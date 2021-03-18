@@ -2,132 +2,190 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C822FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 10:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C02C433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 12:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8141864F3B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 10:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FD3264F3B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 12:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbhCRKpS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Mar 2021 06:45:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbhCRKow (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Mar 2021 06:44:52 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A52C06174A;
-        Thu, 18 Mar 2021 03:44:52 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id f26so6866976ljp.8;
-        Thu, 18 Mar 2021 03:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UZZzq/9McYqHi4InJGaReUkavQ57VQ1UkA2ucnh78uI=;
-        b=gTbIM+eVxHGNlcaYXsqO6C0ktHAtRqi8q20fGcwHQ7semqVJMZXtpkH3pUFPSQzVYl
-         +WeAtppdRYVyjxzgwUh+BgHpEe4qAn3IgFJE50GSbAeZlhxYE1NhbzyWcz0qANY02xD9
-         WP/N8IHj1Xbipui8Hxo0TpkS0cIx3pOqI+fEMQahZIx3V9BTkJvMMa+O4GB3oqVFmtOe
-         PcYtWLGkWX1vePVvpC7ryqpXjGSLfeD9PLLYAl2nESHcF6eZHkofYB/GOLFT3CpPW+cG
-         454A9TWQJ4AC+2RGIkZZU0S6hK9JCBBXxB3v2kxS2/Soah9MHXBtHvehAqnp3ZeAXTMk
-         xD8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UZZzq/9McYqHi4InJGaReUkavQ57VQ1UkA2ucnh78uI=;
-        b=cA6hRWkFE5QGmIZebR5CU8VvqaWt2pv2XfEKyM4ZFeYwdmu1GeuiFzOqU6qjvrH04o
-         casrI3RfpUYfnt+WWUcBR6Nqhgg5JEnlNNNK+YyZu7iNIQVmZKT85/J6e99ABgmZo94O
-         lY35j4hu5K3q62SDBeWSHc/k/dOSebN5XMmwP7+ytFwPA+LKElv8Nseb2xdDI+Qd0ebx
-         ZZRZvEndH0omQbJELpa6so46jf79GCpydZOuNfaPNIZl5qbfUtfwbeQxIYfOxB9hjrL4
-         RB4WoPhzKZf3stPutyY3+PNqJj8yrE05XVweWrwsn2Kw7qghWn9h9/MbaaZDU984ICRN
-         D7Eg==
-X-Gm-Message-State: AOAM5318WkY2JDhgDZ7IiIzag436r3VtktkZ+8varTmal4VVNCPPH8lg
-        eCQ8Kb7rPOxFBQ6t4T3DCr7xGZodIvM=
-X-Google-Smtp-Source: ABdhPJyZkPBz604XveIMMKnivIAAlI3Kq+ffrnq13fyiOfAK/uWCFgXw6pG59Ahla1dsNA6XD5eWHQ==
-X-Received: by 2002:a2e:974d:: with SMTP id f13mr4956977ljj.210.1616064290378;
-        Thu, 18 Mar 2021 03:44:50 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id a1sm191289ljb.76.2021.03.18.03.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 03:44:50 -0700 (PDT)
-Subject: Re: [PATCH v5 2/7] clk: tegra: Fix refcounting of gate clocks
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S230464AbhCRMK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Mar 2021 08:10:28 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48852 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230408AbhCRMKS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Mar 2021 08:10:18 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 12ICACtI064381;
+        Thu, 18 Mar 2021 07:10:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1616069412;
+        bh=V55Fqi93WhICRWF6k7K7rR1gLR73q2SA61LmnQTRQKM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=hEIkECQhKK9Uri7GuzN66hQ75ct6ucFuxvgLH+Zc7/meHfMCrI51CuALpW6DXEXar
+         3EDlt3EyNJX5bgMkErdrpKYOW2NK0CCLoYdD/1y7kKdYPEssmTgxjEajwX0yTjyhaN
+         WRFO2B7jMMgyYE7k/Jyk6pgU65G78qU+q/6eq/sw=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 12ICABqK015215
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 18 Mar 2021 07:10:12 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 18
+ Mar 2021 07:10:11 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Thu, 18 Mar 2021 07:10:11 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 12ICA8Tm116376;
+        Thu, 18 Mar 2021 07:10:08 -0500
+Subject: Re: [PATCH 4/4] clk: ti: add am33xx spread spectrum clock support
+To:     Dario Binacchi <dariobin@libero.it>,
+        <linux-kernel@vger.kernel.org>,
+        "Vutla, Lokesh" <lokeshvutla@ti.com>, "Menon, Nishanth" <nm@ti.com>
+CC:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20210317193006.29633-1-digetx@gmail.com>
- <20210317193006.29633-3-digetx@gmail.com>
- <20210318091219.GA18038@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <768dcbd3-a29b-33c1-2147-e59e3847e75c@gmail.com>
-Date:   Thu, 18 Mar 2021 13:44:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Tero Kristo <kristo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20210314151233.23243-1-dariobin@libero.it>
+ <20210314151233.23243-5-dariobin@libero.it>
+ <6dc0d2c6-570a-3fbf-77e1-6731a6c8d558@ti.com>
+ <2069482516.552063.1616053134087@mail1.libero.it>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <64771168-1222-cfb5-f79c-31a945b713a5@ti.com>
+Date:   Thu, 18 Mar 2021 14:08:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210318091219.GA18038@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <2069482516.552063.1616053134087@mail1.libero.it>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.03.2021 12:12, Michał Mirosław пишет:
-> On Wed, Mar 17, 2021 at 10:30:01PM +0300, Dmitry Osipenko wrote:
->> The refcounting of the gate clocks has a bug causing the enable_refcnt
->> to underflow when unused clocks are disabled. This happens because clk
->> provider erroneously bumps the refcount if clock is enabled at a boot
->> time, which it shouldn't be doing, and it does this only for the gate
->> clocks, while peripheral clocks are using the same gate ops and the
->> peripheral clocks are missing the initial bump. Hence the refcount of
->> the peripheral clocks is 0 when unused clocks are disabled and then the
->> counter is decremented further by the gate ops, causing the integer
->> underflow.
-> [...]
->> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
->> index 4b31beefc9fc..3c4259fec82e 100644
->> --- a/drivers/clk/tegra/clk-periph-gate.c
->> +++ b/drivers/clk/tegra/clk-periph-gate.c
-> [...]
->> @@ -91,21 +108,28 @@ static void clk_periph_disable(struct clk_hw *hw)
->>  
->>  	spin_lock_irqsave(&periph_ref_lock, flags);
->>  
->> -	gate->enable_refcnt[gate->clk_num]--;
->> -	if (gate->enable_refcnt[gate->clk_num] > 0) {
->> -		spin_unlock_irqrestore(&periph_ref_lock, flags);
->> -		return;
->> -	}
->> +	WARN_ON(!gate->enable_refcnt[gate->clk_num]);
->> +
->> +	if (gate->enable_refcnt[gate->clk_num]-- == 1)
->> +		clk_periph_disable_locked(hw);
-> 
-> Nit: "if (--n == 0)" seems more natural, as you want to call
-> clk_periph_disable_locked() when the refcount goes down to 0.
-> 
-> [...]
->>  	/*
->> -	 * If peripheral is in the APB bus then read the APB bus to
->> -	 * flush the write operation in apb bus. This will avoid the
->> -	 * peripheral access after disabling clock
->> +	 * Some clocks are duplicated and some of them are marked as critical,
->> +	 * like fuse and fuse_burn for example, thus the enable_refcnt will
->> +	 * be non-zero here id the "unused" duplicate is disabled by CCF.
-> 
-> s/id/if/ ?
 
-I'll update this patch over the weekend, thanks!
+
+On 18/03/2021 09:38, Dario Binacchi wrote:
+> Hi Grygorii,
+> 
+>> Il 16/03/2021 12:52 Grygorii Strashko <grygorii.strashko@ti.com> ha scritto:
+>>
+>>   
+>> On 14/03/2021 17:12, Dario Binacchi wrote:
+>>> The patch enables spread spectrum clocking (SSC) for MPU and LCD PLLs.
+>>> As reported by the TI spruh73x RM, SSC is only supported for the
+>>> DISP/LCD and MPU PLLs on am33xx device. SSC is not supported for DDR,
+>>> PER, and CORE PLLs.
+>>>
+>>> Calculating the required values and setting the registers accordingly
+>>> was taken from the set_mpu_spreadspectrum routine contained in the
+>>> arch/arm/mach-omap2/am33xx/clock_am33xx.c file of the u-boot project.
+>>>
+>>> In locked condition, DPLL output clock = CLKINP *[M/N]. In case of
+>>> SSC enabled, the AM335x reference manual explains that there is a
+>>> restriction of range of M values. Since the omap2_dpll_round_rate
+>>> routine attempts to select the minimum possible N, the value of M
+>>> obtained is not guaranteed to be within the range required. With the new
+>>> "ti,min-div" parameter it is possible to increase N and consequently M
+>>> to satisfy the constraint imposed by SSC.
+>>>
+>>> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+>>>
+>>> ---
+>>>
+>>>    arch/arm/boot/dts/am33xx-clocks.dtsi |  4 +-
+>>>    drivers/clk/ti/dpll.c                | 41 ++++++++++++++
+>>>    drivers/clk/ti/dpll3xxx.c            | 85 ++++++++++++++++++++++++++++
+>>>    include/linux/clk/ti.h               | 24 ++++++++
+>>>    4 files changed, 152 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/am33xx-clocks.dtsi b/arch/arm/boot/dts/am33xx-clocks.dtsi
+>>> index e7bbbf536a8c..a02e0b1229a4 100644
+>>> --- a/arch/arm/boot/dts/am33xx-clocks.dtsi
+>>> +++ b/arch/arm/boot/dts/am33xx-clocks.dtsi
+>>> @@ -164,7 +164,7 @@
+>>>    		#clock-cells = <0>;
+>>>    		compatible = "ti,am3-dpll-core-clock";
+>>>    		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
+>>> -		reg = <0x0490>, <0x045c>, <0x0468>, <0x0460>, <0x0464>;
+>>> +		reg = <0x0490>, <0x045c>, <0x0468>;
+>>>    	};
+>>>    
+>>>    	dpll_core_x2_ck: dpll_core_x2_ck {
+>>> @@ -204,7 +204,7 @@
+>>>    		#clock-cells = <0>;
+>>>    		compatible = "ti,am3-dpll-clock";
+>>>    		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
+>>> -		reg = <0x0488>, <0x0420>, <0x042c>;
+>>> +		reg = <0x0488>, <0x0420>, <0x042c>, <0x0424>, <0x0428>;
+>>>    	};
+>>
+>> You can't mix DT vs code.
+> 
+> Right, I forgot to remove it during a rebase of the series.
+> 
+>>
+>>>    
+>>>    	dpll_mpu_m2_ck: dpll_mpu_m2_ck@4a8 {
+>>> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+>>> index d6f1ac5b53e1..2738417a47b7 100644
+>>> --- a/drivers/clk/ti/dpll.c
+>>> +++ b/drivers/clk/ti/dpll.c
+>>> @@ -290,7 +290,9 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>>>    	struct clk_init_data *init = NULL;
+>>>    	const char **parent_names = NULL;
+>>>    	struct dpll_data *dd = NULL;
+>>> +	int ssc_clk_index;
+>>>    	u8 dpll_mode = 0;
+>>> +	u32 min_div;
+>>>    
+>>>    	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
+>>>    	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+>>> @@ -345,6 +347,27 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>>>    	if (dd->autoidle_mask) {
+>>>    		if (ti_clk_get_reg_addr(node, 3, &dd->autoidle_reg))
+>>>    			goto cleanup;
+>>> +
+>>> +		ssc_clk_index = 4;
+>>> +	} else {
+>>> +		ssc_clk_index = 3;
+>>> +	}
+>>> +
+>>> +	if (dd->ssc_deltam_int_mask && dd->ssc_deltam_frac_mask &&
+>>> +	    dd->ssc_modfreq_mant_mask && dd->ssc_modfreq_exp_mask) {
+>>> +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
+>>> +					&dd->ssc_deltam_reg))
+>>> +			goto cleanup;
+>>> +
+>>> +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
+>>> +					&dd->ssc_modfreq_reg))
+>>> +			goto cleanup;
+>>> +
+>>> +		of_property_read_u32(node, "ti,ssc-modfreq", &dd->ssc_modfreq);
+>>> +		of_property_read_u32(node, "ti,ssc-deltam", &dd->ssc_deltam);
+>>> +		if (of_property_read_bool(node, "ti,ssc-downspread"))
+>>> +			dd->ssc_downspread = 1;
+>>
+>> New bindings.
+> 
+> I added the bindings documentation in another patch of the series.
+> 
+
+oh. sorry I've not received it for some reasons :(
+
+-- 
+Best regards,
+grygorii
