@@ -2,114 +2,250 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF57EC433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 20:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3C6C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A264D64F41
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 20:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0823F64F3B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233351AbhCQUMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 16:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
+        id S229866AbhCRCFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 22:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233340AbhCQUMd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 16:12:33 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FE4C06174A;
-        Wed, 17 Mar 2021 13:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=KLAHwcd2QZ23rDr/5Z70QKfxvKIFkoTNZ3q3rZSsusQ=; b=jEgVG4lCtXmAMEgO1vHsH/ZGOt
-        NXcTYviTA2tIgXt+11oFfLAcHdOKvmooiSV5dX1TwBSXQ222coDHKFSS1t+Qsgg/XsYRsYxJQDCsk
-        C0YjQU4Q7YciUegtyud+vPBlk7/FOUL2e5CvIV7jm5bQuEzyrVqY39JfFHt+HNfr5XbJvJd0qV5K8
-        EFCqO4hHfMok65hHp+PyY7CEHAdcWFML7WHqpgaaWCGRhppsEtyTsubfnTCsKZ+uYcWYjMcx2QSu6
-        ZP9I/D1HGaHYKzxI6RhQ8bvArBhvLPMdFDwUxX5eso3Y74XFvHQ99gbIlCA2Arr8ILCgd0+kr+Sye
-        mRq5FkEQ==;
-Received: from [2601:1c0:6280:3f0::9757]
-        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lMcWs-001gXv-Vf; Wed, 17 Mar 2021 20:12:31 +0000
-Subject: Re: [PATCH] devicetree: bindings: clock: Minor typo fix in the file
- armada3700-tbg-clock.txt
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-References: <20210317100840.2449462-1-unixbhaskar@gmail.com>
- <546989ea-c6b2-42e4-46b2-d7de5d208728@infradead.org>
- <YFJcl6i95cRM22MI@ArchLinux>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <efc138db-d82d-a9f0-ca7b-61ae993e0459@infradead.org>
-Date:   Wed, 17 Mar 2021 13:12:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        with ESMTP id S230132AbhCRCFN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 22:05:13 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180BEC061763
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:05:13 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id 31-20020a9d00220000b02901b64b9b50b1so3765080ota.9
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hFIpeKGuX0nycNGYPZhEkMTQ5TBqkNsH4ol9rotosSc=;
+        b=IhgVGMCvFH2iERlU//bxqH9so1HPvDqIVyIrwWE+6bq8TApVEWo3UMUo5FIEUp9/7p
+         SUizN/eu9SknJXLViXcoZX5NUIpl7sB4/tx/cgVd0fDUM9rbGniAvT5h6FnFLq48cAMs
+         ZQYQWjDrYNOlVVegvpVydsF1huTuX890N78nMYdAN3ajl66KQk52r3BGI1HOxt1MxfqH
+         AefYuAJagpM6EiQrKCrhOR50SSON9HG+Ok+/vORiIW5b590kz3hYHUv+Vt9aGaRfwpL8
+         8hg+HI8IXJPsWVxwIRKqLBRbhf3Xj5/43gfh/KGYHBvnyBq154LILExyZkJsroDsF2yt
+         XCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hFIpeKGuX0nycNGYPZhEkMTQ5TBqkNsH4ol9rotosSc=;
+        b=FQKRfsnNHUGbt/O8YG42qBkbIyYx2cACU9yi6fp1pFvFnpk58b8zyFXPVDUBwxUWaE
+         TMVa3q0NQ0a0dqQcD4hISv+iFugqPk3uF8//w1FxmCFMSm74SzmZP47PVImA0fHdD3vQ
+         v8xj5oS5bZ+eJzZdbG81uCU56McyZU/d7ua6RXsD7p5oBAFT5oEfg7H0nwLBnIHCWjZe
+         64pFJVj/TdAKEWFT5XJzxUtnr+JXkhFclfuC2yGvUsS5+biu4W5RmARtwbZt7q3ISRv9
+         YCv4c11hYSV4RaGk0Vx0WSDYm8zeELZT2H00ZNJSUVc00d1lLbvaGYzMAqslNRxSpAHy
+         TQPQ==
+X-Gm-Message-State: AOAM5339uVsUOxFiboYlph3kIlQTAT+y5KX5dB7658Gpy5LnOWEGsh1S
+        O8Wrf8fgeMCvNkD2qjlhGvAP0w==
+X-Google-Smtp-Source: ABdhPJxFML//B68n13ChjKm4UD7s0AutRzoN7PAzF7QkWiRDrh5kbP77C0us713T0MxQGUia13XF+w==
+X-Received: by 2002:a9d:7293:: with SMTP id t19mr5689012otj.4.1616033112191;
+        Wed, 17 Mar 2021 19:05:12 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id u194sm211331oia.27.2021.03.17.19.05.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 19:05:11 -0700 (PDT)
+Date:   Wed, 17 Mar 2021 21:05:10 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Cc:     sboyd@kernel.org, agross@kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+        robh+dt@kernel.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v8 2/9] remoteproc: qcom: Add secure PIL support
+Message-ID: <YFK1VpP74rQH2Z72@builder.lan>
+References: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
+ <1611984013-10201-3-git-send-email-gokulsri@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <YFJcl6i95cRM22MI@ArchLinux>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611984013-10201-3-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/17/21 12:46 PM, Bhaskar Chowdhury wrote:
-> On 10:32 Wed 17 Mar 2021, Randy Dunlap wrote:
->> On 3/17/21 3:08 AM, Bhaskar Chowdhury wrote:
->>>
->>> s/provde/provide/
->>>
->>> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
->>
->> Bhaskar,
->>
->> Did you send this one to "robh+dt@kernel.org"?
->> AFAICT, it was sent to "dt@kernel.org", which bounces.
->>
->> If you used "robh+dt@kernel.org", it appears that 'get send-email' has a problem with that.
->>
-> I sent out a mail to David and Rob, including you for the same problem . Hope
-> David will do something to change that address or Rob might do something . So
-> that it will not bounce in future.
+On Fri 29 Jan 23:20 CST 2021, Gokul Sriram Palanisamy wrote:
 
-David said that vger isn't modifying the email address.
-And there is nothing wrong with it (robh+dt@kernel.org),
-although it appears that either git send-email or just gmail.com
-does not like it.
+> IPQ8074 uses secure PIL. Hence, adding the support for the same.
+> 
 
+Sorry for not giving this a proper review before Gokul, I've look at it
+but been uncertain about what feedback to offer.
 
-> Lets see.
->> thanks.
->>
->>> ---
->>>  .../devicetree/bindings/clock/armada3700-tbg-clock.txt          | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
->>> index 0ba1d83ff363..ed1df32c577a 100644
->>> --- a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
->>> +++ b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
->>> @@ -1,6 +1,6 @@
->>>  * Time Base Generator Clock bindings for Marvell Armada 37xx SoCs
->>>
->>> -Marvell Armada 37xx SoCs provde Time Base Generator clocks which are
->>> +Marvell Armada 37xx SoCs provide Time Base Generator clocks which are
->>>  used as parent clocks for the peripheral clocks.
->>>
->>>  The TBG clock consumer should specify the desired clock by having the
->>> -- 
->>
->>
->> -- 
->> ~Randy
->>
+> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 
+I suspect that there should have some "Co-developed-by" here (and in the
+other patches)?
 
--- 
-~Randy
+> ---
+>  drivers/remoteproc/qcom_q6v5_wcss.c | 43 ++++++++++++++++++++++++++++++++++---
+>  1 file changed, 40 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index c0368bb..4e35e5c 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+> +#include <linux/qcom_scm.h>
+>  #include "qcom_common.h"
+>  #include "qcom_pil_info.h"
+>  #include "qcom_q6v5.h"
+> @@ -86,6 +87,9 @@
+>  #define TCSR_WCSS_CLK_ENABLE	0x14
+>  
+>  #define MAX_HALT_REG		3
+> +
+> +#define WCNSS_PAS_ID		6
+> +
+>  enum {
+>  	WCSS_IPQ8074,
+>  	WCSS_QCS404,
+> @@ -134,6 +138,7 @@ struct q6v5_wcss {
+>  	unsigned int crash_reason_smem;
+>  	u32 version;
+>  	bool requires_force_stop;
+> +	bool need_mem_protection;
+>  
+>  	struct qcom_rproc_glink glink_subdev;
+>  	struct qcom_rproc_ssr ssr_subdev;
+> @@ -152,6 +157,7 @@ struct wcss_data {
+>  	int ssctl_id;
+>  	const struct rproc_ops *ops;
+>  	bool requires_force_stop;
+> +	bool need_mem_protection;
+>  };
+>  
+>  static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+> @@ -251,6 +257,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
+>  
+>  	qcom_q6v5_prepare(&wcss->q6v5);
+>  
+> +	if (wcss->need_mem_protection) {
+> +		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
+> +		if (ret) {
+> +			dev_err(wcss->dev, "wcss_reset failed\n");
+> +			return ret;
+> +		}
+> +		goto wait_for_reset;
 
+This goto essentially puts the entire old function in an "else" block.
+
+> +	}
+> +
+>  	/* Release Q6 and WCSS reset */
+>  	ret = reset_control_deassert(wcss->wcss_reset);
+>  	if (ret) {
+> @@ -285,6 +300,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
+>  	if (ret)
+>  		goto wcss_q6_reset;
+>  
+> +wait_for_reset:
+>  	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
+>  	if (ret == -ETIMEDOUT)
+>  		dev_err(wcss->dev, "start timed out\n");
+> @@ -717,6 +733,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int ret;
+>  
+> +	if (wcss->need_mem_protection) {
+> +		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
+> +		if (ret) {
+> +			dev_err(wcss->dev, "not able to shutdown\n");
+> +			return ret;
+> +		}
+> +		goto pas_done;
+
+Same here.
+
+> +	}
+> +
+>  	/* WCSS powerdown */
+>  	if (wcss->requires_force_stop) {
+>  		ret = qcom_q6v5_request_stop(&wcss->q6v5, NULL);
+> @@ -741,6 +766,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  			return ret;
+>  	}
+>  
+> +pas_done:
+>  	clk_disable_unprepare(wcss->prng_clk);
+>  	qcom_q6v5_unprepare(&wcss->q6v5);
+>  
+> @@ -764,9 +790,15 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int ret;
+>  
+> -	ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> -				    0, wcss->mem_region, wcss->mem_phys,
+> -				    wcss->mem_size, &wcss->mem_reloc);
+> +	if (wcss->need_mem_protection)
+> +		ret = qcom_mdt_load(wcss->dev, fw, rproc->firmware,
+> +				    WCNSS_PAS_ID, wcss->mem_region,
+> +				    wcss->mem_phys, wcss->mem_size,
+> +				    &wcss->mem_reloc);
+> +	else
+> +		ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> +					    0, wcss->mem_region, wcss->mem_phys,
+> +					    wcss->mem_size, &wcss->mem_reloc);
+
+And same here.
+
+In practice this means that you're essentially overloading new logic to
+all code paths though the driver. Left is some boilerplate code, which I
+wish we could refactor into common helper functions in the framework
+(e.g. we duplicate q6v5_alloc_memory_region() in a lot of drivers).
+
+So with this in mind, instead of overloading new logic to this entire
+driver, could you please submit a new driver for the PAS based IPQ WCSS?
+
+Regards,
+Bjorn
+
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1032,6 +1064,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+>  	if (!desc)
+>  		return -EINVAL;
+>  
+> +	if (desc->need_mem_protection && !qcom_scm_is_available())
+> +		return -EPROBE_DEFER;
+> +
+>  	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+>  			    desc->firmware_name, sizeof(*wcss));
+>  	if (!rproc) {
+> @@ -1045,6 +1080,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+>  
+>  	wcss->version = desc->version;
+>  	wcss->requires_force_stop = desc->requires_force_stop;
+> +	wcss->need_mem_protection = desc->need_mem_protection;
+>  
+>  	ret = q6v5_wcss_init_mmio(wcss, pdev);
+>  	if (ret)
+> @@ -1115,6 +1151,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+>  	.wcss_q6_reset_required = true,
+>  	.ops = &q6v5_wcss_ipq8074_ops,
+>  	.requires_force_stop = true,
+> +	.need_mem_protection = true,
+>  };
+>  
+>  static const struct wcss_data wcss_qcs404_res_init = {
+> -- 
+> 2.7.4
+> 
