@@ -2,250 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3C6C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1BAC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0823F64F3B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BDD264EE2
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbhCRCFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 22:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
+        id S230085AbhCRCHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 22:07:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230132AbhCRCFN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 22:05:13 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180BEC061763
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:05:13 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id 31-20020a9d00220000b02901b64b9b50b1so3765080ota.9
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:05:13 -0700 (PDT)
+        with ESMTP id S229866AbhCRCHn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 22:07:43 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B0FC06175F
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:07:43 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id x2so309642oiv.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hFIpeKGuX0nycNGYPZhEkMTQ5TBqkNsH4ol9rotosSc=;
-        b=IhgVGMCvFH2iERlU//bxqH9so1HPvDqIVyIrwWE+6bq8TApVEWo3UMUo5FIEUp9/7p
-         SUizN/eu9SknJXLViXcoZX5NUIpl7sB4/tx/cgVd0fDUM9rbGniAvT5h6FnFLq48cAMs
-         ZQYQWjDrYNOlVVegvpVydsF1huTuX890N78nMYdAN3ajl66KQk52r3BGI1HOxt1MxfqH
-         AefYuAJagpM6EiQrKCrhOR50SSON9HG+Ok+/vORiIW5b590kz3hYHUv+Vt9aGaRfwpL8
-         8hg+HI8IXJPsWVxwIRKqLBRbhf3Xj5/43gfh/KGYHBvnyBq154LILExyZkJsroDsF2yt
-         XCjQ==
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cBOic09Ji2sUr7lSL2XtTwyzCrDuTRmAgWURvlhvtG0=;
+        b=Ndyrp+nu/db70ubdGOP4GiYnNhiVuTIguQnDDahQbyBGQtCYZkmBwbFRrQ0REfFdj2
+         dRkdkq4cgKCrJ8QfojElCvKbvTvOOx4+f16SDDder/3dQUojGoLn8e1GIaj4tmukiFd6
+         a4QwSiqMelJNPB48P0pbFRbE+P/KM6MHbvLTe+tmVJbozYvI6PqWLDPBILZM84FJTWUW
+         lZ00OaIwe0tRb/hp5VmnHACLpUaOuqKvERUGxgLjPUbbSfEwfwmv3yGkidDsLkSHf5Ta
+         r4CdscMpJb/kl0YwPHEaEdBuDNozUW8qyLuBqNZRgD94Ul84FkiCjiDZwUJjpYA9dyeZ
+         El/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hFIpeKGuX0nycNGYPZhEkMTQ5TBqkNsH4ol9rotosSc=;
-        b=FQKRfsnNHUGbt/O8YG42qBkbIyYx2cACU9yi6fp1pFvFnpk58b8zyFXPVDUBwxUWaE
-         TMVa3q0NQ0a0dqQcD4hISv+iFugqPk3uF8//w1FxmCFMSm74SzmZP47PVImA0fHdD3vQ
-         v8xj5oS5bZ+eJzZdbG81uCU56McyZU/d7ua6RXsD7p5oBAFT5oEfg7H0nwLBnIHCWjZe
-         64pFJVj/TdAKEWFT5XJzxUtnr+JXkhFclfuC2yGvUsS5+biu4W5RmARtwbZt7q3ISRv9
-         YCv4c11hYSV4RaGk0Vx0WSDYm8zeELZT2H00ZNJSUVc00d1lLbvaGYzMAqslNRxSpAHy
-         TQPQ==
-X-Gm-Message-State: AOAM5339uVsUOxFiboYlph3kIlQTAT+y5KX5dB7658Gpy5LnOWEGsh1S
-        O8Wrf8fgeMCvNkD2qjlhGvAP0w==
-X-Google-Smtp-Source: ABdhPJxFML//B68n13ChjKm4UD7s0AutRzoN7PAzF7QkWiRDrh5kbP77C0us713T0MxQGUia13XF+w==
-X-Received: by 2002:a9d:7293:: with SMTP id t19mr5689012otj.4.1616033112191;
-        Wed, 17 Mar 2021 19:05:12 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id u194sm211331oia.27.2021.03.17.19.05.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 19:05:11 -0700 (PDT)
-Date:   Wed, 17 Mar 2021 21:05:10 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Cc:     sboyd@kernel.org, agross@kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
-        robh+dt@kernel.org, sricharan@codeaurora.org
-Subject: Re: [PATCH v8 2/9] remoteproc: qcom: Add secure PIL support
-Message-ID: <YFK1VpP74rQH2Z72@builder.lan>
-References: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
- <1611984013-10201-3-git-send-email-gokulsri@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cBOic09Ji2sUr7lSL2XtTwyzCrDuTRmAgWURvlhvtG0=;
+        b=hZWej19p0Ai+ivltNwGgWz5e761hrfXL1HrP9lDEdSZUlnmSBO2bx7EKEQO8uvo/Zm
+         NQejVa7a+LpegQ6I6PCLes+Ewj26+gvwoHt31tguVi6Evlf7dUkJYRZWpt07fzNGkQgT
+         QyZgL2ecvXWTGq7cdgaf/LG1vzHTCJASPWfNjaERF2/Tk/mnCGnNeMdre6XPI4xIYMcV
+         9ND1Tcf0XbmUZ5ymp2Bw7SA6WTdbuRtTn8SZxqhxTpdT413AYBnfgIMbr2o6V9Xqt6XM
+         Y8cq+PRa/cO48q3+HxBN8k2wBUN+84WlqpnhFztWAPRWf1ZIrrf5bKCKkQkw/2t0RlN+
+         69NQ==
+X-Gm-Message-State: AOAM532VEjdEZIUkFAR9GTjOLQRLwooj5xatOgRTfTIui/obA6qYAT/k
+        Cn0k8XiA5asYG3lYCM2umNEkkU7etgu2YrgfYJhWuQ==
+X-Google-Smtp-Source: ABdhPJyIpml/gdyY9dmtxfJlp6jCFpscTMsFU75hsrbdN3tUsgB4w6NmCOGaxfR8kIRzYDCQD946laEs77CtO2uP5Ko=
+X-Received: by 2002:aca:1c02:: with SMTP id c2mr1352536oic.31.1616033262714;
+ Wed, 17 Mar 2021 19:07:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1611984013-10201-3-git-send-email-gokulsri@codeaurora.org>
+References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
+In-Reply-To: <87v99qyjaz.fsf@igel.home>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Thu, 18 Mar 2021 10:07:30 +0800
+Message-ID: <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yash Shah <yash.shah@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 29 Jan 23:20 CST 2021, Gokul Sriram Palanisamy wrote:
+On Wed, Mar 17, 2021 at 3:45 AM Andreas Schwab <schwab@linux-m68k.org> wrote:
+>
+> On Dez 09 2020, Zong Li wrote:
+>
+> > Add a driver for the SiFive FU740 PRCI IP block, which handles more
+> > clocks than FU540. These patches also refactor the original
+> > implementation by spliting the dependent-code of fu540 and fu740
+> > respectively.
+>
+> That breaks ethernet on the fu540.
+>
 
-> IPQ8074 uses secure PIL. Hence, adding the support for the same.
-> 
+I would check that, thanks for the report.
 
-Sorry for not giving this a proper review before Gokul, I've look at it
-but been uncertain about what feedback to offer.
-
-> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
-
-I suspect that there should have some "Co-developed-by" here (and in the
-other patches)?
-
-> ---
->  drivers/remoteproc/qcom_q6v5_wcss.c | 43 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 40 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index c0368bb..4e35e5c 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -18,6 +18,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/qcom_scm.h>
->  #include "qcom_common.h"
->  #include "qcom_pil_info.h"
->  #include "qcom_q6v5.h"
-> @@ -86,6 +87,9 @@
->  #define TCSR_WCSS_CLK_ENABLE	0x14
->  
->  #define MAX_HALT_REG		3
-> +
-> +#define WCNSS_PAS_ID		6
-> +
->  enum {
->  	WCSS_IPQ8074,
->  	WCSS_QCS404,
-> @@ -134,6 +138,7 @@ struct q6v5_wcss {
->  	unsigned int crash_reason_smem;
->  	u32 version;
->  	bool requires_force_stop;
-> +	bool need_mem_protection;
->  
->  	struct qcom_rproc_glink glink_subdev;
->  	struct qcom_rproc_ssr ssr_subdev;
-> @@ -152,6 +157,7 @@ struct wcss_data {
->  	int ssctl_id;
->  	const struct rproc_ops *ops;
->  	bool requires_force_stop;
-> +	bool need_mem_protection;
->  };
->  
->  static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-> @@ -251,6 +257,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
->  
->  	qcom_q6v5_prepare(&wcss->q6v5);
->  
-> +	if (wcss->need_mem_protection) {
-> +		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
-> +		if (ret) {
-> +			dev_err(wcss->dev, "wcss_reset failed\n");
-> +			return ret;
-> +		}
-> +		goto wait_for_reset;
-
-This goto essentially puts the entire old function in an "else" block.
-
-> +	}
-> +
->  	/* Release Q6 and WCSS reset */
->  	ret = reset_control_deassert(wcss->wcss_reset);
->  	if (ret) {
-> @@ -285,6 +300,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
->  	if (ret)
->  		goto wcss_q6_reset;
->  
-> +wait_for_reset:
->  	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
->  	if (ret == -ETIMEDOUT)
->  		dev_err(wcss->dev, "start timed out\n");
-> @@ -717,6 +733,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
->  	struct q6v5_wcss *wcss = rproc->priv;
->  	int ret;
->  
-> +	if (wcss->need_mem_protection) {
-> +		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
-> +		if (ret) {
-> +			dev_err(wcss->dev, "not able to shutdown\n");
-> +			return ret;
-> +		}
-> +		goto pas_done;
-
-Same here.
-
-> +	}
-> +
->  	/* WCSS powerdown */
->  	if (wcss->requires_force_stop) {
->  		ret = qcom_q6v5_request_stop(&wcss->q6v5, NULL);
-> @@ -741,6 +766,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
->  			return ret;
->  	}
->  
-> +pas_done:
->  	clk_disable_unprepare(wcss->prng_clk);
->  	qcom_q6v5_unprepare(&wcss->q6v5);
->  
-> @@ -764,9 +790,15 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
->  	struct q6v5_wcss *wcss = rproc->priv;
->  	int ret;
->  
-> -	ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
-> -				    0, wcss->mem_region, wcss->mem_phys,
-> -				    wcss->mem_size, &wcss->mem_reloc);
-> +	if (wcss->need_mem_protection)
-> +		ret = qcom_mdt_load(wcss->dev, fw, rproc->firmware,
-> +				    WCNSS_PAS_ID, wcss->mem_region,
-> +				    wcss->mem_phys, wcss->mem_size,
-> +				    &wcss->mem_reloc);
-> +	else
-> +		ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
-> +					    0, wcss->mem_region, wcss->mem_phys,
-> +					    wcss->mem_size, &wcss->mem_reloc);
-
-And same here.
-
-In practice this means that you're essentially overloading new logic to
-all code paths though the driver. Left is some boilerplate code, which I
-wish we could refactor into common helper functions in the framework
-(e.g. we duplicate q6v5_alloc_memory_region() in a lot of drivers).
-
-So with this in mind, instead of overloading new logic to this entire
-driver, could you please submit a new driver for the PAS based IPQ WCSS?
-
-Regards,
-Bjorn
-
->  	if (ret)
->  		return ret;
->  
-> @@ -1032,6 +1064,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
->  	if (!desc)
->  		return -EINVAL;
->  
-> +	if (desc->need_mem_protection && !qcom_scm_is_available())
-> +		return -EPROBE_DEFER;
-> +
->  	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
->  			    desc->firmware_name, sizeof(*wcss));
->  	if (!rproc) {
-> @@ -1045,6 +1080,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
->  
->  	wcss->version = desc->version;
->  	wcss->requires_force_stop = desc->requires_force_stop;
-> +	wcss->need_mem_protection = desc->need_mem_protection;
->  
->  	ret = q6v5_wcss_init_mmio(wcss, pdev);
->  	if (ret)
-> @@ -1115,6 +1151,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
->  	.wcss_q6_reset_required = true,
->  	.ops = &q6v5_wcss_ipq8074_ops,
->  	.requires_force_stop = true,
-> +	.need_mem_protection = true,
->  };
->  
->  static const struct wcss_data wcss_qcs404_res_init = {
-> -- 
-> 2.7.4
-> 
+> Andreas.
+>
+> --
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+> "And now for something completely different."
