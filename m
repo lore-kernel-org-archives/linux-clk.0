@@ -2,204 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121D5C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 07:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FAFC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 09:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C88B064F18
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 07:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F62264F49
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 09:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbhCRHjE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Mar 2021 03:39:04 -0400
-Received: from smtp-33-i2.italiaonline.it ([213.209.12.33]:52804 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229598AbhCRHi4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Mar 2021 03:38:56 -0400
-Received: from oxapps-17-098.iol.local ([10.101.8.108])
-        by smtp-33.iol.local with ESMTPA
-        id MnF8lFBb6R8VAMnF8lNXaq; Thu, 18 Mar 2021 08:38:54 +0100
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1616053134; bh=UmWZibCkZXTHJgwmZDv3hJCRtDBRvCXUKmKgxOB37/E=;
-        h=From;
-        b=y0qYDGYULbWM7DwuKnl0EUny6mDQ7IOwDsKAJjjdZ7Zn4cjYynPnnwKV28yQ553mO
-         P774JA4bXetT8FswKoP0Dle/dDtjX/9nzlypyXtUOVH9q/EZj+vIXsSaPyamheZOBK
-         N3eWBcXe18+juba6SF1HBxX2NSkDWW5DkhUUZ/c1vtp8fxbG5s673wL2yamNIclbrf
-         p5Ws2TZCOqQNYCM7stQ+FOtqDR4CxJJJspZx82ZNB1pBs8LywvDY5PhtFLiE0wrv38
-         qU5i3VgVMRyp4dOp6EYC+M7HP7bfgfk8CvWqU24MExJfRlMz5ChOdclFH9V8BSDK/u
-         5yCns0AGix6hg==
-X-CNFS-Analysis: v=2.4 cv=OapdsjfY c=1 sm=1 tr=0 ts=6053038e cx=a_exe
- a=NIaCDMyvpSx5HZmal66lBw==:117 a=C-c6dMTymFoA:10 a=IkcTkHD0fZMA:10
- a=vesc6bHxzc4A:10 a=sozttTNsAAAA:8 a=e1VBGZ4yoO3jfIRmQH0A:9 a=QEXdDO2ut3YA:10
- a=FYBFfbkh9HQ-bD74xMz0:22 a=aeg5Gbbo78KNqacMgKqU:22
-Date:   Thu, 18 Mar 2021 08:38:53 +0100 (CET)
-From:   Dario Binacchi <dariobin@libero.it>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-kernel@vger.kernel.org, "Vutla, Lokesh" <lokeshvutla@ti.com>,
-        "Menon, Nishanth" <nm@ti.com>
-Cc:     =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        id S229751AbhCRJOG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Mar 2021 05:14:06 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:9436 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229600AbhCRJNi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Mar 2021 05:13:38 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4F1Lt74w3zzFV;
+        Thu, 18 Mar 2021 10:13:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1616058816; bh=B/w6FnU1M8k1x8n6SpOvWjJ7fnKVBOzRmgm3GyKX0h4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FxIh9eKfWmGwT5IZxR16FfA9VRI+Ub43iw+oRHsJeETqL9G8qt9bw8GhVsB3UCzBm
+         +WYmN+7N4HvMx/8QwCcGbJ2o6uKZYLM6CA0ZPeM7F3A2qUbvEu9AomWdfoNzvCJmC2
+         MqhjvUr4aDgurjwJbsnGBtzcq4EXfnxQW6y4sEtt+1sGb8mn4aF4BE0wmveQlMGGkM
+         GXvICbgnZ+Tz75q/eIVToRrgu8C004NyVwGAvtOhe/3OHrlFaklZ0rhUv2TNHFChm4
+         lOJBK64yFJUVaGTIzXow9F+t8u/fGEJLL9H6KAAogJDI1MkvEsyiv/+WffktvZW2gM
+         1eB/DSPMBom2Q==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.4 at mail
+Date:   Thu, 18 Mar 2021 10:12:19 +0100
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
-Message-ID: <2069482516.552063.1616053134087@mail1.libero.it>
-In-Reply-To: <6dc0d2c6-570a-3fbf-77e1-6731a6c8d558@ti.com>
-References: <20210314151233.23243-1-dariobin@libero.it>
- <20210314151233.23243-5-dariobin@libero.it>
- <6dc0d2c6-570a-3fbf-77e1-6731a6c8d558@ti.com>
-Subject: Re: [PATCH 4/4] clk: ti: add am33xx spread spectrum clock support
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] clk: tegra: Fix refcounting of gate clocks
+Message-ID: <20210318091219.GA18038@qmqm.qmqm.pl>
+References: <20210317193006.29633-1-digetx@gmail.com>
+ <20210317193006.29633-3-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev27
-X-Originating-IP: 185.33.57.41
-X-Originating-Client: open-xchange-appsuite
-x-libjamsun: V9BCza01eXjhlOGmMwcPmz48CscjONcn
-x-libjamv: P64oCIh3Pcc=
-X-CMAE-Envelope: MS4xfKeTUvUL2ykB0ir2RKaYwNgGaD68vavXR+zoqs1MQ0+mscfvpGxvgIjeKLFnHa+P05DQSlOqI6DZdr3tL4g7mGuS8fMsjGSCwHBKQ9TpP2Ft9PyI9sD3
- 5+peIeVj5Zc92eNup0rDybr/wA2HrVX+OqTB60KAhlMMhVk8aqvrHQqd1ziOTDuZWuBpkwh3o8aVWUUDDc2mZMG16rJVxlkeKq3GUACiRrKsD4SthDhBdYs2
- kN9selwKi6d3FjhiPOyVC0Z29TtBfozPmy+nENnz87QzPBg+FYPPd/ZvjD6J4x1I+zwz5R0VfblTsFeB0GX4pZzv4dzdu4LYyU0r8wIIt7Oc5YLVAhZUJUvR
- nI5v2wzJQpEgIcjlyiglHAzyTY4afBnY+7uVgzbN3MF4CE1mYWv/zFEcJJErS6WOv9mkb/CgJa3coe9Nixt0HZHHQDoBBcL7wPtynEahrqce+gHSCINc4Ex5
- hvkPRSwwvsyMGl9E+xsNMy9hs6rE6hWnLyftslQkP+b8VR1Ai4nxltUCxk42MyyqHJek5qff1NgfKIcY1B4jFN0iedO4BRhoUXHiYXSZxk4D5EH1mHgBSwlk
- PKWKoDygc0UXiCYEpMsUlbrPID59ULlFuihW2yfYFsx5rg==
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210317193006.29633-3-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Grygorii,
-
-> Il 16/03/2021 12:52 Grygorii Strashko <grygorii.strashko@ti.com> ha scritto:
-> 
+On Wed, Mar 17, 2021 at 10:30:01PM +0300, Dmitry Osipenko wrote:
+> The refcounting of the gate clocks has a bug causing the enable_refcnt
+> to underflow when unused clocks are disabled. This happens because clk
+> provider erroneously bumps the refcount if clock is enabled at a boot
+> time, which it shouldn't be doing, and it does this only for the gate
+> clocks, while peripheral clocks are using the same gate ops and the
+> peripheral clocks are missing the initial bump. Hence the refcount of
+> the peripheral clocks is 0 when unused clocks are disabled and then the
+> counter is decremented further by the gate ops, causing the integer
+> underflow.
+[...]
+> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+> index 4b31beefc9fc..3c4259fec82e 100644
+> --- a/drivers/clk/tegra/clk-periph-gate.c
+> +++ b/drivers/clk/tegra/clk-periph-gate.c
+[...]
+> @@ -91,21 +108,28 @@ static void clk_periph_disable(struct clk_hw *hw)
 >  
-> On 14/03/2021 17:12, Dario Binacchi wrote:
-> > The patch enables spread spectrum clocking (SSC) for MPU and LCD PLLs.
-> > As reported by the TI spruh73x RM, SSC is only supported for the
-> > DISP/LCD and MPU PLLs on am33xx device. SSC is not supported for DDR,
-> > PER, and CORE PLLs.
-> > 
-> > Calculating the required values and setting the registers accordingly
-> > was taken from the set_mpu_spreadspectrum routine contained in the
-> > arch/arm/mach-omap2/am33xx/clock_am33xx.c file of the u-boot project.
-> > 
-> > In locked condition, DPLL output clock = CLKINP *[M/N]. In case of
-> > SSC enabled, the AM335x reference manual explains that there is a
-> > restriction of range of M values. Since the omap2_dpll_round_rate
-> > routine attempts to select the minimum possible N, the value of M
-> > obtained is not guaranteed to be within the range required. With the new
-> > "ti,min-div" parameter it is possible to increase N and consequently M
-> > to satisfy the constraint imposed by SSC.
-> > 
-> > Signed-off-by: Dario Binacchi <dariobin@libero.it>
-> > 
-> > ---
-> > 
-> >   arch/arm/boot/dts/am33xx-clocks.dtsi |  4 +-
-> >   drivers/clk/ti/dpll.c                | 41 ++++++++++++++
-> >   drivers/clk/ti/dpll3xxx.c            | 85 ++++++++++++++++++++++++++++
-> >   include/linux/clk/ti.h               | 24 ++++++++
-> >   4 files changed, 152 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/am33xx-clocks.dtsi b/arch/arm/boot/dts/am33xx-clocks.dtsi
-> > index e7bbbf536a8c..a02e0b1229a4 100644
-> > --- a/arch/arm/boot/dts/am33xx-clocks.dtsi
-> > +++ b/arch/arm/boot/dts/am33xx-clocks.dtsi
-> > @@ -164,7 +164,7 @@
-> >   		#clock-cells = <0>;
-> >   		compatible = "ti,am3-dpll-core-clock";
-> >   		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-> > -		reg = <0x0490>, <0x045c>, <0x0468>, <0x0460>, <0x0464>;
-> > +		reg = <0x0490>, <0x045c>, <0x0468>;
-> >   	};
-> >   
-> >   	dpll_core_x2_ck: dpll_core_x2_ck {
-> > @@ -204,7 +204,7 @@
-> >   		#clock-cells = <0>;
-> >   		compatible = "ti,am3-dpll-clock";
-> >   		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-> > -		reg = <0x0488>, <0x0420>, <0x042c>;
-> > +		reg = <0x0488>, <0x0420>, <0x042c>, <0x0424>, <0x0428>;
-> >   	};
-> 
-> You can't mix DT vs code.
+>  	spin_lock_irqsave(&periph_ref_lock, flags);
+>  
+> -	gate->enable_refcnt[gate->clk_num]--;
+> -	if (gate->enable_refcnt[gate->clk_num] > 0) {
+> -		spin_unlock_irqrestore(&periph_ref_lock, flags);
+> -		return;
+> -	}
+> +	WARN_ON(!gate->enable_refcnt[gate->clk_num]);
+> +
+> +	if (gate->enable_refcnt[gate->clk_num]-- == 1)
+> +		clk_periph_disable_locked(hw);
 
-Right, I forgot to remove it during a rebase of the series.
+Nit: "if (--n == 0)" seems more natural, as you want to call
+clk_periph_disable_locked() when the refcount goes down to 0.
 
-> 
-> >   
-> >   	dpll_mpu_m2_ck: dpll_mpu_m2_ck@4a8 {
-> > diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> > index d6f1ac5b53e1..2738417a47b7 100644
-> > --- a/drivers/clk/ti/dpll.c
-> > +++ b/drivers/clk/ti/dpll.c
-> > @@ -290,7 +290,9 @@ static void __init of_ti_dpll_setup(struct device_node *node,
-> >   	struct clk_init_data *init = NULL;
-> >   	const char **parent_names = NULL;
-> >   	struct dpll_data *dd = NULL;
-> > +	int ssc_clk_index;
-> >   	u8 dpll_mode = 0;
-> > +	u32 min_div;
-> >   
-> >   	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
-> >   	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
-> > @@ -345,6 +347,27 @@ static void __init of_ti_dpll_setup(struct device_node *node,
-> >   	if (dd->autoidle_mask) {
-> >   		if (ti_clk_get_reg_addr(node, 3, &dd->autoidle_reg))
-> >   			goto cleanup;
-> > +
-> > +		ssc_clk_index = 4;
-> > +	} else {
-> > +		ssc_clk_index = 3;
-> > +	}
-> > +
-> > +	if (dd->ssc_deltam_int_mask && dd->ssc_deltam_frac_mask &&
-> > +	    dd->ssc_modfreq_mant_mask && dd->ssc_modfreq_exp_mask) {
-> > +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
-> > +					&dd->ssc_deltam_reg))
-> > +			goto cleanup;
-> > +
-> > +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
-> > +					&dd->ssc_modfreq_reg))
-> > +			goto cleanup;
-> > +
-> > +		of_property_read_u32(node, "ti,ssc-modfreq", &dd->ssc_modfreq);
-> > +		of_property_read_u32(node, "ti,ssc-deltam", &dd->ssc_deltam);
-> > +		if (of_property_read_bool(node, "ti,ssc-downspread"))
-> > +			dd->ssc_downspread = 1;
-> 
-> New bindings.
+[...]
+>  	/*
+> -	 * If peripheral is in the APB bus then read the APB bus to
+> -	 * flush the write operation in apb bus. This will avoid the
+> -	 * peripheral access after disabling clock
+> +	 * Some clocks are duplicated and some of them are marked as critical,
+> +	 * like fuse and fuse_burn for example, thus the enable_refcnt will
+> +	 * be non-zero here id the "unused" duplicate is disabled by CCF.
 
-I added the bindings documentation in another patch of the series.
+s/id/if/ ?
 
-Thanks and regards,
-Dario
-> 
-> > +
-> >   	}
-> >   
-> >   	if (of_property_read_bool(node, "ti,low-power-stop"))
-> > @@ -356,6 +379,10 @@ static void __init of_ti_dpll_setup(struct device_node *node,
-> >   	if (of_property_read_bool(node, "ti,lock"))
-> >   		dpll_mode |= 1 << DPLL_LOCKED;
-> >   
-> > +	if (!of_property_read_u32(node, "ti,min-div", &min_div) &&
-> > +	    min_div > dd->min_divider)
-> > +		dd->min_divider = min_div;
-> > +
-> 
-> New bindings.
-> 
-> [...]
-> 
-> -- 
-> Best regards,
-> grygorii
+Best Regards
+Micha³ Miros³aw
