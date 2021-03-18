@@ -2,188 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA6BC433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 03:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D04C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 05:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE92764EFC
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 03:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2A4C64F38
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 05:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbhCRDTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 23:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51496 "EHLO
+        id S229710AbhCRFmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Mar 2021 01:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbhCRDTh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 23:19:37 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9630DC06174A;
-        Wed, 17 Mar 2021 20:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Cc:Subject:From:To:Sender:Reply-To:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=pKHYq1hC0taBlkjCvHKcp3eR8zexcs9SDXnvZOh+BtM=; b=JbClyA67QHU0fDZAxAEByRwKY3
-        Kjdxim4mw14IYawYSOtQRHag+7WrFWDQQNeZOkmEf7VvlUwV3bw5qMIMTMga6zGdbjC0HOczNqU7f
-        GLx/6Natu/Pl4p1tGrVLrcUamZCCrjjRhQmdgtCqGf37v1q79IWEsZQelCruis0KsHOpkLixqIzqe
-        bOx2ZidngIAJyOndMCa3113fziBPrSWW7cSADJ6+9qWbSU0uhe9yaxiJ+A9dItdWoENDDbyfqEd5f
-        N4LJhHG8jxHeusWX026tEPY+kInbicq5A6Ru0dLl3SqbCXdVavKRdnwSBdeTPNZyqRd9eEd4WMyBX
-        bWchQpBA==;
-Received: from [2601:1c0:6280:3f0::9757]
-        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lMjBz-001i9Q-0r; Thu, 18 Mar 2021 03:19:32 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: S390: all HAS_IOMEM build failures in one fell swoop
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Message-ID: <5a0172d7-36b1-f18a-ec0f-eb9ee8964a1b@infradead.org>
-Date:   Wed, 17 Mar 2021 20:19:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        with ESMTP id S229690AbhCRFmJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Mar 2021 01:42:09 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64996C06174A;
+        Wed, 17 Mar 2021 22:42:09 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id g8-20020a9d6c480000b02901b65ca2432cso4134780otq.3;
+        Wed, 17 Mar 2021 22:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=e5E4cv+qzO6RqNYov3uCSW6dw7gV2q0enyiUMpZ0Cjg=;
+        b=LyAApYYT3TQfh+yLVjVHE9ILKZZh3xAndVkUTbEakNpMFn9lKsw5w9XmVMhGg/1XBU
+         l0SZqx+mpRqgQia+R0sTQAiMn9Fzu+Y44k6u2WRsGjJtmbmRfqNmSXI7Cg3IeqXa7Iep
+         k9xcmerxp+WXJDzUQ8CfrtfJH7333tZXfx0mmEQKdBxL0lG5Lz1qy3PNY335ceNrsf5U
+         YIjpsqqJCH/FwpsH0conEXCANsFNO/HtbAfpUMUc2KmjvJgrNG9aG+9m8/sTHuFn4RFP
+         /7ZiqAP/rSuYYuLnN5tMrIp3Jv4OHZJw6v+TMMtgYaJpTuEyVcjiMrj2B1dxSFMNbh3X
+         uQPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=e5E4cv+qzO6RqNYov3uCSW6dw7gV2q0enyiUMpZ0Cjg=;
+        b=lvQSkx9H/hbK3D064K/U1zzTzZZu/f97e9dmGlgGD3XkhoYE0L5eXaULwiHuAUQNoB
+         q4BNZp3oP8ZJWupRs6FZ2fRCkgZtUeO7RreZRv3EKSyq7t++kcUyu8wxwkyIxc3OQ6Dm
+         cOpfybc9dsWpUzjFp3cqhw0+D9sqLLZZH7VZAzAiViXAVuTcPVFrh6PZzSpYsOFWZv7n
+         d7d6aANFq8bV4Di0xK9c3RureAhlWbTKmlA7fqLkrfs4sSPX0EReI/6vgv7/t+Zc58qn
+         euS5GOYgb8aAoDUZ5SnvvDWtTffUdfR/8Xc4WlvZJXmGbczYlrt0zeDBbNtzYuyEtXEA
+         zcSA==
+X-Gm-Message-State: AOAM532PUMLJ9/7FE99/2xILDLFKHl1fWEev0T6PD4+BwqhdKgP9DqmC
+        fnXH3pt6/RPxOkj+lVq44eUdk7Y7TxUVqmwCArA=
+X-Google-Smtp-Source: ABdhPJy2GkYXi/bDDIvaBgNq+ChA9bCJlBqUGUMTmp+/pVXcMOoHj/tpoSVgbNFMMT5RUvJ8GYHRr2F0cRWbhh8qNIA=
+X-Received: by 2002:a05:6830:408a:: with SMTP id x10mr6147308ott.248.1616046128852;
+ Wed, 17 Mar 2021 22:42:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CACY_kjSRbgSWsfo+JTyQdqorQ+wcy8OqAtKSbJt6tL4t-AUciw@mail.gmail.com>
+In-Reply-To: <CACY_kjSRbgSWsfo+JTyQdqorQ+wcy8OqAtKSbJt6tL4t-AUciw@mail.gmail.com>
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date:   Thu, 18 Mar 2021 11:11:57 +0530
+Message-ID: <CAKfKVtF+9XyOXq2aLoEyMFr9ZsvHOsqPaAPu79ziUtF-VeMnWw@mail.gmail.com>
+Subject: Re: [PATCH v10 5/9] staging: clocking-wizard: Add support for dynamic reconfiguration
+To:     Zhengxun Li <zhengxunli.mxic@gmail.com>
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        devel@driverdev.osuosl.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, git@xilinx.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, zhengxunli@mxic.com.tw,
+        Julien Su <juliensu@mxic.com.tw>, slwu@mxic.com.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Mar 15, 2021 at 12:37 PM Zhengxun Li <zhengxunli.mxic@gmail.com> wr=
+ote:
+>
+> Hi Shubhrajyoti,
+>
+> My name is Zhengxun and I am the engineer from Macronix. We are
+> using the platform PicoZed 7015/7030 SOM (System On Module),
+> which is based on Xilinx Zynq=C2=AE-7000 All Programmable (AP) SoC to
+> verify our Flash driver. Of course, we are also using your clock
+> wizard, our version seems to be v5.2, but something went wrong.
+>
+> +static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long ra=
+te,
+> + unsigned long parent_rate)
+> +{
+> + int err;
+> + u32 value;
+> + unsigned long flags =3D 0;
+> + struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
+> + void __iomem *div_addr =3D divider->base + divider->offset;
+> +
+> + if (divider->lock)
+> + spin_lock_irqsave(divider->lock, flags);
+> + else
+> + __acquire(divider->lock);
+> +
+> + value =3D DIV_ROUND_CLOSEST(parent_rate, rate);
+> +
+> + /* Cap the value to max */
+> + min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
+> +
+> + /* Set divisor and clear phase offset */
+> + writel(value, div_addr);
+> + writel(0x00, div_addr + WZRD_DR_DIV_TO_PHASE_OFFSET);
+>
+> Why phase always set to zero? We want to support DTR operation in
+> Flash driver. Can you add a set_phase function to adjust the phase?
+>
+The phase setting is a separate feature will address in a separate series.
 
-On ARCH=s390:
-
-By disabling CONFIG_PCI and hence also disabling CONFIG_HAS_IOMEM
-(after having done 'make ARCH=s390 allmodconfig'),
-we can see all of the drivers that use IOMEM-related interfaces
-without mentioning that they do so (in their respective Kconfig files).
-
-This should catch all of them, instead of various randconfig builds
-catching a few of them at a time.
-(I'm not trying to pick on arch/s390/ here -- more on the piecemeal
-randconfig approach of some 'bot'. :)
-
-
-I have grouped them by subsystem (more or less).
-(This was done on linux-next of 2021-03-15.)
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-make[1]: Entering directory 'linux-next-20210315/S390'
-
-kernel/dma:
-
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_memory':
-coherent.c:(.text+0x39c): undefined reference to `memremap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: coherent.c:(.text+0x4e0): undefined reference to `memunmap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coherent_memory':
-coherent.c:(.text+0xac6): undefined reference to `memunmap'
-
-irqchip:
-
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_dt':
-irq-al-fic.c:(.init.text+0x6c): undefined reference to `of_iomap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: irq-al-fic.c:(.init.text+0x49c): undefined reference to `iounmap'
-
-clk / clocksource:
-
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
-clk-fixed-mmio.c:(.text+0x9a): undefined reference to `of_iomap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: clk-fixed-mmio.c:(.text+0xe6): undefined reference to `iounmap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_init':
-timer-of.c:(.init.text+0x8e): undefined reference to `of_iomap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: timer-of.c:(.init.text+0x6ec): undefined reference to `iounmap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_cleanup':
-timer-of.c:(.init.text+0x8f2): undefined reference to `iounmap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in function `mchp_pit64b_dt_init_timer':
-timer-microchip-pit64b.c:(.init.text+0xf2): undefined reference to `of_iomap'
-gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xa18): undefined reference to `iounmap'
-
-iio:
-
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/iio/adc/adi-axi-adc.ko] undefined!
-
-pcmcia:
-
-ERROR: modpost: "ioremap" [drivers/pcmcia/pcmcia.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/pcmcia/pcmcia.ko] undefined!
-
-mtd:
-
-ERROR: modpost: "devm_ioremap_resource" [drivers/mtd/nand/raw/denali_dt.ko] undefined!
-
-nvmem:
-
-ERROR: modpost: "memunmap" [drivers/nvmem/nvmem-rmem.ko] undefined!
-ERROR: modpost: "memremap" [drivers/nvmem/nvmem-rmem.ko] undefined!
-
-crypto:
-
-ERROR: modpost: "devm_ioremap_resource" [drivers/crypto/ccree/ccree.ko] undefined!
-ERROR: modpost: "debugfs_create_regset32" [drivers/crypto/ccree/ccree.ko] undefined!
-
-media:
-
-ERROR: modpost: "devm_ioremap_resource" [drivers/media/rc/ir-hix5hd2.ko] undefined!
-
-input:
-
-ERROR: modpost: "devm_ioremap" [drivers/input/keyboard/samsung-keypad.ko] undefined!
-
-net:
-
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/net/can/grcan.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/arcnet/arc-rimi.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/arcnet/arc-rimi.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/arcnet/com90xx.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/arcnet/com90xx.ko] undefined!
-ERROR: modpost: "devm_ioremap" [drivers/net/ethernet/altera/altera_tse.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/ethernet/xircom/xirc2ps_cs.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/ethernet/xircom/xirc2ps_cs.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/net/ethernet/xilinx/xilinx_emac.ko] undefined!
-ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/xilinx_emac.ko] undefined!
-ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/xilinx_emaclite.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/net/ethernet/xilinx/xilinx_emaclite.ko] undefined!
-ERROR: modpost: "devm_platform_ioremap_resource_byname" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
-ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
-ERROR: modpost: "devm_of_iomap" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/ethernet/smsc/smc91c92_cs.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/ethernet/smsc/smc91c92_cs.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/ethernet/fujitsu/fmvj18x_cs.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/ethernet/fujitsu/fmvj18x_cs.ko] undefined!
-ERROR: modpost: "ioremap" [drivers/net/ethernet/8390/pcnet_cs.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/net/ethernet/8390/pcnet_cs.ko] undefined!
-
-char:
-
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/char/xillybus/xillybus_of.ko] undefined!
-
-tty:
-
-ERROR: modpost: "ioremap" [drivers/tty/ipwireless/ipwireless.ko] undefined!
-ERROR: modpost: "iounmap" [drivers/tty/ipwireless/ipwireless.ko] undefined!
-
-dma:
-
-ERROR: modpost: "devm_ioremap_resource" [drivers/dma/sf-pdma/sf-pdma.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/dma/idma64.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/dma/fsl-edma.ko] undefined!
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/dma/dw/dw_dmac.ko] undefined!
-ERROR: modpost: "devm_ioremap" [drivers/dma/altera-msgdma.ko] undefined!
-ERROR: modpost: "devm_platform_ioremap_resource" [drivers/dma/xilinx/xilinx_dpdma.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/dma/qcom/hdma.ko] undefined!
-ERROR: modpost: "devm_ioremap_resource" [drivers/dma/qcom/hdma_mgmt.ko] undefined!
-ERROR: modpost: "of_address_to_resource" [drivers/dma/qcom/hdma_mgmt.ko] undefined!
-
-make[1]: Leaving directory 'linux-next-20210315/S390'
-
--- 
-~Randy
-
+>
