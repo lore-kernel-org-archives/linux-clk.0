@@ -2,83 +2,301 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D5EC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 04:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1335C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 07:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26D5264F1C
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 04:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7166C64F6A
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 07:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233744AbhCSEnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Mar 2021 00:43:01 -0400
-Received: from mail-ej1-f49.google.com ([209.85.218.49]:43913 "EHLO
-        mail-ej1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233489AbhCSEnA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Mar 2021 00:43:00 -0400
-Received: by mail-ej1-f49.google.com with SMTP id l4so7524721ejc.10;
-        Thu, 18 Mar 2021 21:42:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gJ5epElvIHRCLOPs35R9kJU3e4MLpSScnXNFgNaIdtY=;
-        b=H385Bq9L+xyA0l9e6JkP5JkHpiIiM+paV1u8ErB25tUH4ilOxVJBIsILiUfHXq/9DF
-         3GY8vRhBLrX6U3d++0Gk/fGJtMm3Mk88l0lxPWYvvNfpdaBYocfStHie/egHHAU79Aec
-         bAnjQkCQxddd1UWQ88iClDNVUhtHtoyhY8bCzaPPAtfX8V+Qgp4QAUQ9IYtD+WxTLtdF
-         Qt18aajyf5Oownak4hLwTDMY3vX+M2VbAb0QLiRxqWS8N2W25oMo1bzunerOGeKFlzPY
-         zlqpIKjNErRpPipV29AtjR5D38mY1uNKJX04CbuBeDis0DTskjj21IALuFad3AUa11Um
-         /nGA==
-X-Gm-Message-State: AOAM5317db94twX5iC9RaUgIq8rdoUphQeg+1St95kc6AC+6hnXIMo0c
-        wH0SPek/LX1Vi/h6JBCxQwQ=
-X-Google-Smtp-Source: ABdhPJzipLn7AqsZvQHSyVxSUVKaCdMwqPG/fT+kq7UV0ELtkfHgKd6G55CioOG9UmFa84eaKaQdiQ==
-X-Received: by 2002:a17:906:3882:: with SMTP id q2mr2184109ejd.540.1616128979183;
-        Thu, 18 Mar 2021 21:42:59 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id s20sm3296292edu.93.2021.03.18.21.42.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 21:42:58 -0700 (PDT)
-Date:   Fri, 19 Mar 2021 05:42:57 +0100
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
-        zong.li@sifive.com, bhelgaas@google.com, robh+dt@kernel.org,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, mturquette@baylibre.com,
-        sboyd@kernel.org, lorenzo.pieralisi@arm.com,
-        p.zabel@pengutronix.de, alex.dewar90@gmail.com,
-        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
-        vidyas@nvidia.com, jh80.chung@samsung.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, helgaas@kernel.org
-Subject: Re: [PATCH v2 5/6] PCI: fu740: Add SiFive FU740 PCIe host controller
- driver
-Message-ID: <YFQr0bHa6nIgas2S@rocinante>
-References: <cover.1615954045.git.greentime.hu@sifive.com>
- <27f491c113e1bb369d25aca02571b34422986142.1615954046.git.greentime.hu@sifive.com>
- <YFQqpojmJyX0l6lx@rocinante>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YFQqpojmJyX0l6lx@rocinante>
+        id S234178AbhCSHxE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Mar 2021 03:53:04 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:48232 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234256AbhCSHww (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Mar 2021 03:52:52 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1616140372; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=FvJ5yBLgBQZV8r7U4qSnErjL3cCvpmDZCdhaBipeFLM=; b=n4nsgy4/AcPmhQWiZNb7zSY609OaICV/mpeRBrF2dKgMnoGX+c6kiMHaDWjoooR8Amjhd69V
+ BcYhFbM5N7szb69r55wk6g/QOooCHTmC76UmqF/5MF9QjTzuNipQaVK0S8CyDKfv+pHYjDyP
+ tGqRI2iH5hIdZ7ZwveAdUH2kd6k=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 60545726e2200c0a0dbd98ea (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 19 Mar 2021 07:47:50
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 31872C433ED; Fri, 19 Mar 2021 07:47:50 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 31265C433CA;
+        Fri, 19 Mar 2021 07:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31265C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: camcc: Update the clock ops for the SC7180
+Date:   Fri, 19 Mar 2021 13:17:34 +0530
+Message-Id: <1616140054-5141-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Update the RCGs to use shared ops to park the RCGs at XO.
 
-[...]
-> > +	/* Wait for wait_idle */
-> > +	ret = readl_poll_timeout(phy_cr_para_ack, val, val, 10, 5000);
-> > +	if (ret)
-> > +		dev_err(dev, "Wait for wait_ilde state failed!\n");
-> 
-> It would be "wait_idle" rather than "wait_idle".
-[...]
+Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/camcc-sc7180.c | 50 ++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-Apologies, meant to say "wait_ilde" in the "rather than" part, but went
-ahead and somehow used the correct spelling. :)
+diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+index dbac565..9bcf2f8 100644
+--- a/drivers/clk/qcom/camcc-sc7180.c
++++ b/drivers/clk/qcom/camcc-sc7180.c
+@@ -304,7 +304,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
+ 		.name = "cam_cc_bps_clk_src",
+ 		.parent_data = cam_cc_parent_data_2,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
 
-Krzysztof
+@@ -325,7 +325,7 @@ static struct clk_rcg2 cam_cc_cci_0_clk_src = {
+ 		.name = "cam_cc_cci_0_clk_src",
+ 		.parent_data = cam_cc_parent_data_5,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -339,7 +339,7 @@ static struct clk_rcg2 cam_cc_cci_1_clk_src = {
+ 		.name = "cam_cc_cci_1_clk_src",
+ 		.parent_data = cam_cc_parent_data_5,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -360,7 +360,7 @@ static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
+ 		.name = "cam_cc_cphy_rx_clk_src",
+ 		.parent_data = cam_cc_parent_data_3,
+ 		.num_parents = 6,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -379,7 +379,7 @@ static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
+ 		.name = "cam_cc_csi0phytimer_clk_src",
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -393,7 +393,7 @@ static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
+ 		.name = "cam_cc_csi1phytimer_clk_src",
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -407,7 +407,7 @@ static struct clk_rcg2 cam_cc_csi2phytimer_clk_src = {
+ 		.name = "cam_cc_csi2phytimer_clk_src",
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -421,7 +421,7 @@ static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
+ 		.name = "cam_cc_csi3phytimer_clk_src",
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -443,7 +443,7 @@ static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
+ 		.name = "cam_cc_fast_ahb_clk_src",
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -466,7 +466,7 @@ static struct clk_rcg2 cam_cc_icp_clk_src = {
+ 		.name = "cam_cc_icp_clk_src",
+ 		.parent_data = cam_cc_parent_data_2,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -488,7 +488,7 @@ static struct clk_rcg2 cam_cc_ife_0_clk_src = {
+ 		.name = "cam_cc_ife_0_clk_src",
+ 		.parent_data = cam_cc_parent_data_4,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -510,7 +510,7 @@ static struct clk_rcg2 cam_cc_ife_0_csid_clk_src = {
+ 		.name = "cam_cc_ife_0_csid_clk_src",
+ 		.parent_data = cam_cc_parent_data_3,
+ 		.num_parents = 6,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -524,7 +524,7 @@ static struct clk_rcg2 cam_cc_ife_1_clk_src = {
+ 		.name = "cam_cc_ife_1_clk_src",
+ 		.parent_data = cam_cc_parent_data_4,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -538,7 +538,7 @@ static struct clk_rcg2 cam_cc_ife_1_csid_clk_src = {
+ 		.name = "cam_cc_ife_1_csid_clk_src",
+ 		.parent_data = cam_cc_parent_data_3,
+ 		.num_parents = 6,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -553,7 +553,7 @@ static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
+ 		.parent_data = cam_cc_parent_data_4,
+ 		.num_parents = 4,
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -567,7 +567,7 @@ static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
+ 		.name = "cam_cc_ife_lite_csid_clk_src",
+ 		.parent_data = cam_cc_parent_data_3,
+ 		.num_parents = 6,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -590,7 +590,7 @@ static struct clk_rcg2 cam_cc_ipe_0_clk_src = {
+ 		.name = "cam_cc_ipe_0_clk_src",
+ 		.parent_data = cam_cc_parent_data_2,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -613,7 +613,7 @@ static struct clk_rcg2 cam_cc_jpeg_clk_src = {
+ 		.name = "cam_cc_jpeg_clk_src",
+ 		.parent_data = cam_cc_parent_data_2,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -635,7 +635,7 @@ static struct clk_rcg2 cam_cc_lrme_clk_src = {
+ 		.name = "cam_cc_lrme_clk_src",
+ 		.parent_data = cam_cc_parent_data_6,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -656,7 +656,7 @@ static struct clk_rcg2 cam_cc_mclk0_clk_src = {
+ 		.name = "cam_cc_mclk0_clk_src",
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -670,7 +670,7 @@ static struct clk_rcg2 cam_cc_mclk1_clk_src = {
+ 		.name = "cam_cc_mclk1_clk_src",
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -684,7 +684,7 @@ static struct clk_rcg2 cam_cc_mclk2_clk_src = {
+ 		.name = "cam_cc_mclk2_clk_src",
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -698,7 +698,7 @@ static struct clk_rcg2 cam_cc_mclk3_clk_src = {
+ 		.name = "cam_cc_mclk3_clk_src",
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -712,7 +712,7 @@ static struct clk_rcg2 cam_cc_mclk4_clk_src = {
+ 		.name = "cam_cc_mclk4_clk_src",
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+@@ -732,7 +732,7 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = 4,
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
