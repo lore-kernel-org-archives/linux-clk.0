@@ -2,98 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244B6C433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 21:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6063DC433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 22:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0442461976
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 21:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27C2C61989
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Mar 2021 22:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbhCSVtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Mar 2021 17:49:49 -0400
-Received: from mail-il1-f182.google.com ([209.85.166.182]:34622 "EHLO
-        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231234AbhCSVtX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Mar 2021 17:49:23 -0400
-Received: by mail-il1-f182.google.com with SMTP id h1so9351983ilr.1;
-        Fri, 19 Mar 2021 14:49:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=TSxYsh/4QZo74CdzAGCwJNDM12S7BjJC925sJJZcFS4=;
-        b=W1ZEPSBe59GA6KhO+MofCUE6zvL7b4kE7l1uXPNVZxhu0BGGXe+laXEMcuQFGv2v4q
-         8eGbFMNpO3DqsNn4zLiqQcwH/y0xYF6TV483qzn+V2DkVMfbxl6EE6Ts1TJEOWqwgvjQ
-         R72sQQgpaevknL12lQOgQm+aB2DlD42J9j1TCfuMng4ybXJs66T69bvbHYBWMw1DXKln
-         BAHYyphSqlYTtt8DWk2NUpXXCCusCTetcwQpFu3PsIqFi2mmOnSpW46LnS736smleYPB
-         Kvh/Vy9fc8WU7flt8mTdlzUAc29mBxbB4tWzS16JXhpgWKsgO0vFDOS2RLT9RbPaoLea
-         PsVg==
-X-Gm-Message-State: AOAM532a3DtiFpweEYSyqqaBNyPRSb5XqEpQ5AmY/Z9dZlamAoWT6m68
-        18YTB57PtyhBzD6avXmxXg==
-X-Google-Smtp-Source: ABdhPJxZEwHBaki7JZj8S9Wfx9Q661XX+EpH7c18EJM7O2uuvyzAg5xLz15/qRWghrDG07cN0A7Ovg==
-X-Received: by 2002:a05:6e02:174b:: with SMTP id y11mr4340361ill.152.1616190562286;
-        Fri, 19 Mar 2021 14:49:22 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id j14sm3031599ilu.3.2021.03.19.14.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Mar 2021 14:49:21 -0700 (PDT)
-Received: (nullmailer pid 1647634 invoked by uid 1000);
-        Fri, 19 Mar 2021 21:49:12 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, zong.li@sifive.com,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org, hes@sifive.com,
-        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-        jh80.chung@samsung.com, vidyas@nvidia.com,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        lorenzo.pieralisi@arm.com, sboyd@kernel.org, bhelgaas@google.com,
-        alex.dewar90@gmail.com, erik.danie@sifive.com, helgaas@kernel.org,
-        palmer@dabbelt.com, khilman@baylibre.com, paul.walmsley@sifive.com,
-        hayashi.kunihiko@socionext.com
-In-Reply-To: <8008af6d86737b74020d7d8f9c3fbc9b500e9993.1615954046.git.greentime.hu@sifive.com>
-References: <cover.1615954045.git.greentime.hu@sifive.com> <8008af6d86737b74020d7d8f9c3fbc9b500e9993.1615954046.git.greentime.hu@sifive.com>
-Subject: Re: [PATCH v2 4/6] dt-bindings: PCI: Add SiFive FU740 PCIe host controller
-Date:   Fri, 19 Mar 2021 15:49:12 -0600
-Message-Id: <1616190552.561606.1647633.nullmailer@robh.at.kernel.org>
+        id S230203AbhCSWBN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Mar 2021 18:01:13 -0400
+Received: from relay05.th.seeweb.it ([5.144.164.166]:56985 "EHLO
+        relay05.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229942AbhCSWAv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Mar 2021 18:00:51 -0400
+Received: from [192.168.1.101] (abac242.neoplus.adsl.tpnet.pl [83.6.166.242])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id D7E163EE53;
+        Fri, 19 Mar 2021 23:00:45 +0100 (CET)
+Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC
+ driver
+To:     Rob Herring <robh@kernel.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
+ <20210315155425.GA932686@robh.at.kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+Message-ID: <25253f61-934b-93c2-b118-e61f3c4987a3@somainline.org>
+Date:   Fri, 19 Mar 2021 23:00:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20210315155425.GA932686@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 18 Mar 2021 14:08:11 +0800, Greentime Hu wrote:
-> Add PCIe host controller DT bindings of SiFive FU740.
-> 
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> ---
->  .../bindings/pci/sifive,fu740-pcie.yaml       | 119 ++++++++++++++++++
->  1 file changed, 119 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,gcc-msm8992
+>> +      - qcom,gcc-msm8994
+> qcom,msm8994-gcc
+Hm? I can't find the issue, both this and other drivers are like qcom,xyzcc-socname..
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/pci/sifive,fu740-pcie.example.dts:45.29-30 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:349: Documentation/devicetree/bindings/pci/sifive,fu740-pcie.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1380: dt_binding_check] Error 2
-
-See https://patchwork.ozlabs.org/patch/1455121
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+Konrad
 
