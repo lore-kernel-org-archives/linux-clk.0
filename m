@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208CDC433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E51DC433E8
 	for <linux-clk@archiver.kernel.org>; Sat, 20 Mar 2021 15:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C396961973
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Mar 2021 15:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AEDA6196C
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Mar 2021 15:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhCTP2c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Mar 2021 11:28:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37574 "EHLO
+        id S229936AbhCTP2b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Mar 2021 11:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbhCTP2N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Mar 2021 11:28:13 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A77C061574;
-        Sat, 20 Mar 2021 08:28:12 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id n138so14576398lfa.3;
-        Sat, 20 Mar 2021 08:28:12 -0700 (PDT)
+        with ESMTP id S229873AbhCTP2L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Mar 2021 11:28:11 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C40C061574;
+        Sat, 20 Mar 2021 08:28:10 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id o10so14579537lfb.9;
+        Sat, 20 Mar 2021 08:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bGW/+40ApmphwP+PbpLVYGoBEkoT1K7har+B7OfVtFo=;
-        b=kbzYwDRpPzDChPkhUWLD+oyBqHWwQqHbrz/J4NJyBCLiuCpSNMbnsIoCvqtufarxB4
-         T+yxEwWV8bm2E+4eECY/4kHdDfURaxSI/KzYXr2S5ztTu8OCmrAWteew/SOmqstz+UYW
-         ifQvLCKKoXBxowbsZyyDYthuskiWY91ySlsECsvXbSHrn8qrlYt/ND6tk6TwT01YztVO
-         Jbf1aHpCBbIt04vLzSRQW7ejnqreFMwy7gLyc4BbUui33tGrHvU7n6sCbP1gMx6fQWEn
-         cmVHge6qOiuz2MlThQJcNK77E8hL4m8b2MoRTCofYsGK9wy59blJ+mipDonTG1Y/7MoK
-         MW4w==
+        bh=ofiUnTNVmdhSCPXFUakdrcB5fFxVu8qvsddsoETV6Zo=;
+        b=FOjSUX6QuuLhOTEa4xDEXanosnpZFm4psIYA8ZxEAelSnA3ZHFfExzaFd50x/U7LqH
+         DCbMg/hn/IJOKEnduSUPwtXSvoXhU9ccZ0pAGS+zjuWC+j+JLzJk8351vSjw2seTPgec
+         r4FbpPZcqF5UQYix5KPhGLBiz97arFFRYRehaA1TxwCbPZeHqzWRi5G39ysqvlfdyrV3
+         uRNTNQkEpK0LLzuYS8G/s2R80TM9XJYCl7WP+nau0OWc9lpK+gqciUFO20yXJXD8FHRq
+         JNmRCaPNgj9krJQoueZ6cbS+9ZiSwLNsPxNMfbUnXI15s0W0deL/Q+jM1ZhlbfHXwIj9
+         2iGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bGW/+40ApmphwP+PbpLVYGoBEkoT1K7har+B7OfVtFo=;
-        b=r174fHhdtXM4N6m7A3JNNkxaZnGSVfgg55qeQPcm4gHxDGMFfYsReDz7492c/EmL6f
-         45qliW+MsG6qKxE8gPhCVn1YzyXhfwxUswzDrI8Bq5SWe3vRtxcczxybtRLYKmKL1q8H
-         F2vUq5xrkdgzLxjXaDkfZNvpj3X86W1T+uSmgFm6unj7bGhcudu8+H8UuxpkXrjEJy7g
-         DUEspOMZv9wtv18r/PL2XS4ESZ8hliKw5CTqyamO46J8fVjiBBHsoJU9F6Vifni/Xbh+
-         wdzDBMO1e5URCHWx6Pzwqgort9uKqQRRx1ExzL16ZUmq59Zox5f+S7Y2wKelcILPhmxp
-         ubhQ==
-X-Gm-Message-State: AOAM531Kt97GR11lbApvhnFHaN3dZEWfWRTMbQL0FjH7p0bWRXVDr4p8
-        3+yFBk8RQU/kx10Bund+A1c=
-X-Google-Smtp-Source: ABdhPJzgh7qdX6II53OZE6VfFFQ4hQceuBAZy+tdwTEUc1ENmbpDoK5ymFqKGVWeyb58PIM/HEbbNw==
-X-Received: by 2002:ac2:5c0a:: with SMTP id r10mr3779156lfp.47.1616254091175;
-        Sat, 20 Mar 2021 08:28:11 -0700 (PDT)
+        bh=ofiUnTNVmdhSCPXFUakdrcB5fFxVu8qvsddsoETV6Zo=;
+        b=dDHnNwjEek9zuTjpl+mTK3qo5oDLDgjTa77K15RFRvP5stvWm6Ari3d8Qb/GnGF+Mz
+         vjHz6u/E7CcvZsuvy8l2bVwdmYLX0/u6PmJt4J7UfJhDsKS4TmAtSbQQ/VX4KlgTZVne
+         q/pDUar3/AAIEEda8fSrR1nILuc1toVztgc3Oohqb39vIhqiYNqRQETUpztXpzZG6H3k
+         0c/MfUp2m7Qnej1gt/CsFRxxMVJ00piX3FSFpzvKHQEi0fDKPRF7c0eGOJiDydDnZ5BZ
+         1IQJfSQAVjCkXRUY0UX3xqeAFWqmPaQGy9KJhS/ynB1VtusrvZEKiBIS15NAkeEluBvw
+         wqJg==
+X-Gm-Message-State: AOAM5335KKZv6MxclHpjCrTznaJ7BZu/LzX2Y0yvu8sMPxirZihsOESc
+        OIGlpnwV2xbHkdSEArMqw8f8bXe/GEs=
+X-Google-Smtp-Source: ABdhPJzipqmJJyT9K2EN/W7dqPDKhZzgLVbhYip0JAZNitjLdOVJRhl54Kvh+v2qZ20DQ1AYYYB3MQ==
+X-Received: by 2002:a19:80c9:: with SMTP id b192mr4073206lfd.130.1616254089407;
+        Sat, 20 Mar 2021 08:28:09 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id t17sm957024lft.224.2021.03.20.08.28.10
+        by smtp.gmail.com with ESMTPSA id t17sm957024lft.224.2021.03.20.08.28.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Mar 2021 08:28:10 -0700 (PDT)
+        Sat, 20 Mar 2021 08:28:08 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v6 3/7] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Sat, 20 Mar 2021 18:26:44 +0300
-Message-Id: <20210320152648.8389-4-digetx@gmail.com>
+Subject: [PATCH v6 1/7] clk: tegra30: Use 300MHz for video decoder by default
+Date:   Sat, 20 Mar 2021 18:26:42 +0300
+Message-Id: <20210320152648.8389-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210320152648.8389-1-digetx@gmail.com>
 References: <20210320152648.8389-1-digetx@gmail.com>
@@ -79,53 +79,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PLLU (USB) consists of the PLL configuration itself and configuration
-of the PLLU outputs. The PLLU programming is inconsistent on T30 vs T114,
-where T114 immediately bails out if PLLU is enabled and T30 re-enables
-a potentially already enabled PLL (left after bootloader) and then fully
-reprograms it, which could be unsafe to do. The correct way should be to
-skip enabling of the PLL if it's already enabled and then apply
-configuration to the outputs. This patch doesn't fix any known problems,
-it's a minor improvement.
+The 600MHz is a too high clock rate for some SoC versions for the video
+decoder hardware and this may cause stability issues. Use 300MHz for the
+video decoder by default, which is supported by all hardware versions.
 
+Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c5cc0a2dac6f..d709ecb7d8d7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1131,7 +1131,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
-@@ -1748,15 +1749,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
--	if (clk_pll_is_enabled(hw))
--		return 0;
--
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 16dbf83d2f62..a33688b2359e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1245,7 +1245,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
+-	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
 -- 
 2.30.2
 
