@@ -2,58 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBD4C433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA41C433C1
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D47C261947
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B558D6194C
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230525AbhCUUPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Mar 2021 16:15:00 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:43662 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230512AbhCUUOq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 21 Mar 2021 16:14:46 -0400
-Received: from p508fc3a3.dip0.t-ipconnect.de ([80.143.195.163] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lO4T7-0007Oi-L3; Sun, 21 Mar 2021 21:14:37 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org, sboyd@kernel.org,
-        zhangqing@rock-chips.com, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Subject: Re: [PATCH 1/2] clk: rockchip: drop parenthesis from ARM || COMPILE_TEST depends
-Date:   Sun, 21 Mar 2021 21:14:30 +0100
-Message-Id: <161635763247.767241.6758144246841811873.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210315112502.343699-1-heiko@sntech.de>
-References: <20210315112502.343699-1-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S231248AbhCUUry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Mar 2021 16:47:54 -0400
+Received: from st43p00im-ztbu10063701.me.com ([17.58.63.178]:52942 "EHLO
+        st43p00im-ztbu10063701.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231297AbhCUUrf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 16:47:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1616359297; bh=6zSrCQh9NnoaLzoOqXhzt5f/21bkuF9X7e+cdFN1SdU=;
+        h=From:To:Subject:Date:Message-Id;
+        b=Sy3UhTk5mEriEC6dPvqW5BORLJ0w4cqiNfpgWaFayTXaEIj/fX+UwRFoYPTzBCbEv
+         xXxvpMboRQ3hKODfPVb4OqaxEHeGl/EbY6rhnjs9QMWsSkE2cmlYyVSWva8VKeKSH3
+         w2snro4Exgq1qVGcPEtGVBOMt0Go+udNxuq/a0Y5FuKdv4evpOIZSN2vlok9DqbUCm
+         gY2Wi4OgoqtCFZoQmi43kcjfUnMdQ5KhH+1Q9XlPuC45u2PhBSI5DmsRDx94yXIOWv
+         zKn17X0x1jD7DJ0zIUM9YOM287Z4LtkYZs5ApbISo65O9LcwufvlSr65bDtTIG/DLy
+         1beKdqD19dQkg==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by st43p00im-ztbu10063701.me.com (Postfix) with ESMTPSA id 707919A0553;
+        Sun, 21 Mar 2021 20:41:36 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
+Subject: [PATCH 05/16] dt-bindings: clock: st: clkgen-pll: add new introduced compatible
+Date:   Sun, 21 Mar 2021 21:40:27 +0100
+Message-Id: <20210321204038.14417-6-avolmat@me.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210321204038.14417-1-avolmat@me.com>
+References: <20210321204038.14417-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-21_05:2021-03-19,2021-03-21 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2006250000 definitions=main-2103210166
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 15 Mar 2021 12:25:01 +0100, Heiko Stuebner wrote:
-> As suggested by Stephen in the series adding the rk3568 clock controller
-> the depends works just as well without the parenthesis around the depends.
-> 
-> So to make everything look the same, drop them from existing entries too.
+New compatible are added, supporting various kind of clkgen-pll
+used for STiH407, STiH410 and STiH418
 
-Applied, thanks!
+Signed-off-by: Alain Volmat <avolmat@me.com>
+---
+ Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1/2] clk: rockchip: drop parenthesis from ARM || COMPILE_TEST depends
-      commit: e8c51b90f22031bf3f24d1f06d23bafac250bb62
-[2/2] clk: rockchip: drop MODULE_ALIAS from rk3399 clock controller
-      commit: 40f29839d8bef5aecaa772afa8e5f2ff8434b49f
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index f207053e0550..d0fa1e02d06d 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -10,7 +10,10 @@ Required properties:
+ 
+ - compatible : shall be:
+ 	"st,clkgen-pll0"
++	"st,clkgen-pll0-a0"
++	"st,clkgen-pll0-c0"
+ 	"st,clkgen-pll1"
++	"st,clkgen-pll1-c0"
+ 	"st,stih407-clkgen-plla9"
+ 	"st,stih418-clkgen-plla9"
+ 
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.17.1
+
