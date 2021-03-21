@@ -2,98 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BEEC433DB
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 16:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CD6C433C1
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73CDC6192D
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 16:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18CFA61944
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbhCUQFX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Mar 2021 12:05:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbhCUQFX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 12:05:23 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C0CAC061574;
-        Sun, 21 Mar 2021 09:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:References:
-        Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bRZkMDyVjEHYQP3aS4EHghK5KTFY9dCEonp0Ggkl0WM=; b=I4tVtOwMges9O1MI9txjFLx9mD
-        F/fxTJGlxxEtOLPsLOChvC5Cp5Ey7c+zdT9h90Oh/NfUPfQ99N4MbtQwHtSvB2SVv5YzBTCNdONBM
-        tL1NBrLwU1BkxJN58FlX3BHA3d02x/IQ0stGwjYPCzI4WcocIUVNUPc/FpP+yw+wx8JqmBMeyLcS0
-        wbYQTHd+wyAMzMjbHvZfQHkpoPXyLZLnmT76+oWzXmwgQtDpZuEBPVdVhuoT9u//Pry4OMD3D1kda
-        Oo3tUQcNyk7UBy8fhN+qW40q1qw6eeyVpTjnNhdQdR8gk9i58pZGg2IQtmNTl++6fJ7dc9EqN6JkM
-        JUyXCy2Q==;
-Received: from rdunlap (helo=localhost)
-        by bombadil.infradead.org with local-esmtp (Exim 4.94 #2 (Red Hat Linux))
-        id 1lO0Zo-002OLF-QV; Sun, 21 Mar 2021 16:05:17 +0000
-Date:   Sun, 21 Mar 2021 09:05:16 -0700 (PDT)
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-cc:     renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: Couple of spelling fixes
-In-Reply-To: <20210321075813.9471-1-unixbhaskar@gmail.com>
-Message-ID: <53201147-ac5a-c5a1-b6c0-240d9423c61@infradead.org>
-References: <20210321075813.9471-1-unixbhaskar@gmail.com>
+        id S230520AbhCUUPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Mar 2021 16:15:00 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43654 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230511AbhCUUOm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 21 Mar 2021 16:14:42 -0400
+Received: from p508fc3a3.dip0.t-ipconnect.de ([80.143.195.163] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1lO4T8-0007Oi-VT; Sun, 21 Mar 2021 21:14:39 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     sboyd@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        robh+dt@kernel.org, mturquette@baylibre.com
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cl@rock-chips.com,
+        tony.xie@rock-chips.com, finley.xiao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 0/4] clk: rockchip: add clock controller for rk3568
+Date:   Sun, 21 Mar 2021 21:14:35 +0100
+Message-Id: <161635763247.767241.10092028864316275030.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210315085608.16010-1-zhangqing@rock-chips.com>
+References: <20210315085608.16010-1-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210321_090516_880398_011AC1A0 
-X-CRM114-Status: GOOD (  15.01  )
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 15 Mar 2021 16:56:04 +0800, Elaine Zhang wrote:
+> Add the clock tree definition for the new rk3568 SoC.
+> 
+> Change in V5:
+> [PATCH v5 1/4]: No change.
+> [PATCH v5 2/4]: No change.
+> [PATCH v5 3/4]: fix up the warning:
+> 		>> drivers/clk/rockchip/clk-rk3188.c:187:67: warning:
+> 		>> missing braces around initializer [-Wmissing-braces]
+> 		187 | static const struct rockchip_cpuclk_reg_data
+> 		rk3188_cpuclk_data = {
+> [PATCH v5 4/4]: No change.
+> 
+> [...]
 
+Applied, thanks!
 
-On Sun, 21 Mar 2021, Bhaskar Chowdhury wrote:
+[1/4] dt-binding: clock: Document rockchip, rk3568-cru bindings
+      commit: 0cd74eec54a3ec34416bab6cc640a88230472078
+[2/4] clk: rockchip: add dt-binding header for rk3568
+      commit: 0865517926660309b796bd9bd5ba6671704733bc
+[3/4] clk: rockchip: support more core div setting
+      commit: a3561e77cf3ca0937227ba13744d84fc46e5eb4b
+[4/4] clk: rockchip: add clock controller for rk3568
+      commit: cf911d89c4c5e225a2a2cfadf1364838154b2202
 
->
-> s/suposed/supposed/
-> s/concurent/concurrent/
->
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-
-> ---
-> drivers/clk/renesas/r9a06g032-clocks.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-> index 892e91b92f2c..1fe166e7f8bd 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -279,7 +279,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
-> 	/*
-> 	 * These are not hardware clocks, but are needed to handle the special
-> 	 * case where we have a 'selector bit' that doesn't just change the
-> -	 * parent for a clock, but also the gate it's suposed to use.
-> +	 * parent for a clock, but also the gate it's supposed to use.
-> 	 */
-> 	{
-> 		.index = R9A06G032_UART_GROUP_012,
-> @@ -311,7 +311,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
->
-> struct r9a06g032_priv {
-> 	struct clk_onecell_data data;
-> -	spinlock_t lock; /* protects concurent access to gates */
-> +	spinlock_t lock; /* protects concurrent access to gates */
-> 	void __iomem *reg;
-> };
->
-> --
-> 2.30.1
->
->
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
