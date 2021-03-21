@@ -8,30 +8,30 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27CDC433E1
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 101CCC433E4
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADBE96194E
+	by mail.kernel.org (Postfix) with ESMTP id E657461959
 	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbhCUUs0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Mar 2021 16:48:26 -0400
-Received: from st43p00im-zteg10073401.me.com ([17.58.63.181]:60200 "EHLO
-        st43p00im-zteg10073401.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231261AbhCUUsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 16:48:15 -0400
+        id S231264AbhCUUs1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Mar 2021 16:48:27 -0400
+Received: from st43p00im-zteg10073501.me.com ([17.58.63.180]:34518 "EHLO
+        st43p00im-zteg10073501.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231269AbhCUUsT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 16:48:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1616359330; bh=C1Ns+nw92kiQ7Sg5p1H67pDMGTa6rHwk9Y/oyL76Kcc=;
+        t=1616359301; bh=X4MeOL+kLIMJdimcnCQWkF4wzY1RID7Sv0B1gSmDAp4=;
         h=From:To:Subject:Date:Message-Id;
-        b=h6dRGG0DP8iwirMRB+6gxl7Wkw7DIALOcLxheEi+WPZXDT+skNdNkSZbqn/nB95Vt
-         ay37E+sWKIde6vurLPS3ihSKcVkDtn6oeFwQDCD+EInRNNt7FFJ18lZezCj0d4LsHG
-         +7/BL5Zfn3dupK2ErkUAKefeZSqCujNK55x99NZqwXdENZ3YY0eTjf7SfiAu6pnP/I
-         wW5Bi6O76HLdMUek4FfC8OODdWQWTP87WiBh39VG3/GIM+AR9dGt6t9ylyrPnveeEo
-         1ln/R9Zb0G4fEqOnbQW56gqVIeEt7q797RZfpepZedSDu2MPsevUi+L8RAxc5FQx79
-         gDxevO/zfarbA==
+        b=kw4QM485mMBk7ca8gDGFPRojzDhlRXuoziJSSGxmH/FGeyzbHn0COanCDN9dGMDde
+         sCuU2JIliGdXxh2zlGkHkIxHzTzDkhJX3VMDbev6SRw6/Ed3qwfWD8LlF45ejj3gCd
+         HNFSkl8OlqLRJENmM5zb29y136vndUUR7FLg9M8BOdmQieFwGXmYsyUEHwSXLgj2mS
+         YD1coHDzCqHdveg62sNujGRGcffhzpkAZcQDgwKI/n5aPC42qbmusfHqU8Oj7XReBN
+         mw2JlW/eZE48xQUImnx1UvpX+rjZzUPQ/vdbwgOh0BYAVhiIVzIOhuvgoNTYWW7I8G
+         EHoLgmFKaddbQ==
 Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-zteg10073401.me.com (Postfix) with ESMTPSA id 8A29D5E0611;
-        Sun, 21 Mar 2021 20:42:09 +0000 (UTC)
+        by st43p00im-zteg10073501.me.com (Postfix) with ESMTPSA id 38633AE04B6;
+        Sun, 21 Mar 2021 20:41:40 +0000 (UTC)
 From:   Alain Volmat <avolmat@me.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -40,101 +40,230 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH 14/16] ARM: dts: sti: update clkgen-fsyn entries in stih407-clock
-Date:   Sun, 21 Mar 2021 21:40:36 +0100
-Message-Id: <20210321204038.14417-15-avolmat@me.com>
+Subject: [PATCH 06/16] clk: st: clkgen-fsyn: embed soc clock outputs within compatible data
+Date:   Sun, 21 Mar 2021 21:40:28 +0100
+Message-Id: <20210321204038.14417-7-avolmat@me.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210321204038.14417-1-avolmat@me.com>
 References: <20210321204038.14417-1-avolmat@me.com>
 X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
  =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
- =?UTF-8?Q?=3D2021-03-21=5F02:2021-03-19=5F01,2021-03-21=5F02,2020-04-07?=
+ =?UTF-8?Q?=3D2021-03-21=5F02:2021-03-19=5F02,2021-03-21=5F02,2020-04-07?=
  =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- mlxlogscore=981 clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2103210166
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clkgen-fsyn driver now embed the clock names (assuming the
-right compatible is used). Remove all clock-output-names property
-and update when necessary the compatible.
+In order to avoid relying on the old style description via the DT
+clock-output-names, add compatible data describing the flexgen
+outputs clocks for all STiH407/STiH410 and STiH418 SOCs.
+
+In order to ease transition between the two methods, this commit
+introduce the new compatible without removing the old method.
+Once DTs will be fixed, the method relying on DT clock-output-names
+will be removed from this driver as well as old compatibles.
 
 Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
- arch/arm/boot/dts/stih407-clock.dtsi | 27 +++------------------------
- 1 file changed, 3 insertions(+), 24 deletions(-)
+ drivers/clk/st/clkgen-fsyn.c | 113 +++++++++++++++++++++++++++++++----
+ 1 file changed, 101 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
-index 2603226a6ca8..9cce9541e26b 100644
---- a/arch/arm/boot/dts/stih407-clock.dtsi
-+++ b/arch/arm/boot/dts/stih407-clock.dtsi
-@@ -93,12 +93,6 @@
- 			reg = <0x9103000 0x1000>;
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index dd6062e043e0..c44a59ba4d85 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -66,6 +66,16 @@ struct clkgen_quadfs_data {
+ 			unsigned long *);
+ };
  
- 			clocks = <&clk_sysin>;
++struct clkgen_clk_out {
++	const char *name;
++	unsigned long flags;
++};
++
++struct clkgen_quadfs_data_clks {
++	struct clkgen_quadfs_data *data;
++	const struct clkgen_clk_out *outputs;
++};
++
+ static const struct clk_ops st_quadfs_pll_c32_ops;
+ 
+ static int clk_fs660c32_dig_get_params(unsigned long input,
+@@ -115,6 +125,18 @@ static const struct clkgen_quadfs_data st_fs660c32_C = {
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
++static const struct clkgen_clk_out st_fs660c32_C_clks[] = {
++	{ .name = "clk-s-c0-fs0-ch0",	.flags = CLK_IS_CRITICAL,	},
++	{ .name = "clk-s-c0-fs0-ch1",	},
++	{ .name = "clk-s-c0-fs0-ch2",	},
++	{ .name = "clk-s-c0-fs0-ch3",	},
++};
++
++static const struct clkgen_quadfs_data_clks st_fs660c32_C_data = {
++	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_C,
++	.outputs	= st_fs660c32_C_clks,
++};
++
+ static const struct clkgen_quadfs_data st_fs660c32_D = {
+ 	.nrst_present = true,
+ 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
+@@ -156,6 +178,46 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
+ 	.get_params	= clk_fs660c32_dig_get_params,
+ 	.get_rate	= clk_fs660c32_dig_get_rate,};
+ 
++static const struct clkgen_quadfs_data_clks st_fs660c32_D_data = {
++	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
++};
++
++static const struct clkgen_clk_out st_fs660c32_D0_clks[] = {
++	{ .name = "clk-s-d0-fs0-ch0",	},
++	{ .name = "clk-s-d0-fs0-ch1",	},
++	{ .name = "clk-s-d0-fs0-ch2",	},
++	{ .name = "clk-s-d0-fs0-ch3",	},
++};
++
++static const struct clkgen_quadfs_data_clks st_fs660c32_D0_data = {
++	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
++	.outputs	= st_fs660c32_D0_clks,
++};
++
++static const struct clkgen_clk_out st_fs660c32_D2_clks[] = {
++	{ .name = "clk-s-d2-fs0-ch0",	},
++	{ .name = "clk-s-d2-fs0-ch1",	},
++	{ .name = "clk-s-d2-fs0-ch2",	},
++	{ .name = "clk-s-d2-fs0-ch3",	},
++};
++
++static const struct clkgen_quadfs_data_clks st_fs660c32_D2_data = {
++	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
++	.outputs	= st_fs660c32_D2_clks,
++};
++
++static const struct clkgen_clk_out st_fs660c32_D3_clks[] = {
++	{ .name = "clk-s-d3-fs0-ch0",	},
++	{ .name = "clk-s-d3-fs0-ch1",	},
++	{ .name = "clk-s-d3-fs0-ch2",	},
++	{ .name = "clk-s-d3-fs0-ch3",	},
++};
++
++static const struct clkgen_quadfs_data_clks st_fs660c32_D3_data = {
++	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
++	.outputs	= st_fs660c32_D3_clks,
++};
++
+ /**
+  * DOC: A Frequency Synthesizer that multiples its input clock by a fixed factor
+  *
+@@ -857,7 +919,7 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
+ 
+ static void __init st_of_create_quadfs_fsynths(
+ 		struct device_node *np, const char *pll_name,
+-		struct clkgen_quadfs_data *quadfs, void __iomem *reg,
++		struct clkgen_quadfs_data_clks *quadfs, void __iomem *reg,
+ 		spinlock_t *lock)
+ {
+ 	struct clk_onecell_data *clk_data;
+@@ -881,9 +943,15 @@ static void __init st_of_create_quadfs_fsynths(
+ 		const char *clk_name;
+ 		unsigned long flags = 0;
+ 
+-		if (of_property_read_string_index(np, "clock-output-names",
+-						  fschan, &clk_name)) {
+-			break;
++		if (quadfs->outputs) {
++			clk_name = quadfs->outputs[fschan].name;
++			flags = quadfs->outputs[fschan].flags;
++		} else {
++			if (of_property_read_string_index(np,
++							"clock-output-names",
++							fschan, &clk_name))
++				break;
++			of_clk_detect_critical(np, fschan, &flags);
+ 		}
+ 
+ 		/*
+@@ -892,10 +960,8 @@ static void __init st_of_create_quadfs_fsynths(
+ 		if (*clk_name == '\0')
+ 			continue;
+ 
+-		of_clk_detect_critical(np, fschan, &flags);
 -
--			clock-output-names = "clk-s-c0-fs0-ch0",
--					     "clk-s-c0-fs0-ch1",
--					     "clk-s-c0-fs0-ch2",
--					     "clk-s-c0-fs0-ch3";
--			clock-critical = <0>; /* clk-s-c0-fs0-ch0 */
- 		};
+ 		clk = st_clk_register_quadfs_fsynth(clk_name, pll_name,
+-						    quadfs, reg, fschan,
++						    quadfs->data, reg, fschan,
+ 						    flags, lock);
  
- 		clk_s_c0: clockgen-c@9103000 {
-@@ -150,15 +144,10 @@
+ 		/*
+@@ -915,7 +981,7 @@ static void __init st_of_create_quadfs_fsynths(
+ }
  
- 		clk_s_d0_quadfs: clk-s-d0-quadfs@9104000 {
- 			#clock-cells = <1>;
--			compatible = "st,quadfs";
-+			compatible = "st,quadfs-d0";
- 			reg = <0x9104000 0x1000>;
+ static void __init st_of_quadfs_setup(struct device_node *np,
+-		struct clkgen_quadfs_data *data)
++		struct clkgen_quadfs_data_clks *datac)
+ {
+ 	struct clk *clk;
+ 	const char *pll_name, *clk_parent_name;
+@@ -940,7 +1006,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
  
- 			clocks = <&clk_sysin>;
--
--			clock-output-names = "clk-s-d0-fs0-ch0",
--					     "clk-s-d0-fs0-ch1",
--					     "clk-s-d0-fs0-ch2",
--					     "clk-s-d0-fs0-ch3";
- 		};
+ 	spin_lock_init(lock);
  
- 		clockgen-d0@9104000 {
-@@ -179,15 +168,10 @@
+-	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, data,
++	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, datac->data,
+ 			reg, lock);
+ 	if (IS_ERR(clk))
+ 		goto err_exit;
+@@ -950,7 +1016,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+ 			__clk_get_name(clk_get_parent(clk)),
+ 			(unsigned int)clk_get_rate(clk));
  
- 		clk_s_d2_quadfs: clk-s-d2-quadfs@9106000 {
- 			#clock-cells = <1>;
--			compatible = "st,quadfs";
-+			compatible = "st,quadfs-d2";
- 			reg = <0x9106000 0x1000>;
+-	st_of_create_quadfs_fsynths(np, pll_name, data, reg, lock);
++	st_of_create_quadfs_fsynths(np, pll_name, datac, reg, lock);
  
- 			clocks = <&clk_sysin>;
--
--			clock-output-names = "clk-s-d2-fs0-ch0",
--					     "clk-s-d2-fs0-ch1",
--					     "clk-s-d2-fs0-ch2",
--					     "clk-s-d2-fs0-ch3";
- 		};
+ err_exit:
+ 	kfree(pll_name); /* No longer need local copy of the PLL name */
+@@ -958,12 +1024,35 @@ static void __init st_of_quadfs_setup(struct device_node *np,
  
- 		clockgen-d2@9106000 {
-@@ -210,15 +194,10 @@
+ static void __init st_of_quadfs660C_setup(struct device_node *np)
+ {
+-	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_C);
++	st_of_quadfs_setup(np,
++		(struct clkgen_quadfs_data_clks *) &st_fs660c32_C_data);
+ }
+ CLK_OF_DECLARE(quadfs660C, "st,quadfs-pll", st_of_quadfs660C_setup);
  
- 		clk_s_d3_quadfs: clk-s-d3-quadfs@9107000 {
- 			#clock-cells = <1>;
--			compatible = "st,quadfs";
-+			compatible = "st,quadfs-d3";
- 			reg = <0x9107000 0x1000>;
- 
- 			clocks = <&clk_sysin>;
--
--			clock-output-names = "clk-s-d3-fs0-ch0",
--					     "clk-s-d3-fs0-ch1",
--					     "clk-s-d3-fs0-ch2",
--					     "clk-s-d3-fs0-ch3";
- 		};
- 
- 		clockgen-d3@9107000 {
+ static void __init st_of_quadfs660D_setup(struct device_node *np)
+ {
+-	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_D);
++	st_of_quadfs_setup(np,
++		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D_data);
+ }
+ CLK_OF_DECLARE(quadfs660D, "st,quadfs", st_of_quadfs660D_setup);
++
++static void __init st_of_quadfs660D0_setup(struct device_node *np)
++{
++	st_of_quadfs_setup(np,
++		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D0_data);
++}
++CLK_OF_DECLARE(quadfs660D0, "st,quadfs-d0", st_of_quadfs660D0_setup);
++
++static void __init st_of_quadfs660D2_setup(struct device_node *np)
++{
++	st_of_quadfs_setup(np,
++		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D2_data);
++}
++CLK_OF_DECLARE(quadfs660D2, "st,quadfs-d2", st_of_quadfs660D2_setup);
++
++static void __init st_of_quadfs660D3_setup(struct device_node *np)
++{
++	st_of_quadfs_setup(np,
++		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D3_data);
++}
++CLK_OF_DECLARE(quadfs660D3, "st,quadfs-d3", st_of_quadfs660D3_setup);
 -- 
 2.17.1
 
