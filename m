@@ -3,158 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A01C433E6
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 00:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA881C433E3
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 08:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BCC36193A
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 00:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C7C61954
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 08:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbhCUACK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Mar 2021 20:02:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49070 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229936AbhCUACI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Mar 2021 20:02:08 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A50E6EF;
-        Sun, 21 Mar 2021 01:02:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1616284926;
-        bh=fnusObNqvVt7+kv3aLltd17k8J0BczhLYWNPm2HQvn4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SolZj52enTJVdBHSnRXhfzk0+tEK91JrIJgPChRU9nhUQtol3TwkpT+DZ7DjWMvcp
-         TBxpqxYUuLXcgENvWQ5zqSdiJ/bJWj8yrxcHuRpGc+wrcopvr+r8RjO3paLOnhqAW5
-         GwAkdnoVZAz4AyT/lLMCI7fzvJu0iALavKH7tg3s=
-Date:   Sun, 21 Mar 2021 02:01:26 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     quanyang.wang@windriver.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rohit Visavalia <RVISAVAL@xilinx.com>
-Subject: Re: [PATCH 1/2] clk: zynqmp: pll: add set_pll_mode to check
- condition in zynqmp_pll_enable
-Message-ID: <YFaM1uCqM+c1ZOoX@pendragon.ideasonboard.com>
-References: <20210319100717.507500-1-quanyang.wang@windriver.com>
+        id S230045AbhCUH7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Mar 2021 03:59:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229996AbhCUH6i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 03:58:38 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4A7C061574;
+        Sun, 21 Mar 2021 00:58:38 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id y18so7514470qky.11;
+        Sun, 21 Mar 2021 00:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w/FodDC12fPiOO8KW+LQzpBz2k4WggnFhqLfSXUOk7I=;
+        b=H0Tl3FAbKGNNdQY1nn7qXJAoUpOyIY1laxGMwhds2cDvmv77zy8ROW8tUBT/43pmWQ
+         JoE6R9uodvdFZuJpRRPcI7hAVNwpwhX1gjPkUuBm77PQXlqmqRuqBeg8SSxlwIwq73fv
+         tyutaF5pxdVXAA/8zpZmQXPMRI8jhs95LlW/rNVA6lfo6l74NpRBuZMwEqe3VkNcOM+i
+         8MaHIB5BBEEHBW2o+4bz+24yVyED2d5PPp66ZoADjtYOyesD1gzFwztPs3Q5y5JQX6Mh
+         wymI/gthKne2if6WGNTfWtpp/b8hq7ccDSt6RQuIuVQHi1vhUWN5hBUovoP5ywerYNEV
+         ghWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w/FodDC12fPiOO8KW+LQzpBz2k4WggnFhqLfSXUOk7I=;
+        b=biRay4HkuvwE67msl29/E6rdC7BY3idaHbXamUx8QontcpWLvrAqBgFqkfiF4y2bDT
+         LrNxwzdyXjzH4KARO7j7XSwNMRnO3uVF23RYKQ4QluYLM30tMj7S3jTdCshEpOo7ZsPM
+         h7uYMiUp8ClpinU4r9o9/uMGnH4vtc/12K8sLJtqntz5okR8e5PWKcnV5fodOkaK+NeP
+         7FZW1BxW6VcgtWy8BHpn4dHKCD5CfdqPxLXGeVO6PdvXINc4KPocxwjXN7eRtuDJr8zK
+         00oKmyUzjUmxEE6B8RWm89U93j0agizqet9IKAEkNflsfqD/vKO7eEVu+TEWJWMiFBFg
+         xIAw==
+X-Gm-Message-State: AOAM5330bozn+e/OJzzDEOWpwjydhW8HdtkY5BsHEqlAfabAK0iYTeJM
+        NWsjUEJZoFbq4ed+jLSc3O0=
+X-Google-Smtp-Source: ABdhPJxNLUvkzFIE3YzBjX0C4EvNEPKtpihnwmObFP1TJ19QdzliFLuYNnnzcn50yB9+IqaPAxZBfA==
+X-Received: by 2002:ae9:f81a:: with SMTP id x26mr5608819qkh.497.1616313517322;
+        Sun, 21 Mar 2021 00:58:37 -0700 (PDT)
+Received: from Slackware.localdomain ([156.146.55.204])
+        by smtp.gmail.com with ESMTPSA id d23sm8298626qka.125.2021.03.21.00.58.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Mar 2021 00:58:36 -0700 (PDT)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] clk: renesas: Couple of spelling fixes
+Date:   Sun, 21 Mar 2021 13:28:13 +0530
+Message-Id: <20210321075813.9471-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210319100717.507500-1-quanyang.wang@windriver.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Quanyang,
 
-Thank you for the patch.
+s/suposed/supposed/
+s/concurent/concurrent/
 
-On Fri, Mar 19, 2021 at 06:07:17PM +0800, quanyang.wang@windriver.com wrote:
-> From: Quanyang Wang <quanyang.wang@windriver.com>
-> 
-> If there is a IOCTL_SET_PLL_FRAC_MODE request sent to ATF ever,
-> we shouldn't skip invoking PM_CLOCK_ENABLE fn even though this
-> pll has been enabled. In ATF implementation, it will only assign
-> the mode to the variable (struct pm_pll *)pll->mode when handling
-> IOCTL_SET_PLL_FRAC_MODE call. Invoking PM_CLOCK_ENABLE can force
-> ATF send request to PWU to set the pll mode to PLL's register.
-> 
-> There is a scenario that happens in enabling VPLL_INT(clk_id:96):
-> 1) VPLL_INT has been enabled during booting.
-> 2) A driver calls clk_set_rate and according to the rate, the VPLL_INT
->    should be set to FRAC mode. Then zynqmp_pll_set_mode is called
->    to pass IOCTL_SET_PLL_FRAC_MODE to ATF. Note that at this point
->    ATF just stores the mode to a variable.
-> 3) This driver calls clk_prepare_enable and zynqmp_pll_enable is
->    called to try to enable VPLL_INT pll. Because of 1), the function
->    zynqmp_pll_enable just returns without doing anything after checking
->    that this pll has been enabled.
-> 
-> In the scenario above, the pll mode of VPLL_INT will never be set
-> successfully. So adding set_pll_mode to chec condition to fix it.
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-s/chec/check/
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 892e91b92f2c..1fe166e7f8bd 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -279,7 +279,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+ 	/*
+ 	 * These are not hardware clocks, but are needed to handle the special
+ 	 * case where we have a 'selector bit' that doesn't just change the
+-	 * parent for a clock, but also the gate it's suposed to use.
++	 * parent for a clock, but also the gate it's supposed to use.
+ 	 */
+ 	{
+ 		.index = R9A06G032_UART_GROUP_012,
+@@ -311,7 +311,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
 
-> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
-> ---
->  drivers/clk/zynqmp/pll.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-> index 92f449ed38e5..f1e8f37d7f52 100644
-> --- a/drivers/clk/zynqmp/pll.c
-> +++ b/drivers/clk/zynqmp/pll.c
-> @@ -14,10 +14,12 @@
->   * struct zynqmp_pll - PLL clock
->   * @hw:		Handle between common and hardware-specific interfaces
->   * @clk_id:	PLL clock ID
-> + * @set_pll_mode:	Whether an IOCTL_SET_PLL_FRAC_MODE request be sent to ATF
->   */
->  struct zynqmp_pll {
->  	struct clk_hw hw;
->  	u32 clk_id;
-> +	bool set_pll_mode;
->  };
->  
->  #define to_zynqmp_pll(_hw)	container_of(_hw, struct zynqmp_pll, hw)
-> @@ -81,6 +83,8 @@ static inline void zynqmp_pll_set_mode(struct clk_hw *hw, bool on)
->  	if (ret)
->  		pr_warn_once("%s() PLL set frac mode failed for %s, ret = %d\n",
->  			     __func__, clk_name, ret);
-> +	else
-> +		clk->set_pll_mode = true;
->  }
->  
->  /**
-> @@ -240,9 +244,14 @@ static int zynqmp_pll_enable(struct clk_hw *hw)
->  	u32 clk_id = clk->clk_id;
->  	int ret;
->  
-> -	if (zynqmp_pll_is_enabled(hw))
-> +	/* Don't skip enabling clock if there is an IOCTL_SET_PLL_FRAC_MODE request
-> +	 * that has been sent to ATF.
-> +	 */
+ struct r9a06g032_priv {
+ 	struct clk_onecell_data data;
+-	spinlock_t lock; /* protects concurent access to gates */
++	spinlock_t lock; /* protects concurrent access to gates */
+ 	void __iomem *reg;
+ };
 
-Very small issue, multiline kerneldoc comments are supposed to start
-with a '/*' on its own line:
+--
+2.30.1
 
-	/*
-	 * Don't skip enabling clock if there is an IOCTL_SET_PLL_FRAC_MODE
-	 * request that has been sent to ATF.
-	 */
-
-> +	if (zynqmp_pll_is_enabled(hw) && (!clk->set_pll_mode))
->  		return 0;
->  
-> +	clk->set_pll_mode = false;
-> +
->  	ret = zynqmp_pm_clock_enable(clk_id);
->  	if (ret)
->  		pr_warn_once("%s() clock enable failed for %s, ret = %d\n",
-
-This fixes the DPSUB clock issue, so
-
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I however wonder if this is the best solution. Shouldn't we instead fix
-it on the ATF side, to program the hardware when zynqmp_pll_set_mode()
-is called if the clock is already enabled ?
-
-Just reading the code, I can immediately see another potential issue in
-zynqmp_pll_set_mode(). The function is called from
-zynqmp_pll_round_rate(), which seems completely wrong, as
-zynqmp_pll_round_rate() is supposed to only perform rate calculation,
-not program the hardware. Am I missing something, or does the PLL
-implementation need to be reworked more extensively than this ?
-
--- 
-Regards,
-
-Laurent Pinchart
