@@ -8,30 +8,30 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C920C433E6
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF00C433E1
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 330F761947
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E15D961959
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Mar 2021 20:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231261AbhCUUs1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Mar 2021 16:48:27 -0400
-Received: from st43p00im-zteg10073401.me.com ([17.58.63.181]:60179 "EHLO
-        st43p00im-zteg10073401.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231256AbhCUUsO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 16:48:14 -0400
+        id S230363AbhCUUtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Mar 2021 16:49:33 -0400
+Received: from st43p00im-ztdg10063201.me.com ([17.58.63.182]:48602 "EHLO
+        st43p00im-ztdg10063201.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230340AbhCUUtO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Mar 2021 16:49:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1616359320; bh=Ge/uIA5hLdNP9ltZO4wkWhRW01e4mo9aC5X6GiyNNoM=;
+        t=1616359284; bh=gOHpXquEfX1hsU0THYneHHqC+i2psTEBMcaJtktWXlc=;
         h=From:To:Subject:Date:Message-Id;
-        b=zmBo6PB35QK+CyVRfzChnBi2Ltf3M0+FnEjcZXq5KtSg6LVSV01UdN+ONwGoLKeaU
-         LlHyh9K9Z+WVTtE7LBdH5IE7NhPMbgrUvwZn7dwyYhKfVCCAHUlBtjUI1jCSfHNSaK
-         8sYJ8owP0CZNCMuEUqAG3UQIWXaa4wnR2IABqr3DE3L3L59MR8bi+0UOeug0ZR9v+N
-         9Y7PeFN4TEdkCH2KbBfCfGBmeXercZjgNNogmE6WM3y8qphR+DsNIJktYM163vWxGP
-         rJ9VwsEorX/4ezdOSdZHSndpV+nVoCr1UC9d5/lTsTOzKpZla9btKiMoGVkOffAqRF
-         yqBfgvLh1iCAw==
+        b=YYhz10ekr39lyQ+qsR4kiEYcTSBjWGA3UKqtnGlQHwFCZnzNgOlePMmxMyHXATwhm
+         AXxqJuLZdMsHlsVUy5/thl5o62J7XqmS5UCe95cHTxJAahE+U866pteSTxrqv6XQNW
+         /XR/W86mRuqUPvJ1sm77+eMhGVlp3ZWQMes8l8/PlZTm6FATyaSPZYBsbEMVqTLo8z
+         CXzxIn7659Hq7mlWZwxDqVXVzpLieDtaW/D2veZc+Z3zuw7V2CMUgPtfn1cBmjtRQg
+         9POPZqudVaG+l0u1SaAzDreki9G8oBImlwK9vjtnrm4UsEZiArZa2QhUgrDrFDvGDY
+         5Rx6c7k8hQIGQ==
 Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-zteg10073401.me.com (Postfix) with ESMTPSA id 173D95E0181;
-        Sun, 21 Mar 2021 20:41:59 +0000 (UTC)
+        by st43p00im-ztdg10063201.me.com (Postfix) with ESMTPSA id D20EF540720;
+        Sun, 21 Mar 2021 20:41:23 +0000 (UTC)
 From:   Alain Volmat <avolmat@me.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -40,82 +40,44 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH 11/16] ARM: dts: sti: update clkgen-pll entries in stih407-clock
-Date:   Sun, 21 Mar 2021 21:40:33 +0100
-Message-Id: <20210321204038.14417-12-avolmat@me.com>
+Subject: [PATCH 01/16] clk: st: clkgen-pll: remove used variable of struct clkgen_pll
+Date:   Sun, 21 Mar 2021 21:40:23 +0100
+Message-Id: <20210321204038.14417-2-avolmat@me.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210321204038.14417-1-avolmat@me.com>
 References: <20210321204038.14417-1-avolmat@me.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-21_05:2021-03-19,2021-03-21 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-2006250000 definitions=main-2103210166
+X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
+ =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
+ =?UTF-8?Q?=3D2021-03-21=5F05:2021-03-19=5F01,2021-03-21=5F05,2020-04-07?=
+ =?UTF-8?Q?=5F01_signatures=3D0?=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=924
+ phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0 spamscore=0
+ adultscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103210166
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clkgen-pll driver now embed the clock names (assuming the
-right compatible is used). Remove all clock-output-names property
-and update when necessary the compatible.
+ODF field within the struct clkgen_pll is never used by the driver
+and can thus be removed.
 
 Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
- arch/arm/boot/dts/stih407-clock.dtsi | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/clk/st/clkgen-pll.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
-index ecd568777e5f..2603226a6ca8 100644
---- a/arch/arm/boot/dts/stih407-clock.dtsi
-+++ b/arch/arm/boot/dts/stih407-clock.dtsi
-@@ -36,8 +36,6 @@
- 				compatible = "st,stih407-clkgen-plla9";
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 119c5b33080c..f6c56ca90c7d 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -146,7 +146,6 @@ struct clkgen_pll {
  
- 				clocks = <&clk_sysin>;
--
--				clock-output-names = "clockgen-a9-pll-odf";
- 			};
- 		};
+ 	u32 ndiv;
+ 	u32 idf;
+-	u32 odf;
+ 	u32 cp;
+ };
  
-@@ -74,12 +72,9 @@
- 
- 			clk_s_a0_pll: clk-s-a0-pll {
- 				#clock-cells = <1>;
--				compatible = "st,clkgen-pll0";
-+				compatible = "st,clkgen-pll0-a0";
- 
- 				clocks = <&clk_sysin>;
--
--				clock-output-names = "clk-s-a0-pll-ofd-0";
--				clock-critical = <0>; /* clk-s-a0-pll-ofd-0 */
- 			};
- 
- 			clk_s_a0_flexgen: clk-s-a0-flexgen {
-@@ -112,21 +107,16 @@
- 
- 			clk_s_c0_pll0: clk-s-c0-pll0 {
- 				#clock-cells = <1>;
--				compatible = "st,clkgen-pll0";
-+				compatible = "st,clkgen-pll0-c0";
- 
- 				clocks = <&clk_sysin>;
--
--				clock-output-names = "clk-s-c0-pll0-odf-0";
--				clock-critical = <0>; /* clk-s-c0-pll0-odf-0 */
- 			};
- 
- 			clk_s_c0_pll1: clk-s-c0-pll1 {
- 				#clock-cells = <1>;
--				compatible = "st,clkgen-pll1";
-+				compatible = "st,clkgen-pll1-c0";
- 
- 				clocks = <&clk_sysin>;
--
--				clock-output-names = "clk-s-c0-pll1-odf-0";
- 			};
- 
- 			clk_s_c0_flexgen: clk-s-c0-flexgen {
 -- 
 2.17.1
 
