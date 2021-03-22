@@ -2,51 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22202C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB52C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 17:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E549F619A2
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FD1619B6
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 17:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbhCVPiU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Mar 2021 11:38:20 -0400
-Received: from mail-vs1-f46.google.com ([209.85.217.46]:39817 "EHLO
-        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbhCVPiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Mar 2021 11:38:16 -0400
-Received: by mail-vs1-f46.google.com with SMTP id e72so2232004vsc.6;
-        Mon, 22 Mar 2021 08:38:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HeaWu7NQhqTg67+28QJCmBXaQRsdudr3ZwUMLAQvMow=;
-        b=pxJp6kwcs2WRp/H7USwaqjME4s4abgdyDbFEL0aZTRRWtWMwwWPca8sq8JjFDUouMF
-         mP3PhHoUu6jpj2G6rja5KTcJNXGashBWBJQo2mvNmtGFp8ZXa9vnjruHzzwa0YeIlEFo
-         w8br3x8E47ceHueurHwui310Ro2R51xUIe7L/dz8mY21EmWS3wqjQRi6D70HZhZETW8j
-         EaJlHPRRMXE62uPp4MKGeG67SxAXDyv3c7eXosARVXk2LRRL8sQxhaaJc+jhLwm+i2op
-         lxXVkzTYPE9aIsk2ad9tCArTkYPgyIq4KULkE86xxBkvZb2/V4tr21kPC0SIpB9ugRI0
-         P3YQ==
-X-Gm-Message-State: AOAM533I+WX2zMqHD/JKmigePgZYo4r+RtLm1rgWg4Y6zf2cEihb/1LB
-        U63vdtubpwR6IfJ7XNXgnuzv6L43rUtqPTnj1DE=
-X-Google-Smtp-Source: ABdhPJxNe+DMTZdB2lWgUCE5StB9yp5TTZKT2HloywUXMNLbDmvZ6gW30OxDfaCQ8FunvzXfxRMyQk6bPYmPn8SKULg=
-X-Received: by 2002:a67:8883:: with SMTP id k125mr515895vsd.18.1616427495528;
- Mon, 22 Mar 2021 08:38:15 -0700 (PDT)
+        id S231321AbhCVRgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Mar 2021 13:36:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231365AbhCVRgP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Mar 2021 13:36:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0770361994;
+        Mon, 22 Mar 2021 17:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616434575;
+        bh=VdW4om2AyPCfqy4wAovCR7HUVEe2frovxQ0Cc8nEk7s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Mh9yoSTNMWrpBFxp7mRAqgfTfZOlph3dYZnhso+XBF99dtzEHkgBu1YOy2DccLzzn
+         fUylSmXKjiXNkdvZx/WKnjEV+5GnHZAVRPf8FAuQ+FX2zNlEFwMnVuBx3/7QcHBGRR
+         VmCt4+L4cInUjBNq78zxXp4FBDQOleC4/KxA9aQVsnHM3Zt5q+sPQ+9++fOCLAChGA
+         ZrbBCoyVviPqoFFBHsivxNrK5fArDQmqAhFcrkwkX3XZuyzri6iX5TjfgUyKO2BGWn
+         +jNA3cIftCwjS8BGd8BxZpoBiA5+h4IHlX0hKg0akAFueiGgUW8oqUusCrgeyLdw+R
+         NAjf6bEHS7S5w==
+Received: by mail-ed1-f45.google.com with SMTP id z1so20406691edb.8;
+        Mon, 22 Mar 2021 10:36:14 -0700 (PDT)
+X-Gm-Message-State: AOAM531IT0C8EmZXdUdl2/O0RfqM2n+Belt7+onRvizq6QDIQphW2JSP
+        Rz4HTlybecblpmqZzlLW4FYCCmlGZgWGlIDeSg==
+X-Google-Smtp-Source: ABdhPJx2NmuQG0Y5DzdS5+450riDgemRYrFCSvVWhwcs0YPSA/NP54tZmFoCyKBJEdQ1WhL/o13t1FITdk/T511dQts=
+X-Received: by 2002:aa7:c403:: with SMTP id j3mr718221edq.137.1616434573540;
+ Mon, 22 Mar 2021 10:36:13 -0700 (PDT)
 MIME-Version: 1.0
 References: <1599734644-4791-1-git-send-email-sagar.kadam@sifive.com>
  <1599734644-4791-3-git-send-email-sagar.kadam@sifive.com> <20200922203429.GA3188204@bogus>
-In-Reply-To: <20200922203429.GA3188204@bogus>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 22 Mar 2021 16:38:04 +0100
-Message-ID: <CAMuHMdXPG-+EOCrQZi1deKv1yYMBtohprUVYW_-Shdp_gfQs5Q@mail.gmail.com>
+ <CAMuHMdXPG-+EOCrQZi1deKv1yYMBtohprUVYW_-Shdp_gfQs5Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXPG-+EOCrQZi1deKv1yYMBtohprUVYW_-Shdp_gfQs5Q@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 22 Mar 2021 11:36:01 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJSF=p657tdvm4CW_LYi93t6vG0aOmQxUmYYW3_5h5UHQ@mail.gmail.com>
+Message-ID: <CAL_JsqJSF=p657tdvm4CW_LYi93t6vG0aOmQxUmYYW3_5h5UHQ@mail.gmail.com>
 Subject: Re: [PATCH v1 2/3] dt-bindings: riscv: convert plic bindings to json-schema
-To:     Sagar Kadam <sagar.kadam@sifive.com>, Rob Herring <robh@kernel.org>
-Cc:     Linux PWM List <linux-pwm@vger.kernel.org>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Sagar Kadam <sagar.kadam@sifive.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-riscv <linux-riscv@lists.infradead.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
@@ -69,67 +73,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sagar, Rob,
-
-(replying to an old email, as this one seems to be the most appropriate)
-
-On Tue, Sep 22, 2020 at 10:34 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Sep 10, 2020 at 04:14:03PM +0530, Sagar Kadam wrote:
-> > Convert device tree bindings for SiFive's PLIC to YAML format
-> >
-> > Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
-
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-
-> > +
-> > +  '#address-cells':
-> > +    const: 0
-> > +    description: Should be <0> or more.
+On Mon, Mar 22, 2021 at 9:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> Drop. 'or more' is wrong. If there's a case with more, it will need to
-> be documented.
+> Hi Sagar, Rob,
+>
+> (replying to an old email, as this one seems to be the most appropriate)
+>
+> On Tue, Sep 22, 2020 at 10:34 PM Rob Herring <robh@kernel.org> wrote:
+> > On Thu, Sep 10, 2020 at 04:14:03PM +0530, Sagar Kadam wrote:
+> > > Convert device tree bindings for SiFive's PLIC to YAML format
+> > >
+> > > Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
+>
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+>
+> > > +
+> > > +  '#address-cells':
+> > > +    const: 0
+> > > +    description: Should be <0> or more.
+> >
+> > Drop. 'or more' is wrong. If there's a case with more, it will need to
+> > be documented.
+>
+> Why do we have the "'#address-cells': const: 0" at all...
+>
+> > > +required:
+> > > +  - compatible
+> > > +  - '#address-cells'
+>
+> ... and why is it required?
 
-Why do we have the "'#address-cells': const: 0" at all...
+It is only required if an 'interrupt-map' points to this node.
+Currently dtc is warning if it is missing always, but there are plans
+to relax dtc to only warn when 'interrupt-map' is present. Of course,
+if you had 'interrupt-map' in an overlay, you'd want #address-cells in
+the base dt and there's no other way to check that than making it
+required.
 
-> > +required:
-> > +  - compatible
-> > +  - '#address-cells'
-
-... and why is it required?
-
-> > +  - '#interrupt-cells'
-> > +  - interrupt-controller
-> > +  - reg
-> > +  - interrupts-extended
-> > +  - riscv,ndev
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    plic: interrupt-controller@c000000 {
-> > +      #address-cells = <0>;
-> > +      #interrupt-cells = <1>;
-> > +      compatible = "sifive,plic-1.0.0", "sifive,fu540-c000-plic";
-> > +      interrupt-controller;
-> > +      interrupts-extended = <
-> > +        &cpu0_intc 11
-> > +        &cpu1_intc 11 &cpu1_intc 9
-> > +        &cpu2_intc 11 &cpu2_intc 9
-> > +        &cpu3_intc 11 &cpu3_intc 9
-> > +        &cpu4_intc 11 &cpu4_intc 9>;
-> > +      reg = <0xc000000 0x4000000>;
-> > +      riscv,ndev = <10>;
-> > +    };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
