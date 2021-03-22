@@ -2,122 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60B7C433E5
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22202C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7AE6198B
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E549F619A2
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhCVPLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Mar 2021 11:11:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbhCVPK6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Mar 2021 11:10:58 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F6EC061765
-        for <linux-clk@vger.kernel.org>; Mon, 22 Mar 2021 08:10:57 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id e7so19724148edu.10
-        for <linux-clk@vger.kernel.org>; Mon, 22 Mar 2021 08:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=BblDdmrktMK5tFFD4LOpFP77ijBklviaU26xu4C63tQ=;
-        b=IT2iGJQyBA7Y1+dCJvTIJziErQmWcbn0+kMr4Y273pDNqodHvB6Ww7nGeAozLlDj16
-         AaZFlWmlmAzS7zUACjHtiaCrXpOhiRROiQFyU4auZ+13hpjjdqVYNePQ5Cyp/9DkkrQC
-         b91OFvMWYHKs9MAA7wM3CC0WQRuzxtVRw66hiamNYNrYJOlJE43oIsVGuMZ9kLPAqUbQ
-         nynbvcEhIJeX2PlbMuKhnlTT65dd9GDFO83TYP0QzGcN6dLgdO2DDjR1KDBGvGzAifvT
-         3iM6ErE3HQUX/Nd9uR6OnpKDyBISmiXqsi9ileg7sykq6tbAiP06wPIgKKPW7GTaZvHL
-         iZmA==
+        id S230034AbhCVPiU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Mar 2021 11:38:20 -0400
+Received: from mail-vs1-f46.google.com ([209.85.217.46]:39817 "EHLO
+        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230091AbhCVPiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Mar 2021 11:38:16 -0400
+Received: by mail-vs1-f46.google.com with SMTP id e72so2232004vsc.6;
+        Mon, 22 Mar 2021 08:38:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=BblDdmrktMK5tFFD4LOpFP77ijBklviaU26xu4C63tQ=;
-        b=Yh1BdzUbzZcdckQqZ2/mnyFa3wclssaQ5wFcFDX3hfe4K9MHho9zmgBO9P8niIaHty
-         fXjdjfImL+5bQpIGWZgJbFAqjFuDCt8yUW0o91CEw56Xty3kBNr56rz1sd3ZmHMZE9t5
-         imSMelYNg2yKVBoiJ3Kqeq1vc4kUFjscbeTDqNIHmrgKucLOzNZ7M3aanP2DaTwYAftW
-         xLQegP3YpvPiGdn4tszJGQt4tllbYTXJxak1+0rAPxRq979ZQjCd5JRnLYMlXkEfwtbm
-         Xt5Ma7NpF+6gMo1hKkYr/OcJkRLdchv6J0BNaAjdppM7CBlMJcj4eHatddprwlETlhUJ
-         V6Rw==
-X-Gm-Message-State: AOAM5325L0hxjAyBZsQtqJqXoNanzpGXA1oKuHNo+MBN5U8zHDBkxBp5
-        fJKTysFB1Pf28BWiymeZIu/XJg==
-X-Google-Smtp-Source: ABdhPJwxMVa4A4qij3tXD3Epc4EsEgsbfdMWBHLOdKIarJBUoxpk8xvIYdSjs+oVvVNjC/1HEN64aQ==
-X-Received: by 2002:a05:6402:22b5:: with SMTP id cx21mr26421224edb.27.1616425856228;
-        Mon, 22 Mar 2021 08:10:56 -0700 (PDT)
-Received: from dell ([91.110.221.180])
-        by smtp.gmail.com with ESMTPSA id e4sm9768413ejz.4.2021.03.22.08.10.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 08:10:55 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 15:10:53 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 03/15] mfd: altera: merge ARCH_SOCFPGA and
- ARCH_STRATIX10
-Message-ID: <20210322151053.GB2916463@dell>
-References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
- <20210311152545.1317581-4-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HeaWu7NQhqTg67+28QJCmBXaQRsdudr3ZwUMLAQvMow=;
+        b=pxJp6kwcs2WRp/H7USwaqjME4s4abgdyDbFEL0aZTRRWtWMwwWPca8sq8JjFDUouMF
+         mP3PhHoUu6jpj2G6rja5KTcJNXGashBWBJQo2mvNmtGFp8ZXa9vnjruHzzwa0YeIlEFo
+         w8br3x8E47ceHueurHwui310Ro2R51xUIe7L/dz8mY21EmWS3wqjQRi6D70HZhZETW8j
+         EaJlHPRRMXE62uPp4MKGeG67SxAXDyv3c7eXosARVXk2LRRL8sQxhaaJc+jhLwm+i2op
+         lxXVkzTYPE9aIsk2ad9tCArTkYPgyIq4KULkE86xxBkvZb2/V4tr21kPC0SIpB9ugRI0
+         P3YQ==
+X-Gm-Message-State: AOAM533I+WX2zMqHD/JKmigePgZYo4r+RtLm1rgWg4Y6zf2cEihb/1LB
+        U63vdtubpwR6IfJ7XNXgnuzv6L43rUtqPTnj1DE=
+X-Google-Smtp-Source: ABdhPJxNe+DMTZdB2lWgUCE5StB9yp5TTZKT2HloywUXMNLbDmvZ6gW30OxDfaCQ8FunvzXfxRMyQk6bPYmPn8SKULg=
+X-Received: by 2002:a67:8883:: with SMTP id k125mr515895vsd.18.1616427495528;
+ Mon, 22 Mar 2021 08:38:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210311152545.1317581-4-krzysztof.kozlowski@canonical.com>
+References: <1599734644-4791-1-git-send-email-sagar.kadam@sifive.com>
+ <1599734644-4791-3-git-send-email-sagar.kadam@sifive.com> <20200922203429.GA3188204@bogus>
+In-Reply-To: <20200922203429.GA3188204@bogus>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 22 Mar 2021 16:38:04 +0100
+Message-ID: <CAMuHMdXPG-+EOCrQZi1deKv1yYMBtohprUVYW_-Shdp_gfQs5Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] dt-bindings: riscv: convert plic bindings to json-schema
+To:     Sagar Kadam <sagar.kadam@sifive.com>, Rob Herring <robh@kernel.org>
+Cc:     Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yash Shah <yash.shah@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 11 Mar 2021, Krzysztof Kozlowski wrote:
+Hi Sagar, Rob,
 
-> Simplify 32-bit and 64-bit Intel SoCFPGA Kconfig options by having only
-> one for both of them.  This the common practice for other platforms.
-> Additionally, the ARCH_SOCFPGA is too generic as SoCFPGA designs come
-> from multiple vendors.
-> 
-> The side effect is that the MFD_ALTERA_A10SR will now be available for
-> both 32-bit and 64-bit Intel SoCFPGA, even though it is used only for
-> 32-bit.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  drivers/mfd/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+(replying to an old email, as this one seems to be the most appropriate)
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+On Tue, Sep 22, 2020 at 10:34 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Sep 10, 2020 at 04:14:03PM +0530, Sagar Kadam wrote:
+> > Convert device tree bindings for SiFive's PLIC to YAML format
+> >
+> > Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+
+> > +
+> > +  '#address-cells':
+> > +    const: 0
+> > +    description: Should be <0> or more.
+>
+> Drop. 'or more' is wrong. If there's a case with more, it will need to
+> be documented.
+
+Why do we have the "'#address-cells': const: 0" at all...
+
+> > +required:
+> > +  - compatible
+> > +  - '#address-cells'
+
+... and why is it required?
+
+> > +  - '#interrupt-cells'
+> > +  - interrupt-controller
+> > +  - reg
+> > +  - interrupts-extended
+> > +  - riscv,ndev
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    plic: interrupt-controller@c000000 {
+> > +      #address-cells = <0>;
+> > +      #interrupt-cells = <1>;
+> > +      compatible = "sifive,plic-1.0.0", "sifive,fu540-c000-plic";
+> > +      interrupt-controller;
+> > +      interrupts-extended = <
+> > +        &cpu0_intc 11
+> > +        &cpu1_intc 11 &cpu1_intc 9
+> > +        &cpu2_intc 11 &cpu2_intc 9
+> > +        &cpu3_intc 11 &cpu3_intc 9
+> > +        &cpu4_intc 11 &cpu4_intc 9>;
+> > +      reg = <0xc000000 0x4000000>;
+> > +      riscv,ndev = <10>;
+> > +    };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
