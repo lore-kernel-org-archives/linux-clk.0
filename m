@@ -2,101 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C91C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 14:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60B7C433E5
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB31461994
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 14:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7AE6198B
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Mar 2021 15:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbhCVOWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Mar 2021 10:22:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47932 "EHLO
+        id S230384AbhCVPLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Mar 2021 11:11:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230131AbhCVOWa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Mar 2021 10:22:30 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBDAC061574
-        for <linux-clk@vger.kernel.org>; Mon, 22 Mar 2021 07:22:30 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lOLRq-0003oj-UF; Mon, 22 Mar 2021 15:22:26 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lOLRq-0007Nf-IM; Mon, 22 Mar 2021 15:22:26 +0100
-Date:   Mon, 22 Mar 2021 15:22:26 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] clk: provide new devm helpers for prepared and
- enabled clocks
-Message-ID: <20210322142226.n7qa4rijdhsqoqgf@pengutronix.de>
-References: <20210301135053.1462168-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S230341AbhCVPK6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Mar 2021 11:10:58 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F6EC061765
+        for <linux-clk@vger.kernel.org>; Mon, 22 Mar 2021 08:10:57 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id e7so19724148edu.10
+        for <linux-clk@vger.kernel.org>; Mon, 22 Mar 2021 08:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=BblDdmrktMK5tFFD4LOpFP77ijBklviaU26xu4C63tQ=;
+        b=IT2iGJQyBA7Y1+dCJvTIJziErQmWcbn0+kMr4Y273pDNqodHvB6Ww7nGeAozLlDj16
+         AaZFlWmlmAzS7zUACjHtiaCrXpOhiRROiQFyU4auZ+13hpjjdqVYNePQ5Cyp/9DkkrQC
+         b91OFvMWYHKs9MAA7wM3CC0WQRuzxtVRw66hiamNYNrYJOlJE43oIsVGuMZ9kLPAqUbQ
+         nynbvcEhIJeX2PlbMuKhnlTT65dd9GDFO83TYP0QzGcN6dLgdO2DDjR1KDBGvGzAifvT
+         3iM6ErE3HQUX/Nd9uR6OnpKDyBISmiXqsi9ileg7sykq6tbAiP06wPIgKKPW7GTaZvHL
+         iZmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=BblDdmrktMK5tFFD4LOpFP77ijBklviaU26xu4C63tQ=;
+        b=Yh1BdzUbzZcdckQqZ2/mnyFa3wclssaQ5wFcFDX3hfe4K9MHho9zmgBO9P8niIaHty
+         fXjdjfImL+5bQpIGWZgJbFAqjFuDCt8yUW0o91CEw56Xty3kBNr56rz1sd3ZmHMZE9t5
+         imSMelYNg2yKVBoiJ3Kqeq1vc4kUFjscbeTDqNIHmrgKucLOzNZ7M3aanP2DaTwYAftW
+         xLQegP3YpvPiGdn4tszJGQt4tllbYTXJxak1+0rAPxRq979ZQjCd5JRnLYMlXkEfwtbm
+         Xt5Ma7NpF+6gMo1hKkYr/OcJkRLdchv6J0BNaAjdppM7CBlMJcj4eHatddprwlETlhUJ
+         V6Rw==
+X-Gm-Message-State: AOAM5325L0hxjAyBZsQtqJqXoNanzpGXA1oKuHNo+MBN5U8zHDBkxBp5
+        fJKTysFB1Pf28BWiymeZIu/XJg==
+X-Google-Smtp-Source: ABdhPJwxMVa4A4qij3tXD3Epc4EsEgsbfdMWBHLOdKIarJBUoxpk8xvIYdSjs+oVvVNjC/1HEN64aQ==
+X-Received: by 2002:a05:6402:22b5:: with SMTP id cx21mr26421224edb.27.1616425856228;
+        Mon, 22 Mar 2021 08:10:56 -0700 (PDT)
+Received: from dell ([91.110.221.180])
+        by smtp.gmail.com with ESMTPSA id e4sm9768413ejz.4.2021.03.22.08.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 08:10:55 -0700 (PDT)
+Date:   Mon, 22 Mar 2021 15:10:53 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 03/15] mfd: altera: merge ARCH_SOCFPGA and
+ ARCH_STRATIX10
+Message-ID: <20210322151053.GB2916463@dell>
+References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
+ <20210311152545.1317581-4-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5phyeawdahq2t3cm"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210301135053.1462168-1-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210311152545.1317581-4-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 11 Mar 2021, Krzysztof Kozlowski wrote:
 
---5phyeawdahq2t3cm
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Simplify 32-bit and 64-bit Intel SoCFPGA Kconfig options by having only
+> one for both of them.  This the common practice for other platforms.
+> Additionally, the ARCH_SOCFPGA is too generic as SoCFPGA designs come
+> from multiple vendors.
+> 
+> The side effect is that the MFD_ALTERA_A10SR will now be available for
+> both 32-bit and 64-bit Intel SoCFPGA, even though it is used only for
+> 32-bit.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  drivers/mfd/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hello,
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-On Mon, Mar 01, 2021 at 02:50:50PM +0100, Uwe Kleine-K=F6nig wrote:
-> Uwe Kleine-K=F6nig (3):
->   clk: generalize devm_clk_get() a bit
->   clk: Provide new devm_clk_helpers for prepared and enabled clocks
->   pwm: atmel: Simplify using devm_clk_get_prepared()
->=20
->  drivers/clk/clk-devres.c | 96 +++++++++++++++++++++++++++++++++-------
->  drivers/pwm/pwm-atmel.c  | 15 +------
->  include/linux/clk.h      | 87 +++++++++++++++++++++++++++++++++++-
->  3 files changed, 168 insertions(+), 30 deletions(-)
-
-can I get some feedback on this series please? The idea is on the list
-since October last year with absolutely no maintainer feedback.
-
-I think it's a good idea and not too hard to review, so I wonder what is
-stopping you.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---5phyeawdahq2t3cm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBYqB8ACgkQwfwUeK3K
-7AlcLwf+MO9wU66kI2KeEmjWTjbBNyavpby/rc/RzbJBTlUBEA+WMpbfUsZCslhW
-kYjEEdrVqJ5WnR15w/17Y5fcu6eP2McQ1gaEhYFtseU27HNy2xZ4VABnRRrtzdbX
-NJsWJrhFWVMQtGe1YXsfLFY5BdsbzJcSdhs3YY9tPUaeJMIzz3QyNEp2eVVtQZZ8
-eEggpUA/2Xz57sdS4ILGs9+QEk4y3rK1+1IERQHu3USuenA2U7KhqG3CZ2tVj+AE
-OJvOpHfmDxSEVI9MmwP5YhKYWKCbjisug3ucdjStk47ERe28t5U8c+0RBbv8xPY5
-JqKOm+ZNH6JOZYaKRd6ycYpjeXtZTQ==
-=AvXV
------END PGP SIGNATURE-----
-
---5phyeawdahq2t3cm--
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
