@@ -2,999 +2,681 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49CCC433E3
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 11:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEDFC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 15:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A311E61993
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 11:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841B7619BD
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 15:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbhCWLau (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Mar 2021 07:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231187AbhCWLal (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Mar 2021 07:30:41 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D778DC061574;
-        Tue, 23 Mar 2021 04:30:40 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id lr1-20020a17090b4b81b02900ea0a3f38c1so965239pjb.0;
-        Tue, 23 Mar 2021 04:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SCNMr7LS+/cQOOfJiYBakhu+Djqbnk/VhaCL0+6Gjuc=;
-        b=Ni2Pk8U9S6Cr9tdhHvOUFIZnNTWYoshNP7GWjeiC/LFN8zmiQRIE3A9FYLMMRpnTvJ
-         C4IAfy/C+f5jxCFbma1mcgbz9og6nSSuIs4WzUuQiyH0BeSk7vr9lvUOPCx7MXeUFCxL
-         WxY5QjNUzV7CZ//CI5E/9IfK07OQ/c14iRsNQ9RRXX8cU9yX4gDOdpkty/aansjAxxFG
-         SrSLqCWvtUEwANZvHmQu6dy2Bi972p+cxJa0REkCt3vMfo6/YFeIE7d3TDX6Hg3RpOZz
-         eqAPj/MtkUeo1YnZKRcRbvCEwzTlIwJzs7yR02IIKHf/3sTeeZV5zxg0b8i4/sdDMXBC
-         Ld/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=SCNMr7LS+/cQOOfJiYBakhu+Djqbnk/VhaCL0+6Gjuc=;
-        b=WcHZrSHbv/gJpY3v8p5WpBCoWwJp9/42k9XQPOsvHmGVc/NGyJ/rK3kmZlxgkWlF38
-         X6B1z+AW5OMr3Lj/ygBkjmozXzeUOYJUG8s928/1Dirliekh8aGA0mejg6JF63UmFGlH
-         TQf2HeGygP197GrNR3QBK/D+ghjVpUw1bkZQ9issJN9bi29xqlHVTM3OcPkkmp6LLYIz
-         nXZpfB5v/7HRYVVPfJz5ZRajP0qzudjcjnbB2gKnRyvtiwZii+Vmp3hmiHc/M15/OqI8
-         38PEIz4P/pI2hFx5rBIbfvBt977u3/FNKJfsxJF6QY5crwROAESPOhxl8iSc0RO+UNG6
-         Tt7g==
-X-Gm-Message-State: AOAM533OO+HyV8fS2OKXegNtebXof6u4secJZ+1BX7XDMkza9zCoqAbD
-        EPnGzW64KRzDP0ejSZQqVlQ=
-X-Google-Smtp-Source: ABdhPJwT2DAtWSFr1rEwzR1QHhYa/3/Jcj6EtodZO/A3uTMPsfuOLnNvb2+pchN24rZb99NznNmG1A==
-X-Received: by 2002:a17:90a:550f:: with SMTP id b15mr4164803pji.102.1616499040270;
-        Tue, 23 Mar 2021 04:30:40 -0700 (PDT)
-Received: from localhost.localdomain ([101.95.133.222])
-        by smtp.gmail.com with ESMTPSA id f23sm16281824pfa.85.2021.03.23.04.30.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Mar 2021 04:30:39 -0700 (PDT)
-From:   Dongjiu Geng <gengdongjiu1@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        id S232949AbhCWPlR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Mar 2021 11:41:17 -0400
+Received: from out28-2.mail.aliyun.com ([115.124.28.2]:48186 "EHLO
+        out28-2.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232835AbhCWPlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Mar 2021 11:41:07 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00626366-0.00026132-0.993475;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047201;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.Jp6Q2K2_1616514060;
+Received: from 192.168.88.129(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Jp6Q2K2_1616514060)
+          by smtp.aliyun-inc.com(10.147.44.145);
+          Tue, 23 Mar 2021 23:41:01 +0800
+Subject: Re: [PATCH 6/6] clk: ingenic: Add support for the JZ4760
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, od@zcrc.me,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gengdongjiu1@gmail.com
-Cc:     Dongjiu Geng <gengdongjiu@huawei.com>
-Subject: [PATCH v8 2/2] clk: hisilicon: Add clock driver for hi3559A SoC
-Date:   Tue, 23 Mar 2021 19:29:33 +0800
-Message-Id: <1616498973-47067-3-git-send-email-gengdongjiu1@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1616498973-47067-1-git-send-email-gengdongjiu1@gmail.com>
-References: <1616498973-47067-1-git-send-email-gengdongjiu1@gmail.com>
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20210307141759.30426-1-paul@crapouillou.net>
+ <20210307141759.30426-7-paul@crapouillou.net>
+ <dbd5bea3-a693-cbb6-c411-f164f8f0452f@wanyeetech.com>
+ <83TDQQ.FC04M4R63ME53@crapouillou.net>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <8dfd794e-be79-22e7-a9cf-feb59056e34f@wanyeetech.com>
+Date:   Tue, 23 Mar 2021 23:41:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <83TDQQ.FC04M4R63ME53@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dongjiu Geng <gengdongjiu@huawei.com>
+Hi Paul,
 
-Add clock drivers for hi3559A SoC, this driver
-controls the SoC registers to supply different
-clocks to different IPs in the SoC.
+On 2021/3/23 上午1:40, Paul Cercueil wrote:
+> Hi Zhou,
+>
+> Le mer. 17 mars 2021 à 20:41, Zhou Yanjie <zhouyanjie@wanyeetech.com> 
+> a écrit :
+>> Hi Paul,
+>>
+>> On 2021/3/7 下午10:17, Paul Cercueil wrote:
+>>> Add the CGU code and the compatible string to the TCU driver to support
+>>> the JZ4760 SoC.
+>>>
+>>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>> ---
+>>>   drivers/clk/ingenic/Kconfig            |  10 +
+>>>   drivers/clk/ingenic/Makefile           |   1 +
+>>>   drivers/clk/ingenic/jz4760-cgu.c       | 433 
+>>> +++++++++++++++++++++++++
+>>>   drivers/clk/ingenic/tcu.c              |   2 +
+>>>   include/dt-bindings/clock/jz4760-cgu.h |  54 +++
+>>>   5 files changed, 500 insertions(+)
+>>>   create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
+>>>   create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
+>>>
+>>> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+>>> index 580b0cf69ed5..898f1bc478c9 100644
+>>> --- a/drivers/clk/ingenic/Kconfig
+>>> +++ b/drivers/clk/ingenic/Kconfig
+>>> @@ -25,6 +25,16 @@ config INGENIC_CGU_JZ4725B
+>>>           If building for a JZ4725B SoC, you want to say Y here.
+>>>   +config INGENIC_CGU_JZ4760
+>>> +    bool "Ingenic JZ4760 CGU driver"
+>>> +    default MACH_JZ4760
+>>> +    select INGENIC_CGU_COMMON
+>>> +    help
+>>> +      Support the clocks provided by the CGU hardware on Ingenic 
+>>> JZ4760
+>>> +      and compatible SoCs.
+>>> +
+>>> +      If building for a JZ4760 SoC, you want to say Y here.
+>>> +
+>>>   config INGENIC_CGU_JZ4770
+>>>       bool "Ingenic JZ4770 CGU driver"
+>>>       default MACH_JZ4770
+>>> diff --git a/drivers/clk/ingenic/Makefile 
+>>> b/drivers/clk/ingenic/Makefile
+>>> index aaa4bffe03c6..9edfaf4610b9 100644
+>>> --- a/drivers/clk/ingenic/Makefile
+>>> +++ b/drivers/clk/ingenic/Makefile
+>>> @@ -2,6 +2,7 @@
+>>>   obj-$(CONFIG_INGENIC_CGU_COMMON)    += cgu.o pm.o
+>>>   obj-$(CONFIG_INGENIC_CGU_JZ4740)    += jz4740-cgu.o
+>>>   obj-$(CONFIG_INGENIC_CGU_JZ4725B)    += jz4725b-cgu.o
+>>> +obj-$(CONFIG_INGENIC_CGU_JZ4760)    += jz4760-cgu.o
+>>>   obj-$(CONFIG_INGENIC_CGU_JZ4770)    += jz4770-cgu.o
+>>>   obj-$(CONFIG_INGENIC_CGU_JZ4780)    += jz4780-cgu.o
+>>>   obj-$(CONFIG_INGENIC_CGU_X1000)        += x1000-cgu.o
+>>> diff --git a/drivers/clk/ingenic/jz4760-cgu.c 
+>>> b/drivers/clk/ingenic/jz4760-cgu.c
+>>> new file mode 100644
+>>> index 000000000000..a45327cba7d1
+>>> --- /dev/null
+>>> +++ b/drivers/clk/ingenic/jz4760-cgu.c
+>>> @@ -0,0 +1,433 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * JZ4760 SoC CGU driver
+>>> + * Copyright 2018, Paul Cercueil <paul@crapouillou.net>
+>>> + */
+>>> +
+>>> +#include <linux/bitops.h>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/delay.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/of.h>
+>>> +
+>>> +#include <linux/clk.h>
+>>> +
+>>> +#include <dt-bindings/clock/jz4760-cgu.h>
+>>> +
+>>> +#include "cgu.h"
+>>> +#include "pm.h"
+>>> +
+>>> +#define MHZ (1000 * 1000)
+>>> +
+>>> +/*
+>>> + * CPM registers offset address definition
+>>> + */
+>>> +#define CGU_REG_CPCCR        0x00
+>>> +#define CGU_REG_LCR        0x04
+>>> +#define CGU_REG_CPPCR0        0x10
+>>> +#define CGU_REG_CLKGR0        0x20
+>>> +#define CGU_REG_OPCR        0x24
+>>> +#define CGU_REG_CLKGR1        0x28
+>>> +#define CGU_REG_CPPCR1        0x30
+>>> +#define CGU_REG_USBPCR        0x3c
+>>> +#define CGU_REG_USBCDR        0x50
+>>> +#define CGU_REG_I2SCDR        0x60
+>>> +#define CGU_REG_LPCDR        0x64
+>>> +#define CGU_REG_MSCCDR        0x68
+>>> +#define CGU_REG_UHCCDR        0x6c
+>>> +#define CGU_REG_SSICDR        0x74
+>>> +#define CGU_REG_CIMCDR        0x7c
+>>> +#define CGU_REG_GPSCDR        0x80
+>>> +#define CGU_REG_PCMCDR        0x84
+>>> +#define CGU_REG_GPUCDR        0x88
+>>> +
+>>> +static const s8 pll_od_encoding[8] = {
+>>> +    0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
+>>> +};
+>>> +
+>>> +static const u8 jz4760_cgu_cpccr_div_table[] = {
+>>> +    1, 2, 3, 4, 6, 8,
+>>> +};
+>>> +
+>>> +static const u8 jz4760_cgu_pll_half_div_table[] = {
+>>> +    2, 1,
+>>> +};
+>>> +
+>>> +static void
+>>> +jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
+>>> +               unsigned long rate, unsigned long parent_rate,
+>>> +               unsigned int *pm, unsigned int *pn, unsigned int *pod)
+>>> +{
+>>> +    unsigned int m, n, od;
+>>> +
+>>> +    /* The output of the PLL must be between 500 and 1500 MHz. */
+>>> +    rate = clamp_val(rate, 500ul * MHZ, 1500ul * MHZ);
+>>> +
+>>> +    /* The frequency after the N divider must be between 1 and 50 
+>>> MHz. */
+>>> +    n = parent_rate / (1 * MHZ);
+>>> +
+>>> +    /* The N divider must be >= 2. */
+>>> +    n = clamp_val(n, 2, 1 << pll_info->n_bits);
+>>> +
+>>> +    for (;;) {
+>>> +        od = 0;
+>>> +
+>>> +        do {
+>>> +            m = (rate / MHZ) * ++od * n / (parent_rate / MHZ);
+>>
+>>
+>> Please correct me if I am wrong, according to the PM, when the 
+>> register value of OD is 0, 1, 2, 3, the value corresponding 
+>> participating PL frequency calculation is 1, 2, 4, 8. Therefore, change
+>>
+>> m = (rate / MHZ) * ++od * n / (parent_rate / MHZ); to m = (rate / 
+>> MHZ) * (2 ^ od++) * n / (parent_rate / MHZ); seems to be more 
+>> appropriate, it can avoid 3, 5, 6, and 7 that should not exist.
+>
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
----
- drivers/clk/hisilicon/Kconfig       |   7 +
- drivers/clk/hisilicon/Makefile      |   1 +
- drivers/clk/hisilicon/clk-hi3559a.c | 847 ++++++++++++++++++++++++++++++++++++
- drivers/clk/hisilicon/clk.c         |   2 +-
- drivers/clk/hisilicon/clk.h         |   2 +-
- 5 files changed, 857 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
+I found a mistake. My brain must have been broken at that time. The 2 ^ 
+od here I intended to express the meaning of od power of 2, but it 
+should be written as 1 << od, otherwise it becomes a XOR operation.
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 6a9e93a..5ecc37a 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -15,6 +15,13 @@ config COMMON_CLK_HI3519
- 	help
- 	  Build the clock driver for hi3519.
- 
-+config COMMON_CLK_HI3559A
-+	bool "Hi3559A Clock Driver"
-+	depends on ARCH_HISI || COMPILE_TEST
-+	default ARCH_HISI
-+	help
-+	  Build the clock driver for hi3559a.
-+
- config COMMON_CLK_HI3660
- 	bool "Hi3660 Clock Driver"
- 	depends on ARCH_HISI || COMPILE_TEST
-diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-index b2441b9..2978e56 100644
---- a/drivers/clk/hisilicon/Makefile
-+++ b/drivers/clk/hisilicon/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
- obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
- obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
- obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
-+obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
- obj-$(CONFIG_COMMON_CLK_HI3660) += clk-hi3660.o
- obj-$(CONFIG_COMMON_CLK_HI3670) += clk-hi3670.o
- obj-$(CONFIG_COMMON_CLK_HI3798CV200)	+= crg-hi3798cv200.o
-diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
-new file mode 100644
-index 0000000..a47df96
---- /dev/null
-+++ b/drivers/clk/hisilicon/clk-hi3559a.c
-@@ -0,0 +1,847 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Hisilicon Hi3559A clock driver
-+ *
-+ * Copyright (c) 2019-2020, Huawei Tech. Co., Ltd.
-+ *
-+ * Author: Dongjiu Geng <gengdongjiu@huawei.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/hi3559av100-clock.h>
-+
-+#include "clk.h"
-+#include "crg.h"
-+#include "reset.h"
-+
-+#define CRG_BASE_ADDR  0x18020000
-+#define PLL_MASK_WIDTH 24
-+
-+struct hi3559av100_pll_clock {
-+	u32	id;
-+	const char	*name;
-+	const char	*parent_name;
-+	const u32	ctrl_reg1;
-+	const u8	frac_shift;
-+	const u8	frac_width;
-+	const u8	postdiv1_shift;
-+	const u8	postdiv1_width;
-+	const u8	postdiv2_shift;
-+	const u8	postdiv2_width;
-+	const u32	ctrl_reg2;
-+	const u8	fbdiv_shift;
-+	const u8	fbdiv_width;
-+	const u8	refdiv_shift;
-+	const u8	refdiv_width;
-+};
-+
-+struct hi3559av100_clk_pll {
-+	struct clk_hw	hw;
-+	u32	id;
-+	void __iomem	*ctrl_reg1;
-+	u8	frac_shift;
-+	u8	frac_width;
-+	u8	postdiv1_shift;
-+	u8	postdiv1_width;
-+	u8	postdiv2_shift;
-+	u8	postdiv2_width;
-+	void __iomem	*ctrl_reg2;
-+	u8	fbdiv_shift;
-+	u8	fbdiv_width;
-+	u8	refdiv_shift;
-+	u8	refdiv_width;
-+};
-+
-+/* soc clk config */
-+static const struct hisi_fixed_rate_clock hi3559av100_fixed_rate_clks_crg[] = {
-+	{ HI3559AV100_FIXED_1188M, "1188m", NULL, 0, 1188000000, },
-+	{ HI3559AV100_FIXED_1000M, "1000m", NULL, 0, 1000000000, },
-+	{ HI3559AV100_FIXED_842M, "842m", NULL, 0, 842000000, },
-+	{ HI3559AV100_FIXED_792M, "792m", NULL, 0, 792000000, },
-+	{ HI3559AV100_FIXED_750M, "750m", NULL, 0, 750000000, },
-+	{ HI3559AV100_FIXED_710M, "710m", NULL, 0, 710000000, },
-+	{ HI3559AV100_FIXED_680M, "680m", NULL, 0, 680000000, },
-+	{ HI3559AV100_FIXED_667M, "667m", NULL, 0, 667000000, },
-+	{ HI3559AV100_FIXED_631M, "631m", NULL, 0, 631000000, },
-+	{ HI3559AV100_FIXED_600M, "600m", NULL, 0, 600000000, },
-+	{ HI3559AV100_FIXED_568M, "568m", NULL, 0, 568000000, },
-+	{ HI3559AV100_FIXED_500M, "500m", NULL, 0, 500000000, },
-+	{ HI3559AV100_FIXED_475M, "475m", NULL, 0, 475000000, },
-+	{ HI3559AV100_FIXED_428M, "428m", NULL, 0, 428000000, },
-+	{ HI3559AV100_FIXED_400M, "400m", NULL, 0, 400000000, },
-+	{ HI3559AV100_FIXED_396M, "396m", NULL, 0, 396000000, },
-+	{ HI3559AV100_FIXED_300M, "300m", NULL, 0, 300000000, },
-+	{ HI3559AV100_FIXED_250M, "250m", NULL, 0, 250000000, },
-+	{ HI3559AV100_FIXED_200M, "200m", NULL, 0, 200000000, },
-+	{ HI3559AV100_FIXED_198M, "198m", NULL, 0, 198000000, },
-+	{ HI3559AV100_FIXED_187p5M, "187p5m", NULL, 0, 187500000, },
-+	{ HI3559AV100_FIXED_150M, "150m", NULL, 0, 150000000, },
-+	{ HI3559AV100_FIXED_148p5M, "148p5m", NULL, 0, 1485000000, },
-+	{ HI3559AV100_FIXED_125M, "125m", NULL, 0, 125000000, },
-+	{ HI3559AV100_FIXED_107M, "107m", NULL, 0, 107000000, },
-+	{ HI3559AV100_FIXED_100M, "100m", NULL, 0, 100000000, },
-+	{ HI3559AV100_FIXED_99M, "99m",	NULL, 0, 99000000, },
-+	{ HI3559AV100_FIXED_75M, "75m", NULL, 0, 75000000, },
-+	{ HI3559AV100_FIXED_74p25M, "74p25m", NULL, 0, 74250000, },
-+	{ HI3559AV100_FIXED_72M, "72m",	NULL, 0, 72000000, },
-+	{ HI3559AV100_FIXED_60M, "60m",	NULL, 0, 60000000, },
-+	{ HI3559AV100_FIXED_54M, "54m",	NULL, 0, 54000000, },
-+	{ HI3559AV100_FIXED_50M, "50m",	NULL, 0, 50000000, },
-+	{ HI3559AV100_FIXED_49p5M, "49p5m", NULL, 0, 49500000, },
-+	{ HI3559AV100_FIXED_37p125M, "37p125m", NULL, 0, 37125000, },
-+	{ HI3559AV100_FIXED_36M, "36m",	NULL, 0, 36000000, },
-+	{ HI3559AV100_FIXED_32p4M, "32p4m", NULL, 0, 32400000, },
-+	{ HI3559AV100_FIXED_27M, "27m",	NULL, 0, 27000000, },
-+	{ HI3559AV100_FIXED_25M, "25m",	NULL, 0, 25000000, },
-+	{ HI3559AV100_FIXED_24M, "24m",	NULL, 0, 24000000, },
-+	{ HI3559AV100_FIXED_12M, "12m",	NULL, 0, 12000000, },
-+	{ HI3559AV100_FIXED_3M,	 "3m", NULL, 0, 3000000, },
-+	{ HI3559AV100_FIXED_1p6M, "1p6m", NULL, 0, 1600000, },
-+	{ HI3559AV100_FIXED_400K, "400k", NULL, 0, 400000, },
-+	{ HI3559AV100_FIXED_100K, "100k", NULL, 0, 100000, },
-+};
-+
-+
-+static const char *fmc_mux_p[] __initconst = {
-+	"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m"
-+};
-+
-+static const char *mmc_mux_p[] __initconst = {
-+	"100k", "25m", "49p5m", "99m", "187p5m", "150m", "198m", "400k"
-+};
-+
-+static const char *sysapb_mux_p[] __initconst = {
-+	"24m", "50m",
-+};
-+
-+static const char *sysbus_mux_p[] __initconst = {
-+	"24m", "300m"
-+};
-+
-+static const char *uart_mux_p[] __initconst = { "50m", "24m", "3m" };
-+
-+static const char *a73_clksel_mux_p[] __initconst = {
-+	"24m", "apll", "1000m"
-+};
-+
-+static const u32 fmc_mux_table[]	= { 0, 1, 2, 3, 4, 5, 6, 7 };
-+static const u32 mmc_mux_table[]	= { 0, 1, 2, 3, 4, 5, 6, 7 };
-+static const u32 sysapb_mux_table[]	= { 0, 1 };
-+static const u32 sysbus_mux_table[]	= { 0, 1 };
-+static const u32 uart_mux_table[]	= { 0, 1, 2 };
-+static const u32 a73_clksel_mux_table[] = { 0, 1, 2 };
-+
-+static struct hisi_mux_clock hi3559av100_mux_clks_crg[] __initdata = {
-+	{
-+		HI3559AV100_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
-+		CLK_SET_RATE_PARENT, 0x170, 2, 3, 0, fmc_mux_table,
-+	},
-+	{
-+		HI3559AV100_MMC0_MUX, "mmc0_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
-+		CLK_SET_RATE_PARENT, 0x1a8, 24, 3, 0, mmc_mux_table,
-+	},
-+	{
-+		HI3559AV100_MMC1_MUX, "mmc1_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
-+		CLK_SET_RATE_PARENT, 0x1ec, 24, 3, 0, mmc_mux_table,
-+	},
-+
-+	{
-+		HI3559AV100_MMC2_MUX, "mmc2_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
-+		CLK_SET_RATE_PARENT, 0x214, 24, 3, 0, mmc_mux_table,
-+	},
-+
-+	{
-+		HI3559AV100_MMC3_MUX, "mmc3_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
-+		CLK_SET_RATE_PARENT, 0x23c, 24, 3, 0, mmc_mux_table,
-+	},
-+
-+	{
-+		HI3559AV100_SYSAPB_MUX, "sysapb_mux", sysapb_mux_p, ARRAY_SIZE(sysapb_mux_p),
-+		CLK_SET_RATE_PARENT, 0xe8, 3, 1, 0, sysapb_mux_table
-+	},
-+
-+	{
-+		HI3559AV100_SYSBUS_MUX, "sysbus_mux", sysbus_mux_p, ARRAY_SIZE(sysbus_mux_p),
-+		CLK_SET_RATE_PARENT, 0xe8, 0, 1, 0, sysbus_mux_table
-+	},
-+
-+	{
-+		HI3559AV100_UART_MUX, "uart_mux", uart_mux_p, ARRAY_SIZE(uart_mux_p),
-+		CLK_SET_RATE_PARENT, 0x198, 28, 2, 0, uart_mux_table
-+	},
-+
-+	{
-+		HI3559AV100_A73_MUX, "a73_mux", a73_clksel_mux_p, ARRAY_SIZE(a73_clksel_mux_p),
-+		CLK_SET_RATE_PARENT, 0xe4, 0, 2, 0, a73_clksel_mux_table
-+	},
-+};
-+
-+static struct hisi_gate_clock hi3559av100_gate_clks[] __initdata = {
-+	{
-+		HI3559AV100_FMC_CLK, "clk_fmc", "fmc_mux",
-+		CLK_SET_RATE_PARENT, 0x170, 1, 0,
-+	},
-+	{
-+		HI3559AV100_MMC0_CLK, "clk_mmc0", "mmc0_mux",
-+		CLK_SET_RATE_PARENT, 0x1a8, 28, 0,
-+	},
-+	{
-+		HI3559AV100_MMC1_CLK, "clk_mmc1", "mmc1_mux",
-+		CLK_SET_RATE_PARENT, 0x1ec, 28, 0,
-+	},
-+	{
-+		HI3559AV100_MMC2_CLK, "clk_mmc2", "mmc2_mux",
-+		CLK_SET_RATE_PARENT, 0x214, 28, 0,
-+	},
-+	{
-+		HI3559AV100_MMC3_CLK, "clk_mmc3", "mmc3_mux",
-+		CLK_SET_RATE_PARENT, 0x23c, 28, 0,
-+	},
-+	{
-+		HI3559AV100_UART0_CLK, "clk_uart0", "uart_mux",
-+		CLK_SET_RATE_PARENT, 0x198, 23, 0,
-+	},
-+	{
-+		HI3559AV100_UART1_CLK, "clk_uart1", "uart_mux",
-+		CLK_SET_RATE_PARENT, 0x198, 24, 0,
-+	},
-+	{
-+		HI3559AV100_UART2_CLK, "clk_uart2", "uart_mux",
-+		CLK_SET_RATE_PARENT, 0x198, 25, 0,
-+	},
-+	{
-+		HI3559AV100_UART3_CLK, "clk_uart3", "uart_mux",
-+		CLK_SET_RATE_PARENT, 0x198, 26, 0,
-+	},
-+	{
-+		HI3559AV100_UART4_CLK, "clk_uart4", "uart_mux",
-+		CLK_SET_RATE_PARENT, 0x198, 27, 0,
-+	},
-+	{
-+		HI3559AV100_ETH_CLK, "clk_eth", NULL,
-+		CLK_SET_RATE_PARENT, 0x0174, 1, 0,
-+	},
-+	{
-+		HI3559AV100_ETH_MACIF_CLK, "clk_eth_macif", NULL,
-+		CLK_SET_RATE_PARENT, 0x0174, 5, 0,
-+	},
-+	{
-+		HI3559AV100_ETH1_CLK, "clk_eth1", NULL,
-+		CLK_SET_RATE_PARENT, 0x0174, 3, 0,
-+	},
-+	{
-+		HI3559AV100_ETH1_MACIF_CLK, "clk_eth1_macif", NULL,
-+		CLK_SET_RATE_PARENT, 0x0174, 7, 0,
-+	},
-+	{
-+		HI3559AV100_I2C0_CLK, "clk_i2c0", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 16, 0,
-+	},
-+	{
-+		HI3559AV100_I2C1_CLK, "clk_i2c1", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 17, 0,
-+	},
-+	{
-+		HI3559AV100_I2C2_CLK, "clk_i2c2", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 18, 0,
-+	},
-+	{
-+		HI3559AV100_I2C3_CLK, "clk_i2c3", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 19, 0,
-+	},
-+	{
-+		HI3559AV100_I2C4_CLK, "clk_i2c4", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 20, 0,
-+	},
-+	{
-+		HI3559AV100_I2C5_CLK, "clk_i2c5", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 21, 0,
-+	},
-+	{
-+		HI3559AV100_I2C6_CLK, "clk_i2c6", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 22, 0,
-+	},
-+	{
-+		HI3559AV100_I2C7_CLK, "clk_i2c7", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 23, 0,
-+	},
-+	{
-+		HI3559AV100_I2C8_CLK, "clk_i2c8", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 24, 0,
-+	},
-+	{
-+		HI3559AV100_I2C9_CLK, "clk_i2c9", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 25, 0,
-+	},
-+	{
-+		HI3559AV100_I2C10_CLK, "clk_i2c10", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 26, 0,
-+	},
-+	{
-+		HI3559AV100_I2C11_CLK, "clk_i2c11", "50m",
-+		CLK_SET_RATE_PARENT, 0x01a0, 27, 0,
-+	},
-+	{
-+		HI3559AV100_SPI0_CLK, "clk_spi0", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 16, 0,
-+	},
-+	{
-+		HI3559AV100_SPI1_CLK, "clk_spi1", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 17, 0,
-+	},
-+	{
-+		HI3559AV100_SPI2_CLK, "clk_spi2", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 18, 0,
-+	},
-+	{
-+		HI3559AV100_SPI3_CLK, "clk_spi3", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 19, 0,
-+	},
-+	{
-+		HI3559AV100_SPI4_CLK, "clk_spi4", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 20, 0,
-+	},
-+	{
-+		HI3559AV100_SPI5_CLK, "clk_spi5", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 21, 0,
-+	},
-+	{
-+		HI3559AV100_SPI6_CLK, "clk_spi6", "100m",
-+		CLK_SET_RATE_PARENT, 0x0198, 22, 0,
-+	},
-+	{
-+		HI3559AV100_EDMAC_AXICLK, "axi_clk_edmac", NULL,
-+		CLK_SET_RATE_PARENT, 0x16c, 6, 0,
-+	},
-+	{
-+		HI3559AV100_EDMAC_CLK, "clk_edmac", NULL,
-+		CLK_SET_RATE_PARENT, 0x16c, 5, 0,
-+	},
-+	{
-+		HI3559AV100_EDMAC1_AXICLK, "axi_clk_edmac1", NULL,
-+		CLK_SET_RATE_PARENT, 0x16c, 9, 0,
-+	},
-+	{
-+		HI3559AV100_EDMAC1_CLK, "clk_edmac1", NULL,
-+		CLK_SET_RATE_PARENT, 0x16c, 8, 0,
-+	},
-+	{
-+		HI3559AV100_VDMAC_CLK, "clk_vdmac", NULL,
-+		CLK_SET_RATE_PARENT, 0x14c, 5, 0,
-+	},
-+};
-+
-+static struct hi3559av100_pll_clock hi3559av100_pll_clks[] __initdata = {
-+	{
-+		HI3559AV100_APLL_CLK, "apll", NULL, 0x0, 0, 24, 24, 3, 28, 3,
-+		0x4, 0, 12, 12, 6
-+	},
-+	{
-+		HI3559AV100_GPLL_CLK, "gpll", NULL, 0x20, 0, 24, 24, 3, 28, 3,
-+		0x24, 0, 12, 12, 6
-+	},
-+};
-+
-+#define to_pll_clk(_hw) container_of(_hw, struct hi3559av100_clk_pll, hw)
-+static void hi3559av100_calc_pll(u32 *frac_val, u32 *postdiv1_val,
-+				 u32 *postdiv2_val,
-+				 u32 *fbdiv_val, u32 *refdiv_val, u64 rate)
-+{
-+	u64 rem;
-+
-+	*postdiv1_val = 2;
-+	*postdiv2_val = 1;
-+
-+	rate = rate * ((*postdiv1_val) * (*postdiv2_val));
-+
-+	*frac_val = 0;
-+	rem = do_div(rate, 1000000);
-+	rem = do_div(rate, PLL_MASK_WIDTH);
-+	*fbdiv_val = rate;
-+	*refdiv_val = 1;
-+	rem = rem * (1 << PLL_MASK_WIDTH);
-+	do_div(rem, PLL_MASK_WIDTH);
-+	*frac_val = rem;
-+}
-+
-+static int clk_pll_set_rate(struct clk_hw *hw,
-+			    unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
-+	u32 frac_val, postdiv1_val, postdiv2_val, fbdiv_val, refdiv_val;
-+	u32 val;
-+
-+	postdiv1_val = postdiv2_val = 0;
-+
-+	hi3559av100_calc_pll(&frac_val, &postdiv1_val, &postdiv2_val,
-+			     &fbdiv_val, &refdiv_val, (u64)rate);
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val &= ~(((1 << clk->frac_width) - 1) << clk->frac_shift);
-+	val &= ~(((1 << clk->postdiv1_width) - 1) << clk->postdiv1_shift);
-+	val &= ~(((1 << clk->postdiv2_width) - 1) << clk->postdiv2_shift);
-+
-+	val |= frac_val << clk->frac_shift;
-+	val |= postdiv1_val << clk->postdiv1_shift;
-+	val |= postdiv2_val << clk->postdiv2_shift;
-+	writel_relaxed(val, clk->ctrl_reg1);
-+
-+	val = readl_relaxed(clk->ctrl_reg2);
-+	val &= ~(((1 << clk->fbdiv_width) - 1) << clk->fbdiv_shift);
-+	val &= ~(((1 << clk->refdiv_width) - 1) << clk->refdiv_shift);
-+
-+	val |= fbdiv_val << clk->fbdiv_shift;
-+	val |= refdiv_val << clk->refdiv_shift;
-+	writel_relaxed(val, clk->ctrl_reg2);
-+
-+	return 0;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
-+	u64 frac_val, fbdiv_val, refdiv_val;
-+	u32 postdiv1_val, postdiv2_val;
-+	u32 val;
-+	u64 tmp, rate;
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val = val >> clk->frac_shift;
-+	val &= ((1 << clk->frac_width) - 1);
-+	frac_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val = val >> clk->postdiv1_shift;
-+	val &= ((1 << clk->postdiv1_width) - 1);
-+	postdiv1_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg1);
-+	val = val >> clk->postdiv2_shift;
-+	val &= ((1 << clk->postdiv2_width) - 1);
-+	postdiv2_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg2);
-+	val = val >> clk->fbdiv_shift;
-+	val &= ((1 << clk->fbdiv_width) - 1);
-+	fbdiv_val = val;
-+
-+	val = readl_relaxed(clk->ctrl_reg2);
-+	val = val >> clk->refdiv_shift;
-+	val &= ((1 << clk->refdiv_width) - 1);
-+	refdiv_val = val;
-+
-+	/* rate = 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
-+	rate = 0;
-+	tmp = 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
-+	rate += tmp;
-+	do_div(rate, refdiv_val);
-+	do_div(rate, postdiv1_val * postdiv2_val);
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops hisi_clk_pll_ops = {
-+	.set_rate = clk_pll_set_rate,
-+	.recalc_rate = clk_pll_recalc_rate,
-+};
-+
-+static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
-+			   int nums, struct hisi_clock_data *data, struct device *dev)
-+{
-+	void __iomem *base = data->base;
-+	struct hi3559av100_clk_pll *p_clk = NULL;
-+	struct clk *clk = NULL;
-+	struct clk_init_data init;
-+	int i;
-+
-+	p_clk = devm_kzalloc(dev, sizeof(*p_clk) * nums, GFP_KERNEL);
-+
-+	if (!p_clk)
-+		return;
-+
-+	for (i = 0; i < nums; i++) {
-+		init.name = clks[i].name;
-+		init.flags = 0;
-+		init.parent_names =
-+			(clks[i].parent_name ? &clks[i].parent_name : NULL);
-+		init.num_parents = (clks[i].parent_name ? 1 : 0);
-+		init.ops = &hisi_clk_pll_ops;
-+
-+		p_clk->ctrl_reg1 = base + clks[i].ctrl_reg1;
-+		p_clk->frac_shift = clks[i].frac_shift;
-+		p_clk->frac_width = clks[i].frac_width;
-+		p_clk->postdiv1_shift = clks[i].postdiv1_shift;
-+		p_clk->postdiv1_width = clks[i].postdiv1_width;
-+		p_clk->postdiv2_shift = clks[i].postdiv2_shift;
-+		p_clk->postdiv2_width = clks[i].postdiv2_width;
-+
-+		p_clk->ctrl_reg2 = base + clks[i].ctrl_reg2;
-+		p_clk->fbdiv_shift = clks[i].fbdiv_shift;
-+		p_clk->fbdiv_width = clks[i].fbdiv_width;
-+		p_clk->refdiv_shift = clks[i].refdiv_shift;
-+		p_clk->refdiv_width = clks[i].refdiv_width;
-+		p_clk->hw.init = &init;
-+
-+		clk = clk_register(NULL, &p_clk->hw);
-+		if (IS_ERR(clk)) {
-+			kfree(p_clk);
-+			dev_err(dev, "%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+
-+		data->clk_data.clks[clks[i].id] = clk;
-+		p_clk++;
-+	}
-+}
-+
-+static __init struct hisi_clock_data *hi3559av100_clk_register(
-+	struct platform_device *pdev)
-+{
-+	struct hisi_clock_data *clk_data;
-+	int ret;
-+
-+	clk_data = hisi_clk_alloc(pdev, HI3559AV100_CRG_NR_CLKS);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = hisi_clk_register_fixed_rate(hi3559av100_fixed_rate_clks_crg,
-+					   ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	hisi_clk_register_pll(hi3559av100_pll_clks,
-+			      ARRAY_SIZE(hi3559av100_pll_clks), clk_data, &pdev->dev);
-+
-+	ret = hisi_clk_register_mux(hi3559av100_mux_clks_crg,
-+				    ARRAY_SIZE(hi3559av100_mux_clks_crg), clk_data);
-+	if (ret)
-+		goto unregister_fixed_rate;
-+
-+	ret = hisi_clk_register_gate(hi3559av100_gate_clks,
-+				     ARRAY_SIZE(hi3559av100_gate_clks), clk_data);
-+	if (ret)
-+		goto unregister_mux;
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node,
-+				  of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		goto unregister_gate;
-+
-+	return clk_data;
-+
-+unregister_gate:
-+	hisi_clk_unregister_gate(hi3559av100_gate_clks,
-+				 ARRAY_SIZE(hi3559av100_gate_clks), clk_data);
-+unregister_mux:
-+	hisi_clk_unregister_mux(hi3559av100_mux_clks_crg,
-+				ARRAY_SIZE(hi3559av100_mux_clks_crg), clk_data);
-+unregister_fixed_rate:
-+	hisi_clk_unregister_fixed_rate(hi3559av100_fixed_rate_clks_crg,
-+				       ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), clk_data);
-+	return ERR_PTR(ret);
-+}
-+
-+static __init void hi3559av100_clk_unregister(struct platform_device *pdev)
-+{
-+	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	hisi_clk_unregister_gate(hi3559av100_gate_clks,
-+				 ARRAY_SIZE(hi3559av100_gate_clks), crg->clk_data);
-+	hisi_clk_unregister_mux(hi3559av100_mux_clks_crg,
-+				ARRAY_SIZE(hi3559av100_mux_clks_crg), crg->clk_data);
-+	hisi_clk_unregister_fixed_rate(hi3559av100_fixed_rate_clks_crg,
-+				       ARRAY_SIZE(hi3559av100_fixed_rate_clks_crg), crg->clk_data);
-+}
-+
-+static const struct hisi_crg_funcs hi3559av100_crg_funcs = {
-+	.register_clks = hi3559av100_clk_register,
-+	.unregister_clks = hi3559av100_clk_unregister,
-+};
-+
-+static struct hisi_fixed_rate_clock hi3559av100_shub_fixed_rate_clks[]
-+	__initdata = {
-+	{ HI3559AV100_SHUB_SOURCE_SOC_24M, "clk_source_24M", NULL, 0, 24000000UL, },
-+	{ HI3559AV100_SHUB_SOURCE_SOC_200M, "clk_source_200M", NULL, 0, 200000000UL, },
-+	{ HI3559AV100_SHUB_SOURCE_SOC_300M, "clk_source_300M", NULL, 0, 300000000UL, },
-+	{ HI3559AV100_SHUB_SOURCE_PLL, "clk_source_PLL", NULL, 0, 192000000UL, },
-+	{ HI3559AV100_SHUB_I2C0_CLK, "clk_shub_i2c0", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C1_CLK, "clk_shub_i2c1", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C2_CLK, "clk_shub_i2c2", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C3_CLK, "clk_shub_i2c3", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C4_CLK, "clk_shub_i2c4", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C5_CLK, "clk_shub_i2c5", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C6_CLK, "clk_shub_i2c6", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_I2C7_CLK, "clk_shub_i2c7", NULL, 0, 48000000UL, },
-+	{ HI3559AV100_SHUB_UART_CLK_32K, "clk_uart_32K", NULL, 0, 32000UL, },
-+};
-+
-+/* shub mux clk */
-+static u32 shub_source_clk_mux_table[] = {0, 1, 2, 3};
-+static const char *shub_source_clk_mux_p[] __initconst = {
-+	"clk_source_24M", "clk_source_200M", "clk_source_300M", "clk_source_PLL"
-+};
-+
-+static u32 shub_uart_source_clk_mux_table[] = {0, 1, 2, 3};
-+static const char *shub_uart_source_clk_mux_p[] __initconst = {
-+	"clk_uart_32K", "clk_uart_div_clk", "clk_uart_div_clk", "clk_source_24M"
-+};
-+
-+static struct hisi_mux_clock hi3559av100_shub_mux_clks[] __initdata = {
-+	{
-+		HI3559AV100_SHUB_SOURCE_CLK, "shub_clk", shub_source_clk_mux_p,
-+		ARRAY_SIZE(shub_source_clk_mux_p),
-+		0, 0x0, 0, 2, 0, shub_source_clk_mux_table,
-+	},
-+
-+	{
-+		HI3559AV100_SHUB_UART_SOURCE_CLK, "shub_uart_source_clk",
-+		shub_uart_source_clk_mux_p, ARRAY_SIZE(shub_uart_source_clk_mux_p),
-+		0, 0x1c, 28, 2, 0, shub_uart_source_clk_mux_table,
-+	},
-+};
-+
-+
-+/* shub div clk */
-+struct clk_div_table shub_spi_clk_table[] = {{0, 8}, {1, 4}, {2, 2}};
-+struct clk_div_table shub_spi4_clk_table[] = {{0, 8}, {1, 4}, {2, 2}, {3, 1}};
-+struct clk_div_table shub_uart_div_clk_table[] = {{1, 8}, {2, 4}};
-+
-+struct hisi_divider_clock hi3559av100_shub_div_clks[] __initdata = {
-+	{ HI3559AV100_SHUB_SPI_SOURCE_CLK, "clk_spi_clk", "shub_clk", 0, 0x20, 24, 2,
-+	  CLK_DIVIDER_ALLOW_ZERO, shub_spi_clk_table,
-+	},
-+	{ HI3559AV100_SHUB_UART_DIV_CLK, "clk_uart_div_clk", "shub_clk", 0, 0x1c, 28, 2,
-+	  CLK_DIVIDER_ALLOW_ZERO, shub_uart_div_clk_table,
-+	},
-+};
-+
-+/* shub gate clk */
-+static struct hisi_gate_clock hi3559av100_shub_gate_clks[] __initdata = {
-+	{
-+		HI3559AV100_SHUB_SPI0_CLK, "clk_shub_spi0", "clk_spi_clk",
-+		0, 0x20, 1, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_SPI1_CLK, "clk_shub_spi1", "clk_spi_clk",
-+		0, 0x20, 5, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_SPI2_CLK, "clk_shub_spi2", "clk_spi_clk",
-+		0, 0x20, 9, 0,
-+	},
-+
-+	{
-+		HI3559AV100_SHUB_UART0_CLK, "clk_shub_uart0", "shub_uart_source_clk",
-+		0, 0x1c, 1, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART1_CLK, "clk_shub_uart1", "shub_uart_source_clk",
-+		0, 0x1c, 5, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART2_CLK, "clk_shub_uart2", "shub_uart_source_clk",
-+		0, 0x1c, 9, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART3_CLK, "clk_shub_uart3", "shub_uart_source_clk",
-+		0, 0x1c, 13, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART4_CLK, "clk_shub_uart4", "shub_uart_source_clk",
-+		0, 0x1c, 17, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART5_CLK, "clk_shub_uart5", "shub_uart_source_clk",
-+		0, 0x1c, 21, 0,
-+	},
-+	{
-+		HI3559AV100_SHUB_UART6_CLK, "clk_shub_uart6", "shub_uart_source_clk",
-+		0, 0x1c, 25, 0,
-+	},
-+
-+	{
-+		HI3559AV100_SHUB_EDMAC_CLK, "clk_shub_dmac", "shub_clk",
-+		0, 0x24, 4, 0,
-+	},
-+};
-+
-+static int hi3559av100_shub_default_clk_set(void)
-+{
-+	void *crg_base;
-+	unsigned int val;
-+
-+	crg_base = ioremap(CRG_BASE_ADDR, SZ_4K);
-+
-+	/* SSP: 192M/2 */
-+	val = readl_relaxed(crg_base + 0x20);
-+	val |= (0x2 << 24);
-+	writel_relaxed(val, crg_base + 0x20);
-+
-+	/* UART: 192M/8 */
-+	val = readl_relaxed(crg_base + 0x1C);
-+	val |= (0x1 << 28);
-+	writel_relaxed(val, crg_base + 0x1C);
-+
-+	iounmap(crg_base);
-+	crg_base = NULL;
-+
-+	return 0;
-+}
-+
-+static __init struct hisi_clock_data *hi3559av100_shub_clk_register(
-+	struct platform_device *pdev)
-+{
-+	struct hisi_clock_data *clk_data = NULL;
-+	int ret;
-+
-+	hi3559av100_shub_default_clk_set();
-+
-+	clk_data = hisi_clk_alloc(pdev, HI3559AV100_SHUB_NR_CLKS);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = hisi_clk_register_fixed_rate(hi3559av100_shub_fixed_rate_clks,
-+					   ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ret = hisi_clk_register_mux(hi3559av100_shub_mux_clks,
-+				    ARRAY_SIZE(hi3559av100_shub_mux_clks), clk_data);
-+	if (ret)
-+		goto unregister_fixed_rate;
-+
-+	ret = hisi_clk_register_divider(hi3559av100_shub_div_clks,
-+					ARRAY_SIZE(hi3559av100_shub_div_clks), clk_data);
-+	if (ret)
-+		goto unregister_mux;
-+
-+	ret = hisi_clk_register_gate(hi3559av100_shub_gate_clks,
-+				     ARRAY_SIZE(hi3559av100_shub_gate_clks), clk_data);
-+	if (ret)
-+		goto unregister_factor;
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node,
-+				  of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		goto unregister_gate;
-+
-+	return clk_data;
-+
-+unregister_gate:
-+	hisi_clk_unregister_gate(hi3559av100_shub_gate_clks,
-+				 ARRAY_SIZE(hi3559av100_shub_gate_clks), clk_data);
-+unregister_factor:
-+	hisi_clk_unregister_divider(hi3559av100_shub_div_clks,
-+				    ARRAY_SIZE(hi3559av100_shub_div_clks), clk_data);
-+unregister_mux:
-+	hisi_clk_unregister_mux(hi3559av100_shub_mux_clks,
-+				ARRAY_SIZE(hi3559av100_shub_mux_clks), clk_data);
-+unregister_fixed_rate:
-+	hisi_clk_unregister_fixed_rate(hi3559av100_shub_fixed_rate_clks,
-+				       ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), clk_data);
-+	return ERR_PTR(ret);
-+}
-+
-+static __init void hi3559av100_shub_clk_unregister(struct platform_device *pdev)
-+{
-+	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	hisi_clk_unregister_gate(hi3559av100_shub_gate_clks,
-+				 ARRAY_SIZE(hi3559av100_shub_gate_clks), crg->clk_data);
-+	hisi_clk_unregister_divider(hi3559av100_shub_div_clks,
-+				    ARRAY_SIZE(hi3559av100_shub_div_clks), crg->clk_data);
-+	hisi_clk_unregister_mux(hi3559av100_shub_mux_clks,
-+				ARRAY_SIZE(hi3559av100_shub_mux_clks), crg->clk_data);
-+	hisi_clk_unregister_fixed_rate(hi3559av100_shub_fixed_rate_clks,
-+				       ARRAY_SIZE(hi3559av100_shub_fixed_rate_clks), crg->clk_data);
-+}
-+
-+static const struct hisi_crg_funcs hi3559av100_shub_crg_funcs = {
-+	.register_clks = hi3559av100_shub_clk_register,
-+	.unregister_clks = hi3559av100_shub_clk_unregister,
-+};
-+
-+static const struct of_device_id hi3559av100_crg_match_table[] = {
-+	{
-+		.compatible = "hisilicon,hi3559av100-clock",
-+		.data = &hi3559av100_crg_funcs
-+	},
-+	{
-+		.compatible = "hisilicon,hi3559av100-shub-clock",
-+		.data = &hi3559av100_shub_crg_funcs
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, hi3559av100_crg_match_table);
-+
-+static int hi3559av100_crg_probe(struct platform_device *pdev)
-+{
-+	struct hisi_crg_dev *crg;
-+
-+	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
-+	if (!crg)
-+		return -ENOMEM;
-+
-+	crg->funcs = of_device_get_match_data(&pdev->dev);
-+	if (!crg->funcs)
-+		return -ENOENT;
-+
-+	crg->rstc = hisi_reset_init(pdev);
-+	if (!crg->rstc)
-+		return -ENOMEM;
-+
-+	crg->clk_data = crg->funcs->register_clks(pdev);
-+	if (IS_ERR(crg->clk_data)) {
-+		hisi_reset_exit(crg->rstc);
-+		return PTR_ERR(crg->clk_data);
-+	}
-+
-+	platform_set_drvdata(pdev, crg);
-+	return 0;
-+}
-+
-+static int hi3559av100_crg_remove(struct platform_device *pdev)
-+{
-+	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
-+
-+	hisi_reset_exit(crg->rstc);
-+	crg->funcs->unregister_clks(pdev);
-+	return 0;
-+}
-+
-+static struct platform_driver hi3559av100_crg_driver = {
-+	.probe		= hi3559av100_crg_probe,
-+	.remove		= hi3559av100_crg_remove,
-+	.driver		= {
-+		.name	= "hi3559av100-clock",
-+		.of_match_table = hi3559av100_crg_match_table,
-+	},
-+};
-+
-+static int __init hi3559av100_crg_init(void)
-+{
-+	return platform_driver_register(&hi3559av100_crg_driver);
-+}
-+core_initcall(hi3559av100_crg_init);
-+
-+static void __exit hi3559av100_crg_exit(void)
-+{
-+	platform_driver_unregister(&hi3559av100_crg_driver);
-+}
-+module_exit(hi3559av100_crg_exit);
-+
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("HiSilicon Hi3559AV100 CRG Driver");
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 54d9fdc..9361fba 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -162,7 +162,7 @@ int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 					clks[i].num_parents, clks[i].flags,
- 					base + clks[i].offset, clks[i].shift,
- 					mask, clks[i].mux_flags,
--					clks[i].table, &hisi_clk_lock);
-+					(u32 *)clks[i].table, &hisi_clk_lock);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 61cbd90..7a9b42e 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -50,7 +50,7 @@ struct hisi_mux_clock {
- 	u8			shift;
- 	u8			width;
- 	u8			mux_flags;
--	u32			*table;
-+	const u32		*table;
- 	const char		*alias;
- };
- 
--- 
-2.7.4
 
+> You are totally correct. I will send a revised version.
+>
+> Thanks!
+>
+> Cheers,
+> -Paul
+>
+>>> +        } while (m < pll_info->m_offset || m & 1);
+>>> +
+>>> +        if (m <= (1 << pll_info->m_bits) - 2)
+>>> +            break;
+>>> +
+>>> +        n >>= 1;
+>>> +    }
+>>> +
+>>> +    *pm = m;
+>>> +    *pn = n;
+>>> +    *pod = od;
+>>
+>>
+>> If we change the above formula, we also need to change this to *pod = 
+>> 2 ^ od;
+>>
+
+Same here.
+
+
+Thanks and best regards!
+
+
+>>
+>> Thanks and best regards!
+>>
+>>
+>>> +}
+>>> +
+>>> +static const struct ingenic_cgu_clk_info jz4760_cgu_clocks[] = {
+>>> +
+>>> +    /* External clocks */
+>>> +
+>>> +    [JZ4760_CLK_EXT] = { "ext", CGU_CLK_EXT },
+>>> +    [JZ4760_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
+>>> +
+>>> +    /* PLLs */
+>>> +
+>>> +    [JZ4760_CLK_PLL0] = {
+>>> +        "pll0", CGU_CLK_PLL,
+>>> +        .parents = { JZ4760_CLK_EXT },
+>>> +        .pll = {
+>>> +            .reg = CGU_REG_CPPCR0,
+>>> +            .rate_multiplier = 1,
+>>> +            .m_shift = 23,
+>>> +            .m_bits = 8,
+>>> +            .m_offset = 0,
+>>> +            .n_shift = 18,
+>>> +            .n_bits = 4,
+>>> +            .n_offset = 0,
+>>> +            .od_shift = 16,
+>>> +            .od_bits = 2,
+>>> +            .od_max = 8,
+>>> +            .od_encoding = pll_od_encoding,
+>>> +            .bypass_reg = CGU_REG_CPPCR0,
+>>> +            .bypass_bit = 9,
+>>> +            .enable_bit = 8,
+>>> +            .stable_bit = 10,
+>>> +            .calc_m_n_od = jz4760_cgu_calc_m_n_od,
+>>> +        },
+>>> +    },
+>>> +
+>>> +    [JZ4760_CLK_PLL1] = {
+>>> +        /* TODO: PLL1 can depend on PLL0 */
+>>> +        "pll1", CGU_CLK_PLL,
+>>> +        .parents = { JZ4760_CLK_EXT },
+>>> +        .pll = {
+>>> +            .reg = CGU_REG_CPPCR1,
+>>> +            .rate_multiplier = 1,
+>>> +            .m_shift = 23,
+>>> +            .m_bits = 8,
+>>> +            .m_offset = 0,
+>>> +            .n_shift = 18,
+>>> +            .n_bits = 4,
+>>> +            .n_offset = 0,
+>>> +            .od_shift = 16,
+>>> +            .od_bits = 2,
+>>> +            .od_max = 8,
+>>> +            .od_encoding = pll_od_encoding,
+>>> +            .bypass_bit = -1,
+>>> +            .enable_bit = 7,
+>>> +            .stable_bit = 6,
+>>> +            .calc_m_n_od = jz4760_cgu_calc_m_n_od,
+>>> +        },
+>>> +    },
+>>> +
+>>> +    /* Main clocks */
+>>> +
+>>> +    [JZ4760_CLK_CCLK] = {
+>>> +        "cclk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +    [JZ4760_CLK_HCLK] = {
+>>> +        "hclk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +    [JZ4760_CLK_SCLK] = {
+>>> +        "sclk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 24, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +    [JZ4760_CLK_H2CLK] = {
+>>> +        "h2clk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +    [JZ4760_CLK_MCLK] = {
+>>> +        "mclk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +    [JZ4760_CLK_PCLK] = {
+>>> +        "pclk", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0, },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1, 0,
+>>> +            jz4760_cgu_cpccr_div_table,
+>>> +        },
+>>> +    },
+>>> +
+>>> +    /* Divided clocks */
+>>> +
+>>> +    [JZ4760_CLK_PLL0_HALF] = {
+>>> +        "pll0_half", CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_PLL0 },
+>>> +        .div = {
+>>> +            CGU_REG_CPCCR, 21, 1, 1, 22, -1, -1, 0,
+>>> +            jz4760_cgu_pll_half_div_table,
+>>> +        },
+>>> +    },
+>>> +
+>>> +    /* Those divided clocks can connect to PLL0 or PLL1 */
+>>> +
+>>> +    [JZ4760_CLK_UHC] = {
+>>> +        "uhc", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
+>>> +        .mux = { CGU_REG_UHCCDR, 31, 1 },
+>>> +        .div = { CGU_REG_UHCCDR, 0, 1, 4, -1, -1, -1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 24 },
+>>> +    },
+>>> +    [JZ4760_CLK_GPU] = {
+>>> +        "gpu", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
+>>> +        .mux = { CGU_REG_GPUCDR, 31, 1 },
+>>> +        .div = { CGU_REG_GPUCDR, 0, 1, 3, -1, -1, -1 },
+>>> +        .gate = { CGU_REG_CLKGR1, 9 },
+>>> +    },
+>>> +    [JZ4760_CLK_LPCLK_DIV] = {
+>>> +        "lpclk_div", CGU_CLK_DIV | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
+>>> +        .mux = { CGU_REG_LPCDR, 29, 1 },
+>>> +        .div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
+>>> +    },
+>>> +    [JZ4760_CLK_TVE] = {
+>>> +        "tve", CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_LPCLK_DIV, JZ4760_CLK_EXT, },
+>>> +        .mux = { CGU_REG_LPCDR, 31, 1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 27 },
+>>> +    },
+>>> +    [JZ4760_CLK_LPCLK] = {
+>>> +        "lpclk", CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_LPCLK_DIV, JZ4760_CLK_TVE, },
+>>> +        .mux = { CGU_REG_LPCDR, 30, 1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 28 },
+>>> +    },
+>>> +    [JZ4760_CLK_GPS] = {
+>>> +        "gps", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
+>>> +        .mux = { CGU_REG_GPSCDR, 31, 1 },
+>>> +        .div = { CGU_REG_GPSCDR, 0, 1, 4, -1, -1, -1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 22 },
+>>> +    },
+>>> +
+>>> +    /* Those divided clocks can connect to EXT, PLL0 or PLL1 */
+>>> +
+>>> +    [JZ4760_CLK_PCM] = {
+>>> +        "pcm", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_EXT, -1,
+>>> +            JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
+>>> +        .mux = { CGU_REG_PCMCDR, 30, 2 },
+>>> +        .div = { CGU_REG_PCMCDR, 0, 1, 9, -1, -1, -1, BIT(0) },
+>>> +        .gate = { CGU_REG_CLKGR1, 8 },
+>>> +    },
+>>> +    [JZ4760_CLK_I2S] = {
+>>> +        "i2s", CGU_CLK_DIV | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_EXT, -1,
+>>> +            JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
+>>> +        .mux = { CGU_REG_I2SCDR, 30, 2 },
+>>> +        .div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1, BIT(0) },
+>>> +    },
+>>> +    [JZ4760_CLK_OTG] = {
+>>> +        "usb", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_EXT, -1,
+>>> +            JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
+>>> +        .mux = { CGU_REG_USBCDR, 30, 2 },
+>>> +        .div = { CGU_REG_USBCDR, 0, 1, 8, -1, -1, -1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 2 },
+>>> +    },
+>>> +
+>>> +    /* Those divided clocks can connect to EXT or PLL0 */
+>>> +    [JZ4760_CLK_MMC_MUX] = {
+>>> +        "mmc_mux", CGU_CLK_MUX | CGU_CLK_DIV,
+>>> +        .parents = { JZ4760_CLK_EXT, JZ4760_CLK_PLL0_HALF, },
+>>> +        .mux = { CGU_REG_MSCCDR, 31, 1 },
+>>> +        .div = { CGU_REG_MSCCDR, 0, 1, 6, -1, -1, -1, BIT(0) },
+>>> +    },
+>>> +    [JZ4760_CLK_SSI_MUX] = {
+>>> +        "ssi_mux", CGU_CLK_DIV | CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_EXT, JZ4760_CLK_PLL0_HALF, },
+>>> +        .mux = { CGU_REG_SSICDR, 31, 1 },
+>>> +        .div = { CGU_REG_SSICDR, 0, 1, 6, -1, -1, -1, BIT(0) },
+>>> +    },
+>>> +
+>>> +    /* These divided clock can connect to PLL0 only */
+>>> +    [JZ4760_CLK_CIM] = {
+>>> +        "cim", CGU_CLK_DIV | CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_PLL0_HALF },
+>>> +        .div = { CGU_REG_CIMCDR, 0, 1, 8, -1, -1, -1 },
+>>> +        .gate = { CGU_REG_CLKGR0, 26 },
+>>> +    },
+>>> +
+>>> +    /* Gate-only clocks */
+>>> +
+>>> +    [JZ4760_CLK_SSI0] = {
+>>> +        "ssi0", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_SSI_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 4 },
+>>> +    },
+>>> +    [JZ4760_CLK_SSI1] = {
+>>> +        "ssi1", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_SSI_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 19 },
+>>> +    },
+>>> +    [JZ4760_CLK_SSI2] = {
+>>> +        "ssi2", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_SSI_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 20 },
+>>> +    },
+>>> +    [JZ4760_CLK_DMA] = {
+>>> +        "dma", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_H2CLK, },
+>>> +        .gate = { CGU_REG_CLKGR0, 21 },
+>>> +    },
+>>> +    [JZ4760_CLK_I2C0] = {
+>>> +        "i2c0", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 5 },
+>>> +    },
+>>> +    [JZ4760_CLK_I2C1] = {
+>>> +        "i2c1", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 6 },
+>>> +    },
+>>> +    [JZ4760_CLK_UART0] = {
+>>> +        "uart0", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 15 },
+>>> +    },
+>>> +    [JZ4760_CLK_UART1] = {
+>>> +        "uart1", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 16 },
+>>> +    },
+>>> +    [JZ4760_CLK_UART2] = {
+>>> +        "uart2", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 17 },
+>>> +    },
+>>> +    [JZ4760_CLK_UART3] = {
+>>> +        "uart3", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 18 },
+>>> +    },
+>>> +    [JZ4760_CLK_IPU] = {
+>>> +        "ipu", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_HCLK, },
+>>> +        .gate = { CGU_REG_CLKGR0, 29 },
+>>> +    },
+>>> +    [JZ4760_CLK_ADC] = {
+>>> +        "adc", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 14 },
+>>> +    },
+>>> +    [JZ4760_CLK_AIC] = {
+>>> +        "aic", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_EXT, },
+>>> +        .gate = { CGU_REG_CLKGR0, 8 },
+>>> +    },
+>>> +    [JZ4760_CLK_VPU] = {
+>>> +        "vpu", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_HCLK, },
+>>> +        .gate = { CGU_REG_LCR, 30, false, 150 },
+>>> +    },
+>>> +    [JZ4760_CLK_MMC0] = {
+>>> +        "mmc0", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_MMC_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 3 },
+>>> +    },
+>>> +    [JZ4760_CLK_MMC1] = {
+>>> +        "mmc1", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_MMC_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 11 },
+>>> +    },
+>>> +    [JZ4760_CLK_MMC2] = {
+>>> +        "mmc2", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_MMC_MUX, },
+>>> +        .gate = { CGU_REG_CLKGR0, 12 },
+>>> +    },
+>>> +    [JZ4760_CLK_UHC_PHY] = {
+>>> +        "uhc_phy", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_UHC, },
+>>> +        .gate = { CGU_REG_OPCR, 5 },
+>>> +    },
+>>> +    [JZ4760_CLK_OTG_PHY] = {
+>>> +        "usb_phy", CGU_CLK_GATE,
+>>> +        .parents = { JZ4760_CLK_OTG },
+>>> +        .gate = { CGU_REG_OPCR, 7, true, 50 },
+>>> +    },
+>>> +
+>>> +    /* Custom clocks */
+>>> +    [JZ4760_CLK_EXT512] = {
+>>> +        "ext/512", CGU_CLK_FIXDIV,
+>>> +        .parents = { JZ4760_CLK_EXT },
+>>> +        .fixdiv = { 512 },
+>>> +    },
+>>> +    [JZ4760_CLK_RTC] = {
+>>> +        "rtc", CGU_CLK_MUX,
+>>> +        .parents = { JZ4760_CLK_EXT512, JZ4760_CLK_OSC32K, },
+>>> +        .mux = { CGU_REG_OPCR, 2, 1},
+>>> +    },
+>>> +};
+>>> +
+>>> +static void __init jz4760_cgu_init(struct device_node *np)
+>>> +{
+>>> +    struct ingenic_cgu *cgu;
+>>> +    int retval;
+>>> +
+>>> +    cgu = ingenic_cgu_new(jz4760_cgu_clocks,
+>>> +                  ARRAY_SIZE(jz4760_cgu_clocks), np);
+>>> +    if (!cgu) {
+>>> +        pr_err("%s: failed to initialise CGU\n", __func__);
+>>> +        return;
+>>> +    }
+>>> +
+>>> +    retval = ingenic_cgu_register_clocks(cgu);
+>>> +    if (retval)
+>>> +        pr_err("%s: failed to register CGU Clocks\n", __func__);
+>>> +
+>>> +    ingenic_cgu_register_syscore_ops(cgu);
+>>> +}
+>>> +
+>>> +/* We only probe via devicetree, no need for a platform driver */
+>>> +CLK_OF_DECLARE_DRIVER(jz4760_cgu, "ingenic,jz4760-cgu", 
+>>> jz4760_cgu_init);
+>>> +
+>>> +/* JZ4760B has some small differences, but we don't implement them. */
+>>> +CLK_OF_DECLARE_DRIVER(jz4760b_cgu, "ingenic,jz4760b-cgu", 
+>>> jz4760_cgu_init);
+>>> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+>>> index 9382dc3aa27e..77acfbeb4830 100644
+>>> --- a/drivers/clk/ingenic/tcu.c
+>>> +++ b/drivers/clk/ingenic/tcu.c
+>>> @@ -326,6 +326,7 @@ static const struct ingenic_soc_info 
+>>> x1000_soc_info = {
+>>>   static const struct of_device_id __maybe_unused 
+>>> ingenic_tcu_of_match[] __initconst = {
+>>>       { .compatible = "ingenic,jz4740-tcu", .data = 
+>>> &jz4740_soc_info, },
+>>>       { .compatible = "ingenic,jz4725b-tcu", .data = 
+>>> &jz4725b_soc_info, },
+>>> +    { .compatible = "ingenic,jz4760-tcu", .data = &jz4770_soc_info, },
+>>>       { .compatible = "ingenic,jz4770-tcu", .data = 
+>>> &jz4770_soc_info, },
+>>>       { .compatible = "ingenic,x1000-tcu", .data = &x1000_soc_info, },
+>>>       { /* sentinel */ }
+>>> @@ -477,5 +478,6 @@ static void __init ingenic_tcu_init(struct 
+>>> device_node *np)
+>>>     CLK_OF_DECLARE_DRIVER(jz4740_cgu, "ingenic,jz4740-tcu", 
+>>> ingenic_tcu_init);
+>>>   CLK_OF_DECLARE_DRIVER(jz4725b_cgu, "ingenic,jz4725b-tcu", 
+>>> ingenic_tcu_init);
+>>> +CLK_OF_DECLARE_DRIVER(jz4760_cgu, "ingenic,jz4760-tcu", 
+>>> ingenic_tcu_init);
+>>>   CLK_OF_DECLARE_DRIVER(jz4770_cgu, "ingenic,jz4770-tcu", 
+>>> ingenic_tcu_init);
+>>>   CLK_OF_DECLARE_DRIVER(x1000_cgu, "ingenic,x1000-tcu", 
+>>> ingenic_tcu_init);
+>>> diff --git a/include/dt-bindings/clock/jz4760-cgu.h 
+>>> b/include/dt-bindings/clock/jz4760-cgu.h
+>>> new file mode 100644
+>>> index 000000000000..4bb2e19c4743
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/jz4760-cgu.h
+>>> @@ -0,0 +1,54 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * This header provides clock numbers for the ingenic,jz4760-cgu DT 
+>>> binding.
+>>> + */
+>>> +
+>>> +#ifndef __DT_BINDINGS_CLOCK_JZ4760_CGU_H__
+>>> +#define __DT_BINDINGS_CLOCK_JZ4760_CGU_H__
+>>> +
+>>> +#define JZ4760_CLK_EXT        0
+>>> +#define JZ4760_CLK_OSC32K    1
+>>> +#define JZ4760_CLK_PLL0        2
+>>> +#define JZ4760_CLK_PLL0_HALF    3
+>>> +#define JZ4760_CLK_PLL1        4
+>>> +#define JZ4760_CLK_CCLK        5
+>>> +#define JZ4760_CLK_HCLK        6
+>>> +#define JZ4760_CLK_SCLK        7
+>>> +#define JZ4760_CLK_H2CLK    8
+>>> +#define JZ4760_CLK_MCLK        9
+>>> +#define JZ4760_CLK_PCLK        10
+>>> +#define JZ4760_CLK_MMC_MUX    11
+>>> +#define JZ4760_CLK_MMC0        12
+>>> +#define JZ4760_CLK_MMC1        13
+>>> +#define JZ4760_CLK_MMC2        14
+>>> +#define JZ4760_CLK_CIM        15
+>>> +#define JZ4760_CLK_UHC        16
+>>> +#define JZ4760_CLK_GPU        17
+>>> +#define JZ4760_CLK_GPS        18
+>>> +#define JZ4760_CLK_SSI_MUX    19
+>>> +#define JZ4760_CLK_PCM        20
+>>> +#define JZ4760_CLK_I2S        21
+>>> +#define JZ4760_CLK_OTG        22
+>>> +#define JZ4760_CLK_SSI0        23
+>>> +#define JZ4760_CLK_SSI1        24
+>>> +#define JZ4760_CLK_SSI2        25
+>>> +#define JZ4760_CLK_DMA        26
+>>> +#define JZ4760_CLK_I2C0        27
+>>> +#define JZ4760_CLK_I2C1        28
+>>> +#define JZ4760_CLK_UART0    29
+>>> +#define JZ4760_CLK_UART1    30
+>>> +#define JZ4760_CLK_UART2    31
+>>> +#define JZ4760_CLK_UART3    32
+>>> +#define JZ4760_CLK_IPU        33
+>>> +#define JZ4760_CLK_ADC        34
+>>> +#define JZ4760_CLK_AIC        35
+>>> +#define JZ4760_CLK_VPU        36
+>>> +#define JZ4760_CLK_UHC_PHY    37
+>>> +#define JZ4760_CLK_OTG_PHY    38
+>>> +#define JZ4760_CLK_EXT512    39
+>>> +#define JZ4760_CLK_RTC        40
+>>> +#define JZ4760_CLK_LPCLK_DIV    41
+>>> +#define JZ4760_CLK_TVE        42
+>>> +#define JZ4760_CLK_LPCLK    43
+>>> +
+>>> +#endif /* __DT_BINDINGS_CLOCK_JZ4760_CGU_H__ */
+>
