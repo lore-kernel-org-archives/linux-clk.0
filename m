@@ -2,90 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4812C433C1
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 03:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B22C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 07:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99D17619B0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 03:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5932619BC
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Mar 2021 07:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbhCWDMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Mar 2021 23:12:03 -0400
-Received: from m12-12.163.com ([220.181.12.12]:52146 "EHLO m12-12.163.com"
+        id S229576AbhCWHaI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Mar 2021 03:30:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229548AbhCWDLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Mar 2021 23:11:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=US+lAK9tXx3ZQu8YlR
-        j1VnBBEaM3fbPCi1jDiKVVnfk=; b=JM6QntIdZsuKW6pU0JyeYAoLfLchezT0gn
-        uqU+lPFj+SnB/1zUJE9+7wToQYtV6NLOLAeSFxIxeinHS1cAyArRJgy4/oQ37D0e
-        R+koqtcovn4LzE+JhtZG/6xe1GKvo0gKrzCtII27UrJOOh8VxjPsltlVhbBTElXX
-        wvmI7QdF8=
-Received: from bf-rmnj-02.ccdomain.com (unknown [218.94.48.178])
-        by smtp8 (Coremail) with SMTP id DMCowAAHD48xXFlgvk9CWA--.5103S2;
-        Tue, 23 Mar 2021 11:10:56 +0800 (CST)
-From:   Jian Dong <dj0227@163.com>
-To:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        huyue2@yulong.com, Jian Dong <dongjian@yulong.com>
-Subject: [PATCH]  clk: imx: reference preceded by free
-Date:   Tue, 23 Mar 2021 11:10:34 +0800
-Message-Id: <1616469034-9691-1-git-send-email-dj0227@163.com>
-X-Mailer: git-send-email 1.9.1
-X-CM-TRANSID: DMCowAAHD48xXFlgvk9CWA--.5103S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKry7Jryxur1DXr43ur18AFb_yoWDZwb_CF
-        18Wrn7XrWvyr43AF15ur1xZrZ0vFnxZFsavF12qry3K39xZr15Jr1Fvw4fKw45Cry8ArWD
-        Cw1DGrWq9FZ8GjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUn5GYJUUUUU==
-X-Originating-IP: [218.94.48.178]
-X-CM-SenderInfo: dgmqjjqx6rljoofrz/1tbiEABe3V8YFUAYNgAAsv
+        id S229622AbhCWH3l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Mar 2021 03:29:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 96357619AB;
+        Tue, 23 Mar 2021 07:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616484580;
+        bh=Aj5SamPuQDIK94vu6wAnw3TzJIL9R+1C87wF3TyVc1w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=EzlGxsxTsHITh7w8RrzfAKsKGjEMXv8PFuX5FcfTMhgJ2IR0rdqHjAFMTri1aPYs5
+         hHrG19NbREgNZVZ8btyJBWh50RZ41FPgTES1TbwqEb3Pdlnmics6N+ZBzslyooOPN6
+         0ig5K3qyypY0KXarnustNWGKw56sEZHtVjdsqSy2nM1SU1M0H4YFngswO7NsMW45JN
+         btodP6kxbPM1zYWhyhCQsgs7t89W6MKfVoY4sWv9MkZPVv1R5kDPdpjND77Nr5iTIz
+         xFNTsc6FVlZHIrKYqOU9hg4umMRmd/Lt+SWBMfACuuuT0Qi9n/dIaKX0qiEuxm8+5V
+         EEg4bhmzW1Etw==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1616140054-5141-1-git-send-email-tdas@codeaurora.org>
+References: <1616140054-5141-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: camcc: Update the clock ops for the SC7180
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Tue, 23 Mar 2021 00:29:39 -0700
+Message-ID: <161648457933.3012082.10324281519544090271@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jian Dong <dongjian@yulong.com>
+Quoting Taniya Das (2021-03-19 00:47:34)
+> Update the RCGs to use shared ops to park the RCGs at XO.
 
- when register failed, clk will be freed, it will generate dangling pointer
- problem in later reference. it should return directly.
+s/Update/fix/?
 
-Signed-off-by: Jian Dong <dongjian@yulong.com>
----
- drivers/clk/imx/clk-lpcg-scu.c | 1 +
- drivers/clk/imx/clk-scu.c      | 1 +
- 2 files changed, 2 insertions(+)
+Can you also elaborate more on why we need to park the RCGs here for all
+these different clks? Is the camera driver supposed to not touch these
+and let the firmware take over? Is there zero coordination between the
+kernel and the firmware?
 
-diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
-index 77be763..dd5abd0 100644
---- a/drivers/clk/imx/clk-lpcg-scu.c
-+++ b/drivers/clk/imx/clk-lpcg-scu.c
-@@ -114,6 +114,7 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
- 	if (ret) {
- 		kfree(clk);
- 		hw = ERR_PTR(ret);
-+		return hw;
- 	}
- 
- 	if (dev)
-diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index 1f5518b7..f89b4da 100644
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -426,6 +426,7 @@ struct clk_hw *__imx_clk_scu(struct device *dev, const char *name,
- 	if (ret) {
- 		kfree(clk);
- 		hw = ERR_PTR(ret);
-+		return hw;
- 	}
- 
- 	if (dev)
--- 
-1.9.1
-
-
+>=20
+> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller drive=
+r for SC7180")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
