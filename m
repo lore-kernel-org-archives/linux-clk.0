@@ -2,81 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D9AC433C1
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 18:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D1BC433C1
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 18:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1A5D61A02
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 18:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E79761A16
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 18:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbhCXSZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 14:25:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44674 "EHLO mail.kernel.org"
+        id S237571AbhCXSiY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 14:38:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237549AbhCXSYy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Mar 2021 14:24:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E32B61A02;
-        Wed, 24 Mar 2021 18:24:53 +0000 (UTC)
+        id S237586AbhCXSiD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Mar 2021 14:38:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id C8A6361A16;
+        Wed, 24 Mar 2021 18:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616610293;
-        bh=HYs+nGuL0HZgWLRYyeYnAW6kjv3X1W7oq2C2YlCIsbQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=e8T/VoLVYDqZVg4zZzpf82wmOuKSU1vhsr8PjqWuqwxTqvP1mWHLC9G67H1O/+yxo
-         aLWEZzeVuXdrUVefV0f+nU4Z3emCbNwjooWiFpjcwikvgBzp/8xqdVIKLbnNSMNTce
-         wZy7iU7JEAlx2XXeaxAL1j1sYIhZQFBP6sHu2di3lVRCXahUK8yWFxPIX6NeCmQqvU
-         8qRsoEII/kgWq9HGFjW3CP7GGqzTt8KXgddO7HejCSkWa9ISXspBxHVhHyPJmSeFOZ
-         erAsUz31lBzVBiiJmUNrwYGmYT7h/+L8n5keXMTu3Fb1w5EU3VUKInu01tppVe5SSY
-         8IO63czFwCt4w==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=k20201202; t=1616611082;
+        bh=eSZw8yU9zUa1RFZayjOa+pIrltGQX/u3MnGtFcRxUP4=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=NIc4aXRRHDyljr6aVbnrJa58ZgiFYkCRgir02Y1eim2lOJOEGZYBPWtFh0eXD718e
+         HpEOitKGUUskKn0YbAA5b0lA9qedbrqbSf2SLllR5UCV5UQvaDChi8DgKvA++nVT1f
+         yha20kJ3QHiN5Ss8Gmm4txXLKTGz6R2NUkgd2ptTs6d6mB0hLRhMFoj7FC1E8H0ok2
+         Z9vTPl9Iy+SPzNvvwMJ3Eya2DfPiE3FDt9ovyncHPSQV+wOuM8VcpivDvTFmdc5c/h
+         bGBVgl9hn3pXWXqk3nWYQ/Dx3gbrK1lX9NwXXFtl4G4ip9LGpgha98S7eUmuuC1ZjX
+         spiY4FjMNGmQw==
+Subject: Re: [GIT PULL] clk fixes for v5.12-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210324182453.2033329-1-sboyd@kernel.org>
+References: <20210324182453.2033329-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210324182453.2033329-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 148ddaa89d4a0a927c4353398096cc33687755c1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4ee998b0ef8b6d7b1267cd4d953182224929abba
+Message-Id: <161661108279.26767.11653190916642234587.pr-tracker-bot@kernel.org>
+Date:   Wed, 24 Mar 2021 18:38:02 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.12-rc4
-Date:   Wed, 24 Mar 2021 11:24:53 -0700
-Message-Id: <20210324182453.2033329-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.31.0.291.g576ba9dcdaf-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+The pull request you sent on Wed, 24 Mar 2021 11:24:53 -0700:
 
-  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4ee998b0ef8b6d7b1267cd4d953182224929abba
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 148ddaa89d4a0a927c4353398096cc33687755c1:
-
-  clk: qcom: gcc-sc7180: Use floor ops for the correct sdcc1 clk (2021-03-13 13:00:05 -0800)
-
-----------------------------------------------------------------
-Three fixes for the Qualcomm clk driver, two for regressions this merge
-window and one for a long standing problem that only popped up now that
-eMMC is being used.
-
-----------------------------------------------------------------
-Douglas Anderson (1):
-      clk: qcom: gcc-sc7180: Use floor ops for the correct sdcc1 clk
-
-Marijn Suijten (1):
-      clk: qcom: rcg2: Rectify clk_gfx3d rate rounding without mux division
-
-Taniya Das (1):
-      clk: qcom: rpmh: Update the XO clock source for SC7280
-
- drivers/clk/qcom/clk-rcg2.c   | 17 +++++++++--------
- drivers/clk/qcom/clk-rpmh.c   |  7 +++++--
- drivers/clk/qcom/gcc-sc7180.c |  4 ++--
- 3 files changed, 16 insertions(+), 12 deletions(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
