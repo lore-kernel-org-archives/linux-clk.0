@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64DAC433F2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BB4C433FB
 	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 15:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9591761A13
+	by mail.kernel.org (Postfix) with ESMTP id 86E9761A1B
 	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 15:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236499AbhCXPUT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 11:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60966 "EHLO
+        id S236407AbhCXPUR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 11:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236528AbhCXPTp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 11:19:45 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64818C0613E1
-        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:30 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id i26so16652482lfl.1
-        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:30 -0700 (PDT)
+        with ESMTP id S236586AbhCXPTk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 11:19:40 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FDEC0617AA
+        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:25 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id m12so32535763lfq.10
+        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cjAMUv7MIhb1KdQ27o54N1t7Ve1qx874G712Y764Vm0=;
-        b=Tc25TD5+7Gwo1HO4vQj/3EiBeyJcsnhH7fA3aeCN5TNcqbP/oVU4HMDFXqOtqwP+P2
-         Zdq93VMu2vCBVadNX3nvEKyzRcDkbHi5u2/7Avu8aDQtVOtDidA95usU5UlmTP+MJ/R6
-         sVguu0bJ75WatTP8XaB3NJPDsLzgw/cpxzjobzcFr8p3kaQeKo57bqtNmE82PfYjpSy1
-         ALGNzNRoBz1hiCw566AJcCM/S2N5vCB83Fk0QWPJT3VWfBIoZiTqvExohdsc93hFEM+I
-         m2YFbOjtRW6ndpLOdLmt8Zb49bk/7dz3sjQR81yB/rfa3Un0WCyMj02Fn14szlge6Tfv
-         vP1Q==
+        bh=d5gXnaS6/FhBtkbwF8y1QR9zxelWPPlPpq/TCaYVKkQ=;
+        b=ahp+fVKPZwAYJOW7LBbtb9n9bOtkcZ8QEH92zF0ab5N9I6JC/bQAFlWBWCXj/7GxMY
+         KXs1r/ByTAchuEe9IEHPZU0h+05/u29eJIiggZRbHuSnVAulRDX62LU5xFRFyLkUHNnL
+         +oqsGuNEul9eDR/gWiAR/YPHklWTlVq1iwa2CIvvxNokMlgb3nskHwPfabCcQL1Fa1zL
+         sd1p1G94PgZkt5kszyIIj2+jyLcg83O039DV/ojycQFbwB5EqIt01IgL78QLQHdVhxSf
+         2Lf490CyWN4LD+V8qFbEMm+gB16bQgXbpaWuEWEJF3BPBq/7zpKxrFtkkUuUjrcOOnHD
+         4MhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cjAMUv7MIhb1KdQ27o54N1t7Ve1qx874G712Y764Vm0=;
-        b=kyXHmiTNgD1xrTlzt0KhkqFkpNdYr12S79sUhx1qFl1TfOHZMZaM64AadflZcI/aZi
-         7MM+IMxDhRLyOO509IoZsXRGx6WFuEMj4+UzSRlfiHbwOtNWprHYfMC+sNuKfeP6DUpC
-         bPzUN7YscDdZgoYUZQ0u8ofxAMxqb70guchiY/n+Ht9bDkHI6Qn7WVkoktz4btt+GTMr
-         obiKzu3H1dm0Su1pRH/p0mkRcvz8VZx2ZYaLJ9OXLSlloik74wEy35SVd20vJk6yPKRD
-         LZI8M5TJwkodf7sL71OgUVY7TpQtCTiUM4eJslxzjHAYmerEEgbMp7n8RGSobmUuP784
-         9awQ==
-X-Gm-Message-State: AOAM530q1DGz5x0enGpoXMPquq/X/HJd5noh4M5zo3p1kRvZLGM42rGp
-        q33xy3kTigmDooU+3MjuY2hBiQ==
-X-Google-Smtp-Source: ABdhPJwkT+pO34l6OqgP6jbUkA2UjX0bT6Qiqht5D9qWgnV/qsJJoLaKaul/Sz5nGrQya5lfmFU+tQ==
-X-Received: by 2002:ac2:5fa2:: with SMTP id s2mr2232448lfe.486.1616599168652;
-        Wed, 24 Mar 2021 08:19:28 -0700 (PDT)
+        bh=d5gXnaS6/FhBtkbwF8y1QR9zxelWPPlPpq/TCaYVKkQ=;
+        b=RvWPZPBe7XfLQo1u4JIB1GX6qUGcJODjhSQehr2rO8jXM5P+O4G/a+lvwXndhm8tZr
+         U5Mwkm7xfs7PBaiPY0s7BTTITsRQXKs52w0yLBF9GXfqIyh3FS6XRfhqV42mwNnetqEW
+         aq6o8c+x6mGP5Uq27pOcQV7BUR8u4KnvS6o2K/O9oxmXML+4+rQY/Vov40W6/8Aunpzy
+         Cqs7pzXsUK4riBvsuPVy7dej4rEqYdoVOwNxJYlU2cOf24/Tl+86O+tmVYhux9A++3pg
+         ADs3TMnVa68UdzHntAZ7Dr298ueFC/HeMesyaIoWyydQ+SajPpHcOK+Ezv0QY7IIpfW1
+         5AOA==
+X-Gm-Message-State: AOAM533PaIMKnClS/uvLG47LR4XYX8jb1dyyw3y0PN7bgfI1xbBG/c55
+        Lp4QEdTR5Ek7M2cppumqkKQO+A==
+X-Google-Smtp-Source: ABdhPJx8XJ9coT+NGmhTsbhOuiSRspWWg3awMGtpNTVWXUtP3HYMg5dWhk1AsT5lXPxJa92lUn+ukw==
+X-Received: by 2002:ac2:4ac4:: with SMTP id m4mr2215124lfp.404.1616599164364;
+        Wed, 24 Mar 2021 08:19:24 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id d22sm255199lfm.267.2021.03.24.08.19.27
+        by smtp.gmail.com with ESMTPSA id d22sm255199lfm.267.2021.03.24.08.19.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 08:19:27 -0700 (PDT)
+        Wed, 24 Mar 2021 08:19:23 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Jonathan Marek <jonathan@marek.ca>,
@@ -63,9 +63,9 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 16/28] drm/msm/dsi: use devm_of_clk_add_hw_provider
-Date:   Wed, 24 Mar 2021 18:18:34 +0300
-Message-Id: <20210324151846.2774204-17-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 13/28] arm64: dts: qcom: sc7180: assign DSI clock source parents
+Date:   Wed, 24 Mar 2021 18:18:31 +0300
+Message-Id: <20210324151846.2774204-14-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210324151846.2774204-1-dmitry.baryshkov@linaro.org>
 References: <20210324151846.2774204-1-dmitry.baryshkov@linaro.org>
@@ -75,59 +75,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm_of_clk_add_hw_provider() to register provided clocks. This
-allows dropping the remove function alltogether.
+Assign DSI clock source parents to DSI PHY clocks.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 22 +---------------------
- 1 file changed, 1 insertion(+), 21 deletions(-)
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-index 4a8577a08f57..74a4e2daade8 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-@@ -728,7 +728,7 @@ static int dsi_phy_driver_probe(struct platform_device *pdev)
- 		}
- 	}
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 22b832fc62e3..c16ddabb3a92 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -3076,6 +3076,9 @@ dsi0: dsi@ae94000 {
+ 					      "iface",
+ 					      "bus";
  
--	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 				     phy->provided_clocks);
- 	if (ret) {
- 		DRM_DEV_ERROR(dev, "%s: failed to register clk provider: %d\n", __func__, ret);
-@@ -742,31 +742,11 @@ static int dsi_phy_driver_probe(struct platform_device *pdev)
- 	return 0;
++				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>, <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
++				assigned-clock-parents = <&dsi_phy 0>, <&dsi_phy 1>;
++
+ 				operating-points-v2 = <&dsi_opp_table>;
+ 				power-domains = <&rpmhpd SC7180_CX>;
  
- fail:
--	if (phy->pll) {
--		of_clk_del_provider(dev->of_node);
--		phy->pll = NULL;
--	}
--
- 	return ret;
- }
- 
--static int dsi_phy_driver_remove(struct platform_device *pdev)
--{
--	struct msm_dsi_phy *phy = platform_get_drvdata(pdev);
--
--	if (phy && phy->pll) {
--		of_clk_del_provider(pdev->dev.of_node);
--		phy->pll = NULL;
--	}
--
--	platform_set_drvdata(pdev, NULL);
--
--	return 0;
--}
--
- static struct platform_driver dsi_phy_platform_driver = {
- 	.probe      = dsi_phy_driver_probe,
--	.remove     = dsi_phy_driver_remove,
- 	.driver     = {
- 		.name   = "msm_dsi_phy",
- 		.of_match_table = dsi_phy_dt_match,
 -- 
 2.30.2
 
