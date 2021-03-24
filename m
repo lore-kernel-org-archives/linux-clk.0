@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_PH_BODY_ACCOUNTS_PRE,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F40C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CF9C433E1
 	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 020E061A06
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 381E461A04
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbhCXJoz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:44:55 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:2528 "EHLO
+        id S235128AbhCXJo6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 05:44:58 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:4536 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbhCXJo0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:44:26 -0400
+        with ESMTP id S229738AbhCXJoe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:44:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1616579066; x=1648115066;
+  t=1616579074; x=1648115074;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EL+7YZiuBOEuw3rdP+GGFj0w1dSQCtzlJBMqg/Kiiro=;
-  b=OayBMEyKdZZ3P1eI7YJuUtXNNFvpHUrwiE4u1+aP1PIVc/dyEpziRFjE
-   ZMy5aRNgq0VobBwn+nAgzbEXxIE8lNwreTLAkuFYHJCjFzX5IpwBUCown
-   AnFZIdzduTrItvIRtEzNboD4D2qRD5b+0ZdtYYKa79mY4rT1F56bY0toq
-   OQ2qUNXvVRGXMiatn7NIokIpZo9wl1jDar417AnLup83Ayxeb03ksqy5H
-   shZABO9aF2erRn1p/lMC4tBBgrR0IDiOPzT66z1m3GHOBR1xGhumtZ1/I
-   U53qrKYu9B5IikmJ4tOnmDaRz7+opj87G1RQhqvwowV5pkdda0AOJ5O9f
-   Q==;
-IronPort-SDR: MLiPjfzeiL9oGBqIT0jCTt08RrcsBAOejhIc5oKB67mv0gCo0qKXO0Y2DfIa27q7Zw1pKMxdrA
- KkiwjQwXymLDeYfZwHYvHhxYi3TbllW1QzTtidQIomc5/LxZtiu4TCsG3O9YjWf0xhjalVon3L
- mGGAohs2hw9U8yhkDHoOIi9PQQV7bk45AdL2/6KPkEmFJDvyLCHapNy0+XRN6HnVRDdOMgg9jA
- tbm4cj5j7ZNXkNQiFMHoFgwd0TfPR5aSJ5vZjNNsZanBMhj0BkqFih+0exn673u3yuOBZ4AcPv
- E/0=
+  bh=7OhO16sR0h02aoPYQcc9qk7JtyYcwL7bJH6PV01/oYs=;
+  b=OPJy/DRn+kHdVRnHkezxJhx4bduyNvYMyG/gBVQzbDn7a1dtNo7SJsGW
+   dsur7pfV7WDuhHeDCSkccxS5sk3QKHBm4qaZaojtdhmxCV75eGIhEI16Z
+   SGsDkHnQSozBq9zOdRCzV2w75nJRcHBAy3I12/P9zlS2IlwsHxx+stvzy
+   0LL+AzkZlRAM8b33vxwOA/Ilx1PeIbQTMfw8Ckzav7GT3kpZQsi9R3j8w
+   fTfCIIwIZMeCQh3BkQjLAe3m6sLkzTkkCTf0D1Ovz5ggAS108x9S4wHnE
+   Cn3Gq1samFBKuGJVx28rNIK7w2iLdrqmCoBhdv6xSOA6ljetFqq78vONE
+   w==;
+IronPort-SDR: 0KToYkfZBUAtS8ToGZrwbMFBdePtrbZO+6Ayf9Hy2Tvf0jtSybXd+Mjf/U0lf67PORis74L/88
+ cWEbeVDQoYexpAqz4Na+g1IlHDGO1M5Z6JU41rM/h0Wquv2znwpQ4RlJxtpee/X9QCJ/TpKkze
+ yI0xGB+kv3V3tfvvhgC8ziykUoRZBaBKilsfsVnvGrbqUYUU/Uw2csLft+RspzLQeakgx4fA14
+ v+rJxFI4El+mqJsRTshXzopU/6+N+Jycq6gOXlmbj2uMof1kM5Rx2Ow54FzCbwtsCS7Ynx8N9l
+ sMY=
 X-IronPort-AV: E=Sophos;i="5.81,274,1610434800"; 
-   d="scan'208";a="48679574"
+   d="scan'208";a="114436309"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Mar 2021 02:44:25 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Mar 2021 02:44:34 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 24 Mar 2021 02:44:25 -0700
+ 15.1.2176.2; Wed, 24 Mar 2021 02:44:33 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Wed, 24 Mar 2021 02:44:22 -0700
+ 15.1.2176.2 via Frontend Transport; Wed, 24 Mar 2021 02:44:31 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -56,9 +56,9 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [RESEND PATCH 2/5] clk: at91: pmc: execute suspend/resume only for backup mode
-Date:   Wed, 24 Mar 2021 11:43:50 +0200
-Message-ID: <20210324094353.1710114-3-claudiu.beznea@microchip.com>
+Subject: [RESEND PATCH 5/5] clk: at91: clk-master: update for dvfs
+Date:   Wed, 24 Mar 2021 11:43:53 +0200
+Message-ID: <20210324094353.1710114-6-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
 References: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
@@ -69,117 +69,537 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Before going to backup mode architecture specific PM code sets the first
-word in securam (and it will be cleared in a subsequent commit for the rest
-of power saving modes). Thus take this into account when
-suspending/resuming clocks. This will avoid executing unnecessary
-instructions when suspending to non backup modes. Since the clear of the
-1st word in securam will be done in a subsequent commit the current commit
-will not broke the current behavior since up to this moment the
-suspend/resume were executed for all AT91 PM modes. The difference now
-is that the suspend/resume for clocks will be executed for the rest of
-AT91 PM modes just after the 1st enter/exit to/from backup mode.
-Also this commit changed the postcore_initcall() with subsys_initcall()
-to be able to execute of_find_compatible_node() since this was not
-available at the moment of postcore_initcall(). This should not alter
-the tcb_clksrc since the changes are related to clocks suspend/resume
-procedure that will be executed at the user space request, thus long
-ago after postcore_initcall().
+SAMA7G5 supports CPU DVFS. The hardware block diagram for the clock
+system generating CPU clock is as follows:
+
+                               +--------+
+                           +-->|divider1|--> CPU clock
+                           |   +--------+
++--------+   +----------+  |   +--------+
+|CPU PLL |-->|prescaller|--+-->|divider0|--> MCK0 clock
++--------+   +----------+      +--------+
+
+The divider1 is not implemented in software since the supported CPU
+frequencies could be directly retrieved from CPU PLL + prescaller.
+Every time the CPU clock needs to be changed the MCK0 should also be
+changed to avoid its over/under clocking and also to preserve its
+initial value (200MHz). MCK0 feeds IPs that are glitch free aware.
+
+The initial approach for implementing DVFS was to implement MCK0 and
+CPU clocks as 2 different Linux clocks, to pass these two clocks to CPUFreq
+driver and in CPUFreq driver to run clk_set_rate() on CPU and MCK clocks
+accordingly. E.g. if 1GHz speed was requested by CPUFreq subsystem the
+following were executed in CPUFreq driver:
+
+/* ... */
+clk_set_rate(mck0, intermediary_freq_to_avoid_over_under_clocking);
+clk_set_rate(cpu, 1000000000);
+clk_set_rate(mck0, initial_freq);
+/ ... */
+
+However, it has been proposed in [1] to use the generic cpufreq-dt driver
+and to overload the necessary clocks operations in the proper clock
+driver.
+
+To address this proposal the master clock prescaller registers a clock
+notifier that will update properly the master clock divider on
+PRE_RATE_CHANGE and POST_RATE_CHANGE events to avoid master clock
+divider over/under clocking and also to preserve its initial value
+(200MHz).
+
+[1] https://lore.kernel.org/lkml/1609842147-8161-1-git-send-email-claudiu.beznea@microchip.com/
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/at91/pmc.c | 48 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 9 deletions(-)
+ drivers/clk/at91/at91rm9200.c  |   2 +-
+ drivers/clk/at91/at91sam9260.c |   2 +-
+ drivers/clk/at91/at91sam9g45.c |   2 +-
+ drivers/clk/at91/at91sam9n12.c |   2 +-
+ drivers/clk/at91/at91sam9rl.c  |   2 +-
+ drivers/clk/at91/at91sam9x5.c  |   2 +-
+ drivers/clk/at91/clk-master.c  | 187 ++++++++++++++++++++-------------
+ drivers/clk/at91/dt-compat.c   |   2 +-
+ drivers/clk/at91/pmc.h         |   3 +-
+ drivers/clk/at91/sam9x60.c     |   2 +-
+ drivers/clk/at91/sama5d2.c     |   2 +-
+ drivers/clk/at91/sama5d3.c     |   2 +-
+ drivers/clk/at91/sama5d4.c     |   2 +-
+ drivers/clk/at91/sama7g5.c     |   2 +-
+ 14 files changed, 130 insertions(+), 84 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 77b57c9f5dcb..c226d33cd899 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -8,6 +8,8 @@
+diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
+index 0fad1009f315..749c0b1e9c3d 100644
+--- a/drivers/clk/at91/at91rm9200.c
++++ b/drivers/clk/at91/at91rm9200.c
+@@ -144,7 +144,7 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
+ 					   &at91rm9200_master_layout,
+ 					   &rm9200_mck_characteristics,
+ 					   &rm9200_mck_lock, CLK_SET_RATE_GATE,
+-					   INT_MIN);
++					   INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
+index ceb5495f723a..c01d9455f6d4 100644
+--- a/drivers/clk/at91/at91sam9260.c
++++ b/drivers/clk/at91/at91sam9260.c
+@@ -420,7 +420,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
+ 					   &at91rm9200_master_layout,
+ 					   data->mck_characteristics,
+ 					   &at91sam9260_mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
+index 0214333dedd3..8364e7a06cfc 100644
+--- a/drivers/clk/at91/at91sam9g45.c
++++ b/drivers/clk/at91/at91sam9g45.c
+@@ -155,7 +155,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
+ 					   &at91rm9200_master_layout,
+ 					   &mck_characteristics,
+ 					   &at91sam9g45_mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
+index f9db5316a7f1..ddcae243a4ea 100644
+--- a/drivers/clk/at91/at91sam9n12.c
++++ b/drivers/clk/at91/at91sam9n12.c
+@@ -182,7 +182,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
+ 					   &at91sam9x5_master_layout,
+ 					   &mck_characteristics,
+ 					   &at91sam9n12_mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
+index 66736e03cfef..e87b50aaa9a2 100644
+--- a/drivers/clk/at91/at91sam9rl.c
++++ b/drivers/clk/at91/at91sam9rl.c
+@@ -124,7 +124,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
+ 					   &at91rm9200_master_layout,
+ 					   &sam9rl_mck_characteristics,
+ 					   &sam9rl_mck_lock, CLK_SET_RATE_GATE,
+-					   INT_MIN);
++					   INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 79b9d3667228..4b6819f003be 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -202,7 +202,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 					   parent_names,
+ 					   &at91sam9x5_master_layout,
+ 					   &mck_characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index a6a393bb1def..5e78f0416f05 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/clk-provider.h>
  #include <linux/clkdev.h>
++#include <linux/clk.h>
  #include <linux/clk/at91_pmc.h>
  #include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
  #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -110,13 +112,35 @@ struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
- }
- 
- #ifdef CONFIG_PM
-+
-+/* Address in SECURAM that say if we suspend to backup mode. */
-+static void __iomem *at91_pmc_backup_suspend;
-+
- static int at91_pmc_suspend(void)
- {
-+	unsigned int backup;
-+
-+	if (!at91_pmc_backup_suspend)
-+		return 0;
-+
-+	backup = *(unsigned int *)at91_pmc_backup_suspend;
-+	if (!backup)
-+		return 0;
-+
- 	return clk_save_context();
- }
- 
- static void at91_pmc_resume(void)
- {
-+	unsigned int backup;
-+
-+	if (!at91_pmc_backup_suspend)
-+		return;
-+
-+	backup = *(unsigned int *)at91_pmc_backup_suspend;
-+	if (!backup)
-+		return;
-+
- 	clk_restore_context();
- }
- 
-@@ -125,24 +149,30 @@ static struct syscore_ops pmc_syscore_ops = {
- 	.resume = at91_pmc_resume,
+@@ -38,6 +39,9 @@ struct clk_master {
+ 	u8 div;
  };
  
--static const struct of_device_id sama5d2_pmc_dt_ids[] = {
--	{ .compatible = "atmel,sama5d2-pmc" },
--	{ /* sentinel */ }
--};
--
- static int __init pmc_register_ops(void)
++/* MCK div reference to be used by notifier. */
++static struct clk_master *master_div;
++
+ static inline bool clk_master_ready(struct clk_master *master)
  {
-+	struct platform_device *pdev;
- 	struct device_node *np;
+ 	unsigned int bit = master->id ? AT91_PMC_MCKXRDY : AT91_PMC_MCKRDY;
+@@ -153,107 +157,127 @@ static const struct clk_ops master_div_ops = {
+ 	.restore_context = clk_master_div_restore_context,
+ };
  
--	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-+	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
- 	if (!np)
--		return 0;
-+		return -ENODEV;
-+
-+	pdev = of_find_device_by_node(np);
- 	of_node_put(np);
-+	if (!pdev)
-+		return -ENODEV;
-+
-+	at91_pmc_backup_suspend = of_iomap(np, 0);
-+	if (!at91_pmc_backup_suspend) {
-+		pr_warn("%s(): unable to map securam\n", __func__);
-+		return -ENOMEM;
-+	}
+-static int clk_master_div_set_rate(struct clk_hw *hw, unsigned long rate,
+-				   unsigned long parent_rate)
++static int clk_master_div_set(struct clk_master *master,
++			      unsigned long parent_rate, int div)
+ {
+-	struct clk_master *master = to_clk_master(hw);
+ 	const struct clk_master_characteristics *characteristics =
+ 						master->characteristics;
+-	unsigned long flags;
+-	unsigned int mckr, tmp;
+-	int div, i;
++	unsigned long rate = parent_rate;
++	unsigned int max_div = 0, div_index = 0, max_div_index = 0;
++	unsigned int i, mckr, tmp;
+ 	int ret;
  
- 	register_syscore_ops(&pmc_syscore_ops);
+-	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+-	if (div > ARRAY_SIZE(characteristics->divisors))
+-		return -EINVAL;
+-
+ 	for (i = 0; i < ARRAY_SIZE(characteristics->divisors); i++) {
+ 		if (!characteristics->divisors[i])
+ 			break;
+ 
+-		if (div == characteristics->divisors[i]) {
+-			div = i;
+-			break;
++		if (div == characteristics->divisors[i])
++			div_index = i;
++
++		if (max_div < characteristics->divisors[i]) {
++			max_div = characteristics->divisors[i];
++			max_div_index = i;
+ 		}
+ 	}
+ 
+-	if (i == ARRAY_SIZE(characteristics->divisors))
+-		return -EINVAL;
++	if (div > max_div)
++		div_index = max_div_index;
+ 
+-	spin_lock_irqsave(master->lock, flags);
+ 	ret = regmap_read(master->regmap, master->layout->offset, &mckr);
+ 	if (ret)
+-		goto unlock;
++		return ret;
+ 
+ 	tmp = mckr & master->layout->mask;
+ 	tmp = (tmp >> MASTER_DIV_SHIFT) & MASTER_DIV_MASK;
+-	if (tmp == div)
+-		goto unlock;
++	if (tmp == div_index)
++		return 0;
++
++	rate /= characteristics->divisors[div_index];
++	if (rate < characteristics->output.min)
++		pr_warn("master clk div is underclocked");
++	else if (rate > characteristics->output.max)
++		pr_warn("master clk div is overclocked");
+ 
+ 	mckr &= ~(MASTER_DIV_MASK << MASTER_DIV_SHIFT);
+-	mckr |= (div << MASTER_DIV_SHIFT);
++	mckr |= (div_index << MASTER_DIV_SHIFT);
+ 	ret = regmap_write(master->regmap, master->layout->offset, mckr);
+ 	if (ret)
+-		goto unlock;
++		return ret;
+ 
+ 	while (!clk_master_ready(master))
+ 		cpu_relax();
+-unlock:
+-	spin_unlock_irqrestore(master->lock, flags);
++
++	master->div = characteristics->divisors[div_index];
  
  	return 0;
  }
--/* This has to happen before arch_initcall because of the tcb_clksrc driver */
--postcore_initcall(pmc_register_ops);
+ 
+-static int clk_master_div_determine_rate(struct clk_hw *hw,
+-					 struct clk_rate_request *req)
++static int at91_clk_master_div_notifier(struct notifier_block *notifier,
++					unsigned long code, void *data)
+ {
+-	struct clk_master *master = to_clk_master(hw);
+ 	const struct clk_master_characteristics *characteristics =
+-						master->characteristics;
+-	struct clk_hw *parent;
+-	unsigned long parent_rate, tmp_rate, best_rate = 0;
+-	int i, best_diff = INT_MIN, tmp_diff;
+-
+-	parent = clk_hw_get_parent(hw);
+-	if (!parent)
+-		return -EINVAL;
+-
+-	parent_rate = clk_hw_get_rate(parent);
+-	if (!parent_rate)
+-		return -EINVAL;
+-
+-	for (i = 0; i < ARRAY_SIZE(characteristics->divisors); i++) {
+-		if (!characteristics->divisors[i])
+-			break;
+-
+-		tmp_rate = DIV_ROUND_CLOSEST_ULL(parent_rate,
+-						 characteristics->divisors[i]);
+-		tmp_diff = abs(tmp_rate - req->rate);
++						master_div->characteristics;
++	struct clk_notifier_data *cnd = data;
++	unsigned long cur_rate, flags;
++	unsigned int mckr, cur_div, diff_div;
++	static unsigned int new_div;
 +
-+subsys_initcall(pmc_register_ops);
- #endif
++	/*
++	 * Need to increase/decrease div to avoid master div clock over/under
++	 * clocking
++	 */
++	spin_lock_irqsave(master_div->lock, flags);
++	switch (code) {
++	case PRE_RATE_CHANGE:
++		regmap_read(master_div->regmap, master_div->layout->offset,
++			    &mckr);
++		mckr &= master_div->layout->mask;
++		mckr = (mckr >> MASTER_DIV_SHIFT) & MASTER_DIV_MASK;
++
++		cur_div = characteristics->divisors[mckr];
++		cur_rate = DIV_ROUND_CLOSEST_ULL(cnd->old_rate, cur_div);
++		new_div = DIV_ROUND_CLOSEST(cnd->new_rate, cur_rate);
++		diff_div = abs(cur_div - new_div);
++
++		clk_master_div_set(master_div, cnd->old_rate,
++				   cur_div + diff_div);
++		break;
++
++	case POST_RATE_CHANGE:
++		clk_master_div_set(master_div, cnd->new_rate, new_div);
++		break;
++
++	default:
++		break;
++	}
++	spin_unlock_irqrestore(master_div->lock, flags);
+ 
+-		if (!best_rate || best_diff > tmp_diff) {
+-			best_diff = tmp_diff;
+-			best_rate = tmp_rate;
+-		}
++	return 0;
++}
+ 
+-		if (!best_diff)
+-			break;
+-	}
++static struct notifier_block clk_master_notifier = {
++	.notifier_call = at91_clk_master_div_notifier,
++};
+ 
+-	req->best_parent_rate = best_rate;
+-	req->best_parent_hw = parent;
+-	req->rate = best_rate;
++static unsigned long clk_master_div_recalc_rate_chg(struct clk_hw *hw,
++						    unsigned long parent_rate)
++{
++	struct clk_master *master = to_clk_master(hw);
+ 
+-	return 0;
++	return DIV_ROUND_CLOSEST_ULL(parent_rate, master->div);
+ }
+ 
+ static void clk_master_div_restore_context_chg(struct clk_hw *hw)
+ {
+ 	struct clk_master *master = to_clk_master(hw);
++	unsigned long flags;
+ 	int ret;
+ 
+-	ret = clk_master_div_set_rate(hw, master->pms.rate,
+-				      master->pms.parent_rate);
++	spin_lock_irqsave(master->lock, flags);
++	ret = clk_master_div_set(master, master->pms.parent_rate,
++				 DIV_ROUND_CLOSEST(master->pms.parent_rate,
++						   master->pms.rate));
++	spin_unlock_irqrestore(master->lock, flags);
+ 	if (ret)
+ 		pr_warn("Failed to restore MCK DIV clock\n");
+ }
+@@ -261,9 +285,7 @@ static void clk_master_div_restore_context_chg(struct clk_hw *hw)
+ static const struct clk_ops master_div_ops_chg = {
+ 	.prepare = clk_master_prepare,
+ 	.is_prepared = clk_master_is_prepared,
+-	.recalc_rate = clk_master_div_recalc_rate,
+-	.determine_rate = clk_master_div_determine_rate,
+-	.set_rate = clk_master_div_set_rate,
++	.recalc_rate = clk_master_div_recalc_rate_chg,
+ 	.save_context = clk_master_div_save_context,
+ 	.restore_context = clk_master_div_restore_context_chg,
+ };
+@@ -488,6 +510,8 @@ at91_clk_register_master_internal(struct regmap *regmap,
+ 	struct clk_master *master;
+ 	struct clk_init_data init;
+ 	struct clk_hw *hw;
++	unsigned int mckr;
++	unsigned long irqflags;
+ 	int ret;
+ 
+ 	if (!name || !num_parents || !parent_names || !lock)
+@@ -510,6 +534,16 @@ at91_clk_register_master_internal(struct regmap *regmap,
+ 	master->chg_pid = chg_pid;
+ 	master->lock = lock;
+ 
++	if (ops == &master_div_ops_chg) {
++		spin_lock_irqsave(master->lock, irqflags);
++		regmap_read(master->regmap, master->layout->offset, &mckr);
++		spin_unlock_irqrestore(master->lock, irqflags);
++
++		mckr &= layout->mask;
++		mckr = (mckr >> MASTER_DIV_SHIFT) & MASTER_DIV_MASK;
++		master->div = characteristics->divisors[mckr];
++	}
++
+ 	hw = &master->hw;
+ 	ret = clk_hw_register(NULL, &master->hw);
+ 	if (ret) {
+@@ -526,19 +560,24 @@ at91_clk_register_master_pres(struct regmap *regmap,
+ 		const char **parent_names,
+ 		const struct clk_master_layout *layout,
+ 		const struct clk_master_characteristics *characteristics,
+-		spinlock_t *lock, u32 flags, int chg_pid)
++		spinlock_t *lock, u32 flags, int chg_pid, bool notifier)
+ {
+ 	const struct clk_ops *ops;
++	struct clk_hw *hw;
+ 
+ 	if (flags & CLK_SET_RATE_GATE)
+ 		ops = &master_pres_ops;
+ 	else
+ 		ops = &master_pres_ops_chg;
+ 
+-	return at91_clk_register_master_internal(regmap, name, num_parents,
+-						 parent_names, layout,
+-						 characteristics, ops,
+-						 lock, flags, chg_pid);
++	hw = at91_clk_register_master_internal(regmap, name, num_parents,
++					       parent_names, layout,
++					       characteristics, ops,
++					       lock, flags, chg_pid);
++	if (!IS_ERR(hw) && notifier)
++		clk_notifier_register(hw->clk, &clk_master_notifier);
++
++	return hw;
+ }
+ 
+ struct clk_hw * __init
+@@ -549,16 +588,22 @@ at91_clk_register_master_div(struct regmap *regmap,
+ 		spinlock_t *lock, u32 flags)
+ {
+ 	const struct clk_ops *ops;
++	struct clk_hw *hw;
+ 
+ 	if (flags & CLK_SET_RATE_GATE)
+ 		ops = &master_div_ops;
+ 	else
+ 		ops = &master_div_ops_chg;
+ 
+-	return at91_clk_register_master_internal(regmap, name, 1,
+-						 &parent_name, layout,
+-						 characteristics, ops,
+-						 lock, flags, -EINVAL);
++	hw = at91_clk_register_master_internal(regmap, name, 1,
++					       &parent_name, layout,
++					       characteristics, ops,
++					       lock, flags, -EINVAL);
++
++	if (!IS_ERR(hw))
++		master_div = to_clk_master(hw);
++
++	return hw;
+ }
+ 
+ static unsigned long
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index a97b99c2dc12..99ad43ea6169 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -393,7 +393,7 @@ of_at91_clk_master_setup(struct device_node *np,
+ 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", num_parents,
+ 					   parent_names, layout,
+ 					   characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto out_free_characteristics;
+ 
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 86580ebd9ad9..2263f4df3a82 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -175,7 +175,8 @@ at91_clk_register_master_pres(struct regmap *regmap, const char *name,
+ 			      int num_parents, const char **parent_names,
+ 			      const struct clk_master_layout *layout,
+ 			      const struct clk_master_characteristics *characteristics,
+-			      spinlock_t *lock, u32 flags, int chg_pid);
++			      spinlock_t *lock, u32 flags, int chg_pid,
++			      bool notifier);
+ 
+ struct clk_hw * __init
+ at91_clk_register_master_div(struct regmap *regmap, const char *name,
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 5f6fa89571b7..8e1b89e05724 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -272,7 +272,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 3,
+ 					   parent_names, &sam9x60_master_layout,
+ 					   &mck_characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 9a5cbc7cd55a..406d4b33562e 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -241,7 +241,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 					   parent_names,
+ 					   &at91sam9x5_master_layout,
+ 					   &mck_characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+index 87009ee8effc..164a080c53fa 100644
+--- a/drivers/clk/at91/sama5d3.c
++++ b/drivers/clk/at91/sama5d3.c
+@@ -176,7 +176,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+ 					   parent_names,
+ 					   &at91sam9x5_master_layout,
+ 					   &mck_characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+index 57fff790188b..9253aa2e6039 100644
+--- a/drivers/clk/at91/sama5d4.c
++++ b/drivers/clk/at91/sama5d4.c
+@@ -191,7 +191,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 					   parent_names,
+ 					   &at91sam9x5_master_layout,
+ 					   &mck_characteristics, &mck_lock,
+-					   CLK_SET_RATE_GATE, INT_MIN);
++					   CLK_SET_RATE_GATE, INT_MIN, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 28e26fb90417..3bb630ac0f53 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -986,7 +986,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 	hw = at91_clk_register_master_pres(regmap, "cpuck", 1, parent_names,
+ 					   &mck0_layout, &mck0_characteristics,
+ 					   &pmc_mck0_lock,
+-					   CLK_SET_RATE_PARENT, 0);
++					   CLK_SET_RATE_PARENT, 0, 1);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
 -- 
 2.25.1
 
