@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4100C433C1
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170EFC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87D53619FF
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7EFB61A04
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235092AbhCXJoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:44:22 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:48495 "EHLO
+        id S232556AbhCXJo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 05:44:56 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:26789 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235077AbhCXJoU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:44:20 -0400
+        with ESMTP id S235075AbhCXJo3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:44:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1616579060; x=1648115060;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vAL2C/cv6cfhXR8yAq0F6TMT+xO5j2GY0OKdM64ZkRE=;
-  b=WtZOsbSils4UCdfh8IvkrM2p2LshQosDja7aahKWElpI7LF0f1lRBdUS
-   pqWCe/6VWeav2By9xujgKSeWqS8pw2eXMayVLht3HSo8/niO2yMp1UU06
-   S8gsBlu9ufF6oqmQgnaEBBYCjyfFAEr3Yg1ei68MPj2ypYf3gG7pxMy0E
-   y33DG5GO0/p3T5o45QmO7tIo2Zx0qXRg22bRJROECbIhS4jH8+hSf9dxh
-   Nqk6usRFXh2aPzr2MBPg+5BKgGOS8E2VoA2ZnnyeVLrdhUlTM67qXOy7d
-   woMuiStXJYSBs7hkDt5BH5+jGL85QOpkapl2lxF5Mx2MXAHw5l0z8nHx1
-   w==;
-IronPort-SDR: aAaAaMi9zn5b0IKvAXVll+KT1qEYlXSXP8NEQWe7jSRcKsoO+nqpYopgBpi3nVF7kfvvFVtrQf
- G5HQV5cJejqk0/4DSKD/LaWrbxWX6JyY7uRRyyrfYlZiJGMTRD8/g7GhKHpt5crXiKEl7hVKcG
- lTgG2r3kf2m6QvYp/3Y1feD4C2iFgTSEOUWFoUf1Kg2HWAN1G9igbSa/8LNJnlDF+fo9rqGKtp
- xevkajNMmnSvv17+g7ww+o1KJQKakkOruTe042R9FbXIi4lW4CstrGE1IB9uivbkDshSMtFvGx
- R7M=
+  t=1616579070; x=1648115070;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=bfOEgfjd8QEOkQ9Fk23dlhdfzyBSdSzKAI0oLUpC+oY=;
+  b=zQ0WT1kBe57sCSQBOLy+sQ9Xz3g7WJZOecdLy7khIeEF1mc/QbCnN/wg
+   2VlQ8KHO14i6N5epfasso8FuHKY7zu8E9ZaQImgCMV9OtsnSiH+bl/XtK
+   bqJiGSeUpN/dH63SbS5G/sDXQWJfNl5radaqkPWLlVityLy3mSecLLnCT
+   VeW3p7Is1YNPBeCcbTaD6JmsC3Zch7R5mDB5u88hZ9akwgFQ6BPwvYiGn
+   jTvz10HQlSgh1z6I2vSRhJa6N0yKCpfG2rP+H/KEKK3y+F8EFeAWqYg+v
+   nKAdwcRuuqP8nF2++5eVifpngaO1av4H3bMsHglnHgb9ctzAZx0KoE+BF
+   g==;
+IronPort-SDR: BjMdheW71ch4rIBDBeeguEsXgE0P7k9V+DIyr+DqbDBq4NXE1+0LaHAwYE6cvTfWZagDd0dAmz
+ 7uz+DUg7//SF69qkC/x5KXKB3g5oI54k5Q0nKSKKWomS/5AMhav970zqPeIIfXprqL+dmQwGOC
+ 5WkAtApXAPizQsKjX6hPsidGaJiKyGHzprSSTAvMuJYKRVDgWS1UF3/m5A3QWFWv7ux+YF1JW2
+ Qnt0oPrs8bZ+e/TIwzqDOlbq0cFy9qahqraL97DW2txbOhY954Rr0tX6Uwy5r3U3elShV8nfvN
+ gRI=
 X-IronPort-AV: E=Sophos;i="5.81,274,1610434800"; 
-   d="scan'208";a="108354587"
+   d="scan'208";a="113941951"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Mar 2021 02:44:19 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Mar 2021 02:44:30 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 24 Mar 2021 02:44:19 -0700
+ 15.1.2176.2; Wed, 24 Mar 2021 02:44:28 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Wed, 24 Mar 2021 02:44:15 -0700
+ 15.1.2176.2 via Frontend Transport; Wed, 24 Mar 2021 02:44:25 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -56,10 +56,12 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [RESEND PATCH 0/5] clk: at91: updates for power management and dvfs
-Date:   Wed, 24 Mar 2021 11:43:48 +0200
-Message-ID: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
+Subject: [RESEND PATCH 3/5] clk: at91: sama7g5: add securam's peripheral clock
+Date:   Wed, 24 Mar 2021 11:43:51 +0200
+Message-ID: <20210324094353.1710114-4-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
+References: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -67,70 +69,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Add SECURAM's peripheral clock.
 
-This series addresses the power management for SAMA7G5 and also updates
-the master clock prescaller and master clock divider drivers to accommodate
-the requests at [1].
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/clk/at91/sama7g5.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The power management part is implemented by adding
-save_context()/restore_context() on each clock driver (patch 1/5). Since
-the PM part is necessary only for backup mode (supported on SAMA5D2 and
-SAMA7G5) the pmc.c has been adapted to call the
-save_context()/restore_context() only on switches to/from backup mode
-(patch 2/5).
-
-Patch 3/5 adds the securam clock on SAMA7G5. This is necessary for
-backup mode of SAMA7G5.
-
-Patch 4/5 adds registers definitions for the new master clocks (MCK1..4) of
-SAMA7G5 and adapt the clk-master.c. The defines exported in
-include/linux/clk/at91_pmc.h will be also used by platform specific PM
-code.
-
-Patch 5/5 adpat the master clock divider and master clock prescaller
-to address the requests at [1].
-
-Thank you,
-Claudiu Beznea
-
-[1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
-
-Claudiu Beznea (5):
-  clk: at91: re-factor clocks suspend/resume
-  clk: at91: pmc: execute suspend/resume only for backup mode
-  clk: at91: sama7g5: add securam's peripheral clock
-  clk: at91: clk-master: add register definition for sama7g5's master
-    clock
-  clk: at91: clk-master: update for dvfs
-
- drivers/clk/at91/at91rm9200.c       |   2 +-
- drivers/clk/at91/at91sam9260.c      |   2 +-
- drivers/clk/at91/at91sam9g45.c      |   2 +-
- drivers/clk/at91/at91sam9n12.c      |   2 +-
- drivers/clk/at91/at91sam9rl.c       |   2 +-
- drivers/clk/at91/at91sam9x5.c       |   2 +-
- drivers/clk/at91/clk-generated.c    |  45 +++-
- drivers/clk/at91/clk-main.c         |  66 +++++
- drivers/clk/at91/clk-master.c       | 395 +++++++++++++++++++++-------
- drivers/clk/at91/clk-peripheral.c   |  38 ++-
- drivers/clk/at91/clk-pll.c          |  37 +++
- drivers/clk/at91/clk-programmable.c |  29 +-
- drivers/clk/at91/clk-sam9x60-pll.c  |  68 ++++-
- drivers/clk/at91/clk-system.c       |  20 ++
- drivers/clk/at91/clk-usb.c          |  27 ++
- drivers/clk/at91/clk-utmi.c         |  47 +++-
- drivers/clk/at91/dt-compat.c        |   2 +-
- drivers/clk/at91/pmc.c              | 175 +++---------
- drivers/clk/at91/pmc.h              |  27 +-
- drivers/clk/at91/sam9x60.c          |   2 +-
- drivers/clk/at91/sama5d2.c          |   2 +-
- drivers/clk/at91/sama5d3.c          |   2 +-
- drivers/clk/at91/sama5d4.c          |   2 +-
- drivers/clk/at91/sama7g5.c          |   3 +-
- include/linux/clk/at91_pmc.h        |  26 ++
- 25 files changed, 750 insertions(+), 275 deletions(-)
-
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index a6e20b35960e..28e26fb90417 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -377,6 +377,7 @@ static const struct {
+ 	u8 id;
+ } sama7g5_periphck[] = {
+ 	{ .n = "pioA_clk",	.p = "mck0", .id = 11, },
++	{ .n = "securam_clk",	.p = "mck0", .id = 18, },
+ 	{ .n = "sfr_clk",	.p = "mck1", .id = 19, },
+ 	{ .n = "hsmc_clk",	.p = "mck1", .id = 21, },
+ 	{ .n = "xdmac0_clk",	.p = "mck1", .id = 22, },
 -- 
 2.25.1
 
