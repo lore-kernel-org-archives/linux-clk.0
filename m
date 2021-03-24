@@ -2,50 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B24C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 20:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16672C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 20:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C97C761A21
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 20:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A0161A0D
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 20:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238098AbhCXUXQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 16:23:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42388 "EHLO
+        id S237906AbhCXU1h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 16:27:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238070AbhCXUXC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 16:23:02 -0400
+        with ESMTP id S237807AbhCXU11 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 16:27:27 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A888C06174A
-        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 13:23:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4DCC06174A
+        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 13:27:25 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lPA1q-00024w-Ra; Wed, 24 Mar 2021 21:22:58 +0100
+        id 1lPA5y-0002XA-LK; Wed, 24 Mar 2021 21:27:14 +0100
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lPA1q-0001th-Hu; Wed, 24 Mar 2021 21:22:58 +0100
-Date:   Wed, 24 Mar 2021 21:22:58 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+        id 1lPA5x-00028P-BU; Wed, 24 Mar 2021 21:27:13 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: davinci: Simplify using devm_clk_get_prepared()
-Message-ID: <20210324202258.bossedmrhj35nyvc@pengutronix.de>
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] rtc: at91sma9: Simplify using devm_clk_get_enabled()
+Date:   Wed, 24 Mar 2021 21:27:11 +0100
+Message-Id: <20210324202711.76734-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210301135053.1462168-1-u.kleine-koenig@pengutronix.de>
 References: <20210301135053.1462168-1-u.kleine-koenig@pengutronix.de>
- <20210324201723.76299-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="h2ekt5s5ojowan2a"
-Content-Disposition: inline
-In-Reply-To: <20210324201723.76299-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
 X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -54,84 +57,99 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+devm_clk_get_enabled() returns the clk already (prepared and) enabled
+and the automatically called cleanup cares for disabling (and
+unpreparing). So simplify .probe() and .remove() accordingly.
 
---h2ekt5s5ojowan2a
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Hello,
 
-On Wed, Mar 24, 2021 at 09:17:23PM +0100, Uwe Kleine-K=F6nig wrote:
-> devm_clk_get_prepared returns the clk already prepared and the
-> automatically called cleanup cares for unpreparing. So simplify .probe
-> and .remove accordingly.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> ---
-> Hello,
->=20
-> this simplification depends on a patch set that introduces
-> devm_clk_get_prepared() and friends.
->=20
-> The most recent version of this patch set can be found at
->=20
-> 	https://lore.kernel.org/r/20210301135053.1462168-1-u.kleine-koenig@pengu=
-tronix.de
->=20
-> Unfortunately I didn't get any feedback at all from the clk maintainers
-> on it, so I try to make other maintainers aware of it in the expectation
-> that the simplifications are welcome and so lure the clk maintainers to
-> share their thoughts.
->=20
-> Best regards
-> Uwe
->=20
->  drivers/spi/spi-davinci.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-> index 7453a1dbbc06..c170bccf9710 100644
-> --- a/drivers/spi/spi-davinci.c
-> +++ b/drivers/spi/spi-davinci.c
-> @@ -936,14 +936,11 @@ static int davinci_spi_probe(struct platform_device=
- *pdev)
-> =20
->  	dspi->bitbang.master =3D master;
-> =20
-> -	dspi->clk =3D devm_clk_get(&pdev->dev, NULL);
-> +	dspi->clk =3D devm_clk_get_prepared(&pdev->dev, NULL);
+this simplification depends on a patch set that introduces
+devm_clk_get_prepared() and friends.
 
-oops, I got that wrong, this must be devm_clk_get_enabled, not
-devm_clk_get_prepared. So if the clk patches go in, please let me resend
-a fixed patch (or adapt yourself, whatever you prefer).
+The most recent version of this patch set can be found at
+
+	https://lore.kernel.org/r/20210301135053.1462168-1-u.kleine-koenig@pengutronix.de
+
+Unfortunately I didn't get any feedback at all from the clk maintainers
+on it, so I try to make other maintainers aware of it in the expectation
+that the simplifications are welcome and so lure the clk maintainers to
+share their thoughts.
 
 Best regards
 Uwe
 
->  	if (IS_ERR(dspi->clk)) {
->  		ret =3D -ENODEV;
->  		goto free_master;
->  	}
-> -	ret =3D clk_prepare_enable(dspi->clk);
-> -	if (ret)
-> -		goto free_master;
+ drivers/rtc/rtc-at91sam9.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+index 2216be429ab7..b52e7bd26303 100644
+--- a/drivers/rtc/rtc-at91sam9.c
++++ b/drivers/rtc/rtc-at91sam9.c
+@@ -374,21 +374,14 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	rtc->sclk = devm_clk_get(&pdev->dev, NULL);
++	rtc->sclk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(rtc->sclk))
+ 		return PTR_ERR(rtc->sclk);
+ 
+-	ret = clk_prepare_enable(rtc->sclk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Could not enable slow clock\n");
+-		return ret;
+-	}
+-
+ 	sclk_rate = clk_get_rate(rtc->sclk);
+ 	if (!sclk_rate || sclk_rate > AT91_RTT_RTPRES) {
+ 		dev_err(&pdev->dev, "Invalid slow clock rate\n");
+-		ret = -EINVAL;
+-		goto err_clk;
++		return -EINVAL;
+ 	}
+ 
+ 	mr = rtt_readl(rtc, MR);
+@@ -406,7 +399,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc->rtcdev)) {
+ 		ret = PTR_ERR(rtc->rtcdev);
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	rtc->rtcdev->ops = &at91_rtc_ops;
+@@ -418,7 +411,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 			       dev_name(&rtc->rtcdev->dev), rtc);
+ 	if (ret) {
+ 		dev_dbg(&pdev->dev, "can't share IRQ %d?\n", rtc->irq);
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	/* NOTE:  sam9260 rev A silicon has a ROM bug which resets the
+@@ -432,11 +425,6 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 			 dev_name(&rtc->rtcdev->dev));
+ 
+ 	return devm_rtc_register_device(rtc->rtcdev);
+-
+-err_clk:
+-	clk_disable_unprepare(rtc->sclk);
+-
+-	return ret;
+ }
+ 
+ /*
+@@ -450,8 +438,6 @@ static int at91_rtc_remove(struct platform_device *pdev)
+ 	/* disable all interrupts */
+ 	rtt_writel(rtc, MR, mr & ~(AT91_RTT_ALMIEN | AT91_RTT_RTTINCIEN));
+ 
+-	clk_disable_unprepare(rtc->sclk);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.30.2
 
---h2ekt5s5ojowan2a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBbn58ACgkQwfwUeK3K
-7An0Kwf9Gb6Gap7dLohuhBIvvIaava8POgNLy14HJ9c7+b12IkeLadFXClal9etN
-1hyF0idewSJvQ4M2jfRUG6L26/Gml8vgKS+std15q98TzC35i/21cwS7H9fbfKBF
-qbqsZR+k+7uV7rV9guBJshVVX03sIs2O9DpfndQsoxFpEqWHuHiFLE+loGwKXMp/
-3i1+fa3Ngb9y5k3RfA4kvXWMDC0FJirUgfmOWNvZJnmxw8FB8tdPjKjc2M3bq44j
-NIazz/rxRGGkCsjEBPT3Rnr11S2jGZGAig4L10RXpMAveiorKD3TRVrJqEG6g616
-PaN2hZgqLteBl9lcj5nSWcUs2WzVKQ==
-=9DaC
------END PGP SIGNATURE-----
-
---h2ekt5s5ojowan2a--
