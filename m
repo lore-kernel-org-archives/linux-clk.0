@@ -2,100 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30713C433C1
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 14:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE178C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 15:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E301461A07
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 14:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABD9761A16
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 15:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236080AbhCXOhi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:37:38 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:53493 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235911AbhCXOhc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 10:37:32 -0400
-Received: from linux-e202.suse.de ([46.90.46.54]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MpUlO-1m1kMt1h4W-00puZr; Wed, 24 Mar 2021 15:37:27 +0100
-From:   Fabian Vogt <fabian@ritter-vogt.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Tang <dt.tangr@gmail.com>, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: clk-nspire: Use a more complete algorithm for divider calculation
-Date:   Wed, 24 Mar 2021 15:37:24 +0100
-Message-ID: <5001083.BWDE7HjgcL@linux-e202.suse.de>
+        id S236584AbhCXPTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 11:19:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236527AbhCXPTK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 11:19:10 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B95C0613DE
+        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:07 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id q29so32366145lfb.4
+        for <linux-clk@vger.kernel.org>; Wed, 24 Mar 2021 08:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tk201XK0GsgCw2z2W2qK3LFMVQT+0BnMz/tqU+2avqI=;
+        b=u9N/Sj5afQG8CJSXVMiyXWwyTqjsexPwrnBD7G3Y+pkl4ZCYhlNcg7DXojl0swbOnK
+         IBgyjzy7J9RGN7OKBGx0D0zELukt+Q94oTCjeMOpAqj07ZUUXeCuZf1hA49OswEgZEOH
+         oqv7N+MjOdkpfwaxSVPJae3QQYseoUFj51PTv2Kl21GGE6sMxSP7BWDwN6OTHyIWUJrj
+         7mgE8hD96osLkTOqmdZfwdsAAmsem56lV3pwPN+FRU4I28CRExn8LVOe/5SBdyCvyyae
+         M/x2xwEVJFcjw6YlUPGCcEAMphxtFg1Ujz7zKMUBK/nwlABeYi5bZCv0aA3Iv5BwGlIY
+         A2Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tk201XK0GsgCw2z2W2qK3LFMVQT+0BnMz/tqU+2avqI=;
+        b=tcvfq93uWxZLjFyBeEGrpi6gsxS4WvSTB+I2u53dg4/whzU1q9nyw6iJsBmZW3SnjD
+         1f7G/p5v2rk8cCrR1yiaf/5Zy6Nus7+0oi+mNV838SVSsgD+sBhf9TQTzH0tJ1MbiKal
+         Ze4yPKPyc+BFUiRdpqXtaA+TKUZs4uhwLZ7Ec0skvN1RkujlRvY30ywvuA+Vmxqdz7ep
+         NXk8Xi0F19pqghFFNPNHISQ6pSmdGGSbUe8jQkBrUlqNfWB6XfRTWaPGMxiWsoPqMNgv
+         Ss++W/2x8OukhlT5aIU4QualF74JTSrMBR5Xp/Rd8HiYE48Rt+neNBAmNltpg1kqowc3
+         r9jw==
+X-Gm-Message-State: AOAM532TiZBof0oy/4AsvwjeOlB1vwO+kAIH+hTwL+A2khLFXUvFtCdl
+        KjeaG5SnLJu0pyf0oit6EsAHYA==
+X-Google-Smtp-Source: ABdhPJzubbcVNRPYMGpCD+9JZnn8dZ+ory2gYhWQAdH1sr669SIMX31yypo+z5GBv3rmF8Oj+5eOhg==
+X-Received: by 2002:ac2:4e8c:: with SMTP id o12mr2300931lfr.400.1616599146090;
+        Wed, 24 Mar 2021 08:19:06 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id d22sm255199lfm.267.2021.03.24.08.19.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Mar 2021 08:19:05 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 00/28] drm/msm/dsi: refactor MSM DSI PHY/PLL drivers
+Date:   Wed, 24 Mar 2021 18:18:18 +0300
+Message-Id: <20210324151846.2774204-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Provags-ID: V03:K1:GN4WyBHf19Ee2938SaCqBGH5Niqtp4DYYyceLO3ykyi4/6vW2ak
- QWlqoZuA7AJTSYEzN4IMPgHd/w8rNfxuuCu9sawel7tHGQH64LKH7oKpd1FK4i0JhV95J6b
- kZkcmX3Vb7UAKzHcdq+XbHZIL0wfiu4uEKzI6RxURxAkvKS2KdFp+5K34Wj+Zr12YASDv04
- VB7RoY9z7+nWUDlZpQnQA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BZbakof12No=:9zJoGOiZAdIGLuWU07YO91
- 1rG6M+00Y4bs03ymnQmXhlHXUbIQZLF4+0fYZAX4at5qU+eaMyFYgVaUuW/lBgRaWUZDjouH/
- 2HG1wIP7CvDRsjt4DC4GSPNwhfxE6hjD6kqPAzEliHCOqbXRpkaIjGw7iRn5cSYBs0dcD+G6I
- 0j+Klsor5dTo5Z/StFJ622kVZBnksmHUuv2S7U9dcACSlm7mMKcz60oCUlrBSgAJk/KZQJ971
- aVP907UIHiFhrNxn3hb4/wBu4QE8rYbGfhmoGQnF6pKj+XTHZYU3TaUVThUfD1tvDNa9dmg7w
- A2eNIGTifrV/Dc6owhXIg/BDmbwEkvFneBowzTosExUwN5i4AMQqomJzcTpxC4EDJie/dXu2u
- QKK7AlbaAYlI4tcTZKH86noVRGP9RpPhc4E9GL33SuE6DsjztFlaJd0OD6Qn4uVXTXeSoalPf
- 3zL34lB9+nOV1e0ShvdML4pBeznESJJiEDlBCPfBd9xNMES0Aq1t
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For some reason it implemented a mixture of the fixed base and variable
-base paths. Those actually differ, which led to a division by zero in some
-cases.
+Restructure MSM DSI PHY drivers. What started as an attempt to grok the
+overcomplicated PHY drivers, has lead up to the idea of merging PHY and
+PLL code, reducing abstractions, code duplication, dropping dead code,
+etc.
 
-Signed-off-by: Fabian Vogt <fabian@ritter-vogt.de>
----
- drivers/clk/clk-nspire.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+The patches were mainly tested on RB5 (sm8250, 7nm) and DB410c (apq8016,
+28nm-lp) and lightly tested on RB3 (sdm845, 10nm).
 
-diff --git a/drivers/clk/clk-nspire.c b/drivers/clk/clk-nspire.c
-index 6305058dd0d3..97bad9423960 100644
---- a/drivers/clk/clk-nspire.c
-+++ b/drivers/clk/clk-nspire.c
-@@ -27,7 +27,7 @@
- #define CX_BASE_SHIFT		15
- #define CX_BASE_MASK		0x3F
- 
--#define CX_UNKNOWN_SHIFT	21
-+#define CX_UNKNOWN_SHIFT	30
- #define CX_UNKNOWN_MASK		0x03
- 
- struct nspire_clk_info {
-@@ -40,13 +40,17 @@ struct nspire_clk_info {
- #define EXTRACT(var, prop) (((var)>>prop##_SHIFT) & prop##_MASK)
- static void nspire_clkinfo_cx(u32 val, struct nspire_clk_info *clk)
- {
--	if (EXTRACT(val, FIXED_BASE))
-+	if (EXTRACT(val, FIXED_BASE)) {
- 		clk->base_clock = 48 * MHZ;
--	else
-+		clk->base_cpu_ratio = 1 << EXTRACT(val, CX_UNKNOWN);
-+		clk->base_ahb_ratio = clk->base_cpu_ratio * 2;
-+	} else {
- 		clk->base_clock = 6 * EXTRACT(val, CX_BASE) * MHZ;
--
--	clk->base_cpu_ratio = EXTRACT(val, BASE_CPU) * EXTRACT(val, CX_UNKNOWN);
--	clk->base_ahb_ratio = clk->base_cpu_ratio * (EXTRACT(val, CPU_AHB) + 1);
-+		clk->base_cpu_ratio = 2;
-+		if (EXTRACT(val, BASE_CPU))
-+			clk->base_cpu_ratio = EXTRACT(val, BASE_CPU) * 2;
-+		clk->base_ahb_ratio = clk->base_cpu_ratio * (EXTRACT(val, CPU_AHB) + 1);
-+	}
- }
- 
- static void nspire_clkinfo_classic(u32 val, struct nspire_clk_info *clk)
--- 
-2.25.1
+External dependency for sm8250: https://lore.kernel.org/linux-arm-msm/20210317144039.556409-10-dmitry.baryshkov@linaro.org/
 
+The patch 'clk: fixed: add devm helper for clk_hw_register_fixed_factor()'
+is already a part of mainline as of 5.12-rc1, but is included here for
+completeness to fix compilation issues (as msm-next is based on 5.11-rc5).
 
+Changes since v1:
+ - Rebase on top of msm/msm-next
+ - Reorder patches to follow logical sequence
+ - Add sc7180 clocks assignment
+ - Drop sm8250 clocks assignment, as respective file is not updated in
+   msm/msm-next
+
+Changes since RFC:
+ - Reorder patches to move global clock patches in the beginning and
+   dtsi patches where they are required.
+ - remove msm_dsi_phy_set_src_pll() and guess src_pll_id using PHY usecase.
+
+The following changes since commit 627dc55c273dab308303a5217bd3e767d7083ddb:
+
+  drm/msm/disp/dpu1: icc path needs to be set before dpu runtime resume (2021-03-22 18:52:34 -0700)
+
+are available in the Git repository at:
+
+  https://git.linaro.org/people/dmitry.baryshkov/kernel.git dsi-phy-2
+
+for you to fetch changes up to 0fec912264e9ee8f0ebbad12e2711843d7d9e0ac:
+
+  drm/msm/dsi: stop passing src_pll_id to the phy_enable call (2021-03-24 18:14:39 +0300)
+
+----------------------------------------------------------------
+Daniel Palmer (1):
+      clk: fixed: add devm helper for clk_hw_register_fixed_factor()
+
+Dmitry Baryshkov (27):
+      clk: mux: provide devm_clk_hw_register_mux()
+      clk: divider: add devm_clk_hw_register_divider
+      drm/msm/dsi: replace PHY's init callback with configurable data
+      drm/msm/dsi: fuse dsi_pll_* code into dsi_phy_* code
+      drm/msm/dsi: drop multiple pll enable_seq support
+      drm/msm/dsi: move all PLL callbacks into PHY config struct
+      drm/msm/dsi: drop global msm_dsi_phy_type enumaration
+      drm/msm/dsi: move min/max PLL rate to phy config
+      drm/msm/dsi: remove msm_dsi_pll_set_usecase
+      drm/msm/dsi: stop setting clock parents manually
+      arm64: dts: qcom: sdm845: assign DSI clock source parents
+      arm64: dts: qcom: sc7180: assign DSI clock source parents
+      drm/msm/dsi: push provided clocks handling into a generic code
+      drm/msm/dsi: use devm_clk_*register to registe DSI PHY clocks
+      drm/msm/dsi: use devm_of_clk_add_hw_provider
+      drm/msm/dsi: make save/restore_state phy-level functions
+      drm/msm/dsi: drop vco_delay setting from 7nm, 10nm, 14nm drivers
+      drm/msm/dpu: simplify vco_delay handling in dsi_phy_28nm driver
+      drm/msi/dsi: inline msm_dsi_pll_helper_clk_prepare/unprepare
+      drm/msm/dsi: make save_state/restore_state callbacks accept msm_dsi_phy
+      drm/msm/dsi: drop msm_dsi_pll abstracton
+      drm/msm/dsi: drop PLL accessor functions
+      drm/msm/dsi: move ioremaps to dsi_phy_driver_probe
+      drm/msm/dsi: remove duplicate fields from dsi_pll_Nnm instances
+      drm/msm/dsi: remove temp data from global pll structure
+      drm/msm/dsi: inline msm_dsi_phy_set_src_pll
+      drm/msm/dsi: stop passing src_pll_id to the phy_enable call
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi            |    3 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi            |    6 +
+ drivers/clk/clk-fixed-factor.c                  |   39 +-
+ drivers/clk/clk-mux.c                           |   35 +
+ drivers/gpu/drm/msm/Kconfig                     |    8 -
+ drivers/gpu/drm/msm/Makefile                    |    9 -
+ drivers/gpu/drm/msm/dsi/dsi.h                   |   58 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c              |   51 --
+ drivers/gpu/drm/msm/dsi/dsi_manager.c           |   29 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c           |  150 ++--
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           |   41 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  745 ++++++++++++++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  939 ++++++++++++++++++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c      |   16 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      |  654 +++++++++++++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  479 +++++++++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       |  772 +++++++++++++++-
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll.c           |  184 ----
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll.h           |  132 ---
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c      |  881 ------------------
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c      | 1096 -----------------------
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c      |  643 -------------
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c |  526 -----------
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_7nm.c       |  913 -------------------
+ include/linux/clk-provider.h                    |   34 +-
+ 25 files changed, 3722 insertions(+), 4721 deletions(-)
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll.c
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll.h
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c
+ delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_7nm.c
 
 
