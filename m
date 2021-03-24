@@ -2,76 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B658C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4100C433C1
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D177061A0A
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87D53619FF
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Mar 2021 09:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232369AbhCXJmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:42:45 -0400
-Received: from mail-vk1-f182.google.com ([209.85.221.182]:34707 "EHLO
-        mail-vk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232724AbhCXJmh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:42:37 -0400
-Received: by mail-vk1-f182.google.com with SMTP id j15so5304968vkc.1;
-        Wed, 24 Mar 2021 02:42:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uTa3qcH8xY0ymAKQ1SS82CdjrmkKpFgPyzAvTe69dMk=;
-        b=PDKYNv5+NdZraUQgH1WAXJcEZKEWYYqI2UTSReK8c2xewYHlVtU5m0emx8As0qlmQ4
-         MW5n/mHzASSy7JzBr+OHE54u63A+WNrR7ojslK7L4Aiip6NY+ZgrjGVPpeL9VpGa15w6
-         i9VAlG1SqdnGsrKEjIY1DoK22ip5E1519zuJ26LT06gzpze2yIBnjLNyhijdZVYDr3vX
-         PPs5jjKOACu5KM3wO9HCH0WY5muYR+cGBpndDxGqG9R34o+RKjBgzczOeXsDzTMmyD/h
-         i8J3fALumQQY+tAQohM01DLUMI3Nrxy7srR1L3gdfPbDZulGAu5t8mJpi1Ih2Xs4lF4/
-         EDqQ==
-X-Gm-Message-State: AOAM530AvnioWkTBuWNTj6jPtJGmEDh2Toekaiyy90pWVUdbL66EITyS
-        j3pmpK1Hk3GBXKmw3kq94sAldr0qLg55d0dbCqo=
-X-Google-Smtp-Source: ABdhPJwO5caj4lj5o4nn5BtbfCAhNkQAu8ZO6C/WVbL+w1h9d5mLBYViz0c6DBWXQUCtZr8rGzQzc+54RrH+gkoykGQ=
-X-Received: by 2002:ac5:ce04:: with SMTP id j4mr884148vki.1.1616578956471;
- Wed, 24 Mar 2021 02:42:36 -0700 (PDT)
+        id S235092AbhCXJoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Mar 2021 05:44:22 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:48495 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235077AbhCXJoU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Mar 2021 05:44:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1616579060; x=1648115060;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vAL2C/cv6cfhXR8yAq0F6TMT+xO5j2GY0OKdM64ZkRE=;
+  b=WtZOsbSils4UCdfh8IvkrM2p2LshQosDja7aahKWElpI7LF0f1lRBdUS
+   pqWCe/6VWeav2By9xujgKSeWqS8pw2eXMayVLht3HSo8/niO2yMp1UU06
+   S8gsBlu9ufF6oqmQgnaEBBYCjyfFAEr3Yg1ei68MPj2ypYf3gG7pxMy0E
+   y33DG5GO0/p3T5o45QmO7tIo2Zx0qXRg22bRJROECbIhS4jH8+hSf9dxh
+   Nqk6usRFXh2aPzr2MBPg+5BKgGOS8E2VoA2ZnnyeVLrdhUlTM67qXOy7d
+   woMuiStXJYSBs7hkDt5BH5+jGL85QOpkapl2lxF5Mx2MXAHw5l0z8nHx1
+   w==;
+IronPort-SDR: aAaAaMi9zn5b0IKvAXVll+KT1qEYlXSXP8NEQWe7jSRcKsoO+nqpYopgBpi3nVF7kfvvFVtrQf
+ G5HQV5cJejqk0/4DSKD/LaWrbxWX6JyY7uRRyyrfYlZiJGMTRD8/g7GhKHpt5crXiKEl7hVKcG
+ lTgG2r3kf2m6QvYp/3Y1feD4C2iFgTSEOUWFoUf1Kg2HWAN1G9igbSa/8LNJnlDF+fo9rqGKtp
+ xevkajNMmnSvv17+g7ww+o1KJQKakkOruTe042R9FbXIi4lW4CstrGE1IB9uivbkDshSMtFvGx
+ R7M=
+X-IronPort-AV: E=Sophos;i="5.81,274,1610434800"; 
+   d="scan'208";a="108354587"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Mar 2021 02:44:19 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 24 Mar 2021 02:44:19 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2176.2 via Frontend Transport; Wed, 24 Mar 2021 02:44:15 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [RESEND PATCH 0/5] clk: at91: updates for power management and dvfs
+Date:   Wed, 24 Mar 2021 11:43:48 +0200
+Message-ID: <20210324094353.1710114-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210321075813.9471-1-unixbhaskar@gmail.com>
-In-Reply-To: <20210321075813.9471-1-unixbhaskar@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 24 Mar 2021 10:42:25 +0100
-Message-ID: <CAMuHMdXxvq2uUJWuYJQFDqPzMU1hCWWtemjSS73VsJON4npBkQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: Couple of spelling fixes
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     renesas@glider.be, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Mar 21, 2021 at 9:03 AM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
-> s/suposed/supposed/
-> s/concurent/concurrent/
->
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Hi,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.13.
+This series addresses the power management for SAMA7G5 and also updates
+the master clock prescaller and master clock divider drivers to accommodate
+the requests at [1].
 
-Gr{oetje,eeting}s,
+The power management part is implemented by adding
+save_context()/restore_context() on each clock driver (patch 1/5). Since
+the PM part is necessary only for backup mode (supported on SAMA5D2 and
+SAMA7G5) the pmc.c has been adapted to call the
+save_context()/restore_context() only on switches to/from backup mode
+(patch 2/5).
 
-                        Geert
+Patch 3/5 adds the securam clock on SAMA7G5. This is necessary for
+backup mode of SAMA7G5.
+
+Patch 4/5 adds registers definitions for the new master clocks (MCK1..4) of
+SAMA7G5 and adapt the clk-master.c. The defines exported in
+include/linux/clk/at91_pmc.h will be also used by platform specific PM
+code.
+
+Patch 5/5 adpat the master clock divider and master clock prescaller
+to address the requests at [1].
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
+
+Claudiu Beznea (5):
+  clk: at91: re-factor clocks suspend/resume
+  clk: at91: pmc: execute suspend/resume only for backup mode
+  clk: at91: sama7g5: add securam's peripheral clock
+  clk: at91: clk-master: add register definition for sama7g5's master
+    clock
+  clk: at91: clk-master: update for dvfs
+
+ drivers/clk/at91/at91rm9200.c       |   2 +-
+ drivers/clk/at91/at91sam9260.c      |   2 +-
+ drivers/clk/at91/at91sam9g45.c      |   2 +-
+ drivers/clk/at91/at91sam9n12.c      |   2 +-
+ drivers/clk/at91/at91sam9rl.c       |   2 +-
+ drivers/clk/at91/at91sam9x5.c       |   2 +-
+ drivers/clk/at91/clk-generated.c    |  45 +++-
+ drivers/clk/at91/clk-main.c         |  66 +++++
+ drivers/clk/at91/clk-master.c       | 395 +++++++++++++++++++++-------
+ drivers/clk/at91/clk-peripheral.c   |  38 ++-
+ drivers/clk/at91/clk-pll.c          |  37 +++
+ drivers/clk/at91/clk-programmable.c |  29 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  |  68 ++++-
+ drivers/clk/at91/clk-system.c       |  20 ++
+ drivers/clk/at91/clk-usb.c          |  27 ++
+ drivers/clk/at91/clk-utmi.c         |  47 +++-
+ drivers/clk/at91/dt-compat.c        |   2 +-
+ drivers/clk/at91/pmc.c              | 175 +++---------
+ drivers/clk/at91/pmc.h              |  27 +-
+ drivers/clk/at91/sam9x60.c          |   2 +-
+ drivers/clk/at91/sama5d2.c          |   2 +-
+ drivers/clk/at91/sama5d3.c          |   2 +-
+ drivers/clk/at91/sama5d4.c          |   2 +-
+ drivers/clk/at91/sama7g5.c          |   3 +-
+ include/linux/clk/at91_pmc.h        |  26 ++
+ 25 files changed, 750 insertions(+), 275 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
