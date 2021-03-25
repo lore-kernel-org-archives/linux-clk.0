@@ -2,35 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC771C433E4
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF09C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A81FF61A13
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D1061A13
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhCYHu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 03:50:56 -0400
-Received: from st43p00im-ztdg10061801.me.com ([17.58.63.170]:55941 "EHLO
-        st43p00im-ztdg10061801.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229882AbhCYHus (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 03:50:48 -0400
+        id S230012AbhCYHv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 03:51:29 -0400
+Received: from st43p00im-zteg10063401.me.com ([17.58.63.175]:43401 "EHLO
+        st43p00im-zteg10063401.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229616AbhCYHvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 03:51:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1616658645; bh=4W2/WmU9+mKLVBD82gYcRjsNMnXk4ZFJUWlVJxBIPW0=;
+        t=1616658675; bh=6f9Q0yFOd9GJCa/VvqoWPq3YcCZQ9pxcEKh9Th8QBbA=;
         h=From:To:Subject:Date:Message-Id;
-        b=XSJIO/Ib+7po656hE2TOmmImhunGUAfwFjAkq+bTCoYidft9yMaG9hB89+tQuLUOO
-         IFrTfWozLleuinQO7zCXqnDDkoDqVZ0B3N/2I6yyMn19n9ewFudMXo7vOhedMeJP2J
-         l1Z1f+dXQ0DEDMivzRBDe5Lf3Ue/SJ81nzhQyd0u0NatNugZxyyaVmy4IGaA6PMS9I
-         NwlYJnBqCzuhjSvFzhTIK0jIOHo3a29mv8fqgNP/xftT4VmOvK0v0P5oEsxr6P2JPU
-         kr4srE/ZtUfRqZrHdMHY7eOOpOLJg1lnZxzkwoZ/tBilzvqfzmKLUIl9L43cr0lS82
-         1bxjoOHC4xYxg==
+        b=Xz0tVmMvym10uJ0rGAdIW0bw78z9UeICMGQQ9irY4S/6CQQtprbgWy0GgxNupgRVa
+         /pev3c2UTxL4Kus+94E6csDTXXKFm3uA9GnlEmmsdDlAkZL7srw5PrdZQUyWi7os1r
+         S9YbvCmKyv1XnN2qvTsOT2PWa1F+Yc+1o6RcGdxnLr+srsm0dxunUs6oCcCiT0nBvw
+         skunUb6cywWdfA9G+rPobPKk3FQYH352SYKAFbB0T5gnN8MvKGRxaT37yFh23PGBdi
+         j3ApfzkhpRLGAMHgGzmFX5SSlajEH3VsqHApqiABRSUk4oPD8Wx1ew1uzxu3jX6lQ4
+         YmluvfYL08E4w==
 Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-ztdg10061801.me.com (Postfix) with ESMTPSA id 18EA28C03F9;
-        Thu, 25 Mar 2021 07:50:40 +0000 (UTC)
+        by st43p00im-zteg10063401.me.com (Postfix) with ESMTPSA id C8AD04A061A;
+        Thu, 25 Mar 2021 07:51:13 +0000 (UTC)
 From:   Alain Volmat <avolmat@me.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -39,70 +40,51 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH v2 00/16] clk: st: embed clock outputs within drivers
-Date:   Thu, 25 Mar 2021 08:50:02 +0100
-Message-Id: <20210325075018.6598-1-avolmat@me.com>
+Subject: [PATCH v2 03/16] dt-bindings: clock: st: flexgen: add new introduced compatible
+Date:   Thu, 25 Mar 2021 08:50:05 +0100
+Message-Id: <20210325075018.6598-4-avolmat@me.com>
 X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
- =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
- =?UTF-8?Q?=3D2021-03-25=5F01:2021-03-24=5F02,2021-03-25=5F01,2020-04-07?=
- =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=981 bulkscore=0
- malwarescore=0 clxscore=1015 phishscore=0 spamscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103250059
+In-Reply-To: <20210325075018.6598-1-avolmat@me.com>
+References: <20210325075018.6598-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-25_01:2021-03-24,2021-03-25 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2006250000 definitions=main-2103250059
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of ST clock drivers used by STi platform are updated in
-order to introduce clock outputs informations within each drivers
-and thus allow to avoid having to rely on clock-output-names properties
-within DT clock nodes.
-For that purpose, drivers are updated to allow handling both modes
-(with or without clock-output-names).
-Once all DT will have been updated, the legacy mode could be removed
-from the drivers.
-This will also allow, once all STi DT will be corrected, to remove the
-of_clk_detect_critical API from clk core code since STi clock drivers
-are the only drivers using this API.
+New compatible are added, supporting various kind of flexgen in
+STiH407, STiH410 and STiH418
 
-This serie also contains modifications within STi DTS in order to use
-the newly introduced compatible and remove clock-output-names
-properties.
-
-Alain Volmat (16):
-  clk: st: clkgen-pll: remove used variable of struct clkgen_pll
-  clk: st: flexgen: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: flexgen: add new introduced compatible
-  clk: st: clkgen-pll: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: clkgen-pll: add new introduced compatible
-  clk: st: clkgen-fsyn: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: clkgen-fsyn: add new introduced compatible
-  ARM: dts: sti: update flexgen compatible within stih418-clock
-  ARM: dts: sti: update flexgen compatible within stih407-clock
-  ARM: dts: sti: update flexgen compatible within stih410-clock
-  ARM: dts: sti: update clkgen-pll entries in stih407-clock
-  ARM: dts: sti: update clkgen-pll entries in stih410-clock
-  ARM: dts: sti: update clkgen-pll entries in stih418-clock
-  ARM: dts: sti: update clkgen-fsyn entries in stih407-clock
-  ARM: dts: sti: update clkgen-fsyn entries in stih410-clock
-  ARM: dts: sti: update clkgen-fsyn entries in stih418-clock
-
- .../bindings/clock/st/st,clkgen-pll.txt       |   3 +
- .../bindings/clock/st/st,flexgen.txt          |  10 +
- .../bindings/clock/st/st,quadfs.txt           |   3 +
- arch/arm/boot/dts/stih407-clock.dtsi          | 128 +------
- arch/arm/boot/dts/stih410-clock.dtsi          | 138 +------
- arch/arm/boot/dts/stih418-clock.dtsi          | 136 +------
- drivers/clk/st/clk-flexgen.c                  | 344 +++++++++++++++++-
- drivers/clk/st/clkgen-fsyn.c                  | 113 +++++-
- drivers/clk/st/clkgen-pll.c                   | 121 +++++-
- 9 files changed, 588 insertions(+), 408 deletions(-)
-
+Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
-v2: fix drivers to update some clocks as CLK_IS_CRITICAL
+ .../devicetree/bindings/clock/st/st,flexgen.txt        | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index 7ff77fc57dff..55a18939bddd 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -64,6 +64,16 @@ Required properties:
+   audio use case)
+   "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
+ 					and activate synchronous mode)
++  "st,flexgen-stih407-a0"
++  "st,flexgen-stih410-a0"
++  "st,flexgen-stih407-c0"
++  "st,flexgen-stih410-c0"
++  "st,flexgen-stih418-c0"
++  "st,flexgen-stih407-d0"
++  "st,flexgen-stih410-d0"
++  "st,flexgen-stih407-d2"
++  "st,flexgen-stih418-d2"
++  "st,flexgen-stih407-d3"
+ 
+ - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
+   outputs).
 -- 
 2.17.1
 
