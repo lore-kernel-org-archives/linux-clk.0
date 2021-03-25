@@ -2,245 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1000AC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 13:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B435C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 14:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D73B161A17
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 13:32:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2276461A32
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 14:00:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhCYNcY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 09:32:24 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22987 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230296AbhCYNcC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 09:32:02 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210325133200euoutp01261ac7dabeb55b9fdada19fe1214a439~vmRhHLxi42918429184euoutp01W
-        for <linux-clk@vger.kernel.org>; Thu, 25 Mar 2021 13:32:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210325133200euoutp01261ac7dabeb55b9fdada19fe1214a439~vmRhHLxi42918429184euoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1616679120;
-        bh=Z/DNfCxQzs0IDWoaY5k0ggzsNxFtNfsppQC7SUo3Oxc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=PMtE0N/GN5n23FKdJXoe8fmfFE0n4PTHJd3YgoYKQPYCm535bMH5dylBD/7xAPS6A
-         q4+0hT/utbRMOzRFTSeYrVtJswhqbLyjqTM7c8/0pfbxpLlEFTUpA/GJHzeLLuskvt
-         JfW95ozqwAKxC+A8pj2zaJLFcCbZ+vpPvtNEovU0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210325133200eucas1p220f7c0abe8506fb7c14ee5a19048e6d5~vmRgcvosb0792407924eucas1p2T;
-        Thu, 25 Mar 2021 13:32:00 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5F.25.09452.FC09C506; Thu, 25
-        Mar 2021 13:31:59 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e~vmRfxkYzT0793607936eucas1p2M;
-        Thu, 25 Mar 2021 13:31:59 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210325133159eusmtrp2092b54a21cf01982167e7e9aebd38641~vmRfwEGGD3060130601eusmtrp2q;
-        Thu, 25 Mar 2021 13:31:59 +0000 (GMT)
-X-AuditID: cbfec7f2-a9fff700000024ec-a5-605c90cf87a7
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FA.32.08705.FC09C506; Thu, 25
-        Mar 2021 13:31:59 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210325133157eusmtip1093d76ecea4c2fb8cbe03e117ac26715~vmReav6BN2222222222eusmtip1s;
-        Thu, 25 Mar 2021 13:31:57 +0000 (GMT)
-Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>, corbet@lwn.net,
-        gregkh@linuxfoundation.org, rafael@kernel.org, khilman@kernel.org,
-        ulf.hansson@linaro.org, len.brown@intel.com, lenb@kernel.org,
-        pavel@ucw.cz, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, frowand.list@gmail.com, maz@kernel.org,
-        tglx@linutronix.de, saravanak@google.com
-Cc:     nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-        geert@linux-m68k.org, kernel-team@android.com,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <d24bebc5-0f78-021f-293f-e58defa32531@samsung.com>
-Date:   Thu, 25 Mar 2021 14:31:57 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.8.1
+        id S230076AbhCYOA0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 10:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230078AbhCYN7z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 09:59:55 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A8CC06174A;
+        Thu, 25 Mar 2021 06:59:54 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id b9so2374802wrt.8;
+        Thu, 25 Mar 2021 06:59:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YjKGZLlCtyQB82qBJtWELpC41+tYuhv7momCoRL5qT4=;
+        b=S9QtyGwQo+41p9iAUrEHgPuF5EeA74lOYUAjf/ANbIvv2otJllwZLx2i1p9TllU0Ur
+         x+AusAq9YqdSZKsOcgxdDprpG4xdADmTL1Ia22nnW6k/3gMTGF0mO7R4sC1Jd/qYIx+k
+         3lhA4vhe0KKwFk+RchlCTO1aEfHMGNjWzBI8jTHi5ZgXugU48aHtIsB/07Le7GOuPeXb
+         xrFW2s9K20C2U1bta6TTjSuzlzWBq8quRX7FNcGRw+GEZvDqTyZputNiB8aqxOR2qTjA
+         ti0zugtzA6KsxJyjbd0wgOGWj+rIO0s7kBz/S9CQBmU/5zpdELOhu9j97XYm1j/DxQZt
+         LFFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YjKGZLlCtyQB82qBJtWELpC41+tYuhv7momCoRL5qT4=;
+        b=ln3YIpTbB+CLvNoONwbj5upr8CePNCo3fJyrdoNwrgYzX/asZDI8MtXpvk9hxgNktJ
+         jg8Yz3pKWbMEMObqC5EIFrPWoYaeLYC2w5VpeZEfzPXgjlL51+nIcG51ssWJoYXfUDpo
+         1sYGmH2SxixJTP2qGW/K6Dnt158cnp6ixAkK9WLowX0Fjk6t4JPGv+Gwdxsg8t9DK9wn
+         yx4wCbrW8qUCm5a7eKxNQHXO9iN29+8UzOeUY/q9fiXjSu+8YXDGpdp2cY2MWhnomNKI
+         Gv50c/h0t8iRaQm+EDWY4neXYg265cTBBTOCnaOnyYRM1eGROVbcXxokAGuT0I9YNPdQ
+         JQNQ==
+X-Gm-Message-State: AOAM531W65SE2afYaGQL+7/1Fpe5iopDiz/i8LmfTqGWaW2CP2HnSAik
+        QrtOtVpbNAQfd2BMBEzK3gOO/7e3Yp4=
+X-Google-Smtp-Source: ABdhPJwHcUox/5A2lYu1bIefKlEe74vU5Oa15/sCjCff49J5IazfdbhZcgKGFfqI9+beoH1y40UsIQ==
+X-Received: by 2002:adf:a703:: with SMTP id c3mr9360689wrd.72.1616680792847;
+        Thu, 25 Mar 2021 06:59:52 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id x25sm7110649wmj.14.2021.03.25.06.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 06:59:50 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 15:00:12 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>, JC Kuo <jckuo@nvidia.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg KH <gregkh@linuxfoundation.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, robh@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        nkristam@nvidia.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 00/14] Tegra XHCI controller ELPG support
+Message-ID: <YFyXbNXSVSBGqp9i@orome.fritz.box>
+References: <20210120073414.69208-1-jckuo@nvidia.com>
+ <YB1vGTt0ufzsYBgo@ulmo>
+ <YB1wxazg/QpRSJz6@kroah.com>
+ <YFszBH1JJmjJmjn2@orome.fritz.box>
+ <YFs/VBZvZo6mBJqz@orome.fritz.box>
+ <YFwqdNkkcrTRxSkP@vkoul-mobl.Dlink>
 MIME-Version: 1.0
-In-Reply-To: <20210210114435.122242-2-tudor.ambarus@microchip.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxzdfa99rxDrHgXTO2aYNJM5l/FhMN6NxjDF7S1EQzYXF4KjFd/A
-        FSq2sM0tGQhUoSoUi1FrCZiiMD4E21GtCKylriBLy4ZjjCGufJTJhqbW+S2O55ON/8459/zO
-        73eSK8BFViJcsEuZx6iU8mwJEcyz/vDA86ZHlyaLNfqkyNP1mEST3x8AqMbp5qMTfz8lkG+k
-        E0PFplYCXTgfhqYsExgyVM1LNu8sgeq7KgDyHxrjo1P763ho8KKRQIHDToAqf28jkc3Yx0c/
-        XdmEzltO4chqqCfQtSuXCVR95yiONJ1OEmkdTwg0N3SOhyzmec1fl4hcLdsSl9PWDiufvjWs
-        IWmb4RpJ15rzadOlGxhtbiwj6NGhSwR90+0maUdPKaC7q5tJ2lJXQJvK9Xx69P5pQFv6v6Yb
-        mu6RdMAckUKlBkt3Mtm7PmdUMetlwVnlk5O83PGILzXXrUQhKAnXgiABpOJhwPYLoQXBAhHV
-        AKDe1P+c3AFwYrYFZ10iKgBgYb1kYaLn0a3npnoAL3fcAxzxA+g3dWBaIBCEUu9DszGL1cOo
-        GxjU+1p5LMGpUhz2/OHlsVEEFQe1s1qCxUJqPTzS58RYzKNWwqkBL58NWkbtgG2O7ZwlBPad
-        mHw2GkRtgP0VTc/sOPUKLG4/iXNYDEcmazB2F6TswVBnbAZsDqSS4F9VG7kGoXDG9R3J4eXw
-        qW3BXwyg191CcuQQgINFxwHnSoCj7ocEG4RTr8PWizGc/A4sDdzmc/lL4fBsCHfDUnjEegzn
-        ZCEs3S/i3FHQ4Dr731r7wM+4DkgMi5oZFrUxLGpj+H9vLeA1AjGTr87JZNRxSuaLaLU8R52v
-        zIzO2J1jBvNfu3/OdfsCqJ7xRzsAJgAOAAW4JEy4Y3OaTCTcKd/7FaPana7Kz2bUDvCygCcR
-        CxtPNqeLqEx5HqNgmFxGtfCKCYLCCzGj8u25pMGOo70vvXo38rcl/Kzjvc6QtYel7mPnIh+t
-        Ufu2JXVRSQV2YpOqL8Ja9GdKXfnVkUp7e9QKRTf2ickzkLCltnt8YxSpV0wcgOsG8E5F6bS1
-        KUCLtQW/vmUs8qTBD8+KKl6bmrbpM16sHz4T8vjT7pLte+7aNQZP+B51WmjDhoS8j6XK96qS
-        /Vs0kaHJg5qxis3XpaMfpH8kU6DuJLtuXEp4qCWf+eIPrvJthS0Pl4l/FL/xZPXVWBQpWrPu
-        4Kqw9sq9qSUZutah1JmBM15Jb3LN/fgU3YPeqH2935QpX2jwrV3R5oopc347nfhu/D9BUxL9
-        ygTZvrFYUe7NZAlPnSWPW42r1PJ/AU4O5fpJBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsVy+t/xu7rnJ8QkGHxey29xft8fdosnB9oZ
-        LeYfOcdqMfPNfzaLZ7f2Mlk0L17PZrFju4jF082PmSxmTQEK7Xz4ls1i+b5+RouPPfdYLRa2
-        LWGxuLxrDpvF594jjBYTb29gt9g55ySrxcVTrhbbNy9kttg2azmbxd1TR9ks5n6ZymzRuvcI
-        u0XXob9sFv+ubWSx2LwJKPZxiYPF8bXhDjIe23ZvY/V4f6OV3WPnrLvsHgs2lXos3vOSyWPT
-        qk42jzvX9rB5vDt3jt3j0OEORo/9c9ewe2xeUu+xuG8yq8edH0sZPTafrvZYsfo7u8fnTXIB
-        AlF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GX1P
-        nrAUPJKraL2/ja2BsUWqi5GTQ0LAROLw7/dsXYxcHEICSxklXi58ygyRkJE4Oa2BFcIWlvhz
-        rQuq6D2jxNfLk1i6GDk4hAU8JTbNyQCJiwi8ZJJ4tWkfK4jDLNDBLHHpeDc7RMdqRolr//4y
-        gYxiEzCU6HoLMoqTg1fATmLSySNgcRYBVYmnFx6CrRMVSJK4vGQiK0SNoMTJmU9YQGxOASeJ
-        0/2rweqZBcwk5m1+yAxhy0s0b50NZYtL3Hoyn2kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXF
-        uem5xYZ6xYm5xaV56XrJ+bmbGIGpatuxn5t3MM579VHvECMTB+MhRgkOZiUR3iTfmAQh3pTE
-        yqrUovz4otKc1OJDjKZA/0xklhJNzgcmy7ySeEMzA1NDEzNLA1NLM2Mlcd6tc9fECwmkJ5ak
-        ZqemFqQWwfQxcXBKNTAd2sJbqSZ3ZsaPzGfXT7892/3YTKtiQ9tn8Uotpq/7Vv/eOMFRykax
-        f9X+bd3fMqdxfRQOq8644Xc84WpJhHE/l5e34oIXxnuWx20si5L5cfMpf4Xw7UvfJ/VwPhDp
-        vCLSv+JQwxyZy3Fs5oZTPvSd5FS1P7OizyJ5wqU+jdStk1N7BZpe7bjLEW2uz+kq/WY189uc
-        iD/7X9Tty5ygu6FvX/cS+wWdN7h1dvzw4nI+s2xVvZRG6HJJdsei0s2PeBhV8rM+W77YcOaW
-        3OHwtypHjH52xRW/zlP8cmjp/LKXbQb9hs99v2hc8/RLCE35pZ3Rxq8R9lOSkeGU8+xXyZOt
-        zl9h95nyPz8mQIOnh0+JpTgj0VCLuag4EQC4OsQT3gMAAA==
-X-CMS-MailID: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
-References: <20210205222644.2357303-9-saravanak@google.com>
-        <20210210114435.122242-1-tudor.ambarus@microchip.com>
-        <20210210114435.122242-2-tudor.ambarus@microchip.com>
-        <CGME20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e@eucas1p2.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dai2fAX/B7TMT3mf"
+Content-Disposition: inline
+In-Reply-To: <YFwqdNkkcrTRxSkP@vkoul-mobl.Dlink>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi
 
-On 10.02.2021 12:44, Tudor Ambarus wrote:
-> This is a follow-up for:
-> commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
->
-> The above commit updated the deprecated of_clk_add_provider(),
-> but missed to update the preferred of_clk_add_hw_provider().
-> Update it now.
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+--dai2fAX/B7TMT3mf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch, which landed in linux-next as commit 6579c8d97ad7 ("clk: 
-Mark fwnodes when their clock provider is added") causes the following 
-NULL pointer dereference on Raspberry Pi 3b+ boards:
+On Thu, Mar 25, 2021 at 11:45:16AM +0530, Vinod Koul wrote:
+> On 24-03-21, 14:32, Thierry Reding wrote:
+> > On Wed, Mar 24, 2021 at 01:39:32PM +0100, Thierry Reding wrote:
+> > > On Fri, Feb 05, 2021 at 05:22:29PM +0100, Greg KH wrote:
+> > > > On Fri, Feb 05, 2021 at 05:15:21PM +0100, Thierry Reding wrote:
+> > > > > On Wed, Jan 20, 2021 at 03:34:00PM +0800, JC Kuo wrote:
+> > > > > > Tegra XHCI controler can be placed in ELPG (Engine Level PowerG=
+ated)
+> > > > > > state for power saving when all of the connected USB devices ar=
+e in
+> > > > > > suspended state. This patch series includes clk, phy and pmc ch=
+anges
+> > > > > > that are required for properly place controller in ELPG and bri=
+ng
+> > > > > > controller out of ELPG.
+> > > > > >=20
+> > > > > > JC Kuo (14):
+> > > > > >   clk: tegra: Add PLLE HW power sequencer control
+> > > > > >   clk: tegra: Don't enable PLLE HW sequencer at init
+> > > > > >   phy: tegra: xusb: Move usb3 port init for Tegra210
+> > > > > >   phy: tegra: xusb: Rearrange UPHY init on Tegra210
+> > > > > >   phy: tegra: xusb: Add Tegra210 lane_iddq operation
+> > > > > >   phy: tegra: xusb: Add sleepwalk and suspend/resume
+> > > > > >   soc/tegra: pmc: Provide USB sleepwalk register map
+> > > > > >   arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
+> > > > > >   dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
+> > > > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra210
+> > > > > >   phy: tegra: xusb: Tegra210 host mode VBUS control
+> > > > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra186
+> > > > > >   usb: host: xhci-tegra: Unlink power domain devices
+> > > > > >   xhci: tegra: Enable ELPG for runtime/system PM
+> > > > > >=20
+> > > > > >  .../phy/nvidia,tegra124-xusb-padctl.txt       |    1 +
+> > > > > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    1 +
+> > > > > >  drivers/clk/tegra/clk-pll.c                   |   12 -
+> > > > > >  drivers/clk/tegra/clk-tegra210.c              |   53 +-
+> > > > > >  drivers/phy/tegra/xusb-tegra186.c             |  558 ++++-
+> > > > > >  drivers/phy/tegra/xusb-tegra210.c             | 1889 +++++++++=
+++++----
+> > > > > >  drivers/phy/tegra/xusb.c                      |   92 +-
+> > > > > >  drivers/phy/tegra/xusb.h                      |   22 +-
+> > > > > >  drivers/soc/tegra/pmc.c                       |   94 +
+> > > > > >  drivers/usb/host/xhci-tegra.c                 |  613 ++++--
+> > > > > >  include/linux/clk/tegra.h                     |    4 +-
+> > > > > >  include/linux/phy/tegra/xusb.h                |   10 +-
+> > > > > >  12 files changed, 2784 insertions(+), 565 deletions(-)
+> > > > > >=20
+> > > > > > v5 "phy: tegra: xusb: tegra210: Do not reset UPHY PLL" is moved
+> > > > > > into v6 "phy: tegra: xusb: Rearrange UPHY init on Tegra210"
+> > > > >=20
+> > > > > Mike, Stephen,
+> > > > >=20
+> > > > > could you guys take a look at the two clk patches here and give an
+> > > > > Acked-by? There's build-time dependencies throughout the series, =
+so it'd
+> > > > > be good if they can all go through either the PHY or USB trees.
+> > > > >=20
+> > > > > Kishon, Greg,
+> > > > >=20
+> > > > > any comments on these patches? Unfortunately, the USB patches in =
+this
+> > > > > series have a build-time dependency on the PHY patches, so this s=
+hould
+> > > > > all go through one tree. Since this all culminates in the XHCI dr=
+iver,
+> > > > > merging this through the USB tree might be best, provided that Ki=
+shon
+> > > > > provides his Acked-by on the PHY patches.
+> > > > >=20
+> > > > > Alternatively, I can create a set of branches with the correct
+> > > > > dependencies and send out pull requests for the three subsystems =
+if
+> > > > > that's preferrable.
+> > > >=20
+> > > > I have no objection for the usb patches to go through your tree as =
+they
+> > > > are hardware-specific.
+> > >=20
+> > > Kishon,
+> > >=20
+> > > I haven't heard back from you on this yet. We missed v5.12 but I'd li=
+ke
+> > > to get this into v5.13 since it's the last missing piece to get suspe=
+nd
+> > > and resume working properly on a number of boards.
+> > >=20
+> > > Are you okay if I take this through the Tegra tree to satisfy the
+> > > interdependencies between clk, PHY and USB patches? I've already got
+> > > Acked-by's from the clock and USB maintainers.
+> > >=20
+> > > I want to tentatively take this into linux-next to give it a bit of s=
+oak
+> > > time before the ARM SoC -rc6 cut-off. Please let me know if you'd pre=
+fer
+> > > to apply these to your tree so I can back them out of the Tegra tree
+> > > again.
+> >=20
+> > Also adding Vinod for visibility and in case Kishon's too busy.
+>=20
+> Yes please CC me on all things phy (MAINTAINERS should have told you so)
+>=20
+> If you can resend me and cc linux-phy@lists.infradead.org, I would take
+> a look. FWIW since this goes thru Greg, the window closes earlier than
+> merge window
 
---->8---
+Greg already agreed that it might be best to take this through the Tegra
+tree because there's a bunch of dependencies. For Tegra the patches go
+through ARM SoC and that usually means I have to send pull requests by
+-rc6.
 
-raspberrypi-firmware soc:firmware: Attached to firmware from 
-2020-01-06T13:05:25
-Unable to handle kernel NULL pointer dereference at virtual address 
-0000000000000050
-Mem abort info:
-   ESR = 0x96000004
-   EC = 0x25: DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
-Data abort info:
-   ISV = 0, ISS = 0x00000004
-   CM = 0, WnR = 0
-[0000000000000050] user address but active_mm is swapper
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 5.12.0-rc4+ #2764
-Hardware name: Raspberry Pi 3 Model B (DT)
-Workqueue: events deferred_probe_work_func
-pstate: 00000005 (nzcv daif -PAN -UAO -TCO BTYPE=--)
-pc : of_clk_add_hw_provider+0xac/0xe8
-lr : of_clk_add_hw_provider+0x94/0xe8
-sp : ffff8000130936b0
-x29: ffff8000130936b0 x28: ffff800012494e04
-x27: ffff00003b18cb05 x26: ffff00003aa5c010
-x25: 0000000000000000 x24: 0000000000000000
-x23: ffff00003aa1e380 x22: ffff8000106830d0
-x21: ffff80001233f180 x20: 0000000000000018
-x19: 0000000000000000 x18: ffff8000124d38b0
-x17: 0000000000000013 x16: 0000000000000014
-x15: ffff8000125758b0 x14: 00000000000184e0
-x13: 000000000000292e x12: ffff80001258dd98
-x11: 0000000000000001 x10: 0101010101010101
-x9 : ffff80001233f288 x8 : 7f7f7f7f7f7f7f7f
-x7 : fefefefeff6c626f x6 : 5d636d8080808080
-x5 : 00000000006d635d x4 : 0000000000000000
-x3 : 0000000000000000 x2 : 540eb5edae191600
-x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
-  of_clk_add_hw_provider+0xac/0xe8
-  devm_of_clk_add_hw_provider+0x5c/0xb8
-  raspberrypi_clk_probe+0x110/0x210
-  platform_probe+0x90/0xd8
-  really_probe+0x108/0x3c0
-  driver_probe_device+0x60/0xc0
-  __device_attach_driver+0x9c/0xd0
-  bus_for_each_drv+0x70/0xc8
-  __device_attach+0xec/0x150
-  device_initial_probe+0x10/0x18
-  bus_probe_device+0x94/0xa0
-  device_add+0x47c/0x780
-  platform_device_add+0x110/0x248
-  platform_device_register_full+0x120/0x150
-  rpi_firmware_probe+0x158/0x1f8
-  platform_probe+0x90/0xd8
-  really_probe+0x108/0x3c0
-  driver_probe_device+0x60/0xc0
-  __device_attach_driver+0x9c/0xd0
-  bus_for_each_drv+0x70/0xc8
-  __device_attach+0xec/0x150
-  device_initial_probe+0x10/0x18
-  bus_probe_device+0x94/0xa0
-  deferred_probe_work_func+0x70/0xa8
-  process_one_work+0x2a8/0x718
-  worker_thread+0x48/0x460
-  kthread+0x134/0x160
-  ret_from_fork+0x10/0x18
-Code: b1006294 540000c0 b140069f 54000088 (3940e280)
----[ end trace 7ead5ec2f0c51cfe ]---
+JC, do you have time to resend this batch this week? If not I can do it,
+too.
 
-This patch mainly revealed that clk/bcm/clk-raspberrypi.c driver calls 
-devm_of_clk_add_hw_provider(), with a device pointer, which has a NULL 
-dev->of_node. I'm not sure if adding a check for a NULL np in 
-of_clk_add_hw_provider() is a right fix, though.
+Thierry
 
-> ---
->   drivers/clk/clk.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 27ff90eacb1f..9370e4dfecae 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
->   	if (ret < 0)
->   		of_clk_del_provider(np);
->   
-> +	fwnode_dev_initialized(&np->fwnode, true);
-> +
->   	return ret;
->   }
->   EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
+--dai2fAX/B7TMT3mf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBcl2kACgkQ3SOs138+
+s6FJpRAAh/KdrFYeA+5w0LDmn1v40Lbh3XKBhiRlvmtkwquVdcVyNFT0ZVZQUvA5
+bG5Ruvj3YbKufmVGXx5f9Sz2QnfSg+A4x7snLN2NYgCxx/ENsQvvLsnTJwKhFghK
+NaqBfZ9kiZtmZjFjobzMTqu75saE78+KyuA3uahrKrpxKMhSqqrZ5opdN4k3Q5iQ
+QLcul4xFNiJ9Yn93S9lc0I5f+Hm4GL5SMR0oOsPVHoUL5g1YWj4y/MqpZ8gh0HkR
+ABuQp0K788del+g1JdJjnMsBG7fQpYBvIAobuBYgnM7a//bLmvSbHM/oGDD7aV3h
+vIZhAaC2iaSSQTwB1B+K2rqlcI9t9qww3lphbAKALGeOKGBh1I7XCFHjSVVMcWVE
+ZLMRgn4xqIQVomUKTF6tS6Jz+iwuYKpVBQDDo2wJVItTusYfFHM3iUJ0eZgrFBfz
+J3JUPhSBWlHU6q6cBlZ90xOipZYseRt1ADunGKhVMfTi+20zxLMiRgRRHXndJ6K/
+yQZr4VVHAo+YivfDUGN52vl0OVoe/tBVNNPB4XgYzD0T+Fo+Dfc3ERi30Vj9OWcs
+AwScJAB5xi5lahkz4ADe6cY9VngQWOsYHewk7OHgE1JCENVTOyBRggyYb8ldl4rv
+a0CHLOsjWBm8OR0w/HujDZhCEWbMe3kLQYky40A/jk3iAQHtecM=
+=5lML
+-----END PGP SIGNATURE-----
+
+--dai2fAX/B7TMT3mf--
