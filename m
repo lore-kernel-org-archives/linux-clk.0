@@ -2,295 +2,245 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067CFC43446
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 11:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1000AC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 13:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4B9060240
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 11:13:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D73B161A17
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 13:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbhCYLMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 07:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbhCYLL6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 07:11:58 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DFD3C06175F
-        for <linux-clk@vger.kernel.org>; Thu, 25 Mar 2021 04:11:57 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id b4so1912802lfi.6
-        for <linux-clk@vger.kernel.org>; Thu, 25 Mar 2021 04:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vlFFAnWw2oQS6KQuBOzl9VFGrwAtxCUu1GQdT8KGelI=;
-        b=Q2FtlHyq9lCVdHB+T4AqLf/mTjSpxlXIr0Rc/L+21g/h7G+nEvOdtIMpx25bRMHr1G
-         9WXvA9DxBkt08b0v0pANFJ1I9aqjStDMtW6FuLd0isoGXZCkWV+mZXaSyZKglPtRHdpf
-         sZQk9iwB+3ZjhdTGZxbYBHFOs4Q3YveUEnLg+VsTXtQwZBxSRlijMVJ1bOsfHjcrZvT5
-         cEDTTSq/MwYVdFh8j4K5cnDRPIT/E6oRNaoKGRBfjOGuaFQOSEbFBS0hu7rAgvCmlW/N
-         avYXyQSL3nj5T1u1hmBUkFas36VXOQl4VMDggc04TwCCrsQcP4XnFwFhDutVINrbB9/I
-         m+bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vlFFAnWw2oQS6KQuBOzl9VFGrwAtxCUu1GQdT8KGelI=;
-        b=OGrJznBs0dn4+kClLJYP3GGBNhMEYpQcDIk76bpXfM3dGxAzmJmNftzzqOAnMnpAHY
-         dHg8nWxDfmH8KBNWJWfuE6gRU072vUHLMzhLBBkgr8TiKu6cay8AVqU0FTP0LstIf91y
-         +BpWrkxpc/2HjMZUbhq7QGA7cRYZY983Ip2pf5TZvPYQz+sT8tYBX9ATrNf1eHJKDLdB
-         MLrdGl48ds7Wlrzjg/Uwaio593rgFvFDQ3xUG8YiudyApf7bRisaCcHtQBnuGTgUI3o9
-         ku39xrPEPyELMFDT50Kjd7j4nEc1sslfnQiKy12RqncKYEmYFS8gSWiUFfVgVmFvWpHU
-         tuvg==
-X-Gm-Message-State: AOAM531lp9U2uPY7ZcAxrbp14twcN67fn3LA9RouvgCxfUu0O4GIqJsP
-        dr/0SBBB/+kz5CA9YMlE/IKBTw==
-X-Google-Smtp-Source: ABdhPJwFyaqfQ4UJ+nmevJJOzQyffkAN9YmU1D0QLJdQeSETcUP20X9ctJfJXW48kYJkddQhUSUybw==
-X-Received: by 2002:a19:6b10:: with SMTP id d16mr4949784lfa.540.1616670716160;
-        Thu, 25 Mar 2021 04:11:56 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id t22sm715191ljj.94.2021.03.25.04.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 04:11:55 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v1 12/15] clk: qcom: dispcc-sdm845: get rid of the test clock
-Date:   Thu, 25 Mar 2021 14:11:41 +0300
-Message-Id: <20210325111144.2852594-13-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210325111144.2852594-1-dmitry.baryshkov@linaro.org>
-References: <20210325111144.2852594-1-dmitry.baryshkov@linaro.org>
+        id S230406AbhCYNcY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 09:32:24 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:22987 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230296AbhCYNcC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 09:32:02 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210325133200euoutp01261ac7dabeb55b9fdada19fe1214a439~vmRhHLxi42918429184euoutp01W
+        for <linux-clk@vger.kernel.org>; Thu, 25 Mar 2021 13:32:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210325133200euoutp01261ac7dabeb55b9fdada19fe1214a439~vmRhHLxi42918429184euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1616679120;
+        bh=Z/DNfCxQzs0IDWoaY5k0ggzsNxFtNfsppQC7SUo3Oxc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=PMtE0N/GN5n23FKdJXoe8fmfFE0n4PTHJd3YgoYKQPYCm535bMH5dylBD/7xAPS6A
+         q4+0hT/utbRMOzRFTSeYrVtJswhqbLyjqTM7c8/0pfbxpLlEFTUpA/GJHzeLLuskvt
+         JfW95ozqwAKxC+A8pj2zaJLFcCbZ+vpPvtNEovU0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210325133200eucas1p220f7c0abe8506fb7c14ee5a19048e6d5~vmRgcvosb0792407924eucas1p2T;
+        Thu, 25 Mar 2021 13:32:00 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5F.25.09452.FC09C506; Thu, 25
+        Mar 2021 13:31:59 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e~vmRfxkYzT0793607936eucas1p2M;
+        Thu, 25 Mar 2021 13:31:59 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210325133159eusmtrp2092b54a21cf01982167e7e9aebd38641~vmRfwEGGD3060130601eusmtrp2q;
+        Thu, 25 Mar 2021 13:31:59 +0000 (GMT)
+X-AuditID: cbfec7f2-a9fff700000024ec-a5-605c90cf87a7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FA.32.08705.FC09C506; Thu, 25
+        Mar 2021 13:31:59 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210325133157eusmtip1093d76ecea4c2fb8cbe03e117ac26715~vmReav6BN2222222222eusmtip1s;
+        Thu, 25 Mar 2021 13:31:57 +0000 (GMT)
+Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>, corbet@lwn.net,
+        gregkh@linuxfoundation.org, rafael@kernel.org, khilman@kernel.org,
+        ulf.hansson@linaro.org, len.brown@intel.com, lenb@kernel.org,
+        pavel@ucw.cz, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, frowand.list@gmail.com, maz@kernel.org,
+        tglx@linutronix.de, saravanak@google.com
+Cc:     nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        geert@linux-m68k.org, kernel-team@android.com,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <d24bebc5-0f78-021f-293f-e58defa32531@samsung.com>
+Date:   Thu, 25 Mar 2021 14:31:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <20210210114435.122242-2-tudor.ambarus@microchip.com>
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxzdfa99rxDrHgXTO2aYNJM5l/FhMN6NxjDF7S1EQzYXF4KjFd/A
+        FSq2sM0tGQhUoSoUi1FrCZiiMD4E21GtCKylriBLy4ZjjCGufJTJhqbW+S2O55ON/8459/zO
+        73eSK8BFViJcsEuZx6iU8mwJEcyz/vDA86ZHlyaLNfqkyNP1mEST3x8AqMbp5qMTfz8lkG+k
+        E0PFplYCXTgfhqYsExgyVM1LNu8sgeq7KgDyHxrjo1P763ho8KKRQIHDToAqf28jkc3Yx0c/
+        XdmEzltO4chqqCfQtSuXCVR95yiONJ1OEmkdTwg0N3SOhyzmec1fl4hcLdsSl9PWDiufvjWs
+        IWmb4RpJ15rzadOlGxhtbiwj6NGhSwR90+0maUdPKaC7q5tJ2lJXQJvK9Xx69P5pQFv6v6Yb
+        mu6RdMAckUKlBkt3Mtm7PmdUMetlwVnlk5O83PGILzXXrUQhKAnXgiABpOJhwPYLoQXBAhHV
+        AKDe1P+c3AFwYrYFZ10iKgBgYb1kYaLn0a3npnoAL3fcAxzxA+g3dWBaIBCEUu9DszGL1cOo
+        GxjU+1p5LMGpUhz2/OHlsVEEFQe1s1qCxUJqPTzS58RYzKNWwqkBL58NWkbtgG2O7ZwlBPad
+        mHw2GkRtgP0VTc/sOPUKLG4/iXNYDEcmazB2F6TswVBnbAZsDqSS4F9VG7kGoXDG9R3J4eXw
+        qW3BXwyg191CcuQQgINFxwHnSoCj7ocEG4RTr8PWizGc/A4sDdzmc/lL4fBsCHfDUnjEegzn
+        ZCEs3S/i3FHQ4Dr731r7wM+4DkgMi5oZFrUxLGpj+H9vLeA1AjGTr87JZNRxSuaLaLU8R52v
+        zIzO2J1jBvNfu3/OdfsCqJ7xRzsAJgAOAAW4JEy4Y3OaTCTcKd/7FaPana7Kz2bUDvCygCcR
+        CxtPNqeLqEx5HqNgmFxGtfCKCYLCCzGj8u25pMGOo70vvXo38rcl/Kzjvc6QtYel7mPnIh+t
+        Ufu2JXVRSQV2YpOqL8Ja9GdKXfnVkUp7e9QKRTf2ickzkLCltnt8YxSpV0wcgOsG8E5F6bS1
+        KUCLtQW/vmUs8qTBD8+KKl6bmrbpM16sHz4T8vjT7pLte+7aNQZP+B51WmjDhoS8j6XK96qS
+        /Vs0kaHJg5qxis3XpaMfpH8kU6DuJLtuXEp4qCWf+eIPrvJthS0Pl4l/FL/xZPXVWBQpWrPu
+        4Kqw9sq9qSUZutah1JmBM15Jb3LN/fgU3YPeqH2935QpX2jwrV3R5oopc347nfhu/D9BUxL9
+        ygTZvrFYUe7NZAlPnSWPW42r1PJ/AU4O5fpJBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsVy+t/xu7rnJ8QkGHxey29xft8fdosnB9oZ
+        LeYfOcdqMfPNfzaLZ7f2Mlk0L17PZrFju4jF082PmSxmTQEK7Xz4ls1i+b5+RouPPfdYLRa2
+        LWGxuLxrDpvF594jjBYTb29gt9g55ySrxcVTrhbbNy9kttg2azmbxd1TR9ks5n6ZymzRuvcI
+        u0XXob9sFv+ubWSx2LwJKPZxiYPF8bXhDjIe23ZvY/V4f6OV3WPnrLvsHgs2lXos3vOSyWPT
+        qk42jzvX9rB5vDt3jt3j0OEORo/9c9ewe2xeUu+xuG8yq8edH0sZPTafrvZYsfo7u8fnTXIB
+        AlF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GX1P
+        nrAUPJKraL2/ja2BsUWqi5GTQ0LAROLw7/dsXYxcHEICSxklXi58ygyRkJE4Oa2BFcIWlvhz
+        rQuq6D2jxNfLk1i6GDk4hAU8JTbNyQCJiwi8ZJJ4tWkfK4jDLNDBLHHpeDc7RMdqRolr//4y
+        gYxiEzCU6HoLMoqTg1fATmLSySNgcRYBVYmnFx6CrRMVSJK4vGQiK0SNoMTJmU9YQGxOASeJ
+        0/2rweqZBcwk5m1+yAxhy0s0b50NZYtL3Hoyn2kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXF
+        uem5xYZ6xYm5xaV56XrJ+bmbGIGpatuxn5t3MM579VHvECMTB+MhRgkOZiUR3iTfmAQh3pTE
+        yqrUovz4otKc1OJDjKZA/0xklhJNzgcmy7ySeEMzA1NDEzNLA1NLM2Mlcd6tc9fECwmkJ5ak
+        ZqemFqQWwfQxcXBKNTAd2sJbqSZ3ZsaPzGfXT7892/3YTKtiQ9tn8Uotpq/7Vv/eOMFRykax
+        f9X+bd3fMqdxfRQOq8644Xc84WpJhHE/l5e34oIXxnuWx20si5L5cfMpf4Xw7UvfJ/VwPhDp
+        vCLSv+JQwxyZy3Fs5oZTPvSd5FS1P7OizyJ5wqU+jdStk1N7BZpe7bjLEW2uz+kq/WY189uc
+        iD/7X9Tty5ygu6FvX/cS+wWdN7h1dvzw4nI+s2xVvZRG6HJJdsei0s2PeBhV8rM+W77YcOaW
+        3OHwtypHjH52xRW/zlP8cmjp/LKXbQb9hs99v2hc8/RLCE35pZ3Rxq8R9lOSkeGU8+xXyZOt
+        zl9h95nyPz8mQIOnh0+JpTgj0VCLuag4EQC4OsQT3gMAAA==
+X-CMS-MailID: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e
+References: <20210205222644.2357303-9-saravanak@google.com>
+        <20210210114435.122242-1-tudor.ambarus@microchip.com>
+        <20210210114435.122242-2-tudor.ambarus@microchip.com>
+        <CGME20210325133159eucas1p297b769beb681743fb32d362a86cc6e3e@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The test clock isn't in the bindings and apparently it's not used by
-anyone upstream.  Remove it.
+Hi
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/dispcc-sdm845.c | 39 ++++++++++++--------------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+On 10.02.2021 12:44, Tudor Ambarus wrote:
+> This is a follow-up for:
+> commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
+>
+> The above commit updated the deprecated of_clk_add_provider(),
+> but missed to update the preferred of_clk_add_hw_provider().
+> Update it now.
+>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index bf5e8a4a0230..195cecf9f294 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -21,7 +21,6 @@
- 
- enum {
- 	P_BI_TCXO,
--	P_CORE_BI_PLL_TEST_SE,
- 	P_DISP_CC_PLL0_OUT_MAIN,
- 	P_DSI0_PHY_PLL_OUT_BYTECLK,
- 	P_DSI0_PHY_PLL_OUT_DSICLK,
-@@ -52,38 +51,32 @@ static const struct parent_map disp_cc_parent_map_0[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
- 	{ P_DSI1_PHY_PLL_OUT_BYTECLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_0[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dsi0_phy_pll_out_byteclk", .name = "dsi0_phy_pll_out_byteclk" },
- 	{ .fw_name = "dsi1_phy_pll_out_byteclk", .name = "dsi1_phy_pll_out_byteclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_1[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DP_PHY_PLL_LINK_CLK, 1 },
- 	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_1[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dp_link_clk_divsel_ten", .name = "dp_link_clk_divsel_ten" },
- 	{ .fw_name = "dp_vco_divided_clk_src_mux", .name = "dp_vco_divided_clk_src_mux" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_2[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_3[] = {
-@@ -91,7 +84,6 @@ static const struct parent_map disp_cc_parent_map_3[] = {
- 	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
- 	{ P_GPLL0_OUT_MAIN, 4 },
- 	{ P_GPLL0_OUT_MAIN_DIV, 5 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_3[] = {
-@@ -99,21 +91,18 @@ static const struct clk_parent_data disp_cc_parent_data_3[] = {
- 	{ .hw = &disp_cc_pll0.clkr.hw },
- 	{ .fw_name = "gcc_disp_gpll0_clk_src", .name = "gcc_disp_gpll0_clk_src" },
- 	{ .fw_name = "gcc_disp_gpll0_div_clk_src", .name = "gcc_disp_gpll0_div_clk_src" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_4[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
- 	{ P_DSI1_PHY_PLL_OUT_DSICLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_4[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dsi0_phy_pll_out_dsiclk", .name = "dsi0_phy_pll_out_dsiclk" },
- 	{ .fw_name = "dsi1_phy_pll_out_dsiclk", .name = "dsi1_phy_pll_out_dsiclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- /* Return the HW recalc rate for idle use case */
-@@ -125,7 +114,7 @@ static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte0_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -140,7 +129,7 @@ static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte1_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -160,7 +149,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_aux_clk_src",
- 		.parent_data = disp_cc_parent_data_2,
--		.num_parents = 2,
-+		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -174,7 +163,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_crypto_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_byte2_ops,
- 	},
- };
-@@ -187,7 +176,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_link_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -201,7 +190,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel1_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
- 	},
-@@ -215,7 +204,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
- 	},
-@@ -235,7 +224,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc0_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
-@@ -249,7 +238,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc1_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
-@@ -276,7 +265,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_mdp_clk_src",
- 		.parent_data = disp_cc_parent_data_3,
--		.num_parents = 5,
-+		.num_parents = 4,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-@@ -290,7 +279,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk0_clk_src",
- 		.parent_data = disp_cc_parent_data_4,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
- 	},
-@@ -305,7 +294,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk1_clk_src",
- 		.parent_data = disp_cc_parent_data_4,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
- 	},
-@@ -329,7 +318,7 @@ static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_rot_clk_src",
- 		.parent_data = disp_cc_parent_data_3,
--		.num_parents = 5,
-+		.num_parents = 4,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-@@ -343,7 +332,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_vsync_clk_src",
- 		.parent_data = disp_cc_parent_data_2,
--		.num_parents = 2,
-+		.num_parents = 1,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
+This patch, which landed in linux-next as commit 6579c8d97ad7 ("clk: 
+Mark fwnodes when their clock provider is added") causes the following 
+NULL pointer dereference on Raspberry Pi 3b+ boards:
+
+--->8---
+
+raspberrypi-firmware soc:firmware: Attached to firmware from 
+2020-01-06T13:05:25
+Unable to handle kernel NULL pointer dereference at virtual address 
+0000000000000050
+Mem abort info:
+   ESR = 0x96000004
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+Data abort info:
+   ISV = 0, ISS = 0x00000004
+   CM = 0, WnR = 0
+[0000000000000050] user address but active_mm is swapper
+Internal error: Oops: 96000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 5.12.0-rc4+ #2764
+Hardware name: Raspberry Pi 3 Model B (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 00000005 (nzcv daif -PAN -UAO -TCO BTYPE=--)
+pc : of_clk_add_hw_provider+0xac/0xe8
+lr : of_clk_add_hw_provider+0x94/0xe8
+sp : ffff8000130936b0
+x29: ffff8000130936b0 x28: ffff800012494e04
+x27: ffff00003b18cb05 x26: ffff00003aa5c010
+x25: 0000000000000000 x24: 0000000000000000
+x23: ffff00003aa1e380 x22: ffff8000106830d0
+x21: ffff80001233f180 x20: 0000000000000018
+x19: 0000000000000000 x18: ffff8000124d38b0
+x17: 0000000000000013 x16: 0000000000000014
+x15: ffff8000125758b0 x14: 00000000000184e0
+x13: 000000000000292e x12: ffff80001258dd98
+x11: 0000000000000001 x10: 0101010101010101
+x9 : ffff80001233f288 x8 : 7f7f7f7f7f7f7f7f
+x7 : fefefefeff6c626f x6 : 5d636d8080808080
+x5 : 00000000006d635d x4 : 0000000000000000
+x3 : 0000000000000000 x2 : 540eb5edae191600
+x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+  of_clk_add_hw_provider+0xac/0xe8
+  devm_of_clk_add_hw_provider+0x5c/0xb8
+  raspberrypi_clk_probe+0x110/0x210
+  platform_probe+0x90/0xd8
+  really_probe+0x108/0x3c0
+  driver_probe_device+0x60/0xc0
+  __device_attach_driver+0x9c/0xd0
+  bus_for_each_drv+0x70/0xc8
+  __device_attach+0xec/0x150
+  device_initial_probe+0x10/0x18
+  bus_probe_device+0x94/0xa0
+  device_add+0x47c/0x780
+  platform_device_add+0x110/0x248
+  platform_device_register_full+0x120/0x150
+  rpi_firmware_probe+0x158/0x1f8
+  platform_probe+0x90/0xd8
+  really_probe+0x108/0x3c0
+  driver_probe_device+0x60/0xc0
+  __device_attach_driver+0x9c/0xd0
+  bus_for_each_drv+0x70/0xc8
+  __device_attach+0xec/0x150
+  device_initial_probe+0x10/0x18
+  bus_probe_device+0x94/0xa0
+  deferred_probe_work_func+0x70/0xa8
+  process_one_work+0x2a8/0x718
+  worker_thread+0x48/0x460
+  kthread+0x134/0x160
+  ret_from_fork+0x10/0x18
+Code: b1006294 540000c0 b140069f 54000088 (3940e280)
+---[ end trace 7ead5ec2f0c51cfe ]---
+
+This patch mainly revealed that clk/bcm/clk-raspberrypi.c driver calls 
+devm_of_clk_add_hw_provider(), with a device pointer, which has a NULL 
+dev->of_node. I'm not sure if adding a check for a NULL np in 
+of_clk_add_hw_provider() is a right fix, though.
+
+> ---
+>   drivers/clk/clk.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 27ff90eacb1f..9370e4dfecae 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+>   	if (ret < 0)
+>   		of_clk_del_provider(np);
+>   
+> +	fwnode_dev_initialized(&np->fwnode, true);
+> +
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
+
+Best regards
 -- 
-2.30.2
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
