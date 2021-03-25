@@ -6,126 +6,136 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026A2C433C1
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 16:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B69C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 16:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D07E661A1F
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 16:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7E961A1D
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 16:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbhCYQJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 12:09:58 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:35783 "EHLO
+        id S229508AbhCYQLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 12:11:06 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:49869 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229592AbhCYQJp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 12:09:45 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 55DA91809;
-        Thu, 25 Mar 2021 12:09:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 25 Mar 2021 12:09:45 -0400
+        by vger.kernel.org with ESMTP id S229670AbhCYQKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 12:10:32 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 11C99180D;
+        Thu, 25 Mar 2021 12:10:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 25 Mar 2021 12:10:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=Q144IAj/XeRE6/ClS/WlFX41ZIU
-        PNkAazPcLJ7XGT74=; b=k1LAzeoewe/QR8hI4QRwqtOAGb+hetMN7XhPeI1Wn5J
-        nS/GsH5IpvB9aOMR98iyhqCBoNTeHNKTzk42woSBOuHsg6gNWdGLY59IvMHm0d7G
-        DmRsYoNk39t1CZ+D3CK8+AScuiEAlVZ7W2cfipc4JLBls1kzkzyM4tFH2VfRkGCY
-        QCrjZPNtcjZtUu/EAhJZU1bnOHx6tjrMsMFyxTW7k/eHwNRTUvBXAD+qESNMZTkq
-        81sLJgFSj2JfrWs2fvad1Qi1w8st3YgJNVOHNbq8I2co0mZFHucYygTT5zHirHhG
-        Rw4+RJAwSqWSaDsAxoA3NmBXnvvoSnAvZe0nZQ+S44Q==
+        :content-type:in-reply-to; s=fm2; bh=ESM4FqMgZ+0RUA2MrQvNkDgoDG8
+        DnKWTVejSnhzrZG8=; b=PFnyArR9ee8fUlgucNHHvbum8Frykau+yGQ9xBXnkDe
+        cbeLq5CiDc2ucWbiW8d9lAkwsukO6szoHliDeq40nwqkkGhh65YhXnHqpbvDMJWr
+        jfvL6kq2PfeO52QqDlL1MYBiDHDJvkpfb7c/upGApYV+4f4TriWFRbEb+uA9HHA0
+        oIGWOXxUqoY64pyXQ2bynZMw26YN2U0Z25loAx1VfxFAa7cMwAEPwHVELHH7XeM9
+        I6KZJPhMg3XdDymFLC+1/f5hQxhMRhzJRIzZU6J9Wg7uErbxw480ScMmhESnzijO
+        CVfmZ7NllpT1FSXkyuZax0Zr1rHTIvxDkXZJu+hEluw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Q144IA
-        j/XeRE6/ClS/WlFX41ZIUPNkAazPcLJ7XGT74=; b=H3KbbS4ylnANs5uuTT/5mX
-        VAo0wz9WuwID4X+62oJ6oLCdTol2oJ39yrhWW02slGeO9BOo28vcZ4SPGB4ytHZ4
-        ERGzas8DxQ2+sPBSHefaEnbC2ZgDl9K9MI2IalAbOchMXvgZBcN4HwXIQyfDeDWL
-        MceK2d8Heeb73wJgmT6upJGwQ3kHsrA3hDbS2DGAdpVV9tli4Qxf+CS8tlbx0exn
-        G0TmyYYKXy0eXo8kYxNhpcAAVGjSoFBViaqdsWNpbglXiRgrvs8XvqFhhYSY7hUD
-        +6Kd710xef3L35OS0tP3d+q5TfhCS92gO4ixaO5Z7wUGKjLFf/vZfc93hrt7WgyQ
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ESM4Fq
+        MgZ+0RUA2MrQvNkDgoDG8DnKWTVejSnhzrZG8=; b=VPiXrVIspFA+qwuBzT7hhm
+        ICt8wJJeZGPFTaEKTeXJ3OW+5aJWaepnLjFVexmQxSRaPie2xcpaKlqGWHxktLcJ
+        6cxpjcKgrtyCKy/5MV22w4a6/K0VqlnblyPCy0FnIOsz97x43OfZSsOL3AcfhzYv
+        dEVqMJExwN5mwQZ82hxrE+Ca0QoxvpMYjjKCvcTvBIB9GU4vTRY88U8HD45etEYB
+        KQOvQdV2TjoKwX443D1hkA7B0WrehLxMq0CVyg7o7w42luEJaZ5lz5ipVg9bK8Xw
+        wB729yq5IVpux1qxreJjFkcg9HBb61DDoP9HESfgDSAzTr7/8YY453Zl7XKnXGEw
         ==
-X-ME-Sender: <xms:x7VcYA7zluKKbbHGFKdhYkqEG27AJ9tI_ZvhrPk0U1oZG2pljH08zQ>
-    <xme:x7VcYB4tgpV5kvmdlNAkbeoWDH8tvdW6uRjnpVLeuK3b-SbfChP7XO09fbWKnW9Qv
-    1i0x-1lohPbQmkYgIc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudehtddgkeehucetufdoteggodetrfdotf
+X-ME-Sender: <xms:9bVcYLj2RGigOEVprFHfgBnwFJtKnm9EnFwL7-poHPv-DA_lxvv-rw>
+    <xme:9bVcYOdeDmxSu0JyGEm2Zb_PX02LaIZQwI2KFOcris8vMD1LH9UGQxgLY8MMvhWv8
+    7CW-16fPbk0pLSEFFE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudehtddgkeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:x7VcYPeB_i8SvZTTfaDGyujMsIkJC6wPvwrfeI7XGEU3qguTRSWkTA>
-    <xmx:x7VcYFKsuF4OkSR6bZ9cl7LFuu17jmBty8GBA5nk3fm32jZhjEHaUg>
-    <xmx:x7VcYELPTnOlY5gA4aWaHQPpgcFko2NIXLLP7fKnklDh0MWsPuGYxQ>
-    <xmx:x7VcYOgM48hA6uXR-NL4EV8LWBYhvbKslYXlv5YgT2diE4cDUDYWjw>
+    htvghrnhepveevfeffudeviedtgeethffhteeuffetfeffvdehvedvheetteehvdelfffg
+    jedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrieekrd
+    ejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    rgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:9bVcYD4phYhMy8JW_hCHftBRSKDSVo29Ff2zLfB1VEgtXUxUU5LONw>
+    <xmx:9bVcYHg3mP057WytmnjG5MbKqiR4sn79h_n1IFHzkxZ-nuZLDpZW6Q>
+    <xmx:9bVcYKH9_zLDcRZS3yc05iYJa7y9y_Vfb6aI46Jqrx_GiyM15Y8xCg>
+    <xmx:9rVcYFZuKf9UeNZd3giTjzOSv_9w4RpGuQCXRNsOw4W1w-ot59HCrw>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CCE89108006A;
-        Thu, 25 Mar 2021 12:09:42 -0400 (EDT)
-Date:   Thu, 25 Mar 2021 17:09:40 +0100
+        by mail.messagingengine.com (Postfix) with ESMTPA id 996DF24005A;
+        Thu, 25 Mar 2021 12:10:29 -0400 (EDT)
+Date:   Thu, 25 Mar 2021 17:10:28 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Linus Walleij <linus.walleij@linaro.org>
+To:     Abel Vesa <abelvesa@kernel.org>
 Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
         Tim Gover <tim.gover@raspberrypi.com>,
         Dom Cobley <dom@raspberrypi.com>
 Subject: Re: Scaling back down a shared clock
-Message-ID: <20210325160940.odqcsr37ue5d3tvf@gilmour>
+Message-ID: <20210325161028.u72koxewte7s65kw@gilmour>
 References: <20210319150355.xzw7ikwdaga2dwhv@gilmour>
- <CACRpkdar4tNTLLd9NFV-nG3kQnq-cLhLDB10EcLyN_Sew+uRAA@mail.gmail.com>
+ <YFxerzh3a4xSzRu/@ryzen.lan>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lccdkvrumzutibqg"
+        protocol="application/pgp-signature"; boundary="pm4wpw6kzrsqdkmz"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdar4tNTLLd9NFV-nG3kQnq-cLhLDB10EcLyN_Sew+uRAA@mail.gmail.com>
+In-Reply-To: <YFxerzh3a4xSzRu/@ryzen.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lccdkvrumzutibqg
+--pm4wpw6kzrsqdkmz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
-
-On Thu, Mar 25, 2021 at 09:01:31AM +0100, Linus Walleij wrote:
-> On Fri, Mar 19, 2021 at 4:04 PM Maxime Ripard <maxime@cerno.tech> wrote:
->=20
+On Thu, Mar 25, 2021 at 11:58:07AM +0200, Abel Vesa wrote:
+> On 21-03-19 16:03:55, Maxime Ripard wrote:
+> > Hi Mike, Stephen,
+> >=20
+> > The SoCs used in the RaspberryPi have a bunch of shared clocks (between
+> > two HDMI controllers for example) that need to be at a given minimum
+> > rate for each instance (based on the resolution for the HDMI
+> > controllers), but don't really have any maximum requirement other than
+> > the operating boundaries of that clock.
+> >=20
+> > We've supported it so far using the clk_set_min_rate function which
+> > handles nicely that requirement and the fact that it's shared.
+> >=20
+> > However, those clocks run at a fairly high frequency and there's some
+> > interest in keeping them at their minimum to draw less power. Currently,
+> > if we increase the minimum to a rate higher than the current clock rate,
+> > it will raise its rate, but once that minimum is lowered the clock rate
+> > doesn't change (which makes sense).
+> >=20
 > > How could we put some kind of downward pressure on the clock rate to
 > > make it run at its minimum all the time? It looks like the PM QoS
 > > framework implements something similar for the bus bandwidth, except
 > > that it's not really a bus that have this requirement here.
+> >=20
 >=20
-> Unsolicited comment: this is similar to what _regulator_do_set_voltage()
-> is doing with voltages that can be expressed as linear intervals or
-> selectors (fixed voltage steps) when a consumer calls
-> regulator_set_voltage().
+> Maybe interconnect + devfreq is the solution here.
+>=20
+> I did something similar here:
+>=20
+> https://lore.kernel.org/lkml/1613750416-11901-1-git-send-email-abel.vesa@=
+nxp.com/
 
-Thanks for the pointer :)
+Unfortunately, this is some internal device requirements (internal state
+machine) so we don't really have an interconnect there
 
-It's definitely relevant, regulators and clocks are fairly similar in
-what constraints they have and how consumers would want to express them
-I guess.
+maxime
 
-To some extent regulator_get_optimal_voltage is also something relevant
-to the discussion, since it will try to find the best match for the
-opposite scenario: a single user with multiple regulators
-
-Maxime
-
---lccdkvrumzutibqg
+--pm4wpw6kzrsqdkmz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYFy1xAAKCRDj7w1vZxhR
-xUE3AQCDCtLQ71X//p7/IiLe2JUKYkrjG86uj2RhyShKydci4QD/dEUX8jHVOtFL
-zfuX7vBigJ1QZPcXQhCKMoy7OMktwAU=
-=bfVo
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYFy19AAKCRDj7w1vZxhR
+xfLyAQCBSfoHav3DkNO8BLFp2KsdwTBj8LB+kM+uttcAIM/0cwEA3hov+H/9DoDE
+F/muqmF+E3PGAA8TzszsekIo5og9TQg=
+=885w
 -----END PGP SIGNATURE-----
 
---lccdkvrumzutibqg--
+--pm4wpw6kzrsqdkmz--
