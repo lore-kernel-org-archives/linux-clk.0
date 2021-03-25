@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854F8C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D59C433E0
 	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A74C61A29
+	by mail.kernel.org (Postfix) with ESMTP id 405DE61A28
 	for <linux-clk@archiver.kernel.org>; Thu, 25 Mar 2021 07:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbhCYHv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 03:51:58 -0400
-Received: from st43p00im-zteg10063401.me.com ([17.58.63.175]:44238 "EHLO
-        st43p00im-zteg10063401.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230047AbhCYHvd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 03:51:33 -0400
+        id S230091AbhCYHv5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 03:51:57 -0400
+Received: from st43p00im-ztbu10073701.me.com ([17.58.63.183]:36225 "EHLO
+        st43p00im-ztbu10073701.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229629AbhCYHvX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 03:51:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1616658691; bh=ye/Yow2uMjJ8Ying0ux4B6YZilHhDS6s68d+MR8JALc=;
+        t=1616658681; bh=2V9OhZlQp75WdO1jUuk+6Lh+sdKYtn8Pw83yLAb2SZ4=;
         h=From:To:Subject:Date:Message-Id;
-        b=bh9P2LB0HtQi47HygNddclQe9DH0h9J9+87yYKKamNWEIdOr76iDwIALZkxONp/MY
-         acfVENZrIqfkMQHY+6WplUO/UiYwF08FrzaxFWOUQQxYfyaefgyLdrvu7/a0T6VptR
-         DVR5479QBHzP9+KOTj1nQ+m93Vvveajga+eJDCF4QegJ7rgelw5Uo2w3kKGZBApzED
-         kov0gTWNZaUOGemH0uGWd3VEft7H93FIkEiZkTVz/mWqK6aeNe9+S6B4VU6e57+03S
-         D5NqwtiTZp8GvvHGUn6P0MpKmHOi6ezHtBr/J4WMffLaO21yL5aGyY3p5trkAOYXDs
-         rw2H1C2i/MWkQ==
+        b=XqlT3MQVI4zb/1crdJkN4LRD7Abz2IvYvRuiohPMi3OpQGGzGZrGMVJONYL1WeLKI
+         47nu3eY7umXJDLas2PXo7erm904IvdF40fmDzUeynT3EH0AKZR4rYkcqpfXr1xqUxU
+         YWZBCX/u2+gRc+MQIwJNnM3XjPH91/3y85xQI6rlNi2LCCp1LbclzxaHb9GS2BiyRS
+         xRH9DmiC4xfx/PNBr5lmsDOnrUr1SkjmnhWMkVXFyRKQI98qVTELd9d1/P42xngR4b
+         SW8xLUQQMiLe3PhChOmfFMv7lx48J1yTUFueSbdiMRJH7cO5SiSx3D97ZaKfOujaa0
+         LmPvRVPR62Piw==
 Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-zteg10063401.me.com (Postfix) with ESMTPSA id 114B84A05BE;
-        Thu, 25 Mar 2021 07:51:30 +0000 (UTC)
+        by st43p00im-ztbu10073701.me.com (Postfix) with ESMTPSA id DB8AA4C06D5;
+        Thu, 25 Mar 2021 07:51:18 +0000 (UTC)
 From:   Alain Volmat <avolmat@me.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -40,9 +40,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH v2 06/16] clk: st: clkgen-fsyn: embed soc clock outputs within compatible data
-Date:   Thu, 25 Mar 2021 08:50:08 +0100
-Message-Id: <20210325075018.6598-7-avolmat@me.com>
+Subject: [PATCH v2 04/16] clk: st: clkgen-pll: embed soc clock outputs within compatible data
+Date:   Thu, 25 Mar 2021 08:50:06 +0100
+Message-Id: <20210325075018.6598-5-avolmat@me.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210325075018.6598-1-avolmat@me.com>
 References: <20210325075018.6598-1-avolmat@me.com>
@@ -50,9 +50,9 @@ X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c
  =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
  =?UTF-8?Q?=3D2021-03-24=5F14:2021-03-24=5F02,2021-03-24=5F14,2020-04-07?=
  =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
- adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2103250059
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -69,17 +69,18 @@ will be removed from this driver as well as old compatibles.
 
 Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
-v2: clk-s-c0-fs0-ch0 do not need to be CLK_IS_CRITICAL
+v2: clk-s-a0-pll-odf-0 don't need to be CLK_IS_CRITICAL
+    mark several clock as CLK_IS_CRITICAL
 
- drivers/clk/st/clkgen-fsyn.c | 113 +++++++++++++++++++++++++++++++----
- 1 file changed, 101 insertions(+), 12 deletions(-)
+ drivers/clk/st/clkgen-pll.c | 120 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 106 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index dd6062e043e0..164285d6be97 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -66,6 +66,16 @@ struct clkgen_quadfs_data {
- 			unsigned long *);
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index f6c56ca90c7d..8c6215b3c808 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -57,6 +57,17 @@ struct clkgen_pll_data {
+ 	const struct clk_ops *ops;
  };
  
 +struct clkgen_clk_out {
@@ -87,185 +88,204 @@ index dd6062e043e0..164285d6be97 100644
 +	unsigned long flags;
 +};
 +
-+struct clkgen_quadfs_data_clks {
-+	struct clkgen_quadfs_data *data;
++struct clkgen_pll_data_clks {
++	struct clkgen_pll_data *data;
 +	const struct clkgen_clk_out *outputs;
 +};
 +
- static const struct clk_ops st_quadfs_pll_c32_ops;
- 
- static int clk_fs660c32_dig_get_params(unsigned long input,
-@@ -115,6 +125,18 @@ static const struct clkgen_quadfs_data st_fs660c32_C = {
- 	.get_rate	= clk_fs660c32_dig_get_rate,
++
+ static const struct clk_ops stm_pll3200c32_ops;
+ static const struct clk_ops stm_pll3200c32_a9_ops;
+ static const struct clk_ops stm_pll4600c28_ops;
+@@ -74,6 +85,28 @@ static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
+ 	.ops		= &stm_pll3200c32_ops,
  };
  
-+static const struct clkgen_clk_out st_fs660c32_C_clks[] = {
-+	{ .name = "clk-s-c0-fs0-ch0",	},
-+	{ .name = "clk-s-c0-fs0-ch1",	},
-+	{ .name = "clk-s-c0-fs0-ch2",	},
-+	{ .name = "clk-s-c0-fs0-ch3",	},
++static const struct clkgen_pll_data_clks st_pll3200c32_cx_0_legacy_data = {
++	.data	= (struct clkgen_pll_data *)&st_pll3200c32_cx_0,
 +};
 +
-+static const struct clkgen_quadfs_data_clks st_fs660c32_C_data = {
-+	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_C,
-+	.outputs	= st_fs660c32_C_clks,
++static const struct clkgen_clk_out st_pll3200c32_ax_0_clks[] = {
++	{ .name = "clk-s-a0-pll-odf-0", },
 +};
 +
- static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.nrst_present = true,
- 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
-@@ -156,6 +178,46 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.get_params	= clk_fs660c32_dig_get_params,
- 	.get_rate	= clk_fs660c32_dig_get_rate,};
++static const struct clkgen_pll_data_clks st_pll3200c32_a0_data = {
++	.data		= (struct clkgen_pll_data *)&st_pll3200c32_cx_0,
++	.outputs	= st_pll3200c32_ax_0_clks,
++};
++
++static const struct clkgen_clk_out st_pll3200c32_cx_0_clks[] = {
++	{ .name = "clk-s-c0-pll0-odf-0",	.flags = CLK_IS_CRITICAL },
++};
++
++static const struct clkgen_pll_data_clks st_pll3200c32_c0_data = {
++	.data		= (struct clkgen_pll_data *)&st_pll3200c32_cx_0,
++	.outputs	= st_pll3200c32_cx_0_clks,
++};
++
+ static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
+ 	/* 407 C0 PLL1 */
+ 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
+@@ -87,6 +120,19 @@ static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
+ 	.ops		= &stm_pll3200c32_ops,
+ };
  
-+static const struct clkgen_quadfs_data_clks st_fs660c32_D_data = {
-+	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
++static const struct clkgen_pll_data_clks st_pll3200c32_cx_1_legacy_data = {
++	.data	= (struct clkgen_pll_data *)&st_pll3200c32_cx_1,
 +};
 +
-+static const struct clkgen_clk_out st_fs660c32_D0_clks[] = {
-+	{ .name = "clk-s-d0-fs0-ch0",	},
-+	{ .name = "clk-s-d0-fs0-ch1",	},
-+	{ .name = "clk-s-d0-fs0-ch2",	},
-+	{ .name = "clk-s-d0-fs0-ch3",	},
++static const struct clkgen_clk_out st_pll3200c32_cx_1_clks[] = {
++	{ .name = "clk-s-c0-pll1-odf-0",	.flags = CLK_IS_CRITICAL },
 +};
 +
-+static const struct clkgen_quadfs_data_clks st_fs660c32_D0_data = {
-+	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
-+	.outputs	= st_fs660c32_D0_clks,
++static const struct clkgen_pll_data_clks st_pll3200c32_c1_data = {
++	.data		= (struct clkgen_pll_data *)&st_pll3200c32_cx_1,
++	.outputs	= st_pll3200c32_cx_1_clks,
 +};
 +
-+static const struct clkgen_clk_out st_fs660c32_D2_clks[] = {
-+	{ .name = "clk-s-d2-fs0-ch0",	},
-+	{ .name = "clk-s-d2-fs0-ch1",	},
-+	{ .name = "clk-s-d2-fs0-ch2",	},
-+	{ .name = "clk-s-d2-fs0-ch3",	},
+ static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
+ 	/* 407 A9 */
+ 	.pdn_status	= CLKGEN_FIELD(0x1a8,	0x1,			0),
+@@ -104,6 +150,15 @@ static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
+ 	.ops		= &stm_pll3200c32_a9_ops,
+ };
+ 
++static const struct clkgen_clk_out st_pll3200c32_407_a9_clks[] = {
++	{ .name = "clockgen-a9-pll-odf",	.flags = CLK_IS_CRITICAL },
 +};
 +
-+static const struct clkgen_quadfs_data_clks st_fs660c32_D2_data = {
-+	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
-+	.outputs	= st_fs660c32_D2_clks,
++static const struct clkgen_pll_data_clks st_pll3200c32_407_a9_data = {
++	.data		= (struct clkgen_pll_data *)&st_pll3200c32_407_a9,
++	.outputs	= st_pll3200c32_407_a9_clks,
 +};
 +
-+static const struct clkgen_clk_out st_fs660c32_D3_clks[] = {
-+	{ .name = "clk-s-d3-fs0-ch0",	},
-+	{ .name = "clk-s-d3-fs0-ch1",	},
-+	{ .name = "clk-s-d3-fs0-ch2",	},
-+	{ .name = "clk-s-d3-fs0-ch3",	},
+ static struct clkgen_pll_data st_pll4600c28_418_a9 = {
+ 	/* 418 A9 */
+ 	.pdn_status	= CLKGEN_FIELD(0x1a8,	0x1,			0),
+@@ -120,6 +175,15 @@ static struct clkgen_pll_data st_pll4600c28_418_a9 = {
+ 	.ops		= &stm_pll4600c28_ops,
+ };
+ 
++static const struct clkgen_clk_out st_pll4600c28_418_a9_clks[] = {
++	{ .name = "clockgen-a9-pll-odf", },
 +};
 +
-+static const struct clkgen_quadfs_data_clks st_fs660c32_D3_data = {
-+	.data	= (struct clkgen_quadfs_data *)&st_fs660c32_D,
-+	.outputs	= st_fs660c32_D3_clks,
++static const struct clkgen_pll_data_clks st_pll4600c28_418_a9_data = {
++	.data		= (struct clkgen_pll_data *)&st_pll4600c28_418_a9,
++	.outputs	= st_pll4600c28_418_a9_clks,
 +};
 +
  /**
-  * DOC: A Frequency Synthesizer that multiples its input clock by a fixed factor
+  * DOC: Clock Generated by PLL, rate set and enabled by bootloader
   *
-@@ -857,7 +919,7 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
+@@ -684,7 +748,7 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
  
- static void __init st_of_create_quadfs_fsynths(
- 		struct device_node *np, const char *pll_name,
--		struct clkgen_quadfs_data *quadfs, void __iomem *reg,
-+		struct clkgen_quadfs_data_clks *quadfs, void __iomem *reg,
- 		spinlock_t *lock)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -881,9 +943,15 @@ static void __init st_of_create_quadfs_fsynths(
- 		const char *clk_name;
- 		unsigned long flags = 0;
  
--		if (of_property_read_string_index(np, "clock-output-names",
--						  fschan, &clk_name)) {
--			break;
-+		if (quadfs->outputs) {
-+			clk_name = quadfs->outputs[fschan].name;
-+			flags = quadfs->outputs[fschan].flags;
-+		} else {
-+			if (of_property_read_string_index(np,
-+							"clock-output-names",
-+							fschan, &clk_name))
-+				break;
-+			of_clk_detect_critical(np, fschan, &flags);
- 		}
- 
- 		/*
-@@ -892,10 +960,8 @@ static void __init st_of_create_quadfs_fsynths(
- 		if (*clk_name == '\0')
- 			continue;
- 
--		of_clk_detect_critical(np, fschan, &flags);
--
- 		clk = st_clk_register_quadfs_fsynth(clk_name, pll_name,
--						    quadfs, reg, fschan,
-+						    quadfs->data, reg, fschan,
- 						    flags, lock);
- 
- 		/*
-@@ -915,7 +981,7 @@ static void __init st_of_create_quadfs_fsynths(
- }
- 
- static void __init st_of_quadfs_setup(struct device_node *np,
--		struct clkgen_quadfs_data *data)
-+		struct clkgen_quadfs_data_clks *datac)
+ static void __init clkgen_c32_pll_setup(struct device_node *np,
+-		struct clkgen_pll_data *data)
++		struct clkgen_pll_data_clks *datac)
  {
  	struct clk *clk;
- 	const char *pll_name, *clk_parent_name;
-@@ -940,7 +1006,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+ 	const char *parent_name, *pll_name;
+@@ -704,14 +768,14 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
  
- 	spin_lock_init(lock);
+ 	of_clk_detect_critical(np, 0, &pll_flags);
  
--	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, data,
-+	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, datac->data,
- 			reg, lock);
+-	clk = clkgen_pll_register(parent_name, data, pll_base, pll_flags,
+-				  np->name, data->lock);
++	clk = clkgen_pll_register(parent_name, datac->data, pll_base, pll_flags,
++				  np->name, datac->data->lock);
  	if (IS_ERR(clk))
- 		goto err_exit;
-@@ -950,7 +1016,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
- 			__clk_get_name(clk_get_parent(clk)),
- 			(unsigned int)clk_get_rate(clk));
+ 		return;
  
--	st_of_create_quadfs_fsynths(np, pll_name, data, reg, lock);
-+	st_of_create_quadfs_fsynths(np, pll_name, datac, reg, lock);
+ 	pll_name = __clk_get_name(clk);
  
- err_exit:
- 	kfree(pll_name); /* No longer need local copy of the PLL name */
-@@ -958,12 +1024,35 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+-	num_odfs = data->num_odfs;
++	num_odfs = datac->data->num_odfs;
  
- static void __init st_of_quadfs660C_setup(struct device_node *np)
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -729,14 +793,21 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+ 		const char *clk_name;
+ 		unsigned long odf_flags = 0;
+ 
+-		if (of_property_read_string_index(np, "clock-output-names",
+-						  odf, &clk_name))
+-			return;
++		if (datac->outputs) {
++			clk_name = datac->outputs[odf].name;
++			odf_flags = datac->outputs[odf].flags;
++		} else {
++			if (of_property_read_string_index(np,
++							  "clock-output-names",
++							  odf, &clk_name))
++				return;
+ 
+-		of_clk_detect_critical(np, odf, &odf_flags);
++			of_clk_detect_critical(np, odf, &odf_flags);
++		}
+ 
+-		clk = clkgen_odf_register(pll_name, pll_base, data, odf_flags,
+-				odf, &clkgena_c32_odf_lock, clk_name);
++		clk = clkgen_odf_register(pll_name, pll_base, datac->data,
++				odf_flags, odf, &clkgena_c32_odf_lock,
++				clk_name);
+ 		if (IS_ERR(clk))
+ 			goto err;
+ 
+@@ -754,27 +825,48 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+ static void __init clkgen_c32_pll0_setup(struct device_node *np)
  {
--	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_C);
-+	st_of_quadfs_setup(np,
-+		(struct clkgen_quadfs_data_clks *) &st_fs660c32_C_data);
+ 	clkgen_c32_pll_setup(np,
+-			(struct clkgen_pll_data *) &st_pll3200c32_cx_0);
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_cx_0_legacy_data);
  }
- CLK_OF_DECLARE(quadfs660C, "st,quadfs-pll", st_of_quadfs660C_setup);
+ CLK_OF_DECLARE(c32_pll0, "st,clkgen-pll0", clkgen_c32_pll0_setup);
  
- static void __init st_of_quadfs660D_setup(struct device_node *np)
++static void __init clkgen_c32_pll0_a0_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_a0_data);
++}
++CLK_OF_DECLARE(c32_pll0_a0, "st,clkgen-pll0-a0", clkgen_c32_pll0_a0_setup);
++
++static void __init clkgen_c32_pll0_c0_setup(struct device_node *np)
++{
++	clkgen_c32_pll_setup(np,
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_c0_data);
++}
++CLK_OF_DECLARE(c32_pll0_c0, "st,clkgen-pll0-c0", clkgen_c32_pll0_c0_setup);
++
+ static void __init clkgen_c32_pll1_setup(struct device_node *np)
  {
--	st_of_quadfs_setup(np, (struct clkgen_quadfs_data *) &st_fs660c32_D);
-+	st_of_quadfs_setup(np,
-+		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D_data);
+ 	clkgen_c32_pll_setup(np,
+-			(struct clkgen_pll_data *) &st_pll3200c32_cx_1);
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_cx_1_legacy_data);
  }
- CLK_OF_DECLARE(quadfs660D, "st,quadfs", st_of_quadfs660D_setup);
-+
-+static void __init st_of_quadfs660D0_setup(struct device_node *np)
+ CLK_OF_DECLARE(c32_pll1, "st,clkgen-pll1", clkgen_c32_pll1_setup);
+ 
++static void __init clkgen_c32_pll1_c0_setup(struct device_node *np)
 +{
-+	st_of_quadfs_setup(np,
-+		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D0_data);
++	clkgen_c32_pll_setup(np,
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_c1_data);
 +}
-+CLK_OF_DECLARE(quadfs660D0, "st,quadfs-d0", st_of_quadfs660D0_setup);
++CLK_OF_DECLARE(c32_pll1_c0, "st,clkgen-pll1-c0", clkgen_c32_pll1_c0_setup);
 +
-+static void __init st_of_quadfs660D2_setup(struct device_node *np)
-+{
-+	st_of_quadfs_setup(np,
-+		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D2_data);
-+}
-+CLK_OF_DECLARE(quadfs660D2, "st,quadfs-d2", st_of_quadfs660D2_setup);
-+
-+static void __init st_of_quadfs660D3_setup(struct device_node *np)
-+{
-+	st_of_quadfs_setup(np,
-+		(struct clkgen_quadfs_data_clks *) &st_fs660c32_D3_data);
-+}
-+CLK_OF_DECLARE(quadfs660D3, "st,quadfs-d3", st_of_quadfs660D3_setup);
+ static void __init clkgen_c32_plla9_setup(struct device_node *np)
+ {
+ 	clkgen_c32_pll_setup(np,
+-			(struct clkgen_pll_data *) &st_pll3200c32_407_a9);
++		(struct clkgen_pll_data_clks *) &st_pll3200c32_407_a9_data);
+ }
+ CLK_OF_DECLARE(c32_plla9, "st,stih407-clkgen-plla9", clkgen_c32_plla9_setup);
+ 
+ static void __init clkgen_c28_plla9_setup(struct device_node *np)
+ {
+ 	clkgen_c32_pll_setup(np,
+-			(struct clkgen_pll_data *) &st_pll4600c28_418_a9);
++		(struct clkgen_pll_data_clks *) &st_pll4600c28_418_a9_data);
+ }
+ CLK_OF_DECLARE(c28_plla9, "st,stih418-clkgen-plla9", clkgen_c28_plla9_setup);
 -- 
 2.17.1
 
