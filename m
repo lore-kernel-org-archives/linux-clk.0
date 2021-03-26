@@ -2,171 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16215C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 12:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A2BC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 13:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE57761984
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 12:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCE5E61A1E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 13:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbhCZMlG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 08:41:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbhCZMlD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 08:41:03 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED80C0613AA;
-        Fri, 26 Mar 2021 05:41:02 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id h13so6141790eds.5;
-        Fri, 26 Mar 2021 05:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ai/sBaJhqrRCWGFUEsUnLWF/QfwBQ52U7SGdirULJxA=;
-        b=uCjETYGYNoXkWFnAnxrREMGnWCf4CT3WkSUcUIwelIYp/DG4PNHW59MxV0ndLkmKgw
-         L2IWwNo6EyYyTYDtD8OnYmHTc3e6jv9884w6qBn83ztCcGKzBTfT9VZi4FrsY0fAmdgD
-         ur9rC0Au9YibHKnhDtRtnuR6TmiDKHMLiKkdFQBru/Rg3CNOG0AO1xf2t/BfGdTfqqmA
-         XwvFfXkcKbOAT7hy7hseEdn4+/SVJmzCmlcRTdfpBXzf34azVckBOAtF5T9AGODNsmHi
-         JB9fYSTh7FLf8XAc67eXw0GuTEJ4SVHnGJeGbaLRFM/fngNYTBDvYjVjkIiDqEkKOz/Z
-         NJ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ai/sBaJhqrRCWGFUEsUnLWF/QfwBQ52U7SGdirULJxA=;
-        b=PskyuHmVOQ7HEj1LDTVXQ1f6BBNHgfkTXhdCl8prHgTNxtonMOGlIHSwp2tZCSeXHB
-         bXdyGgXwkqzKkPvCDXO9FNpEA5M24TEazXVLarTHCnB7sOff0fCcXMO1YPB7rQEE0kcu
-         oi1ObVOy5AoV0S763IeokLDhDQF+SWDjRyQdaGN9YZehJNDADc8ch0fFirS/S8RG4xT9
-         mSHRFt/wSLQaXoQHNKnwD9Szs89YpTchjEd3clrg0Kr+59M2Fuh7f+rrHCTPP7L1scAk
-         dDvYzuNF/VKpc0ohE7+itMixgpjVSko4NtZhGm1kL5ZvgRTiuTo0lLpFrTxs5bQrM+fm
-         BHzA==
-X-Gm-Message-State: AOAM533MrmKCwoOhVpgX7K1zK5BOuc0VyOXlaQkLTpT8UwRc3c1KN2xT
-        KuD8J3nimkYrTTxxhky1UGI=
-X-Google-Smtp-Source: ABdhPJyBfhRplv3kSXtcQVbf9j3CtTsxKbJ2vdFf6xxPS0KZwTr0+U5i0X7OFEFWWah2Xup+2PjS6w==
-X-Received: by 2002:a05:6402:254f:: with SMTP id l15mr14885368edb.189.1616762461102;
-        Fri, 26 Mar 2021 05:41:01 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id x1sm3830371eji.8.2021.03.26.05.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 05:40:59 -0700 (PDT)
-Date:   Fri, 26 Mar 2021 13:41:22 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Clean-up undocumented compatible strings
-Message-ID: <YF3WctL0BJON130C@orome.fritz.box>
-References: <20210316194918.3528417-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="anrc3HovXG4wMGPC"
-Content-Disposition: inline
-In-Reply-To: <20210316194918.3528417-1-robh@kernel.org>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+        id S229908AbhCZN3e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 09:29:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:59316 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229915AbhCZN3S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Mar 2021 09:29:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35A70143D;
+        Fri, 26 Mar 2021 06:29:17 -0700 (PDT)
+Received: from e120937-lin.home (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18E493F7D7;
+        Fri, 26 Mar 2021 06:29:15 -0700 (PDT)
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Cc:     sudeep.holla@arm.com, cristian.marussi@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v8 18/38] clk: scmi: port driver to the new scmi_clk_proto_ops interface
+Date:   Fri, 26 Mar 2021 13:28:44 +0000
+Message-Id: <20210326132844.33360-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <161671733901.3012082.11186673559577220910@swboyd.mtv.corp.google.com>
+References: <161671733901.3012082.11186673559577220910@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Port driver to the new SCMI Clock interface based on protocol handles
+and common devm_get_ops().
 
---anrc3HovXG4wMGPC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+v7 -> v8
+- renamed local clk_ops to scmi_proto_clk_ops
+v6 -> v7
+- fixed Copyright
+- renamed non-static function to fit scmi_<OBJ>_<ACTION> naming pattern
+v4 --> v5
+- using renamed devm_get/put_protocol
+---
+ drivers/clk/clk-scmi.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-On Tue, Mar 16, 2021 at 01:49:18PM -0600, Rob Herring wrote:
-> Adding checks for undocumented compatible strings reveals a bunch of
-> warnings in the DT binding examples. Fix the cases which are typos, just
-> a mismatch between the schema and the example, or aren't documented at al=
-l.
-> In a couple of cases, fixing the compatible revealed some schema errors
-> which are fixed.
->=20
-> There's a bunch of others remaining after this which have bindings, but
-> those aren't converted to schema yet.
->=20
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dmaengine@vger.kernel.org
-> Cc: linux-i3c@lists.infradead.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: linux-spi@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../clock/allwinner,sun4i-a10-pll1-clk.yaml   |  2 +-
->  .../bindings/clock/milbeaut-clock.yaml        | 12 +++++----
->  .../bindings/display/brcm,bcm2835-dsi0.yaml   |  6 -----
->  .../bindings/display/panel/panel-dpi.yaml     |  2 +-
->  .../devicetree/bindings/dma/qcom,gpi.yaml     |  2 +-
->  .../devicetree/bindings/i3c/i3c.yaml          |  7 ++---
->  .../iio/adc/brcm,iproc-static-adc.yaml        |  5 ----
->  .../iio/gyroscope/nxp,fxas21002c.yaml         |  2 +-
->  .../bindings/iio/light/upisemi,us5182.yaml    |  4 +--
->  .../interrupt-controller/loongson,htpic.yaml  |  2 +-
->  .../devicetree/bindings/leds/leds-lgm.yaml    | 26 ++++++++++++++++---
->  .../bindings/phy/ti,phy-j721e-wiz.yaml        |  2 +-
->  .../bindings/power/supply/cw2015_battery.yaml |  2 +-
->  .../bindings/power/supply/power-supply.yaml   | 22 ----------------
->  .../devicetree/bindings/serial/serial.yaml    |  2 +-
->  .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  4 +--
->  .../bindings/spi/spi-controller.yaml          | 21 ++++++++-------
->  .../devicetree/bindings/spi/spi-mux.yaml      |  8 ++----
->  .../devicetree/bindings/spi/st,stm32-spi.yaml |  6 -----
->  19 files changed, 58 insertions(+), 79 deletions(-)
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index c754dfbb73fd..1e357d364ca2 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -2,7 +2,7 @@
+ /*
+  * System Control and Power Interface (SCMI) Protocol based clock driver
+  *
+- * Copyright (C) 2018 ARM Ltd.
++ * Copyright (C) 2018-2021 ARM Ltd.
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -13,11 +13,13 @@
+ #include <linux/scmi_protocol.h>
+ #include <asm/div64.h>
+ 
++static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
++
+ struct scmi_clk {
+ 	u32 id;
+ 	struct clk_hw hw;
+ 	const struct scmi_clock_info *info;
+-	const struct scmi_handle *handle;
++	const struct scmi_protocol_handle *ph;
+ };
+ 
+ #define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
+@@ -29,7 +31,7 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
+ 	u64 rate;
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
+ 
+-	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
++	ret = scmi_proto_clk_ops->rate_get(clk->ph, clk->id, &rate);
+ 	if (ret)
+ 		return 0;
+ 	return rate;
+@@ -69,21 +71,21 @@ static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
+ 
+-	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, rate);
++	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
+ }
+ 
+ static int scmi_clk_enable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
+ 
+-	return clk->handle->clk_ops->enable(clk->handle, clk->id);
++	return scmi_proto_clk_ops->enable(clk->ph, clk->id);
+ }
+ 
+ static void scmi_clk_disable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
+ 
+-	clk->handle->clk_ops->disable(clk->handle, clk->id);
++	scmi_proto_clk_ops->disable(clk->ph, clk->id);
+ }
+ 
+ static const struct clk_ops scmi_clk_ops = {
+@@ -142,11 +144,17 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 	struct device *dev = &sdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	const struct scmi_handle *handle = sdev->handle;
++	struct scmi_protocol_handle *ph;
+ 
+-	if (!handle || !handle->clk_ops)
++	if (!handle)
+ 		return -ENODEV;
+ 
+-	count = handle->clk_ops->count_get(handle);
++	scmi_proto_clk_ops =
++		handle->devm_protocol_get(sdev, SCMI_PROTOCOL_CLOCK, &ph);
++	if (IS_ERR(scmi_proto_clk_ops))
++		return PTR_ERR(scmi_proto_clk_ops);
++
++	count = scmi_proto_clk_ops->count_get(ph);
+ 	if (count < 0) {
+ 		dev_err(dev, "%pOFn: invalid clock output count\n", np);
+ 		return -EINVAL;
+@@ -167,14 +175,14 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		if (!sclk)
+ 			return -ENOMEM;
+ 
+-		sclk->info = handle->clk_ops->info_get(handle, idx);
++		sclk->info = scmi_proto_clk_ops->info_get(ph, idx);
+ 		if (!sclk->info) {
+ 			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
+ 			continue;
+ 		}
+ 
+ 		sclk->id = idx;
+-		sclk->handle = handle;
++		sclk->ph = ph;
+ 
+ 		err = scmi_clk_ops_init(dev, sclk);
+ 		if (err) {
+-- 
+2.17.1
 
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
-
---anrc3HovXG4wMGPC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBd1nIACgkQ3SOs138+
-s6EKNw/+PWZ5d3e0xEwvPK7F2Ar6aLwrAZTugsDRjLWV08E7tyOy+G9o7fONJcWa
-rYcXHvrQzc3Vr6/H0Aht9gv8h4N1ouQlIYbKkommVUDHWZlKKKKuf2UW9DeIzbLp
-jRdHkqZsdlRy/1UZGl7oXPsDf+OIYG04QbOA1+uBhqW+BdpfEC59ouN/KDCou9aq
-7JvFVhtOB5SZBDQhNNyY9VINpf7uHivV+onqfwg40fO/QTkYaHINb29gb73NBZWr
-fqP16h7YrpKw+JqePYucWisMfZ8hubG6mNypAlhnRBdaqhoPm+OwmRFfbb9hE0f4
-VtTBHT2HndgpshRyqJZegJUueeRQX5scz0IYfDdpHSvJ/+bvZ3HwmxOG3XHOIsEz
-o36PE9KKIX3b9PZqEtMrNfnC7a9KzlnGJzQ0N+ZKvNZufnlkpbGuKC2PN/gTnADi
-p6Shg4Nz6Jg67p2nWhIoFWMA1sYd1b18urfFn133K3B4R+6ox7NfDl7jDoLO//rO
-qxgp4aySmSZyGC0LnhX/rjThoVGggs/Ph99sxbDaObX1bed7K/3MVfuFHv9dgNxq
-BMerE+S1zd+XdeI1iSdQ459gqtFuWyTNTX4Atm3ddd+7P1Ay7iRMjyAjZ5MgwUvn
-NUVQ+ss5oAt4BguhMPXeKvkkJEDQWl8xSzXm5qd39jSxZ06FAL8=
-=w24T
------END PGP SIGNATURE-----
-
---anrc3HovXG4wMGPC--
