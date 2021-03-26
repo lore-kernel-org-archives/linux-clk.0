@@ -5,43 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11251C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 613B2C433E1
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 12:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC326619C2
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 12:03:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DF761A49
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 12:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbhCZMC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 08:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47988 "EHLO
+        id S229738AbhCZMC5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 08:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbhCZMCT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 08:02:19 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFEAC0613AA
+        with ESMTP id S229744AbhCZMC2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 08:02:28 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5E7C0613BF
         for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 05:02:18 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5cae:bca6:def7:9f08])
-        by albert.telenet-ops.be with bizsmtp
-        id l02F2400Q53vE1T0602FDY; Fri, 26 Mar 2021 13:02:16 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id l02F2400N53vE1T0102FuG; Fri, 26 Mar 2021 13:02:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lPlAN-00AXLW-6o; Fri, 26 Mar 2021 13:02:15 +0100
+        id 1lPlAM-00AXLS-V1; Fri, 26 Mar 2021 13:02:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lPlAM-006cQe-Cp; Fri, 26 Mar 2021 13:02:14 +0100
+        id 1lPlAM-006cQK-92; Fri, 26 Mar 2021 13:02:14 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/7] clk: renesas: rcar-gen3: Increase Z clock accuracy
-Date:   Fri, 26 Mar 2021 13:00:58 +0100
-Message-Id: <20210326120100.1577596-6-geert+renesas@glider.be>
+Subject: [PATCH 1/7] clk: renesas: rcar-gen3: Update Z clock rate formula in comments
+Date:   Fri, 26 Mar 2021 13:00:54 +0100
+Message-Id: <20210326120100.1577596-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210326120100.1577596-1-geert+renesas@glider.be>
 References: <20210326120100.1577596-1-geert+renesas@glider.be>
@@ -51,40 +51,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Improve accuracy in the .determine_rate() callback for Z and Z2 clocks
-by using rounded divisions.  This is similar to the calculation of rates
-and multipliers in the .recalc_rate() resp. set_rate() callbacks.
+The fixed divider in the calculation of the Z and Z2 clock rates was
+generalized from a hardcoded value of two to a parameterized value, but
+the comments were not updated accordingly.
 
-Sample impact for a few requested clock rates:
-  - R-Car H3:
-      - Z 500 MHz:	468 MHz => 515 MHz
-      - Z2 1000 MHz:	973 MHz => 1011 MHz
-  - R-Car M3-W:
-      - Z 500 MHz:	422 MHz => 516 MHz
-      - Z2 800 MHz:	750 MHz => 788 MHz
-
+Fixes: 20cc05ba04a93f05 ("clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index a241bf6e904f2f66..6b389c1caca76f07 100644
+index caa0f9414e45fe73..5edc85ab04b4430f 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.c
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -83,10 +83,10 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
- 	if (max_mult < min_mult)
- 		return -EINVAL;
- 
--	mult = div64_ul(req->rate * 32ULL, prate);
-+	mult = DIV_ROUND_CLOSEST_ULL(req->rate * 32ULL, prate);
- 	mult = clamp(mult, min_mult, max_mult);
- 
--	req->rate = div_u64((u64)prate * mult, 32);
-+	req->rate = DIV_ROUND_CLOSEST_ULL((u64)prate * mult, 32);
- 	return 0;
- }
- 
+@@ -38,7 +38,8 @@
+  * Traits of this clock:
+  * prepare - clk_prepare only ensures that parents are prepared
+  * enable - clk_enable only ensures that parents are enabled
+- * rate - rate is adjustable.  clk->rate = (parent->rate * mult / 32 ) / 2
++ * rate - rate is adjustable.
++ *        clk->rate = (parent->rate * mult / 32 ) / fixed_div
+  * parent - fixed parent.  No clk_set_parent support
+  */
+ #define CPG_FRQCRB			0x00000004
 -- 
 2.25.1
 
