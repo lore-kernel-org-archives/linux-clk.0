@@ -2,107 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506EAC433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10779C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F56461A3A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE6DC61A3A
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbhCZAJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 20:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229836AbhCZAJA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Mar 2021 20:09:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 530236198C;
-        Fri, 26 Mar 2021 00:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616717340;
-        bh=rfHNeZy3xAA9yAvhD6BBRZD5DW31WjGDzteujbD/pZQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cun7tR9jtx/N+rwe7kNhy7Lqi7pywG+g44F23esq+Lb5jGF1q5h2zb1dphMqZxA54
-         I7EBfuSflaykovnNs8bQTAb8RYQtx9cavHA9QFMYw3IJuRE5dHlUsLFvlhw0rI7BAH
-         3ufDJwd4FG9RLRK80zHebS+ucTTZ8vaqeFvfEcacnj2VUUIFQC/UHZcJYO9R/Ja09u
-         7K0aMJNIz/8KmEKdWXvkfJHsIEcdXAebaSG0zN77eKClRiXTdsApQk6df5OE4STICL
-         0/kNjVJ/h4l4AwJG0OFFzPArsMM76RayQbVg+t900hwsZK/5lnIMCTBMWTrmK/fmUX
-         fFPvVVgF6UUvg==
-Content-Type: text/plain; charset="utf-8"
+        id S229879AbhCZAL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 20:11:27 -0400
+Received: from mail-il1-f172.google.com ([209.85.166.172]:45615 "EHLO
+        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229639AbhCZALY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 20:11:24 -0400
+Received: by mail-il1-f172.google.com with SMTP id w2so3194296ilj.12;
+        Thu, 25 Mar 2021 17:11:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=P/I+wMdHICPtFWlW8kLfAQ7JiR1EZW/dP2yVRmWYJGU=;
+        b=bh/eufw9UDiJDF6CtK/sZ8HlZK7k2aEO1Ked96aDz/J/Atx6wIVSJ9t3w7IzsYVaS/
+         2pmdl9KGBzMwHqNBKSe5oxSleuQ6PJQLay1K6kNE67knT7c8XCz0Y3tkpTyqRTdlG2sM
+         mLNIRzLENVCWJvkw6jDfiRfr0lacw+L3NpMbs6kZ17BmvsgXXV8utjCs9/LyGiaYpiNG
+         ziOYs5uaez+Qk99hfut8RDBiKu0pOxgN+sQ2/Sm0Zv8JEddarElgzOTKvIsQ42dX3KMP
+         WuWAnnN4ujLfHuhuWBEUA2DO2Kmrp7zCb18VmltRGrvDACGxvzP8yX+acGs5zCmOmNtZ
+         oD+Q==
+X-Gm-Message-State: AOAM530VW9FxsEOReicoC1vfQH7NpYh/7WlZn+NHo91QrB9ERwpK6/27
+        GL3PwHI4PVRDifwFL1aBgg==
+X-Google-Smtp-Source: ABdhPJzWTUM7ViOUd0d1O5WVuFw0EBmZZAJwzZ9S1RfUkdCRF37cp6Wp77JMxNHIeBXaOjKMrxKidg==
+X-Received: by 2002:a05:6e02:1a89:: with SMTP id k9mr8673060ilv.29.1616717483503;
+        Thu, 25 Mar 2021 17:11:23 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id 14sm3554588ilt.54.2021.03.25.17.11.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 17:11:22 -0700 (PDT)
+Received: (nullmailer pid 2004913 invoked by uid 1000);
+        Fri, 26 Mar 2021 00:11:20 -0000
+Date:   Thu, 25 Mar 2021 18:11:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/6] dt-bindings: clock: Add SC7280 DISPCC clock
+ binding
+Message-ID: <20210326001120.GA2001669@robh.at.kernel.org>
+References: <1615944142-12171-1-git-send-email-tdas@codeaurora.org>
+ <1615944142-12171-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210316124903.35011-19-cristian.marussi@arm.com>
-References: <20210316124903.35011-1-cristian.marussi@arm.com> <20210316124903.35011-19-cristian.marussi@arm.com>
-Subject: Re: [PATCH v7 18/38] clk: scmi: port driver to the new scmi_clk_proto_ops interface
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com,
-        james.quinlan@broadcom.com, Jonathan.Cameron@Huawei.com,
-        f.fainelli@gmail.com, etienne.carriere@linaro.org,
-        thara.gopinath@linaro.org, vincent.guittot@linaro.org,
-        souvik.chakravarty@arm.com, cristian.marussi@arm.com,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Date:   Thu, 25 Mar 2021 17:08:59 -0700
-Message-ID: <161671733901.3012082.11186673559577220910@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1615944142-12171-2-git-send-email-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sorry didn't notice because linux-clk@vger.kernel.org wasn't Cced
-
-Quoting Cristian Marussi (2021-03-16 05:48:43)
-> Port driver to the new SCMI Clock interface based on protocol handles
-> and common devm_get_ops().
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+On Wed, Mar 17, 2021 at 06:52:17AM +0530, Taniya Das wrote:
+> Add device tree bindings for display clock controller subsystem for
+> Qualcomm Technology Inc's SC7280 SoCs.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
-> v6 -> v7
-> - fixed Copyright
-> - renamed non-static function to fit scmi_<OBJ>_<ACTION> naming pattern
-> v4 --> v5
-> - using renamed devm_get/put_protocol
-> ---
->  drivers/clk/clk-scmi.c | 27 +++++++++++++++++----------
->  1 file changed, 17 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index c754dfbb73fd..be4c13d63385 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -2,7 +2,7 @@
->  /*
->   * System Control and Power Interface (SCMI) Protocol based clock driver
->   *
-> - * Copyright (C) 2018 ARM Ltd.
-> + * Copyright (C) 2018-2021 ARM Ltd.
->   */
-> =20
->  #include <linux/clk-provider.h>
-> @@ -13,11 +13,13 @@
->  #include <linux/scmi_protocol.h>
->  #include <asm/div64.h>
-> =20
-> +static const struct scmi_clk_proto_ops *clk_ops;
-
-Can you call it scmi_proto_clk_ops instead of clk_ops? We already have
-'struct clk_ops' and this pollutes the global namespace with another
-'clk_ops'.
-
+>  .../bindings/clock/qcom,sc7280-dispcc.yaml         | 94 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,dispcc-sc7280.h     | 55 +++++++++++++
+>  2 files changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+> new file mode 100644
+> index 0000000..2178666
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+> @@ -0,0 +1,94 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc7280-dispcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  struct scmi_clk {
->         u32 id;
->         struct clk_hw hw;
->         const struct scmi_clock_info *info;
-> -       const struct scmi_handle *handle;
-> +       const struct scmi_protocol_handle *ph;
->  };
-> =20
->  #define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
+> +title: Qualcomm Display Clock & Reset Controller Binding for SC7280
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm display clock control module which supports the clocks, resets and
+> +  power domains on SC7280.
+> +
+> +  See also dt-bindings/clock/qcom,dispcc-sc7280.h.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc7280-dispcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: GPLL0 source from GCC
+> +      - description: Byte clock from DSI PHY
+> +      - description: Pixel clock from DSI PHY
+> +      - description: Link clock from DP PHY
+> +      - description: VCO DIV clock from DP PHY
+> +      - description: Link clock from EDP PHY
+> +      - description: VCO DIV clock from EDP PHY
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: gcc_disp_gpll0_clk
+> +      - const: dsi0_phy_pll_out_byteclk
+> +      - const: dsi0_phy_pll_out_dsiclk
+> +      - const: dp_phy_pll_link_clk
+> +      - const: dp_phy_pll_vco_div_clk
+> +      - const: edp_phy_pll_link_clk
+> +      - const: edp_phy_pll_vco_div_clk
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    clock-controller@af00000 {
+> +      compatible = "qcom,sc7280-dispcc";
+> +      reg = <0x0af00000 0x200000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
+> +               <&dsi_phy 0>,
+> +               <&dsi_phy 1>,
+> +               <&dp_phy 0>,
+> +               <&dp_phy 1>,
+> +               <&edp_phy 0>,
+> +               <&edp_phy 1>;
+> +      clock-names = "bi_tcxo",
+> +                    "gcc_disp_gpll0_clk",
+> +                    "dsi0_phy_pll_out_byteclk",
+> +                    "dsi0_phy_pll_out_dsiclk",
+> +                    "dp_phy_pll_link_clk",
+> +                    "dp_phy_pll_vco_div_clk",
+> +                    "edp_phy_pll_link_clk",
+> +                    "edp_phy_pll_vco_div_clk";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
+> new file mode 100644
+> index 0000000..2074b30
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
+> @@ -0,0 +1,55 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+
+Dual license?
+
+Rob
