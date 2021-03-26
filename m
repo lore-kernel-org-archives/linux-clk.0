@@ -2,62 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC45C433E8
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F426C433F4
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 857EF61A13
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2744061A27
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbhCZO7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
+        id S230242AbhCZO7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 10:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230142AbhCZO6x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 10:58:53 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A76C0613B3
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id z8so7664275ljm.12
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
+        with ESMTP id S230225AbhCZO6z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 10:58:55 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A96C0613B2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:55 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id u4so7721066ljo.6
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=snejp.pl; s=gmail;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=npgVJQYGqq8MrhD2GhepRmqoa6UpE4qIZ21saywyRzU=;
-        b=Yzs39DgjgTZDjRkOa+0KljchTKe9UD4+jerh9jA+9fmOmvsXQczZ0IXPErgkMgl5Wb
-         c6fWPl3a9R4KBqq4USEokBRRClYoZdleUMeHlIaQjr6admk77WjrrVxJjbGqjJrfxgbt
-         lHXxMbo85o1hPh8J8UrqLQwr3N8XYu2NtvCC11+tIM0V0KoZ/J2/P+5Ne6D5gAbrGiT9
-         +H2nVIyElwNcaPYL6tcB8IfUudZZYlkRwYeFJz/ETQor24ZExUdVgAHuZud/DNcJ89ni
-         ESiky+GhkeJvrhqxl/F4nVDEdK6M9JpftTgKatEb4qfMdaNx8Ig1ZLIqWKwzsxM2L6zL
-         f8oA==
+        bh=74ExyrGQ2FrMHb3FbC5tSKScDQ67EMx6FU4HJ+L5E00=;
+        b=LdF6rehR3g42XXaOynyISZkO5iu/QV+iuJsSk0LMVFhbea28iAIqqHJXpYRNk63Czr
+         ozIguXy0tiyGh9TDJ/ViqQSY4T5f2sI8bacGqunWnfdD65jV2UQKEwwziDdsEEGcFqRl
+         G3SaScmhs15eNsPog0sOEdTK2cMzqSMPO8ViLs2j6UmKkjNQOoaj291FTKMo1KmDTF9a
+         T93enEWsnsswJqiB39y48cqkRPyYCAeRtODh0v41EGRoO4Eap0Ag/vSgyafiNVkAlwUZ
+         mBrUtxRVSWKJlsdIvBv3Ei5HP3TFc+PxUUe+CKiOMiYI0GjchIFq0USLvF5ClrgK4ctW
+         +RpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=npgVJQYGqq8MrhD2GhepRmqoa6UpE4qIZ21saywyRzU=;
-        b=JV2iHrczqeC1DJspHYd6Bs2TzPvJ1Enn3k+MPfJUxXMBS27Ggizx1ii7WU5SSxgkEl
-         NGjq7ysp8qCyfoOv7KY8EZ1ljVdjiXrOBWo/ie6QVGnO0FJwcbxkEPsOfXiSgMUaYhOg
-         N2XzUxftK5bol63tDO7i/kE4lrlM1frtVrfWxq2XZW7U7zMo/W+FZD+g9x28997bze2c
-         yoUECW/MYmN9XmeK26/v+eKOheVSq7V379KwK8Lx7kAK3atdY4Qnwc+DIVPsSSObTlmL
-         I7mbJeU2MxE2AihvGK8x73suA6EV0PrHWAN48baa8WuYCk+nVlkkqs1iJVjz1eUIWcE6
-         O5Kw==
-X-Gm-Message-State: AOAM530TP3pZFPda6B/OqEBRTZBRt0ja3jmq8DpP9UH+98wwGnvZeXQd
-        03G9+YPyGdx8xWrsJsKUDdc+8w==
-X-Google-Smtp-Source: ABdhPJzYrDX59TwrGoOCg/ROWP7z+FxqdLCWfsIuJJkgWfUfynvQD4cO9OjAUMs2JRc3nKUxkpsZ5w==
-X-Received: by 2002:a2e:b6d4:: with SMTP id m20mr9419697ljo.448.1616770731475;
-        Fri, 26 Mar 2021 07:58:51 -0700 (PDT)
+        bh=74ExyrGQ2FrMHb3FbC5tSKScDQ67EMx6FU4HJ+L5E00=;
+        b=UowNsxGOU3493Z2YRQRDS0AIdEeZrF8zC2OXbLD/wPkXPJd9Qsukvm2ZWF7gYE5I4I
+         /Y0LLgxaRaZfeg96Sla8MjSTVa9KxMqa5okWk8XTAiCo+lcPQsHbVwPeIqjshJ9ApNN7
+         AAeS0wPXy03g/l/uvMOcPBMH8m+RS22eXZZFhIUc6DyYev4gG2hpOdsoO8j2VVbWMNDc
+         5oZDTBdXYYbB/zPxscXHZXuxduRfBkRdhb9yCIZ8ChRsXJTQZZQlMEAVcKdnpKr/Fee/
+         fmtqhuZh79phRWH2fdnVkoWcalcSMpBcS9sKGcsVYBgOdCree+Zf0lRS/pKrU3jqyj43
+         H/3A==
+X-Gm-Message-State: AOAM531m5c7pAVMWarrsWUXdjFGqc2s45BZ8NYV06/q7CIORPaLWx+MG
+        rJ5rlRlQr6+vnYmrL1a9oIjB7g==
+X-Google-Smtp-Source: ABdhPJz6rK13/EGBp6dWa2QzseHC+W24RMCZO5kUB+Vxzz/D5a8m4pmlqZ21/8Sy5DRyTtOsJ4ds1w==
+X-Received: by 2002:a2e:8591:: with SMTP id b17mr9093307lji.230.1616770733943;
+        Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
 Received: from PackardBell ([82.160.139.10])
-        by smtp.googlemail.com with ESMTPSA id k2sm893382lfm.174.2021.03.26.07.58.50
+        by smtp.googlemail.com with ESMTPSA id k2sm893382lfm.174.2021.03.26.07.58.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 07:58:51 -0700 (PDT)
+        Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
 Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 66d913d2;
+        by PackardBell (OpenSMTPD) with ESMTPA id b605a23b;
         Fri, 26 Mar 2021 14:58:48 +0000 (UTC)
 From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
 To:     Andy Gross <agross@kernel.org>,
@@ -68,9 +67,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
 Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH 2/5] clk: qcom: gcc: Add support for Global Clock controller found on MSM8226
-Date:   Fri, 26 Mar 2021 15:58:13 +0100
-Message-Id: <20210326145816.9758-3-bartosz.dudziak@snejp.pl>
+Subject: [PATCH 5/5] arm: dts: qcom: Add initial DTS file for Samsung Galaxy S III Neo phone
+Date:   Fri, 26 Mar 2021 15:58:16 +0100
+Message-Id: <20210326145816.9758-6-bartosz.dudziak@snejp.pl>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
 References: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
@@ -80,281 +79,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Modify existing MSM8974 driver to support MSM8226 SoC. Override frequencies
-which are different in this older chip. Register all the clocks to the
-framework for the clients to be able to request for them.
+This DTS has support for the Samsung Galaxy S III Neo (codenamed s3ve3g)
+phone. Initial version have just a working serial console.
 
 Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
 ---
- drivers/clk/qcom/gcc-msm8974.c | 185 ++++++++++++++++++++++++++++++---
- 1 file changed, 171 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/Makefile                    |  1 +
+ .../boot/dts/qcom-msm8226-samsung-s3ve3g.dts  | 25 +++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
 
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 740d3c44c0..06cd669e10 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -3,16 +3,13 @@
-  * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-  */
- 
--#include <linux/kernel.h>
--#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
--#include <linux/platform_device.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/clk-provider.h>
-+#include <linux/of.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,gcc-msm8974.h>
- #include <dt-bindings/reset/qcom,gcc-msm8974.h>
-@@ -719,6 +716,12 @@ static struct clk_rcg2 blsp2_uart6_apps_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_ce1_clk_msm8226[] = {
-+	F(50000000, P_GPLL0, 12, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	{ }
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 8e5d4ab4e7..080ff37fdb 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -920,6 +920,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-ipq4019-ap.dk07.1-c2.dtb \
+ 	qcom-ipq8064-ap148.dtb \
+ 	qcom-ipq8064-rb3011.dtb \
++	qcom-msm8226-samsung-s3ve3g.dtb \
+ 	qcom-msm8660-surf.dtb \
+ 	qcom-msm8960-cdp.dtb \
+ 	qcom-msm8974-fairphone-fp2.dtb \
+diff --git a/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts b/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
+new file mode 100644
+index 0000000000..4790077962
+--- /dev/null
++++ b/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include "qcom-msm8226.dtsi"
++
++/ {
++	model = "Samsung Galaxy S III Neo";
++	compatible = "samsung,s3ve3g", "qcom,msm8226";
++
++	aliases {
++		serial0 = &blsp1_uart3;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +};
 +
- static const struct freq_tbl ftbl_gcc_ce1_clk[] = {
- 	F(50000000, P_GPLL0, 12, 0, 0),
- 	F(75000000, P_GPLL0, 8, 0, 0),
-@@ -761,6 +764,11 @@ static struct clk_rcg2 ce2_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_gp_clk_msm8226[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	{ }
++&soc {
++	serial@f991f000 {
++		status = "ok";
++	};
 +};
-+
- static const struct freq_tbl ftbl_gcc_gp_clk[] = {
- 	F(4800000, P_XO, 4, 0, 0),
- 	F(6000000, P_GPLL0, 10, 1, 10),
-@@ -1955,6 +1963,10 @@ static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_mss_q6_bimc_axi_clk",
-+			.parent_names = (const char *[]){
-+				"system_noc_clk_src",
-+			},
-+			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1993,6 +2005,20 @@ static struct clk_branch gcc_pdm_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_pdm_xo4_clk = {
-+	.halt_reg = 0x0cc8,
-+	.clkr = {
-+		.enable_reg = 0x0cc8,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_pdm_xo4_clk",
-+			.parent_names = (const char *[]){ "xo" },
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_prng_ahb_clk = {
- 	.halt_reg = 0x0d04,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -2430,6 +2456,121 @@ static struct gdsc usb_hs_hsic_gdsc = {
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-+static struct clk_regmap *gcc_msm8226_clocks[] = {
-+	[GPLL0] = &gpll0.clkr,
-+	[GPLL0_VOTE] = &gpll0_vote,
-+	[GPLL1] = &gpll1.clkr,
-+	[GPLL1_VOTE] = &gpll1_vote,
-+	[CONFIG_NOC_CLK_SRC] = &config_noc_clk_src.clkr,
-+	[PERIPH_NOC_CLK_SRC] = &periph_noc_clk_src.clkr,
-+	[SYSTEM_NOC_CLK_SRC] = &system_noc_clk_src.clkr,
-+	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP1_SPI_APPS_CLK_SRC] = &blsp1_qup1_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP2_I2C_APPS_CLK_SRC] = &blsp1_qup2_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP2_SPI_APPS_CLK_SRC] = &blsp1_qup2_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP3_I2C_APPS_CLK_SRC] = &blsp1_qup3_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP3_SPI_APPS_CLK_SRC] = &blsp1_qup3_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP4_I2C_APPS_CLK_SRC] = &blsp1_qup4_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP4_SPI_APPS_CLK_SRC] = &blsp1_qup4_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP5_I2C_APPS_CLK_SRC] = &blsp1_qup5_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP5_SPI_APPS_CLK_SRC] = &blsp1_qup5_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP6_I2C_APPS_CLK_SRC] = &blsp1_qup6_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP6_SPI_APPS_CLK_SRC] = &blsp1_qup6_spi_apps_clk_src.clkr,
-+	[BLSP1_UART1_APPS_CLK_SRC] = &blsp1_uart1_apps_clk_src.clkr,
-+	[BLSP1_UART2_APPS_CLK_SRC] = &blsp1_uart2_apps_clk_src.clkr,
-+	[BLSP1_UART3_APPS_CLK_SRC] = &blsp1_uart3_apps_clk_src.clkr,
-+	[BLSP1_UART4_APPS_CLK_SRC] = &blsp1_uart4_apps_clk_src.clkr,
-+	[BLSP1_UART5_APPS_CLK_SRC] = &blsp1_uart5_apps_clk_src.clkr,
-+	[BLSP1_UART6_APPS_CLK_SRC] = &blsp1_uart6_apps_clk_src.clkr,
-+	[CE1_CLK_SRC] = &ce1_clk_src.clkr,
-+	[GP1_CLK_SRC] = &gp1_clk_src.clkr,
-+	[GP2_CLK_SRC] = &gp2_clk_src.clkr,
-+	[GP3_CLK_SRC] = &gp3_clk_src.clkr,
-+	[PDM2_CLK_SRC] = &pdm2_clk_src.clkr,
-+	[SDCC1_APPS_CLK_SRC] = &sdcc1_apps_clk_src.clkr,
-+	[SDCC2_APPS_CLK_SRC] = &sdcc2_apps_clk_src.clkr,
-+	[SDCC3_APPS_CLK_SRC] = &sdcc3_apps_clk_src.clkr,
-+	[USB_HS_SYSTEM_CLK_SRC] = &usb_hs_system_clk_src.clkr,
-+	[USB_HSIC_CLK_SRC] = &usb_hsic_clk_src.clkr,
-+	[USB_HSIC_IO_CAL_CLK_SRC] = &usb_hsic_io_cal_clk_src.clkr,
-+	[USB_HSIC_SYSTEM_CLK_SRC] = &usb_hsic_system_clk_src.clkr,
-+	[GCC_BAM_DMA_AHB_CLK] = &gcc_bam_dma_ahb_clk.clkr,
-+	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
-+	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP2_I2C_APPS_CLK] = &gcc_blsp1_qup2_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP2_SPI_APPS_CLK] = &gcc_blsp1_qup2_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP3_I2C_APPS_CLK] = &gcc_blsp1_qup3_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP3_SPI_APPS_CLK] = &gcc_blsp1_qup3_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP4_I2C_APPS_CLK] = &gcc_blsp1_qup4_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP5_I2C_APPS_CLK] = &gcc_blsp1_qup5_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP5_SPI_APPS_CLK] = &gcc_blsp1_qup5_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP6_I2C_APPS_CLK] = &gcc_blsp1_qup6_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP6_SPI_APPS_CLK] = &gcc_blsp1_qup6_spi_apps_clk.clkr,
-+	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
-+	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
-+	[GCC_BLSP1_UART3_APPS_CLK] = &gcc_blsp1_uart3_apps_clk.clkr,
-+	[GCC_BLSP1_UART4_APPS_CLK] = &gcc_blsp1_uart4_apps_clk.clkr,
-+	[GCC_BLSP1_UART5_APPS_CLK] = &gcc_blsp1_uart5_apps_clk.clkr,
-+	[GCC_BLSP1_UART6_APPS_CLK] = &gcc_blsp1_uart6_apps_clk.clkr,
-+	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
-+	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
-+	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
-+	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
-+	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
-+	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
-+	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
-+	[GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
-+	[GCC_MSS_CFG_AHB_CLK] = &gcc_mss_cfg_ahb_clk.clkr,
-+	[GCC_MSS_Q6_BIMC_AXI_CLK] = &gcc_mss_q6_bimc_axi_clk.clkr,
-+	[GCC_PDM2_CLK] = &gcc_pdm2_clk.clkr,
-+	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
-+	[GCC_PDM_XO4_CLK] = &gcc_pdm_xo4_clk.clkr,
-+	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
-+	[GCC_SDCC1_AHB_CLK] = &gcc_sdcc1_ahb_clk.clkr,
-+	[GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
-+	[GCC_SDCC2_AHB_CLK] = &gcc_sdcc2_ahb_clk.clkr,
-+	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
-+	[GCC_SDCC3_AHB_CLK] = &gcc_sdcc3_ahb_clk.clkr,
-+	[GCC_SDCC3_APPS_CLK] = &gcc_sdcc3_apps_clk.clkr,
-+	[GCC_USB2A_PHY_SLEEP_CLK] = &gcc_usb2a_phy_sleep_clk.clkr,
-+	[GCC_USB_HS_AHB_CLK] = &gcc_usb_hs_ahb_clk.clkr,
-+	[GCC_USB_HS_SYSTEM_CLK] = &gcc_usb_hs_system_clk.clkr,
-+	[GCC_USB_HSIC_AHB_CLK] = &gcc_usb_hsic_ahb_clk.clkr,
-+	[GCC_USB_HSIC_CLK] = &gcc_usb_hsic_clk.clkr,
-+	[GCC_USB_HSIC_IO_CAL_CLK] = &gcc_usb_hsic_io_cal_clk.clkr,
-+	[GCC_USB_HSIC_SYSTEM_CLK] = &gcc_usb_hsic_system_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map gcc_msm8226_resets[] = {
-+	[GCC_USB_HS_HSIC_BCR] = { 0x0400 },
-+	[GCC_USB_HS_BCR] = { 0x0480 },
-+	[GCC_USB2A_PHY_BCR] = { 0x04a8 },
-+};
-+
-+static struct gdsc *gcc_msm8226_gdscs[] = {
-+	[USB_HS_HSIC_GDSC] = &usb_hs_hsic_gdsc,
-+};
-+
-+static const struct regmap_config gcc_msm8226_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x1a80,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc gcc_msm8226_desc = {
-+	.config = &gcc_msm8226_regmap_config,
-+	.clks = gcc_msm8226_clocks,
-+	.num_clks = ARRAY_SIZE(gcc_msm8226_clocks),
-+	.resets = gcc_msm8226_resets,
-+	.num_resets = ARRAY_SIZE(gcc_msm8226_resets),
-+	.gdscs = gcc_msm8226_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_msm8226_gdscs),
-+};
-+
- static struct clk_regmap *gcc_msm8974_clocks[] = {
- 	[GPLL0] = &gpll0.clkr,
- 	[GPLL0_VOTE] = &gpll0_vote,
-@@ -2682,13 +2823,22 @@ static const struct qcom_cc_desc gcc_msm8974_desc = {
- };
- 
- static const struct of_device_id gcc_msm8974_match_table[] = {
--	{ .compatible = "qcom,gcc-msm8974" },
--	{ .compatible = "qcom,gcc-msm8974pro" , .data = (void *)1UL },
--	{ .compatible = "qcom,gcc-msm8974pro-ac", .data = (void *)1UL },
-+	{ .compatible = "qcom,gcc-msm8226", .data = &gcc_msm8226_desc },
-+	{ .compatible = "qcom,gcc-msm8974", .data = &gcc_msm8974_desc },
-+	{ .compatible = "qcom,gcc-msm8974pro", .data = &gcc_msm8974_desc },
-+	{ .compatible = "qcom,gcc-msm8974pro-ac", .data = &gcc_msm8974_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, gcc_msm8974_match_table);
- 
-+static void msm8226_clock_override(void)
-+{
-+	ce1_clk_src.freq_tbl = ftbl_gcc_ce1_clk_msm8226;
-+	gp1_clk_src.freq_tbl = ftbl_gcc_gp_clk_msm8226;
-+	gp2_clk_src.freq_tbl = ftbl_gcc_gp_clk_msm8226;
-+	gp3_clk_src.freq_tbl = ftbl_gcc_gp_clk_msm8226;
-+}
-+
- static void msm8974_pro_clock_override(void)
- {
- 	sdcc1_apps_clk_src_init.parent_names = gcc_xo_gpll0_gpll4;
-@@ -2708,16 +2858,19 @@ static int gcc_msm8974_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct device *dev = &pdev->dev;
--	bool pro;
-+	struct regmap *regmap;
- 	const struct of_device_id *id;
- 
- 	id = of_match_device(gcc_msm8974_match_table, dev);
- 	if (!id)
- 		return -ENODEV;
--	pro = !!(id->data);
- 
--	if (pro)
--		msm8974_pro_clock_override();
-+	if (!of_device_is_compatible(dev->of_node, "qcom,gcc-msm8974")) {
-+		if (id->data == &gcc_msm8226_desc)
-+			msm8226_clock_override();
-+		else
-+			msm8974_pro_clock_override();
-+	}
- 
- 	ret = qcom_cc_register_board_clk(dev, "xo_board", "xo", 19200000);
- 	if (ret)
-@@ -2727,7 +2880,11 @@ static int gcc_msm8974_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	return qcom_cc_probe(pdev, &gcc_msm8974_desc);
-+	regmap = qcom_cc_map(pdev, id->data);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	return qcom_cc_really_probe(pdev, id->data, regmap);
- }
- 
- static struct platform_driver gcc_msm8974_driver = {
 -- 
 2.25.1
 
