@@ -2,219 +2,233 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2262DC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 09:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC17AC433C1
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 10:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0B4561A42
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 09:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C11D61A48
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 10:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbhCZJwY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 05:52:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48170 "EHLO
+        id S229779AbhCZKzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 06:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbhCZJwR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 05:52:17 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548B1C0613AA;
-        Fri, 26 Mar 2021 02:52:16 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 88E681F46C28
-Received: by earth.universe (Postfix, from userid 1000)
-        id 575153C0C96; Fri, 26 Mar 2021 10:52:12 +0100 (CET)
-Date:   Fri, 26 Mar 2021 10:52:12 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>
-Subject: Re: [RFC] clk: add boot clock support
-Message-ID: <20210326095212.22ty5ueowiq36y6b@earth.universe>
-References: <20210316215123.GA3712408@robh.at.kernel.org>
- <20210318210318.144961-1-sebastian.reichel@collabora.com>
- <20210326012720.GA2113788@robh.at.kernel.org>
- <CAGETcx9JmtbwAq_fpU5KfUzjcTw-uHPqKo3gAGjQwht=wxY8yg@mail.gmail.com>
+        with ESMTP id S229730AbhCZKys (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 06:54:48 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A053C0613AA
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 03:54:47 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5cae:bca6:def7:9f08])
+        by andre.telenet-ops.be with bizsmtp
+        id kyum2400M53vE1T01yumVY; Fri, 26 Mar 2021 11:54:46 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lPk73-00AWZz-T7; Fri, 26 Mar 2021 11:54:45 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lPk73-006bgh-3v; Fri, 26 Mar 2021 11:54:45 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: Zero init clk_init_data
+Date:   Fri, 26 Mar 2021 11:54:34 +0100
+Message-Id: <20210326105434.1574796-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yuqc3nyfosvvvnh3"
-Content-Disposition: inline
-In-Reply-To: <CAGETcx9JmtbwAq_fpU5KfUzjcTw-uHPqKo3gAGjQwht=wxY8yg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+As clk_core_populate_parent_map() checks clk_init_data.num_parents
+first, and checks clk_init_data.parent_names[] before
+clk_init_data.parent_data[] and clk_init_data.parent_hws[], leaving the
+latter uninitialized doesn't do harm for now.  However, it is better to
+play it safe, and initialize all clk_init_data structures to zeroes, to
+avoid any current and future members containing uninitialized data.
 
---yuqc3nyfosvvvnh3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove a few explicit zero initializers, which are now superfluous.
 
-Hi Saravana,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v5.13.
 
-On Thu, Mar 25, 2021 at 06:55:52PM -0700, Saravana Kannan wrote:
-> On Thu, Mar 25, 2021 at 6:27 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > +Saravana
-> >
-> > On Thu, Mar 18, 2021 at 10:03:18PM +0100, Sebastian Reichel wrote:
-> > > On Congatec's QMX6 system on module one of the i.MX6 fixed clocks
-> > > is provided by an I2C RTC. Specifying this properly results in a
-> > > circular dependency, since the I2C RTC (and thus its clock) cannot
-> > > be initialized without the i.MX6 clock controller being initialized.
-> > >
-> > > With current code the following path is executed when i.MX6 clock
-> > > controller is probed (and ckil clock is specified to be the I2C RTC
-> > > via DT):
-> > >
-> > > 1. imx6q_obtain_fixed_clk_hw(ccm_node, "ckil", 0);
-> > > 2. of_clk_get_by_name(ccm_node, "ckil");
-> > > 3. __of_clk_get(ccm_node, 0, ccm_node->full_name, "ckil");
-> > > 4. of_clk_get_hw(ccm_node, 0, "ckil")
-> > > 5. spec =3D of_parse_clkspec(ccm_node, 0, "ckil"); // get phandle
-> > > 6. of_clk_get_hw_from_clkspec(&spec); // returns -EPROBE_DEFER
-> > > 7. error is propagated back, i.MX6q clock controller is probe deferred
-> > > 8. I2C controller is never initialized without clock controller
-> > >    I2C RTC is never initialized without I2C controller
-> > >    CKIL clock is never initialized without I2C RTC
-> > >    clock controller is never initialized without CKIL
-> > >
-> > > To fix the circular dependency this registers a dummy clock when
-> > > the RTC clock is tried to be acquired. The dummy clock will later
-> > > be unregistered when the proper clock is registered for the RTC
-> > > DT node. IIUIC clk_core_reparent_orphans() will take care of
-> > > fixing up the clock tree.
-> > >
-> > > NOTE: For now the patch is compile tested only. If this approach
-> > > is the correct one I will do some testing and properly submit this.
-> > > You can find all the details about the hardware in the following
-> > > patchset:
-> > >
-> > > https://lore.kernel.org/linux-devicetree/20210222171247.97609-1-sebas=
-tian.reichel@collabora.com/
-> > >
-> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > ---
-> > >  .../bindings/clock/clock-bindings.txt         |   7 +
-> > >  drivers/clk/clk.c                             | 146 ++++++++++++++++=
-++
-> > >  2 files changed, 153 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.t=
-xt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > index f2ea53832ac6..66d67ff4aa0f 100644
-> > > --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > @@ -32,6 +32,13 @@ clock-output-names: Recommended to be a list of st=
-rings of clock output signal
-> > >                   Clock consumer nodes must never directly reference
-> > >                   the provider's clock-output-names property.
-> > >
-> > > +boot-clock-frequencies: This property is used to specify that a cloc=
-k is enabled
-> > > +                     by default with the provided frequency at boot =
-time. This
-> > > +                     is required to break circular clock dependencie=
-s. For clock
-> > > +                     providers with #clock-cells =3D 0 this is a sin=
-gle u32
-> > > +                     with the frequency in Hz. Otherwise it's a list=
- of
-> > > +                     clock cell specifier + frequency in Hz.
-> >
-> > Seems alright to me. I hadn't thought about the aspect of needing to
-> > know the frequency. Other cases probably don't as you only need the
-> > clocks once both components have registered.
-> >
-> > Note this could be lost being threaded in the other series.
->=20
-> I read this thread and tried to understand it. But my head isn't right
-> today (lack of sleep) so I couldn't wrap my head around it. I'll look
-> at it again after the weekend. In the meantime, Sebastian can you
-> please point me to the DT file and the specific device nodes (names or
-> line number) where this cycle is present?
+ drivers/clk/renesas/clk-div6.c            | 3 +--
+ drivers/clk/renesas/clk-mstp.c            | 2 +-
+ drivers/clk/renesas/r9a06g032-clocks.c    | 8 ++++----
+ drivers/clk/renesas/rcar-cpg-lib.c        | 2 +-
+ drivers/clk/renesas/rcar-gen2-cpg.c       | 3 +--
+ drivers/clk/renesas/rcar-gen3-cpg.c       | 2 +-
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
+ drivers/clk/renesas/renesas-cpg-mssr.c    | 2 +-
+ 8 files changed, 11 insertions(+), 16 deletions(-)
 
-I have not yet sent an updated DT file, but if you look at this
-submission:
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 5ca183e701667b46..8fb68e703a6bab8c 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -216,7 +216,7 @@ struct clk * __init cpg_div6_register(const char *name,
+ 				      struct raw_notifier_head *notifiers)
+ {
+ 	unsigned int valid_parents;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct div6_clock *clock;
+ 	struct clk *clk;
+ 	unsigned int i;
+@@ -267,7 +267,6 @@ struct clk * __init cpg_div6_register(const char *name,
+ 	/* Register the clock. */
+ 	init.name = name;
+ 	init.ops = &cpg_div6_clock_ops;
+-	init.flags = 0;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = valid_parents;
+ 
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index a9e91d9b3cdcb135..6e3c4a9c16b07ae9 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -151,7 +151,7 @@ static struct clk * __init cpg_mstp_clock_register(const char *name,
+ 	const char *parent_name, unsigned int index,
+ 	struct mstp_clock_group *group)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct mstp_clock *clock;
+ 	struct clk *clk;
+ 
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 892e91b92f2c80f5..77beb876fd7423fd 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -504,7 +504,7 @@ r9a06g032_register_gate(struct r9a06g032_priv *clocks,
+ {
+ 	struct clk *clk;
+ 	struct r9a06g032_clk_gate *g;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 
+ 	g = kzalloc(sizeof(*g), GFP_KERNEL);
+ 	if (!g)
+@@ -674,7 +674,7 @@ r9a06g032_register_div(struct r9a06g032_priv *clocks,
+ {
+ 	struct r9a06g032_clk_div *div;
+ 	struct clk *clk;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	unsigned int i;
+ 
+ 	div = kzalloc(sizeof(*div), GFP_KERNEL);
+@@ -758,7 +758,7 @@ r9a06g032_register_bitsel(struct r9a06g032_priv *clocks,
+ {
+ 	struct clk *clk;
+ 	struct r9a06g032_clk_bitsel *g;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const char *names[2];
+ 
+ 	/* allocate the gate */
+@@ -849,7 +849,7 @@ r9a06g032_register_dualgate(struct r9a06g032_priv *clocks,
+ {
+ 	struct r9a06g032_clk_dualgate *g;
+ 	struct clk *clk;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 
+ 	/* allocate the gate */
+ 	g = kzalloc(sizeof(*g), GFP_KERNEL);
+diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
+index 7e7e5d1341d5e80c..5678768ee1f2ca58 100644
+--- a/drivers/clk/renesas/rcar-cpg-lib.c
++++ b/drivers/clk/renesas/rcar-cpg-lib.c
+@@ -226,7 +226,7 @@ struct clk * __init cpg_sd_clk_register(const char *name,
+ 	void __iomem *base, unsigned int offset, const char *parent_name,
+ 	struct raw_notifier_head *notifiers, bool skip_first)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct sd_clock *clock;
+ 	struct clk *clk;
+ 	u32 val;
+diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
+index d4fa3dc3e2a2632f..edae874fa2b63369 100644
+--- a/drivers/clk/renesas/rcar-gen2-cpg.c
++++ b/drivers/clk/renesas/rcar-gen2-cpg.c
+@@ -137,7 +137,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 					      const char *parent_name,
+ 					      void __iomem *base)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct cpg_z_clk *zclk;
+ 	struct clk *clk;
+ 
+@@ -147,7 +147,6 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &cpg_z_clk_ops;
+-	init.flags = 0;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 17826599e9dd0e02..caa0f9414e45fe73 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -143,7 +143,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 					      unsigned int div,
+ 					      unsigned int offset)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct cpg_z_clk *zclk;
+ 	struct clk *clk;
+ 
+diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+index 3abafd78f7c8a570..34a85dc95beb87a9 100644
+--- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
++++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+@@ -144,7 +144,7 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct usb2_clock_sel_priv *priv;
+ 	struct clk *clk;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -188,9 +188,6 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+ 
+ 	init.name = "rcar_usb2_clock_sel";
+ 	init.ops = &usb2_clock_sel_clock_ops;
+-	init.flags = 0;
+-	init.parent_names = NULL;
+-	init.num_parents = 0;
+ 	priv->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &priv->hw);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index bffbc3d2faf5fa16..fc531d35b269d3cd 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -408,7 +408,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+ 	struct mstp_clock *clock = NULL;
+ 	struct device *dev = priv->dev;
+ 	unsigned int id = mod->id;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk *parent, *clk;
+ 	const char *parent_name;
+ 	unsigned int i;
+-- 
+2.25.1
 
-https://lore.kernel.org/linux-devicetree/20210222171247.97609-7-sebastian.r=
-eichel@collabora.com/
-
-There is a node
-
-rtc: m41t62@68 { compatible =3D "st,m41t62"; };
-
-That is an I2C RTC, which provides a 32.768 kHz clock by default
-(i.e. after power loss). This clock signal is used to provide the
-i.MX6 CKIL:
-
-------------------------------------
-&clks {
-    clocks =3D <&rtc>;
-    clock-names =3D "ckil";
-};
-------------------------------------
-
-> Keeping a clock on until all its consumers probe is part of my TODO
-> list (next item after fw_devlink=3Don lands). I already have it working
-> in AOSP, but need to clean it up for upstream. fw_devlink can also
-> break *some* cycles (not all). So I'm wondering if the kernel will
-> solve this automatically soon(ish). If it can solve it automatically,
-> I'd rather not add new DT bindings because it'll make it more work for
-> fw_devlink.
-
-As written above on Congatec QMX6 an I2C RTC provides one of the
-SoC's input frequencies. The SoC basically expects that frequency
-to be always enabled and this is what it works like before clock
-support had been added to the RTC driver.
-
-With the link properly being described the Kernel tries to probe=20
-the SoC's clock controller during early boot. Then it tries to get a
-reference to the linked clock, using imx6q_obtain_fixed_clk_hw()
-and that returns -EPROBE_DEFER (because the RTC driver has not
-yet been probed). Without the clock controller basically none of
-the i.MX6 SoC drivers can probe including the I2C driver. Without
-the I2C bus being registered, the RTC driver never probes and the
-boot process is stuck.
-
-I'm not sure how fw_devlink can help here. I see exactly two
-options to solve this:
-
-a) do not describe the link and keep RTC clock enabled somehow.
-   (my initial patchset)
-b) describe the link, but ignore it during boot.
-   (what I'm trying to do here)
-
-Thanks,
-
--- Sebastian
-
---yuqc3nyfosvvvnh3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBdrr0ACgkQ2O7X88g7
-+pprNQ//ausWttZwADiPqm832XLLkBLS6xCGi1ntEuXqYXQAhNdD7ncGATlceYmE
-1UsfVgYstQDQE9aGyM0blkUNeUB4ejW4j5BFUkSG/+ANltZosa17qWMfgn9yS4px
-0bNqggfUKX5EHMtZmxkjnjxxZTYyzDB+sRhld7BePV7c5xdyIY91JEtEaEYTl0NX
-mX2KKroKOPH6heiXOBKg+qSUeK03Eek2ezmGnSfRBnOoQjsbyUTeYQpSRbDZ2CSF
-vp/6/nbKVAmRDfqoThWG+hVZP8Nyg8ukj6icHLUdg4nZyFV6i+Hlm3ebbzF2Li+g
-RpDmudDqm6b74R9ZcieIVvRw1N6oKtHcypLSa0nL/a8JICsZ3ykdh0Q3dwHEOGWm
-tMWbH0TIyVQgPeIOt7XfN+nPSBecD3sz31WU71iYwRMHxlm2plsdzarOwccTDE/z
-pug42JostOKofd7A4gMSJ2NW62Np5HfpGxpyjlIgMzw4Cj1j0I8j7V/tT/QNiA3a
-usLxEdS/g65EwewDC1Q7hXPY6ZczZz9ImFWFe9OifBqUldOn7DEruHkAEw8LEdmt
-vcF0HQXqhDsJ8pVkqt++ZZCkRECr7m2KmVkmD5dLpCTldMSxznO1mfV9CpLi4wwL
-dj24yan7oZ6wkajSdxmJ5QNM1Z7O0JcmEWoxzdI9rg8H4CtWlpw=
-=/IHI
------END PGP SIGNATURE-----
-
---yuqc3nyfosvvvnh3--
