@@ -5,58 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F426C433F4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CEDC433F1
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2744061A27
+	by mail.kernel.org (Postfix) with ESMTP id 1803A61A2D
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbhCZO7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57920 "EHLO
+        id S230134AbhCZO7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 10:59:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhCZO6z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 10:58:55 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A96C0613B2
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:55 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id u4so7721066ljo.6
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:55 -0700 (PDT)
+        with ESMTP id S230167AbhCZO6y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 10:58:54 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4E9C0613B4
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id v15so8110081lfq.5
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=snejp.pl; s=gmail;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=74ExyrGQ2FrMHb3FbC5tSKScDQ67EMx6FU4HJ+L5E00=;
-        b=LdF6rehR3g42XXaOynyISZkO5iu/QV+iuJsSk0LMVFhbea28iAIqqHJXpYRNk63Czr
-         ozIguXy0tiyGh9TDJ/ViqQSY4T5f2sI8bacGqunWnfdD65jV2UQKEwwziDdsEEGcFqRl
-         G3SaScmhs15eNsPog0sOEdTK2cMzqSMPO8ViLs2j6UmKkjNQOoaj291FTKMo1KmDTF9a
-         T93enEWsnsswJqiB39y48cqkRPyYCAeRtODh0v41EGRoO4Eap0Ag/vSgyafiNVkAlwUZ
-         mBrUtxRVSWKJlsdIvBv3Ei5HP3TFc+PxUUe+CKiOMiYI0GjchIFq0USLvF5ClrgK4ctW
-         +RpQ==
+        bh=C5ERnmYiVSfZOvLBPHXfrcD24I8mfAAc53AvKVggtY4=;
+        b=ELvzfXAW10zs5X8fa3xbIzvf2/OOQMINVOrmncAzNMtDFbRl7fS0BkkIMU2TJ5krkJ
+         GUa1vJC57d4gJf3wGKQQNz1DBdFammiWUPLsgUyRh2djrQJWx0j2ig8WKx1zDo5URl5f
+         cDIEZehADeV5K0RnGacupwjaiyOLRIj/b2o0NyqcSJ+ZEp8bKfBHIzBbaEMjFLYq3+4A
+         lC0A49V1Wg80Flx5MLaE3WRhzaaM8EFYyuOLBq33hCSmaZV0DlEwnvq+cGxVPZpKZvMo
+         A1CTzL9Xv8TO2qAVtcugxp6MmvHjiiDdbJbj4g2v+QmXfElmz5cDS8OVrHIhLze2dbLj
+         Kuig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=74ExyrGQ2FrMHb3FbC5tSKScDQ67EMx6FU4HJ+L5E00=;
-        b=UowNsxGOU3493Z2YRQRDS0AIdEeZrF8zC2OXbLD/wPkXPJd9Qsukvm2ZWF7gYE5I4I
-         /Y0LLgxaRaZfeg96Sla8MjSTVa9KxMqa5okWk8XTAiCo+lcPQsHbVwPeIqjshJ9ApNN7
-         AAeS0wPXy03g/l/uvMOcPBMH8m+RS22eXZZFhIUc6DyYev4gG2hpOdsoO8j2VVbWMNDc
-         5oZDTBdXYYbB/zPxscXHZXuxduRfBkRdhb9yCIZ8ChRsXJTQZZQlMEAVcKdnpKr/Fee/
-         fmtqhuZh79phRWH2fdnVkoWcalcSMpBcS9sKGcsVYBgOdCree+Zf0lRS/pKrU3jqyj43
-         H/3A==
-X-Gm-Message-State: AOAM531m5c7pAVMWarrsWUXdjFGqc2s45BZ8NYV06/q7CIORPaLWx+MG
-        rJ5rlRlQr6+vnYmrL1a9oIjB7g==
-X-Google-Smtp-Source: ABdhPJz6rK13/EGBp6dWa2QzseHC+W24RMCZO5kUB+Vxzz/D5a8m4pmlqZ21/8Sy5DRyTtOsJ4ds1w==
-X-Received: by 2002:a2e:8591:: with SMTP id b17mr9093307lji.230.1616770733943;
-        Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
+        bh=C5ERnmYiVSfZOvLBPHXfrcD24I8mfAAc53AvKVggtY4=;
+        b=KCIql1UBJxKOb9I3mw10pAxE0+WiwP4CK5Pr8rV1BU+9PQJazDAwhBmHsIgPLVcQTp
+         8jMuuIo4zjH/4yULsYB5/jGGDP/kvhrXPqnANI88794eIqDz8RZy0w600e9ze4OiI8d6
+         rZjxZX6eK6Nf1oCi0hFp6R8BpsknHURr3GXZmAvFw5ZBeFZfrNGVsGEdDqkRaETQTieX
+         qJp/7CcueM9wJyv7FsVRVRtLoM/JARsXVWHXhcuPU3Oy5/MtY1b6T+NdvkbkJ5Li92+a
+         MKGHo7qqzJfd0PTslc+pKK8743t2uCpCe2p+SMr7a5s+uWCLSCjfHiEtKo/QuNjW5rVH
+         9iig==
+X-Gm-Message-State: AOAM530uNvRRem81aWnUPZUwicvPtYz+porbn6uCVR96qfe6YHxIrp0Q
+        P2yQxWqayyWWc2QLTgPZmcG6tQ==
+X-Google-Smtp-Source: ABdhPJyfHZhl+6MBBO5Xfa3bjyeWpJXK6rzvCVBVaT1AB/4nLCKxMKGf7CZi4pFkY0tVInN5VGPfeQ==
+X-Received: by 2002:a19:7409:: with SMTP id v9mr566973lfe.2.1616770732312;
+        Fri, 26 Mar 2021 07:58:52 -0700 (PDT)
 Received: from PackardBell ([82.160.139.10])
-        by smtp.googlemail.com with ESMTPSA id k2sm893382lfm.174.2021.03.26.07.58.53
+        by smtp.googlemail.com with ESMTPSA id k2sm893382lfm.174.2021.03.26.07.58.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
+        Fri, 26 Mar 2021 07:58:52 -0700 (PDT)
 Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id b605a23b;
+        by PackardBell (OpenSMTPD) with ESMTPA id 27f68d92;
         Fri, 26 Mar 2021 14:58:48 +0000 (UTC)
 From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
 To:     Andy Gross <agross@kernel.org>,
@@ -67,9 +68,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
 Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH 5/5] arm: dts: qcom: Add initial DTS file for Samsung Galaxy S III Neo phone
-Date:   Fri, 26 Mar 2021 15:58:16 +0100
-Message-Id: <20210326145816.9758-6-bartosz.dudziak@snejp.pl>
+Subject: [PATCH 3/5] arm: dts: qcom: Add support for MSM8226 SoC
+Date:   Fri, 26 Mar 2021 15:58:14 +0100
+Message-Id: <20210326145816.9758-4-bartosz.dudziak@snejp.pl>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
 References: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
@@ -79,57 +80,173 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This DTS has support for the Samsung Galaxy S III Neo (codenamed s3ve3g)
-phone. Initial version have just a working serial console.
+This patch adds basic device tree support for MSM8226 SoC which belongs
+to the Snapdragon 400 family. For now, this file adds the basic nodes
+like gcc, pinctrl and other required configuration for booting up to
+the serial console.
 
 Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
 ---
- arch/arm/boot/dts/Makefile                    |  1 +
- .../boot/dts/qcom-msm8226-samsung-s3ve3g.dts  | 25 +++++++++++++++++++
- 2 files changed, 26 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
+ arch/arm/boot/dts/qcom-msm8226.dtsi | 152 ++++++++++++++++++++++++++++
+ 1 file changed, 152 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-msm8226.dtsi
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 8e5d4ab4e7..080ff37fdb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -920,6 +920,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
-+	qcom-msm8226-samsung-s3ve3g.dtb \
- 	qcom-msm8660-surf.dtb \
- 	qcom-msm8960-cdp.dtb \
- 	qcom-msm8974-fairphone-fp2.dtb \
-diff --git a/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts b/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
+diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
 new file mode 100644
-index 0000000000..4790077962
+index 0000000000..81bb19398e
 --- /dev/null
-+++ b/arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
-@@ -0,0 +1,25 @@
++++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
+@@ -0,0 +1,152 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
 + */
 +
-+#include "qcom-msm8226.dtsi"
++/dts-v1/;
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-msm8974.h>
 +
 +/ {
-+	model = "Samsung Galaxy S III Neo";
-+	compatible = "samsung,s3ve3g", "qcom,msm8226";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	model = "Qualcomm Technologies, Inc. MSM8226";
++	compatible = "qcom,msm8226";
++	interrupt-parent = <&intc>;
 +
-+	aliases {
-+		serial0 = &blsp1_uart3;
++	chosen { };
++
++	memory {
++		device_type = "memory";
++		/* We expect the bootloader to fill in the size */
++		reg = <0x0 0x0>;
 +	};
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
++	soc: soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		compatible = "simple-bus";
 +
-+&soc {
-+	serial@f991f000 {
-+		status = "ok";
++		intc: interrupt-controller@f9000000 {
++			compatible = "qcom,msm-qgic2";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0xF9000000 0x1000>,
++			      <0xF9002000 0x1000>;
++		};
++
++		gcc: clock-controller@fc400000 {
++			compatible = "qcom,gcc-msm8226";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++			reg = <0xfc400000 0x4000>;
++		};
++
++		msmgpio: pinctrl@fd510000 {
++			compatible = "qcom,msm8226-pinctrl";
++			reg = <0xfd510000 0x4000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&msmgpio 0 0 117>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		blsp1_uart3: serial@f991f000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0xf991f000 0x1000>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
++		restart@fc4ab000 {
++			compatible = "qcom,pshold";
++			reg = <0xfc4ab000 0x4>;
++		};
++
++		rng@f9bff000 {
++			compatible = "qcom,prng";
++			reg = <0xf9bff000 0x200>;
++			clocks = <&gcc GCC_PRNG_AHB_CLK>;
++			clock-names = "core";
++		};
++
++		timer@f9020000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			compatible = "arm,armv7-timer-mem";
++			reg = <0xf9020000 0x1000>;
++			clock-frequency = <19200000>;
++
++			frame@f9021000 {
++				frame-number = <0>;
++				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9021000 0x1000>,
++				      <0xf9022000 0x1000>;
++			};
++
++			frame@f9023000 {
++				frame-number = <1>;
++				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9023000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@f9024000 {
++				frame-number = <2>;
++				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9024000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@f9025000 {
++				frame-number = <3>;
++				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9025000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@f9026000 {
++				frame-number = <4>;
++				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9026000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@f9027000 {
++				frame-number = <5>;
++				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9027000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@f9028000 {
++				frame-number = <6>;
++				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xf9028000 0x1000>;
++				status = "disabled";
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <GIC_PPI 2
++				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 3
++				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 4
++				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 1
++				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>;
++		clock-frequency = <19200000>;
 +	};
 +};
 -- 
