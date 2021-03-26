@@ -2,188 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10779C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ABBC433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE6DC61A3A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ABAC61A46
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbhCZAL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 20:11:27 -0400
-Received: from mail-il1-f172.google.com ([209.85.166.172]:45615 "EHLO
-        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbhCZALY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 20:11:24 -0400
-Received: by mail-il1-f172.google.com with SMTP id w2so3194296ilj.12;
-        Thu, 25 Mar 2021 17:11:23 -0700 (PDT)
+        id S229854AbhCZAVK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 20:21:10 -0400
+Received: from mail-il1-f169.google.com ([209.85.166.169]:45733 "EHLO
+        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229639AbhCZAUt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 20:20:49 -0400
+Received: by mail-il1-f169.google.com with SMTP id w2so3208902ilj.12;
+        Thu, 25 Mar 2021 17:20:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=P/I+wMdHICPtFWlW8kLfAQ7JiR1EZW/dP2yVRmWYJGU=;
-        b=bh/eufw9UDiJDF6CtK/sZ8HlZK7k2aEO1Ked96aDz/J/Atx6wIVSJ9t3w7IzsYVaS/
-         2pmdl9KGBzMwHqNBKSe5oxSleuQ6PJQLay1K6kNE67knT7c8XCz0Y3tkpTyqRTdlG2sM
-         mLNIRzLENVCWJvkw6jDfiRfr0lacw+L3NpMbs6kZ17BmvsgXXV8utjCs9/LyGiaYpiNG
-         ziOYs5uaez+Qk99hfut8RDBiKu0pOxgN+sQ2/Sm0Zv8JEddarElgzOTKvIsQ42dX3KMP
-         WuWAnnN4ujLfHuhuWBEUA2DO2Kmrp7zCb18VmltRGrvDACGxvzP8yX+acGs5zCmOmNtZ
-         oD+Q==
-X-Gm-Message-State: AOAM530VW9FxsEOReicoC1vfQH7NpYh/7WlZn+NHo91QrB9ERwpK6/27
-        GL3PwHI4PVRDifwFL1aBgg==
-X-Google-Smtp-Source: ABdhPJzWTUM7ViOUd0d1O5WVuFw0EBmZZAJwzZ9S1RfUkdCRF37cp6Wp77JMxNHIeBXaOjKMrxKidg==
-X-Received: by 2002:a05:6e02:1a89:: with SMTP id k9mr8673060ilv.29.1616717483503;
-        Thu, 25 Mar 2021 17:11:23 -0700 (PDT)
+        bh=AENgAWH1NANoYRe4oyIttR/P/MAGP1UF/GSmZ4hpSLk=;
+        b=YwopgSk7dbWFAth7JgemiOpycUXlqkfkCVNiTQolZM+SUgWcOqAIkbjuq3ongVAFG8
+         /NO9pSrzldthDgDl88hBH9MFzLDXuG2aj2N3y9J/JePWdXYqIlthbCNhd/CSKS3P8UIk
+         lbk5NJQIpP1N9OO6DnBTEJvmYOZdtR6+VBteSr7ppVkOej0MiSDejOPyK2EiRtfYS9NL
+         +7yGAc2hBhCIAEeqMaSwHGD8owzqXSyajuEqTw06ksKiLc2JMUI55ABrDfji+aAd/H3Q
+         6fj9SmFJ9PqDtOTZiu8t0oeepb4xt58jIUGwvjtjsBBkVCufWmai/5GSkdIXXNztB1af
+         nvrw==
+X-Gm-Message-State: AOAM532m9j37vv0yt9ZoXAbDiWOO/Cl7nc0vtC3yorq22AX0IN7TJHEU
+        BUHtJlsWWaBxySANFGVLWw==
+X-Google-Smtp-Source: ABdhPJw77lvnxPuHdiO6Ji9kmIO5+JODXwQ35Yi75d5AwOqA3dNFEpvLhLz0ifmyBG4LRuQMSVmxUw==
+X-Received: by 2002:a92:5411:: with SMTP id i17mr8497509ilb.22.1616718048673;
+        Thu, 25 Mar 2021 17:20:48 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id 14sm3554588ilt.54.2021.03.25.17.11.21
+        by smtp.gmail.com with ESMTPSA id y15sm3283345ilv.70.2021.03.25.17.20.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 17:11:22 -0700 (PDT)
-Received: (nullmailer pid 2004913 invoked by uid 1000);
-        Fri, 26 Mar 2021 00:11:20 -0000
-Date:   Thu, 25 Mar 2021 18:11:20 -0600
+        Thu, 25 Mar 2021 17:20:47 -0700 (PDT)
+Received: (nullmailer pid 2020031 invoked by uid 1000);
+        Fri, 26 Mar 2021 00:20:46 -0000
+Date:   Thu, 25 Mar 2021 18:20:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/6] dt-bindings: clock: Add SC7280 DISPCC clock
- binding
-Message-ID: <20210326001120.GA2001669@robh.at.kernel.org>
-References: <1615944142-12171-1-git-send-email-tdas@codeaurora.org>
- <1615944142-12171-2-git-send-email-tdas@codeaurora.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] devicetree: bindings: clock: Minor typo fix in the file
+ armada3700-tbg-clock.txt
+Message-ID: <20210326002046.GA2016315@robh.at.kernel.org>
+References: <20210317100840.2449462-1-unixbhaskar@gmail.com>
+ <546989ea-c6b2-42e4-46b2-d7de5d208728@infradead.org>
+ <YFJcl6i95cRM22MI@ArchLinux>
+ <efc138db-d82d-a9f0-ca7b-61ae993e0459@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1615944142-12171-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <efc138db-d82d-a9f0-ca7b-61ae993e0459@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 06:52:17AM +0530, Taniya Das wrote:
-> Add device tree bindings for display clock controller subsystem for
-> Qualcomm Technology Inc's SC7280 SoCs.
+On Wed, Mar 17, 2021 at 01:12:28PM -0700, Randy Dunlap wrote:
+> On 3/17/21 12:46 PM, Bhaskar Chowdhury wrote:
+> > On 10:32 Wed 17 Mar 2021, Randy Dunlap wrote:
+> >> On 3/17/21 3:08 AM, Bhaskar Chowdhury wrote:
+> >>>
+> >>> s/provde/provide/
+> >>>
+> >>> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> >>
+> >> Bhaskar,
+> >>
+> >> Did you send this one to "robh+dt@kernel.org"?
+> >> AFAICT, it was sent to "dt@kernel.org", which bounces.
+> >>
+> >> If you used "robh+dt@kernel.org", it appears that 'get send-email' has a problem with that.
+> >>
+> > I sent out a mail to David and Rob, including you for the same problem . Hope
+> > David will do something to change that address or Rob might do something . So
+> > that it will not bounce in future.
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../bindings/clock/qcom,sc7280-dispcc.yaml         | 94 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,dispcc-sc7280.h     | 55 +++++++++++++
->  2 files changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-> new file mode 100644
-> index 0000000..2178666
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sc7280-dispcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Display Clock & Reset Controller Binding for SC7280
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Qualcomm display clock control module which supports the clocks, resets and
-> +  power domains on SC7280.
-> +
-> +  See also dt-bindings/clock/qcom,dispcc-sc7280.h.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sc7280-dispcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 source from GCC
-> +      - description: Byte clock from DSI PHY
-> +      - description: Pixel clock from DSI PHY
-> +      - description: Link clock from DP PHY
-> +      - description: VCO DIV clock from DP PHY
-> +      - description: Link clock from EDP PHY
-> +      - description: VCO DIV clock from EDP PHY
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: gcc_disp_gpll0_clk
-> +      - const: dsi0_phy_pll_out_byteclk
-> +      - const: dsi0_phy_pll_out_dsiclk
-> +      - const: dp_phy_pll_link_clk
-> +      - const: dp_phy_pll_vco_div_clk
-> +      - const: edp_phy_pll_link_clk
-> +      - const: edp_phy_pll_vco_div_clk
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@af00000 {
-> +      compatible = "qcom,sc7280-dispcc";
-> +      reg = <0x0af00000 0x200000>;
-> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-> +               <&dsi_phy 0>,
-> +               <&dsi_phy 1>,
-> +               <&dp_phy 0>,
-> +               <&dp_phy 1>,
-> +               <&edp_phy 0>,
-> +               <&edp_phy 1>;
-> +      clock-names = "bi_tcxo",
-> +                    "gcc_disp_gpll0_clk",
-> +                    "dsi0_phy_pll_out_byteclk",
-> +                    "dsi0_phy_pll_out_dsiclk",
-> +                    "dp_phy_pll_link_clk",
-> +                    "dp_phy_pll_vco_div_clk",
-> +                    "edp_phy_pll_link_clk",
-> +                    "edp_phy_pll_vco_div_clk";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> new file mode 100644
-> index 0000000..2074b30
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> @@ -0,0 +1,55 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+> David said that vger isn't modifying the email address.
+> And there is nothing wrong with it (robh+dt@kernel.org),
+> although it appears that either git send-email or just gmail.com
+> does not like it.
 
-Dual license?
+I've used that for years and never heard of any problems.
 
 Rob
