@@ -3,122 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFE9C433E5
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DFFC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7CF61A42
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2CBA61A43
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbhCZBSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 21:18:42 -0400
-Received: from mail-io1-f42.google.com ([209.85.166.42]:42655 "EHLO
-        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbhCZBS1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 21:18:27 -0400
-Received: by mail-io1-f42.google.com with SMTP id r193so3818551ior.9;
-        Thu, 25 Mar 2021 18:18:27 -0700 (PDT)
+        id S230227AbhCZB1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 21:27:48 -0400
+Received: from mail-io1-f47.google.com ([209.85.166.47]:40945 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230222AbhCZB1Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 21:27:24 -0400
+Received: by mail-io1-f47.google.com with SMTP id n21so3848520ioa.7;
+        Thu, 25 Mar 2021 18:27:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=uLEv/UUTMOz0YMtABzYyD5q0F3bD9ue+f7LZRR5uqaQ=;
-        b=OY9edyg0TvmQkHuh/2HMI++wxFmANudCYtIaV3ED27tyPLLTpGFwsAbcRvILk7+SxE
-         0x2nLwKtXJDDJDJ+1UhbXccbJmq3KKjsLDG2Z3vciUiBECU/APFzNTSJXkOLCLmb5eJA
-         GrL7eQB3rSLGLrrdfIdBq6K1TTZtks3OadlE1mL6OE5vEEgWA5BgBbzR3kNJlT6mkbNY
-         UvdE+/vLhveomoFbgcepiBGAXGK411OBRkcQ2gbMzPfNfIR5VJdDv7qWcqykAPvDQd37
-         98swN9M73lpo0M31Z3YoV33H/xhm50Z2XYpZl0xm+yVf2/IfSFQjW3ZlR1l4Y/CxTDCn
-         8hog==
-X-Gm-Message-State: AOAM533+yltcGUj15WWxKbmfJfEg3D4p1uC4LFYkiZgv5zTDj1YZNNXW
-        rSsaQWKob6Zpo9/6rRc+aQ==
-X-Google-Smtp-Source: ABdhPJzqjnBsjg5OOMfmunx455Sgg50aTb8Nxfxl10GMGD+dZ9XGG9xe6kn6gqUrOhukuU0sLugHyQ==
-X-Received: by 2002:a05:6638:224e:: with SMTP id m14mr10171656jas.8.1616721506708;
-        Thu, 25 Mar 2021 18:18:26 -0700 (PDT)
+        bh=dRWavZ1UWIootJ3uk+1UUX2VAn0PU+/0Lq/aUm24ZKs=;
+        b=lh1G9/iXxulfTnBQE5OfP8XMJAUyGba0qNrIGln0J/cXCHDFSb9BTwToV083CdzuLw
+         hkmuVcUIvc1GK0hT0g9k6BvsadP5aYz0+CNu7J8GQsngvGMhLGpvgMoAjlYGyJE1QSWf
+         ehoRPSPmgaOhhs/qipdWfBzpK6ojDwhVXibC0lYYw3OcrFkGFPwuIriwbA5jqV2r2FIm
+         ZW3PKEcCrN8ibat7XjG5K0U2nSVHHI2pYDVw0bmVsb4ikel422kwIMptkSYyW6C6WqiG
+         9ritG9Dp4q8+emH7Ecb3Nq3qMYXhIf/N+tyGNiv26dueLA21fO6+PCrAYHWEbQtiFntc
+         D5YA==
+X-Gm-Message-State: AOAM530LUyqlibeqFDMNh7Y56xeQ80O64A4PDyzWVNKquOzdHIL8PlFo
+        ACn8IWuazkviAPV+hr3fD/3VbFOMrw==
+X-Google-Smtp-Source: ABdhPJyabYJGIx9qMfl9XMDQRju4DktdbCBVKNJ11gxwE/sGooH0sTn4mcQfWSnUfqtR3PBBoVzj2g==
+X-Received: by 2002:a5d:850c:: with SMTP id q12mr8575181ion.13.1616722044024;
+        Thu, 25 Mar 2021 18:27:24 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id e2sm3452684iov.26.2021.03.25.18.18.24
+        by smtp.gmail.com with ESMTPSA id y9sm3447664ill.15.2021.03.25.18.27.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 18:18:26 -0700 (PDT)
-Received: (nullmailer pid 2110362 invoked by uid 1000);
-        Fri, 26 Mar 2021 01:18:23 -0000
-Date:   Thu, 25 Mar 2021 19:18:23 -0600
+        Thu, 25 Mar 2021 18:27:23 -0700 (PDT)
+Received: (nullmailer pid 2124356 invoked by uid 1000);
+        Fri, 26 Mar 2021 01:27:20 -0000
+Date:   Thu, 25 Mar 2021 19:27:20 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Dario Binacchi <dariobin@libero.it>
-Cc:     linux-kernel@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: ti: dpll: add spread spectrum support
-Message-ID: <20210326011823.GA2102368@robh.at.kernel.org>
-References: <20210318172627.12173-1-dariobin@libero.it>
- <20210318172627.12173-3-dariobin@libero.it>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, saravanak@google.com
+Subject: Re: [RFC] clk: add boot clock support
+Message-ID: <20210326012720.GA2113788@robh.at.kernel.org>
+References: <20210316215123.GA3712408@robh.at.kernel.org>
+ <20210318210318.144961-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210318172627.12173-3-dariobin@libero.it>
+In-Reply-To: <20210318210318.144961-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 06:26:24PM +0100, Dario Binacchi wrote:
-> DT bindings for enabling and adjusting spread spectrum clocking have
-> been added.
++Saravana
+
+On Thu, Mar 18, 2021 at 10:03:18PM +0100, Sebastian Reichel wrote:
+> On Congatec's QMX6 system on module one of the i.MX6 fixed clocks
+> is provided by an I2C RTC. Specifying this properly results in a
+> circular dependency, since the I2C RTC (and thus its clock) cannot
+> be initialized without the i.MX6 clock controller being initialized.
 > 
-> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> With current code the following path is executed when i.MX6 clock
+> controller is probed (and ckil clock is specified to be the I2C RTC
+> via DT):
+> 
+> 1. imx6q_obtain_fixed_clk_hw(ccm_node, "ckil", 0);
+> 2. of_clk_get_by_name(ccm_node, "ckil");
+> 3. __of_clk_get(ccm_node, 0, ccm_node->full_name, "ckil");
+> 4. of_clk_get_hw(ccm_node, 0, "ckil")
+> 5. spec = of_parse_clkspec(ccm_node, 0, "ckil"); // get phandle
+> 6. of_clk_get_hw_from_clkspec(&spec); // returns -EPROBE_DEFER
+> 7. error is propagated back, i.MX6q clock controller is probe deferred
+> 8. I2C controller is never initialized without clock controller
+>    I2C RTC is never initialized without I2C controller
+>    CKIL clock is never initialized without I2C RTC
+>    clock controller is never initialized without CKIL
+> 
+> To fix the circular dependency this registers a dummy clock when
+> the RTC clock is tried to be acquired. The dummy clock will later
+> be unregistered when the proper clock is registered for the RTC
+> DT node. IIUIC clk_core_reparent_orphans() will take care of
+> fixing up the clock tree.
+> 
+> NOTE: For now the patch is compile tested only. If this approach
+> is the correct one I will do some testing and properly submit this.
+> You can find all the details about the hardware in the following
+> patchset:
+> 
+> https://lore.kernel.org/linux-devicetree/20210222171247.97609-1-sebastian.reichel@collabora.com/
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
+>  .../bindings/clock/clock-bindings.txt         |   7 +
+>  drivers/clk/clk.c                             | 146 ++++++++++++++++++
+>  2 files changed, 153 insertions(+)
 > 
-> (no changes since v1)
-> 
->  .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-> index df57009ff8e7..0810ae073294 100644
-> --- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
-> +++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-> @@ -42,6 +42,11 @@ Required properties:
->  	"idlest" - contains the idle status register base address
->  	"mult-div1" - contains the multiplier / divider register base address
->  	"autoidle" - contains the autoidle register base address (optional)
-> +	"ssc-deltam" - DPLL supports spread spectrum clocking (SSC), contains
-> +		       the frequency spreading register base address (optional)
-> +	"ssc-modfreq" - DPLL supports spread spectrum clocking (SSC), contains
-> +		        the modulation frequency register base address
-> +			(optional)
->    ti,am3-* dpll types do not have autoidle register
->    ti,omap2-* dpll type does not support idlest / autoidle registers
+> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> index f2ea53832ac6..66d67ff4aa0f 100644
+> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> @@ -32,6 +32,13 @@ clock-output-names: Recommended to be a list of strings of clock output signal
+>  		    Clock consumer nodes must never directly reference
+>  		    the provider's clock-output-names property.
 >  
-> @@ -51,6 +56,14 @@ Optional properties:
->  	- ti,low-power-stop : DPLL supports low power stop mode, gating output
->  	- ti,low-power-bypass : DPLL output matches rate of parent bypass clock
->  	- ti,lock : DPLL locks in programmed rate
-> +	- ti,min-div : the minimum divisor to start from to round the DPLL
-> +		       target rate
-> +	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
-> +			  spreading in permille (10th of a percent)
-> +	- ti,ssc-modfreq : DPLL supports spread spectrum clocking, spread
-> +			   spectrum modulation frequency in kHz
+> +boot-clock-frequencies: This property is used to specify that a clock is enabled
+> +			by default with the provided frequency at boot time. This
+> +			is required to break circular clock dependencies. For clock
+> +			providers with #clock-cells = 0 this is a single u32
+> +			with the frequency in Hz. Otherwise it's a list of
+> +			clock cell specifier + frequency in Hz.
 
-Use a standard unit suffix (-hz or -mhz).
+Seems alright to me. I hadn't thought about the aspect of needing to 
+know the frequency. Other cases probably don't as you only need the 
+clocks once both components have registered.
 
-> +	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
-> +			      to enable the downspread feature
->  
->  Examples:
->  	dpll_core_ck: dpll_core_ck@44e00490 {
-> @@ -83,3 +96,10 @@ Examples:
->  		clocks = <&sys_ck>, <&sys_ck>;
->  		reg = <0x0500>, <0x0540>;
->  	};
-> +
-> +	dpll_disp_ck: dpll_disp_ck {
-> +		#clock-cells = <0>;
-> +		compatible = "ti,am3-dpll-no-gate-clock";
-> +		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-> +		reg = <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
-> +	};
-> -- 
-> 2.17.1
-> 
+Note this could be lost being threaded in the other series.
+
+Rob
