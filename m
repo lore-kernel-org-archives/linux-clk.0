@@ -2,163 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87293C433C1
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 06:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9882C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 09:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4620061A48
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 06:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8244E61A3F
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 09:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbhCZGZI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 02:25:08 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:10657 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230130AbhCZGYn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 02:24:43 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210326062437euoutp0197a1d84d44acda47a7390ec378ca6fe9~v0FpNz2_P0558805588euoutp01H
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 06:24:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210326062437euoutp0197a1d84d44acda47a7390ec378ca6fe9~v0FpNz2_P0558805588euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1616739877;
-        bh=uiWXswu74C9VwWhKhIKxbIB0dROw5uXGq+yox3AHyYs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=tf65vhSVSdoygMpUWZm2OcL6shsA59KG973KVbjzxXs1oAg1by1A7nRJMr+86xWuS
-         okBefQqwF83s+D9dRSFeODorFwrXZJT6v3GXuX0vXiXnVGxQ0R99qM7lW/X0sNmopa
-         7VSOGEN8tvYVi5/M0YqbyIyPsMs8wGngeze+E+7E=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210326062437eucas1p2aa32a10b3586f8f480cd310404e524b6~v0Fovrb8z1141511415eucas1p21;
-        Fri, 26 Mar 2021 06:24:37 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id D9.A4.09444.42E7D506; Fri, 26
-        Mar 2021 06:24:36 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210326062436eucas1p2492d7064a71a3f6798b0e7abe9255064~v0FoNGsYl1140511405eucas1p2E;
-        Fri, 26 Mar 2021 06:24:36 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210326062436eusmtrp1aa8f3d7f79a35fd47624798f62a1b35c~v0FoMT31A2848328483eusmtrp1F;
-        Fri, 26 Mar 2021 06:24:36 +0000 (GMT)
-X-AuditID: cbfec7f4-dbdff700000024e4-c7-605d7e24d74b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 3D.70.08696.42E7D506; Fri, 26
-        Mar 2021 06:24:36 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210326062435eusmtip182a4fed3d091bd6d473e50d8f909f79c~v0FnmKxUR0031200312eusmtip1i;
-        Fri, 26 Mar 2021 06:24:35 +0000 (GMT)
-Subject: Re: [PATCH] clk: bcm: rpi: Don't register as OF provider if
- !dev->np
-To:     Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-rpi-kernel@lists.infradead.org, geert@linux-m68k.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <5c178935-1d92-9095-9f60-773eddd937c3@samsung.com>
-Date:   Fri, 26 Mar 2021 07:24:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.8.1
+        id S229639AbhCZJLB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 05:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230191AbhCZJKh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 05:10:37 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051FEC0613AA
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 02:10:37 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id f9so5066858oiw.5
+        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 02:10:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4p7L0r2YVzvHUiWBzaSDayxmY/547g3xQbzU3O52T2E=;
+        b=K//qQBOSq6LUJ/Ks7l0mrUPHs53l2Y1cWYTAx32Gr87z72QyvxSgd8n/3wdyZwBa9Y
+         VJJFuBtSJQ2V34IWaPS9wqqDQJJKuwfWRH91wAzYmwMZOPX8SGtMk6qwguBjJ61lwP2b
+         iLaoblkPZMm8b2E2yJvXXGHFj71px91XW31LHTtueSJ1lX4gcK/8Zr7Y+DYlXDtg9Eml
+         igyHDBGqetdlCtKl9jiSRUCIomfnb1f9aMiqseOUPPlUE5mAtBD53/D8A++mRhTkyRdt
+         WPYwhuFyxorKD3YQ5b+q4dVGIaFbHZ4sjTo5ELKGsWEO3mSmAWfPVZ+2ZNK09l9LovFX
+         ZEog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4p7L0r2YVzvHUiWBzaSDayxmY/547g3xQbzU3O52T2E=;
+        b=PBMfvpGmSwVVARP1pbD42yZCK6W7HJyG1fi/LF2FykK16EXYznoSgkITv+rKqaTgFg
+         qSjNTt+DI6Qg7HmI21/QbJIzLnD4FDfyhJ6DbfoFRxqGacQ/w5/e2HhnvHmm7gLHOYiQ
+         xOjj9kr5Blh4A+lyUzzo48AwPqCrBKHp2xWqWWfmWulOB2om0EFOgpZHUseVzPtvNk0k
+         S3nlaf3qrhA1x8h66NUg5ape0EdpS5d7j+MbUMh0dZC6DTp8KCFgoWaubcBFtSuRcOtC
+         3N4MYNSAW8taXW5dDcN/GG0Ord7adGgt9o/+clEMFpM6UkmG6QsG7Tl5SgYSTU0Gx4cQ
+         sBdw==
+X-Gm-Message-State: AOAM531450SAeGBdYeLlkNOMb96lWCqEElWoHS9Xx2F6jsWoFoDUfDQF
+        /5gfIesWHgFpZb2wJg0X5u8GncSAHAFyiiXihBahzQ==
+X-Google-Smtp-Source: ABdhPJzWYUEN40+bsyYL88YYVQP5NXJtFRzbznOQwcflZtD04abopFLejxa8uvUREgVwa5kx1YHlguTbvtlVwiiZfJM=
+X-Received: by 2002:aca:1c02:: with SMTP id c2mr8944699oic.31.1616749836344;
+ Fri, 26 Mar 2021 02:10:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210325185749.27984-1-nsaenz@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7oqdbEJBiu+W1o8u7WXyeJjzz1W
-        i8u75rBZTLy9gd1ixo9/jBYXT7la3HiobbFt1nI2i3/XNrI4cHq8v9HK7nHn3Hk2j02rOtk8
-        Dh3uYPTYvKTeY/Ppao/Pm+QC2KO4bFJSczLLUov07RK4Ms58mc1ccJq34s/D/SwNjI3cXYwc
-        HBICJhJXfvh2MXJxCAmsYJS4/OMjE4TzhVGipfM8G4TzmVHi3/ktjF2MnGAdXZt3skAkljNK
-        LG7vYIdwPjJKTDi4hQmkSljAX+L4/AlgVSIgVQumvAWrYgbZsuN8KwtIFZuAoUTX2y42EJtX
-        wE7iV0cjWJxFQFVi5etOJpALRQWSJDYcioUoEZQ4OfMJWAmngLnEzMajYCcxC8hLbH87hxnC
-        Fpe49WQ+E8SpXzgk7t2UgLBdJBZ8fskGYQtLvDq+hR3ClpE4PbkH7FAJgWZGiYfn1rJDOD3A
-        4GiaAfW0tcSdc7/YQA5iFtCUWL9LHyLsKNF1ajUzJCT5JG68FYS4gU9i0rbpUGFeiY42IYhq
-        NYlZx9fBrT144RLzBEalWUg+m4Xkm1lIvpmFsHcBI8sqRvHU0uLc9NRio7zUcr3ixNzi0rx0
-        veT83E2MwCR1+t/xLzsYl7/6qHeIkYmD8RCjBAezkghvkm9MghBvSmJlVWpRfnxRaU5q8SFG
-        aQ4WJXHepC1r4oUE0hNLUrNTUwtSi2CyTBycUg1MWTs7+OfdkTbd2dRxxtjcX5ep71aI4uID
-        Vr8Y5qzTOBbNMNes8bJfSt6TBWo/sysiHrwwk61/fjSNfeqXaw/bmPbdvmjxdnX8iVSF0nPf
-        V6mLPt/xXPFZQdjm3H8b0yZf+y70/dzdJO++U3UCWQsbuYp8jPylrCO/OHc3/N0cwjc74cTa
-        1f2eG08/ClkUNUVd5UWWzceDhl9mW1W4udfcU5Kwlr/zaEbuo2W5X5fKHI82KN151Pv2nMLK
-        +pMy+2/EHd9+R5vNTCsjwF7t23zeh9EhOvmrXl2cvo/hgOj3cx2hrFZ2Cz692rmt7s8lD8Hd
-        V+/9W5umqL3C9naxlcX8t32hvNG79u+YLZ+a+N/mjxJLcUaioRZzUXEiALwZDXDBAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7oqdbEJBpt+CFs8u7WXyeJjzz1W
-        i8u75rBZTLy9gd1ixo9/jBYXT7la3HiobbFt1nI2i3/XNrI4cHq8v9HK7nHn3Hk2j02rOtk8
-        Dh3uYPTYvKTeY/Ppao/Pm+QC2KP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxM
-        lfTtbFJSczLLUov07RL0Ms58mc1ccJq34s/D/SwNjI3cXYycHBICJhJdm3eygNhCAksZJbZe
-        1YKIy0icnNbACmELS/y51sXWxcgFVPOeUeJwyw4mkISwgK9Ex8n57CAJEYHljBKtk9uYQRxm
-        gRWMEhvvPWaBaOlilNi0+T5YC5uAoUTXW5BZnBy8AnYSvzoawXazCKhKrHzdCVYjKpAkcXnJ
-        RFaIGkGJkzOfgNVwCphLzGw8yghiMwuYSczb/JAZwpaX2P52DpQtLnHryXymCYxCs5C0z0LS
-        MgtJyywkLQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERua2Yz+37GBc+eqj3iFGJg7G
-        Q4wSHMxKIrxJvjEJQrwpiZVVqUX58UWlOanFhxhNgf6ZyCwlmpwPTA15JfGGZgamhiZmlgam
-        lmbGSuK8JkfWxAsJpCeWpGanphakFsH0MXFwSjUwbXH+zihw0pVNUCZjzz2pzq/rKydeKX2f
-        qu//4/lyk+J39pK2nTNftzSLc3PNcT+m8vFZ2Gpm/YUbJsYeOCfDd3C9c73qp9D2VIs+s1VT
-        rRfe71Pb+2Gte93eN2muXSLi/9b5s89n5HSomKf/tugeS86/Z+/CbF9v+bgrsI+5pTos6NA6
-        Br5lUU2P+Vo3TXncckffU/+P7JUZfItslyron3999gLjZfu8goJwJpnde1rfWH1RY3bmmbOX
-        XSi+X3mh8McdU0REZ/xO3ytgYLZhX7CXuMc8A3V/de9pt/c/LZ3W5Sv1z3IGm8LLa/c89fOz
-        lLtkVI884mwrfMlnKbn6u7SXH2Pm6lS9K7sYW0uVWIozEg21mIuKEwEeY2WVVQMAAA==
-X-CMS-MailID: 20210326062436eucas1p2492d7064a71a3f6798b0e7abe9255064
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210325185810eucas1p1d36da720896060cc37b8d33db012044d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210325185810eucas1p1d36da720896060cc37b8d33db012044d
-References: <CGME20210325185810eucas1p1d36da720896060cc37b8d33db012044d@eucas1p1.samsung.com>
-        <20210325185749.27984-1-nsaenz@kernel.org>
+References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
+ <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+ <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
+ <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
+ <87a6qrk2pw.fsf@igel.home>
+In-Reply-To: <87a6qrk2pw.fsf@igel.home>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Fri, 26 Mar 2021 17:10:24 +0800
+Message-ID: <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25.03.2021 19:57, Nicolas Saenz Julienne wrote:
-> There are two ways clk-raspberrypi might be registered: through
-> device-tree or through an explicit platform device registration. The
-> latter happens after firmware/raspberrypi's probe, and it's limited to
-> RPi3s, which solely use the ARM clock to scale CPU's frequency. That
-> clock is matched with cpu0's device thanks to the ARM clock being
-> registered as a clkdev.
+On Thu, Mar 25, 2021 at 5:22 PM Andreas Schwab <schwab@linux-m68k.org> wrot=
+e:
 >
-> In that scenario, don't register the device as an OF clock provider, as
-> it makes no sense and will cause trouble.
+> On M=C3=A4r 25 2021, Zong Li wrote:
 >
-> Fixes: d4b4f1b6b97e ("clk: bcm: rpi: Add DT provider for the clocks")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/clk/bcm/clk-raspberrypi.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
+> > take a look at this again. Could you also let me know which bootloader
+> > you used (FSBL or U-boot-SPL)? Thanks.
 >
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-> index f89b9cfc4309..27e85687326f 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -337,10 +337,12 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> -	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> -					  clk_data);
-> -	if (ret)
-> -		return ret;
-> +	if (dev->of_node) {
-> +		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +						  clk_data);
-> +		if (ret)
-> +			return ret;
-> +	}
->   
->   	rpi->cpufreq = platform_device_register_data(dev, "raspberrypi-cpufreq",
->   						     -1, NULL, 0);
+> U-Boot SPL
+>
+> Please try this image:
+>
+> http://download.opensuse.org/ports/riscv/tumbleweed/images/openSUSE-Tumbl=
+eweed-RISC-V-JeOS-hifiveunleashed.riscv64.raw.xz
+>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Hi Andreas,
 
+The following is the result of the test so far. I would continue to
+see what happened there.
+
+1. Boot on openSUSE-Tumbleweed-RISC-V-JeOS-hifiveunleashed.riscv64.raw.xz
+w/ plugging ethernet cable
+  - It seems that I encountered a different situation with you, my
+system hung up and I didn't see the boot message you mentioned yet.
+
+[  OK  ] Finished Generate issue file for login session.
+[  OK  ] Finished Apply settings from /etc/sysconfig/keyboard.
+[  OK  ] Started User Login Management.
+[  *** ] (3 of 3) A start job is running for=E2=80=A6upplicant service (58s=
+ / 1min 51s)
+[**    ] (3 of 3) A start job is running for=E2=80=A6cant service (1min 28s=
+ / 1min 51s)
+[   ***] (2 of 3) A start job is running for=E2=80=A6cant service (1min 58s=
+ / 3min 21s)
+[   ***] (1 of 3) A start job is running for=E2=80=A6cant service (2min 28s=
+ / 3min 21s)
+[**    ] (3 of 3) A start job is running for=E2=80=A6cant service (2min 58s=
+ / 3min 21s)
+[ ***  ] (2 of 3) A start job is running for=E2=80=A6cant service (3min 28s=
+ / 4min 51s)
+[     *] (1 of 3) A start job is running for=E2=80=A6cant service (3min 58s=
+ / 4min 51s)
+[ ***  ] (3 of 3) A start job is running for=E2=80=A6cant service (4min 28s=
+ / 4min 51s)
+[***   ] (2 of 3) A start job is running for=E2=80=A6cant service (4min 59s=
+ / 6min 22s)
+[    **] (1 of 3) A start job is running for=E2=80=A6cant service (5min 29s=
+ / 6min 22s)
+[  *** ] (3 of 3) A start job is running for=E2=80=A6cant service (5min 59s=
+ / 6min 22s)
+[*     ] (2 of 3) A start job is running for=E2=80=A6cant service (6min 29s=
+ / 7min 52s)
+[  *** ] (1 of 3) A start job is running for=E2=80=A6cant service (6min 59s=
+ / 7min 52s)
+[    **] (3 of 3) A start job is running for=E2=80=A6cant service (7min 29s=
+ / 7min 52s)
+[FAILED] Failed to start wicked AutoIPv4 supplicant service.
+See 'systemctl status wickedd-auto4.service' for details.
+[FAILED] Failed to start wicked DHCPv4 supplicant service.
+See 'systemctl status wickedd-dhcp4.service' for details.
+[FAILED] Failed to start wicked DHCPv6 supplicant service.
+See 'systemctl status wickedd-dhcp6.service' for details.
+         Starting wicked network management service daemon...
+[    **] A start job is running for wicked n=E2=80=A6rvice daemon (7min 59s=
+ / 9min 22s)
+[***   ] A start job is running for wicked n=E2=80=A6rvice daemon (8min 29s=
+ / 9min 22s)
+[  603.364988] BUG: workqueue lockup - pool cpus=3D1 node=3D0 flags=3D0x0
+nice=3D0 stuck for 36s!
+[***   ] A start job is running for wicked n=E2=80=A6rvice daemon (8min 59s=
+ / 9min 22s)
+[  633.444986] BUG: workqueue lockup - pool cpus=3D1 node=3D0 flags=3D0x0
+nice=3D0 stuck for 66s!
+         Stopping Flush Journal to Persistent Storage...
+[  OK  ] Stopped Flush Journal to Persistent Storage.
+[  OK  ] Stopped Journal Service.
+
+
+2. Boot on kernel image which built by opensuse defconfig with
+changing CONFIG_MACB to y instead of m
+ - Although I got some problem for mounting the root filesystem on
+this image now, but I didn't hang up at the message you mentioned, I
+could go through after macb driver initialization
+
+[    2.350309] libphy: Fixed MDIO Bus: probed
+[    2.354476] macb 10090000.ethernet: Registered clk switch
+'sifive-gemgxl-mgmt'
+[    2.358752] macb 10090000.ethernet: GEM doesn't support hardware ptp.
+[    2.361464] libphy: MACB_mii_bus: probed
+[    2.366289] macb 10090000.ethernet eth0: Cadence GEM rev 0x10070109
+at 0x10090000 irq 16 (70:b3:d5:92:f2:6c)
+[    2.375570] e1000e: Intel(R) PRO/1000 Network Driver
+[    2.380323] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    2.386338] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+...
+[    2.687447] Waiting for root device /dev/mmcblk0p4...
+
+3. I check the patch set of supporting fu740, it shouldn't impact
+fu540, I'm going to dump and comparing the prci content and give more
+testing.
+
+
+> Andreas.
+>
+> --
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint =3D 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC=
+1
+> "And now for something completely different."
