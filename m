@@ -2,109 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD150C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 18:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74293C433C1
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 18:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76D9D61A26
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 18:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A6FF619C2
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 18:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbhCZSJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 14:09:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230180AbhCZSJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Mar 2021 14:09:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 237B261A13;
-        Fri, 26 Mar 2021 18:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616782173;
-        bh=oZuNNowA8hJn4kt24Qmg+vwOtPMVCc72tQAlQNlwhek=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VyVyzQFnmwAJ5JuccpSdd3iFn/WWtOCUUzBwObShmf5bM/uWy5qtzHZ2lhGc+Fh+Z
-         6Y/ts3SvLVn7vxbDA7MUd/XjyVTC9Ea20jAAEk57jaFzRG9eid53h35xUuaKBO8Hzn
-         OJqGaxXEm9Vf9+PjRBLigHtr/bAM+Tshp3zaoHyOpM1LNrA5WAJoVQkUJJCG/bSt3L
-         spat86yD+X+kayPiUVA4sJlF7ofjcTUp0UzFhEBfs/kh+uBntifY0msWDpBT8NhUPw
-         56FsAytTMg+bv1pKwGC+wuNrrFoyNUtvr+SQyrz7MGpPTpQASAizwvFWg1dHCgrkab
-         NKSoi/0UC+Y9g==
-Content-Type: text/plain; charset="utf-8"
+        id S230043AbhCZSNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 14:13:44 -0400
+Received: from mail-vs1-f43.google.com ([209.85.217.43]:40596 "EHLO
+        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230202AbhCZSNj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 14:13:39 -0400
+Received: by mail-vs1-f43.google.com with SMTP id l4so3137874vsc.7;
+        Fri, 26 Mar 2021 11:13:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FDpqcQgTexarvW+AT636FmF/lPMTzTe04W+T1jW+7WY=;
+        b=LA+y++mQJC182oHN/6nOA2hX6LvJr81afBKOSnUWuAT+VcePtCy91SYEFR1Y1ZatE6
+         yhnubzbkPu4BjmYXPeTzS25sDazqgWB62y9i7w+8OtB2hY89tl+Ct3dv2fOIX1mIYt+v
+         6uouHXFSSQrWuE2d1B3u4GAfY21xInbsJlKjAMm2mTFZlO4c2Aiq31wBhGAP4Emtbp5F
+         IXtGvLNmT/O/LX61ovveusb6kBfuLEmEEEfCpzbxPqsCZRMmgB26/BWikj0+zsSfwbDf
+         54axCkF7j4E6pCZ3g2tbXr4gJfsglmxDzkVWno8NCbTueS1k9dA0be+lDbZfZmWhLHvd
+         PrSQ==
+X-Gm-Message-State: AOAM532E0ADpLWXbYiH7aQiseneQEVgDWCmYedndAiPAWC2EGYTtp+yK
+        k/pTNlw7XTmpc3XW1BJh8a6miEExt9cShnQHC6g=
+X-Google-Smtp-Source: ABdhPJxOzCTasDp54zylzJyaz+KFDObMiEEDXS/K/2M7pd/hbZzjLAFykziFdC6wbj75KFCkmxdJUdWyQChRhj6q8Hw=
+X-Received: by 2002:a67:f7c6:: with SMTP id a6mr9632169vsp.42.1616782418388;
+ Fri, 26 Mar 2021 11:13:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210325185749.27984-1-nsaenz@kernel.org>
-References: <20210325185749.27984-1-nsaenz@kernel.org>
+References: <20210325185749.27984-1-nsaenz@kernel.org> <161678217156.3012082.17482478610662557764@swboyd.mtv.corp.google.com>
+In-Reply-To: <161678217156.3012082.17482478610662557764@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 26 Mar 2021 19:13:26 +0100
+Message-ID: <CAMuHMdXLB=g0vCaNVSsO+6qC6UPpbrordsjx+=ZLEAV2MAaE-Q@mail.gmail.com>
 Subject: Re: [PATCH] clk: bcm: rpi: Don't register as OF provider if !dev->np
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, geert@linux-m68k.org,
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Fri, 26 Mar 2021 11:09:31 -0700
-Message-ID: <161678217156.3012082.17482478610662557764@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nicolas Saenz Julienne (2021-03-25 11:57:48)
-> There are two ways clk-raspberrypi might be registered: through
-> device-tree or through an explicit platform device registration. The
-> latter happens after firmware/raspberrypi's probe, and it's limited to
-> RPi3s, which solely use the ARM clock to scale CPU's frequency. That
-> clock is matched with cpu0's device thanks to the ARM clock being
-> registered as a clkdev.
->=20
-> In that scenario, don't register the device as an OF clock provider, as
-> it makes no sense and will cause trouble.
+On Fri, Mar 26, 2021 at 7:09 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Nicolas Saenz Julienne (2021-03-25 11:57:48)
+> > There are two ways clk-raspberrypi might be registered: through
+> > device-tree or through an explicit platform device registration. The
+> > latter happens after firmware/raspberrypi's probe, and it's limited to
+> > RPi3s, which solely use the ARM clock to scale CPU's frequency. That
+> > clock is matched with cpu0's device thanks to the ARM clock being
+> > registered as a clkdev.
+> >
+> > In that scenario, don't register the device as an OF clock provider, as
+> > it makes no sense and will cause trouble.
+>
+> What sort of trouble?
 
-What sort of trouble?
+A crash
+https://lore.kernel.org/linux-acpi/d24bebc5-0f78-021f-293f-e58defa32531@samsung.com/
 
->=20
-> Fixes: d4b4f1b6b97e ("clk: bcm: rpi: Add DT provider for the clocks")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index f89b9cfc4309..27e85687326f 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -337,10 +337,12 @@ static int raspberrypi_clk_probe(struct platform_de=
-vice *pdev)
->         if (ret)
->                 return ret;
-> =20
-> -       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> -                                         clk_data);
-> -       if (ret)
-> -               return ret;
-> +       if (dev->of_node) {
+> > Fixes: d4b4f1b6b97e ("clk: bcm: rpi: Add DT provider for the clocks")
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
+> > ---
+> >  drivers/clk/bcm/clk-raspberrypi.c | 10 ++++++----
+> >  1 file changed, 6 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+> > index f89b9cfc4309..27e85687326f 100644
+> > --- a/drivers/clk/bcm/clk-raspberrypi.c
+> > +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> > @@ -337,10 +337,12 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
+> >         if (ret)
+> >                 return ret;
+> >
+> > -       ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> > -                                         clk_data);
+> > -       if (ret)
+> > -               return ret;
+> > +       if (dev->of_node) {
+>
+> Can you add a comment to the code indicating the problem this is fixing?
+> I fear that we'll look back on this later and simply remove this if
+> condition because it's "redundant". Better to have some code comment so
+> we don't have to look up git history to figure out that we only call
+> this when the of node is populated. I'm not sure I understand what goes
+> wrong though. Won't the absence of dev->of_node mean the provider
+> doesn't do anything?
 
-Can you add a comment to the code indicating the problem this is fixing?
-I fear that we'll look back on this later and simply remove this if
-condition because it's "redundant". Better to have some code comment so
-we don't have to look up git history to figure out that we only call
-this when the of node is populated. I'm not sure I understand what goes
-wrong though. Won't the absence of dev->of_node mean the provider
-doesn't do anything?
 
-> +               ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecel=
-l_get,
-> +                                                 clk_data);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> =20
->         rpi->cpufreq =3D platform_device_register_data(dev, "raspberrypi-=
-cpufreq",
->                                                      -1, NULL, 0);
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
