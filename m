@@ -6,68 +6,119 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F16C433C1
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFE9C433E5
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72E02619F8
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 00:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7CF61A42
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 01:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbhCZAWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Mar 2021 20:22:13 -0400
-Received: from mail-io1-f43.google.com ([209.85.166.43]:34730 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbhCZAVn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 20:21:43 -0400
-Received: by mail-io1-f43.google.com with SMTP id x16so3743988iob.1;
-        Thu, 25 Mar 2021 17:21:42 -0700 (PDT)
+        id S230062AbhCZBSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Mar 2021 21:18:42 -0400
+Received: from mail-io1-f42.google.com ([209.85.166.42]:42655 "EHLO
+        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230013AbhCZBS1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Mar 2021 21:18:27 -0400
+Received: by mail-io1-f42.google.com with SMTP id r193so3818551ior.9;
+        Thu, 25 Mar 2021 18:18:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=GWy8NXTw+pLAbpyPspl19i3Z5xWZ5aPkuYlAGNhEVnM=;
-        b=PlUM6pUaThDe+YymqJGzSg2YF6bvpxNQcULm1yYZG+/PoB6DcVfHzHn/kywxVmWCGh
-         MW5jjMZJ6jCIpr8JENWG7vS9R3RjXk3mWPCFpZj8cGrKqdzKanv3gvTfSZrWwEYgtl+l
-         NPhY6D9QUMJum6P1n45Ldg2vos8o17xToBt9huXbaiONvyfmkKGMrogNI5gvMNjZmxsZ
-         0VdeSoSjYmwXpHFNT9tpHcCo0epCaosQG12rrzMmMrmA3D6NIyV4/jBXmRnreYCAJvDF
-         nvYzvTk0jJDpYiDVtwrSVW835RvhPAiYQXfgsCFGv+TNqSC8QCQTnuzPugFqdYaquR6H
-         R2Kg==
-X-Gm-Message-State: AOAM530PAyMBb3lFObVOH29eUwzrxK3//GXmh+6KoeZrswEfLpbwdT27
-        p0aJbokgvbTJsm+rB6KAaz5kDGEhcA==
-X-Google-Smtp-Source: ABdhPJxw3Xsrk/BggYGaqSuORLUB53KuZYbOOE4CrP2WFVxbma7fealCox2rE2qXaGUWPWE5BSJCmQ==
-X-Received: by 2002:a05:6602:2d95:: with SMTP id k21mr8314148iow.123.1616718102405;
-        Thu, 25 Mar 2021 17:21:42 -0700 (PDT)
+        bh=uLEv/UUTMOz0YMtABzYyD5q0F3bD9ue+f7LZRR5uqaQ=;
+        b=OY9edyg0TvmQkHuh/2HMI++wxFmANudCYtIaV3ED27tyPLLTpGFwsAbcRvILk7+SxE
+         0x2nLwKtXJDDJDJ+1UhbXccbJmq3KKjsLDG2Z3vciUiBECU/APFzNTSJXkOLCLmb5eJA
+         GrL7eQB3rSLGLrrdfIdBq6K1TTZtks3OadlE1mL6OE5vEEgWA5BgBbzR3kNJlT6mkbNY
+         UvdE+/vLhveomoFbgcepiBGAXGK411OBRkcQ2gbMzPfNfIR5VJdDv7qWcqykAPvDQd37
+         98swN9M73lpo0M31Z3YoV33H/xhm50Z2XYpZl0xm+yVf2/IfSFQjW3ZlR1l4Y/CxTDCn
+         8hog==
+X-Gm-Message-State: AOAM533+yltcGUj15WWxKbmfJfEg3D4p1uC4LFYkiZgv5zTDj1YZNNXW
+        rSsaQWKob6Zpo9/6rRc+aQ==
+X-Google-Smtp-Source: ABdhPJzqjnBsjg5OOMfmunx455Sgg50aTb8Nxfxl10GMGD+dZ9XGG9xe6kn6gqUrOhukuU0sLugHyQ==
+X-Received: by 2002:a05:6638:224e:: with SMTP id m14mr10171656jas.8.1616721506708;
+        Thu, 25 Mar 2021 18:18:26 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id h6sm3353391ild.79.2021.03.25.17.21.40
+        by smtp.gmail.com with ESMTPSA id e2sm3452684iov.26.2021.03.25.18.18.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 17:21:41 -0700 (PDT)
-Received: (nullmailer pid 2021603 invoked by uid 1000);
-        Fri, 26 Mar 2021 00:21:38 -0000
-Date:   Thu, 25 Mar 2021 18:21:38 -0600
+        Thu, 25 Mar 2021 18:18:26 -0700 (PDT)
+Received: (nullmailer pid 2110362 invoked by uid 1000);
+        Fri, 26 Mar 2021 01:18:23 -0000
+Date:   Thu, 25 Mar 2021 19:18:23 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, dt@kernel.org, rdunlap@infradead.org,
-        devicetree@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH] devicetree: bindings: clock: Minor typo fix in the file
- armada3700-tbg-clock.txt
-Message-ID: <20210326002138.GA2021512@robh.at.kernel.org>
-References: <20210317100840.2449462-1-unixbhaskar@gmail.com>
+To:     Dario Binacchi <dariobin@libero.it>
+Cc:     linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: ti: dpll: add spread spectrum support
+Message-ID: <20210326011823.GA2102368@robh.at.kernel.org>
+References: <20210318172627.12173-1-dariobin@libero.it>
+ <20210318172627.12173-3-dariobin@libero.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210317100840.2449462-1-unixbhaskar@gmail.com>
+In-Reply-To: <20210318172627.12173-3-dariobin@libero.it>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 17 Mar 2021 15:38:40 +0530, Bhaskar Chowdhury wrote:
+On Thu, Mar 18, 2021 at 06:26:24PM +0100, Dario Binacchi wrote:
+> DT bindings for enabling and adjusting spread spectrum clocking have
+> been added.
 > 
-> s/provde/provide/
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
 > ---
->  .../devicetree/bindings/clock/armada3700-tbg-clock.txt          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> (no changes since v1)
+> 
+>  .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
+> index df57009ff8e7..0810ae073294 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
+> @@ -42,6 +42,11 @@ Required properties:
+>  	"idlest" - contains the idle status register base address
+>  	"mult-div1" - contains the multiplier / divider register base address
+>  	"autoidle" - contains the autoidle register base address (optional)
+> +	"ssc-deltam" - DPLL supports spread spectrum clocking (SSC), contains
+> +		       the frequency spreading register base address (optional)
+> +	"ssc-modfreq" - DPLL supports spread spectrum clocking (SSC), contains
+> +		        the modulation frequency register base address
+> +			(optional)
+>    ti,am3-* dpll types do not have autoidle register
+>    ti,omap2-* dpll type does not support idlest / autoidle registers
+>  
+> @@ -51,6 +56,14 @@ Optional properties:
+>  	- ti,low-power-stop : DPLL supports low power stop mode, gating output
+>  	- ti,low-power-bypass : DPLL output matches rate of parent bypass clock
+>  	- ti,lock : DPLL locks in programmed rate
+> +	- ti,min-div : the minimum divisor to start from to round the DPLL
+> +		       target rate
+> +	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
+> +			  spreading in permille (10th of a percent)
+> +	- ti,ssc-modfreq : DPLL supports spread spectrum clocking, spread
+> +			   spectrum modulation frequency in kHz
 
-Applied, thanks!
+Use a standard unit suffix (-hz or -mhz).
+
+> +	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
+> +			      to enable the downspread feature
+>  
+>  Examples:
+>  	dpll_core_ck: dpll_core_ck@44e00490 {
+> @@ -83,3 +96,10 @@ Examples:
+>  		clocks = <&sys_ck>, <&sys_ck>;
+>  		reg = <0x0500>, <0x0540>;
+>  	};
+> +
+> +	dpll_disp_ck: dpll_disp_ck {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,am3-dpll-no-gate-clock";
+> +		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
+> +		reg = <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
+> +	};
+> -- 
+> 2.17.1
+> 
