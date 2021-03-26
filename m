@@ -2,253 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CEDC433F1
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071CEC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 17:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1803A61A2D
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 14:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C393661A24
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Mar 2021 17:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbhCZO7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhCZO6y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 10:58:54 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4E9C0613B4
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id v15so8110081lfq.5
-        for <linux-clk@vger.kernel.org>; Fri, 26 Mar 2021 07:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snejp.pl; s=gmail;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=C5ERnmYiVSfZOvLBPHXfrcD24I8mfAAc53AvKVggtY4=;
-        b=ELvzfXAW10zs5X8fa3xbIzvf2/OOQMINVOrmncAzNMtDFbRl7fS0BkkIMU2TJ5krkJ
-         GUa1vJC57d4gJf3wGKQQNz1DBdFammiWUPLsgUyRh2djrQJWx0j2ig8WKx1zDo5URl5f
-         cDIEZehADeV5K0RnGacupwjaiyOLRIj/b2o0NyqcSJ+ZEp8bKfBHIzBbaEMjFLYq3+4A
-         lC0A49V1Wg80Flx5MLaE3WRhzaaM8EFYyuOLBq33hCSmaZV0DlEwnvq+cGxVPZpKZvMo
-         A1CTzL9Xv8TO2qAVtcugxp6MmvHjiiDdbJbj4g2v+QmXfElmz5cDS8OVrHIhLze2dbLj
-         Kuig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=C5ERnmYiVSfZOvLBPHXfrcD24I8mfAAc53AvKVggtY4=;
-        b=KCIql1UBJxKOb9I3mw10pAxE0+WiwP4CK5Pr8rV1BU+9PQJazDAwhBmHsIgPLVcQTp
-         8jMuuIo4zjH/4yULsYB5/jGGDP/kvhrXPqnANI88794eIqDz8RZy0w600e9ze4OiI8d6
-         rZjxZX6eK6Nf1oCi0hFp6R8BpsknHURr3GXZmAvFw5ZBeFZfrNGVsGEdDqkRaETQTieX
-         qJp/7CcueM9wJyv7FsVRVRtLoM/JARsXVWHXhcuPU3Oy5/MtY1b6T+NdvkbkJ5Li92+a
-         MKGHo7qqzJfd0PTslc+pKK8743t2uCpCe2p+SMr7a5s+uWCLSCjfHiEtKo/QuNjW5rVH
-         9iig==
-X-Gm-Message-State: AOAM530uNvRRem81aWnUPZUwicvPtYz+porbn6uCVR96qfe6YHxIrp0Q
-        P2yQxWqayyWWc2QLTgPZmcG6tQ==
-X-Google-Smtp-Source: ABdhPJyfHZhl+6MBBO5Xfa3bjyeWpJXK6rzvCVBVaT1AB/4nLCKxMKGf7CZi4pFkY0tVInN5VGPfeQ==
-X-Received: by 2002:a19:7409:: with SMTP id v9mr566973lfe.2.1616770732312;
-        Fri, 26 Mar 2021 07:58:52 -0700 (PDT)
-Received: from PackardBell ([82.160.139.10])
-        by smtp.googlemail.com with ESMTPSA id k2sm893382lfm.174.2021.03.26.07.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 07:58:52 -0700 (PDT)
-Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 27f68d92;
-        Fri, 26 Mar 2021 14:58:48 +0000 (UTC)
-From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH 3/5] arm: dts: qcom: Add support for MSM8226 SoC
-Date:   Fri, 26 Mar 2021 15:58:14 +0100
-Message-Id: <20210326145816.9758-4-bartosz.dudziak@snejp.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
-References: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
+        id S230003AbhCZRoA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Mar 2021 13:44:00 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:50474 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230026AbhCZRn2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Mar 2021 13:43:28 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1616780608; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=FWCcM5CXpiJmEZLD5IoNtjeP5xTEpPwqcQqDtZvor/E=;
+ b=We1fRCpjg5wFzV2L6P3SlSx83OxsnAswFHPAVzbEu0i7wm3dk8HtCSdNYjsIqG8PiBNqnqkY
+ boERxn3G4EZpi8w1L4Y9F1iYMdVqSzFpd9pmaJBahuhHHYQ17sfTGXKJx8JMBpmFu7uCJiy6
+ 3h1bWKYtUjBSmgIOzjJT/1p9EVE=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 605e1d3004a1954ec3361309 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 26 Mar 2021 17:43:12
+ GMT
+Sender: abhinavk=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CB671C4346A; Fri, 26 Mar 2021 17:43:11 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: abhinavk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D2B1C43461;
+        Fri, 26 Mar 2021 17:43:10 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 26 Mar 2021 10:43:10 -0700
+From:   abhinavk@codeaurora.org
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Daniel Palmer <daniel@0x0f.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        freedreno@lists.freedesktop.org, linux-clk@vger.kernel.org
+Subject: Re: [Freedreno] [PATCH v2 01/28] clk: fixed: add devm helper for
+ clk_hw_register_fixed_factor()
+In-Reply-To: <20210324151846.2774204-2-dmitry.baryshkov@linaro.org>
+References: <20210324151846.2774204-1-dmitry.baryshkov@linaro.org>
+ <20210324151846.2774204-2-dmitry.baryshkov@linaro.org>
+Message-ID: <4d2f69071681f0ccd2bffb7740a4f260@codeaurora.org>
+X-Sender: abhinavk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds basic device tree support for MSM8226 SoC which belongs
-to the Snapdragon 400 family. For now, this file adds the basic nodes
-like gcc, pinctrl and other required configuration for booting up to
-the serial console.
+Hi Dmitry
 
-Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
----
- arch/arm/boot/dts/qcom-msm8226.dtsi | 152 ++++++++++++++++++++++++++++
- 1 file changed, 152 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-msm8226.dtsi
-
-diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
-new file mode 100644
-index 0000000000..81bb19398e
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-msm8974.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	model = "Qualcomm Technologies, Inc. MSM8226";
-+	compatible = "qcom,msm8226";
-+	interrupt-parent = <&intc>;
-+
-+	chosen { };
-+
-+	memory {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the size */
-+		reg = <0x0 0x0>;
-+	};
-+
-+	soc: soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		compatible = "simple-bus";
-+
-+		intc: interrupt-controller@f9000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0xF9000000 0x1000>,
-+			      <0xF9002000 0x1000>;
-+		};
-+
-+		gcc: clock-controller@fc400000 {
-+			compatible = "qcom,gcc-msm8226";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0xfc400000 0x4000>;
-+		};
-+
-+		msmgpio: pinctrl@fd510000 {
-+			compatible = "qcom,msm8226-pinctrl";
-+			reg = <0xfd510000 0x4000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&msmgpio 0 0 117>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		blsp1_uart3: serial@f991f000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0xf991f000 0x1000>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
-+		restart@fc4ab000 {
-+			compatible = "qcom,pshold";
-+			reg = <0xfc4ab000 0x4>;
-+		};
-+
-+		rng@f9bff000 {
-+			compatible = "qcom,prng";
-+			reg = <0xf9bff000 0x200>;
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "core";
-+		};
-+
-+		timer@f9020000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0xf9020000 0x1000>;
-+			clock-frequency = <19200000>;
-+
-+			frame@f9021000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9021000 0x1000>,
-+				      <0xf9022000 0x1000>;
-+			};
-+
-+			frame@f9023000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9023000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@f9024000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9024000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@f9025000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9025000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@f9026000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9026000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@f9027000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9027000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@f9028000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xf9028000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 2
-+				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 3
-+				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 4
-+				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 1
-+				(GIC_CPU_MASK_RAW(15) | IRQ_TYPE_LEVEL_LOW)>;
-+		clock-frequency = <19200000>;
-+	};
-+};
--- 
-2.25.1
-
+On 2021-03-24 08:18, Dmitry Baryshkov wrote:
+> From: Daniel Palmer <daniel@0x0f.com>
+> 
+> Add a devm helper for clk_hw_register_fixed_factor() so that drivers
+> that internally
+> register fixed factor clocks for things like dividers don't need to
+> manually unregister
+> them on remove or if probe fails.
+> 
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> Link: 
+> https://lore.kernel.org/r/20210211052206.2955988-4-daniel@0x0f.com
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Doesnt this need your signed-off too?
+Other than that,
+Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+> ---
+>  drivers/clk/clk-fixed-factor.c | 39 ++++++++++++++++++++++++++++------
+>  include/linux/clk-provider.h   |  4 +++-
+>  2 files changed, 36 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-fixed-factor.c 
+> b/drivers/clk/clk-fixed-factor.c
+> index 910e6e74ae90..4f7bf3929d6d 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -64,10 +64,16 @@ const struct clk_ops clk_fixed_factor_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+> 
+> +static void devm_clk_hw_register_fixed_factor_release(struct device
+> *dev, void *res)
+> +{
+> +	clk_hw_unregister_fixed_factor(&((struct clk_fixed_factor 
+> *)res)->hw);
+> +}
+> +
+>  static struct clk_hw *
+>  __clk_hw_register_fixed_factor(struct device *dev, struct device_node 
+> *np,
+>  		const char *name, const char *parent_name, int index,
+> -		unsigned long flags, unsigned int mult, unsigned int div)
+> +		unsigned long flags, unsigned int mult, unsigned int div,
+> +		bool devm)
+>  {
+>  	struct clk_fixed_factor *fix;
+>  	struct clk_init_data init = { };
+> @@ -75,7 +81,15 @@ __clk_hw_register_fixed_factor(struct device *dev,
+> struct device_node *np,
+>  	struct clk_hw *hw;
+>  	int ret;
+> 
+> -	fix = kmalloc(sizeof(*fix), GFP_KERNEL);
+> +	/* You can't use devm without a dev */
+> +	if (devm && !dev)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	if (devm)
+> +		fix = devres_alloc(devm_clk_hw_register_fixed_factor_release,
+> +				sizeof(*fix), GFP_KERNEL);
+> +	else
+> +		fix = kmalloc(sizeof(*fix), GFP_KERNEL);
+>  	if (!fix)
+>  		return ERR_PTR(-ENOMEM);
+> 
+> @@ -99,9 +113,13 @@ __clk_hw_register_fixed_factor(struct device *dev,
+> struct device_node *np,
+>  	else
+>  		ret = of_clk_hw_register(np, hw);
+>  	if (ret) {
+> -		kfree(fix);
+> +		if (devm)
+> +			devres_free(fix);
+> +		else
+> +			kfree(fix);
+>  		hw = ERR_PTR(ret);
+> -	}
+> +	} else if (devm)
+> +		devres_add(dev, fix);
+> 
+>  	return hw;
+>  }
+> @@ -111,7 +129,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct
+> device *dev,
+>  		unsigned int mult, unsigned int div)
+>  {
+>  	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, 
+> -1,
+> -					      flags, mult, div);
+> +					      flags, mult, div, false);
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+> 
+> @@ -153,6 +171,15 @@ void clk_hw_unregister_fixed_factor(struct clk_hw 
+> *hw)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+> 
+> +struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+> +		const char *name, const char *parent_name, unsigned long flags,
+> +		unsigned int mult, unsigned int div)
+> +{
+> +	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, 
+> -1,
+> +			flags, mult, div, true);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+> +
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id set_rate_parent_matches[] = {
+>  	{ .compatible = "allwinner,sun4i-a10-pll3-2x-clk" },
+> @@ -185,7 +212,7 @@ static struct clk_hw
+> *_of_fixed_factor_clk_setup(struct device_node *node)
+>  		flags |= CLK_SET_RATE_PARENT;
+> 
+>  	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, 0,
+> -					    flags, mult, div);
+> +					    flags, mult, div, false);
+>  	if (IS_ERR(hw)) {
+>  		/*
+>  		 * Clear OF_POPULATED flag so that clock registration can be
+> diff --git a/include/linux/clk-provider.h 
+> b/include/linux/clk-provider.h
+> index e4316890661a..58f6fe866ae9 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -941,7 +941,9 @@ struct clk_hw *clk_hw_register_fixed_factor(struct
+> device *dev,
+>  		const char *name, const char *parent_name, unsigned long flags,
+>  		unsigned int mult, unsigned int div);
+>  void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+> -
+> +struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+> +		const char *name, const char *parent_name, unsigned long flags,
+> +		unsigned int mult, unsigned int div);
+>  /**
+>   * struct clk_fractional_divider - adjustable fractional divider clock
+>   *
