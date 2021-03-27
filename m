@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7D7C433E5
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9216C433E1
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF9F5619FF
+	by mail.kernel.org (Postfix) with ESMTP id 8A1CE619BB
 	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbhC0LDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230506AbhC0LDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 27 Mar 2021 07:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33452 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230471AbhC0LDP (ORCPT
+        with ESMTP id S230424AbhC0LDP (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Mar 2021 07:03:15 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27379C0613B4
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A4B3C0613B2
         for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:15 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id o10so11464231lfb.9
+Received: by mail-lf1-x129.google.com with SMTP id o126so11560682lfa.0
         for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fsZHMjpcpMRNh50aSCQG6toWuDuQmBAyzcA/aBJD+oM=;
-        b=C4ABTjf+1I+oVNozkaZuGs+wKMKgrnOVc+PKX/BfFGajdOSkWjvqPvBmhPv8Yy/E3P
-         hWjfTA2BLyrci+Pnkp31bvXgNRqeHgOqKyg2mVyBH+pIma/GibqXa0w0JuXqwHlprh8V
-         PRBtTbLFT6up/l5M+eFQOASguL0/ixCfVHTH6fTeX3Myl+4X1QWMDGNVHGy/KnXj3wmi
-         rcvBoA922Kz0Um+aw7Gl+n3FqcJL3szQ5AQ7Z40fFkTmBd9Ay1Ep8mid6EwUKQFAeAZG
-         bsod4m4tSzFVOIpiRkEfc/O049rw2eEhTvljAn6IBgmHyn7wD2AmvVgn//wFjGTyjpB5
-         VZxg==
+        bh=821JPadqceS+s/0RcZV8FtCTa+nAVDnEcGJf+djq6mQ=;
+        b=npIsBaY3sU7Mr4s72ru0F/USbmW/sqXdFE28eIzij/ipeEl7r+TuzEYlxafAM4nhNr
+         bajNwD8tluV0eCPf8hxSvPJKyJomuGRHSbFJdliulvG0opI3tMJXOphCd+0SaLe7P+G0
+         QL8MtSMbEiFoEEiKxSJGQxsGijjRV/eyfLXP/0GeFn8y+EBpW6wm/0YV7Pqc9s7IqFar
+         vxsNfvsZ29wp18vmnds1/X0ClgNEdtyT89MmP41obAs0ECFKkPQIX//XROP50a2/XZ2T
+         3yYiBXL/YHPkobmUaShWaHJKrBiiadXoEjWI7WvGnfoJNX0TRKVq1w4KTs00i0UUYhv6
+         klDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fsZHMjpcpMRNh50aSCQG6toWuDuQmBAyzcA/aBJD+oM=;
-        b=cKvnqtJVYkig5a93VYLoeAP7+9BkvDdp9T68h0EjehSRPYth+Cmpo6U0Zmy5K2d3WF
-         bbYOetxx7nIZaUL/K3fXAX1QjhYRUcpx5H2CShtaBZctyc9SRiRUMAMTUQKmzEuF6lKR
-         G9Uv5ZcAr+S+5L3esfSedkVghWaEQUuwhP3KXQeIqaeqeRdqllGoeDgr1auxe6We+Itn
-         uSYMg8OLujvkYetD6doOZ5d77DbVhWbQq8+GjNOAhRPa8gVyXvBiR95VT0NcjCOfGRgM
-         X6+iK5SsIDjnIKpUkkUsFprT+wS9eGPNTMt7u3Brz04+Db+QZZs+sVy8wFgiPHgvjeIZ
-         SwSA==
-X-Gm-Message-State: AOAM531H80gsWMjskymcV6VmrvjOwFhp5XJZCYk0jDzEha0OMOP6poZo
-        8TeZPIyaazeAMhs25dMPTI2spA==
-X-Google-Smtp-Source: ABdhPJwWbbznHAterTYKDXO9HEln7JYxzDLt5iKbWUyH78pxBQKVlPWB3d8mqM1sKP4I5tFTFC6Jxg==
-X-Received: by 2002:ac2:4c85:: with SMTP id d5mr11456182lfl.503.1616842993422;
-        Sat, 27 Mar 2021 04:03:13 -0700 (PDT)
+        bh=821JPadqceS+s/0RcZV8FtCTa+nAVDnEcGJf+djq6mQ=;
+        b=Bs4TKXbtAuTIS8NYQKKasVcObj6ebyhbFWKOx+k//jYem/fsgLlX5QS1E7sc6I/hWM
+         b/dqBnFbDp2DpBq0B4kmissP1hHRdtAvC39rj+iMxcLYLuyJLiA3nLgC16Y8o0YwbGVN
+         NXkuwVA+FVX1aIvBToJ6ImTXzBG+j2KZcmjSr9Lz3I6AGcvziKPsoIh6jl7PhQtwf7uS
+         SNkVkhTHxZ+CoVK81P4TYmyCzQfshk8gCCYCHKcHcfKlXMnE/12hkYIt8jBX8jvs7M7d
+         WImBw6V3mEZfEUC6UXuN9fD04mjWpyYNWdbr5BHgElU+/0zBG9o8PkQZTgsvN7Lnybzw
+         GpvA==
+X-Gm-Message-State: AOAM533JYAMHBU+HRKSx4nALQFSnTib7lgcqpPn7wARj6F/JW/jKfqDO
+        iSx3jdm/39h4r/9rCO2iUTIlPQ==
+X-Google-Smtp-Source: ABdhPJzcQNTnymZds/VNl4DYZ1qZoGyLcC8/xJRrpDSS+RMUG4IU064W1LZj9TKHDl7MzfoE60tkzw==
+X-Received: by 2002:ac2:47ef:: with SMTP id b15mr10544704lfp.615.1616842991985;
+        Sat, 27 Mar 2021 04:03:11 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id a8sm1513801ljn.96.2021.03.27.04.03.12
+        by smtp.gmail.com with ESMTPSA id a8sm1513801ljn.96.2021.03.27.04.03.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Mar 2021 04:03:13 -0700 (PDT)
+        Sat, 27 Mar 2021 04:03:11 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Abhinav Kumar <abhinavk@codeaurora.org>,
@@ -63,10 +63,10 @@ To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
 Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 03/25] clk: divider: add devm_clk_hw_register_divider
-Date:   Sat, 27 Mar 2021 14:02:43 +0300
-Message-Id: <20210327110305.3289784-4-dmitry.baryshkov@linaro.org>
+        linux-clk@vger.kernel.org, Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH v3 01/25] clk: fixed: add devm helper for clk_hw_register_fixed_factor()
+Date:   Sat, 27 Mar 2021 14:02:41 +0300
+Message-Id: <20210327110305.3289784-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
 References: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
@@ -76,43 +76,125 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add devm_clk_hw_register_divider() - devres version of
-clk_hw_register_divider().
+From: Daniel Palmer <daniel@0x0f.com>
 
+Add a devm helper for clk_hw_register_fixed_factor() so that drivers that internally
+register fixed factor clocks for things like dividers don't need to manually unregister
+them on remove or if probe fails.
+
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+Link: https://lore.kernel.org/r/20210211052206.2955988-4-daniel@0x0f.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
 ---
- include/linux/clk-provider.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/clk/clk-fixed-factor.c | 39 ++++++++++++++++++++++++++++------
+ include/linux/clk-provider.h   |  4 +++-
+ 2 files changed, 36 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 910e6e74ae90..4f7bf3929d6d 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -64,10 +64,16 @@ const struct clk_ops clk_fixed_factor_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
++static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *res)
++{
++	clk_hw_unregister_fixed_factor(&((struct clk_fixed_factor *)res)->hw);
++}
++
+ static struct clk_hw *
+ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name, int index,
+-		unsigned long flags, unsigned int mult, unsigned int div)
++		unsigned long flags, unsigned int mult, unsigned int div,
++		bool devm)
+ {
+ 	struct clk_fixed_factor *fix;
+ 	struct clk_init_data init = { };
+@@ -75,7 +81,15 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+-	fix = kmalloc(sizeof(*fix), GFP_KERNEL);
++	/* You can't use devm without a dev */
++	if (devm && !dev)
++		return ERR_PTR(-EINVAL);
++
++	if (devm)
++		fix = devres_alloc(devm_clk_hw_register_fixed_factor_release,
++				sizeof(*fix), GFP_KERNEL);
++	else
++		fix = kmalloc(sizeof(*fix), GFP_KERNEL);
+ 	if (!fix)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -99,9 +113,13 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	else
+ 		ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+-		kfree(fix);
++		if (devm)
++			devres_free(fix);
++		else
++			kfree(fix);
+ 		hw = ERR_PTR(ret);
+-	}
++	} else if (devm)
++		devres_add(dev, fix);
+ 
+ 	return hw;
+ }
+@@ -111,7 +129,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, -1,
+-					      flags, mult, div);
++					      flags, mult, div, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -153,6 +171,15 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+ 
++struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		unsigned int mult, unsigned int div)
++{
++	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, -1,
++			flags, mult, div, true);
++}
++EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
++
+ #ifdef CONFIG_OF
+ static const struct of_device_id set_rate_parent_matches[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-pll3-2x-clk" },
+@@ -185,7 +212,7 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ 		flags |= CLK_SET_RATE_PARENT;
+ 
+ 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, 0,
+-					    flags, mult, div);
++					    flags, mult, div, false);
+ 	if (IS_ERR(hw)) {
+ 		/*
+ 		 * Clear OF_POPULATED flag so that clock registration can be
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 3eb15e0262f5..162a2e5546a3 100644
+index e4316890661a..58f6fe866ae9 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -785,6 +785,23 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 				  (parent_data), (flags), (reg), (shift),     \
- 				  (width), (clk_divider_flags), (table),      \
- 				  (lock))
-+/**
-+ * devm_clk_hw_register_divider - register a divider clock with the clock framework
-+ * @dev: device registering this clock
-+ * @name: name of this clock
-+ * @parent_name: name of clock's parent
-+ * @flags: framework-specific flags
-+ * @reg: register address to adjust divider
-+ * @shift: number of bits to shift the bitfield
-+ * @width: width of the bitfield
-+ * @clk_divider_flags: divider-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define devm_clk_hw_register_divider(dev, name, parent_name, flags, reg, shift,    \
-+				width, clk_divider_flags, lock)		      \
-+	__devm_clk_hw_register_divider((dev), NULL, (name), (parent_name), NULL,   \
-+				  NULL, (flags), (reg), (shift), (width),     \
-+				  (clk_divider_flags), NULL, (lock))
+@@ -941,7 +941,9 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+-
++struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		unsigned int mult, unsigned int div);
  /**
-  * devm_clk_hw_register_divider_table - register a table based divider clock
-  * with the clock framework (devres variant)
+  * struct clk_fractional_divider - adjustable fractional divider clock
+  *
 -- 
 2.30.2
 
