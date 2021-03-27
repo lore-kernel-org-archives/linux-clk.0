@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A46C433E6
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEB3C433E8
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF985619FC
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D25CF61A05
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Mar 2021 11:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbhC0LDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Mar 2021 07:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33450 "EHLO
+        id S231455AbhC0LD0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Mar 2021 07:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230350AbhC0LDP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Mar 2021 07:03:15 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C84C0613B3
-        for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:15 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id v15so11503596lfq.5
-        for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:15 -0700 (PDT)
+        with ESMTP id S231514AbhC0LDY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Mar 2021 07:03:24 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE44DC0613B3
+        for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:22 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id g8so11471169lfv.12
+        for <linux-clk@vger.kernel.org>; Sat, 27 Mar 2021 04:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KZDpEXPQmSxpWJA5pbH10vAd6wTYvaEgEWkgKJ7hknY=;
-        b=xbeuY4fHeWgajQPrP2wfQ/qKNf1IQvjaHgMipZUKetQ+GwVwfTw4vcPFgntVtYD23+
-         koQfFVqRIKx2AL2+AsQ3FbD2ed71A2hUiPD8JREN9dTO2PIlVAX1eWN15SrnljBucFEv
-         c2oCkOPYGO8VQP8R0ozuxE9b0+BdGsFnNEAOZ9+MyfuLQqmB4+3SFk5cB/g1oanT1+kZ
-         OQa2suhjwGiZEzWuMTfKwBT+1IroRx7pRG3StbS0F+yX+L+A34ToLRZDNlAmOMUsoWoF
-         jFKe71m+AURunrBZibU6aQZxx5/HZrkEjZMtfx0fjv8MRdlFt6I1zjwzHHv2KMyk6DUW
-         kTVQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nUQtvD88N6qezFUguVb2+kjKBymou2g/Ldt3kG2D1oU=;
+        b=a59fxjm9PdTGRgOHHVEybYvS4toDBC+ZnlASJXV6sLBygD4vi1yAV7MYhL1JF83kop
+         C+715U1HQZ3c4Fwce1CLemXr0YEr1MFih1daddNwAFqT7DMVWOr/lTUcFlg4vXrlYlOz
+         NT+4bxllNbn8yyKuYKl0pkJjmlZpdKRjbliQEz8ZgjssoG46ry1+W/bvm4PjQJGZHmZB
+         yyd0x6pHYsMIaAOKdj7ofcF/RVWe+I549eHoTgLY65PM5bw36f2GF+JJUEyTs+M7kemP
+         07M1+akcR5Xhxxm6igLa24BFVnY5tXvxC065/s9KfTwoQQIEyjyfuFSu6XHfxnR8/L/9
+         rp+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KZDpEXPQmSxpWJA5pbH10vAd6wTYvaEgEWkgKJ7hknY=;
-        b=ELg/ily01EvMRZ4gUgezJ5t4qIm8+8E9VKiL57/+toVLHE+11/D/gYLgoieHqKDUIC
-         pmVabZ4Vm/FZ+/M8TwFbivQ28CPLnXXb2ZEtGrXh7WY1k6z5j7IMSZubR3IFLIguVhtl
-         emLMCBhBJ2ShzIU9+9adbfRkhAgOjubPBBepqEFLdilzQ2Z/yQ5PumvclHNS/A8QUc5I
-         l9E9lBhxPd+lOxjYuh2tiwXfQpgM/nCxDLIqf0gYgYl7wnjforzRglMfq63sRt7JghYY
-         Web0vBF/Z7R/H1Dj2q2PZIKIVvxTi74xLn/8xFXmJbrD2Z8A3mwmfHTSjfqhpZKHIS0d
-         9pEA==
-X-Gm-Message-State: AOAM530BseloamQSOjks2wl872DlnaWhNnAfqCOf7K74EsNh1+Wz1GQl
-        6Ix4yc1Zb3VBh+x55QiaLc78sA==
-X-Google-Smtp-Source: ABdhPJzKlkUYKA9Z7ZuJKCxOltu1RQmG+F/4OudHEO78+/n3taFdvD3MWfzQYmmMt+9YO4BNe0PW8Q==
-X-Received: by 2002:a19:3804:: with SMTP id f4mr11362701lfa.117.1616842991268;
-        Sat, 27 Mar 2021 04:03:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nUQtvD88N6qezFUguVb2+kjKBymou2g/Ldt3kG2D1oU=;
+        b=Jh1pgKk5ltprejwJcU62YrzDn01hfHtU+V/KtD2NVNhc3BpBGa6UZlMV0lwVQ86pPZ
+         gaspVe8SkP7+XZy3q35/KrxBFASNiVc7SbHqzmSm5J6AY9bWhYgTNOHqnkB4SfOoG2ot
+         Htf91JfUg8vRjhR9mdUW+W06ygzcn3mPrw14MxAQAmon6Z/YnpWUzVzq+QN4KmkGsnhv
+         QCXsOPYGZD0U/oQpjXTjfAFcagmjqR5B15K3V8/eR9WSBs+Qu/OLk7vvLLoymIRCP6JJ
+         Rm1gMcFRF9c4MFZh305gS1um13tsgPfLPePA+YManEUnYpkXCDsGfxExSZM6flpfE1aY
+         3rlA==
+X-Gm-Message-State: AOAM530/jR8eQrBdNU5d+990ac5VbhlWenk2ols7cO7aYxwHElCUk2tU
+        EqDrvgRL982cCHWJTYgOSAMgVg==
+X-Google-Smtp-Source: ABdhPJyAndE6f8S063l51F2awtP0GSni8wpVwHSJijUH1flvSDmgbXisKKXezfNd6gC0n4QJEB/s5g==
+X-Received: by 2002:a19:7504:: with SMTP id y4mr10744711lfe.616.1616843001252;
+        Sat, 27 Mar 2021 04:03:21 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id a8sm1513801ljn.96.2021.03.27.04.03.10
+        by smtp.gmail.com with ESMTPSA id a8sm1513801ljn.96.2021.03.27.04.03.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Mar 2021 04:03:10 -0700 (PDT)
+        Sat, 27 Mar 2021 04:03:20 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Abhinav Kumar <abhinavk@codeaurora.org>,
@@ -64,118 +64,909 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v3 00/25] drm/msm/dsi: refactor MSM DSI PHY/PLL drivers
-Date:   Sat, 27 Mar 2021 14:02:40 +0300
-Message-Id: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 12/25] drm/msm/dsi: use devm_clk_*register to registe DSI PHY clocks
+Date:   Sat, 27 Mar 2021 14:02:52 +0300
+Message-Id: <20210327110305.3289784-13-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
+References: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Restructure MSM DSI PHY drivers. What started as an attempt to grok the
-overcomplicated PHY drivers, has lead up to the idea of merging PHY and
-PLL code, reducing abstractions, code duplication, dropping dead code,
-etc.
+Use devres-enabled version of clock registration functions. This lets us
+remove dsi_pll destroy callbacks completely.
 
-The patches were mainly tested on RB5 (sm8250, 7nm) and DB410c (apq8016,
-28nm-lp) and lightly tested on RB3 (sdm845, 10nm).
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/msm/dsi/dsi.h                 |  4 -
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c         |  2 -
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h         |  1 -
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 84 ++++---------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    | 35 +-------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 50 +++++------
+ .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 39 +++------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 84 ++++---------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_pll.c         | 17 ----
+ drivers/gpu/drm/msm/dsi/phy/dsi_pll.h         |  4 -
+ 10 files changed, 71 insertions(+), 249 deletions(-)
 
-The patch 'clk: fixed: add devm helper for clk_hw_register_fixed_factor()'
-is already a part of mainline as of 5.12-rc1, but is included here for
-completeness to fix compilation issues (as msm-next is based on 5.11-rc5).
-
-Changes since v2:
- - Drop the 'stop setting clock parents manually' patch for now together
-   with the dtsi changes. Unlike the rest of patchset it provides
-   functional changes and might require additional discussion.
-   The patchset will be resubmitted later.
-
-Changes since v1:
- - Rebase on top of msm/msm-next
- - Reorder patches to follow logical sequence
- - Add sc7180 clocks assignment
- - Drop sm8250 clocks assignment, as respective file is not updated in
-   msm/msm-next
-
-Changes since RFC:
- - Reorder patches to move global clock patches in the beginning and
-   dtsi patches where they are required.
- - remove msm_dsi_phy_set_src_pll() and guess src_pll_id using PHY usecase.
-
-The following changes since commit 627dc55c273dab308303a5217bd3e767d7083ddb:
-
-  drm/msm/disp/dpu1: icc path needs to be set before dpu runtime resume (2021-03-22 18:52:34 -0700)
-
-are available in the Git repository at:
-
-  https://git.linaro.org/people/dmitry.baryshkov/kernel.git dsi-phy-3
-
-for you to fetch changes up to da7ba6797b2899a78774fb89e586e79a1001eff4:
-
-  drm/msm/dsi: stop passing src_pll_id to the phy_enable call (2021-03-27 13:56:26 +0300)
-
-----------------------------------------------------------------
-Daniel Palmer (1):
-      clk: fixed: add devm helper for clk_hw_register_fixed_factor()
-
-Dmitry Baryshkov (24):
-      clk: mux: provide devm_clk_hw_register_mux()
-      clk: divider: add devm_clk_hw_register_divider
-      drm/msm/dsi: replace PHY's init callback with configurable data
-      drm/msm/dsi: fuse dsi_pll_* code into dsi_phy_* code
-      drm/msm/dsi: drop multiple pll enable_seq support
-      drm/msm/dsi: move all PLL callbacks into PHY config struct
-      drm/msm/dsi: drop global msm_dsi_phy_type enumaration
-      drm/msm/dsi: move min/max PLL rate to phy config
-      drm/msm/dsi: remove msm_dsi_pll_set_usecase
-      drm/msm/dsi: push provided clocks handling into a generic code
-      drm/msm/dsi: use devm_clk_*register to registe DSI PHY clocks
-      drm/msm/dsi: use devm_of_clk_add_hw_provider
-      drm/msm/dsi: make save/restore_state phy-level functions
-      drm/msm/dsi: drop vco_delay setting from 7nm, 10nm, 14nm drivers
-      drm/msm/dpu: simplify vco_delay handling in dsi_phy_28nm driver
-      drm/msi/dsi: inline msm_dsi_pll_helper_clk_prepare/unprepare
-      drm/msm/dsi: make save_state/restore_state callbacks accept msm_dsi_phy
-      drm/msm/dsi: drop msm_dsi_pll abstracton
-      drm/msm/dsi: drop PLL accessor functions
-      drm/msm/dsi: move ioremaps to dsi_phy_driver_probe
-      drm/msm/dsi: remove duplicate fields from dsi_pll_Nnm instances
-      drm/msm/dsi: remove temp data from global pll structure
-      drm/msm/dsi: inline msm_dsi_phy_set_src_pll
-      drm/msm/dsi: stop passing src_pll_id to the phy_enable call
-
- drivers/clk/clk-fixed-factor.c                  |   39 +-
- drivers/clk/clk-mux.c                           |   35 +
- drivers/gpu/drm/msm/Kconfig                     |    8 -
- drivers/gpu/drm/msm/Makefile                    |    9 -
- drivers/gpu/drm/msm/dsi/dsi.h                   |   60 +-
- drivers/gpu/drm/msm/dsi/dsi_host.c              |    4 +-
- drivers/gpu/drm/msm/dsi/dsi_manager.c           |   30 +-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c           |  161 ++--
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           |   41 +-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  745 ++++++++++++++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  939 ++++++++++++++++++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c      |   16 +-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      |  654 +++++++++++++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  479 +++++++++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       |  772 +++++++++++++++-
- drivers/gpu/drm/msm/dsi/pll/dsi_pll.c           |  184 ----
- drivers/gpu/drm/msm/dsi/pll/dsi_pll.h           |  132 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c      |  881 ------------------
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c      | 1096 -----------------------
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c      |  643 -------------
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c |  526 -----------
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_7nm.c       |  913 -------------------
- include/linux/clk-provider.h                    |   34 +-
- 23 files changed, 3732 insertions(+), 4669 deletions(-)
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll.c
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll.h
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c
- delete mode 100644 drivers/gpu/drm/msm/dsi/pll/dsi_pll_7nm.c
-
+diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
+index 43590f338d20..0970f05cd47f 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi.h
++++ b/drivers/gpu/drm/msm/dsi/dsi.h
+@@ -95,13 +95,9 @@ struct drm_encoder *msm_dsi_get_encoder(struct msm_dsi *msm_dsi);
+ /* dsi pll */
+ struct msm_dsi_pll;
+ #ifdef CONFIG_DRM_MSM_DSI_PLL
+-void msm_dsi_pll_destroy(struct msm_dsi_pll *pll);
+ void msm_dsi_pll_save_state(struct msm_dsi_pll *pll);
+ int msm_dsi_pll_restore_state(struct msm_dsi_pll *pll);
+ #else
+-static inline void msm_dsi_pll_destroy(struct msm_dsi_pll *pll)
+-{
+-}
+ static inline void msm_dsi_pll_save_state(struct msm_dsi_pll *pll)
+ {
+ }
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index 69214447f757..df3b91b0ea88 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -744,7 +744,6 @@ static int dsi_phy_driver_probe(struct platform_device *pdev)
+ fail:
+ 	if (phy->pll) {
+ 		of_clk_del_provider(dev->of_node);
+-		msm_dsi_pll_destroy(phy->pll);
+ 		phy->pll = NULL;
+ 	}
+ 
+@@ -757,7 +756,6 @@ static int dsi_phy_driver_remove(struct platform_device *pdev)
+ 
+ 	if (phy && phy->pll) {
+ 		of_clk_del_provider(pdev->dev.of_node);
+-		msm_dsi_pll_destroy(phy->pll);
+ 		phy->pll = NULL;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+index c3099629fa3b..2c5196844ba9 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+@@ -23,7 +23,6 @@ struct msm_dsi_phy_ops {
+ struct msm_dsi_pll_ops {
+ 	int (*enable_seq)(struct msm_dsi_pll *pll);
+ 	void (*disable_seq)(struct msm_dsi_pll *pll);
+-	void (*destroy)(struct msm_dsi_pll *pll);
+ 	void (*save_state)(struct msm_dsi_pll *pll);
+ 	int (*restore_state)(struct msm_dsi_pll *pll);
+ };
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+index 8666da1c29e5..6300b92c65eb 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+@@ -103,15 +103,6 @@ struct dsi_pll_10nm {
+ 	struct dsi_pll_config pll_configuration;
+ 	struct dsi_pll_regs reg_setup;
+ 
+-	/* private clocks: */
+-	struct clk_hw *out_div_clk_hw;
+-	struct clk_hw *bit_clk_hw;
+-	struct clk_hw *byte_clk_hw;
+-	struct clk_hw *by_2_bit_clk_hw;
+-	struct clk_hw *post_out_div_clk_hw;
+-	struct clk_hw *pclk_mux_hw;
+-	struct clk_hw *out_dsiclk_hw;
+-
+ 	struct pll_10nm_cached_state cached_state;
+ 
+ 	enum msm_dsi_phy_usecase uc;
+@@ -614,22 +605,6 @@ static int dsi_pll_10nm_set_usecase(struct msm_dsi_pll *pll,
+ 	return 0;
+ }
+ 
+-static void dsi_pll_10nm_destroy(struct msm_dsi_pll *pll)
+-{
+-	struct dsi_pll_10nm *pll_10nm = to_pll_10nm(pll);
+-
+-	DBG("DSI PLL%d", pll_10nm->id);
+-
+-	clk_hw_unregister_divider(pll_10nm->out_dsiclk_hw);
+-	clk_hw_unregister_mux(pll_10nm->pclk_mux_hw);
+-	clk_hw_unregister_fixed_factor(pll_10nm->post_out_div_clk_hw);
+-	clk_hw_unregister_fixed_factor(pll_10nm->by_2_bit_clk_hw);
+-	clk_hw_unregister_fixed_factor(pll_10nm->byte_clk_hw);
+-	clk_hw_unregister_divider(pll_10nm->bit_clk_hw);
+-	clk_hw_unregister_divider(pll_10nm->out_div_clk_hw);
+-	clk_hw_unregister(&pll_10nm->base.clk_hw);
+-}
+-
+ /*
+  * The post dividers and mux clocks are created using the standard divider and
+  * mux API. Unlike the 14nm PHY, the slave PLL doesn't need its dividers/mux
+@@ -656,30 +631,28 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_10nm->id);
+ 	pll_10nm->base.clk_hw.init = &vco_init;
+ 
+-	ret = clk_hw_register(dev, &pll_10nm->base.clk_hw);
++	ret = devm_clk_hw_register(dev, &pll_10nm->base.clk_hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	snprintf(clk_name, 32, "dsi%d_pll_out_div_clk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%dvco_clk", pll_10nm->id);
+ 
+-	hw = clk_hw_register_divider(dev, clk_name,
++	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				     parent, CLK_SET_RATE_PARENT,
+ 				     pll_10nm->mmio +
+ 				     REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE,
+ 				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_base_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->out_div_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_10nm->id);
+ 
+ 	/* BIT CLK: DIV_CTRL_3_0 */
+-	hw = clk_hw_register_divider(dev, clk_name, parent,
++	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     CLK_SET_RATE_PARENT,
+ 				     pll_10nm->phy_cmn_mmio +
+ 				     REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+@@ -687,56 +660,49 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 				     &pll_10nm->postdiv_lock);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_out_div_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->bit_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
+ 
+ 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  CLK_SET_RATE_PARENT, 1, 8);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_bit_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->byte_clk_hw = hw;
+ 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+ 
+ 	snprintf(clk_name, 32, "dsi%d_pll_by_2_bit_clk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
+ 
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_byte_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->by_2_bit_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pll_post_out_div_clk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_10nm->id);
+ 
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  0, 1, 4);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_by_2_bit_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->post_out_div_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pclk_mux", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
+ 	snprintf(parent2, 32, "dsi%d_pll_by_2_bit_clk", pll_10nm->id);
+ 	snprintf(parent3, 32, "dsi%d_pll_out_div_clk", pll_10nm->id);
+ 	snprintf(parent4, 32, "dsi%d_pll_post_out_div_clk", pll_10nm->id);
+ 
+-	hw = clk_hw_register_mux(dev, clk_name,
++	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 				 ((const char *[]){
+ 				 parent, parent2, parent3, parent4
+ 				 }), 4, 0, pll_10nm->phy_cmn_mmio +
+@@ -744,44 +710,28 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 				 0, 2, 0, NULL);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_post_out_div_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->pclk_mux_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pclk_mux", pll_10nm->id);
+ 
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+-	hw = clk_hw_register_divider(dev, clk_name, parent,
++	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     0, pll_10nm->phy_cmn_mmio +
+ 					REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+ 				     4, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_10nm->postdiv_lock);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_pclk_mux_hw;
++		goto fail;
+ 	}
+ 
+-	pll_10nm->out_dsiclk_hw = hw;
+ 	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
+ 
+ 	return 0;
+ 
+-err_pclk_mux_hw:
+-	clk_hw_unregister_mux(pll_10nm->pclk_mux_hw);
+-err_post_out_div_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_10nm->post_out_div_clk_hw);
+-err_by_2_bit_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_10nm->by_2_bit_clk_hw);
+-err_byte_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_10nm->byte_clk_hw);
+-err_bit_clk_hw:
+-	clk_hw_unregister_divider(pll_10nm->bit_clk_hw);
+-err_out_div_clk_hw:
+-	clk_hw_unregister_divider(pll_10nm->out_div_clk_hw);
+-err_base_clk_hw:
+-	clk_hw_unregister(&pll_10nm->base.clk_hw);
++fail:
+ 
+ 	return ret;
+ }
+@@ -1060,7 +1010,6 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs = {
+ 		.pll_init = dsi_pll_10nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_10nm_destroy,
+ 		.save_state = dsi_pll_10nm_save_state,
+ 		.restore_state = dsi_pll_10nm_restore_state,
+ 	},
+@@ -1085,7 +1034,6 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs = {
+ 		.pll_init = dsi_pll_10nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_10nm_destroy,
+ 		.save_state = dsi_pll_10nm_save_state,
+ 		.restore_state = dsi_pll_10nm_restore_state,
+ 	},
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+index 07ecdf34f614..7fe7c8348b42 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+@@ -133,10 +133,6 @@ struct dsi_pll_14nm {
+ 	u64 vco_current_rate;
+ 	u64 vco_ref_clk_rate;
+ 
+-	/* private clocks: */
+-	struct clk_hw *hws[NUM_DSI_CLOCKS_MAX];
+-	u32 num_hws;
+-
+ 	struct pll_14nm_cached_state cached_state;
+ 
+ 	enum msm_dsi_phy_usecase uc;
+@@ -872,15 +868,6 @@ static int dsi_pll_14nm_set_usecase(struct msm_dsi_pll *pll,
+ 	return 0;
+ }
+ 
+-static void dsi_pll_14nm_destroy(struct msm_dsi_pll *pll)
+-{
+-	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
+-	int num_hws = pll_14nm->num_hws;
+-
+-	while (num_hws--)
+-		clk_hw_unregister(pll_14nm->hws[num_hws]);
+-}
+-
+ static struct clk_hw *pll_14nm_postdiv_register(struct dsi_pll_14nm *pll_14nm,
+ 						const char *name,
+ 						const char *parent_name,
+@@ -910,7 +897,7 @@ static struct clk_hw *pll_14nm_postdiv_register(struct dsi_pll_14nm *pll_14nm,
+ 	pll_postdiv->flags = CLK_DIVIDER_ONE_BASED;
+ 	pll_postdiv->hw.init = &postdiv_init;
+ 
+-	ret = clk_hw_register(dev, &pll_postdiv->hw);
++	ret = devm_clk_hw_register(dev, &pll_postdiv->hw);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+@@ -928,9 +915,7 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 		.ops = &clk_ops_dsi_pll_14nm_vco,
+ 	};
+ 	struct device *dev = &pll_14nm->pdev->dev;
+-	struct clk_hw **hws = pll_14nm->hws;
+ 	struct clk_hw *hw;
+-	int num = 0;
+ 	int ret;
+ 
+ 	DBG("DSI%d", pll_14nm->id);
+@@ -938,12 +923,10 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_14nm->id);
+ 	pll_14nm->base.clk_hw.init = &vco_init;
+ 
+-	ret = clk_hw_register(dev, &pll_14nm->base.clk_hw);
++	ret = devm_clk_hw_register(dev, &pll_14nm->base.clk_hw);
+ 	if (ret)
+ 		return ret;
+ 
+-	hws[num++] = &pll_14nm->base.clk_hw;
+-
+ 	snprintf(clk_name, 32, "dsi%dn1_postdiv_clk", pll_14nm->id);
+ 	snprintf(parent, 32, "dsi%dvco_clk", pll_14nm->id);
+ 
+@@ -953,18 +936,15 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	hws[num++] = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%dpllbyte", pll_14nm->id);
+ 	snprintf(parent, 32, "dsi%dn1_postdiv_clk", pll_14nm->id);
+ 
+ 	/* DSI Byte clock = VCO_CLK / N1 / 8 */
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  CLK_SET_RATE_PARENT, 1, 8);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	hws[num++] = hw;
+ 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+ 
+ 	snprintf(clk_name, 32, "dsi%dn1_postdivby2_clk", pll_14nm->id);
+@@ -974,12 +954,10 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 	 * Skip the mux for now, force DSICLK_SEL to 1, Add a /2 divider
+ 	 * on the way. Don't let it set parent.
+ 	 */
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 2);
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 2);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	hws[num++] = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_14nm->id);
+ 	snprintf(parent, 32, "dsi%dn1_postdivby2_clk", pll_14nm->id);
+ 
+@@ -991,11 +969,8 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	hws[num++] = hw;
+ 	provided_clocks[DSI_PIXEL_PLL_CLK]	= hw;
+ 
+-	pll_14nm->num_hws = num;
+-
+ 	return 0;
+ }
+ 
+@@ -1184,7 +1159,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
+ 		.pll_init = dsi_pll_14nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_14nm_destroy,
+ 		.save_state = dsi_pll_14nm_save_state,
+ 		.restore_state = dsi_pll_14nm_restore_state,
+ 		.disable_seq = dsi_pll_14nm_disable_seq,
+@@ -1211,7 +1185,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
+ 		.pll_init = dsi_pll_14nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_14nm_destroy,
+ 		.save_state = dsi_pll_14nm_save_state,
+ 		.restore_state = dsi_pll_14nm_restore_state,
+ 		.disable_seq = dsi_pll_14nm_disable_seq,
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+index 3446be318648..3e9b7949b038 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+@@ -74,10 +74,6 @@ struct dsi_pll_28nm {
+ 
+ 	int vco_delay;
+ 
+-	/* private clocks: */
+-	struct clk *clks[NUM_DSI_CLOCKS_MAX];
+-	u32 num_clks;
+-
+ 	struct pll_28nm_cached_state cached_state;
+ };
+ 
+@@ -486,15 +482,6 @@ static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
+ 	return 0;
+ }
+ 
+-static void dsi_pll_28nm_destroy(struct msm_dsi_pll *pll)
+-{
+-	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
+-
+-	msm_dsi_pll_helper_unregister_clks(pll_28nm->clks, pll_28nm->num_clks);
+-
+-	pll_28nm->num_clks = 0;
+-}
+-
+ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **provided_clocks)
+ {
+ 	char clk_name[32], parent1[32], parent2[32], vco_name[32];
+@@ -506,53 +493,63 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 		.ops = &clk_ops_dsi_pll_28nm_vco,
+ 	};
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	struct clk **clks = pll_28nm->clks;
+-	int num = 0;
++	struct clk_hw *hw;
++	int ret;
+ 
+ 	DBG("%d", pll_28nm->id);
+ 
+ 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	pll_28nm->base.clk_hw.init = &vco_init;
+-	clks[num++] = clk_register(dev, &pll_28nm->base.clk_hw);
++	ret = devm_clk_hw_register(dev, &pll_28nm->base.clk_hw);
++	if (ret)
++		return ret;
+ 
+ 	snprintf(clk_name, 32, "dsi%danalog_postdiv_clk", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%dvco_clk", pll_28nm->id);
+-	clks[num++] = clk_register_divider(dev, clk_name,
++	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 			parent1, CLK_SET_RATE_PARENT,
+ 			pll_28nm->mmio +
+ 			REG_DSI_28nm_PHY_PLL_POSTDIV1_CFG,
+ 			0, 4, 0, NULL);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
+ 
+ 	snprintf(clk_name, 32, "dsi%dindirect_path_div2_clk", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%danalog_postdiv_clk", pll_28nm->id);
+-	clks[num++] = clk_register_fixed_factor(dev, clk_name,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name,
+ 			parent1, CLK_SET_RATE_PARENT,
+ 			1, 2);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
+ 
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%dvco_clk", pll_28nm->id);
+-	clks[num++] = clk_register_divider(dev, clk_name,
++	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				parent1, 0, pll_28nm->mmio +
+ 				REG_DSI_28nm_PHY_PLL_POSTDIV3_CFG,
+ 				0, 8, 0, NULL);
+-	provided_clocks[DSI_PIXEL_PLL_CLK] = __clk_get_hw(clks[num - 1]);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
+ 
+ 	snprintf(clk_name, 32, "dsi%dbyte_mux", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	snprintf(parent2, 32, "dsi%dindirect_path_div2_clk", pll_28nm->id);
+-	clks[num++] = clk_register_mux(dev, clk_name,
++	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 			((const char *[]){
+ 				parent1, parent2
+ 			}), 2, CLK_SET_RATE_PARENT, pll_28nm->mmio +
+ 			REG_DSI_28nm_PHY_PLL_VREG_CFG, 1, 1, 0, NULL);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
+ 
+ 	snprintf(clk_name, 32, "dsi%dpllbyte", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%dbyte_mux", pll_28nm->id);
+-	clks[num++] = clk_register_fixed_factor(dev, clk_name,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name,
+ 				parent1, CLK_SET_RATE_PARENT, 1, 4);
+-	provided_clocks[DSI_BYTE_PLL_CLK] = __clk_get_hw(clks[num - 1]);
+-
+-	pll_28nm->num_clks = num;
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+ 
+ 	return 0;
+ }
+@@ -758,7 +755,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs = {
+ 		.pll_init = dsi_pll_28nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_28nm_destroy,
+ 		.save_state = dsi_pll_28nm_save_state,
+ 		.restore_state = dsi_pll_28nm_restore_state,
+ 		.disable_seq = dsi_pll_28nm_disable_seq,
+@@ -785,7 +781,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs = {
+ 		.pll_init = dsi_pll_28nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_28nm_destroy,
+ 		.save_state = dsi_pll_28nm_save_state,
+ 		.restore_state = dsi_pll_28nm_restore_state,
+ 		.disable_seq = dsi_pll_28nm_disable_seq,
+@@ -812,7 +807,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs = {
+ 		.pll_init = dsi_pll_28nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_28nm_destroy,
+ 		.save_state = dsi_pll_28nm_save_state,
+ 		.restore_state = dsi_pll_28nm_restore_state,
+ 		.disable_seq = dsi_pll_28nm_disable_seq,
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+index c4b433790cfb..45b2bf482392 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+@@ -64,13 +64,6 @@ struct dsi_pll_28nm {
+ 	struct platform_device *pdev;
+ 	void __iomem *mmio;
+ 
+-	/* custom byte clock divider */
+-	struct clk_bytediv *bytediv;
+-
+-	/* private clocks: */
+-	struct clk *clks[NUM_DSI_CLOCKS_MAX];
+-	u32 num_clks;
+-
+ 	struct pll_28nm_cached_state cached_state;
+ };
+ 
+@@ -368,13 +361,6 @@ static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
+ 	return 0;
+ }
+ 
+-static void dsi_pll_28nm_destroy(struct msm_dsi_pll *pll)
+-{
+-	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
+-
+-	msm_dsi_pll_helper_unregister_clks(pll_28nm->clks, pll_28nm->num_clks);
+-}
+-
+ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **provided_clocks)
+ {
+ 	char *clk_name, *parent_name, *vco_name;
+@@ -385,10 +371,10 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 		.ops = &clk_ops_dsi_pll_28nm_vco,
+ 	};
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	struct clk **clks = pll_28nm->clks;
++	struct clk_hw *hw;
+ 	struct clk_bytediv *bytediv;
+ 	struct clk_init_data bytediv_init = { };
+-	int num = 0;
++	int ret;
+ 
+ 	DBG("%d", pll_28nm->id);
+ 
+@@ -404,14 +390,14 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 	if (!clk_name)
+ 		return -ENOMEM;
+ 
+-	pll_28nm->bytediv = bytediv;
+-
+ 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	vco_init.name = vco_name;
+ 
+ 	pll_28nm->base.clk_hw.init = &vco_init;
+ 
+-	clks[num++] = clk_register(dev, &pll_28nm->base.clk_hw);
++	ret = devm_clk_hw_register(dev, &pll_28nm->base.clk_hw);
++	if (ret)
++		return ret;
+ 
+ 	/* prepare and register bytediv */
+ 	bytediv->hw.init = &bytediv_init;
+@@ -427,18 +413,20 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 	bytediv_init.num_parents = 1;
+ 
+ 	/* DIV2 */
+-	clks[num++] = clk_register(dev, &bytediv->hw);
+-	provided_clocks[DSI_BYTE_PLL_CLK] = __clk_get_hw(clks[num - 1]);
++	ret = devm_clk_hw_register(dev, &bytediv->hw);
++	if (ret)
++		return ret;
++	provided_clocks[DSI_BYTE_PLL_CLK] = &bytediv->hw;
+ 
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_28nm->id);
+ 	/* DIV3 */
+-	clks[num++] = clk_register_divider(dev, clk_name,
++	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				parent_name, 0, pll_28nm->mmio +
+ 				REG_DSI_28nm_8960_PHY_PLL_CTRL_10,
+ 				0, 8, 0, NULL);
+-	provided_clocks[DSI_PIXEL_PLL_CLK] = __clk_get_hw(clks[num - 1]);
+-
+-	pll_28nm->num_clks = num;
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
+ 
+ 	return 0;
+ }
+@@ -662,7 +650,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs = {
+ 		.pll_init = dsi_pll_28nm_8960_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_28nm_destroy,
+ 		.save_state = dsi_pll_28nm_save_state,
+ 		.restore_state = dsi_pll_28nm_restore_state,
+ 		.disable_seq = dsi_pll_28nm_disable_seq,
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index 0b601afa9e49..c482e51d1bee 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -103,15 +103,6 @@ struct dsi_pll_7nm {
+ 	struct dsi_pll_config pll_configuration;
+ 	struct dsi_pll_regs reg_setup;
+ 
+-	/* private clocks: */
+-	struct clk_hw *out_div_clk_hw;
+-	struct clk_hw *bit_clk_hw;
+-	struct clk_hw *byte_clk_hw;
+-	struct clk_hw *by_2_bit_clk_hw;
+-	struct clk_hw *post_out_div_clk_hw;
+-	struct clk_hw *pclk_mux_hw;
+-	struct clk_hw *out_dsiclk_hw;
+-
+ 	struct pll_7nm_cached_state cached_state;
+ 
+ 	enum msm_dsi_phy_usecase uc;
+@@ -639,22 +630,6 @@ static int dsi_pll_7nm_set_usecase(struct msm_dsi_pll *pll,
+ 	return 0;
+ }
+ 
+-static void dsi_pll_7nm_destroy(struct msm_dsi_pll *pll)
+-{
+-	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(pll);
+-
+-	DBG("DSI PLL%d", pll_7nm->id);
+-
+-	clk_hw_unregister_divider(pll_7nm->out_dsiclk_hw);
+-	clk_hw_unregister_mux(pll_7nm->pclk_mux_hw);
+-	clk_hw_unregister_fixed_factor(pll_7nm->post_out_div_clk_hw);
+-	clk_hw_unregister_fixed_factor(pll_7nm->by_2_bit_clk_hw);
+-	clk_hw_unregister_fixed_factor(pll_7nm->byte_clk_hw);
+-	clk_hw_unregister_divider(pll_7nm->bit_clk_hw);
+-	clk_hw_unregister_divider(pll_7nm->out_div_clk_hw);
+-	clk_hw_unregister(&pll_7nm->base.clk_hw);
+-}
+-
+ /*
+  * The post dividers and mux clocks are created using the standard divider and
+  * mux API. Unlike the 14nm PHY, the slave PLL doesn't need its dividers/mux
+@@ -681,30 +656,28 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
+ 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_7nm->id);
+ 	pll_7nm->base.clk_hw.init = &vco_init;
+ 
+-	ret = clk_hw_register(dev, &pll_7nm->base.clk_hw);
++	ret = devm_clk_hw_register(dev, &pll_7nm->base.clk_hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	snprintf(clk_name, 32, "dsi%d_pll_out_div_clk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%dvco_clk", pll_7nm->id);
+ 
+-	hw = clk_hw_register_divider(dev, clk_name,
++	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				     parent, CLK_SET_RATE_PARENT,
+ 				     pll_7nm->mmio +
+ 				     REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
+ 				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_base_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->out_div_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pll_bit_clk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_7nm->id);
+ 
+ 	/* BIT CLK: DIV_CTRL_3_0 */
+-	hw = clk_hw_register_divider(dev, clk_name, parent,
++	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     CLK_SET_RATE_PARENT,
+ 				     pll_7nm->phy_cmn_mmio +
+ 				     REG_DSI_7nm_PHY_CMN_CLK_CFG0,
+@@ -712,56 +685,49 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
+ 				     &pll_7nm->postdiv_lock);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_out_div_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->bit_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->id);
+ 
+ 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  CLK_SET_RATE_PARENT, 1, 8);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_bit_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->byte_clk_hw = hw;
+ 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+ 
+ 	snprintf(clk_name, 32, "dsi%d_pll_by_2_bit_clk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->id);
+ 
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_byte_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->by_2_bit_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pll_post_out_div_clk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_7nm->id);
+ 
+-	hw = clk_hw_register_fixed_factor(dev, clk_name, parent,
++	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+ 					  0, 1, 4);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_by_2_bit_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->post_out_div_clk_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_pclk_mux", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->id);
+ 	snprintf(parent2, 32, "dsi%d_pll_by_2_bit_clk", pll_7nm->id);
+ 	snprintf(parent3, 32, "dsi%d_pll_out_div_clk", pll_7nm->id);
+ 	snprintf(parent4, 32, "dsi%d_pll_post_out_div_clk", pll_7nm->id);
+ 
+-	hw = clk_hw_register_mux(dev, clk_name,
++	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 				 ((const char *[]){
+ 				 parent, parent2, parent3, parent4
+ 				 }), 4, 0, pll_7nm->phy_cmn_mmio +
+@@ -769,44 +735,28 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
+ 				 0, 2, 0, NULL);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_post_out_div_clk_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->pclk_mux_hw = hw;
+-
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_7nm->id);
+ 	snprintf(parent, 32, "dsi%d_pclk_mux", pll_7nm->id);
+ 
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+-	hw = clk_hw_register_divider(dev, clk_name, parent,
++	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     0, pll_7nm->phy_cmn_mmio +
+ 					REG_DSI_7nm_PHY_CMN_CLK_CFG0,
+ 				     4, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_7nm->postdiv_lock);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto err_pclk_mux_hw;
++		goto fail;
+ 	}
+ 
+-	pll_7nm->out_dsiclk_hw = hw;
+ 	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
+ 
+ 	return 0;
+ 
+-err_pclk_mux_hw:
+-	clk_hw_unregister_mux(pll_7nm->pclk_mux_hw);
+-err_post_out_div_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_7nm->post_out_div_clk_hw);
+-err_by_2_bit_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_7nm->by_2_bit_clk_hw);
+-err_byte_clk_hw:
+-	clk_hw_unregister_fixed_factor(pll_7nm->byte_clk_hw);
+-err_bit_clk_hw:
+-	clk_hw_unregister_divider(pll_7nm->bit_clk_hw);
+-err_out_div_clk_hw:
+-	clk_hw_unregister_divider(pll_7nm->out_div_clk_hw);
+-err_base_clk_hw:
+-	clk_hw_unregister(&pll_7nm->base.clk_hw);
++fail:
+ 
+ 	return ret;
+ }
+@@ -1093,7 +1043,6 @@ const struct msm_dsi_phy_cfg dsi_phy_7nm_cfgs = {
+ 		.pll_init = dsi_pll_7nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_7nm_destroy,
+ 		.save_state = dsi_pll_7nm_save_state,
+ 		.restore_state = dsi_pll_7nm_restore_state,
+ 	},
+@@ -1119,7 +1068,6 @@ const struct msm_dsi_phy_cfg dsi_phy_7nm_8150_cfgs = {
+ 		.pll_init = dsi_pll_7nm_init,
+ 	},
+ 	.pll_ops = {
+-		.destroy = dsi_pll_7nm_destroy,
+ 		.save_state = dsi_pll_7nm_save_state,
+ 		.restore_state = dsi_pll_7nm_restore_state,
+ 	},
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
+index 914e95435dcb..96de79b94f1b 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
+@@ -57,26 +57,9 @@ void msm_dsi_pll_helper_clk_unprepare(struct clk_hw *hw)
+ 	pll->pll_on = false;
+ }
+ 
+-void msm_dsi_pll_helper_unregister_clks(struct clk **clks, u32 num_clks)
+-{
+-	if (!num_clks || !clks)
+-		return;
+-
+-	do {
+-		clk_unregister(clks[--num_clks]);
+-		clks[num_clks] = NULL;
+-	} while (num_clks);
+-}
+-
+ /*
+  * DSI PLL API
+  */
+-void msm_dsi_pll_destroy(struct msm_dsi_pll *pll)
+-{
+-	if (pll->cfg->pll_ops.destroy)
+-		pll->cfg->pll_ops.destroy(pll);
+-}
+-
+ void msm_dsi_pll_save_state(struct msm_dsi_pll *pll)
+ {
+ 	if (pll->cfg->pll_ops.save_state) {
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
+index d819a886beb8..c94f079b8275 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
+@@ -11,8 +11,6 @@
+ 
+ #include "dsi.h"
+ 
+-#define NUM_DSI_CLOCKS_MAX	6
+-
+ struct msm_dsi_pll {
+ 	struct clk_hw	clk_hw;
+ 	bool		pll_on;
+@@ -54,8 +52,6 @@ long msm_dsi_pll_helper_clk_round_rate(struct clk_hw *hw,
+ 		unsigned long rate, unsigned long *parent_rate);
+ int msm_dsi_pll_helper_clk_prepare(struct clk_hw *hw);
+ void msm_dsi_pll_helper_clk_unprepare(struct clk_hw *hw);
+-/* misc */
+-void msm_dsi_pll_helper_unregister_clks(struct clk **clks, u32 num_clks);
+ 
+ #endif /* __DSI_PLL_H__ */
+ 
+-- 
+2.30.2
 
