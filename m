@@ -2,85 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705C0C433DB
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Mar 2021 11:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A39C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 00:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3548361972
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Mar 2021 11:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED2AC6194B
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 00:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbhC1Lb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 Mar 2021 07:31:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40720 "EHLO mail.kernel.org"
+        id S230248AbhC2AvR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 Mar 2021 20:51:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:4032 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229577AbhC1LbG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 28 Mar 2021 07:31:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8630B61971;
-        Sun, 28 Mar 2021 11:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616931065;
-        bh=ygvSF2Bvmh+H0Ma+sUc7kwaXVrdd1FF8mhiJ8+JAGfY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=acADhzr0jVnivNqQulEMufS5/dn17nejyQXJ1PwzYDzlN9+67zA8tpuyIl2mXZBfo
-         C6u6XgitRCNszbWow5OAmYxHjOof/VgM86sQ41bAjDq4aX0H/EImyqHwgRmYS+JoVD
-         hKbC/yRNCcKEk+eqP7dQBFEzLYRRJ1RxXzsyvkgJdVscRD9r3ICUMcE35fta5LCPV3
-         zCcOzxDhoya2PKyI7mnjayEIgsje1qqXaaEr/Rdrn1PFC+LoeE6RtrIl+HrYHfEN40
-         rOcf7axb+FDUNyuEtP7RrJ+RcLltbmiHZ5rd0cgsVvR6dwFajqPA4BhB0GR3aaIb+9
-         EZG3Ja1aYL0rQ==
-Received: by pali.im (Postfix)
-        id 1B8E956D; Sun, 28 Mar 2021 13:31:03 +0200 (CEST)
-Date:   Sun, 28 Mar 2021 13:31:02 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
+        id S231643AbhC2AvE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 28 Mar 2021 20:51:04 -0400
+IronPort-SDR: 2DHVheUurMvLjwBU8OHPE6coY4UsMT/KTymeQTIZojbJQzUPevBEY5IYtpN0SG1rbswS/ZflJD
+ RBRURisp5+Jw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9937"; a="191483948"
+X-IronPort-AV: E=Sophos;i="5.81,285,1610438400"; 
+   d="scan'208";a="191483948"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2021 17:51:02 -0700
+IronPort-SDR: 40zU5ISxmkGYAJuyQdJsEfIVD3hYBfGegW7OUK5gd9dlmpnibhAoz9jbRNN8qqvXiD1PYxBKOM
+ 53qDfXEvBYow==
+X-IronPort-AV: E=Sophos;i="5.81,285,1610438400"; 
+   d="scan'208";a="410824156"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.11])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2021 17:50:59 -0700
+Date:   Mon, 29 Mar 2021 08:50:09 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tomasz Maciej Nowak <tmn505@gmail.com>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Andre Heider <a.heider@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        =?utf-8?Q?G=C3=A9rald?= Kerma <gerald@gk2.net>,
-        Konstantin Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH mvebu v3 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210328113102.jk3os7p56kq43yve@pali>
-References: <20210114124032.12765-1-pali@kernel.org>
- <20210222194158.12342-1-pali@kernel.org>
- <20210301192024.tgvp6f5zscbknepo@pali>
- <87a6r8ka6x.fsf@BL-laptop>
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+Subject: Re: [PATCH 5/5] arm: dts: qcom: Add initial DTS file for Samsung
+ Galaxy S III Neo phone
+Message-ID: <20210329005009.GI4176174@shao2-debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87a6r8ka6x.fsf@BL-laptop>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20210326145816.9758-6-bartosz.dudziak@snejp.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Friday 12 March 2021 10:12:06 Gregory CLEMENT wrote:
-> Hello Pali,
-> 
-> > Hello Gregory!
-> >
-> > Patches are the for almost two months and more people have tested them.
-> > They are marked with Fixed/CC-stable tags, they should go also into
-> > stable trees as they are fixing CPU scaling and instability issues.
-> >
-> > Are there any issues with these patches? If not, could you please merge
-> > them for upcoming Linux version?
-> 
-> Actually I am not the maintainer of the clk and cpufreq subsystems, so
-> the only thing I can apply is the device tree relative patch.
-> 
-> Gregory
+Hi Bartosz,
 
-Hello Gregory! Could you please at least review this patches, so other
-maintainers could merge them?
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next v5.12-rc4 next-20210326]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Bartosz-Dudziak/Samsung-Galaxy-S-III-Neo-Initial-DTS/20210326-230134
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+:::::: branch date: 24 hours ago
+:::::: commit date: 24 hours ago
+compiler: arm-linux-gnueabi-gcc (GCC) 9.3.0
+reproduce: make ARCH=arm dtbs_check
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dt.yaml: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0]]}
+   	From schema: /usr/local/lib/python3.9/dist-packages/dtschema/schemas/root-node.yaml
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
