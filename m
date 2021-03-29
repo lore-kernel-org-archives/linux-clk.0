@@ -2,33 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6881C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 15:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 019BDC433C1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 15:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA6A61969
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 15:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C000561968
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 15:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbhC2PRE convert rfc822-to-8bit (ORCPT
+        id S229502AbhC2PSI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Mar 2021 11:17:04 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:48121 "EHLO
+        Mon, 29 Mar 2021 11:18:08 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:33475 "EHLO
         mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhC2PQk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Mar 2021 11:16:40 -0400
-X-Greylist: delayed 1354 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Mar 2021 11:16:40 EDT
+        with ESMTP id S230347AbhC2PSD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Mar 2021 11:18:03 -0400
 Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id CDAA6D00A3;
-        Mon, 29 Mar 2021 14:47:35 +0000 (UTC)
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 2DB4ED1502;
+        Mon, 29 Mar 2021 14:48:28 +0000 (UTC)
 X-Originating-IP: 91.175.115.186
 Received: from localhost (91-175-115-186.subs.proxad.net [91.175.115.186])
         (Authenticated sender: gregory.clement@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 1452BFF811;
-        Mon, 29 Mar 2021 14:47:07 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 47462FF809;
+        Mon, 29 Mar 2021 14:48:05 +0000 (UTC)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -45,14 +44,14 @@ Cc:     Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?utf-8?Q?G=C3=A9rald?= Kerma <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH mvebu v3 04/10] cpufreq: armada-37xx: Fix the AVS value
- for load L1
-In-Reply-To: <20210222194158.12342-5-pali@kernel.org>
+Subject: Re: [PATCH mvebu v3 05/10] clk: mvebu: armada-37xx-periph: Fix
+ switching CPU freq from 250 Mhz to 1 GHz
+In-Reply-To: <20210222194158.12342-6-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
  <20210222194158.12342-1-pali@kernel.org>
- <20210222194158.12342-5-pali@kernel.org>
-Date:   Mon, 29 Mar 2021 16:47:07 +0200
-Message-ID: <871rbyf250.fsf@BL-laptop>
+ <20210222194158.12342-6-pali@kernel.org>
+Date:   Mon, 29 Mar 2021 16:48:04 +0200
+Message-ID: <87y2e6dniz.fsf@BL-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
@@ -62,122 +61,70 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Pali Rohár <pali@kernel.org> writes:
 
-> The original CPU voltage value for load L1 is too low for Armada 37xx SoC
-> when base CPU frequency is 1000 or 1200 MHz. It leads to instabilities
-> where CPU gets stuck soon after dynamic voltage scaling from load L1 to L0.
+> It was observed that the workaround introduced by commit 61c40f35f5cd
+> ("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to
+> 1.2GHz") when base CPU frequency is 1.2 GHz is also required when base
+> CPU frequency is 1 GHz. Otherwise switching CPU frequency directly from
+> L2 (250 MHz) to L0 (1 GHz) causes a crash.
 >
-> Update the CPU voltage value for load L1 accordingly when base frequency is
-> 1000 or 1200 MHz. The minimal L1 value for base CPU frequency 1000 MHz is
-> updated from the original 1.05V to 1.108V and for 1200 MHz is updated to
-> 1.155V. This minimal L1 value is used only in the case when it is lower
-> than value for L0.
->
-> This change fixes CPU instability issues on 1 GHz and 1.2 GHz variants of
-> Espressobin and 1 GHz Turris Mox.
->
-> Marvell previously for 1 GHz variant of Espressobin provided a patch [1]
-> suitable only for their Marvell Linux kernel 4.4 fork which workarounded
-> this issue. Patch forced CPU voltage value to 1.108V in all loads. But
-> such change does not fix CPU instability issues on 1.2 GHz variants of
-> Armada 3720 SoC.
->
-> During testing we come to the conclusion that using 1.108V as minimal
-> value for L1 load makes 1 GHz variants of Espressobin and Turris Mox boards
-> stable. And similarly 1.155V for 1.2 GHz variant of Espressobin.
->
-> These two values 1.108V and 1.155V are documented in Armada 3700 Hardware
-> Specifications as typical initial CPU voltage values.
->
-> Discussion about this issue is also at the Armbian forum [2].
->
-> [1] - https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/dc33b62c90696afb6adc7dbcc4ebbd48bedec269
-> [2] - https://forum.armbian.com/topic/10429-how-to-make-espressobin-v7-stable/
+> When base CPU frequency is just 800 MHz no crashed were observed during
+> switch from L2 to L0.
 >
 > Signed-off-by: Pali Rohár <pali@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 > Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 > Tested-by: Philip Soares <philips@netisense.com>
-> Fixes: 1c3528232f4b ("cpufreq: armada-37xx: Add AVS support")
-> Cc: stable@vger.kernel.org
+> Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+> Cc: stable@vger.kernel.org # 61c40f35f5cd ("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz")
+
 
 Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
 Thanks,
 
 Gregory
+
 > ---
->  drivers/cpufreq/armada-37xx-cpufreq.c | 37 +++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
+>  drivers/clk/mvebu/armada-37xx-periph.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 >
-> diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-> index b8dc6c849579..c7683d447b11 100644
-> --- a/drivers/cpufreq/armada-37xx-cpufreq.c
-> +++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-> @@ -73,6 +73,8 @@
->  #define LOAD_LEVEL_NR	4
->  
->  #define MIN_VOLT_MV 1000
-> +#define MIN_VOLT_MV_FOR_L1_1000MHZ 1108
-> +#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
->  
->  /*  AVS value for the corresponding voltage (in mV) */
->  static int avs_map[] = {
-> @@ -208,6 +210,8 @@ static u32 armada_37xx_avs_val_match(int target_vm)
->   * - L2 & L3 voltage should be about 150mv smaller than L0 voltage.
->   * This function calculates L1 & L2 & L3 AVS values dynamically based
->   * on L0 voltage and fill all AVS values to the AVS value table.
-> + * When base CPU frequency is 1000 or 1200 MHz then there is additional
-> + * minimal avs value for load L1.
->   */
->  static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
->  						struct armada_37xx_dvfs *dvfs)
-> @@ -239,6 +243,19 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
->  		for (load_level = 1; load_level < LOAD_LEVEL_NR; load_level++)
->  			dvfs->avs[load_level] = avs_min;
->  
-> +		/*
-> +		 * Set the avs values for load L0 and L1 when base CPU frequency
-> +		 * is 1000/1200 MHz to its typical initial values according to
-> +		 * the Armada 3700 Hardware Specifications.
-> +		 */
-> +		if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-> +			if (dvfs->cpu_freq_max >= 1200*1000*1000)
-> +				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
-> +			else
-> +				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
-> +			dvfs->avs[0] = dvfs->avs[1] = avs_min;
-> +		}
-> +
->  		return;
->  	}
->  
-> @@ -258,6 +275,26 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
->  	target_vm = avs_map[l0_vdd_min] - 150;
->  	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
->  	dvfs->avs[2] = dvfs->avs[3] = armada_37xx_avs_val_match(target_vm);
-> +
-> +	/*
-> +	 * Fix the avs value for load L1 when base CPU frequency is 1000/1200 MHz,
-> +	 * otherwise the CPU gets stuck when switching from load L1 to load L0.
-> +	 * Also ensure that avs value for load L1 is not higher than for L0.
-> +	 */
-> +	if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-> +		u32 avs_min_l1;
-> +
-> +		if (dvfs->cpu_freq_max >= 1200*1000*1000)
-> +			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
-> +		else
-> +			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
-> +
-> +		if (avs_min_l1 > dvfs->avs[0])
-> +			avs_min_l1 = dvfs->avs[0];
-> +
-> +		if (dvfs->avs[1] < avs_min_l1)
-> +			dvfs->avs[1] = avs_min_l1;
-> +	}
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 6507bd2c5f31..b15e177bea7e 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -487,8 +487,10 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
 >  }
 >  
->  static void __init armada37xx_cpufreq_avs_setup(struct regmap *base,
+>  /*
+> - * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> - * respectively) to L0 frequency (1.2 Ghz) requires a significant
+> + * Workaround when base CPU frequnecy is 1000 or 1200 MHz
+> + *
+> + * Switching the CPU from the L2 or L3 frequencies (250/300 or 200 MHz
+> + * respectively) to L0 frequency (1/1.2 GHz) requires a significant
+>   * amount of time to let VDD stabilize to the appropriate
+>   * voltage. This amount of time is large enough that it cannot be
+>   * covered by the hardware countdown register. Due to this, the CPU
+> @@ -498,15 +500,15 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+>   * To work around this problem, we prevent switching directly from the
+>   * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+>   * frequency in-between. The sequence therefore becomes:
+> - * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> + * 1. First switch from L2/L3 (200/250/300 MHz) to L1 (500/600 MHz)
+>   * 2. Sleep 20ms for stabling VDD voltage
+> - * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+> + * 3. Then switch from L1 (500/600 MHz) to L0 (1000/1200 MHz).
+>   */
+>  static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
+>  {
+>  	unsigned int cur_level;
+>  
+> -	if (rate != 1200 * 1000 * 1000)
+> +	if (rate < 1000 * 1000 * 1000)
+>  		return;
+>  
+>  	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
 > -- 
 > 2.20.1
 >
