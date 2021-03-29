@@ -2,84 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0D9C433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 19:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69020C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 19:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F41F961981
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 19:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20D5B61919
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 19:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231765AbhC2TO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Mar 2021 15:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55620 "EHLO mail.kernel.org"
+        id S230224AbhC2TSR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Mar 2021 15:18:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230271AbhC2TOH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Mar 2021 15:14:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 36C9461936;
-        Mon, 29 Mar 2021 19:14:03 +0000 (UTC)
+        id S229955AbhC2TSD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Mar 2021 15:18:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8A9FA61936;
+        Mon, 29 Mar 2021 19:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617045243;
-        bh=ToS0MidpfphiNtS55x67RiSvWClxRs/ZhbXeO1EBtAw=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=oQfZOPcCqmdWePI7Lw64BaJIMp8Fg02xLSjbmILupDBGx799hmQd5C/AhhnXHzQPh
-         Fo5TIF3XxWugMx0k7kmS8Ub6sBSGHfY8Pu5uk3SgFlHTuHOhPS0/l2ulNsQzLRsyry
-         iQUpHuII7FhbQZDUyDqx5our/WCk8VKvumz8VEwUPLkHxyZoFrJ+iG5/NBTnpIgHhe
-         ba8T5QPdvcUOTLUrJhsIQt0T3nqIJYvxBhwZ9gmmxDPeT8QDBvAgZcJoNndcspOyw8
-         RvPJunEY33GrQTQsxgpSTYG+qxr+qMtywMxS3CcMthZ2PpH3T2TYfJFvaAew8UQeGF
-         MW7BaGRcOa81g==
+        s=k20201202; t=1617045482;
+        bh=Vx8l5nUt6KRnMV7obic7+pvnXPSgoQ5HQnML0CGmV7Y=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=myLuX4TUnDEvlW63nMzOXUTCVbISHpLaBO7COIq5U6UTohnTkJiehgCayDNVx9DTg
+         asHH2jKtoZX+vvn8fI22d03i83KjXBudXGbvzrJxjxTVgOdEckxt2sjYhJ8djnVqMx
+         nrFxwVpwj/ZbKsXnmPorL1aH+TUYhI/+HKPhq8XRQUhD1dlm1ijKb4tu9KwgpWuJ9F
+         JZNlceAOtAXNB3MdYBEflYNbvpPIBefeRf4uT+GDgVAGRKtpgmNa4fN7ByWuWqZsfM
+         VUAbOeYPbiYIxBu8Ueff4axQjhbcMJoDtnj1Vr+/bVvh68OmrJ9sZgj86TSYjTTLHG
+         rkZOOzq7hZggQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <91d016e59bab9d9175168a63e7bcd81fdb69b549.1615954046.git.greentime.hu@sifive.com>
-References: <cover.1615954045.git.greentime.hu@sifive.com> <91d016e59bab9d9175168a63e7bcd81fdb69b549.1615954046.git.greentime.hu@sifive.com>
-Subject: Re: [PATCH v2 2/6] clk: sifive: Use reset-simple in prci driver for PCIe driver
+In-Reply-To: <20210319090737.2710936-1-geert+renesas@glider.be>
+References: <20210319090737.2710936-1-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.13
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     alex.dewar90@gmail.com, aou@eecs.berkeley.edu, bhelgaas@google.com,
-        devicetree@vger.kernel.org, erik.danie@sifive.com,
-        greentime.hu@sifive.com, hayashi.kunihiko@socionext.com,
-        helgaas@kernel.org, hes@sifive.com, jh80.chung@samsung.com,
-        khilman@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-riscv@lists.infradead.org, lorenzo.pieralisi@arm.com,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org,
-        vidyas@nvidia.com, zong.li@sifive.com
-Date:   Mon, 29 Mar 2021 12:14:02 -0700
-Message-ID: <161704524201.3012082.13807741329367593907@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 29 Mar 2021 12:18:01 -0700
+Message-ID: <161704548101.3012082.5234092232201550637@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Greentime Hu (2021-03-17 23:08:09)
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 71ab75a46491..f094df93d911 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -173,7 +173,7 @@ config RESET_SCMI
-> =20
->  config RESET_SIMPLE
->         bool "Simple Reset Controller Driver" if COMPILE_TEST
-> -       default ARCH_AGILEX || ARCH_ASPEED || ARCH_BITMAIN || ARCH_REALTE=
-K || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARC
-> +       default ARCH_AGILEX || ARCH_ASPEED || ARCH_BITMAIN || ARCH_REALTE=
-K || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARC || RISCV
+Quoting Geert Uytterhoeven (2021-03-19 02:07:37)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab=
+15:
+>=20
+>   Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.13-tag1
+>=20
+> for you to fetch changes up to 0eedab655ec1817d450085dcb12219726cb415ff:
+>=20
+>   clk: renesas: r8a779a0: Add CMT clocks (2021-03-12 09:23:24 +0100)
+>=20
+> ----------------------------------------------------------------
 
-This conflicts. Can this default be part of the riscv defconfig instead?
-
->         help
->           This enables a simple reset controller driver for reset lines t=
-hat
->           that can be asserted and deasserted by toggling bits in a conti=
-guous,
-> @@ -187,6 +187,7 @@ config RESET_SIMPLE
->            - RCC reset controller in STM32 MCUs
->            - Allwinner SoCs
->            - ZTE's zx2967 family
-> +          - SiFive FU740 SoCs
-> =20
->  config RESET_STM32MP157
->         bool "STM32MP157 Reset Driver" if COMPILE_TEST
+Thanks. Pulled into clk-next
