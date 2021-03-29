@@ -2,66 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDEDC433C1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 21:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7ABC433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 21:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5526A61988
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 21:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF65261989
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 21:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbhC2VIo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Mar 2021 17:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
+        id S230329AbhC2Voa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Mar 2021 17:44:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230161AbhC2VIg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Mar 2021 17:08:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 154EC61987;
-        Mon, 29 Mar 2021 21:08:36 +0000 (UTC)
+        id S230100AbhC2Vo3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Mar 2021 17:44:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0349261989;
+        Mon, 29 Mar 2021 21:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617052116;
-        bh=H7oFD+Wy16D6yioU0LA4DZWPK5qlhfgz520Z+alPqNo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=g48/jWSZO9tmh/95faqO1JanUlisIh6Wv6TCDK0VvK2pVaQf4jqDxxz/FLPplnWBF
-         lfSr/KWd/jH/zd+zbtNHMsgb67/XPmnZdhYQXZdhtRbEPAbRxO17ksP5IVvrjGNAVE
-         H0wQSVrK45dybbtt+DtDnP/nd0gYbgN+95oDiuQT43fYZWUGswUNZLfoQxIRDg7JFH
-         f5fbv8V4EKHEtfgY2a5AWUqFz9KpF5SpTQMSKJl6eQL0XIeXv1O01Q6QLSCCJKp/hi
-         S/vrKEBNk7cRyQtcQAQP3DpFgjiWVpPE2/dtFhsVbPCWcm4MnwExHhNezWHj94ylnw
-         u3m3n98nr6+LA==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1617054269;
+        bh=EYxKY5cj+eXScS9penVqhmJaLofkZ6a2MhIudLVrLbw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fId5cUg6e38V8CVqnpGRCjIJuezOj6rIbvO791peZ1fZyLrJRBRjFEZShwVRvLC7j
+         eS5KFCuERQWZezoW4pu7shHusfULQ0L11L+P9jQzoYTDzalW2mGQCNx4wkFmTyA1iO
+         ikSv0d7nQmDuJdlVVe1eR5bT6SNwoCpY6YIMnrNH1jOFQJQy3a3xhniaf1roxxHvil
+         ergCGhO80Ka/i+ivPPj+bgYeO1SIQA/Oa80zFtRGZRo+1dHCEi2UOf8A8y5raJl0+B
+         Ka6Z2DXOdbd0rBeo/04rtg7CUB7MVY6w6rIIunDnN/2EUOG8oiv5SSBACU3otvh6JB
+         o5ZxftfPi6FjA==
+Date:   Mon, 29 Mar 2021 23:44:24 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tomasz Maciej Nowak <tmn505@gmail.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andre Heider <a.heider@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?B?R8OpcmFsZA==?= Kerma <gerald@gk2.net>,
+        Konstantin Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH mvebu v2 09/10] cpufreq: armada-37xx: Remove
+ cur_frequency variable
+Message-ID: <20210329234424.1f6fdb2c@thinkpad>
+In-Reply-To: <87mtumdmyr.fsf@BL-laptop>
+References: <20210114124032.12765-1-pali@kernel.org>
+        <20210114124032.12765-10-pali@kernel.org>
+        <87mtumdmyr.fsf@BL-laptop>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1616809265-11912-1-git-send-email-tdas@codeaurora.org>
-References: <1616809265-11912-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v2] clk: qcom: camcc: Update the clock ops for the SC7180
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 29 Mar 2021 14:08:34 -0700
-Message-ID: <161705211465.3012082.15103893459170781797@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2021-03-26 18:41:05)
-> Some of the RCGs could be always ON from the XO source and could be used
-> as the clock on signal for the GDSC to be operational. In the cases where
-> the GDSCs are parked at different source with the source clock disabled,
-> it could lead to the GDSC to be stuck at ON/OFF during gdsc disable/enabl=
-e.
-> Thus park the RCGs at XO during clock disable and update the rcg_ops to
-> use the shared_ops.
->=20
-> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller drive=
-r for SC7180")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+On Mon, 29 Mar 2021 17:00:12 +0200
+Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
-Applied to clk-fixes
+> Pali Roh=C3=A1r <pali@kernel.org> writes:
+>=20
+> > Variable cur_frequency in armada37xx_cpufreq_driver_init() is unused.
+> >
+> > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org> =20
+>=20
+> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Gregory, THX for the acks.
+
+Will you be merging these patches or should this be done by
+someone else? cpufreq maintainers maybe?
+
+Marek
