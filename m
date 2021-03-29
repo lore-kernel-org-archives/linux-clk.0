@@ -2,120 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B4BC433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 13:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BD3C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 14:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1259861982
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 13:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07C760234
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Mar 2021 14:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231696AbhC2NBm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Mar 2021 09:01:42 -0400
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:34500 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbhC2NBZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Mar 2021 09:01:25 -0400
-Received: by mail-lf1-f50.google.com with SMTP id i26so18250463lfl.1;
-        Mon, 29 Mar 2021 06:01:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=egthqhzn5ZpLM0FjZqjc5wIxAZteYh+EG3fvKfyV1Xo=;
-        b=fqdNo0jrNOKjK/JBcKWSZuirMuuOPQ4x9dvESe8QTn85IJxTSzHGDKoD4bqggFXeJN
-         20s26mbZ5nVtdgV8dGCNinuN/lSJVxBZaNX+jTl0u2jspT3aXhF7jkUFPUScYeHnyjSY
-         74nrVL4G8pr0HZjKO6dffiAdhp6YJ3n4m5q83zDyvJGOMf4/pF/WdgUnuiEEsyd+KCJA
-         rjobmB1gCVcnqAhbQSoxwqosbfq9aZgX9AnC0gdzbl2tKwGtN2PvpZDDKjOBmgKUEftc
-         TYx3/ljyO2xHj6YJ7UpVwvFlDeiShS5RYRtMODfPdd7573L+a8bmxsrXbifXxAiaFE6X
-         ooTQ==
-X-Gm-Message-State: AOAM533fFCmXlevapZAofZc7EeX7TxD5Oh9O6+PR6RnoV1CTTXIb9nzm
-        1bCrHG15ioJIAHZ/W4giAmk=
-X-Google-Smtp-Source: ABdhPJz/t/pzX0cY5Mt6X3cYJF2gO1TnhOQmbCB1RUE8aruUyLPGUXQ5PP5yS/WJgA6wlf8swZURAw==
-X-Received: by 2002:a05:6512:1116:: with SMTP id l22mr16043625lfg.61.1617022883230;
-        Mon, 29 Mar 2021 06:01:23 -0700 (PDT)
-Received: from localhost.localdomain (dc7vkhyyyyyyyyyyyyyby-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::2])
-        by smtp.gmail.com with ESMTPSA id f11sm1917198lfm.230.2021.03.29.06.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Mar 2021 06:01:22 -0700 (PDT)
-Date:   Mon, 29 Mar 2021 16:01:15 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        id S230220AbhC2OqF convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Mar 2021 10:46:05 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:63763 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229628AbhC2OqB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Mar 2021 10:46:01 -0400
+X-Originating-IP: 91.175.115.186
+Received: from localhost (91-175-115-186.subs.proxad.net [91.175.115.186])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 328E04000B;
+        Mon, 29 Mar 2021 14:45:54 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH v5 19/19] MAINTAINERS: Add ROHM BD71815AGW
-Message-ID: <95272c5cf3919f725ce96f2cf3054fd2bdbeb06a.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tomasz Maciej Nowak <tmn505@gmail.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andre Heider <a.heider@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?utf-8?Q?G=C3=A9rald?= Kerma <gerald@gk2.net>,
+        Konstantin Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH mvebu v3 02/10] cpufreq: armada-37xx: Fix setting TBG
+ parent for load levels
+In-Reply-To: <20210222194158.12342-3-pali@kernel.org>
+References: <20210114124032.12765-1-pali@kernel.org>
+ <20210222194158.12342-1-pali@kernel.org>
+ <20210222194158.12342-3-pali@kernel.org>
+Date:   Mon, 29 Mar 2021 16:45:53 +0200
+Message-ID: <877dlqf272.fsf@BL-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add maintainer entries for ROHM BD71815AGW drivers.
-New regulator and GPIO drivers were introduced for these PMICs.
+Pali Rohár <pali@kernel.org> writes:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
-Changes since v3:
- - No changes
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+> From: Marek Behún <kabel@kernel.org>
+>
+> With CPU frequency determining software [1] we have discovered that
+> after this driver does one CPU frequency change, the base frequency of
+> the CPU is set to the frequency of TBG-A-P clock, instead of the TBG
+> that is parent to the CPU.
+>
+> This can be reproduced on EspressoBIN and Turris MOX:
+>   cd /sys/devices/system/cpu/cpufreq/policy0
+>   echo powersave >scaling_governor
+>   echo performance >scaling_governor
+>
+> Running the mhz tool before this driver is loaded reports 1000 MHz, and
+> after loading the driver and executing commands above the tool reports
+> 800 MHz.
+>
+> The change of TBG clock selector is supposed to happen in function
+> armada37xx_cpufreq_dvfs_setup. Before the function returns, it does
+> this:
+>   parent = clk_get_parent(clk);
+>   clk_set_parent(clk, parent);
+>
+> The armada-37xx-periph clock driver has the .set_parent method
+> implemented correctly for this, so if the method was actually called,
+> this would work. But since the introduction of the common clock
+> framework in commit b2476490ef11 ("clk: introduce the common clock..."),
+> the clk_set_parent function checks whether the parent is actually
+> changing, and if the requested new parent is same as the old parent
+> (which is obviously the case for the code above), the .set_parent method
+> is not called at all.
+>
+> This patch fixes this issue by filling the correct TBG clock selector
+> directly in the armada37xx_cpufreq_dvfs_setup during the filling of
+> other registers at the same address. But the determination of CPU TBG
+> index cannot be done via the common clock framework, therefore we need
+> to access the North Bridge Peripheral Clock registers directly in this
+> driver.
+>
+> [1] https://github.com/wtarreau/mhz
+>
+> Signed-off-by: Marek Behún <kabel@kernel.org>
+> Tested-by: Pali Rohár <pali@kernel.org>
+> Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+> Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
+> Tested-by: Philip Soares <philips@netisense.com>
+> Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
+> Cc: stable@vger.kernel.org
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9e876927c60d..c251af6bfc03 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15452,18 +15452,21 @@ F:	Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
- F:	Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd70528.c
-+F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
- F:	drivers/mfd/rohm-bd70528.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/power/supply/bd70528-charger.c
- F:	drivers/regulator/bd70528-regulator.c
-+F:	drivers/regulator/bd71815-regulator.c
- F:	drivers/regulator/bd71828-regulator.c
- F:	drivers/regulator/bd718x7-regulator.c
- F:	drivers/regulator/rohm-regulator.c
- F:	drivers/rtc/rtc-bd70528.c
- F:	drivers/watchdog/bd70528_wdt.c
- F:	include/linux/mfd/rohm-bd70528.h
-+F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
- F:	include/linux/mfd/rohm-generic.h
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Thanks,
+
+Gregory
+> ---
+>  drivers/cpufreq/armada-37xx-cpufreq.c | 35 ++++++++++++++++++---------
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+> index b4af4094309b..b8dc6c849579 100644
+> --- a/drivers/cpufreq/armada-37xx-cpufreq.c
+> +++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+> @@ -25,6 +25,10 @@
+>  
+>  #include "cpufreq-dt.h"
+>  
+> +/* Clk register set */
+> +#define ARMADA_37XX_CLK_TBG_SEL		0
+> +#define ARMADA_37XX_CLK_TBG_SEL_CPU_OFF	22
+> +
+>  /* Power management in North Bridge register set */
+>  #define ARMADA_37XX_NB_L0L1	0x18
+>  #define ARMADA_37XX_NB_L2L3	0x1C
+> @@ -120,10 +124,15 @@ static struct armada_37xx_dvfs *armada_37xx_cpu_freq_info_get(u32 freq)
+>   * will be configured then the DVFS will be enabled.
+>   */
+>  static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
+> -						 struct clk *clk, u8 *divider)
+> +						 struct regmap *clk_base, u8 *divider)
+>  {
+> +	u32 cpu_tbg_sel;
+>  	int load_lvl;
+> -	struct clk *parent;
+> +
+> +	/* Determine to which TBG clock is CPU connected */
+> +	regmap_read(clk_base, ARMADA_37XX_CLK_TBG_SEL, &cpu_tbg_sel);
+> +	cpu_tbg_sel >>= ARMADA_37XX_CLK_TBG_SEL_CPU_OFF;
+> +	cpu_tbg_sel &= ARMADA_37XX_NB_TBG_SEL_MASK;
+>  
+>  	for (load_lvl = 0; load_lvl < LOAD_LEVEL_NR; load_lvl++) {
+>  		unsigned int reg, mask, val, offset = 0;
+> @@ -142,6 +151,11 @@ static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
+>  		mask = (ARMADA_37XX_NB_CLK_SEL_MASK
+>  			<< ARMADA_37XX_NB_CLK_SEL_OFF);
+>  
+> +		/* Set TBG index, for all levels we use the same TBG */
+> +		val = cpu_tbg_sel << ARMADA_37XX_NB_TBG_SEL_OFF;
+> +		mask = (ARMADA_37XX_NB_TBG_SEL_MASK
+> +			<< ARMADA_37XX_NB_TBG_SEL_OFF);
+> +
+>  		/*
+>  		 * Set cpu divider based on the pre-computed array in
+>  		 * order to have balanced step.
+> @@ -160,14 +174,6 @@ static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
+>  
+>  		regmap_update_bits(base, reg, mask, val);
+>  	}
+> -
+> -	/*
+> -	 * Set cpu clock source, for all the level we keep the same
+> -	 * clock source that the one already configured. For this one
+> -	 * we need to use the clock framework
+> -	 */
+> -	parent = clk_get_parent(clk);
+> -	clk_set_parent(clk, parent);
+>  }
+>  
+>  /*
+> @@ -358,11 +364,16 @@ static int __init armada37xx_cpufreq_driver_init(void)
+>  	struct platform_device *pdev;
+>  	unsigned long freq;
+>  	unsigned int cur_frequency, base_frequency;
+> -	struct regmap *nb_pm_base, *avs_base;
+> +	struct regmap *nb_clk_base, *nb_pm_base, *avs_base;
+>  	struct device *cpu_dev;
+>  	int load_lvl, ret;
+>  	struct clk *clk, *parent;
+>  
+> +	nb_clk_base =
+> +		syscon_regmap_lookup_by_compatible("marvell,armada-3700-periph-clock-nb");
+> +	if (IS_ERR(nb_clk_base))
+> +		return -ENODEV;
+> +
+>  	nb_pm_base =
+>  		syscon_regmap_lookup_by_compatible("marvell,armada-3700-nb-pm");
+>  
+> @@ -439,7 +450,7 @@ static int __init armada37xx_cpufreq_driver_init(void)
+>  	armada37xx_cpufreq_avs_configure(avs_base, dvfs);
+>  	armada37xx_cpufreq_avs_setup(avs_base, dvfs);
+>  
+> -	armada37xx_cpufreq_dvfs_setup(nb_pm_base, clk, dvfs->divider);
+> +	armada37xx_cpufreq_dvfs_setup(nb_pm_base, nb_clk_base, dvfs->divider);
+>  	clk_put(clk);
+>  
+>  	for (load_lvl = ARMADA_37XX_DVFS_LOAD_0; load_lvl < LOAD_LEVEL_NR;
+> -- 
+> 2.20.1
+>
+
 -- 
-2.25.4
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
