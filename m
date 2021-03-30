@@ -2,99 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51977C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 07:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBC4C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 08:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF3D361994
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 07:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C633160249
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 08:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbhC3HCo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 03:02:44 -0400
-Received: from mail-vk1-f175.google.com ([209.85.221.175]:43620 "EHLO
-        mail-vk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229633AbhC3HCP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 03:02:15 -0400
-Received: by mail-vk1-f175.google.com with SMTP id k76so3330608vkk.10;
-        Tue, 30 Mar 2021 00:02:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HcA+LloJ/R6nBcWeO6UM7t+MrUAeGKv3Nig3tyDWBi4=;
-        b=X7hzBWjrJRD1A6zvhTYwZupblVSUUZXFrNfJbV5WEUnv6JsX0nWb88UmrTkapf9D37
-         11esZ1+lnXLrcxdDOIWwj8bFnDx6DQSfclqrgrZdkEtP0ymiENe6CLckDLY31UT17T4L
-         Aui0rk4K/QO5iFwQysVoY8g0o3ZsfNRg6r9PhlYNOUrxJPkY99mvA3Nq+Fj02B2K32mE
-         7eMNPeLcbATAEhUpKOyZ27v27ZQOAKO9criZf3j+IvYnNdLhPtkAJ6kN37Wuzo4tKlQ3
-         mhFPcOgdWmi++CdXoDXO/f5QKQwOg3udLA5TNnTTtbCE3V5otTpQPW5wgZpJhaiVUduE
-         kLIw==
-X-Gm-Message-State: AOAM532P6ag758SvKbMcyd7pQnDI8PwFeHp4TcedHa/6ODEpy2Th6Kwc
-        i8XhRCBZOavMm9urQTH+UjTCXFDotAjNiVkL4Jo=
-X-Google-Smtp-Source: ABdhPJyi7dc6TVZBIkeoFos/Uxvp+XcUOu/SRueDG+OLqS40ICeyESvrUSLbALwHlmA/EXTKDV4TJCd6dHrL3QhKQvo=
-X-Received: by 2002:ac5:ce04:: with SMTP id j4mr16605221vki.1.1617087734509;
- Tue, 30 Mar 2021 00:02:14 -0700 (PDT)
+        id S231565AbhC3Io0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 04:44:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231481AbhC3IoF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 30 Mar 2021 04:44:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6996660249;
+        Tue, 30 Mar 2021 08:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617093845;
+        bh=r0uuupAdCxJJpbeB1aFZbKAUjWGXy0u+SLRJVqsmgrc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bRY8eWdMHM92iseYUCBLzBhB2dkTjb8iSrZ7HNQ+pLUZsMjvmDDXOF3+Y1ya1qEzP
+         sw4EPexb6rdaLXPt0IUMxd3qq4yRAeKYwCo8EYYuJCEdsQ+uEvUzcaOctAC+av866l
+         p4cvWT548YWUkuP1GMYp5dQ6P2ngixUameHPgsIEXeUXi92FY6aIl1Sz0KmNYSiI/j
+         ZilMmOCMSeCZVxYeZ+dX7wfaEj9RfOQZweUc4UMthTGThZXuEVEy4QDwcFjRbhykZb
+         d9tXef3yeq9sXZbg9v+4BHQCZoKUifvf8xodmSfvYlEdyuqmuwh/sjfI1kgXWFOF+n
+         9IIQwqgDqBK4g==
+Date:   Tue, 30 Mar 2021 11:44:01 +0300
+From:   Abel Vesa <abelvesa@kernel.org>
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     abel.vesa@nxp.com, shawnguo@kernel.org, ping.bai@nxp.com,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: imx8mp: Remove the none exist pcie clocks
+Message-ID: <YGLk0S2LO4GiKAOC@ryzen.lan>
+References: <1615796268-9011-1-git-send-email-hongxing.zhu@nxp.com>
 MIME-Version: 1.0
-References: <20210326120100.1577596-1-geert+renesas@glider.be>
- <20210326120100.1577596-7-geert+renesas@glider.be> <161707092940.3012082.11081102694273753765@swboyd.mtv.corp.google.com>
-In-Reply-To: <161707092940.3012082.11081102694273753765@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 30 Mar 2021 09:02:03 +0200
-Message-ID: <CAMuHMdWUEhs=nwP+a0vO2jOzkq-7FEOqcJ+SsxAGNXX1PQ2KMA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] clk: renesas: rcar-gen3: Add custom clock for PLLs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1615796268-9011-1-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 21-03-15 16:17:47, Richard Zhu wrote:
+> In the i.MX8MP PCIe design, the PCIe PHY REF clock comes from external
+> OSC or internal system PLL. It is configured in the IOMUX_GPR14 register
+> directly, and can't be contolled by CCM at all.
+> Remove the PCIE PHY clock from clock driver to clean up codes.
+> There is only one PCIe in i.MX8MP, remove the none exist second PCIe
+> related clocks.
+> Remove the none exsits clocks IDs together.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Jason Liu <jason.hui.liu@nxp.com>
 
-On Tue, Mar 30, 2021 at 4:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2021-03-26 05:00:59)
-> > +}
-> > +
-> > +static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                               unsigned long parent_rate)
-> > +{
-> > +       struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-> > +       unsigned int mult, i;
-> > +       u32 val;
-> > +
-> > +       mult = DIV_ROUND_CLOSEST_ULL(rate, parent_rate * pll_clk->fixed_mult);
-> > +       mult = clamp(mult, 1U, 128U);
-> > +
-> > +       val = readl(pll_clk->pllcr_reg);
-> > +       val &= ~CPG_PLLnCR_STC_MASK;
-> > +       val |= (mult - 1) << __ffs(CPG_PLLnCR_STC_MASK);
-> > +       writel(val, pll_clk->pllcr_reg);
-> > +
-> > +       for (i = 1000; i; i--) {
-> > +               if (readl(pll_clk->pllecr_reg) & pll_clk->pllecr_pllst_mask)
-> > +                       return 0;
-> > +
-> > +               cpu_relax();
-> > +       }
->
-> Why not readl_poll_timeout()?
+Applied, thanks.
 
-I had considered that.  But then I noticed readl_poll_timeout() does not
-call cpu_relax() if sleep_us == 0.  Perhaps such a call should be added
-(at the risk of introducing a subtle regression elsewhere)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/clk/imx/clk-imx8mp.c             | 15 ---------------
+>  include/dt-bindings/clock/imx8mp-clock.h |  3 ---
+>  2 files changed, 18 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 2f4e1d674e1c..afbeb6bf1909 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -152,10 +152,6 @@ static const char * const imx8mp_can2_sels[] = {"osc_24m", "sys_pll2_200m", "sys
+>  						"sys_pll1_160m", "sys_pll1_800m", "sys_pll3_out",
+>  						"sys_pll2_250m", "audio_pll2_out", };
+>  
+> -static const char * const imx8mp_pcie_phy_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll2_500m",
+> -						    "clk_ext1", "clk_ext2", "clk_ext3",
+> -						    "clk_ext4", "sys_pll1_400m", };
+> -
+>  static const char * const imx8mp_pcie_aux_sels[] = {"osc_24m", "sys_pll2_200m", "sys_pll2_50m",
+>  						    "sys_pll3_out", "sys_pll2_100m", "sys_pll1_80m",
+>  						    "sys_pll1_160m", "sys_pll1_200m", };
+> @@ -380,14 +376,6 @@ static const char * const imx8mp_memrepair_sels[] = {"osc_24m", "sys_pll2_100m",
+>  							"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out",
+>  							"clk_ext3", "audio_pll2_out", };
+>  
+> -static const char * const imx8mp_pcie2_ctrl_sels[] = {"osc_24m", "sys_pll2_250m", "sys_pll2_200m",
+> -						      "sys_pll1_266m", "sys_pll1_800m", "sys_pll2_500m",
+> -						      "sys_pll2_333m", "sys_pll3_out", };
+> -
+> -static const char * const imx8mp_pcie2_phy_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll2_500m",
+> -						     "clk_ext1", "clk_ext2", "clk_ext3",
+> -						     "clk_ext4", "sys_pll1_400m", };
+> -
+>  static const char * const imx8mp_media_mipi_test_byte_sels[] = {"osc_24m", "sys_pll2_200m", "sys_pll2_50m",
+>  								"sys_pll3_out", "sys_pll2_100m",
+>  								"sys_pll1_80m", "sys_pll1_160m",
+> @@ -585,7 +573,6 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_VPU_G2] = imx8m_clk_hw_composite("vpu_g2", imx8mp_vpu_g2_sels, ccm_base + 0xa180);
+>  	hws[IMX8MP_CLK_CAN1] = imx8m_clk_hw_composite("can1", imx8mp_can1_sels, ccm_base + 0xa200);
+>  	hws[IMX8MP_CLK_CAN2] = imx8m_clk_hw_composite("can2", imx8mp_can2_sels, ccm_base + 0xa280);
+> -	hws[IMX8MP_CLK_PCIE_PHY] = imx8m_clk_hw_composite("pcie_phy", imx8mp_pcie_phy_sels, ccm_base + 0xa380);
+>  	hws[IMX8MP_CLK_PCIE_AUX] = imx8m_clk_hw_composite("pcie_aux", imx8mp_pcie_aux_sels, ccm_base + 0xa400);
+>  	hws[IMX8MP_CLK_I2C5] = imx8m_clk_hw_composite("i2c5", imx8mp_i2c5_sels, ccm_base + 0xa480);
+>  	hws[IMX8MP_CLK_I2C6] = imx8m_clk_hw_composite("i2c6", imx8mp_i2c6_sels, ccm_base + 0xa500);
+> @@ -643,8 +630,6 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+>  	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+>  	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+> -	hws[IMX8MP_CLK_PCIE2_CTRL] = imx8m_clk_hw_composite("pcie2_ctrl", imx8mp_pcie2_ctrl_sels, ccm_base + 0xc000);
+> -	hws[IMX8MP_CLK_PCIE2_PHY] = imx8m_clk_hw_composite("pcie2_phy", imx8mp_pcie2_phy_sels, ccm_base + 0xc080);
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+>  	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
+>  	hws[IMX8MP_CLK_PDM] = imx8m_clk_hw_composite("pdm", imx8mp_pdm_sels, ccm_base + 0xc200);
+> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+> index e8d68fbb6e3f..43927a1b9e94 100644
+> --- a/include/dt-bindings/clock/imx8mp-clock.h
+> +++ b/include/dt-bindings/clock/imx8mp-clock.h
+> @@ -125,7 +125,6 @@
+>  #define IMX8MP_CLK_CAN1				116
+>  #define IMX8MP_CLK_CAN2				117
+>  #define IMX8MP_CLK_MEMREPAIR			118
+> -#define IMX8MP_CLK_PCIE_PHY			119
+>  #define IMX8MP_CLK_PCIE_AUX			120
+>  #define IMX8MP_CLK_I2C5				121
+>  #define IMX8MP_CLK_I2C6				122
+> @@ -182,8 +181,6 @@
+>  #define IMX8MP_CLK_MEDIA_CAM2_PIX		173
+>  #define IMX8MP_CLK_MEDIA_LDB			174
+>  #define IMX8MP_CLK_MEDIA_MIPI_CSI2_ESC		175
+> -#define IMX8MP_CLK_PCIE2_CTRL			176
+> -#define IMX8MP_CLK_PCIE2_PHY			177
+>  #define IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE		178
+>  #define IMX8MP_CLK_ECSPI3			179
+>  #define IMX8MP_CLK_PDM				180
+> -- 
+> 2.17.1
