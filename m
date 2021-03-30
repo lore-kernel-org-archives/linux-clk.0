@@ -2,92 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19529C433E8
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0761C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 22:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFF0A61985
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83AE9619D7
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 22:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232584AbhC3Uwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 16:52:36 -0400
-Received: from st43p00im-zteg10062001.me.com ([17.58.63.166]:48714 "EHLO
-        st43p00im-zteg10062001.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232622AbhC3UwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 16:52:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1617137531; bh=qyZanw9bvq4XzKEGum+SixXhJ4fFKKUpQPcyblgNRAY=;
-        h=From:To:Subject:Date:Message-Id;
-        b=JoWAUjR9kEdARUFtq6LnTvieTtG7WcgSG+/z2MjHSwdj6eOetpoiO+zsYIqAAYdn8
-         Duo/l+cs9lw+DucOb9mnbc9yAqt+yXPDwsPHlVkaR23D4tS8vx/jrY44ALpoOj5Ue2
-         iASbFKoJrQrFvAz5dZa4TqsJu2lXBdlKQHpNLCjzcck+zXwBWrBpOvZkK/a3MsvHVf
-         zNU0MUXmL6j2oq4ENUvR1JpNXdhMRCHoxyIrdLQDaQnLKm9w8DmdBYyfa+k9iKzkwN
-         x2xjZ444xCrhgEyaVUv1l5eConpOhWnoq4lt1wagHY65mqArdmyKHaRC7NUcaEo6dq
-         vB2SaBVRkfjXQ==
-Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-zteg10062001.me.com (Postfix) with ESMTPSA id 1B2536C0434;
-        Tue, 30 Mar 2021 20:52:09 +0000 (UTC)
-From:   Alain Volmat <avolmat@me.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH v3 3/7] dt-bindings: clock: st: flexgen: add new introduced compatible
-Date:   Tue, 30 Mar 2021 22:51:21 +0200
-Message-Id: <20210330205125.25708-4-avolmat@me.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210330205125.25708-1-avolmat@me.com>
-References: <20210330205125.25708-1-avolmat@me.com>
-X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
- =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
- =?UTF-8?Q?=3D2021-03-30=5F12:2021-03-30=5F02,2021-03-30=5F12,2020-04-07?=
- =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 malwarescore=0 mlxscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103300152
+        id S232307AbhC3WWQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 18:22:16 -0400
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:44556 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232910AbhC3WWE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 18:22:04 -0400
+Received: by mail-ot1-f46.google.com with SMTP id y19-20020a0568301d93b02901b9f88a238eso17055229oti.11;
+        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6zE7eJ2fq/h+F919KpIJBmhEbaiUg8/PKDecbu+g1Qo=;
+        b=QWBF2RrMQx/X4i/jvsSZCZ4L+P9rCQejElbtfOseHzqxc+PUGvqjcee7h5aeUMAJyT
+         Uu75CwBBoKfizFKHCswqi7z0DLDDzXOW8fRftXwCFQUPxZKPn0/yXJuPoqX470mXqESZ
+         1EQa1oLtBu4pQwsZxoQ/FY1Z43gtGHGxvEQdUA0cE2eLXLsIzyisyOZmv5UNFPwcciOs
+         OEzi6P0dG5zTBArUlEMZOM8SS157zMXr9h3DLdsAtrRAtyybN0jFvOjzvltDJoN/NPn2
+         KdkSAZUYAzuyGjfjrABHA/PEkiM9QpcMWuE5j9Gz+TCxhQboXYc0ku23cAFD2cfKFcwG
+         4Ztg==
+X-Gm-Message-State: AOAM533f1HpsXA42Hk7fCVqx0J2qim83PgDwWoqvfsV0Pk8xJj7THBUU
+        R1gmSDsfowsa/f6Ua2W4MQ==
+X-Google-Smtp-Source: ABdhPJxxh7Vv32YkMChIM4ids4ZCy2CnNS4R0YBJbzedDc+MeQB/Sq7p3Op7wydFkRethpl2DIl3KQ==
+X-Received: by 2002:a9d:798a:: with SMTP id h10mr105741otm.170.1617142923563;
+        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g5sm81958oiy.24.2021.03.30.15.22.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
+Received: (nullmailer pid 819184 invoked by uid 1000);
+        Tue, 30 Mar 2021 22:22:01 -0000
+Date:   Tue, 30 Mar 2021 17:22:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dario Binacchi <dariobin@libero.it>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] dt-bindings: ti: dpll: add spread spectrum support
+Message-ID: <20210330222201.GA819152@robh.at.kernel.org>
+References: <20210329164222.26794-1-dariobin@libero.it>
+ <20210329164222.26794-3-dariobin@libero.it>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210329164222.26794-3-dariobin@libero.it>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-New compatible are added, supporting various kind of flexgen in
-STiH407, STiH410 and STiH418
+On Mon, 29 Mar 2021 18:42:19 +0200, Dario Binacchi wrote:
+> DT bindings for enabling and adjusting spread spectrum clocking have
+> been added.
+> 
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> 
+> ---
+> 
+> Changes in v3:
+> - Add '-hz' suffix to "ti,ssc-modfreq" binding.
+> 
+>  .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
 
-Signed-off-by: Alain Volmat <avolmat@me.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/st/st,flexgen.txt        | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-index 7ff77fc57dff..55a18939bddd 100644
---- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-@@ -64,6 +64,16 @@ Required properties:
-   audio use case)
-   "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
- 					and activate synchronous mode)
-+  "st,flexgen-stih407-a0"
-+  "st,flexgen-stih410-a0"
-+  "st,flexgen-stih407-c0"
-+  "st,flexgen-stih410-c0"
-+  "st,flexgen-stih418-c0"
-+  "st,flexgen-stih407-d0"
-+  "st,flexgen-stih410-d0"
-+  "st,flexgen-stih407-d2"
-+  "st,flexgen-stih418-d2"
-+  "st,flexgen-stih407-d3"
- 
- - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
-   outputs).
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
