@@ -2,330 +2,498 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1864AC433C1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 19:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB628C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC33D619AB
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 19:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A662619C5
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbhC3TaJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 15:30:09 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:14256 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233135AbhC3T3r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 15:29:47 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1617132587; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=a95vjplYANEQc1OBiqfteOvGXbi8z1BBsoYoWjdz7lo=;
- b=rtEht5P/ymzb96/1bsac69RfE0PhkkYQzGC7zFodM3ufPAhajU4zjkRQacKu25gDU6u4VOj+
- iRPVTh1R69KWl3g88q4QtF03ZnqKBrAIpWzxs/4O6JgPiBhH32B/ruIU+hoklR03cj4YwqwL
- KE4CjqA6Jj3JNoVZJfHn1qhGy94=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 60637c2387ce1fbb56ecaacf (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 30 Mar 2021 19:29:39
- GMT
-Sender: abhinavk=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D3D26C43465; Tue, 30 Mar 2021 19:29:38 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: abhinavk)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 65737C433CA;
-        Tue, 30 Mar 2021 19:29:36 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 30 Mar 2021 12:29:36 -0700
-From:   abhinavk@codeaurora.org
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        freedreno@lists.freedesktop.org, linux-clk@vger.kernel.org
-Subject: Re: [Freedreno] [PATCH v3 25/25] drm/msm/dsi: stop passing src_pll_id
- to the phy_enable call
-In-Reply-To: <20210327110305.3289784-26-dmitry.baryshkov@linaro.org>
-References: <20210327110305.3289784-1-dmitry.baryshkov@linaro.org>
- <20210327110305.3289784-26-dmitry.baryshkov@linaro.org>
-Message-ID: <c5d51139810c5c6c941a71675ffc270b@codeaurora.org>
-X-Sender: abhinavk@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        id S232601AbhC3Uwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 16:52:36 -0400
+Received: from st43p00im-ztfb10061701.me.com ([17.58.63.172]:36070 "EHLO
+        st43p00im-ztfb10061701.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232560AbhC3UwI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 16:52:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1617137527; bh=+sMlt55gRM2MS/BCjhcDC4/88TNQVzfxj1JraasJcdQ=;
+        h=From:To:Subject:Date:Message-Id;
+        b=vtyhFxkAh4dR8MHd+1scx7QNzrX2om6xKdPR/ykSLNdqcn2aI8pKePNNNZ+HmfSMn
+         bCSS865bl6N15FMnwVi78eu6lPA1/GAPK8Eylt2/bnaoQSecqBvtUqVWPKRSMXi7EH
+         w+B3WF1i7a4OUJpIhguHDFZceNBtyCZCtP0N3opbX9macjHkpw3jrGbBwdGpdXQHLD
+         FjhFa2yQ8s+D8R8Ht7NlrEZptT3Hf+9pZM7VloQjN+X+wtkk1EOKeYPP/lzQZJcTWF
+         373Q3CbepjVFj2xau0j87GAs/cbNFIWDXDgf8AOjoeG6BFUdPHfhWAf/U3BhciM6m5
+         j24dXR/+oSNNg==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by st43p00im-ztfb10061701.me.com (Postfix) with ESMTPSA id 3D034AC05C7;
+        Tue, 30 Mar 2021 20:52:06 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
+Subject: [PATCH v3 2/7] clk: st: flexgen: embed soc clock outputs within compatible data
+Date:   Tue, 30 Mar 2021 22:51:20 +0200
+Message-Id: <20210330205125.25708-3-avolmat@me.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210330205125.25708-1-avolmat@me.com>
+References: <20210330205125.25708-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
+ =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
+ =?UTF-8?Q?=3D2021-03-30=5F09:2021-03-30=5F02,2021-03-30=5F09,2020-04-07?=
+ =?UTF-8?Q?=5F01_signatures=3D0?=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103300153
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-03-27 04:03, Dmitry Baryshkov wrote:
-> Phy driver already knows the source PLL id basing on the set usecase 
-> and
-> the current PLL id. Stop passing it to the phy_enable call. As a
-> reminder, dsi manager will always use DSI 0 as a clock master in a 
-> slave
-> mode, so PLL 0 is always a clocksource for DSI 0 and it is always a
-> clocksource for DSI 1 too unless DSI 1 is used in the standalone mode.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/msm/dsi/dsi.h                   |  2 +-
->  drivers/gpu/drm/msm/dsi/dsi_manager.c           | 11 +++++------
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c           |  4 ++--
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           |  2 +-
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  2 +-
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  4 ++--
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c      |  4 ++--
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      |  4 ++--
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  2 +-
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       |  2 +-
->  10 files changed, 18 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h 
-> b/drivers/gpu/drm/msm/dsi/dsi.h
-> index 53feea9d30c0..c8ef63bdc042 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
-> @@ -162,7 +162,7 @@ struct msm_dsi_phy_clk_request {
-> 
->  void msm_dsi_phy_driver_register(void);
->  void msm_dsi_phy_driver_unregister(void);
-> -int msm_dsi_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-> +int msm_dsi_phy_enable(struct msm_dsi_phy *phy,
->  			struct msm_dsi_phy_clk_request *clk_req);
->  void msm_dsi_phy_disable(struct msm_dsi_phy *phy);
->  void msm_dsi_phy_get_shared_timings(struct msm_dsi_phy *phy,
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> index 0c47c5fb1ab3..76735cde57c6 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> @@ -114,7 +114,7 @@ static int dsi_mgr_setup_components(int id)
->  	return ret;
->  }
-> 
-> -static int enable_phy(struct msm_dsi *msm_dsi, int src_pll_id,
-> +static int enable_phy(struct msm_dsi *msm_dsi,
->  		      struct msm_dsi_phy_shared_timings *shared_timings)
->  {
->  	struct msm_dsi_phy_clk_request clk_req;
-> @@ -123,7 +123,7 @@ static int enable_phy(struct msm_dsi *msm_dsi, int
-> src_pll_id,
-> 
->  	msm_dsi_host_get_phy_clk_req(msm_dsi->host, &clk_req, is_dual_dsi);
-> 
-> -	ret = msm_dsi_phy_enable(msm_dsi->phy, src_pll_id, &clk_req);
-> +	ret = msm_dsi_phy_enable(msm_dsi->phy, &clk_req);
->  	msm_dsi_phy_get_shared_timings(msm_dsi->phy, shared_timings);
-> 
->  	return ret;
-> @@ -136,7 +136,6 @@ dsi_mgr_phy_enable(int id,
->  	struct msm_dsi *msm_dsi = dsi_mgr_get_dsi(id);
->  	struct msm_dsi *mdsi = dsi_mgr_get_dsi(DSI_CLOCK_MASTER);
->  	struct msm_dsi *sdsi = dsi_mgr_get_dsi(DSI_CLOCK_SLAVE);
-> -	int src_pll_id = IS_DUAL_DSI() ? DSI_CLOCK_MASTER : id;
->  	int ret;
-> 
->  	/* In case of dual DSI, some registers in PHY1 have been programmed
-> @@ -149,11 +148,11 @@ dsi_mgr_phy_enable(int id,
->  			msm_dsi_host_reset_phy(mdsi->host);
->  			msm_dsi_host_reset_phy(sdsi->host);
-> 
-> -			ret = enable_phy(mdsi, src_pll_id,
-> +			ret = enable_phy(mdsi,
->  					 &shared_timings[DSI_CLOCK_MASTER]);
->  			if (ret)
->  				return ret;
-> -			ret = enable_phy(sdsi, src_pll_id,
-> +			ret = enable_phy(sdsi,
->  					 &shared_timings[DSI_CLOCK_SLAVE]);
->  			if (ret) {
->  				msm_dsi_phy_disable(mdsi->phy);
-> @@ -162,7 +161,7 @@ dsi_mgr_phy_enable(int id,
->  		}
->  	} else {
->  		msm_dsi_host_reset_phy(msm_dsi->host);
-> -		ret = enable_phy(msm_dsi, src_pll_id, &shared_timings[id]);
-> +		ret = enable_phy(msm_dsi, &shared_timings[id]);
->  		if (ret)
->  			return ret;
->  	}
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> index 56f5134e3933..2a421fd77f2f 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> @@ -753,7 +753,7 @@ void __exit msm_dsi_phy_driver_unregister(void)
->  	platform_driver_unregister(&dsi_phy_platform_driver);
->  }
-> 
-> -int msm_dsi_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-> +int msm_dsi_phy_enable(struct msm_dsi_phy *phy,
->  			struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	struct device *dev = &phy->pdev->dev;
-> @@ -776,7 +776,7 @@ int msm_dsi_phy_enable(struct msm_dsi_phy *phy,
-> int src_pll_id,
->  		goto reg_en_fail;
->  	}
-> 
-> -	ret = phy->cfg->ops.enable(phy, src_pll_id, clk_req);
-> +	ret = phy->cfg->ops.enable(phy, clk_req);
->  	if (ret) {
->  		DRM_DEV_ERROR(dev, "%s: phy enable failed, %d\n", __func__, ret);
->  		goto phy_en_fail;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> index 3b207cf9f6b4..74fffcae0f10 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> @@ -19,7 +19,7 @@
-> 
->  struct msm_dsi_phy_ops {
->  	int (*pll_init)(struct msm_dsi_phy *phy);
-> -	int (*enable)(struct msm_dsi_phy *phy, int src_pll_id,
-> +	int (*enable)(struct msm_dsi_phy *phy,
->  			struct msm_dsi_phy_clk_request *clk_req);
->  	void (*disable)(struct msm_dsi_phy *phy);
->  	void (*save_state)(struct msm_dsi_phy *phy);
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> index 04535ccd11ef..bea68154ef87 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> @@ -786,7 +786,7 @@ static void dsi_phy_hw_v3_0_lane_settings(struct
-> msm_dsi_phy *phy)
->  	}
->  }
-> 
-> -static int dsi_10nm_phy_enable(struct msm_dsi_phy *phy, int 
-> src_pll_id,
-> +static int dsi_10nm_phy_enable(struct msm_dsi_phy *phy,
->  			       struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	int ret;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> index 7a87bed71e36..c9afa6c461ee 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> @@ -938,7 +938,7 @@ static void dsi_14nm_dphy_set_timing(struct
-> msm_dsi_phy *phy,
->  		      DSI_14nm_PHY_LN_TIMING_CTRL_11_TRIG3_CMD(0xa0));
->  }
-> 
-> -static int dsi_14nm_phy_enable(struct msm_dsi_phy *phy, int 
-> src_pll_id,
-> +static int dsi_14nm_phy_enable(struct msm_dsi_phy *phy,
->  			       struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	struct msm_dsi_dphy_timing *timing = &phy->timing;
-> @@ -996,7 +996,7 @@ static int dsi_14nm_phy_enable(struct msm_dsi_phy
-> *phy, int src_pll_id,
->  	dsi_phy_write(base + REG_DSI_14nm_PHY_CMN_CTRL_1, 0x00);
-> 
->  	glbl_test_ctrl = dsi_phy_read(base + 
-> REG_DSI_14nm_PHY_CMN_GLBL_TEST_CTRL);
-> -	if (phy->id == DSI_1 && src_pll_id == DSI_0)
-> +	if (phy->usecase == MSM_DSI_PHY_SLAVE)
-I think it should not make a difference but can we keep the check for 
-DSI_1? So lets modify this to be:
-if (phy->id == DSI_1 && phy->usecase == MSM_DSI_PHY_SLAVE)
->  		glbl_test_ctrl |= DSI_14nm_PHY_CMN_GLBL_TEST_CTRL_BITCLK_HS_SEL;
->  	else
->  		glbl_test_ctrl &= ~DSI_14nm_PHY_CMN_GLBL_TEST_CTRL_BITCLK_HS_SEL;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-> index f5b88c85a8fc..e96d789aea18 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-> @@ -63,7 +63,7 @@ static void dsi_20nm_phy_regulator_ctrl(struct
-> msm_dsi_phy *phy, bool enable)
->  	dsi_phy_write(base + REG_DSI_20nm_PHY_REGULATOR_CTRL_0, 0x03);
->  }
-> 
-> -static int dsi_20nm_phy_enable(struct msm_dsi_phy *phy, int 
-> src_pll_id,
-> +static int dsi_20nm_phy_enable(struct msm_dsi_phy *phy,
->  				struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	struct msm_dsi_dphy_timing *timing = &phy->timing;
-> @@ -85,7 +85,7 @@ static int dsi_20nm_phy_enable(struct msm_dsi_phy
-> *phy, int src_pll_id,
->  	dsi_phy_write(base + REG_DSI_20nm_PHY_STRENGTH_0, 0xff);
-> 
->  	val = dsi_phy_read(base + REG_DSI_20nm_PHY_GLBL_TEST_CTRL);
-> -	if (src_pll_id == DSI_1)
-> +	if (phy->id == DSI_1 && phy->usecase == MSM_DSI_PHY_STANDALONE)
->  		val |= DSI_20nm_PHY_GLBL_TEST_CTRL_BITCLK_HS_SEL;
->  	else
->  		val &= ~DSI_20nm_PHY_GLBL_TEST_CTRL_BITCLK_HS_SEL;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> index 9f83ab90d093..0e8f74ebb895 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-> @@ -698,7 +698,7 @@ static void dsi_28nm_phy_regulator_ctrl(struct
-> msm_dsi_phy *phy, bool enable)
->  		dsi_28nm_phy_regulator_enable_dcdc(phy);
->  }
-> 
-> -static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int 
-> src_pll_id,
-> +static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy,
->  				struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	struct msm_dsi_dphy_timing *timing = &phy->timing;
-> @@ -745,7 +745,7 @@ static int dsi_28nm_phy_enable(struct msm_dsi_phy
-> *phy, int src_pll_id,
->  	dsi_phy_write(base + REG_DSI_28nm_PHY_CTRL_0, 0x5f);
-> 
->  	val = dsi_phy_read(base + REG_DSI_28nm_PHY_GLBL_TEST_CTRL);
-> -	if (phy->id == DSI_1 && src_pll_id == DSI_0)
-> +	if (phy->usecase == MSM_DSI_PHY_SLAVE)
-same here
->  		val &= ~DSI_28nm_PHY_GLBL_TEST_CTRL_BITCLK_HS_SEL;
->  	else
->  		val |= DSI_28nm_PHY_GLBL_TEST_CTRL_BITCLK_HS_SEL;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-> index d2bfe43c9ef1..104446450f7c 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-> @@ -585,7 +585,7 @@ static void dsi_28nm_phy_lane_config(struct
-> msm_dsi_phy *phy)
->  	dsi_phy_write(base + REG_DSI_28nm_8960_PHY_LNCK_TEST_STR1, 0x88);
->  }
-> 
-> -static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy, int 
-> src_pll_id,
-> +static int dsi_28nm_phy_enable(struct msm_dsi_phy *phy,
->  				struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	struct msm_dsi_dphy_timing *timing = &phy->timing;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> index 619998506b78..badc76a8d425 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> @@ -799,7 +799,7 @@ static void dsi_phy_hw_v4_0_lane_settings(struct
-> msm_dsi_phy *phy)
->  	}
->  }
-> 
-> -static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
-> +static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
->  			      struct msm_dsi_phy_clk_request *clk_req)
->  {
->  	int ret;
+In order to avoid relying on the old style description via the DT
+clock-output-names, add compatible data describing the flexgen
+outputs clocks for all STiH407/STiH410 and STiH418 SOCs.
+
+In order to ease transition between the two methods, this commit
+introduce the new compatible without removing the old method.
+Once DTs will be fixed, the method relying on DT clock-output-names
+will be removed from this driver as well as old compatibles.
+
+Signed-off-by: Alain Volmat <avolmat@me.com>
+---
+v3: add comments about CLK_IS_CRITICAL reason
+    don't put clk-proc-stfe as CLK_IS_CRITICAL
+v2: add some missing clock as CLK_IS_CRITICAL
+
+ drivers/clk/st/clk-flexgen.c | 366 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 352 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 55873d4b7603..69711c6c47a4 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -16,9 +16,16 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
++struct clkgen_clk_out {
++	const char *name;
++	unsigned long flags;
++};
++
+ struct clkgen_data {
+ 	unsigned long flags;
+ 	bool mode;
++	const struct clkgen_clk_out *outputs;
++	const unsigned int outputs_nb;
+ };
+ 
+ struct flexgen {
+@@ -295,6 +302,289 @@ static const struct clkgen_data clkgen_video = {
+ 	.mode = 1,
+ };
+ 
++static const struct clkgen_clk_out clkgen_stih407_a0_clk_out[] = {
++	/* This clk needs to be on so that memory interface is accessible */
++	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
++};
++
++static const struct clkgen_data clkgen_stih407_a0 = {
++	.outputs = clkgen_stih407_a0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih407_a0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih410_a0_clk_out[] = {
++	/* Those clks need to be on so that memory interface is accessible */
++	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-ic-lmi1", .flags = CLK_IS_CRITICAL },
++};
++
++static const struct clkgen_data clkgen_stih410_a0 = {
++	.outputs = clkgen_stih410_a0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih410_a0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih407_c0_clk_out[] = {
++	{ .name = "clk-icn-gpu", },
++	{ .name = "clk-fdma", },
++	{ .name = "clk-nand", },
++	{ .name = "clk-hva", },
++	{ .name = "clk-proc-stfe", },
++	{ .name = "clk-proc-tp", },
++	{ .name = "clk-rx-icn-dmu", },
++	{ .name = "clk-rx-icn-hva", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-cpu", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-tx-icn-dmu", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-mmc-0", },
++	{ .name = "clk-mmc-1", },
++	{ .name = "clk-jpegdec", },
++	/* This clk needs to be on to keep A9 running */
++	{ .name = "clk-ext2fa9", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-ic-bdisp-0", },
++	{ .name = "clk-ic-bdisp-1", },
++	{ .name = "clk-pp-dmu", },
++	{ .name = "clk-vid-dmu", },
++	{ .name = "clk-dss-lpc", },
++	{ .name = "clk-st231-aud-0", },
++	{ .name = "clk-st231-gp-1", },
++	{ .name = "clk-st231-dmu", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-lmi", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-tx-icn-disp-1", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-sbc", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-stfe-frc2", },
++	{ .name = "clk-eth-phy", },
++	{ .name = "clk-eth-ref-phyclk", },
++	{ .name = "clk-flash-promip", },
++	{ .name = "clk-main-disp", },
++	{ .name = "clk-aux-disp", },
++	{ .name = "clk-compo-dvp", },
++};
++
++static const struct clkgen_data clkgen_stih407_c0 = {
++	.outputs = clkgen_stih407_c0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih407_c0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih410_c0_clk_out[] = {
++	{ .name = "clk-icn-gpu", },
++	{ .name = "clk-fdma", },
++	{ .name = "clk-nand", },
++	{ .name = "clk-hva", },
++	{ .name = "clk-proc-stfe", },
++	{ .name = "clk-proc-tp", },
++	{ .name = "clk-rx-icn-dmu", },
++	{ .name = "clk-rx-icn-hva", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-cpu", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-tx-icn-dmu", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-mmc-0", },
++	{ .name = "clk-mmc-1", },
++	{ .name = "clk-jpegdec", },
++	/* This clk needs to be on to keep A9 running */
++	{ .name = "clk-ext2fa9", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-ic-bdisp-0", },
++	{ .name = "clk-ic-bdisp-1", },
++	{ .name = "clk-pp-dmu", },
++	{ .name = "clk-vid-dmu", },
++	{ .name = "clk-dss-lpc", },
++	{ .name = "clk-st231-aud-0", },
++	{ .name = "clk-st231-gp-1", },
++	{ .name = "clk-st231-dmu", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-lmi", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-tx-icn-disp-1", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-sbc", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-stfe-frc2", },
++	{ .name = "clk-eth-phy", },
++	{ .name = "clk-eth-ref-phyclk", },
++	{ .name = "clk-flash-promip", },
++	{ .name = "clk-main-disp", },
++	{ .name = "clk-aux-disp", },
++	{ .name = "clk-compo-dvp", },
++	{ .name = "clk-tx-icn-hades", },
++	{ .name = "clk-rx-icn-hades", },
++	{ .name = "clk-icn-reg-16", },
++	{ .name = "clk-pp-hades", },
++	{ .name = "clk-clust-hades", },
++	{ .name = "clk-hwpe-hades", },
++	{ .name = "clk-fc-hades", },
++};
++
++static const struct clkgen_data clkgen_stih410_c0 = {
++	.outputs = clkgen_stih410_c0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih410_c0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih418_c0_clk_out[] = {
++	{ .name = "clk-icn-gpu", },
++	{ .name = "clk-fdma", },
++	{ .name = "clk-nand", },
++	{ .name = "clk-hva", },
++	{ .name = "clk-proc-stfe", },
++	{ .name = "clk-tp", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-rx-icn-dmu", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-rx-icn-hva", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-icn-cpu", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-tx-icn-dmu", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-mmc-0", },
++	{ .name = "clk-mmc-1", },
++	{ .name = "clk-jpegdec", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-reg", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-proc-bdisp-0", },
++	{ .name = "clk-proc-bdisp-1", },
++	{ .name = "clk-pp-dmu", },
++	{ .name = "clk-vid-dmu", },
++	{ .name = "clk-dss-lpc", },
++	{ .name = "clk-st231-aud-0", },
++	{ .name = "clk-st231-gp-1", },
++	{ .name = "clk-st231-dmu", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-lmi", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-tx-icn-1", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-sbc", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-stfe-frc2", },
++	{ .name = "clk-eth-phyref", },
++	{ .name = "clk-eth-ref-phyclk", },
++	{ .name = "clk-flash-promip", },
++	{ .name = "clk-main-disp", },
++	{ .name = "clk-aux-disp", },
++	{ .name = "clk-compo-dvp", },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-tx-icn-hades", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-rx-icn-hades", .flags = CLK_IS_CRITICAL },
++	/* This clk needs to be on to keep bus interconnect alive */
++	{ .name = "clk-icn-reg-16", .flags = CLK_IS_CRITICAL },
++	{ .name = "clk-pp-hevc", },
++	{ .name = "clk-clust-hevc", },
++	{ .name = "clk-hwpe-hevc", },
++	{ .name = "clk-fc-hevc", },
++	{ .name = "clk-proc-mixer", },
++	{ .name = "clk-proc-sc", },
++	{ .name = "clk-avsp-hevc", },
++};
++
++static const struct clkgen_data clkgen_stih418_c0 = {
++	.outputs = clkgen_stih418_c0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih418_c0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih407_d0_clk_out[] = {
++	{ .name = "clk-pcm-0", },
++	{ .name = "clk-pcm-1", },
++	{ .name = "clk-pcm-2", },
++	{ .name = "clk-spdiff", },
++};
++
++static const struct clkgen_data clkgen_stih407_d0 = {
++	.flags = CLK_SET_RATE_PARENT,
++	.outputs = clkgen_stih407_d0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih407_d0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih410_d0_clk_out[] = {
++	{ .name = "clk-pcm-0", },
++	{ .name = "clk-pcm-1", },
++	{ .name = "clk-pcm-2", },
++	{ .name = "clk-spdiff", },
++	{ .name = "clk-pcmr10-master", },
++	{ .name = "clk-usb2-phy", },
++};
++
++static const struct clkgen_data clkgen_stih410_d0 = {
++	.flags = CLK_SET_RATE_PARENT,
++	.outputs = clkgen_stih410_d0_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih410_d0_clk_out),
++};
++
++static const struct clkgen_clk_out clkgen_stih407_d2_clk_out[] = {
++	{ .name = "clk-pix-main-disp", },
++	{ .name = "clk-pix-pip", },
++	{ .name = "clk-pix-gdp1", },
++	{ .name = "clk-pix-gdp2", },
++	{ .name = "clk-pix-gdp3", },
++	{ .name = "clk-pix-gdp4", },
++	{ .name = "clk-pix-aux-disp", },
++	{ .name = "clk-denc", },
++	{ .name = "clk-pix-hddac", },
++	{ .name = "clk-hddac", },
++	{ .name = "clk-sddac", },
++	{ .name = "clk-pix-dvo", },
++	{ .name = "clk-dvo", },
++	{ .name = "clk-pix-hdmi", },
++	{ .name = "clk-tmds-hdmi", },
++	{ .name = "clk-ref-hdmiphy", },
++};
++
++static const struct clkgen_data clkgen_stih407_d2 = {
++	.outputs = clkgen_stih407_d2_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih407_d2_clk_out),
++	.flags = CLK_SET_RATE_PARENT,
++	.mode = 1,
++};
++
++static const struct clkgen_clk_out clkgen_stih418_d2_clk_out[] = {
++	{ .name = "clk-pix-main-disp", },
++	{ .name = "", },
++	{ .name = "", },
++	{ .name = "", },
++	{ .name = "", },
++	{ .name = "clk-tmds-hdmi-div2", },
++	{ .name = "clk-pix-aux-disp", },
++	{ .name = "clk-denc", },
++	{ .name = "clk-pix-hddac", },
++	{ .name = "clk-hddac", },
++	{ .name = "clk-sddac", },
++	{ .name = "clk-pix-dvo", },
++	{ .name = "clk-dvo", },
++	{ .name = "clk-pix-hdmi", },
++	{ .name = "clk-tmds-hdmi", },
++	{ .name = "clk-ref-hdmiphy", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "", }, { .name = "", }, { .name = "", },
++	{ .name = "clk-vp9", },
++};
++
++static const struct clkgen_data clkgen_stih418_d2 = {
++	.outputs = clkgen_stih418_d2_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih418_d2_clk_out),
++	.flags = CLK_SET_RATE_PARENT,
++	.mode = 1,
++};
++
++static const struct clkgen_clk_out clkgen_stih407_d3_clk_out[] = {
++	{ .name = "clk-stfe-frc1", },
++	{ .name = "clk-tsout-0", },
++	{ .name = "clk-tsout-1", },
++	{ .name = "clk-mchi", },
++	{ .name = "clk-vsens-compo", },
++	{ .name = "clk-frc1-remote", },
++	{ .name = "clk-lpc-0", },
++	{ .name = "clk-lpc-1", },
++};
++
++static const struct clkgen_data clkgen_stih407_d3 = {
++	.outputs = clkgen_stih407_d3_clk_out,
++	.outputs_nb = ARRAY_SIZE(clkgen_stih407_d3_clk_out),
++};
++
+ static const struct of_device_id flexgen_of_match[] = {
+ 	{
+ 		.compatible = "st,flexgen-audio",
+@@ -304,6 +594,46 @@ static const struct of_device_id flexgen_of_match[] = {
+ 		.compatible = "st,flexgen-video",
+ 		.data = &clkgen_video,
+ 	},
++	{
++		.compatible = "st,flexgen-stih407-a0",
++		.data = &clkgen_stih407_a0,
++	},
++	{
++		.compatible = "st,flexgen-stih410-a0",
++		.data = &clkgen_stih410_a0,
++	},
++	{
++		.compatible = "st,flexgen-stih407-c0",
++		.data = &clkgen_stih407_c0,
++	},
++	{
++		.compatible = "st,flexgen-stih410-c0",
++		.data = &clkgen_stih410_c0,
++	},
++	{
++		.compatible = "st,flexgen-stih418-c0",
++		.data = &clkgen_stih418_c0,
++	},
++	{
++		.compatible = "st,flexgen-stih407-d0",
++		.data = &clkgen_stih407_d0,
++	},
++	{
++		.compatible = "st,flexgen-stih410-d0",
++		.data = &clkgen_stih410_d0,
++	},
++	{
++		.compatible = "st,flexgen-stih407-d2",
++		.data = &clkgen_stih407_d2,
++	},
++	{
++		.compatible = "st,flexgen-stih418-d2",
++		.data = &clkgen_stih418_d2,
++	},
++	{
++		.compatible = "st,flexgen-stih407-d3",
++		.data = &clkgen_stih407_d3,
++	},
+ 	{}
+ };
+ 
+@@ -320,6 +650,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	unsigned long flex_flags = 0;
+ 	int ret;
+ 	bool clk_mode = 0;
++	const char *clk_name;
+ 
+ 	pnode = of_get_parent(np);
+ 	if (!pnode)
+@@ -347,13 +678,17 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	if (!clk_data)
+ 		goto err;
+ 
+-	ret = of_property_count_strings(np, "clock-output-names");
+-	if (ret <= 0) {
+-		pr_err("%s: Failed to get number of output clocks (%d)",
+-				__func__, clk_data->clk_num);
+-		goto err;
+-	}
+-	clk_data->clk_num = ret;
++	/* First try to get output information from the compatible data */
++	if (!data || !data->outputs_nb || !data->outputs) {
++		ret = of_property_count_strings(np, "clock-output-names");
++		if (ret <= 0) {
++			pr_err("%s: Failed to get number of output clocks (%d)",
++					__func__, clk_data->clk_num);
++			goto err;
++		}
++		clk_data->clk_num = ret;
++	} else
++		clk_data->clk_num = data->outputs_nb;
+ 
+ 	clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
+ 			GFP_KERNEL);
+@@ -368,16 +703,19 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 
+ 	for (i = 0; i < clk_data->clk_num; i++) {
+ 		struct clk *clk;
+-		const char *clk_name;
+ 
+-		if (of_property_read_string_index(np, "clock-output-names",
+-						  i, &clk_name)) {
+-			break;
++		if (!data || !data->outputs_nb || !data->outputs) {
++			if (of_property_read_string_index(np,
++							  "clock-output-names",
++							  i, &clk_name))
++				break;
++			flex_flags &= ~CLK_IS_CRITICAL;
++			of_clk_detect_critical(np, i, &flex_flags);
++		} else {
++			clk_name = data->outputs[i].name;
++			flex_flags = data->flags | data->outputs[i].flags;
+ 		}
+ 
+-		flex_flags &= ~CLK_IS_CRITICAL;
+-		of_clk_detect_critical(np, i, &flex_flags);
+-
+ 		/*
+ 		 * If we read an empty clock name then the output is unused
+ 		 */
+-- 
+2.17.1
+
