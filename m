@@ -2,96 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1F5C433C1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 15:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1B5C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF6D7619CE
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 15:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1582619CE
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232001AbhC3Pkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60966 "EHLO
+        id S232404AbhC3Pmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbhC3PkS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 11:40:18 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6015CC061574;
-        Tue, 30 Mar 2021 08:40:17 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id o126so24521627lfa.0;
-        Tue, 30 Mar 2021 08:40:17 -0700 (PDT)
+        with ESMTP id S232118AbhC3Pm1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 11:42:27 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1646DC061574;
+        Tue, 30 Mar 2021 08:42:26 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id w1-20020a4adec10000b02901bc77feac3eso3879913oou.3;
+        Tue, 30 Mar 2021 08:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=urZWxZfB9unPuEm4Qf4bW/iI+i8H6VODYdeRAS1F/MI=;
-        b=MrnFWRQtgTGgchvSFTJRhG0iKpk9EDN2YXdCjpBbyB8rh22kK7jvid3cRUCNSBbLpZ
-         UejA7C1qrcoNQ+7CHGGy1GBQtXARqaJzuNWrsloNP9L1oevIk5+KdNgZ/O4zLJJqQRBi
-         CEO5W9FO7KicYhSVJphTPoVAdpTyRLFC4NkP3+4OjbnBowZBSSbrj8tt0K8oQ4GXArbI
-         BZz/KOfVyEgcCkd2fvLH0kiV9peZL7+hJpDwja5M3V0MTvgEVqc3OqEWF5h2v+f06xlE
-         EZqPuLVN7WQ4DMMHa9URMvoSFxduS1DyOTvCk96kxR0CQL8pAkodscvdb/KL528TOrp9
-         WSKw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qM3iUxurXiKPxM9feL0QlUy8TVTGziOQBaYcEOYdGrQ=;
+        b=NW9gs82KSLBYkZpRmjMEfRUgoWhanDJXPgjbtbgbYBgwrNMP/cMngf5KQKfNLKJg7/
+         gmtTnCzB/SsPHfUC2kWKIY6mYuydMapEgDkcykJo5CwQ8LjQaOXQZ/7tqKcPQF0ZYfJO
+         06c2r9ETkpoKp7lG0EM3b7L/f20EvLp/YaR6l/j5+lm5WP+7MI1LV/EG0qL8KhbW8DQj
+         2qWedb4VlwBsQnlhu5egaDR23GUX6x2gam5wrtigllpqFxBBzNPQObfhX9u9QiRbXyBF
+         VqT2uFcwey1uGh/xAkp1o5B1H9UmSH1MPf36QsR6oKPGlHdw9oRZ1m4I5LPh6PjkshQG
+         tAGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=urZWxZfB9unPuEm4Qf4bW/iI+i8H6VODYdeRAS1F/MI=;
-        b=VkV1va/19voeszKcSB82ec5A5Fq6b0B+M1G9fQI5jSspdwdkmYhq3b3OpQSUNQHl6O
-         G5oFwPji2PKJokK+T/eumwHOGtEXyC/Tb9g6ieMpHIjMDF/06LoyxbHpx/PcbgUk9RBs
-         JMlC7SnqSko1dWrNuoLV22qX3eZukGRL1kEqNKFjR9yo6tLPHCHg088876y6FOGR1z2Z
-         rsjeNU6YZU2WncSVORnMG/GrrAlYl8DCs61+so0xxT1QCrVQfwtz8kQJqbdrOzOdkl6M
-         A77dIw4GjHRhhnv+FF2RzxCsgsvMhZ+wMVRJV/EOmSjAgvtfZf3rPTqxq+iGuFt9my3/
-         zBfg==
-X-Gm-Message-State: AOAM532+oOy+Kst1EIXgFBhhf2hPk+D5FhlUHj8Mdh/iu5mMsgVgSV39
-        uHNA+C5+CAlWzhasgODfMzA65CNp84o=
-X-Google-Smtp-Source: ABdhPJxLFpSSfuhNS0hdHsznwk8YNQRRUIPd6xUixqlH59yRifshaEk4JlORzzZoe3gmo0A7krPl6Q==
-X-Received: by 2002:a05:6512:3b9a:: with SMTP id g26mr20260153lfv.560.1617118815739;
-        Tue, 30 Mar 2021 08:40:15 -0700 (PDT)
-Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id y17sm2204847lfb.132.2021.03.30.08.40.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Mar 2021 08:40:15 -0700 (PDT)
-Subject: Re: [PATCH v6 0/7] Couple improvements for Tegra clk driver
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20210320152648.8389-1-digetx@gmail.com>
-Message-ID: <c4394764-184c-3680-5e6f-2df8d2d18972@gmail.com>
-Date:   Tue, 30 Mar 2021 18:40:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qM3iUxurXiKPxM9feL0QlUy8TVTGziOQBaYcEOYdGrQ=;
+        b=B/GYHx28JCgVEF4gMq4mBPYgTjuvy/l5Z5vgezD+1EKl+CL7vzNqbpqoeEQMahEYxq
+         CxgZfr+Ske1JxC7YGk+gjiGLVO1ENk6HeiXQYSYEvfh7JKzDwiWbatxFkvxEeZw2mopq
+         sG28Ut8YjeeUqu2Kw/iSnkiEXIZkdSo2QnP8vnXyl6KGJ1V7+8b08smfuLclRFHv9UWQ
+         NH3tNiHQzPly/lLfQ7GKKZe6Bg+sFCWkvsxjkI4Wia+aipLGI+xL64a3y519nEVYTcdO
+         uh1PwtzW+I0mwE7iEzkFDoi4isjQsSPHeulPPUEiev9yLBrEMyvZig5VNRh8tnp1AC33
+         35Bg==
+X-Gm-Message-State: AOAM532e6hXFF4UDIYFFBgBkFvc0KdYJc7RxNB98/23bToBDO5f0VBDt
+        04PPSCYtoTIQYVpcL4zxYXM=
+X-Google-Smtp-Source: ABdhPJwOH4GrdevdYv/OWFyPub323EE7r+Zzeliv5G3Px1g+5k6tLU2N+2xq5pjEqbDvWPbMsS5z0Q==
+X-Received: by 2002:a4a:e8d1:: with SMTP id h17mr26131056ooe.20.1617118945451;
+        Tue, 30 Mar 2021 08:42:25 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c25sm5356763otk.35.2021.03.30.08.42.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Mar 2021 08:42:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 30 Mar 2021 08:42:23 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
+        khilman@kernel.org, ulf.hansson@linaro.org, len.brown@intel.com,
+        lenb@kernel.org, pavel@ucw.cz, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        maz@kernel.org, tglx@linutronix.de, saravanak@google.com,
+        nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        m.szyprowski@samsung.com, geert@linux-m68k.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
+Message-ID: <20210330154222.GA5411@roeck-us.net>
+References: <20210205222644.2357303-9-saravanak@google.com>
+ <20210210114435.122242-1-tudor.ambarus@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20210320152648.8389-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210210114435.122242-1-tudor.ambarus@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-20.03.2021 18:26, Dmitry Osipenko пишет:
-> This series fixes couple minor standalone problems of the Tegra clk
-> driver.
+On Wed, Feb 10, 2021 at 01:44:34PM +0200, Tudor Ambarus wrote:
+> This is a follow-up for:
+> commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
+> 
+> The above commit updated the deprecated of_clk_add_provider(),
+> but missed to update the preferred of_clk_add_hw_provider().
+> Update it now.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Reviewed-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/clk/clk.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 27ff90eacb1f..9370e4dfecae 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+>  	if (ret < 0)
+>  		of_clk_del_provider(np);
+>  
+> +	fwnode_dev_initialized(&np->fwnode, true);
+> +
 
-Hello Stephen,
+This causes a crash when booting raspi2 images in qemu.
 
-Do you have any objects if Thierry will take this series into the Tegra
-tree?
+[   22.123618] Unable to handle kernel NULL pointer dereference at virtual address 00000028
+[   22.123830] pgd = (ptrval)
+[   22.123992] [00000028] *pgd=00000000
+[   22.124579] Internal error: Oops: 5 [#1] SMP ARM
+...
+[   22.141624] [<c0a2f4d8>] (of_clk_add_hw_provider) from [<c0a2f54c>] (devm_of_clk_add_hw_provider+0x48/0x80)
+[   22.141819] [<c0a2f54c>] (devm_of_clk_add_hw_provider) from [<c0a43ad8>] (raspberrypi_clk_probe+0x25c/0x384)
+[   22.141976] [<c0a43ad8>] (raspberrypi_clk_probe) from [<c0c18da0>] (platform_probe+0x5c/0xb8)
+[   22.142114] [<c0c18da0>] (platform_probe) from [<c0c16654>] (really_probe+0xf0/0x39c)
+[   22.142246] [<c0c16654>] (really_probe) from [<c0c16968>] (driver_probe_device+0x68/0xc0)
+[   22.142377] [<c0c16968>] (driver_probe_device) from [<c0c14834>] (bus_for_each_drv+0x84/0xc8)...
 
-Or will you be able to take the patches into the clk tree?
+np can (and will) be NULL here. See of_clk_set_defaults().
 
-Please let us know what works best for you, thanks in advance.
+Guenter
 
+---
+Bisect log:
+
+# bad: [9d49ed9ca93b8c564033c1d6808017bc9052b5db] Add linux-next specific files for 20210329
+# good: [0d02ec6b3136c73c09e7859f0d0e4e2c4c07b49b] Linux 5.12-rc4
+git bisect start 'HEAD' 'v5.12-rc4'
+# good: [4b15c5b50e5ec7f2d80275d5a150807b7b9a0a0c] Merge remote-tracking branch 'crypto/master'
+git bisect good 4b15c5b50e5ec7f2d80275d5a150807b7b9a0a0c
+# good: [c92ad2dfc1a3bc31afc3d41af82c38accf2c3783] Merge remote-tracking branch 'ftrace/for-next'
+git bisect good c92ad2dfc1a3bc31afc3d41af82c38accf2c3783
+# bad: [103c8000962c33e274244a02a0383d20fab734c9] Merge remote-tracking branch 'staging/staging-next'
+git bisect bad 103c8000962c33e274244a02a0383d20fab734c9
+# bad: [05ee9b17ef7af7d47395caa48db55d0e2dae64a2] Merge remote-tracking branch 'tty/tty-next'
+git bisect bad 05ee9b17ef7af7d47395caa48db55d0e2dae64a2
+# good: [bd91c862df59c0290c8a2e2ee6467c0ed5fb6432] Merge remote-tracking branch 'workqueues/for-next'
+git bisect good bd91c862df59c0290c8a2e2ee6467c0ed5fb6432
+# good: [24327c478b2fc17a01b21a4721f35f22a51fe12b] usb: mtu3: drop CONFIG_OF
+git bisect good 24327c478b2fc17a01b21a4721f35f22a51fe12b
+# bad: [04c49226ac79b3e5bd0f89da69a64ba2e0cccb91] Merge remote-tracking branch 'usb-serial/usb-next'
+git bisect bad 04c49226ac79b3e5bd0f89da69a64ba2e0cccb91
+# good: [21a292d73a6e69f31c57d36288482c40b355daf0] Merge remote-tracking branch 'drivers-x86/for-next'
+git bisect good 21a292d73a6e69f31c57d36288482c40b355daf0
+# bad: [b6688015151857ed3f61fa2344c4b220bc9dc4d7] regulator: qcom_spmi-regulator: Clean-up by using managed work init
+git bisect bad b6688015151857ed3f61fa2344c4b220bc9dc4d7
+# good: [ea718c699055c8566eb64432388a04974c43b2ea] Revert "Revert "driver core: Set fw_devlink=on by default""
+git bisect good ea718c699055c8566eb64432388a04974c43b2ea
+# bad: [0341ce5443949588e93581b49b934cdde2befbf8] workqueue: Add resource managed version of delayed work init
+git bisect bad 0341ce5443949588e93581b49b934cdde2befbf8
+# bad: [0b8bf06f67191e6a3184802a690d3f521c6d7e78] device property: Sync descriptions of swnode array and group APIs
+git bisect bad 0b8bf06f67191e6a3184802a690d3f521c6d7e78
+# bad: [6579c8d97ad7fc5671ee60234f3b8388abee5f77] clk: Mark fwnodes when their clock provider is added
+git bisect bad 6579c8d97ad7fc5671ee60234f3b8388abee5f77
+# first bad commit: [6579c8d97ad7fc5671ee60234f3b8388abee5f77] clk: Mark fwnodes when their clock provider is added
