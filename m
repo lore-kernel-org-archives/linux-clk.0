@@ -2,158 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31DAC433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 11:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E14C433C1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 12:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7D4F61985
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 11:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E60D61985
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 12:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231768AbhC3LHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 07:07:22 -0400
-Received: from mail-eopbgr70050.outbound.protection.outlook.com ([40.107.7.50]:9602
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S231803AbhC3MSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 08:18:38 -0400
+Received: from mail-mw2nam10on2087.outbound.protection.outlook.com ([40.107.94.87]:55904
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231370AbhC3LG6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 30 Mar 2021 07:06:58 -0400
+        id S232037AbhC3MSZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 30 Mar 2021 08:18:25 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ccJ3vTlyuE9eLbZCJJPQpzkttklIRxF6f+vzhQ2/cW0KghvZPmNhAx/VI9GwTSpWcZvwsAE48tC8CB3OZpSZo8e9Bt34KOmXWZp+WA8iQOiuot5WmRlN9XtXSK0PPa1xRNxSV1xHsLhoxa+VOt3H+wvFHxeL3heabf6b6gPzj4/dVU6+mTNzfB/+z/AxT6HSSv60gNr81btYMYuehzJrYYlU2JTVMW4FuuMGZQGcZPdMAkjlRjPCceUgo6XcBgzPdEct41CKUAXKe0fFK7e9H7AzQZw2CRj+Kk7H3f3XoCenv4d5JAHG0hjOUKtqGZdYLiMn/l5jA6vacmBSJ39+iQ==
+ b=a0dATeuIsEDaKw4kpOsa6QTCwR/mSxDUPPL2PfCBhZi8hcQB5lm2BBr3crpE6tNVpB7pEzLVGbx2ejoug7evO+dQVP8dUJ677q+aDVC9yTO3dDQ/rL2yO9ZTgE5JoRgILa1h77GpVMd8wNkyU53EnPhowxfC2/UmKfr4Rp3tGUQ44Xl5mFciS3MI2x17L+wrsPp/ez+V8acZwPnOa6ClOx6IqoJOowookeluT0BJfumBr+r5rN6QFeNfmRTHJBiT7mY2kG/y0zFYtFwyENsgE3nOz7dZ9W22/7p1y5cP3RqNXrDt+6c9B5VybjFAy8vRw+fRAWswkhIh2BDsbheasQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/frgKHMEKJ6Ms2j+Qj/KQYjZiiyerx7jkKBw+/LXTR8=;
- b=h+C9SKxg6Ys8dSzNdrwwO5kB+EDDutNrbG0mzl+WkZW1isVj8Np/vWYFf9AGj3ruI7C8wae0THCfVHuHqjy92NwL+G6DwcNaK5we6xkTAsVS0rs6KGHKtbev1JQCmNEYXfzHgo6Fyv3xTFudIxvslI718AbMJuvYS3Iz/urVsW9SLrpns5GzUjxOjYx+hXfy9PQOIg5Cma016cEZR83AliTeFQwpSZWTpknmJ4NOP3wn+sWIijkt/6eBrqY/9/xhDTlZxU1Kp3nEJeOOEMRJZIg9hQPv/NAJ9X3RV6DOb++1k04ifQJIFPEpMtiOX3kOMfS+4YnnoZaJE9vO6c7/eA==
+ bh=fK6DGXFvVtcUqFQ3U3o2te1UGJ5WCx728f/0asfrwKg=;
+ b=L31b5g5hgY3CFvjJYvEKDGmfKmWFLpxMOaiRejlUGaJinYHWMhXDXYB3yRFE0R7qSk2uyrEU29AoW7HLQfX1l9x+/o4CIqZL2aVm8JfLbv6wLx52SMVzGb8n5cA99HJoMCe99m3QsH0Ax3nm0sGO2Zj2g+L+28THH9hsoBvjLgR2On7OXLoNzRhsXddqP7VAfCqHw1msEVkrPkFRxXcgrpE6XDOjxerx+gIvpegYJSPxD5lngVQxRQaj8jJkFX2H7bR3Fd4uI0iofeSkvhHEg+43EeCa2ppGlXzYHEr2CXTEdnLLIzTgNerNBhs001lhVWj4bX/wMj737ZvGqyKEMQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fi.rohmeurope.com; dmarc=pass action=none
- header.from=fi.rohmeurope.com; dkim=pass header.d=fi.rohmeurope.com; arc=none
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=rohmsemiconductoreurope.onmicrosoft.com;
- s=selector1-rohmsemiconductoreurope-onmicrosoft-com;
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/frgKHMEKJ6Ms2j+Qj/KQYjZiiyerx7jkKBw+/LXTR8=;
- b=Qhz5aHx3R2HuCMPRaeVPsFGkpN4vavRKp5xrCZZZRsHsg9BQOc6J4trlfnZSr/R39rJOgcOa4xbhCzDtbvUCjGnKyk7QZ75rBLxsMj/ZZl0eHD3TObSL5Z/YkP2S07xE5snq7ulomc6nu/3GgAPskHNCqt42pWe5OUI2Jk9C2fA=
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com (2603:10a6:7:55::20) by
- HE1PR0301MB2169.eurprd03.prod.outlook.com (2603:10a6:3:21::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3977.25; Tue, 30 Mar 2021 11:06:53 +0000
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::f4d0:ee66:d5fb:9cdd]) by HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::f4d0:ee66:d5fb:9cdd%3]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 11:06:53 +0000
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v5 00/19] Support ROHM BD71815 PMIC
-Thread-Topic: [PATCH v5 00/19] Support ROHM BD71815 PMIC
-Thread-Index: AQHXJJps4G37QdCWoUakTStXWzuSFqqcYF4A
-Date:   Tue, 30 Mar 2021 11:06:53 +0000
-Message-ID: <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
-References: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
-Reply-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-authentication-results: fi.rohmeurope.com; dkim=none (message not signed)
- header.d=none;fi.rohmeurope.com; dmarc=none action=none
- header.from=fi.rohmeurope.com;
-x-originating-ip: [2001:14ba:16e2:8300::2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7844294e-03f4-424a-7e9c-08d8f36becf8
-x-ms-traffictypediagnostic: HE1PR0301MB2169:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <HE1PR0301MB216915B0BC318EFC4592CBBCAD7D9@HE1PR0301MB2169.eurprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: CFxLqxT93evPqyO6rhTmIUPBpVQWwZtb/l9HOidKoCJ71UdwNWf8USdlUUJnwBJ+Lx2scCNmKbdgKm5Cm15j2OSQwCi+EAe8TvyFk2l6uIYHnjM0K1shDjRe0Rf29WQtcPW3K6fJp7iAz4WEMgwPr4o64+nvdgSmLuuYCk4j/geiB19N6UnuckckIYdQGqErFnLJhd67XnehiASJ7dTqbLog/kjE5PACIiziVKP7Z0NLmXca9S+IJH+B7fGUa/zVNs3AJAFUrGUDAsB+Ca0YTXic+6bdTiCKCgeeaKHi72hPkeobt7NOeT0DWyThH1fvxxvDAEXS2XaumrbJ3j65iKlPWGpO/czZkz2FkJSEssbmQcuOvhR8GrgMvj6byC1P8ZkZrJ3PyZ8q6TUesW/0/r/ENOYOovOxJtS6j+XimPZ+QCnUdUn0KcSkL8FHHk6ysLUcz1CSaVfwMG492SuNPmSFS2VH+IX6UVQExSTPyfn1BsB2VQWQ/clqKaLRn3PY3tSm6Y9Hp7WtFG13Tarkb2vToQCsOnSNT1nxh9GVDE/GNw0Iik+CU1Ik/Hyz2/C3qE9PXagAQhGfO3AjfC98Ju626hbceE1KrsSW7vQFe3+0op3Q89JD9wQskzJgdQLtjijUEr02gd3Hr42MaJWtLsrEw4YpjLAhqW1fvh1Km1s=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR03MB3162.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39850400004)(346002)(396003)(366004)(136003)(5660300002)(8676002)(6862004)(8936002)(7416002)(86362001)(6512007)(2616005)(3450700001)(83380400001)(2906002)(6506007)(66946007)(54906003)(6486002)(4326008)(37006003)(316002)(76116006)(71200400001)(66446008)(66556008)(64756008)(66476007)(186003)(478600001)(38100700001)(6200100001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?eG0rN0ljWmEyTnRlbWd5cWNhcGdqc0FBZS9HbncrVjZ3bkdWZ1NXTGFRakpQ?=
- =?utf-8?B?MXZ2TWV6SnFCaHh4TEpEWnMrM3pWeW4yTDdBaUR0Z3diY3VPSnYxZ1NMZVRX?=
- =?utf-8?B?ajlwNUo0OUV0Sk01eXE5QUtMUEVxbmhxQWtGOW9JN0tteGY4Mjh6NHlaVW5S?=
- =?utf-8?B?N1NMOEZ0K2xXN3UzaUZTVy95MjJ2WmsrNkp0QkRXT1FUbXVCQjRjMVRneS80?=
- =?utf-8?B?dS9yTTMvUWtncVlwOTJJbEFDTjF3b3FKQ3JEeFhwQnFRN2ZtRk85NHdMZS9J?=
- =?utf-8?B?VGY3aUQyMEViYVhkbkdKUlpCK01PTEw1SEJpTnI2c3JyRHZ1Z0pUTnpqK1Fq?=
- =?utf-8?B?U29BTXdKY0pYYkRZZW1XR1pLOFBlSmFvSWN3Zm54UDNSY1djdEF0WUNEREM1?=
- =?utf-8?B?ZC9hSlZNbk0xQ1I4R2RGd2hjNXdnS2lFT3hmZWNESThENmhlbEVjSFNlSG11?=
- =?utf-8?B?WTZLTkIvUzFBOS9wVCs3VHJHZnlCdmQxb3ZpemUxQUpMY2owZVNQMGRKaUhJ?=
- =?utf-8?B?ZHdURDdJRTlWNkhpZWhDUWdnV3ArbW9kYjF1N1dZY1FmTXpXTjhhVzk1RFlk?=
- =?utf-8?B?SXVKaWQyQVpSSFlJcjV6TlpKYW9ONEZodGxlZ3B1c0JsQ1dNcUFkQ0tjTkJV?=
- =?utf-8?B?clhGc3BLZ050QklCQkxoSVh0NFhUNncraWJqRVdMU3p6cVNYTlQ4ZjBNbEhz?=
- =?utf-8?B?Rlp0R2w3L0dOdjR3QnFpTnhaWjZoanNqbjZlRnZLMDRwSUdRUFFjNmE5R1Nh?=
- =?utf-8?B?bW9UUk9mWVJsUUhTVEFjUzRyMjQrM1Y2dHBPeFdOd1c0Mlk5TzBaYVRjZVpL?=
- =?utf-8?B?NEk2cm1DNVJvZXlpK0ZWeFdUWmVUcE1SSFk4NUVrQkJZK0dqUUdWaFhpYzBC?=
- =?utf-8?B?NjVLNGV6MkxKUnZwR2pmNkFBY2tkbHdmRVZvOWdBMDJ1eTNiMy93dHQxZUdD?=
- =?utf-8?B?b0tmeDJWQkNxbkg2a3RSOHJZUkZGNGd0T1ZvN0VpV0ZtUXU1OFJXSGtjMlc3?=
- =?utf-8?B?SlBDd2k5OTJuZ05qRk9iVzVpdmxnTERXaFdzV0tXYWF5K0l3TEh6eVNpRGlG?=
- =?utf-8?B?ZXcvN3kvRFlNRHliWjFBTXhRVUJsNHA4a2pjSk1yUnRoYnZVQzFZVUJuUFNP?=
- =?utf-8?B?UG5ta0VHRnNLM29uYzdabDJxNkNSbVhPU3lkeG5GQmZCRG9IRHpkRVIwZHZB?=
- =?utf-8?B?V05mWDRRc2dWY0ZsVWVNbCtubDdkSmozTlp3QnYzSFhlMWNFR0Z2L2VJNEJP?=
- =?utf-8?B?bXBOeDQ2MjRoSHVUZzVDcllzbnIram0veFN1TGNTZkpJNmpZOWNFRDl2dlpl?=
- =?utf-8?B?aXY5ZTlxRU0xcVI2VXVuRnIwcnhoclJFNTlvSlNlbVBYOElGMFBMNTVxWXhD?=
- =?utf-8?B?VzNjcFhZZjdndEJta0dDV3hobjdORHdMZm5vQVlUV0puSWNJUUJOQjVBdEx4?=
- =?utf-8?B?OWRKZTRXR2VCNTZDNFJvcDV2emkwVktWZGxNMVVBZWlZa1hFRElvc2pNSXgv?=
- =?utf-8?B?N3JOZE9ockhtNkY5aksrdHdGckQ3eDdpVGxzMW5YTnRTa3RxNkJrV2d3bGhT?=
- =?utf-8?B?QlNzMTRHRFc2TmY1ZndVZlR4WUwyZElna1kyTmkreVRCbmVOS29qMzBLSXd4?=
- =?utf-8?B?SU5VcStNbko0WG5VUVdndFU5RXJGUzNqNVN0NlVVdDdwcUpMVzkzbWIxWU93?=
- =?utf-8?B?L3plTjQ1SHFpMlhIT3ZZRGdoK3o0QjN5eUdoaFlYRDNTV2IyL1dLWks5dTNI?=
- =?utf-8?B?MGppQzhpOE9SVDN1a2o5aHpDeVFXV2ZoT3NnV3pOQUY5dU16clhkWTYyVHV3?=
- =?utf-8?Q?2maLLjPysXXSpj9N6OqXSH2s5SCCXISZ5+aPk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4061A4B565258C44A2B87FFE6C8DE1A9@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ bh=fK6DGXFvVtcUqFQ3U3o2te1UGJ5WCx728f/0asfrwKg=;
+ b=IbqdME1PIIkBPe/5oB3bn4eUPr28uEbWRBt+ykzmhWXRqFaOIlLKWsr/iv9OUbi59a8UFCDFDwN5/7AkHZ2pCyo/ac/q6Uc4GY6sRAUeMNPuxmNAsrDOBXnAqr6AQaxb1jMSLZ8qFcfUoWGCQLR7Ho8UbLkaPqC8WC7nOpbvmPg=
+Authentication-Results: baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=none action=none header.from=windriver.com;
+Received: from CY4PR11MB0071.namprd11.prod.outlook.com (2603:10b6:910:7a::30)
+ by CY4PR1101MB2341.namprd11.prod.outlook.com (2603:10b6:903:b1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24; Tue, 30 Mar
+ 2021 12:18:21 +0000
+Received: from CY4PR11MB0071.namprd11.prod.outlook.com
+ ([fe80::d4fe:8135:d8fa:81c0]) by CY4PR11MB0071.namprd11.prod.outlook.com
+ ([fe80::d4fe:8135:d8fa:81c0%5]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
+ 12:18:21 +0000
+From:   quanyang.wang@windriver.com
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [V2] [PATCH] clk: zynqmp: pll: add set_pll_mode to check condition in zynqmp_pll_enable
+Date:   Tue, 30 Mar 2021 20:17:01 +0800
+Message-Id: <20210330121701.3258948-1-quanyang.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [60.247.85.82]
+X-ClientProxiedBy: HKAPR03CA0034.apcprd03.prod.outlook.com
+ (2603:1096:203:c9::21) To CY4PR11MB0071.namprd11.prod.outlook.com
+ (2603:10b6:910:7a::30)
 MIME-Version: 1.0
-X-OriginatorOrg: fi.rohmeurope.com
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from pek-qwang2-d1.wrs.com (60.247.85.82) by HKAPR03CA0034.apcprd03.prod.outlook.com (2603:1096:203:c9::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.16 via Frontend Transport; Tue, 30 Mar 2021 12:18:17 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 32a4b574-00bd-4335-8abb-08d8f375e854
+X-MS-TrafficTypeDiagnostic: CY4PR1101MB2341:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CY4PR1101MB2341417D69724A730ED04494F07D9@CY4PR1101MB2341.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:345;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lvCrkxDIDObkArh0PO51eY+mVVK34hjJRoAbHIOHT94ARk6JXlV/DV/zws3zA79/TGRK8Oz6GqSovgF7ev1s2U1+xIRuIXz7E5ijxd17zRsXKpfw/LTLSq2Wia3zWPHBIWbzMuwO3uDT8StXWzCaVmqomYJlbh6nHGVzwZQmvpTv4F3PIAu4B+wFWjdfpREzLugNDWdSrs+zWHEe3zduTMu0NB7tcDhGmqC77YO9L6imm/9Brjj3PRKesSUXQz7EAA3wpl/DOC6lTS/VQjurlXmY0zuZTYL8dc9OKf9t2VFKhBg/rLL6zm6yYdTHYsGgurLHTkPI7ikDGirGMJ4QazbgZp7p7mSb+5u49OF9Y8EM+GSeoX0q0Ha22ITBL/oBrJf+kLB76I4NEImUkv/AcK13tQmMQjALnOAf/OFdpo1++lnXcmEzYGdIK0/+Ymg7Qm5/1K07BGvn2MJ/QWlAPRbsFLjaW6SF/OHVSaEST0ya5oIjhVT1dGcuk8pJNu1lGvvBw+ePLG+x2FCcBKVKJNdWumQ65EP5XStNOfxnCWFGBqweO31JJma1RWj3RJom6bXmJAHC8fVJbBcU2r8WEKM72hOStqVwVmbxAkGcnJrNtY7HS4mJtlAcyVnF8q3bYMNSKYAnxuq7u56TBdUU6lG0HrKTITdPtxpVRXGZzHM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB0071.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39850400004)(346002)(136003)(376002)(396003)(2906002)(186003)(26005)(16526019)(1076003)(36756003)(66946007)(4326008)(66476007)(8676002)(956004)(6486002)(38100700001)(52116002)(8936002)(478600001)(6512007)(6506007)(86362001)(5660300002)(6666004)(2616005)(54906003)(316002)(83380400001)(110136005)(66556008)(7416002)(9686003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?lzxe3/LTV86xvk2/0WlrUaYaoHJNfEQrEiyE98+RjdnLM/DJYZboxVugNpKz?=
+ =?us-ascii?Q?KLZA6qoQ6wXLVAIm6wmu24s4XaSnzfm8EWlfAhJn6/0zk3E9kgR1Oag72/aK?=
+ =?us-ascii?Q?YiGp3HXovlAmLs9su0WkPyChJiNKw53+itTxfaYoMbIqcsjfKSNQZPTbSn23?=
+ =?us-ascii?Q?AqL7aZ7kyuMK871Kj+UEZtyGZt1KWq9EdxC/d8XfdZmpVJVeN57Po1P+lm7i?=
+ =?us-ascii?Q?I1d0t1wTgDqCz+8d3YlE4eeDwAEGXFZ6lw9SP1Lgj+hY5g6CPeyLftuWqHZC?=
+ =?us-ascii?Q?VWSNyowgdVahDgKdOkWN/tUVrhPDh27Xb/sXa5fxfA6NmIW8dw9At25hzRe5?=
+ =?us-ascii?Q?x2abHnVISQvP/TmExCir4H4twkdiX/M3ljQRaIXX/iz9AKftX/zaNaOOckdo?=
+ =?us-ascii?Q?hHVShP5CcZIWnn+M/6WFNg/osP32ARIDUM5sXudA1Ywl11WWc7Cf7UmgJLqQ?=
+ =?us-ascii?Q?41JYy+U8r1ebXC1zmOmQtt8FFepImrf3cOGrVLpUs1x5G9QcLiE92U7OmYfD?=
+ =?us-ascii?Q?I1VbbmOonsBC5w7xSVbA4mGY/gbshgPr7Jvd6yJKfAi6mn6haYX1Vo6AUK6b?=
+ =?us-ascii?Q?YdnquxWlLjYkGAMN3eNxOo72mnHGdCaFuKqofkYRlwzeRXGpl1jvGb0p3MIf?=
+ =?us-ascii?Q?1+Mj9ieil2s4ZtFdMJtmhNufUOv6s3e3huJcIRNS6wFhsvsb4wTKCNy+Zmzh?=
+ =?us-ascii?Q?zd7HrS71Hl9C9GdgVUV1+c0sMlTFVMQmao/l8C/VEVQq4sy4eIK7XMotJ+sp?=
+ =?us-ascii?Q?kIgaQH0wqWVqoJiGRl/MEEgSYliVRjAtL9YOwmkVYH7+d3Bn16Tn7yL6TekT?=
+ =?us-ascii?Q?ZamncQAWyAMsd2g1tUiZeMwKzniRqEtC7lYl6yyRXfRPyXGFA/748nrnbwB7?=
+ =?us-ascii?Q?nXx6MPxFp7DNvf1/iTipUt+Dv9dg5mILHJbbhnmyu49ZQElnlAzFemuWccoU?=
+ =?us-ascii?Q?ktsYtaVpzu2/l87y/mK9pwkA10oDVwftovLdMoXbiLQnz0/GnjeCXqF6xbR+?=
+ =?us-ascii?Q?4+CQP/EDUPQUR4Bl69AxZN3dBv/iL92uR+Rx3qLEh9ESGhblSQCccPAbxuTE?=
+ =?us-ascii?Q?pciqz0P2ZqrBniQwjFt0HjgxqLPJeQysQGheKwZKXL5RJFaDfRh8amBKUvOe?=
+ =?us-ascii?Q?LiRaXxU0Q4TKyOTci1goFmfOi+04igFMKNqOPuErhg2nklDBvleU7Yl34XTG?=
+ =?us-ascii?Q?3mKxv9Fp1sbBSE6ywgZLf076VK+jfVhyv6HejYTnIuYFGu+hQRyKmLOTy3bP?=
+ =?us-ascii?Q?Xp9B0IoHvBSBtVwXE+G0Kd72Xs7UNPJIyBuWuOHuqI3x3zlDL829Hlq2Tyl2?=
+ =?us-ascii?Q?lq3YqusY9tdkeSXO9AHIO9t/?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a4b574-00bd-4335-8abb-08d8f375e854
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB0071.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR03MB3162.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7844294e-03f4-424a-7e9c-08d8f36becf8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2021 11:06:53.4424
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 12:18:21.2740
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 94f2c475-a538-4112-b5dd-63f17273d67a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rC9u2DlFkikc+KknmqgECpQEWYUkgLhk9C3ciJjtz0fnCViJ4pqZgg95oEfJI6HQf/BRtghUdNZ6TFgxsByA0YOxF3UlzUAAb7IBT4b9dE4n7hApPdHF1r+n5LWhgF50
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0301MB2169
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZYqtE8FRGFDknmjlWFaMJQ7q6VkRkCLc9JS/Go7Z/7dnh6urpnyFMee6TuHim7kGMIjaqYYxAYJbdQTMs4Ii1XHQ2nc7pmktU4dZUZ9Oy3o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1101MB2341
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBNb24sIDIwMjEtMDMtMjkgYXQgMTU6NTIgKzAzMDAsIE1hdHRpIFZhaXR0aW5lbiB3cm90
-ZToNCj4gUGF0Y2ggc2VyaWVzIGludHJvZHVjaW5nIHN1cHBvcnQgZm9yIFJPSE0gQkQ3MTgxNSBQ
-TUlDDQo+IA0KPiBST0hNIEJENzE4MTUgaXMgYSBwb3dlciBtYW5hZ2VtZW50IElDIHVzZWQgaW4g
-c29tZSBiYXR0ZXJ5IHBvd2VyZWQNCj4gc3lzdGVtcy4gSXQgY29udGFpbnMgcmVndWxhdG9ycywg
-R1BPKHMpLCBjaGFyZ2VyICsgY291bG9tYiBjb3VudGVyLA0KPiBSVEMNCj4gYW5kIGEgY2xvY2sg
-Z2F0ZS4NCg0KTGVlLCBNYXJrLCAoTGludXMsIEJhcnRvc3osIGFsbCkNCg0KSSB0aGluayBhbGwg
-b3RoZXIgcGFydHMgZXhjZXB0IHRoZSByZWd1bGF0b3IgaGF2ZSByZWxldmFudCBhY2tzLiAoV2Vs
-bCwNCkkgY2hhbmdlZCBHUElPIGluIGxhc3QgdmVyc2lvbiBzbyBCYXJ0L0xpbnVzIG1heSB3YW50
-IGNoYW5nZXMgYnV0IHRob3NlDQp3aWxsIGZvbGxvdyB0byBHUElPIGluIG5lYXIgZnV0dXJlIGFu
-eXdheXMpLg0KDQpEbyB5b3UgdGhpbmsgTGVlIGNvdWxkIG1lcmdlIG90aGVyIGJ1dCB0aGUgcmVn
-dWxhdG9yIHBhcnRzIHRvIE1GRCBpZg0KTWFyayBpcyBidXN5PyBJJ2QgbGlrZSB0byBiZSBhYmxl
-IHRvIHNxdWVlemUgdGhlIGFtb3VudCBvZiBwYXRjaGVzIGFuZA0KcmVjaXBpZW50cyBmb3IgZnV0
-dXJlIGl0ZXJhdGlvbnMuIEl0IG1pZ2h0IGJlIGVhc2llciB0byB3b3JrIGRpcmVjdGx5DQpvbiBy
-ZWd1bGF0b3IgdHJlZSBpZiByZWd1bGF0b3IgcGFydCBnZXRzIGRlbGF5ZWQgdG8gbmV4dCBjeWNs
-ZS4gKEkgZG8NCmFsc28gcGxhbiBmdXJ0aGVyIHdvcmtpbmcgd2l0aCB0aGUgR1BJTyBwYXJ0IGR1
-cmluZyA1LjEzLXJjIGN5Y2xlIHRvDQp1dGlsaXplIHRoZSByZWdtYXBfZ3Bpby4gVGhhdCBjb3Vs
-ZCBiZSBkb25lIGluIHRoZSBHUElPIHRyZWUgdGhlbikuIEkNCnRoaW5rIHRoZSBvdGhlciBwb3J0
-aW9ucyBhcmUgaW4gYSBwcmV0dHkgc3RhYmxlIHNoYXBlIG5vdy4NCg0KQmVzdCBSZWdhcmRzDQoJ
-TWF0dGkgVmFpdHRpbmVuDQo=
+From: Quanyang Wang <quanyang.wang@windriver.com>
+
+If there is a IOCTL_SET_PLL_FRAC_MODE request sent to ATF ever,
+we shouldn't skip invoking PM_CLOCK_ENABLE fn even though this
+pll has been enabled. In ATF implementation, it will only assign
+the mode to the variable (struct pm_pll *)pll->mode when handling
+IOCTL_SET_PLL_FRAC_MODE call. Invoking PM_CLOCK_ENABLE can force
+ATF send request to PWU to set the pll mode to PLL's register.
+
+There is a scenario that happens in enabling VPLL_INT(clk_id:96):
+1) VPLL_INT has been enabled during booting.
+2) A driver calls clk_set_rate and according to the rate, the VPLL_INT
+   should be set to FRAC mode. Then zynqmp_pll_set_mode is called
+   to pass IOCTL_SET_PLL_FRAC_MODE to ATF. Note that at this point
+   ATF just stores the mode to a variable.
+3) This driver calls clk_prepare_enable and zynqmp_pll_enable is
+   called to try to enable VPLL_INT pll. Because of 1), the function
+   zynqmp_pll_enable just returns without doing anything after checking
+   that this pll has been enabled.
+
+In the scenario above, the pll mode of VPLL_INT will never be set
+successfully. So adding set_pll_mode to check condition to fix it.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+V2:
+ - add Tested-by tag, thanks Laurent.
+ - fix typos in commit message and multiline code comments
+---
+ drivers/clk/zynqmp/pll.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 92f449ed38e5..fa89ee722a6d 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -14,10 +14,12 @@
+  * struct zynqmp_pll - PLL clock
+  * @hw:		Handle between common and hardware-specific interfaces
+  * @clk_id:	PLL clock ID
++ * @set_pll_mode:	Whether an IOCTL_SET_PLL_FRAC_MODE request be sent to ATF
+  */
+ struct zynqmp_pll {
+ 	struct clk_hw hw;
+ 	u32 clk_id;
++	bool set_pll_mode;
+ };
+ 
+ #define to_zynqmp_pll(_hw)	container_of(_hw, struct zynqmp_pll, hw)
+@@ -81,6 +83,8 @@ static inline void zynqmp_pll_set_mode(struct clk_hw *hw, bool on)
+ 	if (ret)
+ 		pr_warn_once("%s() PLL set frac mode failed for %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++	else
++		clk->set_pll_mode = true;
+ }
+ 
+ /**
+@@ -240,9 +244,15 @@ static int zynqmp_pll_enable(struct clk_hw *hw)
+ 	u32 clk_id = clk->clk_id;
+ 	int ret;
+ 
+-	if (zynqmp_pll_is_enabled(hw))
++	/*
++	 * Don't skip enabling clock if there is an IOCTL_SET_PLL_FRAC_MODE request
++	 * that has been sent to ATF.
++	 */
++	if (zynqmp_pll_is_enabled(hw) && (!clk->set_pll_mode))
+ 		return 0;
+ 
++	clk->set_pll_mode = false;
++
+ 	ret = zynqmp_pm_clock_enable(clk_id);
+ 	if (ret)
+ 		pr_warn_once("%s() clock enable failed for %s, ret = %d\n",
+-- 
+2.25.1
+
