@@ -2,169 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E100C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 10:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A25C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 10:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC1B761957
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 10:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0DE461874
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 10:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbhC3KFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 06:05:22 -0400
-Received: from mail-eopbgr1320117.outbound.protection.outlook.com ([40.107.132.117]:17040
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231584AbhC3KFL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 30 Mar 2021 06:05:11 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fnpZ+nWb2s/pOgWBHzRAB90aHjdgdCtQU8XYCzwAhUHhhSjTGvmQ+YGWuWUXvdtmLBKa8GmpKJEdf93wf0nSCTAh5QrbUfcgdN64uzdd/rgHMGtDAVGkMIIhHybIO8DNYhDhQ3hMq0kqC8buunAKIZPAdTfU3ebUl+hbWhFRtyv9gfmtGCcYQZMPryXSha4Ydda+cvmy4D5U/MxBTRLmTYPk6FQoAAGaOc0IL7ruNP7V+3DMJvcevkwsGjHSwlk14oL3Quw7+oj/PNlMxFBAcpf+otzOxpoOdKM36MwDLI07LGZhTlN92gWfgrgB6M50KN8gL76RrZUtSi6I370Gsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S/UaxoklHKIWdlIBMm3TiX8FEra+sucYE2VKfkhr0+s=;
- b=OtFWyrf1EAaiod6q/rjt3UV6W3NXruD10Ke4xx1Ep/ZWSWJWLDoaKWFx+mJiRRYlmJ2ZuoVAnXGRpRO/dhA6aZlHNiiK73YqvQ6kxMn1WUB3a3p1bgfaeuBUUqIr7GvZPonMo4/wC+VF0s+CaJzyAMtUxuUb9tkY5Exs7xMw/1bHFSliG4aIgGK/Cq3DQDpSQx3+DB5dukZ4ClpkUek56qMXJJuUZzJhavo8jPvwNFyQaYs0rqhBPuxlQoJ0RKVj+Qm/o+sq82ORVq6pZKSerFFK7KHSJ1/id/Ho6Fa7tYmvzgO0AVmmyfidzuUMgRSBqbR9lbGk7UyQQxfOEGedbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        id S231723AbhC3Ks7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 06:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231561AbhC3Ksp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 06:48:45 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0D8C061574;
+        Tue, 30 Mar 2021 03:48:45 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso10029232wmi.3;
+        Tue, 30 Mar 2021 03:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S/UaxoklHKIWdlIBMm3TiX8FEra+sucYE2VKfkhr0+s=;
- b=HmgIgqpiDr5NLyB+gu1i3SDkadTr8cJXayTub4sAjj51QEvfjb2IKTaJcT5q0o3/bnbJZF6yzNXIV+kGSnQQK8m2T0EXl4c1RJ4VkeNFM0lv7l/XQvCFBDHigdYpdqSZmgowMYz3fr1R1smeb6eKQ/bu3g8V7vXXQ7yQQPxX+uY=
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
- by TY2PR01MB2347.jpnprd01.prod.outlook.com (2603:1096:404:6c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.30; Tue, 30 Mar
- 2021 10:05:05 +0000
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::cb4:9680:bb26:8f3f]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::cb4:9680:bb26:8f3f%4]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 10:05:05 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Q//pqem2+12d7QEjvjgaohlrsZ0f7RzdSyBP0d8mQF8=;
+        b=XAAkVB7wU7qFKtSJlIbXEuV0fqSLgWmM7CgKkpyrJZrHMLETXXA0GIEtbJDfHnrIxa
+         DnrA9/t+AGUEYEiHhrppYvAvUcj6TjuE8CVO0pcajCmO+v324od1o1qi2gphEOkIiHzZ
+         kLEhzQRZh6e2vl8RSEjU0MXkRCltLjmubLh2ad1zSg64+wFfCYXOX3oy7FotQT6jKG9f
+         Tkzk6idkrKaYy/z1NzZSKhwqossCXQ3/BsHyA/tCexS6cAus2ZG8rJvg3/H+mqcO5v/E
+         zXcTeyYRpaytvboHZ09XiFGDw+afgcrmMZYlYgkcuWsm5HJm4H4PJh1xa4hLBZhHqXSk
+         rDLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q//pqem2+12d7QEjvjgaohlrsZ0f7RzdSyBP0d8mQF8=;
+        b=OR9Qg6ULl8+6oQjdS14MtTsXUupBueTnu7D3lggLMsRtr6Q5H4gDWURWb+NbgfMaTt
+         0QKwXwLNncOrW7qMsPEbEx5gMjkr0U3t0M7khiLnc6pstloewc9jyC2Y8Ljg8UwujKIH
+         wTSZJduw9qWncUoqVZUsHaQMdHQocsQfpmLiyhs5wySU2Xi/CtArYiKttC9cVA/En1XF
+         W8lr5EMpRUIdme7/BUQtwBSgbB+n5DNTruuro45eR6kHHF6bXb7oCtvQ7Iv4ThjmR4h6
+         Yc2wFjYDnEn3KEDrLbFhVyhr+p9M+2SbMpL6vBp78sPHnHHEjF0ovkwCH3x41k/Ca9cM
+         jqrg==
+X-Gm-Message-State: AOAM5309NMi5e/iH0weDbfDgGf6piNMnb6ago07U7svOMMl691Vt7Izj
+        Y7rePCdU24Ye582L/c/4Sr8=
+X-Google-Smtp-Source: ABdhPJwvPii3xPnYowk2vyInsF26PMhunrL16Vuj5UvYFQF18+YD+34YeHDpiFXR6Zds8mztAtBjQg==
+X-Received: by 2002:a7b:cf11:: with SMTP id l17mr3360588wmg.128.1617101323947;
+        Tue, 30 Mar 2021 03:48:43 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.126.134])
+        by smtp.gmail.com with ESMTPSA id p14sm2901836wmc.30.2021.03.30.03.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Mar 2021 03:48:43 -0700 (PDT)
+Subject: Re: [PATCH v10 1/4] dt-bindings: mediatek: Add smi dts binding for
+ Mediatek MT6765 SoC
+To:     Macpaul Lin <macpaul.lin@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH 0/7] clk: renesas: rcar-gen3: Add support for CPU core
- clock boost modes
-Thread-Topic: [PATCH 0/7] clk: renesas: rcar-gen3: Add support for CPU core
- clock boost modes
-Thread-Index: AQHXIjf3NlWPca0VKEOVehXmdIWVA6qcUcHg
-Date:   Tue, 30 Mar 2021 10:05:05 +0000
-Message-ID: <TY2PR01MB3692C5E461ADF12E848E0180D87D9@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-References: <20210326120100.1577596-1-geert+renesas@glider.be>
-In-Reply-To: <20210326120100.1577596-1-geert+renesas@glider.be>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: glider.be; dkim=none (message not signed)
- header.d=none;glider.be; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [124.210.22.195]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7d802a0a-a592-413f-1715-08d8f3634a9e
-x-ms-traffictypediagnostic: TY2PR01MB2347:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <TY2PR01MB2347018A03E61F2CDEDBB024D87D9@TY2PR01MB2347.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FMKZW26l/+wnAsjnVhu4+gJOZBZlE09VtEpxbg6a8+msplCuk23L+L6Cqhdd3eDFGRY0KWsA4oT8sIKDP+iljgAaXZ1ZNeO6sYt4ATjYPm6EsmJoZPhK/Eep6M0sxnhUcgPDvl1B1H6p8D3oNyhwsJH2JhK/0k3H6jrIKeXsP3JFV3bJlOMLZXgUaLZeA9UpsODWuBMK8b5uEKZVjRDsfkr+AvHXm+NqMYqVi2wOhrUtabztjdDfFpI9qMISU0LmEF0bzD/i3q7HHSuAhwBWvoH29a9DgcUFU7eiBrfIqajerF79m8F5GIB9RFdPgbx2YXsInf5OtsTqlfUHxUEkKoPSC0H5ZPTQ0v2RtoMj20YLH0C5yDSVVyRNIZVNEdWdtIRjtCaZIQncS/cnrvV+hmMlV8zLvSpMUbbFsXNhfEh+Ts/EEb0KeJO+f7wg4mTVnp8CDkXranlOZ9nH6LwEOF9/BIpqG1aZ49DdloPRxirkYJdJKE0fyJ+CBkUg2a47f8x/Z8VMyZJwe0HHgHw5LeswBQjqjKLAerGtLOSmv0JdK7WeGEHat80abNbEjMw8wu3Jc9uwnfEWhaOiuX1IweM9GPLzjyziILygpjD/c6cY0ZMpS1Y5mkusWn2jR5doCH9wUElN8TfpoYH/301RgaX+rdiGH4gf8c+V84oOM7A=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(136003)(39860400002)(366004)(76116006)(66946007)(55236004)(52536014)(33656002)(66446008)(66476007)(66556008)(64756008)(478600001)(5660300002)(83380400001)(6506007)(186003)(9686003)(4326008)(71200400001)(8936002)(316002)(26005)(7696005)(55016002)(86362001)(38100700001)(2906002)(54906003)(8676002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?iuZrbxY1K1KfRNdx6w7Yhb81m/FZbGkngo9wS0HSQYbwMfy11S+t/s/MtsHZ?=
- =?us-ascii?Q?XmK4gtXb3iS5c7iUC7GkzHkGWT9NGHz+jFYwTjn/HM0bm5je1PximYS1z/ew?=
- =?us-ascii?Q?29qvnpkqyjFeybsrc4wGKqAZjuWbSfLz4M7iF+WSlfXh7QSR8u/5u3rB65NZ?=
- =?us-ascii?Q?jUyQyx3ekeYHJKJaYzeJVQx+3EnAU9SDa0NmfTk7hu95J5s/NDtEGFa2lz9S?=
- =?us-ascii?Q?D+4d3tE+yVCtkatyTDMh9ejDrRUV0JAn3+FYDhebWZW2s/xMk2bciZz1ksF/?=
- =?us-ascii?Q?D1DsGUELRPsQLlXxPpNmdileLTA+u0gAzSyGzYNIwOc7Hap3e7MHIsKpqbqC?=
- =?us-ascii?Q?RytnukkaothLjqFrGB8ukWgAaLfi2IagVX7Pxay3Su0YkiqZbA53XS41kIou?=
- =?us-ascii?Q?CvjbB3p5YthS5fhFCpZxBVCGnjYZsiR2bOdtYflO7TT0Kj2sEoYHVkMvis11?=
- =?us-ascii?Q?uub+n2z5aTjrK8Odt7DqfpaYgBRf5FF2GJzsidVjmdzdcmog6QPbUNTapkn0?=
- =?us-ascii?Q?tnUbDHtFydfRL9+ZsrN02S3093olLsSoJBwDXBRC0Yw8tsijW7q0dYq2UMLR?=
- =?us-ascii?Q?3o9qWw3VB2svGz/0qo0DPkcA4lajCn2LwIjR5fwXb1nlu6AShWyHSBdKL2jo?=
- =?us-ascii?Q?g4i2tBKW5oJ+lrdHxAPgCYKl70SUDvN7aHNurqRqaV4/DRN8MaNwRRiLwOU9?=
- =?us-ascii?Q?Yc5lZxkpPewIN9HxUNGvmytpFPqajGQgHeRfsm+n6j8uTMa5/mhlk9n4ujoD?=
- =?us-ascii?Q?cbiHfDXZTeUKnkaPXRx/F8xWcgR7bWREvHOKz1KVDP+Baw/bVUrWFvwHzYc8?=
- =?us-ascii?Q?3G371k5UZ+3OGG+G3kwq6Ae9euvfWGemST239OwSG58m+bsvr7bVG/vaTznt?=
- =?us-ascii?Q?XRI2csV94k1qK4LwffYQVxiLzbI1EkkP8s+uIGmRq2P5PRT/b6JatQKllg6j?=
- =?us-ascii?Q?bovEQXVWcwQiRVXxFNYSYbhyhuugWUxi1Ef+8bPjXdEkVZO5SGsnS5kKCTeT?=
- =?us-ascii?Q?XRbnEgPSMOE/+GX3AelMxhJKGmirjK8/LsODShlG4w3dv9vP8+bandcC0J3m?=
- =?us-ascii?Q?IaGobkEAcpnAQhT4HRPLXoOmmRh8kbR+Ujpp0qdQf5lx2Ul1ys3X1Sh8qT3T?=
- =?us-ascii?Q?Gs+FZCUBatDyu+CTcjEIgeapUVMzWhQNtrZ4Q+vpjJIpHbgGw9uFv3ZmDHqB?=
- =?us-ascii?Q?dqKuytsYnCeZl1BB32Ci7A2OvG/Ls9+Jnm6k/0e2Y2dZl5kVVf0Sd5q9y7BF?=
- =?us-ascii?Q?KPp1MR/PlxbvF0tzCOg8+8kX0E28nt69CbFNro5F/vyCUR3JGWkmDwuU8MpZ?=
- =?us-ascii?Q?scF1wwBTbGRUUj04B7NKTLO2?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>,
+        Wendell Lin <Wendell.Lin@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Evan Green <evgreen@chromium.org>, Yong.Wu@mediatek.com,
+        Joerg Roedel <jroedel@suse.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <Ryder.Lee@mediatek.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Ainge Hsu <ainge.hsu@mediatek.com>,
+        Eddie Hung <eddie.hung@mediatek.com>,
+        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
+        Macpaul Lin <macpaul@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+References: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
+ <1615358218-6540-1-git-send-email-macpaul.lin@mediatek.com>
+ <1615358218-6540-2-git-send-email-macpaul.lin@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5caf003d-e7c5-1f2f-d499-726788d5e490@gmail.com>
+Date:   Tue, 30 Mar 2021 12:48:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d802a0a-a592-413f-1715-08d8f3634a9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2021 10:05:05.0892
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SNdrAOk3v87hTYk/q8/p8LXmpWaWrwq3QlsJ4K9aKzEKBnG7oI3n8SuZb3z0KEDQw/KYBL7Ua4hKusFYfD814pAMwcOc4uasKGaQ2FKt+xaNzxyFPa6kIMMNlukiXTjx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2347
+In-Reply-To: <1615358218-6540-2-git-send-email-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert-san,
 
-> From: Geert Uytterhoeven, Sent: Friday, March 26, 2021 9:01 PM
->=20
-> 	Hi Mike, Stephen,
->=20
-> This patch series improves the accuracy of the CPU clock rate on R-Car
-> Gen3 SoCs, and adds support for CPU boost modes (marked "turbo-mode" in
-> the operating points table in DT).
-> As usual, it is preceded by a few small cleanups.
->=20
-> The easiest way to test this is by enabling
-> CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE, and writing the requested clock
-> rate to /sys/devices/system/cpu/cpufreq/policy$n/scaling_setspeed
-> (n=3D0 for the first cluster, n=3D2 or 4 for the second cluster).
-> Note that you need to do
->=20
->     echo 1 > /sys/devices/system/cpu/cpufreq/boost
->=20
-> before you can enable boost modes.
->=20
-> The PLL rates and CPU clock rates and voltages can be monitored in
-> /sys/kernel/debug/{clk/{z,z2,.pll[024]}/clk_rate,reg*/dvfs/cpu*/*uV}.
-> The DVFS voltage measured by the on-board max9611 can be monitored
-> remotely using iio-monitor.
->=20
-> This series has been tested on Salvator-(X)S (with R-Car H3 ES1.0, H3
-> ES2.0, M3-W, and M3-N) and Ebisu-4D (R-Car E3).
 
-Thank you for the patch!
+On 10/03/2021 07:36, Macpaul Lin wrote:
+> From: Mars Cheng <mars.cheng@mediatek.com>
+> 
+> This patch adds MT6765 smi binding document
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Patch looks good, but where is the driver part for it?
 
-And, I tested on R-Car H3 ES3.0 and it worked. So,
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-# I'm not sure adding Tested-by tag is suitable for patch 1 and 4 though...
-
-> As boost modes may be unstable without increasing the CPU core voltage,
-> this series depends on "[PATCH 0/2] arm64: dts: renesas: Add cpu-supply
-> properties for DVFS"[1].  Hence I think it is better to postpone this to
-> v5.14.
-
-I think so.
-
-Best regards,
-Yoshihiro Shimoda
-
+> ---
+>  .../bindings/memory-controllers/mediatek,smi-common.yaml         | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> index a08a32340987..4a4f4377576f 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> @@ -31,6 +31,7 @@ properties:
+>        - enum:
+>            - mediatek,mt2701-smi-common
+>            - mediatek,mt2712-smi-common
+> +          - mediatek,mt6765-smi-common
+>            - mediatek,mt6779-smi-common
+>            - mediatek,mt8167-smi-common
+>            - mediatek,mt8173-smi-common
+> 
