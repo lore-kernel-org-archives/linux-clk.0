@@ -2,83 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E91C433C1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 02:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C629C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 02:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 856B961994
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 02:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 241F561936
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 02:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbhC3CWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Mar 2021 22:22:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52234 "EHLO mail.kernel.org"
+        id S230307AbhC3CXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Mar 2021 22:23:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231184AbhC3CWL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Mar 2021 22:22:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A51E461989;
-        Tue, 30 Mar 2021 02:22:10 +0000 (UTC)
+        id S230122AbhC3CXT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Mar 2021 22:23:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0FB8F61989;
+        Tue, 30 Mar 2021 02:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617070930;
-        bh=t26KUWF4MKlDZ5yivB1+E6Fn8vf5j50CkjL/q8jR6q0=;
+        s=k20201202; t=1617070999;
+        bh=Cohu/2cxN+tEHFYMMs+yo/4uX8ZIfwZVuwWi3CEctjg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YG0hik780xy8xZlIq/yqutcD69XI84AEbJ7VM/0au+q8Qy6MZSO8cgnfP0kuU3eQu
-         VTHlkfbn2rzT0f79SiXwNDkr3s0E8AyFzyqUgMEncottuPWbEN2KBOfutBsCOkAXVr
-         1sAJK8Xm++Udilvlis0NGC49A+Yhn3qJqKa0H7NseM1PsRIvhtni7NJPQ2fZXQEUfO
-         XZpz2AJTqavZDMbVq9qffGgrPr/B4kjogdzhjw1UBln7iLQbN7RRP2ZIus9pAVXJwK
-         M8q6qEkbVj3FWRWEOyRekTj+oDZ+HEDVCsbc3pM4Dw7A6hYCsw2aZPDAq5TehFZysB
-         GI7I4zgJPsLrg==
+        b=IfCM2kN5SV3cPW8NVJ54qVpbJoOyswsjKsIhS7lPXUc/n5ey7mz7MoB5QnZMX1d3l
+         eAU0p3Dq9SfLssaHRwZVqkXGLdZs7JfFjJZP3XNXhnABbg+RHIjEdmkg8QrUyPhhN9
+         /KcBV1qFle2j1AhKLonOTkWjyPE6T2yZPpGHLSYWo9EBkxoQgwL7oOdAUzFts5G9Oi
+         dSSJ3KWYIblRtXZT/phK+Th9tN1NisJQGHQB6dbdvE61M8DDrobM+2Oi9p7o9c1Maz
+         un9w602H3kZZPHH2iRWL5Ygy59QJOEfZhWTNPjhfxxEhbWNJuBEdB+cJdskId9YbIJ
+         LH9ubvQ2ab6yA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210326120100.1577596-7-geert+renesas@glider.be>
-References: <20210326120100.1577596-1-geert+renesas@glider.be> <20210326120100.1577596-7-geert+renesas@glider.be>
-Subject: Re: [PATCH 6/7] clk: renesas: rcar-gen3: Add custom clock for PLLs
+In-Reply-To: <20210318172627.12173-2-dariobin@libero.it>
+References: <20210318172627.12173-1-dariobin@libero.it> <20210318172627.12173-2-dariobin@libero.it>
+Subject: Re: [PATCH v2 1/4] clk: ti: fix typo in routine description
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 29 Mar 2021 19:22:09 -0700
-Message-ID: <161707092940.3012082.11081102694273753765@swboyd.mtv.corp.google.com>
+Cc:     Dario Binacchi <dariobin@libero.it>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <kristo@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+To:     Dario Binacchi <dariobin@libero.it>, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Mar 2021 19:23:17 -0700
+Message-ID: <161707099768.3012082.16934007943600501374@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-03-26 05:00:59)
-> +}
-> +
-> +static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long parent_rate)
-> +{
-> +       struct cpg_pll_clk *pll_clk =3D to_pll_clk(hw);
-> +       unsigned int mult, i;
-> +       u32 val;
-> +
-> +       mult =3D DIV_ROUND_CLOSEST_ULL(rate, parent_rate * pll_clk->fixed=
-_mult);
-> +       mult =3D clamp(mult, 1U, 128U);
-> +
-> +       val =3D readl(pll_clk->pllcr_reg);
-> +       val &=3D ~CPG_PLLnCR_STC_MASK;
-> +       val |=3D (mult - 1) << __ffs(CPG_PLLnCR_STC_MASK);
-> +       writel(val, pll_clk->pllcr_reg);
-> +
-> +       for (i =3D 1000; i; i--) {
-> +               if (readl(pll_clk->pllecr_reg) & pll_clk->pllecr_pllst_ma=
-sk)
-> +                       return 0;
-> +
-> +               cpu_relax();
-> +       }
+Quoting Dario Binacchi (2021-03-18 10:26:23)
+> Replace _omap3_noncore_dpll_program with omap3_noncore_dpll_program.
+>=20
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> ---
 
-Why not readl_poll_timeout()?
-
-> +
-> +       return -ETIMEDOUT;
-> +}
-> +
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
