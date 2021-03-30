@@ -2,35 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2884C433E3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801CDC433C1
 	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 765BC619D1
+	by mail.kernel.org (Postfix) with ESMTP id 5229F619CF
 	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 20:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232457AbhC3Uwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S232596AbhC3Uwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 30 Mar 2021 16:52:35 -0400
-Received: from st43p00im-ztbu10063701.me.com ([17.58.63.178]:53957 "EHLO
-        st43p00im-ztbu10063701.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232569AbhC3UwA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 16:52:00 -0400
+Received: from st43p00im-ztdg10071801.me.com ([17.58.63.171]:49851 "EHLO
+        st43p00im-ztdg10071801.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232606AbhC3UwE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 16:52:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1617137520; bh=ZKLWSMdxWfNs8QN6JF4XTqugfEbF2VXoXeQPmxKIWZc=;
+        t=1617137523; bh=8GP6O/8IJL+3JdRIOBVkqIlHRGNe9z2cZjDEuIT2MxE=;
         h=From:To:Subject:Date:Message-Id;
-        b=YNkxX5LnpNCyuQuh0foeEdQrDo/+gSjUYQJzTrpg0bL6zlMxEvVf+1QhhATm5uxBU
-         ikW733Q0arc6QPbx95lZfp96F39VIAcqKhTBXZZ+Z2ZTD5bmSlsCVwYS15ddE+jrcV
-         VDCdrx528l3zo5vfFFCYhKZGVpM6ILRs4pcQTlP75rxt68cs5A39MnMHyvt/fn+hzc
-         QvPzu692n6+7IAvyj1dpffa050wguycG7gPCTHwPjRhmYV0Y633qqg2cNnRHesPWAH
-         jcg2O4h2JIrTUYc23R/pdy40nRRQKit6ynf9iZlIAVWdSiSOpahzAPu79yaFeL3lMr
-         bQBJjRPwPsWzQ==
+        b=L/YTeiNCoEMqW6u4ZYjCrPLCYzszUa+BX67y1OOFujuWyFRnHM4F54yUPbyFGa3ul
+         t4CEDF5Ggj4g6SOFCSGuyZPthRlwVsvKPIlhR+4W4IQGjRAF7NWwM1vhZ5My9h4Mn7
+         ydVsrtsQoVmpetggboSySa36R0nvalFIy0qL1MQjCk8rq616MYceRTWrXqw+40ev+J
+         HIRLZxDepUTXbzw8M0H68qRpFuWtV4zBI5qP9d6G7uY5vR3UZEUvdI+P42J0qZbEKd
+         0Gyf2pBNbomFD5SrhxfKCAP9/atOSgjEvZcSj2F/Jmv2fHFLismHJOkUmsA6X2cGPZ
+         kwix75cKvqmUg==
 Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-ztbu10063701.me.com (Postfix) with ESMTPSA id 719E29A06A8;
-        Tue, 30 Mar 2021 20:51:59 +0000 (UTC)
+        by st43p00im-ztdg10071801.me.com (Postfix) with ESMTPSA id 5FF645402B0;
+        Tue, 30 Mar 2021 20:52:02 +0000 (UTC)
 From:   Alain Volmat <avolmat@me.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -39,60 +40,44 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH v3 0/7] clk: st: embed clock outputs within drivers
-Date:   Tue, 30 Mar 2021 22:51:18 +0200
-Message-Id: <20210330205125.25708-1-avolmat@me.com>
+Subject: [PATCH v3 1/7] clk: st: clkgen-pll: remove unused variable of struct clkgen_pll
+Date:   Tue, 30 Mar 2021 22:51:19 +0200
+Message-Id: <20210330205125.25708-2-avolmat@me.com>
 X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
- =?UTF-8?Q?2903e8d5c8f:6.0.369,18.0.761,17.0.607.475.0000000_definitions?=
- =?UTF-8?Q?=3D2021-03-30=5F09:2021-03-30=5F01,2021-03-30=5F09,2020-04-07?=
- =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- clxscore=1015 mlxlogscore=903 suspectscore=0 spamscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103300153
+In-Reply-To: <20210330205125.25708-1-avolmat@me.com>
+References: <20210330205125.25708-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-30_12:2021-03-30,2021-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=945 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2006250000 definitions=main-2103300153
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of ST clock drivers used by STi platform are updated in
-order to introduce clock outputs informations within each drivers
-and thus allow to avoid having to rely on clock-output-names properties
-within DT clock nodes.
-For that purpose, drivers are updated to allow handling both modes
-(with or without clock-output-names).
-Once all DT will have been updated, the legacy mode could be removed
-from the drivers.
-This will also allow, once all STi DT will be corrected, to remove the
-of_clk_detect_critical API from clk core code since STi clock drivers
-are the only drivers using this API.
+ODF field within the struct clkgen_pll is never used by the driver
+and can thus be removed.
 
-This serie also contains modifications within STi DTS in order to use
-the newly introduced compatible and remove clock-output-names
-properties.
-
-Alain Volmat (7):
-  clk: st: clkgen-pll: remove used variable of struct clkgen_pll
-  clk: st: flexgen: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: flexgen: add new introduced compatible
-  clk: st: clkgen-pll: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: clkgen-pll: add new introduced compatible
-  clk: st: clkgen-fsyn: embed soc clock outputs within compatible data
-  dt-bindings: clock: st: clkgen-fsyn: add new introduced compatible
-
- .../bindings/clock/st/st,clkgen-pll.txt       |   3 +
- .../bindings/clock/st/st,flexgen.txt          |  10 +
- .../bindings/clock/st/st,quadfs.txt           |   3 +
- drivers/clk/st/clk-flexgen.c                  | 366 +++++++++++++++++-
- drivers/clk/st/clkgen-fsyn.c                  | 113 +++++-
- drivers/clk/st/clkgen-pll.c                   | 121 +++++-
- 6 files changed, 575 insertions(+), 41 deletions(-)
-
+Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
-v3: - removal some useless CLK_IS_CRITICAL and add some comments
-    - only keep clk drivers/binding patches within the serie
-v2: fix drivers to update some clocks as CLK_IS_CRITICAL
+v3: s/used/unused within the subject
 
+ drivers/clk/st/clkgen-pll.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 119c5b33080c..f6c56ca90c7d 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -146,7 +146,6 @@ struct clkgen_pll {
+ 
+ 	u32 ndiv;
+ 	u32 idf;
+-	u32 odf;
+ 	u32 cp;
+ };
+ 
 -- 
 2.17.1
 
