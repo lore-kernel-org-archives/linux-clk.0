@@ -2,140 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0BDC433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 16:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0553FC433C1
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 17:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 991A6619C8
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 16:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B81146196C
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 17:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231910AbhC3Q1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 12:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232064AbhC3Q04 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 12:26:56 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A75CC0613D9
-        for <linux-clk@vger.kernel.org>; Tue, 30 Mar 2021 09:26:56 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id v107so13026254ybi.9
-        for <linux-clk@vger.kernel.org>; Tue, 30 Mar 2021 09:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E84xiuP96qdI7CJTKEoKUbx5Tud8k1cz/vlbjHEw4u0=;
-        b=NhyyBx3rsxS/8TIMF2Ga2ndhdkfALclaVvdMgUn9VzeEDA9vjUxsU0hrmepA76TfLt
-         u0X4694RTY7cucG2E7Ff8cg8WyEZtc72CatSnkWj4BIkSv+WQ56l3wybCFVpC7oO8/aY
-         n7JuOd68AJouHOTeOvP+UeSvFZ0DzJGOerJU8QYdsQ3N1WYHN/oNfRba5OmHqlCHvH3X
-         O+u1FJyU6EET1HxP051/l4PrUVO0W7xz7dyvd7Eu54lhSOAPhAsK3Kb11A1ssyc9J65P
-         MH/b7aHeZJaLunKWbnTsmaRedKpwTDaFc9GgNUVHXYtTbKTaLcBqisSEGID/TuBZAjHG
-         wbPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E84xiuP96qdI7CJTKEoKUbx5Tud8k1cz/vlbjHEw4u0=;
-        b=MZaGYPATKlBE5/9X6Ldi1zgrkMuj7oKBAku/6EezD5dn87b8XNvXeXmTBSaib6cvux
-         IR5xtqbPjVkbYYeZdWIeOcoWt23YEc7WnM3aaN43CSdQ0nkZIdWLPB7LLHSouA2cwySr
-         qEFHp+3Y5jY/V/XER4jwxbzzq1o3FEWkR+zWlbFK9NfCjqOrgQix+jWo8BnYSYvDceHl
-         kNRydJlY68epP85XMrqPFipRLDMDIe21vfgT+zFIrRa0txLzO+q7IT5YNVT/Eenrw4zt
-         GP8EcZZ2hKmiK116yu1vPFJworAgT/fCQ2rV1586mCzWrPY2+ebywv6AflSjXbo12IyN
-         /E4A==
-X-Gm-Message-State: AOAM5337EvZHLTaaysfV6Vnew7qvLD4sNINDM8iXmNP7wenV5X0z2R+8
-        sH04w0uiPWGLUr3uUqcWLWZab8svkz3dScaaZld7FA==
-X-Google-Smtp-Source: ABdhPJzRju2GzsjyNoiA4fXciYHN4xAXYF+zjvtaWtSDSt0ofrTYQWng9+AP3dlitSrOgxr9jUO9qbtBbt2EI9ZSqHM=
-X-Received: by 2002:a25:d3cf:: with SMTP id e198mr45556943ybf.228.1617121615342;
- Tue, 30 Mar 2021 09:26:55 -0700 (PDT)
+        id S232101AbhC3RG6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 13:06:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232313AbhC3RFH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 30 Mar 2021 13:05:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 039CC6196C;
+        Tue, 30 Mar 2021 17:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617123906;
+        bh=QPhwovPcrsJg7hlzphlimDuvLhq/FIeCSJnaDQzrOjc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DDqd9PhXVEzre+KMdx6WmgAtMne02eCaNEpn6ob96vMaGttqcg/+o11Ww1iyqRzr5
+         WWLQP2ZKJhF1yEsJWv/wlS/isj4W4MGCkMO7RrmZU35+Lu9qRy3raHMqnROVUejpdL
+         hruog23VLibhstXaB23OMn/+axX6LENLYNm6vOPbD65A6fAmdOnxMzWZ+zE2Ct4vjp
+         78ELXv9Kqspnm8z7J/t4Cj18CELCtXMdzYHwxou5jEdqcscBQUMT1KnsUZ4+qMFG8D
+         LXyQ3deU6rcavbyy4IBHWOy5lWLRVaxMAoEBtEbseYe5UC9WLYaNd1JMqFsMQtBdXA
+         qLW7kRyZMKp2Q==
+Date:   Tue, 30 Mar 2021 18:04:54 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: davinci: Simplify using devm_clk_get_prepared()
+Message-ID: <20210330170454.GG4976@sirena.org.uk>
+References: <20210301135053.1462168-1-u.kleine-koenig@pengutronix.de>
+ <20210324201723.76299-1-u.kleine-koenig@pengutronix.de>
+ <20210324202258.bossedmrhj35nyvc@pengutronix.de>
 MIME-Version: 1.0
-References: <20210205222644.2357303-9-saravanak@google.com>
- <20210210114435.122242-1-tudor.ambarus@microchip.com> <20210330154222.GA5411@roeck-us.net>
-In-Reply-To: <20210330154222.GA5411@roeck-us.net>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 30 Mar 2021 09:26:19 -0700
-Message-ID: <CAGETcx_k2dAHRWn4914s32KSdJ=WLDe6DeD50V2kvR+2dUPrMw@mail.gmail.com>
-Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Brown, Len" <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MiFvc8Vo6wRSORdP"
+Content-Disposition: inline
+In-Reply-To: <20210324202258.bossedmrhj35nyvc@pengutronix.de>
+X-Cookie: Memory fault - where am I?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 8:42 AM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Wed, Feb 10, 2021 at 01:44:34PM +0200, Tudor Ambarus wrote:
-> > This is a follow-up for:
-> > commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
-> >
-> > The above commit updated the deprecated of_clk_add_provider(),
-> > but missed to update the preferred of_clk_add_hw_provider().
-> > Update it now.
-> >
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> > Reviewed-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >  drivers/clk/clk.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 27ff90eacb1f..9370e4dfecae 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
-> >       if (ret < 0)
-> >               of_clk_del_provider(np);
-> >
-> > +     fwnode_dev_initialized(&np->fwnode, true);
-> > +
->
-> This causes a crash when booting raspi2 images in qemu.
->
-> [   22.123618] Unable to handle kernel NULL pointer dereference at virtual address 00000028
-> [   22.123830] pgd = (ptrval)
-> [   22.123992] [00000028] *pgd=00000000
-> [   22.124579] Internal error: Oops: 5 [#1] SMP ARM
-> ...
-> [   22.141624] [<c0a2f4d8>] (of_clk_add_hw_provider) from [<c0a2f54c>] (devm_of_clk_add_hw_provider+0x48/0x80)
-> [   22.141819] [<c0a2f54c>] (devm_of_clk_add_hw_provider) from [<c0a43ad8>] (raspberrypi_clk_probe+0x25c/0x384)
-> [   22.141976] [<c0a43ad8>] (raspberrypi_clk_probe) from [<c0c18da0>] (platform_probe+0x5c/0xb8)
-> [   22.142114] [<c0c18da0>] (platform_probe) from [<c0c16654>] (really_probe+0xf0/0x39c)
-> [   22.142246] [<c0c16654>] (really_probe) from [<c0c16968>] (driver_probe_device+0x68/0xc0)
-> [   22.142377] [<c0c16968>] (driver_probe_device) from [<c0c14834>] (bus_for_each_drv+0x84/0xc8)...
->
-> np can (and will) be NULL here. See of_clk_set_defaults().
 
-Thanks for the report. It was reported earlier by Marek and there's a
-discussion going on about it in the thread.
+--MiFvc8Vo6wRSORdP
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Saravana
+On Wed, Mar 24, 2021 at 09:22:58PM +0100, Uwe Kleine-K=F6nig wrote:
+
+> oops, I got that wrong, this must be devm_clk_get_enabled, not
+> devm_clk_get_prepared. So if the clk patches go in, please let me resend
+> a fixed patch (or adapt yourself, whatever you prefer).
+
+I'll look out for your resubmission.
+
+--MiFvc8Vo6wRSORdP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBjWjYACgkQJNaLcl1U
+h9D4Hgf/RTdD38g2NTIIgbFmtGwZrK5fZoqoOpcEtMp8N9gT0XdUzIRq4LUCTFxI
+WIjEcpFXmqpYn/8JPFTk9gJQjQO316EX5iHhC7IYtAfRMZYCyK+99x4xQajWuQA0
+rkhohjJe7dMtQ6p7eBz2O/TtK06xEw+28Lv5o3TgHT4Ln8I0CRdnWHsOEAs7lxfS
+PsaffrUYZH4zGzJ9w2ncfegn/i5UddL1BWfiy0l274OXwXM90BG0jz7SBn9joBlQ
+pRrMr+svxdeS1ceyrOgz/1VNiAidKuu3TYvGHQ55mX7hqc0hW5gVU+eINXbEL9vh
+O71UWm6a81FaKqt/F/HslTMOiOs89Q==
+=OQMo
+-----END PGP SIGNATURE-----
+
+--MiFvc8Vo6wRSORdP--
