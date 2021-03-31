@@ -2,124 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A29C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 08:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DA1C433C1
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 08:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B480619DE
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 08:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B3BC619D3
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 08:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234273AbhCaIAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Mar 2021 04:00:20 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:59243 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234137AbhCaIAB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Mar 2021 04:00:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1617177601; x=1648713601;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=QAMy0aKzrxFM3Ag+XLeRLy9l4AN42Ui0jKuCNNrgJVM=;
-  b=zpZwRbp99G+T1V5bA1icUTVQk9tnX6119JeBHvz1rgxbvVSVJJOnlE9p
-   S89h2lHEbXYNWOXtfcdbkmABQHUXPx1NZYjOjPIlLxonuvfXcMuPQd9Gx
-   pVpIEW5HaRoLDNvpHibgUwQ3W3oq9pJAvP6uzjf6qGiAV6gBc71McdLW6
-   IfR0LrLrLyoHHYfY+qKjMBmY01kAxa20LaxkMP8n9tmPW4ENGdyhPYzz0
-   HxCEjnmI/xM0T3r3jfuLjcFIgd/QaqrvkGDguRzGGdoHgqugOU3NmjdFy
-   P2bPhag39fijH8oKfqBBcjot3asNVZqSMIIaMcuUxtTr4H7NkONwu0Gz7
-   A==;
-IronPort-SDR: i9OxWw8o1ULYSqFkAQsesztI4c8ZNzhFSdD6CQfiD06asGzAD1lQk4+Ueu4Hc6/5ZamFpL9NCj
- wL6a1T5DxBlFEKMBvt0ZIrnVSis72I9fpvoOUuWBV9W7QdNOaYALw7zdX3UY6Z+GEWyClTLzGP
- PP3mTxM3qdaWTC6138hN9ODPA3RH+7VjSCgDxXwv/+1RISOPvORdNxgYCakcJOuR5CGKM2rOMY
- /wfXWXlqK+uCfRqRfoTsfA9SbJ4Tb1egFydZFCbO6QEeqVcF3ydwGsxb41P3bpCnkOpWw/Il6N
- AhY=
-X-IronPort-AV: E=Sophos;i="5.81,293,1610434800"; 
-   d="scan'208";a="109181483"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Mar 2021 01:00:00 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 31 Mar 2021 00:59:59 -0700
-Received: from [10.171.246.91] (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Wed, 31 Mar 2021 00:59:57 -0700
-Subject: Re: [PATCH] clk: at91: Trivial typo fixes in the file sama7g5.c
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <claudiu.beznea@microchip.com>, <eugen.hristev@microchip.com>,
-        <tudor.ambarus@microchip.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <rdunlap@infradead.org>
-References: <20210313053222.14706-1-unixbhaskar@gmail.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <498a30fd-405b-8599-92ca-ca37269d49d4@microchip.com>
-Date:   Wed, 31 Mar 2021 09:59:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S234321AbhCaILg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Mar 2021 04:11:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234317AbhCaILc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Mar 2021 04:11:32 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B02C061574
+        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 01:11:31 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id l12-20020a9d6a8c0000b0290238e0f9f0d8so18182775otq.8
+        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 01:11:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dB0gWAEfZHKWfkYzrwK4EeStUrUWxM9Hj/xXv+mALOI=;
+        b=NfAdeXgL3iBuXyT9lp5nzsqiQkroT5annb1uZOmXLpNXmjk+hpy6F0F+FRveH5r1/1
+         XUzWiLPwYLgMQpX7ndNKM/1Qb31qLumbWtNZQusMYrgg8eMH1glsHsq/VJKJN5v2OYR8
+         qlBQFWstfKVN2XnQPUDzNgkhphm66qbGOBTBFija6FUExwqS3l/h9zS9h/dnZ35ZwNPY
+         xKL9YsEOPaF9+P7hWg1B/adoSFuYlqcuzoKUqDELe9HIeVvQKUk279LunGX4e4WH6Z0g
+         6bohdzIgiulsiOxgbI7yia63Elb8jGWDWKhOgYMlcQwDermLHfQijNchYgbhutEiOEjD
+         /VVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dB0gWAEfZHKWfkYzrwK4EeStUrUWxM9Hj/xXv+mALOI=;
+        b=TUF6jUoqawk4s0kuB5wu7ArYvzG4Jlm38raVp1XNp86dLSA6Ugd8aEMnMihOjSrb+P
+         A07dW716urRjzKE4x4tBcyEXG4RVgd6/X+g4QkELho8N71rBD54OuoKHtitLx3ORERDo
+         VtlZtRnBbq0yMcKQ7FaXdu3hsShoI+K+y2FKJVFd+mB20c+pmu9yPIhA36ot0bg/Fa/q
+         VYTkykF17HglIq6z2coX770ZReQU7so8aGL85zEvt8ROnZLAtJtAHraiFamxEICSEWCC
+         0BvacVV7YqcPSS6rDi8WKh63sg0Nu4rV9TkWjUIWSpqsKV0EhDzU/1iNwjbA8yVgPvw7
+         JKpQ==
+X-Gm-Message-State: AOAM532rIHUJ/dwe0CKinjRCAGXY+vJcwE0Tfd7s6g6LKdz5KsV46AKP
+        UwFW6r32tSgfTQsdCdUaQ+fpyDdQv7hrbOEpmWoY6A==
+X-Google-Smtp-Source: ABdhPJwncnEGkqPa53glb2cwgGqHNjR8JoKY4ey9u94NBOGSLTlyqhNGXBFQt2Q3v3VffMEnW3Ti9RMoqF56AIEeisY=
+X-Received: by 2002:a9d:6249:: with SMTP id i9mr1781965otk.166.1617178290874;
+ Wed, 31 Mar 2021 01:11:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210313053222.14706-1-unixbhaskar@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
+ <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+ <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
+ <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
+ <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
+ <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
+ <87h7kukzy4.fsf@igel.home>
+In-Reply-To: <87h7kukzy4.fsf@igel.home>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Wed, 31 Mar 2021 16:11:20 +0800
+Message-ID: <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/03/2021 at 06:32, Bhaskar Chowdhury wrote:
-> s/critial/critical/  ......two different places
-> s/parrent/parent/
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+On Mon, Mar 29, 2021 at 6:37 PM Andreas Schwab <schwab@linux-m68k.org> wrot=
+e:
+>
+> On M=C3=A4r 29 2021, Zong Li wrote:
+>
+> > Yes, I could get the network problem by using the defconfig you
+> > provided, the system hung up when executing 'ifconfig' immediately
+> > after installing macb driver module, the network can work by only
+> > reverting the commit 732374a0b440d9a79c8412f318a25cd37ba6f4e2. But the
+> > network is fine by using the mainline's defconfig, this is a little
+> > bit weird, I will check that and try to find the difference.
+>
+> My guess would be that it is an init dependency problem between the phy
+> driver and the clock driver, which causes the clock to be enabled too
+> late.
+>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+I found that the gemgxlpll was disabled immediately by power
+management after macb driver install. The mainline's defconfig doesn't
+enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
+enables CONFIG_PM, and the patch
+732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
+callback functions, so the gemgxlpll PLL, I have no idea why power
+management disable it, I would keep trace it.
 
-> ---
->   drivers/clk/at91/sama7g5.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index a6e20b35960e..9e1ec48c4474 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -166,7 +166,7 @@ static const struct {
->                    .c = &pll_characteristics,
->                    .t = PLL_TYPE_FRAC,
->                     /*
-> -                   * This feeds syspll_divpmcck which may feed critial parts
-> +                   * This feeds syspll_divpmcck which may feed critical parts
->                      * of the systems like timers. Therefore it should not be
->                      * disabled.
->                      */
-> @@ -178,7 +178,7 @@ static const struct {
->                    .c = &pll_characteristics,
->                    .t = PLL_TYPE_DIV,
->                     /*
-> -                   * This may feed critial parts of the systems like timers.
-> +                   * This may feed critical parts of the systems like timers.
->                      * Therefore it should not be disabled.
->                      */
->                    .f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
-> @@ -455,7 +455,7 @@ static const struct {
->    * @pp:                        PLL parents
->    * @pp_mux_table:      PLL parents mux table
->    * @r:                 clock output range
-> - * @pp_chg_id:         id in parrent array of changeable PLL parent
-> + * @pp_chg_id:         id in parent array of changeable PLL parent
->    * @pp_count:          PLL parents count
->    * @id:                        clock id
->    */
+By the way, I tried to disable CONFIG_PM on oenpsuse defconfig, the
+system didn't hang anymore, on the contrary, I enable CONFIG_PM on
+mainline's defconfig, I expect that the system would hang up as well,
+unfortunately, I cannot boot successfully by just enabling CONFIG_PM
+easily.
+
+
+> Andreas.
+>
 > --
-> 2.26.2
-> 
-
-
--- 
-Nicolas Ferre
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint =3D 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC=
+1
+> "And now for something completely different."
