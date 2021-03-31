@@ -2,80 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0761C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 22:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869BFC433C1
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 00:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83AE9619D7
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Mar 2021 22:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5411C619C0
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 00:25:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232307AbhC3WWQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Mar 2021 18:22:16 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:44556 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232910AbhC3WWE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 18:22:04 -0400
-Received: by mail-ot1-f46.google.com with SMTP id y19-20020a0568301d93b02901b9f88a238eso17055229oti.11;
-        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
+        id S232644AbhCaAZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Mar 2021 20:25:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232367AbhCaAY1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Mar 2021 20:24:27 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40CEDC061765
+        for <linux-clk@vger.kernel.org>; Tue, 30 Mar 2021 17:24:27 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id m7so12916249pgj.8
+        for <linux-clk@vger.kernel.org>; Tue, 30 Mar 2021 17:24:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t8GisNUKhAXhRRmhb5Tmd7cSosC0ChQ5VE6Rcal6IVk=;
+        b=urdw3ivXzWShCpZ72V3nD7ok9QIvHP0ke8jFdQ6gOdSvymUjIs2/ErLZOItEsi3Exq
+         Zs/3q45bKVnrvrbSLkghBP8hFtj6qVeMzz3QGjNAbe8vYCKmt67b0HU/a1rimNbVG/bG
+         9i5i5OG5X0jCsbYssTZKB2kEzfUjkj/Tz2IgeJP/MkJhFphCczFN6i17moOy/H7qOQ3e
+         aI+4KGsS3P5GrnDzdy7q9IblINvwNF1BiXXQaD5XzCxZULPiIcfhxzp7xxrMM0HeWyVS
+         JANPccHlgxQi8ZyQM3ouLqwjeOC7ke9gUVjz5HNCEAVRcxOfa39fRx9hzMCTKz9mMlld
+         ffdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6zE7eJ2fq/h+F919KpIJBmhEbaiUg8/PKDecbu+g1Qo=;
-        b=QWBF2RrMQx/X4i/jvsSZCZ4L+P9rCQejElbtfOseHzqxc+PUGvqjcee7h5aeUMAJyT
-         Uu75CwBBoKfizFKHCswqi7z0DLDDzXOW8fRftXwCFQUPxZKPn0/yXJuPoqX470mXqESZ
-         1EQa1oLtBu4pQwsZxoQ/FY1Z43gtGHGxvEQdUA0cE2eLXLsIzyisyOZmv5UNFPwcciOs
-         OEzi6P0dG5zTBArUlEMZOM8SS157zMXr9h3DLdsAtrRAtyybN0jFvOjzvltDJoN/NPn2
-         KdkSAZUYAzuyGjfjrABHA/PEkiM9QpcMWuE5j9Gz+TCxhQboXYc0ku23cAFD2cfKFcwG
-         4Ztg==
-X-Gm-Message-State: AOAM533f1HpsXA42Hk7fCVqx0J2qim83PgDwWoqvfsV0Pk8xJj7THBUU
-        R1gmSDsfowsa/f6Ua2W4MQ==
-X-Google-Smtp-Source: ABdhPJxxh7Vv32YkMChIM4ids4ZCy2CnNS4R0YBJbzedDc+MeQB/Sq7p3Op7wydFkRethpl2DIl3KQ==
-X-Received: by 2002:a9d:798a:: with SMTP id h10mr105741otm.170.1617142923563;
-        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g5sm81958oiy.24.2021.03.30.15.22.02
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=t8GisNUKhAXhRRmhb5Tmd7cSosC0ChQ5VE6Rcal6IVk=;
+        b=jZsNAUq2ry4PcsU/ODCpGbo+zCZGICO0uH+qNiX2ZlPeXD5C3IH5cuYyuvJ9W8OEXW
+         JkXIJc64OoiPF1cM/7empLozHoSZCwR1Bbw+dBDXPfn9OjKpuCkeTtWKdPXkTRFelYTK
+         Oe0AwApDgb3r4NeaEipiGl9sy7hGZAZQtXxD4fhAk3hO0AUMenv9YUNASRUljWAhFWwX
+         mzKNJ6fHkZoSHg3KyCn9BweG4TJvIDIPvaBcRmCnLZNC4l1w0VRALWQ6OLo6V60m712P
+         3+cL0F4F4iwmsgvAFiEEVPNHy1tc2UerZSkHD63bbHRpicjK8mdghcRKHkorhGq7aNEI
+         q2vg==
+X-Gm-Message-State: AOAM532vju8mpo9Uj/cSizVnnFT0+fuaqLLVU9nKJjOIdZ+SaVH4maNS
+        sIb51mBvNUcAPxW5YWS4rdDeeA==
+X-Google-Smtp-Source: ABdhPJzu1TA+qlBzM73yS6GhrKUJdqQ2kl7j2QOiV7JjAougt35JjgWoZLN67F4hgX4tR8a+GoQsxw==
+X-Received: by 2002:aa7:9687:0:b029:22e:e5ce:95b6 with SMTP id f7-20020aa796870000b029022ee5ce95b6mr502259pfk.53.1617150266450;
+        Tue, 30 Mar 2021 17:24:26 -0700 (PDT)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id p25sm169258pfe.100.2021.03.30.17.24.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Mar 2021 15:22:03 -0700 (PDT)
-Received: (nullmailer pid 819184 invoked by uid 1000);
-        Tue, 30 Mar 2021 22:22:01 -0000
-Date:   Tue, 30 Mar 2021 17:22:01 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dario Binacchi <dariobin@libero.it>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: ti: dpll: add spread spectrum support
-Message-ID: <20210330222201.GA819152@robh.at.kernel.org>
-References: <20210329164222.26794-1-dariobin@libero.it>
- <20210329164222.26794-3-dariobin@libero.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210329164222.26794-3-dariobin@libero.it>
+        Tue, 30 Mar 2021 17:24:25 -0700 (PDT)
+Date:   Tue, 30 Mar 2021 17:24:25 -0700 (PDT)
+X-Google-Original-Date: Tue, 30 Mar 2021 17:06:40 PDT (-0700)
+Subject:     Re: [PATCH v2 2/6] clk: sifive: Use reset-simple in prci driver for PCIe driver
+In-Reply-To: <CAHCEehL63aJQPA3DdRCa3pZHWX3DH9ktgKbo1+nD=KWxADsogA@mail.gmail.com>
+CC:     sboyd@kernel.org, alex.dewar90@gmail.com, aou@eecs.berkeley.edu,
+        bhelgaas@google.com, devicetree@vger.kernel.org,
+        erik.danie@sifive.com, hayashi.kunihiko@socionext.com,
+        helgaas@kernel.org, hes@sifive.com, jh80.chung@samsung.com,
+        khilman@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-riscv@lists.infradead.org, lorenzo.pieralisi@arm.com,
+        mturquette@baylibre.com, p.zabel@pengutronix.de,
+        Paul Walmsley <paul.walmsley@sifive.com>, robh+dt@kernel.org,
+        vidyas@nvidia.com, zong.li@sifive.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     greentime.hu@sifive.com
+Message-ID: <mhng-78a4de2c-8723-4b35-b64e-2e1866ad6743@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 29 Mar 2021 18:42:19 +0200, Dario Binacchi wrote:
-> DT bindings for enabling and adjusting spread spectrum clocking have
-> been added.
-> 
-> Signed-off-by: Dario Binacchi <dariobin@libero.it>
-> 
-> ---
-> 
-> Changes in v3:
-> - Add '-hz' suffix to "ti,ssc-modfreq" binding.
-> 
->  .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
+On Mon, 29 Mar 2021 20:36:12 PDT (-0700), greentime.hu@sifive.com wrote:
+> Stephen Boyd <sboyd@kernel.org> 於 2021年3月30日 週二 上午3:14寫道：
+>>
+>> Quoting Greentime Hu (2021-03-17 23:08:09)
+>> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> > index 71ab75a46491..f094df93d911 100644
+>> > --- a/drivers/reset/Kconfig
+>> > +++ b/drivers/reset/Kconfig
+>> > @@ -173,7 +173,7 @@ config RESET_SCMI
+>> >
+>> >  config RESET_SIMPLE
+>> >         bool "Simple Reset Controller Driver" if COMPILE_TEST
+>> > -       default ARCH_AGILEX || ARCH_ASPEED || ARCH_BITMAIN || ARCH_REALTEK || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARC
+>> > +       default ARCH_AGILEX || ARCH_ASPEED || ARCH_BITMAIN || ARCH_REALTEK || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARC || RISCV
+>>
+>> This conflicts. Can this default be part of the riscv defconfig instead?
+>>
+>
+> Maybe I should remove this since it has been selected by CLK_SIFIVE_PRCI?
+>
+>  config CLK_SIFIVE_PRCI
+>         bool "PRCI driver for SiFive SoCs"
+> +       select RESET_CONTROLLER
+> +       select RESET_SIMPLE
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Ya, that's better.  IIRC I suggested something similar in some other 
+version, but I might have not actually sent the mail.
+
+>
+>> >         help
+>> >           This enables a simple reset controller driver for reset lines that
+>> >           that can be asserted and deasserted by toggling bits in a contiguous,
+>> > @@ -187,6 +187,7 @@ config RESET_SIMPLE
+>> >            - RCC reset controller in STM32 MCUs
+>> >            - Allwinner SoCs
+>> >            - ZTE's zx2967 family
+>> > +          - SiFive FU740 SoCs
+>> >
+>> >  config RESET_STM32MP157
+>> >         bool "STM32MP157 Reset Driver" if COMPILE_TEST
