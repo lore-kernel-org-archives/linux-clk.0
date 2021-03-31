@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF149C4345D
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 10:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1824CC43460
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 10:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B498619BB
+	by mail.kernel.org (Postfix) with ESMTP id E5BA561994
 	for <linux-clk@archiver.kernel.org>; Wed, 31 Mar 2021 10:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235147AbhCaK6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S235145AbhCaK6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 31 Mar 2021 06:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235155AbhCaK5x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Mar 2021 06:57:53 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32E6C06174A
-        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 03:57:52 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id u20so23257477lja.13
-        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 03:57:52 -0700 (PDT)
+        with ESMTP id S235148AbhCaK5u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Mar 2021 06:57:50 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 491E2C06174A
+        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 03:57:50 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id d13so7508683lfg.7
+        for <linux-clk@vger.kernel.org>; Wed, 31 Mar 2021 03:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hznsgYDHAusvWizyBrE12tdQt6ZNG9CS7BUT3Tle0z4=;
-        b=AEZ3sRqOspektPKkP7ZWmuQNuLieI5sc4Ebd68YLCYyTKY8fhYpKyylcAkHU7SXdKU
-         8cdisc7NZgLX7E9mQd3QfYSrxt+mimB8LIK61SVfN+Vb1a/J186QA8NFopW0jL8ICa7o
-         ScxaOjCxgMShtZ6oxzdg4rM1gimlB0ji+elcTjII4XRKCqLdNzpDdZU3pwtTg41zDlb0
-         uYCl4TEZh1OWyvi9tkUssqohEzgcnaKE4EDKeEeKQG2NytIDnRL/zj+UEE8lH0Z5wHES
-         ePW3vAY8eLOTOeZ22W4sbl8sFQyfialHyeiwmhaMPQUoC+I4k8bnQVIhOezw0l9ieezc
-         8RAw==
+        bh=jks6uw8vKOVjHJ64qxajKP26j7EyBfYIM430M0HkHfs=;
+        b=wfwRQZyiNacy1vxu713dR9WuHQPios7+Qcd+scxyCncpwRqJqLHzG3Nw6DGhpz4ifm
+         OF2Vika9dXagyLxGkTp7wuMP5v//K3boi+Ew1MF4ZeJtZJc+N34a5BAZJN/SGbDkhWPm
+         hop+1M5zoX9kwbWsP+fIGGqrb9tX5etOSYQkDy9bH7lBswgNJWwl77cFJKlhAn24urWZ
+         XCck8+NeT3gevE7aR5651uA/sbURa/6wEsV77Xv8dW76Y9/qDYizS9Jmh7tOZFCRhcA5
+         o5Ab1eWsBNKL+GaVksvH+5zEQtuKD51oudsr71H2hlC0eryy5Y9EejliuzEEn749/o7I
+         0YIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hznsgYDHAusvWizyBrE12tdQt6ZNG9CS7BUT3Tle0z4=;
-        b=WfkyC7uCcNybOP8ZrrJ29Wfmf8xmVdptcl1m/lq9K+CLX+Hb8CRxAyPYcz0ZKCb8+D
-         2xGMo4srHsGGe3LBHKkuHUe2rJIDb6W3qk4q59IpiDwJVU95l01/bSzWrumt49/ucPoM
-         oC/u008nI5y7S+e4ec05+qpjNGtN2rQMEK6LfhU/7gEgzv+8gOW53WNUhrsqdEjmas2b
-         E2CuDNVUk0bRt7KQICT/cqj+LKul+huJ03qZkNQcPF87KaGR7ZCSFbzU/+B6gJMJnDT+
-         In4c19AVrPe0uHRlEZG+KdyLSOOdAHIhnAVtkzXJgFp63o3UgQ7THwGjIbC2PoFBHsDI
-         ZeGA==
-X-Gm-Message-State: AOAM531W3ygn30QF4NiIhl2e+fLVyC1ubNfrtu8XOmJiR6Qe31YFKp8I
-        BteVyVyihxmWjcC4Dk3ioIr/kw==
-X-Google-Smtp-Source: ABdhPJyswHvqLXCa0S1bId7oRFB9p8hjhqbBpN+FbteJJbaqXjPRcQ0rTeJ+g+Mn3Yiv/eBjdrbcOA==
-X-Received: by 2002:a05:651c:1022:: with SMTP id w2mr1606855ljm.455.1617188271286;
-        Wed, 31 Mar 2021 03:57:51 -0700 (PDT)
+        bh=jks6uw8vKOVjHJ64qxajKP26j7EyBfYIM430M0HkHfs=;
+        b=haC69JCkQqlTvWg/A4ruEvK6JswD3UxubsVtyaHXsUDodXnsXZUWyLb/KWW5jEictj
+         9OYCdStGKJ3U7Aw7Sy0Mluv3s/US48CsQoq66hYGdItJsUA7ZoqScG0INz1oNi50ey4I
+         WZLpRYpytULh7lZFg1v3QYnUCTJonLEmXN8ZXVpKnIwrjyS8IlBG3bqYazonrNAddQ73
+         WrwSjU1sUayyXVqkYhLlH/4t+rzHG26trdyAhgpWE6JO0cwEGZBnp+Ce+C/gxyGbtiea
+         747RgtrJ0QEoOvG56mgrZQGXCdLwz9fGy77Lzy6raSXf1QTj6aVZD48z40YHWCjF3ZdL
+         Z00w==
+X-Gm-Message-State: AOAM530pfuO6vsXfvZ6+NBM4V9dnRHPbEdx+HK3Q+adWLyVlPb8wmyHc
+        YDNLm2ovKKxxxfFNw6H1iGuBvUxzBAsemg==
+X-Google-Smtp-Source: ABdhPJzq/Rzg/aZWsJnMdr6s1o/6IhvZXxo7SK+LVH+8VHk27vL6j0oNidRPwF6sVZyCPOsHpAbk0g==
+X-Received: by 2002:ac2:465c:: with SMTP id s28mr1862968lfo.135.1617188268714;
+        Wed, 31 Mar 2021 03:57:48 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id h3sm184359ljc.67.2021.03.31.03.57.50
+        by smtp.gmail.com with ESMTPSA id h3sm184359ljc.67.2021.03.31.03.57.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 03:57:50 -0700 (PDT)
+        Wed, 31 Mar 2021 03:57:48 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Abhinav Kumar <abhinavk@codeaurora.org>,
@@ -64,9 +64,9 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         linux-clk@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v4 16/24] drm/msi/dsi: inline msm_dsi_pll_helper_clk_prepare/unprepare
-Date:   Wed, 31 Mar 2021 13:57:27 +0300
-Message-Id: <20210331105735.3690009-17-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 13/24] drm/msm/dsi: make save/restore_state phy-level functions
+Date:   Wed, 31 Mar 2021 13:57:24 +0300
+Message-Id: <20210331105735.3690009-14-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210331105735.3690009-1-dmitry.baryshkov@linaro.org>
 References: <20210331105735.3690009-1-dmitry.baryshkov@linaro.org>
@@ -76,539 +76,260 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-10nm and 7nm already do not use these helpers, as they handle setting
-slave DSI clocks after enabling VCO. Modify the rest of PHY drivers to
-remove unnecessary indirection and drop enable_seq/disable_seq PLL
-callbacks.
+Morph msm_dsi_pll_save/restore_state() into msm_dsi_phy_save/restore_state(),
+thus removing last bits of knowledge about msm_dsi_pll from dsi_manager.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
 Tested-by: Stephen Boyd <swboyd@chromium.org> # on sc7180 lazor
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h         |   2 -
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    |  87 +++++++------
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    |  86 ++++++++-----
- .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 120 ++++++++++--------
- drivers/gpu/drm/msm/dsi/phy/dsi_pll.c         |  35 -----
- drivers/gpu/drm/msm/dsi/phy/dsi_pll.h         |   2 -
- 6 files changed, 171 insertions(+), 161 deletions(-)
+ drivers/gpu/drm/msm/dsi/dsi.h              | 18 ++---------
+ drivers/gpu/drm/msm/dsi/dsi_manager.c      |  6 ++--
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c      | 35 +++++++++++++++-------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      | 11 +++++++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c |  2 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c  |  2 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_pll.c      | 26 ----------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_pll.h      | 11 -------
+ 8 files changed, 42 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-index 8133732e0c7f..b477d21804c8 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-@@ -32,8 +32,6 @@ struct msm_dsi_phy_ops {
- };
+diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
+index 0970f05cd47f..7f99e12efd52 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi.h
++++ b/drivers/gpu/drm/msm/dsi/dsi.h
+@@ -92,21 +92,6 @@ static inline bool msm_dsi_device_connected(struct msm_dsi *msm_dsi)
  
- struct msm_dsi_pll_ops {
--	int (*enable_seq)(struct msm_dsi_pll *pll);
--	void (*disable_seq)(struct msm_dsi_pll *pll);
- 	void (*save_state)(struct msm_dsi_pll *pll);
- 	int (*restore_state)(struct msm_dsi_pll *pll);
- };
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-index 434d02ffa7fe..91c5bb2fd169 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-@@ -652,12 +652,58 @@ static unsigned long dsi_pll_14nm_vco_recalc_rate(struct clk_hw *hw,
- 	return (unsigned long)vco_rate;
- }
+ struct drm_encoder *msm_dsi_get_encoder(struct msm_dsi *msm_dsi);
  
-+static int dsi_pll_14nm_vco_prepare(struct clk_hw *hw)
-+{
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
-+	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
-+	void __iomem *base = pll_14nm->mmio;
-+	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
-+	bool locked;
-+
-+	DBG("");
-+
-+	if (unlikely(pll->pll_on))
-+		return 0;
-+
-+	pll_write(base + REG_DSI_14nm_PHY_PLL_VREF_CFG1, 0x10);
-+	pll_write(cmn_base + REG_DSI_14nm_PHY_CMN_PLL_CNTRL, 1);
-+
-+	locked = pll_14nm_poll_for_ready(pll_14nm, POLL_MAX_READS,
-+					 POLL_TIMEOUT_US);
-+
-+	if (unlikely(!locked)) {
-+		DRM_DEV_ERROR(&pll_14nm->pdev->dev, "DSI PLL lock failed\n");
-+		return -EINVAL;
-+	}
-+
-+	DBG("DSI PLL lock success");
-+	pll->pll_on = true;
-+
-+	return 0;
-+}
-+
-+static void dsi_pll_14nm_vco_unprepare(struct clk_hw *hw)
-+{
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
-+	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
-+	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
-+
-+	DBG("");
-+
-+	if (unlikely(!pll->pll_on))
-+		return;
-+
-+	pll_write(cmn_base + REG_DSI_14nm_PHY_CMN_PLL_CNTRL, 0);
-+
-+	pll->pll_on = false;
-+}
-+
- static const struct clk_ops clk_ops_dsi_pll_14nm_vco = {
- 	.round_rate = msm_dsi_pll_helper_clk_round_rate,
- 	.set_rate = dsi_pll_14nm_vco_set_rate,
- 	.recalc_rate = dsi_pll_14nm_vco_recalc_rate,
--	.prepare = msm_dsi_pll_helper_clk_prepare,
--	.unprepare = msm_dsi_pll_helper_clk_unprepare,
-+	.prepare = dsi_pll_14nm_vco_prepare,
-+	.unprepare = dsi_pll_14nm_vco_unprepare,
- };
- 
- /*
-@@ -749,39 +795,6 @@ static const struct clk_ops clk_ops_dsi_pll_14nm_postdiv = {
-  * PLL Callbacks
-  */
- 
--static int dsi_pll_14nm_enable_seq(struct msm_dsi_pll *pll)
+-/* dsi pll */
+-struct msm_dsi_pll;
+-#ifdef CONFIG_DRM_MSM_DSI_PLL
+-void msm_dsi_pll_save_state(struct msm_dsi_pll *pll);
+-int msm_dsi_pll_restore_state(struct msm_dsi_pll *pll);
+-#else
+-static inline void msm_dsi_pll_save_state(struct msm_dsi_pll *pll)
 -{
--	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
--	void __iomem *base = pll_14nm->mmio;
--	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
--	bool locked;
--
--	DBG("");
--
--	pll_write(base + REG_DSI_14nm_PHY_PLL_VREF_CFG1, 0x10);
--	pll_write(cmn_base + REG_DSI_14nm_PHY_CMN_PLL_CNTRL, 1);
--
--	locked = pll_14nm_poll_for_ready(pll_14nm, POLL_MAX_READS,
--					 POLL_TIMEOUT_US);
--
--	if (unlikely(!locked))
--		DRM_DEV_ERROR(&pll_14nm->pdev->dev, "DSI PLL lock failed\n");
--	else
--		DBG("DSI PLL lock success");
--
--	return locked ? 0 : -EINVAL;
 -}
--
--static void dsi_pll_14nm_disable_seq(struct msm_dsi_pll *pll)
+-static inline int msm_dsi_pll_restore_state(struct msm_dsi_pll *pll)
 -{
--	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
--	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
--
--	DBG("");
--
--	pll_write(cmn_base + REG_DSI_14nm_PHY_CMN_PLL_CNTRL, 0);
+-	return 0;
 -}
+-#endif
 -
- static void dsi_pll_14nm_save_state(struct msm_dsi_pll *pll)
- {
- 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(pll);
-@@ -1157,8 +1170,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_14nm_save_state,
- 		.restore_state = dsi_pll_14nm_restore_state,
--		.disable_seq = dsi_pll_14nm_disable_seq,
--		.enable_seq = dsi_pll_14nm_enable_seq,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
-@@ -1183,8 +1194,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_14nm_save_state,
- 		.restore_state = dsi_pll_14nm_restore_state,
--		.disable_seq = dsi_pll_14nm_disable_seq,
--		.enable_seq = dsi_pll_14nm_enable_seq,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index ed369eb18e9d..20b31398b540 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -289,19 +289,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
- 	return vco_rate;
- }
+ /* dsi host */
+ struct msm_dsi_host;
+ int msm_dsi_host_xfer_prepare(struct mipi_dsi_host *host,
+@@ -182,11 +167,12 @@ int msm_dsi_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
+ void msm_dsi_phy_disable(struct msm_dsi_phy *phy);
+ void msm_dsi_phy_get_shared_timings(struct msm_dsi_phy *phy,
+ 			struct msm_dsi_phy_shared_timings *shared_timing);
+-struct msm_dsi_pll *msm_dsi_phy_get_pll(struct msm_dsi_phy *phy);
+ void msm_dsi_phy_set_usecase(struct msm_dsi_phy *phy,
+ 			     enum msm_dsi_phy_usecase uc);
+ int msm_dsi_phy_get_clk_provider(struct msm_dsi_phy *phy,
+ 	struct clk **byte_clk_provider, struct clk **pixel_clk_provider);
++void msm_dsi_phy_pll_save_state(struct msm_dsi_phy *phy);
++int msm_dsi_phy_pll_restore_state(struct msm_dsi_phy *phy);
  
--static const struct clk_ops clk_ops_dsi_pll_28nm_vco = {
--	.round_rate = msm_dsi_pll_helper_clk_round_rate,
--	.set_rate = dsi_pll_28nm_clk_set_rate,
--	.recalc_rate = dsi_pll_28nm_clk_recalc_rate,
--	.prepare = msm_dsi_pll_helper_clk_prepare,
--	.unprepare = msm_dsi_pll_helper_clk_unprepare,
--	.is_enabled = dsi_pll_28nm_clk_is_enabled,
--};
--
--/*
-- * PLL Callbacks
-- */
--static int _dsi_pll_28nm_enable_seq_hpm(struct msm_dsi_pll *pll)
-+static int _dsi_pll_28nm_vco_prepare_hpm(struct msm_dsi_pll *pll)
- {
- 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
- 	struct device *dev = &pll_28nm->pdev->dev;
-@@ -376,21 +364,28 @@ static int _dsi_pll_28nm_enable_seq_hpm(struct msm_dsi_pll *pll)
- 	return locked ? 0 : -EINVAL;
- }
+ #endif /* __DSI_CONNECTOR_H__ */
  
--static int dsi_pll_28nm_enable_seq_hpm(struct msm_dsi_pll *pll)
-+static int dsi_pll_28nm_vco_prepare_hpm(struct clk_hw *hw)
- {
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
- 	int i, ret;
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+index 86e36be58701..e116e5ff5d24 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+@@ -498,7 +498,6 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 	struct msm_dsi *msm_dsi1 = dsi_mgr_get_dsi(DSI_1);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct drm_panel *panel = msm_dsi->panel;
+-	struct msm_dsi_pll *src_pll;
+ 	bool is_dual_dsi = IS_DUAL_DSI();
+ 	int ret;
  
-+	if (unlikely(pll->pll_on))
-+		return 0;
-+
- 	for (i = 0; i < 3; i++) {
--		ret = _dsi_pll_28nm_enable_seq_hpm(pll);
--		if (!ret)
-+		ret = _dsi_pll_28nm_vco_prepare_hpm(pll);
-+		if (!ret) {
-+			pll->pll_on = true;
- 			return 0;
-+		}
+@@ -532,9 +531,8 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 								id, ret);
  	}
  
- 	return ret;
+-	/* Save PLL status if it is a clock source */
+-	src_pll = msm_dsi_phy_get_pll(msm_dsi->phy);
+-	msm_dsi_pll_save_state(src_pll);
++	/* Save PHY status if it is a clock source */
++	msm_dsi_phy_pll_save_state(msm_dsi->phy);
+ 
+ 	ret = msm_dsi_host_power_off(host);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index 46561435a27d..a1360e2dad3b 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -799,9 +799,9 @@ int msm_dsi_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
+ 	 * source.
+ 	 */
+ 	if (phy->usecase != MSM_DSI_PHY_SLAVE) {
+-		ret = msm_dsi_pll_restore_state(phy->pll);
++		ret = msm_dsi_phy_pll_restore_state(phy);
+ 		if (ret) {
+-			DRM_DEV_ERROR(dev, "%s: failed to restore pll state, %d\n",
++			DRM_DEV_ERROR(dev, "%s: failed to restore phy state, %d\n",
+ 				__func__, ret);
+ 			goto pll_restor_fail;
+ 		}
+@@ -838,14 +838,6 @@ void msm_dsi_phy_get_shared_timings(struct msm_dsi_phy *phy,
+ 	       sizeof(*shared_timings));
  }
  
--static int dsi_pll_28nm_enable_seq_lp(struct msm_dsi_pll *pll)
-+static int dsi_pll_28nm_vco_prepare_lp(struct clk_hw *hw)
+-struct msm_dsi_pll *msm_dsi_phy_get_pll(struct msm_dsi_phy *phy)
+-{
+-	if (!phy)
+-		return NULL;
+-
+-	return phy->pll;
+-}
+-
+ void msm_dsi_phy_set_usecase(struct msm_dsi_phy *phy,
+ 			     enum msm_dsi_phy_usecase uc)
  {
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
- 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
- 	struct device *dev = &pll_28nm->pdev->dev;
- 	void __iomem *base = pll_28nm->mmio;
-@@ -400,6 +395,9 @@ static int dsi_pll_28nm_enable_seq_lp(struct msm_dsi_pll *pll)
+@@ -863,3 +855,26 @@ int msm_dsi_phy_get_clk_provider(struct msm_dsi_phy *phy,
  
- 	DBG("id=%d", pll_28nm->id);
- 
-+	if (unlikely(pll->pll_on))
-+		return 0;
-+
- 	pll_28nm_software_reset(pll_28nm);
- 
- 	/*
-@@ -424,22 +422,54 @@ static int dsi_pll_28nm_enable_seq_lp(struct msm_dsi_pll *pll)
- 
- 	locked = pll_28nm_poll_for_ready(pll_28nm, max_reads, timeout_us);
- 
--	if (unlikely(!locked))
-+	if (unlikely(!locked)) {
- 		DRM_DEV_ERROR(dev, "DSI PLL lock failed\n");
--	else
--		DBG("DSI PLL lock success");
-+		return -EINVAL;
-+	}
- 
--	return locked ? 0 : -EINVAL;
-+	DBG("DSI PLL lock success");
-+	pll->pll_on = true;
-+
-+	return 0;
+ 	return -EINVAL;
  }
- 
--static void dsi_pll_28nm_disable_seq(struct msm_dsi_pll *pll)
-+static void dsi_pll_28nm_vco_unprepare(struct clk_hw *hw)
- {
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
- 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
- 
- 	DBG("id=%d", pll_28nm->id);
 +
-+	if (unlikely(!pll->pll_on))
-+		return;
-+
- 	pll_write(pll_28nm->mmio + REG_DSI_28nm_PHY_PLL_GLB_CFG, 0x00);
-+
-+	pll->pll_on = false;
- }
- 
-+static const struct clk_ops clk_ops_dsi_pll_28nm_vco_hpm = {
-+	.round_rate = msm_dsi_pll_helper_clk_round_rate,
-+	.set_rate = dsi_pll_28nm_clk_set_rate,
-+	.recalc_rate = dsi_pll_28nm_clk_recalc_rate,
-+	.prepare = dsi_pll_28nm_vco_prepare_hpm,
-+	.unprepare = dsi_pll_28nm_vco_unprepare,
-+	.is_enabled = dsi_pll_28nm_clk_is_enabled,
-+};
-+
-+static const struct clk_ops clk_ops_dsi_pll_28nm_vco_lp = {
-+	.round_rate = msm_dsi_pll_helper_clk_round_rate,
-+	.set_rate = dsi_pll_28nm_clk_set_rate,
-+	.recalc_rate = dsi_pll_28nm_clk_recalc_rate,
-+	.prepare = dsi_pll_28nm_vco_prepare_lp,
-+	.unprepare = dsi_pll_28nm_vco_unprepare,
-+	.is_enabled = dsi_pll_28nm_clk_is_enabled,
-+};
-+
-+/*
-+ * PLL Callbacks
-+ */
-+
- static void dsi_pll_28nm_save_state(struct msm_dsi_pll *pll)
- {
- 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
-@@ -490,7 +520,6 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
- 		.num_parents = 1,
- 		.name = vco_name,
- 		.flags = CLK_IGNORE_UNUSED,
--		.ops = &clk_ops_dsi_pll_28nm_vco,
- 	};
- 	struct device *dev = &pll_28nm->pdev->dev;
- 	struct clk_hw *hw;
-@@ -498,6 +527,11 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
- 
- 	DBG("%d", pll_28nm->id);
- 
-+	if (pll_28nm->base.cfg->type == MSM_DSI_PHY_28NM_LP)
-+		vco_init.ops = &clk_ops_dsi_pll_28nm_vco_lp;
-+	else
-+		vco_init.ops = &clk_ops_dsi_pll_28nm_vco_hpm;
-+
- 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_28nm->id);
- 	pll_28nm->base.clk_hw.init = &vco_init;
- 	ret = devm_clk_hw_register(dev, &pll_28nm->base.clk_hw);
-@@ -753,8 +787,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_28nm_save_state,
- 		.restore_state = dsi_pll_28nm_restore_state,
--		.disable_seq = dsi_pll_28nm_disable_seq,
--		.enable_seq = dsi_pll_28nm_enable_seq_hpm,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
-@@ -779,8 +811,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_28nm_save_state,
- 		.restore_state = dsi_pll_28nm_restore_state,
--		.disable_seq = dsi_pll_28nm_disable_seq,
--		.enable_seq = dsi_pll_28nm_enable_seq_hpm,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
-@@ -805,8 +835,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_28nm_save_state,
- 		.restore_state = dsi_pll_28nm_restore_state,
--		.disable_seq = dsi_pll_28nm_disable_seq,
--		.enable_seq = dsi_pll_28nm_enable_seq_lp,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-index 45b2bf482392..952444e3e8f0 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-@@ -178,12 +178,76 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
- 	return vco_rate;
- }
- 
-+static int dsi_pll_28nm_vco_prepare(struct clk_hw *hw)
++void msm_dsi_phy_pll_save_state(struct msm_dsi_phy *phy)
 +{
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
-+	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
-+	struct device *dev = &pll_28nm->pdev->dev;
-+	void __iomem *base = pll_28nm->mmio;
-+	bool locked;
-+	unsigned int bit_div, byte_div;
-+	int max_reads = 1000, timeout_us = 100;
-+	u32 val;
-+
-+	DBG("id=%d", pll_28nm->id);
-+
-+	if (unlikely(pll->pll_on))
-+		return 0;
-+
-+	/*
-+	 * before enabling the PLL, configure the bit clock divider since we
-+	 * don't expose it as a clock to the outside world
-+	 * 1: read back the byte clock divider that should already be set
-+	 * 2: divide by 8 to get bit clock divider
-+	 * 3: write it to POSTDIV1
-+	 */
-+	val = pll_read(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_9);
-+	byte_div = val + 1;
-+	bit_div = byte_div / 8;
-+
-+	val = pll_read(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_8);
-+	val &= ~0xf;
-+	val |= (bit_div - 1);
-+	pll_write(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_8, val);
-+
-+	/* enable the PLL */
-+	pll_write(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_0,
-+			DSI_28nm_8960_PHY_PLL_CTRL_0_ENABLE);
-+
-+	locked = pll_28nm_poll_for_ready(pll_28nm, max_reads, timeout_us);
-+
-+	if (unlikely(!locked)) {
-+		DRM_DEV_ERROR(dev, "DSI PLL lock failed\n");
-+		return -EINVAL;
++	if (phy->cfg->pll_ops.save_state) {
++		phy->cfg->pll_ops.save_state(phy->pll);
++		phy->pll->state_saved = true;
 +	}
++}
 +
-+	DBG("DSI PLL lock success");
-+	pll->pll_on = true;
++int msm_dsi_phy_pll_restore_state(struct msm_dsi_phy *phy)
++{
++	int ret;
++
++	if (phy->cfg->pll_ops.restore_state && phy->pll->state_saved) {
++		ret = phy->cfg->pll_ops.restore_state(phy->pll);
++		if (ret)
++			return ret;
++
++		phy->pll->state_saved = false;
++	}
 +
 +	return 0;
 +}
-+
-+static void dsi_pll_28nm_vco_unprepare(struct clk_hw *hw)
-+{
-+	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
-+	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
-+
-+	DBG("id=%d", pll_28nm->id);
-+
-+	if (unlikely(!pll->pll_on))
-+		return;
-+
-+	pll_write(pll_28nm->mmio + REG_DSI_28nm_8960_PHY_PLL_CTRL_0, 0x00);
-+
-+	pll->pll_on = false;
-+}
-+
- static const struct clk_ops clk_ops_dsi_pll_28nm_vco = {
- 	.round_rate = msm_dsi_pll_helper_clk_round_rate,
- 	.set_rate = dsi_pll_28nm_clk_set_rate,
- 	.recalc_rate = dsi_pll_28nm_clk_recalc_rate,
--	.prepare = msm_dsi_pll_helper_clk_prepare,
--	.unprepare = msm_dsi_pll_helper_clk_unprepare,
-+	.prepare = dsi_pll_28nm_vco_prepare,
-+	.unprepare = dsi_pll_28nm_vco_unprepare,
- 	.is_enabled = dsi_pll_28nm_clk_is_enabled,
- };
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+index 2c5196844ba9..8133732e0c7f 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+@@ -6,6 +6,7 @@
+ #ifndef __DSI_PHY_H__
+ #define __DSI_PHY_H__
  
-@@ -270,56 +334,6 @@ static const struct clk_ops clk_bytediv_ops = {
- /*
-  * PLL Callbacks
-  */
--static int dsi_pll_28nm_enable_seq(struct msm_dsi_pll *pll)
--{
--	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
--	struct device *dev = &pll_28nm->pdev->dev;
--	void __iomem *base = pll_28nm->mmio;
--	bool locked;
--	unsigned int bit_div, byte_div;
--	int max_reads = 1000, timeout_us = 100;
--	u32 val;
--
--	DBG("id=%d", pll_28nm->id);
--
--	/*
--	 * before enabling the PLL, configure the bit clock divider since we
--	 * don't expose it as a clock to the outside world
--	 * 1: read back the byte clock divider that should already be set
--	 * 2: divide by 8 to get bit clock divider
--	 * 3: write it to POSTDIV1
--	 */
--	val = pll_read(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_9);
--	byte_div = val + 1;
--	bit_div = byte_div / 8;
--
--	val = pll_read(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_8);
--	val &= ~0xf;
--	val |= (bit_div - 1);
--	pll_write(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_8, val);
--
--	/* enable the PLL */
--	pll_write(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_0,
--			DSI_28nm_8960_PHY_PLL_CTRL_0_ENABLE);
--
--	locked = pll_28nm_poll_for_ready(pll_28nm, max_reads, timeout_us);
--
--	if (unlikely(!locked))
--		DRM_DEV_ERROR(dev, "DSI PLL lock failed\n");
--	else
--		DBG("DSI PLL lock success");
--
--	return locked ? 0 : -EINVAL;
--}
--
--static void dsi_pll_28nm_disable_seq(struct msm_dsi_pll *pll)
--{
--	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
--
--	DBG("id=%d", pll_28nm->id);
--	pll_write(pll_28nm->mmio + REG_DSI_28nm_8960_PHY_PLL_CTRL_0, 0x00);
--}
--
- static void dsi_pll_28nm_save_state(struct msm_dsi_pll *pll)
- {
- 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
-@@ -652,8 +666,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs = {
- 	.pll_ops = {
- 		.save_state = dsi_pll_28nm_save_state,
- 		.restore_state = dsi_pll_28nm_restore_state,
--		.disable_seq = dsi_pll_28nm_disable_seq,
--		.enable_seq = dsi_pll_28nm_enable_seq,
- 	},
- 	.min_pll_rate = VCO_MIN_RATE,
- 	.max_pll_rate = VCO_MAX_RATE,
++#include <linux/clk-provider.h>
+ #include <linux/regulator/consumer.h>
+ 
+ #include "dsi.h"
+@@ -13,6 +14,16 @@
+ #define dsi_phy_read(offset) msm_readl((offset))
+ #define dsi_phy_write(offset, data) msm_writel((data), (offset))
+ 
++struct msm_dsi_pll {
++	struct clk_hw	clk_hw;
++	bool		pll_on;
++	bool		state_saved;
++
++	const struct msm_dsi_phy_cfg *cfg;
++};
++
++#define hw_clk_to_pll(x) container_of(x, struct msm_dsi_pll, clk_hw)
++
+ struct msm_dsi_phy_ops {
+ 	int (*pll_init)(struct msm_dsi_phy *phy);
+ 	int (*enable)(struct msm_dsi_phy *phy, int src_pll_id,
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+index 6300b92c65eb..d81cea661f5c 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+@@ -782,7 +782,7 @@ static int dsi_pll_10nm_init(struct msm_dsi_phy *phy)
+ 	phy->pll = pll;
+ 
+ 	/* TODO: Remove this when we have proper display handover support */
+-	msm_dsi_pll_save_state(pll);
++	msm_dsi_phy_pll_save_state(phy);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index c482e51d1bee..d725ceb0b90c 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -807,7 +807,7 @@ static int dsi_pll_7nm_init(struct msm_dsi_phy *phy)
+ 	phy->pll = pll;
+ 
+ 	/* TODO: Remove this when we have proper display handover support */
+-	msm_dsi_pll_save_state(pll);
++	msm_dsi_phy_pll_save_state(phy);
+ 
+ 	return 0;
+ }
 diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
-index 652c2d6bfeec..cae668b669a4 100644
+index 96de79b94f1b..652c2d6bfeec 100644
 --- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
 +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
-@@ -21,38 +21,3 @@ long msm_dsi_pll_helper_clk_round_rate(struct clk_hw *hw,
- 	else
- 		return rate;
+@@ -56,29 +56,3 @@ void msm_dsi_pll_helper_clk_unprepare(struct clk_hw *hw)
+ 
+ 	pll->pll_on = false;
  }
 -
--int msm_dsi_pll_helper_clk_prepare(struct clk_hw *hw)
+-/*
+- * DSI PLL API
+- */
+-void msm_dsi_pll_save_state(struct msm_dsi_pll *pll)
 -{
--	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
--	int ret = 0;
--
--	/*
--	 * Certain PLLs do not allow VCO rate update when it is on.
--	 * Keep track of their status to turn on/off after set rate success.
--	 */
--	if (unlikely(pll->pll_on))
--		return 0;
--
--	ret = pll->cfg->pll_ops.enable_seq(pll);
--	if (ret) {
--		DRM_ERROR("DSI PLL failed to lock\n");
--		return ret;
+-	if (pll->cfg->pll_ops.save_state) {
+-		pll->cfg->pll_ops.save_state(pll);
+-		pll->state_saved = true;
 -	}
+-}
 -
--	pll->pll_on = true;
+-int msm_dsi_pll_restore_state(struct msm_dsi_pll *pll)
+-{
+-	int ret;
+-
+-	if (pll->cfg->pll_ops.restore_state && pll->state_saved) {
+-		ret = pll->cfg->pll_ops.restore_state(pll);
+-		if (ret)
+-			return ret;
+-
+-		pll->state_saved = false;
+-	}
 -
 -	return 0;
 -}
--
--void msm_dsi_pll_helper_clk_unprepare(struct clk_hw *hw)
--{
--	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
--
--	if (unlikely(!pll->pll_on))
--		return;
--
--	pll->cfg->pll_ops.disable_seq(pll);
--
--	pll->pll_on = false;
--}
 diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
-index eca13cf67c21..da83e4c11f4f 100644
+index c94f079b8275..eca13cf67c21 100644
 --- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
 +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
-@@ -39,8 +39,6 @@ static inline void pll_write_ndelay(void __iomem *reg, u32 data, u32 delay_ns)
- /* clock callbacks */
- long msm_dsi_pll_helper_clk_round_rate(struct clk_hw *hw,
- 		unsigned long rate, unsigned long *parent_rate);
--int msm_dsi_pll_helper_clk_prepare(struct clk_hw *hw);
--void msm_dsi_pll_helper_clk_unprepare(struct clk_hw *hw);
+@@ -6,21 +6,10 @@
+ #ifndef __DSI_PLL_H__
+ #define __DSI_PLL_H__
  
- #endif /* __DSI_PLL_H__ */
+-#include <linux/clk-provider.h>
+ #include <linux/delay.h>
  
+ #include "dsi.h"
+ 
+-struct msm_dsi_pll {
+-	struct clk_hw	clk_hw;
+-	bool		pll_on;
+-	bool		state_saved;
+-
+-	const struct msm_dsi_phy_cfg *cfg;
+-};
+-
+-#define hw_clk_to_pll(x) container_of(x, struct msm_dsi_pll, clk_hw)
+-
+ static inline void pll_write(void __iomem *reg, u32 data)
+ {
+ 	msm_writel(data, reg);
 -- 
 2.30.2
 
