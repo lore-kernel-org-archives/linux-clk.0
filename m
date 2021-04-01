@@ -2,99 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A51C43461
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87965C433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 20:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A35FC610E9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DEF610D0
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 20:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235136AbhDAT4W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 15:56:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234956AbhDAT4L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Apr 2021 15:56:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B3DAE61041;
-        Thu,  1 Apr 2021 19:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617306971;
-        bh=ChFC7NycbeTj6zCwP3dNjOnoAHLUf/WuAPwnnC/LFV8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ozr0Ie6ieEYkXukXSwKYxaakNNL2BiwauH7/3xdXx4KIYUdp2wPYF/Jdxm/v76dNE
-         TMVKpVj45DvMTWehDunaEisOD/KyvK8Qf/MN+bGCdEiPenAAjTqYKKghftKPGMCv0y
-         hgs46ejoYVkap1tkQBG6MLnxAKGEwmrau7YBpBPYHezjXSA2Szut7CPAKh0Ehali5P
-         nYU5fsHPASAOvU4VR7vzw/roeeAkAcHs5luixwIDjNoONh2GG6h7hSF/SdC5UDTVGi
-         GEAQd1lUyFdWofNkHAPy7CE30RJkqqtxXrGsIrwc8mBTnmz/wEGrtrP4UbNF5jwq0v
-         Vbd079jLClzYw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210313021919.435332-8-konrad.dybcio@somainline.org>
-References: <20210313021919.435332-1-konrad.dybcio@somainline.org> <20210313021919.435332-8-konrad.dybcio@somainline.org>
-Subject: Re: [PATCH 8/9] clk: qcom: gcc-msm8994: Add proper msm8992 support
-From:   Stephen Boyd <sboyd@kernel.org>
+        id S234525AbhDAURQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 16:17:16 -0400
+Received: from relay05.th.seeweb.it ([5.144.164.166]:55163 "EHLO
+        relay05.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234489AbhDAURP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 16:17:15 -0400
+Received: from [192.168.1.101] (abae153.neoplus.adsl.tpnet.pl [83.6.168.153])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id D33303F5DD;
+        Thu,  1 Apr 2021 22:17:12 +0200 (CEST)
+Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC
+ driver
+To:     Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
         angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
+        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Date:   Thu, 01 Apr 2021 12:56:10 -0700
-Message-ID: <161730697046.2260335.17961769659321987524@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
+ <161730597895.2260335.4437139498852095330@swboyd.mtv.corp.google.com>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+Message-ID: <407789fb-bb43-874b-af4b-a3c1fa74a1bc@somainline.org>
+Date:   Thu, 1 Apr 2021 22:17:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
+MIME-Version: 1.0
+In-Reply-To: <161730597895.2260335.4437139498852095330@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2021-03-12 18:19:17)
-> diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm899=
-4.c
-> index fae784b4242f..a5b9db7678d1 100644
-> --- a/drivers/clk/qcom/gcc-msm8994.c
-> +++ b/drivers/clk/qcom/gcc-msm8994.c
-> @@ -2718,13 +2742,57 @@ static const struct qcom_cc_desc gcc_msm8994_desc=
- =3D {
->  };
-> =20
->  static const struct of_device_id gcc_msm8994_match_table[] =3D {
-> -       { .compatible =3D "qcom,gcc-msm8994" },
-> +       { .compatible =3D "qcom,gcc-msm8992" },
-> +       { .compatible =3D "qcom,gcc-msm8994" }, /* V2 and V2.1 */
->         {}
->  };
->  MODULE_DEVICE_TABLE(of, gcc_msm8994_match_table);
-> =20
->  static int gcc_msm8994_probe(struct platform_device *pdev)
->  {
-> +       struct device *dev =3D &pdev->dev;
-> +       bool is_msm8992;
-> +
-> +       is_msm8992 =3D of_device_is_compatible(pdev->dev.of_node, "qcom,g=
-cc-msm8992");
-> +
-> +       if (is_msm8992) {
 
-Drop the bool please
+> Isn't this already documented in
+> Documentation/devicetree/bindings/clock/qcom,gcc.yaml
 
-	if (of_device_is_compatible(pdev->dev.of_node, "qcom,gcc-msm8992")) {
 
-> +               /* MSM8992 features less clocks and some have different f=
-req tables */
-> +               gcc_msm8994_desc.clks[GCC_LPASS_Q6_AXI_CLK] =3D 0;
+I wanted to document the custom property for the SONY SDHCI quirk, but if it's not necessary, we can just omit this patch.
 
-Use NULL please.
 
-> +               gcc_msm8994_desc.clks[GCC_PCIE_1_AUX_CLK] =3D 0;
-> +               gcc_msm8994_desc.clks[GCC_PCIE_1_CFG_AHB_CLK] =3D 0;
-> +               gcc_msm8994_desc.clks[GCC_PCIE_1_MSTR_AXI_CLK] =3D 0;
+Konrad
+
