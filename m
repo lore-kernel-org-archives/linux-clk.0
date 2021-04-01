@@ -2,253 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB0EC433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 09:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF20BC433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 11:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7452F610D0
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 09:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F18610CC
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 11:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233803AbhDAJYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 05:24:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233865AbhDAJYc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 05:24:32 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B18C0613E6;
-        Thu,  1 Apr 2021 02:24:31 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id x16so1097937wrn.4;
-        Thu, 01 Apr 2021 02:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QOZ406BEEbEWHKFv25vOlBMps7sISsv3QFK8sS1MwtA=;
-        b=SWab0PZ7BrG7ikUp/9BfwfF65yALwYpjPDfYWda+cCXfJR8UIxbUA30Clh6LoSKHVx
-         qp2BJ4aXaiyYw5IhnZJRGrt0OqFJ79M8GEKybnzBLjwTNDwjgF04Z1Nxp+R8b5r24yvv
-         hr3HMXaR0L29Ok2nRkRdD9vC/8Ek/07WsG14e95CrGFthD7V8OdD3GGsU+//2CW4B1vG
-         qsZs9jKpKm99reBy4uCkCtjeoJOS7p7c5RiwJyn3mDNobGyPikADdAU4JEy5Xj7AtVCU
-         64qLTbqH4DY1QJgnb5sDmU1DSzngtMlXbHwBhWSh0WWDHCTw3+qaUiPne1I5sOwU0a86
-         aV5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QOZ406BEEbEWHKFv25vOlBMps7sISsv3QFK8sS1MwtA=;
-        b=N5UeKVSISAH3v57h4SPNFYIWlSwTsLA5qVnLyNjLAd2R+w9u8uVTsCz9Hn9ehzWr5O
-         GAcuqzKM+lgWBWaBvq2sQ2/KgArvd+TiH6DrwXZLbH9/BMd1/4pJBHoZTPF9+9+jXykj
-         gb5Kz/bczmw4/eYG7sOzl4NS00skqhfK7MT6Bfm93XMEiLlJczYWys12gYFhkbahzBYq
-         ynrWS8M7McQIxpqkNjcWTTbh0hZxnsg1yTuAWmczrG1k6LvxeLOqDg0FnVHwlGrG+wwb
-         J8+xjAGlUUJ/cjPFh496I2NpQV7qFnnPyutZTUW1kytlHmaPdQ8v01qN0WDOMeMYhbrz
-         hAxg==
-X-Gm-Message-State: AOAM531jczrxFWzE5TGrunQ5w/JwShT6zkaKO9SjlGAGNOzyspcJL6IT
-        MIlMSkcZ7oK1SfY1EimL+Ac=
-X-Google-Smtp-Source: ABdhPJxF7BHzMuUefc6Ht1IZf5VWDYA0aKA8LyX3aVJq/Cl/cTdsqEvTdPzMz3hnFIGM1PNtysKvFA==
-X-Received: by 2002:adf:f851:: with SMTP id d17mr8396821wrq.267.1617269070552;
-        Thu, 01 Apr 2021 02:24:30 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.126.134])
-        by smtp.gmail.com with ESMTPSA id s9sm8153450wmh.31.2021.04.01.02.24.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Apr 2021 02:24:29 -0700 (PDT)
-Subject: Re: [PATCH v10 2/4] soc: mediatek: add MT6765 scpsys and subdomain
- support
-To:     Macpaul Lin <macpaul.lin@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wendell Lin <Wendell.Lin@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Evan Green <evgreen@chromium.org>, Yong.Wu@mediatek.com,
-        Joerg Roedel <jroedel@suse.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <Ryder.Lee@mediatek.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
-Cc:     Ainge Hsu <ainge.hsu@mediatek.com>,
-        Eddie Hung <eddie.hung@mediatek.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Macpaul Lin <macpaul@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-References: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
- <1615358218-6540-1-git-send-email-macpaul.lin@mediatek.com>
- <1615358218-6540-3-git-send-email-macpaul.lin@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <da80f06b-31d6-b728-43ab-e543f3f6d038@gmail.com>
-Date:   Thu, 1 Apr 2021 11:24:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S234004AbhDALEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 07:04:10 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:52181 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234000AbhDALEC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 07:04:02 -0400
+Received: from mail-ot1-f42.google.com ([209.85.210.42]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M5PVb-1lQYCr46bN-001UKe; Thu, 01 Apr 2021 13:04:01 +0200
+Received: by mail-ot1-f42.google.com with SMTP id h6-20020a0568300346b02901b71a850ab4so1742097ote.6;
+        Thu, 01 Apr 2021 04:04:00 -0700 (PDT)
+X-Gm-Message-State: AOAM5332uRNNpVLBqeGcHCgl4CPMAH6cKgNq5iUjXyhyAEPDMO8sJOEH
+        PBaeAPI0mpMSyVL6ShLUwCgp9ZUlzlMT1GTitUg=
+X-Google-Smtp-Source: ABdhPJzv7NfJJM5P4rtmBV6imKoE6SXOGcuNPsyG7xm5vTrhAebddjzZDciuJMsX9IJPq79khP0o2GXRH+qVT+juje4=
+X-Received: by 2002:a05:6830:148c:: with SMTP id s12mr6614473otq.251.1617275039517;
+ Thu, 01 Apr 2021 04:03:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1615358218-6540-3-git-send-email-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210223061830.1913700-1-daniel@0x0f.com> <20210223061830.1913700-2-daniel@0x0f.com>
+ <1614108850.540354.4116103.nullmailer@robh.at.kernel.org> <CAFr9PX=h2JPdAwjYS2849ufH=wnxSti2Dj60fbq4bg8b8=xy_g@mail.gmail.com>
+In-Reply-To: <CAFr9PX=h2JPdAwjYS2849ufH=wnxSti2Dj60fbq4bg8b8=xy_g@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 1 Apr 2021 13:03:42 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1L62YT1WUxmmfLNmvERo7DbeVwfCHCxuKvxs7Uap+iXg@mail.gmail.com>
+Message-ID: <CAK8P3a1L62YT1WUxmmfLNmvERo7DbeVwfCHCxuKvxs7Uap+iXg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clk: mstar msc313 cpupll binding description
+To:     Daniel Palmer <daniel@0x0f.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, SoC Team <soc@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Willy Tarreau <w@1wt.eu>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:VYITO51LBE9r9PCcrCD8PAJtMuvCJtiQ2yotVDhuUgxbaS6ogPD
+ K+omwmuiJtgYAxermfB5znfB+aAlZeqDNkeY/rqSfRjcjMJs5bXk+yRyxpgut1FgCpQnTIo
+ R4+4zD9cmOC4CAa0CVtnvha17jS5efA58K1S9tqXxRwKdjXvKabcXMGC/QkWo5zTVvAxjN0
+ tExHTxZbz9BIMtSJm2erQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zRn54HoKq6I=:v79/lefLgMBPzWuAVUpQqi
+ SkB5xaungZs1NOZECnXq0moEiHqVwPLvcaiNfLxkhqns3VhD26eggo4R1PjgypbjdIYWsgzDq
+ yHepV8HuZHFzBvQ1ujDIqgelCqAx4dEfbnSU2VTb2+ZBasv/PfoW1amqL+p4UIgxEfKyvleL8
+ Vlh7lgIjOtjuZuoncu3laK0sCSApsxcpW56Oq4B9K5m8w1tZafLyt/sTMKUwy9h83XnnbQ8yR
+ 6U+r20DselenS63vh3efm0Z25EYKZKhsOykIvoCQ7UBsgUX5kz0NYV2vEZaxdKnLVrpVjbwj/
+ a1NhAbP9L1o+lFXUwTorOMEjXYpjZ+ClH8vwWxT4ecsfFXKjWbxFK5uZN+3vkUgCYyt8utQQ6
+ Bj1+BHMVs9gbKDa9znS3pPGuRo/cnZZ/ltljZ14DfOQRcdVDjVeXyV6xVJ04vmLHPmMoRak4t
+ /4HP919OpB3hm31LRraIvZgDIsJ7a0M=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Macpaul,
+On Fri, Feb 26, 2021 at 12:31 PM Daniel Palmer <daniel@0x0f.com> wrote:
+>
+> Hi Rob's bot
+>
+> On Wed, 24 Feb 2021 at 04:34, Rob Herring <robh@kernel.org> wrote:
+> > dtschema/dtc warnings/errors:
+> > Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.example.dts:19:18: fatal error: dt-bindings/clock/mstar-msc313-mpll.h: No such file or directory
+> >    19 |         #include <dt-bindings/clock/mstar-msc313-mpll.h>
+> >       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > compilation terminated.
+> > make[1]: *** [scripts/Makefile.lib:344: Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.example.dt.yaml] Error 1
+> > make[1]: *** Waiting for unfinished jobs....
+> > make: *** [Makefile:1370: dt_binding_check] Error 2
+>
+> Looks like I sent this too early. I will try again later.
 
-On 10/03/2021 07:36, Macpaul Lin wrote:
-> From: Mars Cheng <mars.cheng@mediatek.com>
-> 
-> This adds scpsys support for MT6765
-> Add subdomain support for MT6765:
-> isp, mm, connsys, mfg, and cam.
-> 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 91 +++++++++++++++++++++++++++++++
->  1 file changed, 91 insertions(+)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+I found this is still in patchwork as not merged, and I have not
+seen a replacement. Marking all eight patches as 'changes requested' now,
+please resend.
 
-the mtk-scpsys is the old version of the driver. Please port your code to the
-new driver: mtk-pm-domains.c
-
-The biggest difference for you will be to describe the power domain hierarchy in
-DT instead as in the driver.
-
-Regards,
-Matthias
-
-> index ca75b14931ec..fc8d3858f1b4 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -15,6 +15,7 @@
->  
->  #include <dt-bindings/power/mt2701-power.h>
->  #include <dt-bindings/power/mt2712-power.h>
-> +#include <dt-bindings/power/mt6765-power.h>
->  #include <dt-bindings/power/mt6797-power.h>
->  #include <dt-bindings/power/mt7622-power.h>
->  #include <dt-bindings/power/mt7623a-power.h>
-> @@ -750,6 +751,81 @@ static const struct scp_subdomain scp_subdomain_mt2712[] = {
->  	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
->  };
->  
-> +/*
-> + * MT6765 power domain support
-> + */
-> +#define SPM_PWR_STATUS_MT6765			0x0180
-> +#define SPM_PWR_STATUS_2ND_MT6765		0x0184
-> +
-> +static const struct scp_domain_data scp_domain_data_mt6765[] = {
-> +	[MT6765_POWER_DOMAIN_VCODEC] = {
-> +		.name = "vcodec",
-> +		.sta_mask = BIT(26),
-> +		.ctl_offs = 0x300,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_ISP] = {
-> +		.name = "isp",
-> +		.sta_mask = BIT(5),
-> +		.ctl_offs = 0x308,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_MM] = {
-> +		.name = "mm",
-> +		.sta_mask = BIT(3),
-> +		.ctl_offs = 0x30C,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +		.clk_id = {CLK_MM},
-> +	},
-> +	[MT6765_POWER_DOMAIN_CONN] = {
-> +		.name = "conn",
-> +		.sta_mask = BIT(1),
-> +		.ctl_offs = 0x32C,
-> +		.sram_pdn_bits = 0,
-> +		.sram_pdn_ack_bits = 0,
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
-> +		.name = "mfg_async",
-> +		.sta_mask = BIT(23),
-> +		.ctl_offs = 0x334,
-> +		.sram_pdn_bits = 0,
-> +		.sram_pdn_ack_bits = 0,
-> +		.clk_id = {CLK_MFG},
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG] = {
-> +		.name = "mfg",
-> +		.sta_mask = BIT(4),
-> +		.ctl_offs = 0x338,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_CAM] = {
-> +		.name = "cam",
-> +		.sta_mask = BIT(25),
-> +		.ctl_offs = 0x344,
-> +		.sram_pdn_bits = GENMASK(9, 8),
-> +		.sram_pdn_ack_bits = GENMASK(13, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
-> +		.name = "mfg_core0",
-> +		.sta_mask = BIT(7),
-> +		.ctl_offs = 0x34C,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +};
-> +
-> +static const struct scp_subdomain scp_subdomain_mt6765[] = {
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
-> +	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
-> +	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
-> +};
-> +
->  /*
->   * MT6797 power domain support
->   */
-> @@ -1033,6 +1109,18 @@ static const struct scp_soc_data mt2712_data = {
->  	.bus_prot_reg_update = false,
->  };
->  
-> +static const struct scp_soc_data mt6765_data = {
-> +	.domains = scp_domain_data_mt6765,
-> +	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
-> +	.subdomains = scp_subdomain_mt6765,
-> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
-> +	.regs = {
-> +		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
-> +		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
-> +	},
-> +	.bus_prot_reg_update = true,
-> +};
-> +
->  static const struct scp_soc_data mt6797_data = {
->  	.domains = scp_domain_data_mt6797,
->  	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
-> @@ -1088,6 +1176,9 @@ static const struct of_device_id of_scpsys_match_tbl[] = {
->  	}, {
->  		.compatible = "mediatek,mt2712-scpsys",
->  		.data = &mt2712_data,
-> +	}, {
-> +		.compatible = "mediatek,mt6765-scpsys",
-> +		.data = &mt6765_data,
->  	}, {
->  		.compatible = "mediatek,mt6797-scpsys",
->  		.data = &mt6797_data,
-> 
+         Arnd
