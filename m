@@ -2,67 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD9CC43462
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 01:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11353C43461
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 01:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5DD860FE9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 01:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA2696108F
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 01:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbhDABih (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Mar 2021 21:38:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47276 "EHLO mail.kernel.org"
+        id S232672AbhDABk1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Mar 2021 21:40:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhDABiX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 31 Mar 2021 21:38:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 35DEF61001;
-        Thu,  1 Apr 2021 01:38:23 +0000 (UTC)
+        id S232271AbhDABkY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 Mar 2021 21:40:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A5CFE60FE9;
+        Thu,  1 Apr 2021 01:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617241103;
-        bh=lXPrmLD8cR13af0zzzzRyCkEh9/F2LOtjr4TPKAihQs=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=r0YN/a+crPqLnr9k3CcPd18eCft+dH+aFjTQw+bB1hAk8yooWEG22xb511q2/z8nl
-         rmWlrMwEFb/Ndd0BxBdLQelYlaDLtTWNhfC1LPfAKYwxOBL6Xn44dUD8rugmbfbADu
-         udLSYfBDbawC9QLg61U3wJcF6T9iXx8KNfUfX2+1BKdi5lrJy+3/CGp9p5Annu73nf
-         q51hNsYQGadMTZSayypg5fjojDLbB6Z6+ya8DzL5uKFdSU7sWYHxww08AxUmrPAza9
-         WqIeitQ7nNkNBIZ62d8UugpefyNHcMUfOxo76tIVxYJN9fgwlzPt1N7UE5WCObX+ZK
-         sC3apKlqudenQ==
+        s=k20201202; t=1617241223;
+        bh=/hWUcFdNmhjQSoaVdaUfZMNgbGXfPPRbkF0X9ypFFI0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=grbFQ+dKtLPQ8yUIZD3AU1bUFs11NZFxCI7HWJpkKU4kb6Rsd5/iweHCnyCYWoXhs
+         XzH4o/OoG/IdrC2OC/GY6abvrQGN0LBcSab3DH0uVBqVrhPD1gujHlGkpsqX6+cCJF
+         OEwuq6QhxiqGe/3CkHqSJrZKDN6Alen3v6GGLTcFQ0YME7lK5o8t5yfCQuDbehNGFV
+         O11bQnZw4zLGKNHpMtRyc2UomD1SnxG6+5pYMC4Jy7NcxPbGsYxZ7pI+dH8HWO+pHi
+         qPsigJuEQ36/RmiKYneTsdceIGl4Y/5Ju5PEJbeDyXw4GCAj8R/cGq8MiP6TZfdnQa
+         FzeVhjB3vEtQw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210331092605.105909-2-greentime.hu@sifive.com>
-References: <20210331092605.105909-1-greentime.hu@sifive.com> <20210331092605.105909-2-greentime.hu@sifive.com>
-Subject: Re: [PATCH v3 1/6] clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
+In-Reply-To: <CAMuHMdWUEhs=nwP+a0vO2jOzkq-7FEOqcJ+SsxAGNXX1PQ2KMA@mail.gmail.com>
+References: <20210326120100.1577596-1-geert+renesas@glider.be> <20210326120100.1577596-7-geert+renesas@glider.be> <161707092940.3012082.11081102694273753765@swboyd.mtv.corp.google.com> <CAMuHMdWUEhs=nwP+a0vO2jOzkq-7FEOqcJ+SsxAGNXX1PQ2KMA@mail.gmail.com>
+Subject: Re: [PATCH 6/7] clk: renesas: rcar-gen3: Add custom clock for PLLs
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     alex.dewar90@gmail.com, aou@eecs.berkeley.edu, bhelgaas@google.com,
-        devicetree@vger.kernel.org, erik.danie@sifive.com,
-        greentime.hu@sifive.com, hayashi.kunihiko@socionext.com,
-        helgaas@kernel.org, hes@sifive.com, jh80.chung@samsung.com,
-        khilman@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-riscv@lists.infradead.org, lorenzo.pieralisi@arm.com,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        paul.walmsley@sifive.com, robh+dt@kernel.org, vidyas@nvidia.com,
-        zong.li@sifive.com
-Date:   Wed, 31 Mar 2021 18:38:21 -0700
-Message-ID: <161724110197.2260335.12311143415074941643@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 31 Mar 2021 18:40:22 -0700
+Message-ID: <161724122216.2260335.712765000494021106@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Greentime Hu (2021-03-31 02:26:00)
-> We add pcie_aux clock in this patch so that pcie driver can use
-> clk_prepare_enable() and clk_disable_unprepare() to enable and disable
-> pcie_aux clock.
+Quoting Geert Uytterhoeven (2021-03-30 00:02:03)
+> Hi Stephen,
 >=20
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> ---
+> On Tue, Mar 30, 2021 at 4:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2021-03-26 05:00:59)
+> > > +}
+> > > +
+> > > +static int cpg_pll_clk_set_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> > > +                               unsigned long parent_rate)
+> > > +{
+> > > +       struct cpg_pll_clk *pll_clk =3D to_pll_clk(hw);
+> > > +       unsigned int mult, i;
+> > > +       u32 val;
+> > > +
+> > > +       mult =3D DIV_ROUND_CLOSEST_ULL(rate, parent_rate * pll_clk->f=
+ixed_mult);
+> > > +       mult =3D clamp(mult, 1U, 128U);
+> > > +
+> > > +       val =3D readl(pll_clk->pllcr_reg);
+> > > +       val &=3D ~CPG_PLLnCR_STC_MASK;
+> > > +       val |=3D (mult - 1) << __ffs(CPG_PLLnCR_STC_MASK);
+> > > +       writel(val, pll_clk->pllcr_reg);
+> > > +
+> > > +       for (i =3D 1000; i; i--) {
+> > > +               if (readl(pll_clk->pllecr_reg) & pll_clk->pllecr_plls=
+t_mask)
+> > > +                       return 0;
+> > > +
+> > > +               cpu_relax();
+> > > +       }
+> >
+> > Why not readl_poll_timeout()?
+>=20
+> I had considered that.  But then I noticed readl_poll_timeout() does not
+> call cpu_relax() if sleep_us =3D=3D 0.  Perhaps such a call should be add=
+ed
+> (at the risk of introducing a subtle regression elsewhere)?
+>=20
 
-With robot fix
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Risk seems low. Maybe introduce a readl_poll_timeout_relaxed() if it's a
+concern. At the least, a patch to document why it doesn't use
+cpu_relax() right now would be good to have.
