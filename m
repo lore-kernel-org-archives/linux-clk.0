@@ -2,124 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54773C433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD18EC433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 208CC610C7
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97FA960725
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235292AbhDATiw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 15:38:52 -0400
-Received: from smtp-17-i2.italiaonline.it ([213.209.12.17]:53431 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235189AbhDATiv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Apr 2021 15:38:51 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
- ([87.20.116.197])
-        by smtp-17.iol.local with ESMTPA
-        id S38SlkFJgtpGHS38Zly35h; Thu, 01 Apr 2021 21:37:51 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1617305871; bh=w5zE/nnncsLL9tS2y4P86qvOqWWWEomS3J6KCrNrdms=;
-        h=From;
-        b=koptiVMx5H2h2giBsZuq0ulg1Xxs2HxqW/G5U0/cBslbmykHQXZGKiVt+CMKs+DmP
-         eVK0a6zUoDeqdx/c6U7iz7styPqSVc4bxOjQhY0UZ6QbqM7cPCuMaF83UpuTpd0uXS
-         Idvo0kCSlKhKNitEu6BlQW4XSwZ1ZSmcLCWBxmAUBCTyNN/2X/Yv7D1YEbs2ieRDJ3
-         71qMn8yeeqYZeK3UoaO17PZHZ0k2n0zapaIJV5BNR6PaE0wldH1XB2uYNmXbk4EL8U
-         41qE3hQCCTGK6/97Z40YQ7Ew1WLEFPMLsW5e+JLUT7jP3eStZmlXFSYjK6ybOPr8mf
-         Xdtw3lR2V7FkA==
-X-CNFS-Analysis: v=2.4 cv=Q7IXX66a c=1 sm=1 tr=0 ts=6066210f cx=a_exe
- a=AVqmXbCQpuNSdJmApS5GbQ==:117 a=AVqmXbCQpuNSdJmApS5GbQ==:17 a=VwQbUJbxAAAA:8
- a=IXkOJODCewQtKEFu2i4A:9 a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-kernel@vger.kernel.org
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Dario Binacchi <dariobin@libero.it>,
+        id S234601AbhDATjl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 15:39:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234316AbhDATjk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Apr 2021 15:39:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2588E60725;
+        Thu,  1 Apr 2021 19:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617305980;
+        bh=HnnPKXIu+Kt9kaxYUQGcL/XccprXnMk8lJbIJrdwHsI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mgRpQ4YfK/zy01EV8ShdcvTPoNnCGzM6xcgTrGXkqNA5Hi4ep6Gha02h1NolvomFj
+         fdx3P1uKTyUhCbg8pJRBemjyOfwIaldWtTKhvZ3RGV5DXKoRKyjW0PeBdgOLebUtS9
+         0eLREPNz6XG8OYGY+G/5rL2lQoMrwE3teUK+QuyR12TtEzPkwHbGeQUCZ0rQ9hXdSf
+         HPhKiLdnTYzwSQyN8DhZA9ZbOGn4VdFZaMYwjl+mQ0q8/BKhVeLpzHywDZeBdrvmeW
+         2Y6DZ2sErNF4xDJ4gDkK85P+xcjz8Id78VWtwRazjNmibI2hNK1D9G/3SVz9OXp027
+         1lVs24G4GvZSg==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210313021919.435332-1-konrad.dybcio@somainline.org>
+References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
+Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v4 2/5] dt-bindings: ti: dpll: add spread spectrum support
-Date:   Thu,  1 Apr 2021 21:37:38 +0200
-Message-Id: <20210401193741.24639-3-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210401193741.24639-1-dariobin@libero.it>
-References: <20210401193741.24639-1-dariobin@libero.it>
-X-CMAE-Envelope: MS4xfBlw2Mp5JJU6vyf14yZAflC6VIrElHTuPW2Z29hVlQ7oe8qgAWXk4e8U5Wsh5yGlzxR2cKRaZBI+LQLOJk3SHrgjfQcIkLEGQzYua+bYSqjH10iJQSj4
- 7XD/aIhKtMPJeD6btI/4z6ukUU1w9HpWLREBr7a9OLKy8Yq3QJGod3WEmESJBI+72tFgQgcEHqmSqq/5Tqi8Nfl/2roLe7LC6ONBFnN5CzmlFDvC47TdaItP
- yeLB8p3aFaGaBr+yvfB9/hUMIjmeRohTCbJ4I8SVe4yFjgKg4TV6IVOjrn7Y4um2SydXfYwG6GBTPVJCBbyTthtsGoFEA6Xq8wD+BROkTsu9jYFG5KnbuL0F
- rjRgU4TVLHCdI0eRMN5Mzvt495iWIwHljgO6+BwhPS2BhLai2kx2oUQXbK4MHxt6tnLWx2Y+0oYZ8cqZ7fRlIComAWMsHLykuzucNEOIxy+Bj3/9HB4Qz11z
- WiyPiP5Eu6P+hBdx
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Date:   Thu, 01 Apr 2021 12:39:38 -0700
+Message-ID: <161730597895.2260335.4437139498852095330@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DT bindings for enabling and adjusting spread spectrum clocking have
-been added.
+Quoting Konrad Dybcio (2021-03-12 18:19:10)
+> Add documentation for the MSM8994 GCC driver.
+>=20
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> ---
+>  .../bindings/clock/qcom,gcc-msm8994.yaml      | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8=
+994.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yam=
+l b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+> new file mode 100644
+> index 000000000000..f8067fb1bbd6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets=
+ and
+> +  power domains on MSM8994 and MSM8992.
 
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
----
-
-Changes in v4:
-- Add Rob Herring review tag.
-
-Changes in v3:
-- Add '-hz' suffix to "ti,ssc-modfreq" binding.
-
- .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-index df57009ff8e7..37a7cb6ad07d 100644
---- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-@@ -42,6 +42,11 @@ Required properties:
- 	"idlest" - contains the idle status register base address
- 	"mult-div1" - contains the multiplier / divider register base address
- 	"autoidle" - contains the autoidle register base address (optional)
-+	"ssc-deltam" - DPLL supports spread spectrum clocking (SSC), contains
-+		       the frequency spreading register base address (optional)
-+	"ssc-modfreq" - DPLL supports spread spectrum clocking (SSC), contains
-+		        the modulation frequency register base address
-+			(optional)
-   ti,am3-* dpll types do not have autoidle register
-   ti,omap2-* dpll type does not support idlest / autoidle registers
- 
-@@ -51,6 +56,14 @@ Optional properties:
- 	- ti,low-power-stop : DPLL supports low power stop mode, gating output
- 	- ti,low-power-bypass : DPLL output matches rate of parent bypass clock
- 	- ti,lock : DPLL locks in programmed rate
-+	- ti,min-div : the minimum divisor to start from to round the DPLL
-+		       target rate
-+	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
-+			  spreading in permille (10th of a percent)
-+	- ti,ssc-modfreq-hz : DPLL supports spread spectrum clocking, spread
-+			      spectrum modulation frequency
-+	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
-+			      to enable the downspread feature
- 
- Examples:
- 	dpll_core_ck: dpll_core_ck@44e00490 {
-@@ -83,3 +96,10 @@ Examples:
- 		clocks = <&sys_ck>, <&sys_ck>;
- 		reg = <0x0500>, <0x0540>;
- 	};
-+
-+	dpll_disp_ck: dpll_disp_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,am3-dpll-no-gate-clock";
-+		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-+		reg = <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
-+	};
--- 
-2.17.1
-
+Isn't this already documented in
+Documentation/devicetree/bindings/clock/qcom,gcc.yaml
