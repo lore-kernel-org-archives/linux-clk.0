@@ -2,84 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F6DC433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 11:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DC9C41538
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B59D6108F
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 11:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AA2B613CA
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234089AbhDALI2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 07:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59610 "EHLO
+        id S234678AbhDARmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 13:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233553AbhDALHc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 07:07:32 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1232EC061788
-        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 04:07:31 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id o19so810699qvu.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Apr 2021 04:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5hr4EJfC6Dy4LxB2ks0ND142hkf8rNwvgR5bFJx1My8=;
-        b=IwfvFudKaG7ulKrhClM3/mRjUThVsffOd8fFnuhBPUkS35EDofF6DoNmO2uJl0ZJe5
-         w9rFM1Svm6WR0jHPftrVEjfPU1eMR2oS0EwmA/dpM000mgQHQyWSWOa00XbSoRkoTy9a
-         AmV8tA/1UITRcKRQzP+3RAU311ay+sDi2dTLI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5hr4EJfC6Dy4LxB2ks0ND142hkf8rNwvgR5bFJx1My8=;
-        b=EkzzcCezjTCwkJSgvIYItacfNwbiAct3hqwS7rjVU/gptHDu5P/Mk587JUpo++UsTP
-         Awrwy+CCw4VnYq+8HpyVj0xk+Bx1r9zdGhbHyvyAh2laI2yC+W7dCqHVcGf31kFKcREP
-         6qM95MY81mPdBMIwuxDlpCpOOyZ8eZVuHUSI6o6RgRl7Wco3XD3dMcRnSQKDTEk5mosq
-         UgvWawIsVfX9frnMqnbUcpq1Kl5MOe1uZG1jQLQGymSGQ/0jVV2ctDdqMU5PyLDMzF68
-         bPt4xOd1cNnLfDmSlGK7zmthbcQ1CyLMyXtc+Sp69mz/gH57Uriendz8ZixSZoS5TB2v
-         5zPA==
-X-Gm-Message-State: AOAM533FZ+SgBvIdrdEHHjoOXjnG3BA2ZNd5JM93/eg/lI7iVy9CLZLM
-        d4XOd3C4M+QQEJ6m5BlXhDRO6lKzwHssHLlygRsW4g==
-X-Google-Smtp-Source: ABdhPJxPeLgGNYuUVol7wcn3UD700JCejRwjzkrn+bZT/fTLQdwdf0L0H88XiIRNF+6k69uJk/9V3D5PfwQ6HMp9Q6E=
-X-Received: by 2002:ad4:56e1:: with SMTP id cr1mr7615297qvb.25.1617275251088;
- Thu, 01 Apr 2021 04:07:31 -0700 (PDT)
+        with ESMTP id S234673AbhDARjG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 13:39:06 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AA7C05BD29
+        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 06:01:43 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7c3c:adbc:7a1a:b85f])
+        by baptiste.telenet-ops.be with bizsmtp
+        id nR1h240034A7w6i01R1haJ; Thu, 01 Apr 2021 15:01:41 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lRwxA-00CBkG-La; Thu, 01 Apr 2021 15:01:40 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lRwx9-003mtQ-MW; Thu, 01 Apr 2021 15:01:39 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] clk: renesas: div6: Consider all parents for requested rate
+Date:   Thu,  1 Apr 2021 15:01:37 +0200
+Message-Id: <60e639692b462f99e0b6ab868c3675b3d97dbdb0.1617281699.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1617281699.git.geert+renesas@glider.be>
+References: <cover.1617281699.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20210223061830.1913700-1-daniel@0x0f.com> <20210223061830.1913700-2-daniel@0x0f.com>
- <1614108850.540354.4116103.nullmailer@robh.at.kernel.org> <CAFr9PX=h2JPdAwjYS2849ufH=wnxSti2Dj60fbq4bg8b8=xy_g@mail.gmail.com>
- <CAK8P3a1L62YT1WUxmmfLNmvERo7DbeVwfCHCxuKvxs7Uap+iXg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1L62YT1WUxmmfLNmvERo7DbeVwfCHCxuKvxs7Uap+iXg@mail.gmail.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Thu, 1 Apr 2021 20:07:20 +0900
-Message-ID: <CAFr9PXmT-FUUu-yMBWCe52KDHUSF2+Zhr8wk-NdC+cW+_8prKw@mail.gmail.com>
-Subject: Re: [PATCH 1/8] dt-bindings: clk: mstar msc313 cpupll binding description
-To:     Arnd Bergmann <arnd@arndb.de>
-List-Id: <soc.lore.kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, SoC Team <soc@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Willy Tarreau <w@1wt.eu>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Arnd,
+Currently the .determine_rate() callback considers only the current
+parent clock, limiting the range of achievable clock rates on DIV6
+clocks with multiple parents, as found on SH/R-Mobile SoCs.
 
-On Thu, 1 Apr 2021 at 20:04, Arnd Bergmann <arnd@arndb.de> wrote:
-> I found this is still in patchwork as not merged, and I have not
-> seen a replacement. Marking all eight patches as 'changes requested' now,
-> please resend.
+Extend the callback to consider all available parent clocks.
 
-Understood. I will resend.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-div6.c | 35 +++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 3af65ef5690e3d84..a9ac2a83c1d0daa0 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -103,10 +103,39 @@ static unsigned int cpg_div6_clock_calc_div(unsigned long rate,
+ static int cpg_div6_clock_determine_rate(struct clk_hw *hw,
+ 					 struct clk_rate_request *req)
+ {
+-	unsigned int div = cpg_div6_clock_calc_div(req->rate,
+-						   req->best_parent_rate);
++	unsigned long prate, calc_rate, diff, best_rate, best_prate;
++	unsigned int num_parents = clk_hw_get_num_parents(hw);
++	struct clk_hw *parent, *best_parent = NULL;
++	unsigned long min_diff = ULONG_MAX;
++	unsigned int i, div;
++
++	for (i = 0; i < num_parents; i++) {
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
++			continue;
++
++		prate = clk_hw_get_rate(parent);
++		if (!prate)
++			continue;
++
++		div = cpg_div6_clock_calc_div(req->rate, prate);
++		calc_rate = prate / div;
++		diff = calc_rate > req->rate ? calc_rate - req->rate
++					     : req->rate - calc_rate;
++		if (diff < min_diff) {
++			best_rate = calc_rate;
++			best_parent = parent;
++			best_prate = prate;
++			min_diff = diff;
++		}
++	}
++
++	if (!best_parent)
++		return -EINVAL;
+ 
+-	req->rate = req->best_parent_rate / div;
++	req->best_parent_rate = best_prate;
++	req->best_parent_hw = best_parent;
++	req->rate = best_rate;
+ 	return 0;
+ }
+ 
+-- 
+2.25.1
 
-Daniel
