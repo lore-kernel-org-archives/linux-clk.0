@@ -2,93 +2,205 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C25C433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E3EC4361B
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E927060FE6
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75162610C7
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235836AbhDASIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:08:55 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:19744 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237540AbhDASAW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:00:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1617300021; x=1648836021;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qV0JxVgerqrpLMTEzoS0XnWxl85b6WMlFIIcxkZ+TjA=;
-  b=SNjIeISrINs5exAYkmkxdXoSF0PgLclb6owuVW6yO7yvIPyD/L5wCjUT
-   bKeoIXCpb2S57hYqstTR8UX6+JHVrBtGBTqrn5o7GzDaAzp+VWS1CkpnD
-   myIrnxiomhq9SY8qI+LONrNobWSg8eQZuTEwhla/RYjgPejUux5SL0W0s
-   zWSftFfLPx7NIZdEFTlKEcylWvfT0OmNCOzK2O8sMG0Zvp8RUvm7qRw7q
-   USLeMXugGp0Vo2BTxOlNmReeSvDFKv+l0I7de6KBhVmqrXPMicYfq7jBh
-   Q7uN1LeXcjMyRpwEyfVj1m42CCUKBsPMN235yqpajKM163BpsIaT1CX9T
-   g==;
-IronPort-SDR: zldxxCiHHG/Lh8GGOQ4c2+3s+yeEkqsJHfy+vbinGhayR0aJVywtQMIw6IsGHylqbmObUjJ7Hv
- 6JNfXM45GM4JcljkrNdNe5ItETVysoTAjGfN8c73hWzIOaizyvAHJGQ0CIlSxWMyrZY5aSliBt
- f72Z/3unnUvMX7fftxNpzLJiOkBlBNeMcIQw9216O7Ql+ou9RbyCZbEfg5t17In/8TJ6Zn1/qg
- rPvaWywznAq4eCvSt0DJ+MM/6zGWyLgPcNULFW61DiSXHtF87xYVhMhjr0WeMknBXQHr7WeoaJ
- Obw=
-X-IronPort-AV: E=Sophos;i="5.81,296,1610434800"; 
-   d="scan'208";a="109344809"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Apr 2021 05:27:39 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 1 Apr 2021 05:27:39 -0700
-Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Thu, 1 Apr 2021 05:27:37 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 3/6] clk: at91: sama7g5: add securam's peripheral clock
-Date:   Thu, 1 Apr 2021 15:27:23 +0300
-Message-ID: <20210401122726.28528-4-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20210401122726.28528-1-claudiu.beznea@microchip.com>
-References: <20210401122726.28528-1-claudiu.beznea@microchip.com>
+        id S235263AbhDASI4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:08:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234914AbhDASBg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:01:36 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7977DC03116B;
+        Thu,  1 Apr 2021 09:54:16 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id r17-20020a4acb110000b02901b657f28cdcso703126ooq.6;
+        Thu, 01 Apr 2021 09:54:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CL6cxNJtKIKQmvSTfzksNAMYKqjon+6PChUUz9zmOJ4=;
+        b=WTlh/ItSs7haofddu0vSTF4AYv7kJ2T13HGo4CjcrJO4KSIxEeWC95FL/SCpnAAfdS
+         0vR9yUMA3Ot3f9iO3Rn7L1KYBdw6yexBoQnPWjd9zV0vdzSjbhZXA1xztKAclrWyCOBI
+         Du+ieCSnSx1vMJlVR2P05s36JkwRRQVaJPJVa7y8zC5XpKMKuXA6ymwIznhi/2LTMqes
+         HhXSwyXF15eHB0RaqRUoXz9o/V/9yvxHLpfYHWDVRENwjMnn9YmKtopV6Wya1d8aOX98
+         AQurodFZSbwF4/LJcVf8unyEDwkarACJPLCKeM0BkjhNL7RM+KOh46I6h7pYOWuDdcjC
+         MIJg==
+X-Gm-Message-State: AOAM530uc2tNrHGVfCOEoCVSM3x3UJSqi9J+DuNzCsxNQQJeL1uKUkXS
+        oEucHEQphTcUIT5UChBpRg==
+X-Google-Smtp-Source: ABdhPJw+gejICHezMAuNryQdqWA8Zve/kSvWD62nMm2wCCAlpKJgdKHwi2th5zEK21YRRtHo5Tw8jA==
+X-Received: by 2002:a4a:e615:: with SMTP id f21mr7883695oot.91.1617296055414;
+        Thu, 01 Apr 2021 09:54:15 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h17sm1241240otj.38.2021.04.01.09.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 09:54:13 -0700 (PDT)
+Received: (nullmailer pid 597920 invoked by uid 1000);
+        Thu, 01 Apr 2021 16:54:12 -0000
+Date:   Thu, 1 Apr 2021 11:54:12 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Greentime Hu <greentime.hu@sifive.com>
+Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
+        zong.li@sifive.com, bhelgaas@google.com, aou@eecs.berkeley.edu,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
+        alex.dewar90@gmail.com, khilman@baylibre.com,
+        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
+        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        helgaas@kernel.org
+Subject: Re: [PATCH v4 4/6] dt-bindings: PCI: Add SiFive FU740 PCIe host
+ controller
+Message-ID: <20210401165412.GB573380@robh.at.kernel.org>
+References: <20210401060054.40788-1-greentime.hu@sifive.com>
+ <20210401060054.40788-5-greentime.hu@sifive.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210401060054.40788-5-greentime.hu@sifive.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add SECURAM's peripheral clock.
+On Thu, Apr 01, 2021 at 02:00:52PM +0800, Greentime Hu wrote:
+> Add PCIe host controller DT bindings of SiFive FU740.
+> 
+> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> ---
+>  .../bindings/pci/sifive,fu740-pcie.yaml       | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
+> new file mode 100644
+> index 000000000000..ccb58e5f06d4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/sifive,fu740-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SiFive FU740 PCIe host controller
+> +
+> +description: |+
+> +  SiFive FU740 PCIe host controller is based on the Synopsys DesignWare
+> +  PCI core. It shares common features with the PCIe DesignWare core and
+> +  inherits common properties defined in
+> +  Documentation/devicetree/bindings/pci/designware-pcie.txt.
+> +
+> +maintainers:
+> +  - Paul Walmsley <paul.walmsley@sifive.com>
+> +  - Greentime Hu <greentime.hu@sifive.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-bus.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: sifive,fu740-pcie
+> +
+> +  reg:
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dbi
+> +      - const: config
+> +      - const: mgmt
+> +
+> +  num-lanes:
+> +    const: 8
+> +
+> +  msi-parent: true
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: msi
+> +      - const: inta
+> +      - const: intb
+> +      - const: intc
+> +      - const: intd
+> +
+> +  resets:
+> +    description: A phandle to the PCIe power up reset line.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/sama7g5.c | 1 +
- 1 file changed, 1 insertion(+)
+How many (maxItems)?
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 9e1ec48c4474..9c87b50abbae 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -377,6 +377,7 @@ static const struct {
- 	u8 id;
- } sama7g5_periphck[] = {
- 	{ .n = "pioA_clk",	.p = "mck0", .id = 11, },
-+	{ .n = "securam_clk",	.p = "mck0", .id = 18, },
- 	{ .n = "sfr_clk",	.p = "mck1", .id = 19, },
- 	{ .n = "hsmc_clk",	.p = "mck1", .id = 21, },
- 	{ .n = "xdmac0_clk",	.p = "mck1", .id = 22, },
--- 
-2.25.1
+> +
+> +  pwren-gpios:
+> +    description: Should specify the GPIO for controlling the PCI bus device power on.
+> +    maxItems: 1
 
+Still need to list 'reset-gpios' here.
+
+> +
+> +required:
+> +  - dma-coherent
+> +  - num-lanes
+> +  - interrupts
+> +  - interrupt-names
+> +  - interrupt-parent
+> +  - interrupt-map-mask
+> +  - interrupt-map
+> +  - clock-names
+> +  - clocks
+> +  - resets
+> +  - pwren-gpios
+> +  - reset-gpios
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        #include <dt-bindings/clock/sifive-fu740-prci.h>
+> +
+> +        pcie@e00000000 {
+> +            compatible = "sifive,fu740-pcie";
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            #interrupt-cells = <1>;
+> +            reg = <0xe 0x00000000 0x0 0x80000000>,
+> +                  <0xd 0xf0000000 0x0 0x10000000>,
+> +                  <0x0 0x100d0000 0x0 0x1000>;
+> +            reg-names = "dbi", "config", "mgmt";
+> +            device_type = "pci";
+> +            dma-coherent;
+> +            bus-range = <0x0 0xff>;
+> +            ranges = <0x81000000  0x0 0x60080000  0x0 0x60080000 0x0 0x10000>,      /* I/O */
+> +                     <0x82000000  0x0 0x60090000  0x0 0x60090000 0x0 0xff70000>,    /* mem */
+> +                     <0x82000000  0x0 0x70000000  0x0 0x70000000 0x0 0x1000000>,    /* mem */
+> +                     <0xc3000000 0x20 0x00000000 0x20 0x00000000 0x20 0x00000000>;  /* mem prefetchable */
+> +            num-lanes = <0x8>;
+> +            interrupts = <56>, <57>, <58>, <59>, <60>, <61>, <62>, <63>, <64>;
+> +            interrupt-names = "msi", "inta", "intb", "intc", "intd";
+> +            interrupt-parent = <&plic0>;
+> +            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +            interrupt-map = <0x0 0x0 0x0 0x1 &plic0 57>,
+> +                            <0x0 0x0 0x0 0x2 &plic0 58>,
+> +                            <0x0 0x0 0x0 0x3 &plic0 59>,
+> +                            <0x0 0x0 0x0 0x4 &plic0 60>;
+> +            clock-names = "pcie_aux";
+> +            clocks = <&prci PRCI_CLK_PCIE_AUX>;
+> +            resets = <&prci 4>;
+> +            pwren-gpios = <&gpio 5 0>;
+> +            reset-gpios = <&gpio 8 0>;
+> +        };
+> +    };
+> -- 
+> 2.30.2
+> 
