@@ -2,205 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E3EC4361B
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF2C4363F
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75162610C7
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3214A6112E
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235263AbhDASI4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:08:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        id S236970AbhDASI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234914AbhDASBg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:01:36 -0400
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7977DC03116B;
-        Thu,  1 Apr 2021 09:54:16 -0700 (PDT)
-Received: by mail-oo1-xc35.google.com with SMTP id r17-20020a4acb110000b02901b657f28cdcso703126ooq.6;
-        Thu, 01 Apr 2021 09:54:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CL6cxNJtKIKQmvSTfzksNAMYKqjon+6PChUUz9zmOJ4=;
-        b=WTlh/ItSs7haofddu0vSTF4AYv7kJ2T13HGo4CjcrJO4KSIxEeWC95FL/SCpnAAfdS
-         0vR9yUMA3Ot3f9iO3Rn7L1KYBdw6yexBoQnPWjd9zV0vdzSjbhZXA1xztKAclrWyCOBI
-         Du+ieCSnSx1vMJlVR2P05s36JkwRRQVaJPJVa7y8zC5XpKMKuXA6ymwIznhi/2LTMqes
-         HhXSwyXF15eHB0RaqRUoXz9o/V/9yvxHLpfYHWDVRENwjMnn9YmKtopV6Wya1d8aOX98
-         AQurodFZSbwF4/LJcVf8unyEDwkarACJPLCKeM0BkjhNL7RM+KOh46I6h7pYOWuDdcjC
-         MIJg==
-X-Gm-Message-State: AOAM530uc2tNrHGVfCOEoCVSM3x3UJSqi9J+DuNzCsxNQQJeL1uKUkXS
-        oEucHEQphTcUIT5UChBpRg==
-X-Google-Smtp-Source: ABdhPJw+gejICHezMAuNryQdqWA8Zve/kSvWD62nMm2wCCAlpKJgdKHwi2th5zEK21YRRtHo5Tw8jA==
-X-Received: by 2002:a4a:e615:: with SMTP id f21mr7883695oot.91.1617296055414;
-        Thu, 01 Apr 2021 09:54:15 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h17sm1241240otj.38.2021.04.01.09.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 09:54:13 -0700 (PDT)
-Received: (nullmailer pid 597920 invoked by uid 1000);
-        Thu, 01 Apr 2021 16:54:12 -0000
-Date:   Thu, 1 Apr 2021 11:54:12 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
-        zong.li@sifive.com, bhelgaas@google.com, aou@eecs.berkeley.edu,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
-        alex.dewar90@gmail.com, khilman@baylibre.com,
-        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
-        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        helgaas@kernel.org
-Subject: Re: [PATCH v4 4/6] dt-bindings: PCI: Add SiFive FU740 PCIe host
- controller
-Message-ID: <20210401165412.GB573380@robh.at.kernel.org>
-References: <20210401060054.40788-1-greentime.hu@sifive.com>
- <20210401060054.40788-5-greentime.hu@sifive.com>
+        with ESMTP id S234781AbhDASD1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:03:27 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4467C05BD2C
+        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 06:01:43 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7c3c:adbc:7a1a:b85f])
+        by baptiste.telenet-ops.be with bizsmtp
+        id nR1g2400G4A7w6i01R1ga1; Thu, 01 Apr 2021 15:01:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lRwxA-00CBkD-2C; Thu, 01 Apr 2021 15:01:40 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lRwx9-003mtB-Jh; Thu, 01 Apr 2021 15:01:39 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/5] clk: renesas: div6: Use clamp() instead of clamp_t()
+Date:   Thu,  1 Apr 2021 15:01:34 +0200
+Message-Id: <2670c1e3c82a245666578cbbd1fb20d37932fd8e.1617281699.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1617281699.git.geert+renesas@glider.be>
+References: <cover.1617281699.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210401060054.40788-5-greentime.hu@sifive.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 02:00:52PM +0800, Greentime Hu wrote:
-> Add PCIe host controller DT bindings of SiFive FU740.
-> 
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> ---
->  .../bindings/pci/sifive,fu740-pcie.yaml       | 109 ++++++++++++++++++
->  1 file changed, 109 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-> new file mode 100644
-> index 000000000000..ccb58e5f06d4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-> @@ -0,0 +1,109 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/sifive,fu740-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SiFive FU740 PCIe host controller
-> +
-> +description: |+
-> +  SiFive FU740 PCIe host controller is based on the Synopsys DesignWare
-> +  PCI core. It shares common features with the PCIe DesignWare core and
-> +  inherits common properties defined in
-> +  Documentation/devicetree/bindings/pci/designware-pcie.txt.
-> +
-> +maintainers:
-> +  - Paul Walmsley <paul.walmsley@sifive.com>
-> +  - Greentime Hu <greentime.hu@sifive.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-bus.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: sifive,fu740-pcie
-> +
-> +  reg:
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: config
-> +      - const: mgmt
-> +
-> +  num-lanes:
-> +    const: 8
-> +
-> +  msi-parent: true
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: msi
-> +      - const: inta
-> +      - const: intb
-> +      - const: intc
-> +      - const: intd
-> +
-> +  resets:
-> +    description: A phandle to the PCIe power up reset line.
+As "div" is already "unsigned int", adding "U" suffixes to the constants
+"1" and "64" allows us to replace the call to clamp_t() by a call to
+clamp().  This removes hidden casts, and thus helps the compiler doing a
+better job at type-checking.
 
-How many (maxItems)?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-div6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +  pwren-gpios:
-> +    description: Should specify the GPIO for controlling the PCI bus device power on.
-> +    maxItems: 1
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 8fb68e703a6bab8c..a3c4fbeb7b0d2ec0 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -99,7 +99,7 @@ static unsigned int cpg_div6_clock_calc_div(unsigned long rate,
+ 		rate = 1;
+ 
+ 	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+-	return clamp_t(unsigned int, div, 1, 64);
++	return clamp(div, 1U, 64U);
+ }
+ 
+ static long cpg_div6_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.25.1
 
-Still need to list 'reset-gpios' here.
-
-> +
-> +required:
-> +  - dma-coherent
-> +  - num-lanes
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-parent
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +  - clock-names
-> +  - clocks
-> +  - resets
-> +  - pwren-gpios
-> +  - reset-gpios
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    bus {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        #include <dt-bindings/clock/sifive-fu740-prci.h>
-> +
-> +        pcie@e00000000 {
-> +            compatible = "sifive,fu740-pcie";
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            #interrupt-cells = <1>;
-> +            reg = <0xe 0x00000000 0x0 0x80000000>,
-> +                  <0xd 0xf0000000 0x0 0x10000000>,
-> +                  <0x0 0x100d0000 0x0 0x1000>;
-> +            reg-names = "dbi", "config", "mgmt";
-> +            device_type = "pci";
-> +            dma-coherent;
-> +            bus-range = <0x0 0xff>;
-> +            ranges = <0x81000000  0x0 0x60080000  0x0 0x60080000 0x0 0x10000>,      /* I/O */
-> +                     <0x82000000  0x0 0x60090000  0x0 0x60090000 0x0 0xff70000>,    /* mem */
-> +                     <0x82000000  0x0 0x70000000  0x0 0x70000000 0x0 0x1000000>,    /* mem */
-> +                     <0xc3000000 0x20 0x00000000 0x20 0x00000000 0x20 0x00000000>;  /* mem prefetchable */
-> +            num-lanes = <0x8>;
-> +            interrupts = <56>, <57>, <58>, <59>, <60>, <61>, <62>, <63>, <64>;
-> +            interrupt-names = "msi", "inta", "intb", "intc", "intd";
-> +            interrupt-parent = <&plic0>;
-> +            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +            interrupt-map = <0x0 0x0 0x0 0x1 &plic0 57>,
-> +                            <0x0 0x0 0x0 0x2 &plic0 58>,
-> +                            <0x0 0x0 0x0 0x3 &plic0 59>,
-> +                            <0x0 0x0 0x0 0x4 &plic0 60>;
-> +            clock-names = "pcie_aux";
-> +            clocks = <&prci PRCI_CLK_PCIE_AUX>;
-> +            resets = <&prci 4>;
-> +            pwren-gpios = <&gpio 5 0>;
-> +            reset-gpios = <&gpio 8 0>;
-> +        };
-> +    };
-> -- 
-> 2.30.2
-> 
