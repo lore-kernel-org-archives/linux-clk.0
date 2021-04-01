@@ -2,106 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368FDC43618
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9770C433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A38260FEA
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2B9610CB
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 19:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235277AbhDASbx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:31:53 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:46406 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238662AbhDASZF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:25:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1617301505; x=1648837505;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KRDSPtavXfZSEi1+DG38az9zzkfxEOJUbAop1plVBhM=;
-  b=HZjWUsWndiJAazBCAseHDH0KbBQTX5P5JcRqr5HMU1swcgJTY3yFRZtR
-   KRH5gOJwW9E3EvYK6NvEHpnMTl1bYfD/zv7jvArjm5RGgAhOy+C8S4P6Z
-   kb2Ec22wr37iU2Y38foSgMV0Gtn3czXVkkXEi59ryD9ook+GXFiJeMrDO
-   v/ZFzfNgyOEUWhbqmKTTj3sEbPWWZX/788cgZw+G4w22H9YA6U7m0Svq5
-   TPkZ7Hp/TEG8xYiXfSgY3ESfca0UxG/0FNb9MBGfus7Xmwbuknj1kLZsY
-   8fXgwGZDrUwxyQHKANdc/VZ3onQ2y/y0RzKmFlMSafEkpuE3/mLTi8SiB
-   w==;
-IronPort-SDR: 5Et8IH4FOOYfLYdPYoOjzkwVKY8Z8s4mpVOr/g9tTquE7lNJ8991aHseAbTA1pvRszspoGqa2t
- aua3UO0OnaYPW+xHUnbdAGSV7xiILxbKVBBbj+oa30K/ziPaxfn4L/LdmkOf3aTQGmFVS3EnOh
- bvXPJb89qKgyW+qaVhyw8NILQYQsLy2XupyOGaah8gqPbXl7Oro3gu5KTOf8MwwPJ+4DILnyRU
- 099brdqf0MevpbN57+NHJdl7VqTkUWL1W9F10Af7lbs/ztmHRnx6TPLiqRqCz8cebWieb9T3LO
- Aqo=
-X-IronPort-AV: E=Sophos;i="5.81,296,1610434800"; 
-   d="scan'208";a="121406278"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Apr 2021 05:27:48 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 1 Apr 2021 05:27:48 -0700
-Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Thu, 1 Apr 2021 05:27:45 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 6/6] clk: at91: clk-master: improve readability by using local variables
-Date:   Thu, 1 Apr 2021 15:27:26 +0300
-Message-ID: <20210401122726.28528-7-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20210401122726.28528-1-claudiu.beznea@microchip.com>
-References: <20210401122726.28528-1-claudiu.beznea@microchip.com>
+        id S234601AbhDAThw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 15:37:52 -0400
+Received: from smtp-17.italiaonline.it ([213.209.10.17]:45205 "EHLO libero.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234377AbhDAThv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Apr 2021 15:37:51 -0400
+Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
+ ([87.20.116.197])
+        by smtp-17.iol.local with ESMTPA
+        id S38SlkFJgtpGHS38Wly34z; Thu, 01 Apr 2021 21:37:50 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1617305870; bh=YQB7g1tisjsO2/drdzJfID05HXMNLmMVG06wPqjwn88=;
+        h=From;
+        b=bqHrWqGHQHCwRxWwIwip8RK7Moc2HaHTTEil/uUqh+ipY0d43VmtwGRzQoAENdjXf
+         cvIKiXFiZfJhxf/GlhkLU1qCB/Lnun1pB9HugdgWawQZSr9siJg45Lilo7wWJ6KE9x
+         TX8TvzGOGFaO2PmC8TIY5hP0lqvXp7rdwWnQRc+Y1Gh3BGxfckF7hcJL+kbJYvbRYw
+         hf0+1h0cpxDtyDyPHiTrbQj6DRh+UKsGyPmtNT5QVNJkctmieynMTxbOXk90cdo9Tk
+         fPPWlGWot4+3kuAfBqBEG28uQVCOrLSUGvj2mET1xFe/mOCEIXJo9J5ubZ39DCEbDd
+         x2QSS3kfeNVYg==
+X-CNFS-Analysis: v=2.4 cv=Q7IXX66a c=1 sm=1 tr=0 ts=6066210e cx=a_exe
+ a=AVqmXbCQpuNSdJmApS5GbQ==:117 a=AVqmXbCQpuNSdJmApS5GbQ==:17
+ a=IkcTkHD0fZMA:10 a=1Ew--PDDX9GlwpKbZyQA:9 a=QEXdDO2ut3YA:10
+From:   Dario Binacchi <dariobin@libero.it>
+To:     linux-kernel@vger.kernel.org
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Dario Binacchi <dariobin@libero.it>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: [PATCH v4 0/5] clk: ti: add am33xx spread spectrum clock support
+Date:   Thu,  1 Apr 2021 21:37:36 +0200
+Message-Id: <20210401193741.24639-1-dariobin@libero.it>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CMAE-Envelope: MS4xfDiLzMti9f+2PiHEAAsu6xn+rVDM+lPnGENoR6zBoMCDhuA17etv25hLQb5jrSKjuAcMphCH4j+8tg/G5wT4AC9Exakc0HQKI9oab86fVstoTZdlfS6G
+ 9WoiF3Qx5zZx1dyZ07esTdm9XgZdhVG4puKiW+Rg8HcJg84o7ivevZa6Juoj9t7AVQFtkHok8+4O+SJ+B9bMjxJqC/q2bIePtlFAMN/z/nIem8dtpiFv2Lcy
+ pjFZJg98+FtwBAxf6cao3tiraGuo3pQ/vY63V4TsYHC8OVVYyVwRaUVx3XDmcWsQTcICWrC6oWN+TssYh9LdJMI2x5YbucWIEUw2LaDU6bN04ADkMGkocuTr
+ athPYBqo3jlp48xTGV+0Q67qnFPghdwkAeEAfQkeWZZhkSQRWJEREoMea1XJjyR9p7fuZFYBp/wP/0SdlnMjGGWnp3kHisPO+Rf6WmNNqs4WO31Kcxo1Xy7k
+ NFWPETc5yBfr5bOguHIJJrCLUU4PKymgrYJzW0ryrs+Sk7YE1JjUBZRvT050XUWfjINrHJMlV2BpS/6x9/daF/KNYdKzTe73lfASYrj6op7Hwe9wqmS1WYge
+ zzlcXVQHbvFX+6zqXpBCyrWXWfSmO6NuGErygIrguoISIA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Improve readability in clk_sama7g5_master_set() by using local
-variables.
+As reported by the TI spruh73x/spruhl7x RM, MPU and LCD modules support
+spread spectrum clocking (SSC) on their output clocks. SSC is used to
+spread the spectral peaking of the clock to reduce any electromagnetic
+interference (EMI) that may be caused due to the clock’s fundamental
+or any of its harmonics.
+The series allows you to enable and adjust the spread spectrum clocking
+for all am33xx/am43xx PLLs for which it is supported. All these issues
+have been fixed.
 
-Suggested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/clk-master.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Previous versions of the series did not supported SSC for am43xx SOCs,
+causing clock registration failure for DPLLs. Furthermore, for am33xx
+SOCs, clock registration failed for DPLLs for which SSC is not supported.
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 1b2962289629..76b2467b32dc 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -720,6 +720,8 @@ static void clk_sama7g5_master_set(struct clk_master *master,
- 	unsigned long flags;
- 	unsigned int val, cparent;
- 	unsigned int enable = status ? AT91_PMC_MCR_V2_EN : 0;
-+	unsigned int parent = master->parent << PMC_MCR_CSS_SHIFT;
-+	unsigned int div = master->div << MASTER_DIV_SHIFT;
- 
- 	spin_lock_irqsave(master->lock, flags);
- 
-@@ -729,9 +731,7 @@ static void clk_sama7g5_master_set(struct clk_master *master,
- 	regmap_update_bits(master->regmap, AT91_PMC_MCR_V2,
- 			   enable | AT91_PMC_MCR_V2_CSS | AT91_PMC_MCR_V2_DIV |
- 			   AT91_PMC_MCR_V2_CMD | AT91_PMC_MCR_V2_ID_MSK,
--			   enable | (master->parent << PMC_MCR_CSS_SHIFT) |
--			   (master->div << MASTER_DIV_SHIFT) |
--			   AT91_PMC_MCR_V2_CMD |
-+			   enable | parent | div | AT91_PMC_MCR_V2_CMD |
- 			   AT91_PMC_MCR_V2_ID(master->id));
- 
- 	cparent = (val & AT91_PMC_MCR_V2_CSS) >> PMC_MCR_CSS_SHIFT;
+Changes in v4:
+- Add Stephen Boyd review tag.
+- Add Rob Herring review tag.
+- Add SSC registers for CORE, DDR and PER PLLs.
+- Update commit message.
+- Update commit message.
+
+Changes in v3:
+- Add '-hz' suffix to "ti,ssc-modfreq" binding.
+- Add Tony Lindgren acked tag.
+- Use "ti,ssc-modfreq-hz" binding instead of "ti,ssc-modfreq".
+
+Changes in v2:
+- Remove SSC registers from dpll_core_ck@490 node (SSC is not supported)
+- Add SSC registers to dpll_mpu_ck@488 node.
+- Move the DT changes to the previous patch in the series.
+
+Dario Binacchi (5):
+  clk: ti: fix typo in routine description
+  dt-bindings: ti: dpll: add spread spectrum support
+  ARM: dts: am33xx-clocks: add spread spectrum support
+  ARM: dts: am43xx-clocks: add spread spectrum support
+  clk: ti: add am33xx/am43xx spread spectrum clock support
+
+ .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++
+ arch/arm/boot/dts/am33xx-clocks.dtsi          | 10 +--
+ arch/arm/boot/dts/am43xx-clocks.dtsi          | 12 +--
+ drivers/clk/ti/dpll.c                         | 42 +++++++++
+ drivers/clk/ti/dpll3xxx.c                     | 87 ++++++++++++++++++-
+ include/linux/clk/ti.h                        | 24 +++++
+ 6 files changed, 183 insertions(+), 12 deletions(-)
+
 -- 
-2.25.1
+2.17.1
 
