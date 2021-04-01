@@ -2,106 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312E8C433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 20:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417D6C43460
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 21:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C009610F9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 20:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04672610FC
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 21:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233710AbhDAU6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 16:58:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44900 "EHLO
+        id S234389AbhDAVKK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 17:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234389AbhDAU6l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 16:58:41 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5695DC061788
-        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 13:58:40 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id q26so3605019qkm.6
-        for <linux-clk@vger.kernel.org>; Thu, 01 Apr 2021 13:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NvVk82m6hhIQriolRhQ8Z203iWxsgnrRsbJQOs66SaI=;
-        b=Jp6vxVF8jtCYHT4xhyRLT1pBqz5GDZNABKErvGUTqaBEXVjovp2SdU6MbpSSRBmjcH
-         gJ8hOJzEpvdOYZkV/hWKf40idl3T2ENatYEuD06xHrmvb27MsmEUFsqs1bhGOrCJDhhK
-         fRtp8DUGhB4LRYsOA3XZqP9y9cAls0RiuNzZmnH8Q4+TNtYNxxL/L3ZaCsHUJZasXHO4
-         a1Le0gjAvp/ZH5vvlpWedEtVlNsh7YMBAi+Gl2i3ap+nhtMe5wr6+lq+FZfvnuKeJ5Vt
-         KlcIQa4rA9F1mZwjsjEQvrLtxvXwSVU7hF9govFej0Uh+/k/5nkGCsJr0eeh5LGMfsxL
-         HmjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NvVk82m6hhIQriolRhQ8Z203iWxsgnrRsbJQOs66SaI=;
-        b=DY+m/4hpMpO3i8UU1IkbsYmBSxdjBrToGTHW3uSu4EihmCILKFNHqV/GkHhrUUcRve
-         rrkr9MgOltT83F+skqBYSusEBOqgCw9nBTQYeF1YZXQ+4UCOxYbtP4E30hKXNcx52AIY
-         KJ4pWSbFKoNoRlW9VI9E5YzWA6QKF2hF4SIoX7irhlRWMg40AY2e9QJhc1TOwgCkYNb+
-         j6l6iqbH2FlZvcKGd4gjw0wTCfbRv07uMO0J2NCiAmEPnDWeFSbrAyK0DjiObvNL+DA5
-         qTYjHEpz8I11CsGu4oV2UDuFQX5eCJ9XKLLBLEEIpZPZ5ezoBgFNt9IO0EMcoC6ofizP
-         JRgA==
-X-Gm-Message-State: AOAM530Oi+bnPg9WLvx0eZoPF2Qk6bEjTlBN4pH0wJiVxIj8UwHumxy5
-        ZdzDiIUcCLwIiDPLpKBPyTfinaVbLGyZPMRXHQiV4w==
-X-Google-Smtp-Source: ABdhPJx1rpyYOOJdxKZQYFzQB+5i85Rx/659TiPzXswfiJPztzBFR+4XKyLpkO9bQ2aHwsg+kn8kW/Pj6TKqMaeS2mU=
-X-Received: by 2002:a37:a016:: with SMTP id j22mr10434149qke.486.1617310719561;
- Thu, 01 Apr 2021 13:58:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210325111144.2852594-1-dmitry.baryshkov@linaro.org>
- <20210325111144.2852594-7-dmitry.baryshkov@linaro.org> <4217c4a2-cb15-ef08-8c39-9a5f164d2b41@codeaurora.org>
- <CAA8EJpoNThCf-R8+CmjNWC9bGin8x60v-AjZrsm2x=ZE+UDjgw@mail.gmail.com> <161730706709.2260335.8947402948263904863@swboyd.mtv.corp.google.com>
-In-Reply-To: <161730706709.2260335.8947402948263904863@swboyd.mtv.corp.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 1 Apr 2021 23:58:28 +0300
-Message-ID: <CAA8EJprOTzjoN_Yz8M5qsdg-7FEsLaVnhN+xP3iwXxp5p6_2-A@mail.gmail.com>
-Subject: Re: [PATCH v1 06/15] clk: qcom: videocc-sc7180: drop unused enum entries
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Taniya Das <tdas@codeaurora.org>, Andy Gross <agross@kernel.org>,
+        with ESMTP id S234287AbhDAVKJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 17:10:09 -0400
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE2FC06178A;
+        Thu,  1 Apr 2021 14:10:09 -0700 (PDT)
+Received: from [192.168.1.101] (abae153.neoplus.adsl.tpnet.pl [83.6.168.153])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 035EE3F5D2;
+        Thu,  1 Apr 2021 23:10:06 +0200 (CEST)
+Subject: Re: [PATCH 5/6] clk: qcom: gcc-sdm660: Account for needed adjustments
+ in probe function
+To:     Stephen Boyd <sboyd@kernel.org>, phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        DRM DRIVER FOR MSM ADRENO GPU 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Craig Tatlor <ctatlor97@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20210220155618.176559-1-konrad.dybcio@somainline.org>
+ <20210220155618.176559-5-konrad.dybcio@somainline.org>
+ <161404077336.1254594.15002572465360321874@swboyd.mtv.corp.google.com>
+ <3917fba4-e5b0-911f-9220-f401a90aac38@somainline.org>
+ <161724198675.2260335.14358880292682931985@swboyd.mtv.corp.google.com>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+Message-ID: <abc821cc-ef43-3241-793a-cc4c85b72563@somainline.org>
+Date:   Thu, 1 Apr 2021 23:10:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
+MIME-Version: 1.0
+In-Reply-To: <161724198675.2260335.14358880292682931985@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Apr 2021 at 22:57, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dmitry Baryshkov (2021-03-27 01:13:56)
-> > Hi Tanya,
-> >
-> > On Sat, 27 Mar 2021 at 04:49, Taniya Das <tdas@codeaurora.org> wrote:
-> > >
-> > > Hi Dmitry,
-> > >
-> > > Thanks for the patch for cleanup.
-> > > It is okay to remove TEST source, but you can still keep the sleep clock
-> > > source as it could be still connected to certain RCGs and could be used
-> > > to derive low frequencies if required.
-> > >
-> > > As these sources are generated from the HW plans it would be good if we
-> > > keep them as they are except the TEST source.
-> >
-> > Please note that I've barely removed the unused enum entry, which is
-> > not used in any of clock parent maps. So I'd suggest to either add it
-> > to relevant clock parent maps and to the videocc bindings or to drop
-> > unused enum entry.
-> >
->
-> Is this going to be resent?
 
-Is there a reason to resend the patches?
-I'm not removing any actual clock sources, only unused(!) enum entries
-are removed. No functional changes.
+>>>> +
+>>>> +       /* Keep bimc gfx clock port on all the time */
+>>>> +       clk_prepare_enable(gcc_bimc_gfx_clk.clkr.hw.clk);
+>>>> +
+>>> Preferably just set these various bits with regmap_update_bits() during
+>>> probe. Also, please do it before regsitering the clks, not after.
+>> To be fair, now I think that simply adding CLK_IS_CRITICAL flag to the clocks in question is the smartest thing to do. Magic writes don't tell a whole lot.
+> This is how it's been done in various other qcom clk drivers. Usually
+> there is a comment about what is enabled, but really it's just setting
+> random bits that sadly aren't already set by default.
+
+But why.. why should we give Linux less information about the hardware it's running on? It's a kernel after all, I know some parties would prefer to keep the hardware away from its users, but cmon, it's OSSLand out there!
+
+Allocating a few bytes more in memory is proooobably a good trade-off for keeping an eye on the state of various clocks instead of simply setting some seemingly random bits and hoping nothing bad happens under the hood.. This isn't only a case for this clock, but for all ones that are effectively pinky-promise-trusted to function properly with no way of checking if they're even still alive other than poking the registers manually.. As of v5.12-rc2, there are *46* such trust credits..
+
+It's NOT easy to track down issues in big monolithic kernels, especially when people submitting changes to common code seem to think that only their hardware uses it (no hard feelings, but drm/msm broke on !a6xx *at least* two times within the last year) and since making sure the clocks are ticking properly is one of the most crucial things when looking into more complex issues, which may or may not randomly happen on a platform that is just being brought up for various reasons (e.g. half of mdm9607 hardware doesn't wanna play along without a ICC driver), I *really* think we should use CLK_IS_CRITICAL instead and give developers a way to check if everything's in tact with the clock, while still keeping the "never turn it off, don't touch it!" aspect.
 
 
--- 
-With best wishes
-Dmitry
+>>>> +       /* Set the HMSS_GPLL0_SRC for 300MHz to CPU subsystem */
+>>>> +       clk_set_rate(hmss_gpll0_clk_src.clkr.hw.clk, 300000000);
+>>> Is this not already the case?
+>>
+>> This is a mission-critical clock and we cannot trust the bootloader with setting it. Otherwise dragons might appear.
+>>
+> What does the bootloader set it to?
+
+Sorry but I can't check, nor do I remember right now. But we still shouldn't add a variable that might come from a lazy OEM not incorporating the fix into their release, especially since this one is used for clocking the AP.
+
+
+Konrad
+
