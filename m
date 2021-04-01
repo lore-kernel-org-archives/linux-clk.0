@@ -4,142 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A605C001B9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8178C4360C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62EF9611C9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5A7461369
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234630AbhDARmR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57212 "EHLO
+        id S234869AbhDARmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 13:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234671AbhDARjG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 13:39:06 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D360C05BD2B
-        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 06:01:43 -0700 (PDT)
+        with ESMTP id S234276AbhDARgs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 13:36:48 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8CC8C05BD31
+        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 06:03:29 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7c3c:adbc:7a1a:b85f])
-        by baptiste.telenet-ops.be with bizsmtp
-        id nR1g2400K4A7w6i01R1ga2; Thu, 01 Apr 2021 15:01:40 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id nR3T2400c4A7w6i01R3TwL; Thu, 01 Apr 2021 15:03:28 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lRwxA-00CBkE-5P; Thu, 01 Apr 2021 15:01:40 +0200
+        id 1lRwyt-00CBlT-Ei; Thu, 01 Apr 2021 15:03:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lRwx9-003mtF-KP; Thu, 01 Apr 2021 15:01:39 +0200
+        id 1lRwys-003mwo-TQ; Thu, 01 Apr 2021 15:03:26 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
+To:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: renesas: div6: Simplify src mask handling
-Date:   Thu,  1 Apr 2021 15:01:35 +0200
-Message-Id: <5f05a5110d222ce5a113e683fe2aa726f4100b73.1617281699.git.geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r9a06g032: Switch to .determine_rate()
+Date:   Thu,  1 Apr 2021 15:03:24 +0200
+Message-Id: <7a384d02b85cdaac4a0e2b357582c8244b9a6f98.1617282116.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1617281699.git.geert+renesas@glider.be>
-References: <cover.1617281699.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Simplify the handling of the register bits to select the parent clock,
-by storing a bitmask instead of separate shift and width values.
+As the .round_rate() callback returns a long clock rate, it cannot
+return clock rates that do not fit in signed long, but do fit in
+unsigned long.  Hence switch the divider clocks on RZ/N1 from the old
+.round_rate() callback to the newer .determine_rate() callback, which
+does not suffer from this limitation.
+
+Note that range checking is not yet implemented.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/clk-div6.c | 31 +++++++++++--------------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+Compile-tested only due to lack of hardware.
 
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index a3c4fbeb7b0d2ec0..2920bec49bce0eb8 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -28,8 +28,7 @@
-  * @hw: handle between common and hardware-specific interfaces
-  * @reg: IO-remapped register
-  * @div: divisor value (1-64)
-- * @src_shift: Shift to access the register bits to select the parent clock
-- * @src_width: Number of register bits to select the parent clock (may be 0)
-+ * @src_mask: Bitmask covering the register bits to select the parent clock
-  * @nb: Notifier block to save/restore clock state for system resume
-  * @parents: Array to map from valid parent clocks indices to hardware indices
-  */
-@@ -37,8 +36,7 @@ struct div6_clock {
- 	struct clk_hw hw;
- 	void __iomem *reg;
- 	unsigned int div;
--	u32 src_shift;
--	u32 src_width;
-+	u32 src_mask;
- 	struct notifier_block nb;
- 	u8 parents[];
- };
-@@ -133,11 +131,11 @@ static u8 cpg_div6_clock_get_parent(struct clk_hw *hw)
- 	unsigned int i;
- 	u8 hw_index;
- 
--	if (clock->src_width == 0)
-+	if (clock->src_mask == 0)
- 		return 0;
- 
--	hw_index = (readl(clock->reg) >> clock->src_shift) &
--		   (BIT(clock->src_width) - 1);
-+	hw_index = (readl(clock->reg) & clock->src_mask) >>
-+		   __ffs(clock->src_mask);
- 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
- 		if (clock->parents[i] == hw_index)
- 			return i;
-@@ -151,18 +149,13 @@ static u8 cpg_div6_clock_get_parent(struct clk_hw *hw)
- static int cpg_div6_clock_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct div6_clock *clock = to_div6_clock(hw);
--	u8 hw_index;
--	u32 mask;
-+	u32 src;
- 
- 	if (index >= clk_hw_get_num_parents(hw))
- 		return -EINVAL;
- 
--	mask = ~((BIT(clock->src_width) - 1) << clock->src_shift);
--	hw_index = clock->parents[index];
--
--	writel((readl(clock->reg) & mask) | (hw_index << clock->src_shift),
--	       clock->reg);
--
-+	src = clock->parents[index] << __ffs(clock->src_mask);
-+	writel((readl(clock->reg) & ~clock->src_mask) | src, clock->reg);
- 	return 0;
+To be queued in renesas-clk for v5.14.
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 71b11443f6fc3801..c99942f0e4d4c751 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -604,20 +604,19 @@ r9a06g032_div_clamp_div(struct r9a06g032_clk_div *clk,
+ 	return div;
  }
  
-@@ -236,17 +229,15 @@ struct clk * __init cpg_div6_register(const char *name,
- 	switch (num_parents) {
- 	case 1:
- 		/* fixed parent clock */
--		clock->src_shift = clock->src_width = 0;
-+		clock->src_mask = 0;
- 		break;
- 	case 4:
- 		/* clock with EXSRC bits 6-7 */
--		clock->src_shift = 6;
--		clock->src_width = 2;
-+		clock->src_mask = GENMASK(7, 6);
- 		break;
- 	case 8:
- 		/* VCLK with EXSRC bits 12-14 */
--		clock->src_shift = 12;
--		clock->src_width = 3;
-+		clock->src_mask = GENMASK(14, 12);
- 		break;
- 	default:
- 		pr_err("%s: invalid number of parents for DIV6 clock %s\n",
+-static long
+-r9a06g032_div_round_rate(struct clk_hw *hw,
+-			 unsigned long rate, unsigned long *prate)
++static int
++r9a06g032_div_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+ 	struct r9a06g032_clk_div *clk = to_r9a06g032_div(hw);
+-	u32 div = DIV_ROUND_UP(*prate, rate);
++	u32 div = DIV_ROUND_UP(req->best_parent_rate, req->rate);
+ 
+ 	pr_devel("%s %pC %ld (prate %ld) (wanted div %u)\n", __func__,
+-		 hw->clk, rate, *prate, div);
++		 hw->clk, req->rate, req->best_parent_rate, div);
+ 	pr_devel("   min %d (%ld) max %d (%ld)\n",
+-		 clk->min, DIV_ROUND_UP(*prate, clk->min),
+-		clk->max, DIV_ROUND_UP(*prate, clk->max));
++		 clk->min, DIV_ROUND_UP(req->best_parent_rate, clk->min),
++		 clk->max, DIV_ROUND_UP(req->best_parent_rate, clk->max));
+ 
+-	div = r9a06g032_div_clamp_div(clk, rate, *prate);
++	div = r9a06g032_div_clamp_div(clk, req->rate, req->best_parent_rate);
+ 	/*
+ 	 * this is a hack. Currently the serial driver asks for a clock rate
+ 	 * that is 16 times the baud rate -- and that is wildly outside the
+@@ -630,11 +629,13 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
+ 	if (clk->index == R9A06G032_DIV_UART ||
+ 	    clk->index == R9A06G032_DIV_P2_PG) {
+ 		pr_devel("%s div uart hack!\n", __func__);
+-		return clk_get_rate(hw->clk);
++		req->rate = clk_get_rate(hw->clk);
++		return 0;
+ 	}
++	req->rate = DIV_ROUND_UP(req->best_parent_rate, div);
+ 	pr_devel("%s %pC %ld / %u = %ld\n", __func__, hw->clk,
+-		 *prate, div, DIV_ROUND_UP(*prate, div));
+-	return DIV_ROUND_UP(*prate, div);
++		 req->best_parent_rate, div, req->rate);
++	return 0;
+ }
+ 
+ static int
+@@ -663,7 +664,7 @@ r9a06g032_div_set_rate(struct clk_hw *hw,
+ 
+ static const struct clk_ops r9a06g032_clk_div_ops = {
+ 	.recalc_rate = r9a06g032_div_recalc_rate,
+-	.round_rate = r9a06g032_div_round_rate,
++	.determine_rate = r9a06g032_div_determine_rate,
+ 	.set_rate = r9a06g032_div_set_rate,
+ };
+ 
 -- 
 2.25.1
 
