@@ -2,80 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1768EC43600
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368FDC43618
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDABF60FEA
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A38260FEA
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235192AbhDASbw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:31:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237220AbhDASTB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:19:01 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B543EC031142;
-        Thu,  1 Apr 2021 09:37:47 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id i81so2368329oif.6;
-        Thu, 01 Apr 2021 09:37:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YMAsPGO6KHMaXJV1c7XmFTAteeel5n+TdsvM+DoZXYY=;
-        b=i0l+2NcmEBlyy/ROf9cv+coomEMsgXfVia3f2a7y11ZDog1elb/h0OelTk+GNNpHQl
-         erq+fQq9zkyZi0XP6N+A2rufvx8TwBHWFcojltglpSD/81Hvl3HlWa/plamnDN+c6hEg
-         /LD7hmaxepMqMPpLUsNsU5GCBqK7MmNedGOEAWmptbn9knqoLRu3mlvqmoq1B500Igp/
-         7qCiGjr6a8fs/w0jJzxdRiJPHCzZ0OIXFbONaRIf3s0UXe4BeAjHcUk8PYUTzI1E7f+W
-         CG9a9QZElk8LPKKt5dV4X0t8AYVHHnYi/UpMeP85ySyNOhNw0g+pQkJFQruC5tMd0qo7
-         tC/A==
-X-Gm-Message-State: AOAM531oan1eTgn6QJnwpnHHR/PypgL2hD5y5SRSe7ANVkPFSOe3E5LQ
-        5FloTp8ukKo9h+Ir3x8ppXXkyYvW3Q==
-X-Google-Smtp-Source: ABdhPJxRZZ/7gbXG7ccAPufljlo8vDwhR8XiL5Yq3sseIy4zGTgiofKrzePcv1BaAmTLbUG1rovXig==
-X-Received: by 2002:aca:4284:: with SMTP id p126mr6186372oia.178.1617295067179;
-        Thu, 01 Apr 2021 09:37:47 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x18sm1261250otr.73.2021.04.01.09.37.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 09:37:46 -0700 (PDT)
-Received: (nullmailer pid 572404 invoked by uid 1000);
-        Thu, 01 Apr 2021 16:37:45 -0000
-Date:   Thu, 1 Apr 2021 11:37:45 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Alain Volmat <avolmat@me.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] dt-bindings: clock: st: clkgen-fsyn: add new
- introduced compatible
-Message-ID: <20210401163745.GA572347@robh.at.kernel.org>
-References: <20210331201632.24530-1-avolmat@me.com>
- <20210331201632.24530-8-avolmat@me.com>
+        id S235277AbhDASbx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:31:53 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:46406 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238662AbhDASZF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 14:25:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1617301505; x=1648837505;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KRDSPtavXfZSEi1+DG38az9zzkfxEOJUbAop1plVBhM=;
+  b=HZjWUsWndiJAazBCAseHDH0KbBQTX5P5JcRqr5HMU1swcgJTY3yFRZtR
+   KRH5gOJwW9E3EvYK6NvEHpnMTl1bYfD/zv7jvArjm5RGgAhOy+C8S4P6Z
+   kb2Ec22wr37iU2Y38foSgMV0Gtn3czXVkkXEi59ryD9ook+GXFiJeMrDO
+   v/ZFzfNgyOEUWhbqmKTTj3sEbPWWZX/788cgZw+G4w22H9YA6U7m0Svq5
+   TPkZ7Hp/TEG8xYiXfSgY3ESfca0UxG/0FNb9MBGfus7Xmwbuknj1kLZsY
+   8fXgwGZDrUwxyQHKANdc/VZ3onQ2y/y0RzKmFlMSafEkpuE3/mLTi8SiB
+   w==;
+IronPort-SDR: 5Et8IH4FOOYfLYdPYoOjzkwVKY8Z8s4mpVOr/g9tTquE7lNJ8991aHseAbTA1pvRszspoGqa2t
+ aua3UO0OnaYPW+xHUnbdAGSV7xiILxbKVBBbj+oa30K/ziPaxfn4L/LdmkOf3aTQGmFVS3EnOh
+ bvXPJb89qKgyW+qaVhyw8NILQYQsLy2XupyOGaah8gqPbXl7Oro3gu5KTOf8MwwPJ+4DILnyRU
+ 099brdqf0MevpbN57+NHJdl7VqTkUWL1W9F10Af7lbs/ztmHRnx6TPLiqRqCz8cebWieb9T3LO
+ Aqo=
+X-IronPort-AV: E=Sophos;i="5.81,296,1610434800"; 
+   d="scan'208";a="121406278"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Apr 2021 05:27:48 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 1 Apr 2021 05:27:48 -0700
+Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2176.2 via Frontend Transport; Thu, 1 Apr 2021 05:27:45 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 6/6] clk: at91: clk-master: improve readability by using local variables
+Date:   Thu, 1 Apr 2021 15:27:26 +0300
+Message-ID: <20210401122726.28528-7-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20210401122726.28528-1-claudiu.beznea@microchip.com>
+References: <20210401122726.28528-1-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210331201632.24530-8-avolmat@me.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 31 Mar 2021 22:16:32 +0200, Alain Volmat wrote:
-> New compatible are added, supporting various kind of clkgen-fsyn
-> used for STiH407, STiH410 and STiH418
-> 
-> Signed-off-by: Alain Volmat <avolmat@me.com>
-> ---
->  Documentation/devicetree/bindings/clock/st/st,quadfs.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Improve readability in clk_sama7g5_master_set() by using local
+variables.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Suggested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/clk/at91/clk-master.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index 1b2962289629..76b2467b32dc 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -720,6 +720,8 @@ static void clk_sama7g5_master_set(struct clk_master *master,
+ 	unsigned long flags;
+ 	unsigned int val, cparent;
+ 	unsigned int enable = status ? AT91_PMC_MCR_V2_EN : 0;
++	unsigned int parent = master->parent << PMC_MCR_CSS_SHIFT;
++	unsigned int div = master->div << MASTER_DIV_SHIFT;
+ 
+ 	spin_lock_irqsave(master->lock, flags);
+ 
+@@ -729,9 +731,7 @@ static void clk_sama7g5_master_set(struct clk_master *master,
+ 	regmap_update_bits(master->regmap, AT91_PMC_MCR_V2,
+ 			   enable | AT91_PMC_MCR_V2_CSS | AT91_PMC_MCR_V2_DIV |
+ 			   AT91_PMC_MCR_V2_CMD | AT91_PMC_MCR_V2_ID_MSK,
+-			   enable | (master->parent << PMC_MCR_CSS_SHIFT) |
+-			   (master->div << MASTER_DIV_SHIFT) |
+-			   AT91_PMC_MCR_V2_CMD |
++			   enable | parent | div | AT91_PMC_MCR_V2_CMD |
+ 			   AT91_PMC_MCR_V2_ID(master->id));
+ 
+ 	cparent = (val & AT91_PMC_MCR_V2_CSS) >> PMC_MCR_CSS_SHIFT;
+-- 
+2.25.1
+
