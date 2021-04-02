@@ -2,128 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2D5C433B4
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3E3C433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86FAD61175
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D299161167
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236256AbhDBTUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Apr 2021 15:20:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229553AbhDBTUF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Apr 2021 15:20:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A737A6115A;
-        Fri,  2 Apr 2021 19:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617391204;
-        bh=PRpSTE+uCYtRFa0lZsZ+bpij6OkbE/yPXMysib3so3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=friQo4yO67kYFvDFxkgZfH9Lx1H71ACkbqEVS4OPgHsAG7/MzDCvZ6YY1E6SWWAnh
-         5cRwKaYG2/GofZz4fnvfQGUdUF2NxNkY7I/nT+BsLv9scUlkmdDw7D6xPAE3g7udc/
-         WncWAPWD2z09HdbRJ2bNymXcYIy4zNWJ8grNtjIemIOx6k+qUU5sb1/nB4LC600prC
-         R8evLQxp+MIFz75/uTPzQJUyMTx5nGew5Bbg6+DMaE9Cz4LD4SOQ6581BDiOZOenNi
-         pf0/d1TMFNUOlv7qb129ustqmdJnob5OAgjoWCA5t/Yh4PebvAEnhEsHJJ54cgWxTH
-         9lmheeWdBrRVw==
-Date:   Fri, 2 Apr 2021 20:19:50 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 00/19] Support ROHM BD71815 PMIC
-Message-ID: <20210402191950.GK5402@sirena.org.uk>
-References: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
- <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EVcIhgQsEzAXu06J"
-Content-Disposition: inline
-In-Reply-To: <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
-X-Cookie: Dammit Jim, I'm an actor, not a doctor.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S236452AbhDBTVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Apr 2021 15:21:07 -0400
+Received: from smtp-17.italiaonline.it ([213.209.10.17]:40504 "EHLO libero.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235946AbhDBTVG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Apr 2021 15:21:06 -0400
+Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
+ ([87.20.116.197])
+        by smtp-17.iol.local with ESMTPA
+        id SPLllsyFltpGHSPLpl2FsN; Fri, 02 Apr 2021 21:21:03 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1617391263; bh=R6GHCx3CerAOJ+ryJ+EbVwiXfLqRKvfStzoQSk5u4Z8=;
+        h=From;
+        b=PNpxoOPjsruurWBuIP4BWB+8sXnwBBhpLq6WSMpi1i8HX+YlU7REHjLC1NNMthbeM
+         7WRA01kYa4OYmU/dvxCy1YHm9Ik8T9LkSUcKs2FVWQ/8YMu+ikOjOgwXBzfahF3dbB
+         RvPrsEsdXqFWDyZQpLpiWprZD0IRiGFCQH0GNzllnh33CQuAlAtIG3PZunfZ2moISU
+         x8w22+hGzhf8v2c9yyqsufWTjY2Uy2rgCd8DTVlkVsmzaYl/9Pc80QYtydjyBG3NJZ
+         IfkFjm3fbmBADucPZrNj84LOpXvASE5gLRfAigz4oMEhZO2p/Jsba3lekk9IWY/Fg8
+         oGhQOT7qfGxVA==
+X-CNFS-Analysis: v=2.4 cv=Q7IXX66a c=1 sm=1 tr=0 ts=60676e9f cx=a_exe
+ a=AVqmXbCQpuNSdJmApS5GbQ==:117 a=AVqmXbCQpuNSdJmApS5GbQ==:17 a=voM4FWlXAAAA:8
+ a=pGLkceISAAAA:8 a=41Gc8jEUxQ3D8fAdJ3gA:9 a=IC2XNlieTeVoXbcui8wp:22
+From:   Dario Binacchi <dariobin@libero.it>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dario Binacchi <dariobin@libero.it>, Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+Date:   Fri,  2 Apr 2021 21:20:52 +0200
+Message-Id: <20210402192054.7934-1-dariobin@libero.it>
+X-Mailer: git-send-email 2.17.1
+X-CMAE-Envelope: MS4xfCtRTdCoLJ2l+ys7Y/9ueVP5NO0jLh0APftefEw44q51Um2Gxrttik/fbkAxgU+eAAceMxARlPUZC+g5WTy2N3TQgP/04rXbs9zGd7Ml7JQGhTHE0lzy
+ 9NgKitBC4BqWQVFXoTtbGmhyFto1sDlGm4xrUvu+OlsmMYkgFmPWvmEn+rFGroLXwTPIqkyM5FcIEgHDDHnehZZU2T34w8HlX51yV6TGeBn+Li9kqqeDXHRe
+ Ry68FpenD4x++rm4UctLu0GEQra0ZCRZQvpTDN0SZGFN414hlWgfoBf9Dp5pu0KtkHaC8bbbh41WqyIrgIK07RgJozeD69XGRd5hMgEWyB7K3QNNoq6MaHrR
+ nxHizmEFea+9Jkt5iUZrB07LRt6S/gKoJj8TguyDWLloa9eJvZGBYGGDLOkeKevpgGze4/ceayu5JFbUqV6NSMCGOTLWZxUtHGO6jB9weOehEqSTrguJrH8Z
+ ft1Giu73nX3amVkdkChwORPL810+qXMc60P3+WoXzi41b+WYDppUpszAoSW0u4+ave8hzYhqpW6i/SGDsUBpL+f2xzXaEFgbttCvRw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---EVcIhgQsEzAXu06J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The series comes from my commit in U-boot
+d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+and from the subsequent exchange of emails at the end of which I was
+suggested to send the patch to the linux kernel
+(https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
 
-On Tue, Mar 30, 2021 at 11:06:53AM +0000, Vaittinen, Matti wrote:
+The second patch of the series aims to demonstrate that the first one, which
+enables the translation of addresses also for crossings of DT nodes
+with #size-cells = <0>, it really works.
 
-> Do you think Lee could merge other but the regulator parts to MFD if
-> Mark is busy? I'd like to be able to squeeze the amount of patches and
-> recipients for future iterations. It might be easier to work directly
-> on regulator tree if regulator part gets delayed to next cycle. (I do
-> also plan further working with the GPIO part during 5.13-rc cycle to
-> utilize the regmap_gpio. That could be done in the GPIO tree then). I
-> think the other portions are in a pretty stable shape now.
 
-This wouldn't be a bad idea in general for these serieses, especially
-the bigger ones or the ones that get a lot of review comments on some
-patches.
+Dario Binacchi (2):
+  fdt: translate address if #size-cells = <0>
+  clk: ti: get register address from device tree
 
-In any case, here's a pull request for the helpers that are added
+ drivers/clk/ti/clk.c     | 13 ++++++++++++-
+ drivers/of/Kconfig       | 13 +++++++++++++
+ drivers/of/address.c     |  8 +++++++-
+ drivers/of/fdt_address.c |  6 ++++--
+ 4 files changed, 36 insertions(+), 4 deletions(-)
 
-The following changes since commit 0d02ec6b3136c73c09e7859f0d0e4e2c4c07b49b:
+-- 
+2.17.1
 
-  Linux 5.12-rc4 (2021-03-21 14:56:43 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-list-ramp-helpers
-
-for you to fetch changes up to fb8fee9efdcf084d9e31ba14cc4734d97e5dd972:
-
-  regulator: Add regmap helper for ramp-delay setting (2021-04-02 18:33:59 +0100)
-
-----------------------------------------------------------------
-regulator: Add a new helper and export an existing one
-
-For new drivers.
-
-----------------------------------------------------------------
-Matti Vaittinen (2):
-      regulator: helpers: Export helper voltage listing
-      regulator: Add regmap helper for ramp-delay setting
-
- drivers/regulator/helpers.c      | 101 +++++++++++++++++++++++++++++++++++----
- include/linux/regulator/driver.h |   7 +++
- 2 files changed, 100 insertions(+), 8 deletions(-)
-
---EVcIhgQsEzAXu06J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBnblUACgkQJNaLcl1U
-h9BQEwf/RuI3X5ibi67PgHKtZBl58wGqUZfH+2oBTHq1nRZle8r/3i2I+o+Ifvd8
-BHC7PcWUW7ieEwXgntZnt9jTe2rQCdYsBHK1+VUJ43BDOH0wocz+/9voeVpoLQgu
-THWJLSayS9+jjv0knBuG8evSH4ddiRrnBJXq9fHHRYwqQukAXaAZLFYfF5N1cTnd
-b2oZoGeom7DBtrBh75tV8ZmrtvafigjoaZFOh+euYstYfjoNK4ZBmDxYtwX7qTfl
-yYOikVjMXeLCWLKmuR8rdjZ8NNnuduPl7ct8vx7DbkdIDt3ajwj+EkCs29mLc3RB
-JxucX6EF4NI4inJqd3+NVzpze3hU5A==
-=RfZr
------END PGP SIGNATURE-----
-
---EVcIhgQsEzAXu06J--
