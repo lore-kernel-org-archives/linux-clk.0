@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F8BC43618
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 02:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B555CC43460
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 02:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 860CA61156
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 02:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E9E661103
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 02:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234264AbhDBCVX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Apr 2021 22:21:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58518 "EHLO
+        id S233915AbhDBCVV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Apr 2021 22:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234265AbhDBCVW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 22:21:22 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93461C06178A
-        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 19:21:20 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id b4so5660575lfi.6
-        for <linux-clk@vger.kernel.org>; Thu, 01 Apr 2021 19:21:20 -0700 (PDT)
+        with ESMTP id S234211AbhDBCVT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Apr 2021 22:21:19 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECEF4C061794
+        for <linux-clk@vger.kernel.org>; Thu,  1 Apr 2021 19:21:16 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id o16so4276359ljp.3
+        for <linux-clk@vger.kernel.org>; Thu, 01 Apr 2021 19:21:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nFKRMT+uuLb0v0tcxrynoQiqJNSnoW1UORVuiU4smjw=;
-        b=kax29XgfQWXmMdpZ/IGNhRqAXbmOpaOYzVLpuPajNIuZu3xbyk2pIsWdD9y+qy/OJ0
-         W7TqfzPGTCcGZi3hPi3wnsrN2VrXYD2e9+sPNA2g5fkoV+jk2oUtFkuZmvnvnxvYWtAm
-         tA60PUYLK6f+bDmY0rfzd+Tauda3JsdsDDEH0RaViNRhztzhmtkLoeh1H+6xBuBSx+m+
-         NeaqPTkfsQL9doyXXyRZjnSCMkgZ2r2/RT0tpTInYML5tQYeH7ITryOhch/iYr4VjI7V
-         D5RqE9SBOPks88yBDwfwCXO6r2KLz0sh1YBuUfgidkaKsBC3HUL6qXLnFI0C58K3iE7f
-         3zmA==
+        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
+        b=qL8V/rUglrm7QXoXNI4eaFBE2y27GGvk+aXQpUPQu52oOh5iMakv9/04aAFor+/zYG
+         GvHASM1e3SMZXL4tisx3adwZ4CnmTc0SIcMEXn76NGCTv0+daB1H01+7K6NDPW2eq47G
+         MC4Vmee5FRyU1fkaDykZFYi0hpo8b2mQTVu+TUvOlblWIc38JSZZ5CMp9s2XeK5UhXQ3
+         I0RlubCuEkk4lCSYMOSwNGTvdP00krah2qEnL5UNA/p1Osak+Vzjm1ezClRhKuBtYIWz
+         9e9+OaM/oFmCjNJvJ3/FxUA86F72rrEaGJdlAr8JQTUE1haoqMYwbyUltrCDHpp1jr82
+         1v5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nFKRMT+uuLb0v0tcxrynoQiqJNSnoW1UORVuiU4smjw=;
-        b=A44dunyXqmV62Pb9oVWbtgwv7Qil0Nj+3QTJn78mPJ9t0PwWmt6TBa12QOj2Vm/XTt
-         zZJPsqODxyu0KfwnVFgTS72PSaDsLuJ+/1vx8XLjc21X1Hm2X3hS2ljwdSmVXsmFBC3p
-         nYHYYVgzQtA9aMHN98pOtFIM3Wkczmniwrjl4v9baaHgDR5F+Y5h8XpbNUhe1rzogY5v
-         v975LOjIGDDZS4vxOaY81un73JRcXFfwSgTw/12Z5XAJd3bnyPSOyICLSZV1xTfYxFmg
-         h2Dw9jl2vTM7XYjGbXuVMqbox1onVK6be7dKbvsbmmFIll6WdctYAocA0L8AnrEq5MLp
-         DQQA==
-X-Gm-Message-State: AOAM531zB+3vXDsxNP+y3U4pSjOjZjQSQC7ErQ+YwC4rgAkxmRSFtW5j
-        AM4ZnkZTozmaaIsJMg1HcnVQ9g==
-X-Google-Smtp-Source: ABdhPJwZ+L1AtAmdSgHPGwtjMactAopjXqxEkMPf3yUymVc5jvYloW5iHlD8Y6lKSYlpoaL0pMkEAA==
-X-Received: by 2002:a19:58a:: with SMTP id 132mr7584079lff.520.1617330079069;
-        Thu, 01 Apr 2021 19:21:19 -0700 (PDT)
+        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
+        b=dqDBix13d0UXujzajOfplGuu/nSuhf6z50rPt1wnHbWldKffa73vYcmZNW3Wo3gExt
+         eyx4tANRU6AMIrERKsmhLkCO17D5IFAfXqqj7t7aLoi7svPnGTV7FNf55syJfjfTA5Lj
+         OBSn2NYGPc5Ze5HbeSkHm75tJ6wdgARB4nIfh02FVBRGIeCuN7Q+bhihfQ9evNAUMCib
+         U86xyut/EbYNzcdRVx/rBE3q9lLO3L6v1AqJUVpRyESh/autpIFQZh7Jx7lXXCC7Fozp
+         2rYrOl4cnmcEWGppATR0jXMcYEuHZkfwOfqCu50RqYkPulMIAJxKLozgEjHjfWwlnHRY
+         cBJQ==
+X-Gm-Message-State: AOAM533lj0OLUiZsgO6fIT7bQ5x6pgw0ONLfabRfgHw9IuhUqKKytMA/
+        JsYMS72oqOvlsTBjF3OKtkiJSUmPfOIP0A==
+X-Google-Smtp-Source: ABdhPJxeZGdbKZB4ruHFH+dGln6t9eqe1jXdghIAcD3WpwFu3SVaoBar0hCX1kiHLB9sJWdoIMByew==
+X-Received: by 2002:a2e:6e1a:: with SMTP id j26mr7069514ljc.171.1617330075472;
+        Thu, 01 Apr 2021 19:21:15 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id x74sm713634lff.145.2021.04.01.19.21.18
+        by smtp.gmail.com with ESMTPSA id x74sm713634lff.145.2021.04.01.19.21.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 19:21:18 -0700 (PDT)
+        Thu, 01 Apr 2021 19:21:14 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 11/16] clk: qcom: dispcc-sdm845: convert to parent data
-Date:   Fri,  2 Apr 2021 05:21:03 +0300
-Message-Id: <20210402022108.4183114-12-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 06/16] clk: qcom: gpucc-sm8150: drop unused enum entries
+Date:   Fri,  2 Apr 2021 05:20:58 +0300
+Message-Id: <20210402022108.4183114-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210402022108.4183114-1-dmitry.baryshkov@linaro.org>
 References: <20210402022108.4183114-1-dmitry.baryshkov@linaro.org>
@@ -73,494 +73,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the clock driver to specify parent data rather than parent
-names, to actually bind using 'clock-names' specified in the DTS rather
-than global clock names.
+Drop unused enum entries from the list of parent enums.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sdm845.c | 188 ++++++++++++++++---------------
- 1 file changed, 95 insertions(+), 93 deletions(-)
+ drivers/clk/qcom/gpucc-sm8150.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index 5c932cd17b14..bf5e8a4a0230 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -33,6 +33,21 @@ enum {
- 	P_DP_PHY_PLL_VCO_DIV_CLK,
- };
+diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
+index 27c40754b2c7..2b952f561537 100644
+--- a/drivers/clk/qcom/gpucc-sm8150.c
++++ b/drivers/clk/qcom/gpucc-sm8150.c
+@@ -21,7 +21,6 @@
  
-+static struct clk_alpha_pll disp_cc_pll0 = {
-+	.offset = 0x0,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo", .name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
- static const struct parent_map disp_cc_parent_map_0[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
-@@ -40,11 +55,11 @@ static const struct parent_map disp_cc_parent_map_0[] = {
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
--static const char * const disp_cc_parent_names_0[] = {
--	"bi_tcxo",
--	"dsi0_phy_pll_out_byteclk",
--	"dsi1_phy_pll_out_byteclk",
--	"core_bi_pll_test_se",
-+static const struct clk_parent_data disp_cc_parent_data_0[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "dsi0_phy_pll_out_byteclk", .name = "dsi0_phy_pll_out_byteclk" },
-+	{ .fw_name = "dsi1_phy_pll_out_byteclk", .name = "dsi1_phy_pll_out_byteclk" },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_1[] = {
-@@ -54,11 +69,11 @@ static const struct parent_map disp_cc_parent_map_1[] = {
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
--static const char * const disp_cc_parent_names_1[] = {
--	"bi_tcxo",
--	"dp_link_clk_divsel_ten",
--	"dp_vco_divided_clk_src_mux",
--	"core_bi_pll_test_se",
-+static const struct clk_parent_data disp_cc_parent_data_1[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "dp_link_clk_divsel_ten", .name = "dp_link_clk_divsel_ten" },
-+	{ .fw_name = "dp_vco_divided_clk_src_mux", .name = "dp_vco_divided_clk_src_mux" },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_2[] = {
-@@ -66,9 +81,9 @@ static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
--static const char * const disp_cc_parent_names_2[] = {
--	"bi_tcxo",
--	"core_bi_pll_test_se",
-+static const struct clk_parent_data disp_cc_parent_data_2[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_3[] = {
-@@ -79,12 +94,12 @@ static const struct parent_map disp_cc_parent_map_3[] = {
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
--static const char * const disp_cc_parent_names_3[] = {
--	"bi_tcxo",
--	"disp_cc_pll0",
--	"gcc_disp_gpll0_clk_src",
--	"gcc_disp_gpll0_div_clk_src",
--	"core_bi_pll_test_se",
-+static const struct clk_parent_data disp_cc_parent_data_3[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .hw = &disp_cc_pll0.clkr.hw },
-+	{ .fw_name = "gcc_disp_gpll0_clk_src", .name = "gcc_disp_gpll0_clk_src" },
-+	{ .fw_name = "gcc_disp_gpll0_div_clk_src", .name = "gcc_disp_gpll0_div_clk_src" },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_4[] = {
-@@ -94,24 +109,11 @@ static const struct parent_map disp_cc_parent_map_4[] = {
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
--static const char * const disp_cc_parent_names_4[] = {
--	"bi_tcxo",
--	"dsi0_phy_pll_out_dsiclk",
--	"dsi1_phy_pll_out_dsiclk",
--	"core_bi_pll_test_se",
--};
--
--static struct clk_alpha_pll disp_cc_pll0 = {
--	.offset = 0x0,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
--	.clkr = {
--		.hw.init = &(struct clk_init_data){
--			.name = "disp_cc_pll0",
--			.parent_names = (const char *[]){ "bi_tcxo" },
--			.num_parents = 1,
--			.ops = &clk_alpha_pll_fabia_ops,
--		},
--	},
-+static const struct clk_parent_data disp_cc_parent_data_4[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "dsi0_phy_pll_out_dsiclk", .name = "dsi0_phy_pll_out_dsiclk" },
-+	{ .fw_name = "dsi1_phy_pll_out_dsiclk", .name = "dsi1_phy_pll_out_dsiclk" },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- /* Return the HW recalc rate for idle use case */
-@@ -122,7 +124,7 @@ static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
- 	.parent_map = disp_cc_parent_map_0,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte0_clk_src",
--		.parent_names = disp_cc_parent_names_0,
-+		.parent_data = disp_cc_parent_data_0,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
-@@ -137,7 +139,7 @@ static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
- 	.parent_map = disp_cc_parent_map_0,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte1_clk_src",
--		.parent_names = disp_cc_parent_names_0,
-+		.parent_data = disp_cc_parent_data_0,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
-@@ -157,7 +159,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_dp_aux_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_aux_clk_src",
--		.parent_names = disp_cc_parent_names_2,
-+		.parent_data = disp_cc_parent_data_2,
- 		.num_parents = 2,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_ops,
-@@ -171,7 +173,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
- 	.parent_map = disp_cc_parent_map_1,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_crypto_clk_src",
--		.parent_names = disp_cc_parent_names_1,
-+		.parent_data = disp_cc_parent_data_1,
- 		.num_parents = 4,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -184,7 +186,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
- 	.parent_map = disp_cc_parent_map_1,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_link_clk_src",
--		.parent_names = disp_cc_parent_names_1,
-+		.parent_data = disp_cc_parent_data_1,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
-@@ -198,7 +200,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
- 	.parent_map = disp_cc_parent_map_1,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel1_clk_src",
--		.parent_names = disp_cc_parent_names_1,
-+		.parent_data = disp_cc_parent_data_1,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
-@@ -212,7 +214,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
- 	.parent_map = disp_cc_parent_map_1,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel_clk_src",
--		.parent_names = disp_cc_parent_names_1,
-+		.parent_data = disp_cc_parent_data_1,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
-@@ -232,7 +234,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc0_clk_src",
--		.parent_names = disp_cc_parent_names_0,
-+		.parent_data = disp_cc_parent_data_0,
- 		.num_parents = 4,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -246,7 +248,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc1_clk_src",
--		.parent_names = disp_cc_parent_names_0,
-+		.parent_data = disp_cc_parent_data_0,
- 		.num_parents = 4,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -273,7 +275,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_mdp_clk_src",
--		.parent_names = disp_cc_parent_names_3,
-+		.parent_data = disp_cc_parent_data_3,
- 		.num_parents = 5,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
-@@ -287,7 +289,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
- 	.parent_map = disp_cc_parent_map_4,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk0_clk_src",
--		.parent_names = disp_cc_parent_names_4,
-+		.parent_data = disp_cc_parent_data_4,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
-@@ -302,7 +304,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
- 	.parent_map = disp_cc_parent_map_4,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk1_clk_src",
--		.parent_names = disp_cc_parent_names_4,
-+		.parent_data = disp_cc_parent_data_4,
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
-@@ -326,7 +328,7 @@ static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_rot_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_rot_clk_src",
--		.parent_names = disp_cc_parent_names_3,
-+		.parent_data = disp_cc_parent_data_3,
- 		.num_parents = 5,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
-@@ -340,7 +342,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
- 	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_vsync_clk_src",
--		.parent_names = disp_cc_parent_names_2,
-+		.parent_data = disp_cc_parent_data_2,
- 		.num_parents = 2,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -381,8 +383,8 @@ static struct clk_branch disp_cc_mdss_byte0_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte0_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte0_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte0_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -399,8 +401,8 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte0_div_clk_src",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte0_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte0_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_regmap_div_ops,
-@@ -417,8 +419,8 @@ static struct clk_branch disp_cc_mdss_byte0_intf_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte0_intf_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte0_div_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte0_div_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -436,8 +438,8 @@ static struct clk_branch disp_cc_mdss_byte1_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte1_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte1_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte1_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -454,8 +456,8 @@ static struct clk_regmap_div disp_cc_mdss_byte1_div_clk_src = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte1_div_clk_src",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte1_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte1_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_regmap_div_ops,
-@@ -472,8 +474,8 @@ static struct clk_branch disp_cc_mdss_byte1_intf_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_byte1_intf_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_byte1_div_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_byte1_div_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -490,8 +492,8 @@ static struct clk_branch disp_cc_mdss_dp_aux_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_aux_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_aux_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_aux_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -508,8 +510,8 @@ static struct clk_branch disp_cc_mdss_dp_crypto_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_crypto_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_crypto_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_crypto_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -526,8 +528,8 @@ static struct clk_branch disp_cc_mdss_dp_link_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_link_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_link_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_link_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -545,8 +547,8 @@ static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_link_intf_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_link_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_link_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -562,8 +564,8 @@ static struct clk_branch disp_cc_mdss_dp_pixel1_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_pixel1_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_pixel1_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_pixel1_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -580,8 +582,8 @@ static struct clk_branch disp_cc_mdss_dp_pixel_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_dp_pixel_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_dp_pixel_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_dp_pixel_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -598,8 +600,8 @@ static struct clk_branch disp_cc_mdss_esc0_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_esc0_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_esc0_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_esc0_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -616,8 +618,8 @@ static struct clk_branch disp_cc_mdss_esc1_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_esc1_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_esc1_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_esc1_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -634,8 +636,8 @@ static struct clk_branch disp_cc_mdss_mdp_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_mdp_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_mdp_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_mdp_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -652,8 +654,8 @@ static struct clk_branch disp_cc_mdss_mdp_lut_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_mdp_lut_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_mdp_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_mdp_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
-@@ -670,8 +672,8 @@ static struct clk_branch disp_cc_mdss_pclk0_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_pclk0_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_pclk0_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_pclk0_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -689,8 +691,8 @@ static struct clk_branch disp_cc_mdss_pclk1_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_pclk1_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_pclk1_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_pclk1_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -707,8 +709,8 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_rot_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_rot_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_rot_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -738,8 +740,8 @@ static struct clk_branch disp_cc_mdss_rscc_vsync_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_rscc_vsync_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_vsync_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_vsync_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -756,8 +758,8 @@ static struct clk_branch disp_cc_mdss_vsync_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "disp_cc_mdss_vsync_clk",
--			.parent_names = (const char *[]){
--				"disp_cc_mdss_vsync_clk_src",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &disp_cc_mdss_vsync_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
+ enum {
+ 	P_BI_TCXO,
+-	P_CORE_BI_PLL_TEST_SE,
+ 	P_GPLL0_OUT_MAIN,
+ 	P_GPLL0_OUT_MAIN_DIV,
+ 	P_GPU_CC_PLL1_OUT_MAIN,
 -- 
 2.30.2
 
