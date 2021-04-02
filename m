@@ -2,295 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4015DC4361A
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 20:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4932EC433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 23:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D01361181
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 20:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07E2161179
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 23:39:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235523AbhDBU6Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Apr 2021 16:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
+        id S234161AbhDBXju (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Apr 2021 19:39:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235567AbhDBU6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Apr 2021 16:58:21 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F88C061793
-        for <linux-clk@vger.kernel.org>; Fri,  2 Apr 2021 13:58:19 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id c6so5213778lji.8
-        for <linux-clk@vger.kernel.org>; Fri, 02 Apr 2021 13:58:19 -0700 (PDT)
+        with ESMTP id S235241AbhDBXjt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Apr 2021 19:39:49 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E581C061788
+        for <linux-clk@vger.kernel.org>; Fri,  2 Apr 2021 16:39:47 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id s17so6970060ljc.5
+        for <linux-clk@vger.kernel.org>; Fri, 02 Apr 2021 16:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vlFFAnWw2oQS6KQuBOzl9VFGrwAtxCUu1GQdT8KGelI=;
-        b=TK09IY7eKq3qvOLxDJXD5Hlp/9brUs1poXQAwIlQ66XGuEVSAbh8A3u2RGZmJqIVPh
-         n+OWHTzD+igraqKQIrKWSmXjufB1UeHgE9DoyOUffZ+cG75BEvJgxpvRV3IN9uMLA5Kx
-         RK+UaV+i/59fulA7hGkpPmRTKALSECV6QxSPf1qRHHg4u6dF9KYCDwpGExB7A/I+XB6z
-         PiAwf3dGLGvsh++NrMi2RuFWkpQZem7vd7YbLQXa1FrT2MaIDM5EaxprvGBv5aXj5RwO
-         52GOgeGEDf0dOl/tOESFcPC+yrTRLCow8gx7GhdVb/G6dfpdFfkV93D1oMcDI0FAIo12
-         xDnA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MqUyCQ8bApydwGreXPqVnRLc78HVU/m7ATGYH5tMkXg=;
+        b=CRV4wVaJgKNwAGzfnLsbhXrf3/5B0OdKHc/t5G3+AztIgYdXNASnYWvk+zZfNGxRA9
+         Pv3AmSbcvzkl8tFQUWb1fhhEniE/TIVl21lJ7WLosk/JLXrqpdE/oztF/LaPRaCITXHO
+         hKbPduoy7VoYEuR4SEla8ygjeKA1lsgnWvd+IvjkZHUZ8SldAjFxZtxA8spcO5pIWbsb
+         iWAPMoMF8zQZT98wHDWdwa4RXmuJTR7paQ4WYc+ar6VpVO07AQsFFzwQqDGPBQHwYNzS
+         iEcvmlaCMndVJDmRxlhKTZ4sdLqL1EYLaZB0TZgHtiqN4fLO85rb20ATEac39z6lcHl1
+         qmkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vlFFAnWw2oQS6KQuBOzl9VFGrwAtxCUu1GQdT8KGelI=;
-        b=JMyyHVONFKJ8ZFG66G9pg+kc7tS+dz/X2Biy3FXLMMPLX3g0uAKiTDILwDx6yTlFYO
-         PuyqZZNQPqrc5oYssJdDDR0+zNWBWv9n9fv3lg0L3u8hKwOz4mYWol3tlQPy+qqN1cFc
-         LfUULYeDv2ZSIWpK/1NcdbKcsuK4himR26eUrjKMEqlii11gv+o6pL+vR00CW1RSnRvW
-         IyCKCXRewfN3Qd6+NohFTil6g/AdrbTQqrrR3n+n+Dv+kbvxgnrWpK3rTADS3Oa4rJ5f
-         y3nBe/KO7NSshM66aQxVWiJq7/XDMPKani12+cDcyThFj1OjDAfD8XL2lZmA5+qcf5M8
-         xkKQ==
-X-Gm-Message-State: AOAM533CGf2s7frlCDpr84v9yC4Gr2OLF1ILg7XtkYMjvDAGKcMox3nU
-        NUXrZsBiGSklFB7Zlcjooa9Brw==
-X-Google-Smtp-Source: ABdhPJw3Tm/4viHMIRFUMcS7XSPdG8l2PltzQzpwnQunk3MA2BUNGPOOyhAO84T11TqvI8GgZhLLGA==
-X-Received: by 2002:a2e:89d4:: with SMTP id c20mr9457002ljk.169.1617397098114;
-        Fri, 02 Apr 2021 13:58:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MqUyCQ8bApydwGreXPqVnRLc78HVU/m7ATGYH5tMkXg=;
+        b=JaJkJmyAZifTFdDLgzRLu8DeSMjcBj014B/CWAA+Y+pihZNMfzUsBkdsDvUPBAUFWm
+         1Ye48Vkh/0ztO1/8AIOR/Qmbdxi6GeRS1B+yU1M479kux24KzbWApQxdAfJ9Y/ahU/LK
+         vvSCFJMapzpFS7FHQe7JlZOW2D3CgWYYVRnQ+4O5QSJKREu8PiGK+55kP33vUYitqFL+
+         hVDn95MtJyko1zWn4DNItZq8e1SUWjchobVgjqYIyzT7dZ0xdCvE26Pw9w9E23XU6QWH
+         dSGwvjfporBUX8mXXcFSbbU1uJkUoyZkD6vitoN+ryxqzTO86psab9TpsFNKUDYBxaEW
+         2WDA==
+X-Gm-Message-State: AOAM530Y04O+MtRj1D1RQbF27meh2phWq4teYtHpLicDTODMe2l0pGAD
+        kSCPr26lG8CsKe7T6i3vsg6oVg==
+X-Google-Smtp-Source: ABdhPJyFSpdNKrhaXLogMPPh4tFDp1fdxd0HOYG9LhFrVBtCNJ2uEagmXOd8XtRqY7ZnA7sT00/0PA==
+X-Received: by 2002:a2e:9b14:: with SMTP id u20mr9483055lji.463.1617406786121;
+        Fri, 02 Apr 2021 16:39:46 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b17sm959076lfi.57.2021.04.02.13.58.17
+        by smtp.gmail.com with ESMTPSA id w30sm1013134lfq.210.2021.04.02.16.39.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Apr 2021 13:58:17 -0700 (PDT)
+        Fri, 02 Apr 2021 16:39:45 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 15/16] clk: qcom: dispcc-sdm845: get rid of the test clock
-Date:   Fri,  2 Apr 2021 23:58:03 +0300
-Message-Id: <20210402205804.96507-16-dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v1 1/4] dt-bindings: clock: separate SDM845 GCC clock bindings
+Date:   Sat,  3 Apr 2021 02:39:41 +0300
+Message-Id: <20210402233944.273275-1-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210402205804.96507-1-dmitry.baryshkov@linaro.org>
-References: <20210402205804.96507-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The test clock isn't in the bindings and apparently it's not used by
-anyone upstream.  Remove it.
+Separate qcom,gcc-sdm845 clock bindings, adding required clocks and
+clock-names properties.
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sdm845.c | 39 ++++++++++++--------------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+ .../bindings/clock/qcom,gcc-sdm845.yaml       | 84 +++++++++++++++++++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 -
+ 2 files changed, 84 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index bf5e8a4a0230..195cecf9f294 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -21,7 +21,6 @@
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+new file mode 100644
+index 000000000000..4808fa7a6b8c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-sdm845.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SDM845
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-sdm845.h
++
++properties:
++  compatible:
++    const: qcom,gcc-sdm845
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Board active XO source
++      - description: Sleep clock source
++      - description: PCIE 0 Pipe clock source (Optional clock)
++      - description: PCIE 1 Pipe clock source (Optional clock)
++    minItems: 3
++    maxItems: 5
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: bi_tcxo_ao
++      - const: sleep_clk
++      - const: pcie_0_pipe_clk # Optional clock
++      - const: pcie_1_pipe_clk # Optional clock
++    minItems: 3
++    maxItems: 5
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  # Example for GCC for MSM8960:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-sdm845";
++      reg = <0x100000 0x1f0000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&rpmhcc RPMH_CXO_CLK_A>,
++               <&sleep_clk>;
++      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index ee0467fb5e31..490edad25830 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -32,7 +32,6 @@ description: |
+   - dt-bindings/clock/qcom,gcc-mdm9615.h
+   - dt-bindings/reset/qcom,gcc-mdm9615.h
+   - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
+-  - dt-bindings/clock/qcom,gcc-sdm845.h
  
- enum {
- 	P_BI_TCXO,
--	P_CORE_BI_PLL_TEST_SE,
- 	P_DISP_CC_PLL0_OUT_MAIN,
- 	P_DSI0_PHY_PLL_OUT_BYTECLK,
- 	P_DSI0_PHY_PLL_OUT_DSICLK,
-@@ -52,38 +51,32 @@ static const struct parent_map disp_cc_parent_map_0[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
- 	{ P_DSI1_PHY_PLL_OUT_BYTECLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
+ properties:
+   compatible:
+@@ -52,7 +51,6 @@ properties:
+       - qcom,gcc-mdm9615
+       - qcom,gcc-sdm630
+       - qcom,gcc-sdm660
+-      - qcom,gcc-sdm845
  
- static const struct clk_parent_data disp_cc_parent_data_0[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dsi0_phy_pll_out_byteclk", .name = "dsi0_phy_pll_out_byteclk" },
- 	{ .fw_name = "dsi1_phy_pll_out_byteclk", .name = "dsi1_phy_pll_out_byteclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_1[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DP_PHY_PLL_LINK_CLK, 1 },
- 	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_1[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dp_link_clk_divsel_ten", .name = "dp_link_clk_divsel_ten" },
- 	{ .fw_name = "dp_vco_divided_clk_src_mux", .name = "dp_vco_divided_clk_src_mux" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_2[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_3[] = {
-@@ -91,7 +84,6 @@ static const struct parent_map disp_cc_parent_map_3[] = {
- 	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
- 	{ P_GPLL0_OUT_MAIN, 4 },
- 	{ P_GPLL0_OUT_MAIN_DIV, 5 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_3[] = {
-@@ -99,21 +91,18 @@ static const struct clk_parent_data disp_cc_parent_data_3[] = {
- 	{ .hw = &disp_cc_pll0.clkr.hw },
- 	{ .fw_name = "gcc_disp_gpll0_clk_src", .name = "gcc_disp_gpll0_clk_src" },
- 	{ .fw_name = "gcc_disp_gpll0_div_clk_src", .name = "gcc_disp_gpll0_div_clk_src" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_4[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
- 	{ P_DSI1_PHY_PLL_OUT_DSICLK, 2 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_4[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "dsi0_phy_pll_out_dsiclk", .name = "dsi0_phy_pll_out_dsiclk" },
- 	{ .fw_name = "dsi1_phy_pll_out_dsiclk", .name = "dsi1_phy_pll_out_dsiclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- /* Return the HW recalc rate for idle use case */
-@@ -125,7 +114,7 @@ static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte0_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -140,7 +129,7 @@ static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_byte1_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -160,7 +149,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_aux_clk_src",
- 		.parent_data = disp_cc_parent_data_2,
--		.num_parents = 2,
-+		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -174,7 +163,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_crypto_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_byte2_ops,
- 	},
- };
-@@ -187,7 +176,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_link_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_byte2_ops,
- 	},
-@@ -201,7 +190,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel1_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
- 	},
-@@ -215,7 +204,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_pixel_clk_src",
- 		.parent_data = disp_cc_parent_data_1,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_dp_ops,
- 	},
-@@ -235,7 +224,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc0_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
-@@ -249,7 +238,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_esc1_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
-@@ -276,7 +265,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_mdp_clk_src",
- 		.parent_data = disp_cc_parent_data_3,
--		.num_parents = 5,
-+		.num_parents = 4,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-@@ -290,7 +279,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk0_clk_src",
- 		.parent_data = disp_cc_parent_data_4,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
- 	},
-@@ -305,7 +294,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_pclk1_clk_src",
- 		.parent_data = disp_cc_parent_data_4,
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_pixel_ops,
- 	},
-@@ -329,7 +318,7 @@ static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_rot_clk_src",
- 		.parent_data = disp_cc_parent_data_3,
--		.num_parents = 5,
-+		.num_parents = 4,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-@@ -343,7 +332,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_vsync_clk_src",
- 		.parent_data = disp_cc_parent_data_2,
--		.num_parents = 2,
-+		.num_parents = 1,
- 		.ops = &clk_rcg2_ops,
- 	},
- };
+   '#clock-cells':
+     const: 1
 -- 
 2.30.2
 
