@@ -2,121 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6500FC433ED
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 17:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2D5C433B4
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 393DF610FC
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 17:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86FAD61175
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235343AbhDBReq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Apr 2021 13:34:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46078 "EHLO mail.kernel.org"
+        id S236256AbhDBTUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Apr 2021 15:20:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235299AbhDBReq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Apr 2021 13:34:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 52A8E6113E;
-        Fri,  2 Apr 2021 17:34:45 +0000 (UTC)
+        id S229553AbhDBTUF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Apr 2021 15:20:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A737A6115A;
+        Fri,  2 Apr 2021 19:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617384885;
-        bh=wMX4jU/oK8U7TlZYc9a3oh7NxXgMtjC7IUIKYogQpOs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aT2KE5BTHeOTKmbkFmq7P2d5SWsHO9el6gfoi0xRGUHzqbnF07tWlHUTrzj5dWbxM
-         1f13qa9HDrUSJLi6xZ5YZbpHEln1A7nQZ4ruSsXe7rN5S8HtKAzHaDhQUT6Qaxp6cl
-         Ded55YDbu6SfeyQ1KSoyMsvnohEyHjKo9F4GJYNB8j7WS0TZWPp4h8nkKQ8NK/sky0
-         Ni8byNK3ArmGTN82lSDFWI2r4r0WToRthhzmjxkywhkk2t+vayGGFXfYmXwe6zsWch
-         ud3MPPbWcfNBrbQGLBLDGIU0INnufiHS43J8zREi861UpJFdM1yU/6ejQ8Q3PPQKV5
-         GUHYPkd4ABodQ==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1617391204;
+        bh=PRpSTE+uCYtRFa0lZsZ+bpij6OkbE/yPXMysib3so3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=friQo4yO67kYFvDFxkgZfH9Lx1H71ACkbqEVS4OPgHsAG7/MzDCvZ6YY1E6SWWAnh
+         5cRwKaYG2/GofZz4fnvfQGUdUF2NxNkY7I/nT+BsLv9scUlkmdDw7D6xPAE3g7udc/
+         WncWAPWD2z09HdbRJ2bNymXcYIy4zNWJ8grNtjIemIOx6k+qUU5sb1/nB4LC600prC
+         R8evLQxp+MIFz75/uTPzQJUyMTx5nGew5Bbg6+DMaE9Cz4LD4SOQ6581BDiOZOenNi
+         pf0/d1TMFNUOlv7qb129ustqmdJnob5OAgjoWCA5t/Yh4PebvAEnhEsHJJ54cgWxTH
+         9lmheeWdBrRVw==
+Date:   Fri, 2 Apr 2021 20:19:50 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-power <linux-power@fi.rohmeurope.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 00/19] Support ROHM BD71815 PMIC
+Message-ID: <20210402191950.GK5402@sirena.org.uk>
+References: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
+ <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c92f7a04-f010-4c63-4b39-482a5581317a@linaro.org>
-References: <20210325111144.2852594-1-dmitry.baryshkov@linaro.org> <20210325111144.2852594-14-dmitry.baryshkov@linaro.org> <21bc5248-57b8-243d-300f-1bc39162c37f@codeaurora.org> <c92f7a04-f010-4c63-4b39-482a5581317a@linaro.org>
-Subject: Re: [PATCH v1 13/15] clk: qcom: videocc-sdm845: remove unsupported clock sources
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Fri, 02 Apr 2021 10:34:43 -0700
-Message-ID: <161738488399.2260335.10137992073962455023@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EVcIhgQsEzAXu06J"
+Content-Disposition: inline
+In-Reply-To: <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
+X-Cookie: Dammit Jim, I'm an actor, not a doctor.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-04-01 18:49:37)
-> On 02/04/2021 04:23, Taniya Das wrote:
-> > Hi Dmitry,
-> >=20
-> > On 3/25/2021 4:41 PM, Dmitry Baryshkov wrote:
-> >> video_pll0_out_even/_odd are not supported neither in the upstream nor
-> >> in the downstream kernels, so drop those clock sources.
-> >>
-> >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> ---
-> >> =C2=A0 drivers/clk/qcom/videocc-sdm845.c | 8 +-------
-> >> =C2=A0 1 file changed, 1 insertion(+), 7 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/videocc-sdm845.c=20
-> >> b/drivers/clk/qcom/videocc-sdm845.c
-> >> index 5d6a7724a194..7153f044504f 100644
-> >> --- a/drivers/clk/qcom/videocc-sdm845.c
-> >> +++ b/drivers/clk/qcom/videocc-sdm845.c
-> >> @@ -21,24 +21,18 @@
-> >> =C2=A0 enum {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 P_BI_TCXO,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 P_CORE_BI_PLL_TEST_SE,
-> >> -=C2=A0=C2=A0=C2=A0 P_VIDEO_PLL0_OUT_EVEN,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 P_VIDEO_PLL0_OUT_MAIN,
-> >> -=C2=A0=C2=A0=C2=A0 P_VIDEO_PLL0_OUT_ODD,
-> >> =C2=A0 };
-> >> =C2=A0 static const struct parent_map video_cc_parent_map_0[] =3D {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 { P_BI_TCXO, 0 },
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 { P_VIDEO_PLL0_OUT_MAIN, 1 },
-> >> -=C2=A0=C2=A0=C2=A0 { P_VIDEO_PLL0_OUT_EVEN, 2 },
-> >> -=C2=A0=C2=A0=C2=A0 { P_VIDEO_PLL0_OUT_ODD, 3 },
-> >=20
-> > These are supported from the design, please do not remove them. It is=20
-> > just that in SW currently it is not being used.
-> > But SW can decide to use them as they want. As said earlier these are=20
-> > defined in the HW plans and thus do not want them to be updated manuall=
-y=20
-> > to create a mismatch.
->=20
-> The problem arises during conversion of these drivers to use parent_data =
 
-> instead of parent_names. You see, video_pll0_odd/_even are clocks which=20
-> should be referenced using .hw (and thus defined inside the videocc=20
-> driver) as we do for "video_pll0" parent. However there are no clk_hw=20
-> entities defined for those clocks. For now I'd just use the { .name =3D=20
-> video_pll0_out_odd" } entry for those clocks, however I still think this =
+--EVcIhgQsEzAXu06J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> is not correct.
->=20
+On Tue, Mar 30, 2021 at 11:06:53AM +0000, Vaittinen, Matti wrote:
 
-Yes we shouldn't be adding .name anymore. Can we add the
-video_pll0_out_{even,odd} clks? Or if they're not used then can we
-remove them from the parent_data and leave some sort of comment
-indicating that they may be there?
+> Do you think Lee could merge other but the regulator parts to MFD if
+> Mark is busy? I'd like to be able to squeeze the amount of patches and
+> recipients for future iterations. It might be easier to work directly
+> on regulator tree if regulator part gets delayed to next cycle. (I do
+> also plan further working with the GPIO part during 5.13-rc cycle to
+> utilize the regmap_gpio. That could be done in the GPIO tree then). I
+> think the other portions are in a pretty stable shape now.
 
-> >=20
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 { P_CORE_BI_PLL_TEST_SE, 4 },
-> >> =C2=A0 };
-> >> =C2=A0 static const char * const video_cc_parent_names_0[] =3D {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "bi_tcxo",
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "video_pll0",
-> >> -=C2=A0=C2=A0=C2=A0 "video_pll0_out_even",
-> >> -=C2=A0=C2=A0=C2=A0 "video_pll0_out_odd",
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "core_bi_pll_test_se",
+This wouldn't be a bad idea in general for these serieses, especially
+the bigger ones or the ones that get a lot of review comments on some
+patches.
 
-Looks like in this case it would be OK because the array would be length
-2 instead of length 5.
+In any case, here's a pull request for the helpers that are added
 
-> >> =C2=A0 };
+The following changes since commit 0d02ec6b3136c73c09e7859f0d0e4e2c4c07b49b:
+
+  Linux 5.12-rc4 (2021-03-21 14:56:43 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-list-ramp-helpers
+
+for you to fetch changes up to fb8fee9efdcf084d9e31ba14cc4734d97e5dd972:
+
+  regulator: Add regmap helper for ramp-delay setting (2021-04-02 18:33:59 +0100)
+
+----------------------------------------------------------------
+regulator: Add a new helper and export an existing one
+
+For new drivers.
+
+----------------------------------------------------------------
+Matti Vaittinen (2):
+      regulator: helpers: Export helper voltage listing
+      regulator: Add regmap helper for ramp-delay setting
+
+ drivers/regulator/helpers.c      | 101 +++++++++++++++++++++++++++++++++++----
+ include/linux/regulator/driver.h |   7 +++
+ 2 files changed, 100 insertions(+), 8 deletions(-)
+
+--EVcIhgQsEzAXu06J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBnblUACgkQJNaLcl1U
+h9BQEwf/RuI3X5ibi67PgHKtZBl58wGqUZfH+2oBTHq1nRZle8r/3i2I+o+Ifvd8
+BHC7PcWUW7ieEwXgntZnt9jTe2rQCdYsBHK1+VUJ43BDOH0wocz+/9voeVpoLQgu
+THWJLSayS9+jjv0knBuG8evSH4ddiRrnBJXq9fHHRYwqQukAXaAZLFYfF5N1cTnd
+b2oZoGeom7DBtrBh75tV8ZmrtvafigjoaZFOh+euYstYfjoNK4ZBmDxYtwX7qTfl
+yYOikVjMXeLCWLKmuR8rdjZ8NNnuduPl7ct8vx7DbkdIDt3ajwj+EkCs29mLc3RB
+JxucX6EF4NI4inJqd3+NVzpze3hU5A==
+=RfZr
+-----END PGP SIGNATURE-----
+
+--EVcIhgQsEzAXu06J--
