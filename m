@@ -2,93 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64009C433ED
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Apr 2021 06:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5B2C433B4
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Apr 2021 06:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 264606120E
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Apr 2021 06:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929796120E
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Apr 2021 06:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236109AbhDCG4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Apr 2021 02:56:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46782 "EHLO mail.kernel.org"
+        id S236231AbhDCG7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Apr 2021 02:59:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232178AbhDCG4t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 3 Apr 2021 02:56:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 009BE6120D;
-        Sat,  3 Apr 2021 06:56:46 +0000 (UTC)
+        id S236134AbhDCG7c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Apr 2021 02:59:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8BB5D611BF;
+        Sat,  3 Apr 2021 06:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617433007;
-        bh=dw1fbVnqDfOx0WRH9hI4Zzll4VBclFklWKbcF+TwmWY=;
+        s=k20201202; t=1617433170;
+        bh=QrRgzxGL2+UVBRv1VG1RXyFUnhe2EufHD67P9Imkas4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jizfnI0utbmsEBABJrU83MPNyRr9illbfCnktb+P2hdEIax1/GkYUdgTDozdGwie+
-         dqYSw/WsHrxstRezAFyu/wnRlrNxoPMtfU9SMM/yg3l2PdyDZ51KHnAgWKoTOZOZH3
-         qEyTuVdQ+32/RGbevXrZ8/dcasNZHPvXaOPGUiEmG+nxchT3ZRnPEV2nBtZrFwMGpN
-         eFgyG2AV99xiTemF7rFEJ8EMCnX6oQDo+NEgtq5JluCn9NAAocywZ/dzivwiz8h0aJ
-         1meyQWQuOTrny3CXLgJ7t6i9mW/uai4SI6A/v0E2OeJ9KVQ9eXJVD4wEBAtFAYTgyw
-         IDviKlTNR0aFg==
+        b=mJCXJWbyxlnJ9dvyZmYrRZyOf+5AcGpBc80z7i/DcQTXn+a3/Mn6UXwz0Xzv5jvTw
+         PRs/CcAhF6sI18QndfrMF2b6NzqaYzLuMYI/iNqtSbvX1g0p6yH3R/gEU9m5+OnvPS
+         HstDIk96OV1+DYMJ2qLlXErvwttwVxLQiMv4IeNJXCBNGKqZ3xxr7gJ0Oo8HCChKJH
+         ZMkzSKlsg2HUZQt8OH2zB6FK/tor/Z6iRu8BHtn3YkeSVxNAjXlFs51WWVblgixEed
+         90dUXoj+szbR4aZtTfT0fqSXViZ5fHTHhU+Etq+yCXIU76iomn45xSTD5j7TjFGwA3
+         hGCAO6AAYkiaA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210401225149.18826-2-lb@semihalf.com>
-References: <20210401225149.18826-1-lb@semihalf.com> <20210401225149.18826-2-lb@semihalf.com>
-Subject: Re: [PATCH v4 2/2] clk: fix invalid usage of list cursor in unregister
+In-Reply-To: <cover.1617363608.git.geert+renesas@glider.be>
+References: <cover.1617363608.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.13 (take two)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, upstream@semihalf.com
-To:     Lukasz Bartosik <lb@semihalf.com>,
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 02 Apr 2021 23:56:45 -0700
-Message-ID: <161743300584.2260335.425699097651087484@swboyd.mtv.corp.google.com>
+Date:   Fri, 02 Apr 2021 23:59:29 -0700
+Message-ID: <161743316928.2260335.17856133729369410294@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lukasz Bartosik (2021-04-01 15:51:49)
-> Fix invalid usage of a list_for_each_entry cursor in
-> clk_notifier_unregister(). When list is empty or if the list
-> is completely traversed (without breaking from the loop on one
-> of the entries) then the list cursor does not point to a valid
-> entry and therefore should not be used. The patch fixes a logical
-> bug that hasn't been seen in pratice however it is analogus
-> to the bug fixed in clk_notifier_register().
+Quoting Geert Uytterhoeven (2021-04-02 04:43:06)
+>         Hi Mike, Stephen,
 >=20
-> The issue was dicovered when running 5.12-rc1 kernel on x86_64
-> with KASAN enabled:
-> BUG: KASAN: global-out-of-bounds in clk_notifier_register+0xab/0x230
-> Read of size 8 at addr ffffffffa0d10588 by task swapper/0/1
+> The following changes since commit 0eedab655ec1817d450085dcb12219726cb415=
+ff:
 >=20
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc1 #1
-> Hardware name: Google Caroline/Caroline,
-> BIOS Google_Caroline.7820.430.0 07/20/2018
-> Call Trace:
->  dump_stack+0xee/0x15c
->  print_address_description+0x1e/0x2dc
->  kasan_report+0x188/0x1ce
->  ? clk_notifier_register+0xab/0x230
->  ? clk_prepare_lock+0x15/0x7b
->  ? clk_notifier_register+0xab/0x230
->  clk_notifier_register+0xab/0x230
->  dw8250_probe+0xc01/0x10d4
->  ...
->  Memory state around the buggy address:
->   ffffffffa0d10480: 00 00 00 00 00 03 f9 f9 f9 f9 f9 f9 00 00 00 00
->   ffffffffa0d10500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
->  >ffffffffa0d10580: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
->                           ^
->   ffffffffa0d10600: 00 00 00 00 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00
->   ffffffffa0d10680: 00 00 00 00 00 00 00 00 f9 f9 f9 f9 00 00 00 00
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   clk: renesas: r8a779a0: Add CMT clocks (2021-03-12 09:23:24 +0100)
 >=20
-> Fixes: b2476490ef11 ("clk: introduce the common clock framework")
-> Reported-by: Lukasz Majczak <lma@semihalf.com>
-> Signed-off-by: Lukasz Bartosik <lb@semihalf.com>
-> ---
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.13-tag2
+>=20
+> for you to fetch changes up to f2fb4fe62390b293bc6edc04cc7002940c441359:
+>=20
+>   clk: renesas: Zero init clk_init_data (2021-03-30 09:58:27 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-fixes
+Thanks. Pulled into clk-next
