@@ -5,65 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD7FC4363C
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77E6C433ED
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0A44613E5
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E246613E2
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242844AbhDEWsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Apr 2021 18:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36066 "EHLO
+        id S236097AbhDEWr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Apr 2021 18:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242849AbhDEWr7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 18:47:59 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7090C061794
-        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 15:47:52 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id d12so19625682lfv.11
-        for <linux-clk@vger.kernel.org>; Mon, 05 Apr 2021 15:47:52 -0700 (PDT)
+        with ESMTP id S242844AbhDEWr5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 18:47:57 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B533FC0617AA
+        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 15:47:50 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id v15so19657880lfq.5
+        for <linux-clk@vger.kernel.org>; Mon, 05 Apr 2021 15:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uc2bBmZbtEdOHqgSTXP/SGQ9SxGSu18X6WnoYCdFGZg=;
-        b=eKEg98pMFKKixC5AQ6U7ZESJn+pJcb+elY5o5t47eYoQ8HM9XKrrI2si+yCVwxNxs+
-         VAAF0ldpWT2BMNsfBNQzJ3itmp/wAprFK1o0dgHq4ZCp26u7WkHIp4AuwQO7nuCn4RSl
-         nM9LsLgTn0GPJXUtFbqrB/dv/3LewENXJCwWraZMSL9VPxfFiDYKjknuJwXem1W+Kncx
-         zwcp8xIS0vO5h5ksWuwy281yA+1UJdMpsFAeSCskA9EyrjxgtFuqAqEdVNvnMhTg8DLg
-         k1i605hyms01HU7JkE21rFVp5nyDv9aKq956fWDX1rG207+3RwZPhSo2zrP9uVEsIOhF
-         mmeQ==
+        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
+        b=wYP1Rg42CeLV8hV3/H3qsHkbdEui8ow21fPTRg1YJqrgCisoVCs6KJrUasHx55b5NI
+         I21tZC4h5v3au2qXjHAuK8XVdQuXp2N2fDNdn2e+Wy02bbd0qgXAOQypkQpMJBVLQSw7
+         7geu6bp8vESxFRzAQtHiKpkeBXw3JaOgJrxVFucIXSrIhjD386KGsA/YldMORD9oHadR
+         U9DFa+p+lD58n701bh13jrgSSdzXWPI2oJD8UV53t0yNUI0AQBEiQ4qB7CEkS0hgW3iu
+         XLJ7ZOgp5+nfekUksk6lM1dtdAtqRWeCDio3teL8AbbDNqmKw0su11KmIz3AmkNVruZ+
+         hR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uc2bBmZbtEdOHqgSTXP/SGQ9SxGSu18X6WnoYCdFGZg=;
-        b=FvRcibUrPtPCZOQkzABcYWp328MEvUD2/eloDwoJISt/k9bPzumSSgN7/Mwlg4blRo
-         wOe0MPJrTZ9C1gZJmKSNyF/nVxy3obx0U0od74JV1cPXMbTi3UUPL8exO8Tnb0TM3BSz
-         YhCllLxE7YQcdKRALyC/Jck3ftqt/skTCrp3Mtiu1LiQZLANRgUo1uc7bZ6CnhnpOzew
-         b5uXfrs7OtKWG5g2Xx8Lp6fRsFyct05BVB3WH6JPQUMfh/QmGICw36/xLLbbLKq28IhE
-         QHRtaAtTxN9PLh5Zfj0CeeSVDxiWoFT6OkFAxGY3td+a5igMr4Fzu4j6gQXWGb51hMwA
-         Jydw==
-X-Gm-Message-State: AOAM533QRL/+5tTaonl4dfzSfYj2aBS2XT/nerPMuuvypUcoQVqc1h/c
-        lPQzkcISIlLarCvdpK8hxKHXMn3GW1E/3Q==
-X-Google-Smtp-Source: ABdhPJyLVAgRRk/UG8ZGRfjI61MRYxgryi9ejU/OglcCtEH5keUUp5kPX82tfr9w4+zVLSFCfn5Jzg==
-X-Received: by 2002:ac2:5119:: with SMTP id q25mr19101072lfb.114.1617662871382;
-        Mon, 05 Apr 2021 15:47:51 -0700 (PDT)
+        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
+        b=TcCCXO25453IfrK0V5B5EekhhrLQ4Yn4A/+ClAP81Ech2ueOo6nV91s57UAZvqfEwg
+         boBNP9UB+b9LY/NNe1xalAP8VXKkMndsnvqoMOE91gWXhp7wyXLZS+fst4D1FnfzZ8cm
+         ALuBJT+MBbCn9mw3/g4yh0PJgqPXAQubpG3QQd8l4Yyy/kJYPdkuc8i3uFRxUlNJZwRo
+         NLh87tPHE4Kp6VRd93sUGosftY11j+QKwWMuKWaoCm94T/cTVES0awriieMsvKhco9I9
+         0tD3Vv/M47oHybj/V0y/KsIjg0qcV1E9/5iTPK8szyNBRrcN4tHU8x0sgDfRf7chqgQA
+         Y/GA==
+X-Gm-Message-State: AOAM533Ebdwn5mwWPytece4YItFRpOecTRj8MlVvhyRHYprbVwgW+VZA
+        hKzcchJlmPofggVxL2DZXboeUg==
+X-Google-Smtp-Source: ABdhPJx08woCFqYotvYKIyfZfrbOktho2R292oUhNXmgxFX/3rSl8uheNbCswGGh4hBOFLXuK2GCPw==
+X-Received: by 2002:a05:6512:2090:: with SMTP id t16mr19935365lfr.514.1617662869315;
+        Mon, 05 Apr 2021 15:47:49 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id 130sm213748lfg.263.2021.04.05.15.47.50
+        by smtp.gmail.com with ESMTPSA id 130sm213748lfg.263.2021.04.05.15.47.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Apr 2021 15:47:50 -0700 (PDT)
+        Mon, 05 Apr 2021 15:47:48 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 09/33] clk: qcom: videocc-sm8150: drop unused enum entries
-Date:   Tue,  6 Apr 2021 01:47:19 +0300
-Message-Id: <20210405224743.590029-10-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 06/33] clk: qcom: gpucc-sm8150: drop unused enum entries
+Date:   Tue,  6 Apr 2021 01:47:16 +0300
+Message-Id: <20210405224743.590029-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210405224743.590029-1-dmitry.baryshkov@linaro.org>
 References: <20210405224743.590029-1-dmitry.baryshkov@linaro.org>
@@ -77,25 +77,21 @@ Drop unused enum entries from the list of parent enums.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/videocc-sm8150.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/qcom/gpucc-sm8150.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-index 3087e2ec8fd4..85b0bbc2b151 100644
---- a/drivers/clk/qcom/videocc-sm8150.c
-+++ b/drivers/clk/qcom/videocc-sm8150.c
-@@ -20,11 +20,7 @@
+diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
+index 27c40754b2c7..2b952f561537 100644
+--- a/drivers/clk/qcom/gpucc-sm8150.c
++++ b/drivers/clk/qcom/gpucc-sm8150.c
+@@ -21,7 +21,6 @@
  
  enum {
  	P_BI_TCXO,
--	P_CHIP_SLEEP_CLK,
 -	P_CORE_BI_PLL_TEST_SE,
--	P_VIDEO_PLL0_OUT_EVEN,
- 	P_VIDEO_PLL0_OUT_MAIN,
--	P_VIDEO_PLL0_OUT_ODD,
- };
- 
- static struct pll_vco trion_vco[] = {
+ 	P_GPLL0_OUT_MAIN,
+ 	P_GPLL0_OUT_MAIN_DIV,
+ 	P_GPU_CC_PLL1_OUT_MAIN,
 -- 
 2.30.2
 
