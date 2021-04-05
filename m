@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77E6C433ED
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AB5C001BE
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E246613E2
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DCE7613E9
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 22:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236097AbhDEWr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Apr 2021 18:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36054 "EHLO
+        id S242856AbhDEWsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Apr 2021 18:48:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242844AbhDEWr5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 18:47:57 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B533FC0617AA
-        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 15:47:50 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id v15so19657880lfq.5
-        for <linux-clk@vger.kernel.org>; Mon, 05 Apr 2021 15:47:50 -0700 (PDT)
+        with ESMTP id S242860AbhDEWsC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 18:48:02 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3ED7C06174A
+        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 15:47:54 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id u9so14250142ljd.11
+        for <linux-clk@vger.kernel.org>; Mon, 05 Apr 2021 15:47:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
-        b=wYP1Rg42CeLV8hV3/H3qsHkbdEui8ow21fPTRg1YJqrgCisoVCs6KJrUasHx55b5NI
-         I21tZC4h5v3au2qXjHAuK8XVdQuXp2N2fDNdn2e+Wy02bbd0qgXAOQypkQpMJBVLQSw7
-         7geu6bp8vESxFRzAQtHiKpkeBXw3JaOgJrxVFucIXSrIhjD386KGsA/YldMORD9oHadR
-         U9DFa+p+lD58n701bh13jrgSSdzXWPI2oJD8UV53t0yNUI0AQBEiQ4qB7CEkS0hgW3iu
-         XLJ7ZOgp5+nfekUksk6lM1dtdAtqRWeCDio3teL8AbbDNqmKw0su11KmIz3AmkNVruZ+
-         hR7Q==
+        bh=M5Z3CmrtJqYjyCysAchxnacG6jL8cKLOXdM48UI1dE4=;
+        b=GgmjPziNy25lzsSdfga6B2Z6FjGp8IARiwybppUsCJWZvZPMqGsi0UZrpJUrHuE9qH
+         64bH8rqeXDGk6nFXmSj2HebsX6s2H216Wes7mjuc70lTuKkpuSPvxCIsJv0/v3AMOuu3
+         PVMqT60q9uzF3o10jufHkiWhV1I2v3CkQjklsXHHAda9CnNKgFzjnQZTDo06dOxlzhb4
+         AJJlA53Ah9hPlKP+N8ysnmVlWct+WbC7n7VW3JyuVXyl1s4ynQsQRY5nFIuGSt6PNEEs
+         Ei6N9+Gcmay3lE9kwlE/TOC82bTYIXH62ldVPnXdO9XyaY4yTwVSynbBCi+UxP/rU6Ff
+         EfGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LaVGcGxnlvWl/N60TSPqkBXVPvOJpnJu23KDJt8v/cE=;
-        b=TcCCXO25453IfrK0V5B5EekhhrLQ4Yn4A/+ClAP81Ech2ueOo6nV91s57UAZvqfEwg
-         boBNP9UB+b9LY/NNe1xalAP8VXKkMndsnvqoMOE91gWXhp7wyXLZS+fst4D1FnfzZ8cm
-         ALuBJT+MBbCn9mw3/g4yh0PJgqPXAQubpG3QQd8l4Yyy/kJYPdkuc8i3uFRxUlNJZwRo
-         NLh87tPHE4Kp6VRd93sUGosftY11j+QKwWMuKWaoCm94T/cTVES0awriieMsvKhco9I9
-         0tD3Vv/M47oHybj/V0y/KsIjg0qcV1E9/5iTPK8szyNBRrcN4tHU8x0sgDfRf7chqgQA
-         Y/GA==
-X-Gm-Message-State: AOAM533Ebdwn5mwWPytece4YItFRpOecTRj8MlVvhyRHYprbVwgW+VZA
-        hKzcchJlmPofggVxL2DZXboeUg==
-X-Google-Smtp-Source: ABdhPJx08woCFqYotvYKIyfZfrbOktho2R292oUhNXmgxFX/3rSl8uheNbCswGGh4hBOFLXuK2GCPw==
-X-Received: by 2002:a05:6512:2090:: with SMTP id t16mr19935365lfr.514.1617662869315;
-        Mon, 05 Apr 2021 15:47:49 -0700 (PDT)
+        bh=M5Z3CmrtJqYjyCysAchxnacG6jL8cKLOXdM48UI1dE4=;
+        b=qo5fwnPbc/cgfrX+Xb/v+Cf/tG36PLlzL+cdwvRWcYEHK2X5WGNnXVYJq+3E+XRxX0
+         2qhGXlN78KewkXUM/CJwugL4loAU53shFvr2y+WuYkorUC6qFoCTZLFFnFg7+Z2CAdPT
+         LsfCVg3trDM/+8WufD0PBJQbTGdbiqvEZps4YY0TDMjXMtPAmdZ5Sm2DPCSLYkCMEHUU
+         MRTMuP6uIiq1LPTw7C/5VxD756rHlnKBoNAjDR4A0uANfQD+BDexFwYR3POPxfqVBPFl
+         fZNoQFeN2SFtSFl4k6+P1wNaZwt3dpyTW3wiQyzRNYgCIzerhZnJmNLZstKx/E/8gxKT
+         Av4w==
+X-Gm-Message-State: AOAM531Q6QT1J/mR7jMQBTivy32aMdcYfBhDT/5kPfuNUV9BU7x0Uvep
+        moQGyJe3k4684x8LstdOCODQHA==
+X-Google-Smtp-Source: ABdhPJxjvD4LAqZntM9Yygr2n6JlK/QkNc3COB2UCLmrHLDKVgu+k3krNjKP7DiLdLTO7paoTcxRZw==
+X-Received: by 2002:a2e:5716:: with SMTP id l22mr17128357ljb.244.1617662873546;
+        Mon, 05 Apr 2021 15:47:53 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id 130sm213748lfg.263.2021.04.05.15.47.48
+        by smtp.gmail.com with ESMTPSA id 130sm213748lfg.263.2021.04.05.15.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Apr 2021 15:47:48 -0700 (PDT)
+        Mon, 05 Apr 2021 15:47:53 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 06/33] clk: qcom: gpucc-sm8150: drop unused enum entries
-Date:   Tue,  6 Apr 2021 01:47:16 +0300
-Message-Id: <20210405224743.590029-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 12/33] clk: qcom: gpucc-sdm845: convert to parent data
+Date:   Tue,  6 Apr 2021 01:47:22 +0300
+Message-Id: <20210405224743.590029-13-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210405224743.590029-1-dmitry.baryshkov@linaro.org>
 References: <20210405224743.590029-1-dmitry.baryshkov@linaro.org>
@@ -73,25 +73,97 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Drop unused enum entries from the list of parent enums.
+Convert the clock driver to specify parent data rather than parent
+names, to actually bind using 'clock-names' specified in the DTS rather
+than global clock names.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/gpucc-sm8150.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/qcom/gpucc-sdm845.c | 44 +++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
-index 27c40754b2c7..2b952f561537 100644
---- a/drivers/clk/qcom/gpucc-sm8150.c
-+++ b/drivers/clk/qcom/gpucc-sm8150.c
-@@ -21,7 +21,6 @@
- 
- enum {
- 	P_BI_TCXO,
--	P_CORE_BI_PLL_TEST_SE,
- 	P_GPLL0_OUT_MAIN,
- 	P_GPLL0_OUT_MAIN_DIV,
+diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
+index 2d7dc89915e8..b38a4bccdc96 100644
+--- a/drivers/clk/qcom/gpucc-sdm845.c
++++ b/drivers/clk/qcom/gpucc-sdm845.c
+@@ -33,22 +33,6 @@ enum {
  	P_GPU_CC_PLL1_OUT_MAIN,
+ };
+ 
+-static const struct parent_map gpu_cc_parent_map_0[] = {
+-	{ P_BI_TCXO, 0 },
+-	{ P_GPU_CC_PLL1_OUT_MAIN, 3 },
+-	{ P_GPLL0_OUT_MAIN, 5 },
+-	{ P_GPLL0_OUT_MAIN_DIV, 6 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gpu_cc_parent_names_0[] = {
+-	"bi_tcxo",
+-	"gpu_cc_pll1",
+-	"gcc_gpu_gpll0_clk_src",
+-	"gcc_gpu_gpll0_div_clk_src",
+-	"core_bi_pll_test_se",
+-};
+-
+ static const struct alpha_pll_config gpu_cc_pll1_config = {
+ 	.l = 0x1a,
+ 	.alpha = 0xaab,
+@@ -60,13 +44,31 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll1",
+-			.parent_names = (const char *[]){ "bi_tcxo" },
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo", .name = "bi_tcxo",
++			},
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_fabia_ops,
+ 		},
+ 	},
+ };
+ 
++static const struct parent_map gpu_cc_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_GPU_CC_PLL1_OUT_MAIN, 3 },
++	{ P_GPLL0_OUT_MAIN, 5 },
++	{ P_GPLL0_OUT_MAIN_DIV, 6 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const struct clk_parent_data gpu_cc_parent_data_0[] = {
++	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .hw = &gpu_cc_pll1.clkr.hw },
++	{ .fw_name = "gcc_gpu_gpll0_clk_src", .name = "gcc_gpu_gpll0_clk_src" },
++	{ .fw_name = "gcc_gpu_gpll0_div_clk_src", .name = "gcc_gpu_gpll0_div_clk_src" },
++	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
++};
++
+ static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+ 	F(200000000, P_GPLL0_OUT_MAIN_DIV, 1.5, 0, 0),
+@@ -82,8 +84,8 @@ static struct clk_rcg2 gpu_cc_gmu_clk_src = {
+ 	.freq_tbl = ftbl_gpu_cc_gmu_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gpu_cc_gmu_clk_src",
+-		.parent_names = gpu_cc_parent_names_0,
+-		.num_parents = 5,
++		.parent_data = gpu_cc_parent_data_0,
++		.num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+@@ -96,8 +98,8 @@ static struct clk_branch gpu_cc_cx_gmu_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_cx_gmu_clk",
+-			.parent_names = (const char *[]){
+-				"gpu_cc_gmu_clk_src",
++			.parent_hws = (const struct clk_hw*[]){
++				&gpu_cc_gmu_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
 -- 
 2.30.2
 
