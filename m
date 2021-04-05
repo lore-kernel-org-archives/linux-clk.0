@@ -2,158 +2,217 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04979C433ED
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50B9C43460
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF7F3613B0
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C274613B2
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233284AbhDELEv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Apr 2021 07:04:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59846 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232355AbhDELEu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 5 Apr 2021 07:04:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6B79CB03C;
-        Mon,  5 Apr 2021 11:04:43 +0000 (UTC)
-Message-ID: <8f147485af325181c57bdf0dd3b0e3dd54000ac8.camel@suse.de>
-Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
+        id S233400AbhDELkW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Apr 2021 07:40:22 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:44642 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232755AbhDELkW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 07:40:22 -0400
+Received: by mail-lf1-f43.google.com with SMTP id d12so16929100lfv.11;
+        Mon, 05 Apr 2021 04:40:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=zIXXSCqMXDob1DAPG5CCbwNP2i92dYCSQ1Gjx9Ia5QE=;
+        b=A6NrUmbdslsnvgPJDt5MOGd/dgX7GjJe8s579FSpuKS/dRImVc1umbgc2OhsaifYAZ
+         vKJ8HnlFd+p6XubGdI14PE64cPqeTcipDoZ88+ah44qVsaTsXxRUZjiv1Rln242T0axz
+         1BxUEG4cap3HxW2ju/O1dRRyKBOwhaDxFNncBM/ioK126pcka1ReQd33O3twTNeOccSr
+         jMjPXqgttjtftmK9Ni/G4XLdYbGkxBPLt/7B3FC6XWrdSrkU+Ltiqklonm+5m2JIYWlR
+         5zQCzCIwgT9frDt76lQNWbRJU3G8WLx/SjYTCDfd9jqB6hw/v6eisAO1ajd8h9uVcpwW
+         XL/A==
+X-Gm-Message-State: AOAM532ad7FP4z2P42DdyYVAtUchHRRxG8cmyRcC3z8xub8EZ8cIaSnX
+        ilBi+P3EPz/pvp9aiwH5PHQ=
+X-Google-Smtp-Source: ABdhPJwKaAC8+FP0vP4kjp8sh+KI9jXnex5lyylHDRAC4RmeaqgtD6ACmuyVwhKzaUDsF/vFYgb2NA==
+X-Received: by 2002:a05:6512:504:: with SMTP id o4mr16628598lfb.438.1617622814783;
+        Mon, 05 Apr 2021 04:40:14 -0700 (PDT)
+Received: from localhost.localdomain (dc7vkhyyyyyyyyyyyyydy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::6])
+        by smtp.gmail.com with ESMTPSA id r3sm1842666ljn.13.2021.04.05.04.40.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Apr 2021 04:40:13 -0700 (PDT)
+Date:   Mon, 5 Apr 2021 14:40:06 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J.Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        DOCUMENTATION <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS "
-         "<devicetree@vger.ke rnel.org>, ACPI Devel Maling List "
-         "<linux-acpi@vger.kernel.org>, Android Kernel Team "
-         "<kernel-team@android.com>, linux-rpi-kernel" 
-        <linux-rpi-kernel@lists.infradead.org>
-Date:   Mon, 05 Apr 2021 13:04:40 +0200
-In-Reply-To: <161721871083.2260335.2392646934517115770@swboyd.mtv.corp.google.com>
-References: <20210205222644.2357303-9-saravanak@google.com>
-         <9b206c4d00dfe8b7f941260f18909914b2b2eecb.camel@suse.de>
-         <161678243444.3012082.5031467952132861429@swboyd.mtv.corp.google.com>
-         <CAMuHMdV5PGUujsFP2TXMxij4UxVnrrurh_qVhq8+480w21jJAg@mail.gmail.com>
-         <161705310317.3012082.15148238105608149214@swboyd.mtv.corp.google.com>
-         <CAGETcx8reqKoPoJ8dV7f9=SHYKmNhcVpkNHoCS-0L4UHCBahoA@mail.gmail.com>
-         <161706920822.3012082.10047587064612237296@swboyd.mtv.corp.google.com>
-         <CAMuHMdX7OxTjwQmdP8xDbVkjtZ5442qFao8K6bNpDQ5S3GPSgQ@mail.gmail.com>
-         <161715734080.2260335.881350237641202575@swboyd.mtv.corp.google.com>
-         <CAMuHMdXMhiOBSSwrC2A_ijXCaekBMfC8h9PFhqLtNGhtPDba=A@mail.gmail.com>
-         <161721871083.2260335.2392646934517115770@swboyd.mtv.corp.google.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ffRO6YGGlkKiYOjSl+0D"
-User-Agent: Evolution 3.40.0 
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v6 00/16] Support ROHM BD71815 PMIC
+Message-ID: <cover.1617616855.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Patch series introducing support for ROHM BD71815 PMIC
 
---=-ffRO6YGGlkKiYOjSl+0D
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ROHM BD71815 is a power management IC used in some battery powered
+systems. It contains regulators, GPO(s), charger + coulomb counter, RTC
+and a clock gate.
 
-On Wed, 2021-03-31 at 12:25 -0700, Stephen Boyd wrote:
-> Quoting Geert Uytterhoeven (2021-03-31 00:05:00)
-> > On Wed, Mar 31, 2021 at 4:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > > Does it have any use?
-> > > >=20
-> > > > of_clk_del_provider() removes the first provider found with node =
-=3D=3D NULL.
-> > > > If there are two drivers calling of_clk_add_hw_provider(), and one =
-of
-> > > > hem calls of_clk_del_provider() later, the wrong provider may be
-> > > > removed from the list.
-> > > >=20
-> > >=20
-> > > So you're saying we shouldn't add a NULL device node pointer to the l=
-ist
-> > > so that this can't happen? That doesn't mean returning an error from
-> > > of_clk_add_hw_provider() would be useful though.
-> > > of_clk_add_hw_provider() can return 0 if np =3D=3D NULL and
-> > > of_clk_del_provider() can return early if np =3D=3D NULL too.
-> >=20
-> > I don't know if I grasp all meanings of the above.
-> >=20
-> > The main question is if it is valid for a driver to call
-> > of_clk_add_hw_provider()
-> > with np =3D=3D NULL.
-> > =C2=A0=C2=A0- If yes, should that register the provider?
->=20
-> No it should not register the provider. That would be bad as you pointed
-> out.
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0- If yes, how to handle two drivers=
- calling of_clk_add_hw_provider()
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0with np =3D NULL, as th=
-eir unregistration order is not guaranteed to
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0be correct.
-> >=20
-> > If no, is that something to ignore (0), or a bug (error)?
->=20
-> This is my question above. Is there a use to having
-> of_clk_add_hw_provider() return an error value when np =3D=3D NULL? I dou=
-bt
-> it.
->=20
-> Returning 0 would reduce the if conditions in driver code in this case
-> and be consistent with the CONFIG_OF=3Dn inline stub that returns 0 when
-> CONFIG_OF is disabled. The only case an error would be returned is if we
-> couldn't allocate memory or if the assigned clocks code failed. Seems
-> sane to me. The downside is that drivers would maybe register clkdev
-> lookups when they don't need to and waste some memory. I'm fine with
-> that until we have some sort of non-DT based clk provider lookup
-> mechanism that could unify the two methods.
+All regulators can be controlled via I2C. LDO4 can additionally be set to
+be enabled/disabled by a GPIO. LDO3 voltage could be selected from two
+voltages written into separate VSEL reisters using GPIO but this mode is
+not supported by driver. On top of that the PMIC has the typical HW
+state machine which is present also on many other ROHM PMICs.
 
-What about devm_of_clk_add_hw_provider() users, do we care that a seemingly
-empty managed resource will be created?
+IC contains two GPOs - but one of the GPOs is marked as GND in
+data-sheet. Thus the driver by default only exposes one GPO. The second
+GPO can be enabled by special DT property.
 
-Regards,
-Nicolas
+RTC is almost similar to what is on BD71828. For currently used features
+only the register address offset to RTC block differs.
+
+The charger driver is not included in this series. ROHM has a charger
+driver with some fuel-gauging logig written in but this is not included
+here. I am working on separating the logic from HW specific driver and
+supporting both BD71815 and BD71828 chargers in separate patch series.
+
+Changelog v6:
+  Rebased on v5.12-rc6
+  Regulator:
+   - Fixed few minor issues pointer by Mark
+   - Dropped the helper patches which were applied to regulator tree.
+     Please note, there is compile-time dependency to those helpers so
+     regulator helpers should be pulled in from:
+     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+     tags/regulator-list-ramp-helpers
+  GPIO:
+   - Corrected change log spelling
+   - Fixes some styling issues pointed by Andy.
+Changelog v5:
+  Regulator:
+  - Added regmap helper for regulator ramp-delay and taken it in use
+    (patches 13, 14, 16 - they can be just dropped if ramp-delay helper is not
+    a good idea. Patch 15 implements old-fashioned ramp-delay)
+  GPIO:
+  - styling changes to GPIO (Mostly suggested by Andy)
+  - implemented init_valid_mask (but can't count on it yet)
+Changelog v4:
+  - Sorted ROHM chip ID enum
+  - Statcized DVS structures in regulator driver
+  - Minor styling for regulator driver
+  - rebased on v5.12-rc4
+Changelog v3:
+  - GPIO clean-up as suggested by Bartosz
+  - MFD clean-up as suggested by Lee
+  - clk-mode dt-binding handling in MFD driver corrected to reflect new
+    property values.
+  - Dropped already applied patches
+  - Rebased on v5.12-rc2
+Changelog v2:
+  - Rebased on top of v5.11-rc3
+  - Added another "preliminary patch" which fixes HW-dvs voltage
+    handling (patch 1)
+  - split regulator patch to two.
+  - changed dt-binding patch ordering.
+  regulators:
+    - staticized probe
+    - removed some unnecessary defines
+    - updated comments
+    - split rohm-regulator patch adding SNVS and supporting simple
+      linear mapping into two - one adding support for mapping, other
+      adding SNVS.
+  GPIO:
+    - removed unnecessary headers
+    - clarified dev/parent->dev usage
+    - removed forgotten #define DEBUG
+  dt-bindings:
+    - changed patch order to meet ref-dependencies
+    - added missing regulator nodes
+    - changed string property for clk mode to tristated
+  MFD:
+    - header cleanups.
+  CLK:
+    - fixed commit message
+
+--
+
+Matti Vaittinen (16):
+  rtc: bd70528: Do not require parent data
+  mfd: bd718x7: simplify by cleaning unnecessary device data
+  dt_bindings: bd71828: Add clock output mode
+  dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
+  dt_bindings: mfd: Add ROHM BD71815 PMIC
+  mfd: Add ROHM BD71815 ID
+  mfd: Sort ROHM chip ID list for better readability
+  mfd: Support for ROHM BD71815 PMIC core
+  gpio: support ROHM BD71815 GPOs
+  regulator: rohm-regulator: linear voltage support
+  regulator: rohm-regulator: Support SNVS HW state.
+  regulator: bd718x7, bd71828: Use ramp-delay helper
+  regulator: Support ROHM BD71815 regulators
+  clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
+  rtc: bd70528: Support RTC on ROHM BD71815
+  MAINTAINERS: Add ROHM BD71815AGW
+
+ .../bindings/mfd/rohm,bd71815-pmic.yaml       | 201 ++++++
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       |   6 +
+ .../regulator/rohm,bd71815-regulator.yaml     | 116 ++++
+ MAINTAINERS                                   |   3 +
+ drivers/clk/clk-bd718x7.c                     |   9 +-
+ drivers/gpio/Kconfig                          |  10 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd71815.c                   | 185 +++++
+ drivers/mfd/Kconfig                           |  15 +-
+ drivers/mfd/rohm-bd71828.c                    | 486 +++++++++----
+ drivers/mfd/rohm-bd718x7.c                    |  43 +-
+ drivers/regulator/Kconfig                     |  11 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/bd71815-regulator.c         | 652 ++++++++++++++++++
+ drivers/regulator/bd71828-regulator.c         |  51 +-
+ drivers/regulator/bd718x7-regulator.c         |  60 +-
+ drivers/regulator/rohm-regulator.c            |  23 +-
+ drivers/rtc/Kconfig                           |   6 +-
+ drivers/rtc/rtc-bd70528.c                     | 104 +--
+ include/linux/mfd/rohm-bd71815.h              | 562 +++++++++++++++
+ include/linux/mfd/rohm-bd71828.h              |   3 +
+ include/linux/mfd/rohm-bd718x7.h              |  13 -
+ include/linux/mfd/rohm-generic.h              |  15 +-
+ 23 files changed, 2286 insertions(+), 290 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71815-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd71815.c
+ create mode 100644 drivers/regulator/bd71815-regulator.c
+ create mode 100644 include/linux/mfd/rohm-bd71815.h
 
 
---=-ffRO6YGGlkKiYOjSl+0D
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+base-commit: e49d033bddf5b565044e2abe4241353959bc9120
+-- 
+2.25.4
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmBq7sgACgkQlfZmHno8
-x/5ZSwf9HS5H+QT20eiJRWn3bELAv3sRiJTSXv7nkK9YBffB4RHKSH28Ocj04LdC
-75oUWS2K08zuwHEK78YAo3wnD95KNIWq4Q3iNtkkmHxvm+DA/1fwbljVilKAtF0O
-+HwypDjA3TMJm37VgB6AL9VKrO4/fQHdkq89m4WRl/ui9TP+LMpUfmpGMOT2g5KZ
-r4OA+AsGfAjJpEOjvc+O+BAjfFaw53bDX2BqdWAodMSF5iAOYi+6/jQftxKRym4y
-yw9x+YWxx6cG/I5rXJAC6es5foHtjHxgY9vL3BE7vN3ClQ5ZwcJmMq+gS/SKGopu
-CY4Wm2CjB1YMigXfwLmvYxpMW5ubbw==
-=EzAP
------END PGP SIGNATURE-----
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
---=-ffRO6YGGlkKiYOjSl+0D--
-
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
