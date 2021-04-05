@@ -2,165 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98358C43461
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 05:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04979C433ED
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D111613B6
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 05:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF7F3613B0
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 11:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbhDEFYs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Apr 2021 01:24:48 -0400
-Received: from mail-vi1eur05on2046.outbound.protection.outlook.com ([40.107.21.46]:51681
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232065AbhDEFXw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 5 Apr 2021 01:23:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c2nRNkoZ/1LwJ9zHvEa3C/OAn6WiHzx5NXA2l916IHEAD4nw2y8lQjFFgwuclGksGl/OkKqbilrBZXyyMz6YV2EVi8CuV7ronbOPLGjmImCyNApldR9Ru6kgPepJhCu2omV5EJFCHFhzwQWAQd0x/BPAF4tIddoLH0kLtYGarefd1fvC3dSyoH7t3XrM7jWjgyZtvkhlRFgijR91Cv9Iqe8x23FCfOFa1Wdcuz4dSbFJtMkqEcMa7ybjIjZOhuqPdxUZ6d6e6CxQv7KHkp1sMC/zR9dh4klgib41SznpBiIp3O3/E8KhhZ4wDuee8HAjiPahRebhwgq3CtSAPKi52g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iWCjWZVRjvaGodqNylLB0EssfajXZTgpOwyRLrRLYDU=;
- b=TTASRbMKZOpMuyycxEmjEy5qGTyW2IXmMe+S68IHpS6r/38CBS11NZjOEctM0gO95etiVRZ3aXR6Us/bz1irZeS+mGE618+gQ2EWsHYRP3b/ubl+3w/mBTY5CTC9+vQlOCuu5kzGe4r0hEyaKO91038+73yiYhz59aC7nCC1fWJZHxYXyjOt077aKoH34hi/IjWp/2CqhINw4+9ppvxqJf+/fwQC60kYyhV4ej+SnCeOhGGgT10NshMfSq+bRIYlJTH/0CqsHCTOMauATyjvxafdC0LgJXHN2tc2sMWdBuKk6VFfUeVKZTll1U7WnuDcbyZZmd6sI8GkRyWc4O4+Vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fi.rohmeurope.com; dmarc=pass action=none
- header.from=fi.rohmeurope.com; dkim=pass header.d=fi.rohmeurope.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=rohmsemiconductoreurope.onmicrosoft.com;
- s=selector1-rohmsemiconductoreurope-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iWCjWZVRjvaGodqNylLB0EssfajXZTgpOwyRLrRLYDU=;
- b=ee70KcWNCCoiYVFOxklXilpkLr76GQu/ahpCoo4OAjNl2IaJYG5OUaOnEp2EM8LfhAVFbm7aDwWyrn5KaQIzNKwzJY/P2EtVuj6/iHrtQb8i3Hu7ts40/Df3EjY6iKJufoJ32rC3WwsxFxAkFs5r3JT7g8OmmDX2/xluzfP8NN0=
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com (2603:10a6:7:55::20) by
- HE1PR0301MB2396.eurprd03.prod.outlook.com (2603:10a6:3:67::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3999.32; Mon, 5 Apr 2021 05:23:41 +0000
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::f4d0:ee66:d5fb:9cdd]) by HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::f4d0:ee66:d5fb:9cdd%3]) with mapi id 15.20.3999.032; Mon, 5 Apr 2021
- 05:23:41 +0000
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-Subject: Re: [PATCH v5 00/19] Support ROHM BD71815 PMIC
-Thread-Topic: [PATCH v5 00/19] Support ROHM BD71815 PMIC
-Thread-Index: AQHXJJps4G37QdCWoUakTStXWzuSFqqcYF4AgAVAugCAA81egA==
-Date:   Mon, 5 Apr 2021 05:23:41 +0000
-Message-ID: <e0b83eee4417e4e267b15a8c22bbc7f70df919e9.camel@fi.rohmeurope.com>
-References: <cover.1617020713.git.matti.vaittinen@fi.rohmeurope.com>
-         <303b164aaa3d36cf8c9d03ee9b3863635be4073d.camel@fi.rohmeurope.com>
-         <20210402191950.GK5402@sirena.org.uk>
-In-Reply-To: <20210402191950.GK5402@sirena.org.uk>
-Reply-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none
- header.from=fi.rohmeurope.com;
-x-originating-ip: [2001:14ba:16e2:8300::6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 595c90c5-15fb-41ac-3220-08d8f7f2f99f
-x-ms-traffictypediagnostic: HE1PR0301MB2396:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <HE1PR0301MB2396108C9E03B0A09D2BAEC1AD779@HE1PR0301MB2396.eurprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bi3+rPEC3WHykCG861/puXSHl1hF/cqkjDtDTvkerweAVnVM9VcxAuogkF9wTALtXzhmqib9A5XaJmZUnU202haB+0LwQ8canOUbT7ZTaaiGyDVMxug1U98WsvSVyBVPnfZBEGCFWLEPW6WUM2LU4gR2ZUoEYz60h3hItN4Fo17YrEJ4qwYELABUt2IR38AyjnHT12g23xfT/eVGVfBHHFlSXH56jHOIp6tTf4laNlJKTKjSKWyfVkaFMCe/JQzmLDd+hS5LEueVnYgRWN7yrEJh8lMiJFc4o4ADm5F+AdgF/tJ03efurLJteA94lRJaTx1GeCDWu/SwiBXoPNyy6Bsc7JzHGdtHh8fljkgFL5pD1WqlayUMzDA7fTQicnkJQK60rsJx1vznPVxHfNL2Hb3s2qAb+2ksXeUytnRhMopOU2x6Foh9SvAeHx3w6EVNn8YUcGTI9oncfVhNFwDCE0zapneItsjVNvdeRJ0GoMhE/XZjlLkPWflafbn5yzoDfaKL6B+2gW65b4my+mBwLYwBGAGWnAiJE5VXZcK+BW/8qAus1oU5MiFgw7jhCD4xGMKQmzKoaeMwguSPDcjHwz4XxuOhK3mmwOy71Z7NMx69r+6CiR6n8DPB9wT4AEn5k+L8tWBOQExCtE63+M2GoKNJf8PVUOd7I8YuuxQk27c=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR03MB3162.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39840400004)(376002)(136003)(346002)(396003)(478600001)(6512007)(7416002)(86362001)(2616005)(6486002)(71200400001)(6506007)(186003)(76116006)(5660300002)(6916009)(38100700001)(66476007)(3450700001)(66446008)(4326008)(64756008)(66556008)(2906002)(8676002)(316002)(8936002)(66946007)(83380400001)(54906003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?R3g2S21jQ1RFWkpVeXFDdVZjdy9KaTRwdmR4R2RaZThXTVJoRThkUTVWOWtO?=
- =?utf-8?B?a0szVzAxVnJyRENTN1U0Y0VtOElhOHROV09vUS8vT1VvUzJPZkVxYU5HWTVu?=
- =?utf-8?B?K1BJWFYvaTNmbGIrWkdBdDljS2Y5eE5pdDNiVG5YMTNRcDc4TmJZNEgwekZn?=
- =?utf-8?B?Q3U3N3dPU2ZBSXhjd0tieDZxS0ZKOGxnb3pLeEhRNUVKRXRoU2tSRzNsdkxL?=
- =?utf-8?B?b0tmc1NXamlUQklyMDlqbTNITmhwK0dseXRKQ3RkSk5uWXJ0SEg2RXdQMW9t?=
- =?utf-8?B?NkZKK2MzaVR4b0RjQlpNMVl1WW1nSVkwdzROSWgvRFdSQjA1emkrQUFQaDg0?=
- =?utf-8?B?VUszTURlbExJMzZpZVkweE10bEZoNkV5dHdxYkQyN3NIdklTWUo0NXl2bE1T?=
- =?utf-8?B?SHNzb2VuS3o5NFlkbU8wM0o3ZVNVUDNlUlJmK3FUZXA0Z2xDc3hjSzJFb3dT?=
- =?utf-8?B?aUlIbENObTUzckoyM3lBR3RJcmw1cUl1QjVER24wYU9RU3gyM3gwVDBEQU91?=
- =?utf-8?B?WVlRYUFTRVY3bERRbVU4UWYvak4vTHY1RGpTczdTNGZFK2FWRzR5NWd1ZFds?=
- =?utf-8?B?MEovWVBISlRQNGlYQ1FCdE1qS1d6U3c2REFSaS9TTWdzRHdXL2RYSUpyTndD?=
- =?utf-8?B?blNLaEVyeGJHRkFSYjhXZWRIQTJHc05sL1RHR08rdmZ6TW5Ed0l4bGhXY3lu?=
- =?utf-8?B?dnp5bG1HRjk4UVMxNlliTkNwWitvem5NQTVKMXBEaFY3WmRaeXRaTVR5MnZq?=
- =?utf-8?B?emR5dWVLODZ3OGEwaXB4S0h0SGhDb2ZVdm9VYmY2UHFGTWkveXE5Mm0yZkNu?=
- =?utf-8?B?Ums2TUNwQWs3WUZDaGRKZloyMklxb29JSU85U0IxK2JLTi9CbHg2dE5rVzM2?=
- =?utf-8?B?QStRQjIrMWdRbTE5SHJMSnIxY0MwMGVNNEZjTDB1c0xPWE5kOXpwM1RPQzZW?=
- =?utf-8?B?ODVybEcvU0lYVHdTM2VPVEoveFVvN2NNZUkzcGhYby9vUWhJcTQyOWhvcWtS?=
- =?utf-8?B?V3NLVGVBT1RRYUJ1UDFFcWdqZTBERFgwV0pGeG4zVmo3Zi8wWWp5am9mREZE?=
- =?utf-8?B?WGU4VUhqSzRvTUlWT2kvUjVyYUdYVUZFcmU1bWNENUFkNnpuQjgxSjFHZ1lX?=
- =?utf-8?B?eTVKQlpobkZLNEk4Z1IwbXFBRTdRbHVZZVAveks5S2tGV0NzQTJRN21hMDZV?=
- =?utf-8?B?Vk5pd2dNeTNnVmNCYmZ1Nm1zQU02NWliVjNvNzJWNmJueHNpczVoMkI3RUdj?=
- =?utf-8?B?bUhHQTAxVU1uK0I4UDgzY3FaRVNRc24zSHFEMmIzaHN3M0VQUGxndGJmSTcw?=
- =?utf-8?B?NzhJaXBkYU04dXJ4S3pSR0xYMzBzQ2FWZUxKcHcxRWdPOGNFWDEycE9rRENF?=
- =?utf-8?B?L1dCZ2d2K3d0by9mQWdKTWIvekoxRXgxYmRXZWFhcCtlbU43bDJEN0lNL0Fz?=
- =?utf-8?B?ZUdTdi84NlkvQ2FHWTJ5eStLOXRZKzBhMnp3dW1GQlhxUEgrdlk0WmxicmFZ?=
- =?utf-8?B?U24yV0pEQzd2OHFtREE5UXorclM2Y0ZNeGZMcUgzZ1dWOXhvMGVmUVJPdVdY?=
- =?utf-8?B?N0VpdnFDS1dBOEpBcmZSM1Vqa1VXVDF5TlU3TmIzVnNZRGNsMHBrN1VwQ05S?=
- =?utf-8?B?blJuZnAwRXhmQkNlOEJMdW9JU2t1WUt5TzhYUjlRYktkTVovS2grQ1NBQjIv?=
- =?utf-8?B?OU8rODQ0UG9CemEzSGQrcWVTakNzME0vMkpoQkFDcVJIbWRmU2IybldZZ0Rk?=
- =?utf-8?B?VjJla1UyU3d4TUMxUURkV3BES1VQME9NaXNXR1RQaHkyTTlYZ0hmZ2pFNGV6?=
- =?utf-8?Q?gbMj5hMaMqbtAVYx/E1YiZRqblSWNQO/oMGlM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EF6A72578D7386489178652C8B359CBE@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S233284AbhDELEv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Apr 2021 07:04:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59846 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232355AbhDELEu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 5 Apr 2021 07:04:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6B79CB03C;
+        Mon,  5 Apr 2021 11:04:43 +0000 (UTC)
+Message-ID: <8f147485af325181c57bdf0dd3b0e3dd54000ac8.camel@suse.de>
+Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J.Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        DOCUMENTATION <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS "
+         "<devicetree@vger.ke rnel.org>, ACPI Devel Maling List "
+         "<linux-acpi@vger.kernel.org>, Android Kernel Team "
+         "<kernel-team@android.com>, linux-rpi-kernel" 
+        <linux-rpi-kernel@lists.infradead.org>
+Date:   Mon, 05 Apr 2021 13:04:40 +0200
+In-Reply-To: <161721871083.2260335.2392646934517115770@swboyd.mtv.corp.google.com>
+References: <20210205222644.2357303-9-saravanak@google.com>
+         <9b206c4d00dfe8b7f941260f18909914b2b2eecb.camel@suse.de>
+         <161678243444.3012082.5031467952132861429@swboyd.mtv.corp.google.com>
+         <CAMuHMdV5PGUujsFP2TXMxij4UxVnrrurh_qVhq8+480w21jJAg@mail.gmail.com>
+         <161705310317.3012082.15148238105608149214@swboyd.mtv.corp.google.com>
+         <CAGETcx8reqKoPoJ8dV7f9=SHYKmNhcVpkNHoCS-0L4UHCBahoA@mail.gmail.com>
+         <161706920822.3012082.10047587064612237296@swboyd.mtv.corp.google.com>
+         <CAMuHMdX7OxTjwQmdP8xDbVkjtZ5442qFao8K6bNpDQ5S3GPSgQ@mail.gmail.com>
+         <161715734080.2260335.881350237641202575@swboyd.mtv.corp.google.com>
+         <CAMuHMdXMhiOBSSwrC2A_ijXCaekBMfC8h9PFhqLtNGhtPDba=A@mail.gmail.com>
+         <161721871083.2260335.2392646934517115770@swboyd.mtv.corp.google.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ffRO6YGGlkKiYOjSl+0D"
+User-Agent: Evolution 3.40.0 
 MIME-Version: 1.0
-X-OriginatorOrg: fi.rohmeurope.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR03MB3162.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 595c90c5-15fb-41ac-3220-08d8f7f2f99f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2021 05:23:41.3432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 94f2c475-a538-4112-b5dd-63f17273d67a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vqNFKQIdYdGkjZP/wMglUaGbYqdzDVMWCmnBbh5wQ1VzwO6thoLokc9gLjxmE1DX1ues+vY/GGlqFQmC0Tg0euvbibKTsgBG2XXONfkl+ZNvypUr7ZrHktFUM46RU0oW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0301MB2396
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBGcmksIDIwMjEtMDQtMDIgYXQgMjA6MTkgKzAxMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
-IE9uIFR1ZSwgTWFyIDMwLCAyMDIxIGF0IDExOjA2OjUzQU0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0
-dGkgd3JvdGU6DQo+IA0KPiA+IERvIHlvdSB0aGluayBMZWUgY291bGQgbWVyZ2Ugb3RoZXIgYnV0
-IHRoZSByZWd1bGF0b3IgcGFydHMgdG8gTUZEDQo+ID4gaWYNCj4gPiBNYXJrIGlzIGJ1c3k/IEkn
-ZCBsaWtlIHRvIGJlIGFibGUgdG8gc3F1ZWV6ZSB0aGUgYW1vdW50IG9mIHBhdGNoZXMNCj4gPiBh
-bmQNCj4gPiByZWNpcGllbnRzIGZvciBmdXR1cmUgaXRlcmF0aW9ucy4gSXQgbWlnaHQgYmUgZWFz
-aWVyIHRvIHdvcmsNCj4gPiBkaXJlY3RseQ0KPiA+IG9uIHJlZ3VsYXRvciB0cmVlIGlmIHJlZ3Vs
-YXRvciBwYXJ0IGdldHMgZGVsYXllZCB0byBuZXh0IGN5Y2xlLiAoSQ0KPiA+IGRvDQo+ID4gYWxz
-byBwbGFuIGZ1cnRoZXIgd29ya2luZyB3aXRoIHRoZSBHUElPIHBhcnQgZHVyaW5nIDUuMTMtcmMg
-Y3ljbGUNCj4gPiB0bw0KPiA+IHV0aWxpemUgdGhlIHJlZ21hcF9ncGlvLiBUaGF0IGNvdWxkIGJl
-IGRvbmUgaW4gdGhlIEdQSU8gdHJlZSB0aGVuKS4NCj4gPiBJDQo+ID4gdGhpbmsgdGhlIG90aGVy
-IHBvcnRpb25zIGFyZSBpbiBhIHByZXR0eSBzdGFibGUgc2hhcGUgbm93Lg0KPiANCj4gVGhpcyB3
-b3VsZG4ndCBiZSBhIGJhZCBpZGVhIGluIGdlbmVyYWwgZm9yIHRoZXNlIHNlcmllc2VzLCBlc3Bl
-Y2lhbGx5DQo+IHRoZSBiaWdnZXIgb25lcyBvciB0aGUgb25lcyB0aGF0IGdldCBhIGxvdCBvZiBy
-ZXZpZXcgY29tbWVudHMgb24gc29tZQ0KPiBwYXRjaGVzLg0KPiANCj4gSW4gYW55IGNhc2UsIGhl
-cmUncyBhIHB1bGwgcmVxdWVzdCBmb3IgdGhlIGhlbHBlcnMgdGhhdCBhcmUgYWRkZWQNCg0KVGhh
-bmtzIE1hcmsuDQoNCj4gTWF0dGkgVmFpdHRpbmVuICgyKToNCj4gICAgICAgcmVndWxhdG9yOiBo
-ZWxwZXJzOiBFeHBvcnQgaGVscGVyIHZvbHRhZ2UgbGlzdGluZw0KPiAgICAgICByZWd1bGF0b3I6
-IEFkZCByZWdtYXAgaGVscGVyIGZvciByYW1wLWRlbGF5IHNldHRpbmcNCj4gDQoNCklmIEkgdW5k
-ZXJzdGFuZCB0aGlzIGNvcnJlY3RseSwgdGhlIGlkZWEgaXMgdGhhdCBMZWUgY291bGQgcHVsbCB0
-aGVzZQ0KY2hhbmdlcyB0byBoaXMgdHJlZT8gU28sIEkgd2lsbCBkcm9wIHRoZXNlIHR3byBwYXRj
-aGVzIGZyb20gdGhlIHNlcmllcw0Kd2hlbiBJIHJlc2VuZCBpdC4gSGVscGVycyBhcmUgbmVlZGVk
-IGZvciB0aGUgcmVndWxhdG9yIHBhcnQgb2YgdGhlDQpzZXJpZXMgdG8gYXBwbHkuIExlZSwgTWFy
-aywgcGxlYXNlIGxldCBtZSBrbm93IGlmIEkgbWlzdW5kZXJzdG9vZC4NCg0KDQpCZXN0IFJlZ2Fy
-ZHMNCglNYXR0aSBWYWl0dGluZW4NCg0K
+
+--=-ffRO6YGGlkKiYOjSl+0D
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2021-03-31 at 12:25 -0700, Stephen Boyd wrote:
+> Quoting Geert Uytterhoeven (2021-03-31 00:05:00)
+> > On Wed, Mar 31, 2021 at 4:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > > Does it have any use?
+> > > >=20
+> > > > of_clk_del_provider() removes the first provider found with node =
+=3D=3D NULL.
+> > > > If there are two drivers calling of_clk_add_hw_provider(), and one =
+of
+> > > > hem calls of_clk_del_provider() later, the wrong provider may be
+> > > > removed from the list.
+> > > >=20
+> > >=20
+> > > So you're saying we shouldn't add a NULL device node pointer to the l=
+ist
+> > > so that this can't happen? That doesn't mean returning an error from
+> > > of_clk_add_hw_provider() would be useful though.
+> > > of_clk_add_hw_provider() can return 0 if np =3D=3D NULL and
+> > > of_clk_del_provider() can return early if np =3D=3D NULL too.
+> >=20
+> > I don't know if I grasp all meanings of the above.
+> >=20
+> > The main question is if it is valid for a driver to call
+> > of_clk_add_hw_provider()
+> > with np =3D=3D NULL.
+> > =C2=A0=C2=A0- If yes, should that register the provider?
+>=20
+> No it should not register the provider. That would be bad as you pointed
+> out.
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0- If yes, how to handle two drivers=
+ calling of_clk_add_hw_provider()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0with np =3D NULL, as th=
+eir unregistration order is not guaranteed to
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0be correct.
+> >=20
+> > If no, is that something to ignore (0), or a bug (error)?
+>=20
+> This is my question above. Is there a use to having
+> of_clk_add_hw_provider() return an error value when np =3D=3D NULL? I dou=
+bt
+> it.
+>=20
+> Returning 0 would reduce the if conditions in driver code in this case
+> and be consistent with the CONFIG_OF=3Dn inline stub that returns 0 when
+> CONFIG_OF is disabled. The only case an error would be returned is if we
+> couldn't allocate memory or if the assigned clocks code failed. Seems
+> sane to me. The downside is that drivers would maybe register clkdev
+> lookups when they don't need to and waste some memory. I'm fine with
+> that until we have some sort of non-DT based clk provider lookup
+> mechanism that could unify the two methods.
+
+What about devm_of_clk_add_hw_provider() users, do we care that a seemingly
+empty managed resource will be created?
+
+Regards,
+Nicolas
+
+
+--=-ffRO6YGGlkKiYOjSl+0D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmBq7sgACgkQlfZmHno8
+x/5ZSwf9HS5H+QT20eiJRWn3bELAv3sRiJTSXv7nkK9YBffB4RHKSH28Ocj04LdC
+75oUWS2K08zuwHEK78YAo3wnD95KNIWq4Q3iNtkkmHxvm+DA/1fwbljVilKAtF0O
++HwypDjA3TMJm37VgB6AL9VKrO4/fQHdkq89m4WRl/ui9TP+LMpUfmpGMOT2g5KZ
+r4OA+AsGfAjJpEOjvc+O+BAjfFaw53bDX2BqdWAodMSF5iAOYi+6/jQftxKRym4y
+yw9x+YWxx6cG/I5rXJAC6es5foHtjHxgY9vL3BE7vN3ClQ5ZwcJmMq+gS/SKGopu
+CY4Wm2CjB1YMigXfwLmvYxpMW5ubbw==
+=EzAP
+-----END PGP SIGNATURE-----
+
+--=-ffRO6YGGlkKiYOjSl+0D--
+
