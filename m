@@ -2,113 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D31AC433ED
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 20:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38204C433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 22:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A75C613D4
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 20:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F48613CD
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 22:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347179AbhDFU3O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 16:29:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347137AbhDFU3N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Apr 2021 16:29:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 260A3613D2;
-        Tue,  6 Apr 2021 20:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617740944;
-        bh=ycO3Lven3n9FV1W0louvhRA6+NVC79zMPhxR2jAN3uM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L3Ic6dXC4Qc4OMVO2UNJzIGGQVlGjKjF8QLC7GX4ZyGywZ/dwFA2EKu/ffCHcikJg
-         j2ncSDod4oPrFX4UIIpP3ixsWHNArZqxFWFuCPk0h9kqBLRi33yUqSKru5x/g6bXr9
-         zELAJ+hhJQKGrqjQV6CASqSB0e/mITCzf0nhe/I61j39GwfCVai4NmroVqCGEQT452
-         oo/nFldJ6JpegsFHEAvkcYSHJshUfFEsEt4hu1k0yOByWZ3izGrYVehEMizRZiTyeX
-         YBmVphfgkPpoo2lZUTl0A/7CVmofrIVV4p2hn+DYxfhE2RYC6eLujHoKoe/w0xzBbq
-         UO1S7JfnQdC8A==
-Date:   Tue, 6 Apr 2021 22:29:01 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-i2c@vger.kernel.org, kernel@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v4.1 5/6] i2c: imx: Simplify using
- devm_clk_get_enableded()
-Message-ID: <20210406202901.GB3804@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        id S233309AbhDFWCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 18:02:49 -0400
+Received: from smtp-16-i2.italiaonline.it ([213.209.12.16]:53292 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229832AbhDFWCq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Apr 2021 18:02:46 -0400
+Received: from oxapps-32-144.iol.local ([10.101.8.190])
+        by smtp-16.iol.local with ESMTPA
+        id TtmMlF7I2f2ANTtmMl5syE; Wed, 07 Apr 2021 00:02:34 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1617746554; bh=akIOS2LFU8AbnXeSKX/lN7kLwCQ59toKE6VoSYcU7p4=;
+        h=From;
+        b=BBHr4D4cYuWFL1NfC8JTa9C2WGMjscDa/CfrMMvK7A6woSjzh84OV2DcgKLxL3sM/
+         +3YMv34N3NV6csEv/fQ7WjHjS1i/4oVxITUXoa4Ad1tzRxGZ6hu2T7X8P3Im9dYIH1
+         QQu8S0xY6y8KC38FEQU6Sq34LXDywwpVGNz217OeCUbVGGnWmvyAmEjtpT0Y5ij64j
+         wk7vz5dOvW6cMo+PFLX9Kv/nPSwX2KKbrProes+dNgnyGz70HKkA2+V18bleDPj+aI
+         uJ857pBimg5qiEAwgeoSPOX0Ewby1NcoAKWPx09h6qGO56l5xjgR+CGVRxPQpi1/SB
+         7TDT2CkOTNIoA==
+X-CNFS-Analysis: v=2.4 cv=Adt0o1bG c=1 sm=1 tr=0 ts=606cda7a cx=a_exe
+ a=+LyvvGPX93CApvOVpnXrdQ==:117 a=UPWQtH3J-JgA:10 a=IkcTkHD0fZMA:10
+ a=_gZzKa99_6AA:10 a=VwQbUJbxAAAA:8 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8
+ a=aW_EbgM9uDbL71VJ2OAA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=IC2XNlieTeVoXbcui8wp:22
+Date:   Wed, 7 Apr 2021 00:02:34 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>, linux-i2c@vger.kernel.org,
-        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20210330181755.204339-6-u.kleine-koenig@pengutronix.de>
- <20210406064618.24194-1-uwe@kleine-koenig.org>
+        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Message-ID: <1727466283.11523.1617746554330@mail1.libero.it>
+In-Reply-To: <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+References: <20210402192054.7934-1-dariobin@libero.it>
+ <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
-Content-Disposition: inline
-In-Reply-To: <20210406064618.24194-1-uwe@kleine-koenig.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 87.20.116.197
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: 0kJUj9J8+FPQ/YxkwJqhiHCIFaYs727T
+x-libjamv: J5mKezAXc6M=
+X-CMAE-Envelope: MS4xfLhjxEr/Kp9gu70nyFP13JwXaIfRPj46VyjgR1MpMlp1MPqhqnicFn3XKmrgI2HHVMBkQrAnRDtuhTp+X7ZB9C+nElMvNkK/Roo+m6hQd5Q9kbYDgKvy
+ 6Ib7IWoJecJ0Ca+PzBVKZVAyAiPDq7SgF/tHh3iqZvy4VNQTsgsJeo42wLLyr64ND0bVofM9/EYEDxe+ZXPTBtmf9pzVkzOe/VrBiHPCgNCJNg64NEXzGyGG
+ YFt8rQ/8nF0d7F8kFMkPFeA8VJ2EPSKAi6Qih4/c7I8RL9Fr5YhiW0idb40hvnM1mckqpfvKyZrK78Z9MT49XWg4jbPsLO8GKSi4kU4eQ5X72Xz8DW4mDgYO
+ rULeuWi9FhAZCbSWV4XYJxEQBQcIb4KL198/rG98gpFnvERGD5PKlAuISxfSxKjUc6iIfZSOuMufo98WwNGc2GMa0DYEREP72cuDQRg2u6hjOUvstlWcRusP
+ ZUgDgjF/JUUaOsXlp7b/3WVRrVogfshs71oTrg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---98e8jtXdkpgskNou
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+> 
+>  
+> On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
+> >
+> >
+> > The series comes from my commit in U-boot
+> > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+> > and from the subsequent exchange of emails at the end of which I was
+> > suggested to send the patch to the linux kernel
+> > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
+> 
+> It's 'ranges' that determines translatable which is missing from the
+> DT. This should have not had a 0 size either though maybe we could
+> support that.
 
-On Tue, Apr 06, 2021 at 08:46:18AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->=20
-> devm_clk_get_enabled() returns the clk already (prepared and) enabled
-> and the automatically called cleanup cares for disabling (and
-> unpreparing). So simplify .probe() and .remove() accordingly.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+I have replied to the email you sent to the u-boot mailing list
 
-So, this will go in with the rest of this series?
+> 
+> Does the DT have to be updated anyways for your spread spectrum support?
 
-In that case:
+The spread spectrum support patch does not need this patch to work. They belong 
+to two different series.
 
-Acked-by: Wolfram Sang <wsa@kernel.org>
+> 
+> > The second patch of the series aims to demonstrate that the first one, which
+> > enables the translation of addresses also for crossings of DT nodes
+> > with #size-cells = <0>, it really works.
+> 
+> I don't seem to have the 2nd patch... In any case, you should handle
+> the special case for this platform in code for the platform.
+> 
 
+the 2nd patch:
+https://lore.kernel.org/patchwork/patch/1407108/
 
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks and regards,
+Dario
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBsxI0ACgkQFA3kzBSg
-KbaqwhAAs6JTJGXDGGmYMqARRRvgzGiDtUS9ddeJLb21TWjKhFwDS6drdE0Hmxg1
-BBzUeEtZ7hHyfQJyH7r7cKFgNkH2TXc1ggxCt1UxGPw7QINWsC+FBvQN09SUxpt0
-4GnSmeYF1ECvhfrC0TR+HaDo0ca8G2fJ/ZykKHnyZMyZeDUisVAOcfuh2IRJlWJT
-nQT/3BuJ0cJNkfcMH9+alHjRJHB4zjhw/Ag9pmJfaAuMjz8bfEWMGt3FwDSdz7Oy
-nY4rH2QGR2X8XifjLAxbXYC+ICoFDRTQFldThj56cINM8noSk40oGqiev5IfwRED
-Uycs3qU/RM4Ny+4ySGJXWTBStmSl/UxmD9+CEkyxXbqAWi7RSAInlJwV/+pjcYek
-UeXQDVpR4Mh9IUlBMvsHseijiew7SjKcA2P15nyvvWDA10z9I4x4sVK1Oke1pgML
-vTDnC+IbOnl9tdbUyetB4hhJtZtyleJb4ZaSOLHNpfW8BfDNCsB+ik8TywyT5Gbc
-1wWaQN3V3VUVXWa3aXSFvefym7007A182L2cR6vJQif+4AATt136wUZYeWEV+BUw
-/uscUkkY9JlqSCKiWCb9L9z6XYxUGf4Zh1BEWkXmOwsVgLCDWiJd0knbKVc62WnY
-gAJJFWE65oBQmyOGdw6sYMCdsopF9M8f3zqEa2DJ40wQv+Mq0kc=
-=Y2Nf
------END PGP SIGNATURE-----
-
---98e8jtXdkpgskNou--
+> Rob
