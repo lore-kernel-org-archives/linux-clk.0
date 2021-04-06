@@ -2,171 +2,288 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AE4C43462
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 13:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42734C433ED
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 14:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D36216113E
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 13:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9BF3613C7
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 14:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244111AbhDFNoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 09:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33492 "EHLO
+        id S234998AbhDFOBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 10:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229911AbhDFNoe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 09:44:34 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26087C06174A
-        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 06:44:26 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTlzt-0004HM-FT; Tue, 06 Apr 2021 15:44:01 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTlzo-00033c-7n; Tue, 06 Apr 2021 15:43:56 +0200
-Date:   Tue, 6 Apr 2021 15:43:56 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
+        with ESMTP id S1344849AbhDFOBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 10:01:15 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54C3C06174A;
+        Tue,  6 Apr 2021 07:01:06 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id a6so8354402wrw.8;
+        Tue, 06 Apr 2021 07:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lyaJC5idQzW8tJ00oZwa0i4EGsa2UYRBAw/y1mTUSfY=;
+        b=ayUWJz1LljY43oBsHUV2fquC0dOfHIGx1sozNYGS0hOden2eG1tTbmdRZ24+HaFfwS
+         TKA5FsaPt3kNZXBlzZf5tPzwmKh5+kY2w5NHOPNYkZe49H8CzjH01ZA/KfEb8pfF3KMR
+         JSJ7zjIEPxv2kXW6r4wtKJHqcj9VPGRH8IudZ3oktd6Oi31Rqdt/liyO7L/pEiHaxAs4
+         NiO1hvtb91hPJosaBlC8I63MZ4htwA9v/5TV0RaOdYOucxorwiiggrk3ahPL9nwL7NLi
+         5ZJjKnvsgjrqsOKWk+Zyq+GgLj9kVtX2VW+fk3RyeAd3lP3bw85655aaDiMh7ttNzOOy
+         0xsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lyaJC5idQzW8tJ00oZwa0i4EGsa2UYRBAw/y1mTUSfY=;
+        b=mz5gEuaYpwxxIrmqWpmzrF+JRXLwye9DkZYpKSnJQ+EK7quCHi4kmNsUCHgnrtl/Yv
+         WzOMUClEyhjnV2yaNLCqKb7qN2sRIyHLj3ApezkyZTmd/5Xq74mJ6VSkCyFJHNTVnxi5
+         2thypbqp1VLdEDOJsve0SK7N/8aQSWFuvqtv7tQ+lk3WDHbpz6pMQpI9hmAx3Mfa9+jV
+         P3f4kaB3PIU1a1om1UoRvqixO8F7byKa5RtqoCXV/Syl7Qmykts6sO2d2M+TZiqFbsx5
+         /s4N7kc+C15Vur3FSreSXXhdWmc20sdYBA9ZTc+n832a++aY4V8y+KZWdcrAXBubzDRU
+         6SIA==
+X-Gm-Message-State: AOAM530OMdXj23xT69mLyIQOE+o/uczPREB9cSwv9bUp2X2XF0sFic78
+        tn9zZFL19oTgI5d946AMrkU=
+X-Google-Smtp-Source: ABdhPJwhqDdKl7A1F5aod5ie1kaC7iSZB3TCVH2ClVuonHpZIk/vJdtZM1hqBpP18KFVj1FaDIxEAw==
+X-Received: by 2002:a5d:6c6f:: with SMTP id r15mr35631965wrz.77.1617717665570;
+        Tue, 06 Apr 2021 07:01:05 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.126.134])
+        by smtp.gmail.com with ESMTPSA id f2sm3051522wmp.20.2021.04.06.07.01.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Apr 2021 07:01:05 -0700 (PDT)
+Subject: Re: [PATCH v8 2/4] soc: mediatek: add MT6765 scpsys and subdomain
+ support
+To:     Macpaul Lin <macpaul.lin@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rockchip@lists.infradead.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-input@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-pwm@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Support Opensource <support.opensource@diasemi.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Evan Green <evgreen@chromium.org>,
+        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
         Shawn Guo <shawnguo@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: [PATCH] pwm: Rename pwm_get_state() to better reflect its
- semantic
-Message-ID: <20210406134356.dda74heeshkwdarw@pengutronix.de>
-References: <20210406073036.26857-1-u.kleine-koenig@pengutronix.de>
- <YGxDD4jVZx/H/Zdr@orome.fritz.box>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <Ryder.Lee@mediatek.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+References: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
+ <1582279929-11535-3-git-send-email-macpaul.lin@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <c9cefb0b-2394-e48c-f140-3dab55af2369@gmail.com>
+Date:   Tue, 6 Apr 2021 16:01:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t6hkzfhuwxujjtpy"
-Content-Disposition: inline
-In-Reply-To: <YGxDD4jVZx/H/Zdr@orome.fritz.box>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <1582279929-11535-3-git-send-email-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---t6hkzfhuwxujjtpy
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello Thierry,
+On 21/02/2020 11:12, Macpaul Lin wrote:
+> From: Mars Cheng <mars.cheng@mediatek.com>
+> 
+> This adds scpsys support for MT6765
+> Add subdomain support for MT6765:
+> isp, mm, connsys, mfg, and cam.
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-scpsys.c |  130 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 130 insertions(+)
+> 
 
-On Tue, Apr 06, 2021 at 01:16:31PM +0200, Thierry Reding wrote:
-> On Tue, Apr 06, 2021 at 09:30:36AM +0200, Uwe Kleine-K=F6nig wrote:
-> > Given that lowlevel drivers usually cannot implement exactly what a
-> > consumer requests with pwm_apply_state() there is some rounding involve=
-d.
-> >=20
-> > pwm_get_state() traditionally returned the setting that was requested m=
-ost
-> > recently by the consumer (opposed to what was actually implemented in
-> > hardware in reply to the last request). To make this semantic obvious
-> > rename the function.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
-> >  Documentation/driver-api/pwm.rst           |  6 +++-
-> >  drivers/clk/clk-pwm.c                      |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_panel.c |  4 +--
-> >  drivers/input/misc/da7280.c                |  2 +-
-> >  drivers/input/misc/pwm-beeper.c            |  2 +-
-> >  drivers/input/misc/pwm-vibra.c             |  4 +--
-> >  drivers/pwm/core.c                         |  4 +--
-> >  drivers/pwm/pwm-atmel-hlcdc.c              |  2 +-
-> >  drivers/pwm/pwm-atmel.c                    |  2 +-
-> >  drivers/pwm/pwm-imx27.c                    |  2 +-
-> >  drivers/pwm/pwm-rockchip.c                 |  2 +-
-> >  drivers/pwm/pwm-stm32-lp.c                 |  4 +--
-> >  drivers/pwm/pwm-sun4i.c                    |  2 +-
-> >  drivers/pwm/sysfs.c                        | 18 ++++++------
-> >  drivers/regulator/pwm-regulator.c          |  4 +--
-> >  drivers/video/backlight/pwm_bl.c           | 10 +++----
-> >  include/linux/pwm.h                        | 34 ++++++++++++++--------
-> >  17 files changed, 59 insertions(+), 45 deletions(-)
->=20
-> Honestly, I don't think this is worth the churn. If you think people
-> will easily get confused by this then a better solution might be to more
-> explicitly document the pwm_get_state() function to say exactly what it
-> returns.
+Unfortunately scpsys is deprecated in the meantime. Please port you patches to
+the new mtk-pm-domains.c driver. The biggest difference is, that the domain and
+subdomain structure of the pm domains is describe in device tree instead of
+hard-coded in the driver.
 
-I'm not so optimistic that people become aware of the semantic just
-because there is documentation describing it and I strongly believe that
-a good name for functions is more important than accurate documentation.
+Regards,
+Matthias
 
-If you don't agree, what do you think about the updated wording in
-Documentation/driver-api/pwm.rst?
-
-> But there's no need to make life difficult for everyone by
-> renaming this to something as cumbersome as this.
-
-I don't expect any merge conflicts (and if still a problem occurs
-resolving should be trivial enough). So I obviously don't agree to your
-weighing.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---t6hkzfhuwxujjtpy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBsZZkACgkQwfwUeK3K
-7AnKfQf8CsJvMKdyRy2ch/MNcEI+IBzOnV6nRAbwkLN/G3pbTRHLCtd8Zg/Iobf1
-P7ADJlOPATvorbWWUoagJrzcsXswh3ctV5aSWs0Ax1GJQ+PxNtz20n+MtsiTq2gZ
-flPfVN0AurTPqh+oGXK+f9C9N0ASjR7i2qjuUoub37yQ/abR5exNOpaM8FEnIbcF
-OHcBHOokDL0GpBDir8M9UyfrsPt8TfVD5fk5hXr7hmBhY/iuGQynYDRMQ11/zkvM
-lqdH7zPujy5oNqA/+6OSE8vbqoyTRoSqFHuyPRirxDrO14Yu2U570iUznQfg2O/t
-3egDaTaqSuaJjxZHzKE4dbx3R/z8wQ==
-=ePEJ
------END PGP SIGNATURE-----
-
---t6hkzfhuwxujjtpy--
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index f669d37..9940c6d 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -15,6 +15,7 @@
+>  
+>  #include <dt-bindings/power/mt2701-power.h>
+>  #include <dt-bindings/power/mt2712-power.h>
+> +#include <dt-bindings/power/mt6765-power.h>
+>  #include <dt-bindings/power/mt6797-power.h>
+>  #include <dt-bindings/power/mt7622-power.h>
+>  #include <dt-bindings/power/mt7623a-power.h>
+> @@ -750,6 +751,120 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  };
+>  
+>  /*
+> + * MT6765 power domain support
+> + */
+> +#define SPM_PWR_STATUS_MT6765			0x0180
+> +#define SPM_PWR_STATUS_2ND_MT6765		0x0184
+> +
+> +static const struct scp_domain_data scp_domain_data_mt6765[] = {
+> +	[MT6765_POWER_DOMAIN_VCODEC] = {
+> +		.name = "vcodec",
+> +		.sta_mask = BIT(26),
+> +		.ctl_offs = 0x300,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +	[MT6765_POWER_DOMAIN_ISP] = {
+> +		.name = "isp",
+> +		.sta_mask = BIT(5),
+> +		.ctl_offs = 0x308,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +		.subsys_clk_prefix = "isp",
+> +		.bp_table = {
+> +			BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
+> +				BIT(20), BIT(20)),
+> +			BUS_PROT(SMI_TYPE, 0x3C4, 0x3C8, 0, 0x3C0,
+> +				BIT(2), BIT(2)),
+> +		},
+> +	},
+> +	[MT6765_POWER_DOMAIN_MM] = {
+> +		.name = "mm",
+> +		.sta_mask = BIT(3),
+> +		.ctl_offs = 0x30C,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +		.basic_clk_id = {"mm"},
+> +		.subsys_clk_prefix = "mm",
+> +		.bp_table = {
+> +			BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
+> +				BIT(16) | BIT(17), BIT(16) | BIT(17)),
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(10) | BIT(11), BIT(10) | BIT(11)),
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(1) | BIT(2), BIT(1) | BIT(2)),
+> +		},
+> +	},
+> +	[MT6765_POWER_DOMAIN_CONN] = {
+> +		.name = "conn",
+> +		.sta_mask = BIT(1),
+> +		.ctl_offs = 0x32C,
+> +		.sram_pdn_bits = 0,
+> +		.sram_pdn_ack_bits = 0,
+> +		.bp_table = {
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(13), BIT(13)),
+> +			BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
+> +				BIT(18), BIT(18)),
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(14) | BIT(16), BIT(14) | BIT(16)),
+> +		},
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
+> +		.name = "mfg_async",
+> +		.sta_mask = BIT(23),
+> +		.ctl_offs = 0x334,
+> +		.sram_pdn_bits = 0,
+> +		.sram_pdn_ack_bits = 0,
+> +		.basic_clk_id = {"mfg"},
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG] = {
+> +		.name = "mfg",
+> +		.sta_mask = BIT(4),
+> +		.ctl_offs = 0x338,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +		.bp_table = {
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(25), BIT(25)),
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(21) | BIT(22), BIT(21) | BIT(22)),
+> +		}
+> +	},
+> +	[MT6765_POWER_DOMAIN_CAM] = {
+> +		.name = "cam",
+> +		.sta_mask = BIT(25),
+> +		.ctl_offs = 0x344,
+> +		.sram_pdn_bits = GENMASK(8, 9),
+> +		.sram_pdn_ack_bits = GENMASK(12, 13),
+> +		.subsys_clk_prefix = "cam",
+> +		.bp_table = {
+> +			BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
+> +				BIT(19) | BIT(21), BIT(19) | BIT(21)),
+> +			BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
+> +				BIT(20), BIT(20)),
+> +			BUS_PROT(SMI_TYPE, 0x3C4, 0x3C8, 0, 0x3C0,
+> +				BIT(3), BIT(3)),
+> +		}
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
+> +		.name = "mfg_core0",
+> +		.sta_mask = BIT(7),
+> +		.ctl_offs = 0x34C,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +};
+> +
+> +static const struct scp_subdomain scp_subdomain_mt6765[] = {
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
+> +	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
+> +	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
+> +};
+> +
+> +/*
+>   * MT6797 power domain support
+>   */
+>  
+> @@ -1032,6 +1147,18 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  	.bus_prot_reg_update = false,
+>  };
+>  
+> +static const struct scp_soc_data mt6765_data = {
+> +	.domains = scp_domain_data_mt6765,
+> +	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
+> +	.subdomains = scp_subdomain_mt6765,
+> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
+> +	.regs = {
+> +		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
+> +		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
+> +	},
+> +	.bus_prot_reg_update = true,
+> +};
+> +
+>  static const struct scp_soc_data mt6797_data = {
+>  	.domains = scp_domain_data_mt6797,
+>  	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+> @@ -1088,6 +1215,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.compatible = "mediatek,mt2712-scpsys",
+>  		.data = &mt2712_data,
+>  	}, {
+> +		.compatible = "mediatek,mt6765-scpsys",
+> +		.data = &mt6765_data,
+> +	}, {
+>  		.compatible = "mediatek,mt6797-scpsys",
+>  		.data = &mt6797_data,
+>  	}, {
+> 
