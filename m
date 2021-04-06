@@ -2,418 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5E4C433ED
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 23:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD86C433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 06:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E80D613D4
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Apr 2021 23:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08217613C0
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 06:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237769AbhDEXvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Apr 2021 19:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237959AbhDEXvp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Apr 2021 19:51:45 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203D9C061756
-        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 16:51:38 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id c195so14179387ybf.9
-        for <linux-clk@vger.kernel.org>; Mon, 05 Apr 2021 16:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tVpe0QOTBwn5O0cFrjsaacQnYALSOhZfC2QwuuWghCU=;
-        b=nK/77dysjZgS7a/e7JDAtzESctxzQAxOxrWJfQFs6RWwiZY/tVNKAHPDnIOb8nF8hY
-         CSDcue48a/j3UvG+z8ZszUEVk0vbujFXEx2c3C+GU/5jY9gYlJc5VPZNg5sFAOP3hy3d
-         MLb1AmiQkcgN3ZG5DC8nMlIq5BoPaVnGocz/MDc7HLajqT8nC2fi83/mq1pjRQ9CQ95j
-         M795jnKr1/KGKMXISWJwavh8W4B1CvOaJ7gD+bfkw5WSP6RT7i8bpvHG7+i4jseEhmSM
-         OoMxqS5X3WPburZtmgV5BYDA25dlnVZmarDNvdwwNXxolKQ9YSQmgvkTM0HdPceKmm5g
-         thJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tVpe0QOTBwn5O0cFrjsaacQnYALSOhZfC2QwuuWghCU=;
-        b=JArNZZQiJHxYIggIx/2ElR3NI2ebhIpMvpdIjkNV/HZkGs5dk5sfXntG+xdicRhd1p
-         mGRLwM1GoGGGBv26QqZwnn2JPHMJDIEcKd5mKNeoprf48Tbu8awLfejCTdsOxVMrzZZ4
-         KolPZHzzyOsEDgeEpjmefPQS1ie0nggmVUG5OqA4NCP1E08EOltepQE/Iim6th87maxb
-         gwEu+i7EjdtlVU66fzNaAwS9969e8qQ79YXmGlApR4IVxyvWXVsbX/ceRBkhMzdvLnJ7
-         iTUiH0Vppm1HsPjYtTEKwhtnFiX9lYI9aFiSklKjLn5OUgYnMbVnJAeZyoBBhn/HJetl
-         lDtg==
-X-Gm-Message-State: AOAM5314CKLYGNZfxUOvojVyrhS0qlGyow7wsW8qeXhuifJMUDk83ZIm
-        jnaKUSRZG3lIeLNS4KbgOoUSAbYCAmqnwJHr50s8hQ==
-X-Google-Smtp-Source: ABdhPJxu6d1v8H//1NPiZ/7+h7bdExHUwEIrMvTiChP5oNIXbjHAkBSjohT6tOtgI2NWNbBzqzqglttpwz7nOU9CIHA=
-X-Received: by 2002:a25:c985:: with SMTP id z127mr42140072ybf.20.1617666696719;
- Mon, 05 Apr 2021 16:51:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210316215123.GA3712408@robh.at.kernel.org> <20210318210318.144961-1-sebastian.reichel@collabora.com>
- <20210326012720.GA2113788@robh.at.kernel.org> <CAGETcx9JmtbwAq_fpU5KfUzjcTw-uHPqKo3gAGjQwht=wxY8yg@mail.gmail.com>
- <20210326095212.22ty5ueowiq36y6b@earth.universe> <CAGETcx81=GwChE0eZtKKAk4kDeq2S0ijS8X7FsMnk5HhzAcOhA@mail.gmail.com>
- <20210329215300.4qnhmm4utmdectk5@earth.universe> <CAGETcx9fpr_jXLH9OEBaDsKQcOyZd16WGBO+dXgYHUbCj+Ew=g@mail.gmail.com>
- <20210330090947.7f5sa4b6g6ycgb3v@earth.universe> <CAGETcx9Z+qK94u1d1-+7YxPgTg9KtQnviA0UyECCvaV44O6=6w@mail.gmail.com>
- <20210405224321.cqz4fk2j3ecfnejl@earth.universe>
-In-Reply-To: <20210405224321.cqz4fk2j3ecfnejl@earth.universe>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 5 Apr 2021 16:51:00 -0700
-Message-ID: <CAGETcx_S8dRmswqkXcPFi3ZbdgyzJK9JQ49Kx6Q1RVuNSZakYw@mail.gmail.com>
-Subject: Re: [RFC] clk: add boot clock support
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Rob Herring <robh@kernel.org>,
+        id S243929AbhDFGCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 02:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243934AbhDFGCV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Apr 2021 02:02:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C64E3613C8;
+        Tue,  6 Apr 2021 06:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617688934;
+        bh=vsBChbY5+LVkujpH9gbQlIQG3kRuiu5IdEM2SWqQFPQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MZ1CxFVWIewiqkef0s0fsT8o07mW1EtcauFEY+QOvfQhPQzgmtUSR6G4rgUJsdLJq
+         j3mfoRsXvoWUJmjDMVDRQWde4DPbrzO6we3YAxlKwIagW/EeGZt/kiB6x2i7mKEToD
+         LWf9Q+B7HJaVRyLgnbb10d5q7Xh7GKPclRiQ3c9tzk/r9DyT9yjjXtvUXKqMhyE1/x
+         p4nn10JEHw6ctw8UmjHElg5WyOyZRDn3gEr/7RRbdDw/4XQFhpTbmyqVLjez6t3xjd
+         u7Rhuud/4KkIYmPqZms796Db8fmA2GTpc/iZB6g4a4sR4cT6V+TO+s4O1LdyLfGBPJ
+         FhkDJwB1Yn6fQ==
+Subject: Re: [PATCH 2/2] clk: ti: get register address from device tree
+To:     Dario Binacchi <dariobin@libero.it>, linux-kernel@vger.kernel.org
+Cc:     Bin Meng <bmeng.cn@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20210402192054.7934-1-dariobin@libero.it>
+ <20210402192054.7934-3-dariobin@libero.it>
+From:   Tero Kristo <kristo@kernel.org>
+Message-ID: <12964099-7d74-57f3-e517-79c8b14c9b94@kernel.org>
+Date:   Tue, 6 Apr 2021 09:02:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20210402192054.7934-3-dariobin@libero.it>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 5, 2021 at 3:43 PM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hi,
->
-> On Tue, Mar 30, 2021 at 10:05:45AM -0700, Saravana Kannan wrote:
-> > On Tue, Mar 30, 2021 at 2:09 AM Sebastian Reichel
-> > <sebastian.reichel@collabora.com> wrote:
-> > > On Mon, Mar 29, 2021 at 05:36:11PM -0700, Saravana Kannan wrote:
-> > > > On Mon, Mar 29, 2021 at 2:53 PM Sebastian Reichel
-> > > > <sebastian.reichel@collabora.com> wrote:
-> > > > > On Mon, Mar 29, 2021 at 01:03:20PM -0700, Saravana Kannan wrote:
-> > > > > > On Fri, Mar 26, 2021 at 2:52 AM Sebastian Reichel
-> > > > > > <sebastian.reichel@collabora.com> wrote:
-> > > > > > > On Thu, Mar 25, 2021 at 06:55:52PM -0700, Saravana Kannan wrote:
-> > > > > > > > On Thu, Mar 25, 2021 at 6:27 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > > > On Thu, Mar 18, 2021 at 10:03:18PM +0100, Sebastian Reichel wrote:
-> > > > > > > > > > On Congatec's QMX6 system on module one of the i.MX6 fixed clocks
-> > > > > > > > > > is provided by an I2C RTC. Specifying this properly results in a
-> > > > > > > > > > circular dependency, since the I2C RTC (and thus its clock) cannot
-> > > > > > > > > > be initialized without the i.MX6 clock controller being initialized.
-> > > > > > > > > >
-> > > > > > > > > > With current code the following path is executed when i.MX6 clock
-> > > > > > > > > > controller is probed (and ckil clock is specified to be the I2C RTC
-> > > > > > > > > > via DT):
-> > > > > > > > > >
-> > > > > > > > > > 1. imx6q_obtain_fixed_clk_hw(ccm_node, "ckil", 0);
-> > > > > > > > > > 2. of_clk_get_by_name(ccm_node, "ckil");
-> > > > > > > > > > 3. __of_clk_get(ccm_node, 0, ccm_node->full_name, "ckil");
-> > > > > > > > > > 4. of_clk_get_hw(ccm_node, 0, "ckil")
-> > > > > > > > > > 5. spec = of_parse_clkspec(ccm_node, 0, "ckil"); // get phandle
-> > > > > > > > > > 6. of_clk_get_hw_from_clkspec(&spec); // returns -EPROBE_DEFER
-> > > > > > > > > > 7. error is propagated back, i.MX6q clock controller is probe deferred
-> > > > > > > > > > 8. I2C controller is never initialized without clock controller
-> > > > > > > > > >    I2C RTC is never initialized without I2C controller
-> > > > > > > > > >    CKIL clock is never initialized without I2C RTC
-> > > > > > > > > >    clock controller is never initialized without CKIL
-> > > > > > > > > >
-> > > > > > > > > > To fix the circular dependency this registers a dummy clock when
-> > > > > > > > > > the RTC clock is tried to be acquired. The dummy clock will later
-> > > > > > > > > > be unregistered when the proper clock is registered for the RTC
-> > > > > > > > > > DT node. IIUIC clk_core_reparent_orphans() will take care of
-> > > > > > > > > > fixing up the clock tree.
-> > > > > > > > > >
-> > > > > > > > > > NOTE: For now the patch is compile tested only. If this approach
-> > > > > > > > > > is the correct one I will do some testing and properly submit this.
-> > > > > > > > > > You can find all the details about the hardware in the following
-> > > > > > > > > > patchset:
-> > > > > > > > > >
-> > > > > > > > > > https://lore.kernel.org/linux-devicetree/20210222171247.97609-1-sebastian.reichel@collabora.com/
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > > > > > > > > ---
-> > > > > > > > > >  .../bindings/clock/clock-bindings.txt         |   7 +
-> > > > > > > > > >  drivers/clk/clk.c                             | 146 ++++++++++++++++++
-> > > > > > > > > >  2 files changed, 153 insertions(+)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > > > > > > > > index f2ea53832ac6..66d67ff4aa0f 100644
-> > > > > > > > > > --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > > > > > > > > +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > > > > > > > > > @@ -32,6 +32,13 @@ clock-output-names: Recommended to be a list of strings of clock output signal
-> > > > > > > > > >                   Clock consumer nodes must never directly reference
-> > > > > > > > > >                   the provider's clock-output-names property.
-> > > > > > > > > >
-> > > > > > > > > > +boot-clock-frequencies: This property is used to specify that a clock is enabled
-> > > > > > > > > > +                     by default with the provided frequency at boot time. This
-> > > > > > > > > > +                     is required to break circular clock dependencies. For clock
-> > > > > > > > > > +                     providers with #clock-cells = 0 this is a single u32
-> > > > > > > > > > +                     with the frequency in Hz. Otherwise it's a list of
-> > > > > > > > > > +                     clock cell specifier + frequency in Hz.
-> > > > > > > > >
-> > > > > > > > > Seems alright to me. I hadn't thought about the aspect of needing to
-> > > > > > > > > know the frequency. Other cases probably don't as you only need the
-> > > > > > > > > clocks once both components have registered.
-> > > > > > > > >
-> > > > > > > > > Note this could be lost being threaded in the other series.
-> > > > > > > >
-> > > > > > > > I read this thread and tried to understand it. But my head isn't right
-> > > > > > > > today (lack of sleep) so I couldn't wrap my head around it. I'll look
-> > > > > > > > at it again after the weekend. In the meantime, Sebastian can you
-> > > > > > > > please point me to the DT file and the specific device nodes (names or
-> > > > > > > > line number) where this cycle is present?
-> > > > > > >
-> > > > > > > I have not yet sent an updated DT file, but if you look at this
-> > > > > > > submission:
-> > > > > > >
-> > > > > > > https://lore.kernel.org/linux-devicetree/20210222171247.97609-7-sebastian.reichel@collabora.com/
-> > > > > > >
-> > > > > > > There is a node
-> > > > > > >
-> > > > > > > rtc: m41t62@68 { compatible = "st,m41t62"; };
-> > > > > > >
-> > > > > > > That is an I2C RTC, which provides a 32.768 kHz clock by default
-> > > > > > > (i.e. after power loss). This clock signal is used to provide the
-> > > > > > > i.MX6 CKIL:
-> > > > > > >
-> > > > > > > ------------------------------------
-> > > > > > > &clks {
-> > > > > > >     clocks = <&rtc>;
-> > > > > > >     clock-names = "ckil";
-> > > > > > > };
-> > > > > > > ------------------------------------
-> > > > > > >
-> > > > > > > > Keeping a clock on until all its consumers probe is part of my TODO
-> > > > > > > > list (next item after fw_devlink=on lands). I already have it working
-> > > > > > > > in AOSP, but need to clean it up for upstream. fw_devlink can also
-> > > > > > > > break *some* cycles (not all). So I'm wondering if the kernel will
-> > > > > > > > solve this automatically soon(ish). If it can solve it automatically,
-> > > > > > > > I'd rather not add new DT bindings because it'll make it more work for
-> > > > > > > > fw_devlink.
-> > > > > > >
-> > > > > > > As written above on Congatec QMX6 an I2C RTC provides one of the
-> > > > > > > SoC's input frequencies. The SoC basically expects that frequency
-> > > > > > > to be always enabled and this is what it works like before clock
-> > > > > > > support had been added to the RTC driver.
-> > > > > >
-> > > > > > Thanks. I skimmed through the RTC driver code and
-> > > > > > imx6q_obtain_fixed_clk_hw() and the DT files.
-> > > > > >
-> > > > > > >
-> > > > > > > With the link properly being described the Kernel tries to probe
-> > > > > > > the SoC's clock controller during early boot. Then it tries to get a
-> > > > > > > reference to the linked clock, using imx6q_obtain_fixed_clk_hw()
-> > > > > > > and that returns -EPROBE_DEFER (because the RTC driver has not
-> > > > > > > yet been probed).
-> > > > > >
-> > > > > > But the RTC (which is a proper I2C device) will never probe before
-> > > > > > CLK_OF_DECLARE() initializes the core clock controller. So, it's not
-> > > > > > clear how "protected-clocks" helps here since it doesn't change
-> > > > > > whether you get -EPROBE_DEFER from imx6q_obtain_fixed_clk_hw() (which
-> > > > > > is called from the CLK_OF_DECLARE() callback). Oof... I see what you
-> > > > > > are doing with of_clk_register_boot_clk(). You are having the consumer
-> > > > > > register its own clock and then use it. Kinda beats the whole point of
-> > > > > > describing the link in the first place.
-> > > > >
-> > > > > I agree, that it does not make sense from a code point of view for
-> > > > > this platform. All of this is just to make the DT look correct.
-> > > > > From a platform point of view the most logical way is to handle the
-> > > > > RTC clock as do-not-touch always enabled fixed-clock.
-> > > > >
-> > > > > > > Without the clock controller basically none of
-> > > > > > > the i.MX6 SoC drivers can probe including the I2C driver. Without
-> > > > > > > the I2C bus being registered, the RTC driver never probes and the
-> > > > > > > boot process is stuck.
-> > > > > > >
-> > > > > > > I'm not sure how fw_devlink can help here.
-> > > > > >
-> > > > > > I'll explain how it'd help. Let's assume "fsl,imx6q-ccm" was
-> > > > > > implemented as an actual platform device driver and not using
-> > > > > > CLK_OF_DECLARE() to initialize ALL the clocks. I'll get to this
-> > > > > > assumption later.
-> > > > > >
-> > > > > > In that case, fw_devlink will notice this cycle:
-> > > > > > syntax: consumer -(reason)-> supplier
-> > > > > > clks -(clocks property)-> rtc -(parent)-> i2c3  -(clocks property)-> clks.
-> > > > > >
-> > > > > > It'll then reason that it doesn't make sense for a device (clks) to
-> > > > > > have a supplier (rtc) whose parent (i2c3) in turn depends on the
-> > > > > > device (clks). It'll then drop the clks -> rtc dependency because
-> > > > > > that's the most illogical one in terms of probing.
-> > > > > >
-> > > > > > So all you'd need to do is delete any -EPROBE defer you might do in
-> > > > > > "fsl,imx6q-ccm" driver for "ckil". For cases where there's no cycle,
-> > > > > > fw_devlink will make sure the supplier of ckil has probed first. For
-> > > > > > cases where there's a cycle like this, it'll be smart enough to drop
-> > > > > > this dependency during probe ordering.
-> > > > >
-> > > > > What do you mean drop? Anything using ckil will not be registered?
-> > > > > That will basically kill the system within a few seconds, since the
-> > > > > watchdog hardware uses ckil.
-> > > >
-> > > > No, it means that it won't block CCM on ckil. It's not a generic
-> > > > "ignore dependency for all consumers of ckil". fw_devlink does this
-> > > > specifically to the link that causes a probe dependency cycle.
-> > >
-> > > I still don't follow. If CCM proceeds booting without blocking on
-> > > missing CCM,
-> >
-> > I think you meant to say missing CKIL,
->
-> Yes.
->
-> > > what would be the content of hws[IMX6QDL_CLK_CKIL]?
-> > > What ensures, that the consumers get correct clock rates?
-> >
-> > I haven't dug into the IMX CCM driver, but my current understanding is
-> > that the 32 KHz clock is the CKIL input coming into CCM and it's a
-> > parent/ancestor to some/all of the CCM clocks.
->
-> Right.
->
-> > The clock framework allows you to register clocks before their
-> > parents are registered (because clocks are messy and clock
-> > providers can have cycles between them). So if the IMX CCM driver
-> > is written correctly, it'd register the clock with the clock
-> > framework saying "hey, my parent is clock CKIL from this other DT
-> > node, connect us up when it's registered".  I'll let you figure
-> > out the details of the implementation.
->
-> I've been told this is supposed to work in theory before, but nobody
-> could point at an example. All drivers, that I checked end up with
-> -EPROBE_DEFER on missing parent clocks, which is good enough for
-> most dependency issues, but not for cyclic dependencies.
+On 02/04/2021 22:20, Dario Binacchi wrote:
+> Until now, only the register offset was retrieved from the device tree
+> to be added, during access, to a common base address for the clocks.
+> If possible, we try to retrieve the physical address of the register
+> directly from the device tree.
 
-Ok I had some time so I looked up some examples for you. Look at
-drivers/clk/qcom/dispcc-sm8250.c and see how it used .fw_name =
-"bi_tcxo" for the parents. You'll also see that it never does a
-clk_get() on "bi_tcxo". It does the same thing for a bunch of other
-clock inputs too. See arch/arm64/boot/dts/qcom/sm8250.dtsi for the
-node that lists the input clocks. Basically parent's fw_name should
-match what you have in DT. Hope that helps.
+The physical address is derived from the base address of the clock 
+provider, it is not derived from the clock node itself.
 
-> > Also, as I said before, the fixed-clock(s) will be available and
-> > working before the RTC probes. So, either the CCM registers first or
-> > the CKIL fixed-clock registers first and the same caller would
-> > register the other. And then the clock framework will connect them up
-> > and everything will continue working nicely.
->
-> Yes, since fixed-clock is completley unrelated to RTC. Without
-> further driver changes the RTC would still register a clock
-> device and disable the clock because of it being unused.
+Doing what this patch does may actually break things, as you end up 
+creating an individual ioremap for every single clock register, and they 
+are typically a word apart from each other. In the TI clock driver case, 
+the ioremap is done only once for the whole clock register space.
 
-Right, to avoid turning off the "unused" fixed clock, the RTC driver
-will have to NOT register the same clock if you have a fixed-clock
-child node.
+-Tero
 
->
-> > > > > > I don't know enough about the clocks in imx6q to comment if you can
-> > > > > > get away without using CLK_OF_DECLARE() at all. The only clock that
-> > > > > > really needs to use CLK_OF_DECLARE() is any clock that's needed for
-> > > > > > the scheduler timer. Other than that, everything else can be
-> > > > > > initialized by a normal driver. Including UART clocks. I can get into
-> > > > > > more specifics if you go down this path.
-> > > > > >
-> > > > > > So, that's how fw_devlink could help here if you massage
-> > > > > > drivers/clk/imx/clk-imx6q.c to be a proper platform driver. You'll
-> > > > > > have to set fw_devlink=on in the kernel commandline though (it's work
-> > > > > > in progress to set this by default). There are some additional details
-> > > > > > here about keeping clocks on, but we can discuss the solution for that
-> > > > > > if it becomes an issue.
-> > > > > >
-> > > > > > > I see exactly two
-> > > > > > > options to solve this:
-> > > > > > >
-> > > > > > > a) do not describe the link and keep RTC clock enabled somehow.
-> > > > > > >    (my initial patchset)
-> > > > > > > b) describe the link, but ignore it during boot.
-> > > > > > >    (what I'm trying to do here)
-> > > > > > >
-> > > > > >
-> > > > > > Even if you completely ignore fw_devlink, why not just model this
-> > > > > > clock as a fixed-clock in DT for this specific machine?
-> > > > > >
-> > > > > > It's clearly expecting the clock to be an always on fixed clock.
-> > > > >
-> > > > > Yes. SoC runs unreliably with this. Downstream vendor kernel does
-> > > > > not contain a clock driver for the squarewave pin of the RTC (i.e.
-> > > > > their driver does not yet contain 1373e77b4f10) and just works.
-> > > > > Upstream kernel disables the RTC's squarewave and then goes into
-> > > > > reboot loop because of watchdog going crazy.
-> > > > >
-> > > > > > This will also remove the need for adding "boot-clock-frequencies"
-> > > > > > binding.  "fixed-clocks" devices are initialized very early on
-> > > > > > (they use CLK_OF_DECLARE too) even without their parents probing
-> > > > > > (not sure I agree with this, but this is how it works now).
-> > > > > >
-> > > > > > Something like:
-> > > > > >
-> > > > > > rtc: m41t62@68 {
-> > > > > > compatible = "st,m41t62";
-> > > > > > reg = <0x68>;
-> > > > > >
-> > > > > >     clock-ckil {
-> > > > > >                     compatible = "fixed-clock";
-> > > > > >                     #clock-cells = <0>;
-> > > > > >                     clock-frequency = <32768>;
-> > > > > >             };
-> > > > > > };
-> > > > > >
-> > > > > > I hope this helps.
-> > > > >
-> > > > > This looks like a complex way of my initial patchset with
-> > > > > 'protected-clocks' property replaced by a fixed-clock
-> > > > > node. RTC driver needs to check if that exists and avoid
-> > > > > registering its own clock.
-> > > >
-> > > > If anything, I'd argue this is a lot more simpler because it avoids
-> > > > adding a new DT binding, it avoids changes to drivers/clk/clk.c.
-> > >
-> > > My original patch [0] is a two liner, which does not change
-> > > drivers/clk/clk.c and protected-clocks is a standard property
-> > > from [1]. I think you confused this with the boot-clock-frequencies
-> > > approach :)
-> >
-> > I think my confusion was that you wanted to do both [0] and [1]
-> > because of them being threaded and not having v1/v2.
->
-> Yes, I send PATCHv1 and an incomplete RFCv2 labled RFC, sorry.
->
-> > Just to clarify, I'm not NAKing any patch here. I'm just explaining
-> > how things work and giving options because I was CCed. I'll leave it
-> > to Stephen/Rob to decide what they want to accept.
->
-> and I try to figure out how to get this thing supported upstream,
-> which blocks the whole series adding a new system on module and
-> five similar boards using it :)
->
-> > But I can see the point in Rob's request for wanting the DT to capture
-> > the real hardware connections correctly.
-> >
-> > > [0] https://lore.kernel.org/linux-devicetree/20210222171247.97609-2-sebastian.reichel@collabora.com/
-> > > [1] Documentation/devicetree/bindings/clock/clock-bindings.txt.
-> > >
-> > > > Instead of checking for "protected-clocks" you just check for this
-> > > > child node (or just any child node). Also, technically if you set the
-> > > > CLK_IGNORE_UNUSED flag for the clock, you don't even need to do any
-> > > > explicit checking in the RTC driver as long as some other driver
-> > > > doesn't try to get this clock and turn it on/off.
-> > >
-> > > Child nodes are part of DT binding, so the information about the
-> > > potential clock subnode also needs to be added to the RTC binding.
-> > > It also changes the reference point from referencing the RTC node
-> > > to referencing a subnode, which seems a bit inconsistent to me.
-> >
-> > Sure, you can add a child node to the RTC binding.
->
-> /me is confused. This is what you suggested, see "Something like:"
+> 
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> 
+> ---
+> 
+>   drivers/clk/ti/clk.c | 13 ++++++++++++-
+>   1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+> index 3da33c786d77..938f5a2cb425 100644
+> --- a/drivers/clk/ti/clk.c
+> +++ b/drivers/clk/ti/clk.c
+> @@ -265,9 +265,21 @@ int __init ti_clk_retry_init(struct device_node *node, void *user,
+>   int ti_clk_get_reg_addr(struct device_node *node, int index,
+>   			struct clk_omap_reg *reg)
+>   {
+> +	const __be32 *addrp;
+> +	u64 size, addr = OF_BAD_ADDR;
+> +	unsigned int flags;
+>   	u32 val;
+>   	int i;
+>   
+> +	addrp = of_get_address(node, index, &size, &flags);
+> +	if (addrp)
+> +		addr = of_translate_address(node, addrp);
+> +
+> +	if (addr != OF_BAD_ADDR) {
+> +		reg->ptr = ioremap(addr, sizeof(u32));
+> +		return 0;
+> +	}
+> +
+>   	for (i = 0; i < CLK_MAX_MEMMAPS; i++) {
+>   		if (clocks_node_ptr[i] == node->parent)
+>   			break;
+> @@ -287,7 +299,6 @@ int ti_clk_get_reg_addr(struct device_node *node, int index,
+>   
+>   	reg->offset = val;
+>   	reg->ptr = NULL;
+> -
+>   	return 0;
+>   }
+>   
+> 
 
-The "sure, you can do it" is referring to you saying you'll need to
-update the RTC's binding doc to list the child node.
-
-> > But it's not a new DT property binding (if you go with option 2).
->
-> well of course binding for RTC and for fixed-clock already exist,
-> but RTC binding needs to be changed to support a fixed-clock
-> sub-node (binding, not driver!). If Rob is fine with this I can
-> take that route.
-
--Saravana
