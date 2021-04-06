@@ -5,70 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F42C433ED
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 12:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FF5C43461
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 12:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3FD6613CB
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 12:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8421B613CB
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 12:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243206AbhDFMp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 08:45:58 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:22409 "EHLO
+        id S243392AbhDFMzv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 08:55:51 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:36472 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243129AbhDFMp4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 08:45:56 -0400
+        with ESMTP id S243382AbhDFMzu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 08:55:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1617713148; x=1649249148;
+  t=1617713742; x=1649249742;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=RreDx+hwN2KnXkp9m1HiIofVELZL3wH0B1Z6ElipDUE=;
-  b=W7B5n/eNidvf3z0hLE3BFO68MbGw2xGgJ3dW65WDG0/SWf4Ff7xE5DR2
-   aNM0mw27gmNGegYE3YRaR3+68V2gI30SPXdjZ+C9fZtifP2wknCeN+dsX
-   6lNLSFeM+2nA2zz7PkI71c+5vZkCcfGC+p3wMLyTKRVSmoOj2pGA1zXDj
-   k/NhOzEif3LkWuP6iISyRurUzpTZQJUbASottQH2ur6CftYVebRWPjq1Y
-   bXX+uKJ2SzWDs7V/UhlMJMx1cpvVSXytHG8Y8plKQe5kENldb6OqzRhJu
-   klaC+nHwcEdtsG5/I7o8CRECMyFKVrK6CpdLwrjrcN5HOOuxzzYcR3V5s
-   w==;
-IronPort-SDR: bk5v5L8RKiVbpr7+Ht/C5p3cQaLbTYxYccOH8PkaSW3cOUi+ISO2Q7nczzQ+UNBfYUgVyER4W9
- k6BLwxcnukxiq0QNCjwzpuBsyyzrJW1iIQsfaDwAznHC6x69qBhjiUFCj7JxPMba5KqaTQynhd
- +4CUtljX29b1yJvhlbYHW9zyC6qal1zv7JYWiNyQrM+QRxbj3FSrHFN8bBpYQKQdlb7YUH8rV6
- QpflU3athueaDCHVPHZco1jJvFyr5vsWfNvRPNFIt1IVjAIOWFJI0TqEg7Gf6D42+7lHs1Vk3H
- bWY=
+  bh=N/4f2546iodJQOZLG1ZCIU8Qga5gaWd9MkNRYugDGrU=;
+  b=LQ2H/RKoGtCucBy8tc4YPjjqahvUTMoLGFDs3rUrA/WWDzbEYly2QFBL
+   Q3myFW47tO+/KMhjLy+cKvyYMbDlY1LW5EXGpWbpIUxmcQW0zMMcFi4dP
+   ToYl8sktBBUfQ/yj9zYBGWPzTrYd0Xg8HbE6PyRjeoNj64B+QtqomT0An
+   eoStc44VOZzmxJCLqkDt6xnW2C0kXmrPGt7FbD6N391KydFjBs/VzxBa8
+   Js10pSv0REnnGnDSBp2cs+rzdVDnpkQXJ/W/2VL/Ztsqidt3IxDGD2UzF
+   up6crPLYNDUqZ+1rXgIMfW49wkAKaKLBC9FT13YAM9Xzj8E3KcuUbPBvL
+   g==;
+IronPort-SDR: hGU0ApbNK2WitOMYcbFP76HcU2Lb4otIIK4jZEscz7qsBbSaFj24kNInd0ZMxhEEvcf3FxdclY
+ t0Aqzxa2R8PUEHsNRUL1uRtf6pfMRBcyWOyyXF4EKNVb/zW3kpIK3kYmkOxfDAO5t7pqqa1ogH
+ CEsBJy/MNi6ZfqD19CHG8qBjkAQaWdhnBXb/vIV14dC4NXj/oVEKmVTL2O7semFRrPqUWWIP1I
+ oKxEfV87I5uGR3asRZnEp/A2kAVEjNHL/50XDxERu/wchfo3916F5yaRzUMiDgOhgCU8JZh3qa
+ AzA=
 X-IronPort-AV: E=Sophos;i="5.81,309,1610434800"; 
-   d="scan'208";a="115984629"
+   d="scan'208";a="121946896"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Apr 2021 05:45:43 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Apr 2021 05:55:41 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 6 Apr 2021 05:45:43 -0700
+ 15.1.2176.2; Tue, 6 Apr 2021 05:55:41 -0700
 Received: from [10.12.73.192] (10.10.115.15) by chn-vm-ex01.mchp-main.com
  (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Tue, 6 Apr 2021 05:45:41 -0700
-Subject: Re: [PATCH v4 3/6] pwm: atmel: Simplify using devm_clk_get_prepared()
+ Transport; Tue, 6 Apr 2021 05:55:39 -0700
+Subject: Re: [PATCH v4 4/6] rtc: at91sma9: Simplify using
+ devm_clk_get_enabled()
 To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>
 CC:     <linux-clk@vger.kernel.org>, <kernel@pengutronix.de>,
-        <linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+        <linux-rtc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
 References: <20210330181755.204339-1-u.kleine-koenig@pengutronix.de>
- <20210330181755.204339-4-u.kleine-koenig@pengutronix.de>
+ <20210330181755.204339-5-u.kleine-koenig@pengutronix.de>
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-Message-ID: <822218d0-6b28-98d9-c23a-2dc3c3f0c84a@microchip.com>
-Date:   Tue, 6 Apr 2021 14:45:40 +0200
+Message-ID: <cacffd33-0df6-9c96-78bf-8313821daaee@microchip.com>
+Date:   Tue, 6 Apr 2021 14:55:38 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210330181755.204339-4-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20210330181755.204339-5-u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -77,65 +76,89 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30/03/2021 at 20:17, Uwe Kleine-König wrote:
-> With devm_clk_get_prepared() caring to unprepare the clock the error
-> path and remove callback can be simplified accordingly.
+> devm_clk_get_enabled() returns the clk already (prepared and) enabled
+> and the automatically called cleanup cares for disabling (and
+> unpreparing). So simplify .probe() and .remove() accordingly.
 > 
 > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Looks good to me:
+I do see the benefit:
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
+Thanks Uwe for taking these drivers as examples! Best regards,
+   Nicolas
+
 > ---
->   drivers/pwm/pwm-atmel.c | 15 ++-------------
->   1 file changed, 2 insertions(+), 13 deletions(-)
+>   drivers/rtc/rtc-at91sam9.c | 22 ++++------------------
+>   1 file changed, 4 insertions(+), 18 deletions(-)
 > 
-> diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-> index 5813339b597b..d65e23da2582 100644
-> --- a/drivers/pwm/pwm-atmel.c
-> +++ b/drivers/pwm/pwm-atmel.c
-> @@ -415,16 +415,10 @@ static int atmel_pwm_probe(struct platform_device *pdev)
->          if (IS_ERR(atmel_pwm->base))
->                  return PTR_ERR(atmel_pwm->base);
+> diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+> index 2216be429ab7..b52e7bd26303 100644
+> --- a/drivers/rtc/rtc-at91sam9.c
+> +++ b/drivers/rtc/rtc-at91sam9.c
+> @@ -374,21 +374,14 @@ static int at91_rtc_probe(struct platform_device *pdev)
+>                  return -ENOMEM;
+>          }
 > 
-> -       atmel_pwm->clk = devm_clk_get(&pdev->dev, NULL);
-> +       atmel_pwm->clk = devm_clk_get_prepared(&pdev->dev, NULL);
->          if (IS_ERR(atmel_pwm->clk))
->                  return PTR_ERR(atmel_pwm->clk);
+> -       rtc->sclk = devm_clk_get(&pdev->dev, NULL);
+> +       rtc->sclk = devm_clk_get_enabled(&pdev->dev, NULL);
+>          if (IS_ERR(rtc->sclk))
+>                  return PTR_ERR(rtc->sclk);
 > 
-> -       ret = clk_prepare(atmel_pwm->clk);
+> -       ret = clk_prepare_enable(rtc->sclk);
 > -       if (ret) {
-> -               dev_err(&pdev->dev, "failed to prepare PWM clock\n");
+> -               dev_err(&pdev->dev, "Could not enable slow clock\n");
 > -               return ret;
 > -       }
 > -
->          atmel_pwm->chip.dev = &pdev->dev;
->          atmel_pwm->chip.ops = &atmel_pwm_ops;
->          atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
-> @@ -435,23 +429,18 @@ static int atmel_pwm_probe(struct platform_device *pdev)
->          ret = pwmchip_add(&atmel_pwm->chip);
->          if (ret < 0) {
->                  dev_err(&pdev->dev, "failed to add PWM chip %d\n", ret);
-> -               goto unprepare_clk;
+>          sclk_rate = clk_get_rate(rtc->sclk);
+>          if (!sclk_rate || sclk_rate > AT91_RTT_RTPRES) {
+>                  dev_err(&pdev->dev, "Invalid slow clock rate\n");
+> -               ret = -EINVAL;
+> -               goto err_clk;
+> +               return -EINVAL;
+>          }
+> 
+>          mr = rtt_readl(rtc, MR);
+> @@ -406,7 +399,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+>          rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
+>          if (IS_ERR(rtc->rtcdev)) {
+>                  ret = PTR_ERR(rtc->rtcdev);
+> -               goto err_clk;
 > +               return ret;
 >          }
 > 
->          platform_set_drvdata(pdev, atmel_pwm);
+>          rtc->rtcdev->ops = &at91_rtc_ops;
+> @@ -418,7 +411,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+>                                 dev_name(&rtc->rtcdev->dev), rtc);
+>          if (ret) {
+>                  dev_dbg(&pdev->dev, "can't share IRQ %d?\n", rtc->irq);
+> -               goto err_clk;
+> +               return ret;
+>          }
 > 
->          return ret;
+>          /* NOTE:  sam9260 rev A silicon has a ROM bug which resets the
+> @@ -432,11 +425,6 @@ static int at91_rtc_probe(struct platform_device *pdev)
+>                           dev_name(&rtc->rtcdev->dev));
+> 
+>          return devm_rtc_register_device(rtc->rtcdev);
 > -
-> -unprepare_clk:
-> -       clk_unprepare(atmel_pwm->clk);
+> -err_clk:
+> -       clk_disable_unprepare(rtc->sclk);
+> -
 > -       return ret;
 >   }
 > 
->   static int atmel_pwm_remove(struct platform_device *pdev)
->   {
->          struct atmel_pwm_chip *atmel_pwm = platform_get_drvdata(pdev);
+>   /*
+> @@ -450,8 +438,6 @@ static int at91_rtc_remove(struct platform_device *pdev)
+>          /* disable all interrupts */
+>          rtt_writel(rtc, MR, mr & ~(AT91_RTT_ALMIEN | AT91_RTT_RTTINCIEN));
 > 
-> -       clk_unprepare(atmel_pwm->clk);
->          mutex_destroy(&atmel_pwm->isr_lock);
+> -       clk_disable_unprepare(rtc->sclk);
+> -
+>          return 0;
+>   }
 > 
->          return pwmchip_remove(&atmel_pwm->chip);
 > --
 > 2.30.2
 > 
