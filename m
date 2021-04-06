@@ -2,170 +2,279 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E78DC433ED
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 15:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6766C43460
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 16:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B9E56124B
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 15:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80D70613CB
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 16:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233999AbhDFPmB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 11:42:01 -0400
-Received: from mail-co1nam11on2058.outbound.protection.outlook.com ([40.107.220.58]:44647
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S244150AbhDFPmA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Apr 2021 11:42:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OEUlOIwUb9u95289i2jSXlabziLCdoEW8CvLmYNYasMJKHPsufGavYDlnQjpa83FJd+fpt9NGOVhfhkjL4Rv6r/IqR4IBJDyfEP9j4MhPe4QgU0ghJMceuQ/7oh5qGsyUmLHNctB/Rn4iQbuZaPG3QEyw/fpeGt1ziYOpk+sm891iUeNQT22jj2+r2dQZdMRbIxTNSswCBcJvuiRIGExgm4ZKK9eLh0Abe6TSkWoPZERWX5g6FTdDqa6PuY5f/pRDrUr4xx5vzBlROdPbFhh9db6xhLs8nyhF/VT/bYC09MvdC+F+4uPrOsBO2tASadNJkCC6J0fQeVdyN84gn7wNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GgsasAbIGX0KBO78AtPvTCN42iBoHQx5Mee4+RFWlso=;
- b=HSZPiqrnyJAVIMXuGvQjIft4MTTjXGw9femQKNxBI7kAHgRZMsvGmzeWXgHpOJ+ASMMBLKaEPMjjB+9SFctvRPgvQBFO46K/SazO0hxvuZAS/k+9Kn2zIECDbhotzKh8ZQunXHfzF6a/unTB6B2loIsfruI57WrGIIbjAhU0BvRucQQ5nc/tmpgvK2QNLff3WK/uvXNqMBmH3egmc3zEfQyzGPodv7sp42zI5C0VpWq9HROE3Obus42pdV4jAUXS5kxTGuUTx2N8TjR8HPilCbkFiHWfmwHxpzNTbpc0gXFsmw09uTia2ZZOnfaOMQ9aGGgZ/iDIeaoWgu5lmdR6gA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+        id S238749AbhDFQKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 12:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233506AbhDFQKJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 12:10:09 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A254FC06174A;
+        Tue,  6 Apr 2021 09:10:01 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id x2so15660594oiv.2;
+        Tue, 06 Apr 2021 09:10:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GgsasAbIGX0KBO78AtPvTCN42iBoHQx5Mee4+RFWlso=;
- b=e9DcBH7Y/iZBfL0xW2IQf3T+uPW2jRNjl+CTdmNXsmsFKg2j9EcCVVf1BgsN38g+s+iX5GerSW6641jFDE5fBqUD2zrdYrWDxO/f7ghVGS8j4ZQ/eOYDvZPCC6YhYDd9c4grHAxxwtf4P1H4TF7X9DcodWsQrH1p0HnDmbsiOI8=
-Authentication-Results: baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=none action=none header.from=windriver.com;
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com (2603:10b6:910:7a::30)
- by CY4PR11MB1256.namprd11.prod.outlook.com (2603:10b6:903:25::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.27; Tue, 6 Apr
- 2021 15:41:51 +0000
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::f45f:e820:49f5:3725]) by CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::f45f:e820:49f5:3725%6]) with mapi id 15.20.3999.032; Tue, 6 Apr 2021
- 15:41:51 +0000
-From:   quanyang.wang@windriver.com
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Quanyang Wang <quanyang.wang@windriver.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [V2][PATCH] clk: zynqmp: move zynqmp_pll_set_mode out of round_rate callback
-Date:   Tue,  6 Apr 2021 23:40:15 +0800
-Message-Id: <20210406154015.602779-1-quanyang.wang@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [60.247.85.82]
-X-ClientProxiedBy: SJ0PR13CA0046.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::21) To CY4PR11MB0071.namprd11.prod.outlook.com
- (2603:10b6:910:7a::30)
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=70/WXuRSOVM+Cc9ViyI6lDUSxH+eDXC41IovFsWbeYs=;
+        b=mZHPqUim93e/5u+URkvc/Ye1e5GK97PBlzfwKox4sOBT0lN+SkMyIKlSxqOOXncrAK
+         6vC4G+ZyvQX97b1+02ESEbKpWxy6wpdVgcvS3TML68NHexPqdOTJYcS2owuFsU4G/IQw
+         2m6PgS4O+foYkxYMBeufP2rbxsFCpYuGbB+YZgt6f42vITYALda/lf2H3CFixXYuqAVN
+         Qot5vsNWbluJqtZuxX7JwGE2pWMkl7cmc3V4dMSdVzMMp07mI8uZbBp0dyzbOk4mRjfO
+         NMLENOqxmZvhSEPNuzYgXh1CIdskUDOAzniyiTPpp+6SJZhlzYwHIn0rsE4GObpAQKPP
+         CJsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=70/WXuRSOVM+Cc9ViyI6lDUSxH+eDXC41IovFsWbeYs=;
+        b=AkA7rHEAi0e2dGCbv3tk0Wcbf7jyO6RkDB8d8ODgi371c9rFYrDEHlQ6ngY6FdHVCX
+         VhlIsCWGeq6rDZERGFfK2zZC3fxKYUV7O1JhGlGd3qhQ0enCoiA7L0GoNrgGSMxsTvPV
+         AXiMVerjHndyMTdxnmX5snLEMAig6y+sDlTLU5xpQAuQAbBsF/rDt97wKciOul6cWqa+
+         HEyxE2mvJW28J/R4wNX+7vG6h/91TlRXrxAewB9qUGaH3meXEeBE3tCu9JWvm4U7p/xA
+         g8tQtoPZtDB5E/zW3l02ZEb4OSM0zRTyEmdlChpwUM63QUCbwBzVTtj2w7X+S5HgIBhH
+         QhIQ==
+X-Gm-Message-State: AOAM531uEE1igVyMS5icD3EqClKlGxN6s8TNkjzDgB+D0lQWoWLtBPYT
+        QSuCQPHgUw+sqfAo91h9las=
+X-Google-Smtp-Source: ABdhPJw+oRcabyeXlR7veCmXYel+3+bxwvoQzsVviymeaR2MbFVB6NWM8xsX1yZHtzLpbix2jLBDXA==
+X-Received: by 2002:aca:4187:: with SMTP id o129mr3872937oia.10.1617725401042;
+        Tue, 06 Apr 2021 09:10:01 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r22sm4644989otg.4.2021.04.06.09.10.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Apr 2021 09:10:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 6 Apr 2021 09:09:59 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 08/15] arm64: socfpga: merge Agilex and N5X into
+ ARCH_INTEL_SOCFPGA
+Message-ID: <20210406160959.GA208060@roeck-us.net>
+References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
+ <20210311152545.1317581-9-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from pek-qwang2-d1.wrs.com (60.247.85.82) by SJ0PR13CA0046.namprd13.prod.outlook.com (2603:10b6:a03:2c2::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.9 via Frontend Transport; Tue, 6 Apr 2021 15:41:47 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d10abdbb-fb83-4fc4-7bb2-08d8f9127ec5
-X-MS-TrafficTypeDiagnostic: CY4PR11MB1256:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CY4PR11MB12563C58DA37DBEC4604C9AFF0769@CY4PR11MB1256.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2958;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NIBpTGPf4g7PFSRqeXLYBpG554Enti93+KrUcCsItjg8fW/+9G6Yl9BA65Je5grtQ4V4I2W7UGDWRFrCVfbOYogS19LNlE/qMcD7Jp/Ij5nEpQW/1xVPdBrPqyxIwgpUX3CuoX/LqIl8HtnCokkN9/X7ivGei0rHeyiwLJcLUBniRw1vyPWCWBoTKLjvHxB8CVnnVy12aVF8Qarta28RiDW94TM9RuXBdrkVDEGhrbd32DkHAtDlscDB+tJDKgrslb+TX47Mo9cj1ke9ANJDplXwB+b3fBYLWWUk9cdJthMWWiwHT8TTjn1yMsM9f+LxV79gniWuUlQfNNKxc5VssXeUQLQ7SH2XichqhaKb9Oq+a5Bygzl7KC3/A0sJoHd55/y+eL/zpZdIRKW7Ft4KdqkjRQ/uLKuRIvwvcQ4PQLZTb1Es4qnlEwSFeTg+D4IScYerQ0wQJ9o9t7M0PyKRthb2Rzv01D3JEjfpUGMFYi4TI/HMsh/HZjsiTngm4POvVk4L8cbGmPdBV1i7JT+vpYpuWf6RuqlRrUndRxUvOgqfS0LWTVa2VPEr6nR34ijbEqruCVmUA/ONLP6XMS0twLNRmQf5geE9s1Y8tzG+oZdiY+xhGV8UB8w5hRetowXS1mUjO70VY50xNJ8oRUkqb2uFfNHOcsIAMOQGyAGE1feoNVozS2zhWLq1DyN9Mn/WNMEwUGg3UU7bZLvcI8I3GQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB0071.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(39850400004)(366004)(346002)(136003)(376002)(478600001)(6486002)(66476007)(66556008)(52116002)(4326008)(83380400001)(66946007)(5660300002)(38350700001)(186003)(38100700001)(16526019)(8936002)(8676002)(956004)(2616005)(26005)(9686003)(110136005)(2906002)(316002)(7416002)(6666004)(6506007)(1076003)(86362001)(54906003)(36756003)(6512007)(309714004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?K5Cs+5vOP80AgjK6HQRBLZ5WjvdmdyIHTW5cUQMRqxfRCiM0CGeMXuoEpkfR?=
- =?us-ascii?Q?AMOx2zGatlPUNF+wAJLUN6De6tbxn2yvHk86+bUZqabWhclM2PdK/akjlVU0?=
- =?us-ascii?Q?2UhqDjtSgwe4BBavPd2QW+qLwtANluwVmKAwCyMV/d1r6hG/yt/YmrXaZPbo?=
- =?us-ascii?Q?M606+Sxr9bZsn/0mZ/jTIi7+vrf/Ak6vZ/BoUi50P+3n0W3SdsbxxqBwAtDt?=
- =?us-ascii?Q?3BKKXFtItHKFBwgWcy0vjfgIDZzkVErohJWrOp/FliwDTnFw72d+bLgWDC3i?=
- =?us-ascii?Q?xUJ0VhQyPtc0CYWv/AdGQF1oAYCcS+8/I1IWcV62GUuZYWlvUClN4O5dARNZ?=
- =?us-ascii?Q?q42p0rZ9u8akaPhc6d7r+PhoXEqVgdUGIP9mD63UfzINiY5Fh6d2ovC/1dyw?=
- =?us-ascii?Q?wCjh6gJAKSZFwHiNFZCca4krJkNJE4O9Ylp7mfSO18RroNLUjzpHDl/ssTHz?=
- =?us-ascii?Q?ocOnAWiJOLkeu6t3dVVgVOVe1Dws2y/5/JMYo8ZrpSEUWrZ0L6MFqYapkCxc?=
- =?us-ascii?Q?nDGtQ7UeVDSE/M0VuTHeaHGlilRPDrfdEQD3UCOQcY0liVuo5NYB6bJI+HXY?=
- =?us-ascii?Q?7En5JhndEBp9zc1TnLEIAUWxR9BxJ+ZtQitmV5zohG1dSrtgqSxKJIoYt3Yy?=
- =?us-ascii?Q?axtQlgl5dxj+d/Mop0vZ3+FLgC/mzKAZa4rR94lbHeneSUyCiFgElmRbs72Q?=
- =?us-ascii?Q?hWryXU7J4CpUpZ6DI1za1T1LGQJrDEvEaUoUStMpPfpXGp5M4QiE5NKzrTlM?=
- =?us-ascii?Q?X0pmSxvO0pz2PwC0AiNeX8rtpQn9XIu38uLRlo1v3aN0OyifT1MpY6sqLVy1?=
- =?us-ascii?Q?/WMbhbxuVenzTcMfd4jgpGhB8m5kSmhbCrd0l9cOhttnh7Z6m78yJg2RsErW?=
- =?us-ascii?Q?gxu1Qnr9T2fIHi7Ib66RIM3tN/10zzea42Z+b11fZa4v+34UQyyFRmJhaBQ2?=
- =?us-ascii?Q?zm4f9BGB8PLAnjEdNT6+u/QvQ1hpoFxzOBjXEFWjuG2cpTITl8kh1Hyq0lgW?=
- =?us-ascii?Q?DH7c4haqfGYtEQ5tPm1l12Wwb6MNW9xHX+D+eSzTXkhJ86GQrWWb9bkBk9pD?=
- =?us-ascii?Q?XpKRnmjHSWKfXFiSogIIA5b8/ihV+TGAL8P1WXZayxCCVu5fEaOkIWxNDuUN?=
- =?us-ascii?Q?NslTpn4yi6DDM8SS8jeVpy8cOKffbLBARN/Q6y/l5PKNk2Zq3Xkl/KmHm1uJ?=
- =?us-ascii?Q?m4ZaaYvsTekg2GJEYpShZi5ITPm3qPdLCwvj+EnXM4tvHrqt3yKXw13WcDwH?=
- =?us-ascii?Q?8fhv4wBzfc3pa8E0qVCiIkOf2F+6DFyEDt/wZ0xcT8t28dg0lFhbV4j1i+eV?=
- =?us-ascii?Q?YhyL9hHKRvYyAWku+0pSKcBF?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d10abdbb-fb83-4fc4-7bb2-08d8f9127ec5
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB0071.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2021 15:41:50.8242
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hYu1QqS+OPTqfG0LwJhnRPajwcUeoBa2gmSk1rahVTlBEPQPVPIN5Axy3rdUiN/0u16NuBux/+yVR1k6IMu+UXLn9zVipAGTMwmOhTb+FdY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210311152545.1317581-9-krzysztof.kozlowski@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+On Thu, Mar 11, 2021 at 04:25:38PM +0100, Krzysztof Kozlowski wrote:
+> Agilex, N5X and Stratix 10 share all quite similar arm64 hard cores and
+> SoC-part.  Up to a point that N5X uses the same DTSI as Agilex.  From
+> the Linux kernel point of view these are flavors of the same
+> architecture so there is no need for three top-level arm64
+> architectures.  Simplify this by merging all three architectures into
+> ARCH_INTEL_SOCFPGA and dropping the other ARCH* arm64 Kconfig entries.
+> 
+> The side effect is that the INTEL_STRATIX10_SERVICE will now be
+> available for both 32-bit and 64-bit Intel SoCFPGA, even though it is
+> used only for 64-bit.
 
-The round_rate callback should only perform rate calculation and not
-involve calling zynqmp_pll_set_mode to change the pll mode. So let's
-move zynqmp_pll_set_mode out of round_rate and to set_rate callback.
+Did you try to compile, say, arm:allmodconfig with this patch applied ?
+Because for me that results in:
 
-Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
----
-V2:
- - add Fixes tag.
----
- drivers/clk/zynqmp/pll.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+In file included from <command-line>:
+drivers/firmware/stratix10-rsu.c: In function 'rsu_status_callback':
+include/linux/compiler_types.h:320:38: error:
+	call to '__compiletime_assert_177' declared with attribute error:
+	FIELD_GET: type of reg too small for mask
 
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 0d64268a4a84..abe6afbf3407 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -104,9 +104,7 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	/* Enable the fractional mode if needed */
- 	rate_div = (rate * FRAC_DIV) / *prate;
- 	f = rate_div % FRAC_DIV;
--	zynqmp_pll_set_mode(hw, !!f);
--
--	if (zynqmp_pll_get_mode(hw) == PLL_MODE_FRAC) {
-+	if (f) {
- 		if (rate > PS_PLL_VCO_MAX) {
- 			fbdiv = rate / PS_PLL_VCO_MAX;
- 			rate = rate / (fbdiv + 1);
-@@ -177,10 +175,12 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	long rate_div, frac, m, f;
- 	int ret;
- 
--	if (zynqmp_pll_get_mode(hw) == PLL_MODE_FRAC) {
--		rate_div = (rate * FRAC_DIV) / parent_rate;
-+	rate_div = (rate * FRAC_DIV) / parent_rate;
-+	f = rate_div % FRAC_DIV;
-+	zynqmp_pll_set_mode(hw, !!f);
-+
-+	if (f) {
- 		m = rate_div / FRAC_DIV;
--		f = rate_div % FRAC_DIV;
- 		m = clamp_t(u32, m, (PLL_FBDIV_MIN), (PLL_FBDIV_MAX));
- 		rate = parent_rate * m;
- 		frac = (parent_rate * f) / FRAC_DIV;
--- 
-2.25.1
+and lots of similar errors.
 
+Guenter
+
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  arch/arm64/Kconfig.platforms       | 21 ++++-----------------
+>  arch/arm64/boot/dts/intel/Makefile |  6 +++---
+>  arch/arm64/configs/defconfig       |  3 +--
+>  drivers/clk/Makefile               |  2 --
+>  drivers/clk/socfpga/Kconfig        |  4 ++--
+>  drivers/firmware/Kconfig           |  2 +-
+>  drivers/fpga/Kconfig               |  2 +-
+>  drivers/reset/Kconfig              |  2 +-
+>  8 files changed, 13 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index ecab67a1afb8..ce50dd129eec 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -8,16 +8,6 @@ config ARCH_ACTIONS
+>  	help
+>  	  This enables support for the Actions Semiconductor S900 SoC family.
+>  
+> -config ARCH_AGILEX
+> -	bool "Intel's Agilex SoCFPGA Family"
+> -	help
+> -	  This enables support for Intel's Agilex SoCFPGA Family.
+> -
+> -config ARCH_N5X
+> -	bool "Intel's eASIC N5X SoCFPGA Family"
+> -	help
+> -	  This enables support for Intel's eASIC N5X SoCFPGA Family.
+> -
+>  config ARCH_SUNXI
+>  	bool "Allwinner sunxi 64-bit SoC Family"
+>  	select ARCH_HAS_RESET_CONTROLLER
+> @@ -254,14 +244,11 @@ config ARCH_SEATTLE
+>  	help
+>  	  This enables support for AMD Seattle SOC Family
+>  
+> -config ARCH_STRATIX10
+> -	bool "Altera's Stratix 10 SoCFPGA Family"
+> -	select ARCH_INTEL_SOCFPGA
+> -	help
+> -	  This enables support for Altera's Stratix 10 SoCFPGA Family.
+> -
+>  config ARCH_INTEL_SOCFPGA
+> -	bool
+> +	bool "Intel's SoCFPGA ARMv8 Families"
+> +	help
+> +	  This enables support for Intel's SoCFPGA ARMv8 families:
+> +	  Stratix 10 (ex. Altera), Agilex and eASIC N5X.
+>  
+>  config ARCH_SYNQUACER
+>  	bool "Socionext SynQuacer SoC Family"
+> diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
+> index 3a052540605b..0b5477442263 100644
+> --- a/arch/arm64/boot/dts/intel/Makefile
+> +++ b/arch/arm64/boot/dts/intel/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -dtb-$(CONFIG_ARCH_AGILEX) += socfpga_agilex_socdk.dtb \
+> -			     socfpga_agilex_socdk_nand.dtb
+> +dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_socdk.dtb \
+> +				socfpga_agilex_socdk_nand.dtb \
+> +				socfpga_n5x_socdk.dtb
+>  dtb-$(CONFIG_ARCH_KEEMBAY) += keembay-evm.dtb
+> -dtb-$(CONFIG_ARCH_N5X) += socfpga_n5x_socdk.dtb
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index d612f633b771..cf8a3009b858 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -28,7 +28,6 @@ CONFIG_KALLSYMS_ALL=y
+>  # CONFIG_COMPAT_BRK is not set
+>  CONFIG_PROFILING=y
+>  CONFIG_ARCH_ACTIONS=y
+> -CONFIG_ARCH_AGILEX=y
+>  CONFIG_ARCH_SUNXI=y
+>  CONFIG_ARCH_ALPINE=y
+>  CONFIG_ARCH_BCM2835=y
+> @@ -50,7 +49,7 @@ CONFIG_ARCH_RENESAS=y
+>  CONFIG_ARCH_ROCKCHIP=y
+>  CONFIG_ARCH_S32=y
+>  CONFIG_ARCH_SEATTLE=y
+> -CONFIG_ARCH_STRATIX10=y
+> +CONFIG_ARCH_INTEL_SOCFPGA=y
+>  CONFIG_ARCH_SYNQUACER=y
+>  CONFIG_ARCH_TEGRA=y
+>  CONFIG_ARCH_SPRD=y
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 1e29e5ad107a..96802294d35a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -105,8 +105,6 @@ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+>  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+>  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+>  obj-$(CONFIG_ARCH_INTEL_SOCFPGA)	+= socfpga/
+> -obj-$(CONFIG_ARCH_AGILEX)		+= socfpga/
+> -obj-$(CONFIG_ARCH_N5X)			+= socfpga/
+>  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+>  obj-y					+= sprd/
+>  obj-$(CONFIG_ARCH_STI)			+= st/
+> diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
+> index bc102e0f0be0..b6c5b9737174 100644
+> --- a/drivers/clk/socfpga/Kconfig
+> +++ b/drivers/clk/socfpga/Kconfig
+> @@ -2,5 +2,5 @@
+>  config CLK_INTEL_SOCFPGA64
+>  	bool
+>  	# Intel Stratix / Agilex / N5X clock controller support
+> -	default (ARCH_AGILEX || ARCH_N5X || ARCH_STRATIX10)
+> -	depends on ARCH_AGILEX || ARCH_N5X || ARCH_STRATIX10
+> +	default ARM64 && ARCH_INTEL_SOCFPGA
+> +	depends on ARM64 && ARCH_INTEL_SOCFPGA
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index 3f14dffb9669..6a4e882e448d 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -206,7 +206,7 @@ config FW_CFG_SYSFS_CMDLINE
+>  
+>  config INTEL_STRATIX10_SERVICE
+>  	tristate "Intel Stratix10 Service Layer"
+> -	depends on (ARCH_STRATIX10 || ARCH_AGILEX) && HAVE_ARM_SMCCC
+> +	depends on ARCH_INTEL_SOCFPGA && HAVE_ARM_SMCCC
+>  	default n
+>  	help
+>  	  Intel Stratix10 service layer runs at privileged exception level,
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 5ff9438b7b46..fd325e9c5ce6 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -60,7 +60,7 @@ config FPGA_MGR_ZYNQ_FPGA
+>  
+>  config FPGA_MGR_STRATIX10_SOC
+>  	tristate "Intel Stratix10 SoC FPGA Manager"
+> -	depends on (ARCH_STRATIX10 && INTEL_STRATIX10_SERVICE)
+> +	depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE)
+>  	help
+>  	  FPGA manager driver support for the Intel Stratix10 SoC.
+>  
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 4171c6f76385..b1e8efa16166 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -183,7 +183,7 @@ config RESET_SCMI
+>  
+>  config RESET_SIMPLE
+>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+> -	default ARCH_AGILEX || ARCH_ASPEED || ARCH_BCM4908 || ARCH_BITMAIN || ARCH_REALTEK || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARC
+> +	default ARCH_ASPEED || ARCH_BCM4908 || ARCH_BITMAIN || ARCH_REALTEK || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC
+>  	help
+>  	  This enables a simple reset controller driver for reset lines that
+>  	  that can be asserted and deasserted by toggling bits in a contiguous,
+> -- 
+> 2.25.1
+> 
