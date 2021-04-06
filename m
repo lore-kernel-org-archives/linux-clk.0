@@ -2,102 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0817C433B4
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 06:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C5CC433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 07:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81824613A7
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 06:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 228926124B
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 07:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244100AbhDFG5j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 02:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56750 "EHLO
+        id S233558AbhDFHMe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 03:12:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233519AbhDFG5j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 02:57:39 -0400
+        with ESMTP id S233351AbhDFHM3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 03:12:29 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0F9C06174A
-        for <linux-clk@vger.kernel.org>; Mon,  5 Apr 2021 23:57:31 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457A7C06174A
+        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 00:12:21 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTfeS-0003hH-53; Tue, 06 Apr 2021 08:57:28 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTfeR-000771-IE; Tue, 06 Apr 2021 08:57:27 +0200
-Date:   Tue, 6 Apr 2021 08:57:27 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] spi: davinci: Simplify using
- devm_clk_get_enabled()
-Message-ID: <20210406065727.i7wbve2ihdblq24p@pengutronix.de>
-References: <20210330181755.204339-1-u.kleine-koenig@pengutronix.de>
- <20210330181755.204339-7-u.kleine-koenig@pengutronix.de>
- <20210331120212.GB4758@sirena.org.uk>
+        (envelope-from <ore@pengutronix.de>)
+        id 1lTfsj-0005GZ-VY; Tue, 06 Apr 2021 09:12:13 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1lTfsj-00040C-1f; Tue, 06 Apr 2021 09:12:13 +0200
+Date:   Tue, 6 Apr 2021 09:12:13 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>, kernel@pengutronix.de,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4.1 5/6] i2c: imx: Simplify using
+ devm_clk_get_enableded()
+Message-ID: <20210406071213.dxwucpggq6m7hfxi@pengutronix.de>
+References: <20210330181755.204339-6-u.kleine-koenig@pengutronix.de>
+ <20210406064618.24194-1-uwe@kleine-koenig.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="b3oia2ax5tjtswo5"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210331120212.GB4758@sirena.org.uk>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210406064618.24194-1-uwe@kleine-koenig.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:08:48 up 124 days, 21:15, 44 users,  load average: 0.07, 0.04,
+ 0.00
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Apr 06, 2021 at 08:46:18AM +0200, Uwe Kleine-König wrote:
+> From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
+> devm_clk_get_enabled() returns the clk already (prepared and) enabled
+> and the automatically called cleanup cares for disabling (and
+> unpreparing). So simplify .probe() and .remove() accordingly.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
---b3oia2ax5tjtswo5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Enthusiastically Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Hello Mark,
+I hope devm_clk_get_enabled() will go mainline, it reduces dramatically
+code and makes my life a lot better ;)
 
-On Wed, Mar 31, 2021 at 01:02:12PM +0100, Mark Brown wrote:
-> On Tue, Mar 30, 2021 at 08:17:55PM +0200, Uwe Kleine-K=F6nig wrote:
-> > devm_clk_get_enabled() returns the clk already (prepared and) enabled
-> > and the automatically called cleanup cares for disabling (and
-> > unpreparing). So simplify .probe() and .remove() accordingly.
->=20
-> Acked-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index b80fdc1f0092..d6594358cf83 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -1405,16 +1405,10 @@ static int i2c_imx_probe(struct platform_device *pdev)
+>  	ACPI_COMPANION_SET(&i2c_imx->adapter.dev, ACPI_COMPANION(&pdev->dev));
+>  
+>  	/* Get I2C clock */
+> -	i2c_imx->clk = devm_clk_get(&pdev->dev, NULL);
+> +	i2c_imx->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>  	if (IS_ERR(i2c_imx->clk))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(i2c_imx->clk),
+> -				     "can't get I2C clock\n");
+> -
+> -	ret = clk_prepare_enable(i2c_imx->clk);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "can't enable I2C clock, ret=%d\n", ret);
+> -		return ret;
+> -	}
+> +				     "can't get prepared I2C clock\n");
+>  
+>  	/* Init queue */
+>  	init_waitqueue_head(&i2c_imx->queue);
+> @@ -1487,7 +1481,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  	pm_runtime_set_suspended(&pdev->dev);
+>  	pm_runtime_dont_use_autosuspend(&pdev->dev);
+> -	clk_disable_unprepare(i2c_imx->clk);
+>  	return ret;
+>  }
+>  
+> @@ -1517,7 +1510,6 @@ static int i2c_imx_remove(struct platform_device *pdev)
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq >= 0)
+>  		free_irq(irq, i2c_imx);
+> -	clk_disable_unprepare(i2c_imx->clk);
+>  
+>  	pm_runtime_put_noidle(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -- 
+> 2.30.2
+> 
+> 
+> 
 
-Thanks. I wonder what you think about this series. Is it more "Well, ok,
-if you must, the change you did to this spi driver looks correct." or
-"This is a good simplification and a similar change for nearly all other
-spi drivers that make use of a clk is possible, too. Dear clk
-maintainers, please go forward and apply this useful series."?
-
-Best regards
-Uwe
-
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---b3oia2ax5tjtswo5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBsBlMACgkQwfwUeK3K
-7Al2zAf9HnFqMN1hf7hIPT7XC6aTNTUdmRm/FAyZkZ7j+UFHeRkY95S4vP7WWVii
-3h+wmaalGPhvS3hpJnTPqpzZMySvsAe4/SdgTNCPJzDgrgA4NXtcWA/BKikJNzCy
-AtheLoSQUvuo6gM8Slz1CyzsJbm5HQgRWOCDMFeOv4uX6vwHfF4IGRXivOJEbv7J
-lbmLpT03mqEQyFJ+9OCEPDgYdBlVvFgrJrk1czbKlY+0L3iQ9dzKP6y4lOexWrjR
-xiSfLRNXWrhbj9ibTZvS+buHhoz4JDKClHgflJzoXzW8HlxNo1n3Bfn//zCzvsk1
-a5YpWJjRTaJ2PPwwDm0XU0Dr/r3Kjw==
-=eRkg
------END PGP SIGNATURE-----
-
---b3oia2ax5tjtswo5--
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
