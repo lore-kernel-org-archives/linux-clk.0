@@ -2,114 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38204C433B4
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 22:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63179C433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 23:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02F48613CD
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 22:02:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F47261262
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 23:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233309AbhDFWCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 18:02:49 -0400
-Received: from smtp-16-i2.italiaonline.it ([213.209.12.16]:53292 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229832AbhDFWCq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Apr 2021 18:02:46 -0400
-Received: from oxapps-32-144.iol.local ([10.101.8.190])
-        by smtp-16.iol.local with ESMTPA
-        id TtmMlF7I2f2ANTtmMl5syE; Wed, 07 Apr 2021 00:02:34 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1617746554; bh=akIOS2LFU8AbnXeSKX/lN7kLwCQ59toKE6VoSYcU7p4=;
-        h=From;
-        b=BBHr4D4cYuWFL1NfC8JTa9C2WGMjscDa/CfrMMvK7A6woSjzh84OV2DcgKLxL3sM/
-         +3YMv34N3NV6csEv/fQ7WjHjS1i/4oVxITUXoa4Ad1tzRxGZ6hu2T7X8P3Im9dYIH1
-         QQu8S0xY6y8KC38FEQU6Sq34LXDywwpVGNz217OeCUbVGGnWmvyAmEjtpT0Y5ij64j
-         wk7vz5dOvW6cMo+PFLX9Kv/nPSwX2KKbrProes+dNgnyGz70HKkA2+V18bleDPj+aI
-         uJ857pBimg5qiEAwgeoSPOX0Ewby1NcoAKWPx09h6qGO56l5xjgR+CGVRxPQpi1/SB
-         7TDT2CkOTNIoA==
-X-CNFS-Analysis: v=2.4 cv=Adt0o1bG c=1 sm=1 tr=0 ts=606cda7a cx=a_exe
- a=+LyvvGPX93CApvOVpnXrdQ==:117 a=UPWQtH3J-JgA:10 a=IkcTkHD0fZMA:10
- a=_gZzKa99_6AA:10 a=VwQbUJbxAAAA:8 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8
- a=aW_EbgM9uDbL71VJ2OAA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=IC2XNlieTeVoXbcui8wp:22
-Date:   Wed, 7 Apr 2021 00:02:34 +0200 (CEST)
-From:   Dario Binacchi <dariobin@libero.it>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S234136AbhDFXGT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 19:06:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233379AbhDFXGT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 19:06:19 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65659C06174A
+        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 16:06:09 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id u4so18382216ljo.6
+        for <linux-clk@vger.kernel.org>; Tue, 06 Apr 2021 16:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aPWXCRyQycYQvj6HYAPrgu+5Z9a57EfhLN3d1yHm7Ps=;
+        b=TpblUsbtD5po/N9CH/uKdwv0vEB3mnX65H7KPdYRddC7mVJFSjpYcspElVN2O/5zzv
+         2NpmbX9x1UTxC/AiZlaBMKn4eS9jCVyuZQ/exmSW+stHaDAlpm6HzEuLtv+YbAGyjeua
+         V4S8RLiqJk+mcEOvLgVUqhmmcWK2LLUItP/tmnl5KhP45rkzszvaaqhxln/vB2NErNSF
+         whPy8AlWU59tdX6njnk0uAnKlCsN7wG36UGU6SFGzJ3mGEaoee9u6DAarPFvGZCBgvJN
+         qqevv4fjV00ioLnCri+pzlI9ZIilUwxBMtOxAcgry/cd3REqfT8EOVLrcqTJqQiyak+f
+         oa4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aPWXCRyQycYQvj6HYAPrgu+5Z9a57EfhLN3d1yHm7Ps=;
+        b=ihUarACSp0jTZcfrwMETlbwNIkCyKZ36DC7ZRjJ0hchvc8vC4Cwfu8UjH//iQcrD/T
+         hzAAI64uvHPgW2DSLKh80yQPYhXVUmm+Kp/jzDAUwR7Q1tKuUzWZ8cexOaHvuGZOUV1a
+         MHgwrpXukajg8iiQJZP5i2rf9iBNH6bCO1w4h2vznpBZleXWl798pc0B5Uso+VWbJj19
+         gE+Ky4ygbIJtpACH+gwHo7sL7QOQaVXtLfXN6MYQWI+PKggF7XXJ75G1Riyp5EOPqZ29
+         viuuzyfnHUuv5S6+0LO7zhymYudneu/1+2V5Ukx+2ZeoI4DByX4RBdYxSn5+S7iol9mB
+         VFxQ==
+X-Gm-Message-State: AOAM531vKadNwGqP2e2FKAo2JfzaarsZpoJCC2AVEVq4BukydTYWhO1n
+        6CRL4ojhJTuGQzgS4bmqByP1uQ==
+X-Google-Smtp-Source: ABdhPJxc5AF4qmysF86wYNJ0vHcgPANetDoaI2kJ39Ne3VwoDSAJxdpOVbZhfFJ5YUI9Ez56qmMVXA==
+X-Received: by 2002:a05:651c:ca:: with SMTP id 10mr240945ljr.63.1617750367763;
+        Tue, 06 Apr 2021 16:06:07 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id b25sm2351498ljo.80.2021.04.06.16.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Apr 2021 16:06:07 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Message-ID: <1727466283.11523.1617746554330@mail1.libero.it>
-In-Reply-To: <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
-References: <20210402192054.7934-1-dariobin@libero.it>
- <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robdclark@chromium.org>,
+        Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH] clk: fixed: fix double free in resource managed fixed-factor clock
+Date:   Wed,  7 Apr 2021 02:06:06 +0300
+Message-Id: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
-X-Originating-IP: 87.20.116.197
-X-Originating-Client: open-xchange-appsuite
-x-libjamsun: 0kJUj9J8+FPQ/YxkwJqhiHCIFaYs727T
-x-libjamv: J5mKezAXc6M=
-X-CMAE-Envelope: MS4xfLhjxEr/Kp9gu70nyFP13JwXaIfRPj46VyjgR1MpMlp1MPqhqnicFn3XKmrgI2HHVMBkQrAnRDtuhTp+X7ZB9C+nElMvNkK/Roo+m6hQd5Q9kbYDgKvy
- 6Ib7IWoJecJ0Ca+PzBVKZVAyAiPDq7SgF/tHh3iqZvy4VNQTsgsJeo42wLLyr64ND0bVofM9/EYEDxe+ZXPTBtmf9pzVkzOe/VrBiHPCgNCJNg64NEXzGyGG
- YFt8rQ/8nF0d7F8kFMkPFeA8VJ2EPSKAi6Qih4/c7I8RL9Fr5YhiW0idb40hvnM1mckqpfvKyZrK78Z9MT49XWg4jbPsLO8GKSi4kU4eQ5X72Xz8DW4mDgYO
- rULeuWi9FhAZCbSWV4XYJxEQBQcIb4KL198/rG98gpFnvERGD5PKlAuISxfSxKjUc6iIfZSOuMufo98WwNGc2GMa0DYEREP72cuDQRg2u6hjOUvstlWcRusP
- ZUgDgjF/JUUaOsXlp7b/3WVRrVogfshs71oTrg==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+devm_clk_hw_register_fixed_factor_release(), the release function for
+the devm_clk_hw_register_fixed_factor(), calls
+clk_hw_unregister_fixed_factor(), which will kfree() the clock. However
+after that the devres functions will also kfree the allocated data,
+resulting in double free/memory corruption. Just call
+clk_hw_unregister() instead, leaving kfree() to devres code.
 
-> Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
-> 
->  
-> On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
-> >
-> >
-> > The series comes from my commit in U-boot
-> > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
-> > and from the subsequent exchange of emails at the end of which I was
-> > suggested to send the patch to the linux kernel
-> > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
-> 
-> It's 'ranges' that determines translatable which is missing from the
-> DT. This should have not had a 0 size either though maybe we could
-> support that.
+Reported-by: Rob Clark <robdclark@chromium.org>
+Cc: Daniel Palmer <daniel@0x0f.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
 
-I have replied to the email you sent to the u-boot mailing list
+Stephen, this fix affects the DSI PHY rework. Do we have a chance of
+getting it into 5.12, otherwise there will be a cross-dependency between
+msm-next and clk-next.
 
-> 
-> Does the DT have to be updated anyways for your spread spectrum support?
+---
+ drivers/clk/clk-fixed-factor.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-The spread spectrum support patch does not need this patch to work. They belong 
-to two different series.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 4f7bf3929d6d..390c16f321a6 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -66,7 +66,12 @@ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
+ static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *res)
+ {
+-	clk_hw_unregister_fixed_factor(&((struct clk_fixed_factor *)res)->hw);
++	/*
++	 * We can not use clk_hw_unregister_fixed_factor, since it will kfree()
++	 * the hw, resulting in double free. Just unregister the hw and let
++	 * devres code kfree() it.
++	 */
++	clk_hw_unregister(&((struct clk_fixed_factor *)res)->hw);
+ }
+ 
+ static struct clk_hw *
+-- 
+2.30.2
 
-> 
-> > The second patch of the series aims to demonstrate that the first one, which
-> > enables the translation of addresses also for crossings of DT nodes
-> > with #size-cells = <0>, it really works.
-> 
-> I don't seem to have the 2nd patch... In any case, you should handle
-> the special case for this platform in code for the platform.
-> 
-
-the 2nd patch:
-https://lore.kernel.org/patchwork/patch/1407108/
-
-Thanks and regards,
-Dario
-
-> Rob
