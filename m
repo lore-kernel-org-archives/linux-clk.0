@@ -2,596 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95615C43461
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 07:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4427C433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D162613BE
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 07:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7151613C6
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244322AbhDFHbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 03:31:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35976 "EHLO
+        id S234001AbhDFJ0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 05:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244319AbhDFHbc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 03:31:32 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB24C061756
-        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 00:31:25 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTgAf-0007N9-UL; Tue, 06 Apr 2021 09:30:45 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lTgAa-0001YT-Vl; Tue, 06 Apr 2021 09:30:40 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-pwm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-fbdev@vger.kernel.org
-Subject: [PATCH] pwm: Rename pwm_get_state() to better reflect its semantic
-Date:   Tue,  6 Apr 2021 09:30:36 +0200
-Message-Id: <20210406073036.26857-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S234021AbhDFJ0t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 05:26:49 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4749CC061760
+        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 02:26:42 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id j7so2468827plx.2
+        for <linux-clk@vger.kernel.org>; Tue, 06 Apr 2021 02:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L9aauEj0ZznO9LzKslz62xYfWSRsY7rwUuiLDdRfB74=;
+        b=fjWJDRbldFVlvO4zkZJQyJKIRAAbm80Vl9BjmTAzp94b2Gbj1V4ZMJvd+h2myJySEu
+         Bn0hrzUlDR+MSaUMVED0H1qEVOgQCB2J5ofzTRRSdAXp/Uj1qUqkWtBIqaycypvIdVoD
+         lGp4ouOgXnx9DWlnOOaMxWGjFbmQQ/J1XjPassnAs5RFWj5axewls+T+BBCl7cXIrOgy
+         jJdbwez6Q/9ZLHZFNatV+BfDJeLiAyJn3AqIJB+wx4Tefk+d/OV2JijgfHF8dDkWuPcZ
+         sfaaBvGxMDZpEWa3a59lxCPV7n/M28thc6yGsfjD/pWM04Dxeslmf7R9LJ4IwdNm+IR3
+         srOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L9aauEj0ZznO9LzKslz62xYfWSRsY7rwUuiLDdRfB74=;
+        b=Bc/w5VjLGH2AIWi939yeALeg6RiMt8CN5WpW0wqdTFXb4jqbV8rmZRfC2pqAyRjVOC
+         3i99Kufr6wYe+5EzzvBzVWZSt+ALE6P/YmnO2Vmuz5w0j6EMuupnDDy1DDQP3VK5FjBL
+         iai/a4OpijFQm+OMncTOjSBirXjbDpIuMAnD7hQ813L5aaBucdM3fEV0PGI9Aa+8D+6n
+         zz+tiYfvPKN1aUU8ewHe8+pqaBupfXAdj0goWxx1Des+XSZ/DT+zQH0xqBZjjiQpNeiH
+         Y66eMiQ4VLOo8y6zA8pZiIrgdt6kEk/gvgdK8o5dSpDxYQ2SgxEvjTiUXw7X/PRO+CrP
+         XVbA==
+X-Gm-Message-State: AOAM530Hn/cvYTvi2iZC9DDxnf6KP8iuoBUt4sMHf56kWO9kWFuB1PDH
+        B0T5KzgApF6Wld30G4lqu1sEYg==
+X-Google-Smtp-Source: ABdhPJwg9APLF5QDj3ZWbb0zY8K+pD55HInxwlo7zs4IjEZ+8gAm316DirXcyzUK4NPF9AlzQvnsiA==
+X-Received: by 2002:a17:90a:1d08:: with SMTP id c8mr3675584pjd.139.1617701201659;
+        Tue, 06 Apr 2021 02:26:41 -0700 (PDT)
+Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
+        by smtp.gmail.com with ESMTPSA id w7sm13685589pff.208.2021.04.06.02.26.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Apr 2021 02:26:41 -0700 (PDT)
+From:   Greentime Hu <greentime.hu@sifive.com>
+To:     greentime.hu@sifive.com, paul.walmsley@sifive.com, hes@sifive.com,
+        erik.danie@sifive.com, zong.li@sifive.com, bhelgaas@google.com,
+        robh+dt@kernel.org, aou@eecs.berkeley.edu, mturquette@baylibre.com,
+        sboyd@kernel.org, lorenzo.pieralisi@arm.com,
+        p.zabel@pengutronix.de, alex.dewar90@gmail.com,
+        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
+        vidyas@nvidia.com, jh80.chung@samsung.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, helgaas@kernel.org
+Subject: [PATCH v5 0/6] Add SiFive FU740 PCIe host controller driver support
+Date:   Tue,  6 Apr 2021 17:26:28 +0800
+Message-Id: <20210406092634.50465-1-greentime.hu@sifive.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Given that lowlevel drivers usually cannot implement exactly what a
-consumer requests with pwm_apply_state() there is some rounding involved.
+This patchset includes SiFive FU740 PCIe host controller driver. We also
+add pcie_aux clock and pcie_power_on_reset controller to prci driver for
+PCIe driver to use it.
 
-pwm_get_state() traditionally returned the setting that was requested most
-recently by the consumer (opposed to what was actually implemented in
-hardware in reply to the last request). To make this semantic obvious
-rename the function.
+This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon R5
+230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based on
+v5.11 Linux kernel.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- Documentation/driver-api/pwm.rst           |  6 +++-
- drivers/clk/clk-pwm.c                      |  2 +-
- drivers/gpu/drm/i915/display/intel_panel.c |  4 +--
- drivers/input/misc/da7280.c                |  2 +-
- drivers/input/misc/pwm-beeper.c            |  2 +-
- drivers/input/misc/pwm-vibra.c             |  4 +--
- drivers/pwm/core.c                         |  4 +--
- drivers/pwm/pwm-atmel-hlcdc.c              |  2 +-
- drivers/pwm/pwm-atmel.c                    |  2 +-
- drivers/pwm/pwm-imx27.c                    |  2 +-
- drivers/pwm/pwm-rockchip.c                 |  2 +-
- drivers/pwm/pwm-stm32-lp.c                 |  4 +--
- drivers/pwm/pwm-sun4i.c                    |  2 +-
- drivers/pwm/sysfs.c                        | 18 ++++++------
- drivers/regulator/pwm-regulator.c          |  4 +--
- drivers/video/backlight/pwm_bl.c           | 10 +++----
- include/linux/pwm.h                        | 34 ++++++++++++++--------
- 17 files changed, 59 insertions(+), 45 deletions(-)
+Changes in v5:
+ - Fix typo in comments
+ - Keep comments style consistent
+ - Refine some error handling codes
+ - Remove unneeded header file including
+ - Merge fu740_pcie_ltssm_enable implementation to fu740_pcie_start_link
 
-diff --git a/Documentation/driver-api/pwm.rst b/Documentation/driver-api/pwm.rst
-index ab62f1bb0366..381f3c46cdac 100644
---- a/Documentation/driver-api/pwm.rst
-+++ b/Documentation/driver-api/pwm.rst
-@@ -55,7 +55,11 @@ several parameter at once. For example, if you see pwm_config() and
- pwm_{enable,disable}() calls in the same function, this probably means you
- should switch to pwm_apply_state().
- 
--The PWM user API also allows one to query the PWM state with pwm_get_state().
-+The PWM user API also allows one to query the last applied PWM state with
-+pwm_get_last_applied_state(). Note this is different to what the driver has
-+actually implemented if the request cannot be implemented exactly with the
-+hardware in use. There is currently no way for consumers to get the actually
-+implemented settings.
- 
- In addition to the PWM state, the PWM API also exposes PWM arguments, which
- are the reference PWM config one should use on this PWM.
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index da2c8eddfd9f..7cfaff32980b 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -49,7 +49,7 @@ static int clk_pwm_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- 	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
- 	struct pwm_state state;
- 
--	pwm_get_state(clk_pwm->pwm, &state);
-+	pwm_get_last_applied_state(clk_pwm->pwm, &state);
- 
- 	duty->num = state.duty_cycle;
- 	duty->den = state.period;
-diff --git a/drivers/gpu/drm/i915/display/intel_panel.c b/drivers/gpu/drm/i915/display/intel_panel.c
-index 5fdf52643150..3aebf9be6b6a 100644
---- a/drivers/gpu/drm/i915/display/intel_panel.c
-+++ b/drivers/gpu/drm/i915/display/intel_panel.c
-@@ -627,7 +627,7 @@ static u32 ext_pwm_get_backlight(struct intel_connector *connector, enum pipe un
- 	struct intel_panel *panel = &connector->panel;
- 	struct pwm_state state;
- 
--	pwm_get_state(panel->backlight.pwm, &state);
-+	pwm_get_last_applied_state(panel->backlight.pwm, &state);
- 	return pwm_get_relative_duty_cycle(&state, 100);
- }
- 
-@@ -1915,7 +1915,7 @@ static int ext_pwm_setup_backlight(struct intel_connector *connector,
- 
- 	if (pwm_is_enabled(panel->backlight.pwm)) {
- 		/* PWM is already enabled, use existing settings */
--		pwm_get_state(panel->backlight.pwm, &panel->backlight.pwm_state);
-+		pwm_get_last_applied_state(panel->backlight.pwm, &panel->backlight.pwm_state);
- 
- 		level = pwm_get_relative_duty_cycle(&panel->backlight.pwm_state,
- 						    100);
-diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
-index b08610d6e575..409670be1d2b 100644
---- a/drivers/input/misc/da7280.c
-+++ b/drivers/input/misc/da7280.c
-@@ -333,7 +333,7 @@ static int da7280_haptic_set_pwm(struct da7280_haptic *haptics, bool enabled)
- 		return -EINVAL;
- 	}
- 
--	pwm_get_state(haptics->pwm_dev, &state);
-+	pwm_get_last_applied_state(haptics->pwm_dev, &state);
- 	state.enabled = enabled;
- 	if (enabled) {
- 		period_mag_multi = (u64)state.period * haptics->gain;
-diff --git a/drivers/input/misc/pwm-beeper.c b/drivers/input/misc/pwm-beeper.c
-index d6b12477748a..4c5f09201ecf 100644
---- a/drivers/input/misc/pwm-beeper.c
-+++ b/drivers/input/misc/pwm-beeper.c
-@@ -33,7 +33,7 @@ static int pwm_beeper_on(struct pwm_beeper *beeper, unsigned long period)
- 	struct pwm_state state;
- 	int error;
- 
--	pwm_get_state(beeper->pwm, &state);
-+	pwm_get_last_applied_state(beeper->pwm, &state);
- 
- 	state.enabled = true;
- 	state.period = period;
-diff --git a/drivers/input/misc/pwm-vibra.c b/drivers/input/misc/pwm-vibra.c
-index 81e777a04b88..d4e286e50aee 100644
---- a/drivers/input/misc/pwm-vibra.c
-+++ b/drivers/input/misc/pwm-vibra.c
-@@ -48,7 +48,7 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
- 		vibrator->vcc_on = true;
- 	}
- 
--	pwm_get_state(vibrator->pwm, &state);
-+	pwm_get_last_applied_state(vibrator->pwm, &state);
- 	pwm_set_relative_duty_cycle(&state, vibrator->level, 0xffff);
- 	state.enabled = true;
- 
-@@ -59,7 +59,7 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
- 	}
- 
- 	if (vibrator->pwm_dir) {
--		pwm_get_state(vibrator->pwm_dir, &state);
-+		pwm_get_last_applied_state(vibrator->pwm_dir, &state);
- 		state.duty_cycle = vibrator->direction_duty_cycle;
- 		state.enabled = true;
- 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index a8eff4b3ee36..cc8a948098eb 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -697,7 +697,7 @@ int pwm_adjust_config(struct pwm_device *pwm)
- 	struct pwm_args pargs;
- 
- 	pwm_get_args(pwm, &pargs);
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	/*
- 	 * If the current period is zero it means that either the PWM driver
-@@ -1274,7 +1274,7 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		struct pwm_device *pwm = &chip->pwms[i];
- 		struct pwm_state state;
- 
--		pwm_get_state(pwm, &state);
-+		pwm_get_last_applied_state(pwm, &state);
- 
- 		seq_printf(s, " pwm-%-3d (%-20.20s):", i, pwm->label);
- 
-diff --git a/drivers/pwm/pwm-atmel-hlcdc.c b/drivers/pwm/pwm-atmel-hlcdc.c
-index dcbc0489dfd4..cb5fae4056ec 100644
---- a/drivers/pwm/pwm-atmel-hlcdc.c
-+++ b/drivers/pwm/pwm-atmel-hlcdc.c
-@@ -198,7 +198,7 @@ static int atmel_hlcdc_pwm_resume(struct device *dev)
- 	struct pwm_state state;
- 	int ret;
- 
--	pwm_get_state(&chip->chip.pwms[0], &state);
-+	pwm_get_last_applied_state(&chip->chip.pwms[0], &state);
- 
- 	/* Re-enable the periph clock it was stopped during suspend. */
- 	if (!state.enabled) {
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 5813339b597b..4eee895471a7 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -241,7 +241,7 @@ static int atmel_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	u32 pres, val;
- 	int ret;
- 
--	pwm_get_state(pwm, &cstate);
-+	pwm_get_last_applied_state(pwm, &cstate);
- 
- 	if (state->enabled) {
- 		if (cstate.enabled &&
-diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-index 18055326a2f3..b9d54e209a5c 100644
---- a/drivers/pwm/pwm-imx27.c
-+++ b/drivers/pwm/pwm-imx27.c
-@@ -223,7 +223,7 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	int ret;
- 	u32 cr;
- 
--	pwm_get_state(pwm, &cstate);
-+	pwm_get_last_applied_state(pwm, &cstate);
- 
- 	clkrate = clk_get_rate(imx->clk_per);
- 	c = clkrate * state->period;
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 6ad7d0a50aed..16f99369f4c5 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -198,7 +198,7 @@ static int rockchip_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (ret)
- 		return ret;
- 
--	pwm_get_state(pwm, &curstate);
-+	pwm_get_last_applied_state(pwm, &curstate);
- 	enabled = curstate.enabled;
- 
- 	if (state->polarity != curstate.polarity && enabled &&
-diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
-index 134c14621ee0..c9e10aa1a8ef 100644
---- a/drivers/pwm/pwm-stm32-lp.c
-+++ b/drivers/pwm/pwm-stm32-lp.c
-@@ -41,7 +41,7 @@ static int stm32_pwm_lp_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	bool reenable;
- 	int ret;
- 
--	pwm_get_state(pwm, &cstate);
-+	pwm_get_last_applied_state(pwm, &cstate);
- 	reenable = !cstate.enabled;
- 
- 	if (!state->enabled) {
-@@ -235,7 +235,7 @@ static int __maybe_unused stm32_pwm_lp_suspend(struct device *dev)
- 	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
- 	struct pwm_state state;
- 
--	pwm_get_state(&priv->chip.pwms[0], &state);
-+	pwm_get_last_applied_state(&priv->chip.pwms[0], &state);
- 	if (state.enabled) {
- 		dev_err(dev, "The consumer didn't stop us (%s)\n",
- 			priv->chip.pwms[0].label);
-diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-index ce5c4fc8da6f..b4ae8190c3e9 100644
---- a/drivers/pwm/pwm-sun4i.c
-+++ b/drivers/pwm/pwm-sun4i.c
-@@ -239,7 +239,7 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	unsigned long now;
- 	bool bypass;
- 
--	pwm_get_state(pwm, &cstate);
-+	pwm_get_last_applied_state(pwm, &cstate);
- 
- 	if (!cstate.enabled) {
- 		ret = clk_prepare_enable(sun4i_pwm->clk);
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 9903c3a7eced..341def50e2df 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -40,7 +40,7 @@ static ssize_t period_show(struct device *child,
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return sprintf(buf, "%llu\n", state.period);
- }
-@@ -60,7 +60,7 @@ static ssize_t period_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	state.period = val;
- 	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
-@@ -75,7 +75,7 @@ static ssize_t duty_cycle_show(struct device *child,
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return sprintf(buf, "%llu\n", state.duty_cycle);
- }
-@@ -95,7 +95,7 @@ static ssize_t duty_cycle_store(struct device *child,
- 		return ret;
- 
- 	mutex_lock(&export->lock);
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	state.duty_cycle = val;
- 	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
-@@ -110,7 +110,7 @@ static ssize_t enable_show(struct device *child,
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return sprintf(buf, "%d\n", state.enabled);
- }
-@@ -130,7 +130,7 @@ static ssize_t enable_store(struct device *child,
- 
- 	mutex_lock(&export->lock);
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	switch (val) {
- 	case 0:
-@@ -159,7 +159,7 @@ static ssize_t polarity_show(struct device *child,
- 	const char *polarity = "unknown";
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	switch (state.polarity) {
- 	case PWM_POLARITY_NORMAL:
-@@ -192,7 +192,7 @@ static ssize_t polarity_store(struct device *child,
- 		return -EINVAL;
- 
- 	mutex_lock(&export->lock);
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	state.polarity = polarity;
- 	ret = pwm_apply_state(pwm, &state);
- 	mutex_unlock(&export->lock);
-@@ -392,7 +392,7 @@ static struct pwm_export *pwm_class_get_state(struct device *parent,
- 	put_device(child);	/* for device_find_child() */
- 
- 	mutex_lock(&export->lock);
--	pwm_get_state(pwm, state);
-+	pwm_get_last_applied_state(pwm, state);
- 
- 	return export;
- }
-diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
-index 7629476d94ae..e8ada29f340a 100644
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@ -58,7 +58,7 @@ static void pwm_regulator_init_state(struct regulator_dev *rdev)
- 	unsigned int dutycycle;
- 	int i;
- 
--	pwm_get_state(drvdata->pwm, &pwm_state);
-+	pwm_get_last_applied_state(drvdata->pwm, &pwm_state);
- 	dutycycle = pwm_get_relative_duty_cycle(&pwm_state, 100);
- 
- 	for (i = 0; i < rdev->desc->n_voltages; i++) {
-@@ -155,7 +155,7 @@ static int pwm_regulator_get_voltage(struct regulator_dev *rdev)
- 	unsigned int diff_duty;
- 	unsigned int voltage;
- 
--	pwm_get_state(drvdata->pwm, &pstate);
-+	pwm_get_last_applied_state(drvdata->pwm, &pstate);
- 
- 	voltage = pwm_get_relative_duty_cycle(&pstate, duty_unit);
- 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index e48fded3e414..df950d9b3738 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -44,7 +44,7 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb)
- 	struct pwm_state state;
- 	int err;
- 
--	pwm_get_state(pb->pwm, &state);
-+	pwm_get_last_applied_state(pb->pwm, &state);
- 	if (pb->enabled)
- 		return;
- 
-@@ -68,7 +68,7 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
- {
- 	struct pwm_state state;
- 
--	pwm_get_state(pb->pwm, &state);
-+	pwm_get_last_applied_state(pb->pwm, &state);
- 	if (!pb->enabled)
- 		return;
- 
-@@ -92,7 +92,7 @@ static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
- 	struct pwm_state state;
- 	u64 duty_cycle;
- 
--	pwm_get_state(pb->pwm, &state);
-+	pwm_get_last_applied_state(pb->pwm, &state);
- 
- 	if (pb->levels)
- 		duty_cycle = pb->levels[brightness];
-@@ -115,7 +115,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
- 		brightness = pb->notify(pb->dev, brightness);
- 
- 	if (brightness > 0) {
--		pwm_get_state(pb->pwm, &state);
-+		pwm_get_last_applied_state(pb->pwm, &state);
- 		state.duty_cycle = compute_duty_cycle(pb, brightness);
- 		pwm_apply_state(pb->pwm, &state);
- 		pwm_backlight_power_on(pb);
-@@ -567,7 +567,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 		 */
- 
- 		/* Get the PWM period (in nanoseconds) */
--		pwm_get_state(pb->pwm, &state);
-+		pwm_get_last_applied_state(pb->pwm, &state);
- 
- 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
- 						       state.period);
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index e4d84d4db293..35782cd4075b 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -88,12 +88,18 @@ struct pwm_device {
- };
- 
- /**
-- * pwm_get_state() - retrieve the current PWM state
-+ * pwm_get_last_applied_state() - retrieve the PWM state that was passed to
-+ *                                pwm_apply_state() before
-+ *
-+ * If pwm_apply_state() wasn't called before the state returned might be what is
-+ * actually implemented in the hardware (if supported by the driver) or a
-+ * default setting.
-+ *
-  * @pwm: PWM device
-  * @state: state to fill with the current PWM state
-  */
--static inline void pwm_get_state(const struct pwm_device *pwm,
--				 struct pwm_state *state)
-+static inline void pwm_get_last_applied_state(const struct pwm_device *pwm,
-+					      struct pwm_state *state)
- {
- 	*state = pwm->state;
- }
-@@ -102,7 +108,7 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return state.enabled;
- }
-@@ -117,7 +123,7 @@ static inline u64 pwm_get_period(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return state.period;
- }
-@@ -132,7 +138,7 @@ static inline u64 pwm_get_duty_cycle(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return state.duty_cycle;
- }
-@@ -141,7 +147,7 @@ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 
- 	return state.polarity;
- }
-@@ -175,7 +181,7 @@ static inline void pwm_init_state(const struct pwm_device *pwm,
- 	struct pwm_args args;
- 
- 	/* First get the current state. */
--	pwm_get_state(pwm, state);
-+	pwm_get_last_applied_state(pwm, state);
- 
- 	/* Then fill it with the reference config */
- 	pwm_get_args(pwm, &args);
-@@ -195,8 +201,12 @@ static inline void pwm_init_state(const struct pwm_device *pwm,
-  *
-  * For example if you want to get the duty_cycle expressed in percent, call:
-  *
-- * pwm_get_state(pwm, &state);
-+ * pwm_get_last_applied_state(pwm, &state);
-  * duty = pwm_get_relative_duty_cycle(&state, 100);
-+ *
-+ * Note however that this example yields the relative duty cycle that was
-+ * requested before which doesn't necessarily exactly matches what is actually
-+ * provided by the hardware.
-  */
- static inline unsigned int
- pwm_get_relative_duty_cycle(const struct pwm_state *state, unsigned int scale)
-@@ -337,7 +347,7 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
- 	if (duty_ns < 0 || period_ns < 0)
- 		return -EINVAL;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	if (state.duty_cycle == duty_ns && state.period == period_ns)
- 		return 0;
- 
-@@ -359,7 +369,7 @@ static inline int pwm_enable(struct pwm_device *pwm)
- 	if (!pwm)
- 		return -EINVAL;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	if (state.enabled)
- 		return 0;
- 
-@@ -378,7 +388,7 @@ static inline void pwm_disable(struct pwm_device *pwm)
- 	if (!pwm)
- 		return;
- 
--	pwm_get_state(pwm, &state);
-+	pwm_get_last_applied_state(pwm, &state);
- 	if (!state.enabled)
- 		return;
- 
+Changes in v4:
+ - Fix Wunused-but-set-variable warning in prci driver
+
+Changes in v3:
+ - Remove items that has been defined
+ - Refine format of sifive,fu740-pcie.yaml
+ - Replace perstn-gpios with the common one
+ - Change DBI mapping space to 2GB from 4GB
+ - Refine drivers/reset/Kconfig
+
+Changes in v2:
+ - Refine codes based on reviewers' feedback
+ - Remove define and use the common one
+ - Replace __raw_writel with writel_relaxed
+ - Split fu740_phyregreadwrite to write function
+ - Use readl_poll_timeout in stead of while loop checking
+ - Use dwc common codes
+ - Use gpio descriptors and the gpiod_* api.
+ - Replace devm_ioremap_resource with devm_platform_ioremap_resource_byname
+ - Replace devm_reset_control_get with devm_reset_control_get_exclusive
+ - Add more comments for delay and sleep
+ - Remove "phy ? x : y" expressions
+ - Refine code logic to remove possible infinite loop
+ - Replace magic number with meaningful define
+ - Remove fu740_pcie_pm_ops
+ - Use builtin_platform_driver
+
+Greentime Hu (5):
+  clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
+  clk: sifive: Use reset-simple in prci driver for PCIe driver
+  MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
+  dt-bindings: PCI: Add SiFive FU740 PCIe host controller
+  riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
+
+Paul Walmsley (1):
+  PCI: fu740: Add SiFive FU740 PCIe host controller driver
+
+ .../bindings/pci/sifive,fu740-pcie.yaml       | 113 +++++++
+ MAINTAINERS                                   |   8 +
+ arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  33 ++
+ drivers/clk/sifive/Kconfig                    |   2 +
+ drivers/clk/sifive/fu740-prci.c               |  11 +
+ drivers/clk/sifive/fu740-prci.h               |   2 +-
+ drivers/clk/sifive/sifive-prci.c              |  54 +++
+ drivers/clk/sifive/sifive-prci.h              |  13 +
+ drivers/pci/controller/dwc/Kconfig            |   9 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-fu740.c       | 308 ++++++++++++++++++
+ drivers/reset/Kconfig                         |   1 +
+ include/dt-bindings/clock/sifive-fu740-prci.h |   1 +
+ 13 files changed, 555 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
+
 -- 
 2.30.2
 
