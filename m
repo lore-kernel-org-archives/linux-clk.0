@@ -2,139 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B856CC43460
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754F7C43460
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77D7B613C9
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 434C5613CD
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Apr 2021 09:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244874AbhDFJ1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 05:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240874AbhDFJ1N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 05:27:13 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CE8C061761
-        for <linux-clk@vger.kernel.org>; Tue,  6 Apr 2021 02:27:05 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id d10so5072594pgf.12
-        for <linux-clk@vger.kernel.org>; Tue, 06 Apr 2021 02:27:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bJDxiGn0zb+AtBhh3GrH3c02J/dSNj0T0Os6e9JU2HI=;
-        b=CkAK3AMNLVaTU0AJ+BKXafxyyc2oHDGM5ISRrZstIeYm0ynPQZLoUEbNCbeyNys0US
-         wvN6aKbq1RQwZcbDiughkylaiLEy5dzBC5DOItvgLBPmNMJskYLL8TfUaI9vtKagynM/
-         tJ+NdQww5Jl1iuVgbSIele56yUgv/6Zf1Fm14khEApXkHmRhy4xVSWdIpbjyQVhhapth
-         XXlnJmkhM4cRnqZMS9oAg7MaIJE9REDQNDPj0PTC5azcN4V9DgsjVdCjhdEcZ0WiPAF7
-         yln8aVHSakNPUsVmCLU7eAngNHG7lT3F63G6olwtImNY8A354i+NEIuidgqUB73U0eC2
-         gpUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bJDxiGn0zb+AtBhh3GrH3c02J/dSNj0T0Os6e9JU2HI=;
-        b=t3G0OA1OI2Bcci90BcJR/8LM+sQ39U3DdQjI32GRGVHlksGdRg5ge+VwYdob9hZVj7
-         fahi8XAnTLeRxgEXmE1oB6KVooHfDyhl22x0OxAvS/XC1WTTAVKWlV6pSkjxK2I+VMew
-         GgGyLvpoUEe76U7yhnoeNEcd7Yu+tMPgB/nZI/XZ62yZTqlkomZ7a5wBsMS36w56Z6mB
-         3xyziCPEoMxCAPWwW6Y2ugdYc8Y3nS7cYjMZ07Izab2E8cUyLa9mnsXUTtwEZymcfLOJ
-         3hYAvg2qNynBfSgF2PiPN+vJrPSg3Fk+uxILYwTkfCCf94EPWwSUfYBfqafaLBlAiU++
-         0iqQ==
-X-Gm-Message-State: AOAM533kE0MAIXm5RNeIwPN0LH3GtUdTpBpxd6pP4ZLH4guEHkRpBQe4
-        2HkGYvlJLdmmCkzk7iSPZE3XAw==
-X-Google-Smtp-Source: ABdhPJydGIUF/6dUeUWIt/R7Abd1V20Uua9AfyQ1Nildjd522JxEtojvsjGsv0bmaULXYZeNuwupGA==
-X-Received: by 2002:a63:74c:: with SMTP id 73mr26216577pgh.200.1617701225074;
-        Tue, 06 Apr 2021 02:27:05 -0700 (PDT)
-Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
-        by smtp.gmail.com with ESMTPSA id w7sm13685589pff.208.2021.04.06.02.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 02:27:04 -0700 (PDT)
-From:   Greentime Hu <greentime.hu@sifive.com>
-To:     greentime.hu@sifive.com, paul.walmsley@sifive.com, hes@sifive.com,
-        erik.danie@sifive.com, zong.li@sifive.com, bhelgaas@google.com,
-        robh+dt@kernel.org, aou@eecs.berkeley.edu, mturquette@baylibre.com,
-        sboyd@kernel.org, lorenzo.pieralisi@arm.com,
-        p.zabel@pengutronix.de, alex.dewar90@gmail.com,
-        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
-        vidyas@nvidia.com, jh80.chung@samsung.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, helgaas@kernel.org
-Cc:     Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v5 6/6] riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
-Date:   Tue,  6 Apr 2021 17:26:34 +0800
-Message-Id: <20210406092634.50465-7-greentime.hu@sifive.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210406092634.50465-1-greentime.hu@sifive.com>
-References: <20210406092634.50465-1-greentime.hu@sifive.com>
+        id S237384AbhDFJdo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 05:33:44 -0400
+Received: from mga12.intel.com ([192.55.52.136]:14984 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236696AbhDFJdn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Apr 2021 05:33:43 -0400
+IronPort-SDR: nAQjvgOFpT76wHt/4rwAtdtVM+I8aU2LkBV0j3hYQEzISCCMCT9ZyS0fQq/9qKYWSduU4RCbMx
+ TwZF7dbCmFTw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9945"; a="172502141"
+X-IronPort-AV: E=Sophos;i="5.81,309,1610438400"; 
+   d="scan'208";a="172502141"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2021 02:33:34 -0700
+IronPort-SDR: yNx+NRizR5mkR8GcZPzlI8J7Pj0MjByUv03J9PMpLpN8+8z9CtxNE4aHX/zeWYKFAFUMA0T4x4
+ hC15JwVa90TA==
+X-IronPort-AV: E=Sophos;i="5.81,309,1610438400"; 
+   d="scan'208";a="457817452"
+Received: from oowomilo-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.33.55])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2021 02:33:03 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-pwm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH] pwm: Rename pwm_get_state() to better reflect its semantic
+In-Reply-To: <20210406073036.26857-1-u.kleine-koenig@pengutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210406073036.26857-1-u.kleine-koenig@pengutronix.de>
+Date:   Tue, 06 Apr 2021 12:32:58 +0300
+Message-ID: <87tuojlpv9.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
----
- arch/riscv/boot/dts/sifive/fu740-c000.dtsi | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+On Tue, 06 Apr 2021, Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
+> Given that lowlevel drivers usually cannot implement exactly what a
+> consumer requests with pwm_apply_state() there is some rounding involved.
+>
+> pwm_get_state() traditionally returned the setting that was requested most
+> recently by the consumer (opposed to what was actually implemented in
+> hardware in reply to the last request). To make this semantic obvious
+> rename the function.
+>
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
 
-diff --git a/arch/riscv/boot/dts/sifive/fu740-c000.dtsi b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
-index d1bb22b11920..b2317c8e3a80 100644
---- a/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
-+++ b/arch/riscv/boot/dts/sifive/fu740-c000.dtsi
-@@ -158,6 +158,7 @@ prci: clock-controller@10000000 {
- 			reg = <0x0 0x10000000 0x0 0x1000>;
- 			clocks = <&hfclk>, <&rtcclk>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 		uart0: serial@10010000 {
- 			compatible = "sifive,fu740-c000-uart", "sifive,uart0";
-@@ -288,5 +289,37 @@ gpio: gpio@10060000 {
- 			clocks = <&prci PRCI_CLK_PCLK>;
- 			status = "disabled";
- 		};
-+		pcie@e00000000 {
-+			compatible = "sifive,fu740-pcie";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			reg = <0xe 0x00000000 0x0 0x80000000>,
-+			      <0xd 0xf0000000 0x0 0x10000000>,
-+			      <0x0 0x100d0000 0x0 0x1000>;
-+			reg-names = "dbi", "config", "mgmt";
-+			device_type = "pci";
-+			dma-coherent;
-+			bus-range = <0x0 0xff>;
-+			ranges = <0x81000000  0x0 0x60080000  0x0 0x60080000 0x0 0x10000>,      /* I/O */
-+				 <0x82000000  0x0 0x60090000  0x0 0x60090000 0x0 0xff70000>,    /* mem */
-+				 <0x82000000  0x0 0x70000000  0x0 0x70000000 0x0 0x1000000>,    /* mem */
-+				 <0xc3000000 0x20 0x00000000 0x20 0x00000000 0x20 0x00000000>;  /* mem prefetchable */
-+			num-lanes = <0x8>;
-+			interrupts = <56>, <57>, <58>, <59>, <60>, <61>, <62>, <63>, <64>;
-+			interrupt-names = "msi", "inta", "intb", "intc", "intd";
-+			interrupt-parent = <&plic0>;
-+			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-+			interrupt-map = <0x0 0x0 0x0 0x1 &plic0 57>,
-+					<0x0 0x0 0x0 0x2 &plic0 58>,
-+					<0x0 0x0 0x0 0x3 &plic0 59>,
-+					<0x0 0x0 0x0 0x4 &plic0 60>;
-+			clock-names = "pcie_aux";
-+			clocks = <&prci PRCI_CLK_PCIE_AUX>;
-+			pwren-gpios = <&gpio 5 0>;
-+			reset-gpios = <&gpio 8 0>;
-+			resets = <&prci 4>;
-+			status = "okay";
-+		};
- 	};
- };
+>  drivers/gpu/drm/i915/display/intel_panel.c |  4 +--
+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+
+
 -- 
-2.30.2
-
+Jani Nikula, Intel Open Source Graphics Center
