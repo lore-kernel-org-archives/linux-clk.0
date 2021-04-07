@@ -2,124 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1F7C43461
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 07:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35143C43460
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 07:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF0A613B8
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 07:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1577761369
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 07:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346051AbhDGHH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 03:07:59 -0400
-Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:37081 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239630AbhDGHH6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 03:07:58 -0400
-Received: from oxapps-11-062.iol.local ([10.101.8.72])
-        by smtp-18.iol.local with ESMTPA
-        id U2HxlPMnAgCmjU2Hxl8ysS; Wed, 07 Apr 2021 09:07:45 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1617779265; bh=slIShbV1YkY+zgU6LQeffA5sjh62E5ntWRjeWAOcOxo=;
-        h=From;
-        b=OOhHe0HFgsfQyxVnWChjeIHWLpZG2r5gx6CbfKY/XdHQvR8/jndm6kqGN5SNOhoqr
-         MaOAdeaBHpEj3DaZUetKApBXvyDl5YVcgy8HP+BxtaXOyUoJEYbPLE2nlQz47onR+t
-         8dCA8lB9UTgFrNznYrHwL6YfPVvk+47iDgsbIWrjEr4PVWtm6sbFWkId5b9jKnKDQ7
-         0wwoxMORqviXRNNcyrelQWiSOa0+vYrftpXmYgyfkD/wRPrN7PbhiAhDGMb1FPaaJa
-         eDv9QDqczgJqY0pBMCftB2nOYErICn7CD89d1Qc0U/pBvtykB6RSxlCPO95yx3ulVF
-         xzM7kUZFwkuQw==
-X-CNFS-Analysis: v=2.4 cv=X5uXlEfe c=1 sm=1 tr=0 ts=606d5a41 cx=a_exe
- a=ArCppHiS2LX9rvfu7+HyXQ==:117 a=C-c6dMTymFoA:10 a=IkcTkHD0fZMA:10
- a=vesc6bHxzc4A:10 a=VwQbUJbxAAAA:8 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8
- a=FNPkBufVjW-pSWU66ZIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=IC2XNlieTeVoXbcui8wp:22
-Date:   Wed, 7 Apr 2021 09:07:45 +0200 (CEST)
-From:   Dario Binacchi <dariobin@libero.it>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+        id S1349420AbhDGHYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 03:24:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244276AbhDGHYz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 03:24:55 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D614C06174A
+        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 00:24:46 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lU2YK-00056i-DB; Wed, 07 Apr 2021 09:24:40 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lU2YJ-0008B6-QN; Wed, 07 Apr 2021 09:24:39 +0200
+Date:   Wed, 7 Apr 2021 09:24:39 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Message-ID: <1044574275.383115.1617779265390@mail1.libero.it>
-In-Reply-To: <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
-References: <20210402192054.7934-1-dariobin@libero.it>
- <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
- <1727466283.11523.1617746554330@mail1.libero.it>
- <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] spi: davinci: Simplify using
+ devm_clk_get_enabled()
+Message-ID: <20210407072439.niicbbvdzuegkagf@pengutronix.de>
+References: <20210330181755.204339-1-u.kleine-koenig@pengutronix.de>
+ <20210330181755.204339-7-u.kleine-koenig@pengutronix.de>
+ <20210331120212.GB4758@sirena.org.uk>
+ <20210406065727.i7wbve2ihdblq24p@pengutronix.de>
+ <CAMuHMdXD3UgbLWD2pEc-Y=OstdYn0riuBaXFZvwZMQ0Xem6soA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
-X-Originating-IP: 185.33.57.41
-X-Originating-Client: open-xchange-appsuite
-x-libjamsun: 4B1r2KzBl4CpwZXlo+hXrxuxGTg7xe5x
-x-libjamv: GQ+1IhXvsBI=
-X-CMAE-Envelope: MS4xfHfxE8O88fnOmjkXI5v0GaptnmPsV5ss65BoVwigbqdYVHsVbsa+T9D4kj/44XpP0xepNXZYcrVSZdiEwnTWDc6knltvuuv+B70YwruAw1yZZg5SFNu2
- V7t5OTCSrMxQxisucWGltfXJ77rqnGtEMT97cRiM3GW0jcFg+D5uc6wdoTCpufNirHQfvB7Outl6WzC632jicj7Hh9G/MVRE/9MNu+zzQcGtuPs+QvhBugKZ
- K1HnTECmPzC2zD/uHQ75HVUunx3/8qsl517fwEaz7fo1RC9GK29ft78xRbvDgBB8ROkW6a8d/vUfG/WvqmOaffJ29W+Tr9pkuWqXbJQ7fa19RE6cSjjhkQS4
- IBpFSG3KutNkmTX8VGv9jkL9J1KHdB8UKICiVRITK37O+pmq7/rh1Un9JcDddbcXWXfP2c73B/sWKU+z5mxcH6NIlm212q/dk/8fq0D0FG3TfLkXPDhHYBgP
- w3H0CDAfqaDGAaIB+4v1LmgH6G1Xdk1CPSb8yA==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="po3m4xovm6fxqdn6"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXD3UgbLWD2pEc-Y=OstdYn0riuBaXFZvwZMQ0Xem6soA@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-> Il 07/04/2021 03:16 Rob Herring <robh+dt@kernel.org> ha scritto:
-> 
->  
-> On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
-> >
-> >
-> > > Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+--po3m4xovm6fxqdn6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 07, 2021 at 09:00:33AM +0200, Geert Uytterhoeven wrote:
+> Hi Uwe,
+>=20
+> I'm not Mark, but I'd like to share my 2=E2=82=ACc.
+>=20
+> On Tue, Apr 6, 2021 at 3:43 PM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+> > On Wed, Mar 31, 2021 at 01:02:12PM +0100, Mark Brown wrote:
+> > > On Tue, Mar 30, 2021 at 08:17:55PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > > > devm_clk_get_enabled() returns the clk already (prepared and) enabl=
+ed
+> > > > and the automatically called cleanup cares for disabling (and
+> > > > unpreparing). So simplify .probe() and .remove() accordingly.
 > > >
-> > >
-> > > On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
-> > > >
-> > > >
-> > > > The series comes from my commit in U-boot
-> > > > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
-> > > > and from the subsequent exchange of emails at the end of which I was
-> > > > suggested to send the patch to the linux kernel
-> > > > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
-> > >
-> > > It's 'ranges' that determines translatable which is missing from the
-> > > DT. This should have not had a 0 size either though maybe we could
-> > > support that.
+> > > Acked-by: Mark Brown <broonie@kernel.org>
 > >
-> > I have replied to the email you sent to the u-boot mailing list
-> >
-> > >
-> > > Does the DT have to be updated anyways for your spread spectrum support?
-> >
-> > The spread spectrum support patch does not need this patch to work. They belong
-> > to two different series.
-> 
-> That's not what I asked. Is the spread spectrum support forcing a DT
-> update for users? 
+> > Thanks. I wonder what you think about this series. Is it more "Well, ok,
+> > if you must, the change you did to this spi driver looks correct." or
+> > "This is a good simplification and a similar change for nearly all other
+> > spi drivers that make use of a clk is possible, too. Dear clk
+> > maintainers, please go forward and apply this useful series."?
+>=20
+> While this simplifies drivers, this makes it harder to add power
+> management by controlling the clocks through Runtime PM later, as that
+> will require reverting the s/devm_clk_get/devm_clk_get_enabled/ again.
 
-Yes, the deltam and modfreq registers must be added to the DPLL clocks. 
+Hmm, if you start with a driver that uses devm_clk_get_enabled() you
+have to do:
 
-> If the DT has to be changed anyways (not really
-> great policy), then you could fix this in the DT at the same time.
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index 63ee918ecdb0..07855f89290e 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -936,7 +936,7 @@ static int davinci_spi_probe(struct platform_device *pd=
+ev)
+=20
+ 	dspi->bitbang.master =3D master;
+=20
+-	dspi->clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
++	dspi->clk =3D devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(dspi->clk)) {
+ 		ret =3D -ENODEV;
+ 		goto free_master;
 
-I could put the fix to the device tree in that series, although I wouldn't 
-create a single patch to fix and add the SSC registers. First the size-cells = <0> 
-fix patch and then the SSC patch. 
-Do you agree?
+(+ adding runtime PM of course). When you start with the previous state
+of the driver you have to do:
 
-Thanks and regards,
-Dario
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index 7453a1dbbc06..07855f89290e 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -941,9 +941,6 @@ static int davinci_spi_probe(struct platform_device *pd=
+ev)
+ 		ret =3D -ENODEV;
+ 		goto free_master;
+ 	}
+-	ret =3D clk_prepare_enable(dspi->clk);
+-	if (ret)
+-		goto free_master;
+=20
+ 	master->use_gpio_descriptors =3D true;
+ 	master->dev.of_node =3D pdev->dev.of_node;
+@@ -968,7 +965,7 @@ static int davinci_spi_probe(struct platform_device *pd=
+ev)
+=20
+ 	ret =3D davinci_spi_request_dma(dspi);
+ 	if (ret =3D=3D -EPROBE_DEFER) {
+-		goto free_clk;
++		goto free_master;
+ 	} else if (ret) {
+ 		dev_info(&pdev->dev, "DMA is not supported (%d)\n", ret);
+ 		dspi->dma_rx =3D NULL;
+@@ -1012,8 +1009,6 @@ static int davinci_spi_probe(struct platform_device *=
+pdev)
+ 		dma_release_channel(dspi->dma_rx);
+ 		dma_release_channel(dspi->dma_tx);
+ 	}
+-free_clk:
+-	clk_disable_unprepare(dspi->clk);
+ free_master:
+ 	spi_master_put(master);
+ err:
+@@ -1039,8 +1034,6 @@ static int davinci_spi_remove(struct platform_device =
+*pdev)
+=20
+ 	spi_bitbang_stop(&dspi->bitbang);
+=20
+-	clk_disable_unprepare(dspi->clk);
+-
+ 	if (dspi->dma_rx) {
+ 		dma_release_channel(dspi->dma_rx);
+ 		dma_release_channel(dspi->dma_tx);
 
-> 
-> Rob
+(+ again adding runtime PM of course). Do you really think the latter is
+the easier approach? Or what am I missing?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--po3m4xovm6fxqdn6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBtXjQACgkQwfwUeK3K
+7AkD8wf9Fi9020AeaOFzrLUuf+rXxbiQk3LyA26ozpXIKcW34B2wswDxLu/NWz+l
+NdU5rOm0oW40wAU5V2yfVg6w34N0Wt2PzWlKdWpUR3/reOxbmrxqD5baE7LyJUYN
+Z4H8pXPSl1TtqflKOC+MKF643mHLk7VyO+5QUFo7w9qfuKXV/3OWmJfTMVMeziSQ
+PHy10q1vup2gFe1w+TPmHuoj1/jPqtW7ziaNKrvKcIOPfDkYcPWP8frLorhx5/FP
+18X5bKpxDYnxaXZn5+/zXVJZdTV1lco1mMQaR2pGBl0wBPTcSGn886+KrjuLM3uv
+3Qy3jfrxldrf7skMOFiYMb1dQS6C5w==
+=DHcI
+-----END PGP SIGNATURE-----
+
+--po3m4xovm6fxqdn6--
