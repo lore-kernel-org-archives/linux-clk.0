@@ -2,304 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33BAC43603
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 00:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BD5C433B4
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 01:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA52613C2
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 00:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA036124B
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 01:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347619AbhDGAyC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 20:54:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347611AbhDGAyB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 20:54:01 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C00C061756;
-        Tue,  6 Apr 2021 17:53:52 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id v70so17067598qkb.8;
-        Tue, 06 Apr 2021 17:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uqirrx4SPmJmI/2P13aaHk5XOPHnCkFm9Zu8TIQzgnA=;
-        b=dDmpGeOFyQuHHTjpOP+0Nn6fSqB1Hh2Zw64Iif+etLDWTpLZ3Zo40EeQNKCcCqhmOi
-         zZRllMrbqkjsa8dnFKErkcyZH4w63SBPLSnO1RrVmyCeyMWoAVZhwpirP0xDFJMmWjGP
-         DtdJedLbxPwMXaR0ZbZexrcgj6j9yei03bybM7TK3Au6qyefOQQpaSqwPBmQk6jIOkGh
-         P5BgSZsoUc5pdvwmoWO9SmycoZFLhaDJ4Kc2RCB1b8+jwaoEE5komAWIuftBKW/gECC1
-         FtGfTI735lPTogFwGlz4Lm4YseBOuejV60j4z2sQqEICQ7X6x0P4C7T+YUT2O+LVC5Ad
-         EX5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uqirrx4SPmJmI/2P13aaHk5XOPHnCkFm9Zu8TIQzgnA=;
-        b=WRtEU8WGPATfcMj7ho08CvLzfmFpbq9Q3/JdtvRl742EOTRy+7cFIC6kE9YM80r1+Z
-         QKedujVeQi4/MSNfFbDC36VyLfSgmexa1EmqIBgipX6aS3EXOpKBbBW1/SG1AiETEVc6
-         mWsbAMfuHvZ7XJdE4WBuVK6ze2/CW6KI3qvsuIVd6xeZj+CkJuCHKnY3T+559aL679/T
-         z6XoU6jbUlmCHCeIgh9fLDjyKYKjWh/lDqJGLn44qRWb2+JDyd37/qDTt1aNgTqeA80T
-         kXPJ+/UThQ8TtPmqAL6fnKFB4Py32wB+iaddf+TWUGYJTUwxIfhbYvvLgvOORmYjz+yC
-         iN8g==
-X-Gm-Message-State: AOAM533zVuh/w9Rp0mgno3KGE8T5WSb3umQfjwwH2jSKBuFG5qKb6IFX
-        N3jCfZIlynYU7zdoF3ocbVUcaDjneeE3JHiX
-X-Google-Smtp-Source: ABdhPJzzGGfCp5SmXl5L4JcSIjQX1k2NWRxgxwQHC57ehhICYcRxhLTPTKhsHVjQltqTSceS7ojrjA==
-X-Received: by 2002:a37:ad0a:: with SMTP id f10mr709314qkm.384.1617756832136;
-        Tue, 06 Apr 2021 17:53:52 -0700 (PDT)
-Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id l9sm15776728qtv.65.2021.04.06.17.53.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 17:53:51 -0700 (PDT)
-From:   Liam Beguin <liambeguin@gmail.com>
-To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org
-Subject: [PATCH v4 3/3] dt-bindings: clock: add ti,lmk04832 bindings
-Date:   Tue,  6 Apr 2021 20:53:30 -0400
-Message-Id: <20210407005330.2890430-4-liambeguin@gmail.com>
-X-Mailer: git-send-email 2.30.1.489.g328c10930387
-In-Reply-To: <20210407005330.2890430-1-liambeguin@gmail.com>
-References: <20210407005330.2890430-1-liambeguin@gmail.com>
+        id S232741AbhDGBRL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 21:17:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229612AbhDGBRK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Apr 2021 21:17:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B8931613B8;
+        Wed,  7 Apr 2021 01:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617758222;
+        bh=zBigBeAVRRnBSblYtyRYt/CjlLIZ5EhRSivRJQIiig8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XA1UVdnGqPBxjfLV2XYA+Kk5KAJ5EurEyTpCNRhO3Z95dJbmGsdSpaKVBW4AnJH2G
+         FPgD++bew9rlYPSH+I3syHrrtf7pTv2RvdcntSYqN2j/Wx++MHVUljAhCdadv43PvY
+         /iwplBLrge0V3i4xzT2e8vv00eP4iSzoLGDCAvkOLiMUUHDi76Ks4qrBKwB2jxyuoE
+         a3h0XgAnHi43gS+/yhqUJwNPwopGPpVEGClI/1BavxhVoGCM3Tx7P6gFAbERd/mtwi
+         g+PKj3CyaAfqNEhUD5lVaMsj8OWfG2Y4gJhJsrufQBSw+2/ZuntuTaln69fi9aTKDw
+         gfz7dnR5Rpw3Q==
+Received: by mail-ed1-f49.google.com with SMTP id dd20so11553525edb.12;
+        Tue, 06 Apr 2021 18:17:01 -0700 (PDT)
+X-Gm-Message-State: AOAM532MEa0sm4EtZro/l/JaYRz8lOb8K+jb+LCsfkXv7dhkmzr1E2rU
+        EWZM96SIl1LcJKy+KPtHHIEfrlijr0Z9kN2k2g==
+X-Google-Smtp-Source: ABdhPJx7e0RDh+oY28QS2hpRLsqDzP7gWN95sa8k6OGQYV4Y9wj+aweFDC2W6/enfc0eeSHbRjLltO2gK/q2hwAQ0JM=
+X-Received: by 2002:a05:6402:1b1c:: with SMTP id by28mr1392400edb.62.1617758220158;
+ Tue, 06 Apr 2021 18:17:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210402192054.7934-1-dariobin@libero.it> <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+ <1727466283.11523.1617746554330@mail1.libero.it>
+In-Reply-To: <1727466283.11523.1617746554330@mail1.libero.it>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 6 Apr 2021 20:16:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+Message-ID: <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+To:     Dario Binacchi <dariobin@libero.it>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Liam Beguin <lvb@xiphos.com>
+On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
+>
+>
+> > Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >
+> >
+> > On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
+> > >
+> > >
+> > > The series comes from my commit in U-boot
+> > > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+> > > and from the subsequent exchange of emails at the end of which I was
+> > > suggested to send the patch to the linux kernel
+> > > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
+> >
+> > It's 'ranges' that determines translatable which is missing from the
+> > DT. This should have not had a 0 size either though maybe we could
+> > support that.
+>
+> I have replied to the email you sent to the u-boot mailing list
+>
+> >
+> > Does the DT have to be updated anyways for your spread spectrum support?
+>
+> The spread spectrum support patch does not need this patch to work. They belong
+> to two different series.
 
-Document devicetree bindings for Texas Instruments' LMK04832.
-The LMK04208 is a high performance clock conditioner with superior clock
-jitter cleaning, generation, and distribution with JEDEC JESD204B
-support.
+That's not what I asked. Is the spread spectrum support forcing a DT
+update for users? If the DT has to be changed anyways (not really
+great policy), then you could fix this in the DT at the same time.
 
-Signed-off-by: Liam Beguin <lvb@xiphos.com>
----
- .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
- 1 file changed, 209 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-new file mode 100644
-index 000000000000..a9f8b9b720fc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-@@ -0,0 +1,209 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Clock bindings for the Texas Instruments LMK04832
-+
-+maintainers:
-+  - Liam Beguin <liambeguin@gmail.com>
-+
-+description: |
-+  Devicetree binding for the LMK04832, a clock conditioner with JEDEC JESD204B
-+  support. The LMK04832 is pin compatible with the LMK0482x family.
-+
-+  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,lmk04832
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  spi-max-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Maximum SPI clocking speed of the device in Hz.
-+
-+  clocks:
-+    items:
-+      - description: PLL2 reference clock.
-+
-+  clock-names:
-+    items:
-+      - const: oscin
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+  ti,spi-4wire-rdbk:
-+    description: |
-+      Select SPI 4wire readback pin configuration.
-+      Available readback pins are,
-+        CLKin_SEL0 0
-+        CLKin_SEL1 1
-+        RESET 2
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,vco-hz:
-+    description: Optional to set VCO frequency of the PLL in Hertz.
-+
-+  ti,sysref-ddly:
-+    description: SYSREF digital delay value.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 8
-+    maximum: 8191
-+    default: 8
-+
-+  ti,sysref-mux:
-+    description: |
-+      SYSREF Mux configuration.
-+      Available options are,
-+        Normal SYNC 0
-+        Re-clocked 1
-+        SYSREF Pulser 2
-+        SYSREF Continuous 3
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+    default: 3
-+
-+  ti,sync-mode:
-+    description: SYNC pin configuration.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,sysref-pulse-count:
-+    description:
-+      Number of SYSREF pulses to send when SYSREF is not in continuous mode.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8]
-+    default: 4
-+
-+patternProperties:
-+  "@[0-9a-d]+$":
-+    type: object
-+    description:
-+      Child nodes used to configure output clocks.
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 0
-+        maximum: 13
-+
-+      ti,clkout-fmt:
-+        description:
-+          Clock output format.
-+          Available options are,
-+            Powerdown 0x00
-+            LVDS 0x01
-+            HSDS 6 mA 0x02
-+            HSDS 8 mA 0x03
-+            LVPECL 1600 mV 0x04
-+            LVPECL 2000 mV 0x05
-+            LCPECL 0x06
-+            CML 16 mA 0x07
-+            CML 24 mA 0x08
-+            CML 32 mA 0x09
-+            CMOS (Off/Inverted) 0x0a
-+            CMOS (Normal/Off) 0x0b
-+            CMOS (Inverted/Inverted) 0x0c
-+            CMOS (Inverted/Normal) 0x0d
-+            CMOS (Normal/Inverted) 0x0e
-+            CMOS (Normal/Normal) 0x0f
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        minimum: 0
-+        maximum: 15
-+
-+      ti,clkout-sysref:
-+        description:
-+          Select SYSREF clock path for output clock.
-+        type: boolean
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clocks {
-+        lmk04832_oscin: oscin {
-+            compatible = "fixed-clock";
-+
-+            #clock-cells = <0>;
-+            clock-frequency = <122880000>;
-+            clock-output-names = "lmk04832-oscin";
-+        };
-+    };
-+
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        lmk04832: clock-controller@0 {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            reg = <0>;
-+
-+            compatible = "ti,lmk04832";
-+            spi-max-frequency = <781250>;
-+
-+            reset-gpios = <&gpio_lmk 0 0 0>;
-+
-+            #clock-cells = <1>;
-+            clocks = <&lmk04832_oscin>;
-+            clock-names = "oscin";
-+
-+            ti,spi-4wire-rdbk = <0>;
-+            ti,vco-hz = <2457600000>;
-+
-+            assigned-clocks =
-+                <&lmk04832 0>, <&lmk04832 1>,
-+                <&lmk04832 2>, <&lmk04832 3>,
-+                <&lmk04832 4>,
-+                <&lmk04832 6>, <&lmk04832 7>,
-+                <&lmk04832 10>, <&lmk04832 11>;
-+            assigned-clock-rates =
-+                <122880000>, <384000>,
-+                <122880000>, <384000>,
-+                <122880000>,
-+                <153600000>, <384000>,
-+                <614400000>, <384000>;
-+
-+            clkout0@0 {
-+                reg = <0>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+            };
-+
-+            clkout1@1 {
-+                reg = <1>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+                ti,clkout-sysref;
-+            };
-+        };
-+    };
--- 
-2.30.1.489.g328c10930387
-
+Rob
