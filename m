@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F384C433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F267C43460
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69A6D6139E
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 124B86139E
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348319AbhDGD3F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 23:29:05 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38892 "EHLO
+        id S1348356AbhDGD3I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 23:29:08 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38924 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1348344AbhDGD3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 23:29:04 -0400
-X-UUID: 6f7c191b6cfc4f7c9ab6082260065597-20210407
-X-UUID: 6f7c191b6cfc4f7c9ab6082260065597-20210407
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        with ESMTP id S1348348AbhDGD3H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 23:29:07 -0400
+X-UUID: fcb5b8f795774ee1aa04bb55a5d48dbd-20210407
+X-UUID: fcb5b8f795774ee1aa04bb55a5d48dbd-20210407
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <flora.fu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1913985007; Wed, 07 Apr 2021 11:28:51 +0800
+        with ESMTP id 1024316135; Wed, 07 Apr 2021 11:28:56 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 7 Apr 2021 11:28:51 +0800
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 7 Apr 2021 11:28:54 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 7 Apr 2021 11:28:51 +0800
+ Transport; Wed, 7 Apr 2021 11:28:53 +0800
 From:   Flora Fu <flora.fu@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -45,45 +45,180 @@ CC:     Flora Fu <flora.fu@mediatek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH 3/8] dt-bindings: apu: Add MT8192 APU power domain
-Date:   Wed, 7 Apr 2021 11:28:01 +0800
-Message-ID: <1617766086-5502-4-git-send-email-flora.fu@mediatek.com>
+Subject: [PATCH 5/8] dt-bindings: soc: mediatek: apusys: Add new document for APU power domain
+Date:   Wed, 7 Apr 2021 11:28:03 +0800
+Message-ID: <1617766086-5502-6-git-send-email-flora.fu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
 References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 42B2CA7540249A853B4F08125BFC10E92DB4B6618A5B217123DDF2CF1714566A2000:8
 X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Create MT8192 APU power domain bindings.
-Add top power domain id.
+Document the bindings for APU power domain on MediaTek SoC.
 
 Signed-off-by: Flora Fu <flora.fu@mediatek.com>
 ---
- include/dt-bindings/power/mt8192-apu-power.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
- create mode 100644 include/dt-bindings/power/mt8192-apu-power.h
+ .../soc/mediatek/mediatek,apu-pm.yaml         | 146 ++++++++++++++++++
+ 1 file changed, 146 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
 
-diff --git a/include/dt-bindings/power/mt8192-apu-power.h b/include/dt-bindings/power/mt8192-apu-power.h
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
 new file mode 100644
-index 000000000000..b821bd4811a6
+index 000000000000..c99e812977f9
 --- /dev/null
-+++ b/include/dt-bindings/power/mt8192-apu-power.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2021 MediaTek Inc.
-+ */
++++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+@@ -0,0 +1,146 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/mediatek/mediatek,apu-pm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef _DT_BINDINGS_POWER_MT8192_APU_POWER_H
-+#define _DT_BINDINGS_POWER_MT8192_APU_POWER_H
++title: Mediatek APU Power Domains
 +
-+#define MT8192_POWER_DOMAIN_APUSYS_TOP	0
++maintainers:
++  - Flora Fu <flora.fu@mediatek.com>
 +
-+#endif
++description: |
++  Mediatek AI Process Unit (APU) include support for power domains which can be
++  powered up/down by software.
++  APU subsys belonging to a power domain should contain a 'power-domains'
++  property that is a phandle for apuspm node representing the domain.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - mediatek,mt8192-apu-pm
++      - const: syscon
++
++  reg:
++    description: Address range of the APU power domain controller.
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  '#power-domain-cells':
++    const: 1
++
++  vsram-supply:
++    description: apu sram regulator supply.
++
++  mediatek,scpsys:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the device containing the scpsys register range.
++
++  mediatek,apu_conn:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the device containing the scpsys apu conn register range.
++
++  mediatek,apu_conn1:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the device containing the scpsys apu conn1 register range.
++
++  mediatek,apu_vcore:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the device containing the scpsys apu vcore register range.
++
++patternProperties:
++  "^power-domain@[0-9a-f]+$":
++    type: object
++    description: |
++      Represents the power domains within the power controller node as
++      documented in Documentation/devicetree/bindings/power/power-domain.yaml.
++
++    properties:
++      reg:
++        description: |
++          Power domain index. Valid values are defined in:
++          "include/dt-bindings/power/mt8182-apu-power.h"
++        maxItems: 1
++
++      '#power-domain-cells':
++        description: |
++          Must be 0 for nodes representing a single PM domain and 1 for nodes
++          providing multiple PM.
++
++      clocks:
++        description: |
++          List of phandles of clocks list. Specify by order according to
++          power-up sequence.
++
++      clock-names:
++        description: |
++          List of names of clocks. Specify by order according to power-up
++          sequence.
++
++      assigned-clocks:
++        maxItems: 2
++
++      assigned-clock-parents:
++        maxItems: 2
++
++      domain-supply:
++        description: domain regulator supply.
++
++    required:
++      - reg
++      - '#power-domain-cells'
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - '#power-domain-cells'
++  - vsram-supply
++  - mediatek,scpsys
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/mt8192-clk.h>
++    #include <dt-bindings/power/mt8192-apu-power.h>
++    apuspm: power-domain@190f0000 {
++        compatible = "mediatek,mt8192-apu-pm", "syscon";
++        reg = <0x190f0000 0x1000>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        #power-domain-cells = <1>;
++        vsram-supply = <&mt6359_vsram_md_ldo_reg>;
++        mediatek,scpsys = <&scpsys>;
++        mediatek,apu_conn = <&apu_conn>;
++        mediatek,apu_vcore = <&apu_vcore>;
++
++        power-domain@MT8192_POWER_DOMAIN_APUSYS_TOP {
++            reg = <MT8192_POWER_DOMAIN_APUSYS_TOP>;
++            #power-domain-cells = <0>;
++            clocks = <&topckgen CLK_TOP_DSP_SEL>,
++                     <&topckgen CLK_TOP_IPU_IF_SEL>,
++                     <&clk26m>,
++                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
++            clock-names = "clk_top_conn",
++                          "clk_top_ipu_if",
++                          "clk_off",
++                          "clk_on_default";
++            assigned-clocks = <&topckgen CLK_TOP_DSP_SEL>,
++                              <&topckgen CLK_TOP_IPU_IF_SEL>;
++            assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D6_D2>,
++                                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
++            domain-supply = <&mt6359_vproc1_buck_reg>;
++        };
++    };
 -- 
 2.18.0
 
