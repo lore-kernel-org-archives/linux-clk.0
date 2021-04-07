@@ -2,77 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DE7C433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 19:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1D2C433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 22:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C064161353
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 19:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65A0861177
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 22:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355541AbhDGTEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 15:04:32 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:13026 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229603AbhDGTEb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 15:04:31 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AIDj1E6scUsseQbd/8/hkTyCD7skDttV00zAX?=
- =?us-ascii?q?/kB9WHVpW+afkN2jm+le6A/shF8qKRMdsP2JJaXoexjh3LFv5415B92fdS3HnE?=
- =?us-ascii?q?ftE41494vlxFTbak7D38pQz71pfaQ7KPCYNzlHpP336gW5DNosqePvmJyAv/vU?=
- =?us-ascii?q?zHtmUGhRBZ1I0gERMGqmO3FtSBIDLZQ0E4f03Kp6jgvlSDAsYsO3CmJtZYX+jt?=
- =?us-ascii?q?fA/aiIXSI7?=
-X-IronPort-AV: E=Sophos;i="5.82,203,1613430000"; 
-   d="scan'208";a="502073259"
-Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Apr 2021 21:04:11 +0200
-Date:   Wed, 7 Apr 2021 21:04:11 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Liam Beguin <liambeguin@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org
-cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        kbuild-all@lists.01.org
-Subject: [PATCH] clk: fix semicolon.cocci warnings
-Message-ID: <alpine.DEB.2.22.394.2104072102490.11549@hadrien>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        id S229484AbhDGWmB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 18:42:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229449AbhDGWmB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 18:42:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C85161057;
+        Wed,  7 Apr 2021 22:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617835311;
+        bh=5lZb+aAr8K92mCDz3Mco+1StlTnl7CvhSeYNRB7lNMs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qZRjQYeFkeG8p1L76Bglc3C5myAukg63MKI16XUnquzVpmkj2V0RL5/B5quyl3HoK
+         9Ov9m6Cr9csPp3gPPK5b4dOptydF0RdbRa3bKcOp2XuhptubeVB/8k+eYhobuh++z8
+         pUxcN90CuvN7NYYLIvNBNcsNHD6LFjCXttZjHQHHrUpyX33ncY8YfAqIld2UXmnIaR
+         bOJICEvUNvxZNNW2W9pvrbmYB1S4zUQ2T/Wrf6lO3OeL8QsOauR7mkkFtum6aBZacP
+         QADhHnj8AAaTTNlrIhlM6FLXd8BJHqrHtOHJU6GgRJDFH6JbfcyEVwHR8kUr3d4llA
+         q9yEuCx0P9C6g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
+References: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH] clk: fixed: fix double free in resource managed fixed-factor clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robdclark@chromium.org>,
+        Daniel Palmer <daniel@0x0f.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Wed, 07 Apr 2021 15:41:49 -0700
+Message-ID: <161783530964.3790633.16412468884239960912@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: kernel test robot <lkp@intel.com>
+Quoting Dmitry Baryshkov (2021-04-06 16:06:06)
+> devm_clk_hw_register_fixed_factor_release(), the release function for
+> the devm_clk_hw_register_fixed_factor(), calls
+> clk_hw_unregister_fixed_factor(), which will kfree() the clock. However
+> after that the devres functions will also kfree the allocated data,
+> resulting in double free/memory corruption. Just call
+> clk_hw_unregister() instead, leaving kfree() to devres code.
+>=20
+> Reported-by: Rob Clark <robdclark@chromium.org>
+> Cc: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>=20
+> Stephen, this fix affects the DSI PHY rework. Do we have a chance of
+> getting it into 5.12, otherwise there will be a cross-dependency between
+> msm-next and clk-next.
 
-Remove unneeded semicolon.
-
-Generated by: scripts/coccinelle/misc/semicolon.cocci
-
-CC: Liam Beguin <lvb@xiphos.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
----
-
-url:    https://github.com/0day-ci/linux/commits/Liam-Beguin/add-support-for-the-lmk04832/20210407-085408
-base:   f40ddce88593482919761f74910f42f4b84c004b
-:::::: branch date: 9 hours ago
-:::::: commit date: 9 hours ago
-
- clk-lmk04832.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -1172,7 +1172,7 @@ static int lmk04832_probe(struct spi_dev
-
- 		lmk->clkout[reg].sysref =
- 			of_property_read_bool(child, "ti,clkout-sysref");
--	};
-+	}
-
- 	lmk->regmap = devm_regmap_init_spi(spi, &regmap_config);
- 	if (IS_ERR(lmk->regmap)) {
+Think I can get this into the last fixes PR. One question though, I
+think this follows the pattern that things like clk-divider.c use for
+devm. Are those also broken?
