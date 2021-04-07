@@ -2,90 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6CFC433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C1C433B4
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 12:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBE76138B
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D35C6124B
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 12:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235017AbhDGLhu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 07:37:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347001AbhDGLhs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 07:37:48 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8A7C061756
-        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 04:37:38 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id g15so18263859qkl.4
-        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 04:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IW3oRRx99M57CpJG31OJ6s9cRTtaL0D26Vt6HdVUzpk=;
-        b=oopYu+YQ42DBdZzN3yOYVkLE34+WNijKBfVjcKw6QPwW/mRKOs2n2G4L1YfBrga8cx
-         220R9uTBCCRVSD1cy6bDEd7gA1lnF9TD+T4FpdSH5e6pDE7WFLCti3vaDYFyC2SgaM9z
-         dzLQKaRLpCgPt311J8OYBUcFJAbeRxPMkE31g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IW3oRRx99M57CpJG31OJ6s9cRTtaL0D26Vt6HdVUzpk=;
-        b=p4LW4k5yDcgz/yTeLH4klCIH/ogINkgdVhvCg3XQjnH4Jl4gKStqD6lx0lRATqkMMK
-         4wSwQmx9LmDhZp7UN9zxw8vgD6Iqlu+jvWRveleErxLhsNct8WPgV4ML356V2f5N3sLi
-         mh8uMnE9sDO8SWLBi+fSDj4fWEsh4KvutQeRgN8uOGDAepAceYKASAUhaZKHyrJhRn9D
-         dXJYku6fb+nt+IOjfVcluDvUprcwgsFkUj43KvZv2Pl1Kk9Wk3umPJTRwlw7jAgp6GpY
-         yCNOXAVjLdS8cgzeT7PH6/FPxhw/y8cDCgft+JYedTjBxiUqihtwoXM3DQHp4YsUkxie
-         8WXQ==
-X-Gm-Message-State: AOAM531D1tLc0lDl+1mFlEI2b+GmcsqzZPHIWvdYamNT+QOztmeCFCza
-        jEi14yDAZI1DcZDQCE+FPPuMO1lGwsTKgKVqd9rIiQ==
-X-Google-Smtp-Source: ABdhPJyA5Hg5hcZK/lrBzsOg/7n5zpjnXNILiWuDcgO2g8kFHFN6fUKV9nWalWac9N9CBudJ/zH0+3dvbyRGFrd6m4Q=
-X-Received: by 2002:ae9:f70a:: with SMTP id s10mr2714172qkg.468.1617795457907;
- Wed, 07 Apr 2021 04:37:37 -0700 (PDT)
+        id S1352474AbhDGMwv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 08:52:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1352473AbhDGMwu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 08:52:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0CB3561362;
+        Wed,  7 Apr 2021 12:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617799961;
+        bh=/Aj9ToFr5Y0Mp0vdEWHWke3cHo+D6lrPdkJwkg5yL9U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fopuVWEfqUbU8nVLFT5OpvoeEKpqH2T2URgTJTVKEC/GPfSFaTYbi7BXCGv2cABab
+         Eg9k88fk0VseeW7s20EuCrgq2acxumplScVQuCCzjs2pfv0t9cz5Pz4or2bwxBVTvX
+         U4s0eOXF+E93tjnJebYUYg7ClUqLskikTHNuYT6dkivK70Oawq2QJp03kycTHIP1Fy
+         /BMk784EtOrbD0KEgHDerOGMBBcvRUIC0pcAO/UEiJGUC5Gbl1xYfwx8WgvVt2ZyLz
+         BtXGt+ffRfaieCvA5VuAjRz1XWeRioYwlOfdBzG2NqyaXWxlIElKKmr+u9xUCEOlgh
+         spNuy81doKcWw==
+Received: by mail-ej1-f45.google.com with SMTP id r9so4944328ejj.3;
+        Wed, 07 Apr 2021 05:52:40 -0700 (PDT)
+X-Gm-Message-State: AOAM532/AE899ecnJY/4yCxnb7VQEWQOc43uNiQKDYl2LEZJjf0zyO7Z
+        9nsdZ5wXBJslQbDMcrZ5QisgRiLSmUzMDGX+1Q==
+X-Google-Smtp-Source: ABdhPJzKzLmcyyeHWH7Ez1rGHI2pJz806QzVhSghuT5iXBesrSOuMERFtUiJ9ViiwISTQu1nJy0kKCOjwkNwwYomYGM=
+X-Received: by 2002:a17:906:55c9:: with SMTP id z9mr3470090ejp.360.1617799959659;
+ Wed, 07 Apr 2021 05:52:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Wed, 7 Apr 2021 20:38:56 +0900
-Message-ID: <CAFr9PXm9oStJ4oKNaGCGi9sXBTc-6iDZJZTWvumWHiFwwcRPnQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: fixed: fix double free in resource managed
- fixed-factor clock
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+References: <20210402192054.7934-1-dariobin@libero.it> <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+ <1727466283.11523.1617746554330@mail1.libero.it> <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+ <1044574275.383115.1617779265390@mail1.libero.it>
+In-Reply-To: <1044574275.383115.1617779265390@mail1.libero.it>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 7 Apr 2021 07:52:27 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
+Message-ID: <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+To:     Dario Binacchi <dariobin@libero.it>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
         linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>
+        linux-omap <linux-omap@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
-
-On Wed, 7 Apr 2021 at 08:06, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Wed, Apr 7, 2021 at 2:07 AM Dario Binacchi <dariobin@libero.it> wrote:
 >
-> devm_clk_hw_register_fixed_factor_release(), the release function for
-> the devm_clk_hw_register_fixed_factor(), calls
-> clk_hw_unregister_fixed_factor(), which will kfree() the clock. However
-> after that the devres functions will also kfree the allocated data,
-> resulting in double free/memory corruption. Just call
-> clk_hw_unregister() instead, leaving kfree() to devres code.
+>
+> > Il 07/04/2021 03:16 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >
+> >
+> > On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
+> > >
+> > >
+> > > > Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+> > > >
+> > > >
+> > > > On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
+> > > > >
+> > > > >
+> > > > > The series comes from my commit in U-boot
+> > > > > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+> > > > > and from the subsequent exchange of emails at the end of which I was
+> > > > > suggested to send the patch to the linux kernel
+> > > > > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
+> > > >
+> > > > It's 'ranges' that determines translatable which is missing from the
+> > > > DT. This should have not had a 0 size either though maybe we could
+> > > > support that.
+> > >
+> > > I have replied to the email you sent to the u-boot mailing list
+> > >
+> > > >
+> > > > Does the DT have to be updated anyways for your spread spectrum support?
+> > >
+> > > The spread spectrum support patch does not need this patch to work. They belong
+> > > to two different series.
+> >
+> > That's not what I asked. Is the spread spectrum support forcing a DT
+> > update for users?
+>
+> Yes, the deltam and modfreq registers must be added to the DPLL clocks.
 
-Doh.
-Sorry for not spotting this when I wrote the patch.
-Thank you for cleaning up after me.
+That's a shame given this dts has been mostly untouched since 2013.
 
-Cheers,
+> > If the DT has to be changed anyways (not really
+> > great policy), then you could fix this in the DT at the same time.
+>
+> I could put the fix to the device tree in that series, although I wouldn't
+> create a single patch to fix and add the SSC registers. First the size-cells = <0>
+> fix patch and then the SSC patch.
+> Do you agree?
 
-Daniel
+By at the same time, I really just meant within 1 release.
+
+But I'd like to hear TI maintainers' thoughts on this.
+
+Rob
