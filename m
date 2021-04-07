@@ -2,92 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2DCC433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 23:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 911FCC433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 23:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C71CD6121E
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 23:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54CDB61260
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 23:29:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbhDGXB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 19:01:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59978 "EHLO mail.kernel.org"
+        id S229520AbhDGX3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 19:29:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229449AbhDGXB2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 19:01:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D5C7611C9;
-        Wed,  7 Apr 2021 23:01:18 +0000 (UTC)
+        id S229459AbhDGX3x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 19:29:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 95A7C61246;
+        Wed,  7 Apr 2021 23:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617836478;
-        bh=Z7WqCUanSlNvnD9wexNvEc3dx0BZpbT+4uVfy5X9skQ=;
+        s=k20201202; t=1617838183;
+        bh=cJogNOH2U7LRtGhANiNxmCvrETxMdec2vVMiimauulc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AD9RsG1MszT7GTAMUnWeZhwOTLC5s3l0DrH6BnTkqDkKT0q18MV8IYE6Zy0t7p5Ok
-         m7vfcNJ+KrsG5vKPysOXjwIU8Ddzt5lPY/swg7C+T4xQKlOqtsugxVnOr08V01rqjm
-         +b4gnM0uRwAQvV1c8+OLWg24WeT+BrQY55ACrC6DdrvdUNhgwcIVSwOh04wb4Tmyra
-         CMfM1W90tDzF9smEKQ8sDIaRLgKXK4oa1KkHVRq2BUPrZVObCC3LbpyZUH8e5v3nyh
-         6Qq5uTvDfaffUx5Jis1ztg2qckI8AC2GPSNxRE+OlyvyQNb9fraw/7coh+lGkjbsAm
-         SdcW9KKg06CAA==
+        b=Om8sBkAW3b18eJq6jaEI7NfnbGqjmmXMqAzPz21ONqkPdUE0dC98J7ArDA93hP7Hr
+         Qki2qFxvgtxnaJFFt3gjYW6OcTH1U4BoRgiy68rsR/ckku97PDRplQCatQH9I1UEAK
+         ILeffM+iOPo3bybhsUdiWU9s5kLZKs06b6+Mhvwm+wEfToOc/HimtMY2PScvWvX8zf
+         RRJqcdvRiyfAFAMMI31maVZel1h6QrrhgH70Kfdv2VugiGyJdaAMI9jD1sYMN7iTN1
+         KIIF9HT7qwReV+Dst2/70IUNdhlpNnqCQVolP3Hgg5vY8I0SNMPtkpIMQ0pGqzQf1x
+         j8E2HfaW6S1rQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
-References: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH] clk: fixed: fix double free in resource managed fixed-factor clock
+In-Reply-To: <20210406170115.430990-1-colin.king@canonical.com>
+References: <20210406170115.430990-1-colin.king@canonical.com>
+Subject: Re: [PATCH] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Daniel Palmer <daniel@0x0f.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 07 Apr 2021 16:01:16 -0700
-Message-ID: <161783647690.3790633.7004111396421583619@swboyd.mtv.corp.google.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin King <colin.king@canonical.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 07 Apr 2021 16:29:42 -0700
+Message-ID: <161783818236.3790633.17349674576901992073@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-04-06 16:06:06)
-> devm_clk_hw_register_fixed_factor_release(), the release function for
-> the devm_clk_hw_register_fixed_factor(), calls
-> clk_hw_unregister_fixed_factor(), which will kfree() the clock. However
-> after that the devres functions will also kfree the allocated data,
-> resulting in double free/memory corruption. Just call
-> clk_hw_unregister() instead, leaving kfree() to devres code.
+Quoting Colin King (2021-04-06 10:01:15)
+> From: Colin Ian King <colin.king@canonical.com>
 >=20
-> Reported-by: Rob Clark <robdclark@chromium.org>
-> Cc: Daniel Palmer <daniel@0x0f.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> There is an error return path that is not kfree'ing socfpga_clk leading
+> to a memory leak. Fix this by adding in the missing kfree call.
+>=20
+> Addresses-Coverity: ("Resource leak")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 
-Applied to clk-fixes. I also squashed this in to cleanup that ugly cast.
-
----8<----
-
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 390c16f321a6..4e4b6d367612 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -66,12 +66,14 @@ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
-=20
- static void devm_clk_hw_register_fixed_factor_release(struct device *dev, =
-void *res)
- {
-+	struct clk_fixed_factor *fix =3D res;
-+
- 	/*
- 	 * We can not use clk_hw_unregister_fixed_factor, since it will kfree()
- 	 * the hw, resulting in double free. Just unregister the hw and let
- 	 * devres code kfree() it.
- 	 */
--	clk_hw_unregister(&((struct clk_fixed_factor *)res)->hw);
-+	clk_hw_unregister(&fix->hw);
- }
-=20
- static struct clk_hw *
+Applied to clk-next
