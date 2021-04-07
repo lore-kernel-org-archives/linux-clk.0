@@ -2,102 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5120C433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78CFC433B4
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 15:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9097661279
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB52C61222
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 15:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352880AbhDGO22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 10:28:28 -0400
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:40698 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348448AbhDGO2Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 10:28:25 -0400
-Received: by mail-oi1-f172.google.com with SMTP id i3so18928313oik.7;
-        Wed, 07 Apr 2021 07:28:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=oUxybfgsa0jBAyR4P005wIPk9RSEkhGXSWLM7IOREgI=;
-        b=ocVh57EK5CEIisWy0rNCwLAmTcWBeqYTNPKrm+xsngZtBylJXJM1HIgH9HdKIlRK9o
-         MMf3xXHu1+n+NQ3qDSm/9+sV4VszeN9kwcKkFnBoH1h79nvA5LFpXqdfmMbVXHPmF+D7
-         86uX+URgUfpkGwZiK7sHRyA8G8mePhrUroyvKMljgklLvZU5xYKPRcC1oLRTpl1jjmIs
-         b277cda19CzT3iHzMEXvRBmBlC3H0c+/8FDrYG6cieVOX0SQM8n229vZgTilY9faSrEc
-         ytQsvmc/j9dBHdt8yS1FXJu1Tgjz2SWu6ITio4mXDrp7ZdQltIG3Az2e3YTvxdUo+0oW
-         cCLw==
-X-Gm-Message-State: AOAM533UwbWtZNhJa7TmOEYDNwCYZvmoLXKrN7pvGpW3GONZQpyIAwtE
-        KQQ37hdtuiXICuxN1c9rDA==
-X-Google-Smtp-Source: ABdhPJwbs7vhzPFfmzF6cXYQom7hIAFl/luDz3uevTicpkI3Lpn+qMolfXbgd74PF9sOhHfzv4kwgQ==
-X-Received: by 2002:a05:6808:904:: with SMTP id w4mr2431870oih.1.1617805694429;
-        Wed, 07 Apr 2021 07:28:14 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r20sm5425207otd.26.2021.04.07.07.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 07:28:13 -0700 (PDT)
-Received: (nullmailer pid 3696994 invoked by uid 1000);
-        Wed, 07 Apr 2021 14:28:12 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Flora Fu <flora.fu@mediatek.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Chiawen Lee <chiawen.lee@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>
-In-Reply-To: <1617766086-5502-6-git-send-email-flora.fu@mediatek.com>
-References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com> <1617766086-5502-6-git-send-email-flora.fu@mediatek.com>
-Subject: Re: [PATCH 5/8] dt-bindings: soc: mediatek: apusys: Add new document for APU power domain
-Date:   Wed, 07 Apr 2021 09:28:12 -0500
-Message-Id: <1617805692.253379.3696993.nullmailer@robh.at.kernel.org>
+        id S234867AbhDGPZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 11:25:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45676 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236449AbhDGPZK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 11:25:10 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lUA37-0007DX-Ny; Wed, 07 Apr 2021 15:24:57 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: uniphier: Fix potential infinite loop
+Date:   Wed,  7 Apr 2021 16:24:57 +0100
+Message-Id: <20210407152457.497346-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 07 Apr 2021 11:28:03 +0800, Flora Fu wrote:
-> Document the bindings for APU power domain on MediaTek SoC.
-> 
-> Signed-off-by: Flora Fu <flora.fu@mediatek.com>
-> ---
->  .../soc/mediatek/mediatek,apu-pm.yaml         | 146 ++++++++++++++++++
->  1 file changed, 146 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The for-loop iterates with a u8 loop counter i and compares this
+with the loop upper limit of num_parents that is an int type.
+There is a potential infinite loop if num_parents is larger than
+the u8 loop counter. Fix this by making the loop counter the same
+type as num_parents.
 
-yamllint warnings/errors:
+Addresses-Coverity: ("Infinite loop")
+Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.example.dts:19:18: fatal error: dt-bindings/clock/mt8192-clk.h: No such file or directory
-   19 |         #include <dt-bindings/clock/mt8192-clk.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[1]: *** [scripts/Makefile.lib:377: Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1414: dt_binding_check] Error 2
-
-See https://patchwork.ozlabs.org/patch/1463115
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+index 462c84321b2d..ce219e0d2a85 100644
+--- a/drivers/clk/uniphier/clk-uniphier-mux.c
++++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+@@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
+ 	int num_parents = clk_hw_get_num_parents(hw);
+ 	int ret;
+ 	unsigned int val;
+-	u8 i;
++	int i;
+ 
+ 	ret = regmap_read(mux->regmap, mux->reg, &val);
+ 	if (ret)
+-- 
+2.30.2
 
