@@ -2,93 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB16C433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6CFC433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C48A61369
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EBE76138B
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 11:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237959AbhDGLDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 07:03:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234304AbhDGLDU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 07:03:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5CB6761362;
-        Wed,  7 Apr 2021 11:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617793390;
-        bh=82+Ke67nXsRlgfDXibtCLxr7nc+kcU4a1nvx8D2L2+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c+RJXx9pSY7CwHT75bRn1ZZDjp2CAlTyguo1aTk/zHpIcVNgL/yKQqzM0ZNnAo0zf
-         pQ2zEL8Zpzhbvo98SMmCSUvXRdmcq4EW+QJBirP4N9a1MyMuWa+jIlBQ5aPwif6ZO8
-         Zx6u2IvDLpF1LImb9ywSru9x+FWMhk+soVRyWk6+8iPuqHbGOydzg2c/G77Ao4ZIlw
-         S7ReG22w2KhqVI/AnrMjv/LkUNBz0BbDEk15MabKmfBJANkg8bkGlMX8Py9rlFUu0J
-         r7/roXvRC0oHxk8PT5va2+zQzqC3Obo7BSp/ZddiecAyadFL1kK5mTsD5og5ZCn0qV
-         a/sfq6fApXqNA==
-Date:   Wed, 7 Apr 2021 12:02:53 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] spi: davinci: Simplify using
- devm_clk_get_enabled()
-Message-ID: <20210407110253.GA5510@sirena.org.uk>
-References: <20210330181755.204339-1-u.kleine-koenig@pengutronix.de>
- <20210330181755.204339-7-u.kleine-koenig@pengutronix.de>
- <20210331120212.GB4758@sirena.org.uk>
- <20210406065727.i7wbve2ihdblq24p@pengutronix.de>
+        id S235017AbhDGLhu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 07:37:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347001AbhDGLhs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 07:37:48 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8A7C061756
+        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 04:37:38 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id g15so18263859qkl.4
+        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 04:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IW3oRRx99M57CpJG31OJ6s9cRTtaL0D26Vt6HdVUzpk=;
+        b=oopYu+YQ42DBdZzN3yOYVkLE34+WNijKBfVjcKw6QPwW/mRKOs2n2G4L1YfBrga8cx
+         220R9uTBCCRVSD1cy6bDEd7gA1lnF9TD+T4FpdSH5e6pDE7WFLCti3vaDYFyC2SgaM9z
+         dzLQKaRLpCgPt311J8OYBUcFJAbeRxPMkE31g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IW3oRRx99M57CpJG31OJ6s9cRTtaL0D26Vt6HdVUzpk=;
+        b=p4LW4k5yDcgz/yTeLH4klCIH/ogINkgdVhvCg3XQjnH4Jl4gKStqD6lx0lRATqkMMK
+         4wSwQmx9LmDhZp7UN9zxw8vgD6Iqlu+jvWRveleErxLhsNct8WPgV4ML356V2f5N3sLi
+         mh8uMnE9sDO8SWLBi+fSDj4fWEsh4KvutQeRgN8uOGDAepAceYKASAUhaZKHyrJhRn9D
+         dXJYku6fb+nt+IOjfVcluDvUprcwgsFkUj43KvZv2Pl1Kk9Wk3umPJTRwlw7jAgp6GpY
+         yCNOXAVjLdS8cgzeT7PH6/FPxhw/y8cDCgft+JYedTjBxiUqihtwoXM3DQHp4YsUkxie
+         8WXQ==
+X-Gm-Message-State: AOAM531D1tLc0lDl+1mFlEI2b+GmcsqzZPHIWvdYamNT+QOztmeCFCza
+        jEi14yDAZI1DcZDQCE+FPPuMO1lGwsTKgKVqd9rIiQ==
+X-Google-Smtp-Source: ABdhPJyA5Hg5hcZK/lrBzsOg/7n5zpjnXNILiWuDcgO2g8kFHFN6fUKV9nWalWac9N9CBudJ/zH0+3dvbyRGFrd6m4Q=
+X-Received: by 2002:ae9:f70a:: with SMTP id s10mr2714172qkg.468.1617795457907;
+ Wed, 07 Apr 2021 04:37:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
-Content-Disposition: inline
-In-Reply-To: <20210406065727.i7wbve2ihdblq24p@pengutronix.de>
-X-Cookie: Dry clean only.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20210406230606.3007138-1-dmitry.baryshkov@linaro.org>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Wed, 7 Apr 2021 20:38:56 +0900
+Message-ID: <CAFr9PXm9oStJ4oKNaGCGi9sXBTc-6iDZJZTWvumWHiFwwcRPnQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: fixed: fix double free in resource managed
+ fixed-factor clock
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robdclark@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Dmitry,
 
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 7 Apr 2021 at 08:06, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> devm_clk_hw_register_fixed_factor_release(), the release function for
+> the devm_clk_hw_register_fixed_factor(), calls
+> clk_hw_unregister_fixed_factor(), which will kfree() the clock. However
+> after that the devres functions will also kfree the allocated data,
+> resulting in double free/memory corruption. Just call
+> clk_hw_unregister() instead, leaving kfree() to devres code.
 
-On Tue, Apr 06, 2021 at 08:57:27AM +0200, Uwe Kleine-K=F6nig wrote:
+Doh.
+Sorry for not spotting this when I wrote the patch.
+Thank you for cleaning up after me.
 
-> Thanks. I wonder what you think about this series. Is it more "Well, ok,
-> if you must, the change you did to this spi driver looks correct." or
-> "This is a good simplification and a similar change for nearly all other
-> spi drivers that make use of a clk is possible, too. Dear clk
-> maintainers, please go forward and apply this useful series."?
+Cheers,
 
-Well, I know there's demand for devm enables of things and for some
-simpler drivers it is actually the pattern people use but I find it hard
-to get enthusiastic about the pattern, it really only works for the
-extremely simple case where things get turned on in probe and never
-touched afterwards.
-
---cWoXeonUoKmBZSoM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBtkVwACgkQJNaLcl1U
-h9DdHwf/WKEDiEh2ExvwazfUB4lex7AIBRchBXYShrFk7ZQ6N49VDccVSsSGOBBM
-UpbO8P6ltky3EJZSA5KGZ+SkctHpUEJcuuBFhhkEEOME0EO0VxXoM/0rf7MA4K7i
-Y11vAnsL/M+YYpmCcLRZB2V915ZOL59hv2yPwKw38ktgHUxuiQwBOxTyf1gfDM/v
-rwcpZ/TEre9hRIzyqCnYZ4kk4HHOyz/idHpTvjeHR3h5/fZyKMpqcEiNqL2wjRtV
-DR9RPUgyD5p9ni35jSrSUiU3CIgCRfJGmILQ5HOv3SEz4b5UWWUvyjLlomv3V2lN
-O2v8nNMxL+An9Ofp57Tv6vWZSPGZdQ==
-=e1qz
------END PGP SIGNATURE-----
-
---cWoXeonUoKmBZSoM--
+Daniel
