@@ -2,93 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BD5C433B4
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 01:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE93C433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA036124B
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 01:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA33C613C6
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Apr 2021 03:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232741AbhDGBRL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Apr 2021 21:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229612AbhDGBRK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Apr 2021 21:17:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B8931613B8;
-        Wed,  7 Apr 2021 01:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617758222;
-        bh=zBigBeAVRRnBSblYtyRYt/CjlLIZ5EhRSivRJQIiig8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XA1UVdnGqPBxjfLV2XYA+Kk5KAJ5EurEyTpCNRhO3Z95dJbmGsdSpaKVBW4AnJH2G
-         FPgD++bew9rlYPSH+I3syHrrtf7pTv2RvdcntSYqN2j/Wx++MHVUljAhCdadv43PvY
-         /iwplBLrge0V3i4xzT2e8vv00eP4iSzoLGDCAvkOLiMUUHDi76Ks4qrBKwB2jxyuoE
-         a3h0XgAnHi43gS+/yhqUJwNPwopGPpVEGClI/1BavxhVoGCM3Tx7P6gFAbERd/mtwi
-         g+PKj3CyaAfqNEhUD5lVaMsj8OWfG2Y4gJhJsrufQBSw+2/ZuntuTaln69fi9aTKDw
-         gfz7dnR5Rpw3Q==
-Received: by mail-ed1-f49.google.com with SMTP id dd20so11553525edb.12;
-        Tue, 06 Apr 2021 18:17:01 -0700 (PDT)
-X-Gm-Message-State: AOAM532MEa0sm4EtZro/l/JaYRz8lOb8K+jb+LCsfkXv7dhkmzr1E2rU
-        EWZM96SIl1LcJKy+KPtHHIEfrlijr0Z9kN2k2g==
-X-Google-Smtp-Source: ABdhPJx7e0RDh+oY28QS2hpRLsqDzP7gWN95sa8k6OGQYV4Y9wj+aweFDC2W6/enfc0eeSHbRjLltO2gK/q2hwAQ0JM=
-X-Received: by 2002:a05:6402:1b1c:: with SMTP id by28mr1392400edb.62.1617758220158;
- Tue, 06 Apr 2021 18:17:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210402192054.7934-1-dariobin@libero.it> <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
- <1727466283.11523.1617746554330@mail1.libero.it>
-In-Reply-To: <1727466283.11523.1617746554330@mail1.libero.it>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 6 Apr 2021 20:16:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
-Message-ID: <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
-To:     Dario Binacchi <dariobin@libero.it>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+        id S234142AbhDGD21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Apr 2021 23:28:27 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60598 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229736AbhDGD21 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Apr 2021 23:28:27 -0400
+X-UUID: 8f237fc3a8ff491eb4a8b716d8886274-20210407
+X-UUID: 8f237fc3a8ff491eb4a8b716d8886274-20210407
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <flora.fu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 120020346; Wed, 07 Apr 2021 11:28:15 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 7 Apr 2021 11:28:14 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 7 Apr 2021 11:28:14 +0800
+From:   Flora Fu <flora.fu@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Flora Fu <flora.fu@mediatek.com>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 0/8] Add Support for MediaTek MT8192 APU Power
+Date:   Wed, 7 Apr 2021 11:27:58 +0800
+Message-ID: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
->
->
-> > Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
-> >
-> >
-> > On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
-> > >
-> > >
-> > > The series comes from my commit in U-boot
-> > > d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
-> > > and from the subsequent exchange of emails at the end of which I was
-> > > suggested to send the patch to the linux kernel
-> > > (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
-> >
-> > It's 'ranges' that determines translatable which is missing from the
-> > DT. This should have not had a 0 size either though maybe we could
-> > support that.
->
-> I have replied to the email you sent to the u-boot mailing list
->
-> >
-> > Does the DT have to be updated anyways for your spread spectrum support?
->
-> The spread spectrum support patch does not need this patch to work. They belong
-> to two different series.
+The MediaTek AI Processing Unit (APU) is a proprietary hardware
+in the SoC to support AI operations.
+The series is to create apusys in the SoC folder for developing
+the related drivers. Add the apu clocks, basic apu nodes and the
+power domain to provide the power controller of APU subsystem.
 
-That's not what I asked. Is the spread spectrum support forcing a DT
-update for users? If the DT has to be changed anyways (not really
-great policy), then you could fix this in the DT at the same time.
+This series is based on MT8192 clock[1] and PMIC[2] patches.
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=454523
+[2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=458733
 
-Rob
+Flora Fu (8):
+  dt-bindings: clock: Add MT8192 APU clock bindings
+  clk: mediatek: mt8192: Add APU clocks support
+  dt-bindings: apu: Add MT8192 APU power domain
+  dt-bindings: arm: mediatek: Add new document bindings for APU
+  dt-bindings: soc: mediatek: apusys: Add new document for APU power
+    domain
+  soc: mediatek: apu: Add apusys and add apu power domain driver
+  arm64: dts: mt8192: Add APU node
+  arm64: dts: mt8192: Add APU power domain node
+
+ .../arm/mediatek/mediatek,apusys.yaml         |  56 ++
+ .../soc/mediatek/mediatek,apu-pm.yaml         | 146 +++++
+ arch/arm64/boot/dts/mediatek/mt8192-evb.dts   |   7 +
+ arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  46 ++
+ drivers/clk/mediatek/clk-mt8192.c             |  91 +++
+ drivers/soc/mediatek/Kconfig                  |  10 +
+ drivers/soc/mediatek/Makefile                 |   1 +
+ drivers/soc/mediatek/apusys/Makefile          |   2 +
+ drivers/soc/mediatek/apusys/mtk-apu-pm.c      | 613 ++++++++++++++++++
+ include/dt-bindings/clock/mt8192-clk.h        |  14 +-
+ include/dt-bindings/power/mt8192-apu-power.h  |  11 +
+ 11 files changed, 995 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,apusys.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+ create mode 100644 drivers/soc/mediatek/apusys/Makefile
+ create mode 100644 drivers/soc/mediatek/apusys/mtk-apu-pm.c
+ create mode 100644 include/dt-bindings/power/mt8192-apu-power.h
+
+-- 
+2.18.0
+
