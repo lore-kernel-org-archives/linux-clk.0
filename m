@@ -2,132 +2,303 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1618BC433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 18:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707DFC433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCCCB6100B
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 18:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3044A61157
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbhDHS6I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 14:58:08 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:55324 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232950AbhDHS6H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 14:58:07 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4FGVrg0wR0z1s0tQ;
-        Thu,  8 Apr 2021 20:57:55 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4FGVrg0QdYz1sP6L;
-        Thu,  8 Apr 2021 20:57:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 3IhKjxWABGys; Thu,  8 Apr 2021 20:57:53 +0200 (CEST)
-X-Auth-Info: Y+oWh5Z/E83ZtGFhjgYSHn1lsHThtGGRawrfe9BsR4U=
-Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu,  8 Apr 2021 20:57:53 +0200 (CEST)
-From:   Marek Vasut <marex@denx.de>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 7/7] ARM: dts: stm32: Switch DWMAC RMII clock to MCO2 on DHCOM
-Date:   Thu,  8 Apr 2021 20:57:31 +0200
-Message-Id: <20210408185731.135511-8-marex@denx.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210408185731.135511-1-marex@denx.de>
-References: <20210408185731.135511-1-marex@denx.de>
+        id S231862AbhDHUNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 16:13:47 -0400
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:37793 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230522AbhDHUNq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 16:13:46 -0400
+Received: by mail-ot1-f48.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so3563067otr.4;
+        Thu, 08 Apr 2021 13:13:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2R+5jHVXPCke6baZgs2LAtymZLLKIbJs/pgqd8CKtGg=;
+        b=RlfjHddvXfZ/oX7ibNQwFMdwJvLxFVsFOhHVAOnhgOYZwOwnBn4Z4tNDD9Xme8K6Zr
+         ZFHddIbJvJytAM06GuZPuInGr8QsAo1xRyZbyMDqoytu6IAoLsfAQ0GIgjnJ1u9cBEfT
+         dMyldX5T6DDqnwZMcvjs7Avg5csPUq+1saYwylpgk6GGgmclzLm0VRQnopG83E22RtOG
+         47uKii+XfkcVYjdw+1eb9LNu8nKxWGR/re/P88wlW0ouLMYI5LAx3Rawst9TYEw0nadH
+         sslCpUnJwbhoedx8CGQXaA/qRm1EUz9y9+lUzpvF5iM7W+vFlvbGS+y1fRu19Vk1cVIB
+         f3cw==
+X-Gm-Message-State: AOAM530j/3lvQJKJN4tdavPnLiAQvpHCRSZK6Qyu/1jApyhmhUTFXBoT
+        OUmbeqUqPEeoPgSIsf1JoQ==
+X-Google-Smtp-Source: ABdhPJzskC+PtCqzySPTtPCLkU0rw2XGaGqjns26ng7vNknaKYyxzVArbfQEwxYPg7Kw3FUkDi+XTA==
+X-Received: by 2002:a9d:4d0d:: with SMTP id n13mr1909840otf.294.1617912814724;
+        Thu, 08 Apr 2021 13:13:34 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 62sm92459oto.60.2021.04.08.13.13.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 13:13:34 -0700 (PDT)
+Received: (nullmailer pid 1886277 invoked by uid 1000);
+        Thu, 08 Apr 2021 20:13:33 -0000
+Date:   Thu, 8 Apr 2021 15:13:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Liam Beguin <liambeguin@gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] dt-bindings: clock: add ti,lmk04832 bindings
+Message-ID: <20210408201333.GA1882021@robh.at.kernel.org>
+References: <20210407005330.2890430-1-liambeguin@gmail.com>
+ <20210407005330.2890430-4-liambeguin@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210407005330.2890430-4-liambeguin@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The DHCOM SoM has two options for supplying ETHRX clock to the DWMAC
-block and PHY. Either (1) ETHCK_K generates 50 MHz clock on ETH_CLK
-pad for the PHY and the same 50 MHz clock are fed back to ETHRX via
-internal eth_clk_fb clock connection OR (2) ETH_CLK is not used at
-all, MCO2 generates 50 MHz clock on MCO2 output pad for the PHY and
-the same MCO2 clock are fed back into ETHRX via ETH_RX_CLK input pad
-using external pad-to-pad connection.
+On Tue, Apr 06, 2021 at 08:53:30PM -0400, Liam Beguin wrote:
+> From: Liam Beguin <lvb@xiphos.com>
+> 
+> Document devicetree bindings for Texas Instruments' LMK04832.
+> The LMK04208 is a high performance clock conditioner with superior clock
+> jitter cleaning, generation, and distribution with JEDEC JESD204B
+> support.
+> 
+> Signed-off-by: Liam Beguin <lvb@xiphos.com>
+> ---
+>  .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
+>  1 file changed, 209 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> new file mode 100644
+> index 000000000000..a9f8b9b720fc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> @@ -0,0 +1,209 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Clock bindings for the Texas Instruments LMK04832
+> +
+> +maintainers:
+> +  - Liam Beguin <liambeguin@gmail.com>
+> +
+> +description: |
+> +  Devicetree binding for the LMK04832, a clock conditioner with JEDEC JESD204B
+> +  support. The LMK04832 is pin compatible with the LMK0482x family.
+> +
+> +  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,lmk04832
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  spi-max-frequency:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Maximum SPI clocking speed of the device in Hz.
 
-Option (1) has two downsides. ETHCK_K is supplied directly from either
-PLL3_Q or PLL4_P, hence the PLL output is limited to exactly 50 MHz and
-since the same PLL output is also used to supply SDMMC blocks, the
-performance of SD and eMMC access is affected. The second downside is
-that using this option, the EMI of the SoM is higher.
+Already has a type and description, just need:
 
-Option (2) solves both of those problems, so implement it here. In this
-case, the PLL4_P is no longer limited and can be operated faster, at
-100 MHz, which improves SDMMC performance (read performance is improved
-from ~41 MiB/s to ~57 MiB/s with dd if=/dev/mmcblk1 of=/dev/null bs=64M
-count=1). The EMI interference also decreases.
+spi-max-frequency: true
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Christophe Roullier <christophe.roullier@foss.st.com>
-Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
-Cc: Stephen Boyd <swboyd@chromium.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-To: linux-arm-kernel@lists.infradead.org
----
- arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+(Or a range of values if you know the maximum).
 
-diff --git a/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi b/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
-index 272a1a67a9ad..4c7c06a7aea0 100644
---- a/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
-+++ b/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
-@@ -114,15 +114,29 @@ &dts {
- 	status = "okay";
- };
- 
-+&rcc {
-+	/* Connect MCO2 output to ETH_RX_CLK input via pad-pad connection */
-+	clocks = <&rcc CK_MCO2>;
-+	clock-names = "ETH_RX_CLK/ETH_REF_CLK";
-+
-+	/*
-+	 * Set PLL4P output to 100 MHz to supply SDMMC with faster clock,
-+	 * set MCO2 output to 50 MHz to supply ETHRX clock with PLL4P/2,
-+	 * so that MCO2 behaves as a divider for the ETHRX clock here.
-+	 */
-+	assigned-clocks = <&rcc CK_MCO2>, <&rcc PLL4_P>;
-+	assigned-clock-parents = <&rcc PLL4_P>;
-+	assigned-clock-rates = <50000000>, <100000000>;
-+};
-+
- &ethernet0 {
- 	status = "okay";
--	pinctrl-0 = <&ethernet0_rmii_pins_a>;
--	pinctrl-1 = <&ethernet0_rmii_sleep_pins_a>;
-+	pinctrl-0 = <&ethernet0_rmii_pins_b &mco2_pins_a>;
-+	pinctrl-1 = <&ethernet0_rmii_sleep_pins_b &mco2_sleep_pins_a>;
- 	pinctrl-names = "default", "sleep";
- 	phy-mode = "rmii";
- 	max-speed = <100>;
- 	phy-handle = <&phy0>;
--	st,eth-ref-clk-sel;
- 	phy-reset-gpios = <&gpioh 3 GPIO_ACTIVE_LOW>;
- 
- 	mdio0 {
--- 
-2.30.2
+> +
+> +  clocks:
+> +    items:
+> +      - description: PLL2 reference clock.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: oscin
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  ti,spi-4wire-rdbk:
+> +    description: |
+> +      Select SPI 4wire readback pin configuration.
+> +      Available readback pins are,
+> +        CLKin_SEL0 0
+> +        CLKin_SEL1 1
+> +        RESET 2
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2]
+> +    default: 1
+> +
+> +  ti,vco-hz:
+> +    description: Optional to set VCO frequency of the PLL in Hertz.
+> +
+> +  ti,sysref-ddly:
+> +    description: SYSREF digital delay value.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 8
+> +    maximum: 8191
+> +    default: 8
+> +
+> +  ti,sysref-mux:
+> +    description: |
+> +      SYSREF Mux configuration.
+> +      Available options are,
+> +        Normal SYNC 0
+> +        Re-clocked 1
+> +        SYSREF Pulser 2
+> +        SYSREF Continuous 3
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +    default: 3
+> +
+> +  ti,sync-mode:
+> +    description: SYNC pin configuration.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2]
+> +    default: 1
+> +
+> +  ti,sysref-pulse-count:
+> +    description:
+> +      Number of SYSREF pulses to send when SYSREF is not in continuous mode.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 4, 8]
+> +    default: 4
+> +
+> +patternProperties:
+> +  "@[0-9a-d]+$":
+> +    type: object
+> +    description:
+> +      Child nodes used to configure output clocks.
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          clock output identifier.
+> +        minimum: 0
+> +        maximum: 13
+> +
+> +      ti,clkout-fmt:
+> +        description:
+> +          Clock output format.
+> +          Available options are,
+> +            Powerdown 0x00
+> +            LVDS 0x01
+> +            HSDS 6 mA 0x02
+> +            HSDS 8 mA 0x03
+> +            LVPECL 1600 mV 0x04
+> +            LVPECL 2000 mV 0x05
+> +            LCPECL 0x06
+> +            CML 16 mA 0x07
+> +            CML 24 mA 0x08
+> +            CML 32 mA 0x09
+> +            CMOS (Off/Inverted) 0x0a
+> +            CMOS (Normal/Off) 0x0b
+> +            CMOS (Inverted/Inverted) 0x0c
+> +            CMOS (Inverted/Normal) 0x0d
+> +            CMOS (Normal/Inverted) 0x0e
+> +            CMOS (Normal/Normal) 0x0f
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 15
+> +
+> +      ti,clkout-sysref:
+> +        description:
+> +          Select SYSREF clock path for output clock.
+> +        type: boolean
+> +
+> +    required:
+> +      - reg
 
+       additionalProperties: false
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clocks {
+> +        lmk04832_oscin: oscin {
+> +            compatible = "fixed-clock";
+> +
+> +            #clock-cells = <0>;
+> +            clock-frequency = <122880000>;
+> +            clock-output-names = "lmk04832-oscin";
+> +        };
+> +    };
+> +
+> +    spi0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        lmk04832: clock-controller@0 {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            reg = <0>;
+> +
+> +            compatible = "ti,lmk04832";
+> +            spi-max-frequency = <781250>;
+> +
+> +            reset-gpios = <&gpio_lmk 0 0 0>;
+> +
+> +            #clock-cells = <1>;
+> +            clocks = <&lmk04832_oscin>;
+> +            clock-names = "oscin";
+> +
+> +            ti,spi-4wire-rdbk = <0>;
+> +            ti,vco-hz = <2457600000>;
+> +
+> +            assigned-clocks =
+> +                <&lmk04832 0>, <&lmk04832 1>,
+> +                <&lmk04832 2>, <&lmk04832 3>,
+> +                <&lmk04832 4>,
+> +                <&lmk04832 6>, <&lmk04832 7>,
+> +                <&lmk04832 10>, <&lmk04832 11>;
+> +            assigned-clock-rates =
+> +                <122880000>, <384000>,
+> +                <122880000>, <384000>,
+> +                <122880000>,
+> +                <153600000>, <384000>,
+> +                <614400000>, <384000>;
+> +
+> +            clkout0@0 {
+> +                reg = <0>;
+> +                ti,clkout-fmt = <0x01>; // LVDS
+> +            };
+> +
+> +            clkout1@1 {
+> +                reg = <1>;
+> +                ti,clkout-fmt = <0x01>; // LVDS
+> +                ti,clkout-sysref;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.30.1.489.g328c10930387
+> 
