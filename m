@@ -3,57 +3,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FBAC433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F3EC433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADCF561184
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0520761182
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbhDHA1L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 20:27:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43706 "EHLO mail.kernel.org"
+        id S229484AbhDHA3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 20:29:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229480AbhDHA1L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 20:27:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ADBFE610FB;
-        Thu,  8 Apr 2021 00:27:00 +0000 (UTC)
+        id S229480AbhDHA3b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 20:29:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D892261181;
+        Thu,  8 Apr 2021 00:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617841620;
-        bh=rTaMy3196vIzUw52lY7eKIK7zms3raSX4c1v+G+4nmk=;
+        s=k20201202; t=1617841761;
+        bh=fDrVtOA9CcpPnyJ1ecDAimSzxUJQMqgpZb9jfbgh27I=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kuAdFLZQDz7UOj9jlHXeTeDEVlvsA5JUIliirsR4i7xC/o9HtA/LMcDPkeqB2XIAO
-         jdqaafpSpqQNDMCs+/0f+57I1g5bFu7PSQwXWicBpH87NANo0aV+2IhqPqSVp1OB5j
-         M1aSGEG4IWXnnLXOd9E/4NRX0sJbHiv+FctiUfsbLQjw9BgL63vwt18/S+mwKgfkyS
-         8s/sCcfE52c89bv9pBmYPW0aIrzd8mqzDfOShEkWJn4VQcg1NDXkimjROImPtuk++b
-         66MFtAb5vfXTy4KRITI+jO8A2riZOX/nD0HjUAqgNpiUUdYKOXT0QqpYudWhRQ8iPa
-         cOgKCcv1mToQQ==
+        b=cNuVgmAdIzBTxZjhj7Kw8h52dBk3ne/0LL7j8jM8OdB679n7dzHbcEV0MXd4qeiyY
+         uPKcNeMTXarBYQM7KzNKFOtFTZd+chhbh14XFwWfLoOP+jymWxwwEfi9oiJCkJJzaH
+         lY9c0igu3SRBAQm5zxoJ47jQPePys2jVDe0/T2tCFNIIHHsMYX8MhG/nJ9+FPJ11Ak
+         mMOzPS3y/76YVO8N8EhzcoGtnXGv/xOEvkYmHrPqqaN605Oqc1+CxARMu8DrMLP7On
+         eOQ9kp+7QpqvTNKaLd4zsjsI3/BKw3HUb+vM1QEOPt1CYl9ubBhj1X/7F4GbE3naal
+         EOTdzFGPUAOVQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210322061754.1065367-3-punit1.agrawal@toshiba.co.jp>
-References: <20210322061754.1065367-1-punit1.agrawal@toshiba.co.jp> <20210322061754.1065367-3-punit1.agrawal@toshiba.co.jp>
-Subject: Re: [PATCH v2 2/2] clk: zynqmp: Drop dependency on ARCH_ZYNQMP
+In-Reply-To: <20210407034456.516204-1-saravanak@google.com>
+References: <20210407034456.516204-1-saravanak@google.com>
+Subject: Re: [PATCH v1 0/2] Add sync_state() support to clock framework
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To:     Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
-        michal.simek@xilinx.com
-Date:   Wed, 07 Apr 2021 17:26:59 -0700
-Message-ID: <161784161937.3790633.13788714088868174566@swboyd.mtv.corp.google.com>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Saravana Kannan <saravanak@google.com>
+Date:   Wed, 07 Apr 2021 17:29:19 -0700
+Message-ID: <161784175956.3790633.6032492675008535412@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Punit Agrawal (2021-03-21 23:17:54)
-> The clock driver depends on ZYNQMP_FIRMWARE which in turn depends on
-> ARCH_ZYNQMP. Simplify the Kconfig by dropping the redundant dependency
-> on ARCH_ZYNQMP as it'll be applied transitively via ZYNQMP_FIRMWARE.
+Quoting Saravana Kannan (2021-04-06 20:44:53)
+> Stephen,
 >=20
-> Signed-off-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-> ---
+> We can decide later if both these patches land through clk tree or the
+> driver-core tree. The meat of the series is in Patch 2/2 and that commit
+> text gives all the details.
 
-Applied to clk-next
+The majority of the diff is in drivers/clk so presumably it can be
+merged through the clk tree if Greg acks the include file API.
+
+>=20
+> Saravana Kannan (2):
+>   driver core: Add dev_set_drv_sync_state()
+>   clk: Add support for sync_state()
+>=20
+>  drivers/clk/clk.c            | 84 +++++++++++++++++++++++++++++++++++-
+>  include/linux/clk-provider.h |  1 +
+>  include/linux/device.h       | 12 ++++++
+>  3 files changed, 96 insertions(+), 1 deletion(-)
