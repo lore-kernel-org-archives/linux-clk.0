@@ -2,133 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D56FC433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39F2C433B4
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 18:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5556161029
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98A1861041
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 18:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbhDHRiN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 13:38:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63517 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232504AbhDHRiN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 13:38:13 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210408173800euoutp02eeeefaf153abb39d260f8e713635ebf7~z8qS4T8ha2641526415euoutp02b
-        for <linux-clk@vger.kernel.org>; Thu,  8 Apr 2021 17:38:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210408173800euoutp02eeeefaf153abb39d260f8e713635ebf7~z8qS4T8ha2641526415euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1617903480;
-        bh=vquHiqaALnuuLU6zMICX31IWiyI0/05OP6X0GBydTlk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=MGRAtYVW0j6/0X2mW/xxeM4RIR6MMKiroE+yiHCeDWYb+MxPJJiVcPpvfGAblgUAZ
-         FFZHDkuekUr95yLEWVcvUEfAlvX7hU0IBBCXVpCXQpvOLGugHUi8mTMq0lFxAyS9Yc
-         7wWHiNy1RAjRfkK0UPiCRR7yf0f4UzjLpS8xm7QU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210408173759eucas1p247ccd7fcfbd34e45ed128b7e9404c239~z8qSJCIYW2437624376eucas1p25;
-        Thu,  8 Apr 2021 17:37:59 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BF.33.09444.77F3F606; Thu,  8
-        Apr 2021 18:37:59 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa~z8qRfokOn0576305763eucas1p1K;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210408173758eusmtrp15df24cb7c6e7a26fb3cdd59c52de7d33~z8qRe6BWe0555405554eusmtrp1_;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-X-AuditID: cbfec7f4-dd5ff700000024e4-b7-606f3f77c881
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.39.08696.67F3F606; Thu,  8
-        Apr 2021 18:37:58 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210408173758eusmtip227bbb5404894f496ec51c839c46bd187~z8qQwcq6v1122911229eusmtip2L;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-Subject: Re: [PATCH -next] clk: samsung: Remove redundant dev_err calls
-To:     Chen Hui <clare.chenhui@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, cw00.choi@samsung.com,
-        tomasz.figa@gmail.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <e8ac725b-b1f5-1631-53bb-fcd0e6c44a96@samsung.com>
-Date:   Thu, 8 Apr 2021 19:37:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.9.0
+        id S232885AbhDHS55 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 14:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231676AbhDHS55 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 14:57:57 -0400
+Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51104C061760
+        for <linux-clk@vger.kernel.org>; Thu,  8 Apr 2021 11:57:45 -0700 (PDT)
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4FGVrQ59M6z1s0tQ;
+        Thu,  8 Apr 2021 20:57:42 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4FGVrQ3s2Sz1sP6L;
+        Thu,  8 Apr 2021 20:57:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id DBy8bgKn8cJA; Thu,  8 Apr 2021 20:57:40 +0200 (CEST)
+X-Auth-Info: eS6/zRyjUhImPWlVRj7XXZEG9mesi+vmn4/sJOZI9Js=
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu,  8 Apr 2021 20:57:40 +0200 (CEST)
+From:   Marek Vasut <marex@denx.de>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marek Vasut <marex@denx.de>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 0/7] ARM: dts: stm32: clk: Switch ETHRX clock parent from ETHCK_K to MCO2 on DHCOM SoM
+Date:   Thu,  8 Apr 2021 20:57:24 +0200
+Message-Id: <20210408185731.135511-1-marex@denx.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87rl9vkJBgsfy1mcaDvEaHH9y3NW
-        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
-        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCOKyyYlNSezLLVI3y6BK+Pv1n2MBRtZ
-        Kg4ffcLWwHiduYuRk0NCwETi54nFbF2MXBxCAisYJQ7uXMoE4XxhlNh3+z47hPOZUWLGrWZ2
-        mJYNLXOhWpYzSkza1Q3lfGSU+Lz7IBtIlbCAu8SDtx0sILaIQJLEp91vwRYyCzxmlFhyQRDE
-        ZhMwlOg92scIYvMK2ElMuP8NrJ5FQEVi7sSNYHFRoN6lj/5B1QhKnJz5BKyGU8BRYvr6+6wQ
-        M8Ulbj2ZzwRhy0tsfzuHGeQgCYFuTonJTxqgznaReHe+EeprYYlXx7dAxWUkTk/uYYFoaGaU
-        6Nl9mx3CmcAocf/4AkaIKmuJO+d+Ab3GAbRCU2L9Ln0QUwLoissPxSBMPokbbwUhbuCTmLRt
-        OjNEmFeio00IYoaKxO9V05kgbCmJ7if/WSYwKs1C8tksJN/MQvLNLIS1CxhZVjGKp5YW56an
-        FhvlpZbrFSfmFpfmpesl5+duYgQmr9P/jn/Zwbj81Ue9Q4xMHIyHGCU4mJVEeHf0ZicI8aYk
-        VlalFuXHF5XmpBYfYpTmYFES503asiZeSCA9sSQ1OzW1ILUIJsvEwSnVwOT157p5w+3i3KfM
-        kyLDPtkv8sntbp+1sLrc+fQMaaZa9dpJGtmfzhw/Lcep93/Bwaf2T5WevZs+K+++leaEnG+z
-        DKetf2KRw/Bh9ipfObP8DNG7lziWZviVxpYv4L2yYWFhx95eZRXundlF0tv2vW/dx80YuFDE
-        6tvKkw0lWy46r7l0/+iyg7FsQqufS6/R0DSK81z1f01G99YiB7blPNweF70j9FdovFwoqjNj
-        r/wxp/L6N4GtSx/W6xquj+F4YCx/tNCVW2GtyrldPu0XLl8xZpBM9rgzyUOk3Z1dasWe/fdy
-        7zxv9wsyv9a7Y8H8nT9C2L/8K/nx+OtetmlrSoUN01srZ13Ruvzs5ITLid+UWIozEg21mIuK
-        EwEuDvLJzQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7pl9vkJBpeO6FucaDvEaHH9y3NW
-        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
-        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCNKz6Yov7QkVSEjv7jEVina0MJIz9DS
-        Qs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pv1n2MBRtZKg4ffcLWwHiduYuRk0NCwERi
-        Q8tcti5GLg4hgaWMEtc+vgByOIASUhLzW5QgaoQl/lzrgqp5zyhx/+R0NpCEsIC7xIO3HSwg
-        tohAksT0ZdPZQYqYBR4zSjQePsUM0XGSUeLG/FlMIFVsAoYSvUf7GEFsXgE7iQn3v4F1swio
-        SMyduBEsLgo0qW33THaIGkGJkzOfgNVwCjhKTF9/nxXEZhZQl/gz7xIzhC0ucevJfCYIW15i
-        +9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIzXbcd+
-        btnBuPLVR71DjEwcjIcYJTiYlUR4d/RmJwjxpiRWVqUW5ccXleakFh9iNAX6ZyKzlGhyPjBh
-        5JXEG5oZmBqamFkamFqaGSuJ85ocWRMvJJCeWJKanZpakFoE08fEwSnVwOQUy108VzP+RU+C
-        z9QE8w2GHjtZXpzbvev6i792SsnNl1ZFXM9sdXbbuibD1Lv7vJrgbqFbp7T1GDNmKgd9q06K
-        Md7o96Jh72vL+8UHj2luWLB43wa39deFVBeHrWheeCq1vqq2NuXwkwm1d53zI03mZsztc68W
-        qnpzTeHHKc3Cd0Zb1z4vq1Q7vrKk+9mrbRzTX307tPHNvO/XN1nziE8rnOCiu7P+ctfLWWe1
-        Y4tv2qsW1/4U6/h4qd7+t/Y7nnWtr3J2Ms0pfCt2Sm737adBedzdCQqTkzL5vij8nabuvvlN
-        n63plvQTMbpTtrk+3h9ptnfi2gnlS9sDeZy3X7pr9ElX93TW9ilPkr5WKX9XYinOSDTUYi4q
-        TgQAWqjXzWADAAA=
-X-CMS-MailID: 20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
-References: <20210408134856.207305-1-clare.chenhui@huawei.com>
-        <CGME20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d@eucas1p2.samsung.com>
-        <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08.04.2021 18:21, Krzysztof Kozlowski wrote:
-> On 08/04/2021 15:48, Chen Hui wrote:
->> There is error message within devm_ioremap_resource
->> already, so remove the dev_err calls to avoid redundant
->> error messages.
->>
->> Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
->> ---
->>  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
->>  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
->>  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+The implementation of ETH_RX_CLK/ETH_REF_CLK handling on STM32MP1 currently
+does not permit selecting the RX clock input from SoC pad, the RX clock are
+hard-wired to eth_clk_fb. This cover letter describes multiple unsuccessful
+attempts at solving this problem and a proposed partial solution.
 
-Thank you, patch applied.
+The problem is that in stm32mp151.dtsi, the "st,stm32mp1-dwmac" compatible
+ethernet requests mac-clk-rx = <&rcc ETHRX> as MAC RX clock, which per [1]
+page 576 maps to clk_rx_i signal. Upon closer inspection of clk-stm32mp1.c,
+the ETHRX clock 1) only models G_ETHRX gate, which represents ETHRXEN bit,
+and 2) sets ETHRX clock parent to ck_axi. Both are wrong for the following
+reasons:
+1) ETHRX clock are composite clock of gate and two muxes, which ultimately
+   permit selecting ETHRX clock parent to be either eth_clk_fb or external
+   ETH_RX_CLK/ETH_REF_CLOCK clock from SoC pad. Because only the gate part
+   is modeled, the clock topology is wrong and it is not possible to select
+   the ETHRX clock parent using the clock framework at all.
+2) ETHRX clock are supplied from a mux controlled by ETH_SEL[2] (from
+   SYSCFG), which is supplied from a mux controlled by ETH_REF_CLK_SEL
+   (from SYSCFG), which is supplied either by ETH_RX_CLK/ETH_REF_CLK
+   from pad OR internally from eth_clk_fb clock, which maps to ETHCK_K
+   clock. Hence, ETHRX can never be supplied by ck_axi.
+
+Another unique feature of ETHRX clock muxes is that they are controlled
+via SYSCFG block instead of being part of the RCC block. This is a rather
+unfortunate design, as it creates dependency between RCC, SYSCFG and DWMAC.
+Currently, those clock muxes are configured in the dwmac4 driver through
+syscon interface to SYSCFG block, based on custom device tree properties --
+st,eth-clk-sel and st,eth-ref-clk-sel -- this is clearly not the correct
+approach.
+
+First approach was to implement ETHRX clock including muxes in clk-stm32mp1.c.
+This means RCC clock driver, clk-stm32mp1.c, must obtain access to SYSCFG IP
+registers via some syscon_regmap_lookup_by_phandle() when registering ETHRX
+clock in RCC driver probe, so that it can read out SYSCFG register state to
+determine the current mux state, and later toggle the mux bits. The problem
+here is that the SYSCFG requires clock which are provided by RCC, so
+syscon_regmap_lookup_by_phandle() fails with EPROBE_DEFER because the clock
+are not available yet in RCC clock driver probe, so there is cyclic dependency
+between RCC and SYSCFG.
+
+Similar approach would be to turn SYSCFG into simple-bus and implement
+separate SYSCFG clock sub-driver, which would register single clock mux with
+two parents -- ETHCK_K and ETH_RX_CLK -- and would only control the SYSCFG
+clock mux bits. The problem here is similar, for RCC driver to register the
+ETHRX clock, the ETHRX clock must have a parent clock, however the parent
+clock are not ready yet, because this new SYSCFG clock sub-driver requires
+SYSCFG register clock, which only become available once RCC finishes probing,
+so there again is a cyclic dependency between RCC and SYSCFG.
+
+One possible solution could be to defer obtaining the SYSCFG regmap handle
+until later point, i.e. only once a register access to SYSCFG is required
+the first time. This could permit us to register the mux in the RCC driver
+including a mux which requires SYSCFG access via syscon, although this would
+likely still run into problems during probe, since the clock framework would
+call .get_parent() during mux registration and trigger the SYSCFG access.
+
+All the above still only discusses the clock part of the problem. Even if
+the clock cyclic dependencies could be solved, it would be necessary to
+resolve legacy dwmac st,eth-clk-sel and st,eth-ref-clk-sel DT properties
+and avoid DT ABI break.
+
+So in the end, this series takes a different approach and only partly solves
+the problem. This series splits ETHCK_K, so the ETHCK_K gate could be turned
+off and adds support for selecting ETHRX clock parent clock via DT. This then
+permits e.g. DHCOM to select MCO2 as ETHRX clock source and the clock tree is
+then correctly set up.
+
+[1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
+    Figure 83. Peripheral clock distribution for Ethernet
+    https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157-advanced-armbased-32bit-mpus-stmicroelectronics.pdf
+
+Marek Vasut (7):
+  clk: stm32mp1: Split ETHCK_K into separate MUX and GATE clock
+  clk: stm32mp1: The dev is always NULL, replace it with np
+  clk: stm32mp1: Register clock with device_node pointer
+  clk: stm32mp1: Add parent_data to ETHRX clock
+  ARM: dts: stm32: Add alternate pinmux for ethernet0 pins
+  ARM: dts: stm32: Add alternate pinmux for mco2 pins
+  ARM: dts: stm32: Switch DWMAC RMII clock to MCO2 on DHCOM
+
+ arch/arm/boot/dts/stm32mp15-pinctrl.dtsi     |  49 +++++++
+ arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi |  20 ++-
+ drivers/clk/clk-stm32mp1.c                   | 134 +++++++++++--------
+ 3 files changed, 146 insertions(+), 57 deletions(-)
+
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
+Cc: Stephen Boyd <swboyd@chromium.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+To: linux-arm-kernel@lists.infradead.org
+
+-- 
+2.30.2
+
