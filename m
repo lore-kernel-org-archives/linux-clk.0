@@ -2,68 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC90C433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD6CC433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2693261165
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F1186115B
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230204AbhDHHGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 03:06:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
+        id S229517AbhDHHKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 03:10:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230124AbhDHHGl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Apr 2021 03:06:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F3E961154;
-        Thu,  8 Apr 2021 07:06:30 +0000 (UTC)
+        id S229506AbhDHHJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Apr 2021 03:09:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 561D661159;
+        Thu,  8 Apr 2021 07:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617865590;
-        bh=UsUSzyuuKnCBntpnhQyJp6l/hjWiwPTKlZU0rkV173c=;
+        s=k20201202; t=1617865788;
+        bh=H5glC+vfELVo/toFGRJmLSWGcysIQJlPM8zDXfnp934=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=M/wpDZPC7q++gHED65M/xzRvcHG7Yvu1sXdsFEeKT+u/O5jiKIwPJ1XN+x8CyWHEk
-         UjwE4zUQqt9yVH8+Jkm2YaONMLO2RP+fx/A2p+cXibGeXdSXSI8PtI/j05gkW9gi9g
-         UhpE+y4CmoyucEd4PaSvcyI0PrvhEqwrkquoMVjjlgBMuV2zJFCuwjoO4hLLcbIt+P
-         UwnpEIgz0V+RsoboncpXj7QTXRY8o74h3s53Q0R3GfZyTMCLoSL4f17fgDynJAhyva
-         7jarYK2T6Ue8/Lx/32jNsX27UzbW9Udo99IpP3uCVbOKH4tyA6+NLI5P8Hbb4sInaO
-         rlEbSA3PvuLvg==
+        b=f6Ze47cwM+Q9yBg7hTOqFdsdmDTVyfBoNVcjjq71LB9C7iQD/BdIU/+VgQ7p+m6uQ
+         2DEp1qKL4hPhDt9w2WdTGEuRI1ORRQ6wBiEDp9GWcLQXX6mJtugmLNEEuIMmKjTgZO
+         RHH1iLtBGpWJRiJylkZWWfCfFDcSFm35D5GOCzDuOLuS5595IFezzdsXReMOP9AP7R
+         /CEk/WuSavqvfP9mrd+h6Glet/ncW4iH09H1sm8B283kE9cODIfv/MEY/bIc4Fczvq
+         S8A4pCg3GhWFCkDKEVVfokYGZNwWOP8awisJmnwOOXJBs36mjzwWz3JG1Ij1JI03UT
+         FkzrUwZQBKz/w==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1617568824-2311-1-git-send-email-abel.vesa@nxp.com>
-References: <1617568824-2311-1-git-send-email-abel.vesa@nxp.com>
-Subject: Re: [GIT PULL] clk: imx: Updates for v5.13
+In-Reply-To: <7a384d02b85cdaac4a0e2b357582c8244b9a6f98.1617282116.git.geert+renesas@glider.be>
+References: <7a384d02b85cdaac4a0e2b357582c8244b9a6f98.1617282116.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Switch to .determine_rate()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Date:   Thu, 08 Apr 2021 00:06:29 -0700
-Message-ID: <161786558917.3790633.14467115349480488916@swboyd.mtv.corp.google.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 08 Apr 2021 00:09:47 -0700
+Message-ID: <161786578706.3790633.4008870643384680138@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2021-04-04 13:40:24)
-> The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab=
-15:
->=20
->   Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
->=20
-> for you to fetch changes up to 054ef44ea3ef2883e0f63c9a54c91c07f321a0b4:
->=20
->   clk: imx: Reference preceded by free (2021-04-04 22:39:05 +0300)
->=20
-> ----------------------------------------------------------------
+Quoting Geert Uytterhoeven (2021-04-01 06:03:24)
+> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
+/r9a06g032-clocks.c
+> index 71b11443f6fc3801..c99942f0e4d4c751 100644
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -630,11 +629,13 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
+>         if (clk->index =3D=3D R9A06G032_DIV_UART ||
+>             clk->index =3D=3D R9A06G032_DIV_P2_PG) {
+>                 pr_devel("%s div uart hack!\n", __func__);
+> -               return clk_get_rate(hw->clk);
+> +               req->rate =3D clk_get_rate(hw->clk);
 
-Thanks. Pulled into clk-next. Next time can you send a signed tag with a
-small blurb about what is included?
+Can this use clk_hw_get_rate()? Or it needs to be clk_get_rate() to make
+sure the rate doesn't change while querying the framework... from the
+framework? Another patch is preferred if you're interested in making the
+change.
+
+> +               return 0;
+>         }
+> +       req->rate =3D DIV_ROUND_UP(req->best_parent_rate, div);
+>         pr_devel("%s %pC %ld / %u =3D %ld\n", __func__, hw->clk,
+> -                *prate, div, DIV_ROUND_UP(*prate, div));
+> -       return DIV_ROUND_UP(*prate, div);
+> +                req->best_parent_rate, div, req->rate);
+> +       return 0;
+>  }
+> =20
+>  static int
