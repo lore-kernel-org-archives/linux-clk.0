@@ -2,126 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B94C433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC2CC433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4563F6124C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB9A061184
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbhDHBu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 21:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhDHBu1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:50:27 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C921C061760;
-        Wed,  7 Apr 2021 18:50:17 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id y5so683447qkl.9;
-        Wed, 07 Apr 2021 18:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:content-transfer-encoding:date:message-id:cc:subject
-         :from:to:references:in-reply-to;
-        bh=mMhxbB0zqHG5YU1pZTAAX3hVmpGb5cQ4fHjP3KzZthQ=;
-        b=QPrEzU8sAygM5cwmENm34A2L3XVE53Ze6nVd2eYnd6KIGKg8AWz3k5PNnFtrilVEXX
-         wgaqkxVTcH9p93o8O3lgyeOHeXQB8XPorZExdV9H4PzqjLEO/ysOcYmu7n2xtyoiZ7Hn
-         lP0E80tx91xON/MH9M+z1km/Sbd722K9SGERcL2hlznvp3GmUYLdKZUWUwTLISZukgFQ
-         VwhtYf9v+BzW0dBQyQ0BtEP9MXIHFS+PWflFbyZDM5KuiJZcnsCllHuQ48o/sTA4UnOu
-         WcuwWi9VQJafhdaRjujIFxA38cvqA+RKvzBBuYpaSUrHcG+cBbD9GeA0kOUE+GwhMB+t
-         bMWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:date
-         :message-id:cc:subject:from:to:references:in-reply-to;
-        bh=mMhxbB0zqHG5YU1pZTAAX3hVmpGb5cQ4fHjP3KzZthQ=;
-        b=evUx6xecgoStHU0vMMBUkbLqNBQzmF3//c0Y2vY0jU7IUZxMKLCAVY+VQxf3R6coAR
-         s+eZA5TMilekz/At4Vt8sqJ1nM7hcPLYalVgMkd/duDbDLgS4F0BlhL5AMlH3FDkRcN0
-         sy7BOZRP3MU7++00apykB3QH+zgIhj09O2A16MJ7QXPeg7wS9A1bGoneRzIaaiGrWUT2
-         xWB5T61vgqYY/8VNnY6v6H+ofSCLurpfSYasRbvp+FwK06TRTpxri74VckoH+6DIR2kT
-         6itqfKjR5ilDf/GjogvjEda3szJJ3HWw9wAS0y1iawzdf7Uz4mAmKx8frSXmNcQUrUGN
-         sOTQ==
-X-Gm-Message-State: AOAM533QG9adUMWNlzGoOQND5uRnFPrBDmfb1uq1v/n3BZfpOQq7K1bs
-        hUR8Q7SVhh9ieSPvKro6ZSm1/ktADHZyPBMh
-X-Google-Smtp-Source: ABdhPJwTVQg1PoTmTSngwfPxVba1R0vKewmtNNIIFfa3tXDiD7qXpPv49hyGOpBl7FLd8+UfUW4YXg==
-X-Received: by 2002:a37:d82:: with SMTP id 124mr6094473qkn.311.1617846616630;
-        Wed, 07 Apr 2021 18:50:16 -0700 (PDT)
-Received: from localhost (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id m16sm19473506qkm.100.2021.04.07.18.50.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Apr 2021 18:50:16 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 07 Apr 2021 21:50:15 -0400
-Message-Id: <CAHYREM5SP01.DM67S1LUC3NY@shaak>
-Cc:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
-        <kbuild-all@lists.01.org>
-Subject: Re: [PATCH] clk: fix for_each_child.cocci warnings
-From:   "Liam Beguin" <liambeguin@gmail.com>
-To:     "Stephen Boyd" <sboyd@kernel.org>,
-        "Julia Lawall" <julia.lawall@inria.fr>, <mturquette@baylibre.com>
-References: <alpine.DEB.2.22.394.2104072100410.11549@hadrien>
- <161784187378.3790633.2593540922159647609@swboyd.mtv.corp.google.com>
-In-Reply-To: <161784187378.3790633.2593540922159647609@swboyd.mtv.corp.google.com>
+        id S229869AbhDHByX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 21:54:23 -0400
+Received: from m12-11.163.com ([220.181.12.11]:44085 "EHLO m12-11.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229505AbhDHByW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 21:54:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=oESgj
+        rDTSJZx6iCAz42pUJTMrnferOVNTf/QOUZOefA=; b=bTZF/17ckVw94iNXIduEU
+        9Ui0f5e7cmSk01vZ48+42sOtXnWloYQyYBCYYUoil6Ze+YfZhacuNtoGVW90KrTo
+        bOjKfV17m4IbjiR3ZVoPPLPHqmRT+osB/dpT5EkM5BMRRk9/K9CqLOoo/ExTyA9I
+        w4MXV290eoXMcOr0guvojE=
+Received: from localhost (unknown [218.94.48.178])
+        by smtp7 (Coremail) with SMTP id C8CowAA3SaEIYm5gARmZWA--.45991S2;
+        Thu, 08 Apr 2021 09:53:13 +0800 (CST)
+Date:   Thu, 8 Apr 2021 09:53:12 +0800
+From:   Jian Dong <dj0227@163.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     abel.vesa@nxp.com, mturquette@baylibre.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huyue2@yulong.com, Jian Dong <dongjian@yulong.com>
+Subject: Re: [PATCH]  clk: imx: reference preceded by free
+Message-ID: <20210408095312.00004267@163.com>
+In-Reply-To: <161715700800.2260335.7834636340431628632@swboyd.mtv.corp.google.com>
+References: <1616469034-9691-1-git-send-email-dj0227@163.com>
+        <161715700800.2260335.7834636340431628632@swboyd.mtv.corp.google.com>
+Organization: yulong
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: C8CowAA3SaEIYm5gARmZWA--.45991S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKw4rCryrGFW5Jr43Kr1Dtrb_yoWxtFg_C3
+        4xCr97WrykGF4UA3Z3ZFn5JrsIkw18uFyvkF17Zr4UGas5Xr1Y9wnY9rZ2yr4UX340kw1D
+        Wa4jk3yv9r13WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbbTmDUUUUU==
+X-Originating-IP: [218.94.48.178]
+X-CM-SenderInfo: dgmqjjqx6rljoofrz/1tbiMwlu3VXl8mrQuwAAsK
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Tue, 30 Mar 2021 19:16:48 -0700
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-On Wed Apr 7, 2021 at 8:31 PM EDT, Stephen Boyd wrote:
-> Quoting Julia Lawall (2021-04-07 12:02:32)
-> > From: kernel test robot <lkp@intel.com>
-> >=20
-> > For_each_child_of_node should have of_node_put() before goto.
-> >=20
-> > Generated by: scripts/coccinelle/iterators/for_each_child.cocci
-> >=20
-> > CC: Liam Beguin <lvb@xiphos.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Signed-off-by: kernel test robot <lkp@intel.com>
-> > Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
-> > ---
->
-> Is this a fix for a patch on the list?
->
+> Quoting Jian Dong (2021-03-22 20:10:34)
+> > From: Jian Dong <dongjian@yulong.com>
+> > 
+> >  when register failed, clk will be freed, it will generate dangling
+> > pointer problem in later reference. it should return directly.
+> > 
+> > Signed-off-by: Jian Dong <dongjian@yulong.com>
+> > ---  
+> 
+> Any Fixes tag?
 
-This is a fix for a patch[1] I sent yesterday.
-I'll apply and resend.
+Sorry for late, I'm unfamiliar with tag rule.
 
-Thanks,
-Liam
+For this patch include two files commit 2f77296d3 and fe37b482
+maybe likes:
 
-[1] https://patchwork.kernel.org/project/linux-clk/patch/20210407005330.289=
-0430-2-liambeguin@gmail.com/
+Fixes: 2f77296d3	(clk: imx: add lpcg clock support)
+Fixes: fe37b482		(clk: imx: add scu clock common part)
 
-> >=20
-> > url:    https://github.com/0day-ci/linux/commits/Liam-Beguin/add-suppor=
-t-for-the-lmk04832/20210407-085408
-> > base:   f40ddce88593482919761f74910f42f4b84c004b
-> > :::::: branch date: 9 hours ago
-> > :::::: commit date: 9 hours ago
-> >=20
-> >  clk-lmk04832.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > --- a/drivers/clk/clk-lmk04832.c
-> > +++ b/drivers/clk/clk-lmk04832.c
-> > @@ -1159,6 +1159,7 @@ static int lmk04832_probe(struct spi_dev
-> >                 if (ret) {
-> >                         dev_err(lmk->dev, "missing reg property in chil=
-d: %s\n",
-> >                                 child->full_name);
-> > +                       of_node_put(child);
-> >                         goto err_disable_oscin;
-> >                 }
-> >
+and I noticed this patch has been merged, do I need RESEND again with
+tags like above?
+
+Thank you
 
