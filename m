@@ -2,198 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BD9C43460
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B94C433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9188F61246
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4563F6124C
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbhDHBsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 21:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55320 "EHLO
+        id S229601AbhDHBu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 21:50:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbhDHBsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:48:01 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5608DC0613D7
-        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 18:47:51 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id o16so322234ljp.3
-        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 18:47:51 -0700 (PDT)
+        with ESMTP id S229505AbhDHBu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:50:27 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C921C061760;
+        Wed,  7 Apr 2021 18:50:17 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id y5so683447qkl.9;
+        Wed, 07 Apr 2021 18:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Mdh5NvSZNpel1YT/OpgDBwKJu+seO7F56lAGeiiRX4I=;
-        b=ewH8uoeAdnOoaCaXSC6E9olXCsgxh1TXcEaj5URQqxBvys1ZDOQIcFx9+5Kxk2Rfz3
-         oGi8viQGgMuFSZUVUfvjERRET6hTeyuaxoG8jzoo33L1e3yb5JHFl19J5vB0oJzjoT9w
-         qb4/400uDi/EELGVZUy2H9BQJNWQe9vhwIwtGDK8eBmgqVXkrmqsfs19Sx5zZD3MY1EX
-         YTEPYK60qlysfRpA2Q+c7e9leoKowgc6LpO7KcpVXEng77QOrLWyl79iTT87AAZuS6RQ
-         c4xmRQZeZPKRiJzTZ3dCP+EX4UD50nAtAomr/SJcIIywnJ2HceQUkCHW7zF2p8AIJKgI
-         DUCg==
+        d=gmail.com; s=20161025;
+        h=mime-version:content-transfer-encoding:date:message-id:cc:subject
+         :from:to:references:in-reply-to;
+        bh=mMhxbB0zqHG5YU1pZTAAX3hVmpGb5cQ4fHjP3KzZthQ=;
+        b=QPrEzU8sAygM5cwmENm34A2L3XVE53Ze6nVd2eYnd6KIGKg8AWz3k5PNnFtrilVEXX
+         wgaqkxVTcH9p93o8O3lgyeOHeXQB8XPorZExdV9H4PzqjLEO/ysOcYmu7n2xtyoiZ7Hn
+         lP0E80tx91xON/MH9M+z1km/Sbd722K9SGERcL2hlznvp3GmUYLdKZUWUwTLISZukgFQ
+         VwhtYf9v+BzW0dBQyQ0BtEP9MXIHFS+PWflFbyZDM5KuiJZcnsCllHuQ48o/sTA4UnOu
+         WcuwWi9VQJafhdaRjujIFxA38cvqA+RKvzBBuYpaSUrHcG+cBbD9GeA0kOUE+GwhMB+t
+         bMWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Mdh5NvSZNpel1YT/OpgDBwKJu+seO7F56lAGeiiRX4I=;
-        b=UVDyL4+dKsr9XreXJ8sMj95FxU8jygUyzeh2LUKceqd+UgUUgWt3F0849YlrYJol4o
-         jg1xCpHTMHWFCVVuAWQLadr162qmyfeVIy9KrYsJy8A3TrFLLd8h68cWnmolLh372MXX
-         ikQXZxc7/f0F751UjBHhwUf3SjwH8DuPVIyvoPQkv378a9Zt+8kUIlyqvNocKtw0tw3d
-         esdu/gRT/LOYISh0lHp8PmYL/zl2Bm4D+i/4MDMFpN0rYxrc0YopLgddXNL1qg1wOvoZ
-         dgERfG+3anXObWNPRRd0X2Ps4nG7LkgeYJKomez47aiW2/Xr0w87p2EeMb9RJhZGPKki
-         BDoQ==
-X-Gm-Message-State: AOAM530AmNXqSN9+IoQ+rYpUKlGN/QCl+7lSeY33flmnO4MfwsrG9mCv
-        bgV9lTpJcmPptC8I1zQbcbOwr4hmYbAWBg==
-X-Google-Smtp-Source: ABdhPJxI6fR5PFr6TqG2xSpwLOsBrWf5SnE87ZFDx0YAjLL9bqVzRlV4HqktHF5ofEd2No1Eywg0/Q==
-X-Received: by 2002:a2e:98d1:: with SMTP id s17mr4008098ljj.349.1617846468876;
-        Wed, 07 Apr 2021 18:47:48 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id w24sm2686705ljh.19.2021.04.07.18.47.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 18:47:48 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 3/4] clk: qcom: gcc-sdm845: get rid of the test clock
-Date:   Thu,  8 Apr 2021 04:47:37 +0300
-Message-Id: <20210408014737.955979-4-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210408014737.955979-1-dmitry.baryshkov@linaro.org>
-References: <20210408014737.955979-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:content-transfer-encoding:date
+         :message-id:cc:subject:from:to:references:in-reply-to;
+        bh=mMhxbB0zqHG5YU1pZTAAX3hVmpGb5cQ4fHjP3KzZthQ=;
+        b=evUx6xecgoStHU0vMMBUkbLqNBQzmF3//c0Y2vY0jU7IUZxMKLCAVY+VQxf3R6coAR
+         s+eZA5TMilekz/At4Vt8sqJ1nM7hcPLYalVgMkd/duDbDLgS4F0BlhL5AMlH3FDkRcN0
+         sy7BOZRP3MU7++00apykB3QH+zgIhj09O2A16MJ7QXPeg7wS9A1bGoneRzIaaiGrWUT2
+         xWB5T61vgqYY/8VNnY6v6H+ofSCLurpfSYasRbvp+FwK06TRTpxri74VckoH+6DIR2kT
+         6itqfKjR5ilDf/GjogvjEda3szJJ3HWw9wAS0y1iawzdf7Uz4mAmKx8frSXmNcQUrUGN
+         sOTQ==
+X-Gm-Message-State: AOAM533QG9adUMWNlzGoOQND5uRnFPrBDmfb1uq1v/n3BZfpOQq7K1bs
+        hUR8Q7SVhh9ieSPvKro6ZSm1/ktADHZyPBMh
+X-Google-Smtp-Source: ABdhPJwTVQg1PoTmTSngwfPxVba1R0vKewmtNNIIFfa3tXDiD7qXpPv49hyGOpBl7FLd8+UfUW4YXg==
+X-Received: by 2002:a37:d82:: with SMTP id 124mr6094473qkn.311.1617846616630;
+        Wed, 07 Apr 2021 18:50:16 -0700 (PDT)
+Received: from localhost (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
+        by smtp.gmail.com with ESMTPSA id m16sm19473506qkm.100.2021.04.07.18.50.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Apr 2021 18:50:16 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 07 Apr 2021 21:50:15 -0400
+Message-Id: <CAHYREM5SP01.DM67S1LUC3NY@shaak>
+Cc:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <kbuild-all@lists.01.org>
+Subject: Re: [PATCH] clk: fix for_each_child.cocci warnings
+From:   "Liam Beguin" <liambeguin@gmail.com>
+To:     "Stephen Boyd" <sboyd@kernel.org>,
+        "Julia Lawall" <julia.lawall@inria.fr>, <mturquette@baylibre.com>
+References: <alpine.DEB.2.22.394.2104072100410.11549@hadrien>
+ <161784187378.3790633.2593540922159647609@swboyd.mtv.corp.google.com>
+In-Reply-To: <161784187378.3790633.2593540922159647609@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The test clock isn't in the bindings and apparently it's not used by
-anyone upstream.  Remove it.
+Hi Stephen,
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gcc-sdm845.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+On Wed Apr 7, 2021 at 8:31 PM EDT, Stephen Boyd wrote:
+> Quoting Julia Lawall (2021-04-07 12:02:32)
+> > From: kernel test robot <lkp@intel.com>
+> >=20
+> > For_each_child_of_node should have of_node_put() before goto.
+> >=20
+> > Generated by: scripts/coccinelle/iterators/for_each_child.cocci
+> >=20
+> > CC: Liam Beguin <lvb@xiphos.com>
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
+> > ---
+>
+> Is this a fix for a patch on the list?
+>
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 46be43a02bf6..58aa3ec9a7fc 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -28,7 +28,6 @@
- enum {
- 	P_BI_TCXO,
- 	P_AUD_REF_CLK,
--	P_CORE_BI_PLL_TEST_SE,
- 	P_GPLL0_OUT_EVEN,
- 	P_GPLL0_OUT_MAIN,
- 	P_GPLL4_OUT_MAIN,
-@@ -98,14 +97,12 @@ static const struct parent_map gcc_parent_map_0[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
- 	{ P_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_0[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_1[] = {
-@@ -113,7 +110,6 @@ static const struct parent_map gcc_parent_map_1[] = {
- 	{ P_GPLL0_OUT_MAIN, 1 },
- 	{ P_SLEEP_CLK, 5 },
- 	{ P_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_1[] = {
-@@ -121,41 +117,34 @@ static const struct clk_parent_data gcc_parent_data_1[] = {
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .fw_name = "sleep_clk", .name = "core_pi_sleep_clk" },
- 	{ .hw = &gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_SLEEP_CLK, 5 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_2[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .fw_name = "sleep_clk", .name = "core_pi_sleep_clk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_3[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_3[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_4[] = {
- 	{ P_BI_TCXO, 0 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_4[] = {
- 	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map gcc_parent_map_6[] = {
-@@ -163,7 +152,6 @@ static const struct parent_map gcc_parent_map_6[] = {
- 	{ P_GPLL0_OUT_MAIN, 1 },
- 	{ P_AUD_REF_CLK, 2 },
- 	{ P_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_6[] = {
-@@ -171,7 +159,6 @@ static const struct clk_parent_data gcc_parent_data_6[] = {
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .fw_name = "aud_ref_clk", .name = "aud_ref_clk" },
- 	{ .hw = &gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- static const struct clk_parent_data gcc_parent_data_7_ao[] = {
-@@ -198,7 +185,6 @@ static const struct parent_map gcc_parent_map_10[] = {
- 	{ P_GPLL0_OUT_MAIN, 1 },
- 	{ P_GPLL4_OUT_MAIN, 5 },
- 	{ P_GPLL0_OUT_EVEN, 6 },
--	{ P_CORE_BI_PLL_TEST_SE, 7 },
- };
- 
- static const struct clk_parent_data gcc_parent_data_10[] = {
-@@ -206,7 +192,6 @@ static const struct clk_parent_data gcc_parent_data_10[] = {
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll4.clkr.hw },
- 	{ .hw = &gpll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
- };
- 
- 
--- 
-2.30.2
+This is a fix for a patch[1] I sent yesterday.
+I'll apply and resend.
+
+Thanks,
+Liam
+
+[1] https://patchwork.kernel.org/project/linux-clk/patch/20210407005330.289=
+0430-2-liambeguin@gmail.com/
+
+> >=20
+> > url:    https://github.com/0day-ci/linux/commits/Liam-Beguin/add-suppor=
+t-for-the-lmk04832/20210407-085408
+> > base:   f40ddce88593482919761f74910f42f4b84c004b
+> > :::::: branch date: 9 hours ago
+> > :::::: commit date: 9 hours ago
+> >=20
+> >  clk-lmk04832.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > --- a/drivers/clk/clk-lmk04832.c
+> > +++ b/drivers/clk/clk-lmk04832.c
+> > @@ -1159,6 +1159,7 @@ static int lmk04832_probe(struct spi_dev
+> >                 if (ret) {
+> >                         dev_err(lmk->dev, "missing reg property in chil=
+d: %s\n",
+> >                                 child->full_name);
+> > +                       of_node_put(child);
+> >                         goto err_disable_oscin;
+> >                 }
+> >
 
