@@ -2,92 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8694C433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 13:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E657C433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 15:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF8B9610FB
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 13:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5655E6112F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 15:27:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231195AbhDHNzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 09:55:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15984 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbhDHNzW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 09:55:22 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FGN4l5N7GzyNZH;
-        Thu,  8 Apr 2021 21:52:55 +0800 (CST)
-Received: from huawei.com (10.67.174.37) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
- 21:55:04 +0800
-From:   Chen Hui <clare.chenhui@huawei.com>
-To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] clk: qcom: Add missing MODULE_DEVICE_TABLE
-Date:   Thu, 8 Apr 2021 21:55:09 +0800
-Message-ID: <20210408135509.208921-1-clare.chenhui@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S231630AbhDHP15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 11:27:57 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:35435 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231659AbhDHP14 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 11:27:56 -0400
+Received: by mail-ot1-f44.google.com with SMTP id v24-20020a9d69d80000b02901b9aec33371so2685155oto.2;
+        Thu, 08 Apr 2021 08:27:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rdZfDLUXaMwgcMUkGetCIhlvH4deTfYYyOQSzUBFId8=;
+        b=PAMTCbw7HkURnCdl0LKlcpuI375UwnRjIvZZfVEegpOI687CdBF2CGfK2MfFtHia7f
+         5y+jDWSHbk1oJKudcOhi+KLS+O2FrWTl0i089PLKFzaoii9RS8m+DtzS7v0tIpP9I9eu
+         V8y6bVGCYEg3SFkvzblxhohPKwjlyE7fDJmkcwaN3GJP+OrYWzTOz6asetwmU0gb+6vu
+         jET/7LVAvnXXRPhFKIL/7mZ7kh5cog6MhI40gjxGdvjG0wdmx8cZSqMjjeJxiLoWjDBX
+         8xhXz8uyKgA8IYDeZigWsaa4Gtc6ch9mV9CxDqPgq1Rh2I4jQy40dVAtCNa2d/WByW1v
+         LXYw==
+X-Gm-Message-State: AOAM531kosk5QrhsQG2LHp4IWZycczlKEwkN75oVd/S9A3B8PQ560y3Q
+        LfSyH6P/7Klg/ZprcJydeg==
+X-Google-Smtp-Source: ABdhPJx+CB57VJt5MT3qSNg+O2bSCTTG4lZKqRMJVQNbU1/SJ53npzyNH/Jh8yb4te5/vIqEC6CGww==
+X-Received: by 2002:a9d:70cf:: with SMTP id w15mr8438401otj.283.1617895664765;
+        Thu, 08 Apr 2021 08:27:44 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n12sm6389560otq.42.2021.04.08.08.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 08:27:44 -0700 (PDT)
+Received: (nullmailer pid 1515862 invoked by uid 1000);
+        Thu, 08 Apr 2021 15:27:42 -0000
+Date:   Thu, 8 Apr 2021 10:27:42 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Greentime Hu <greentime.hu@sifive.com>
+Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
+        zong.li@sifive.com, bhelgaas@google.com, aou@eecs.berkeley.edu,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
+        alex.dewar90@gmail.com, khilman@baylibre.com,
+        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
+        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        helgaas@kernel.org
+Subject: Re: [PATCH v5 5/6] PCI: fu740: Add SiFive FU740 PCIe host controller
+ driver
+Message-ID: <20210408152742.GA1510069@robh.at.kernel.org>
+References: <20210406092634.50465-1-greentime.hu@sifive.com>
+ <20210406092634.50465-6-greentime.hu@sifive.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210406092634.50465-6-greentime.hu@sifive.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing MODULE_DEVICE_TABLE entries to support module autoloading,
-as these drivers can be compiled as external modules.
+On Tue, Apr 06, 2021 at 05:26:33PM +0800, Greentime Hu wrote:
+> From: Paul Walmsley <paul.walmsley@sifive.com>
+> 
+> Add driver for the SiFive FU740 PCIe host controller.
+> This controller is based on the DesignWare PCIe core.
+> 
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Co-developed-by: Henry Styles <hes@sifive.com>
+> Signed-off-by: Henry Styles <hes@sifive.com>
+> Co-developed-by: Erik Danie <erik.danie@sifive.com>
+> Signed-off-by: Erik Danie <erik.danie@sifive.com>
+> Co-developed-by: Greentime Hu <greentime.hu@sifive.com>
+> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig      |   9 +
+>  drivers/pci/controller/dwc/Makefile     |   1 +
+>  drivers/pci/controller/dwc/pcie-fu740.c | 308 ++++++++++++++++++++++++
+>  3 files changed, 318 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
 
-Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
----
- drivers/clk/qcom/a53-pll.c      | 1 +
- drivers/clk/qcom/a7-pll.c       | 1 +
- drivers/clk/qcom/apss-ipq-pll.c | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-index 45cfc57bff92..af6ac17c7dae 100644
---- a/drivers/clk/qcom/a53-pll.c
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -93,6 +93,7 @@ static const struct of_device_id qcom_a53pll_match_table[] = {
- 	{ .compatible = "qcom,msm8916-a53pll" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, qcom_a53pll_match_table);
- 
- static struct platform_driver qcom_a53pll_driver = {
- 	.probe = qcom_a53pll_probe,
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-index e171d3caf2cf..c4a53e5db229 100644
---- a/drivers/clk/qcom/a7-pll.c
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -86,6 +86,7 @@ static const struct of_device_id qcom_a7pll_match_table[] = {
- 	{ .compatible = "qcom,sdx55-a7pll" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, qcom_a7pll_match_table);
- 
- static struct platform_driver qcom_a7pll_driver = {
- 	.probe = qcom_a7pll_probe,
-diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-index 30be87fb222a..bef7899ad0d6 100644
---- a/drivers/clk/qcom/apss-ipq-pll.c
-+++ b/drivers/clk/qcom/apss-ipq-pll.c
-@@ -81,6 +81,7 @@ static const struct of_device_id apss_ipq_pll_match_table[] = {
- 	{ .compatible = "qcom,ipq6018-a53pll" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, apss_ipq_pll_match_table);
- 
- static struct platform_driver apss_ipq_pll_driver = {
- 	.probe = apss_ipq_pll_probe,
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
