@@ -2,86 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E2C433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8524DC43470
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 840D961245
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 642666136A
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbhDHBJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 21:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229937AbhDHBJt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 21:09:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 19AE16113A;
-        Thu,  8 Apr 2021 01:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617844179;
-        bh=f/xx+JASbd9ZTZFHDhgzyPHyCRkJ2KLQ0QZAD9UJK0I=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YdL/cbZe3Q+0BzvpVCZX+E2SWw5m+0YzggStnEkEWU+gb/4Md9vaL705I42JJNYVh
-         /M0rK5h8Tw63R/4w3AS1zIvIQjQ7bV8KYBSWJQKHCTOOfN2R1uLwJcqLoU59lMewr2
-         CSsky2x/UYBtKZXzDECzTJbru9MjXLyfv+QtoKYzJGiTBh+wZoFi7+CLU/SR9pZJ5i
-         lH9OuX9BT0/1TjQBAHzgmlzd8/HcPgVIdPkhkEDh4mdawmuqrRU1seCgYHGiC0iFJw
-         1m9RotrR+ggjiHwolVVYzEKg9Tgm17er0gxw7cVqRHLxqvvMIprRRPnHnKxGagHPln
-         sbQdizP1tEFCw==
-Content-Type: text/plain; charset="utf-8"
+        id S230495AbhDHBRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 21:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230475AbhDHBRS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:17:18 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0BA9C061760
+        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 18:17:06 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id g15so646000qkl.4
+        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 18:17:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RponVH/n0pFWeAldVZ4sD08GNccWTnm59ZDslhoHoI8=;
+        b=iBGVFBxiMIY/WHY9U2+dk0mL9hmKnaVjUbryQlNgHHXCc+cZftQLQgTW3+vtrfj4cc
+         FI9ICgXJ2YllVjB/zIujnGYD5u7ODgjWg4R5yTb+IeFhu+IhdjKMRkE3+oECw8umIwLZ
+         2nuGUk7MJV8+Wsszk2EwJrPqUgrZkCri0TDtRN23nFN5NMvbjqocAQWhaguBejQJZptK
+         Vett4vHV07sEi1iEVMH52KkWcrjVcynhfnpDHgnr/HGaNbOXMb7ecxnUkbIEXS/LILee
+         IgdKLfOtZVk4toehA4Swe1AdlfPC3nBjsl5gOlR/ivUtEjvQIb4QrMdqeh97x9/OoyOU
+         HiAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RponVH/n0pFWeAldVZ4sD08GNccWTnm59ZDslhoHoI8=;
+        b=Q4GafOfvSTo7kvWGgEOD4WaHXHB5DLbunovKzayj09D0J8JlNQe+cz3qXdo2A0GFqO
+         g9Piuz5FIBb5n6Zri3eiBWciPBPzEGRMhyKQaCH82hsVFlTSMTwrp9qPZ1+XPfaoIjWs
+         dJWGz1y43gL8xyYU5ySGve51ZSUFYm7MCXwaLV8rdZKvWL9I2TnXu065ZMMV4JCnu11T
+         svnqJwZyhQbp43f7P4coKy2/iUOvhNDR2jBashm4/2XRmrt3IURebDbX+5sMsdbWLHW8
+         1iit2iqXlsU2vMWj57AUIa9KOtg6XfMBIz2hMdEeHpZf7vw8cMuec/96LR+3dxL5V9Qy
+         dgUg==
+X-Gm-Message-State: AOAM530m0SYjAtRtRhqtwAkY+QL88mXgKKOnYOQF8zXp2vBaVwBC8OYf
+        B0b3gEM4dMwkUJ+wWRU8s9Km0ZXc/Pin0iOPBj063Z9WWZA=
+X-Google-Smtp-Source: ABdhPJz3UZBfJjNTlP+uGEGfQYh2yVI4kGW+LUjXTJj1Heanc3aJJRzfi/+eypiUVBdXr/0LZzRlJHcikVMKUlbnY/8=
+X-Received: by 2002:ae9:f312:: with SMTP id p18mr6207469qkg.162.1617844625938;
+ Wed, 07 Apr 2021 18:17:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210406153131.601701-1-quanyang.wang@windriver.com>
-References: <20210406153131.601701-1-quanyang.wang@windriver.com>
-Subject: Re: [V3][PATCH] clk: zynqmp: pll: add set_pll_mode to check condition in zynqmp_pll_enable
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Quanyang Wang <quanyang.wang@windriver.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+References: <20210406231909.3035267-1-dmitry.baryshkov@linaro.org>
+ <20210406231909.3035267-2-dmitry.baryshkov@linaro.org> <161784119850.3790633.17698180700358661431@swboyd.mtv.corp.google.com>
+ <CAA8EJpqVJgj0eBm5m91MNqiBZg0y1v=iMAuLpW8H-i3ut8-q0A@mail.gmail.com> <161784413353.3790633.12158005058384470922@swboyd.mtv.corp.google.com>
+In-Reply-To: <161784413353.3790633.12158005058384470922@swboyd.mtv.corp.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 8 Apr 2021 04:16:54 +0300
+Message-ID: <CAA8EJprRt=mx5k6cGO91nmH8e1QkKTAnPasveFY7kVhgBBb42w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: separate SDM845 GCC clock bindings
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        quanyang.wang@windriver.com
-Date:   Wed, 07 Apr 2021 18:09:37 -0700
-Message-ID: <161784417793.3790633.1172679818900674783@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Rob Herring <robh+dt@kernel.org>,
+        DRM DRIVER FOR MSM ADRENO GPU 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+        <devicetree@vger.kernel.org>, open list:COMMON CLK FRAMEWORK" 
+        <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting quanyang.wang@windriver.com (2021-04-06 08:31:31)
-> From: Quanyang Wang <quanyang.wang@windriver.com>
->=20
-> If there is a IOCTL_SET_PLL_FRAC_MODE request sent to ATF ever,
-> we shouldn't skip invoking PM_CLOCK_ENABLE fn even though this
-> pll has been enabled. In ATF implementation, it will only assign
-> the mode to the variable (struct pm_pll *)pll->mode when handling
-> IOCTL_SET_PLL_FRAC_MODE call. Invoking PM_CLOCK_ENABLE can force
-> ATF send request to PWU to set the pll mode to PLL's register.
->=20
-> There is a scenario that happens in enabling VPLL_INT(clk_id:96):
-> 1) VPLL_INT has been enabled during booting.
-> 2) A driver calls clk_set_rate and according to the rate, the VPLL_INT
->    should be set to FRAC mode. Then zynqmp_pll_set_mode is called
->    to pass IOCTL_SET_PLL_FRAC_MODE to ATF. Note that at this point
->    ATF just stores the mode to a variable.
-> 3) This driver calls clk_prepare_enable and zynqmp_pll_enable is
->    called to try to enable VPLL_INT pll. Because of 1), the function
->    zynqmp_pll_enable just returns without doing anything after checking
->    that this pll has been enabled.
->=20
-> In the scenario above, the pll mode of VPLL_INT will never be set
-> successfully. So adding set_pll_mode to check condition to fix it.
->=20
-> Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
+On Thu, 8 Apr 2021 at 04:08, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dmitry Baryshkov (2021-04-07 17:38:06)
+> > Hello,
+> >
+> > On Thu, 8 Apr 2021 at 03:20, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Dmitry Baryshkov (2021-04-06 16:19:06)
+> > > > Separate qcom,gcc-sdm845 clock bindings, adding required clocks and
+> > > > clock-names properties.
+> > >
+> > > Yes, but why?
+> >
+> > Why separate or why add required clocks? Consider the rest of
+>
+> Why separate the binding from the overall gcc one.
+>
+> > bindings, where qcom,gcc.yaml defines older bindings, which do not use
+> > clocks/clock-names and for newer bindings we have one file per binding
+> > (qcom,gcc-apq8064.yaml, qcom,gcc-qcs404.yaml, qcom,gcc-sdx55.yaml,
+> > qcom,gcc-sm8150.yaml, etc).
+> >
+> > Do you suggest merging all of them back into a single yaml file?
+>
+> No. Please add the "why" part to the commit text. The "how" and "what"
+> should be clear from the patch itself. I guess "so we can add required
+> clocks and clock-names properties to the binding" should be sufficient.
 
-Applied to clk-next
+Ah, got you. Sorry for the confusion. Will send v3 shortly.
+
+-- 
+With best wishes
+Dmitry
