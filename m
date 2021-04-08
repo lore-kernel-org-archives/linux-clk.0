@@ -2,79 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD6CC433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD776C433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F1186115B
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EB1261057
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhDHHKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 03:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46618 "EHLO mail.kernel.org"
+        id S229517AbhDHHWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 03:22:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229506AbhDHHJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Apr 2021 03:09:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 561D661159;
-        Thu,  8 Apr 2021 07:09:48 +0000 (UTC)
+        id S229506AbhDHHWi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Apr 2021 03:22:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 41C7B61057;
+        Thu,  8 Apr 2021 07:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617865788;
-        bh=H5glC+vfELVo/toFGRJmLSWGcysIQJlPM8zDXfnp934=;
+        s=k20201202; t=1617866547;
+        bh=VWHJ4S2NUazxjkcoG14YcKlRYbUJn67YeARgQ2HlvR4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=f6Ze47cwM+Q9yBg7hTOqFdsdmDTVyfBoNVcjjq71LB9C7iQD/BdIU/+VgQ7p+m6uQ
-         2DEp1qKL4hPhDt9w2WdTGEuRI1ORRQ6wBiEDp9GWcLQXX6mJtugmLNEEuIMmKjTgZO
-         RHH1iLtBGpWJRiJylkZWWfCfFDcSFm35D5GOCzDuOLuS5595IFezzdsXReMOP9AP7R
-         /CEk/WuSavqvfP9mrd+h6Glet/ncW4iH09H1sm8B283kE9cODIfv/MEY/bIc4Fczvq
-         S8A4pCg3GhWFCkDKEVVfokYGZNwWOP8awisJmnwOOXJBs36mjzwWz3JG1Ij1JI03UT
-         FkzrUwZQBKz/w==
+        b=Kbuf8KejErJteWnVQN2yKiXOpnWkPkaFgNWLhc/vJGIjXKzJaXXAZs2JUX3qPePPa
+         p4yDTB/XtA+46L4MNcLTtoIRXjxJIHYKarVYxy8edzjI8/UsTIyDlpC8Z7328uT53l
+         gXdxm5wyFkE1TgJ5pNqHATwWCnzMxl+u+RzrbQP4rnC/cHcvESv8FPg2s/xYYp7DdW
+         8pWvGGjcLP7LnPihWJNaPzTylr9jStwPmgDtyyTfllZpoYLWcOQHxZZZKe5tn9zD20
+         a40Y7yM4NlK6u1mJZlUmH2WkDtu3nAfSCHduDhaiNQBQBd4n44nxEOxUbYmtAk3CGb
+         SFNa/vK9MQ2KQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7a384d02b85cdaac4a0e2b357582c8244b9a6f98.1617282116.git.geert+renesas@glider.be>
-References: <7a384d02b85cdaac4a0e2b357582c8244b9a6f98.1617282116.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Switch to .determine_rate()
+In-Reply-To: <1615944142-12171-5-git-send-email-tdas@codeaurora.org>
+References: <1615944142-12171-1-git-send-email-tdas@codeaurora.org> <1615944142-12171-5-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1 4/6] clk: qcom: Add graphics clock controller driver for SC7280
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 08 Apr 2021 00:09:47 -0700
-Message-ID: <161786578706.3790633.4008870643384680138@swboyd.mtv.corp.google.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 08 Apr 2021 00:22:25 -0700
+Message-ID: <161786654585.3790633.12597782416303763853@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-04-01 06:03:24)
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
-/r9a06g032-clocks.c
-> index 71b11443f6fc3801..c99942f0e4d4c751 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -630,11 +629,13 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
->         if (clk->index =3D=3D R9A06G032_DIV_UART ||
->             clk->index =3D=3D R9A06G032_DIV_P2_PG) {
->                 pr_devel("%s div uart hack!\n", __func__);
-> -               return clk_get_rate(hw->clk);
-> +               req->rate =3D clk_get_rate(hw->clk);
+Quoting Taniya Das (2021-03-16 18:22:20)
+> +static struct clk_regmap_div gpu_cc_hub_ahb_div_clk_src =3D {
+> +       .reg =3D 0x11c0,
+> +       .shift =3D 0,
+> +       .width =3D 4,
+> +       .clkr.hw.init =3D &(struct clk_init_data) {
+> +               .name =3D "gpu_cc_hub_ahb_div_clk_src",
+> +               .parent_data =3D &(const struct clk_parent_data){
+> +                       .hw =3D &gpu_cc_hub_clk_src.clkr.hw,
 
-Can this use clk_hw_get_rate()? Or it needs to be clk_get_rate() to make
-sure the rate doesn't change while querying the framework... from the
-framework? Another patch is preferred if you're interested in making the
-change.
+Can you follow what Dmitry has done and use .hws instead of
+clk_parent_data when the whole array is clk_hw pointers?
 
-> +               return 0;
->         }
-> +       req->rate =3D DIV_ROUND_UP(req->best_parent_rate, div);
->         pr_devel("%s %pC %ld / %u =3D %ld\n", __func__, hw->clk,
-> -                *prate, div, DIV_ROUND_UP(*prate, div));
-> -       return DIV_ROUND_UP(*prate, div);
-> +                req->best_parent_rate, div, req->rate);
-> +       return 0;
->  }
-> =20
->  static int
+> +               },
+> +               .num_parents =3D 1,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_regmap_div_ro_ops,
+> +       },
+> +};
+> +
