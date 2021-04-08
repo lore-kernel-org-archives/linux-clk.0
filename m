@@ -2,303 +2,231 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707DFC433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F07EC433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3044A61157
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC4F06115B
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 20:24:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231862AbhDHUNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 16:13:47 -0400
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:37793 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbhDHUNq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 16:13:46 -0400
-Received: by mail-ot1-f48.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so3563067otr.4;
-        Thu, 08 Apr 2021 13:13:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2R+5jHVXPCke6baZgs2LAtymZLLKIbJs/pgqd8CKtGg=;
-        b=RlfjHddvXfZ/oX7ibNQwFMdwJvLxFVsFOhHVAOnhgOYZwOwnBn4Z4tNDD9Xme8K6Zr
-         ZFHddIbJvJytAM06GuZPuInGr8QsAo1xRyZbyMDqoytu6IAoLsfAQ0GIgjnJ1u9cBEfT
-         dMyldX5T6DDqnwZMcvjs7Avg5csPUq+1saYwylpgk6GGgmclzLm0VRQnopG83E22RtOG
-         47uKii+XfkcVYjdw+1eb9LNu8nKxWGR/re/P88wlW0ouLMYI5LAx3Rawst9TYEw0nadH
-         sslCpUnJwbhoedx8CGQXaA/qRm1EUz9y9+lUzpvF5iM7W+vFlvbGS+y1fRu19Vk1cVIB
-         f3cw==
-X-Gm-Message-State: AOAM530j/3lvQJKJN4tdavPnLiAQvpHCRSZK6Qyu/1jApyhmhUTFXBoT
-        OUmbeqUqPEeoPgSIsf1JoQ==
-X-Google-Smtp-Source: ABdhPJzskC+PtCqzySPTtPCLkU0rw2XGaGqjns26ng7vNknaKYyxzVArbfQEwxYPg7Kw3FUkDi+XTA==
-X-Received: by 2002:a9d:4d0d:: with SMTP id n13mr1909840otf.294.1617912814724;
-        Thu, 08 Apr 2021 13:13:34 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 62sm92459oto.60.2021.04.08.13.13.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 13:13:34 -0700 (PDT)
-Received: (nullmailer pid 1886277 invoked by uid 1000);
-        Thu, 08 Apr 2021 20:13:33 -0000
-Date:   Thu, 8 Apr 2021 15:13:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Liam Beguin <liambeguin@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] dt-bindings: clock: add ti,lmk04832 bindings
-Message-ID: <20210408201333.GA1882021@robh.at.kernel.org>
-References: <20210407005330.2890430-1-liambeguin@gmail.com>
- <20210407005330.2890430-4-liambeguin@gmail.com>
+        id S232372AbhDHUYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 16:24:16 -0400
+Received: from smtp-32-i2.italiaonline.it ([213.209.12.32]:41886 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231451AbhDHUYQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Apr 2021 16:24:16 -0400
+Received: from oxapps-32-144.iol.local ([10.101.8.190])
+        by smtp-32.iol.local with ESMTPA
+        id UbC6lu1MTBc6YUbC6lVgnb; Thu, 08 Apr 2021 22:24:03 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1617913443; bh=S3BIXQfpQo++zDln2EF8ZcTp8LoMYd8zAJ9p8/j1cB8=;
+        h=From;
+        b=xFdHjz4S1+eWsKxVH3uJuNwgtBvw9EcOO20hrm1MIspoCCg3GfBB7N5j8VGtWkCem
+         gJq5hTeePzqgK/U5Ls7MCznyROAF+MNR3K3sbd3XLohYbsw8385TC++JQp0g69Ztmh
+         gkc5WcGuH+28B4mKc0v3FcGuGizjHK3W7+EGXQkB5JEQjxraf6mlyASGI3jX/VRKoL
+         fzBLqK5onoeNusHMyob/frpIem+qh70A4dRX8zW7mXnNDoKI0VNCtYfO0nSGeHAce5
+         skLOcWdSpa3ZmmwiMlvhZUa/SYQatGcPTFY1FnfsC4BomcGKZ9uyuqVCQbZal7B1es
+         oh+cqr19skVcQ==
+X-CNFS-Analysis: v=2.4 cv=B6l8bMhM c=1 sm=1 tr=0 ts=606f6663 cx=a_exe
+ a=+LyvvGPX93CApvOVpnXrdQ==:117 a=UPWQtH3J-JgA:10 a=IkcTkHD0fZMA:10
+ a=_gZzKa99_6AA:10 a=VwQbUJbxAAAA:8 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8
+ a=8LTHUb3NTGMUmE2BBAMA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=IC2XNlieTeVoXbcui8wp:22
+Date:   Thu, 8 Apr 2021 22:24:02 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Message-ID: <116337570.107804.1617913442196@mail1.libero.it>
+In-Reply-To: <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
+References: <20210402192054.7934-1-dariobin@libero.it>
+ <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+ <1727466283.11523.1617746554330@mail1.libero.it>
+ <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+ <1044574275.383115.1617779265390@mail1.libero.it>
+ <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
+ <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210407005330.2890430-4-liambeguin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 87.20.116.197
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: TFQtKds0nbk74TFIzoCUz9lR1gEridzg
+x-libjamv: fydCTFSi3F8=
+X-CMAE-Envelope: MS4xfClDELyJojz8n+Kd3LDLNRqiGELfp97d0xdF/Xm+4PL05Az1h56U0o7sWpEBqTfnU5tN/T+tmmOeQvfH5TQ42zWNDNcIQ5loYIRzrs/6VZbMnSsyEKXV
+ 0Dj5BY813FOaXezdFBcrW4MXuJMAvulsWEse2THai0cXw2NNaNs15Wir/Pgg/6GW91o28GkUfbHrYXaFUc31qrQxH1fsQMDSD8qdgqfIEu8s9Sau2VV6zeCJ
+ 4g3fp+lZuq8bWFDM0tBLhlDQ9CtK8yJWGBFULcT6YL7y68Wu+0bUWBuFp4iSzo4omxiIRqkdlZ/pvJNEv6llHjbHessKIvU5JcY9Gjq/Ees5mdfye3ngl0z3
+ ilYC7ZNve8Hh9ZhmjrkTN0bB0k4+ovaoKpqlZK783mltfY2r0j4asYRiCEWC/lP/FiV/X+SCvHXtvXMYIRCllH4aJjnFd8KzxMpfoGgFXDOM3M6259Yf/IW/
+ iQs2gTKxaxDwyUvV9J6fF8b4yAAPcR3hmVDUsj6J1Dxi8XwIKQMqx7XVZdy7OwUDcMsoeOlIR3xL/2x7
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 08:53:30PM -0400, Liam Beguin wrote:
-> From: Liam Beguin <lvb@xiphos.com>
+
+> Il 07/04/2021 15:21 Tero Kristo <kristo@kernel.org> ha scritto:
 > 
-> Document devicetree bindings for Texas Instruments' LMK04832.
-> The LMK04208 is a high performance clock conditioner with superior clock
-> jitter cleaning, generation, and distribution with JEDEC JESD204B
-> support.
+>  
+> On 07/04/2021 15:52, Rob Herring wrote:
+> > On Wed, Apr 7, 2021 at 2:07 AM Dario Binacchi <dariobin@libero.it> wrote:
+> >>
+> >>
+> >>> Il 07/04/2021 03:16 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >>>
+> >>>
+> >>> On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
+> >>>>
+> >>>>
+> >>>>> Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >>>>>
+> >>>>>
+> >>>>> On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> The series comes from my commit in U-boot
+> >>>>>> d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+> >>>>>> and from the subsequent exchange of emails at the end of which I was
+> >>>>>> suggested to send the patch to the linux kernel
+> >>>>>> (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
+> >>>>>
+> >>>>> It's 'ranges' that determines translatable which is missing from the
+> >>>>> DT. This should have not had a 0 size either though maybe we could
+> >>>>> support that.
+> >>>>
+> >>>> I have replied to the email you sent to the u-boot mailing list
+> >>>>
+> >>>>>
+> >>>>> Does the DT have to be updated anyways for your spread spectrum support?
+> >>>>
+> >>>> The spread spectrum support patch does not need this patch to work. They belong
+> >>>> to two different series.
+> >>>
+> >>> That's not what I asked. Is the spread spectrum support forcing a DT
+> >>> update for users?
+> >>
+> >> Yes, the deltam and modfreq registers must be added to the DPLL clocks.
+> > 
+> > That's a shame given this dts has been mostly untouched since 2013.
+> > 
 > 
-> Signed-off-by: Liam Beguin <lvb@xiphos.com>
-> ---
->  .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
->  1 file changed, 209 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> I think technically it would be possible to map these registers within 
+> the driver also, seeing there are like a handful of the DPLLs for both 
+> am3/am4 which are impacted. Just add a new compatible or something, or 
+> alternatively parse the register addresses and populate the 
+> deltam/modfreq registers based on that.
+
+I have not added new compatibles, but I have added the offset of the delta and modfreq 
+registers to the data structures used by the DPLL drivers and I have set them in the 
+related setup functions.
+https://lore.kernel.org/patchwork/patch/1406590/
+
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-> new file mode 100644
-> index 000000000000..a9f8b9b720fc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-> @@ -0,0 +1,209 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Clock bindings for the Texas Instruments LMK04832
-> +
-> +maintainers:
-> +  - Liam Beguin <liambeguin@gmail.com>
-> +
-> +description: |
-> +  Devicetree binding for the LMK04832, a clock conditioner with JEDEC JESD204B
-> +  support. The LMK04832 is pin compatible with the LMK0482x family.
-> +
-> +  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,lmk04832
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  spi-max-frequency:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Maximum SPI clocking speed of the device in Hz.
-
-Already has a type and description, just need:
-
-spi-max-frequency: true
-
-(Or a range of values if you know the maximum).
-
-> +
-> +  clocks:
-> +    items:
-> +      - description: PLL2 reference clock.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: oscin
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  ti,spi-4wire-rdbk:
-> +    description: |
-> +      Select SPI 4wire readback pin configuration.
-> +      Available readback pins are,
-> +        CLKin_SEL0 0
-> +        CLKin_SEL1 1
-> +        RESET 2
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +    default: 1
-> +
-> +  ti,vco-hz:
-> +    description: Optional to set VCO frequency of the PLL in Hertz.
-> +
-> +  ti,sysref-ddly:
-> +    description: SYSREF digital delay value.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 8
-> +    maximum: 8191
-> +    default: 8
-> +
-> +  ti,sysref-mux:
-> +    description: |
-> +      SYSREF Mux configuration.
-> +      Available options are,
-> +        Normal SYNC 0
-> +        Re-clocked 1
-> +        SYSREF Pulser 2
-> +        SYSREF Continuous 3
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-> +    default: 3
-> +
-> +  ti,sync-mode:
-> +    description: SYNC pin configuration.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +    default: 1
-> +
-> +  ti,sysref-pulse-count:
-> +    description:
-> +      Number of SYSREF pulses to send when SYSREF is not in continuous mode.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8]
-> +    default: 4
-> +
-> +patternProperties:
-> +  "@[0-9a-d]+$":
-> +    type: object
-> +    description:
-> +      Child nodes used to configure output clocks.
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          clock output identifier.
-> +        minimum: 0
-> +        maximum: 13
-> +
-> +      ti,clkout-fmt:
-> +        description:
-> +          Clock output format.
-> +          Available options are,
-> +            Powerdown 0x00
-> +            LVDS 0x01
-> +            HSDS 6 mA 0x02
-> +            HSDS 8 mA 0x03
-> +            LVPECL 1600 mV 0x04
-> +            LVPECL 2000 mV 0x05
-> +            LCPECL 0x06
-> +            CML 16 mA 0x07
-> +            CML 24 mA 0x08
-> +            CML 32 mA 0x09
-> +            CMOS (Off/Inverted) 0x0a
-> +            CMOS (Normal/Off) 0x0b
-> +            CMOS (Inverted/Inverted) 0x0c
-> +            CMOS (Inverted/Normal) 0x0d
-> +            CMOS (Normal/Inverted) 0x0e
-> +            CMOS (Normal/Normal) 0x0f
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 15
-> +
-> +      ti,clkout-sysref:
-> +        description:
-> +          Select SYSREF clock path for output clock.
-> +        type: boolean
-> +
-> +    required:
-> +      - reg
-
-       additionalProperties: false
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clocks {
-> +        lmk04832_oscin: oscin {
-> +            compatible = "fixed-clock";
-> +
-> +            #clock-cells = <0>;
-> +            clock-frequency = <122880000>;
-> +            clock-output-names = "lmk04832-oscin";
-> +        };
-> +    };
-> +
-> +    spi0 {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        lmk04832: clock-controller@0 {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            reg = <0>;
-> +
-> +            compatible = "ti,lmk04832";
-> +            spi-max-frequency = <781250>;
-> +
-> +            reset-gpios = <&gpio_lmk 0 0 0>;
-> +
-> +            #clock-cells = <1>;
-> +            clocks = <&lmk04832_oscin>;
-> +            clock-names = "oscin";
-> +
-> +            ti,spi-4wire-rdbk = <0>;
-> +            ti,vco-hz = <2457600000>;
-> +
-> +            assigned-clocks =
-> +                <&lmk04832 0>, <&lmk04832 1>,
-> +                <&lmk04832 2>, <&lmk04832 3>,
-> +                <&lmk04832 4>,
-> +                <&lmk04832 6>, <&lmk04832 7>,
-> +                <&lmk04832 10>, <&lmk04832 11>;
-> +            assigned-clock-rates =
-> +                <122880000>, <384000>,
-> +                <122880000>, <384000>,
-> +                <122880000>,
-> +                <153600000>, <384000>,
-> +                <614400000>, <384000>;
-> +
-> +            clkout0@0 {
-> +                reg = <0>;
-> +                ti,clkout-fmt = <0x01>; // LVDS
-> +            };
-> +
-> +            clkout1@1 {
-> +                reg = <1>;
-> +                ti,clkout-fmt = <0x01>; // LVDS
-> +                ti,clkout-sysref;
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.30.1.489.g328c10930387
+> >>> If the DT has to be changed anyways (not really
+> >>> great policy), then you could fix this in the DT at the same time.
+> >>
+> >> I could put the fix to the device tree in that series, although I wouldn't
+> >> create a single patch to fix and add the SSC registers. First the size-cells = <0>
+> >> fix patch and then the SSC patch.
+> >> Do you agree?
+> > 
+> > By at the same time, I really just meant within 1 release.
+> > 
+> > But I'd like to hear TI maintainers' thoughts on this.
 > 
+> I did post a comment on patch #1 questioning the approach from TI clock 
+> driver perspective, imho I can't see why these two patches would be 
+> needed right now.
+
+Because U-boot maintainers asked me after I sent them my patch on this issue. 
+I believe that the email exchange that took place in the U-boot (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/)
+and Linux kernel mailing lists showed that:
+- The patch 'fdt: translate address if # size-cells = <0>' is wrong (U-boot has accepted 
+  it, and it will have to be reverted).
+- However, the same patch highlighted that it is wrong to use the size-cells = <0> property 
+  in the prcm_clocks and scm_clocks nodes of device tree.
+- Rob agrees that in the case of the am3xx this is the right choice:
+diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
+index 1fb22088caeb..59b0a0cf211e 100644
+--- a/arch/arm/boot/dts/am33xx-l4.dtsi
++++ b/arch/arm/boot/dts/am33xx-l4.dtsi
+@@ -110,7 +110,8 @@
+ 
+                                prcm_clocks: clocks {
+                                        #address-cells = <1>;
+-                                       #size-cells = <0>;
++                                       #size-cells = <1>;
++                                       ranges = <0 0 0x2000>;
+                                };
+ 
+                                prcm_clockdomains: clockdomains {
+@@ -320,7 +321,8 @@
+ 
+                                        scm_clocks: clocks {
+                                                #address-cells = <1>;
+-                                               #size-cells = <0>;
++                                               #size-cells = <1>;
++                                               ranges = <0 0 0x800>;
+                                        };
+                                };
+
+--- a/arch/arm/boot/dts/am33xx-clocks.dtsi
++++ b/arch/arm/boot/dts/am33xx-clocks.dtsi
+@@ -10,7 +10,7 @@
+                compatible = "ti,mux-clock";
+                clocks = <&virt_19200000_ck>, <&virt_24000000_ck>, <&virt_25000000_ck>, <&virt_26000000_ck>;
+                ti,bit-shift = <22>;
+-               reg = <0x0040>;
++               reg = <0x0040 0x4>;
+        };
+ 
+        adc_tsc_fck: adc_tsc_fck {
+@@ -98,7 +98,7 @@
+                compatible = "ti,gate-clock";
+                clocks = <&l4ls_gclk>;
+                ti,bit-shift = <0>;
+-               reg = <0x0664>;
++               reg = <0x0664 0x04>;
+        };
+[...]
+
+- U-boot rightly wants to use the same device tree as the Kernel.
+- IMHO, if I'm not missing something, I think using a #size-cells = <1>; for clocks 
+  it requires only one code change in the ti_clk_get_reg_addr():
+
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -265,9 +265,27 @@ int __init ti_clk_retry_init(struct device_node *node, void *user,
+ int ti_clk_get_reg_addr(struct device_node *node, int index,
+                        struct clk_omap_reg *reg)
+
+-       if (of_property_read_u32_index(node, "reg", index, &val)) {
++       if (of_property_read_u32_index(node, "reg", index * 2, &val)) {
+
+   The other changes to develop affect device trees of architectures which, like am3, currently
+   use #size-cells = <0>.
+
+IMHO, all this would lead to an improvement of the device trees with minimal impact on the code. 
+It would benefit U-boot, which would not have to develop special platform code and any new 
+architectures that would inherit from these DTs.
+
+If you think it might be worth it, I am available to develop this patch.
+
+Thanks and regards,
+Dario
+
+> 
+> -Tero
