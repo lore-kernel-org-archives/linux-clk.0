@@ -2,60 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7FDC433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 06:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC90C433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB6B6113E
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 06:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2693261165
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 07:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229937AbhDHGle (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 02:41:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38328 "EHLO mail.kernel.org"
+        id S230204AbhDHHGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 03:06:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229745AbhDHGld (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Apr 2021 02:41:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EA60461132;
-        Thu,  8 Apr 2021 06:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1617864082;
-        bh=/zU1SlCaZTsU0PeIDHRx1Ni+FXc8yx1r7z2bbF2dzjk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M5V5o1A8FvYfXDbN3slbnKl/QgW5BUOgsjmpwafHlilpx8ael5ZlSxB0S5p/Aayif
-         IxQLzvPk61KgX314LBZx/IkhO2N7sBct1bLjd3RRqAj/bIt2G35desDOOzb5DZ+I+8
-         kqsqLx+Llco4ab8zJoueSOLALR5Iqh8TTZA2OZNY=
-Date:   Thu, 8 Apr 2021 08:41:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Saravana Kannan <saravanak@google.com>,
-        kernel-team@android.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Add sync_state() support to clock framework
-Message-ID: <YG6lj/cT5yqQdRpK@kroah.com>
-References: <20210407034456.516204-1-saravanak@google.com>
- <161784175956.3790633.6032492675008535412@swboyd.mtv.corp.google.com>
+        id S230124AbhDHHGl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Apr 2021 03:06:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F3E961154;
+        Thu,  8 Apr 2021 07:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617865590;
+        bh=UsUSzyuuKnCBntpnhQyJp6l/hjWiwPTKlZU0rkV173c=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=M/wpDZPC7q++gHED65M/xzRvcHG7Yvu1sXdsFEeKT+u/O5jiKIwPJ1XN+x8CyWHEk
+         UjwE4zUQqt9yVH8+Jkm2YaONMLO2RP+fx/A2p+cXibGeXdSXSI8PtI/j05gkW9gi9g
+         UhpE+y4CmoyucEd4PaSvcyI0PrvhEqwrkquoMVjjlgBMuV2zJFCuwjoO4hLLcbIt+P
+         UwnpEIgz0V+RsoboncpXj7QTXRY8o74h3s53Q0R3GfZyTMCLoSL4f17fgDynJAhyva
+         7jarYK2T6Ue8/Lx/32jNsX27UzbW9Udo99IpP3uCVbOKH4tyA6+NLI5P8Hbb4sInaO
+         rlEbSA3PvuLvg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161784175956.3790633.6032492675008535412@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1617568824-2311-1-git-send-email-abel.vesa@nxp.com>
+References: <1617568824-2311-1-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [GIT PULL] clk: imx: Updates for v5.13
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Date:   Thu, 08 Apr 2021 00:06:29 -0700
+Message-ID: <161786558917.3790633.14467115349480488916@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 05:29:19PM -0700, Stephen Boyd wrote:
-> Quoting Saravana Kannan (2021-04-06 20:44:53)
-> > Stephen,
-> > 
-> > We can decide later if both these patches land through clk tree or the
-> > driver-core tree. The meat of the series is in Patch 2/2 and that commit
-> > text gives all the details.
-> 
-> The majority of the diff is in drivers/clk so presumably it can be
-> merged through the clk tree if Greg acks the include file API.
+Quoting Abel Vesa (2021-04-04 13:40:24)
+> The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab=
+15:
+>=20
+>   Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
+>=20
+> for you to fetch changes up to 054ef44ea3ef2883e0f63c9a54c91c07f321a0b4:
+>=20
+>   clk: imx: Reference preceded by free (2021-04-04 22:39:05 +0300)
+>=20
+> ----------------------------------------------------------------
 
-Now acked, merge away!
+Thanks. Pulled into clk-next. Next time can you send a signed tag with a
+small blurb about what is included?
