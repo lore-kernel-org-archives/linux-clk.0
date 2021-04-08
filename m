@@ -2,69 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F3EC433ED
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA33C433ED
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0520761182
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F90261184
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 00:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbhDHA3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 20:29:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
+        id S229488AbhDHAb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 20:31:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229480AbhDHA3b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Apr 2021 20:29:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D892261181;
-        Thu,  8 Apr 2021 00:29:20 +0000 (UTC)
+        id S229484AbhDHAbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Apr 2021 20:31:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4875D61181;
+        Thu,  8 Apr 2021 00:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617841761;
-        bh=fDrVtOA9CcpPnyJ1ecDAimSzxUJQMqgpZb9jfbgh27I=;
+        s=k20201202; t=1617841875;
+        bh=5YsPqezv793TcVBfx0Cfk1xGz66mtLLY0VP7pyv6NKw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cNuVgmAdIzBTxZjhj7Kw8h52dBk3ne/0LL7j8jM8OdB679n7dzHbcEV0MXd4qeiyY
-         uPKcNeMTXarBYQM7KzNKFOtFTZd+chhbh14XFwWfLoOP+jymWxwwEfi9oiJCkJJzaH
-         lY9c0igu3SRBAQm5zxoJ47jQPePys2jVDe0/T2tCFNIIHHsMYX8MhG/nJ9+FPJ11Ak
-         mMOzPS3y/76YVO8N8EhzcoGtnXGv/xOEvkYmHrPqqaN605Oqc1+CxARMu8DrMLP7On
-         eOQ9kp+7QpqvTNKaLd4zsjsI3/BKw3HUb+vM1QEOPt1CYl9ubBhj1X/7F4GbE3naal
-         EOTdzFGPUAOVQ==
+        b=s9zrAn3EZME/CD+fBbOlgTZzD10vZs4NmNekX35wp0zGTrEu3wiNBQ1KvD//G8S8v
+         zXbwz7/HSz9s+gw19p6/PjDw4HyCRBc3JnqLwImO2qHxr2BOds0V712iWEZL85CiBY
+         96ZmdfaG/LYe9RJqVi0MQySKGdOx0tSHnKb6Jb1gz9H8Ergdhg39Ajd720Z5p8RdLl
+         zbGJeJ1meBqmSR7q0vB7cQ3A/tE+WNw1oqcxFgAd0vfFKgChrIjGtPqBdNvJqvI7Ou
+         fUnCjrYqOiRvf0ebHaHqNCCHeDmzA1RYBck8UM5tuY4A5L4Dl9QLoCb6mCVUhZTbLE
+         LG8MpS28IUnAQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210407034456.516204-1-saravanak@google.com>
-References: <20210407034456.516204-1-saravanak@google.com>
-Subject: Re: [PATCH v1 0/2] Add sync_state() support to clock framework
+In-Reply-To: <alpine.DEB.2.22.394.2104072100410.11549@hadrien>
+References: <alpine.DEB.2.22.394.2104072100410.11549@hadrien>
+Subject: Re: [PATCH] clk: fix for_each_child.cocci warnings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Saravana Kannan <saravanak@google.com>
-Date:   Wed, 07 Apr 2021 17:29:19 -0700
-Message-ID: <161784175956.3790633.6032492675008535412@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        kbuild-all@lists.01.org
+To:     Julia Lawall <julia.lawall@inria.fr>,
+        Liam Beguin <liambeguin@gmail.com>, mturquette@baylibre.com
+Date:   Wed, 07 Apr 2021 17:31:13 -0700
+Message-ID: <161784187378.3790633.2593540922159647609@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Saravana Kannan (2021-04-06 20:44:53)
-> Stephen,
+Quoting Julia Lawall (2021-04-07 12:02:32)
+> From: kernel test robot <lkp@intel.com>
 >=20
-> We can decide later if both these patches land through clk tree or the
-> driver-core tree. The meat of the series is in Patch 2/2 and that commit
-> text gives all the details.
+> For_each_child_of_node should have of_node_put() before goto.
+>=20
+> Generated by: scripts/coccinelle/iterators/for_each_child.cocci
+>=20
+> CC: Liam Beguin <lvb@xiphos.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
+> ---
 
-The majority of the diff is in drivers/clk so presumably it can be
-merged through the clk tree if Greg acks the include file API.
+Is this a fix for a patch on the list?
 
 >=20
-> Saravana Kannan (2):
->   driver core: Add dev_set_drv_sync_state()
->   clk: Add support for sync_state()
+> url:    https://github.com/0day-ci/linux/commits/Liam-Beguin/add-support-=
+for-the-lmk04832/20210407-085408
+> base:   f40ddce88593482919761f74910f42f4b84c004b
+> :::::: branch date: 9 hours ago
+> :::::: commit date: 9 hours ago
 >=20
->  drivers/clk/clk.c            | 84 +++++++++++++++++++++++++++++++++++-
->  include/linux/clk-provider.h |  1 +
->  include/linux/device.h       | 12 ++++++
->  3 files changed, 96 insertions(+), 1 deletion(-)
+>  clk-lmk04832.c |    1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> --- a/drivers/clk/clk-lmk04832.c
+> +++ b/drivers/clk/clk-lmk04832.c
+> @@ -1159,6 +1159,7 @@ static int lmk04832_probe(struct spi_dev
+>                 if (ret) {
+>                         dev_err(lmk->dev, "missing reg property in child:=
+ %s\n",
+>                                 child->full_name);
+> +                       of_node_put(child);
+>                         goto err_disable_oscin;
+>                 }
+>
