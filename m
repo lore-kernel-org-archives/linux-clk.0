@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240F2C43461
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C13C43461
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAAB36121E
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CA2561353
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 01:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbhDHBr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Apr 2021 21:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        id S231366AbhDHBsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Apr 2021 21:48:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230142AbhDHBr6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:47:58 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483BBC061763
-        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 18:47:48 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id c6so299189lji.8
-        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 18:47:48 -0700 (PDT)
+        with ESMTP id S231325AbhDHBsB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Apr 2021 21:48:01 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3677FC061764
+        for <linux-clk@vger.kernel.org>; Wed,  7 Apr 2021 18:47:51 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id u9so288238ljd.11
+        for <linux-clk@vger.kernel.org>; Wed, 07 Apr 2021 18:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=D2i8W4m1OuOLC0EiDShXmmsb5dRC8axuc+jtBhnBrsY=;
-        b=ShhChz8ms6+gHCOH3GLZ6juANUcb6i/XXlP0tGLYHCawUdYhRzhhdy0JJWVJttKnv2
-         MsXJLK4JN++ZfEsODd+8nWxswsfVXj7kw4lKcfp2wHbLc7mihgR+IYF5Zjd2PgrQzGvA
-         808eTjFvF9rTIQiHaWX+c0tpgCkA19o5e+9BfUrMzg/XQKg21p7aT2rPRs0Hb0ocVh1f
-         ke5VSZOHGpFeIH9P7OI9RQkXRo+snnqezXC9TwT7Xx9PDpsHar7Dy06He8Adb0ewA06k
-         u4BukmVbD+4UmYIQCmArD8s6lQLepfV2lWkHw4lvakhxlslyKK351gwATbE2ZZIR6dSi
-         gBRg==
+        bh=E3Z+Q+wmuUr0KYMXECLxkHWsFWhoDF0jH3lckJMwRAY=;
+        b=KM8+BbdRTlLusM2hMlQEQxZBDRLj1WI608H1MUXbvBF1mbUX5XgtNtQNNC7/5WeiGq
+         deil8UqGha9GzcdsS6shTB7HTvi/YMAO/rnmgAbBK1kF/ol70okFyxzF4RJwsCmcNzm7
+         r8c3kyTKb8GGRwocWmKqVhRxhtR7ukLahnJ5/hXHA3+RClUN6QjU5I+GMh5r7sWD/0Yq
+         Tp/f57Y8odgpXo52Z6SeFSaWDnRZBQsZ8oMwabi2sVeWlgKE06yGFybap/e499JnG9pV
+         4+hKfykxGap8nqxT3RV+DQVTGA6pYt4XQR1wgbglIWNtp35Rhk6XzFBraSV3CNIwqINJ
+         Mzyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=D2i8W4m1OuOLC0EiDShXmmsb5dRC8axuc+jtBhnBrsY=;
-        b=hVJARlrcmijiByEyzdOfj3Iw2h981lLQK3dwyzyvjrbqyIrnPrWjSI1/hq+LwHKtCb
-         ym3QXO5FYotU5HV7dmV7wNOe+T+iixtLqodmqQhcaWvNu9tdSgIgP4lDWbILWbqpYd/r
-         XcDJCnBc/AHj/+g4NxqBMhm+B3corvovqnOAEOK+9miTfPFT8YNhJcUgIsgpOtJ5Uvf0
-         hxxaMArJI4DFKSt09C0x5cmmpXPdD+6tQpI98Ksu/4S7L1V9Fz61snO2L0YQZPHBhn6w
-         wxoJTgqmbFugcbMahYpUzh9scuvSTlbQZBbnKG6ZP1M/qb8i18DOygIwowJjR3g5sVqm
-         HD7A==
-X-Gm-Message-State: AOAM531doWxAPGDYlRRdewJ769P0kcqDnbezlBGKvBGslpAQNadFG6K1
-        kW7vgAW91H30EPomsA066eKH9w==
-X-Google-Smtp-Source: ABdhPJx3ooRDJBGSWQ5HKRasO8VCn0PXN8Kx0Y1K80wMCrOhk91wiaNmArhLU+nQ0hetstbp4A80Iw==
-X-Received: by 2002:a2e:b555:: with SMTP id a21mr4027275ljn.69.1617846466751;
-        Wed, 07 Apr 2021 18:47:46 -0700 (PDT)
+        bh=E3Z+Q+wmuUr0KYMXECLxkHWsFWhoDF0jH3lckJMwRAY=;
+        b=nzf1HXHD3vfl3PiVyLcz2aFlhqsQEmABSfqJ/NsaRbM6PNs16WAmm0R2cxggF1owJY
+         PoLkePyW+wm3Dm8mr7Gd8tcg+jeH7jeOSd3gin9Wv6FOnQoBWw3uQHahMgvrgCGC+Bzh
+         jw3GMXdjnMmGp/BMSPh1D+2VGIP2kTtepiewGUINM5NuOCKTi0h4g6uhghAP6y2txjSa
+         Hsz2dGtL2J8yZEhGmKEQ+NquPukXQTI+vtaCigc05NGc3tDJDG2jrX67qtWz/RIfchq5
+         ZRFh4y5syvekp+iUIte+R7T4q8oHF7qmpLZHYhvVREIT0LQ9OVfsyIo4cQHCSForHVv+
+         zgXw==
+X-Gm-Message-State: AOAM532j/tn+xcDZZ6EvUgY0Aol8dXXYgSoj/y7Y7eFdgR3GSUMFbDD+
+        G++U5akQOCfn68VLWZgafOWrbA==
+X-Google-Smtp-Source: ABdhPJxYbOJF1ePOgpSOYy9nEldxcpdvl2WbQOJUqVyK6MDLF/HcTJTEHxEFrJQeYOWsGRqSTsJQHQ==
+X-Received: by 2002:a2e:a312:: with SMTP id l18mr4041558lje.106.1617846469666;
+        Wed, 07 Apr 2021 18:47:49 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id w24sm2686705ljh.19.2021.04.07.18.47.46
+        by smtp.gmail.com with ESMTPSA id w24sm2686705ljh.19.2021.04.07.18.47.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 18:47:46 -0700 (PDT)
+        Wed, 07 Apr 2021 18:47:49 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -63,9 +63,9 @@ To:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v3 1/4] dt-bindings: clock: separate SDM845 GCC clock bindings
-Date:   Thu,  8 Apr 2021 04:47:35 +0300
-Message-Id: <20210408014737.955979-2-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 4/4] arm64: dts: qcom: sdm845: add required clocks on the gcc
+Date:   Thu,  8 Apr 2021 04:47:38 +0300
+Message-Id: <20210408014737.955979-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210408014737.955979-1-dmitry.baryshkov@linaro.org>
 References: <20210408014737.955979-1-dmitry.baryshkov@linaro.org>
@@ -75,125 +75,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Separate qcom,gcc-sdm845 clock bindings from the clock-less
-qcom,gcc.yaml, so that we can add required clocks and clock-names
-properties.
+Specify input clocks to the SDM845's Global Clock Controller as required
+by the bindings.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- .../bindings/clock/qcom,gcc-sdm845.yaml       | 82 +++++++++++++++++++
- .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 -
- 2 files changed, 82 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-new file mode 100644
-index 000000000000..4099b09ee9dd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-@@ -0,0 +1,82 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-sdm845.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Global Clock & Reset Controller Binding
-+
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
-+  - Taniya Das <tdas@codeaurora.org>
-+
-+description: |
-+  Qualcomm global clock control module which supports the clocks, resets and
-+  power domains on SDM845
-+
-+  See also:
-+  - dt-bindings/clock/qcom,gcc-sdm845.h
-+
-+properties:
-+  compatible:
-+    const: qcom,gcc-sdm845
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board active XO source
-+      - description: Sleep clock source
-+      - description: PCIE 0 Pipe clock source
-+      - description: PCIE 1 Pipe clock source
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: sleep_clk
-+      - const: pcie_0_pipe_clk
-+      - const: pcie_1_pipe_clk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  protected-clocks:
-+    description:
-+      Protected clock specifier list as per common clock binding.
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  # Example for GCC for MSM8960:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@100000 {
-+      compatible = "qcom,gcc-sdm845";
-+      reg = <0x100000 0x1f0000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&sleep_clk>,
-+               <&pcie0_lane>,
-+               <&pcie1_lane>;
-+      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk", "pcie_0_pipe_clk", "pcie_1_pipe_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-index ee0467fb5e31..490edad25830 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-@@ -32,7 +32,6 @@ description: |
-   - dt-bindings/clock/qcom,gcc-mdm9615.h
-   - dt-bindings/reset/qcom,gcc-mdm9615.h
-   - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
--  - dt-bindings/clock/qcom,gcc-sdm845.h
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 454f794af547..86f717d5bfb6 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1061,6 +1061,16 @@ soc: soc@0 {
+ 		gcc: clock-controller@100000 {
+ 			compatible = "qcom,gcc-sdm845";
+ 			reg = <0 0x00100000 0 0x1f0000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK_A>,
++				 <&sleep_clk>,
++				 <&pcie0_lane>,
++				 <&pcie1_lane>;
++			clock-names = "bi_tcxo",
++				      "bi_tcxo_ao",
++				      "sleep_clk",
++				      "pcie_0_pipe_clk",
++				      "pcie_1_pipe_clk";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+@@ -2062,6 +2072,7 @@ pcie0_lane: lanes@1c06200 {
+ 				clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
+ 				clock-names = "pipe0";
  
- properties:
-   compatible:
-@@ -52,7 +51,6 @@ properties:
-       - qcom,gcc-mdm9615
-       - qcom,gcc-sdm630
-       - qcom,gcc-sdm660
--      - qcom,gcc-sdm845
++				#clock-cells = <0>;
+ 				#phy-cells = <0>;
+ 				clock-output-names = "pcie_0_pipe_clk";
+ 			};
+@@ -2170,6 +2181,7 @@ pcie1_lane: lanes@1c06200 {
+ 				clocks = <&gcc GCC_PCIE_1_PIPE_CLK>;
+ 				clock-names = "pipe0";
  
-   '#clock-cells':
-     const: 1
++				#clock-cells = <0>;
+ 				#phy-cells = <0>;
+ 				clock-output-names = "pcie_1_pipe_clk";
+ 			};
 -- 
 2.30.2
 
