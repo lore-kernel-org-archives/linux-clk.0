@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33E4C43460
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB39BC433B4
 	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 09:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEDD6611AB
+	by mail.kernel.org (Postfix) with ESMTP id 6FA88611AD
 	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 09:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232330AbhDIJBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S232286AbhDIJBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 9 Apr 2021 05:01:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36459 "EHLO
+Received: from youngberry.canonical.com ([91.189.89.112]:36458 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231127AbhDIJBV (ORCPT
+        with ESMTP id S230181AbhDIJBV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Apr 2021 05:01:21 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lUn0j-0002B4-L5; Fri, 09 Apr 2021 09:01:05 +0000
+        id 1lUn0j-0002Ay-6v; Fri, 09 Apr 2021 09:01:05 +0000
 From:   Colin King <colin.king@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -31,11 +31,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: [PATCH][V2] clk: uniphier: Fix potential infinite loop
-Date:   Fri,  9 Apr 2021 10:01:04 +0100
-Message-Id: <20210409090104.629722-2-colin.king@canonical.com>
+Date:   Fri,  9 Apr 2021 10:01:03 +0100
+Message-Id: <20210409090104.629722-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210409090104.629722-1-colin.king@canonical.com>
-References: <20210409090104.629722-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
