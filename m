@@ -2,253 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107ABC43460
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 10:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6EBC43460
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 11:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA13E60240
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 10:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA6361182
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 11:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233153AbhDIKc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Apr 2021 06:32:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34774 "EHLO mail.kernel.org"
+        id S233008AbhDILtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Apr 2021 07:49:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231402AbhDIKc0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Apr 2021 06:32:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 76EED60240;
-        Fri,  9 Apr 2021 10:32:11 +0000 (UTC)
+        id S232837AbhDILtj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Apr 2021 07:49:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8AF2561005;
+        Fri,  9 Apr 2021 11:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617964333;
-        bh=B6eMCqLAaYU5zJeERy9ko0BB0vsarv4BZc3/zQBQp2c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=URBAWSJUy5K9hW0P17zXEX5ZC/WvEP2PS92C0sEuJSvGLPu3HOrwCjpGbAn5oWWwh
-         AV+TY7EuACzmzBAzU8KPNXiB27Zxw6OVHHWFY9i4Gql4JS+osd1VTG1Z/odeuDGLU2
-         QMuVTJoq98G8pxmqAasVAHzDYaTkTpAZf8H0rtSDOGNla37SO1rTBOrp0o4l2VFV3U
-         oUGAqPeCL54MfZ4JeBeGhPrxf5MA7tJAojX6Bepg1HRrenzUVTG3cJadWN0JHDaWSW
-         JYXnU2Iiank4qI5eMkIppEmPGhaWXLJe9/+Og/trGRAwzyuXc7DBOon1fQFWsxqQ7D
-         mmRseJMVnYTSw==
-Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
-To:     Dario Binacchi <dariobin@libero.it>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+        s=k20201202; t=1617968966;
+        bh=wSgw8vqxkTcKSyPgvD8ke8joz3MElmiOLTRjt10EyxQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r257Sg1OggCxGJg5bCTag7NFuCUtM6bBbQPGssOeudpQTueqANF9k8caCST6j+GGs
+         mhq+777ZkQwKVhOaru41hweVqSWj04b/XsU8h7+ydnyEF2kONVWjrmWmJI81FX2inh
+         1I5q5flBzM6rB5dvZupRSAfvTfk2iRV4KJ8C1mZTY2vPCzbW73c/T7i/07hy3SI8DF
+         8mRhhs2yT0V+iCISJxvGjQqPD7ppY2j6k1JTxquPWqltBrBwD9Eqf+usc+F86rClEv
+         1sWx6Xv2N6pfdBPoJd3B8urT8gi+vY7QJWCh4h6thPfMXLecWCPm/VUEaLlVYX5ru+
+         /QWkr+ISokV9Q==
+Received: by earth.universe (Postfix, from userid 1000)
+        id 877D23C0C96; Fri,  9 Apr 2021 13:49:24 +0200 (CEST)
+Date:   Fri, 9 Apr 2021 13:49:24 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Alexander Lobakin <alobakin@pm.me>,
+        Wei Liu <wei.liu@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        "Jason J. Herne" <jjherne@linux.ibm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Joe Perches <joe@perches.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Wang Wenhu <wenhu.wang@vivo.com>,
+        Marek Czerski <ma.czerski@gmail.com>,
+        Hongbo Yao <yaohongbo@huawei.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Alexander Egorenkov <egorenar@linux.ibm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
+        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Corey Minyard <minyard@acm.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-References: <20210402192054.7934-1-dariobin@libero.it>
- <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
- <1727466283.11523.1617746554330@mail1.libero.it>
- <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
- <1044574275.383115.1617779265390@mail1.libero.it>
- <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
- <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
- <116337570.107804.1617913442196@mail1.libero.it>
-From:   Tero Kristo <kristo@kernel.org>
-Message-ID: <8f232b81-4c83-54db-bcbd-2cae78ede814@kernel.org>
-Date:   Fri, 9 Apr 2021 13:32:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Alex Elder <elder@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Jens Frederich <jfrederich@gmail.com>,
+        Daniel Drake <dsd@laptop.org>,
+        Jon Nettleton <jon.nettleton@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] kernel.h: Split out panic and oops helpers
+Message-ID: <20210409114924.6dpefx26px7aeuaj@earth.universe>
+References: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <116337570.107804.1617913442196@mail1.libero.it>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="c2qg5eip4k7clkwy"
+Content-Disposition: inline
+In-Reply-To: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/04/2021 23:24, Dario Binacchi wrote:
-> 
->> Il 07/04/2021 15:21 Tero Kristo <kristo@kernel.org> ha scritto:
->>
->>   
->> On 07/04/2021 15:52, Rob Herring wrote:
->>> On Wed, Apr 7, 2021 at 2:07 AM Dario Binacchi <dariobin@libero.it> wrote:
->>>>
->>>>
->>>>> Il 07/04/2021 03:16 Rob Herring <robh+dt@kernel.org> ha scritto:
->>>>>
->>>>>
->>>>> On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
->>>>>>
->>>>>>
->>>>>>> Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
->>>>>>>
->>>>>>>
->>>>>>> On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> The series comes from my commit in U-boot
->>>>>>>> d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
->>>>>>>> and from the subsequent exchange of emails at the end of which I was
->>>>>>>> suggested to send the patch to the linux kernel
->>>>>>>> (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
->>>>>>>
->>>>>>> It's 'ranges' that determines translatable which is missing from the
->>>>>>> DT. This should have not had a 0 size either though maybe we could
->>>>>>> support that.
->>>>>>
->>>>>> I have replied to the email you sent to the u-boot mailing list
->>>>>>
->>>>>>>
->>>>>>> Does the DT have to be updated anyways for your spread spectrum support?
->>>>>>
->>>>>> The spread spectrum support patch does not need this patch to work. They belong
->>>>>> to two different series.
->>>>>
->>>>> That's not what I asked. Is the spread spectrum support forcing a DT
->>>>> update for users?
->>>>
->>>> Yes, the deltam and modfreq registers must be added to the DPLL clocks.
->>>
->>> That's a shame given this dts has been mostly untouched since 2013.
->>>
->>
->> I think technically it would be possible to map these registers within
->> the driver also, seeing there are like a handful of the DPLLs for both
->> am3/am4 which are impacted. Just add a new compatible or something, or
->> alternatively parse the register addresses and populate the
->> deltam/modfreq registers based on that.
-> 
-> I have not added new compatibles, but I have added the offset of the delta and modfreq
-> registers to the data structures used by the DPLL drivers and I have set them in the
-> related setup functions.
-> https://lore.kernel.org/patchwork/patch/1406590/
 
-True, I just said that technically it would be possible to add this data 
-within the driver itself to avoid modifying DT if that would be preferred.
+--c2qg5eip4k7clkwy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>
->>>>> If the DT has to be changed anyways (not really
->>>>> great policy), then you could fix this in the DT at the same time.
->>>>
->>>> I could put the fix to the device tree in that series, although I wouldn't
->>>> create a single patch to fix and add the SSC registers. First the size-cells = <0>
->>>> fix patch and then the SSC patch.
->>>> Do you agree?
->>>
->>> By at the same time, I really just meant within 1 release.
->>>
->>> But I'd like to hear TI maintainers' thoughts on this.
->>
->> I did post a comment on patch #1 questioning the approach from TI clock
->> driver perspective, imho I can't see why these two patches would be
->> needed right now.
+Hi,
 
-Fix to above, it was patch #2 I was referring to.
-
-> 
-> Because U-boot maintainers asked me after I sent them my patch on this issue.
-> I believe that the email exchange that took place in the U-boot (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/)
-> and Linux kernel mailing lists showed that:
-> - The patch 'fdt: translate address if # size-cells = <0>' is wrong (U-boot has accepted
->    it, and it will have to be reverted).
-> - However, the same patch highlighted that it is wrong to use the size-cells = <0> property
->    in the prcm_clocks and scm_clocks nodes of device tree.
-> - Rob agrees that in the case of the am3xx this is the right choice:
-
-Well, I don't quite like where this is ending at. Basically you are just 
-modifying the am3/am4 DTs adding a size spec for every clock node. This 
-leaves the omap3/omap4/omap5/dra7 in the old format. Should someone 
-convert those also? Has anybody tested what happens with the u-boot 
-change on those platforms? Or with the kernel change proposed for the TI 
-clock driver?
-
-Also, none of this changes the fact that imho patch #2 in this series is 
-wrong and should be fixed. Doing ioremap for every clock node is at 
-least costly (dra7xx has some 180 clock nodes based on quick grep) and 
-also potentially breaks things (you get extremely fragmented iomappings, 
-and some of them might even get rejected because you end up in the same 
-4K page), and should be avoided.
-
-If things would be fixed properly, we would get rid of the clock nodes 
-from the DT completely and just leave the clock providers in place; 
-clocks would be specified via something like 'clocks = <&prcm 
-AM3_ADC_TSC_FCK>;' similar to what is done with the clkctrl entries, and 
-rest of the clock data would be built-in to the clock driver. This would 
-completely get rid of any future compatibility issues and the need to 
-tweak the DT if some clock driver would need modifications to support 
-some new feature.
-
--Tero
-
-> diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
-> index 1fb22088caeb..59b0a0cf211e 100644
-> --- a/arch/arm/boot/dts/am33xx-l4.dtsi
-> +++ b/arch/arm/boot/dts/am33xx-l4.dtsi
-> @@ -110,7 +110,8 @@
->   
->                                  prcm_clocks: clocks {
->                                          #address-cells = <1>;
-> -                                       #size-cells = <0>;
-> +                                       #size-cells = <1>;
-> +                                       ranges = <0 0 0x2000>;
->                                  };
->   
->                                  prcm_clockdomains: clockdomains {
-> @@ -320,7 +321,8 @@
->   
->                                          scm_clocks: clocks {
->                                                  #address-cells = <1>;
-> -                                               #size-cells = <0>;
-> +                                               #size-cells = <1>;
-> +                                               ranges = <0 0 0x800>;
->                                          };
->                                  };
-> 
-> --- a/arch/arm/boot/dts/am33xx-clocks.dtsi
-> +++ b/arch/arm/boot/dts/am33xx-clocks.dtsi
-> @@ -10,7 +10,7 @@
->                  compatible = "ti,mux-clock";
->                  clocks = <&virt_19200000_ck>, <&virt_24000000_ck>, <&virt_25000000_ck>, <&virt_26000000_ck>;
->                  ti,bit-shift = <22>;
-> -               reg = <0x0040>;
-> +               reg = <0x0040 0x4>;
->          };
->   
->          adc_tsc_fck: adc_tsc_fck {
-> @@ -98,7 +98,7 @@
->                  compatible = "ti,gate-clock";
->                  clocks = <&l4ls_gclk>;
->                  ti,bit-shift = <0>;
-> -               reg = <0x0664>;
-> +               reg = <0x0664 0x04>;
->          };
+On Fri, Apr 09, 2021 at 01:02:50PM +0300, Andy Shevchenko wrote:
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out panic and
+> oops helpers.
+>=20
+> There are several purposes of doing this:
+> - dropping dependency in bug.h
+> - dropping a loop by moving out panic_notifier.h
+> - unload kernel.h from something which has its own domain
+>=20
+> At the same time convert users tree-wide to use new headers, although
+> for the time being include new header back to kernel.h to avoid twisted
+> indirected includes for existing users.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Corey Minyard <cminyard@mvista.com>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Wei Liu <wei.liu@kernel.org>
+> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> v2:
+>  - fixed all errors with allmodconfig on x86_64 (Andrew)
+>  - checked with allyesconfig on x86_64
+>  - additionally grepped source code for panic notifier list usage
+>    and converted all users
+>  - elaborated commit message (Luis)
+>  - collected given tags (incl. Andrew's SoB, see below)
+>=20
+> I added Andrew's SoB since part of the fixes I took from him. Andrew,
+> feel free to amend or tell me how you want me to do.
+>=20
 > [...]
-> 
-> - U-boot rightly wants to use the same device tree as the Kernel.
-> - IMHO, if I'm not missing something, I think using a #size-cells = <1>; for clocks
->    it requires only one code change in the ti_clk_get_reg_addr():
-> 
-> --- a/drivers/clk/ti/clk.c
-> +++ b/drivers/clk/ti/clk.c
-> @@ -265,9 +265,27 @@ int __init ti_clk_retry_init(struct device_node *node, void *user,
->   int ti_clk_get_reg_addr(struct device_node *node, int index,
->                          struct clk_omap_reg *reg)
-> 
-> -       if (of_property_read_u32_index(node, "reg", index, &val)) {
-> +       if (of_property_read_u32_index(node, "reg", index * 2, &val)) {
-> 
->     The other changes to develop affect device trees of architectures which, like am3, currently
->     use #size-cells = <0>.
-> 
-> IMHO, all this would lead to an improvement of the device trees with minimal impact on the code.
-> It would benefit U-boot, which would not have to develop special platform code and any new
-> architectures that would inherit from these DTs.
-> 
-> If you think it might be worth it, I am available to develop this patch.
-> 
-> Thanks and regards,
-> Dario
-> 
->>
->> -Tero
+>  drivers/power/reset/ltc2952-poweroff.c        |  1 +
+> [...]
 
+Acked-by: Sebastian Reichel <sre@kernel.org>
+
+-- Sebastian
+
+--c2qg5eip4k7clkwy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBwPzkACgkQ2O7X88g7
++poVqw//cO5+glgFxA2CU4t3EHFTzSR2pExNCOensIzn/2YcvKlq6RBiaVlO87al
+zfq//z42WEWWRFkl4NeyjJx6ueQGo5Hk7qQiPRQhgt55UiQsizdAFXK4u97lVQ68
+7V2xDT3MlQ/vc+LG3vZBcSGMIoupHDqbYU2kF8xlBhdwuF1lr44NDxRTRsVErgor
+hlvEGYmwSTIg8aEkLt6Da/elDscG08MDU+vv6KLaSiruCN+RtgZGin9gv3Xu+KUi
+PhPU9ZOAfi6duIQdKmdXiAZ8Vlp/43yzeo80t/XUyiEy7Yq+qtsP6YXHlSWlPJnV
+Zz3ifkmNn7YFWd+iOeTe3oTfVIAtg4w/uX184urC+t242MBSeqEkHt7/1TJR2UAx
+8s9NtSaCLUPuFLPO9s8t6nP4kQ4HN3BoxMvgessqguLZtSg3n1Z4+ZE8veoYHQD3
+Vwz58nFLYkMxRB/pFq6dkXv6uPXTbreYkWuUFsDIao2+FVDkMp81DqE86K2li2d6
+/B6jSmObDmG/aryJn+hoHhCEJSfLnaszENAc0toFvCGYU9D5Com1A74gdztMgOvf
+CB4G04azFTgeTjX5JB6r7KXrcZ08bzspk/lo5H9fx+SLki6gFb88zNqBOLcnMM0d
+FZFNMmZ543wUtAsJSxqObtKeAcjitPcaURrh6sWiRuJkndGtmNY=
+=QA06
+-----END PGP SIGNATURE-----
+
+--c2qg5eip4k7clkwy--
