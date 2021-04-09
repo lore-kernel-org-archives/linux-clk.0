@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2244EC433ED
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5383BC433B4
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8038610CA
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2886113C
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbhDIB25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 21:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55050 "EHLO
+        id S232967AbhDIBda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 21:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhDIB25 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 21:28:57 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B76C061760;
-        Thu,  8 Apr 2021 18:28:45 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id u3so1902820qvj.8;
-        Thu, 08 Apr 2021 18:28:45 -0700 (PDT)
+        with ESMTP id S232426AbhDIBda (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 21:33:30 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDBCC061760;
+        Thu,  8 Apr 2021 18:33:18 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id bs7so1421545qvb.12;
+        Thu, 08 Apr 2021 18:33:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:content-transfer-encoding:date:message-id:cc:subject
          :from:to:references:in-reply-to;
-        bh=1nd1zrOJxkb2H8zst/bpfvU3v6ARcnkntcly2FZiX3w=;
-        b=oYuQd05kigAV2xeiUc1nOCPZT8kxpBmstPuIcn7BRRfN34VIs5CYfzxS1QJ7lFc8oO
-         6eieSZYKRV5p5sQ+kDIKkE8cYVD4+z+DgPqsbzrebTxCeW0GOpUGyIoClUv8lGBhxf4q
-         FIbd+Z680QfTO+03Lz0RsTowUcJ4EwkctLfcvhNfWlClzwkDm4cLK/ueu/xl0Hfji9N6
-         tVwTPe9nGIVaCChp451vbYPVuNBDJTId4Q6qPkqyArwrvVaLjvQyukN7ve1oO24bnYjO
-         aQ5XRjBJjneQ6S6nISqFBMawVTccnpFk02GaH7Kw+GTtFflXldiGkvQGi83OCRKvPYPV
-         FEmQ==
+        bh=0x31F7OmUBFv2aYY8WsZQcT9hzNkOdkXYNg1QmgSGvE=;
+        b=i4eL+Q+VFdbU3iQxDvDLjInsceCaAS6uM//NCNUrnwK5cAUkD08FcdgAl6DfzeesYE
+         LggS85W47OcBOeyDt5k/D9iABY7z+bvEI0UUIpfYSIqWHGJZcDgHzTHwAuGY0gDJoedR
+         /DEBoVC72AFjSOfp4/582Ocuz8nW5PmPGL1jnfFItADwzfDGWetlveU6vB1BrikX/ID9
+         5ynrshzIpyGlx1fmsKESDN6uvLdDU8uAjr8sQl1onwuVMWFif6NYlSnhKmCe+H5Z24be
+         YvehqU8D5QO9Ka5wfhvkqNic9sbMWNyTP2rrd5aQv/EsLBuIx67aqaTH0v0IjrK8pU+t
+         iwRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding:date
          :message-id:cc:subject:from:to:references:in-reply-to;
-        bh=1nd1zrOJxkb2H8zst/bpfvU3v6ARcnkntcly2FZiX3w=;
-        b=H4ayfPwjfWWqF1aJhY2KszVqporDo5wUBF7uS9k+0VN60msP0i5q/YtF4ZApkq27+Y
-         adejHu/f0sX/vykrb9JWZQfxHUH+d6EfvhZPE2uCJxb56kFDcJ2WQM4WUMgtLIxguSk4
-         1KEZJN2FtU5nNuOiQxR46XFCSQ8uLjrih9oF+B54JrnIsCni6acfOmD2coeVum+JFY9L
-         OU/G9ZsqYgMjxFUSlCicCCgE8X7keArdhZNiirgaiegcb94C/JFCUHYU9fU48MfKO3va
-         TVcBbLu34FOHXBhhdlOmGWLFKOVujjgbYEf9VGQURbx3VN6MeCIuzzvosACQsaVl/qMj
-         tdGg==
-X-Gm-Message-State: AOAM533EZWJGkstjWWfGGW1ao2Cb4HpaC6k2BflNz2U516/d3Ofs7oQ8
-        PnSpaR8we00WFTNsrczBnXyg1scw8KkDv+EH
-X-Google-Smtp-Source: ABdhPJyadvptk+KR6Zzuwdmo6DsGctjbQF28VqYLJejNf+xZnjju2XXBPDQlRRMnJz71+RkjFcWhmA==
-X-Received: by 2002:a05:6214:204:: with SMTP id i4mr11888545qvt.47.1617931724379;
-        Thu, 08 Apr 2021 18:28:44 -0700 (PDT)
+        bh=0x31F7OmUBFv2aYY8WsZQcT9hzNkOdkXYNg1QmgSGvE=;
+        b=RydjdiFoTa2KGkZi/79CiPbxl+tMZ6YCuczYtzGJDq6g3VhOMgw7iVb7809R/m0bkV
+         1sGuHBG5JcNPDhiWs6eGzFu+vcTERnfMFEp41fSW79sekH88pfM+NN4WOeLS+Pdykbxt
+         LizIlA0oNCS1nbh9A4HdwY4+nNI5u6Fi5n4o4Bu9v+Z9Rz0ziZQwGfsNDV+Z1vgYlh9V
+         r6Xt0a3F+MKRWghkwZHdDLwABGhZ32er25znZ/JJ8i324GjJCcaPrvuF/HhTaE3nr1+p
+         yZC5NyOeTvR3hLbm193u6lNr6wTGdVz9Q7yPMu3PPel6R0DrWAjoOGSC2SINASRtC9eg
+         8gtQ==
+X-Gm-Message-State: AOAM530shnqGTQ1i5+4KRogK1cYjwHftfXoB8qjdbGQU0pYNfm8ujosV
+        /lwzYHg4e94hSJTlcE34/hmQIOZgn+rf2ZLZ
+X-Google-Smtp-Source: ABdhPJyb9YinlcgHRHuOakC22o0kEi2cMq2JWsItuybyGVVWvuc1jE9IkoNAJIIs5A8fGSLp1PianA==
+X-Received: by 2002:a05:6214:c6c:: with SMTP id t12mr11537790qvj.17.1617931997237;
+        Thu, 08 Apr 2021 18:33:17 -0700 (PDT)
 Received: from localhost (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id c19sm846743qte.75.2021.04.08.18.28.42
+        by smtp.gmail.com with ESMTPSA id c1sm906306qth.3.2021.04.08.18.33.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 18:28:43 -0700 (PDT)
+        Thu, 08 Apr 2021 18:33:16 -0700 (PDT)
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 08 Apr 2021 21:28:42 -0400
-Message-Id: <CAISXGCUW7ZQ.3N1ABIICBHUHE@shaak>
+Date:   Thu, 08 Apr 2021 21:33:15 -0400
+Message-Id: <CAIT0Y0W41EH.11ZSYT40VQAP6@shaak>
 Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
@@ -145,9 +145,6 @@ JESD204B
 >
 > (Or a range of values if you know the maximum).
 >
-
-I have the max, will use that instead.
-
 > > +
 > > +  clocks:
 > > +    items:
@@ -255,8 +252,8 @@ I have the max, will use that instead.
 > additionalProperties: false
 >
 
-additionalProperties is defined just below required.
-Should I move it here?
+Apologies for double posting.
+I just realized this is for the child node. Will fix.
 
 Thanks,
 Liam
