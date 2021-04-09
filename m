@@ -2,73 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5A4C433B4
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 17:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A40C433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7C6610F7
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 17:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5F1861007
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:09:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234133AbhDIRCa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Apr 2021 13:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233332AbhDIRCa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Apr 2021 13:02:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B59E610E5;
-        Fri,  9 Apr 2021 17:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617987737;
-        bh=H054uauBn55WDEKJX1Dn0ZTS/kaN7tvN8NjbaxWYx0A=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=beVadimSQ/xufCkjGvDfft8+xl8x3iE8QePcpL3rTLKatzaDXf/+fKHFuLhKZy08t
-         MBzKC+H4bwJWje/czw6ziBuxPPpac3zKY7LLcfHungu4U3xXDhNo6fbyqwwihOgQSf
-         JmJzMa127l8MAiE/KMfIvJ9KHGd3+9h9TdprbgWlVcXkVL2HMb6JRt1/qvcXJjgv8M
-         vTaoV1RMYk7O3tV6tCRUMwJXGeYSRPrLxESnQvZ+7IFgnoRAT7hHbcnbbdgdzzKiCU
-         NVnjvGkl/jH6pQ26bLWb4XyJ0JWOElOL1iVDd3zxLdkDivjqhy9Uf2+ppNyIBhH9r2
-         +qAcwaGtAmZhQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <161795309623.1751103.16552528876108968953.b4-ty@arndb.de>
-References: <20210314110709.32599-1-krzysztof.kozlowski@canonical.com> <161795309623.1751103.16552528876108968953.b4-ty@arndb.de>
-Subject: Re: [PATCH v2] clk: socfpga: fix iomem pointer cast on 64-bit
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>
-To:     Arnd Bergmann <arnd@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        id S234306AbhDISKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Apr 2021 14:10:09 -0400
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:44672 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233332AbhDISKI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Apr 2021 14:10:08 -0400
+Received: by mail-oi1-f173.google.com with SMTP id a8so6631156oic.11;
+        Fri, 09 Apr 2021 11:09:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fCVQeOozXnmqOmzdZZPptmZjBT4ig9JKwPIdux6ewHA=;
+        b=M0IJBe1NSMjweiuOGxl2iX0CZp/JAZq3jo+b9RnEBcsxUsQTv8LpgJ/2XDKhsua2E8
+         +DGl2yMV3mRvvXsrA7f8M/0swJjRiFjRjcyjYVjKNBQgw2T1+rzRBtdN5zdCIMhie3Jn
+         INLX30fhjCCqZV19Za3dTAa61cYJeiYTYXmHahue9Zg8r8EOqC4puKI22Z47XKfMkSJJ
+         DKG43YTRTClltd6hM+B7/hDz/4H4zLbNSNFQib9V2GREu7J5ioBIXOi4d0hcguIGVPLw
+         EqjsufeUb2ndqHjy7aKhGzDKXezUpdPSxLpDjY49jLLDhnDl5q/TrL2zRVVKhclDYV4P
+         a7kA==
+X-Gm-Message-State: AOAM530SOhlim0QrUwW3gsmM0D9R77D2ubs5bJFEBS+4kYfV4OJbrN64
+        ir7gxoMn1pIsyta389c4Yg==
+X-Google-Smtp-Source: ABdhPJxlkqQLFI9GS+qKWcK5PFzpk2KHZgmVCIWpe09a7zrV4vqhg64yNKJOaDodgq1VnWReAPY2yA==
+X-Received: by 2002:aca:1803:: with SMTP id h3mr10921965oih.65.1617991794638;
+        Fri, 09 Apr 2021 11:09:54 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 64sm639617oob.12.2021.04.09.11.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 11:09:54 -0700 (PDT)
+Received: (nullmailer pid 3895463 invoked by uid 1000);
+        Fri, 09 Apr 2021 18:09:52 -0000
+Date:   Fri, 9 Apr 2021 13:09:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Flora Fu <flora.fu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 09 Apr 2021 10:02:16 -0700
-Message-ID: <161798773615.3790633.4877613255691338405@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add MT8192 APU clock bindings
+Message-ID: <20210409180952.GA3895409@robh.at.kernel.org>
+References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
+ <1617766086-5502-2-git-send-email-flora.fu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1617766086-5502-2-git-send-email-flora.fu@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Arnd Bergmann (2021-04-09 00:26:50)
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> On Sun, 14 Mar 2021 12:07:09 +0100, Krzysztof Kozlowski wrote:
-> > Pointers should be cast with uintptr_t instead of integer.  This fixes
-> > warning when compile testing on ARM64:
-> >=20
-> >   drivers/clk/socfpga/clk-gate.c: In function =E2=80=98socfpga_clk_reca=
-lc_rate=E2=80=99:
-> >   drivers/clk/socfpga/clk-gate.c:102:7: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
->=20
-> I decided to pull that into the arm/drivers branch as well, to avoid the
-> build regression. Since the same fix is in the clk tree, there will now
-> be a duplicated commit in the git history, but I prefer that over introdu=
-cing
-> warnings.
->=20
-> [1/1] clk: socfpga: fix iomem pointer cast on 64-bit
->       commit: 36841008059caec9667459a7e126efac6379676b
->=20
+On Wed, 07 Apr 2021 11:27:59 +0800, Flora Fu wrote:
+> Add clock bindings for APU on MT8192.
+> 
+> Signed-off-by: Flora Fu <flora.fu@mediatek.com>
+> ---
+>  include/dt-bindings/clock/mt8192-clk.h | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
 
-Ok. I'm sending it off to Linus now.
+Acked-by: Rob Herring <robh@kernel.org>
