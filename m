@@ -2,118 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63B0C43460
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E56DEC433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0926610FC
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0D7C61105
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 18:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234518AbhDIS3n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Apr 2021 14:29:43 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:57815 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234375AbhDIS3n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Apr 2021 14:29:43 -0400
-X-Greylist: delayed 42111 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Apr 2021 14:29:42 EDT
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 139ISwmU005372;
-        Sat, 10 Apr 2021 03:28:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 139ISwmU005372
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1617992938;
-        bh=eCHNQxRkz9e15GI5IVdo8WG8vYYPK2jIVucpCRZPvu4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wzeCXPVluHCxg3fnohDIUPMXIbzAl1lSWdH+uBypkjqRP1UyjlZ1nKguyxvXBPTdy
-         jpdyo3IP10LqjEpvElHHuwzPCbBCq2JNSlgriAFo+utDfUPEONKvZVmDe2Gor5e3A5
-         LO+j6mSgWfGxJRmLYELLmBGH7r9lJsy0nWgZyyIr4Uii7Q0R4WW9TFG5HNfY3ySjcR
-         ggvVHC8/dEvKlkFisOWsa0n7V5UNn4OGOYSpVh3Qi3PHJ9Y9lofBNvg2noE4/YDHZA
-         IcrNv3RN+WAStMxsM2tXmoTxgBRig8uEK67oIYclPL+d2jjCewjt9/eq/9dGgHBp1K
-         XcHNOb58ioXYA==
-X-Nifty-SrcIP: [209.85.210.179]
-Received: by mail-pf1-f179.google.com with SMTP id a85so4346499pfa.0;
-        Fri, 09 Apr 2021 11:28:58 -0700 (PDT)
-X-Gm-Message-State: AOAM533OjuZ1v87lAJuPySo2F6t/h6YrzK/eYO8ZAs5n9q9yxeYQxfS8
-        wClQ0QK0a68DB3ti1ttcsL9qMY2QlZRSwtdZst8=
-X-Google-Smtp-Source: ABdhPJx+7CPnY7PSLGsEDahPM2MF01RlsoL9wBaM+MVI/s46yFs+CWjOlD0LDR4VTzqRmJfqkVv6VqDDhNTTx2NFltg=
-X-Received: by 2002:aa7:956d:0:b029:1f1:5ba6:2a58 with SMTP id
- x13-20020aa7956d0000b02901f15ba62a58mr13742848pfq.63.1617992937777; Fri, 09
- Apr 2021 11:28:57 -0700 (PDT)
+        id S234462AbhDIScI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Apr 2021 14:32:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233332AbhDIScH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Apr 2021 14:32:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 98E0A61104;
+        Fri,  9 Apr 2021 18:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617993114;
+        bh=+8hEJqNlvBGqGgzMlwFmXXdv48nf4gyOCd8EnKO/if8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=kPXS2sbN+RlSr9PmRPlVRlh6l1ZADD+YTH/OCye/N1QDEz0zHg/g7mHSLQftBU9yH
+         ebSRb+AfK+y/WpU9lN+W8ehPZl5P6H/UJ00k3ACTARiXxZQ8rRrEkH7966EIt9o4Cg
+         K9rKjtluHYAZoGjfa+7XPX/rh+aeXmqwEuElJFVSssu5Z88/Me1v2o/zJwjLfWcNRM
+         PGWAz59S8hh+1lOTRIrUZ99HWGfwJz5tbZP4eV98o9TomUgBIpGHE+r+dw8/hIdWC7
+         N4kq3djtul5r7/OBk2viFUR3cLEqF6qDiAHuFnuIBzYh7BDE0wJtOevWeaEqRy3lDN
+         /zTv01AOjNV6w==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210409090104.629722-1-colin.king@canonical.com> <20210409090104.629722-2-colin.king@canonical.com>
-In-Reply-To: <20210409090104.629722-2-colin.king@canonical.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 10 Apr 2021 03:28:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS=cFxQ3Z3GPdQfwB8DBLDbY9Oxm+yK9cjz116HZ8OKAw@mail.gmail.com>
-Message-ID: <CAK7LNAS=cFxQ3Z3GPdQfwB8DBLDbY9Oxm+yK9cjz116HZ8OKAw@mail.gmail.com>
-Subject: Re: [PATCH][V2] clk: uniphier: Fix potential infinite loop
-To:     Colin King <colin.king@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMhs-H98xzfK4W9KGSKR0QPtm42_K6Y5PzWiA3c-Pugau7oxyQ@mail.gmail.com>
+References: <20210309052226.29531-1-sergio.paracuellos@gmail.com> <CAMhs-H_zBqe_+dKV4KT3QyOaONErmnCKME4-7ey2CnWJfUVseg@mail.gmail.com> <161799224004.3790633.10957084716451758402@swboyd.mtv.corp.google.com> <CAMhs-H98xzfK4W9KGSKR0QPtm42_K6Y5PzWiA3c-Pugau7oxyQ@mail.gmail.com>
+Subject: Re: [PATCH v11 0/6] MIPS: ralink: add CPU clock detection and clock driver for MT7621
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, John Crispin <john@phrozen.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
+        <devicetree@vger.kernel.org>, open list:MIPS 
+        <linux-mips@vger.kernel.org>, open list:STAGING SUBSYSTEM 
+        <devel@driverdev.osuosl.org>, NeilBrown <neil@brown.name>, linux-kernel" 
+        <linux-kernel@vger.kernel.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Fri, 09 Apr 2021 11:31:53 -0700
+Message-ID: <161799311308.2810947.13610751486361071085@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 9, 2021 at 6:01 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The for-loop iterates with a u8 loop counter i and compares this
-> with the loop upper limit of num_parents that is an int type.
-> There is a potential infinite loop if num_parents is larger than
-> the u8 loop counter. Fix this by making the loop counter the same
-> type as num_parents.  Also make num_parents an unsigned int to
-> match the return type of the call to clk_hw_get_num_parents.
->
-> Addresses-Coverity: ("Infinite loop")
-> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->
-> V2: Make num_parents an unsigned int to match return type of
->     clk_hw_get_num_parents().
+Quoting Sergio Paracuellos (2021-04-09 11:25:24)
+> Hi Stephen,
+>=20
+> On Fri, Apr 9, 2021 at 8:17 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Sergio Paracuellos (2021-03-23 01:13:22)
+> > > On Tue, Mar 9, 2021 at 6:22 AM Sergio Paracuellos
+> > > <sergio.paracuellos@gmail.com> wrote:
+> > > >
+> > > > Changes in v11:
+> > > >  - Collect Rob's Reviewed-by in bindings documentation patch.
+> > > >  - Fix MAINTAINERS patch using file 'mediatek,mt7621-sysc.yaml'
+> > > >    for documentation bindings.
+> > >
+> > > Something still missing or something that is needed to be fixed to get
+> > > this series applied through your tree?
+> > >
+> > > Thanks in advance for your time.
+> > >
+> >
+> > Sorry I missed this series. I thought it was going through another tree.
+> > It can merge through clk tree. Just a few nits on the clk driver patch
+> > but otherwise I've merged the first two patches. If you resend in the
+> > next few days it would be great. Thanks.
+>=20
+> I will hopefully do during this weekend. Since you already merge the
+> first two patches, the remaining four should be sent as v12, right?
 
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
-
-
-
-
-> ---
->  drivers/clk/uniphier/clk-uniphier-mux.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-> index 462c84321b2d..1998e9d4cfc0 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-mux.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-> @@ -31,10 +31,10 @@ static int uniphier_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
->  {
->         struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
-> -       int num_parents = clk_hw_get_num_parents(hw);
-> +       unsigned int num_parents = clk_hw_get_num_parents(hw);
->         int ret;
->         unsigned int val;
-> -       u8 i;
-> +       unsigned int i;
->
->         ret = regmap_read(mux->regmap, mux->reg, &val);
->         if (ret)
-> --
-> 2.30.2
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yes. I'll push it out to kernel.org shortly.
