@@ -2,61 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 669ADC433B4
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3465FC433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 02:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3886A610A8
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C92F561055
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 02:23:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233218AbhDIBsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 21:48:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15988 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhDIBso (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 21:48:44 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FGgvs6ztxzyP83;
-        Fri,  9 Apr 2021 09:46:17 +0800 (CST)
-Received: from [10.67.102.71] (10.67.102.71) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
- 09:48:26 +0800
-Subject: Re: [PATCH -next] clk: qcom: Add missing MODULE_DEVICE_TABLE
-To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <mturquette@baylibre.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210408135509.208921-1-clare.chenhui@huawei.com>
- <161791383177.3790633.17835417455437133606@swboyd.mtv.corp.google.com>
-From:   "Chenhui (clare)" <clare.chenhui@huawei.com>
-Message-ID: <87ec5a80-16d0-f3df-c05a-7750c29f881b@huawei.com>
-Date:   Fri, 9 Apr 2021 09:48:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        id S232788AbhDICXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 22:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232620AbhDICXp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 22:23:45 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A2AC061761
+        for <linux-clk@vger.kernel.org>; Thu,  8 Apr 2021 19:23:33 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 30so1949656qva.9
+        for <linux-clk@vger.kernel.org>; Thu, 08 Apr 2021 19:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Dr8o5YF5yqQzC2Z1k+2QkLomm0GkPLRu2hgFbkn12/A=;
+        b=Ly6yeXcWyzUsF37vzaewuSXMHg8oxjVmIMpbnu20lmjf2vDNQwHhcJZLJIRDtMamKE
+         K5fqcZc3UR7MK8guEJoUxEN9fadEzvmO9H0JI8yTk84XkDtJa1wFiXpzUhpDYeSC7pWG
+         IGdQADOzMvd4hpC4Vbkauk7WodpWYq8eT35sLO68e1F1yv1/iQMjayD7vTvSa4cvS46W
+         zbd3tYCqDJk8QD7A2TCLlL1YKuLXSDp+KL83bqmsgMlpys3Yg+GzEwtVA2voaozzvJxO
+         luDpwa7GFR8AT+1Ojm/+exEFo+cV6z7jBOPvz/3DjHBm8n9reY1bscWa/dQqyBj60mvw
+         hlnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Dr8o5YF5yqQzC2Z1k+2QkLomm0GkPLRu2hgFbkn12/A=;
+        b=P/WK7qgdN4u+EB77hti+LOYSv4PxbnwY8P5yM//c8pPlewYdTE1xB6tk48MhuDHqmT
+         kxk5reuNng65oLFZ6EgHMcodP+54eyzByQQ52wcq05JlUQG0QAfO6j1nHDr1KuY71K7J
+         zCnQNvl7PtOIcjQXDnIYbHZ7cNPAlErBT6pHuuguvLeLeGMzX/zJCZqLQExAzsPx1i+R
+         ZVP3ayX4Wsi06fjqb5sqonbXCxUAHmmmMgF9at8U5SIjldHNC+riCoN8eRuYJnP5+KUc
+         ktzIcFdxO/PW/qCN2rDhcBJSLBTwMQmZjA0oUVLejcZ5n2oLiLUmbxpEBFMZ6hDE8SIp
+         VTLw==
+X-Gm-Message-State: AOAM533d+5g1eldzSBDjOBpc5HSvqbhBDlEQwXcS5eB1OnSq+O+qYDQk
+        eK7muJXCLcRDtWlshW61HtGPv5x2jLOAgM4znRSwHw==
+X-Google-Smtp-Source: ABdhPJxtimebsZ9qggqFtKnwApCerfHESWaJIl88HJu0Xf60B4QCcRWMzJJOSmFJIJ+fQt4BpDrO7Q3hF36KGFG+LhI=
+X-Received: by 2002:a05:6214:f0d:: with SMTP id gw13mr11984953qvb.33.1617935012958;
+ Thu, 08 Apr 2021 19:23:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <161791383177.3790633.17835417455437133606@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.102.71]
-X-CFilter-Loop: Reflected
+References: <20210406092634.50465-1-greentime.hu@sifive.com> <20210408162539.GA32036@lpieralisi>
+In-Reply-To: <20210408162539.GA32036@lpieralisi>
+From:   Greentime Hu <greentime.hu@sifive.com>
+Date:   Fri, 9 Apr 2021 10:23:21 +0800
+Message-ID: <CAHCEehK5vf5V_6McexFQPbcxGeC2SEb_3SXiGc2ASkcELe3fXg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Add SiFive FU740 PCIe host controller driver support
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>, hes@sifive.com,
+        Erik Danie <erik.danie@sifive.com>,
+        Zong Li <zong.li@sifive.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, alex.dewar90@gmail.com,
+        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
+        vidyas@nvidia.com, jh80.chung@samsung.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-在 2021/4/9 4:30, Stephen Boyd 写道:
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> =E6=96=BC 2021=E5=B9=B44=E6=
+=9C=889=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=8812:25=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+>
+> On Tue, Apr 06, 2021 at 05:26:28PM +0800, Greentime Hu wrote:
+> > This patchset includes SiFive FU740 PCIe host controller driver. We als=
+o
+> > add pcie_aux clock and pcie_power_on_reset controller to prci driver fo=
+r
+> > PCIe driver to use it.
+> >
+> > This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon =
+R5
+> > 230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based o=
+n
+> > v5.11 Linux kernel.
+> >
+> > Changes in v5:
+> >  - Fix typo in comments
+> >  - Keep comments style consistent
+> >  - Refine some error handling codes
+> >  - Remove unneeded header file including
+> >  - Merge fu740_pcie_ltssm_enable implementation to fu740_pcie_start_lin=
+k
+> >
+> > Changes in v4:
+> >  - Fix Wunused-but-set-variable warning in prci driver
+> >
+> > Changes in v3:
+> >  - Remove items that has been defined
+> >  - Refine format of sifive,fu740-pcie.yaml
+> >  - Replace perstn-gpios with the common one
+> >  - Change DBI mapping space to 2GB from 4GB
+> >  - Refine drivers/reset/Kconfig
+> >
+> > Changes in v2:
+> >  - Refine codes based on reviewers' feedback
+> >  - Remove define and use the common one
+> >  - Replace __raw_writel with writel_relaxed
+> >  - Split fu740_phyregreadwrite to write function
+> >  - Use readl_poll_timeout in stead of while loop checking
+> >  - Use dwc common codes
+> >  - Use gpio descriptors and the gpiod_* api.
+> >  - Replace devm_ioremap_resource with devm_platform_ioremap_resource_by=
+name
+> >  - Replace devm_reset_control_get with devm_reset_control_get_exclusive
+> >  - Add more comments for delay and sleep
+> >  - Remove "phy ? x : y" expressions
+> >  - Refine code logic to remove possible infinite loop
+> >  - Replace magic number with meaningful define
+> >  - Remove fu740_pcie_pm_ops
+> >  - Use builtin_platform_driver
+> >
+> > Greentime Hu (5):
+> >   clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
+> >   clk: sifive: Use reset-simple in prci driver for PCIe driver
+> >   MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
+> >   dt-bindings: PCI: Add SiFive FU740 PCIe host controller
+> >   riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
+> >
+> > Paul Walmsley (1):
+> >   PCI: fu740: Add SiFive FU740 PCIe host controller driver
+>
+> I can pull the patches above into the PCI tree (but will drop patch 6 -
+> dts changes), is it OK for you ? Please let me know how you would like
+> to upstream it.
+>
 
-> Quoting Chen Hui (2021-04-08 06:55:09)
->> Add missing MODULE_DEVICE_TABLE entries to support module autoloading,
->> as these drivers can be compiled as external modules.
->>
->> Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
-> Any fixes tag?
-> .
+Hi Lorenzo,
 
-Thanks for reviewing, fixes tags will be added in v2 patches, which I 
-will send out later
-
+Thank you.
+I am ok with it. So I should ask Palmer to pick patch 6 dts changes to
+RISC-V tree?
