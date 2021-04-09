@@ -2,212 +2,335 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1058CC433B4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 21:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2244EC433ED
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAF5D610E7
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Apr 2021 21:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8038610CA
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Apr 2021 01:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232518AbhDHVvP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Apr 2021 17:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36260 "EHLO
+        id S232951AbhDIB25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Apr 2021 21:28:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhDHVvP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 17:51:15 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C868C061761
-        for <linux-clk@vger.kernel.org>; Thu,  8 Apr 2021 14:51:03 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id x14so3888267qki.10
-        for <linux-clk@vger.kernel.org>; Thu, 08 Apr 2021 14:51:03 -0700 (PDT)
+        with ESMTP id S232426AbhDIB25 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Apr 2021 21:28:57 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B76C061760;
+        Thu,  8 Apr 2021 18:28:45 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id u3so1902820qvj.8;
+        Thu, 08 Apr 2021 18:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k+Wsi7GpVsKLxsjf0wCLA/6InU/eraQK7xtB6V/7xvY=;
-        b=CcQkrP2akWpeGDSQyWsuIPtwDYQcrQF63dtU/b0poCiGi7XRucr8zY88+RpSbCHlBH
-         tQ35FRtxexNToj6wr63DmmWwwZeFwluDGgG82QJWINri2GPkZNvT6XvrApSDUNMDnKb3
-         0ikCWxFLjsX066d4aXdu2uGn4Ej2V8XlNeBYfG/Hsm6iRKMPUjZxctMq62SERwqPqbRD
-         3ZEwqh2lI30D6Bs27ePDEQK/UatuF3Wnh/NoBEaiTJF8YJYnWjKJ65Y0XQv2OcURyb+T
-         H9rCpPu1Fdj3ROTwgW+qom/BNy/ugvlLyYl13w4oxpyATaR8Ow5O673ZFbYJIl6LL5Bc
-         +uuw==
+        d=gmail.com; s=20161025;
+        h=mime-version:content-transfer-encoding:date:message-id:cc:subject
+         :from:to:references:in-reply-to;
+        bh=1nd1zrOJxkb2H8zst/bpfvU3v6ARcnkntcly2FZiX3w=;
+        b=oYuQd05kigAV2xeiUc1nOCPZT8kxpBmstPuIcn7BRRfN34VIs5CYfzxS1QJ7lFc8oO
+         6eieSZYKRV5p5sQ+kDIKkE8cYVD4+z+DgPqsbzrebTxCeW0GOpUGyIoClUv8lGBhxf4q
+         FIbd+Z680QfTO+03Lz0RsTowUcJ4EwkctLfcvhNfWlClzwkDm4cLK/ueu/xl0Hfji9N6
+         tVwTPe9nGIVaCChp451vbYPVuNBDJTId4Q6qPkqyArwrvVaLjvQyukN7ve1oO24bnYjO
+         aQ5XRjBJjneQ6S6nISqFBMawVTccnpFk02GaH7Kw+GTtFflXldiGkvQGi83OCRKvPYPV
+         FEmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k+Wsi7GpVsKLxsjf0wCLA/6InU/eraQK7xtB6V/7xvY=;
-        b=rgbfZKWBM6e7jGUpEDnMnKz7G8DPe1U2pxMaBzNQrD/RKK1G6JQy5xpqeSzPuj1b62
-         PMoEjK0Gjg4DFYjwHxVQyxebL6EoY+fARM9tn/F2a/S4PTWRhXDoJ0MloowwVSvbgpPS
-         EOq4ZKMz+iIz+/zQLGQRbRCqQRbG18MghBkaC1/hugp0d0tjcs+2xfc7MDQ9adwyLqOY
-         rt7LfHSBv5WOW6eEK3buLijQcSwXODHpJvw8MqqCpNdx9rRGrSXFjQzdRa3w7dKMWgoC
-         ZLocNdTzLkk9yt72JktC1HD9u8CHcPOZ+wqWw/QpV2soYoFVHeL4+ZselWmj2+gz6sdr
-         4TSQ==
-X-Gm-Message-State: AOAM5322U5gDVFNYvqelZseaVMuiKeeOrFlAg6/Q/URVQZPFKT8RIk86
-        2kwrR3Hfpxv0KcFfWZNMeVIlKagHxrVN87B8+OOMXw==
-X-Google-Smtp-Source: ABdhPJzM6WjaXDGzKu6COp/Zmi6FsjBlV/XmafidXKsKV8aq9TGMthF7mwVb1oJQGTk0WyLdkFGJ9vo2wfY79YeZ/7g=
-X-Received: by 2002:a37:9e50:: with SMTP id h77mr10773244qke.138.1617918662408;
- Thu, 08 Apr 2021 14:51:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210408014737.955979-1-dmitry.baryshkov@linaro.org>
- <20210408014737.955979-2-dmitry.baryshkov@linaro.org> <20210408203849.GA1914405@robh.at.kernel.org>
-In-Reply-To: <20210408203849.GA1914405@robh.at.kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 9 Apr 2021 00:50:51 +0300
-Message-ID: <CAA8EJpq5tLxXPNH=tkLu9FPr0AGcp3W9aphSkQTO-685Wxsrsw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: separate SDM845 GCC clock bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:content-transfer-encoding:date
+         :message-id:cc:subject:from:to:references:in-reply-to;
+        bh=1nd1zrOJxkb2H8zst/bpfvU3v6ARcnkntcly2FZiX3w=;
+        b=H4ayfPwjfWWqF1aJhY2KszVqporDo5wUBF7uS9k+0VN60msP0i5q/YtF4ZApkq27+Y
+         adejHu/f0sX/vykrb9JWZQfxHUH+d6EfvhZPE2uCJxb56kFDcJ2WQM4WUMgtLIxguSk4
+         1KEZJN2FtU5nNuOiQxR46XFCSQ8uLjrih9oF+B54JrnIsCni6acfOmD2coeVum+JFY9L
+         OU/G9ZsqYgMjxFUSlCicCCgE8X7keArdhZNiirgaiegcb94C/JFCUHYU9fU48MfKO3va
+         TVcBbLu34FOHXBhhdlOmGWLFKOVujjgbYEf9VGQURbx3VN6MeCIuzzvosACQsaVl/qMj
+         tdGg==
+X-Gm-Message-State: AOAM533EZWJGkstjWWfGGW1ao2Cb4HpaC6k2BflNz2U516/d3Ofs7oQ8
+        PnSpaR8we00WFTNsrczBnXyg1scw8KkDv+EH
+X-Google-Smtp-Source: ABdhPJyadvptk+KR6Zzuwdmo6DsGctjbQF28VqYLJejNf+xZnjju2XXBPDQlRRMnJz71+RkjFcWhmA==
+X-Received: by 2002:a05:6214:204:: with SMTP id i4mr11888545qvt.47.1617931724379;
+        Thu, 08 Apr 2021 18:28:44 -0700 (PDT)
+Received: from localhost (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
+        by smtp.gmail.com with ESMTPSA id c19sm846743qte.75.2021.04.08.18.28.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Apr 2021 18:28:43 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 08 Apr 2021 21:28:42 -0400
+Message-Id: <CAISXGCUW7ZQ.3N1ABIICBHUHE@shaak>
+Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] dt-bindings: clock: add ti,lmk04832 bindings
+From:   "Liam Beguin" <liambeguin@gmail.com>
+To:     "Rob Herring" <robh@kernel.org>
+References: <20210407005330.2890430-1-liambeguin@gmail.com>
+ <20210407005330.2890430-4-liambeguin@gmail.com>
+ <20210408201333.GA1882021@robh.at.kernel.org>
+In-Reply-To: <20210408201333.GA1882021@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 8 Apr 2021 at 23:38, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Apr 08, 2021 at 04:47:35AM +0300, Dmitry Baryshkov wrote:
-> > Separate qcom,gcc-sdm845 clock bindings from the clock-less
-> > qcom,gcc.yaml, so that we can add required clocks and clock-names
-> > properties.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu Apr 8, 2021 at 4:13 PM EDT, Rob Herring wrote:
+> On Tue, Apr 06, 2021 at 08:53:30PM -0400, Liam Beguin wrote:
+> > From: Liam Beguin <lvb@xiphos.com>
+> >=20
+> > Document devicetree bindings for Texas Instruments' LMK04832.
+> > The LMK04208 is a high performance clock conditioner with superior cloc=
+k
+> > jitter cleaning, generation, and distribution with JEDEC JESD204B
+> > support.
+> >=20
+> > Signed-off-by: Liam Beguin <lvb@xiphos.com>
 > > ---
-> >  .../bindings/clock/qcom,gcc-sdm845.yaml       | 82 +++++++++++++++++++
-> >  .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 -
-> >  2 files changed, 82 insertions(+), 2 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> >  .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
+> >  1 file changed, 209 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832=
+.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b=
+/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
 > > new file mode 100644
-> > index 000000000000..4099b09ee9dd
+> > index 000000000000..a9f8b9b720fc
 > > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-> > @@ -0,0 +1,82 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> > @@ -0,0 +1,209 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > > +%YAML 1.2
 > > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-sdm845.yaml#
+> > +$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
 > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> > +title: Qualcomm Global Clock & Reset Controller Binding
+> > +title: Clock bindings for the Texas Instruments LMK04832
 > > +
 > > +maintainers:
-> > +  - Stephen Boyd <sboyd@kernel.org>
-> > +  - Taniya Das <tdas@codeaurora.org>
+> > +  - Liam Beguin <liambeguin@gmail.com>
 > > +
 > > +description: |
-> > +  Qualcomm global clock control module which supports the clocks, resets and
-> > +  power domains on SDM845
+> > +  Devicetree binding for the LMK04832, a clock conditioner with JEDEC =
+JESD204B
+> > +  support. The LMK04832 is pin compatible with the LMK0482x family.
 > > +
-> > +  See also:
-> > +  - dt-bindings/clock/qcom,gcc-sdm845.h
+> > +  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
 > > +
 > > +properties:
 > > +  compatible:
-> > +    const: qcom,gcc-sdm845
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Board XO source
-> > +      - description: Board active XO source
-> > +      - description: Sleep clock source
-> > +      - description: PCIE 0 Pipe clock source
-> > +      - description: PCIE 1 Pipe clock source
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: bi_tcxo
-> > +      - const: bi_tcxo_ao
-> > +      - const: sleep_clk
-> > +      - const: pcie_0_pipe_clk
-> > +      - const: pcie_1_pipe_clk
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +  '#power-domain-cells':
-> > +    const: 1
+> > +    enum:
+> > +      - ti,lmk04832
 > > +
 > > +  reg:
 > > +    maxItems: 1
 > > +
-> > +  protected-clocks:
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  spi-max-frequency:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
 > > +    description:
-> > +      Protected clock specifier list as per common clock binding.
+> > +      Maximum SPI clocking speed of the device in Hz.
+>
+> Already has a type and description, just need:
+>
+> spi-max-frequency: true
+>
+> (Or a range of values if you know the maximum).
+>
+
+I have the max, will use that instead.
+
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: PLL2 reference clock.
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: oscin
+> > +
+> > +  reset-gpios:
+> > +    maxItems: 1
+> > +
+> > +  ti,spi-4wire-rdbk:
+> > +    description: |
+> > +      Select SPI 4wire readback pin configuration.
+> > +      Available readback pins are,
+> > +        CLKin_SEL0 0
+> > +        CLKin_SEL1 1
+> > +        RESET 2
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [0, 1, 2]
+> > +    default: 1
+> > +
+> > +  ti,vco-hz:
+> > +    description: Optional to set VCO frequency of the PLL in Hertz.
+> > +
+> > +  ti,sysref-ddly:
+> > +    description: SYSREF digital delay value.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    minimum: 8
+> > +    maximum: 8191
+> > +    default: 8
+> > +
+> > +  ti,sysref-mux:
+> > +    description: |
+> > +      SYSREF Mux configuration.
+> > +      Available options are,
+> > +        Normal SYNC 0
+> > +        Re-clocked 1
+> > +        SYSREF Pulser 2
+> > +        SYSREF Continuous 3
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [0, 1, 2, 3]
+> > +    default: 3
+> > +
+> > +  ti,sync-mode:
+> > +    description: SYNC pin configuration.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [0, 1, 2]
+> > +    default: 1
+> > +
+> > +  ti,sysref-pulse-count:
+> > +    description:
+> > +      Number of SYSREF pulses to send when SYSREF is not in continuous=
+ mode.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [1, 2, 4, 8]
+> > +    default: 4
+> > +
+> > +patternProperties:
+> > +  "@[0-9a-d]+$":
+> > +    type: object
+> > +    description:
+> > +      Child nodes used to configure output clocks.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          clock output identifier.
+> > +        minimum: 0
+> > +        maximum: 13
+> > +
+> > +      ti,clkout-fmt:
+> > +        description:
+> > +          Clock output format.
+> > +          Available options are,
+> > +            Powerdown 0x00
+> > +            LVDS 0x01
+> > +            HSDS 6 mA 0x02
+> > +            HSDS 8 mA 0x03
+> > +            LVPECL 1600 mV 0x04
+> > +            LVPECL 2000 mV 0x05
+> > +            LCPECL 0x06
+> > +            CML 16 mA 0x07
+> > +            CML 24 mA 0x08
+> > +            CML 32 mA 0x09
+> > +            CMOS (Off/Inverted) 0x0a
+> > +            CMOS (Normal/Off) 0x0b
+> > +            CMOS (Inverted/Inverted) 0x0c
+> > +            CMOS (Inverted/Normal) 0x0d
+> > +            CMOS (Normal/Inverted) 0x0e
+> > +            CMOS (Normal/Normal) 0x0f
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        minimum: 0
+> > +        maximum: 15
+> > +
+> > +      ti,clkout-sysref:
+> > +        description:
+> > +          Select SYSREF clock path for output clock.
+> > +        type: boolean
+> > +
+> > +    required:
+> > +      - reg
+>
+> additionalProperties: false
+>
+
+additionalProperties is defined just below required.
+Should I move it here?
+
+Thanks,
+Liam
+
 > > +
 > > +required:
 > > +  - compatible
 > > +  - reg
 > > +  - '#clock-cells'
-> > +  - '#reset-cells'
-> > +  - '#power-domain-cells'
+> > +  - clocks
+> > +  - clock-names
 > > +
 > > +additionalProperties: false
 > > +
 > > +examples:
-> > +  # Example for GCC for MSM8960:
->
-> I've lost my QCom decoder ring. Is 8960 and 845 the same thing?
-
-No. Mea culpa.
-
->
 > > +  - |
-> > +    #include <dt-bindings/clock/qcom,rpmh.h>
-> > +    clock-controller@100000 {
-> > +      compatible = "qcom,gcc-sdm845";
-> > +      reg = <0x100000 0x1f0000>;
-> > +      clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > +               <&rpmhcc RPMH_CXO_CLK_A>,
-> > +               <&sleep_clk>,
-> > +               <&pcie0_lane>,
-> > +               <&pcie1_lane>;
-> > +      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk", "pcie_0_pipe_clk", "pcie_1_pipe_clk";
-> > +      #clock-cells = <1>;
-> > +      #reset-cells = <1>;
-> > +      #power-domain-cells = <1>;
+> > +    clocks {
+> > +        lmk04832_oscin: oscin {
+> > +            compatible =3D "fixed-clock";
+> > +
+> > +            #clock-cells =3D <0>;
+> > +            clock-frequency =3D <122880000>;
+> > +            clock-output-names =3D "lmk04832-oscin";
+> > +        };
 > > +    };
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > index ee0467fb5e31..490edad25830 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > @@ -32,7 +32,6 @@ description: |
-> >    - dt-bindings/clock/qcom,gcc-mdm9615.h
-> >    - dt-bindings/reset/qcom,gcc-mdm9615.h
-> >    - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
-> > -  - dt-bindings/clock/qcom,gcc-sdm845.h
-> >
-> >  properties:
-> >    compatible:
-> > @@ -52,7 +51,6 @@ properties:
-> >        - qcom,gcc-mdm9615
-> >        - qcom,gcc-sdm630
-> >        - qcom,gcc-sdm660
-> > -      - qcom,gcc-sdm845
-> >
-> >    '#clock-cells':
-> >      const: 1
-> > --
-> > 2.30.2
-> >
+> > +
+> > +    spi0 {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        lmk04832: clock-controller@0 {
+> > +            #address-cells =3D <1>;
+> > +            #size-cells =3D <0>;
+> > +
+> > +            reg =3D <0>;
+> > +
+> > +            compatible =3D "ti,lmk04832";
+> > +            spi-max-frequency =3D <781250>;
+> > +
+> > +            reset-gpios =3D <&gpio_lmk 0 0 0>;
+> > +
+> > +            #clock-cells =3D <1>;
+> > +            clocks =3D <&lmk04832_oscin>;
+> > +            clock-names =3D "oscin";
+> > +
+> > +            ti,spi-4wire-rdbk =3D <0>;
+> > +            ti,vco-hz =3D <2457600000>;
+> > +
+> > +            assigned-clocks =3D
+> > +                <&lmk04832 0>, <&lmk04832 1>,
+> > +                <&lmk04832 2>, <&lmk04832 3>,
+> > +                <&lmk04832 4>,
+> > +                <&lmk04832 6>, <&lmk04832 7>,
+> > +                <&lmk04832 10>, <&lmk04832 11>;
+> > +            assigned-clock-rates =3D
+> > +                <122880000>, <384000>,
+> > +                <122880000>, <384000>,
+> > +                <122880000>,
+> > +                <153600000>, <384000>,
+> > +                <614400000>, <384000>;
+> > +
+> > +            clkout0@0 {
+> > +                reg =3D <0>;
+> > +                ti,clkout-fmt =3D <0x01>; // LVDS
+> > +            };
+> > +
+> > +            clkout1@1 {
+> > +                reg =3D <1>;
+> > +                ti,clkout-fmt =3D <0x01>; // LVDS
+> > +                ti,clkout-sysref;
+> > +            };
+> > +        };
+> > +    };
+> > --=20
+> > 2.30.1.489.g328c10930387
+> >=20
 
-
-
--- 
-With best wishes
-Dmitry
