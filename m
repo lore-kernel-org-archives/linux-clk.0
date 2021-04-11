@@ -2,172 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DA5C4361A
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Apr 2021 05:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F2AC433B4
+	for <linux-clk@archiver.kernel.org>; Sun, 11 Apr 2021 09:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDAA61185
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Apr 2021 05:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056A961206
+	for <linux-clk@archiver.kernel.org>; Sun, 11 Apr 2021 09:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234313AbhDJFv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Apr 2021 01:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234327AbhDJFvW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Apr 2021 01:51:22 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E1AC061764;
-        Fri,  9 Apr 2021 22:51:06 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id k128so3914495wmk.4;
-        Fri, 09 Apr 2021 22:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=p/+xyni/YCGnKs32N9UtSLDiZXGL8+kotlNAwV9L5+c=;
-        b=NfvK5567HYt28UkCipC06OgWMXPv7Xs9pNRCvykTRcAx00BjWzfFEEWJrOxksUatKW
-         2S6pPl424KJmgjkuSQKibYoX53aeHq480QN+onSdVaokc/YY/JgCIFP3Huzopt3gegXw
-         wvl59Pvp7FIH5pHL9hI3eKy2D4IdSzD0UAdivVAniXC79uFka4smA7mFrZUKSV5LzZok
-         v94MeQJhw5GeqR64FbhauTZv1c41UvLJkSsaqRFWnmtq5Xn11CvN+Amf3NRNo0w3efeT
-         PWIWzm+ufZw+StStCPPL+sLsGokA9V2dDUay0KgscK5/vtDrMzDuGvzRh9wTM1zcl7nD
-         8Rzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p/+xyni/YCGnKs32N9UtSLDiZXGL8+kotlNAwV9L5+c=;
-        b=c28EFo9gKXlqd+KckX03IZehfIxhCjWqsEM0eyGl8Satw2MrJN4ULq4lm9JJeE8fgp
-         Us/ZO7g4yPOwAgIZZfQWMdYKOh+NGR1CxbTDTyS6dHkWgIGI/yzZMLbae5tjIXxdb5EK
-         Sn8wRhBAvGtbjbA1QlV+qIf5kBTW/0L/fMi5au6vpWCo5s+3qsuUBfNFmtFFybwyqli5
-         p2+1yZuZFicvZZ8SBWzMvT4pgxMjK3CqkQbt8novLvRqxU7EsfcVUVsvK7NJpkYEPFkS
-         gujRhgka7EeSjLGjfrsW2Ik+mZDeybdkFntvl9RqsEEL31ChWamOdWKkwR6j4W0M2CZR
-         f9kA==
-X-Gm-Message-State: AOAM532PcoOWV+98WQznqMgNw5CzmO5r4J8V3tHLp5zPOA+RtshmRW7h
-        bNGvzAZyr2xYmKfJedwKlik=
-X-Google-Smtp-Source: ABdhPJz25GEZhbs/h2JpGSa5AGxf7gRmHLyLhu2qvbYdZpuKoymAD7tbn7xeXclHbozOjtpqTeTEgw==
-X-Received: by 2002:a05:600c:2ca:: with SMTP id 10mr16977918wmn.40.1618033865267;
-        Fri, 09 Apr 2021 22:51:05 -0700 (PDT)
-Received: from localhost.localdomain (225.red-83-57-119.dynamicip.rima-tde.net. [83.57.119.225])
-        by smtp.gmail.com with ESMTPSA id o2sm6376518wmc.23.2021.04.09.22.51.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Apr 2021 22:51:04 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v13 3/4] staging: mt7621-dts: use valid vendor 'mediatek' instead of invalid 'mtk'
-Date:   Sat, 10 Apr 2021 07:50:58 +0200
-Message-Id: <20210410055059.13518-4-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210410055059.13518-1-sergio.paracuellos@gmail.com>
-References: <20210410055059.13518-1-sergio.paracuellos@gmail.com>
+        id S235291AbhDKJm0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Apr 2021 05:42:26 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40528 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235005AbhDKJm0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 11 Apr 2021 05:42:26 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1lVWbY-00047A-2T; Sun, 11 Apr 2021 11:42:08 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 5.13
+Date:   Sun, 11 Apr 2021 11:42:05 +0200
+Message-ID: <5450499.DvuYhMxLoT@phil>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Vendor listed for mediatek in kernel vendor file 'vendor-prefixes.yaml'
-contains 'mediatek' as a valid vendor string. Some nodes in the device
-tree are using an invalid vendor string vfor 'mtk' instead. Fix all of
-them in dts file. Update also ralink mt7621 related code to properly
-match new strings. Even there are used in the device tree there are
-some strings that are not referred anywhere but have been also updated
-with new vendor name. These are 'mtk,mt7621-wdt', 'mtk,mt7621-nand',
-'mtk,mt7621-mc', and 'mtk,mt7621-cpc'.
+Hi Mike, Stephen,
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- arch/mips/ralink/mt7621.c              |  6 +++---
- drivers/staging/mt7621-dts/mt7621.dtsi | 12 ++++++------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+please find below Rockchip clock changes for 5.13
 
-diff --git a/arch/mips/ralink/mt7621.c b/arch/mips/ralink/mt7621.c
-index 6b3db98894cb..f82ad2a621f6 100644
---- a/arch/mips/ralink/mt7621.c
-+++ b/arch/mips/ralink/mt7621.c
-@@ -136,8 +136,8 @@ static void __init mt7621_memory_detect(void)
- 
- void __init ralink_of_remap(void)
- {
--	rt_sysc_membase = plat_of_remap_node("mtk,mt7621-sysc");
--	rt_memc_membase = plat_of_remap_node("mtk,mt7621-memc");
-+	rt_sysc_membase = plat_of_remap_node("mediatek,mt7621-sysc");
-+	rt_memc_membase = plat_of_remap_node("mediatek,mt7621-memc");
- 
- 	if (!rt_sysc_membase || !rt_memc_membase)
- 		panic("Failed to remap core resources");
-@@ -205,7 +205,7 @@ void __init prom_soc_init(struct ralink_soc_info *soc_info)
- 
- 	if (n0 == MT7621_CHIP_NAME0 && n1 == MT7621_CHIP_NAME1) {
- 		name = "MT7621";
--		soc_info->compatible = "mtk,mt7621-soc";
-+		soc_info->compatible = "mediatek,mt7621-soc";
- 	} else {
- 		panic("mt7621: unknown SoC, n0:%08x n1:%08x\n", n0, n1);
- 	}
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index b68183e7e6ad..f0c9ae757bcd 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -56,7 +56,7 @@ palmbus: palmbus@1E000000 {
- 		#size-cells = <1>;
- 
- 		sysc: sysc@0 {
--			compatible = "mtk,mt7621-sysc", "syscon";
-+			compatible = "mediatek,mt7621-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 			#clock-cells = <1>;
- 			ralink,memctl = <&memc>;
-@@ -66,7 +66,7 @@ sysc: sysc@0 {
- 		};
- 
- 		wdt: wdt@100 {
--			compatible = "mtk,mt7621-wdt";
-+			compatible = "mediatek,mt7621-wdt";
- 			reg = <0x100 0x100>;
- 		};
- 
-@@ -123,17 +123,17 @@ i2s: i2s@a00 {
- 		};
- 
- 		memc: memc@5000 {
--			compatible = "mtk,mt7621-memc", "syscon";
-+			compatible = "mediatek,mt7621-memc", "syscon";
- 			reg = <0x5000 0x1000>;
- 		};
- 
- 		cpc: cpc@1fbf0000 {
--			     compatible = "mtk,mt7621-cpc";
-+			     compatible = "mediatek,mt7621-cpc";
- 			     reg = <0x1fbf0000 0x8000>;
- 		};
- 
- 		mc: mc@1fbf8000 {
--			    compatible = "mtk,mt7621-mc";
-+			    compatible = "mediatek,mt7621-mc";
- 			    reg = <0x1fbf8000 0x8000>;
- 		};
- 
-@@ -361,7 +361,7 @@ timer {
- 	nand: nand@1e003000 {
- 		status = "disabled";
- 
--		compatible = "mtk,mt7621-nand";
-+		compatible = "mediatek,mt7621-nand";
- 		bank-width = <2>;
- 		reg = <0x1e003000 0x800
- 			0x1e003800 0x800>;
--- 
-2.25.1
+Please pull, thanks
+Heiko
+
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.13-rockchip-clocks
+
+for you to fetch changes up to 40f29839d8bef5aecaa772afa8e5f2ff8434b49f:
+
+  clk: rockchip: drop MODULE_ALIAS from rk3399 clock controller (2021-03-21 11:13:30 +0100)
+
+----------------------------------------------------------------
+Support for the clock controller on the new rk3568
+and some cleanups for rk3399 modularization.
+
+----------------------------------------------------------------
+Elaine Zhang (4):
+      clk: rockchip: add dt-binding header for rk3568
+      dt-binding: clock: Document rockchip, rk3568-cru bindings
+      clk: rockchip: support more core div setting
+      clk: rockchip: add clock controller for rk3568
+
+Heiko Stuebner (2):
+      clk: rockchip: drop parenthesis from ARM || COMPILE_TEST depends
+      clk: rockchip: drop MODULE_ALIAS from rk3399 clock controller
+
+ .../bindings/clock/rockchip,rk3568-cru.yaml        |   60 +
+ drivers/clk/rockchip/Kconfig                       |   29 +-
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-cpu.c                     |   53 +-
+ drivers/clk/rockchip/clk-px30.c                    |    7 +-
+ drivers/clk/rockchip/clk-rk3036.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3128.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3188.c                  |   14 +-
+ drivers/clk/rockchip/clk-rk3228.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3308.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3328.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |   14 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |   15 +-
+ drivers/clk/rockchip/clk-rk3568.c                  | 1725 ++++++++++++++++++++
+ drivers/clk/rockchip/clk-rv1108.c                  |    7 +-
+ drivers/clk/rockchip/clk.h                         |   54 +-
+ include/dt-bindings/clock/rk3568-cru.h             |  926 +++++++++++
+ 18 files changed, 2857 insertions(+), 90 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3568.c
+ create mode 100644 include/dt-bindings/clock/rk3568-cru.h
+
+
 
