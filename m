@@ -2,93 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1484EC433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 11:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF73C43460
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 17:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFA7F61244
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 11:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E7361289
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 17:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237870AbhDLLcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Apr 2021 07:32:08 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:40195 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238951AbhDLLcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Apr 2021 07:32:07 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4FJmm10FGFz1s3pb;
-        Mon, 12 Apr 2021 13:31:45 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4FJmm0627zz1r1MK;
-        Mon, 12 Apr 2021 13:31:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id EglLZHD-29yn; Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
-X-Auth-Info: Ck3cUIHyMwTSrvrWjSo1RAiYHd/m6J6UJHJ+UhZhLBByE9hnwtEAV9Tz9dURqEKH
-Received: from igel.home (ppp-46-244-166-146.dynamic.mnet-online.de [46.244.166.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id 63F852C3644; Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Zong Li <zong.li@sifive.com>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pragnesh Patel <pragnesh.patel@openfive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
-References: <20201209094916.17383-1-zong.li@sifive.com>
-        <87v99qyjaz.fsf@igel.home>
-        <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
-        <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
-        <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home>
-        <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
-        <87a6qrk2pw.fsf@igel.home>
-        <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
-        <874kgyfetu.fsf@igel.home>
-        <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
-        <87h7kukzy4.fsf@igel.home>
-        <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
-X-Yow:  LOOK!!  Sullen American teens wearing MADRAS shorts and
- ``Flock of Seagulls'' HAIRCUTS!
-Date:   Mon, 12 Apr 2021 13:31:43 +0200
-In-Reply-To: <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
-        (Zong Li's message of "Wed, 31 Mar 2021 16:11:20 +0800")
-Message-ID: <87tuob7n8g.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        id S243366AbhDLRFH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Apr 2021 13:05:07 -0400
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:45648 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243708AbhDLRDz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Apr 2021 13:03:55 -0400
+Received: by mail-oi1-f178.google.com with SMTP id d12so14074200oiw.12;
+        Mon, 12 Apr 2021 10:03:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Bk4HDeKR+toH2oCWOomBubb2tI7dn2Ufe/jMDW0e+EI=;
+        b=Up12KUhmMmixqdSNnU42srIuDmb0NoiLNZmi2X/7mXPa0IUZ9ZpBpPPHqiTr0aTX50
+         nsOIjnEtZYdoftoscML9zs9DQKljAirUzynkvP7QsZuDfUQC9ezgngYstwR5epTG8dny
+         YPT/PM0LuPFb+AmF0ZMLDB8ebL3dxUKLwExRslmGSwpWXfMj/oH5JbhGA+7ptnqdtv5w
+         /gnm4luuMycxRyr66uJwbcLVtxfmg49CnUhqqwCxaB9udqhUjca4ZpmpMxWfB8JiQ0Pf
+         Zvz6GoXvDp/o2aHtfFGwTDs17XyIXe62EaChz+VodQWL417U3reS5G9ytOvITfelku2J
+         vaVQ==
+X-Gm-Message-State: AOAM533OePjYI33eqKqPTkb735kNjp5Go4jaFSRdIU/aBC7z8O1ol5BG
+        SC/XSYev1RYBLnIVDPuxyw==
+X-Google-Smtp-Source: ABdhPJzaCMtbVP2hz7fdM7Un2vWUQwgynfH1W8jP6A19AA/xnu2qLRSJ+VRbIm/94kkBdX66ZgumHA==
+X-Received: by 2002:a05:6808:a8a:: with SMTP id q10mr69213oij.167.1618247016335;
+        Mon, 12 Apr 2021 10:03:36 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 62sm2788817oto.60.2021.04.12.10.03.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Apr 2021 10:03:35 -0700 (PDT)
+Received: (nullmailer pid 4049154 invoked by uid 1000);
+        Mon, 12 Apr 2021 17:03:34 -0000
+Date:   Mon, 12 Apr 2021 12:03:34 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add YAML schemas for LPASS
+ clocks on SC7280
+Message-ID: <20210412170334.GA3971998@robh.at.kernel.org>
+References: <1617969272-10246-1-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1617969272-10246-1-git-send-email-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mär 31 2021, Zong Li wrote:
+On Fri, Apr 09, 2021 at 05:24:31PM +0530, Taniya Das wrote:
+> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
+> properties that are needed in a device tree. Add the LPASS clock IDs for
+> LPASS PIL client to request for the clocks.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../bindings/clock/qcom,sc7280-lpasscc.yaml        | 69 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,lpass-sc7280.h      | 16 +++++
+>  2 files changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,lpass-sc7280.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+> new file mode 100644
+> index 0000000..7b62763
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc7280-lpasscc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS Core Clock Controller Binding for SC7280
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core clock control module which supports the clocks and
+> +  power domains on SC7280.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,lpass-sc7280.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sc7280-lpasscc
+> +
+> +  clocks:
+> +    items:
+> +      - description: gcc_cfg_noc_lpass_clk from GCC
+> +
+> +  clock-names:
+> +    items:
+> +      - const: iface
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    minItems: 3
 
-> I found that the gemgxlpll was disabled immediately by power
-> management after macb driver install. The mainline's defconfig doesn't
-> enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
-> enables CONFIG_PM, and the patch
-> 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
-> callback functions, so the gemgxlpll PLL, I have no idea why power
-> management disable it, I would keep trace it.
+You don't need minItems, as 3 is implied.
 
-Does that mean that CONFIG_PM also affects the FU740?
+> +    items:
+> +      - description: LPASS qdsp6ss register
+> +      - description: LPASS top-cc register
+> +      - description: LPASS cc register
+> +
+> +  reg-names:
+> +    items:
+> +      - const: qdsp6ss
+> +      - const: top_cc
+> +      - const: cc
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
+> +    clock-controller@3000000 {
+> +      compatible = "qcom,sc7280-lpasscc";
+> +      reg = <0x03000000 0x40>, <0x03c04000 0x4>, <0x03389000 0x24>;
+> +      reg-names = "qdsp6ss", "top_cc", "cc";
+> +      clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
+> +      clock-names = "iface";
+> +      #clock-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,lpass-sc7280.h b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+> new file mode 100644
+> index 0000000..a259463
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Andreas.
+What about non-GPL OS users?
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+> +/*
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
+> +#define _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
+> +
+> +#define LPASS_Q6SS_AHBM_CLK				0
+> +#define LPASS_Q6SS_AHBS_CLK				1
+> +#define LPASS_TOP_CC_LPI_Q6_AXIM_HS_CLK			2
+> +#define LPASS_QDSP6SS_XO_CLK				3
+> +#define LPASS_QDSP6SS_SLEEP_CLK				4
+> +#define LPASS_QDSP6SS_CORE_CLK				5
+> +
+> +#endif
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
