@@ -2,102 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5958AC43617
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 09:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1484EC433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 11:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1078E61241
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 09:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA7F61244
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 11:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239647AbhDLJbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:31:34 -0400
-Received: from mail-vk1-f169.google.com ([209.85.221.169]:44856 "EHLO
-        mail-vk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240962AbhDLJZH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Apr 2021 05:25:07 -0400
-Received: by mail-vk1-f169.google.com with SMTP id r196so2712183vkd.11;
-        Mon, 12 Apr 2021 02:24:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4SHMD1oGY2Yw0vxxws1zV6FhECO5igomD0LqhlWJBF8=;
-        b=U9rJIP1Z42ohACpM92IwMW0zGBMherp+60Ss/2DKTq0no3192Joz6L4q1pdqsQzerI
-         dObVJayqOWX54jJehgD0QPNsHkSx/R8vTh+NhwObvqF5AjkSK15zBr/PRdYeQthsy9Fl
-         tdxLnuWK55JJairDk5I3NMF7OqVUcukme17LDaAcESd9MBebhezMekafENCYg5hi9oOs
-         0yC+z5xnrL+hdrF2CMa91+/lw0xzbBSlSMDwA5HnQ47K4kBJ12f9tPbYRGwxTVhaWc1g
-         Niq9i0MeA6RCbzyTYiCLicD9NO/wLmPYgN9tjrwVrKkL5dXTq9/GlNi4vuADqJ1qGxt6
-         RJ/w==
-X-Gm-Message-State: AOAM5324wF/NT9Jy1laVWdRm6r+1wAjLcCLO7XBo1HL23ztuGcAa+h9U
-        CLLwjksHpuLheHUEfaXR9A5/2IAVeoLMayOIDlE=
-X-Google-Smtp-Source: ABdhPJz6H4I3RfTPV/+7eF6tq81iKBSPmhvjZbF2f9wIdDzpLsNpwUoIjlx4y7xBgY5IurLpS5eDhYdCxqR8sPk+a3g=
-X-Received: by 2002:a1f:2502:: with SMTP id l2mr18469108vkl.5.1618219488852;
- Mon, 12 Apr 2021 02:24:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210409095150.2294437-1-yebin10@huawei.com>
-In-Reply-To: <20210409095150.2294437-1-yebin10@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 12 Apr 2021 11:24:37 +0200
-Message-ID: <CAMuHMdUBS2wk7pSC2+8rxsf_-ixMB30FwODDZsH6QE0-QGx=Qg@mail.gmail.com>
-Subject: Re: [PATCH -next] clk: renesas: r8a77970: Use DEFINE_SPINLOCK() for spinlock
-To:     Ye Bin <yebin10@huawei.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S237870AbhDLLcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Apr 2021 07:32:08 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:40195 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238951AbhDLLcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Apr 2021 07:32:07 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4FJmm10FGFz1s3pb;
+        Mon, 12 Apr 2021 13:31:45 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4FJmm0627zz1r1MK;
+        Mon, 12 Apr 2021 13:31:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id EglLZHD-29yn; Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
+X-Auth-Info: Ck3cUIHyMwTSrvrWjSo1RAiYHd/m6J6UJHJ+UhZhLBByE9hnwtEAV9Tz9dURqEKH
+Received: from igel.home (ppp-46-244-166-146.dynamic.mnet-online.de [46.244.166.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+        id 63F852C3644; Mon, 12 Apr 2021 13:31:43 +0200 (CEST)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Zong Li <zong.li@sifive.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+References: <20201209094916.17383-1-zong.li@sifive.com>
+        <87v99qyjaz.fsf@igel.home>
+        <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+        <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
+        <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home>
+        <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
+        <87a6qrk2pw.fsf@igel.home>
+        <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
+        <874kgyfetu.fsf@igel.home>
+        <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
+        <87h7kukzy4.fsf@igel.home>
+        <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
+X-Yow:  LOOK!!  Sullen American teens wearing MADRAS shorts and
+ ``Flock of Seagulls'' HAIRCUTS!
+Date:   Mon, 12 Apr 2021 13:31:43 +0200
+In-Reply-To: <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
+        (Zong Li's message of "Wed, 31 Mar 2021 16:11:20 +0800")
+Message-ID: <87tuob7n8g.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ye,
+On Mär 31 2021, Zong Li wrote:
 
-On Fri, Apr 9, 2021 at 11:43 AM Ye Bin <yebin10@huawei.com> wrote:
-> spinlock can be initialized automatically with DEFINE_SPINLOCK()
-> rather than explicitly calling spin_lock_init().
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> I found that the gemgxlpll was disabled immediately by power
+> management after macb driver install. The mainline's defconfig doesn't
+> enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
+> enables CONFIG_PM, and the patch
+> 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
+> callback functions, so the gemgxlpll PLL, I have no idea why power
+> management disable it, I would keep trace it.
 
-Thanks for your patch, which looks correct to me.
+Does that mean that CONFIG_PM also affects the FU740?
 
-> --- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> @@ -47,7 +47,7 @@ enum clk_ids {
->         MOD_CLK_BASE
->  };
->
-> -static spinlock_t cpg_lock;
-> +static DEFINE_SPINLOCK(cpg_lock);
-
-I think a better fix would be to start using the common cpg_lock, by #including
-rcar-cpg-lib.h.
-
->
->  static const struct clk_div_table cpg_sd0h_div_table[] = {
->         {  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
-> @@ -212,8 +212,6 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
->         if (error)
->                 return error;
->
-> -       spin_lock_init(&cpg_lock);
-> -
->         cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
->
->         return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Andreas.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
