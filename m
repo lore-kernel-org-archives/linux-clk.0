@@ -2,121 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2D3C433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 02:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C2DC433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 06:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3322761207
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 02:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E86C26121D
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Apr 2021 06:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236624AbhDLCiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 11 Apr 2021 22:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235857AbhDLCiV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Apr 2021 22:38:21 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF40FC061574
-        for <linux-clk@vger.kernel.org>; Sun, 11 Apr 2021 19:38:03 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id o5so11989789qkb.0
-        for <linux-clk@vger.kernel.org>; Sun, 11 Apr 2021 19:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TmSSElCK4cYcHvK5QFQubtH5iynsu2VpzHMHEgHy8BA=;
-        b=mbWzSh1p+trrWvmtrxYTsTS6r7o6U7fHTEwOt2citEUHclf1uB5FPBJiH6Uq16l2JV
-         7WuM8/9cc+Q9XA+OT8dgVf3al8k3AXpsDyC+v53R4+AnBjGFPwhPBmMep7dSG9qWwiPn
-         y2lOHpMaMhzoaGwBKLgF+AXBg5myeg5sNVvR2DhVPVJ4Y4d/nMyhUal2MZ4RnV0f35y9
-         O2ZdG6+rWoMod5Bi2v9MraiB0Ky4PpWQYtFh5Uhau9HcJmkvZROGHW6sCvLRbRmgS5im
-         07TfdfkFA6AVfyhc/SPPmM2Ee2RgKBFftH43pPgOwx8c+uyoIclHVSsQuVVlAXdF9IQg
-         6OgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TmSSElCK4cYcHvK5QFQubtH5iynsu2VpzHMHEgHy8BA=;
-        b=ZzDnz6dywdHxMcvHxleK6+6zCT0BdZHf9hBnXhAX5+a70E0g2cpXLS6uJaS6YBzJ5L
-         Axj9Tjoqtn/7WQpLmCmupdRr3wT2DmmmO/CNKoox/LTqHVbdMJBM+jU+mJyVnypFD/Wp
-         EJZt+vqmCdMSXCgeBZ35lBDF5IWJyf/YEZHRh9bP6Fz5Ujwi29UGiJj6qAFVyM3gBQSC
-         Jioy9hcpRcEXJKuJLJlD41MPFGp+b0TfTGGs2l8m/gxhKEmrQktUoookmD+gUZ8uJbC0
-         pJLufIMUiG5rqupHEPo/IZ5AjwYKmAkU+YQ8bit4O1Dz4wfM8tExn2WH7SKvU3k+kfa1
-         Knhg==
-X-Gm-Message-State: AOAM533TogCSpir5fObvW/qMRz79TTZQ7VzEZGNmTgdJEQuOZLKMKhr/
-        v631EUMnQeGA9aH482YtgEqTfuRJO54HNeAlVBv99Q==
-X-Google-Smtp-Source: ABdhPJwOWzULd337c8NuXMd1ABRPnJWVXcSMZ167cl2J0oTgGU5gvgRC+qgOHXrTrA96Yon0OE2bEBoQct1g2/W01Fo=
-X-Received: by 2002:a05:620a:1497:: with SMTP id w23mr24922931qkj.260.1618195083134;
- Sun, 11 Apr 2021 19:38:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210406092634.50465-1-greentime.hu@sifive.com> <161795835843.16967.18210803147557738620.b4-ty@arm.com>
-In-Reply-To: <161795835843.16967.18210803147557738620.b4-ty@arm.com>
-From:   Greentime Hu <greentime.hu@sifive.com>
-Date:   Mon, 12 Apr 2021 10:37:50 +0800
-Message-ID: <CAHCEehJajVGWnAwvX+Jg3_U=WNxaNq89Xq3uvcfcHzt04qNfMQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Add SiFive FU740 PCIe host controller driver support
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     jh80.chung@samsung.com, Zong Li <zong.li@sifive.com>,
-        robh+dt@kernel.org, vidyas@nvidia.com, alex.dewar90@gmail.com,
-        Erik Danie <erik.danie@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
+        id S230064AbhDLGpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Apr 2021 02:45:19 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41293 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229461AbhDLGpT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Apr 2021 02:45:19 -0400
+X-UUID: 2c3f69fdd8204c7797f7b2c4841b6c45-20210412
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=6irlN+d9Mb2+ba18MKnOG1SxUR8FvHNgzGMB81pMeE0=;
+        b=USQkW+zVIb1Jn2MRjQsE4w46Qvh0jLI4jpdRxirtAC/v5POt3Cj/5YwJv7kxHdKk/6WM+wmZ8tIENDbIDGE+ABjbzimvESgLPol0Svv4dD/P9mkAEfDTda4FoaV3G2k3eSOhFj1Iq7oLNXg9PmftnF0AYLmJ5DNdSXVttugc4GM=;
+X-UUID: 2c3f69fdd8204c7797f7b2c4841b6c45-20210412
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+        (envelope-from <flora.fu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 889678458; Mon, 12 Apr 2021 14:44:58 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 12 Apr 2021 14:44:55 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 12 Apr 2021 14:44:55 +0800
+Message-ID: <1618209895.25062.11.camel@mtksdccf07>
+Subject: Re: [PATCH 4/8] dt-bindings: arm: mediatek: Add new document
+ bindings for APU
+From:   Flora Fu <flora.fu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
         Stephen Boyd <sboyd@kernel.org>,
-        hayashi.kunihiko@socionext.com, hes@sifive.com,
-        khilman@baylibre.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, devicetree@vger.kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Flora Fu <flora.fu@mediatek.com>
+Date:   Mon, 12 Apr 2021 14:44:55 +0800
+In-Reply-To: <20210409182538.GA3913794@robh.at.kernel.org>
+References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
+         <1617766086-5502-5-git-send-email-flora.fu@mediatek.com>
+         <20210409182538.GA3913794@robh.at.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: FAF44DDF206968B3B76899833A08D826296786249D61A9BED1B4F7C2A51F30DE2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> =E6=96=BC 2021=E5=B9=B44=E6=
-=9C=889=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:54=E5=AF=AB=E9=81=
-=93=EF=BC=9A
->
-> On Tue, 6 Apr 2021 17:26:28 +0800, Greentime Hu wrote:
-> > This patchset includes SiFive FU740 PCIe host controller driver. We als=
-o
-> > add pcie_aux clock and pcie_power_on_reset controller to prci driver fo=
-r
-> > PCIe driver to use it.
-> >
-> > This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon =
-R5
-> > 230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based o=
-n
-> > v5.11 Linux kernel.
-> >
-> > [...]
->
-> Applied to pci/dwc [dropped patch 6], thanks!
->
-> [1/6] clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
->       https://git.kernel.org/lpieralisi/pci/c/f3ce593b1a
-> [2/6] clk: sifive: Use reset-simple in prci driver for PCIe driver
->       https://git.kernel.org/lpieralisi/pci/c/0a78fcfd3d
-> [3/6] MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
->       https://git.kernel.org/lpieralisi/pci/c/8bb1c66a90
-> [4/6] dt-bindings: PCI: Add SiFive FU740 PCIe host controller
->       https://git.kernel.org/lpieralisi/pci/c/b86d55c107
-> [5/6] PCI: fu740: Add SiFive FU740 PCIe host controller driver
->       https://git.kernel.org/lpieralisi/pci/c/327c333a79
->
-> Thanks,
-> Lorenzo
+T24gRnJpLCAyMDIxLTA0LTA5IGF0IDEzOjI1IC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
+T24gV2VkLCBBcHIgMDcsIDIwMjEgYXQgMTE6Mjg6MDJBTSArMDgwMCwgRmxvcmEgRnUgd3JvdGU6
+DQo+ID4gRG9jdW1lbnQgdGhlIGFwdXN5cyBiaW5kaW5ncy4NCj4gPiANCj4gPiBTaWduZWQtb2Zm
+LWJ5OiBGbG9yYSBGdSA8ZmxvcmEuZnVAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICAuLi4v
+YXJtL21lZGlhdGVrL21lZGlhdGVrLGFwdXN5cy55YW1sICAgICAgICAgfCA1NiArKysrKysrKysr
+KysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA1NiBpbnNlcnRpb25zKCspDQo+ID4gIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLGFwdXN5cy55YW1sDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssYXB1c3lz
+LnlhbWwgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21l
+ZGlhdGVrLGFwdXN5cy55YW1sDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAw
+MDAwMDAwMDAwMDAuLmRjMDRhNDZmMWJhZA0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGFw
+dXN5cy55YW1sDQo+ID4gQEAgLTAsMCArMSw1NiBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVu
+dGlmaWVyOiAoR1BMLTIuMCBPUiBCU0QtMi1DbGF1c2UpDQo+ID4gKyVZQU1MIDEuMg0KPiA+ICst
+LS0NCj4gPiArJGlkOiBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cDovL2RldmljZXRy
+ZWUub3JnL3NjaGVtYXMvYXJtL21lZGlhdGVrL21lZGlhdGVrLGFwdXN5cy55YW1sKl9fO0l3ISFD
+VFJOS0E5d01nMEFSYnchM3J5S0ZUQTJDdnNWc3M0UHQyWk9HN3d2NGpnUi0yTFB4dUduMzBJeEZt
+cHhveFNSZHpOZGY4RnJBWVl2WldjdyQgDQo+ID4gKyRzY2hlbWE6IGh0dHBzOi8vdXJsZGVmZW5z
+ZS5jb20vdjMvX19odHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCpf
+XztJdyEhQ1RSTktBOXdNZzBBUmJ3ITNyeUtGVEEyQ3ZzVnNzNFB0MlpPRzd3djRqZ1ItMkxQeHVH
+bjMwSXhGbXB4b3hTUmR6TmRmOEZyQVJsaENRMHckIA0KPiA+ICsNCj4gPiArdGl0bGU6IE1lZGlh
+VGVrIEFQVVNZUyBDb250cm9sbGVyDQo+ID4gKw0KPiA+ICttYWludGFpbmVyczoNCj4gPiArICAt
+IEZsb3JhIEZ1IDxmbG9yYS5mdUBtZWRpYXRlay5jb20+DQo+ID4gKw0KPiA+ICtkZXNjcmlwdGlv
+bjoNCj4gPiArICBUaGUgTWVkaWF0ZWsgYXB1c3lzIGNvbnRyb2xsZXIgcHJvdmlkZXMgZnVuY3Rp
+b25hbCBjb25maWd1cmF0aW9ucyBhbmQgY2xvY2tzDQo+ID4gKyAgdG8gdGhlIHN5c3RlbS4NCj4g
+PiArDQo+ID4gK3Byb3BlcnRpZXM6DQo+ID4gKyAgY29tcGF0aWJsZToNCj4gPiArICAgIGl0ZW1z
+Og0KPiA+ICsgICAgICAtIGVudW06DQo+ID4gKyAgICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1h
+cHVfbWJveA0KPiA+ICsgICAgICAgICAgLSBtZWRpYXRlayxtdDgxOTItYXB1X2Nvbm4NCj4gPiAr
+ICAgICAgICAgIC0gbWVkaWF0ZWssbXQ4MTkyLWFwdV92Y29yZQ0KPiANCj4gcy9fLy0vDQo+IA0K
+DQpPSy4gSSB3aWxsIHVwZGF0ZSBleHByZXNzaW9uIHN0cmluZ3MgaW4gdGhlIG5leHQgdmVyc2lv
+bi4NCg0KPiA+ICsgICAgICAtIGNvbnN0OiBzeXNjb24NCj4gPiArDQo+ID4gKyAgcmVnOg0KPiA+
+ICsgICAgbWF4SXRlbXM6IDENCj4gPiArDQo+ID4gKyAgJyNjbG9jay1jZWxscyc6DQo+ID4gKyAg
+ICBjb25zdDogMQ0KPiA+ICsNCj4gPiArcmVxdWlyZWQ6DQo+ID4gKyAgLSBjb21wYXRpYmxlDQo+
+ID4gKyAgLSByZWcNCj4gPiArDQo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KPiA+
+ICsNCj4gPiArZXhhbXBsZXM6DQo+ID4gKyAgLSB8DQo+ID4gKyAgICBhcHVfbWJveDogYXB1X21i
+b3hAMTkwMDAwMDAgew0KPiANCj4gbWFpbGJveEAuLi4/IElzIHRoaXMgYSBtYWlsYm94IHByb3Zp
+ZGVyPw0KPiANCg0KWWVzLCB0aGUgYXB1X21ib3ggaXMgdGhlIGZvciBzZXR1cCBtYWlsYm94IGlu
+IHRoZSBBUFUgaGFyZHdhcmUuDQoNCj4gPiArICAgICAgICBjb21wYXRpYmxlID0gIm1lZGlhdGVr
+LG10ODE5Mi1hcHVfbWJveCIsICJzeXNjb24iOw0KPiA+ICsgICAgICAgIHJlZyA9IDwweDE5MDAw
+MDAwIDB4MTAwMD47DQo+ID4gKyAgICB9Ow0KPiA+ICsNCj4gPiArICAtIHwNCj4gPiArICAgIGFw
+dV9jb25uOiBhcHVfY29ubkAxOTAyMDAwMCB7DQo+ID4gKyAgICAgICAgY29tcGF0aWJsZSA9ICJt
+ZWRpYXRlayxtdDgxOTItYXB1X2Nvbm4iLCAic3lzY29uIjsNCj4gPiArICAgICAgICByZWcgPSA8
+MHgxOTAyMDAwMCAweDEwMDA+Ow0KPiA+ICsgICAgICAgICNjbG9jay1jZWxscyA9IDwxPjsNCj4g
+PiArICAgIH07DQo+ID4gKw0KPiA+ICsgIC0gfA0KPiA+ICsgICAgYXB1X3Zjb3JlOiBhcHVfdmNv
+cmVAMTkwMjkwMDAgew0KPiA+ICsgICAgICAgIGNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTky
+LWFwdV92Y29yZSIsICJzeXNjb24iOw0KPiA+ICsgICAgICAgIHJlZyA9IDwweDE5MDI5MDAwIDB4
+MTAwMD47DQo+ID4gKyAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiA+ICsgICAgfTsNCj4g
+PiAtLSANCj4gPiAyLjE4LjANCj4gPiANCg0K
 
-Hi Palmer,
-
-Since the PCIE driver has been applied, would you please pick patch 6
-to RISC-V for-next tree?
-Thank you. :)
