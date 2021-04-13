@@ -2,105 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6917AC433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 12:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CFEC433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 19:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4340F613AE
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 12:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F0D4613CB
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 19:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238364AbhDMMFg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Apr 2021 08:05:36 -0400
-Received: from phobos.denx.de ([85.214.62.61]:38420 "EHLO phobos.denx.de"
+        id S1348009AbhDMTF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Apr 2021 15:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237609AbhDMMFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Apr 2021 08:05:35 -0400
-X-Greylist: delayed 62452 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Apr 2021 08:05:35 EDT
-Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id DEBA281A04;
-        Tue, 13 Apr 2021 14:05:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1618315514;
-        bh=1cx7IY1niXydXktkCXAsPUmSNShSji22fkH1N/eoSfY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cNs09aDP0xo4Kjn2mQ15olg6nAOvl59ycxnQg5bG9ETzyEfkiQd4m/G1ujp8hiBSr
-         tqZInlfSRqFME734Pjf+CCR0CnU3BK2289+ygxvWJCbkc6UKLWiFpwcTrx7wPKsj5m
-         uygL5ziQjKCvl/yyh1Ra+HUtGGqDS7CV97ODF74rOGXgvtoGntZk3yXfWLkS7Y2hFj
-         A8YZFC9u14oRK8KPdxw1waWTt4DA3AkYNHo2BloCO8AqOik5AvAZ1LID5+sxWvjQ2/
-         uCG4OLqQrolT0r6V3R+tLNXBDit/h9PgT4127tIi3qmX16XTqAXSb7e55SX6ml1l39
-         lUBwOV6QR0Ksg==
-Subject: Re: [PATCH 0/7] ARM: dts: stm32: clk: Switch ETHRX clock parent from
- ETHCK_K to MCO2 on DHCOM SoM
-To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20210408185731.135511-1-marex@denx.de>
- <b81d6a69-713f-eda7-0837-d6e80d691c6a@foss.st.com>
- <2c410c1b-2a1d-b291-a128-c5d5979be1ef@denx.de>
- <340d32f1-3afb-2159-fa94-70a45aecd88c@foss.st.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <5a7ac087-4506-df7f-e692-c663d7b61703@denx.de>
-Date:   Tue, 13 Apr 2021 14:05:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S231734AbhDMTFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Apr 2021 15:05:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A7AFD613CA;
+        Tue, 13 Apr 2021 19:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618340705;
+        bh=adPubgfpOrI6A9TuJBDs8NDXHEvW3E+ZI2frnmYzgaM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gUREuKWiLE9Bq+o/j58E6XCRWi5cFvHI0oGGS5LjGmUsAtF6mR6lFZXwkpJpVNdcC
+         HRCsQVs8ovmUhm9rVONpaoBV9xk2UfMC6zAHhtrSC6ylO+yMQuFvLn+LVwArG314bk
+         FYveLJw6UeDOthVe/Dy3NRNdtC9KfuNeQ5z+f+Uj+kaVT5m+zg36b/1ik5W2YixD5g
+         oW0j32qRPtoCOVoYTFlno8VAVMFBCHjflBROwJWUBukPn7/BUHjMy1NALWSaVmEPiH
+         ZYt5MEZ2EBzGV8Fyiub/ODlmZqrXKsMqoGBQt96bpGKUVwVddDGF8kt0vIuzQQLORV
+         HRqsp9Sr1JNfQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <340d32f1-3afb-2159-fa94-70a45aecd88c@foss.st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.102.4 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210410055059.13518-2-sergio.paracuellos@gmail.com>
+References: <20210410055059.13518-1-sergio.paracuellos@gmail.com> <20210410055059.13518-2-sergio.paracuellos@gmail.com>
+Subject: Re: [PATCH v13 1/4] clk: ralink: add clock driver for mt7621 SoC
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
+        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        devel@driverdev.osuosl.org, neil@brown.name,
+        linux-kernel@vger.kernel.org
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 13 Apr 2021 12:05:03 -0700
+Message-ID: <161834070385.3764895.8150982536236653732@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/13/21 9:48 AM, Alexandre TORGUE wrote:
-> Hi Marek
+Quoting Sergio Paracuellos (2021-04-09 22:50:56)
+> The documentation for this SOC only talks about two
+> registers regarding to the clocks:
+> * SYSC_REG_CPLL_CLKCFG0 - provides some information about
+> boostrapped refclock. PLL and dividers used for CPU and some
+> sort of BUS.
+> * SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable
+> clocks for all or some ip cores.
+>=20
+> Looking into driver code, and some openWRT patched there are
+> another frequencies which are used in some drivers (uart, sd...).
+> According to all of this information the clock plan for this
+> SoC is set as follows:
+> - Main top clock "xtal" from where all the rest of the world is
+> derived.
+> - CPU clock "cpu" derived from "xtal" frequencies and a bunch of
+> register reads and predividers.
+> - BUS clock "bus" derived from "cpu" and with (cpu / 4) MHz.
+> - Fixed clocks from "xtal":
+>     * "50m": 50 MHz.
+>     * "125m": 125 MHz.
+>     * "150m": 150 MHz.
+>     * "250m": 250 MHz.
+>     * "270m": 270 MHz.
+>=20
+> We also have a buch of gate clocks with their parents:
+>   * "hsdma": "150m"
+>   * "fe": "250m"
+>   * "sp_divtx": "270m"
+>   * "timer": "50m"
+>   * "pcm": "270m"
+>   * "pio": "50m"
+>   * "gdma": "bus"
+>   * "nand": "125m"
+>   * "i2c": "50m"
+>   * "i2s": "270m"
+>   * "spi": "bus"
+>   * "uart1": "50m"
+>   * "uart2": "50m"
+>   * "uart3": "50m"
+>   * "eth": "50m"
+>   * "pcie0": "125m"
+>   * "pcie1": "125m"
+>   * "pcie2": "125m"
+>   * "crypto": "250m"
+>   * "shxc": "50m"
+>=20
+> With this information the clk driver will provide clock and gates
+> functionality from a a set of hardcoded clocks allowing to define
+> a nice device tree without fixed clocks.
+>=20
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
 
-Hello Alexandre,
-
-> On 4/12/21 8:44 PM, Marek Vasut wrote:
->> On 4/12/21 10:09 AM, Alexandre TORGUE wrote:
->>> Hi Marek
->>
->> Hello Alex,
->>
->> [...]
->>
->>>> All the above still only discusses the clock part of the problem. 
->>>> Even if
->>>> the clock cyclic dependencies could be solved, it would be necessary to
->>>> resolve legacy dwmac st,eth-clk-sel and st,eth-ref-clk-sel DT 
->>>> properties
->>>> and avoid DT ABI break.
->>>
->>> Thanks for those clear explanations and for this series. As 
->>> discussed, this approach looks good to me as it doesn't break our 
->>> current strategy for dwmac clock integration. I don't know if those 
->>> cyclic redundancies will be fixed one day but we can have a look on 
->>> dwmac DT properties (the gain to change them, the effort to keep the 
->>> backward compatibility, code readability, ...).
->>>
->>> Your DT patches looks good. I'll merge them soon.
->> +CC Stephen ; the DT patches depend on the clock driver changes. Would 
->> it make sense to pick the clock patches through the same tree or how 
->> should that be handled ?
-> 
-> In this situation, I prefer to wait that Stephen takes clock patches in 
-> his tree. Then I'll take DT ones in mine. (I assume that taking only 
-> clock patches will not break mp1 boot or Ethernet usage).
-
-That's fine by me, thanks !
+Applied to clk-next
