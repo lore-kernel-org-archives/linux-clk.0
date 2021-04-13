@@ -2,170 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52620C433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 10:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6917AC433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 12:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33359613BC
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 10:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4340F613AE
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 12:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbhDMKNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Apr 2021 06:13:50 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:45217 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231325AbhDMKNt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Apr 2021 06:13:49 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id B99CB1A9C;
-        Tue, 13 Apr 2021 06:13:27 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 13 Apr 2021 06:13:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=vxAfKWUz0NKhL
-        ZUP6I8hrOgd29LYwT2kjWWxWCI300c=; b=Z5lyCSM1dSj3tylbua6t80t8BtvtG
-        aTH2FcEAc6Wfw7rUajBwNh4maw+TPhtuYfOvXXIsXsYV5QZveibk78LAQWgzZlot
-        iOmvZre7SEnHIH4E1MWBmhEYa5Y/3yf4WQdUieg+v3wXYisVgd8uTG+g3VFJU35X
-        wVzdyU3CS+ZnGozlbvbmmo1XLz4Jep/UwhO9GE2pfz3KSEOv94OLi+LY+av7o+zH
-        qHGeQoVqqanc8biVqKfR2DO/oxr/MKMOWEw+Z6gh+cyIIFfCt1zqiA8ZWiAH8nha
-        Bnr6jLF5Xfd9aGskECIqlXtibMKXDvS/fQsABs34oBOwwOEt6D95gf2Qw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=vxAfKWUz0NKhLZUP6I8hrOgd29LYwT2kjWWxWCI300c=; b=lXvxWbK4
-        GMb7mwMSacThP2Nx1V1iZk0wJikkC0+PdJlkpO78dwxzECzKErIJuFTHCn0G+vR7
-        oiQkr6rEYioCnvlVhSjXC1801BdbOgFKdD5WBDU4a/BnoADAguaFNjIIq3Z6NMUc
-        d8/AsqKjgIFMPwIRWzM1XaItW/Bqk9jQY3c4xDTWVO4kFaN+pM3X6J7lrjVrmDWp
-        7CY7PQoNidm89WkxQPqyJjizf49OpEeKK3DT3l+ltoFXIBya124iKHGbYaOkSLzg
-        9i0A2SniWJ1HMU/6VAFq0Tpks4QrEXGkJl8nvEGTf+FAW4r5cLtY/NXvZYzAhuX2
-        xuib1uWXrb7x8g==
-X-ME-Sender: <xms:x251YOrLn1TnGZJu15YLBY-eCWHRsiWA2m8GvBoKmURHHUUeCnpuYw>
-    <xme:x251YMoq7MgZceDnQB8iyKzGm57a-El4qPsgJzfi5VrfXSRyYE1dvjY2yUrbVZu0Z
-    pyWJNQ0uhVEV6adTqA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudekledgvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:x251YDMMmFBkQdO_UUq80z7N0sU5PU6dK71-AmpvfzDuY-8sV1v7VA>
-    <xmx:x251YN5vmqlgxtSAviffPtzTLZcX_lxwOsxy7Y3MNQsQJJlTjc-Fxg>
-    <xmx:x251YN7ZLtjvY7j-E806inVHNjxwDt8znNIEfOzGDRqfLlP1G5_NHA>
-    <xmx:x251YEqycVV3fA8nCDr4xbKG6V0sUN7VB_QV2lLwKP6ncKej5UAAkmkC7wc>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E3CC924005D;
-        Tue, 13 Apr 2021 06:13:26 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Eric Anholt <eric@anholt.net>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>, linux-clk@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>
-Subject: [PATCH 2/2] drm/vc4: hdmi: Convert to the new clock request API
-Date:   Tue, 13 Apr 2021 12:13:20 +0200
-Message-Id: <20210413101320.321584-3-maxime@cerno.tech>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210413101320.321584-1-maxime@cerno.tech>
-References: <20210413101320.321584-1-maxime@cerno.tech>
+        id S238364AbhDMMFg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Apr 2021 08:05:36 -0400
+Received: from phobos.denx.de ([85.214.62.61]:38420 "EHLO phobos.denx.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237609AbhDMMFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Apr 2021 08:05:35 -0400
+X-Greylist: delayed 62452 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Apr 2021 08:05:35 EDT
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id DEBA281A04;
+        Tue, 13 Apr 2021 14:05:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1618315514;
+        bh=1cx7IY1niXydXktkCXAsPUmSNShSji22fkH1N/eoSfY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cNs09aDP0xo4Kjn2mQ15olg6nAOvl59ycxnQg5bG9ETzyEfkiQd4m/G1ujp8hiBSr
+         tqZInlfSRqFME734Pjf+CCR0CnU3BK2289+ygxvWJCbkc6UKLWiFpwcTrx7wPKsj5m
+         uygL5ziQjKCvl/yyh1Ra+HUtGGqDS7CV97ODF74rOGXgvtoGntZk3yXfWLkS7Y2hFj
+         A8YZFC9u14oRK8KPdxw1waWTt4DA3AkYNHo2BloCO8AqOik5AvAZ1LID5+sxWvjQ2/
+         uCG4OLqQrolT0r6V3R+tLNXBDit/h9PgT4127tIi3qmX16XTqAXSb7e55SX6ml1l39
+         lUBwOV6QR0Ksg==
+Subject: Re: [PATCH 0/7] ARM: dts: stm32: clk: Switch ETHRX clock parent from
+ ETHCK_K to MCO2 on DHCOM SoM
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Christophe Roullier <christophe.roullier@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20210408185731.135511-1-marex@denx.de>
+ <b81d6a69-713f-eda7-0837-d6e80d691c6a@foss.st.com>
+ <2c410c1b-2a1d-b291-a128-c5d5979be1ef@denx.de>
+ <340d32f1-3afb-2159-fa94-70a45aecd88c@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <5a7ac087-4506-df7f-e692-c663d7b61703@denx.de>
+Date:   Tue, 13 Apr 2021 14:05:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <340d32f1-3afb-2159-fa94-70a45aecd88c@foss.st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.102.4 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The new clock request API allows us to increase the rate of the HSM
-clock to match our pixel rate requirements while decreasing it when
-we're done, resulting in a better power-efficiency.
+On 4/13/21 9:48 AM, Alexandre TORGUE wrote:
+> Hi Marek
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 19 ++++++++++++-------
- drivers/gpu/drm/vc4/vc4_hdmi.h |  3 +++
- 2 files changed, 15 insertions(+), 7 deletions(-)
+Hello Alexandre,
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 1fda574579af..244053de6150 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -473,7 +473,9 @@ static void vc4_hdmi_encoder_post_crtc_powerdown(struct drm_encoder *encoder,
- 		   HDMI_READ(HDMI_VID_CTL) & ~VC4_HD_VID_CTL_ENABLE);
- 
- 	clk_disable_unprepare(vc4_hdmi->pixel_bvb_clock);
-+	clk_request_done(vc4_hdmi->bvb_req);
- 	clk_disable_unprepare(vc4_hdmi->hsm_clock);
-+	clk_request_done(vc4_hdmi->hsm_req);
- 	clk_disable_unprepare(vc4_hdmi->pixel_clock);
- 
- 	ret = pm_runtime_put(&vc4_hdmi->pdev->dev);
-@@ -778,9 +780,9 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder,
- 	 * pixel clock, but HSM ends up being the limiting factor.
- 	 */
- 	hsm_rate = max_t(unsigned long, 120000000, (pixel_rate / 100) * 101);
--	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, hsm_rate);
--	if (ret) {
--		DRM_ERROR("Failed to set HSM clock rate: %d\n", ret);
-+	vc4_hdmi->hsm_req = clk_request_start(vc4_hdmi->hsm_clock, hsm_rate);
-+	if (IS_ERR(vc4_hdmi->hsm_req)) {
-+		DRM_ERROR("Failed to set HSM clock rate: %ld\n", PTR_ERR(vc4_hdmi->hsm_req));
- 		return;
- 	}
- 
-@@ -797,10 +799,11 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder,
- 	 * FIXME: When the pixel freq is 594MHz (4k60), this needs to be setup
- 	 * at 300MHz.
- 	 */
--	ret = clk_set_min_rate(vc4_hdmi->pixel_bvb_clock,
--			       (hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
--	if (ret) {
--		DRM_ERROR("Failed to set pixel bvb clock rate: %d\n", ret);
-+	vc4_hdmi->bvb_req = clk_request_start(vc4_hdmi->pixel_bvb_clock,
-+					      (hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
-+	if (IS_ERR(vc4_hdmi->bvb_req)) {
-+		DRM_ERROR("Failed to set pixel bvb clock rate: %ld\n", PTR_ERR(vc4_hdmi->bvb_req));
-+		clk_request_done(vc4_hdmi->hsm_req);
- 		clk_disable_unprepare(vc4_hdmi->hsm_clock);
- 		clk_disable_unprepare(vc4_hdmi->pixel_clock);
- 		return;
-@@ -809,6 +812,8 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder,
- 	ret = clk_prepare_enable(vc4_hdmi->pixel_bvb_clock);
- 	if (ret) {
- 		DRM_ERROR("Failed to turn on pixel bvb clock: %d\n", ret);
-+		clk_request_done(vc4_hdmi->bvb_req);
-+		clk_request_done(vc4_hdmi->hsm_req);
- 		clk_disable_unprepare(vc4_hdmi->hsm_clock);
- 		clk_disable_unprepare(vc4_hdmi->pixel_clock);
- 		return;
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
-index 3cebd1fd00fc..9ac4a2c751df 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-@@ -167,6 +167,9 @@ struct vc4_hdmi {
- 
- 	struct reset_control *reset;
- 
-+	struct clk_request *bvb_req;
-+	struct clk_request *hsm_req;
-+
- 	struct debugfs_regset32 hdmi_regset;
- 	struct debugfs_regset32 hd_regset;
- };
--- 
-2.30.2
+> On 4/12/21 8:44 PM, Marek Vasut wrote:
+>> On 4/12/21 10:09 AM, Alexandre TORGUE wrote:
+>>> Hi Marek
+>>
+>> Hello Alex,
+>>
+>> [...]
+>>
+>>>> All the above still only discusses the clock part of the problem. 
+>>>> Even if
+>>>> the clock cyclic dependencies could be solved, it would be necessary to
+>>>> resolve legacy dwmac st,eth-clk-sel and st,eth-ref-clk-sel DT 
+>>>> properties
+>>>> and avoid DT ABI break.
+>>>
+>>> Thanks for those clear explanations and for this series. As 
+>>> discussed, this approach looks good to me as it doesn't break our 
+>>> current strategy for dwmac clock integration. I don't know if those 
+>>> cyclic redundancies will be fixed one day but we can have a look on 
+>>> dwmac DT properties (the gain to change them, the effort to keep the 
+>>> backward compatibility, code readability, ...).
+>>>
+>>> Your DT patches looks good. I'll merge them soon.
+>> +CC Stephen ; the DT patches depend on the clock driver changes. Would 
+>> it make sense to pick the clock patches through the same tree or how 
+>> should that be handled ?
+> 
+> In this situation, I prefer to wait that Stephen takes clock patches in 
+> his tree. Then I'll take DT ones in mine. (I assume that taking only 
+> clock patches will not break mp1 boot or Ethernet usage).
 
+That's fine by me, thanks !
