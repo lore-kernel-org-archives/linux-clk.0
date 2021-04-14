@@ -2,284 +2,342 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE6C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB5BC43461
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 20:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4FBC61042
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3379D61179
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 20:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233908AbhDNRq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Apr 2021 13:46:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231582AbhDNRq4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 13:46:56 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5630C061756
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:46:33 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id x76so13062841ybe.5
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ac8RD2WukXjSqpfh7k38X0swu0LeGtgNE/nGq1NqhZk=;
-        b=Mpmo8WUQ7E9nwFU9kE7K21n5vUwZQIupntBULLtSMZazk5A4w5pTT8kVn7wFReuqP9
-         ltqs6kRlZv8yf+IjJ8qiV3rGvqAB2jej7ERMJieNnVuEH+1SGE8mdNtB1hyN/nhCwR5c
-         CzmfEcHkI2vHfjSc1u1cE9UejF5L8aHuNIkFS8k7KWzDwQCaOuDxgFn/N91weuCeh0TF
-         EJMxkouixLYBcBce5jqfzW1fzoEnBPNBw8ST/jEanDbqYvkcTO8yHHRr7fTSUT0Wpncj
-         RUhjF5+un/cBrectZkWI296fpy0ehcH3tVZu2d0vGznFuZ26eK0IU84SrP8nBPsh0fJ+
-         56yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ac8RD2WukXjSqpfh7k38X0swu0LeGtgNE/nGq1NqhZk=;
-        b=KyhgBQBX9BfC3xU1705a0ZdFKdjqY5uvsv96OUt5uBIjRoWrpXWMoCBdYFhhOvyBZn
-         NXDILMXAOjo6tkKc6AsGs+pwH9zEebGS3NaXCM7P1PfqRqgS10Cw/0P2KBnRObgTrAsv
-         BNFuUucGXxtnbNuAdznmTebGwpX7ZG7v1aw4epiCtm6y3WGIqly302NAOcZx5kI9d0pF
-         Dg7oqG/thWcja2XXoZbklnLNBV7m7GwRoLuUqPCNv11ENDyLIQGFOurmTQnL/t0UVZ9j
-         BEjLxW4KrcxJauBcId63N8yJwyRqvlJDAbwX4xE9z6pejoySH8xX+JfjAONojpSVm4GW
-         Zs+g==
-X-Gm-Message-State: AOAM533UUrniM17CkFIX+E9nv66aj/aX+AZR1l44rKoekquBYi2Y8QAp
-        0HmimP/fxgSiw9taX2wBc20II/6GyPRKrci7g1fPRg==
-X-Google-Smtp-Source: ABdhPJz0pPK+rUAhIDOL4XNp3AJeh80jyTHZqv7aLfz61blbu6YkHLnA5fHXMyxERM1pxxugJoMb3tWUaGRARXf3KfI=
-X-Received: by 2002:a25:c985:: with SMTP id z127mr57011363ybf.20.1618422392561;
- Wed, 14 Apr 2021 10:46:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210407034456.516204-1-saravanak@google.com> <20210407034456.516204-3-saravanak@google.com>
-In-Reply-To: <20210407034456.516204-3-saravanak@google.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 14 Apr 2021 10:45:56 -0700
-Message-ID: <CAGETcx_EaO4aNHNhTOPE9snGavk2+JY8bn9P9NdUteO0+Bn7Lw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: Add support for sync_state()
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S230227AbhDNUkC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Apr 2021 16:40:02 -0400
+Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:53298 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234170AbhDNUkA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Apr 2021 16:40:00 -0400
+Received: from oxapps-34-156.iol.local ([10.101.8.202])
+        by smtp-18.iol.local with ESMTPA
+        id WmIPlnPejgCmjWmIPlCVJG; Wed, 14 Apr 2021 22:39:35 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1618432775; bh=pgQRWWiXnAjv1OPeRW7Xqhv+VM7S98hxJ5GVUijdjp0=;
+        h=From;
+        b=MiLRLk2yeg1s/iJwOvQNab2QDAtuuL5tE1HOQQyobFkVRfBf6F7O9ueezMGu6oknk
+         h3ctMKPnz5GbjZlnSt0DYckwmeNWK3oA527qQNPTUtgvHOu/QilzuZrckf2mjUHLfi
+         jJGZKR9A5HGox4ipXSuXCXtJiLygeb417HkB0kAqsacsH+ps5JPORl2hHcfq/qBE18
+         dS+uuzUYLd6UoeDXQ6qEPieVNYoN+WGwC7pZKkZN0j+eZOFlI+6gGEr701JAkzIf1z
+         2ZThRK4c1ScMQtzuUqw+5ORM1jp4aRvjto4R8K8ETptWwLYMoDLOCsV0ZFafRiDEu9
+         MqDc7lsQtZLww==
+X-CNFS-Analysis: v=2.4 cv=X5uXlEfe c=1 sm=1 tr=0 ts=60775307 cx=a_exe
+ a=8VG+hfycQzUmEcMvOp8bLQ==:117 a=VYA5D5F8Gk0A:10 a=IkcTkHD0fZMA:10
+ a=4ehuGOvBq5EA:10 a=VwQbUJbxAAAA:8 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8
+ a=vt_3zZcFIEjTfUP8xDMA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=IC2XNlieTeVoXbcui8wp:22
+Date:   Wed, 14 Apr 2021 22:39:33 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-omap <linux-omap@vger.kernel.org>
+Message-ID: <1627640615.696710.1618432773724@mail1.libero.it>
+In-Reply-To: <a17dec03-d98c-0aac-0bbb-eeaa11f156f3@kernel.org>
+References: <20210402192054.7934-1-dariobin@libero.it>
+ <CAL_JsqKkpZw_BmcCXUzahF-FkQ=vb7mb_s95Lm2G7pWo0=dqNA@mail.gmail.com>
+ <1727466283.11523.1617746554330@mail1.libero.it>
+ <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+ <1044574275.383115.1617779265390@mail1.libero.it>
+ <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
+ <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
+ <116337570.107804.1617913442196@mail1.libero.it>
+ <8f232b81-4c83-54db-bcbd-2cae78ede814@kernel.org>
+ <333530206.539702.1618169440615@mail1.libero.it>
+ <a17dec03-d98c-0aac-0bbb-eeaa11f156f3@kernel.org>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 95.244.94.151
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: tUXThDJCE87j9GPIGDtFSooe5aKIrLIy
+x-libjamv: 0q95EGFlCl0=
+X-CMAE-Envelope: MS4xfFBFs8oZhE+XtrWE7XdCVsupGI1Nhkqe83YBO7wZn4m6lClG68kahfrlapumIZTsh6oPmvbBcgZI8SsFdheliVYP7hFxM9l8RmsOVI/Zx71o5R48RXnf
+ IzHix+lJvmqNC0k/NwteWjTMMdBThcSLJBS7ATVkzPPJG46wTIfHZILk3RGGBbZpI5kpFIFwb8NqRRNM3f7pqOtASxkAOiG6OHA49hB/cmxOiqhO7FxpW6Hy
+ I/w+e2Dohvr4O7zX7ccvPSAVFuI/xSNxznjNS+OIIh67/kXezlZH9fRIz1PTokcZFJDUPMCM89zWP2WIzs/D3rQ1uaDcJMIF5DLEXNt97Pltgak9yqLJ0KkY
+ gE0LCTF2PKwmhrBrHSvGOZpLSIBtnidup0nYwI8DCeLlC+LqjuM8DVCkiM0WLDW2sOqmD+YpE79WRQdknH1wr+IOUrZhpU7YdQSHO0kLojb5+YIbek0nblgu
+ BnGg16iyTJgkjJstkvuTHSl4iEE0orBxgqjy90fhCdAA1lfe8/zu2ARBsKHBK8MgGgo007s3BAWVDLBo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 6, 2021 at 8:45 PM 'Saravana Kannan' via kernel-team
-<kernel-team@android.com> wrote:
->
-> Clocks can be turned on (by the hardware, bootloader, etc) upon a
-> reset/boot of a hardware platform. These "boot clocks" could be clocking
-> devices that are active before the kernel starts running. For example,
-> clocks needed for the interconnects, UART console, display, CPUs, DDR,
-> etc.
->
-> When a boot clock is used by more than one consumer or multiple boot
-> clocks share a parent clock, the boot clock (or the common parent) can
-> be turned off when the first consumer probes. This can crash the device
-> or cause poor user experience.
->
-> Fix this by explicitly enabling the boot clocks during clock
-> registration and then removing the enable vote when the clock provider
-> device gets its sync_state() callback. Since sync_state() callback comes
-> only when all the consumers of a device (not a specific clock) have
-> probed, this ensures the boot clocks are kept on at least until all
-> their consumers have had a chance to vote on them (in their respective
-> probe functions).
->
-> Also, if a clock provider is loaded as a module and it has some boot
-> clocks, they get turned off only when a consumer explicitly turns them
-> off. So clocks that are boot clocks and are unused never get turned off
-> because the logic to turn off unused clocks has already run during
-> late_initcall_sync(). Adding sync_state() support also makes sure these
-> unused boot clocks are turned off once all the consumers have probed.
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+Hi Tero,
 
-Hi Stephen,
+> Il 12/04/2021 09:41 Tero Kristo <kristo@kernel.org> ha scritto:
+> 
+>  
+> On 11/04/2021 22:30, Dario Binacchi wrote:
+> > 
+> >> Il 09/04/2021 12:32 Tero Kristo <kristo@kernel.org> ha scritto:
+> >>
+> >>   
+> >> On 08/04/2021 23:24, Dario Binacchi wrote:
+> >>>
+> >>>> Il 07/04/2021 15:21 Tero Kristo <kristo@kernel.org> ha scritto:
+> >>>>
+> >>>>    
+> >>>> On 07/04/2021 15:52, Rob Herring wrote:
+> >>>>> On Wed, Apr 7, 2021 at 2:07 AM Dario Binacchi <dariobin@libero.it> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>>> Il 07/04/2021 03:16 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> On Tue, Apr 6, 2021 at 5:02 PM Dario Binacchi <dariobin@libero.it> wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>>> Il 06/04/2021 16:06 Rob Herring <robh+dt@kernel.org> ha scritto:
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> On Fri, Apr 2, 2021 at 2:21 PM Dario Binacchi <dariobin@libero.it> wrote:
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> The series comes from my commit in U-boot
+> >>>>>>>>>> d64b9cdcd4 ("fdt: translate address if #size-cells = <0>")
+> >>>>>>>>>> and from the subsequent exchange of emails at the end of which I was
+> >>>>>>>>>> suggested to send the patch to the linux kernel
+> >>>>>>>>>> (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/).
+> >>>>>>>>>
+> >>>>>>>>> It's 'ranges' that determines translatable which is missing from the
+> >>>>>>>>> DT. This should have not had a 0 size either though maybe we could
+> >>>>>>>>> support that.
+> >>>>>>>>
+> >>>>>>>> I have replied to the email you sent to the u-boot mailing list
+> >>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Does the DT have to be updated anyways for your spread spectrum support?
+> >>>>>>>>
+> >>>>>>>> The spread spectrum support patch does not need this patch to work. They belong
+> >>>>>>>> to two different series.
+> >>>>>>>
+> >>>>>>> That's not what I asked. Is the spread spectrum support forcing a DT
+> >>>>>>> update for users?
+> >>>>>>
+> >>>>>> Yes, the deltam and modfreq registers must be added to the DPLL clocks.
+> >>>>>
+> >>>>> That's a shame given this dts has been mostly untouched since 2013.
+> >>>>>
+> >>>>
+> >>>> I think technically it would be possible to map these registers within
+> >>>> the driver also, seeing there are like a handful of the DPLLs for both
+> >>>> am3/am4 which are impacted. Just add a new compatible or something, or
+> >>>> alternatively parse the register addresses and populate the
+> >>>> deltam/modfreq registers based on that.
+> >>>
+> >>> I have not added new compatibles, but I have added the offset of the delta and modfreq
+> >>> registers to the data structures used by the DPLL drivers and I have set them in the
+> >>> related setup functions.
+> >>> https://lore.kernel.org/patchwork/patch/1406590/
+> >>
+> >> True, I just said that technically it would be possible to add this data
+> >> within the driver itself to avoid modifying DT if that would be preferred.
+> > 
+> > In the review of the series no one asked not to change the device tree but it is also true
+> > that no review has been made on the patch 'clk: ti: add am33xx / am43xx spread spectrum clock support',
+> > the one to be applied on the drivers that support the SSC.
+> > I take this opportunity to ask you if you can kindly review that patch.
+> 
+> The clock driver patch itself seems fine, the devil is on the DT side, 
+> and how we are going to re-arrange the DT data to accommodate it.
+> 
+> > 
+> >>
+> >>>
+> >>>>
+> >>>>>>> If the DT has to be changed anyways (not really
+> >>>>>>> great policy), then you could fix this in the DT at the same time.
+> >>>>>>
+> >>>>>> I could put the fix to the device tree in that series, although I wouldn't
+> >>>>>> create a single patch to fix and add the SSC registers. First the size-cells = <0>
+> >>>>>> fix patch and then the SSC patch.
+> >>>>>> Do you agree?
+> >>>>>
+> >>>>> By at the same time, I really just meant within 1 release.
+> >>>>>
+> >>>>> But I'd like to hear TI maintainers' thoughts on this.
+> >>>>
+> >>>> I did post a comment on patch #1 questioning the approach from TI clock
+> >>>> driver perspective, imho I can't see why these two patches would be
+> >>>> needed right now.
+> >>
+> >> Fix to above, it was patch #2 I was referring to.
+> >>
+> >>>
+> >>> Because U-boot maintainers asked me after I sent them my patch on this issue.
+> >>> I believe that the email exchange that took place in the U-boot (https://patchwork.ozlabs.org/project/uboot/patch/1614324949-61314-1-git-send-email-bmeng.cn@gmail.com/)
+> >>> and Linux kernel mailing lists showed that:
+> >>> - The patch 'fdt: translate address if # size-cells = <0>' is wrong (U-boot has accepted
+> >>>     it, and it will have to be reverted).
+> >>> - However, the same patch highlighted that it is wrong to use the size-cells = <0> property
+> >>>     in the prcm_clocks and scm_clocks nodes of device tree.
+> >>> - Rob agrees that in the case of the am3xx this is the right choice:
+> >>
+> >> Well, I don't quite like where this is ending at. Basically you are just
+> >> modifying the am3/am4 DTs adding a size spec for every clock node. This
+> >> leaves the omap3/omap4/omap5/dra7 in the old format. Should someone
+> >> convert those also? Has anybody tested what happens with the u-boot
+> >> change on those platforms? Or with the kernel change proposed for the TI
+> >> clock driver?
+> >>
+> >> Also, none of this changes the fact that imho patch #2 in this series is
+> >> wrong and should be fixed. Doing ioremap for every clock node is at
+> >> least costly (dra7xx has some 180 clock nodes based on quick grep) and
+> >> also potentially breaks things (you get extremely fragmented iomappings,
+> >> and some of them might even get rejected because you end up in the same
+> >> 4K page), and should be avoided.
+> > 
+> > You are right, and in fact in my previous email, I proposed only to change the
+> > ti_clk_get_reg_addr() from:
+> > - if (of_property_read_u32_index (node, "reg", index, & val)) {
+> > + if (of_property_read_u32_index (node, "reg", index * 2, & val)) {
+> > following the change of size-cells from 0 to 1 in the DTS, without ioremap.
+> 
+> Yep that would be ok, assuming we change the DT in the manner proposed.
+> 
+> > 
+> >> If things would be fixed properly, we would get rid of the clock nodes
+> >> from the DT completely and just leave the clock providers in place;
+> >> clocks would be specified via something like 'clocks = <&prcm
+> >> AM3_ADC_TSC_FCK>;'
+> > 
+> > In which node of the device tree should the 'clocks = <&prcm AM3_ADC_TSC_FCK>;'
+> > property be found?
+> 
+> This would be used to replace the device nodes, e.g. currently we have 
+> clocks = <&adc_tsc_fck> under the tscadc node under am4, this would 
+> change to <&prcm AM3_ADC_TSC_FCK>. Similar to any other clock entry 
+> under every device on the platform.
+> 
+> > Could you please briefly describe how the device tree would change?
+> > The clock nodes would be removed but I am not clear how the rest of the device
+> > tree would change.
+> > Would this solution only impact the device trees and the code of the am3 / am4
+> > architectures?
+> 
+> The change on the DT itself would be pretty large, removing all clock 
+> nodes and modifying any existing handles towards the clock nodes, and 
+> this would impact all OMAP architectures.
+> 
+> Anyways, it is mostly up-to Tony how he wants to see the DT change, as 
+> he is the maintainer for the OMAP family DT data.
+> 
+> I am just raising the opinion here that from kernel point of view, 
+> adding the missing size cells seems unnecessary, and I can't see why 
+> u-boot can't be changed to support the existing broken DT. It is broken 
+> now, and it will be broken with the addition of the size cells in place, 
+> and the actual "neat" end result would be to get rid of the clock nodes 
+> completely.
 
-Gentle reminder.
+I'll fix U-boot.
+Thanks for your explanations.
+Hope for SSC patch review from you and/or some TI MAINTAINER.
 
+Thanks and regards,
+Dario
 
--Saravana
-
-> ---
->  drivers/clk/clk.c            | 84 +++++++++++++++++++++++++++++++++++-
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 84 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d6301a3351f2..cd07f4d1254c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -72,6 +72,8 @@ struct clk_core {
->         unsigned long           flags;
->         bool                    orphan;
->         bool                    rpm_enabled;
-> +       bool                    need_sync;
-> +       bool                    boot_enabled;
->         unsigned int            enable_count;
->         unsigned int            prepare_count;
->         unsigned int            protect_count;
-> @@ -1215,6 +1217,15 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
->         hlist_for_each_entry(child, &core->children, child_node)
->                 clk_unprepare_unused_subtree(child);
->
-> +       /*
-> +        * Orphan clocks might still not have their state held if one of their
-> +        * ancestors hasn't been registered yet. We don't want to turn off
-> +        * these orphan clocks now as they will be turned off later when their
-> +        * device gets a sync_state() call.
-> +        */
-> +       if (dev_has_sync_state(core->dev))
-> +               return;
-> +
->         if (core->prepare_count)
->                 return;
->
-> @@ -1246,6 +1257,15 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->         hlist_for_each_entry(child, &core->children, child_node)
->                 clk_disable_unused_subtree(child);
->
-> +       /*
-> +        * Orphan clocks might still not have their state held if one of their
-> +        * ancestors hasn't been registered yet. We don't want to turn off
-> +        * these orphan clocks now as they will be turned off later when their
-> +        * device gets a sync_state() call.
-> +        */
-> +       if (dev_has_sync_state(core->dev))
-> +               return;
-> +
->         if (core->flags & CLK_OPS_PARENT_ENABLE)
->                 clk_core_prepare_enable(core->parent);
->
-> @@ -1319,6 +1339,38 @@ static int __init clk_disable_unused(void)
->  }
->  late_initcall_sync(clk_disable_unused);
->
-> +static void clk_unprepare_disable_dev_subtree(struct clk_core *core,
-> +                                             struct device *dev)
-> +{
-> +       struct clk_core *child;
-> +
-> +       lockdep_assert_held(&prepare_lock);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_unprepare_disable_dev_subtree(child, dev);
-> +
-> +       if (core->dev != dev || !core->need_sync)
-> +               return;
-> +
-> +       clk_core_disable_unprepare(core);
-> +}
-> +
-> +void clk_sync_state(struct device *dev)
-> +{
-> +       struct clk_core *core;
-> +
-> +       clk_prepare_lock();
-> +
-> +       hlist_for_each_entry(core, &clk_root_list, child_node)
-> +               clk_unprepare_disable_dev_subtree(core, dev);
-> +
-> +       hlist_for_each_entry(core, &clk_orphan_list, child_node)
-> +               clk_unprepare_disable_dev_subtree(core, dev);
-> +
-> +       clk_prepare_unlock();
-> +}
-> +EXPORT_SYMBOL_GPL(clk_sync_state);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->                                            struct clk_rate_request *req)
->  {
-> @@ -1725,6 +1777,30 @@ int clk_hw_get_parent_index(struct clk_hw *hw)
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
->
-> +static void clk_core_hold_state(struct clk_core *core)
-> +{
-> +       if (core->need_sync || !core->boot_enabled)
-> +               return;
-> +
-> +       if (core->orphan || !dev_has_sync_state(core->dev))
-> +               return;
-> +
-> +       core->need_sync = !clk_core_prepare_enable(core);
-> +}
-> +
-> +static void __clk_core_update_orphan_hold_state(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       if (core->orphan)
-> +               return;
-> +
-> +       clk_core_hold_state(core);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               __clk_core_update_orphan_hold_state(child);
-> +}
-> +
->  /*
->   * Update the orphan status of @core and all its children.
->   */
-> @@ -3392,6 +3468,7 @@ static void clk_core_reparent_orphans_nolock(void)
->                         __clk_set_parent_after(orphan, parent, NULL);
->                         __clk_recalc_accuracies(orphan);
->                         __clk_recalc_rates(orphan, 0);
-> +                       __clk_core_update_orphan_hold_state(orphan);
->                 }
->         }
->  }
-> @@ -3550,6 +3627,8 @@ static int __clk_core_init(struct clk_core *core)
->                 rate = 0;
->         core->rate = core->req_rate = rate;
->
-> +       core->boot_enabled = clk_core_is_enabled(core);
-> +
->         /*
->          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->          * don't get accidentally disabled when walking the orphan tree and
-> @@ -3572,6 +3651,7 @@ static int __clk_core_init(struct clk_core *core)
->                 }
->         }
->
-> +       clk_core_hold_state(core);
->         clk_core_reparent_orphans_nolock();
->
->
-> @@ -3837,8 +3917,10 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->                 core->rpm_enabled = true;
->         core->dev = dev;
->         core->of_node = np;
-> -       if (dev && dev->driver)
-> +       if (dev && dev->driver) {
->                 core->owner = dev->driver->owner;
-> +               dev_set_drv_sync_state(dev, clk_sync_state);
-> +       }
->         core->hw = hw;
->         core->flags = init->flags;
->         core->num_parents = init->num_parents;
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 58f6fe866ae9..429c413dadce 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -1112,6 +1112,7 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
->
->  void clk_hw_unregister(struct clk_hw *hw);
->  void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-> +void clk_sync_state(struct device *dev);
->
->  /* helper functions */
->  const char *__clk_get_name(const struct clk *clk);
-> --
-> 2.31.1.295.g9ea45b61b8-goog
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+> 
+> -Tero
+> 
+> > 
+> > Thanks and regards,
+> > Dario
+> > 
+> >> similar to what is done with the clkctrl entries, and
+> >> rest of the clock data would be built-in to the clock driver. This would
+> >> completely get rid of any future compatibility issues and the need to
+> >> tweak the DT if some clock driver would need modifications to support
+> >> some new feature.
+> >>
+> >> -Tero
+> >>
+> >>> diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
+> >>> index 1fb22088caeb..59b0a0cf211e 100644
+> >>> --- a/arch/arm/boot/dts/am33xx-l4.dtsi
+> >>> +++ b/arch/arm/boot/dts/am33xx-l4.dtsi
+> >>> @@ -110,7 +110,8 @@
+> >>>    
+> >>>                                   prcm_clocks: clocks {
+> >>>                                           #address-cells = <1>;
+> >>> -                                       #size-cells = <0>;
+> >>> +                                       #size-cells = <1>;
+> >>> +                                       ranges = <0 0 0x2000>;
+> >>>                                   };
+> >>>    
+> >>>                                   prcm_clockdomains: clockdomains {
+> >>> @@ -320,7 +321,8 @@
+> >>>    
+> >>>                                           scm_clocks: clocks {
+> >>>                                                   #address-cells = <1>;
+> >>> -                                               #size-cells = <0>;
+> >>> +                                               #size-cells = <1>;
+> >>> +                                               ranges = <0 0 0x800>;
+> >>>                                           };
+> >>>                                   };
+> >>>
+> >>> --- a/arch/arm/boot/dts/am33xx-clocks.dtsi
+> >>> +++ b/arch/arm/boot/dts/am33xx-clocks.dtsi
+> >>> @@ -10,7 +10,7 @@
+> >>>                   compatible = "ti,mux-clock";
+> >>>                   clocks = <&virt_19200000_ck>, <&virt_24000000_ck>, <&virt_25000000_ck>, <&virt_26000000_ck>;
+> >>>                   ti,bit-shift = <22>;
+> >>> -               reg = <0x0040>;
+> >>> +               reg = <0x0040 0x4>;
+> >>>           };
+> >>>    
+> >>>           adc_tsc_fck: adc_tsc_fck {
+> >>> @@ -98,7 +98,7 @@
+> >>>                   compatible = "ti,gate-clock";
+> >>>                   clocks = <&l4ls_gclk>;
+> >>>                   ti,bit-shift = <0>;
+> >>> -               reg = <0x0664>;
+> >>> +               reg = <0x0664 0x04>;
+> >>>           };
+> >>> [...]
+> >>>
+> >>> - U-boot rightly wants to use the same device tree as the Kernel.
+> >>> - IMHO, if I'm not missing something, I think using a #size-cells = <1>; for clocks
+> >>>     it requires only one code change in the ti_clk_get_reg_addr():
+> >>>
+> >>> --- a/drivers/clk/ti/clk.c
+> >>> +++ b/drivers/clk/ti/clk.c
+> >>> @@ -265,9 +265,27 @@ int __init ti_clk_retry_init(struct device_node *node, void *user,
+> >>>    int ti_clk_get_reg_addr(struct device_node *node, int index,
+> >>>                           struct clk_omap_reg *reg)
+> >>>
+> >>> -       if (of_property_read_u32_index(node, "reg", index, &val)) {
+> >>> +       if (of_property_read_u32_index(node, "reg", index * 2, &val)) {
+> >>>
+> >>>      The other changes to develop affect device trees of architectures which, like am3, currently
+> >>>      use #size-cells = <0>.
+> >>>
+> >>> IMHO, all this would lead to an improvement of the device trees with minimal impact on the code.
+> >>> It would benefit U-boot, which would not have to develop special platform code and any new
+> >>> architectures that would inherit from these DTs.
+> >>>
+> >>> If you think it might be worth it, I am available to develop this patch.
+> >>>
+> >>> Thanks and regards,
+> >>> Dario
+> >>>
+> >>>>
+> >>>> -Tero
