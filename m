@@ -2,58 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A1DC433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 19:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09F3C433ED
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 13:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECF9613CB
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Apr 2021 19:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A41C60724
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 13:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343672AbhDMTGD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Apr 2021 15:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348043AbhDMTGB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Apr 2021 15:06:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EFCAC613CB;
-        Tue, 13 Apr 2021 19:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618340741;
-        bh=X7WLKy9e8wfmoHzGrC2MOXVR2/sY8zX4FAt9ZkKJsnQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jvZhSI5inFIwJG/ctop1+Qq1bAVu1THj4ALBTd+NL1CsVO4gtocGLpUtspwVFWK0H
-         COGjJYEdZC17keVMauKk13UtYqQm4UArcGOvrg9G5ZIYoVkCpf/8HvmTxyBIHXP9F7
-         jOnyIP09ym3nn2YuvjfQ9YM68bR15qcUwNuyNTrVlrBp+gOfC+FpMMnboTpagCQlcc
-         KH2faT1+kK86LRziMe+LDM8m0yKfJvTxOItOWNNgnzZogPFe3eJQ7jhyX0G79vC8A5
-         qGwzu1LZtzQBGgQcAckKL15Aa8gDpcsRpxsxZWXZCZYSPfiQ8wtp//CcV5kQaf3ZK8
-         5undbdMh+mAxg==
-Content-Type: text/plain; charset="utf-8"
+        id S233328AbhDNNFS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Apr 2021 09:05:18 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50734 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233242AbhDNNE0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 09:04:26 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13ED3YIl029133;
+        Wed, 14 Apr 2021 15:03:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : subject : to
+ : cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=WwyhOomJmwutrJbMMnWKe5Zzis82DOmKJvlisKhNjoQ=;
+ b=rSdRTWMn5+Fd1h0LexopnJ5ivrThXPnhiO3kZWgl4x8V28CNDVDYmwbHbh1s2Ncow4bX
+ Z6TYNTO/HD2QnfLmlh9RPSEzXRH6ITnXn+X3tzceXdSGelqxr77frhbrFj51IlTFESxh
+ UUkTGbXe1C/5dUXl1Qwdu0JAEWVgoQUpz2GnUixALVXjwyQaLCNKpp0ZUIByWvJzGfJ6
+ /AUZXFsu5WtSTLRT/rS3yfA+4E//eSGHBrdtC76L77PkluHGXFhUc4cmbP9vIM87CLvD
+ 7DFV4LA2B5zZ4Ozgd4hTbrvnunHGUjBfd93tE9n3Be6miHmrpD2AGSS4AUb2O9QoczK6 gA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 37wr0xudqs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Apr 2021 15:03:39 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A5A0210002A;
+        Wed, 14 Apr 2021 15:03:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0A6B5237C65;
+        Wed, 14 Apr 2021 15:03:38 +0200 (CEST)
+Received: from lmecxl0572.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 14 Apr
+ 2021 15:03:37 +0200
+From:   "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH 1/7] clk: stm32mp1: Split ETHCK_K into separate MUX and
+ GATE clock
+To:     Marek Vasut <marex@denx.de>, <linux-arm-kernel@lists.infradead.org>
+CC:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210408185731.135511-1-marex@denx.de>
+ <20210408185731.135511-2-marex@denx.de>
+Message-ID: <2b10f5d9-54cb-ce83-b7aa-f4ec8e67c001@foss.st.com>
+Date:   Wed, 14 Apr 2021 15:03:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210410055059.13518-5-sergio.paracuellos@gmail.com>
-References: <20210410055059.13518-1-sergio.paracuellos@gmail.com> <20210410055059.13518-5-sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH v13 4/4] MAINTAINERS: add MT7621 CLOCK maintainer
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Tue, 13 Apr 2021 12:05:39 -0700
-Message-ID: <161834073962.3764895.16827477929314261830@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20210408185731.135511-2-marex@denx.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-14_07:2021-04-14,2021-04-14 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergio Paracuellos (2021-04-09 22:50:59)
-> Adding myself as maintainer for mt7621 clock driver.
->=20
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
+Hi Marek,
 
-Applied to clk-next
+Thanks for the patchset
+
+On 4/8/21 8:57 PM, Marek Vasut wrote:
+> The ETHCK_K are modeled as composite clock of MUX and GATE, however per
+> STM32MP1 Reference Manual RM0436 Rev 3, Page 574, Figure 83. Peripheral
+> clock distribution for Ethernet, ETHPTPDIV divider is attached past the
+> ETHCK_K mux, and ETH_CLK/eth_clk_fb clock are output past ETHCKEN gate.
+> Therefore, in case ETH_CLK/eth_clk_fb are not in use AND PTP clock are
+> in use, ETHCKEN gate can be turned off. Current driver does not permit
+> that, fix it.
+
+I don"t understand, it's already the case.
+
+ETHCK_K it's a composite with a MUX and a GATE.
+
+ETHPTP_K (ETHPTPDIV) it's a composite with the same MUX and a DIV (no gate)
+
+If you use only ETHPTPDIV,  ETHCKEN gate can be turned off.
+
+  
+
+> This patch converts ETHCK_K from composite clock into a ETHCKEN gate,
+> ETHPTP_K from composite clock into ETHPTPDIV divider, and adds another
+> NO_ID clock "ck_ker_eth" which models the ETHSRC mux and is parent clock
+> to both ETHCK_K and ETHPTP_K. Therefore, all references to ETHCK_K and
+> ETHPTP_K remain functional as before.
+>
+> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
+>      Figure 83. Peripheral clock distribution for Ethernet
+>      https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157-advanced-armbased-32bit-mpus-stmicroelectronics.pdf
+>
+> Signed-off-by: Marek Vasut<marex@denx.de>
+> Cc: Alexandre Torgue<alexandre.torgue@foss.st.com>
+> Cc: Christophe Roullier<christophe.roullier@foss.st.com>
+> Cc: Gabriel Fernandez<gabriel.fernandez@foss.st.com>
+> Cc: Patrice Chotard<patrice.chotard@foss.st.com>
+> Cc: Patrick Delaunay<patrick.delaunay@foss.st.com>
+> Cc: Stephen Boyd<swboyd@chromium.org>
+> Cc:linux-clk@vger.kernel.org
+> Cc:linux-stm32@st-md-mailman.stormreply.com
+> To:linux-arm-kernel@lists.infradead.org
+> ---
+>   drivers/clk/clk-stm32mp1.c | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+> index a875649df8b8..a7c7f544ee5d 100644
+> --- a/drivers/clk/clk-stm32mp1.c
+> +++ b/drivers/clk/clk-stm32mp1.c
+> @@ -1949,7 +1949,6 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+>   	KCLK(DSI_K, "dsi_k", dsi_src, 0, G_DSI, M_DSI),
+>   	KCLK(ADFSDM_K, "adfsdm_k", sai_src, 0, G_ADFSDM, M_SAI1),
+>   	KCLK(USBO_K, "usbo_k", usbo_src, 0, G_USBO, M_USBO),
+> -	KCLK(ETHCK_K, "ethck_k", eth_src, 0, G_ETHCK, M_ETHCK),
+>   
+>   	/* Particulary Kernel Clocks (no mux or no gate) */
+>   	MGATE_MP1(DFSDM_K, "dfsdm_k", "ck_mcu", 0, G_DFSDM),
+> @@ -1958,11 +1957,16 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+>   	MGATE_MP1(GPU_K, "gpu_k", "pll2_q", 0, G_GPU),
+>   	MGATE_MP1(DAC12_K, "dac12_k", "ck_lsi", 0, G_DAC12),
+>   
+> -	COMPOSITE(ETHPTP_K, "ethptp_k", eth_src, CLK_OPS_PARENT_ENABLE |
+> +	COMPOSITE(NO_ID, "ck_ker_eth", eth_src, CLK_OPS_PARENT_ENABLE |
+>   		  CLK_SET_RATE_NO_REPARENT,
+>   		  _NO_GATE,
+>   		  _MMUX(M_ETHCK),
+> -		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
+> +		  _NO_DIV),
+> +
+> +	MGATE_MP1(ETHCK_K, "ethck_k", "ck_ker_eth", 0, G_ETHCK),
+assigned parent with ETHCK_K will not work
+> +
+> +	DIV(ETHPTP_K, "ethptp_k", "ck_ker_eth", CLK_OPS_PARENT_ENABLE |
+
+CLK_OPS_PARENT_ENABLE flags not useful with a divider.
+
+best regards
+
+Gabriel
+
+> +	    CLK_SET_RATE_NO_REPARENT, RCC_ETHCKSELR, 4, 4, 0),
+>   
+>   	/* RTC clock */
+>   	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 6, 0),
