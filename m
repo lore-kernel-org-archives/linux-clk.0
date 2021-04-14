@@ -2,162 +2,284 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37B4C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE6C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D06F861179
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4FBC61042
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 17:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349415AbhDNRPq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Apr 2021 13:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42578 "EHLO
+        id S233908AbhDNRq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Apr 2021 13:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349102AbhDNRPp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 13:15:45 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 132CBC06138C
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:15:23 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id w23so24628845edx.7
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:15:22 -0700 (PDT)
+        with ESMTP id S231582AbhDNRq4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 13:46:56 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5630C061756
+        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:46:33 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id x76so13062841ybe.5
+        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 10:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=UXvQGOPGMiIBh+TNB+TuJqTHlXvXGuBCSN0JQwAe2RQ=;
-        b=PWwEvYYJje0y3hO9Tl1LpDzu7QSF9xAeVKMVaYsWQZrwkc7nZjup6LaFcS/lfjD4cs
-         U3RG3b+S0Ul3QZJC7Rahky+ypsws8OJFNWgcA/uATSo/kIWbttCAdlLjnFhau8ieQOdi
-         lnZoUpHjTPV1fOkCJ3QGdk1ZDi10Do4z5CbIpvZiR6P5jMXr0qAflAIqifK5T8ybVR3s
-         DRNGrAOLqXYnH/lFkKF2u6vDCp1NHUPLZ6iwjPQaYSd3VF/lGxM3wJJgqXvYrChs7Z+T
-         R2y9g/F6WEvR4q6w7JpydKRIExcO4e8E6By3YV3o4tE6XP0k/AeXUqxynt4rjyLMpLtB
-         nSZQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ac8RD2WukXjSqpfh7k38X0swu0LeGtgNE/nGq1NqhZk=;
+        b=Mpmo8WUQ7E9nwFU9kE7K21n5vUwZQIupntBULLtSMZazk5A4w5pTT8kVn7wFReuqP9
+         ltqs6kRlZv8yf+IjJ8qiV3rGvqAB2jej7ERMJieNnVuEH+1SGE8mdNtB1hyN/nhCwR5c
+         CzmfEcHkI2vHfjSc1u1cE9UejF5L8aHuNIkFS8k7KWzDwQCaOuDxgFn/N91weuCeh0TF
+         EJMxkouixLYBcBce5jqfzW1fzoEnBPNBw8ST/jEanDbqYvkcTO8yHHRr7fTSUT0Wpncj
+         RUhjF5+un/cBrectZkWI296fpy0ehcH3tVZu2d0vGznFuZ26eK0IU84SrP8nBPsh0fJ+
+         56yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=UXvQGOPGMiIBh+TNB+TuJqTHlXvXGuBCSN0JQwAe2RQ=;
-        b=R5XtjJKJgYOpBPNwq0B4YkDPRYjTR+zFlQpu0xCJaHOHqg+dczXYQGfgkGLJPfVVp3
-         TjqVX1vycmKwxsqCYC0uhUAnBcYex9yRFfFBGyCP/mxUbRFDpCK9au0meZECQGf6zsic
-         nIN5GMdAt4CLdlbIlUnK4T/PZvwy58DExW/iTIKwVnHAJKEWC5K0l+HJ+RbxpFIXTJDq
-         oBZRo7J868989wgaJkIJeFf9yeyO7+o0gQngZqTHrd3OlcSbup5C4WYhVOFDm8ZoDo5n
-         GCd/HMj9qtC/j53THToPvCoWaIgdAm3pWBENBTrtBI1vpkmxQiGmHy9LZcqe6pJSf9Ia
-         f61g==
-X-Gm-Message-State: AOAM532JiShcSMPfNNkK72Wmluify7HL3l3Xiw2OmCCP3BsDsZw5uzeI
-        /+rLBv9A+kPPoF8WyQkGUvK6yA==
-X-Google-Smtp-Source: ABdhPJxsbziy4uMsB6zVMu3xcsr6bls0vIOO6rGwapNBI/ohN+5CrAvAeMvtWBDqkfAGseaP3jUKjQ==
-X-Received: by 2002:a05:6402:1b1c:: with SMTP id by28mr42149129edb.62.1618420521771;
-        Wed, 14 Apr 2021 10:15:21 -0700 (PDT)
-Received: from dell ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id p24sm180643edt.5.2021.04.14.10.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 10:15:21 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 18:15:19 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, Clock, GPIO, Regulator
- and RTC due for the v5.13 merge window
-Message-ID: <20210414171519.GR4869@dell>
-References: <cover.1617616855.git.matti.vaittinen@fi.rohmeurope.com>
- <20210414131158.GN4869@dell>
- <20210414145345.GO4869@dell>
- <43131cbebdd04a3abc51e05de5170c583006e2d2.camel@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ac8RD2WukXjSqpfh7k38X0swu0LeGtgNE/nGq1NqhZk=;
+        b=KyhgBQBX9BfC3xU1705a0ZdFKdjqY5uvsv96OUt5uBIjRoWrpXWMoCBdYFhhOvyBZn
+         NXDILMXAOjo6tkKc6AsGs+pwH9zEebGS3NaXCM7P1PfqRqgS10Cw/0P2KBnRObgTrAsv
+         BNFuUucGXxtnbNuAdznmTebGwpX7ZG7v1aw4epiCtm6y3WGIqly302NAOcZx5kI9d0pF
+         Dg7oqG/thWcja2XXoZbklnLNBV7m7GwRoLuUqPCNv11ENDyLIQGFOurmTQnL/t0UVZ9j
+         BEjLxW4KrcxJauBcId63N8yJwyRqvlJDAbwX4xE9z6pejoySH8xX+JfjAONojpSVm4GW
+         Zs+g==
+X-Gm-Message-State: AOAM533UUrniM17CkFIX+E9nv66aj/aX+AZR1l44rKoekquBYi2Y8QAp
+        0HmimP/fxgSiw9taX2wBc20II/6GyPRKrci7g1fPRg==
+X-Google-Smtp-Source: ABdhPJz0pPK+rUAhIDOL4XNp3AJeh80jyTHZqv7aLfz61blbu6YkHLnA5fHXMyxERM1pxxugJoMb3tWUaGRARXf3KfI=
+X-Received: by 2002:a25:c985:: with SMTP id z127mr57011363ybf.20.1618422392561;
+ Wed, 14 Apr 2021 10:46:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43131cbebdd04a3abc51e05de5170c583006e2d2.camel@fi.rohmeurope.com>
+References: <20210407034456.516204-1-saravanak@google.com> <20210407034456.516204-3-saravanak@google.com>
+In-Reply-To: <20210407034456.516204-3-saravanak@google.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Wed, 14 Apr 2021 10:45:56 -0700
+Message-ID: <CAGETcx_EaO4aNHNhTOPE9snGavk2+JY8bn9P9NdUteO0+Bn7Lw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] clk: Add support for sync_state()
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Apr 2021, Vaittinen, Matti wrote:
+On Tue, Apr 6, 2021 at 8:45 PM 'Saravana Kannan' via kernel-team
+<kernel-team@android.com> wrote:
+>
+> Clocks can be turned on (by the hardware, bootloader, etc) upon a
+> reset/boot of a hardware platform. These "boot clocks" could be clocking
+> devices that are active before the kernel starts running. For example,
+> clocks needed for the interconnects, UART console, display, CPUs, DDR,
+> etc.
+>
+> When a boot clock is used by more than one consumer or multiple boot
+> clocks share a parent clock, the boot clock (or the common parent) can
+> be turned off when the first consumer probes. This can crash the device
+> or cause poor user experience.
+>
+> Fix this by explicitly enabling the boot clocks during clock
+> registration and then removing the enable vote when the clock provider
+> device gets its sync_state() callback. Since sync_state() callback comes
+> only when all the consumers of a device (not a specific clock) have
+> probed, this ensures the boot clocks are kept on at least until all
+> their consumers have had a chance to vote on them (in their respective
+> probe functions).
+>
+> Also, if a clock provider is loaded as a module and it has some boot
+> clocks, they get turned off only when a consumer explicitly turns them
+> off. So clocks that are boot clocks and are unused never get turned off
+> because the logic to turn off unused clocks has already run during
+> late_initcall_sync(). Adding sync_state() support also makes sure these
+> unused boot clocks are turned off once all the consumers have probed.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-> Hello Lee, Mark, Stephen, Linus, Alexandre,
-> 
-> On Wed, 2021-04-14 at 15:53 +0100, Lee Jones wrote:
-> > On Wed, 14 Apr 2021, Lee Jones wrote:
-> > 
-> > > Please note that this PR will break your build unless you have the
-> > > required Regulator API update.
-> > > 
-> > >  fb8fee9efdcf0 regulator: Add regmap helper for ramp-delay setting
-> > >  e3baacf542756 regulator: helpers: Export helper voltage listing
-> > 
-> > Looks like Mark has these:
-> > 
-> >  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator
-> > regulator-list-ramp-helpers
-> >  
-> > > Pull at your peril! :)
-> > > 
-> > > The following changes since commit
-> > > a38fd8748464831584a19438cbb3082b5a2dab15:
-> > > 
-> > >   Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
-> > > tags/ib-mfd-clk-gpio-regulator-rtc-v5.13
-> > > 
-> > > for you to fetch changes up to
-> > > 5a8a64d9a38b9d3794f9f5e153fc0358b858cc24:
-> > > 
-> > >   MAINTAINERS: Add ROHM BD71815AGW (2021-04-14 10:21:43 +0100)
-> > > 
-> > > ----------------------------------------------------------------
-> > > Immutable branch between MFD, Clock, GPIO, Regulator and RTC due
-> > > for the v5.13 merge window
-> > > 
-> > > ----------------------------------------------------------------
-> > > Matti Vaittinen (16):
-> > >       rtc: bd70528: Do not require parent data
-> > >       mfd: bd718x7: simplify by cleaning unnecessary device data
-> > >       dt_bindings: bd71828: Add clock output mode
-> > >       dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
-> > >       dt_bindings: mfd: Add ROHM BD71815 PMIC
-> > >       mfd: Add ROHM BD71815 ID
-> > >       mfd: Sort ROHM chip ID list for better readability
-> > >       mfd: Support for ROHM BD71815 PMIC core
-> > >       gpio: Support ROHM BD71815 GPOs
-> > >       regulator: rohm-regulator: linear voltage support
-> > >       regulator: rohm-regulator: Support SNVS HW state.
-> > >       regulator: bd718x7, bd71828: Use ramp-delay helper
-> > >       regulator: Support ROHM BD71815 regulators
-> > >       clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
-> > >       rtc: bd70528: Support RTC on ROHM BD71815
-> > >       MAINTAINERS: Add ROHM BD71815AGW
-> 
-> I think the original idea was that Lee could get the Tag from Mark and
-> then get all the changes in via MFD tree. I can't say what would be the
-> best way to get these in. I'm open to all suggestions :)
+Hi Stephen,
 
-It's done now.  Anyone who wishes to pull (and test) this branch
-should also pull in the regulator-list-ramp-helpers tag from Mark's
-Regulator tree.
+Gentle reminder.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+-Saravana
+
+> ---
+>  drivers/clk/clk.c            | 84 +++++++++++++++++++++++++++++++++++-
+>  include/linux/clk-provider.h |  1 +
+>  2 files changed, 84 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d6301a3351f2..cd07f4d1254c 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -72,6 +72,8 @@ struct clk_core {
+>         unsigned long           flags;
+>         bool                    orphan;
+>         bool                    rpm_enabled;
+> +       bool                    need_sync;
+> +       bool                    boot_enabled;
+>         unsigned int            enable_count;
+>         unsigned int            prepare_count;
+>         unsigned int            protect_count;
+> @@ -1215,6 +1217,15 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+>         hlist_for_each_entry(child, &core->children, child_node)
+>                 clk_unprepare_unused_subtree(child);
+>
+> +       /*
+> +        * Orphan clocks might still not have their state held if one of their
+> +        * ancestors hasn't been registered yet. We don't want to turn off
+> +        * these orphan clocks now as they will be turned off later when their
+> +        * device gets a sync_state() call.
+> +        */
+> +       if (dev_has_sync_state(core->dev))
+> +               return;
+> +
+>         if (core->prepare_count)
+>                 return;
+>
+> @@ -1246,6 +1257,15 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>         hlist_for_each_entry(child, &core->children, child_node)
+>                 clk_disable_unused_subtree(child);
+>
+> +       /*
+> +        * Orphan clocks might still not have their state held if one of their
+> +        * ancestors hasn't been registered yet. We don't want to turn off
+> +        * these orphan clocks now as they will be turned off later when their
+> +        * device gets a sync_state() call.
+> +        */
+> +       if (dev_has_sync_state(core->dev))
+> +               return;
+> +
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_prepare_enable(core->parent);
+>
+> @@ -1319,6 +1339,38 @@ static int __init clk_disable_unused(void)
+>  }
+>  late_initcall_sync(clk_disable_unused);
+>
+> +static void clk_unprepare_disable_dev_subtree(struct clk_core *core,
+> +                                             struct device *dev)
+> +{
+> +       struct clk_core *child;
+> +
+> +       lockdep_assert_held(&prepare_lock);
+> +
+> +       hlist_for_each_entry(child, &core->children, child_node)
+> +               clk_unprepare_disable_dev_subtree(child, dev);
+> +
+> +       if (core->dev != dev || !core->need_sync)
+> +               return;
+> +
+> +       clk_core_disable_unprepare(core);
+> +}
+> +
+> +void clk_sync_state(struct device *dev)
+> +{
+> +       struct clk_core *core;
+> +
+> +       clk_prepare_lock();
+> +
+> +       hlist_for_each_entry(core, &clk_root_list, child_node)
+> +               clk_unprepare_disable_dev_subtree(core, dev);
+> +
+> +       hlist_for_each_entry(core, &clk_orphan_list, child_node)
+> +               clk_unprepare_disable_dev_subtree(core, dev);
+> +
+> +       clk_prepare_unlock();
+> +}
+> +EXPORT_SYMBOL_GPL(clk_sync_state);
+> +
+>  static int clk_core_determine_round_nolock(struct clk_core *core,
+>                                            struct clk_rate_request *req)
+>  {
+> @@ -1725,6 +1777,30 @@ int clk_hw_get_parent_index(struct clk_hw *hw)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
+>
+> +static void clk_core_hold_state(struct clk_core *core)
+> +{
+> +       if (core->need_sync || !core->boot_enabled)
+> +               return;
+> +
+> +       if (core->orphan || !dev_has_sync_state(core->dev))
+> +               return;
+> +
+> +       core->need_sync = !clk_core_prepare_enable(core);
+> +}
+> +
+> +static void __clk_core_update_orphan_hold_state(struct clk_core *core)
+> +{
+> +       struct clk_core *child;
+> +
+> +       if (core->orphan)
+> +               return;
+> +
+> +       clk_core_hold_state(core);
+> +
+> +       hlist_for_each_entry(child, &core->children, child_node)
+> +               __clk_core_update_orphan_hold_state(child);
+> +}
+> +
+>  /*
+>   * Update the orphan status of @core and all its children.
+>   */
+> @@ -3392,6 +3468,7 @@ static void clk_core_reparent_orphans_nolock(void)
+>                         __clk_set_parent_after(orphan, parent, NULL);
+>                         __clk_recalc_accuracies(orphan);
+>                         __clk_recalc_rates(orphan, 0);
+> +                       __clk_core_update_orphan_hold_state(orphan);
+>                 }
+>         }
+>  }
+> @@ -3550,6 +3627,8 @@ static int __clk_core_init(struct clk_core *core)
+>                 rate = 0;
+>         core->rate = core->req_rate = rate;
+>
+> +       core->boot_enabled = clk_core_is_enabled(core);
+> +
+>         /*
+>          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+>          * don't get accidentally disabled when walking the orphan tree and
+> @@ -3572,6 +3651,7 @@ static int __clk_core_init(struct clk_core *core)
+>                 }
+>         }
+>
+> +       clk_core_hold_state(core);
+>         clk_core_reparent_orphans_nolock();
+>
+>
+> @@ -3837,8 +3917,10 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+>                 core->rpm_enabled = true;
+>         core->dev = dev;
+>         core->of_node = np;
+> -       if (dev && dev->driver)
+> +       if (dev && dev->driver) {
+>                 core->owner = dev->driver->owner;
+> +               dev_set_drv_sync_state(dev, clk_sync_state);
+> +       }
+>         core->hw = hw;
+>         core->flags = init->flags;
+>         core->num_parents = init->num_parents;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 58f6fe866ae9..429c413dadce 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -1112,6 +1112,7 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
+>
+>  void clk_hw_unregister(struct clk_hw *hw);
+>  void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+> +void clk_sync_state(struct device *dev);
+>
+>  /* helper functions */
+>  const char *__clk_get_name(const struct clk *clk);
+> --
+> 2.31.1.295.g9ea45b61b8-goog
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
