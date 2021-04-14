@@ -2,163 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4801C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 13:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEACC433ED
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8A9B600CD
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 13:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E05DC61155
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhDNNM2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Apr 2021 09:12:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45372 "EHLO
+        id S1351743AbhDNOE7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Apr 2021 10:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233213AbhDNNM2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 09:12:28 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D307BC061756
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 06:12:01 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id h10so23600507edt.13
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 06:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=vRUDKBR7RwkkTXgZ+sUsbwVfdbHWNU9ESm88Dqvkblg=;
-        b=Z78a49v7+PWNoXCt2G+P7mD5Bje1NVfIXaUAnp/s74Fh0tMgIh5qZLBKAIfvh2LuoQ
-         rB+FjCghvIxW9JSkWdnMIjzY7Jhr8eaooqoR4PLDASf0hnBF5hVXTKvV6LP0j9Q7Pr+a
-         xEVRnnF7rHB4Ae5KkvtrhT59u5W0nzZuPeEoQ/61nBkwErKhPyBNHwJZj0qmq0WmHjxq
-         HsL2RinDYvbidfZq2/2UDkrBIJE94fkYg9+EaYxgTgclLH0nbp5Utk8EuktnT3SDxhGp
-         6+z8tJpqbNFmQhnySe7pXth1q/I5D8S4ZYlieBmpQlGRY8V0g7Pd4cEhfpokQyDQ4bCm
-         tfyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=vRUDKBR7RwkkTXgZ+sUsbwVfdbHWNU9ESm88Dqvkblg=;
-        b=aUdGniBmP5Fb/9HovyKwRAFDgyiMTFmAK3bRHhlH3VSedaz8UC3SAdo19MG5LAosFl
-         /CssFEe/OkevzdnywDSABTzNX1x5MymwBPcM0PuY7+la5QtcGDOOEEBMnv7iqmq8kKL6
-         F1WguFIxLtfPw9uPIOas3ADd/50rE1bxV/gH2iCYOBZUHfLiYbiQZRIqsDF8YJExPny2
-         97K79Jqh9QEPzPBhGGoQc3Iqkv7pS+Rcz8KebvTC9pyOI9gsSMocq5Mmfd76INcLQ/c1
-         lv4SfnzdJpe9vgCPXcPIF3XQo8tNYLgMPsQGZ/bOahal+qwWsC7Jn7Vdj7Eld+sPmLzK
-         cnag==
-X-Gm-Message-State: AOAM530VaC2+8drm2ixKw2VqW1IuMOa53Jk1K76InYFcwlwl0EscI9/y
-        gf8fWtgUoFgRzLarzL5i1o9ehg==
-X-Google-Smtp-Source: ABdhPJwn/rS2SfHF2VYdBHuVepuPkQv9wfCzaDCvZDOk0dS2tnN1gLRWPu+ZHWIj0/0V1hUU231VXg==
-X-Received: by 2002:a05:6402:42c8:: with SMTP id i8mr40924106edc.386.1618405920522;
-        Wed, 14 Apr 2021 06:12:00 -0700 (PDT)
-Received: from dell ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id 1sm1095942ejt.95.2021.04.14.06.11.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 06:12:00 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 14:11:58 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [GIT PULL] Immutable branch between MFD, Clock, GPIO, Regulator and
- RTC due for the v5.13 merge window
-Message-ID: <20210414131158.GN4869@dell>
-References: <cover.1617616855.git.matti.vaittinen@fi.rohmeurope.com>
+        with ESMTP id S1351739AbhDNOE6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 10:04:58 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB6FC061574
+        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 07:04:35 -0700 (PDT)
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 4B89580C77;
+        Wed, 14 Apr 2021 16:04:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1618409071;
+        bh=Iga1FyrRuXsYhTXi8trAZVI7YZEUcPMHH2G8x3lIEUs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=k4pXER3dUXQ+NPUrRfg+JF5Rr4T1LQg7Z7zjkr/7Crf0JGxUfZw6uIXJuqu1yfOcz
+         uhj0LQNWmKC+YiSjggPkkISPbaGW1rsslHof1fww/qDCnbW0fUgmqtHW/e9X7xwq63
+         WW6Qg7yTZCl3UivcdPmnmrUvWJ+I/KB2eNPnQ/lnXDza+0h/z/9mhuDEN+qH2QSuH3
+         yTBShxvxSo4koAGMt3zNAeQqmSTNiwyd4F+wTbkMeHOG27Is70amG2X90AcIVDSRwx
+         jpbmX3RxE7OY1oug2ndxMBP3fXXcStOavqUhqcLgYpqOU3J3cUT4F8WPOGazrBsKRq
+         A8EjnX/VLmUNg==
+Subject: Re: [PATCH 1/7] clk: stm32mp1: Split ETHCK_K into separate MUX and
+ GATE clock
+To:     "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20210408185731.135511-1-marex@denx.de>
+ <20210408185731.135511-2-marex@denx.de>
+ <2b10f5d9-54cb-ce83-b7aa-f4ec8e67c001@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <92dd5798-8f5a-66e4-06bc-e3beb16690f5@denx.de>
+Date:   Wed, 14 Apr 2021 16:04:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <2b10f5d9-54cb-ce83-b7aa-f4ec8e67c001@foss.st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1617616855.git.matti.vaittinen@fi.rohmeurope.com>
+X-Virus-Scanned: clamav-milter 0.102.4 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Please note that this PR will break your build unless you have the
-required Regulator API update.
+On 4/14/21 3:03 PM, gabriel.fernandez@foss.st.com wrote:
+> Hi Marek,
 
- fb8fee9efdcf0 regulator: Add regmap helper for ramp-delay setting
- e3baacf542756 regulator: helpers: Export helper voltage listing
+Hello Gabriel,
 
-Pull at your peril! :)
+> Thanks for the patchset
+> 
+> On 4/8/21 8:57 PM, Marek Vasut wrote:
+>> The ETHCK_K are modeled as composite clock of MUX and GATE, however per
+>> STM32MP1 Reference Manual RM0436 Rev 3, Page 574, Figure 83. Peripheral
+>> clock distribution for Ethernet, ETHPTPDIV divider is attached past the
+>> ETHCK_K mux, and ETH_CLK/eth_clk_fb clock are output past ETHCKEN gate.
+>> Therefore, in case ETH_CLK/eth_clk_fb are not in use AND PTP clock are
+>> in use, ETHCKEN gate can be turned off. Current driver does not permit
+>> that, fix it.
+> 
+> I don"t understand, it's already the case.
+> 
+> ETHCK_K it's a composite with a MUX and a GATE.
 
-The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+But ETHCK_K is _not_ a composite clock, look at the Figure 83 in the 
+datasheet again and schematic below.
 
-  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+> ETHPTP_K (ETHPTPDIV) it's a composite with the same MUX and a DIV (no gate)
 
-are available in the Git repository at:
+But ETHPTP_K shouldn't control any mux, it is only a divider.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-clk-gpio-regulator-rtc-v5.13
+> If you use only ETHPTPDIV,  ETHCKEN gate can be turned off.
 
-for you to fetch changes up to 5a8a64d9a38b9d3794f9f5e153fc0358b858cc24:
+Look, this is what you have today:
 
-  MAINTAINERS: Add ROHM BD71815AGW (2021-04-14 10:21:43 +0100)
+            .------------ ETHCK_K -----------.
+            |_______               _______   |
+pll4_p_ck--|M_ETHCK\             |G_ETHCK\  |
+            | MUX    |------+-----| GATE   |-------------[x] ETH_CLK
+pll3_q_ck--|_______/       |     |_______/                  eth_clk_fb
+            |               |
+            |               '--(ETHCKSELR[7:4] divider)--[x] clk_ptp_ref
+            |                                          |
+            '------------ ETHPTP_K --------------------'
 
-----------------------------------------------------------------
-Immutable branch between MFD, Clock, GPIO, Regulator and RTC due for the v5.13 merge window
+And this is what you should have, to avoid having two composite clock 
+which control the same mux using the same register bit, i.e. what this 
+patch implements:
 
-----------------------------------------------------------------
-Matti Vaittinen (16):
-      rtc: bd70528: Do not require parent data
-      mfd: bd718x7: simplify by cleaning unnecessary device data
-      dt_bindings: bd71828: Add clock output mode
-      dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
-      dt_bindings: mfd: Add ROHM BD71815 PMIC
-      mfd: Add ROHM BD71815 ID
-      mfd: Sort ROHM chip ID list for better readability
-      mfd: Support for ROHM BD71815 PMIC core
-      gpio: Support ROHM BD71815 GPOs
-      regulator: rohm-regulator: linear voltage support
-      regulator: rohm-regulator: Support SNVS HW state.
-      regulator: bd718x7, bd71828: Use ramp-delay helper
-      regulator: Support ROHM BD71815 regulators
-      clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
-      rtc: bd70528: Support RTC on ROHM BD71815
-      MAINTAINERS: Add ROHM BD71815AGW
+            .- ck_ker_eth -.  .--- ETHCK_K --.
+            |_______       |  |    _______   |
+pll4_p_ck--|M_ETHCK\      |  |   |G_ETHCK\  |
+            | MUX    |------+-----| GATE   |-------------[x] ETH_CLK
+pll3_q_ck--|_______/       |     |_______/                  eth_clk_fb
+                            |
+                            '--(ETHCKSELR[7:4] divider)--[x] clk_ptp_ref
+                             |                         |
+                             '---- ETHPTP_K -----------'
 
- .../devicetree/bindings/mfd/rohm,bd71815-pmic.yaml | 201 +++++++
- .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml |   6 +
- .../bindings/regulator/rohm,bd71815-regulator.yaml | 116 ++++
- MAINTAINERS                                        |   3 +
- drivers/clk/clk-bd718x7.c                          |   9 +-
- drivers/gpio/Kconfig                               |  10 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-bd71815.c                        | 185 ++++++
- drivers/mfd/Kconfig                                |  15 +-
- drivers/mfd/rohm-bd71828.c                         | 486 +++++++++++----
- drivers/mfd/rohm-bd718x7.c                         |  43 +-
- drivers/regulator/Kconfig                          |  11 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd71815-regulator.c              | 652 +++++++++++++++++++++
- drivers/regulator/bd71828-regulator.c              |  51 +-
- drivers/regulator/bd718x7-regulator.c              |  60 +-
- drivers/regulator/rohm-regulator.c                 |  23 +-
- drivers/rtc/Kconfig                                |   6 +-
- drivers/rtc/rtc-bd70528.c                          | 104 ++--
- include/linux/mfd/rohm-bd71815.h                   | 562 ++++++++++++++++++
- include/linux/mfd/rohm-bd71828.h                   |   3 +
- include/linux/mfd/rohm-bd718x7.h                   |  13 -
- include/linux/mfd/rohm-generic.h                   |  15 +-
- 23 files changed, 2286 insertions(+), 290 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71815-regulator.yaml
- create mode 100644 drivers/gpio/gpio-bd71815.c
- create mode 100644 drivers/regulator/bd71815-regulator.c
- create mode 100644 include/linux/mfd/rohm-bd71815.h
+>> This patch converts ETHCK_K from composite clock into a ETHCKEN gate,
+>> ETHPTP_K from composite clock into ETHPTPDIV divider, and adds another
+>> NO_ID clock "ck_ker_eth" which models the ETHSRC mux and is parent clock
+>> to both ETHCK_K and ETHPTP_K. Therefore, all references to ETHCK_K and
+>> ETHPTP_K remain functional as before.
+>>
+>> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
+>>      Figure 83. Peripheral clock distribution for Ethernet
+>>      
+>> https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157-advanced-armbased-32bit-mpus-stmicroelectronics.pdf 
+>>
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+[...]
+
+>> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+>> index a875649df8b8..a7c7f544ee5d 100644
+>> --- a/drivers/clk/clk-stm32mp1.c
+>> +++ b/drivers/clk/clk-stm32mp1.c
+>> @@ -1949,7 +1949,6 @@ static const struct clock_config 
+>> stm32mp1_clock_cfg[] = {
+>>       KCLK(DSI_K, "dsi_k", dsi_src, 0, G_DSI, M_DSI),
+>>       KCLK(ADFSDM_K, "adfsdm_k", sai_src, 0, G_ADFSDM, M_SAI1),
+>>       KCLK(USBO_K, "usbo_k", usbo_src, 0, G_USBO, M_USBO),
+>> -    KCLK(ETHCK_K, "ethck_k", eth_src, 0, G_ETHCK, M_ETHCK),
+>>       /* Particulary Kernel Clocks (no mux or no gate) */
+>>       MGATE_MP1(DFSDM_K, "dfsdm_k", "ck_mcu", 0, G_DFSDM),
+>> @@ -1958,11 +1957,16 @@ static const struct clock_config 
+>> stm32mp1_clock_cfg[] = {
+>>       MGATE_MP1(GPU_K, "gpu_k", "pll2_q", 0, G_GPU),
+>>       MGATE_MP1(DAC12_K, "dac12_k", "ck_lsi", 0, G_DAC12),
+>> -    COMPOSITE(ETHPTP_K, "ethptp_k", eth_src, CLK_OPS_PARENT_ENABLE |
+>> +    COMPOSITE(NO_ID, "ck_ker_eth", eth_src, CLK_OPS_PARENT_ENABLE |
+>>             CLK_SET_RATE_NO_REPARENT,
+>>             _NO_GATE,
+>>             _MMUX(M_ETHCK),
+>> -          _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
+>> +          _NO_DIV),
+>> +
+>> +    MGATE_MP1(ETHCK_K, "ethck_k", "ck_ker_eth", 0, G_ETHCK),
+> assigned parent with ETHCK_K will not work
+>> +
+>> +    DIV(ETHPTP_K, "ethptp_k", "ck_ker_eth", CLK_OPS_PARENT_ENABLE |
+> 
+> CLK_OPS_PARENT_ENABLE flags not useful with a divider.
+
+How so ?
