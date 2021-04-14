@@ -2,106 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B8BC433ED
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD53C43461
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB1061139
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8EE3611EE
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Apr 2021 14:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbhDNONe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Apr 2021 10:13:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58928 "EHLO
+        id S234009AbhDNOy7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Apr 2021 10:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231126AbhDNONd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 10:13:33 -0400
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96DAC061756
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 07:13:12 -0700 (PDT)
-Received: by mail-oo1-xc30.google.com with SMTP id c6-20020a4aacc60000b02901e6260b12e2so2134273oon.3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 07:13:12 -0700 (PDT)
+        with ESMTP id S1350086AbhDNOyj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Apr 2021 10:54:39 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A36BAC061360
+        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 07:53:49 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id v6so30576265ejo.6
+        for <linux-clk@vger.kernel.org>; Wed, 14 Apr 2021 07:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sb+yeDNpNA+Bz8H8xtWBwZnjUmpmY3Grk6ocFL4I/TQ=;
-        b=HVfk+QtkxRTNz90nOoRDFi1g41C5yA5NI/ndLkdC2nUXutLyI0cslXbLRurCPBCNIp
-         6P1nWTfHukY5aUH9ge6nL0/7tuPhJiOVRjTGSjn01VihAi5+D9DqH0yVSNTAZzge9FH0
-         eClYBXJwNw+fiSRccdpqbtOX1sih8b1fMI5CB2q6pQKwN24LAPV9nVRBsOQ4R+UlJrvp
-         ZS66rwnXzQ1n/r0TGT0Ltnclq3Z2dhqbmDZENQxVBOvkM/ci8U2MrwgiW7KW/QCTkwWr
-         7MXKkeQIgRWHYn7Q7jju7/9tGgU2tl3UfYj02SBFrgOe/h1hZohzbpzID2cSeV14xDom
-         LtYw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=lQCWxHZnV1Gsxd6nL87+Rov9CtR0ildCnHkDFpAdqA8=;
+        b=RzVgUsHI9DYU2E1aztKM+c0Ge9sIJht3Kkwujrb62Ob686bFZJ+cjSDN0f0hFQBf5u
+         n1s6gr0E/Nc6KpjTljw3HBvsbKT8FnPLZjvaRDN4MQtmM3nTjFzhz8oM5iu41H3v99+c
+         Dc0lFtKy2TbnBlB9D40PIVD5C/S6cf38nveM4O75XvLbcq0hx5zXzGfdetztvCIUWPQj
+         GuFo5jCuK9R8JwNKV5HlRNs6rXKtpeIV/sHixMIf4KDhuWMgDm/pEKfYcr+Hl7MDyR4H
+         Fegzpr6+SwZ3bzNY3BjRgBLSeTuEVT/cqztgrYsekOsXEx3mDK+V4Qh/gBGJYgJUQZp1
+         5wmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sb+yeDNpNA+Bz8H8xtWBwZnjUmpmY3Grk6ocFL4I/TQ=;
-        b=nqyfMCWDI0q8721t0QHtnVi+0wDB1XYs/qbt0Em+jCZna1eAacMDaDa/kY6vs5a4oR
-         rGCHqYoDHOD7Lk9HSjFwXBF1xBtDDJNGgMwE1Wy84yMfKh6l3BbdG0z1rQWuiwi920s2
-         a4xNMjLreL3zNAwvDSbNEGHEWwa+2zWOO09YfvNjwuT+gawfuCGDnfWsQcgWtL3JCKrN
-         zv5yEfU5ooh95iNcTT5usn0uslvl5QG0n3g5yGl6fbuI0gnnGSWkIWAt8TVujJ6g/u+r
-         n4yAVrI/N62YCsIijzHHd99cpG7P2eF/bH4w0DWsy6b42LeZ/UfJlwD3nA+7KiNkm3/8
-         qMeg==
-X-Gm-Message-State: AOAM531iWqQcU5rInFaxmomASekDkGgE2smK/wnHrENSydkoMWcNCmDJ
-        RKZ0v75YVv/C8sZErlQY5G0Kkshc9NrjvD/pGeWQ1w==
-X-Google-Smtp-Source: ABdhPJzVqDgUTs0CSOHiGCtXMVUP29nRAd/nar8/zWXZGwSyMpmH6yKoTRiRNGStUZoW4T97KmUZzdsisS7I7MQE5SE=
-X-Received: by 2002:a4a:925a:: with SMTP id g26mr18617165ooh.29.1618409592066;
- Wed, 14 Apr 2021 07:13:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
- <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
- <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
- <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
- <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
- <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
- <87h7kukzy4.fsf@igel.home> <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
- <87tuob7n8g.fsf@igel.home>
-In-Reply-To: <87tuob7n8g.fsf@igel.home>
-From:   Zong Li <zong.li@sifive.com>
-Date:   Wed, 14 Apr 2021 22:13:00 +0800
-Message-ID: <CANXhq0rTC8grpRe_Q0vG6_52b-41OuN4vHum8RvouMbE6xiXpQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pragnesh Patel <pragnesh.patel@openfive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=lQCWxHZnV1Gsxd6nL87+Rov9CtR0ildCnHkDFpAdqA8=;
+        b=jL0zP2Otm22+qlrdbOWUAXKE5EbFTM7OPFp3/Yhtkw3w57RNJf+OwySgHhP6R9o/o6
+         IZwBY3IRF4Ztyu15KDQ40uGza1fcRj/1dGF2pmsNQ3pw0MoIXphVu8p6eAva8BX/eG4L
+         Isj/m1hXpsRU7HKIhZWlHFkt0OdoKohk9WB6vPG5qErMbRIpCFVbl/vN4fMYb/GeniOz
+         WqyL83USE+4dHKFfnNiqwQNYH2a7duFw8yjsQDbrMpxG9X3wvD2v8ooujOWxmamSCVFt
+         yn5pRifEqdaelHKIKwvubfnWJ0kiyTQq2V5A793QoG8DMw8wprDGX7CM7VVMsoQTqUYq
+         PRaw==
+X-Gm-Message-State: AOAM532MpbOhNWY/iN0I3ZoOfp7KYEvyCD4JZ+jf+0spvz2VBm9J+UW7
+        Po+eyETH85CzoJsU0gyd7CaCog==
+X-Google-Smtp-Source: ABdhPJyn9cPrILjzA9mfvJ93gUdjDRlCcFQWzEmSXjJQE7qWp4eagrpW18JkJldIvNRpFyq0HxpB1w==
+X-Received: by 2002:a17:906:7fd3:: with SMTP id r19mr12751694ejs.286.1618412028371;
+        Wed, 14 Apr 2021 07:53:48 -0700 (PDT)
+Received: from dell ([91.110.221.215])
+        by smtp.gmail.com with ESMTPSA id cy5sm12288123edb.46.2021.04.14.07.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Apr 2021 07:53:47 -0700 (PDT)
+Date:   Wed, 14 Apr 2021 15:53:45 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD, Clock, GPIO, Regulator
+ and RTC due for the v5.13 merge window
+Message-ID: <20210414145345.GO4869@dell>
+References: <cover.1617616855.git.matti.vaittinen@fi.rohmeurope.com>
+ <20210414131158.GN4869@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210414131158.GN4869@dell>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 7:31 PM Andreas Schwab <schwab@linux-m68k.org> wrot=
-e:
->
-> On M=C3=A4r 31 2021, Zong Li wrote:
->
-> > I found that the gemgxlpll was disabled immediately by power
-> > management after macb driver install. The mainline's defconfig doesn't
-> > enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
-> > enables CONFIG_PM, and the patch
-> > 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
-> > callback functions, so the gemgxlpll PLL, I have no idea why power
-> > management disable it, I would keep trace it.
->
-> Does that mean that CONFIG_PM also affects the FU740?
->
+On Wed, 14 Apr 2021, Lee Jones wrote:
 
-Yes, we got the same problem on the FU740. We are checking the issue.
+> Please note that this PR will break your build unless you have the
+> required Regulator API update.
+> 
+>  fb8fee9efdcf0 regulator: Add regmap helper for ramp-delay setting
+>  e3baacf542756 regulator: helpers: Export helper voltage listing
 
-> Andreas.
->
-> --
-> Andreas Schwab, schwab@linux-m68k.org
-> GPG Key fingerprint =3D 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC=
-1
-> "And now for something completely different."
+Looks like Mark has these:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator regulator-list-ramp-helpers
+ 
+> Pull at your peril! :)
+> 
+> The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+> 
+>   Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-clk-gpio-regulator-rtc-v5.13
+> 
+> for you to fetch changes up to 5a8a64d9a38b9d3794f9f5e153fc0358b858cc24:
+> 
+>   MAINTAINERS: Add ROHM BD71815AGW (2021-04-14 10:21:43 +0100)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between MFD, Clock, GPIO, Regulator and RTC due for the v5.13 merge window
+> 
+> ----------------------------------------------------------------
+> Matti Vaittinen (16):
+>       rtc: bd70528: Do not require parent data
+>       mfd: bd718x7: simplify by cleaning unnecessary device data
+>       dt_bindings: bd71828: Add clock output mode
+>       dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
+>       dt_bindings: mfd: Add ROHM BD71815 PMIC
+>       mfd: Add ROHM BD71815 ID
+>       mfd: Sort ROHM chip ID list for better readability
+>       mfd: Support for ROHM BD71815 PMIC core
+>       gpio: Support ROHM BD71815 GPOs
+>       regulator: rohm-regulator: linear voltage support
+>       regulator: rohm-regulator: Support SNVS HW state.
+>       regulator: bd718x7, bd71828: Use ramp-delay helper
+>       regulator: Support ROHM BD71815 regulators
+>       clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
+>       rtc: bd70528: Support RTC on ROHM BD71815
+>       MAINTAINERS: Add ROHM BD71815AGW
+> 
+>  .../devicetree/bindings/mfd/rohm,bd71815-pmic.yaml | 201 +++++++
+>  .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml |   6 +
+>  .../bindings/regulator/rohm,bd71815-regulator.yaml | 116 ++++
+>  MAINTAINERS                                        |   3 +
+>  drivers/clk/clk-bd718x7.c                          |   9 +-
+>  drivers/gpio/Kconfig                               |  10 +
+>  drivers/gpio/Makefile                              |   1 +
+>  drivers/gpio/gpio-bd71815.c                        | 185 ++++++
+>  drivers/mfd/Kconfig                                |  15 +-
+>  drivers/mfd/rohm-bd71828.c                         | 486 +++++++++++----
+>  drivers/mfd/rohm-bd718x7.c                         |  43 +-
+>  drivers/regulator/Kconfig                          |  11 +
+>  drivers/regulator/Makefile                         |   1 +
+>  drivers/regulator/bd71815-regulator.c              | 652 +++++++++++++++++++++
+>  drivers/regulator/bd71828-regulator.c              |  51 +-
+>  drivers/regulator/bd718x7-regulator.c              |  60 +-
+>  drivers/regulator/rohm-regulator.c                 |  23 +-
+>  drivers/rtc/Kconfig                                |   6 +-
+>  drivers/rtc/rtc-bd70528.c                          | 104 ++--
+>  include/linux/mfd/rohm-bd71815.h                   | 562 ++++++++++++++++++
+>  include/linux/mfd/rohm-bd71828.h                   |   3 +
+>  include/linux/mfd/rohm-bd718x7.h                   |  13 -
+>  include/linux/mfd/rohm-generic.h                   |  15 +-
+>  23 files changed, 2286 insertions(+), 290 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71815-regulator.yaml
+>  create mode 100644 drivers/gpio/gpio-bd71815.c
+>  create mode 100644 drivers/regulator/bd71815-regulator.c
+>  create mode 100644 include/linux/mfd/rohm-bd71815.h
+> 
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
