@@ -2,153 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A539C433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 18:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C9CC433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 21:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1CF60249
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 18:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA1266100B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 21:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233610AbhDOSTr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Apr 2021 14:19:47 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51082 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234520AbhDOSTk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 14:19:40 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13FIFU52066559;
-        Thu, 15 Apr 2021 18:19:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=sSRqnc8CP7d/ScOvRgpRssO7lfHgLBctuEO2QPJ6yFI=;
- b=Sb8k4Iqf+sOpMFNQuCexhjG0vdwHbcNsaNewnh02VoSu7/K6TAbAw1xeKEtXUQH9KbGX
- M9TZQXNg6rsgQ8HMt59D2tV3oHQ6Nyh9j9dVgcXRitkYZI2aN565r4VZ2U+iux2CZies
- 6RXcChQyQSekJ08w5zh3wszkkrMzk1ThNkIUSmhS+b7ewg+WpkIESFiTmMjQ6Uonbl79
- qAwJFxJhgLdFJWT/QMBQFaVEgZLGARsynO8H/McBj8c0MrAtMa3nnxZ+Y0QqqLzdpSq7
- Ux8xswQK8wo8LI6tkbt4F0L9r1liBOqiEfLu5pVsM4RuEDxzCjfl824fSsYrJAwmN0Qw Ag== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 37u3ymptm3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Apr 2021 18:19:08 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13FIFoPr068218;
-        Thu, 15 Apr 2021 18:19:07 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 37unx3app9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Apr 2021 18:19:07 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13FIJ5dm023900;
-        Thu, 15 Apr 2021 18:19:05 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 15 Apr 2021 11:19:04 -0700
-Date:   Thu, 15 Apr 2021 21:18:50 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Colin King <colin.king@canonical.com>,
+        id S235895AbhDOVZ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Apr 2021 17:25:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235093AbhDOVZ0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Apr 2021 17:25:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9867761026;
+        Thu, 15 Apr 2021 21:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618521902;
+        bh=wAzWz1t/6xImauPcT3XLaMkS802uQtcKstpMe9mSozY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=E/51QtVt+JZLl5YJKUji4jjUv0dBmA0cmazs/5w6+Bc4wZzO5QnL2dejEJKPWm3Nz
+         blOgsYGjclj6JlD5IGboMfeGiQ+yiXB0FaNPitc6n+Pgc/BPT4z4QUAn8LElc43w2p
+         DW0iYl09HZIPMm0/dSBmP6P7h0NNhw9kIp61XrB2T4R+z31rL4dpIhDyAXI0P+/egD
+         PKDC65q1VxcwFiaRYagT0Ob/+o2VdMqInrUvQpaSh8X9S4oseMskkKhQEu7aHiu4Pa
+         Rjns9bJQt/R4aYcJnf1arUZqeetP5o8esJ0rxv9BXDiQWIGv52jx2HETOIhpRi/JxD
+         Q8daW7WZwkObA==
+Received: by mail-qk1-f174.google.com with SMTP id d23so14764484qko.12;
+        Thu, 15 Apr 2021 14:25:02 -0700 (PDT)
+X-Gm-Message-State: AOAM532oaoYr97VvPhYbqYexx/1nCp6yi/SOQ48uIT9z1T6UsVsFY9+Y
+        5rOkD7/DhlCDcmL/6ElHSLh6id0keRcF7d6Eug==
+X-Google-Smtp-Source: ABdhPJwEOtVU/PBX8pl5Ub9lOQ0rQ9elsjO6RSPqK7TVDKWJEeKEiIDMHMw6Ipuhxv6/Qi8T03BgwK/XvLFUmMN9Nds=
+X-Received: by 2002:a37:84b:: with SMTP id 72mr5665420qki.464.1618521901808;
+ Thu, 15 Apr 2021 14:25:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
+ <1617766086-5502-5-git-send-email-flora.fu@mediatek.com> <20210409182538.GA3913794@robh.at.kernel.org>
+ <1618209895.25062.11.camel@mtksdccf07>
+In-Reply-To: <1618209895.25062.11.camel@mtksdccf07>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 15 Apr 2021 16:24:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLKaYY=NHm1hD=YaQgvDOBTtraoUqcycA7tu7n-f2GVDw@mail.gmail.com>
+Message-ID: <CAL_JsqLKaYY=NHm1hD=YaQgvDOBTtraoUqcycA7tu7n-f2GVDw@mail.gmail.com>
+Subject: Re: [PATCH 4/8] dt-bindings: arm: mediatek: Add new document bindings
+ for APU
+To:     Flora Fu <flora.fu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
-Message-ID: <20210415181850.GD6021@kadam>
-References: <20210407152457.497346-1-colin.king@canonical.com>
- <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9955 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
- mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104150114
-X-Proofpoint-GUID: 6Byqh3omvf4T8b_6-ZEm8CNEuvS2tfKT
-X-Proofpoint-ORIG-GUID: 6Byqh3omvf4T8b_6-ZEm8CNEuvS2tfKT
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9955 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104150114
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 09, 2021 at 03:46:47PM +0900, Masahiro Yamada wrote:
-> On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
+On Mon, Apr 12, 2021 at 1:45 AM Flora Fu <flora.fu@mediatek.com> wrote:
+>
+> On Fri, 2021-04-09 at 13:25 -0500, Rob Herring wrote:
+> > On Wed, Apr 07, 2021 at 11:28:02AM +0800, Flora Fu wrote:
+> > > Document the apusys bindings.
+> > >
+> > > Signed-off-by: Flora Fu <flora.fu@mediatek.com>
+> > > ---
+> > >  .../arm/mediatek/mediatek,apusys.yaml         | 56 +++++++++++++++++++
+> > >  1 file changed, 56 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,apusys.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apusys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apusys.yaml
+> > > new file mode 100644
+> > > index 000000000000..dc04a46f1bad
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apusys.yaml
+> > > @@ -0,0 +1,56 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,apusys.yaml*__;Iw!!CTRNKA9wMg0ARbw!3ryKFTA2CvsVss4Pt2ZOG7wv4jgR-2LPxuGn30IxFmpxoxSRdzNdf8FrAYYvZWcw$
+> > > +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!3ryKFTA2CvsVss4Pt2ZOG7wv4jgR-2LPxuGn30IxFmpxoxSRdzNdf8FrARlhCQ0w$
+> > > +
+> > > +title: MediaTek APUSYS Controller
+> > > +
+> > > +maintainers:
+> > > +  - Flora Fu <flora.fu@mediatek.com>
+> > > +
+> > > +description:
+> > > +  The Mediatek apusys controller provides functional configurations and clocks
+> > > +  to the system.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - mediatek,mt8192-apu_mbox
+> > > +          - mediatek,mt8192-apu_conn
+> > > +          - mediatek,mt8192-apu_vcore
 > >
-> > From: Colin Ian King <colin.king@canonical.com>
+> > s/_/-/
 > >
-> > The for-loop iterates with a u8 loop counter i and compares this
-> > with the loop upper limit of num_parents that is an int type.
-> > There is a potential infinite loop if num_parents is larger than
-> > the u8 loop counter. Fix this by making the loop counter the same
-> > type as num_parents.
+>
+> OK. I will update expression strings in the next version.
+>
+> > > +      - const: syscon
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  '#clock-cells':
+> > > +    const: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    apu_mbox: apu_mbox@19000000 {
 > >
-> > Addresses-Coverity: ("Infinite loop")
-> > Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > mailbox@...? Is this a mailbox provider?
 > >
-> > diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > index 462c84321b2d..ce219e0d2a85 100644
-> > --- a/drivers/clk/uniphier/clk-uniphier-mux.c
-> > +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
-> >         int num_parents = clk_hw_get_num_parents(hw);
-> >         int ret;
-> >         unsigned int val;
-> > -       u8 i;
-> > +       int i;
-> >
-> >         ret = regmap_read(mux->regmap, mux->reg, &val);
-> >         if (ret)
-> > --
-> > 2.30.2
-> >
-> 
-> clk_hw_get_num_parents() returns 'unsigned int', so
-> I think 'num_parents' should also have been 'unsigned int'.
-> 
-> Maybe, the loop counter 'i' also should be 'unsigned int' then?
+>
+> Yes, the apu_mbox is the for setup mailbox in the APU hardware.
 
-The clk_hw_get_num_parents() function returns 0-255 so the original code
-works fine.
+Then you need #mbox-cells here.
 
-It should basically always be "int i;"  That's the safest assumption.
-There are other case where it has to be size_t but in those cases I
-think people should call the list iterator something else instead of "i"
-like "size_t pg_idx;".
+And in that case, what makes it a syscon?
 
-Making everthing u32 causes more bugs than it prevents.  Signedness bugs
-with comparing to zero, type promotion bugs, or subtraction bugs where
-subtracting wraps to a high value.  It's rare to loop more than INT_MAX
-times in the kernel.  When we do need to count about 2 million then
-we're probably not going to stop counting at 4 million, we're going to
-go to 10 million or higher so size_t is more appropriate than u32.
-
-Btw, if you have a loop that does:
-
-	for (i = 0; i < UINT_MAX; i++) {
-
-that loop works exactly the same if "i" is an int or if it's a u32
-because of type promotion.  So you have to look really hard to find a
-place where changing a loop iterator from int to u32 fixes bug in real
-life.
-
-regards,
-dan carpenter
+>
+> > > +        compatible = "mediatek,mt8192-apu_mbox", "syscon";
+> > > +        reg = <0x19000000 0x1000>;
+> > > +    };
