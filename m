@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
 	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119C5C433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 05:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB54C43460
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 05:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E329361139
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 05:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E28DE6142B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 05:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhDOFtB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Apr 2021 01:49:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56463 "EHLO
+        id S230202AbhDOFxJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Apr 2021 01:53:09 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59329 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229731AbhDOFtB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 01:49:01 -0400
-X-UUID: 67e46d9c3c3842baaa636045915592b3-20210415
-X-UUID: 67e46d9c3c3842baaa636045915592b3-20210415
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        with ESMTP id S230005AbhDOFxI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 01:53:08 -0400
+X-UUID: 4109fb04b007482dabfbafcd9211e28f-20210415
+X-UUID: 4109fb04b007482dabfbafcd9211e28f-20210415
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
         (envelope-from <flora.fu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 258964720; Thu, 15 Apr 2021 13:48:35 +0800
+        with ESMTP id 1239353362; Thu, 15 Apr 2021 13:52:42 +0800
 Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 15 Apr 2021 13:48:33 +0800
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 15 Apr 2021 13:52:41 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 15 Apr 2021 13:48:33 +0800
+ Transport; Thu, 15 Apr 2021 13:52:41 +0800
 From:   Flora Fu <flora.fu@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -47,12 +47,12 @@ CC:     Liam Girdwood <lgirdwood@gmail.com>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>
 Subject: [PATCH v2 0/7] Add Support for MediaTek MT8192 APU Power
-Date:   Thu, 15 Apr 2021 13:48:23 +0800
-Message-ID: <1618465710-2965-1-git-send-email-flora.fu@mediatek.com>
+Date:   Thu, 15 Apr 2021 13:52:33 +0800
+Message-ID: <1618465960-3013-1-git-send-email-flora.fu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 866D9BFE159C4F70A734476E1394C04B87257B056D5FE6C1B441855DC2AF9BF22000:8
+X-TM-SNTS-SMTP: 55F8CAFCAE7B42F408EA77F2DA84EEC679C4F95FB05FECA62F3CF3DEC733908C2000:8
 X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
