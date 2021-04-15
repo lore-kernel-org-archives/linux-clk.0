@@ -2,130 +2,244 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8F6C433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 07:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCD1C433ED
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 15:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AEAF6113B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 07:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F8F060FDA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 15:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbhDOHeR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Apr 2021 03:34:17 -0400
-Received: from spam.zju.edu.cn ([61.164.42.155]:20708 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230090AbhDOHeR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Apr 2021 03:34:17 -0400
-Received: from localhost.localdomain (unknown [10.192.139.175])
-        by mail-app3 (Coremail) with SMTP id cC_KCgD3LtRT7Hdgs8YnAQ--.20029S4;
-        Thu, 15 Apr 2021 15:33:44 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S233694AbhDOPZc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Apr 2021 11:25:32 -0400
+Received: from mail-oo1-f52.google.com ([209.85.161.52]:42965 "EHLO
+        mail-oo1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234139AbhDOPZ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 11:25:27 -0400
+Received: by mail-oo1-f52.google.com with SMTP id e12-20020a056820060cb02901e94efc049dso533035oow.9;
+        Thu, 15 Apr 2021 08:25:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WqLtDa2Y+Z0BtnNMwL32ANtrJ2QU3EanfS3R24oxCVk=;
+        b=fg/PedfINkiVhhtq/vUv1W1ttu7+FwwXJcNNsZUiGyJbYDaiKdz8ASptpmHjOHkJ08
+         P6asEsA2C7IPYrQufLqD6MVp/a4A3nN3nto8apUJVsoP+hKKT1KvcuR83BvkaiGdQk7U
+         vRKIzu9nASol8LhJMOPXY/fRv7U+UsOFbYw2aquRrNwhITRWv7JXHkehkBYyrGJBNdFN
+         Jp80IaPe/42YHAHF64pGppRp/qECQAfNaPUl1AEH3uqd/zTHorzxwmZcE7jFfnqna+BI
+         iUeDPWdV/Eh3QqGy0GSwhciBHWJ44tiK1DK8MxXsEZzwCf3e9Zs+eDY5eI1/d3YEOMuF
+         rgHg==
+X-Gm-Message-State: AOAM531BPTtVGKoU8GgbnMdLJB+OLzqbv3I6bFbJNpEHQiIyycEu5v8z
+        7U+nK0hm18kMdREXZg639cZxVCEAvA==
+X-Google-Smtp-Source: ABdhPJxCoyKRyGYHhBgzkRX/+OPVCS+l9Tx1bKIAWsB0NIPEPcPYA5s0210m+OawWB6cF2WOrkVoAw==
+X-Received: by 2002:a4a:9c46:: with SMTP id c6mr2131118ook.31.1618500303771;
+        Thu, 15 Apr 2021 08:25:03 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y13sm726979oti.79.2021.04.15.08.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Apr 2021 08:25:02 -0700 (PDT)
+Received: (nullmailer pid 1431769 invoked by uid 1000);
+        Thu, 15 Apr 2021 15:25:00 -0000
+Date:   Thu, 15 Apr 2021 10:25:00 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Flora Fu <flora.fu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v3] clk: renesas: rcar-usb2-clock-sel: Fix error handling in rcar_usb2_clock_sel_probe
-Date:   Thu, 15 Apr 2021 15:33:38 +0800
-Message-Id: <20210415073338.22287-1-dinghao.liu@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: cC_KCgD3LtRT7Hdgs8YnAQ--.20029S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4fJr17KFykCFyDKry7GFg_yoW8Kr4Dpw
-        18Xa4ftF4jgrZ2ganxtFsrZFyYka43tayjqFZ2gw18u3ZxC3W8Xr1rJFySgasYqrWkA3W3
-        X3y2gr4xCFs0vFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkq1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
-        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
-        IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E
-        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-        Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxF
-        aVAv8VW8uw4UJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
-        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
-        CI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
-        cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgwNBlZdtTXCvwAMs-
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com
+Subject: Re: [PATCH v2 4/7] dt-bindings: soc: mediatek: apusys: Add new
+ document for APU power domain
+Message-ID: <20210415152500.GA1424680@robh.at.kernel.org>
+References: <1618465960-3013-1-git-send-email-flora.fu@mediatek.com>
+ <1618465960-3013-5-git-send-email-flora.fu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1618465960-3013-5-git-send-email-flora.fu@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The error handling paths after pm_runtime_get_sync() has no
-refcount decrement, which leads to refcount leak.
+On Thu, Apr 15, 2021 at 01:52:37PM +0800, Flora Fu wrote:
+> Document the bindings for APU power domain on MediaTek SoC.
+> 
+> Signed-off-by: Flora Fu <flora.fu@mediatek.com>
+> ---
+> Note:
+> This patch depends on MT8192 clock[1] patches which haven't yet been accepted.
+> [1] https://patchwork.kernel.org/project/linux-mediatek/patch/20210324104110.13383-7-chun-jie.chen@mediatek.com/
+> ---
+>  .../soc/mediatek/mediatek,apu-pm.yaml         | 145 ++++++++++++++++++
+>  1 file changed, 145 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+> new file mode 100644
+> index 000000000000..6ff966920917
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+> @@ -0,0 +1,145 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mediatek/mediatek,apu-pm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek APU Power Domains
+> +
+> +maintainers:
+> +  - Flora Fu <flora.fu@mediatek.com>
+> +
+> +description: |
+> +  Mediatek AI Process Unit (APU) include support for power domains which can be
+> +  powered up/down by software.
+> +  APU subsys belonging to a power domain should contain a 'power-domains'
+> +  property that is a phandle for apuspm node representing the domain.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8192-apu-pm
+> +      - const: syscon
+> +
+> +  reg:
+> +    description: Address range of the APU power domain controller.
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  vsram-supply:
+> +    description: apu sram regulator supply.
+> +
+> +  mediatek,scpsys:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the device containing the scpsys register range.
+> +
+> +  mediatek,apu-conn:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the device containing the scpsys apu conn register range.
+> +
+> +  mediatek,apu-conn1:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the device containing the scpsys apu conn1 register range.
+> +
+> +  mediatek,apu-vcore:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the device containing the scpsys apu vcore register range.
+> +
+> +patternProperties:
+> +  "^power-domain@[0-9a-f]+$":
+> +    type: object
+> +    description: |
+> +      Represents the power domains within the power controller node as
+> +      documented in Documentation/devicetree/bindings/power/power-domain.yaml.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          Power domain index. Valid values are defined in:
+> +          "include/dt-bindings/power/mt8182-apu-power.h"
+> +        maxItems: 1
+> +
+> +      '#power-domain-cells':
+> +        description: |
+> +          Must be 0 for nodes representing a single PM domain and 1 for nodes
+> +          providing multiple PM.
+> +
+> +      clocks:
+> +        description: |
+> +          List of phandles of clocks list. Specify by order according to
+> +          power-up sequence.
+> +
+> +      clock-names:
+> +        description: |
+> +          List of names of clocks. Specify by order according to power-up
+> +          sequence.
+> +
+> +      assigned-clocks:
+> +        maxItems: 2
+> +
+> +      assigned-clock-parents:
+> +        maxItems: 2
+> +
+> +      domain-supply:
+> +        description: domain regulator supply.
+> +
+> +    required:
+> +      - reg
+> +      - '#power-domain-cells'
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#power-domain-cells'
+> +  - vsram-supply
+> +  - mediatek,scpsys
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8192-clk.h>
+> +    apuspm: power-domain@190f0000 {
+> +        compatible = "mediatek,mt8192-apu-pm", "syscon";
+> +        reg = <0x190f0000 0x1000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        #power-domain-cells = <1>;
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
----
+So you have domains provided by this node and then...
 
-Changelog:
+> +        vsram-supply = <&mt6359_vsram_md_ldo_reg>;
+> +        mediatek,scpsys = <&scpsys>;
+> +        mediatek,apu-conn = <&apu_conn>;
+> +        mediatek,apu-vcore = <&apu_vcore>;
+> +
+> +        apu_top: power-domain@0 {
+> +            reg = <0>;
+> +            #power-domain-cells = <0>;
 
-v2: - Move the position of pm_runtime_enable,_get_sync().
-      Use devm_clk_register() to simplify error handling.
+...each child node provides a domain. What's the difference?
 
-v2: - Use devm_clk_hw_register() instead of devm_clk_register().
----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index 3abafd78f7c8..a6f82a5a6335 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -131,7 +131,6 @@ static int rcar_usb2_clock_sel_remove(struct platform_device *pdev)
- 	struct usb2_clock_sel_priv *priv = platform_get_drvdata(pdev);
- 
- 	of_clk_del_provider(dev->of_node);
--	clk_hw_unregister(&priv->hw);
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
- 
-@@ -164,9 +163,6 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->rsts))
- 		return PTR_ERR(priv->rsts);
- 
--	pm_runtime_enable(dev);
--	pm_runtime_get_sync(dev);
--
- 	clk = devm_clk_get(dev, "usb_extal");
- 	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
- 		priv->extal = !!clk_get_rate(clk);
-@@ -183,6 +179,8 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
- 	platform_set_drvdata(pdev, priv);
- 	dev_set_drvdata(dev, priv);
- 
-@@ -193,11 +191,20 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 	init.num_parents = 0;
- 	priv->hw.init = &init;
- 
--	clk = clk_register(NULL, &priv->hw);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = devm_clk_hw_register(NULL, &priv->hw);
-+	if (ret)
-+		goto pm_put;
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
-+	if (ret)
-+		goto pm_put;
-+
-+	return 0;
- 
--	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
-+pm_put:
-+	pm_runtime_put(dev);
-+	pm_runtime_disable(dev);
-+	return ret;
- }
- 
- static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops = {
--- 
-2.17.1
-
+> +            clocks = <&topckgen CLK_TOP_DSP_SEL>,
+> +                     <&topckgen CLK_TOP_IPU_IF_SEL>,
+> +                     <&clk26m>,
+> +                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
+> +            clock-names = "clk_top_conn",
+> +                          "clk_top_ipu_if",
+> +                          "clk_off",
+> +                          "clk_on_default";
+> +            assigned-clocks = <&topckgen CLK_TOP_DSP_SEL>,
+> +                              <&topckgen CLK_TOP_IPU_IF_SEL>;
+> +            assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D6_D2>,
+> +                                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
+> +            domain-supply = <&mt6359_vproc1_buck_reg>;
+> +        };
+> +    };
+> -- 
+> 2.18.0
+> 
