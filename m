@@ -2,244 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCD1C433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 15:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A539C433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 18:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8F060FDA
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 15:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1CF60249
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Apr 2021 18:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233694AbhDOPZc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Apr 2021 11:25:32 -0400
-Received: from mail-oo1-f52.google.com ([209.85.161.52]:42965 "EHLO
-        mail-oo1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbhDOPZ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 11:25:27 -0400
-Received: by mail-oo1-f52.google.com with SMTP id e12-20020a056820060cb02901e94efc049dso533035oow.9;
-        Thu, 15 Apr 2021 08:25:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WqLtDa2Y+Z0BtnNMwL32ANtrJ2QU3EanfS3R24oxCVk=;
-        b=fg/PedfINkiVhhtq/vUv1W1ttu7+FwwXJcNNsZUiGyJbYDaiKdz8ASptpmHjOHkJ08
-         P6asEsA2C7IPYrQufLqD6MVp/a4A3nN3nto8apUJVsoP+hKKT1KvcuR83BvkaiGdQk7U
-         vRKIzu9nASol8LhJMOPXY/fRv7U+UsOFbYw2aquRrNwhITRWv7JXHkehkBYyrGJBNdFN
-         Jp80IaPe/42YHAHF64pGppRp/qECQAfNaPUl1AEH3uqd/zTHorzxwmZcE7jFfnqna+BI
-         iUeDPWdV/Eh3QqGy0GSwhciBHWJ44tiK1DK8MxXsEZzwCf3e9Zs+eDY5eI1/d3YEOMuF
-         rgHg==
-X-Gm-Message-State: AOAM531BPTtVGKoU8GgbnMdLJB+OLzqbv3I6bFbJNpEHQiIyycEu5v8z
-        7U+nK0hm18kMdREXZg639cZxVCEAvA==
-X-Google-Smtp-Source: ABdhPJxCoyKRyGYHhBgzkRX/+OPVCS+l9Tx1bKIAWsB0NIPEPcPYA5s0210m+OawWB6cF2WOrkVoAw==
-X-Received: by 2002:a4a:9c46:: with SMTP id c6mr2131118ook.31.1618500303771;
-        Thu, 15 Apr 2021 08:25:03 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y13sm726979oti.79.2021.04.15.08.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Apr 2021 08:25:02 -0700 (PDT)
-Received: (nullmailer pid 1431769 invoked by uid 1000);
-        Thu, 15 Apr 2021 15:25:00 -0000
-Date:   Thu, 15 Apr 2021 10:25:00 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Flora Fu <flora.fu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S233610AbhDOSTr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Apr 2021 14:19:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51082 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234520AbhDOSTk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 14:19:40 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13FIFU52066559;
+        Thu, 15 Apr 2021 18:19:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=sSRqnc8CP7d/ScOvRgpRssO7lfHgLBctuEO2QPJ6yFI=;
+ b=Sb8k4Iqf+sOpMFNQuCexhjG0vdwHbcNsaNewnh02VoSu7/K6TAbAw1xeKEtXUQH9KbGX
+ M9TZQXNg6rsgQ8HMt59D2tV3oHQ6Nyh9j9dVgcXRitkYZI2aN565r4VZ2U+iux2CZies
+ 6RXcChQyQSekJ08w5zh3wszkkrMzk1ThNkIUSmhS+b7ewg+WpkIESFiTmMjQ6Uonbl79
+ qAwJFxJhgLdFJWT/QMBQFaVEgZLGARsynO8H/McBj8c0MrAtMa3nnxZ+Y0QqqLzdpSq7
+ Ux8xswQK8wo8LI6tkbt4F0L9r1liBOqiEfLu5pVsM4RuEDxzCjfl824fSsYrJAwmN0Qw Ag== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 37u3ymptm3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Apr 2021 18:19:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13FIFoPr068218;
+        Thu, 15 Apr 2021 18:19:07 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 37unx3app9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Apr 2021 18:19:07 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13FIJ5dm023900;
+        Thu, 15 Apr 2021 18:19:05 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Apr 2021 11:19:04 -0700
+Date:   Thu, 15 Apr 2021 21:18:50 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Colin King <colin.king@canonical.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
-        Chiawen Lee <chiawen.lee@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-Subject: Re: [PATCH v2 4/7] dt-bindings: soc: mediatek: apusys: Add new
- document for APU power domain
-Message-ID: <20210415152500.GA1424680@robh.at.kernel.org>
-References: <1618465960-3013-1-git-send-email-flora.fu@mediatek.com>
- <1618465960-3013-5-git-send-email-flora.fu@mediatek.com>
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
+Message-ID: <20210415181850.GD6021@kadam>
+References: <20210407152457.497346-1-colin.king@canonical.com>
+ <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1618465960-3013-5-git-send-email-flora.fu@mediatek.com>
+In-Reply-To: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9955 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104150114
+X-Proofpoint-GUID: 6Byqh3omvf4T8b_6-ZEm8CNEuvS2tfKT
+X-Proofpoint-ORIG-GUID: 6Byqh3omvf4T8b_6-ZEm8CNEuvS2tfKT
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9955 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104150114
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 01:52:37PM +0800, Flora Fu wrote:
-> Document the bindings for APU power domain on MediaTek SoC.
+On Fri, Apr 09, 2021 at 03:46:47PM +0900, Masahiro Yamada wrote:
+> On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
+> >
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > The for-loop iterates with a u8 loop counter i and compares this
+> > with the loop upper limit of num_parents that is an int type.
+> > There is a potential infinite loop if num_parents is larger than
+> > the u8 loop counter. Fix this by making the loop counter the same
+> > type as num_parents.
+> >
+> > Addresses-Coverity: ("Infinite loop")
+> > Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+> > index 462c84321b2d..ce219e0d2a85 100644
+> > --- a/drivers/clk/uniphier/clk-uniphier-mux.c
+> > +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+> > @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
+> >         int num_parents = clk_hw_get_num_parents(hw);
+> >         int ret;
+> >         unsigned int val;
+> > -       u8 i;
+> > +       int i;
+> >
+> >         ret = regmap_read(mux->regmap, mux->reg, &val);
+> >         if (ret)
+> > --
+> > 2.30.2
+> >
 > 
-> Signed-off-by: Flora Fu <flora.fu@mediatek.com>
-> ---
-> Note:
-> This patch depends on MT8192 clock[1] patches which haven't yet been accepted.
-> [1] https://patchwork.kernel.org/project/linux-mediatek/patch/20210324104110.13383-7-chun-jie.chen@mediatek.com/
-> ---
->  .../soc/mediatek/mediatek,apu-pm.yaml         | 145 ++++++++++++++++++
->  1 file changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
+> clk_hw_get_num_parents() returns 'unsigned int', so
+> I think 'num_parents' should also have been 'unsigned int'.
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
-> new file mode 100644
-> index 000000000000..6ff966920917
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,apu-pm.yaml
-> @@ -0,0 +1,145 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/mediatek/mediatek,apu-pm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Mediatek APU Power Domains
-> +
-> +maintainers:
-> +  - Flora Fu <flora.fu@mediatek.com>
-> +
-> +description: |
-> +  Mediatek AI Process Unit (APU) include support for power domains which can be
-> +  powered up/down by software.
-> +  APU subsys belonging to a power domain should contain a 'power-domains'
-> +  property that is a phandle for apuspm node representing the domain.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - mediatek,mt8192-apu-pm
-> +      - const: syscon
-> +
-> +  reg:
-> +    description: Address range of the APU power domain controller.
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  vsram-supply:
-> +    description: apu sram regulator supply.
-> +
-> +  mediatek,scpsys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      phandle to the device containing the scpsys register range.
-> +
-> +  mediatek,apu-conn:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      phandle to the device containing the scpsys apu conn register range.
-> +
-> +  mediatek,apu-conn1:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      phandle to the device containing the scpsys apu conn1 register range.
-> +
-> +  mediatek,apu-vcore:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      phandle to the device containing the scpsys apu vcore register range.
-> +
-> +patternProperties:
-> +  "^power-domain@[0-9a-f]+$":
-> +    type: object
-> +    description: |
-> +      Represents the power domains within the power controller node as
-> +      documented in Documentation/devicetree/bindings/power/power-domain.yaml.
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          Power domain index. Valid values are defined in:
-> +          "include/dt-bindings/power/mt8182-apu-power.h"
-> +        maxItems: 1
-> +
-> +      '#power-domain-cells':
-> +        description: |
-> +          Must be 0 for nodes representing a single PM domain and 1 for nodes
-> +          providing multiple PM.
-> +
-> +      clocks:
-> +        description: |
-> +          List of phandles of clocks list. Specify by order according to
-> +          power-up sequence.
-> +
-> +      clock-names:
-> +        description: |
-> +          List of names of clocks. Specify by order according to power-up
-> +          sequence.
-> +
-> +      assigned-clocks:
-> +        maxItems: 2
-> +
-> +      assigned-clock-parents:
-> +        maxItems: 2
-> +
-> +      domain-supply:
-> +        description: domain regulator supply.
-> +
-> +    required:
-> +      - reg
-> +      - '#power-domain-cells'
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#power-domain-cells'
-> +  - vsram-supply
-> +  - mediatek,scpsys
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8192-clk.h>
-> +    apuspm: power-domain@190f0000 {
-> +        compatible = "mediatek,mt8192-apu-pm", "syscon";
-> +        reg = <0x190f0000 0x1000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        #power-domain-cells = <1>;
+> Maybe, the loop counter 'i' also should be 'unsigned int' then?
 
-So you have domains provided by this node and then...
+The clk_hw_get_num_parents() function returns 0-255 so the original code
+works fine.
 
-> +        vsram-supply = <&mt6359_vsram_md_ldo_reg>;
-> +        mediatek,scpsys = <&scpsys>;
-> +        mediatek,apu-conn = <&apu_conn>;
-> +        mediatek,apu-vcore = <&apu_vcore>;
-> +
-> +        apu_top: power-domain@0 {
-> +            reg = <0>;
-> +            #power-domain-cells = <0>;
+It should basically always be "int i;"  That's the safest assumption.
+There are other case where it has to be size_t but in those cases I
+think people should call the list iterator something else instead of "i"
+like "size_t pg_idx;".
 
-...each child node provides a domain. What's the difference?
+Making everthing u32 causes more bugs than it prevents.  Signedness bugs
+with comparing to zero, type promotion bugs, or subtraction bugs where
+subtracting wraps to a high value.  It's rare to loop more than INT_MAX
+times in the kernel.  When we do need to count about 2 million then
+we're probably not going to stop counting at 4 million, we're going to
+go to 10 million or higher so size_t is more appropriate than u32.
 
-> +            clocks = <&topckgen CLK_TOP_DSP_SEL>,
-> +                     <&topckgen CLK_TOP_IPU_IF_SEL>,
-> +                     <&clk26m>,
-> +                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
-> +            clock-names = "clk_top_conn",
-> +                          "clk_top_ipu_if",
-> +                          "clk_off",
-> +                          "clk_on_default";
-> +            assigned-clocks = <&topckgen CLK_TOP_DSP_SEL>,
-> +                              <&topckgen CLK_TOP_IPU_IF_SEL>;
-> +            assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL_D6_D2>,
-> +                                     <&topckgen CLK_TOP_UNIVPLL_D6_D2>;
-> +            domain-supply = <&mt6359_vproc1_buck_reg>;
-> +        };
-> +    };
-> -- 
-> 2.18.0
-> 
+Btw, if you have a loop that does:
+
+	for (i = 0; i < UINT_MAX; i++) {
+
+that loop works exactly the same if "i" is an int or if it's a u32
+because of type promotion.  So you have to look really hard to find a
+place where changing a loop iterator from int to u32 fixes bug in real
+life.
+
+regards,
+dan carpenter
