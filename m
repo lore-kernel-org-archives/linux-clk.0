@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED4DC43603
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689C6C4360C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 811DB611AB
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3592861184
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239121AbhDPGiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Apr 2021 02:38:01 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38610 "EHLO
+        id S239131AbhDPGiC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Apr 2021 02:38:02 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38614 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238356AbhDPGiA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Apr 2021 02:38:00 -0400
+        with ESMTP id S235576AbhDPGiB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Apr 2021 02:38:01 -0400
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bNjF125763;
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bNQq125765;
         Fri, 16 Apr 2021 01:37:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1618555043;
-        bh=E06Ov0k5VaiMqX2TAE7fti9XHuSYAFCaFc5lwhzNgJY=;
+        bh=zmLDKti0Fwv26bitJG2/F0NGKoPPVKLXrRnsXEk7UlM=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=oxsEgI9e22RbmXRBMEP9k73SN1L85ZKU9Lle00n1GxBWpRkDau+0P8g6BU9uNelEW
-         rm5ThkRDOlpWKoXhWSHK91m2chR6eQpz9dm3dl6Y9fWXRz5IzS4ZLPbivzhOXCvMgY
-         t00RSioV/i8/z+nlzMCGBaEHUlpx6YJZ1yT5r404=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13G6bNa6083442
+        b=kw1Ok0uoz9apcYrRDm3P9ze6JbJmCyWz5Lzmw7fTMpHchBxrPOdcDaNB+pE9d+CiL
+         kIwt0d0oNMYm48LweYg+RlMWFnPUZv0yKM8mxsApHcAbBwTVa+eflgLOq5QnafKwhB
+         mwFStzpUWiPnLl/e2abATLJCdkRI1wKYPlL8NExw=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13G6bN66083441
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Fri, 16 Apr 2021 01:37:23 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 16
  Apr 2021 01:37:23 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
  Frontend Transport; Fri, 16 Apr 2021 01:37:23 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bNSF063623;
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bNQ8015690;
         Fri, 16 Apr 2021 01:37:23 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Philipp Zabel <p.zabel@pengutronix.de>,
@@ -54,9 +54,9 @@ To:     Philipp Zabel <p.zabel@pengutronix.de>,
 CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 3/4] dt-bindings: soc: ti: Convert ti,sci-pm-domain to json schema
-Date:   Fri, 16 Apr 2021 01:37:20 -0500
-Message-ID: <20210416063721.20538-4-nm@ti.com>
+Subject: [PATCH 1/4] dt-bindings: reset: Convert ti,sci-reset to json schema
+Date:   Fri, 16 Apr 2021 01:37:18 -0500
+Message-ID: <20210416063721.20538-2-nm@ti.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210416063721.20538-1-nm@ti.com>
 References: <20210416063721.20538-1-nm@ti.com>
@@ -68,116 +68,109 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the ti,sci-pm-domain to json schema for better checks and
-documentation.
+Convert the ti,sci-reset to json schema for better checks and documentation.
 
 Differences being:
  - Drop consumer example as they are documented in the corresponding
    bindings themselves.
- - Drop phandle description for reset consumer or cell definition as it
-   is redundant.
+ - Drop phandle description for reset consumer or cell definition as it is
+   redundant.
 
 NOTE: we do have false positive checkpatch warning with this patch:
 "DT binding docs and includes should be a separate patch"
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- .../bindings/soc/ti/sci-pm-domain.txt         | 65 -------------------
- .../bindings/soc/ti/sci-pm-domain.yaml        | 59 +++++++++++++++++
- 2 files changed, 59 insertions(+), 65 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
- create mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+ .../bindings/reset/ti,sci-reset.txt           | 62 -------------------
+ .../bindings/reset/ti,sci-reset.yaml          | 51 +++++++++++++++
+ 2 files changed, 51 insertions(+), 62 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+ create mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+diff --git a/Documentation/devicetree/bindings/reset/ti,sci-reset.txt b/Documentation/devicetree/bindings/reset/ti,sci-reset.txt
 deleted file mode 100644
-index 6217e64309de..000000000000
---- a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+index 8b1cf022f18a..000000000000
+--- a/Documentation/devicetree/bindings/reset/ti,sci-reset.txt
 +++ /dev/null
-@@ -1,65 +0,0 @@
--Texas Instruments TI-SCI Generic Power Domain
-----------------------------------------------
+@@ -1,62 +0,0 @@
+-Texas Instruments System Control Interface (TI-SCI) Reset Controller
+-=====================================================================
 -
--Some TI SoCs contain a system controller (like the PMMC, etc...) that is
--responsible for controlling the state of the IPs that are present.
--Communication between the host processor running an OS and the system
--controller happens through a protocol known as TI-SCI [1].
+-Some TI SoCs contain a system controller (like the Power Management Micro
+-Controller (PMMC) on Keystone 66AK2G SoC) that are responsible for controlling
+-the state of the various hardware modules present on the SoC. Communication
+-between the host processor running an OS and the system controller happens
+-through a protocol called TI System Control Interface (TI-SCI protocol).
+-For TI SCI details, please refer to the document,
+-Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
 -
--[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+-TI-SCI Reset Controller Node
+-============================
+-This reset controller node uses the TI SCI protocol to perform the reset
+-management of various hardware modules present on the SoC. Must be a child
+-node of the associated TI-SCI system controller node.
 -
--PM Domain Node
--==============
--The PM domain node represents the global PM domain managed by the PMMC, which
--in this case is the implementation as documented by the generic PM domain
--bindings in Documentation/devicetree/bindings/power/power-domain.yaml.  Because
--this relies on the TI SCI protocol to communicate with the PMMC it must be a
--child of the pmmc node.
--
--Required Properties:
+-Required properties:
 ---------------------
--- compatible: should be "ti,sci-pm-domain"
--- #power-domain-cells: Can be one of the following:
--			1: Containing the device id of each node
--			2: First entry should be device id
--			   Second entry should be one of the floowing:
--			   TI_SCI_PD_EXCLUSIVE: To allow device to be
--						exclusively controlled by
--						the requesting hosts.
--			   TI_SCI_PD_SHARED: To allow device to be shared
--					     by multiple hosts.
+- - compatible	: Should be "ti,sci-reset"
+- - #reset-cells	: Should be 2. Please see the reset consumer node below for
+-		  usage details.
 -
--Example (K2G):
---------------
--	pmmc: pmmc {
--		compatible = "ti,k2g-sci";
--		...
+-TI-SCI Reset Consumer Nodes
+-===========================
+-Each of the reset consumer nodes should have the following properties,
+-in addition to their own properties.
 -
--		k2g_pds: power-controller {
--			compatible = "ti,sci-pm-domain";
--			#power-domain-cells = <1>;
--		};
+-Required properties:
+---------------------
+- - resets	: A phandle and reset specifier pair, one pair for each reset
+-		  signal that affects the device, or that the device manages.
+-		  The phandle should point to the TI-SCI reset controller node,
+-		  and the reset specifier should have 2 cell-values. The first
+-		  cell should contain the device ID. The second cell should
+-		  contain the reset mask value used by system controller.
+-		  Please refer to the protocol documentation for these values
+-		  to be used for different devices,
+-		  http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
+-
+-Please also refer to Documentation/devicetree/bindings/reset/reset.txt for
+-common reset controller usage by consumers.
+-
+-Example:
+---------
+-The following example demonstrates both a TI-SCI reset controller node and a
+-consumer (a DSP device) on the 66AK2G SoC.
+-
+-pmmc: pmmc {
+-	compatible = "ti,k2g-sci";
+-
+-	k2g_reset: reset-controller {
+-		compatible = "ti,sci-reset";
+-		#reset-cells = <2>;
 -	};
+-};
 -
--PM Domain Consumers
--===================
--Hardware blocks belonging to a PM domain should contain a "power-domains"
--property that is a phandle pointing to the corresponding PM domain node
--along with an index representing the device id to be passed to the PMMC
--for device control.
--
--Required Properties:
----------------------
--- power-domains: phandle pointing to the corresponding PM domain node
--		 and an ID representing the device.
--
--See http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data for the list
--of valid identifiers for k2g.
--
--Example (K2G):
----------------------
--	uart0: serial@2530c00 {
--		compatible = "ns16550a";
--		...
--		power-domains = <&k2g_pds 0x002c>;
--	};
-diff --git a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+-dsp0: dsp@10800000 {
+-	...
+-	resets = <&k2g_reset 0x0046 0x1>;
+-	...
+-};
+diff --git a/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
 new file mode 100644
-index 000000000000..9e6cb4ee9755
+index 000000000000..4639d2cec557
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
-@@ -0,0 +1,59 @@
++++ b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+@@ -0,0 +1,51 @@
 +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/soc/ti/sci-pm-domain.yaml#
++$id: http://devicetree.org/schemas/reset/ti,sci-reset.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: TI-SCI generic power domain node bindings
++title: TI-SCI reset controller node bindings
 +
 +maintainers:
 +  - Nishanth Menon <nm@ti.com>
-+
-+allOf:
-+  - $ref: /schemas/power/power-domain.yaml#
 +
 +description: |
 +  Some TI SoCs contain a system controller (like the Power Management Micro
@@ -186,43 +179,38 @@ index 000000000000..9e6cb4ee9755
 +  between the host processor running an OS and the system controller happens
 +  through a protocol called TI System Control Interface (TI-SCI protocol).
 +
-+  This PM domain node represents the global PM domain managed by the TI-SCI
-+  controller. Since this relies on the TI SCI protocol to communicate with
-+  the TI-SCI controller, it must be a child of the TI-SCI controller node.
++  This reset controller node uses the TI SCI protocol to perform the reset
++  management of various hardware modules present on the SoC. Must be a child
++  node of the associated TI-SCI system controller node.
 +
 +properties:
-+  compatible:
-+    const: ti,sci-pm-domain
++  $nodename:
++    pattern: "^reset-controller$"
 +
-+  "#power-domain-cells":
-+    enum: [1, 2]
++  compatible:
++    const: ti,sci-reset
++
++  "#reset-cells":
++    const: 2
 +    description:
 +      The two cells represent values that the TI-SCI controller defines.
 +
 +      The first cell should contain the device ID.
 +
-+      The second cell, if cell-value is 2, should be one of the following
-+      TI_SCI_PD_EXCLUSIVE - Allows the device to be exclusively controlled
-+      or
-+      TI_SCI_PD_SHARED - Allows the device to be shared by multiple hosts.
-+      Please refer to dt-bindings/soc/ti,sci_pm_domain.h for the definitions.
++      The second cell should contain the reset mask corresponding to the device
++      used by system controller.
 +
 +      Please see  http://processors.wiki.ti.com/index.php/TISCI for
 +      protocol documentation for the values to be used for different devices.
++
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    k2g_pds: power-controller {
-+        compatible = "ti,sci-pm-domain";
-+        #power-domain-cells = <1>;
-+    };
-+
-+  - |
-+    k3_pds: power-controller {
-+        compatible = "ti,sci-pm-domain";
-+        #power-domain-cells = <2>;
++    k3_reset: reset-controller {
++        compatible = "ti,sci-reset";
++        #reset-cells = <2>;
 +    };
 -- 
 2.31.0
