@@ -2,181 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBC6C433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 02:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46178C433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 03:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C673861152
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 02:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C9EF61184
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 03:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234764AbhDPCy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Apr 2021 22:54:27 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:33135 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235863AbhDPCy1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 22:54:27 -0400
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 13G2rj5v020114;
-        Fri, 16 Apr 2021 11:53:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 13G2rj5v020114
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1618541625;
-        bh=C3o2fuGogysZj6JUvfMYyt2JuWyfL7NiiLTCUac1I+g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eonCGiJQHsqpZ/iYfUV6r6YN4izdBpsXxeIWZewDQj+SgmwL66MGogDS/0R8HX2TI
-         uqle9ZeL/Luag8A7Jf/+ae5slrDcOZiq9kId4oPQ2Ckklykl/Di4ZAyLIudBcAZV9O
-         kQs4NbltQxQzG1ym0cPTIIORZuwETzHzgQReiE0wZjI4f6d/lGSPM72idliwRpcXQC
-         atM6SOmnp8kqIOmhSA1Ol7biYW0P9dCX2PR4xUUkFpPQ1wT9ttzavICvOKySP6+hKu
-         zZ6j3IxAnWfTjAa5wjbjh7YkRK2g5fVgYotFhrWvtDveEXJUMOHSWXPoGxwy0ztptf
-         U6GnkrKNg6cMA==
-X-Nifty-SrcIP: [209.85.215.179]
-Received: by mail-pg1-f179.google.com with SMTP id b17so18262094pgh.7;
-        Thu, 15 Apr 2021 19:53:45 -0700 (PDT)
-X-Gm-Message-State: AOAM533OqOBJ+KKL1TLWlq23fMsmMMlA8f+GOPGwFhRF0GQW8yfK9LBv
-        bRrF01VOrnAK85T8WEDCnyGaRGXGWDZ6LakK5a8=
-X-Google-Smtp-Source: ABdhPJye0T0Zqs/E4nSVHtl6qDvrTFn2swAHtiCk0RlhR0STxhUMS97/R14pGv5lOTA2CMcjQdgANBZlVex2nBHNDJA=
-X-Received: by 2002:a05:6a00:2303:b029:249:b91e:72f0 with SMTP id
- h3-20020a056a002303b0290249b91e72f0mr5935536pfh.80.1618541624454; Thu, 15 Apr
- 2021 19:53:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210407152457.497346-1-colin.king@canonical.com>
- <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com> <20210415181850.GD6021@kadam>
-In-Reply-To: <20210415181850.GD6021@kadam>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 16 Apr 2021 11:53:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATySocPRr4BdaKr5_GZ=G4tQYgPQEDe0piiTS_qiWawkA@mail.gmail.com>
-Message-ID: <CAK7LNATySocPRr4BdaKr5_GZ=G4tQYgPQEDe0piiTS_qiWawkA@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
+        id S234806AbhDPDBk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Apr 2021 23:01:40 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58561 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234548AbhDPDBk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Apr 2021 23:01:40 -0400
+X-UUID: 1bdd5d1b344c4fc6b909347dc6b1f5c4-20210416
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=MTAy3dK7ZeeTqAFn6CDQfuUe2LUsEJXiuvm05pj0FSo=;
+        b=KRDqCfuCAN6kvJxmqjtLn83qxuYVTBV73wN+hQvJ1XYN5LqOOoEAAqan8vhDhjUutIHtyhD9x4/nf/+aDSwMY3gspbcx6XqVn0iuCm/rBJvLIeUhPJNX4pSf8dq0mieRUMtOJ7KBdA6WAsC8flmh1UPN3JvDWzMA9YEtnvKNrVw=;
+X-UUID: 1bdd5d1b344c4fc6b909347dc6b1f5c4-20210416
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <flora.fu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 24531458; Fri, 16 Apr 2021 11:01:13 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 16 Apr 2021 11:01:10 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 16 Apr 2021 11:01:10 +0800
+Message-ID: <1618542070.27491.15.camel@mtksdccf07>
+Subject: Re: [PATCH 4/8] dt-bindings: arm: mediatek: Add new document
+ bindings for APU
+From:   Flora Fu <flora.fu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
+        Chiawen Lee <chiawen.lee@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Date:   Fri, 16 Apr 2021 11:01:10 +0800
+In-Reply-To: <CAL_JsqLKaYY=NHm1hD=YaQgvDOBTtraoUqcycA7tu7n-f2GVDw@mail.gmail.com>
+References: <1617766086-5502-1-git-send-email-flora.fu@mediatek.com>
+         <1617766086-5502-5-git-send-email-flora.fu@mediatek.com>
+         <20210409182538.GA3913794@robh.at.kernel.org>
+         <1618209895.25062.11.camel@mtksdccf07>
+         <CAL_JsqLKaYY=NHm1hD=YaQgvDOBTtraoUqcycA7tu7n-f2GVDw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 9F4E1F87D3F9E72542DAD2DF050407D939B7DB684CFA915AFE9C5AC433219D722000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 3:19 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Fri, Apr 09, 2021 at 03:46:47PM +0900, Masahiro Yamada wrote:
-> > On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
-> > >
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The for-loop iterates with a u8 loop counter i and compares this
-> > > with the loop upper limit of num_parents that is an int type.
-> > > There is a potential infinite loop if num_parents is larger than
-> > > the u8 loop counter. Fix this by making the loop counter the same
-> > > type as num_parents.
-> > >
-> > > Addresses-Coverity: ("Infinite loop")
-> > > Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > index 462c84321b2d..ce219e0d2a85 100644
-> > > --- a/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
-> > >         int num_parents = clk_hw_get_num_parents(hw);
-> > >         int ret;
-> > >         unsigned int val;
-> > > -       u8 i;
-> > > +       int i;
-> > >
-> > >         ret = regmap_read(mux->regmap, mux->reg, &val);
-> > >         if (ret)
-> > > --
-> > > 2.30.2
-> > >
-> >
-> > clk_hw_get_num_parents() returns 'unsigned int', so
-> > I think 'num_parents' should also have been 'unsigned int'.
-> >
-> > Maybe, the loop counter 'i' also should be 'unsigned int' then?
->
-> The clk_hw_get_num_parents() function returns 0-255 so the original code
-> works fine.
+T24gVGh1LCAyMDIxLTA0LTE1IGF0IDE2OjI0IC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
+T24gTW9uLCBBcHIgMTIsIDIwMjEgYXQgMTo0NSBBTSBGbG9yYSBGdSA8ZmxvcmEuZnVAbWVkaWF0
+ZWsuY29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIEZyaSwgMjAyMS0wNC0wOSBhdCAxMzoyNSAtMDUw
+MCwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEFwciAwNywgMjAyMSBhdCAxMToy
+ODowMkFNICswODAwLCBGbG9yYSBGdSB3cm90ZToNCj4gPiA+ID4gRG9jdW1lbnQgdGhlIGFwdXN5
+cyBiaW5kaW5ncy4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogRmxvcmEgRnUgPGZs
+b3JhLmZ1QG1lZGlhdGVrLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICAuLi4vYXJtL21lZGlh
+dGVrL21lZGlhdGVrLGFwdXN5cy55YW1sICAgICAgICAgfCA1NiArKysrKysrKysrKysrKysrKysr
+DQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgNTYgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPiAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVk
+aWF0ZWsvbWVkaWF0ZWssYXB1c3lzLnlhbWwNCj4gPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBh
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWss
+YXB1c3lzLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlh
+dGVrL21lZGlhdGVrLGFwdXN5cy55YW1sDQo+ID4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+
+ID4gPiA+IGluZGV4IDAwMDAwMDAwMDAwMC4uZGMwNGE0NmYxYmFkDQo+ID4gPiA+IC0tLSAvZGV2
+L251bGwNCj4gPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Fy
+bS9tZWRpYXRlay9tZWRpYXRlayxhcHVzeXMueWFtbA0KPiA+ID4gPiBAQCAtMCwwICsxLDU2IEBA
+DQo+ID4gPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBCU0QtMi1D
+bGF1c2UpDQo+ID4gPiA+ICslWUFNTCAxLjINCj4gPiA+ID4gKy0tLQ0KPiA+ID4gPiArJGlkOiBo
+dHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMv
+YXJtL21lZGlhdGVrL21lZGlhdGVrLGFwdXN5cy55YW1sKl9fO0l3ISFDVFJOS0E5d01nMEFSYnch
+M3J5S0ZUQTJDdnNWc3M0UHQyWk9HN3d2NGpnUi0yTFB4dUduMzBJeEZtcHhveFNSZHpOZGY4RnJB
+WVl2WldjdyQNCj4gPiA+ID4gKyRzY2hlbWE6IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19o
+dHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCpfXztJdyEhQ1RSTktB
+OXdNZzBBUmJ3ITNyeUtGVEEyQ3ZzVnNzNFB0MlpPRzd3djRqZ1ItMkxQeHVHbjMwSXhGbXB4b3hT
+UmR6TmRmOEZyQVJsaENRMHckDQo+ID4gPiA+ICsNCj4gPiA+ID4gK3RpdGxlOiBNZWRpYVRlayBB
+UFVTWVMgQ29udHJvbGxlcg0KPiA+ID4gPiArDQo+ID4gPiA+ICttYWludGFpbmVyczoNCj4gPiA+
+ID4gKyAgLSBGbG9yYSBGdSA8ZmxvcmEuZnVAbWVkaWF0ZWsuY29tPg0KPiA+ID4gPiArDQo+ID4g
+PiA+ICtkZXNjcmlwdGlvbjoNCj4gPiA+ID4gKyAgVGhlIE1lZGlhdGVrIGFwdXN5cyBjb250cm9s
+bGVyIHByb3ZpZGVzIGZ1bmN0aW9uYWwgY29uZmlndXJhdGlvbnMgYW5kIGNsb2Nrcw0KPiA+ID4g
+PiArICB0byB0aGUgc3lzdGVtLg0KPiA+ID4gPiArDQo+ID4gPiA+ICtwcm9wZXJ0aWVzOg0KPiA+
+ID4gPiArICBjb21wYXRpYmxlOg0KPiA+ID4gPiArICAgIGl0ZW1zOg0KPiA+ID4gPiArICAgICAg
+LSBlbnVtOg0KPiA+ID4gPiArICAgICAgICAgIC0gbWVkaWF0ZWssbXQ4MTkyLWFwdV9tYm94DQo+
+ID4gPiA+ICsgICAgICAgICAgLSBtZWRpYXRlayxtdDgxOTItYXB1X2Nvbm4NCj4gPiA+ID4gKyAg
+ICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1hcHVfdmNvcmUNCj4gPiA+DQo+ID4gPiBzL18vLS8N
+Cj4gPiA+DQo+ID4NCj4gPiBPSy4gSSB3aWxsIHVwZGF0ZSBleHByZXNzaW9uIHN0cmluZ3MgaW4g
+dGhlIG5leHQgdmVyc2lvbi4NCj4gPg0KPiA+ID4gPiArICAgICAgLSBjb25zdDogc3lzY29uDQo+
+ID4gPiA+ICsNCj4gPiA+ID4gKyAgcmVnOg0KPiA+ID4gPiArICAgIG1heEl0ZW1zOiAxDQo+ID4g
+PiA+ICsNCj4gPiA+ID4gKyAgJyNjbG9jay1jZWxscyc6DQo+ID4gPiA+ICsgICAgY29uc3Q6IDEN
+Cj4gPiA+ID4gKw0KPiA+ID4gPiArcmVxdWlyZWQ6DQo+ID4gPiA+ICsgIC0gY29tcGF0aWJsZQ0K
+PiA+ID4gPiArICAtIHJlZw0KPiA+ID4gPiArDQo+ID4gPiA+ICthZGRpdGlvbmFsUHJvcGVydGll
+czogZmFsc2UNCj4gPiA+ID4gKw0KPiA+ID4gPiArZXhhbXBsZXM6DQo+ID4gPiA+ICsgIC0gfA0K
+PiA+ID4gPiArICAgIGFwdV9tYm94OiBhcHVfbWJveEAxOTAwMDAwMCB7DQo+ID4gPg0KPiA+ID4g
+bWFpbGJveEAuLi4/IElzIHRoaXMgYSBtYWlsYm94IHByb3ZpZGVyPw0KPiA+ID4NCj4gPg0KPiA+
+IFllcywgdGhlIGFwdV9tYm94IGlzIHRoZSBmb3Igc2V0dXAgbWFpbGJveCBpbiB0aGUgQVBVIGhh
+cmR3YXJlLg0KPiANCj4gVGhlbiB5b3UgbmVlZCAjbWJveC1jZWxscyBoZXJlLg0KPiANCj4gQW5k
+IGluIHRoYXQgY2FzZSwgd2hhdCBtYWtlcyBpdCBhIHN5c2Nvbj8NCj4gDQpUaGUgYXB1X21ib3gg
+YXJlIHJlZ2lzdGVycyBmb3Igc2V0dXAgbWFpbCBib3ggY29tbXVuaWNhdGlvbnMgYmV0d2VlbiBh
+cHUNCnByb2Nlc3NvciBhbmQgdGhlIEFQIHNpZGUga2VybmVsIGRyaXZlcnMuIEl0IGFsc28gaGFz
+IHNwYXJlIHJlZ2lzdGVycw0KdGhhdCByZXNlcnZlZCBmb3Iga2VlcCBzcGVjaWZpYyBpbmZvcm1h
+dGlvbiBiZXR3ZWVuIGFwdSBhbmQgQVAgc2lkZS4NClRoYXQncyB3aHkgSSBzZXQgaXQgYXMgc3lz
+Y29uIHRvIGF2b2lkIGlvcmVtYXAgZnJvbSB1c2Vycy4gRG8geW91IHRoaW5rDQppdCBpcyByZWFz
+b25hYmxlIG9yIGl0IGlzIGJldHRlciB0byBiZSBrZXB0IGluc2lkZSB0aGUgdXNlciBub2RlcyB3
+aGVuDQp1c2luZyBpdD8NCg0KPiA+DQo+ID4gPiA+ICsgICAgICAgIGNvbXBhdGlibGUgPSAibWVk
+aWF0ZWssbXQ4MTkyLWFwdV9tYm94IiwgInN5c2NvbiI7DQo+ID4gPiA+ICsgICAgICAgIHJlZyA9
+IDwweDE5MDAwMDAwIDB4MTAwMD47DQo+ID4gPiA+ICsgICAgfTsNCg0K
 
-True.  clk->core->num_parents is u8,
-but it is not clear just by looking at the
-prototype of clk_hw_get_num_parents().
-
-At least, it is not clear enough for tools,
-and actually Coverity raised a flag.
-
-
-Personally, I prefer 'unsigned int' (or 'int')
-when I count the number of something.
-Historically, the clk subsystem uses u8,
-(maybe to save memory??), and there exists
-distortion.
-
-For example, the return type of
-uniphier_clk_mux_get_parent() is u8,
-but it actually returns -EINVAL for error cases.
-
-So, u8 is not wide enough, in my opinion.
-
-
-
->
-> It should basically always be "int i;"  That's the safest assumption.
-> There are other case where it has to be size_t but in those cases I
-> think people should call the list iterator something else instead of "i"
-> like "size_t pg_idx;".
->
-> Making everthing u32 causes more bugs than it prevents.  Signedness bugs
-> with comparing to zero, type promotion bugs, or subtraction bugs where
-> subtracting wraps to a high value.  It's rare to loop more than INT_MAX
-> times in the kernel.  When we do need to count about 2 million then
-> we're probably not going to stop counting at 4 million, we're going to
-> go to 10 million or higher so size_t is more appropriate than u32.
->
-> Btw, if you have a loop that does:
->
->         for (i = 0; i < UINT_MAX; i++) {
->
-> that loop works exactly the same if "i" is an int or if it's a u32
-> because of type promotion.
-
-You are right.
-
-Perhaps, in hindsight, the following were natural:
-
-
-   unsigned int num_parents = clk_hw_get_num_parents(hw);
-   ...
-   int i;
-
-
-I am fine with this if it is not too late.
-But, Stephen has already picked up this patch.
-
-
-
-
-
->  So you have to look really hard to find a
-> place where changing a loop iterator from int to u32 fixes bug in real
-> life.
->
-> regards,
-> dan carpenter
-
-
-
--- 
-Best Regards
-Masahiro Yamada
