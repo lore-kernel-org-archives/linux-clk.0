@@ -2,181 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB523C433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 15:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C738C433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 23:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 857C8610CC
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 15:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2487F61166
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 23:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343712AbhDPPcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Apr 2021 11:32:09 -0400
-Received: from phobos.denx.de ([85.214.62.61]:38640 "EHLO phobos.denx.de"
+        id S234712AbhDPXzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Apr 2021 19:55:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235563AbhDPPcJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Apr 2021 11:32:09 -0400
-Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 3BC8580C91;
-        Fri, 16 Apr 2021 17:31:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1618587101;
-        bh=uv0frI0pVvjdGrlUcRarPqNaalC/4JZbhNGLO+NMpck=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=M5kCG0DOpjQXdhUWwgerHvNOUWghxEwX8nCF0r4SOzUJcOUzMWYApa0Q+5rmrOfGp
-         edbPSzU80HL00MAzo81CmfykcsETQj+UPF6VJ6q2r+1vUHK2gNYjbcTQyKhbbWcUZP
-         cwatxgJwLUzy1w5CmVzEzz8AZPmOZDR+chhzCEVPHs3a2bNaR2uTr+J81qkE3nYChw
-         KrE8f3L9nUVEd7TAMQKFdeKC97l0qL5QT9UhuUna2e+Oxk8uaY9lvYzPV2s/XofVFC
-         JJDlrPNpz1XRA+Jt2CSWo50YDKTOtPGMN0Zj1e2QAWyZzP2dBgvSNtp1aotaVqa3dS
-         7KT5AS/mGig5g==
-Subject: Re: [PATCH 1/7] clk: stm32mp1: Split ETHCK_K into separate MUX and
- GATE clock
-To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christophe Roullier <christophe.roullier@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Stephen Boyd <swboyd@chromium.org>, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20210408185731.135511-1-marex@denx.de>
- <20210408185731.135511-2-marex@denx.de>
- <2b10f5d9-54cb-ce83-b7aa-f4ec8e67c001@foss.st.com>
- <92dd5798-8f5a-66e4-06bc-e3beb16690f5@denx.de>
- <d168aed8-aebd-1bee-aa72-3a3601718cad@foss.st.com>
- <e27dbccd-518f-7718-8cf7-cc9c8adb8a56@denx.de>
- <6416577a-ea06-a014-543a-9ef86aae603d@foss.st.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <2281af74-33a0-df45-968b-baa1ddd9d6e0@denx.de>
-Date:   Fri, 16 Apr 2021 17:31:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S229719AbhDPXzi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Apr 2021 19:55:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E912A61152;
+        Fri, 16 Apr 2021 23:55:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618617313;
+        bh=E2d1BqEFKaCE3MiFwEpfVs4ZtEN4+OGip5ZcAjHFTEk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=eWHyUqii3l4ZDB8TDLG9zHPcmRehniBQy7CBG7NTofQxvnRdsHbR3sEmdumVtL8FU
+         vhFTJuihDrX6nALpc44cUGoGysPv+VliyJ1vtttZk1nMrWvTtHgs8iBLF2hQ6JuuWh
+         E25JBHtJceYTmledkjRKQ4p1VXYV26LS/NKHNnoPWtmoW+/7PR0dkJb4Lt2gPVuZB6
+         ERMDKkuE8KPOIzY4/5RdkNmKOQ8RCOYgrYbm6kEUo1lwykG8NmBaYw6FWR9YsQJwbQ
+         +AHOwaH/4TfN1uNVpGLIbeGWzUgq7mK32VunQtMxZ5Zcmht2sdnVNszGHY8FnLbb7b
+         fGHsmf67w3+bA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <6416577a-ea06-a014-543a-9ef86aae603d@foss.st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.102.4 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210416063721.20538-3-nm@ti.com>
+References: <20210416063721.20538-1-nm@ti.com> <20210416063721.20538-3-nm@ti.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Convert ti,sci-clk to json schema
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Nishanth Menon <nm@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>
+Date:   Fri, 16 Apr 2021 16:55:11 -0700
+Message-ID: <161861731160.46595.786611690053722257@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/16/21 5:23 PM, Alexandre TORGUE wrote:
+Quoting Nishanth Menon (2021-04-15 23:37:19)
+> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml b/Do=
+cumentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> new file mode 100644
+> index 000000000000..72633651f0c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,sci-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI-SCI clock controller node bindings
+> +
+> +maintainers:
+> +  - Nishanth Menon <nm@ti.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/clock/clock.yaml#
 
-Hello Alexandre,
+Is this needed?
 
-> On 4/16/21 3:47 PM, Marek Vasut wrote:
->> On 4/16/21 8:44 AM, gabriel.fernandez@foss.st.com wrote:
->>> Hi Marek
->>
->> Hello Gabriel,
->>
->>> On 4/14/21 4:04 PM, Marek Vasut wrote:
->>>> On 4/14/21 3:03 PM, gabriel.fernandez@foss.st.com wrote:
->>>>> Hi Marek,
->>>>
->>>> Hello Gabriel,
->>>>
->>>>> Thanks for the patchset
->>>>>
->>>>> On 4/8/21 8:57 PM, Marek Vasut wrote:
->>>>>> The ETHCK_K are modeled as composite clock of MUX and GATE, 
->>>>>> however per
->>>>>> STM32MP1 Reference Manual RM0436 Rev 3, Page 574, Figure 83. 
->>>>>> Peripheral
->>>>>> clock distribution for Ethernet, ETHPTPDIV divider is attached 
->>>>>> past the
->>>>>> ETHCK_K mux, and ETH_CLK/eth_clk_fb clock are output past ETHCKEN 
->>>>>> gate.
->>>>>> Therefore, in case ETH_CLK/eth_clk_fb are not in use AND PTP clock 
->>>>>> are
->>>>>> in use, ETHCKEN gate can be turned off. Current driver does not 
->>>>>> permit
->>>>>> that, fix it.
->>>>>
->>>>> I don"t understand, it's already the case.
->>>>>
->>>>> ETHCK_K it's a composite with a MUX and a GATE.
->>>>
->>>> But ETHCK_K is _not_ a composite clock, look at the Figure 83 in the 
->>>> datasheet again and schematic below.
->>>>
->>>>> ETHPTP_K (ETHPTPDIV) it's a composite with the same MUX and a DIV 
->>>>> (no gate)
->>>>
->>>> But ETHPTP_K shouldn't control any mux, it is only a divider.
->>>>
->>>>> If you use only ETHPTPDIV,  ETHCKEN gate can be turned off.
->>>>
->>>> Look, this is what you have today:
->>>>
->>>>             .------------ ETHCK_K -----------.
->>>>             |_______               _______   |
->>>> pll4_p_ck--|M_ETHCK\             |G_ETHCK\  |
->>>>             | MUX    |------+-----| GATE   |-------------[x] ETH_CLK
->>>> pll3_q_ck--|_______/       |     |_______/                  eth_clk_fb
->>>>             |               |
->>>>             |               '--(ETHCKSELR[7:4] divider)--[x] 
->>>> clk_ptp_ref
->>>>             |                                          |
->>>>             '------------ ETHPTP_K --------------------'
->>>>
->>>> And this is what you should have, to avoid having two composite 
->>>> clock which control the same mux using the same register bit, i.e. 
->>>> what this patch implements:
->>>>
->>>>             .- ck_ker_eth -.  .--- ETHCK_K --.
->>>>             |_______       |  |    _______   |
->>>> pll4_p_ck--|M_ETHCK\      |  |   |G_ETHCK\  |
->>>>             | MUX    |------+-----| GATE   |-------------[x] ETH_CLK
->>>> pll3_q_ck--|_______/       |     |_______/                  eth_clk_fb
->>>>                             |
->>>>                             '--(ETHCKSELR[7:4] divider)--[x] 
->>>> clk_ptp_ref
->>>>                              |                         |
->>>>                              '---- ETHPTP_K -----------'
->>>>
->>>
->>> These 2 solutions are valid. I made the choice to implement the first 
->>> one to be able to change parent with the kernel clock of the IP (no 
->>> need to add an intermediate binding).
->>
->> Which IP are you talking about in here ?
->>
->>> It's the same principle for all kernel of this soc.
->>
->> The first option is wrong, because in that model, you have two 
->> composite clock which control the same one mux bit in the same 
->> register. Basically you register two distinct clock which operate the 
->> same hardware knob.
->>
->>> I can ask to Alexandre to comeback of this principle, but i 'm not 
->>> favorable.
->>
-> 
-> The only discussing thing is how the clock is shown. I mean either two 
-> composites or one mux plus two gates. Gabriel made a choice to abstract 
-> the mux in two composite clocks. But it seems that at the end we have 
-> the same behaviour, isn't ?
+> +
+> +description: |
+> +  Some TI SoCs contain a system controller (like the Power Management Mi=
+cro
+> +  Controller (PMMC) on Keystone 66AK2G SoC) that are responsible for con=
+trolling
+> +  the state of the various hardware modules present on the SoC. Communic=
+ation
+> +  between the host processor running an OS and the system controller hap=
+pens
+> +  through a protocol called TI System Control Interface (TI-SCI protocol=
+).
+> +
+> +  This clock controller node uses the TI SCI protocol to perform various=
+ clock
+> +  management of various hardware modules (devices) present on the SoC. T=
+his
+> +  node must be a child node of the associated TI-SCI system controller n=
+ode.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^clock-controller$"
 
-Not really. Since the two composite clock control the same mux bit, 
-consider what would happen if you were to select pll4_p_ck as parent for 
-one (e.g. ETHCK_K), and pll3_q_ck as parent for the other (e.g. 
-ETHPTP_K), what would be the result ? I guess the result would depend on 
-when the reparenting of each ETHCK_K/ETHPTP_K happens on boot, and I 
-don't think that's how it should work. With a single mux controlling 
-that one single bit, such situation wouldn't happen.
+Is this nodename pattern check required?
 
-> Adding "ck_ker_eth" would impose a new clock to take in DT ?
-Nope, the ck_ker_eth is without ID and internal to the driver. They 
-exist only to describe the clock tree correctly.
+> +
+> +  compatible:
+> +    const: ti,k2g-sci-clk
 
-[...]
+I thought most things keyed off the compatible string.
+
+> +
+> +  "#clock-cells":
+> +    const: 2
+> +    description:
+> +      The two cells represent values that the TI-SCI controller defines.
+> +
+> +      The first cell should contain the device ID.
+> +
+> +      The second cell should contain the clock ID.
+> +
+> +      Please see  http://processors.wiki.ti.com/index.php/TISCI for
+> +      protocol documentation for the values to be used for different dev=
+ices.
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    k3_clks: clock-controller {
+> +        compatible =3D "ti,k2g-sci-clk";
+> +        #clock-cells =3D <2>;
+> +    };
