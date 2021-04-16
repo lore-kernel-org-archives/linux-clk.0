@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9C6C43460
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A343C43470
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 142F6611AC
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8CC61153
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 06:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238538AbhDPGiA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Apr 2021 02:38:00 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43990 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237675AbhDPGh7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Apr 2021 02:37:59 -0400
+        id S239119AbhDPGiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Apr 2021 02:38:01 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38612 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238460AbhDPGiA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Apr 2021 02:38:00 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bNkG128095;
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bN9o125771;
         Fri, 16 Apr 2021 01:37:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1618555043;
-        bh=eMXIcMV1dcJQMxLIXqgNOpRjQIMxiNUYLUUJRJREsFM=;
-        h=From:To:CC:Subject:Date;
-        b=TWPTSEoU515VBPmF/S2d/0c6qqHu6zVxgD8y9ATezF5qNoeKxcfbT1Bay4fvqw4HN
-         fWSmu0hPCYD8EJ74fGJG9vg64bcn2gcjSeC4vlx0EfIKL4/gNa2L3DAl0APiTdqJyY
-         PBul4bh3tk3lgqER8T3rRKsYazdWAHWdOUB63rHA=
+        bh=+Sup0ypjxIcvc4NEFGB6h7kW3aLLqy5KxhpOtjnaQ+I=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=GKyQfdWCCiFSRojiYJbjhrHFOkuTIbTlk6B/A4jVlQB1ecfNWMR0hILIrkPJx0a90
+         MjFa2/YQ9zAZSNYVH2X7tUt5k4ape4YgWr66SWHNG/uprccepxQcmpTPSx26Pnu2b5
+         8g2f+V2pIH3HFf/bkdWq40UdPaIso2RFYQI+ZRXY=
 Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13G6bNvC073126
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13G6bNvv073145
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Fri, 16 Apr 2021 01:37:23 -0500
 Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
  (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 16
  Apr 2021 01:37:23 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
  (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
  Frontend Transport; Fri, 16 Apr 2021 01:37:23 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bN5M090507;
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13G6bN65015701;
         Fri, 16 Apr 2021 01:37:23 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Philipp Zabel <p.zabel@pengutronix.de>,
@@ -54,10 +54,12 @@ To:     Philipp Zabel <p.zabel@pengutronix.de>,
 CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 0/4] dt-bindings: soc/arm: Convert pending ti,sci* bindings to json format
-Date:   Fri, 16 Apr 2021 01:37:17 -0500
-Message-ID: <20210416063721.20538-1-nm@ti.com>
+Subject: [PATCH 4/4] dt-bindings: arm: keystone: Convert ti,sci to json schema
+Date:   Fri, 16 Apr 2021 01:37:21 -0500
+Message-ID: <20210416063721.20538-5-nm@ti.com>
 X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210416063721.20538-1-nm@ti.com>
+References: <20210416063721.20538-1-nm@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -66,44 +68,249 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Convert the ti,sci to json schema for better checks and documentation.
 
-I understand that the following series belong to various maintainers,
-but, it is a bit better reviewed as a single series for
-cohesiveness.
+NOTE: This change does introduce a stricter naming convention for
+TI-SCI controller nodes.
 
-There are also dts fixups that this series exposes, which is good, but
-I chose to hold them back for now pending binding review at least. The
-complete series is available in [1] if folks are curious.
+NOTE: we do have false positive checkpatch warning with this patch:
+"DT binding docs and includes should be a separate patch"
 
-Nishanth Menon (4):
-  dt-bindings: reset: Convert ti,sci-reset to json schema
-  dt-bindings: clock: Convert ti,sci-clk to json schema
-  dt-bindings: soc: ti: Convert ti,sci-pm-domain to json schema
-  dt-bindings: arm: keystone: Convert ti,sci to json schema
-
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
  .../bindings/arm/keystone/ti,sci.txt          |  86 ------------
  .../bindings/arm/keystone/ti,sci.yaml         | 129 ++++++++++++++++++
- .../devicetree/bindings/clock/ti,sci-clk.txt  |  36 -----
- .../devicetree/bindings/clock/ti,sci-clk.yaml |  52 +++++++
- .../bindings/reset/ti,sci-reset.txt           |  62 ---------
- .../bindings/reset/ti,sci-reset.yaml          |  51 +++++++
- .../bindings/soc/ti/sci-pm-domain.txt         |  65 ---------
- .../bindings/soc/ti/sci-pm-domain.yaml        |  59 ++++++++
- 8 files changed, 291 insertions(+), 249 deletions(-)
+ 2 files changed, 129 insertions(+), 86 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
  create mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
- delete mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.txt
- create mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
- delete mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
- create mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
 
-[1] https://github.com/nmenon/linux-2.6-playground/commits/yaml/tisci
-
-Regards,
-Nishanth Menon
+diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt b/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+deleted file mode 100644
+index 6f0cd31c1520..000000000000
+--- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
++++ /dev/null
+@@ -1,86 +0,0 @@
+-Texas Instruments System Control Interface (TI-SCI) Message Protocol
+---------------------------------------------------------------------
+-
+-Texas Instrument's processors including those belonging to Keystone generation
+-of processors have separate hardware entity which is now responsible for the
+-management of the System on Chip (SoC) system. These include various system
+-level functions as well.
+-
+-An example of such an SoC is K2G, which contains the system control hardware
+-block called Power Management Micro Controller (PMMC). This hardware block is
+-initialized early into boot process and provides services to Operating Systems
+-on multiple processors including ones running Linux.
+-
+-See http://processors.wiki.ti.com/index.php/TISCI for protocol definition.
+-
+-TI-SCI controller Device Node:
+-=============================
+-
+-The TI-SCI node describes the Texas Instrument's System Controller entity node.
+-This parent node may optionally have additional children nodes which describe
+-specific functionality such as clocks, power domain, reset or additional
+-functionality as may be required for the SoC. This hierarchy also describes the
+-relationship between the TI-SCI parent node to the child node.
+-
+-Required properties:
+--------------------
+-- compatible:	should be "ti,k2g-sci" for TI 66AK2G SoC
+-		should be "ti,am654-sci" for for TI AM654 SoC
+-- mbox-names:
+-	"rx" - Mailbox corresponding to receive path
+-	"tx" - Mailbox corresponding to transmit path
+-
+-- mboxes: Mailboxes corresponding to the mbox-names. Each value of the mboxes
+-	  property should contain a phandle to the mailbox controller device
+-	  node and an args specifier that will be the phandle to the intended
+-	  sub-mailbox child node to be used for communication.
+-
+-See Documentation/devicetree/bindings/mailbox/mailbox.txt for more details
+-about the generic mailbox controller and client driver bindings. Also see
+-Documentation/devicetree/bindings/mailbox/ti,message-manager.txt for typical
+-controller that is used to communicate with this System controllers.
+-
+-Optional Properties:
+--------------------
+-- reg-names:
+-	debug_messages - Map the Debug message region
+-- reg:  register space corresponding to the debug_messages
+-- ti,system-reboot-controller: If system reboot can be triggered by SoC reboot
+-- ti,host-id: Integer value corresponding to the host ID assigned by Firmware
+-	for identification of host processing entities such as virtual
+-	machines
+-
+-Example (K2G):
+--------------
+-	pmmc: pmmc {
+-		compatible = "ti,k2g-sci";
+-		ti,host-id = <2>;
+-		mbox-names = "rx", "tx";
+-		mboxes= <&msgmgr &msgmgr_proxy_pmmc_rx>,
+-			<&msgmgr &msgmgr_proxy_pmmc_tx>;
+-		reg-names = "debug_messages";
+-		reg = <0x02921800 0x800>;
+-	};
+-
+-
+-TI-SCI Client Device Node:
+-=========================
+-
+-Client nodes are maintained as children of the relevant TI-SCI device node.
+-
+-Example (K2G):
+--------------
+-	pmmc: pmmc {
+-		compatible = "ti,k2g-sci";
+-		...
+-
+-		my_clk_node: clk_node {
+-			...
+-			...
+-		};
+-
+-		my_pd_node: pd_node {
+-			...
+-			...
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+new file mode 100644
+index 000000000000..3e835ad84dc2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+@@ -0,0 +1,129 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/keystone/ti,sci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI-SCI controller device node bindings
++
++maintainers:
++  - Nishanth Menon <nm@ti.com>
++
++allOf:
++  - $ref: /schemas/mbox/mbox-consumer.yaml#
++
++description: |
++  Texas Instrument's processors including those belonging to Keystone generation
++  of processors have separate hardware entity which is now responsible for the
++  management of the System on Chip (SoC) system. These include various system
++  level functions as well.
++
++  An example of such an SoC is K2G, which contains the system control hardware
++  block called Power Management Micro Controller (PMMC). This hardware block is
++  initialized early into boot process and provides services to Operating Systems
++  on multiple processors including ones running Linux.
++
++  See http://processors.wiki.ti.com/index.php/TISCI for protocol definition.
++
++  The TI-SCI node describes the Texas Instrument's System Controller entity node.
++  This parent node may optionally have additional children nodes which describe
++  specific functionality such as clocks, power domain, reset or additional
++  functionality as may be required for the SoC. This hierarchy also describes the
++  relationship between the TI-SCI parent node to the child node.
++
++properties:
++  $nodename:
++    pattern: "^system-controller@[0-9a-f]+$"
++
++  compatible:
++    oneOf:
++      - description: System controller on TI 66AK2G SoC and other K3 SoCs
++        items:
++          - const: ti,k2g-sci
++      - description: System controller on TI AM654 SoC
++        items:
++          - const: ti,am654-sci
++
++  reg-names:
++    description: |
++      Specifies the debug messages memory mapped region that is optionally
++      made available from TI-SCI controller.
++      - const: debug_messages
++
++  reg:
++    minItems: 1
++
++  mbox-names:
++    description: |
++      Specifies the mailboxes used to communicate with TI-SCI Controller
++      made available from TI-SCI controller.
++    items:
++      - const: rx
++      - const: tx
++
++  mboxes:
++    minItems: 2
++
++  ti,system-reboot-controller:
++    description: Determines If system reboot can be triggered by SoC reboot
++    type: boolean
++
++  ti,host-id:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Value corresponding to the host ID assigned by Firmware
++      for identification of host processing entities such as virtual machines.
++
++required:
++  - compatible
++  - mbox-names
++  - mboxes
++
++additionalProperties: false
++
++patternProperties:
++  # All other properties should be a power, clock or reset controller
++  "^(power-controller|clock-controller|reset-controller)$":
++    type: object
++    oneOf:
++      - $ref: /schemas/soc/ti/sci-pm-domain.yaml#
++      - $ref: /schemas/clock/ti,sci-clk.yaml#
++      - $ref: /schemas/reset/ti,sci-reset.yaml#
++
++examples:
++  - |
++    pmmc: system-controller@2921800 {
++      compatible = "ti,k2g-sci";
++      ti,system-reboot-controller;
++      mbox-names = "rx", "tx";
++      mboxes= <&msgmgr 5 2>,
++              <&msgmgr 0 0>;
++      reg-names = "debug_messages";
++      reg = <0x02921800 0x800>;
++    };
++
++  - |
++    dmsc: system-controller@44083000 {
++      compatible = "ti,k2g-sci";
++      ti,host-id = <12>;
++      mbox-names = "rx", "tx";
++      mboxes= <&secure_proxy_main 11>,
++              <&secure_proxy_main 13>;
++      reg-names = "debug_messages";
++      reg = <0x44083000 0x1000>;
++
++      k3_pds: power-controller {
++        compatible = "ti,sci-pm-domain";
++        #power-domain-cells = <2>;
++      };
++
++      k3_clks: clock-controller {
++        compatible = "ti,k2g-sci-clk";
++        #clock-cells = <2>;
++      };
++
++      k3_reset: reset-controller {
++        compatible = "ti,sci-reset";
++        #reset-cells = <2>;
++      };
++    };
 -- 
 2.31.0
 
