@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7017AC433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 10:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD3DC433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 12:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52A3461166
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 10:37:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 811C6611AB
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Apr 2021 12:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240223AbhDPKh4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Apr 2021 06:37:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33446 "EHLO mail.kernel.org"
+        id S242838AbhDPMoR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Apr 2021 08:44:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234899AbhDPKhz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Apr 2021 06:37:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 65CE86115B;
-        Fri, 16 Apr 2021 10:37:29 +0000 (UTC)
+        id S233916AbhDPMoM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Apr 2021 08:44:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C630761107;
+        Fri, 16 Apr 2021 12:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618569451;
-        bh=2NmNjtA3l2od/uJIV8xyDAELe5Bj6tvlex9wTBoBoR4=;
+        s=k20201202; t=1618577027;
+        bh=oMN+Rlt12ndCbHJtP/UKi3IFuOfxmSEY0U7Ig87hsUw=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=O7oCcMRIl2UeQO1cBvETVEe8Qjw9gg0PjP310tIj8NmYZWeaxirFT1Qgco11sAQLf
-         C9uQ4f/KBQJ0cjmoVRGXY1wkQwwU+27a8bZnINIX9mnsQjmP5ShCI+yBdB+ro8azYU
-         q+gw11anV4KoOWYmD7z8mc4hKz7E3hq5LDFwAgR7Bt/eUZZP4MzHkzeJ6gFLqUNSnS
-         eqghaBpBJmeIfN1PHENpL2mGH72Y3iekyDwbVXk8sS8F0uetZer8wR3r8Fu2MG1459
-         5RtYojoPQ1O1haqLfZMe6pCopFXmz+wPZfZG+soxdWxdKMltlL8T7JbrtsGqfEMjOl
-         yIuzL3PBxSNfA==
-Subject: Re: [PATCH 0/4] dt-bindings: soc/arm: Convert pending ti,sci*
- bindings to json format
-To:     Nishanth Menon <nm@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+        b=e3kULCrMHEwHUvtymYCy+3Ba9HRgWBsJ5hZwmce+xKW/V9Pv8g/xNk7PF7DJyDql9
+         piBgMah+1N5w6vufMdMXc5kbx59VYeF6WOVnS2enLk7Zf905sY92SUMotEyikUv52p
+         dhtc826AuWt/zuy+sk4SDRFgAZEXyt7ngu2Zx+qTs5FxjnUX2g/sLrEtw1DJqN6UnI
+         Iuf2D2FZWe+0Urf2omIbC5o4yigTYeqEdAfhir+XqtqYZN6xu0IOGbCkrjden+pGid
+         YgwoEUuQ4JkiDhPyk7Wx2WCOWMdbfTS2fNrD+Di6a+MEBO4cX/J3namvo2xJRyjapD
+         LdbdnEgqpkdPA==
+Subject: Re: [PATCH v4 5/5] clk: ti: add am33xx/am43xx spread spectrum clock
+ support
+To:     Dario Binacchi <dariobin@libero.it>, linux-kernel@vger.kernel.org
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20210416063721.20538-1-nm@ti.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20210401193741.24639-1-dariobin@libero.it>
+ <20210401193741.24639-6-dariobin@libero.it>
 From:   Tero Kristo <kristo@kernel.org>
-Message-ID: <56388707-c8d3-ebdf-77a2-c5a983856b4d@kernel.org>
-Date:   Fri, 16 Apr 2021 13:37:27 +0300
+Message-ID: <b88d012a-b74c-6bd6-7465-3391921c9092@kernel.org>
+Date:   Fri, 16 Apr 2021 15:43:43 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210416063721.20538-1-nm@ti.com>
+In-Reply-To: <20210401193741.24639-6-dariobin@libero.it>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -55,49 +55,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/04/2021 09:37, Nishanth Menon wrote:
-> Hi,
-> 
-> I understand that the following series belong to various maintainers,
-> but, it is a bit better reviewed as a single series for
-> cohesiveness.
-> 
-> There are also dts fixups that this series exposes, which is good, but
-> I chose to hold them back for now pending binding review at least. The
-> complete series is available in [1] if folks are curious.
-> 
-> Nishanth Menon (4):
->    dt-bindings: reset: Convert ti,sci-reset to json schema
->    dt-bindings: clock: Convert ti,sci-clk to json schema
->    dt-bindings: soc: ti: Convert ti,sci-pm-domain to json schema
->    dt-bindings: arm: keystone: Convert ti,sci to json schema
+Hi Dario,
 
-For the whole series:
+Spent some time looking at this, had to read through the TRM chapter of 
+it also in quite detailed level to figure out how this is supposed to 
+work out.
 
-Reviewed-by: Tero Kristo <kristo@kernel.org>
+Other than couple of minor nits below, the code seems ok to me. What is 
+the testing that has been done with this?
 
+On 01/04/2021 22:37, Dario Binacchi wrote:
+> The patch enables spread spectrum clocking (SSC) for MPU and LCD PLLs.
+> As reported by the TI spruh73x/spruhl7x RM, SSC is only supported for
+> the DISP/LCD and MPU PLLs on am33xx/am43xx. SSC is not supported for
+> DDR, PER, and CORE PLLs.
 > 
->   .../bindings/arm/keystone/ti,sci.txt          |  86 ------------
->   .../bindings/arm/keystone/ti,sci.yaml         | 129 ++++++++++++++++++
->   .../devicetree/bindings/clock/ti,sci-clk.txt  |  36 -----
->   .../devicetree/bindings/clock/ti,sci-clk.yaml |  52 +++++++
->   .../bindings/reset/ti,sci-reset.txt           |  62 ---------
->   .../bindings/reset/ti,sci-reset.yaml          |  51 +++++++
->   .../bindings/soc/ti/sci-pm-domain.txt         |  65 ---------
->   .../bindings/soc/ti/sci-pm-domain.yaml        |  59 ++++++++
->   8 files changed, 291 insertions(+), 249 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->   create mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
->   delete mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->   create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
->   delete mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.txt
->   create mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
->   delete mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
->   create mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+> Calculating the required values and setting the registers accordingly
+> was taken from the set_mpu_spreadspectrum routine contained in the
+> arch/arm/mach-omap2/am33xx/clock_am33xx.c file of the u-boot project.
 > 
-> [1] https://github.com/nmenon/linux-2.6-playground/commits/yaml/tisci
+> In locked condition, DPLL output clock = CLKINP *[M/N]. In case of
+> SSC enabled, the reference manual explains that there is a restriction
+> of range of M values. Since the omap2_dpll_round_rate routine attempts
+> to select the minimum possible N, the value of M obtained is not
+> guaranteed to be within the range required. With the new "ti,min-div"
+> parameter it is possible to increase N and consequently M to satisfy the
+> constraint imposed by SSC.
 > 
-> Regards,
-> Nishanth Menon
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> 
+> ---
+
+<snip>
+
+>   	/* REVISIT: Set ramp-up delay? */
+> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+> index c62f6fa6763d..cba093de62d8 100644
+> --- a/include/linux/clk/ti.h
+> +++ b/include/linux/clk/ti.h
+> @@ -63,6 +63,18 @@ struct clk_omap_reg {
+>    * @auto_recal_bit: bitshift of the driftguard enable bit in @control_reg
+>    * @recal_en_bit: bitshift of the PRM_IRQENABLE_* bit for recalibration IRQs
+>    * @recal_st_bit: bitshift of the PRM_IRQSTATUS_* bit for recalibration IRQs
+> + * @ssc_deltam_reg: register containing the DPLL SSC frequency spreading
+> + * @ssc_modfreq_reg: register containing the DPLL SSC modulation frequency
+> + * @ssc_modfreq_mant_mask: mask of the mantissa component in @ssc_modfreq_reg
+> + * @ssc_modfreq_exp_mask: mask of the exponent component in @ssc_modfreq_reg
+> + * @ssc_enable_mask: mask of the DPLL SSC enable bit in @control_reg
+> + * @ssc_ack_mask: mask of the DPLL SSC turned on/off bit in @control_reg
+> + * @ssc_downspread_mask: mask of the DPLL SSC low frequency only bit in
+> + *                       @control_reg
+> + * @ssc_modfreq: the DPLL SSC frequency modulation in kHz
+> + * @ssc_deltam: the DPLL SSC frequency spreading in permille (10th of percent)
+> + * @ssc_downspread: require the only low frequency spread of the DPLL in SSC
+> + *                   mode
+>    * @flags: DPLL type/features (see below)
+>    *
+>    * Possible values for @flags:
+> @@ -110,6 +122,18 @@ struct dpll_data {
+>   	u8			auto_recal_bit;
+>   	u8			recal_en_bit;
+>   	u8			recal_st_bit;
+> +	struct clk_omap_reg	ssc_deltam_reg;
+> +	struct clk_omap_reg	ssc_modfreq_reg;
+> +	u32			ssc_deltam_int_mask;
+> +	u32			ssc_deltam_frac_mask;
+> +	u32			ssc_modfreq_mant_mask;
+> +	u32			ssc_modfreq_exp_mask;
+> +	u32                     ssc_enable_mask;
+> +	u32                     ssc_ack_mask;
+
+ssc_ack_mask is not used for anything in the code.
+
+> +	u32                     ssc_downspread_mask;
+> +	u32                     ssc_modfreq;
+> +	u32                     ssc_deltam;
+> +	u8                      ssc_downspread;
+
+ssc_downspread should be boolean?
+
+>   	u8			flags;
+>   };
+>   
 > 
 
