@@ -2,68 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840F8C433B4
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 00:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D4C433ED
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 08:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE88611C2
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 00:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F4461152
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 08:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234999AbhDQAC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Apr 2021 20:02:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36752 "EHLO mail.kernel.org"
+        id S231387AbhDQIhc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Apr 2021 04:37:32 -0400
+Received: from muru.com ([72.249.23.125]:55464 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229719AbhDQACz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Apr 2021 20:02:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34ED16115B;
-        Sat, 17 Apr 2021 00:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618617750;
-        bh=DtcwCnU2bWW7YUiEpToRNpS8Pj+rL/i63TmoUofqz/U=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=U5R7ieKowAxOZ1uBJMN29kk5OedkpQK9mq7fVSM5HWqUCC77yYbQDfBOek+czQoBZ
-         4yTd9KUG7O64FLXx/A1iJTZIHYjM2LLXrWzp7ezL6WvNWMQzngBekYCyap3PbVcfAp
-         p/e73gnauEPsq/frvYBAvpYyFVEu49YCBeck+Rl9eE1dpSWvYb0FEprPJuC9fvvai/
-         F3B8XYg3ZDPjgoLKxxbrubOI2xQDoqsoxbTPmpBJqFVj0vXzJsaRfOmM2fYigYnjFY
-         ihRSK9tLYr0Qh1N0VDf9rdq5CDxoU5LGJzbUnlSyXcuu7BmimRosNuSDezD+SkGonr
-         7phRPdxu7cD7g==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1618465960-3013-2-git-send-email-flora.fu@mediatek.com>
-References: <1618465960-3013-1-git-send-email-flora.fu@mediatek.com> <1618465960-3013-2-git-send-email-flora.fu@mediatek.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Add MT8192 APU clock bindings
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Flora Fu <flora.fu@mediatek.com>,
-        Pi-Cheng Chen <pi-cheng.chen@mediatek.com>,
-        Chiawen Lee <chiawen.lee@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-To:     Flora Fu <flora.fu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        id S229631AbhDQIhb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Apr 2021 04:37:31 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 050CA80CD;
+        Sat, 17 Apr 2021 08:38:22 +0000 (UTC)
+Date:   Sat, 17 Apr 2021 11:37:01 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dario Binacchi <dariobin@libero.it>
+Cc:     Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 16 Apr 2021 17:02:29 -0700
-Message-ID: <161861774904.46595.8483541757848028552@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
+Message-ID: <YHqeLe/mqzu5OZpg@atomide.com>
+References: <1727466283.11523.1617746554330@mail1.libero.it>
+ <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
+ <1044574275.383115.1617779265390@mail1.libero.it>
+ <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
+ <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
+ <116337570.107804.1617913442196@mail1.libero.it>
+ <8f232b81-4c83-54db-bcbd-2cae78ede814@kernel.org>
+ <333530206.539702.1618169440615@mail1.libero.it>
+ <a17dec03-d98c-0aac-0bbb-eeaa11f156f3@kernel.org>
+ <1627640615.696710.1618432773724@mail1.libero.it>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1627640615.696710.1618432773724@mail1.libero.it>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Flora Fu (2021-04-14 22:52:34)
-> Add clock bindings for APU on MT8192.
->=20
-> Signed-off-by: Flora Fu <flora.fu@mediatek.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+* Dario Binacchi <dariobin@libero.it> [210414 20:40]:
+> > Il 12/04/2021 09:41 Tero Kristo <kristo@kernel.org> ha scritto:
+> > The change on the DT itself would be pretty large, removing all clock 
+> > nodes and modifying any existing handles towards the clock nodes, and 
+> > this would impact all OMAP architectures.
+> > 
+> > Anyways, it is mostly up-to Tony how he wants to see the DT change, as 
+> > he is the maintainer for the OMAP family DT data.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+While I think all the clocks should use a similar binding to the clkctrl
+binding, I don't know if it makes sense to start changing things around
+at such a large scale.
+
+Certainly if somebody does the patches and they can be tested to not cause
+regressions, sure why not :)
+
+> > I am just raising the opinion here that from kernel point of view, 
+> > adding the missing size cells seems unnecessary, and I can't see why 
+> > u-boot can't be changed to support the existing broken DT. It is broken 
+> > now, and it will be broken with the addition of the size cells in place, 
+> > and the actual "neat" end result would be to get rid of the clock nodes 
+> > completely.
+> 
+> I'll fix U-boot.
+> Thanks for your explanations.
+> Hope for SSC patch review from you and/or some TI MAINTAINER.
+
+Best to fix the issues first, then make any clean-up patches a separate
+series.
+
+Regards,
+
+Tony
