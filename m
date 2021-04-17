@@ -2,86 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D4C433ED
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 08:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CDFC43460
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 12:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07F4461152
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 08:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C466C611EF
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Apr 2021 12:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbhDQIhc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Apr 2021 04:37:32 -0400
-Received: from muru.com ([72.249.23.125]:55464 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229631AbhDQIhb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Apr 2021 04:37:31 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 050CA80CD;
-        Sat, 17 Apr 2021 08:38:22 +0000 (UTC)
-Date:   Sat, 17 Apr 2021 11:37:01 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dario Binacchi <dariobin@libero.it>
-Cc:     Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH 0/2] fdt: translate address if #size-cells = <0>
-Message-ID: <YHqeLe/mqzu5OZpg@atomide.com>
-References: <1727466283.11523.1617746554330@mail1.libero.it>
- <CAL_JsqLd+BxW9T99Sx9vgEkxdbMFe+tL7X_nZ7ExvRxVd_9GNQ@mail.gmail.com>
- <1044574275.383115.1617779265390@mail1.libero.it>
- <CAL_JsqLcus=Y5nOuV1wiAiVb1mTq9N8xqJpGJD6ip+Ec_6YDyw@mail.gmail.com>
- <a197b5d8-621b-6655-e571-2877d007cd4c@kernel.org>
- <116337570.107804.1617913442196@mail1.libero.it>
- <8f232b81-4c83-54db-bcbd-2cae78ede814@kernel.org>
- <333530206.539702.1618169440615@mail1.libero.it>
- <a17dec03-d98c-0aac-0bbb-eeaa11f156f3@kernel.org>
- <1627640615.696710.1618432773724@mail1.libero.it>
+        id S236367AbhDQMwI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Apr 2021 08:52:08 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33132 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230442AbhDQMwI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Apr 2021 08:52:08 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13HCpSoT004245;
+        Sat, 17 Apr 2021 07:51:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1618663888;
+        bh=rPXmuMzpEkCL6BgxZC9XuLSBLEjAY7E3u9qrT0/yQqc=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=kAx7E1taPPjvq1bWp4ngK6qZvJmDfictdiLPahQmUKHBB7csyL3OakYz8Picpcv3F
+         2f7zcIvSyMlk43qJ4TnW8CmgstcyeCQYqXCbqwkxLopA8c1/9e73RY6mEMTbYfoJGM
+         xvhOJpiEqsLTRfSWZI7yyJ8tQRg/jiQpy8cSy+3Y=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13HCpSWQ023901
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 17 Apr 2021 07:51:28 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Sat, 17
+ Apr 2021 07:51:27 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Sat, 17 Apr 2021 07:51:27 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13HCpRJL053600;
+        Sat, 17 Apr 2021 07:51:27 -0500
+Date:   Sat, 17 Apr 2021 07:51:27 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Convert ti,sci-clk to json schema
+Message-ID: <20210417125127.vigq23mdoodje6b5@velcro>
+References: <20210416063721.20538-1-nm@ti.com>
+ <20210416063721.20538-3-nm@ti.com>
+ <161861731160.46595.786611690053722257@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1627640615.696710.1618432773724@mail1.libero.it>
+In-Reply-To: <161861731160.46595.786611690053722257@swboyd.mtv.corp.google.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Dario Binacchi <dariobin@libero.it> [210414 20:40]:
-> > Il 12/04/2021 09:41 Tero Kristo <kristo@kernel.org> ha scritto:
-> > The change on the DT itself would be pretty large, removing all clock 
-> > nodes and modifying any existing handles towards the clock nodes, and 
-> > this would impact all OMAP architectures.
-> > 
-> > Anyways, it is mostly up-to Tony how he wants to see the DT change, as 
-> > he is the maintainer for the OMAP family DT data.
-
-While I think all the clocks should use a similar binding to the clkctrl
-binding, I don't know if it makes sense to start changing things around
-at such a large scale.
-
-Certainly if somebody does the patches and they can be tested to not cause
-regressions, sure why not :)
-
-> > I am just raising the opinion here that from kernel point of view, 
-> > adding the missing size cells seems unnecessary, and I can't see why 
-> > u-boot can't be changed to support the existing broken DT. It is broken 
-> > now, and it will be broken with the addition of the size cells in place, 
-> > and the actual "neat" end result would be to get rid of the clock nodes 
-> > completely.
+On 16:55-20210416, Stephen Boyd wrote:
+> Quoting Nishanth Menon (2021-04-15 23:37:19)
+> > diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> > new file mode 100644
+> > index 000000000000..72633651f0c7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> > @@ -0,0 +1,52 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/ti,sci-clk.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TI-SCI clock controller node bindings
+> > +
+> > +maintainers:
+> > +  - Nishanth Menon <nm@ti.com>
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/clock/clock.yaml#
 > 
-> I'll fix U-boot.
-> Thanks for your explanations.
-> Hope for SSC patch review from you and/or some TI MAINTAINER.
+> Is this needed?
 
-Best to fix the issues first, then make any clean-up patches a separate
-series.
+https://github.com/devicetree-org/dt-schema/blob/master/schemas/clock/clock.yaml
+This standardizes provider properties like '#clock-cells' etc, allowing
+you to add more stricter checks or controls in the future if necessary.
 
+while:
+
+https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/clocks.yaml
+is more a consumer node description.
+
+Should I have picked a different yaml as base for a standard clock-controller
+base?
+
+> 
+> > +
+> > +description: |
+> > +  Some TI SoCs contain a system controller (like the Power Management Micro
+> > +  Controller (PMMC) on Keystone 66AK2G SoC) that are responsible for controlling
+> > +  the state of the various hardware modules present on the SoC. Communication
+> > +  between the host processor running an OS and the system controller happens
+> > +  through a protocol called TI System Control Interface (TI-SCI protocol).
+> > +
+> > +  This clock controller node uses the TI SCI protocol to perform various clock
+> > +  management of various hardware modules (devices) present on the SoC. This
+> > +  node must be a child node of the associated TI-SCI system controller node.
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: "^clock-controller$"
+> 
+> Is this nodename pattern check required?
+
+I'd like the definition on rails and not subject to interpretation, and
+restrict the kind of subnodes under TISCI controller node.
+
+> 
+> > +
+> > +  compatible:
+> > +    const: ti,k2g-sci-clk
+> 
+> I thought most things keyed off the compatible string.
+
+Yes, they are. I am not sure I understand your question here. Did you
+mean to indicate that having $nodename and compatible both are
+redundant?
+
+Redundancy was'nt the intent of this schema definition, rather, I'd like
+to make sure that it is not upto interpretation or debate as to what the
+node name should be: I believe clock-controller is the correct nodename
+(without @0x... since this does'nt use reg property) instead of using
+clocks, tisci-clock as the node names.
+
+
+Do you suggest something  different?
+
+-- 
 Regards,
-
-Tony
+Nishanth Menon
+Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
