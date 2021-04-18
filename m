@@ -2,110 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6181C433B4
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Apr 2021 13:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0986EC433B4
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Apr 2021 14:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2708610FC
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Apr 2021 13:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3A161278
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Apr 2021 14:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbhDRNBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Apr 2021 09:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbhDRNBS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Apr 2021 09:01:18 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CB1C061760
-        for <linux-clk@vger.kernel.org>; Sun, 18 Apr 2021 06:00:49 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id x12so28035540ejc.1
-        for <linux-clk@vger.kernel.org>; Sun, 18 Apr 2021 06:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snejp.pl; s=gmail;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6Ow1NlEM7DKtr4mIJK66YbpuR1k+LjlGbnW7/7eKM+w=;
-        b=ZAzrDKi0WrNy99E2xve9lRvUjc4y9pEfsTbOA8rOglKFYPdhSZpk9sn41KFyifW207
-         mNCMthaZUyAG4M3JuWBar9NVWdsjzL8m6XImXPr5eW79YHfWu11l37h66T1/G1dzr+4p
-         d2LnXEOzeQ4rwxCrOgBXAvCu2lJjfeIRBt8zhBIs+8MPUDoi/lwSlqcxVGTwyul8YqM/
-         ZtxAgrmNjcvb17Du8X6TWI0UUYuvwnE6oF9Cd6Z76pqffWCMifOe1iJHdTBRNiReagJo
-         GjODWwgQ7qZsBHXytLHXYNnEKuk2KUoWU6hxmj79hoOqCJaisYCe05el6SB6U9nd1Mcs
-         gU5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6Ow1NlEM7DKtr4mIJK66YbpuR1k+LjlGbnW7/7eKM+w=;
-        b=nc1wMJRWqngo+0wwwgJ75ryhkir6IEC/MyUtAsFa47nP0Je3HCwqgdw38ASfCGhLxA
-         aRre8J2zziC+SnL3Nt6HCnP9L7ymgGCoy1BDk6V+MsybT4CYv/d6vaT3HiIE6K1ibwcV
-         dOz3l1c9jesQZqufjxIYziXFATJUxeVaD71fBTlIjyBhYGEoGy42r2i+233Jgf5MjELA
-         g355u1of5zBJ7LQ4RCDWOVnf8O0KrWa5eV81bAPt8z6rwp4F1kKgFBx0p54EO567JgnC
-         EtS5te42Yhb/PQagetiwGZMMjS9++PKF+cezZnpjgmJ2EjysYVmuipnpN4BeoR3cVrZC
-         bqfg==
-X-Gm-Message-State: AOAM530dYeejHEQOhI/+kkWI9SJ1RexatQzoMMn+yRyu67lPIsTvZdD/
-        btAHuePUxnNg6KolDZ+586dYZw==
-X-Google-Smtp-Source: ABdhPJynk440pimUYGjeiYWc8ykH5SQkOAlqUmul4ohk1LNdpMwCBfj4JfqjQMI6VpxBPwNUI4EKaw==
-X-Received: by 2002:a17:907:76a7:: with SMTP id jw7mr17228065ejc.322.1618750847955;
-        Sun, 18 Apr 2021 06:00:47 -0700 (PDT)
-Received: from PackardBell (87-49-44-144-mobile.dk.customer.tdc.net. [87.49.44.144])
-        by smtp.googlemail.com with ESMTPSA id r10sm8436629ejd.112.2021.04.18.06.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Apr 2021 06:00:47 -0700 (PDT)
-Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 03f6b92d;
-        Sun, 18 Apr 2021 13:00:45 +0000 (UTC)
-Date:   Sun, 18 Apr 2021 15:00:45 +0200
-From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S229995AbhDROue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Apr 2021 10:50:34 -0400
+Received: from smtp-32-i2.italiaonline.it ([213.209.12.32]:47673 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229691AbhDROud (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 18 Apr 2021 10:50:33 -0400
+Received: from oxapps-37-174.iol.local ([10.101.8.220])
+        by smtp-32.iol.local with ESMTPA
+        id Y8kNlST74Bc6YY8kNlhE8V; Sun, 18 Apr 2021 16:50:04 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1618757404; bh=Z+gqUTa/4gMQqPDDlTPJPLQ3NTLR8D+V8mUSlwYrWVk=;
+        h=From;
+        b=TuUA58nLdKA6aeYyxRYJF11P1yqmwNKyB7l58BePnanSjKgVdg1UTnCQ9wBjzbtD+
+         +9bsNHy4CZiI2jrLOAHjaEcChsOQrgp9yhGauu7NFd30SmcU0tCR/+iPuQYFmNEFgR
+         M/Vdq2cX77HkwjqGYLoX96YOPXnz2tk1nMBZ06ndybnZCbKZz5X/qnnK200Ttzd99D
+         mHMx/z0/d5DXizd9/TLfPAfErMUsNRfr7NgCh+e5KFV4N1NWxjbjQlYD5pQVc8bOYx
+         l0b3Y1X1d8iSpLmytO9pK2eqlkWhvYxSaO+/f5AbZEuB5LV06rYigxoUIUiIxeTjD4
+         xyARp7CalOKig==
+X-CNFS-Analysis: v=2.4 cv=B6l8bMhM c=1 sm=1 tr=0 ts=607c471c cx=a_exe
+ a=C8U9wQxWOnS4tgU1BwpF/g==:117 a=VYA5D5F8Gk0A:10 a=IkcTkHD0fZMA:10
+ a=4ehuGOvBq5EA:10 a=VwQbUJbxAAAA:8 a=GAHydID9G1J-QwgOjSYA:9 a=QEXdDO2ut3YA:10
+ a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
+Date:   Sun, 18 Apr 2021 16:50:03 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/5] Samsung Galaxy S III Neo Initial DTS
-Message-ID: <20210418130045.GA73531@PackardBell>
-References: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Message-ID: <2042188966.804761.1618757403843@mail1.libero.it>
+In-Reply-To: <b88d012a-b74c-6bd6-7465-3391921c9092@kernel.org>
+References: <20210401193741.24639-1-dariobin@libero.it>
+ <20210401193741.24639-6-dariobin@libero.it>
+ <b88d012a-b74c-6bd6-7465-3391921c9092@kernel.org>
+Subject: Re: [PATCH v4 5/5] clk: ti: add am33xx/am43xx spread spectrum clock
+ support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210326145816.9758-1-bartosz.dudziak@snejp.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 95.244.94.151
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: nKteNHKRVC0JswLz36FlhNqfco92qKV/
+x-libjamv: oBRXhknxPSs=
+X-CMAE-Envelope: MS4xfFdXTR9TX9SiBogFiIYPJz86nwESpkvlJtlOCFuX94yAjXSHV4ixugTVuxLMTsc1tFJksLu/QbUxmyfYMUawK2nFVe0FvAn0crfgtUHny6ElAdhmlhNg
+ iR0KGr5ot/8efd5KQPcUGo0k28rbTfQitrdx6KdeV0s7xVXPkwgfUJP32VW4TBu0Lp9cMYRo3B8sjjsn77zmjH57mPmtQz3Yb3q50Xf8RqPx/FplxqOXpOEE
+ KDoaVjxWzRxG8vqskjEt9sUYAldUZ7VssVJRJjQvOm4lRevapvrh01ewro3VbSMHT7t18OI/DgF1YsDsXrLElhBOCwdR0Oi2NB+GQE6xcs6CbKeDFGVqmRIn
+ AoAdYM2N9x1u2TR9OXKJjanidu+rVwOOgNddQppmdAFWeHLKpcEUB9qGOzDbDBSws4S1fTVPblGUDps80SgwzvbLX8QFoA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 03:58:11PM +0100, Bartosz Dudziak wrote:
-> This series of patches enables to boot MSM8226 SoC in Samsung Galaxy S III Neo
-> mobile phone. Implemented clocks are on top of MSM8974 GCC driver because there
-> is really little difference between them. UART serial communication is working.
-> I have working patches for the regulators, EMMC, multithreading and Wifi for
-> this device but they are not clean and ready to submit.
-> 
-> Bartosz Dudziak (5):
->   dt-bindings: clock: qcom: Add MSM8226 GCC clock bindings
->   clk: qcom: gcc: Add support for Global Clock controller found on
->     MSM8226
->   arm: dts: qcom: Add support for MSM8226 SoC
->   dt-bindings: arm: qcom: Document MSM8226 SoC binding
->   arm: dts: qcom: Add initial DTS file for Samsung Galaxy S III Neo
->     phone
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |   6 +
->  .../devicetree/bindings/clock/qcom,gcc.yaml   |  13 +-
->  arch/arm/boot/dts/Makefile                    |   1 +
->  .../boot/dts/qcom-msm8226-samsung-s3ve3g.dts  |  25 +++
->  arch/arm/boot/dts/qcom-msm8226.dtsi           | 152 ++++++++++++++
->  drivers/clk/qcom/gcc-msm8974.c                | 185 ++++++++++++++++--
->  6 files changed, 364 insertions(+), 18 deletions(-)
->  create mode 100644 arch/arm/boot/dts/qcom-msm8226-samsung-s3ve3g.dts
->  create mode 100644 arch/arm/boot/dts/qcom-msm8226.dtsi
-> 
-> -- 
-> 2.25.1
-> 
+Hi Tero,
 
-I have sent version V2 of the patches
+> Il 16/04/2021 14:43 Tero Kristo <kristo@kernel.org> ha scritto:
+> 
+>  
+> Hi Dario,
+> 
+> Spent some time looking at this, had to read through the TRM chapter of 
+> it also in quite detailed level to figure out how this is supposed to 
+> work out.
+> 
+> Other than couple of minor nits below, the code seems ok to me. What is 
+> the testing that has been done with this?
+
+The patch has been tested with laboratory instrumentation and is currently 
+used on a custom board based on a AM335x SOC with a TI 4.1.6 kernel. It was born 
+from the need to reduce the electromagnetic emissions of the display to pass the
+EMI certifications. The current patch is a port of that to the mainline kernel. 
+The corrections to be made were minimal and not significant. I'm testing it on a 
+beaglebone black board, verifying with devmem that the DPLL registers are correctly 
+set.
+
+> 
+> On 01/04/2021 22:37, Dario Binacchi wrote:
+> > The patch enables spread spectrum clocking (SSC) for MPU and LCD PLLs.
+> > As reported by the TI spruh73x/spruhl7x RM, SSC is only supported for
+> > the DISP/LCD and MPU PLLs on am33xx/am43xx. SSC is not supported for
+> > DDR, PER, and CORE PLLs.
+> > 
+> > Calculating the required values and setting the registers accordingly
+> > was taken from the set_mpu_spreadspectrum routine contained in the
+> > arch/arm/mach-omap2/am33xx/clock_am33xx.c file of the u-boot project.
+> > 
+> > In locked condition, DPLL output clock = CLKINP *[M/N]. In case of
+> > SSC enabled, the reference manual explains that there is a restriction
+> > of range of M values. Since the omap2_dpll_round_rate routine attempts
+> > to select the minimum possible N, the value of M obtained is not
+> > guaranteed to be within the range required. With the new "ti,min-div"
+> > parameter it is possible to increase N and consequently M to satisfy the
+> > constraint imposed by SSC.
+> > 
+> > Signed-off-by: Dario Binacchi <dariobin@libero.it>
+> > 
+> > ---
+> 
+> <snip>
+> 
+> >   	/* REVISIT: Set ramp-up delay? */
+> > diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+> > index c62f6fa6763d..cba093de62d8 100644
+> > --- a/include/linux/clk/ti.h
+> > +++ b/include/linux/clk/ti.h
+> > @@ -63,6 +63,18 @@ struct clk_omap_reg {
+> >    * @auto_recal_bit: bitshift of the driftguard enable bit in @control_reg
+> >    * @recal_en_bit: bitshift of the PRM_IRQENABLE_* bit for recalibration IRQs
+> >    * @recal_st_bit: bitshift of the PRM_IRQSTATUS_* bit for recalibration IRQs
+> > + * @ssc_deltam_reg: register containing the DPLL SSC frequency spreading
+> > + * @ssc_modfreq_reg: register containing the DPLL SSC modulation frequency
+> > + * @ssc_modfreq_mant_mask: mask of the mantissa component in @ssc_modfreq_reg
+> > + * @ssc_modfreq_exp_mask: mask of the exponent component in @ssc_modfreq_reg
+> > + * @ssc_enable_mask: mask of the DPLL SSC enable bit in @control_reg
+> > + * @ssc_ack_mask: mask of the DPLL SSC turned on/off bit in @control_reg
+> > + * @ssc_downspread_mask: mask of the DPLL SSC low frequency only bit in
+> > + *                       @control_reg
+> > + * @ssc_modfreq: the DPLL SSC frequency modulation in kHz
+> > + * @ssc_deltam: the DPLL SSC frequency spreading in permille (10th of percent)
+> > + * @ssc_downspread: require the only low frequency spread of the DPLL in SSC
+> > + *                   mode
+> >    * @flags: DPLL type/features (see below)
+> >    *
+> >    * Possible values for @flags:
+> > @@ -110,6 +122,18 @@ struct dpll_data {
+> >   	u8			auto_recal_bit;
+> >   	u8			recal_en_bit;
+> >   	u8			recal_st_bit;
+> > +	struct clk_omap_reg	ssc_deltam_reg;
+> > +	struct clk_omap_reg	ssc_modfreq_reg;
+> > +	u32			ssc_deltam_int_mask;
+> > +	u32			ssc_deltam_frac_mask;
+> > +	u32			ssc_modfreq_mant_mask;
+> > +	u32			ssc_modfreq_exp_mask;
+> > +	u32                     ssc_enable_mask;
+> > +	u32                     ssc_ack_mask;
+> 
+> ssc_ack_mask is not used for anything in the code.
+
+Ok, I will remove it.
+
+> 
+> > +	u32                     ssc_downspread_mask;
+> > +	u32                     ssc_modfreq;
+> > +	u32                     ssc_deltam;
+> > +	u8                      ssc_downspread;
+> 
+> ssc_downspread should be boolean?
+
+Yes.
+
+Thanks and regards,
+Dario
+
+> 
+> >   	u8			flags;
+> >   };
+> >   
+> >
