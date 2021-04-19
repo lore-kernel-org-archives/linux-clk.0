@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7E2C4361A
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3FEC4363E
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D40461027
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6718E61370
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238766AbhDSJkJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Apr 2021 05:40:09 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:54462 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238726AbhDSJj5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 05:39:57 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13J9RI4T024744;
-        Mon, 19 Apr 2021 11:39:08 +0200
+        id S238770AbhDSJkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Apr 2021 05:40:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51126 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238641AbhDSJkA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 05:40:00 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13J9QNjl027778;
+        Mon, 19 Apr 2021 11:39:15 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=MQFahwvfutC3FxBs/hqCSrvMqO46K/tUe+kmA3pJK74=;
- b=vwIj+U8U1cWy6Ucrc5jZU9t2cI3OC2E7zjZh/6wFCRVll7VM14ygWMsTJZMqW7I2mcVa
- Qv6cfUv3erOxerFlKayN0hPaU1p4yr2s7XdJCe0FUH7P5+mRG0LKn8+LbgeDbuZoguk9
- Uidykvc+qhdkC20Nf6/2Le55U2uzntgseRcKyz86AxTA9OTAWqnKW0gSdnaQMUgJ/gi4
- vtdKrvxW5Ck4Zlnl+nCbcZyovFjk9Q4l0EJBwsiMwzK87V68zYEmr5oNeAOJO3jIKxhL
- NrUO4hIkA4o2j+gixV/PrfqfPD5/+ozvZXeXKqs8XB/rK4MYyFsZN+iOfooYr6BUoieT Fg== 
+ bh=sFBSBQBDPyeSojaKMfT0U4e3EO47DQFQiaxc7wtZkdY=;
+ b=vhYk2BUJS00OXL6DK4zQ3czNL5SDLNUR3DkNVej4UhubZj0ySRqSRQQmr9kknwhEtpxa
+ U6CvOAHOMJm8/S0Wgx8nnPRpG4spMbSS/dnTpeh7XG/OYFyfZ2Lo0mD/lxVI13o1yPvo
+ /DNdch1t1aPrrrENFemD4SBrs3n8+bO3Sfk8lAPzmPe+vHJlK9YVbSX7s8VPhsRBgjfZ
+ mcFgOEzNLcq6F5XjZYvwD34t809MxToNgqROUxXXLCRpuVR5w9ARidnA6axlGqkR86Ox
+ JFSg7pjdGyKfPPjVpUYkrClyXEvLlqznH2mFqgLotaGwg8iNHyl+KI4R3aOeAz/9vIfG VQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 380wj62ru2-1
+        by mx07-00178001.pphosted.com with ESMTP id 380s533cgd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 11:39:08 +0200
+        Mon, 19 Apr 2021 11:39:15 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F38010002A;
-        Mon, 19 Apr 2021 11:39:07 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE1BC10002A;
+        Mon, 19 Apr 2021 11:39:14 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D87720A07F;
-        Mon, 19 Apr 2021 11:39:07 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BE7A420A07F;
+        Mon, 19 Apr 2021 11:39:14 +0200 (CEST)
 Received: from localhost (10.75.127.49) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 19 Apr 2021 11:39:07
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 19 Apr 2021 11:39:14
  +0200
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -57,17 +57,18 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 02/11] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
-Date:   Mon, 19 Apr 2021 11:38:43 +0200
-Message-ID: <20210419093852.14978-3-gabriel.fernandez@foss.st.com>
+        <linux-kernel@vger.kernel.org>,
+        Etienne Carriere <etienne.carriere@foss.st.com>
+Subject: [PATCH v3 11/11] clk: stm32mp1: new compatible for secure RCC support
+Date:   Mon, 19 Apr 2021 11:38:52 +0200
+Message-ID: <20210419093852.14978-12-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
 References: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-19_05:2021-04-16,2021-04-19 signatures=0
@@ -77,104 +78,191 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
-A divider is available only on the specific rtc input for ck_hse.
-This Merge will facilitate to have a more coherent clock tree
-in no trusted / trusted world.
+Platform STM32MP1 can be used in configuration where some clock
+resources cannot be accessed by Linux kernel when executing in non-secure
+state of the CPU(s).
+In such configuration, the RCC clock driver must not register clocks
+it cannot access.
+They are expected to be registered from another clock driver such
+as the SCMI clock driver.
+This change uses specific compatible string "st,stm32mp1-rcc-secure"
+to specify RCC clock driver configuration where RCC is secure.
 
+Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 54 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 6 deletions(-)
+ drivers/clk/Kconfig        |  10 ++++
+ drivers/clk/clk-stm32mp1.c | 101 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 110 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index a588d56502d4..44cc662f11f2 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -335,6 +335,16 @@ config COMMON_CLK_STM32MP157
+ 	help
+ 	  Support for stm32mp157 SoC family clocks
+ 
++config COMMON_CLK_STM32MP157_SCMI
++	bool "stm32mp157 Clock driver with Trusted Firmware"
++	depends on COMMON_CLK_STM32MP157
++	select COMMON_CLK_SCMI
++	select ARM_SCMI_PROTOCOL
++	default y
++	help
++	  Support for stm32mp157 SoC family clocks with Trusted Firmware using
++	  SCMI protocol.
++
+ config COMMON_CLK_STM32F
+ 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+ 	help
 diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 35d5aee8f9b0..a7c244fd0b03 100644
+index 6d3a36f81b2d..6adc625e79cb 100644
 --- a/drivers/clk/clk-stm32mp1.c
 +++ b/drivers/clk/clk-stm32mp1.c
-@@ -245,7 +245,7 @@ static const char * const dsi_src[] = {
+@@ -2056,11 +2056,61 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
  };
  
- static const char * const rtc_src[] = {
--	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
-+	"off", "ck_lse", "ck_lsi", "ck_hse"
++static const u32 stm32mp1_clock_secured[] = {
++	CK_HSE,
++	CK_HSI,
++	CK_CSI,
++	CK_LSI,
++	CK_LSE,
++	PLL1,
++	PLL2,
++	PLL1_P,
++	PLL2_P,
++	PLL2_Q,
++	PLL2_R,
++	CK_MPU,
++	CK_AXI,
++	SPI6,
++	I2C4,
++	I2C6,
++	USART1,
++	RTCAPB,
++	TZC1,
++	TZC2,
++	TZPC,
++	IWDG1,
++	BSEC,
++	STGEN,
++	GPIOZ,
++	CRYP1,
++	HASH1,
++	RNG1,
++	BKPSRAM,
++	RNG1_K,
++	STGEN_K,
++	SPI6_K,
++	I2C4_K,
++	I2C6_K,
++	USART1_K,
++	RTC,
++};
++
++static bool stm32_check_security(const struct clock_config *cfg)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(stm32mp1_clock_secured); i++)
++		if (cfg->id == stm32mp1_clock_secured[i])
++			return true;
++	return false;
++}
++
+ struct stm32_rcc_match_data {
+ 	const struct clock_config *cfg;
+ 	unsigned int num;
+ 	unsigned int maxbinding;
+ 	u32 clear_offset;
++	bool (*check_security)(const struct clock_config *cfg);
  };
  
- static const char * const mco1_src[] = {
-@@ -1031,6 +1031,47 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
- 	return hw;
+ static struct stm32_rcc_match_data stm32mp1_data = {
+@@ -2070,11 +2120,23 @@ static struct stm32_rcc_match_data stm32mp1_data = {
+ 	.clear_offset	= RCC_CLR,
+ };
+ 
++static struct stm32_rcc_match_data stm32mp1_data_secure = {
++	.cfg		= stm32mp1_clock_cfg,
++	.num		= ARRAY_SIZE(stm32mp1_clock_cfg),
++	.maxbinding	= STM32MP1_LAST_CLK,
++	.clear_offset	= RCC_CLR,
++	.check_security = &stm32_check_security
++};
++
+ static const struct of_device_id stm32mp1_match_data[] = {
+ 	{
+ 		.compatible = "st,stm32mp1-rcc",
+ 		.data = &stm32mp1_data,
+ 	},
++	{
++		.compatible = "st,stm32mp1-rcc-secure",
++		.data = &stm32mp1_data_secure,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, stm32mp1_match_data);
+@@ -2234,6 +2296,9 @@ static int stm32_rcc_clock_init(struct device *dev, void __iomem *base,
+ 		hws[n] = ERR_PTR(-ENOENT);
+ 
+ 	for (n = 0; n < data->num; n++) {
++		if (data->check_security && data->check_security(&data->cfg[n]))
++			continue;
++
+ 		err = stm32_register_hw_clk(dev, clk_data, base, &rlock,
+ 					    &data->cfg[n]);
+ 		if (err) {
+@@ -2301,11 +2366,45 @@ static int stm32mp1_rcc_init(struct device *dev)
+ 	return ret;
  }
  
-+/* The divider of RTC clock concerns only ck_hse clock */
-+#define HSE_RTC 3
-+
-+static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
++static int get_clock_deps(struct device *dev)
 +{
-+	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
-+		return clk_divider_ops.recalc_rate(hw, parent_rate);
++	static const char * const clock_deps_name[] = {
++		"hsi", "hse", "csi", "lsi", "lse",
++	};
++	size_t deps_size = sizeof(struct clk *) * ARRAY_SIZE(clock_deps_name);
++	struct clk **clk_deps;
++	int i;
 +
-+	return parent_rate;
-+}
++	clk_deps = devm_kzalloc(dev, deps_size, GFP_KERNEL);
++	if (!clk_deps)
++		return -ENOMEM;
 +
-+static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
-+		return clk_divider_ops.set_rate(hw, rate, parent_rate);
++	for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
++		struct clk *clk = of_clk_get_by_name(dev_of_node(dev),
++						     clock_deps_name[i]);
 +
-+	return parent_rate;
-+}
-+
-+static int clk_divider_rtc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	unsigned long best_parent_rate = req->best_parent_rate;
-+
-+	if (req->best_parent_hw == clk_hw_get_parent_by_index(hw, HSE_RTC)) {
-+		req->rate = clk_divider_ops.round_rate(hw, req->rate, &best_parent_rate);
-+		req->best_parent_rate = best_parent_rate;
-+	} else {
-+		req->rate = best_parent_rate;
++		if (IS_ERR(clk)) {
++			if (PTR_ERR(clk) != -EINVAL && PTR_ERR(clk) != -ENOENT)
++				return PTR_ERR(clk);
++		} else {
++			/* Device gets a reference count on the clock */
++			clk_deps[i] = devm_clk_get(dev, __clk_get_name(clk));
++			clk_put(clk);
++		}
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct clk_ops rtc_div_clk_ops = {
-+	.recalc_rate	= clk_divider_rtc_recalc_rate,
-+	.set_rate	= clk_divider_rtc_set_rate,
-+	.determine_rate = clk_divider_rtc_determine_rate
-+};
+ static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	int ret = get_clock_deps(dev);
 +
- struct stm32_pll_cfg {
- 	u32 offset;
- };
-@@ -1243,6 +1284,10 @@ _clk_stm32_register_composite(struct device *dev,
- 	_STM32_DIV(_div_offset, _div_shift, _div_width,\
- 		   _div_flags, _div_table, NULL)\
++	if (!ret)
++		ret = stm32mp1_rcc_init(dev);
  
-+#define _DIV_RTC(_div_offset, _div_shift, _div_width, _div_flags, _div_table)\
-+	_STM32_DIV(_div_offset, _div_shift, _div_width,\
-+		   _div_flags, _div_table, &rtc_div_clk_ops)
-+
- #define _STM32_MUX(_offset, _shift, _width, _mux_flags, _mmux, _ops)\
- 	.mux = &(struct stm32_mux_cfg) {\
- 		&(struct mux_cfg) {\
-@@ -1965,13 +2010,10 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
+-	return stm32mp1_rcc_init(dev);
++	return ret;
+ }
  
- 	/* RTC clock */
--	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 6, 0),
--
--	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
--		   CLK_SET_RATE_PARENT,
-+	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE,
- 		  _GATE(RCC_BDCR, 20, 0),
- 		  _MUX(RCC_BDCR, 16, 2, 0),
--		  _NO_DIV),
-+		  _DIV_RTC(RCC_RTCDIVR, 0, 6, 0, NULL)),
- 
- 	/* MCO clocks */
- 	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
+ static int stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
 -- 
 2.17.1
 
