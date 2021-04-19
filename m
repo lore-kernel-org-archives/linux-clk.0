@@ -2,157 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C02DC43460
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 12:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C419C433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 13:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B215611F0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 12:17:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567906113C
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 13:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239092AbhDSMRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Apr 2021 08:17:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:49693 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239056AbhDSMRg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 08:17:36 -0400
-Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1McIYO-1m4VGN1dSm-00cdhN; Mon, 19 Apr 2021 14:17:03 +0200
-Received: by mail-wr1-f45.google.com with SMTP id a4so33804401wrr.2;
-        Mon, 19 Apr 2021 05:17:03 -0700 (PDT)
-X-Gm-Message-State: AOAM530v/yBC/2XYq7ELiJsOKT38utH8V09hnr+DbReIt0QSUowLKCu9
-        qzJPWUNHn5H0Tj77oevy9M0tidTBIegyWgN+ZY8=
-X-Google-Smtp-Source: ABdhPJw4F20QerTwfst1rAMwc6NWiXDSUWeUkZ8E4j2sezaYrIv6atAni45jIwUzsYws7AyLO9D3pu8QFGIGztgXd7o=
-X-Received: by 2002:a05:6000:1843:: with SMTP id c3mr14679907wri.361.1618834612186;
- Mon, 19 Apr 2021 05:16:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210419042722.27554-1-alice.guo@oss.nxp.com> <20210419042722.27554-4-alice.guo@oss.nxp.com>
- <YH0O907dfGY9jQRZ@atmark-techno.com> <CAMuHMdVY1SLZ0K30T2pimyrR6Mm=VoSTO=L-xxCy2Bj7_kostw@mail.gmail.com>
- <YH1OeFy+SepIYYG0@atmark-techno.com>
-In-Reply-To: <YH1OeFy+SepIYYG0@atmark-techno.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 19 Apr 2021 14:16:36 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1Mu2F0irDDCL-50HiHth29iYFL5b7WHZ=UX6W7zzoxAg@mail.gmail.com>
-Message-ID: <CAK8P3a1Mu2F0irDDCL-50HiHth29iYFL5b7WHZ=UX6W7zzoxAg@mail.gmail.com>
-Subject: Re: [RFC v1 PATCH 3/3] driver: update all the code that use soc_device_match
-To:     Dominique MARTINET <dominique.martinet@atmark-techno.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Alice Guo (OSS)" <alice.guo@oss.nxp.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        aymen.sghaier@nxp.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        peter.ujfalusi@gmail.com, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>, tomba@kernel.org,
-        jyri.sarha@iki.fi, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon <kishon@ti.com>, Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Roy Pledge <Roy.Pledge@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+        id S241349AbhDSNhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Apr 2021 09:37:24 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:53406 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241512AbhDSNg3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 09:36:29 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13JDZhIo110437;
+        Mon, 19 Apr 2021 08:35:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1618839343;
+        bh=qeZcN+h8qnPRTBufAOnY5cwD/Q0Lqcs0+bre14HwovE=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=ENexWrbeYpj1oR7s5ZNzjDgFGxdy9V5O5I+UoZJrHh+oyikFGpjm2EC1r5PkdOExF
+         YxrIJjWVnpq4YdeaqGu0T2i5G6p+Nq15aoOR/DwnUgNzQKYCMLGI7g9EYJYsSAe7W+
+         NeyvnQbpUEuUUsh9Xei/vmLpjIyd1hvq3MPj04GQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13JDZhtI129553
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Apr 2021 08:35:43 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 19
+ Apr 2021 08:35:42 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Mon, 19 Apr 2021 08:35:42 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13JDZgj9049023;
+        Mon, 19 Apr 2021 08:35:42 -0500
+Date:   Mon, 19 Apr 2021 08:35:42 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>, Felipe Balbi <balbi@kernel.org>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Amlogic Meson SoC support" 
-        <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-staging@lists.linux.dev,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:P71GUur0c8Et4KTdfK062CelxJMlxDzHdi6foeZVMrh68Tz4kVO
- xXC4vz+qe3LvNC/lTgY8q6jr08cIcxgzzrqqwLuy4gBjPze3CRaFI6Tn0ivsylYkqTjCGCd
- UznPeEk90qstnxb0iWNZx7FG5N+vrUigS/VNsT3W/kFEpTHiyw396kNMzzFJBTjXO+naZJ+
- Cfu35e3pJq/mHwP5LQM/Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Tj0dSv4OACg=:QLuHKXqc+6Lj41NGnufoGl
- N+UnlZp25078q227oT0o/4kxbd0mQOAoQ/NCUKgnVsoYmGtmK6mEBskoottCNbYunStcV9NF4
- wE8ToQWQ05B3nZv4Vjj9qNbaiSwQl2/EIEpHx8+6DQaiGM4h6uplPIOIDeaZjltt02tsjjmk7
- kxpSU+zIeAbNwqmXYSk5Vm3CpYS1xMcDA6Eiv0+uZeBUE0kKjN4jwkU6+BKG/eaq+T9ufKwnD
- crSJLI+V67wSaKUzbHccJ3EU1Sb6dMM2cPoEC3Av6tRhuAXiX84+lOxtkljO1IFE9iL1JBVn5
- CjGxqnLONV0vManrkRS3zSk/dqMTqKx9iNczeHNAz+sKCK3kGK1HvvAI82zCriMShj36q2Yiu
- latEFCHqqv6CzIpzD2Q+F98/Rh3nVZdyFAqvuM6r16X0t/3dzAs72dYw+jzCHok5qetil5Q2V
- 5rdGScTR8+ZhGbwiKRQyQ6I2CQTnccKZ549zJci96NqNdfUe5jbzVwZOI0walCavZ7GVu0d2F
- jvOU246bo6oNPkDzH9c2gJBnZtcrzAKb4pwtF9+3cOiLZPnCE0nY+1vjm75YQHDBCyxvLdR64
- g4tTIuRlUg3P8XaXbJiPp80y/nkM8kt4yG+up76tnDKMDxMpP5a+pkpQ1YQ2I6y3uojN6bE8n
- CFp8=
+        Tero Kristo <kristo@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Convert ti,sci-clk to json schema
+Message-ID: <20210419133542.ndgkmf7eq4oqse34@ladies>
+References: <20210416063721.20538-1-nm@ti.com>
+ <20210416063721.20538-3-nm@ti.com>
+ <161861731160.46595.786611690053722257@swboyd.mtv.corp.google.com>
+ <20210417125127.vigq23mdoodje6b5@velcro>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20210417125127.vigq23mdoodje6b5@velcro>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 11:33 AM Dominique MARTINET
-<dominique.martinet@atmark-techno.com> wrote:
-> Geert Uytterhoeven wrote on Mon, Apr 19, 2021 at 11:03:24AM +0200:
->
-> > soc_device_match() should only be used as a last resort, to identify
-> > systems that cannot be identified otherwise.  Typically this is used for
-> > quirks, which should only be enabled on a very specific subset of
-> > systems.  IMHO such systems should make sure soc_device_match()
-> > is available early, by registering their SoC device early.
->
-> I definitely agree there, my suggestion to defer was only because I know
-> of no other way to influence the ordering of drivers loading reliably
-> and gave up on soc being init'd early.
+Stephen,
 
-In some cases, you can use the device_link infrastructure to deal
-with dependencies between devices. Not sure if this would help
-in your case, but have a look at device_link_add() etc in drivers/base/core.c
+On 07:51-20210417, Nishanth Menon wrote:
+> On 16:55-20210416, Stephen Boyd wrote:
+> > Quoting Nishanth Menon (2021-04-15 23:37:19)
+> > > diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> > > new file mode 100644
+> > > index 000000000000..72633651f0c7
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+> > > @@ -0,0 +1,52 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/clock/ti,sci-clk.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: TI-SCI clock controller node bindings
+> > > +
+> > > +maintainers:
+> > > +  - Nishanth Menon <nm@ti.com>
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/clock/clock.yaml#
+> > 
+> > Is this needed?
+> 
+> https://github.com/devicetree-org/dt-schema/blob/master/schemas/clock/clock.yaml
+> This standardizes provider properties like '#clock-cells' etc, allowing
+> you to add more stricter checks or controls in the future if necessary.
+> 
+> while:
+> 
+> https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/clocks.yaml
+> is more a consumer node description.
+> 
+> Should I have picked a different yaml as base for a standard clock-controller
+> base?
+> 
 
-> In this particular case the problem is that since 7d981405d0fd ("soc:
-> imx8m: change to use platform driver") the soc probe tries to use the
-> nvmem driver for ocotp fuses for imx8m devices, which isn't ready yet.
-> So soc loading gets pushed back to the end of the list because it gets
-> defered and other drivers relying on soc_device_match get confused
-> because they wrongly think a device doesn't match a quirk when it
-> actually does.
->
-> If there is a way to ensure the nvmem driver gets loaded before the soc,
-> that would also solve the problem nicely, and avoid the need to mess
-> with all the ~50 drivers which use it.
->
-> Is there a way to control in what order drivers get loaded? Something in
-> the dtb perhaps?
+Thinking again, I think your comment was to drop the clock.yaml
+inclusion, and, as a result this schema can become more stringent..
 
-For built-in drivers, load order depends on the initcall level and
-link order (how things are lined listed in the Makefile hierarchy).
+Could you clarify?
 
-For loadable modules, this is up to user space in the end.
 
-Which of the drivers in this scenario are loadable modules?
+> > 
+> > > +
+> > > +description: |
+> > > +  Some TI SoCs contain a system controller (like the Power Management Micro
+> > > +  Controller (PMMC) on Keystone 66AK2G SoC) that are responsible for controlling
+> > > +  the state of the various hardware modules present on the SoC. Communication
+> > > +  between the host processor running an OS and the system controller happens
+> > > +  through a protocol called TI System Control Interface (TI-SCI protocol).
+> > > +
+> > > +  This clock controller node uses the TI SCI protocol to perform various clock
+> > > +  management of various hardware modules (devices) present on the SoC. This
+> > > +  node must be a child node of the associated TI-SCI system controller node.
+> > > +
+> > > +properties:
+> > > +  $nodename:
+> > > +    pattern: "^clock-controller$"
+> > 
+> > Is this nodename pattern check required?
+> 
+> I'd like the definition on rails and not subject to interpretation, and
+> restrict the kind of subnodes under TISCI controller node.
+> 
+> > 
+> > > +
+> > > +  compatible:
+> > > +    const: ti,k2g-sci-clk
+> > 
+> > I thought most things keyed off the compatible string.
+> 
+> Yes, they are. I am not sure I understand your question here. Did you
+> mean to indicate that having $nodename and compatible both are
+> redundant?
+> 
+> Redundancy was'nt the intent of this schema definition, rather, I'd like
+> to make sure that it is not upto interpretation or debate as to what the
+> node name should be: I believe clock-controller is the correct nodename
+> (without @0x... since this does'nt use reg property) instead of using
+> clocks, tisci-clock as the node names.
+> 
+> 
+> Do you suggest something  different?
+> 
+> -- 
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
-        Arnd
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
