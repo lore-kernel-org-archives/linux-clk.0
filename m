@@ -2,46 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAECFC43460
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AC4C43470
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A16D561157
+	by mail.kernel.org (Postfix) with ESMTP id F011A61353
 	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238373AbhDSJkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Apr 2021 05:40:04 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21724 "EHLO
+        id S238639AbhDSJkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Apr 2021 05:40:05 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:28308 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238616AbhDSJj4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 05:39:56 -0400
+        by vger.kernel.org with ESMTP id S238733AbhDSJj6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 05:39:58 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13J9RIHb027890;
-        Mon, 19 Apr 2021 11:39:06 +0200
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13J9RIWq027864;
+        Mon, 19 Apr 2021 11:39:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=wOdBXreJaHkgnJPvNm4hYfpoNn+S6pHPol0liOPRIiU=;
- b=Uo86N0X7eVrHf8AswCNPqmebR9xfEdJiaO01eE/irTjjKYtuoChcMetJeoL4+GbUGy45
- P47id3ekrxFkBRVngLJhG9yogUgxx/0m5lBf5GhI/E9qyc8o7UQgCZ6HvBKt1CR+A9Jx
- EyNovc7lG60qvCKNsiRn3BxhuMFecw5mKy8gwM5VjpZVKC+OPZlxPgtzCfm0XWQOemQ2
- umkvGvyKP0HEtYTJimuH41y+Hg/4tWidRR2G1jPYpYjuMrvvrDA+sXrtZzjePKa3YgVq
- hWiAlPIRzOZOT9UBDd909dNz9IgIUrd+30eYWXNTo3iMdUMgyeld69qtJk+Dy+nfUcrR tQ== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=4T6Qz2/JmceHcxFve+YnEKkureSv6YCau+hALUO8xJQ=;
+ b=Yu2W64cYtqLQJYD3M7nqghoMy56xUhZJ6A+9r7lRD2pyyQbdOcKo2eFJe4GqdmC92rkE
+ UitqG4UPgii84VJKa+otoSjCIejgJoZVhsQ3wwWS/TXPbpIPxOrTyZp7xanaQy2dpgsl
+ DwQrExp0Po2dUPTFJ9cPe1Api9ebJRPHrXwsY1PWN2K71yw9PK1zgeHSuRZOMLhz0bk4
+ jWF0F9RW4SU+5+WHC/5mK5D9WPIHXbcPHH2Suv0SFrECfAr5Bb4rLkxnI/OZtDlSY5XG
+ UXb4IDY9Efb5Va+zajfFzxzT+qTOmezxw4fH9lznmC0TQ74NdtMoN+LTc9MfJ9K20sDp Vg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 380s8c3bfy-1
+        by mx07-00178001.pphosted.com with ESMTP id 380s8c3bgu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 11:39:06 +0200
+        Mon, 19 Apr 2021 11:39:12 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 155E410002A;
-        Mon, 19 Apr 2021 11:39:06 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4A1F4100038;
+        Mon, 19 Apr 2021 11:39:12 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DEF9820A07F;
-        Mon, 19 Apr 2021 11:39:05 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3A4BA20A07F;
+        Mon, 19 Apr 2021 11:39:12 +0200 (CEST)
 Received: from localhost (10.75.127.49) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 19 Apr 2021 11:39:05
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 19 Apr 2021 11:39:11
  +0200
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -56,15 +57,18 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 00/11] Introduce STM32MP1 RCC in secured mode
-Date:   Mon, 19 Apr 2021 11:38:41 +0200
-Message-ID: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
+        <linux-kernel@vger.kernel.org>,
+        Etienne Carriere <etienne.carriere@foss.st.com>
+Subject: [PATCH v3 08/11] dt-bindings: reset: add IDs for SCMI reset domains on stm32mp15
+Date:   Mon, 19 Apr 2021 11:38:49 +0200
+Message-ID: <20210419093852.14978-9-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
+References: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-19_05:2021-04-16,2021-04-19 signatures=0
@@ -74,46 +78,46 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Platform STM32MP1 can be used in configuration where some clocks and
-IP resets can relate as secure resources.
-These resources are moved from a RCC clock/reset handle to a SCMI
-clock/reset_domain handle.
+stm32mp15 TZ secure firmware provides SCMI reset domains for
+secure resources. This change defines the SCMI reset domain
+identifiers used by SCMI agents and servers.
 
-The RCC clock driver is now dependent of the SCMI driver, then we have
-to manage now the probe defering.
+Stm32mp15 TZ secure firmware provides SCMI clocks for oscillators, some
+PLL output and few secure aware interfaces. This change defines the
+SCMI clock identifiers used by SCMI agents and servers.
 
-v2 -> v3:
-  - use determine_rate op instead of round_rate for ck_rtc
-  - remove DT patches from patchset to keek Kernel device tree as there are in basic boot.
-     We will applied scmi clock phandle thanks dtbo in U-boot.
-v1 -> v2:
-  - fix yamllint warnings.
+Server SCMI0 exposes reset controllers for resources under RCC[TZEN]
+configuration control.
 
-Gabriel Fernandez (11):
-  clk: stm32mp1: merge 'clk-hsi-div' and 'ck_hsi' into one clock
-  clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
-  clk: stm32mp1: remove intermediate pll clocks
-  clk: stm32mp1: convert to module driver
-  clk: stm32mp1: move RCC reset controller into RCC clock driver
-  reset: stm32mp1: remove stm32mp1 reset
-  dt-bindings: clock: add IDs for SCMI clocks on stm32mp15
-  dt-bindings: reset: add IDs for SCMI reset domains on stm32mp15
-  dt-bindings: reset: add MCU HOLD BOOT ID for SCMI reset domains on
-    stm32mp15
-  dt-bindings: clock: stm32mp1 new compatible for secure rcc
-  clk: stm32mp1: new compatible for secure RCC support
+Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ include/dt-bindings/reset/stm32mp1-resets.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- .../bindings/clock/st,stm32mp1-rcc.yaml       |   6 +-
- drivers/clk/Kconfig                           |  10 +
- drivers/clk/clk-stm32mp1.c                    | 500 +++++++++++++++---
- drivers/reset/Kconfig                         |   6 -
- drivers/reset/Makefile                        |   1 -
- drivers/reset/reset-stm32mp1.c                | 115 ----
- include/dt-bindings/clock/stm32mp1-clks.h     |  27 +
- include/dt-bindings/reset/stm32mp1-resets.h   |  15 +
- 8 files changed, 469 insertions(+), 211 deletions(-)
- delete mode 100644 drivers/reset/reset-stm32mp1.c
-
+diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
+index f0c3aaef67a0..bc71924faa54 100644
+--- a/include/dt-bindings/reset/stm32mp1-resets.h
++++ b/include/dt-bindings/reset/stm32mp1-resets.h
+@@ -105,4 +105,17 @@
+ #define GPIOJ_R		19785
+ #define GPIOK_R		19786
+ 
++/* SCMI reset domain identifiers */
++#define RST_SCMI0_SPI6		0
++#define RST_SCMI0_I2C4		1
++#define RST_SCMI0_I2C6		2
++#define RST_SCMI0_USART1	3
++#define RST_SCMI0_STGEN		4
++#define RST_SCMI0_GPIOZ		5
++#define RST_SCMI0_CRYP1		6
++#define RST_SCMI0_HASH1		7
++#define RST_SCMI0_RNG1		8
++#define RST_SCMI0_MDMA		9
++#define RST_SCMI0_MCU		10
++
+ #endif /* _DT_BINDINGS_STM32MP1_RESET_H_ */
 -- 
 2.17.1
 
