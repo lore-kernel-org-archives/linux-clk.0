@@ -2,267 +2,327 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3FEC4363E
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73C7C433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 11:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6718E61370
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 09:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87F9861157
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Apr 2021 11:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238770AbhDSJkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Apr 2021 05:40:10 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51126 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238641AbhDSJkA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Apr 2021 05:40:00 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13J9QNjl027778;
-        Mon, 19 Apr 2021 11:39:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=sFBSBQBDPyeSojaKMfT0U4e3EO47DQFQiaxc7wtZkdY=;
- b=vhYk2BUJS00OXL6DK4zQ3czNL5SDLNUR3DkNVej4UhubZj0ySRqSRQQmr9kknwhEtpxa
- U6CvOAHOMJm8/S0Wgx8nnPRpG4spMbSS/dnTpeh7XG/OYFyfZ2Lo0mD/lxVI13o1yPvo
- /DNdch1t1aPrrrENFemD4SBrs3n8+bO3Sfk8lAPzmPe+vHJlK9YVbSX7s8VPhsRBgjfZ
- mcFgOEzNLcq6F5XjZYvwD34t809MxToNgqROUxXXLCRpuVR5w9ARidnA6axlGqkR86Ox
- JFSg7pjdGyKfPPjVpUYkrClyXEvLlqznH2mFqgLotaGwg8iNHyl+KI4R3aOeAz/9vIfG VQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 380s533cgd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 11:39:15 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE1BC10002A;
-        Mon, 19 Apr 2021 11:39:14 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BE7A420A07F;
-        Mon, 19 Apr 2021 11:39:14 +0200 (CEST)
-Received: from localhost (10.75.127.49) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 19 Apr 2021 11:39:14
- +0200
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Etienne Carriere <etienne.carriere@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        <marex@denx.de>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Etienne Carriere <etienne.carriere@foss.st.com>
-Subject: [PATCH v3 11/11] clk: stm32mp1: new compatible for secure RCC support
-Date:   Mon, 19 Apr 2021 11:38:52 +0200
-Message-ID: <20210419093852.14978-12-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
-References: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
+        id S232560AbhDSL06 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Apr 2021 07:26:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237627AbhDSL05 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Apr 2021 07:26:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6649A61166;
+        Mon, 19 Apr 2021 11:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618831587;
+        bh=eZeuY5Kfhu/fg038wXgbLrtV1HP+7KAfgIqAqHTu7LM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=B4SIj1tKr8W7+cOH0r49RJifi5FDyzFyJZ4vSwwJNlFHaMZ1/v8Vg2VcGNHcYq8ll
+         V0newZovUcjjxEB6/8dAVxRCIBOXeoe8Vyzj55m1Ux7JJswx0ex7tKz65F0Mw11LGY
+         /ZzIp17It7uj+jmHmb6X9dh0Flbg4h2AI/yhOEx0CCqxPi3f6xPPYNfh6141K+nF8j
+         /J+8JorFr+sceQkKryAXrrdBDkwQ7uicAU5Es1byMRhTqofFWhXPeMu9NDVfEZtgcO
+         YO/oKsJR2lv7gp5kQqQJ9Q4ZKd6WlpgdOwVwedin1w1I2ya28quaFqZC1KlcR1sNS1
+         PR7RTGRtgqAxw==
+Subject: Re: [PATCH v5 5/5] clk: ti: add am33xx/am43xx spread spectrum clock
+ support
+To:     Dario Binacchi <dariobin@libero.it>, linux-kernel@vger.kernel.org
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20210418145655.10415-1-dariobin@libero.it>
+ <20210418145655.10415-6-dariobin@libero.it>
+From:   Tero Kristo <kristo@kernel.org>
+Message-ID: <3e6472c2-5256-0248-6a09-32a59a74832e@kernel.org>
+Date:   Mon, 19 Apr 2021 14:26:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-19_05:2021-04-16,2021-04-19 signatures=0
+In-Reply-To: <20210418145655.10415-6-dariobin@libero.it>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+On 18/04/2021 17:56, Dario Binacchi wrote:
+> The patch enables spread spectrum clocking (SSC) for MPU and LCD PLLs.
+> As reported by the TI spruh73x/spruhl7x RM, SSC is only supported for
+> the DISP/LCD and MPU PLLs on am33xx/am43xx. SSC is not supported for
+> DDR, PER, and CORE PLLs.
+> 
+> Calculating the required values and setting the registers accordingly
+> was taken from the set_mpu_spreadspectrum routine contained in the
+> arch/arm/mach-omap2/am33xx/clock_am33xx.c file of the u-boot project.
+> 
+> In locked condition, DPLL output clock = CLKINP *[M/N]. In case of
+> SSC enabled, the reference manual explains that there is a restriction
+> of range of M values. Since the omap2_dpll_round_rate routine attempts
+> to select the minimum possible N, the value of M obtained is not
+> guaranteed to be within the range required. With the new "ti,min-div"
+> parameter it is possible to increase N and consequently M to satisfy the
+> constraint imposed by SSC.
+> 
+> Signed-off-by: Dario Binacchi <dariobin@libero.it>
 
-Platform STM32MP1 can be used in configuration where some clock
-resources cannot be accessed by Linux kernel when executing in non-secure
-state of the CPU(s).
-In such configuration, the RCC clock driver must not register clocks
-it cannot access.
-They are expected to be registered from another clock driver such
-as the SCMI clock driver.
-This change uses specific compatible string "st,stm32mp1-rcc-secure"
-to specify RCC clock driver configuration where RCC is secure.
+Reviewed-by: Tero Kristo <kristo@kernel.org>
 
-Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- drivers/clk/Kconfig        |  10 ++++
- drivers/clk/clk-stm32mp1.c | 101 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 110 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index a588d56502d4..44cc662f11f2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -335,6 +335,16 @@ config COMMON_CLK_STM32MP157
- 	help
- 	  Support for stm32mp157 SoC family clocks
- 
-+config COMMON_CLK_STM32MP157_SCMI
-+	bool "stm32mp157 Clock driver with Trusted Firmware"
-+	depends on COMMON_CLK_STM32MP157
-+	select COMMON_CLK_SCMI
-+	select ARM_SCMI_PROTOCOL
-+	default y
-+	help
-+	  Support for stm32mp157 SoC family clocks with Trusted Firmware using
-+	  SCMI protocol.
-+
- config COMMON_CLK_STM32F
- 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
- 	help
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 6d3a36f81b2d..6adc625e79cb 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -2056,11 +2056,61 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
- };
- 
-+static const u32 stm32mp1_clock_secured[] = {
-+	CK_HSE,
-+	CK_HSI,
-+	CK_CSI,
-+	CK_LSI,
-+	CK_LSE,
-+	PLL1,
-+	PLL2,
-+	PLL1_P,
-+	PLL2_P,
-+	PLL2_Q,
-+	PLL2_R,
-+	CK_MPU,
-+	CK_AXI,
-+	SPI6,
-+	I2C4,
-+	I2C6,
-+	USART1,
-+	RTCAPB,
-+	TZC1,
-+	TZC2,
-+	TZPC,
-+	IWDG1,
-+	BSEC,
-+	STGEN,
-+	GPIOZ,
-+	CRYP1,
-+	HASH1,
-+	RNG1,
-+	BKPSRAM,
-+	RNG1_K,
-+	STGEN_K,
-+	SPI6_K,
-+	I2C4_K,
-+	I2C6_K,
-+	USART1_K,
-+	RTC,
-+};
-+
-+static bool stm32_check_security(const struct clock_config *cfg)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(stm32mp1_clock_secured); i++)
-+		if (cfg->id == stm32mp1_clock_secured[i])
-+			return true;
-+	return false;
-+}
-+
- struct stm32_rcc_match_data {
- 	const struct clock_config *cfg;
- 	unsigned int num;
- 	unsigned int maxbinding;
- 	u32 clear_offset;
-+	bool (*check_security)(const struct clock_config *cfg);
- };
- 
- static struct stm32_rcc_match_data stm32mp1_data = {
-@@ -2070,11 +2120,23 @@ static struct stm32_rcc_match_data stm32mp1_data = {
- 	.clear_offset	= RCC_CLR,
- };
- 
-+static struct stm32_rcc_match_data stm32mp1_data_secure = {
-+	.cfg		= stm32mp1_clock_cfg,
-+	.num		= ARRAY_SIZE(stm32mp1_clock_cfg),
-+	.maxbinding	= STM32MP1_LAST_CLK,
-+	.clear_offset	= RCC_CLR,
-+	.check_security = &stm32_check_security
-+};
-+
- static const struct of_device_id stm32mp1_match_data[] = {
- 	{
- 		.compatible = "st,stm32mp1-rcc",
- 		.data = &stm32mp1_data,
- 	},
-+	{
-+		.compatible = "st,stm32mp1-rcc-secure",
-+		.data = &stm32mp1_data_secure,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, stm32mp1_match_data);
-@@ -2234,6 +2296,9 @@ static int stm32_rcc_clock_init(struct device *dev, void __iomem *base,
- 		hws[n] = ERR_PTR(-ENOENT);
- 
- 	for (n = 0; n < data->num; n++) {
-+		if (data->check_security && data->check_security(&data->cfg[n]))
-+			continue;
-+
- 		err = stm32_register_hw_clk(dev, clk_data, base, &rlock,
- 					    &data->cfg[n]);
- 		if (err) {
-@@ -2301,11 +2366,45 @@ static int stm32mp1_rcc_init(struct device *dev)
- 	return ret;
- }
- 
-+static int get_clock_deps(struct device *dev)
-+{
-+	static const char * const clock_deps_name[] = {
-+		"hsi", "hse", "csi", "lsi", "lse",
-+	};
-+	size_t deps_size = sizeof(struct clk *) * ARRAY_SIZE(clock_deps_name);
-+	struct clk **clk_deps;
-+	int i;
-+
-+	clk_deps = devm_kzalloc(dev, deps_size, GFP_KERNEL);
-+	if (!clk_deps)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
-+		struct clk *clk = of_clk_get_by_name(dev_of_node(dev),
-+						     clock_deps_name[i]);
-+
-+		if (IS_ERR(clk)) {
-+			if (PTR_ERR(clk) != -EINVAL && PTR_ERR(clk) != -ENOENT)
-+				return PTR_ERR(clk);
-+		} else {
-+			/* Device gets a reference count on the clock */
-+			clk_deps[i] = devm_clk_get(dev, __clk_get_name(clk));
-+			clk_put(clk);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	int ret = get_clock_deps(dev);
-+
-+	if (!ret)
-+		ret = stm32mp1_rcc_init(dev);
- 
--	return stm32mp1_rcc_init(dev);
-+	return ret;
- }
- 
- static int stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
--- 
-2.17.1
+> 
+> ---
+> 
+> Changes in v5:
+> - Remove ssc_ack_mask field from dpll_data structure. It was not used.
+> - Change ssc_downspread type from u8 to bool in dpll_data structure.
+> 
+> Changes in v4:
+> - Update commit message.
+> 
+> Changes in v3:
+> - Use "ti,ssc-modfreq-hz" binding instead of "ti,ssc-modfreq".
+> 
+> Changes in v2:
+> - Move the DT changes to the previous patch in the series.
+> 
+>   drivers/clk/ti/dpll.c     | 39 ++++++++++++++++++
+>   drivers/clk/ti/dpll3xxx.c | 85 +++++++++++++++++++++++++++++++++++++++
+>   include/linux/clk/ti.h    | 22 ++++++++++
+>   3 files changed, 146 insertions(+)
+> 
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index d6f1ac5b53e1..e9f9aee936ae 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -290,7 +290,9 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>   	struct clk_init_data *init = NULL;
+>   	const char **parent_names = NULL;
+>   	struct dpll_data *dd = NULL;
+> +	int ssc_clk_index;
+>   	u8 dpll_mode = 0;
+> +	u32 min_div;
+>   
+>   	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
+>   	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+> @@ -345,6 +347,27 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>   	if (dd->autoidle_mask) {
+>   		if (ti_clk_get_reg_addr(node, 3, &dd->autoidle_reg))
+>   			goto cleanup;
+> +
+> +		ssc_clk_index = 4;
+> +	} else {
+> +		ssc_clk_index = 3;
+> +	}
+> +
+> +	if (dd->ssc_deltam_int_mask && dd->ssc_deltam_frac_mask &&
+> +	    dd->ssc_modfreq_mant_mask && dd->ssc_modfreq_exp_mask) {
+> +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
+> +					&dd->ssc_deltam_reg))
+> +			goto cleanup;
+> +
+> +		if (ti_clk_get_reg_addr(node, ssc_clk_index++,
+> +					&dd->ssc_modfreq_reg))
+> +			goto cleanup;
+> +
+> +		of_property_read_u32(node, "ti,ssc-modfreq-hz",
+> +				     &dd->ssc_modfreq);
+> +		of_property_read_u32(node, "ti,ssc-deltam", &dd->ssc_deltam);
+> +		dd->ssc_downspread =
+> +			of_property_read_bool(node, "ti,ssc-downspread");
+>   	}
+>   
+>   	if (of_property_read_bool(node, "ti,low-power-stop"))
+> @@ -356,6 +379,10 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+>   	if (of_property_read_bool(node, "ti,lock"))
+>   		dpll_mode |= 1 << DPLL_LOCKED;
+>   
+> +	if (!of_property_read_u32(node, "ti,min-div", &min_div) &&
+> +	    min_div > dd->min_divider)
+> +		dd->min_divider = min_div;
+> +
+>   	if (dpll_mode)
+>   		dd->modes = dpll_mode;
+>   
+> @@ -585,8 +612,14 @@ static void __init of_ti_am3_no_gate_dpll_setup(struct device_node *node)
+>   	const struct dpll_data dd = {
+>   		.idlest_mask = 0x1,
+>   		.enable_mask = 0x7,
+> +		.ssc_enable_mask = 0x1 << 12,
+> +		.ssc_downspread_mask = 0x1 << 14,
+>   		.mult_mask = 0x7ff << 8,
+>   		.div1_mask = 0x7f,
+> +		.ssc_deltam_int_mask = 0x3 << 18,
+> +		.ssc_deltam_frac_mask = 0x3ffff,
+> +		.ssc_modfreq_mant_mask = 0x7f,
+> +		.ssc_modfreq_exp_mask = 0x7 << 8,
+>   		.max_multiplier = 2047,
+>   		.max_divider = 128,
+>   		.min_divider = 1,
+> @@ -645,8 +678,14 @@ static void __init of_ti_am3_dpll_setup(struct device_node *node)
+>   	const struct dpll_data dd = {
+>   		.idlest_mask = 0x1,
+>   		.enable_mask = 0x7,
+> +		.ssc_enable_mask = 0x1 << 12,
+> +		.ssc_downspread_mask = 0x1 << 14,
+>   		.mult_mask = 0x7ff << 8,
+>   		.div1_mask = 0x7f,
+> +		.ssc_deltam_int_mask = 0x3 << 18,
+> +		.ssc_deltam_frac_mask = 0x3ffff,
+> +		.ssc_modfreq_mant_mask = 0x7f,
+> +		.ssc_modfreq_exp_mask = 0x7 << 8,
+>   		.max_multiplier = 2047,
+>   		.max_divider = 128,
+>   		.min_divider = 1,
+> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> index 94d5b5fe9a2b..e32b3515f9e7 100644
+> --- a/drivers/clk/ti/dpll3xxx.c
+> +++ b/drivers/clk/ti/dpll3xxx.c
+> @@ -291,6 +291,88 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
+>   	*sd_div = sd;
+>   }
+>   
+> +/**
+> + * omap3_noncore_dpll_ssc_program - set spread-spectrum clocking registers
+> + * @clk:	struct clk * of DPLL to set
+> + *
+> + * Enable the DPLL spread spectrum clocking if frequency modulation and
+> + * frequency spreading have been set, otherwise disable it.
+> + */
+> +static void omap3_noncore_dpll_ssc_program(struct clk_hw_omap *clk)
+> +{
+> +	struct dpll_data *dd = clk->dpll_data;
+> +	unsigned long ref_rate;
+> +	u32 v, ctrl, mod_freq_divider, exponent, mantissa;
+> +	u32 deltam_step, deltam_ceil;
+> +
+> +	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
+> +
+> +	if (dd->ssc_modfreq && dd->ssc_deltam) {
+> +		ctrl |= dd->ssc_enable_mask;
+> +
+> +		if (dd->ssc_downspread)
+> +			ctrl |= dd->ssc_downspread_mask;
+> +		else
+> +			ctrl &= ~dd->ssc_downspread_mask;
+> +
+> +		ref_rate = clk_hw_get_rate(dd->clk_ref);
+> +		mod_freq_divider =
+> +		    (ref_rate / dd->last_rounded_n) / (4 * dd->ssc_modfreq);
+> +		if (dd->ssc_modfreq > (ref_rate / 70))
+> +			pr_warn("clock: SSC modulation frequency of DPLL %s greater than %ld\n",
+> +				__clk_get_name(clk->hw.clk), ref_rate / 70);
+> +
+> +		exponent = 0;
+> +		mantissa = mod_freq_divider;
+> +		while ((mantissa > 127) && (exponent < 7)) {
+> +			exponent++;
+> +			mantissa /= 2;
+> +		}
+> +		if (mantissa > 127)
+> +			mantissa = 127;
+> +
+> +		v = ti_clk_ll_ops->clk_readl(&dd->ssc_modfreq_reg);
+> +		v &= ~(dd->ssc_modfreq_mant_mask | dd->ssc_modfreq_exp_mask);
+> +		v |= mantissa << __ffs(dd->ssc_modfreq_mant_mask);
+> +		v |= exponent << __ffs(dd->ssc_modfreq_exp_mask);
+> +		ti_clk_ll_ops->clk_writel(v, &dd->ssc_modfreq_reg);
+> +
+> +		deltam_step = dd->last_rounded_m * dd->ssc_deltam;
+> +		deltam_step /= 10;
+> +		if (dd->ssc_downspread)
+> +			deltam_step /= 2;
+> +
+> +		deltam_step <<= __ffs(dd->ssc_deltam_int_mask);
+> +		deltam_step /= 100;
+> +		deltam_step /= mod_freq_divider;
+> +		if (deltam_step > 0xFFFFF)
+> +			deltam_step = 0xFFFFF;
+> +
+> +		deltam_ceil = (deltam_step & dd->ssc_deltam_int_mask) >>
+> +		    __ffs(dd->ssc_deltam_int_mask);
+> +		if (deltam_step & dd->ssc_deltam_frac_mask)
+> +			deltam_ceil++;
+> +
+> +		if ((dd->ssc_downspread &&
+> +		     ((dd->last_rounded_m - (2 * deltam_ceil)) < 20 ||
+> +		      dd->last_rounded_m > 2045)) ||
+> +		    ((dd->last_rounded_m - deltam_ceil) < 20 ||
+> +		     (dd->last_rounded_m + deltam_ceil) > 2045))
+> +			pr_warn("clock: SSC multiplier of DPLL %s is out of range\n",
+> +				__clk_get_name(clk->hw.clk));
+> +
+> +		v = ti_clk_ll_ops->clk_readl(&dd->ssc_deltam_reg);
+> +		v &= ~(dd->ssc_deltam_int_mask | dd->ssc_deltam_frac_mask);
+> +		v |= deltam_step << __ffs(dd->ssc_deltam_int_mask |
+> +					  dd->ssc_deltam_frac_mask);
+> +		ti_clk_ll_ops->clk_writel(v, &dd->ssc_deltam_reg);
+> +	} else {
+> +		ctrl &= ~dd->ssc_enable_mask;
+> +	}
+> +
+> +	ti_clk_ll_ops->clk_writel(ctrl, &dd->control_reg);
+> +}
+> +
+>   /**
+>    * omap3_noncore_dpll_program - set non-core DPLL M,N values directly
+>    * @clk:	struct clk * of DPLL to set
+> @@ -390,6 +472,9 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
+>   		ti_clk_ll_ops->clk_writel(v, &dd->control_reg);
+>   	}
+>   
+> +	if (dd->ssc_enable_mask)
+> +		omap3_noncore_dpll_ssc_program(clk);
+> +
+>   	/* We let the clock framework set the other output dividers later */
+>   
+>   	/* REVISIT: Set ramp-up delay? */
+> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+> index c62f6fa6763d..3486f20a3753 100644
+> --- a/include/linux/clk/ti.h
+> +++ b/include/linux/clk/ti.h
+> @@ -63,6 +63,17 @@ struct clk_omap_reg {
+>    * @auto_recal_bit: bitshift of the driftguard enable bit in @control_reg
+>    * @recal_en_bit: bitshift of the PRM_IRQENABLE_* bit for recalibration IRQs
+>    * @recal_st_bit: bitshift of the PRM_IRQSTATUS_* bit for recalibration IRQs
+> + * @ssc_deltam_reg: register containing the DPLL SSC frequency spreading
+> + * @ssc_modfreq_reg: register containing the DPLL SSC modulation frequency
+> + * @ssc_modfreq_mant_mask: mask of the mantissa component in @ssc_modfreq_reg
+> + * @ssc_modfreq_exp_mask: mask of the exponent component in @ssc_modfreq_reg
+> + * @ssc_enable_mask: mask of the DPLL SSC enable bit in @control_reg
+> + * @ssc_downspread_mask: mask of the DPLL SSC low frequency only bit in
+> + *                       @control_reg
+> + * @ssc_modfreq: the DPLL SSC frequency modulation in kHz
+> + * @ssc_deltam: the DPLL SSC frequency spreading in permille (10th of percent)
+> + * @ssc_downspread: require the only low frequency spread of the DPLL in SSC
+> + *                   mode
+>    * @flags: DPLL type/features (see below)
+>    *
+>    * Possible values for @flags:
+> @@ -110,6 +121,17 @@ struct dpll_data {
+>   	u8			auto_recal_bit;
+>   	u8			recal_en_bit;
+>   	u8			recal_st_bit;
+> +	struct clk_omap_reg	ssc_deltam_reg;
+> +	struct clk_omap_reg	ssc_modfreq_reg;
+> +	u32			ssc_deltam_int_mask;
+> +	u32			ssc_deltam_frac_mask;
+> +	u32			ssc_modfreq_mant_mask;
+> +	u32			ssc_modfreq_exp_mask;
+> +	u32                     ssc_enable_mask;
+> +	u32                     ssc_downspread_mask;
+> +	u32                     ssc_modfreq;
+> +	u32                     ssc_deltam;
+> +	bool                    ssc_downspread;
+>   	u8			flags;
+>   };
+>   
+> 
 
