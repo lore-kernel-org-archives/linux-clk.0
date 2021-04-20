@@ -2,76 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A56C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Apr 2021 16:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA42C43460
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Apr 2021 18:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 805B2613D0
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Apr 2021 16:25:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617526052B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Apr 2021 18:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232901AbhDTQ0L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Apr 2021 12:26:11 -0400
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:33590 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232174AbhDTQ0K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Apr 2021 12:26:10 -0400
-Received: by mail-oi1-f179.google.com with SMTP id u80so5931427oia.0;
-        Tue, 20 Apr 2021 09:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EeQe7vEnG67KPQg0lR868BaS1pRsahDJ52u7yGoOIf0=;
-        b=qVYxxDM9ateQaPsauwG7N0YOCBtzOKfVOD99hius6idegfl67hfhZeFkb1FHIFAEQJ
-         ywUyJEGTBxZj4+P3EYiINqX/Ngp6rJEMFwgNfBXh5Zi+FL5HuHv1+UW3gzQTpyhET/xT
-         mc6RGPMVGuL2xBkUbk5h8F6v7mVuXunbY6WeraaX+t19kh73zJ62MoThILde1BevoBD5
-         9IBIbeAkyrrWC7sEwhTO/20vvIyr3lbkqFfybNXKGydyrUo03qrnr+NW0SNMp2ydd1MM
-         b0MpECcU6TVjTce7bC/Kf+iUQiLariVnxjq633vFnEqIIm0rAyvJDoISIkSLnyo6NEMS
-         V3jw==
-X-Gm-Message-State: AOAM533EmbIqhWQ0u8GgJ18Lu/T5kpZD0834UtzLKvg6xqjb6w9T1Fm2
-        diHNLXKyI8R4LldWBpBrlw==
-X-Google-Smtp-Source: ABdhPJzgfvYhhWypZWv9BkoR9/L6J6emx80gLwedJVtCyNP8ChA2qYniQsFYhvhuNKb6Hk8HsxUiDg==
-X-Received: by 2002:aca:ed12:: with SMTP id l18mr3777648oih.24.1618935939098;
-        Tue, 20 Apr 2021 09:25:39 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m5sm480849ots.13.2021.04.20.09.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 09:25:38 -0700 (PDT)
-Received: (nullmailer pid 3432350 invoked by uid 1000);
-        Tue, 20 Apr 2021 16:25:37 -0000
-Date:   Tue, 20 Apr 2021 11:25:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     gabriel.fernandez@foss.st.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, marex@denx.de,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        devicetree@vger.kernel.org,
-        Etienne Carriere <etienne.carriere@st.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Etienne Carriere <etienne.carriere@foss.st.com>,
-        linux-kernel@vger.kernel.org
+        id S233618AbhDTSbE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Apr 2021 14:31:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233530AbhDTSbD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Apr 2021 14:31:03 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F54C06138A;
+        Tue, 20 Apr 2021 11:30:25 -0700 (PDT)
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 34FF48021A;
+        Tue, 20 Apr 2021 20:30:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1618943422;
+        bh=3Jpb3+eZcEQXJ5FDrKgeysID8DsET41SVuxy3dpQ6JQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=viVEBgfjHaJJSdS+nzm1qAvxsXeHuhyezgSB9OZHtguGOFSHS9PJIbyHXaCuycCYg
+         uld3Fz4LcWAcGjlHmJbN7WW0dRpuVtkgEXn4i1X4T7M7uTy44iwApBBUz3C75sK+EP
+         L2Zham3bhYQftRv70024TOzlH9SJDx8rcKHdk+sfTF1p4pv4DZ77WJ34imt1GWBQJR
+         2w3h/s2OYzFy4AkbVHHK7WxzTWf2fqt2aJ2kmrl+M9Qj+DoKeZLF65iF7hyDzJRvXu
+         Er9SRXJM+t9ENmt4uyKXgOahkrbwaRVJ/KeuL4BLvv26ob5QOJjBr4NVg6C3yOW8Zl
+         wdt32No7Sa4lg==
 Subject: Re: [PATCH v3 10/11] dt-bindings: clock: stm32mp1 new compatible for
  secure rcc
-Message-ID: <20210420162537.GA3432298@robh.at.kernel.org>
+To:     gabriel.fernandez@foss.st.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@st.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Etienne Carriere <etienne.carriere@foss.st.com>
 References: <20210419093852.14978-1-gabriel.fernandez@foss.st.com>
  <20210419093852.14978-11-gabriel.fernandez@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <36aafe68-d313-692a-a551-4ff4147e584c@denx.de>
+Date:   Tue, 20 Apr 2021 20:30:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20210419093852.14978-11-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.102.4 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 19 Apr 2021 11:38:51 +0200, gabriel.fernandez@foss.st.com wrote:
+On 4/19/21 11:38 AM, gabriel.fernandez@foss.st.com wrote:
 > From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > 
 > Introduce new compatible string "st,stm32mp1-rcc-secure" for
@@ -81,8 +80,21 @@ On Mon, 19 Apr 2021 11:38:51 +0200, gabriel.fernandez@foss.st.com wrote:
 > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
 > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > ---
->  .../devicetree/bindings/clock/st,stm32mp1-rcc.yaml          | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>   .../devicetree/bindings/clock/st,stm32mp1-rcc.yaml          | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+> index 4e385508f516..8b1ecb2ecdd5 100644
+> --- a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+> @@ -54,7 +54,9 @@ properties:
+>   
+>     compatible:
+>       items:
+> -      - const: st,stm32mp1-rcc
+> +      - enum:
+> +          - st,stm32mp1-rcc-secure
+> +          - st,stm32mp1-rcc
 
-Acked-by: Rob Herring <robh@kernel.org>
+It is still the same IP and same SoC silicon, so shouldn't the 
+configuration be discerned via DT property instead of compatible string ?
