@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0329C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 16:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48369C43461
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 16:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8B06144C
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 16:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03DE861449
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 16:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239029AbhDUQkl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Apr 2021 12:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58674 "EHLO
+        id S244491AbhDUQ5U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Apr 2021 12:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236113AbhDUQkh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Apr 2021 12:40:37 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16ACC06138A;
-        Wed, 21 Apr 2021 09:40:02 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 12so67579481lfq.13;
-        Wed, 21 Apr 2021 09:40:02 -0700 (PDT)
+        with ESMTP id S244483AbhDUQ5U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Apr 2021 12:57:20 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26BF7C06174A;
+        Wed, 21 Apr 2021 09:56:46 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id x19so37478845lfa.2;
+        Wed, 21 Apr 2021 09:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RT1Isl9XOqm5Gmt7X255y3ohiNcOW61XunZZjevIg0s=;
-        b=M86ZX0Wouo3YpdaD622F4bu1TtsZ8QvrSai+tRwsZXoTm/oH7eESj7rHysoZLfhlSd
-         Kjrs8CK6BvIQT4vnpr2GAWhgUxgt1Vu2vwQ6gkE3dzAoBoh1vJ1ko7w5j/3BWcaZ/uuA
-         gvWpBMHyM/JtYMi4Ysqi1baJ0fntxncHxfcxTy/1QCJJ+sHGpabn4bWbWMMtYubNyrx2
-         pRxMegp0XElPAdebgDMfybE5lTv2dn2blZPoE96LijdecfBOV19kxvMqklPpFnRPo0lH
-         2MEtkPM1MAlsW0wdBC2dV7b+NRszoXclE31QbCVa7aINFv5z0miZ0c9UkaS+22PRBHF/
-         43uQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8q1seHggC06VJeW4ambbzXzoE4dP/dHExzwWyVV49vg=;
+        b=uTh2evzPpY8vTxSJrIMlPXvuRwlFcs9sx4FoxrMHvMxFKgJUF30Bl4L6tKkAeFxV9X
+         fYw/P8whiLV+tE9iQUQFGCpEGGrdSoG22hziF7SqCKqlvT6a5UhzYnD8yj2ZJ7oc62OE
+         UQKv7164x1Z3y20VThei7sIjoKtM+UX1PypCvwUHFej3hMA2LYzZlmWPdbyEM2zEnoxR
+         b41tJLFaOE8C1Rz77t2Wktqvnn2iTIzEb4skn9Bvs27VTvcX5q+H8h5i0HrdI0PgH8ie
+         Ns1eqXumc0SIUXbcInTB9HWQyrThtJaILjXHh6GjVsMZLdAg1mYyu0vo7m8FeI7XRpfq
+         4dpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RT1Isl9XOqm5Gmt7X255y3ohiNcOW61XunZZjevIg0s=;
-        b=JL+IvH6avwjkwNltuQQs0SnkTNukZWmW0nzwazFMs6G5Qx8+hiVsK1Jlz/E0LtvIFD
-         PPXHxPD8f3PzrYsz1iOmf9MnVPmqRXhYbJqgf8yovqu3aRysrxsIOJ0DB9A8Ju5R/uW9
-         tggu6UbcAW+F30+cjO8b1BOf8KmWJt3DvxIvVeiKXbrGFE9uiVzNtLsAlNHlcCYId9gD
-         6F76eN7M64qmhTqNM68Rsfg2U91stY6qTvGo8eTbvkLeopRW+3duZXVxErwMNhFbWT1A
-         syqendjXMS8h17IE8gtysGUtPrfFRXnF6qiidcOybvCx7iFA0xgeN0FahclqN6waOIC3
-         OM5A==
-X-Gm-Message-State: AOAM533lsvoQOPFJZcbuQ0AcQKDj/CLAEVr4VNWXZP3NOW+MowDX/WuZ
-        mXnuCpVT/h16ajnMJoIaVVcDBgP3gnA=
-X-Google-Smtp-Source: ABdhPJxr9X7joZCDUYOZC2yoWelxafpU4D/43Dhs8WXXUFRNqdr2hCzgB5uSqvPyQAdYJ9I/UR8BXA==
-X-Received: by 2002:a05:6512:3e09:: with SMTP id i9mr6035349lfv.243.1619023201162;
-        Wed, 21 Apr 2021 09:40:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8q1seHggC06VJeW4ambbzXzoE4dP/dHExzwWyVV49vg=;
+        b=RkDNw+2LCKttYtMAcqgcvwL4guyIwMOllcWHbX5AP89oSTTHbXIMtt46eC6XhjVYSQ
+         ye9Sws5H8xK9LWJdMbhrPu2N+FNnsEVl5baL8L/kzpLJX4qUjvEfSGvNlURhCFidvDwn
+         QUYAEUJwUy51bVHuo70VChReiPNr8r4Dwrsiy7DMShmRktUKn4GjlkmoxFL0/E0ymxPV
+         kYfpxlijJcpyOTylOqtlr4yxTZxZSVtUvE0nXUZfc6k96XZQmoi7DwLKOC7L9RlDwkx8
+         aJOXpWyqsF6XEjWg6nNj5OI6iqa8cXL/YWshR/yyLpNB8gzn1Xg5B1M2dP4mnCXEonnO
+         bqmA==
+X-Gm-Message-State: AOAM531eKbXR1N3TnBWznp+dIDhBURKviLd0zijN5g3FMnJ9dFi6CPGt
+        8K7D5RGVCExXLB8BbJ9blM0=
+X-Google-Smtp-Source: ABdhPJzu2ewn7SDq3r0GjVB6ul74HDXh9UJzdBS6RfygLHfStV6p/pXU2ObgDDkn3tIYswL69Uve/g==
+X-Received: by 2002:a05:6512:74e:: with SMTP id c14mr19660590lfs.642.1619024204569;
+        Wed, 21 Apr 2021 09:56:44 -0700 (PDT)
 Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.gmail.com with ESMTPSA id d6sm7174lfv.251.2021.04.21.09.39.59
+        by smtp.gmail.com with ESMTPSA id t13sm7311ljk.47.2021.04.21.09.56.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 09:40:00 -0700 (PDT)
+        Wed, 21 Apr 2021 09:56:42 -0700 (PDT)
 From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
         Maxime Ripard <maxime@cerno.tech>,
         Florian Fainelli <f.fainelli@gmail.com>,
         =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
@@ -68,10 +68,12 @@ Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH] dt-bindings: clock: brcm,iproc-clocks: convert to the json-schema
-Date:   Wed, 21 Apr 2021 18:39:48 +0200
-Message-Id: <20210421163948.11229-1-zajec5@gmail.com>
+Subject: [PATCH V2] dt-bindings: clock: brcm,iproc-clocks: convert to the json-schema
+Date:   Wed, 21 Apr 2021 18:56:33 +0200
+Message-Id: <20210421165633.13299-1-zajec5@gmail.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210421163948.11229-1-zajec5@gmail.com>
+References: <20210421163948.11229-1-zajec5@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -85,9 +87,11 @@ This helps validating DTS files.
 
 Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 ---
+V2: Fix typo s/clocks/clock-output-names/
+---
  .../bindings/clock/brcm,iproc-clocks.txt      | 313 --------------
- .../bindings/clock/brcm,iproc-clocks.yaml     | 397 ++++++++++++++++++
- 2 files changed, 397 insertions(+), 313 deletions(-)
+ .../bindings/clock/brcm,iproc-clocks.yaml     | 398 ++++++++++++++++++
+ 2 files changed, 398 insertions(+), 313 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
  create mode 100644 Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
 
@@ -412,10 +416,10 @@ index ab730ea0a560..000000000000
 -    clk_pcie_phy_ref	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
 diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
 new file mode 100644
-index 000000000000..8aa504bb2958
+index 000000000000..a1b9613f7c68
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-@@ -0,0 +1,397 @@
+@@ -0,0 +1,398 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
@@ -480,13 +484,14 @@ index 000000000000..8aa504bb2958
 +  clocks:
 +    description: The input parent clock phandle for the PLL / ASIU clock. For
 +      most iProc PLLs, this is an onboard crystal with a fixed rate.
-+    minItems: 1
-+    maxItems: 45
++    maxItems: 1
 +
 +  '#clock-cells':
 +    const: 1
 +
-+  clock-output-names: true
++  clock-output-names:
++    minItems: 1
++    maxItems: 45
 +
 +allOf:
 +  - if:
@@ -502,7 +507,7 @@ index 000000000000..8aa504bb2958
 +              - brcm,cygnus-audiopll
 +    then:
 +      properties:
-+        clocks:
++        clock-output-names:
 +          description: |
 +            The following table defines the set of PLL/clock index and ID for Cygnus.
 +            These clock IDs are defined in:
@@ -554,7 +559,7 @@ index 000000000000..8aa504bb2958
 +              - brcm,hr2-armpll
 +    then:
 +      properties:
-+        clocks:
++        clock-output-names:
 +          description: |
 +            The following table defines the set of PLL/clock for Hurricane 2:
 +
@@ -573,7 +578,7 @@ index 000000000000..8aa504bb2958
 +              - brcm,nsp-lcpll0
 +    then:
 +      properties:
-+        clocks:
++        clock-output-names:
 +          description: |
 +            The following table defines the set of PLL/clock index and ID for Northstar and
 +            Northstar Plus.  These clock IDs are defined in:
@@ -608,7 +613,7 @@ index 000000000000..8aa504bb2958
 +              - brcm,ns2-lcpll-ports
 +    then:
 +      properties:
-+        clocks:
++        clock-output-names:
 +          description: |
 +            The following table defines the set of PLL/clock index and ID for Northstar 2.
 +            These clock IDs are defined in:
@@ -666,7 +671,7 @@ index 000000000000..8aa504bb2958
 +              - brcm,sr-lcpll-pcie
 +    then:
 +      properties:
-+        clocks:
++        clock-output-names:
 +          description: |
 +            The following table defines the set of PLL/clock index and ID for Stingray.
 +            These clock IDs are defined in:
