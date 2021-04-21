@@ -4,86 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B20BC433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 22:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216A5C43460
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 22:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD8CF6144A
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 22:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E240E61453
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Apr 2021 22:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236300AbhDUWdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Apr 2021 18:33:32 -0400
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:44557 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235362AbhDUWdc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Apr 2021 18:33:32 -0400
-Received: by mail-ot1-f47.google.com with SMTP id 5-20020a9d09050000b029029432d8d8c5so14432315otp.11;
-        Wed, 21 Apr 2021 15:32:57 -0700 (PDT)
+        id S235687AbhDUWhD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Apr 2021 18:37:03 -0400
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:40528 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235362AbhDUWhD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Apr 2021 18:37:03 -0400
+Received: by mail-oi1-f175.google.com with SMTP id u16so26640234oiu.7;
+        Wed, 21 Apr 2021 15:36:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=dpOmUUExdbFkJ4kS32EEaVe5t2M7xJq+mg38SoSOiuc=;
-        b=MvGAF9Yw4vv/goAq1/jWapJlrh8VKUmT27WNJCxzGZ3gpU4hmudaY9iClAMFlmz0mt
-         eeQI4ceH1Lt+Eko1zkq8USmEPUCjTPNNi6ThzopRmGdQA1JIYxl1zDroAGJL0ubidgnB
-         f3EB3Bo/HZ+BhqG5pVXf1Ko5mKI9EetMqoy2mqt2wglOKYi4qEO0O69l7wPe487IPJjR
-         XbZGxwSU6RlJjgKblS0Wus12ZUBhr7hGczQo0acdFymNZ5zBzSxzBMsbux4l3pSVyiJ7
-         AQOU1vuyJuiQoDD9X0B6eZhet4IBpv5DXz2s0fn6I5VQ7KQUb/1RL0FkHTAPWVGQFP4j
-         9KQQ==
-X-Gm-Message-State: AOAM533j9L/odNW5DEymTKtH96ToHEynnHt0fTDXGAQl5+1+x/bIIgBf
-        HAF5NO7iP1J8VbkcNPAKjGzDyN9Nmg==
-X-Google-Smtp-Source: ABdhPJyBpK5+T8amA19Lhb4J6/XazxnG/kEaaOGHTBdikqQyXjrOfxT7tQdjc1b1ReGEgRYjsQZF+Q==
-X-Received: by 2002:a9d:a2a:: with SMTP id 39mr299856otg.371.1619044376711;
-        Wed, 21 Apr 2021 15:32:56 -0700 (PDT)
+        bh=g4Lpm6ghFZ2Fk+ppBGhSC5AKie9fH6GCZAqWDABbCSA=;
+        b=iLSB4gvB8xc3wHAsNWKEmyjsHQDtw1VZuKpAf9CY2ddB1dmjEF2Yw3NfVgjGCCJWyV
+         VgEgwRCSyEJ3lcWD+35nIe41hmIJda6mhQUIUOe9slnfs5TrHgWN2m2cMPC+Onn/h8uD
+         wRa7Ft23GcD4IQvvbt2VLgTFDxhKnL9jWU/70vm6depFd+YcM5ZpSp4aVeykC7N44tz4
+         jI3I6+coW8cKoRMHCdggZl/JR0sZUT/E7kSImRX6Y6gslfY1VvJgxFzyJVgIF8AYwshX
+         KM31pXNnpAKCMeYEpshXqr881nSHr0GPi3o6TPGcVaapv6tCABH9FscC3hHA9idwe13R
+         q+5A==
+X-Gm-Message-State: AOAM532eRnq7LK1WBx7LR7wbZnjitKPJLmAtO8hpisC9ZBblGuiVll8W
+        Qdl/dzFQGPeFwcWmOF7hBg==
+X-Google-Smtp-Source: ABdhPJyS8gLXGDJLvxK5P6uC8O0/Y9gKRHm8YJptYiwvw2zpbEOEYkcwVJRtnZsW6ulqWquFL0a0ag==
+X-Received: by 2002:aca:7558:: with SMTP id q85mr179674oic.160.1619044589149;
+        Wed, 21 Apr 2021 15:36:29 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 64sm209136oob.12.2021.04.21.15.32.54
+        by smtp.gmail.com with ESMTPSA id w2sm202592oov.23.2021.04.21.15.36.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 15:32:55 -0700 (PDT)
-Received: (nullmailer pid 1735222 invoked by uid 1000);
-        Wed, 21 Apr 2021 22:32:54 -0000
-Date:   Wed, 21 Apr 2021 17:32:54 -0500
+        Wed, 21 Apr 2021 15:36:28 -0700 (PDT)
+Received: (nullmailer pid 1740043 invoked by uid 1000);
+        Wed, 21 Apr 2021 22:36:27 -0000
+Date:   Wed, 21 Apr 2021 17:36:27 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Nishanth Menon <nm@ti.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: reset: Convert ti,sci-reset to json
- schema
-Message-ID: <20210421223254.GA1734415@robh.at.kernel.org>
+        Tero Kristo <kristo@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 3/4] dt-bindings: soc: ti: Convert ti, sci-pm-domain to
+ json schema
+Message-ID: <20210421223627.GA1740013@robh.at.kernel.org>
 References: <20210416063721.20538-1-nm@ti.com>
- <20210416063721.20538-2-nm@ti.com>
+ <20210416063721.20538-4-nm@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210416063721.20538-2-nm@ti.com>
+In-Reply-To: <20210416063721.20538-4-nm@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 01:37:18AM -0500, Nishanth Menon wrote:
-> Convert the ti,sci-reset to json schema for better checks and documentation.
+On Fri, 16 Apr 2021 01:37:20 -0500, Nishanth Menon wrote:
+> Convert the ti,sci-pm-domain to json schema for better checks and
+> documentation.
 > 
 > Differences being:
 >  - Drop consumer example as they are documented in the corresponding
 >    bindings themselves.
->  - Drop phandle description for reset consumer or cell definition as it is
->    redundant.
+>  - Drop phandle description for reset consumer or cell definition as it
+>    is redundant.
 > 
 > NOTE: we do have false positive checkpatch warning with this patch:
 > "DT binding docs and includes should be a separate patch"
 > 
 > Signed-off-by: Nishanth Menon <nm@ti.com>
 > ---
->  .../bindings/reset/ti,sci-reset.txt           | 62 -------------------
->  .../bindings/reset/ti,sci-reset.yaml          | 51 +++++++++++++++
->  2 files changed, 51 insertions(+), 62 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.txt
->  create mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+>  .../bindings/soc/ti/sci-pm-domain.txt         | 65 -------------------
+>  .../bindings/soc/ti/sci-pm-domain.yaml        | 59 +++++++++++++++++
+>  2 files changed, 59 insertions(+), 65 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+>  create mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+> 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
