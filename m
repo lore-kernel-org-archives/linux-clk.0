@@ -2,137 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA120C433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C825FC433ED
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0D726144A
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88A58613C4
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236092AbhDVOK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 10:10:27 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54476 "EHLO
+        id S236618AbhDVOS0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 10:18:26 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57356 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236341AbhDVOK1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 10:10:27 -0400
+        with ESMTP id S236092AbhDVOS0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 10:18:26 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13ME9adJ069314;
-        Thu, 22 Apr 2021 09:09:36 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13MEHihS073442;
+        Thu, 22 Apr 2021 09:17:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1619100576;
-        bh=6vtsHCiE+UhV1jEh9jWHoCYucvxbpDiXX+TJ66u1Jlw=;
+        s=ti-com-17Q1; t=1619101064;
+        bh=+QeFwgSZcZvSnHvwP9NbzZ+9fb3TLz4c9lcf8n/o5+k=;
         h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=pyNONRIlt5oHfMqBuBKAkQ29DULpNbQCNhTh5l6Bbktxc5jyvHnYznc76EqUnUt1T
-         goQ/IclTyHw7XZWoFargojo9GgxnTkm4GMVQmmGdZnOxf/Bt39GWBCuBeGUhYPmVy8
-         Jh+0k6ijf7TmWSxqOxjtcBdK2gfeDJ6Urliw2WBo=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13ME9ZXA053552
+        b=x1FobscePt3LhRtFpyS7l2/hNpjxoOuSm1MNj+kKlrZFIHyGokye5Esc2+CzV1Ytv
+         VBcrsql3vk8E+kclPFCp0bCcUoS+A/Ad+04OQkwQdRmVv69AIB9cJytm4S9JFSe+uN
+         SPcwBAFuMZ3XnwioR5Xm2WlCCpehtEeYf+B7qym8=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13MEHiqo064493
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Apr 2021 09:09:36 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 22 Apr 2021 09:17:44 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 22
- Apr 2021 09:09:35 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2021 09:17:44 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 22 Apr 2021 09:09:35 -0500
+ Frontend Transport; Thu, 22 Apr 2021 09:17:44 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13ME9ZwN033089;
-        Thu, 22 Apr 2021 09:09:35 -0500
-Date:   Thu, 22 Apr 2021 09:09:35 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13MEHi9N099695;
+        Thu, 22 Apr 2021 09:17:44 -0500
+Date:   Thu, 22 Apr 2021 09:17:44 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Rob Herring <robh@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Tero Kristo <kristo@kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Convert ti,sci-clk to json schema
-Message-ID: <20210422140935.lzsp6s2ugyvi2icu@iodize>
+Subject: Re: [PATCH 4/4] dt-bindings: arm: keystone: Convert ti,sci to json
+ schema
+Message-ID: <20210422141744.2imrochbzzt26wx4@slush>
 References: <20210416063721.20538-1-nm@ti.com>
- <20210416063721.20538-3-nm@ti.com>
- <161861731160.46595.786611690053722257@swboyd.mtv.corp.google.com>
- <20210417125127.vigq23mdoodje6b5@velcro>
- <20210421223145.GB1705110@robh.at.kernel.org>
+ <20210416063721.20538-5-nm@ti.com>
+ <20210421224041.GA1740292@robh.at.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20210421223145.GB1705110@robh.at.kernel.org>
+In-Reply-To: <20210421224041.GA1740292@robh.at.kernel.org>
 User-Agent: NeoMutt/20171215
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17:31-20210421, Rob Herring wrote:
-[...]
+On 17:40-20210421, Rob Herring wrote:
 
-> > > > +allOf:
-> > > > +  - $ref: /schemas/clock/clock.yaml#
-> > > 
-> > > Is this needed?
-> 
-> No. It is already applied to every node.
-> 
-> > https://github.com/devicetree-org/dt-schema/blob/master/schemas/clock/clock.yaml
-> > This standardizes provider properties like '#clock-cells' etc, allowing
-> > you to add more stricter checks or controls in the future if necessary.
-> > 
-> > while:
-> > 
-> > https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/clocks.yaml
-> > is more a consumer node description.
-> 
-> No, the meta-schema is what checks the schemas just as the schemas check 
-> dts files.
+[..]
 
-
-I will drop and respin. thanks for explaining.
-
+> > +allOf:
+> > +  - $ref: /schemas/mbox/mbox-consumer.yaml#
 > 
-> > Should I have picked a different yaml as base for a standard clock-controller
-> > base?
-> > 
-> > > 
-> > > > +
-> > > > +description: |
-> > > > +  Some TI SoCs contain a system controller (like the Power Management Micro
-> > > > +  Controller (PMMC) on Keystone 66AK2G SoC) that are responsible for controlling
-> > > > +  the state of the various hardware modules present on the SoC. Communication
-> > > > +  between the host processor running an OS and the system controller happens
-> > > > +  through a protocol called TI System Control Interface (TI-SCI protocol).
-> > > > +
-> > > > +  This clock controller node uses the TI SCI protocol to perform various clock
-> > > > +  management of various hardware modules (devices) present on the SoC. This
-> > > > +  node must be a child node of the associated TI-SCI system controller node.
-> > > > +
-> > > > +properties:
-> > > > +  $nodename:
-> > > > +    pattern: "^clock-controller$"
-> > > 
-> > > Is this nodename pattern check required?
-> > 
-> > I'd like the definition on rails and not subject to interpretation, and
-> > restrict the kind of subnodes under TISCI controller node.
+> Drop.
 > 
-> If this schema was standalone and not defined as part of another, then 
-> yes it would be required. In your case, you can enforce the node name 
-> from the parent schema. For consistency though, it would be better to 
-> just always require $nodename. 
-> 
-> Actually, this schema will be applied twice. On it's own matching the 
-> compatible string and by the parent schema. You can prevent that with 
-> 'select: false'. I don't mind the double validation as if the parent 
-> node had a compatible typo you'd get zero validation.
 
-Sure. I will keep nodename.
+OK.
+
+> > +  reg-names:
+> > +    description: |
+> > +      Specifies the debug messages memory mapped region that is optionally
+> > +      made available from TI-SCI controller.
+> > +      - const: debug_messages
+> 
+> Drop the '-' and fix the indent so it's an actual schema.
+
+OK.
+
+[..]
+> > +patternProperties:
+> > +  # All other properties should be a power, clock or reset controller
+> > +  "^(power-controller|clock-controller|reset-controller)$":
+> > +    type: object
+> > +    oneOf:
+> > +      - $ref: /schemas/soc/ti/sci-pm-domain.yaml#
+> > +      - $ref: /schemas/clock/ti,sci-clk.yaml#
+> > +      - $ref: /schemas/reset/ti,sci-reset.yaml#
+> 
+> I'd prefer you separate these with a property for each node.
+
+Hmm... I am not sure I completely understand your comment here.
+I assume we dont want to duplicate each of those node yamls, so,
+did you mean something like:
+
+ti,sci-clk as a bool property in the tisci node and if present, then
+expect the node ti,sci-clk node?
+
+Can you give me a hint of similar yaml usage elsewhere that I can refer
+to?
 
 -- 
 Regards,
