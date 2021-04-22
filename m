@@ -2,118 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D1DC433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 16:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DA6C433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 16:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7F5261405
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 16:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D42D661209
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 16:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236780AbhDVQNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 12:13:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236637AbhDVQNn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Apr 2021 12:13:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8432361424;
-        Thu, 22 Apr 2021 16:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619107988;
-        bh=CTXfhvk5l5o8y23WTouJh4NFstFgPZaYNx707CJkgRY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dBRkBR5K7ew9Cs+0GBpGOHJJx8Ls2JKc/rXQpLnR3XZcSp4GP6b8Ex/cOtjoY2AOx
-         HjMZgzJoXMTiKWmvVDj/8WYE+xjhSofM/nysylbt2bNIWIgDZdP0Ul3GjMlBcA1XUG
-         iit82Ls5XREtj2E996yXb6flkxmbdd5URMIrnjJatNSkfbauvveg1CnnnjW6nsrjNl
-         4wwKSu2UNgX5AIDJjQbSCMQyVdh/dwSZYJIkaIL2Vt/GNN1M9e/eBfOa1OUYvVe1+O
-         9Xx/9TVdfoqTe9nSiLlWc06axYR8WH7fsmOQr6bCj/Y2SMkXLrQ6Z6L1D5PHXeAsHm
-         eV5eUC3oAkpZA==
-Received: by mail-ed1-f44.google.com with SMTP id s15so54179442edd.4;
-        Thu, 22 Apr 2021 09:13:08 -0700 (PDT)
-X-Gm-Message-State: AOAM533OJVB9TixTfr/k9S4RpYtII1wojzMEf9CZeTKljVrewP4blPyk
-        tKuvhc/jGB4FvN2lnH0WX5dayRmP3VyIkm60vw==
-X-Google-Smtp-Source: ABdhPJy86k/lVzKmYorlkCTNn/k5N3eXentVbvefOiS4tQ+ryNWj1vLiiLDdpaIL9WV7uMacqtCAgFrwi2fMCOhoghk=
-X-Received: by 2002:a05:6402:212:: with SMTP id t18mr4841703edv.165.1619107986950;
- Thu, 22 Apr 2021 09:13:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210416063721.20538-1-nm@ti.com> <20210416063721.20538-5-nm@ti.com>
- <20210421224041.GA1740292@robh.at.kernel.org> <20210422141744.2imrochbzzt26wx4@slush>
-In-Reply-To: <20210422141744.2imrochbzzt26wx4@slush>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 22 Apr 2021 11:12:54 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJFRdrffKbuBqt6hKks4jQFAm5X9yTji9O6q3UKsOVO3g@mail.gmail.com>
-Message-ID: <CAL_JsqJFRdrffKbuBqt6hKks4jQFAm5X9yTji9O6q3UKsOVO3g@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dt-bindings: arm: keystone: Convert ti,sci to json schema
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        id S236485AbhDVQgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 12:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236459AbhDVQgT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 12:36:19 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F17FDC06174A
+        for <linux-clk@vger.kernel.org>; Thu, 22 Apr 2021 09:35:44 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lZcIk-00069o-2S; Thu, 22 Apr 2021 18:35:38 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lZcIj-0003QK-E1; Thu, 22 Apr 2021 18:35:37 +0200
+Date:   Thu, 22 Apr 2021 18:35:37 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        linux-i2c@vger.kernel.org, kernel@pengutronix.de,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 5/6] i2c: imx: Simplify using devm_clk_get_enableded()
+Message-ID: <20210422163537.skhdsfafweel6sti@pengutronix.de>
+References: <20210422065726.1646742-1-u.kleine-koenig@pengutronix.de>
+ <20210422065726.1646742-6-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rta62bqblgeq3fll"
+Content-Disposition: inline
+In-Reply-To: <20210422065726.1646742-6-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 9:17 AM Nishanth Menon <nm@ti.com> wrote:
->
-> On 17:40-20210421, Rob Herring wrote:
->
-> [..]
->
-> > > +allOf:
-> > > +  - $ref: /schemas/mbox/mbox-consumer.yaml#
-> >
-> > Drop.
-> >
->
-> OK.
->
-> > > +  reg-names:
-> > > +    description: |
-> > > +      Specifies the debug messages memory mapped region that is optionally
-> > > +      made available from TI-SCI controller.
-> > > +      - const: debug_messages
-> >
-> > Drop the '-' and fix the indent so it's an actual schema.
->
-> OK.
->
-> [..]
-> > > +patternProperties:
-> > > +  # All other properties should be a power, clock or reset controller
-> > > +  "^(power-controller|clock-controller|reset-controller)$":
-> > > +    type: object
-> > > +    oneOf:
-> > > +      - $ref: /schemas/soc/ti/sci-pm-domain.yaml#
-> > > +      - $ref: /schemas/clock/ti,sci-clk.yaml#
-> > > +      - $ref: /schemas/reset/ti,sci-reset.yaml#
-> >
-> > I'd prefer you separate these with a property for each node.
->
-> Hmm... I am not sure I completely understand your comment here.
-> I assume we dont want to duplicate each of those node yamls, so,
-> did you mean something like:
->
-> ti,sci-clk as a bool property in the tisci node and if present, then
-> expect the node ti,sci-clk node?
->
-> Can you give me a hint of similar yaml usage elsewhere that I can refer
-> to?
 
-Just do:
+--rta62bqblgeq3fll
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-properties:
-  power-controller:
-    type: object
-    $ref: /schemas/soc/ti/sci-pm-domain.yaml#
+On Thu, Apr 22, 2021 at 08:57:25AM +0200, Uwe Kleine-K=F6nig wrote:
+> devm_clk_get_enabled() returns the clk already (prepared and) enabled
+> and the automatically called cleanup cares for disabling (and
+> unpreparing). So simplify .probe() and .remove() accordingly.
+>=20
+> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Acked-by: Wolfram Sang <wsa@kernel.org>
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-And so on for clock-controller and reset-controller.
+A propos typos: This patch needs $Subject ~=3D s/enableded/enabled/
 
-Rob
+Will fix this for the next submission round.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--rta62bqblgeq3fll
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCBpdYACgkQwfwUeK3K
+7AkQPwf/YZqvojGSf/Z3Wd+QijlXwG9Dmubxl3H62+3zMdMXWS9nVKTf6vG+2Ova
+g5YxQHa1endIKFYdDXnNncwLzRsvo70AdZb+/zGygRnirPdY++JMueL0cB+4g4kk
+G0zGCtuw6LxOznPx/S1cNNeYJNWu943NBVPurcCp8UB6gjfs592l8UiEDZkUP/A0
+PD6XUE3byoLT8itXRHl8ae/FyDoQzyLRNI3+9YlIB4i9++TjZPt5DDYqQC/PoLFA
+AZN0rTQ9fYsFOdcIIQsMikJseG3HxSEbgS9F1nvfBNR0Eh6jL1rRhg6PuWLOUepp
+LqYDxI1+Mh7ELQ6KLzZ4X6bGmWEdsA==
+=qzO+
+-----END PGP SIGNATURE-----
+
+--rta62bqblgeq3fll--
