@@ -2,119 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C825FC433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8800FC433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 15:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88A58613C4
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 14:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5256061208
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 15:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236618AbhDVOS0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 10:18:26 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57356 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236092AbhDVOS0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 10:18:26 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13MEHihS073442;
-        Thu, 22 Apr 2021 09:17:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1619101064;
-        bh=+QeFwgSZcZvSnHvwP9NbzZ+9fb3TLz4c9lcf8n/o5+k=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=x1FobscePt3LhRtFpyS7l2/hNpjxoOuSm1MNj+kKlrZFIHyGokye5Esc2+CzV1Ytv
-         VBcrsql3vk8E+kclPFCp0bCcUoS+A/Ad+04OQkwQdRmVv69AIB9cJytm4S9JFSe+uN
-         SPcwBAFuMZ3XnwioR5Xm2WlCCpehtEeYf+B7qym8=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13MEHiqo064493
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Apr 2021 09:17:44 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 22
- Apr 2021 09:17:44 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 22 Apr 2021 09:17:44 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13MEHi9N099695;
-        Thu, 22 Apr 2021 09:17:44 -0500
-Date:   Thu, 22 Apr 2021 09:17:44 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        id S234158AbhDVPk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 11:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233106AbhDVPk0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 11:40:26 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40654C06174A
+        for <linux-clk@vger.kernel.org>; Thu, 22 Apr 2021 08:39:51 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lZbQc-0008L1-Ma; Thu, 22 Apr 2021 17:39:42 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lZbQb-00083D-H6; Thu, 22 Apr 2021 17:39:41 +0200
+Date:   Thu, 22 Apr 2021 17:39:41 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 4/4] dt-bindings: arm: keystone: Convert ti,sci to json
- schema
-Message-ID: <20210422141744.2imrochbzzt26wx4@slush>
-References: <20210416063721.20538-1-nm@ti.com>
- <20210416063721.20538-5-nm@ti.com>
- <20210421224041.GA1740292@robh.at.kernel.org>
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] rtc: at91sma9: Simplify using
+ devm_clk_get_enabled()
+Message-ID: <20210422153941.og3j76krdfw4mcyr@pengutronix.de>
+References: <20210422065726.1646742-1-u.kleine-koenig@pengutronix.de>
+ <20210422065726.1646742-5-u.kleine-koenig@pengutronix.de>
+ <YIEtVVE8ZdwbTTgM@ada-deb-carambola.ifak-system.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kqfznum3oxovbyl2"
 Content-Disposition: inline
-In-Reply-To: <20210421224041.GA1740292@robh.at.kernel.org>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <YIEtVVE8ZdwbTTgM@ada-deb-carambola.ifak-system.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17:40-20210421, Rob Herring wrote:
 
-[..]
+--kqfznum3oxovbyl2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +allOf:
-> > +  - $ref: /schemas/mbox/mbox-consumer.yaml#
-> 
-> Drop.
-> 
+On Thu, Apr 22, 2021 at 10:01:25AM +0200, Alexander Dahl wrote:
+> Hello Uwe,
+>=20
+> I think there's a typo in the subject.  It should be sam9 instead of
+> sma9, right?
 
-OK.
+Ah indeed, thanks for spotting this. Will fix this for the next round.
 
-> > +  reg-names:
-> > +    description: |
-> > +      Specifies the debug messages memory mapped region that is optionally
-> > +      made available from TI-SCI controller.
-> > +      - const: debug_messages
-> 
-> Drop the '-' and fix the indent so it's an actual schema.
+Best regards
+Uwe
 
-OK.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-[..]
-> > +patternProperties:
-> > +  # All other properties should be a power, clock or reset controller
-> > +  "^(power-controller|clock-controller|reset-controller)$":
-> > +    type: object
-> > +    oneOf:
-> > +      - $ref: /schemas/soc/ti/sci-pm-domain.yaml#
-> > +      - $ref: /schemas/clock/ti,sci-clk.yaml#
-> > +      - $ref: /schemas/reset/ti,sci-reset.yaml#
-> 
-> I'd prefer you separate these with a property for each node.
+--kqfznum3oxovbyl2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hmm... I am not sure I completely understand your comment here.
-I assume we dont want to duplicate each of those node yamls, so,
-did you mean something like:
+-----BEGIN PGP SIGNATURE-----
 
-ti,sci-clk as a bool property in the tisci node and if present, then
-expect the node ti,sci-clk node?
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCBmLoACgkQwfwUeK3K
+7Ams3wf+MSx7n6yY5i8n4uw3XkPisJjBwud0ESALfRaOFi5jUfZP7rnA3YESu0UB
+QMHAcAs8mqaeAiLoMZ3l+5TVwnbiu0HbQAhRkgvMxF5zL4Jr54U1prpbrXuF0tgt
+W5BLeasFE+qrvBOPwBsNBV50pmAtRh+FRDkAKTtQxpsVGKwXId63nUyDqQ5zHbp1
+zlwtEXHWmkApoI/ti2qvv+VvUR9g1DhLpKCzbcNSb9q4koAF52XfvlJi2VBKT7V7
+J5a3YTZxssPxWEpu9tKhg9RHs4cSId3S9aJNq/qhcwBJ5zzD+kZGV4g/VPWOQQbh
+o4dA52rvalsxcXF/ODM7XGPnvLny9w==
+=NwZo
+-----END PGP SIGNATURE-----
 
-Can you give me a hint of similar yaml usage elsewhere that I can refer
-to?
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+--kqfznum3oxovbyl2--
