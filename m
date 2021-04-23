@@ -8,52 +8,52 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F8DC43460
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BEAC433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 452646128D
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 961C66137D
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236141AbhDWDfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 23:35:22 -0400
-Received: from mail-eopbgr140054.outbound.protection.outlook.com ([40.107.14.54]:62689
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S231261AbhDWDf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 23:35:26 -0400
+Received: from mail-eopbgr30043.outbound.protection.outlook.com ([40.107.3.43]:54018
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231261AbhDWDfW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Apr 2021 23:35:22 -0400
+        id S237143AbhDWDf0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Apr 2021 23:35:26 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iDkMvoTVSwvK6kdTtEPhtH27CrZGlR4rS2SxnvJhvyguGnRUFr5lUBiMLwOkCX6Oy9oiplRDPSVH725fuHNU7DMJFNA0Oc/cnDg+r3P3lJf8ej3gdZC5ESgJt99sICzfrbz2HSM7VtK4pFi0MoC8gTNrgf7G3Hnu4668Alcg8phzSjPTWYD9Z+D3zeUzrm6PLVmfwvX9I3YaL3Ay3+Td1Wxv4OSE40knu1zRsu0BL3tWekXUfwtVbRxIouG4p9lNhEKjAOZcczFCJD8uQTJSzfJ0mir8pbWxlpmCSkjxPpluAZyjt3DQewKp0Gb9SVatPzA9GngGja9rWnBcnrYjRA==
+ b=YPJ7q4HRQPwOGfmzIQ8e06Ik8igIiWX0/dQIad7YtFZNX0gocYyybTRzs0wfgGT0Ap7C0YzRh/sLG7O2TWfQUFmynuLkBDbdxXtkJwtn55+CXus28t+B/wbZZCS5IC4aVYkOzRIBm1TPAu4OEMY1togM9AJjrRDPI1ONIoDaH7g24V20KtUtqqYH0ZlTX5sRcbPT05fJrHO3Q1ldv6EpunppqDJmJtLE3o9AKSJqMKnnQ39phUuoI3iphPKEu9L68hhl3I5VEIfDO09J55F00Xs8l0SA0xxLx9r1wnXZO5ls8DzF6PzosQnbfd/Er2VF6hQJ6L5QWGqLJjBs++W0rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gYg0RiNQRkmwCazlZ43jXQfbmNqrDswceCa3c5gu1xQ=;
- b=SYB8U/y6299OgNW3egx1Y/4o7RT/aizkSkUNgoUuwZ8eUIESZrEf6qRuMcB0zuI3VCJH2IfVTOxrqUwI1qsjSY9GjUn9+J+Cu1sk3mc3OhqoIkAl5O8SRASajSZ8yPD6VpH4ah3BJ3Bwp3j0pjBYrC1jDLqMGQmjh/b1ZuWC3dhYoOy6J6ucT5BR2jp6DcLu0FJ9disQq1MbQQmQBwZXGgUNiiQF0i79jWXAGUUGgSnE8cf3jNRWlFSkTgcr8stvahXrJsNmbJV7HBrRDLee7JZdrPHayDt1lOWKZoE8dHNuYP97FJF5ftBirdQdOOTQLpXSbLu3VVewBEZgKu1v4Q==
+ bh=dpJtdLdIcZJyHnf+XWH2aeuE71jYFop2iBtcb6cz3+Y=;
+ b=HZ0LlQFK/fVa7PMgeFepi7KZIWKZrk2T7hoULHLirtwB06qQrrpajEDqWD0HmByRb7vjIIsO+orXRNMb+Oi76Jm6gnXcThjB7Hy2AQHhqIWNr9AIb26PQDz2v+7sbQDKjK6XA+5zrQnTnj9yu9NJB22a2PqiyqizmQu6atHlmg+pXSPZetrDEgXWIvuOr6CxYa5P/DNBqYOo2mwvwviZ7Tky+aPKlqFeLtCF89anmZVcgOmNGVT5wRMzfgdjqj3UXtD4YNHXznU3N3evcpURPGuAy1bDCrbDbcGKE23j0PdBa9sdWMH+sjR69PMHxCRe2t0FnzRJYvnlrmOHATywLw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gYg0RiNQRkmwCazlZ43jXQfbmNqrDswceCa3c5gu1xQ=;
- b=GIVvwmezyvS9s2K8hzvPkPSpvDAOqcaQmE0tAxQVKvSqCymyaZ70XLQMpmGVTUItyzhFGAT5oE/7Tqe98/1gpzfd4xI6dIooy6xrVLGiSuHx5xh9/2NiASf7RYcFifIChmvEHzQxqLhU4iqaeDdnrwG6FREvQa4CDHDyeehbNzA=
+ bh=dpJtdLdIcZJyHnf+XWH2aeuE71jYFop2iBtcb6cz3+Y=;
+ b=X7iawXXLsGrUtQunujGQ2YQSLSiBPc7oMD2tRjXq5+sKC/1IfCr4BaaQ4egN6knAdN+Z5T0A8SE65LqGer9TN79eqG3hFaoV9gFp5awezDCciKb98jVvo7hOdcWLI7ar1Ctg8VKqxqdjgjPu6vwyrJxyCIJt76QN3Kg+PBEZYdA=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
 Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
  by AM6PR04MB5079.eurprd04.prod.outlook.com (2603:10a6:20b:4::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.21; Fri, 23 Apr
- 2021 03:34:44 +0000
+ 2021 03:34:47 +0000
 Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
  ([fe80::b10a:ad0:a6f5:db9b]) by AM6PR04MB4966.eurprd04.prod.outlook.com
  ([fe80::b10a:ad0:a6f5:db9b%2]) with mapi id 15.20.4065.023; Fri, 23 Apr 2021
- 03:34:44 +0000
+ 03:34:47 +0000
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     dongas86@gmail.com, kernel@pengutronix.de, shawnguo@kernel.org,
         linux-imx@nxp.com, abel.vesa@nxp.com, sboyd@kernel.org,
-        Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: arm: imx: scu: drop deprecated legacy clock binding
-Date:   Fri, 23 Apr 2021 11:33:30 +0800
-Message-Id: <20210423033334.3317992-2-aisheng.dong@nxp.com>
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 3/6] clk: imx: scu: remove legacy scu clock binding support
+Date:   Fri, 23 Apr 2021 11:33:31 +0800
+Message-Id: <20210423033334.3317992-3-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210423033334.3317992-1-aisheng.dong@nxp.com>
 References: <20210423033334.3317992-1-aisheng.dong@nxp.com>
@@ -65,82 +65,477 @@ X-ClientProxiedBy: HK2P15301CA0017.APCP153.PROD.OUTLOOK.COM
  (2603:10a6:20b:2::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by HK2P15301CA0017.APCP153.PROD.OUTLOOK.COM (2603:1096:202:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.10 via Frontend Transport; Fri, 23 Apr 2021 03:34:41 +0000
+Received: from localhost.localdomain (119.31.174.66) by HK2P15301CA0017.APCP153.PROD.OUTLOOK.COM (2603:1096:202:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.10 via Frontend Transport; Fri, 23 Apr 2021 03:34:44 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d1cd393a-be29-48db-40f5-08d90608bc41
+X-MS-Office365-Filtering-Correlation-Id: ad2cda74-aa0f-4887-a8dc-08d90608be26
 X-MS-TrafficTypeDiagnostic: AM6PR04MB5079:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM6PR04MB5079AF616FA444EFE16243BF80459@AM6PR04MB5079.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Microsoft-Antispam-PRVS: <AM6PR04MB507955632D35AC6954C38D9980459@AM6PR04MB5079.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1417;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tgDxnGF4dU1CyVbYTkFtT2A4qQaUwR2ktR8axGiwUmxm4GgY2+WABIaPCn1XmXUTe/lsPL/AMPrh0M2MOM7HjvQ6UXMhis7eHH0TqCP9xl4/KPDp0iMXm3Pq2x1HOOIC3vOBChkzqFwa5vP3RE7iF9TnHKnYEpiDcds789t87cOGHEnCtni4ptNmY2o0iwj5OeUrgIfHgdNxkGF2foGcKiJDscCqzoccJcNqK0mDHKs7mbbao8Kh7O7OC/6+R4051WGvQC4BD8YmOHTSZE1ksbyEpv68RunO/wozdEWP9dTfZ4Mz4iSr6s8O1BkwwRpiXNjizLLfdb2i0xQza7Cu5wYFZm2h2hZiz5dm2tvmb95Y9nnLkMUlHE3UPEIDa0pEHP5aFNXB4fYOR+TU8dQKei5bF7PEREBR5Gd4na9dqDo4Vos+O7Efohhec2M/Wg5FM/QdIiKyiFWEN5/YE/kW5nPnJfx/htRKFDBCFX9VqPT5IdcRqUlhLR3Jdv1Zm7lYJssRzQGchGEBk/o67qdc/TVetLoazURjzc91ptaQD2tlf3g9dOggF7DWZLr5xeXPfaT9FoRCUfAMhcaMlEYNDlEJ0/6xJpNBmqm2btz+1Zl9RAgsI5Pc69JbDcX+ZS7wGaSIeuH9i9PN3BZNaHpc7DWcIxbu6wAIYAobnleFejXO2jQoyhMGhMjeGk2oVvhS
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(16526019)(2906002)(8936002)(6512007)(316002)(38350700002)(8676002)(52116002)(38100700002)(4326008)(66556008)(26005)(86362001)(66946007)(478600001)(36756003)(1076003)(2616005)(956004)(6666004)(5660300002)(6486002)(6506007)(186003)(66476007)(83380400001)(69590400013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?lEjxeRzhK32JSAQVGV9qPjIUf2ePpL7irKoiZOjq5FC7awRzYYs3OxtjEff3?=
- =?us-ascii?Q?iv7uIx09F9GDRS+UeG2f96Fy2KBC0sCFPvVjcSUk9A4qvFjAoq/NnJCCcvw/?=
- =?us-ascii?Q?oA9P3Bho+HBghMRY7X2AKmpdsHuZI4yfi6zAQC7ll5ob+lADYvE0vKtU1ckn?=
- =?us-ascii?Q?wEnLuwmyrAGKpHXFjLMHY9qDxgbZsrAa32MJN0Ud94wj3peVBtde7gAHzf1A?=
- =?us-ascii?Q?3tY6dfnYcFNUjRSwbLOUIrIlL9d6vBzGs/sEQLGH54cdE1gP0Tssb8bjYtxK?=
- =?us-ascii?Q?dm6/sNy+q/Cz1SbKqtxJ/+KUd3aFM8MkyTpN/uXE0k9Uu1F5sDV5Vb9GUD8Y?=
- =?us-ascii?Q?zzw+CrYqH3CbxWyqfRPKhKZIQrN7c87iVvAgKPYIijRRfl7SwXUQylMNHQ+a?=
- =?us-ascii?Q?nyfyJCyOg2L8UEvK0KDPZl5JDUg9Vv+QvXHGaKHGyzil0D5E3d7trLPeD1oD?=
- =?us-ascii?Q?7XpXAG+s05FpGuWwgfAss6kuz2e4sDJoqUX/gnMRAAsLfEDjnW0T6dOwP+39?=
- =?us-ascii?Q?qUtb2DYqBk0IeXxon6tcSYNWDjjjNR65nAULNOmjTOe0REntrTdSlhefZWwa?=
- =?us-ascii?Q?rot3A2TVzYuvq2CHcvQdfrojcF2cTTJZOl5KbNSSWRWfKDkurcaEDnKFs4mS?=
- =?us-ascii?Q?BMCBHIqFT7RKjuKTFJWp//pLOF6adLITbLYJU8xYwu17M8+9PpXrQLg6e+rL?=
- =?us-ascii?Q?kY2wGBISaTCHx4yoox7HfxWtr7/6YsAlh8easHFUb9Y6UlCyVRu48AtM8Kuv?=
- =?us-ascii?Q?0T8uUic+1cdQ5jc2QX7fZjYz6RPoreWQ8Su/PeB02kDbXnG+YFNVo4CuahwR?=
- =?us-ascii?Q?zCX4+Vfv43ZvZoJxQVVr+Q5Qi0V2QPWbu7/Xrho+x46QDVxlTASVzp+D9hXw?=
- =?us-ascii?Q?PIuK2sOwT92fC+JnC4UtLs5/Oa4tTD7lvh7S5i4AWBfkJiga5PRJ06uW84VN?=
- =?us-ascii?Q?6GVB96l1jW076Rs65hDfgN2aOc6gwxxYN+ZoXUF8tXUp37XbuvSHj6gEx4Pd?=
- =?us-ascii?Q?pPel4sFudSujGid681ydd3C7QQ1YGVVz9xMDhFqIHbtt7v9q1NDOXnqoqxa5?=
- =?us-ascii?Q?sbIgTIzlwyb3rZK/WBiTa8kSQ+g7pMFrVkaYQNZ1z95PHgFpgSqvGM9WPJPS?=
- =?us-ascii?Q?YT3hFOD1In/Y2aAzoCzzxZ4tbPtt+vDohvFqGu6+IgrOM2ioINHIGSkotl4x?=
- =?us-ascii?Q?ZO7p8reuhzjw7UvXj+5M5XtoWi9v7y8at4qm/tPvNONK2V2lllK7WjIY3+1x?=
- =?us-ascii?Q?AVpYEOD6OQk9hQ8CtkUqDNeBTbnL6UH1cZtVszQ781DoAH3LWgV9nT/Lx4Dx?=
- =?us-ascii?Q?2n2C7s7vpPV2docAfiZUuf7m?=
+X-Microsoft-Antispam-Message-Info: UwXX9E0ixtF66e9F861JVdXwI0d1GltNHQ933eaIWXjFUvXCyqvT6B76FhtG2Mr/qJIfTm+o9edgArq3q5PJJCburbW/XHXTnnXZtRVV9qe7LOshs9gvbZCnnsrWsWi2dknkKWt03wOwVHpzXNSj4bTgqNvoFfIbZcgEFEGB7Ty1aOHOajHyqY0nro+58sXIJBhoKMmZdoBW12pGoqtnW1sOGOluLnMgn7JRX1gIsw/2CTbbF6eKeqhp/1Mtw0hPP1VE2EHz5VdTmtRRB4zAwmNyn2yNoDnMXhiDStEkzAPYcl1CFaCrZIKNXKuj759Wa2nh8vNW/A7kLIGsIbkyvcdXID9OJ207oXGoqQNNKS5RASxitK3/gYXcu5EJYRphYcmaHjeK247wKRSVQJy5K6+XWReumlJkDA14DEp5p/6X74CwEajvOhLlga2QtzyBTbbJzURUdDhoTFn1VnSQJErtFr/B2a9sgYPqtnvb5KkIsJOv2D1H8ZLTOjFtYDEsPZ7kTgHMO61Ri1gCH55uHmW7p+S8wIwDWtnt7v5VccPdY2lfskjvhXxVXn7f9R1s6KGarTgKTPHXyuNvZICKIU7GZhc+TzznjEQx8egMhAu7D+LrjuF1nGS+MqdyJN4bF7s97xXg4UwOa7aaNRjEDnDrfY+5RhKVstoCXl1GfCULHUyVz9Cx2IJ2o4HnLVs1
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(16526019)(2906002)(8936002)(6512007)(316002)(38350700002)(8676002)(52116002)(38100700002)(4326008)(66556008)(26005)(86362001)(66946007)(478600001)(36756003)(1076003)(2616005)(956004)(6666004)(5660300002)(6486002)(6506007)(186003)(30864003)(66476007)(83380400001)(69590400013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?f8C1/8z2keHq075nnIAAFxASSruQVs0F5V6/E8u9WLJqiJukRN6DtytUatV6?=
+ =?us-ascii?Q?e74eCtFz/uqhVSO0p94l1YYtfvE00MUF1zfYRW83rcVqpBLBkZfFUDCtPn+h?=
+ =?us-ascii?Q?ngqdj0WiffGnYPihmCxHQnyr1xX+DPD0znLoLJcdTy26Jh3w8iVX6/Y2jFt8?=
+ =?us-ascii?Q?b3P+aJzpM2EmuizZ50fmjObh3HN1HIqdozAFoUaXHHQQeN2a0di0PHfs0VfN?=
+ =?us-ascii?Q?o2dXMlkPSBSfSQJs6C7tyFbeWT6Q2kItwzmSCKvVeTVzvgI1N1cnbOtbLLIr?=
+ =?us-ascii?Q?zBAm2C0V1+t4dnwzPpD34azSUjtRaFFC3PfatPqEcD+S3wHhtSt5rbSi/qUY?=
+ =?us-ascii?Q?nYvZ4avQq5fFlkd+2s0KpvfpHlZid3On3PzLTojc3Xm0JWLRrGZceuByP2SN?=
+ =?us-ascii?Q?+vZuSfoGDFHwiWNjDgMj2T6sSXBiK0ldVM3f1/IY9guuTYbWb3ewSdQjiWM8?=
+ =?us-ascii?Q?P1zCUBD46yyMZQ89xRtSd9BHI65AXAmuRGqHgBZ+27v9umM5G4roRgSxBYmA?=
+ =?us-ascii?Q?YHWWVZdwRI7bBP5stnZS7b2RLy6wxor6yMZXwlvoEPdMWdpkcH8hAese0yHQ?=
+ =?us-ascii?Q?VbeXEv6V7rJgsL+SEI1Plw/0lcGB7L/Ks4nz4zrBLQx+axR7KkeEoR+O8e7Y?=
+ =?us-ascii?Q?IYh6ZnWR3m8qJwCy4W8DTUvKAGuBkCK+upg/b6fZ9S+tph4ki5XQFEGOjMRk?=
+ =?us-ascii?Q?U2daCbYv+hb8c66XRNIwJGwpq8oiVNfi2OepC+kTv0NrC5KuI9sYGtOD5u84?=
+ =?us-ascii?Q?Eg7GQ8fC4SotfewMG0u6yaz14xsyaWXxNSWy4AvdOQIcy17VgQr9We/dEa6G?=
+ =?us-ascii?Q?ONOaynWhzRRBKMGkSV7yWO597McKB/Cm7BKdYJPUh9MHmhOqcTmdo7kHxm3U?=
+ =?us-ascii?Q?7GsfJBIbYfckJNMlCneeWpfFRqH1yVBgNidVNHU7TEiaTWcZZmlu0OjipuEM?=
+ =?us-ascii?Q?kIKtpy/65pFzu7hylk2ygK0rjugNJK8bnIIQtzxxAMIrt9bcG750cSVw6vzY?=
+ =?us-ascii?Q?qBLfDXYDjHE6n+ytuo+hILGSBRaL+ePw84kIi3xQ7CR10myWmh0iNmNVcJS2?=
+ =?us-ascii?Q?GlaCAoz3yQ8OGXFtQy6g7pURXHV6oxwDNJ8Kpk6CzP+4QNuAz3hmIbivhF+P?=
+ =?us-ascii?Q?Uf1++tleKbC8KLsd29DhXF4FpTnaOfTKO3+hL88JW0wxULPKWuV9kQGlXNKP?=
+ =?us-ascii?Q?4qh9h6Is3M15uZ3Q9fTZwNsdW5Ni5NB/dW4kCuTQiJyAEjAts+WJ1AwWfCnu?=
+ =?us-ascii?Q?aJZ+cOWgVbh0hRiYvH/iRpSudeW8Xl3QlCGYFtKwM6sQILgfiYagCxwFj6vJ?=
+ =?us-ascii?Q?vDshZ0OYeb0CKqrEWpWvcRBC?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1cd393a-be29-48db-40f5-08d90608bc41
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad2cda74-aa0f-4887-a8dc-08d90608be26
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2021 03:34:44.0842
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2021 03:34:47.2563
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yVe+3bT5XjoxcEiZ97mNcjZsQ2i2TgyEvDwoQIJGEYrQ+DgC3Qudl/1OQHrxfkylE7PuYCTFnzNU6fkM8b3Ndg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: /4uLrhORuS+FcB80pnghaIZZZavifpa6TO21Hi9+Eo10wwN8hswwmqJmSgKa4huUWDo4FiLd1xJrYLbzKjeb8A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5079
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The legacy clock binding are not maintained anymore. It has only
-a very preliminary supported clocks during initial upstream and
-meaningless for users. So drop it from binding doc now.
+Legacy scu clock binding are not maintained anymore, it has a very
+limited clocks supported during initial upstreaming and obviously
+unusable by products. So it's meaningless to keep it in
+kernel which worse the code readability.
+Remove it to keep code much cleaner.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clk/imx/clk-imx8qxp.c          | 201 ++++++++++---------------
+ drivers/clk/imx/clk-scu.h              |  15 +-
+ include/dt-bindings/clock/imx8-clock.h | 128 ----------------
+ 3 files changed, 81 insertions(+), 263 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-index 3adf3f6f2beb..fd0061712443 100644
---- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-@@ -89,10 +89,8 @@ Required properties:
- 			  "fsl,imx8qm-clk"
- 			  "fsl,imx8qxp-clk"
- 			followed by "fsl,scu-clk"
--- #clock-cells:		Should be either
--			2: Contains the Resource and Clock ID value.
--			or
--			1: Contains the Clock ID value. (DEPRECATED)
-+- #clock-cells:		Should be 2.
-+			Contains the Resource and Clock ID value.
- - clocks:		List of clock specifiers, must contain an entry for
- 			each required entry in clock-names
- - clock-names:		Should include entries "xtal_32KHz", "xtal_24MHz"
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index fbf1170c09ed..d17b418ac577 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -14,7 +14,6 @@
+ 
+ #include "clk-scu.h"
+ 
+-#include <dt-bindings/clock/imx8-clock.h>
+ #include <dt-bindings/firmware/imx/rsrc.h>
+ 
+ static const char *dc0_sels[] = {
+@@ -28,149 +27,103 @@ static const char *dc0_sels[] = {
+ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *ccm_node = pdev->dev.of_node;
+-	struct clk_hw_onecell_data *clk_data;
+-	struct clk_hw **clks;
+-	u32 clk_cells;
+-	int ret, i;
++	int ret;
+ 
+ 	ret = imx_clk_scu_init(ccm_node);
+ 	if (ret)
+ 		return ret;
+ 
+-	clk_data = devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
+-				IMX_SCU_CLK_END), GFP_KERNEL);
+-	if (!clk_data)
+-		return -ENOMEM;
+-
+-	if (of_property_read_u32(ccm_node, "#clock-cells", &clk_cells))
+-		return -EINVAL;
+-
+-	clk_data->num = IMX_SCU_CLK_END;
+-	clks = clk_data->hws;
+-
+-	/* Fixed clocks */
+-	clks[IMX_CLK_DUMMY]		= clk_hw_register_fixed_rate(NULL, "dummy", NULL, 0, 0);
+-	clks[IMX_ADMA_IPG_CLK_ROOT] 	= clk_hw_register_fixed_rate(NULL, "dma_ipg_clk_root", NULL, 0, 120000000);
+-	clks[IMX_CONN_AXI_CLK_ROOT]	= clk_hw_register_fixed_rate(NULL, "conn_axi_clk_root", NULL, 0, 333333333);
+-	clks[IMX_CONN_AHB_CLK_ROOT]	= clk_hw_register_fixed_rate(NULL, "conn_ahb_clk_root", NULL, 0, 166666666);
+-	clks[IMX_CONN_IPG_CLK_ROOT]	= clk_hw_register_fixed_rate(NULL, "conn_ipg_clk_root", NULL, 0, 83333333);
+-	clks[IMX_DC_AXI_EXT_CLK]	= clk_hw_register_fixed_rate(NULL, "dc_axi_ext_clk_root", NULL, 0, 800000000);
+-	clks[IMX_DC_AXI_INT_CLK]	= clk_hw_register_fixed_rate(NULL, "dc_axi_int_clk_root", NULL, 0, 400000000);
+-	clks[IMX_DC_CFG_CLK]		= clk_hw_register_fixed_rate(NULL, "dc_cfg_clk_root", NULL, 0, 100000000);
+-	clks[IMX_MIPI_IPG_CLK]		= clk_hw_register_fixed_rate(NULL, "mipi_ipg_clk_root", NULL, 0, 120000000);
+-	clks[IMX_IMG_AXI_CLK]		= clk_hw_register_fixed_rate(NULL, "img_axi_clk_root", NULL, 0, 400000000);
+-	clks[IMX_IMG_IPG_CLK]		= clk_hw_register_fixed_rate(NULL, "img_ipg_clk_root", NULL, 0, 200000000);
+-	clks[IMX_IMG_PXL_CLK]		= clk_hw_register_fixed_rate(NULL, "img_pxl_clk_root", NULL, 0, 600000000);
+-	clks[IMX_HSIO_AXI_CLK]		= clk_hw_register_fixed_rate(NULL, "hsio_axi_clk_root", NULL, 0, 400000000);
+-	clks[IMX_HSIO_PER_CLK]		= clk_hw_register_fixed_rate(NULL, "hsio_per_clk_root", NULL, 0, 133333333);
+-	clks[IMX_LSIO_MEM_CLK]		= clk_hw_register_fixed_rate(NULL, "lsio_mem_clk_root", NULL, 0, 200000000);
+-	clks[IMX_LSIO_BUS_CLK]		= clk_hw_register_fixed_rate(NULL, "lsio_bus_clk_root", NULL, 0, 100000000);
+-
+ 	/* ARM core */
+-	clks[IMX_A35_CLK]		= imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK_CPU, clk_cells);
++	imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK_CPU);
+ 
+ 	/* LSIO SS */
+-	clks[IMX_LSIO_PWM0_CLK]		= imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM1_CLK]		= imx_clk_scu("pwm1_clk", IMX_SC_R_PWM_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM2_CLK]		= imx_clk_scu("pwm2_clk", IMX_SC_R_PWM_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM3_CLK]		= imx_clk_scu("pwm3_clk", IMX_SC_R_PWM_3, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM4_CLK]		= imx_clk_scu("pwm4_clk", IMX_SC_R_PWM_4, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM5_CLK]		= imx_clk_scu("pwm5_clk", IMX_SC_R_PWM_5, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM6_CLK]		= imx_clk_scu("pwm6_clk", IMX_SC_R_PWM_6, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_PWM7_CLK]		= imx_clk_scu("pwm7_clk", IMX_SC_R_PWM_7, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_GPT0_CLK]		= imx_clk_scu("gpt0_clk", IMX_SC_R_GPT_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_GPT1_CLK]		= imx_clk_scu("gpt1_clk", IMX_SC_R_GPT_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_GPT2_CLK]		= imx_clk_scu("gpt2_clk", IMX_SC_R_GPT_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_GPT3_CLK]		= imx_clk_scu("gpt3_clk", IMX_SC_R_GPT_3, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_GPT4_CLK]		= imx_clk_scu("gpt4_clk", IMX_SC_R_GPT_4, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_FSPI0_CLK]	= imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_LSIO_FSPI1_CLK]	= imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_1, IMX_SC_PM_CLK_PER, clk_cells);
++	imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm1_clk", IMX_SC_R_PWM_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm2_clk", IMX_SC_R_PWM_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm3_clk", IMX_SC_R_PWM_3, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm4_clk", IMX_SC_R_PWM_4, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm5_clk", IMX_SC_R_PWM_5, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm6_clk", IMX_SC_R_PWM_6, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm7_clk", IMX_SC_R_PWM_7, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpt0_clk", IMX_SC_R_GPT_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpt1_clk", IMX_SC_R_GPT_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpt2_clk", IMX_SC_R_GPT_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpt3_clk", IMX_SC_R_GPT_3, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpt4_clk", IMX_SC_R_GPT_4, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_1, IMX_SC_PM_CLK_PER);
+ 
+ 	/* ADMA SS */
+-	clks[IMX_ADMA_UART0_CLK]	= imx_clk_scu("uart0_clk", IMX_SC_R_UART_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_UART1_CLK]	= imx_clk_scu("uart1_clk", IMX_SC_R_UART_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_UART2_CLK]	= imx_clk_scu("uart2_clk", IMX_SC_R_UART_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_UART3_CLK]	= imx_clk_scu("uart3_clk", IMX_SC_R_UART_3, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_SPI0_CLK]		= imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_SPI1_CLK]		= imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_SPI2_CLK]		= imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_SPI3_CLK]		= imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_CAN0_CLK]		= imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_I2C0_CLK]		= imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_I2C1_CLK]		= imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_I2C2_CLK]		= imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_I2C3_CLK]		= imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_FTM0_CLK]		= imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_FTM1_CLK]		= imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_ADC0_CLK]		= imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_PWM_CLK]		= imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_PWM_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_ADMA_LCD_CLK]		= imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, IMX_SC_PM_CLK_PER, clk_cells);
++	imx_clk_scu("uart0_clk", IMX_SC_R_UART_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("uart1_clk", IMX_SC_R_UART_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("uart2_clk", IMX_SC_R_UART_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("uart3_clk", IMX_SC_R_UART_3, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_PWM_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, IMX_SC_PM_CLK_PER);
+ 
+ 	/* Connectivity */
+-	clks[IMX_CONN_SDHC0_CLK]	= imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_SDHC1_CLK]	= imx_clk_scu("sdhc1_clk", IMX_SC_R_SDHC_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_SDHC2_CLK]	= imx_clk_scu("sdhc2_clk", IMX_SC_R_SDHC_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_ENET0_ROOT_CLK]	= imx_clk_scu("enet0_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_ENET0_BYPASS_CLK]	= imx_clk_scu("enet0_bypass_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_BYPASS, clk_cells);
+-	clks[IMX_CONN_ENET0_RGMII_CLK]	= imx_clk_scu("enet0_rgmii_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_MISC0, clk_cells);
+-	clks[IMX_CONN_ENET1_ROOT_CLK]	= imx_clk_scu("enet1_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_ENET1_BYPASS_CLK]	= imx_clk_scu("enet1_bypass_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_BYPASS, clk_cells);
+-	clks[IMX_CONN_ENET1_RGMII_CLK]	= imx_clk_scu("enet1_rgmii_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_MISC0, clk_cells);
+-	clks[IMX_CONN_GPMI_BCH_IO_CLK]	= imx_clk_scu("gpmi_io_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_MST_BUS, clk_cells);
+-	clks[IMX_CONN_GPMI_BCH_CLK]	= imx_clk_scu("gpmi_bch_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_USB2_ACLK]	= imx_clk_scu("usb3_aclk_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CONN_USB2_BUS_CLK]	= imx_clk_scu("usb3_bus_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_MST_BUS, clk_cells);
+-	clks[IMX_CONN_USB2_LPM_CLK]	= imx_clk_scu("usb3_lpm_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_MISC, clk_cells);
++	imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("sdhc1_clk", IMX_SC_R_SDHC_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("sdhc2_clk", IMX_SC_R_SDHC_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("enet0_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("enet0_bypass_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_BYPASS);
++	imx_clk_scu("enet0_rgmii_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_MISC0);
++	imx_clk_scu("enet1_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("enet1_bypass_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_BYPASS);
++	imx_clk_scu("enet1_rgmii_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_MISC0);
++	imx_clk_scu("gpmi_io_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_MST_BUS);
++	imx_clk_scu("gpmi_bch_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("usb3_aclk_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("usb3_bus_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_MST_BUS);
++	imx_clk_scu("usb3_lpm_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_MISC);
+ 
+ 	/* Display controller SS */
+-	clks[IMX_DC0_DISP0_CLK]		= imx_clk_scu2("dc0_disp0_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC0, clk_cells);
+-	clks[IMX_DC0_DISP1_CLK]		= imx_clk_scu2("dc0_disp1_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC1, clk_cells);
+-	clks[IMX_DC0_PLL0_CLK]		= imx_clk_scu("dc0_pll0_clk", IMX_SC_R_DC_0_PLL_0, IMX_SC_PM_CLK_PLL, clk_cells);
+-	clks[IMX_DC0_PLL1_CLK]		= imx_clk_scu("dc0_pll1_clk", IMX_SC_R_DC_0_PLL_1, IMX_SC_PM_CLK_PLL, clk_cells);
+-	clks[IMX_DC0_BYPASS0_CLK]	= imx_clk_scu("dc0_bypass0_clk", IMX_SC_R_DC_0_VIDEO0, IMX_SC_PM_CLK_BYPASS, clk_cells);
+-	clks[IMX_DC0_BYPASS1_CLK]	= imx_clk_scu("dc0_bypass1_clk", IMX_SC_R_DC_0_VIDEO1, IMX_SC_PM_CLK_BYPASS, clk_cells);
++	imx_clk_scu2("dc0_disp0_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC0);
++	imx_clk_scu2("dc0_disp1_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC1);
++	imx_clk_scu("dc0_pll0_clk", IMX_SC_R_DC_0_PLL_0, IMX_SC_PM_CLK_PLL);
++	imx_clk_scu("dc0_pll1_clk", IMX_SC_R_DC_0_PLL_1, IMX_SC_PM_CLK_PLL);
++	imx_clk_scu("dc0_bypass0_clk", IMX_SC_R_DC_0_VIDEO0, IMX_SC_PM_CLK_BYPASS);
++	imx_clk_scu("dc0_bypass1_clk", IMX_SC_R_DC_0_VIDEO1, IMX_SC_PM_CLK_BYPASS);
+ 
+ 	/* MIPI-LVDS SS */
+-	clks[IMX_MIPI0_LVDS_PIXEL_CLK]	= imx_clk_scu("mipi0_lvds_pixel_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI0_LVDS_BYPASS_CLK]	= imx_clk_scu("mipi0_lvds_bypass_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_BYPASS, clk_cells);
+-	clks[IMX_MIPI0_LVDS_PHY_CLK]	= imx_clk_scu("mipi0_lvds_phy_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3, clk_cells);
+-	clks[IMX_MIPI0_I2C0_CLK]	= imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI0_I2C1_CLK]	= imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_MIPI_0_I2C_1, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI0_PWM0_CLK]	= imx_clk_scu("mipi0_pwm0_clk", IMX_SC_R_MIPI_0_PWM_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_MIPI1_LVDS_PIXEL_CLK]	= imx_clk_scu("mipi1_lvds_pixel_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI1_LVDS_BYPASS_CLK]	= imx_clk_scu("mipi1_lvds_bypass_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_BYPASS, clk_cells);
+-	clks[IMX_MIPI1_LVDS_PHY_CLK]	= imx_clk_scu("mipi1_lvds_phy_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3, clk_cells);
+-	clks[IMX_MIPI1_I2C0_CLK]	= imx_clk_scu("mipi1_i2c0_clk", IMX_SC_R_MIPI_1_I2C_0, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI1_I2C1_CLK]	= imx_clk_scu("mipi1_i2c1_clk", IMX_SC_R_MIPI_1_I2C_1, IMX_SC_PM_CLK_MISC2, clk_cells);
+-	clks[IMX_MIPI1_PWM0_CLK]	= imx_clk_scu("mipi1_pwm0_clk", IMX_SC_R_MIPI_1_PWM_0, IMX_SC_PM_CLK_PER, clk_cells);
++	imx_clk_scu("mipi0_lvds_pixel_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi0_lvds_bypass_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_BYPASS);
++	imx_clk_scu("mipi0_lvds_phy_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
++	imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_MIPI_0_I2C_1, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi0_pwm0_clk", IMX_SC_R_MIPI_0_PWM_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("mipi1_lvds_pixel_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi1_lvds_bypass_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_BYPASS);
++	imx_clk_scu("mipi1_lvds_phy_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
++	imx_clk_scu("mipi1_i2c0_clk", IMX_SC_R_MIPI_1_I2C_0, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi1_i2c1_clk", IMX_SC_R_MIPI_1_I2C_1, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu("mipi1_pwm0_clk", IMX_SC_R_MIPI_1_PWM_0, IMX_SC_PM_CLK_PER);
+ 
+ 	/* MIPI CSI SS */
+-	clks[IMX_CSI0_CORE_CLK]		= imx_clk_scu("mipi_csi0_core_clk", IMX_SC_R_CSI_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CSI0_ESC_CLK]		= imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_R_CSI_0, IMX_SC_PM_CLK_MISC, clk_cells);
+-	clks[IMX_CSI0_I2C0_CLK]		= imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC_R_CSI_0_I2C_0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_CSI0_PWM0_CLK]		= imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC_R_CSI_0_PWM_0, IMX_SC_PM_CLK_PER, clk_cells);
++	imx_clk_scu("mipi_csi0_core_clk", IMX_SC_R_CSI_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_R_CSI_0, IMX_SC_PM_CLK_MISC);
++	imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC_R_CSI_0_I2C_0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC_R_CSI_0_PWM_0, IMX_SC_PM_CLK_PER);
+ 
+ 	/* GPU SS */
+-	clks[IMX_GPU0_CORE_CLK]		= imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_PER, clk_cells);
+-	clks[IMX_GPU0_SHADER_CLK]	= imx_clk_scu("gpu_shader0_clk", IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_MISC, clk_cells);
+-
+-	for (i = 0; i < clk_data->num; i++) {
+-		if (IS_ERR(clks[i]))
+-			pr_warn("i.MX clk %u: register failed with %ld\n",
+-				i, PTR_ERR(clks[i]));
+-	}
+-
+-	if (clk_cells == 2) {
+-		ret = of_clk_add_hw_provider(ccm_node, imx_scu_of_clk_src_get, imx_scu_clks);
+-		if (ret)
+-			imx_clk_scu_unregister();
+-	} else {
+-		/*
+-		 * legacy binding code path doesn't unregister here because
+-		 * it will be removed later.
+-		 */
+-		ret = of_clk_add_hw_provider(ccm_node, of_clk_hw_onecell_get, clk_data);
+-	}
++	imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_PER);
++	imx_clk_scu("gpu_shader0_clk", IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_MISC);
++
++	ret = of_clk_add_hw_provider(ccm_node, imx_scu_of_clk_src_get, imx_scu_clks);
++	if (ret)
++		imx_clk_scu_unregister();
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+index e8352164923e..a6c6d3103e94 100644
+--- a/drivers/clk/imx/clk-scu.h
++++ b/drivers/clk/imx/clk-scu.h
+@@ -32,22 +32,15 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
+ void imx_clk_lpcg_scu_unregister(struct clk_hw *hw);
+ 
+ static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
+-					 u8 clk_type, u8 clk_cells)
++					 u8 clk_type)
+ {
+-	if (clk_cells == 2)
+-		return imx_clk_scu_alloc_dev(name, NULL, 0, rsrc_id, clk_type);
+-	else
+-		return __imx_clk_scu(NULL, name, NULL, 0, rsrc_id, clk_type);
++	return imx_clk_scu_alloc_dev(name, NULL, 0, rsrc_id, clk_type);
+ }
+ 
+ static inline struct clk_hw *imx_clk_scu2(const char *name, const char * const *parents,
+-					  int num_parents, u32 rsrc_id, u8 clk_type,
+-					  u8 clk_cells)
++					  int num_parents, u32 rsrc_id, u8 clk_type)
+ {
+-	if (clk_cells == 2)
+-		return imx_clk_scu_alloc_dev(name, parents, num_parents, rsrc_id, clk_type);
+-	else
+-		return __imx_clk_scu(NULL, name, parents, num_parents, rsrc_id, clk_type);
++	return imx_clk_scu_alloc_dev(name, parents, num_parents, rsrc_id, clk_type);
+ }
+ 
+ static inline struct clk_hw *imx_clk_lpcg_scu_dev(struct device *dev, const char *name,
+diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/clock/imx8-clock.h
+index 82b1fc8d1ee0..2e60ce4d2622 100644
+--- a/include/dt-bindings/clock/imx8-clock.h
++++ b/include/dt-bindings/clock/imx8-clock.h
+@@ -7,134 +7,6 @@
+ #ifndef __DT_BINDINGS_CLOCK_IMX_H
+ #define __DT_BINDINGS_CLOCK_IMX_H
+ 
+-/* SCU Clocks */
+-
+-#define IMX_CLK_DUMMY				0
+-
+-/* CPU */
+-#define IMX_A35_CLK					1
+-
+-/* LSIO SS */
+-#define IMX_LSIO_MEM_CLK				2
+-#define IMX_LSIO_BUS_CLK				3
+-#define IMX_LSIO_PWM0_CLK				10
+-#define IMX_LSIO_PWM1_CLK				11
+-#define IMX_LSIO_PWM2_CLK				12
+-#define IMX_LSIO_PWM3_CLK				13
+-#define IMX_LSIO_PWM4_CLK				14
+-#define IMX_LSIO_PWM5_CLK				15
+-#define IMX_LSIO_PWM6_CLK				16
+-#define IMX_LSIO_PWM7_CLK				17
+-#define IMX_LSIO_GPT0_CLK				18
+-#define IMX_LSIO_GPT1_CLK				19
+-#define IMX_LSIO_GPT2_CLK				20
+-#define IMX_LSIO_GPT3_CLK				21
+-#define IMX_LSIO_GPT4_CLK				22
+-#define IMX_LSIO_FSPI0_CLK				23
+-#define IMX_LSIO_FSPI1_CLK				24
+-
+-/* Connectivity SS */
+-#define IMX_CONN_AXI_CLK_ROOT				30
+-#define IMX_CONN_AHB_CLK_ROOT				31
+-#define IMX_CONN_IPG_CLK_ROOT				32
+-#define IMX_CONN_SDHC0_CLK				40
+-#define IMX_CONN_SDHC1_CLK				41
+-#define IMX_CONN_SDHC2_CLK				42
+-#define IMX_CONN_ENET0_ROOT_CLK				43
+-#define IMX_CONN_ENET0_BYPASS_CLK			44
+-#define IMX_CONN_ENET0_RGMII_CLK			45
+-#define IMX_CONN_ENET1_ROOT_CLK				46
+-#define IMX_CONN_ENET1_BYPASS_CLK			47
+-#define IMX_CONN_ENET1_RGMII_CLK			48
+-#define IMX_CONN_GPMI_BCH_IO_CLK			49
+-#define IMX_CONN_GPMI_BCH_CLK				50
+-#define IMX_CONN_USB2_ACLK				51
+-#define IMX_CONN_USB2_BUS_CLK				52
+-#define IMX_CONN_USB2_LPM_CLK				53
+-
+-/* HSIO SS */
+-#define IMX_HSIO_AXI_CLK				60
+-#define IMX_HSIO_PER_CLK				61
+-
+-/* Display controller SS */
+-#define IMX_DC_AXI_EXT_CLK				70
+-#define IMX_DC_AXI_INT_CLK				71
+-#define IMX_DC_CFG_CLK					72
+-#define IMX_DC0_PLL0_CLK				80
+-#define IMX_DC0_PLL1_CLK				81
+-#define IMX_DC0_DISP0_CLK				82
+-#define IMX_DC0_DISP1_CLK				83
+-#define IMX_DC0_BYPASS0_CLK				84
+-#define IMX_DC0_BYPASS1_CLK				85
+-
+-/* MIPI-LVDS SS */
+-#define IMX_MIPI_IPG_CLK				90
+-#define IMX_MIPI0_PIXEL_CLK				100
+-#define IMX_MIPI0_BYPASS_CLK				101
+-#define IMX_MIPI0_LVDS_PIXEL_CLK			102
+-#define IMX_MIPI0_LVDS_BYPASS_CLK			103
+-#define IMX_MIPI0_LVDS_PHY_CLK				104
+-#define IMX_MIPI0_I2C0_CLK				105
+-#define IMX_MIPI0_I2C1_CLK				106
+-#define IMX_MIPI0_PWM0_CLK				107
+-#define IMX_MIPI1_PIXEL_CLK				108
+-#define IMX_MIPI1_BYPASS_CLK				109
+-#define IMX_MIPI1_LVDS_PIXEL_CLK			110
+-#define IMX_MIPI1_LVDS_BYPASS_CLK			111
+-#define IMX_MIPI1_LVDS_PHY_CLK				112
+-#define IMX_MIPI1_I2C0_CLK				113
+-#define IMX_MIPI1_I2C1_CLK				114
+-#define IMX_MIPI1_PWM0_CLK				115
+-
+-/* IMG SS */
+-#define IMX_IMG_AXI_CLK					120
+-#define IMX_IMG_IPG_CLK					121
+-#define IMX_IMG_PXL_CLK					122
+-
+-/* MIPI-CSI SS */
+-#define IMX_CSI0_CORE_CLK				130
+-#define IMX_CSI0_ESC_CLK				131
+-#define IMX_CSI0_PWM0_CLK				132
+-#define IMX_CSI0_I2C0_CLK				133
+-
+-/* PARALLER CSI SS */
+-#define IMX_PARALLEL_CSI_DPLL_CLK			140
+-#define IMX_PARALLEL_CSI_PIXEL_CLK			141
+-#define IMX_PARALLEL_CSI_MCLK_CLK			142
+-
+-/* VPU SS */
+-#define IMX_VPU_ENC_CLK					150
+-#define IMX_VPU_DEC_CLK					151
+-
+-/* GPU SS */
+-#define IMX_GPU0_CORE_CLK				160
+-#define IMX_GPU0_SHADER_CLK				161
+-
+-/* ADMA SS */
+-#define IMX_ADMA_IPG_CLK_ROOT				165
+-#define IMX_ADMA_UART0_CLK				170
+-#define IMX_ADMA_UART1_CLK				171
+-#define IMX_ADMA_UART2_CLK				172
+-#define IMX_ADMA_UART3_CLK				173
+-#define IMX_ADMA_SPI0_CLK				174
+-#define IMX_ADMA_SPI1_CLK				175
+-#define IMX_ADMA_SPI2_CLK				176
+-#define IMX_ADMA_SPI3_CLK				177
+-#define IMX_ADMA_CAN0_CLK				178
+-#define IMX_ADMA_CAN1_CLK				179
+-#define IMX_ADMA_CAN2_CLK				180
+-#define IMX_ADMA_I2C0_CLK				181
+-#define IMX_ADMA_I2C1_CLK				182
+-#define IMX_ADMA_I2C2_CLK				183
+-#define IMX_ADMA_I2C3_CLK				184
+-#define IMX_ADMA_FTM0_CLK				185
+-#define IMX_ADMA_FTM1_CLK				186
+-#define IMX_ADMA_ADC0_CLK				187
+-#define IMX_ADMA_PWM_CLK				188
+-#define IMX_ADMA_LCD_CLK				189
+-
+-#define IMX_SCU_CLK_END					190
+-
+ /* LPCG clocks */
+ 
+ /* LSIO SS LPCG */
 -- 
 2.25.1
 
