@@ -2,141 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCE2C43460
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 17:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442ADC433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 17:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A28B6613D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 17:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3DD261404
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 17:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243123AbhDWR0K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Apr 2021 13:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231400AbhDWR0J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Apr 2021 13:26:09 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05A5DC06138C
-        for <linux-clk@vger.kernel.org>; Fri, 23 Apr 2021 10:25:30 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id z1so56458962ybf.6
-        for <linux-clk@vger.kernel.org>; Fri, 23 Apr 2021 10:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n8hZDL1xA2e2FhQbADX4o3akbnImWISYvJ4gYV4hTDw=;
-        b=QE34o8j979cX1BIZ77fuSaJFJASbd86yY/WiIZf/hGm3zAIrulu11rCYPdXZCPXmJp
-         dw4Xfb99rfN8VIjOVxPvsDQvjqNyOah9xQTh0YB7Rhj9Um+Y31ErWk6WtIpAP/48tZxd
-         KqxWDkBAgxxGs1bIBFnJJ1N7G+96HTwvTX7AZpH1y/hk93dVzZ+J55Ws35QFdWD2dGeG
-         webPu3XuSDc6v0ErYT++1lSCc0+whj212QDZwdkbqFPuPOJKPRiofRQ/LbcZTLRb1Lli
-         CLSIusitAEqZxhsPHFSvAgDovo+HdOl9codXeFbW8mzmsmMP8Kfm2mcytt8DLw7H27DL
-         kAtA==
+        id S231386AbhDWRnY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Apr 2021 13:43:24 -0400
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:33525 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229549AbhDWRnY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Apr 2021 13:43:24 -0400
+Received: by mail-ot1-f41.google.com with SMTP id 92-20020a9d02e50000b029028fcc3d2c9eso23494147otl.0;
+        Fri, 23 Apr 2021 10:42:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n8hZDL1xA2e2FhQbADX4o3akbnImWISYvJ4gYV4hTDw=;
-        b=t8uPcDtXlybqE5Ge31BtbGIQXG5+MDe2n0BvpHPEStVmRMRf2YyLAUwacA3zj/6p2/
-         ZI7NTQmxOQjK+ybz4E5bIXYFK+xYoNEM/lKlY8a1HhmuAY+OQl+jRG21Az/NnZjUzOa3
-         FHoUW4B2AIGp81EbyYVFVDZVDLhHdpLj2Z8/9/56M06gOaUsC9LhR8hkb5d1xYbwBDsJ
-         MNar9iQBBRQcD/OWVoyG4Bexfd4R0FHeFETK62wvLasCGHZLcVjh7x6+xWEyx4JURE8y
-         U0u8K8pPadHMte/RDcrSlldeogQtsBbErGK2dI2Kt9ouUvjyYH6jhInrlnSl4RG8h9r4
-         hGcA==
-X-Gm-Message-State: AOAM5332hzq/ZvoTKOWc3aHD2Uyct25HNKVXRw8fSponcu/Fm/pjpLi6
-        GJ3BOxzTS6H7gCZclQu7LeZww9WeXX/m2Wj1rTNzIQ==
-X-Google-Smtp-Source: ABdhPJxFoVAvJGui3UN2oIAvxm+a7sAm6jmg01L2/sYpQx5YwJvUfenhyU0iY9IdZ6Rlj5GY+UENrXQypiXTNdleqKM=
-X-Received: by 2002:a5b:ed2:: with SMTP id a18mr7083028ybs.466.1619198729910;
- Fri, 23 Apr 2021 10:25:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NRdnwDjQMRMO0UqN7+1YzzfPwFgjXHPJS+9F8SLu950=;
+        b=mQqmGrLY15PoM0eg5uIpdvUvzKy7x3MuYJTsW/Be5UnYwwaBLCTOl93JXK4MvGS7ZL
+         NLgX5o6qQPYak9h5Z1V8CWBlCQ9VVG80kvDPTBAd0DO5rxIoF4G8WCzPb3DxO5iDc/lJ
+         qLw1LEWhqo/oQxCWsHndrXVNgDBkcpfn/XksoSuNvW8FLKoBp6KQAAJ3YDvmcn5xRndM
+         q588ilZZDhVCs2/UE7/77eOVuraP6hivtNsO0BDkmb1iqvDBsKrKA5ynYxEFBDP9p0iZ
+         CwafI/Xu9h9qfSHG34iCx++22BgOpjD7AAGVAXFLkpexjA8FRG4i4HaeYCqkYveKX55v
+         v44g==
+X-Gm-Message-State: AOAM532hP3NmAwDvcCCp1qrIsg9HWEj2QVMKfQUDY6p0gKdiPRGL9bUP
+        pnTGRlP8nk9nuTC0tH07lw==
+X-Google-Smtp-Source: ABdhPJzLEjI07iwHUCGRfyOJQOgqUJHhqprXp2Cv1C6UlS/oc6NShfcmaU+7AwydfaeOdPkEv40Aqg==
+X-Received: by 2002:a05:6830:1094:: with SMTP id y20mr4329988oto.135.1619199767008;
+        Fri, 23 Apr 2021 10:42:47 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 39sm1538549otv.21.2021.04.23.10.42.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Apr 2021 10:42:46 -0700 (PDT)
+Received: (nullmailer pid 1314100 invoked by uid 1000);
+        Fri, 23 Apr 2021 17:42:45 -0000
+Date:   Fri, 23 Apr 2021 12:42:45 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Liam Beguin <liambeguin@gmail.com>
+Cc:     julia.lawall@inria.fr, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org
+Subject: Re: [PATCH v5 3/3] dt-bindings: clock: add ti,lmk04832 bindings
+Message-ID: <20210423174245.GA1314048@robh.at.kernel.org>
+References: <20210423004057.283926-1-liambeguin@gmail.com>
+ <20210423004057.283926-4-liambeguin@gmail.com>
 MIME-Version: 1.0
-References: <20210423171335.262316-1-tudor.ambarus@microchip.com> <20210423171335.262316-2-tudor.ambarus@microchip.com>
-In-Reply-To: <20210423171335.262316-2-tudor.ambarus@microchip.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 23 Apr 2021 10:24:54 -0700
-Message-ID: <CAGETcx-81hPTW_EVexMWaxGSOknuK-zESqKdiuQvye=n3TaHkA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: Do not register provider with a NULL dev->of_node
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, nsaenz@kernel.org,
-        maxime@cerno.tech, gregkh@linuxfoundation.org, rafael@kernel.org,
-        khilman@kernel.org, ulf.hansson@linaro.org, len.brown@intel.com,
-        pavel@ucw.cz, robh+dt@kernel.org, frowand.list@gmail.com,
-        maz@kernel.org, tglx@linutronix.de, geert@linux-m68k.org,
-        nsaenzjulienne@suse.de, linux@roeck-us.net,
-        guillaume.tucker@collabora.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
-        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-        kernel-team@android.com, linux-rpi-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210423004057.283926-4-liambeguin@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 10:14 AM Tudor Ambarus
-<tudor.ambarus@microchip.com> wrote:
->
-> commit 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-> revealed that clk/bcm/clk-raspberrypi.c driver calls
-> devm_of_clk_add_hw_provider(), with a NULL dev->of_node.
->
-> devm_of_clk_add_hw_provider() should not register the provider with
-> a NULL dev->of_node, as there is no of_node. Apart of the NULL pointer
-> dereference that will result when calling fwnode_dev_initialized() in
-> of_clk_add_hw_provider(), another problem is that when two drivers calling
-> of_clk_add_hw_provider() with np = NULL, their unregistration order is not
-> guaranteed to be correct. Avoid all the problems and just return -ENODEV
-> when the callers of devm_of_clk_add_hw_provider() use a NULL dev->of_node,
-> which seems the natural way to do.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Thu, 22 Apr 2021 20:40:57 -0400, Liam Beguin wrote:
+> From: Liam Beguin <lvb@xiphos.com>
+> 
+> Document devicetree bindings for Texas Instruments' LMK04832.
+> The LMK04208 is a high performance clock conditioner with superior clock
+> jitter cleaning, generation, and distribution with JEDEC JESD204B
+> support.
+> 
+> Signed-off-by: Liam Beguin <lvb@xiphos.com>
 > ---
->  drivers/clk/clk.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index e2ec1b745243..8b5077cc5e67 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4634,11 +4634,10 @@ static struct device_node *get_clk_provider_node(struct device *dev)
->   * @get: callback for decoding clk_hw
->   * @data: context pointer for @get callback
->   *
-> - * Registers clock provider for given device's node. If the device has no DT
-> - * node or if the device node lacks of clock provider information (#clock-cells)
-> - * then the parent device's node is scanned for this information. If parent node
-> - * has the #clock-cells then it is used in registration. Provider is
-> - * automatically released at device exit.
-> + * Registers clock provider for given device's node. If the device node lacks
-> + * of clock provider information (#clock-cells) then the parent device's node is
-> + * scanned for this information. If parent node has the #clock-cells then it is
-> + * used in registration. Provider is automatically released at device exit.
->   *
->   * Return: 0 on success or an errno on failure.
->   */
-> @@ -4650,6 +4649,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
->         struct device_node **ptr, *np;
->         int ret;
->
-> +       if (!dev->of_node)
-> +               return -ENODEV;
-> +
+>  .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
+>  1 file changed, 209 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> 
 
-Based on the other discussions, for now, just return 0. The error
-might cause other issues in other drivers. We can clean this up later.
-
--Saravana
-
->         ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
->                            GFP_KERNEL);
->         if (!ptr)
-> --
-> 2.25.1
->
+Reviewed-by: Rob Herring <robh@kernel.org>
