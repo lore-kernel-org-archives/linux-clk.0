@@ -2,305 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20969C43603
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 00:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05BDC433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E54B66145B
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 00:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89634613B8
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 03:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239922AbhDWAmA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 20:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236404AbhDWAlz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 20:41:55 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168C1C061574;
-        Thu, 22 Apr 2021 17:41:19 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id z25so12602441qtn.8;
-        Thu, 22 Apr 2021 17:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nz9im1KWF9d9obNlXKQvHrwAyoo0lwnAxd4M5RbZT60=;
-        b=etmDDtNFj4W00UBn+NLSkqnC0XC6Kxb9tgovPv2UXUgLJ6mQ1Ge8xz8MsBt/d586oQ
-         B8jf/+i/hnhfAfA8l3d5axXDDDKp4FSEabggCmNXdkEuyK53EjWWjZbbwja90rex8VMd
-         N4le7FE7fMdHBSbdYi2bwQJHm8DgOSRFqicJjkIpTwCCur7feXYC3pxabJVbgIi0uwZA
-         jAQWi13uW86JyLIYoWjoClT3G5bsrhXn+QINtK1+0qz7cNkBgP3RYtjWPnuOrAMs/XiV
-         dPwrXkeX2UiJPumg3fKTcnppu+bGIZRUV4WO3s6KcFiYYU5DJ1MgVk/r5nPFCumFRyrz
-         2Asg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nz9im1KWF9d9obNlXKQvHrwAyoo0lwnAxd4M5RbZT60=;
-        b=kLIVHJnDQsSsm/UWtYe0yop4RnO/3ot2aokEnq4XXkGb3lOE5zOMAwP5QhWkyb4J1G
-         wAx1qVUNr3VarJeQeJ0EOklE0jftAi6g51BXpmARTGEx2k6WV2h4/h88lLQuzj18sK+I
-         XVpBX0OB6+EX4SWgVWB+8e1yhFZLysr5B/VzhksHmQnDfixlWyJVYztRmZS+GJxYXwXq
-         /C+SUOjv5XdI5E/2tY1lN6Zof7vZ7uvHVO6vvDz2ksH29erf8h6aMvkkywpD9yaIGP3c
-         sJvtqiwFC1DlvWIQ6OJxxUJ6P6RwSd9BPd0jmGMwq4/+cWsF4lZNM1542yWcEQn3Zqm4
-         fo4g==
-X-Gm-Message-State: AOAM533r5OV3e/FXQVGETqOREK8MR6LDz1bqurOugtRK4yaGxd3Vnr+g
-        EAs4ZfxKQE7Wz0d0CUGzbZw2cSO0fGknEgp4
-X-Google-Smtp-Source: ABdhPJwtv7EbGS1vIBMmDab7DnyLwuNNzoM7V7mmrpHCkR2YVmAzIyjr8UJcLZCRh65KSugluehSNA==
-X-Received: by 2002:a05:622a:14c9:: with SMTP id u9mr1179594qtx.313.1619138478326;
-        Thu, 22 Apr 2021 17:41:18 -0700 (PDT)
-Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id n15sm3241586qkk.109.2021.04.22.17.41.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 17:41:17 -0700 (PDT)
-From:   Liam Beguin <liambeguin@gmail.com>
-To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     julia.lawall@inria.fr, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: [PATCH v5 3/3] dt-bindings: clock: add ti,lmk04832 bindings
-Date:   Thu, 22 Apr 2021 20:40:57 -0400
-Message-Id: <20210423004057.283926-4-liambeguin@gmail.com>
-X-Mailer: git-send-email 2.30.1.489.g328c10930387
-In-Reply-To: <20210423004057.283926-1-liambeguin@gmail.com>
-References: <20210423004057.283926-1-liambeguin@gmail.com>
-MIME-Version: 1.0
+        id S231639AbhDWDfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 23:35:20 -0400
+Received: from mail-eopbgr140042.outbound.protection.outlook.com ([40.107.14.42]:28856
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231261AbhDWDfU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Apr 2021 23:35:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cfC1CZSjQqSHbZtNCTUbOVKJJznYGr6+8bmDCwBA80CJ8EQ34idIy1ByW90a9T1arYOinYCmyeJtpFEQzN9Z29MDnawNHiAX0PbzwrHzcQWLY+WsRlxIljtzlA/cP0BrsiT8RG3CedzwcTjPWjcGi94kCZUMuk7zRid+Vl/yyxBJRwGDOlGsRsM2ADhtNV2grcvvDKvTiVLgsjnGl1QGhB1+m9AGEbC6GhgpjxF2q97z+m+/2e8EE//bokhsd1jV8igad8iXDwxrMo93aUZIEuMtdCq3I8LMweePp0hneuAbZe8VC7ffnNZgNB16jAZXTkgJoapJzuc3H39kBOzfzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1nteAchaYpm1H/MPgQlQ6J9zj6eqDjOuAItGP9fQAt4=;
+ b=hCMeqPvigQW3amXaiPnhjknOX70Y7dnsG0NrFkYAOtbiwmyzoU6lBA/r+VUdoMbuyiZQk6+dWV9WZ6D/uQ9XIjPJU7nIoJoeFgK3Oc5yElieteAIjHo+h02qIsPlZNK3sMrykyQ3SayOMgS7zkOURv+qHnNoQrs9nKaATx8LozH7QDGhMAZYegGwz8FC0Q3l3qqU2zyhaDSNT6AtIzrh1Mbv6e9bhd0i5W93EKKn1GowxLbdrNK1AK+x8IYeS1WLT10EHtUZv3cEwDSM9CJr1n/gJyV7EloQeCLQz46YLQXB3ZIFkX+DQzm6XXkkqipAG1kmWSAwT6E7Ne2MPwwVCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1nteAchaYpm1H/MPgQlQ6J9zj6eqDjOuAItGP9fQAt4=;
+ b=iKxnYngWk+o+irqnQf6+yUFDJmiRlSCRqnoNpdUVGAD0qTmi3NvfQtFEmY8YHa4wVvs1tFuEK05H74q7BullEhocr7KurwjuP9icGWRx9OzLpnWJk2kfHOQFkgkQms7S8MfHWqLKruNo3geDqmx56II8WJIHbFw5FLyRr/vAKNM=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR04MB5079.eurprd04.prod.outlook.com (2603:10a6:20b:4::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.21; Fri, 23 Apr
+ 2021 03:34:40 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::b10a:ad0:a6f5:db9b]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::b10a:ad0:a6f5:db9b%2]) with mapi id 15.20.4065.023; Fri, 23 Apr 2021
+ 03:34:40 +0000
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     dongas86@gmail.com, kernel@pengutronix.de, shawnguo@kernel.org,
+        linux-imx@nxp.com, abel.vesa@nxp.com, sboyd@kernel.org,
+        Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org
+Subject: [PATCH 1/6] dt-bindings: arm: imx: scu: fix naming typo of clk compatible string
+Date:   Fri, 23 Apr 2021 11:33:29 +0800
+Message-Id: <20210423033334.3317992-1-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK2P15301CA0017.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:202:1::27) To AM6PR04MB4966.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2::14)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by HK2P15301CA0017.APCP153.PROD.OUTLOOK.COM (2603:1096:202:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.10 via Frontend Transport; Fri, 23 Apr 2021 03:34:37 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9415a7e2-c6bb-478c-3344-08d90608ba2b
+X-MS-TrafficTypeDiagnostic: AM6PR04MB5079:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB5079675A55A783FBBDA519A280459@AM6PR04MB5079.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RpzNYjZO+phtzONyPh+Xh//y3sIMgx98dmpG4cW+mXrIjWsLxI71hlviAUFNFwyrnkFPyS9vWJnQvn8FjnvWwoWxFWt9kUZaqkPexjvRxWu01rCcHRMPspw0KK0iOaBRK8eWHLsB559BzIbf1Q6UiyDHY6esYQqtymdKhfAPsy6OGD3eLB1+2n2ZPFXNAQXq5L93GgmLOfeXr8nTdmMd3g38EHZ1PpJM1334PxXkz0DR4BwODquxlbkn9zxHTDHk8dDSlwhMFuRR8PtsrqKRjymjc+1ooi6Tr1ikYMTnsT2P8jBooZ6Ke7vnJ0EqOJlA90l1Q4oX6MveCYsSSOxx0RD1RTtt7FQRyar614MLnqSclXixn1BHfEb8prqfFuHgtXesv6b4TGqAq5EZ/yVJ5RWxrjflkOd7pcp/Q6TQKwTC7mLCRJChCT+1BGjisnAbx2WERxGTaeI4ScBnkz+ZPC/JF8kPD1x5eSR+ig9UwTKwFC9QpWboknu2Wbqs4gG7tGaQvKlUyst4KyUO/oZZjBJGt+WTP1SS3l2QaCrlItswXc1Nf96bqvNRz9MxPNwFJYtNwYT1E6y4al7ruCVC82pB7gcMf1Yp3kd54cB9VSIouWwBk7faTvw7yY97EezYSlYihwnrZFmUoV9X/dvUHQwcVVEBr7ITqTzSifnfcy6v+He6GpMVHiY6FOraAWSWAYWbgTfIrXp3VXscO8iBcQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(16526019)(2906002)(8936002)(6512007)(316002)(38350700002)(8676002)(52116002)(38100700002)(4326008)(66556008)(26005)(86362001)(66946007)(478600001)(36756003)(1076003)(2616005)(956004)(6666004)(5660300002)(6486002)(6506007)(186003)(66476007)(83380400001)(69590400013)(21314003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?1sWxzdrWf+le9CZSaDkbyNZBSoeepjNvQGA5DUh99SzIWKlJ+JWxZmVgulXb?=
+ =?us-ascii?Q?0omQNapbi4D35kGnPfOvm4w7N+fjIOXhd0mIOfsPrGk2uUlqJl5pBPbLvwFJ?=
+ =?us-ascii?Q?GGiGZOBHLZ4VUfX9FqiVuwc8VMSp0G7DvJxpomKbxEQoSgsWt9D8EJQEvucH?=
+ =?us-ascii?Q?/1Do9/d/EmAGzNZoWTGhN9Z+Xph3K4zkI2BOCZEb2Co0G6bAGnUkeWTOBR3x?=
+ =?us-ascii?Q?5lYWZ9GnmjBSLhBcfETb8tYFkXgirAC/02zfEGQ7MxfHIPdCXuUlbdk7aPaD?=
+ =?us-ascii?Q?mq8Ko3UPcZBw/VuGvLqlvP5UTGdD4HmO0bfAxDBCNBxdmwjA6LpIYzn3pStu?=
+ =?us-ascii?Q?WHhmsAHbk6j0y25TOZHJ+RMEYMqo38Q3aSSMXjF/onSJLrkepBzllzyUtsHP?=
+ =?us-ascii?Q?FMNE2oQ/OBzY5Qe2+gyYIYbzI9ksDMyou1ZclrtiSROG7xb1Qn1kqW29z29C?=
+ =?us-ascii?Q?FopkWWi7f6ZEA+pSwoFQUBxy8T0aYy+yUBX+e/m9FSTYaYWhTRUDfC/jKIqC?=
+ =?us-ascii?Q?gMiKv3h9DYSgnICIgaFyKjkRAl36kvpdYY7PIxKn+yj7dNgBoRhTdEhezpb3?=
+ =?us-ascii?Q?gDZba8LtsKuR5f0E7nBnvG9zsiMzzegVvIIirNn6zuwy+p/2MkTbzyUKCozO?=
+ =?us-ascii?Q?7OVgGTsK53hFnKSesf3LdR/8JCkLROnq8B0TwaKrqzpmJ5LTOSyeetJ3jAam?=
+ =?us-ascii?Q?HIBbJRcm+7vmAPn4hpD9tpkEvWOEC+l5NhMM5VQnaF6NtNVCqqKPvNw8zhp4?=
+ =?us-ascii?Q?zwIuJi2+h7MMJGQixwYG4vnVVu0oIa6DZwqhl4LRFM8+4tVIFfh9qf6ZCgTc?=
+ =?us-ascii?Q?+Ft8qZuH+wTxFjggriUEgdwjDTBMobTW/si1ttpfQzffCkY1/+IEwLc44RYT?=
+ =?us-ascii?Q?tHaWWeiw7ym6RCiNh4MtRDDDbCRn5NZmk1WYgHznciNzI0ptfWvf3Krgrgyg?=
+ =?us-ascii?Q?xDJENLOLt88qUcAv3vInP+VXyztBCoAmrfMQSuZvZLJiSwQ9w+0nqQfnwOCe?=
+ =?us-ascii?Q?AtT/tPrOwJPx0rzAC57rm8vgvx4geNPgmnNHiyhGPiIgbDTJBYW6PVVYAIkY?=
+ =?us-ascii?Q?grf3LyiyXkmwD8Y8TkMZMx+nY0IiaFXRZTHFaP8ADS/vlw4Xq4p55hKBQ0TG?=
+ =?us-ascii?Q?P90TsckMdUenbVUsyZbv+mF1XkiqNqjBNGNtj0WZz7CIUxsz7uiB9VaFjwTK?=
+ =?us-ascii?Q?baA1vMsVSd/IoHNmOAxtsU5wudGDsnfwT36O3gt3cpBSbiIE5xyhExvZ2d7T?=
+ =?us-ascii?Q?aoXL7iZV8XTkf9x10YhEC2s0hFP3gXcyFfSXd/l6eIpc5T0+i8s3ef2+6uEi?=
+ =?us-ascii?Q?XJSMN8eR24o8rN8q4S8I17U3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9415a7e2-c6bb-478c-3344-08d90608ba2b
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2021 03:34:40.6871
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f3cW2fmHJpsmS1VGZl6unyaAMeg2lS2Bp3l7UQoZSgsPfsIyOh4PTvulaCunSSQsf4DQCJByr4DWrR+APeY7tQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5079
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Liam Beguin <lvb@xiphos.com>
+There is a typo in binding doc that the name of compatible string of
+scu clock should be "fsl,xxx-clk" rather than "fsl,xxx-clock".
+In reality, both example and dts using "fsl,xxx-clk", so fixing the doc
+is enough.
 
-Document devicetree bindings for Texas Instruments' LMK04832.
-The LMK04208 is a high performance clock conditioner with superior clock
-jitter cleaning, generation, and distribution with JEDEC JESD204B
-support.
-
-Signed-off-by: Liam Beguin <lvb@xiphos.com>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- .../bindings/clock/ti,lmk04832.yaml           | 209 ++++++++++++++++++
- 1 file changed, 209 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+ Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-new file mode 100644
-index 000000000000..bd8173848253
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-@@ -0,0 +1,209 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Clock bindings for the Texas Instruments LMK04832
-+
-+maintainers:
-+  - Liam Beguin <liambeguin@gmail.com>
-+
-+description: |
-+  Devicetree binding for the LMK04832, a clock conditioner with JEDEC JESD204B
-+  support. The LMK04832 is pin compatible with the LMK0482x family.
-+
-+  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,lmk04832
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  spi-max-frequency:
-+    maximum: 5000000
-+
-+  clocks:
-+    items:
-+      - description: PLL2 reference clock.
-+
-+  clock-names:
-+    items:
-+      - const: oscin
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+  ti,spi-4wire-rdbk:
-+    description: |
-+      Select SPI 4wire readback pin configuration.
-+      Available readback pins are,
-+        CLKin_SEL0 0
-+        CLKin_SEL1 1
-+        RESET 2
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,vco-hz:
-+    description: Optional to set VCO frequency of the PLL in Hertz.
-+
-+  ti,sysref-ddly:
-+    description: SYSREF digital delay value.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 8
-+    maximum: 8191
-+    default: 8
-+
-+  ti,sysref-mux:
-+    description: |
-+      SYSREF Mux configuration.
-+      Available options are,
-+        Normal SYNC 0
-+        Re-clocked 1
-+        SYSREF Pulser 2
-+        SYSREF Continuous 3
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+    default: 3
-+
-+  ti,sync-mode:
-+    description: SYNC pin configuration.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,sysref-pulse-count:
-+    description:
-+      Number of SYSREF pulses to send when SYSREF is not in continuous mode.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8]
-+    default: 4
-+
-+patternProperties:
-+  "@[0-9a-d]+$":
-+    type: object
-+    description:
-+      Child nodes used to configure output clocks.
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 0
-+        maximum: 13
-+
-+      ti,clkout-fmt:
-+        description:
-+          Clock output format.
-+          Available options are,
-+            Powerdown 0x00
-+            LVDS 0x01
-+            HSDS 6 mA 0x02
-+            HSDS 8 mA 0x03
-+            LVPECL 1600 mV 0x04
-+            LVPECL 2000 mV 0x05
-+            LCPECL 0x06
-+            CML 16 mA 0x07
-+            CML 24 mA 0x08
-+            CML 32 mA 0x09
-+            CMOS (Off/Inverted) 0x0a
-+            CMOS (Normal/Off) 0x0b
-+            CMOS (Inverted/Inverted) 0x0c
-+            CMOS (Inverted/Normal) 0x0d
-+            CMOS (Normal/Inverted) 0x0e
-+            CMOS (Normal/Normal) 0x0f
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        minimum: 0
-+        maximum: 15
-+
-+      ti,clkout-sysref:
-+        description:
-+          Select SYSREF clock path for output clock.
-+        type: boolean
-+
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clocks {
-+        lmk04832_oscin: oscin {
-+            compatible = "fixed-clock";
-+
-+            #clock-cells = <0>;
-+            clock-frequency = <122880000>;
-+            clock-output-names = "lmk04832-oscin";
-+        };
-+    };
-+
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        lmk04832: clock-controller@0 {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            reg = <0>;
-+
-+            compatible = "ti,lmk04832";
-+            spi-max-frequency = <781250>;
-+
-+            reset-gpios = <&gpio_lmk 0 0 0>;
-+
-+            #clock-cells = <1>;
-+            clocks = <&lmk04832_oscin>;
-+            clock-names = "oscin";
-+
-+            ti,spi-4wire-rdbk = <0>;
-+            ti,vco-hz = <2457600000>;
-+
-+            assigned-clocks =
-+                <&lmk04832 0>, <&lmk04832 1>,
-+                <&lmk04832 2>, <&lmk04832 3>,
-+                <&lmk04832 4>,
-+                <&lmk04832 6>, <&lmk04832 7>,
-+                <&lmk04832 10>, <&lmk04832 11>;
-+            assigned-clock-rates =
-+                <122880000>, <384000>,
-+                <122880000>, <384000>,
-+                <122880000>,
-+                <153600000>, <384000>,
-+                <614400000>, <384000>;
-+
-+            clkout0@0 {
-+                reg = <0>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+            };
-+
-+            clkout1@1 {
-+                reg = <1>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+                ti,clkout-sysref;
-+            };
-+        };
-+    };
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index 395359dc94fd..3adf3f6f2beb 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -86,8 +86,8 @@ This binding uses the common clock binding[1].
+ 
+ Required properties:
+ - compatible:		Should be one of:
+-			  "fsl,imx8qm-clock"
+-			  "fsl,imx8qxp-clock"
++			  "fsl,imx8qm-clk"
++			  "fsl,imx8qxp-clk"
+ 			followed by "fsl,scu-clk"
+ - #clock-cells:		Should be either
+ 			2: Contains the Resource and Clock ID value.
 -- 
-2.30.1.489.g328c10930387
+2.25.1
 
