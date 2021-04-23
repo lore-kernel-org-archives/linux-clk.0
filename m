@@ -2,76 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF38C433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 07:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA41BC433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 08:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0FC9613DE
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 07:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6712F6128A
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 08:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241227AbhDWHtV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Apr 2021 03:49:21 -0400
-Received: from cable.insite.cz ([84.242.75.189]:44845 "EHLO cable.insite.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241226AbhDWHtU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Apr 2021 03:49:20 -0400
-X-Greylist: delayed 590 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Apr 2021 03:49:20 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by cable.insite.cz (Postfix) with ESMTP id 96E2CA1A3D401
-        for <linux-clk@vger.kernel.org>; Fri, 23 Apr 2021 09:38:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
-        t=1619163533; bh=URCcunjhNq7N1EF2LEyZ/5UKyZRZDRiN52G+nvkkQKM=;
-        h=To:From:Subject:Date:From;
-        b=jdr72yftGi9QxY7NdosaecO3ryzY8pBgkD8ZEXIXt28n2AlF8Qbj0vAsnSuwTphuO
-         KfSAd7EbHkw99+iOfjOe2QtdSNKocSNnGrp+EUa92M/2v6JX2bd6gg5R95OwRDYYuF
-         WExny4oNpqe48yQ7umqFi+eFKYodgmlIV5om4NVE=
-Received: from cable.insite.cz ([84.242.75.189])
-        by localhost (server.insite.cz [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bRWatDRGG4Oy for <linux-clk@vger.kernel.org>;
-        Fri, 23 Apr 2021 09:38:48 +0200 (CEST)
-Received: from [192.168.105.22] (ip28.insite.cz [81.0.237.28])
-        (Authenticated sender: pavel)
-        by cable.insite.cz (Postfix) with ESMTPSA id 2E8D3A1A3D400
-        for <linux-clk@vger.kernel.org>; Fri, 23 Apr 2021 09:38:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
-        t=1619163528; bh=URCcunjhNq7N1EF2LEyZ/5UKyZRZDRiN52G+nvkkQKM=;
-        h=To:From:Subject:Date:From;
-        b=by8xptjYzdZA1N1Gnp68B0KKs+EK9KOLhnlNIzT16c1mXckJXUk8HBenawC03x+ju
-         CDhcqqYvrfj3GbTPnzIbLaQKYCv+w5FVMurQK6qkbX5ZjYplKinh3rb3ksSTJie3MU
-         3uYmmJDXHLYWi5j92zDxr+XMCQO7jijlMrsuxIJg=
-To:     linux-clk@vger.kernel.org
-From:   Pavel Hofman <pavel.hofman@ivitera.com>
-Subject: Recommended method for changing clk params dynamically from user
- space?
-Message-ID: <fceb112b-2241-5f67-2b29-3dda161f7c48@ivitera.com>
-Date:   Fri, 23 Apr 2021 09:38:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S230125AbhDWIIl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Apr 2021 04:08:41 -0400
+Received: from spam.zju.edu.cn ([61.164.42.155]:32356 "EHLO zju.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229456AbhDWIIl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Apr 2021 04:08:41 -0400
+Received: by ajax-webmail-mail-app3 (Coremail) ; Fri, 23 Apr 2021 16:07:51
+ +0800 (GMT+08:00)
+X-Originating-IP: [10.192.224.61]
+Date:   Fri, 23 Apr 2021 16:07:51 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   dinghao.liu@zju.edu.cn
+To:     "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc:     "Kangjie Lu" <kjlu@umn.edu>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH] [v3] clk: renesas: rcar-usb2-clock-sel: Fix error
+ handling in rcar_usb2_clock_sel_probe
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20210104(ab8c30b6)
+ Copyright (c) 2002-2021 www.mailtech.cn zju.edu.cn
+In-Reply-To: <CAMuHMdVgtZkO3FfLOph41cXXJbSuc16UX1Z+fD0_iNN7nM-GtA@mail.gmail.com>
+References: <20210415073338.22287-1-dinghao.liu@zju.edu.cn>
+ <CAMuHMdVgtZkO3FfLOph41cXXJbSuc16UX1Z+fD0_iNN7nM-GtA@mail.gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Message-ID: <2fd8490f.73bcd.178fdc55590.Coremail.dinghao.liu@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: cC_KCgC3nz5XgIJgP42CAQ--.54673W
+X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgcEBlZdtTjJMQAAs5
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, I would like to add some missing features to clk-si5341.c that I
-need for my project. From user-space I need to tune delays at each
-output (the driver does not control corresponding registers yet) and
-fine-tune frequency while the clock is running (likely the nom/denom
-values).
-
-IIUC all driver parameters are currently configured via DT. Please what
-is the recommended method/best practice for changing clk params
-dynamically from user space? SysFS, configFS? I would like to have the
-patches accepted upstream eventually.
-
-Thank you very much.
-
-Best regards,
-
-Pavel.
-
+PiBIaSBEaW5naGFvLAo+IAo+IE9uIFRodSwgQXByIDE1LCAyMDIxIGF0IDk6MzMgQU0gRGluZ2hh
+byBMaXUgPGRpbmdoYW8ubGl1QHpqdS5lZHUuY24+IHdyb3RlOgo+ID4gVGhlIGVycm9yIGhhbmRs
+aW5nIHBhdGhzIGFmdGVyIHBtX3J1bnRpbWVfZ2V0X3N5bmMoKSBoYXMgbm8KPiA+IHJlZmNvdW50
+IGRlY3JlbWVudCwgd2hpY2ggbGVhZHMgdG8gcmVmY291bnQgbGVhay4KPiA+Cj4gPiBTaWduZWQt
+b2ZmLWJ5OiBEaW5naGFvIExpdSA8ZGluZ2hhby5saXVAemp1LmVkdS5jbj4KPiA+IC0tLQo+ID4K
+PiA+IENoYW5nZWxvZzoKPiA+Cj4gPiB2MjogLSBNb3ZlIHRoZSBwb3NpdGlvbiBvZiBwbV9ydW50
+aW1lX2VuYWJsZSxfZ2V0X3N5bmMoKS4KPiA+ICAgICAgIFVzZSBkZXZtX2Nsa19yZWdpc3Rlcigp
+IHRvIHNpbXBsaWZ5IGVycm9yIGhhbmRsaW5nLgo+IAo+IFRoYW5rcyBmb3IgdGhlIHVwZGF0ZSEK
+PiAKPiA+IC0tLSBhL2RyaXZlcnMvY2xrL3JlbmVzYXMvcmNhci11c2IyLWNsb2NrLXNlbC5jCj4g
+PiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3JjYXItdXNiMi1jbG9jay1zZWwuYwo+ID4gQEAg
+LTEzMSw3ICsxMzEsNiBAQCBzdGF0aWMgaW50IHJjYXJfdXNiMl9jbG9ja19zZWxfcmVtb3ZlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gPiAgICAgICAgIHN0cnVjdCB1c2IyX2Nsb2Nr
+X3NlbF9wcml2ICpwcml2ID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7Cj4gCj4gICAgIHdh
+cm5pbmc6IHVudXNlZCB2YXJpYWJsZSDigJhwcml24oCZIFstV3VudXNlZC12YXJpYWJsZV0KPiAK
+PiBIYXZlIHlvdSBjb21waWxlZCB0aGlzPwo+IAoKVGhpcyBpcyBteSBjYXJlbGVzc25lc3MsIHRo
+YW5rcyBmb3IgcG9pbnRpbmcgb3V0IHRoaXMuIFdoZW4gd2UgdXNlIApkZXZtX2Nsa19od19yZWdp
+c3RlcigpLCB3ZSB3aWxsIG5vdCBuZWVkIHRvIHVucmVnaXN0ZXIgcHJpdi0+aHcgaW4gCnJjYXJf
+dXNiMl9jbG9ja19zZWxfcmVtb3ZlKCkuIFNvIEkgdGhpbmsgaXQncyBva2F5IHRvIHJlbW92ZSAK
+cGxhdGZvcm1fZ2V0X2RydmRhdGEoKSBpbiBpdCB0byBlbGltaW5hdGUgdGhpcyB3YXJuaW5nLgoK
+RG8geW91IG5lZWQgYSBuZXcgdmVyc2lvbiBvZiBwYXRjaCB0byBmaXggdGhpcyB3YXJuaW5nPwoK
+UmVnYXJkcywKRGluZ2hhbw==
