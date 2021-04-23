@@ -2,198 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10A6C433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 21:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925A8C433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 00:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 958AE613C0
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Apr 2021 21:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47CCB61405
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 00:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237092AbhDVVea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Apr 2021 17:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46092 "EHLO
+        id S229888AbhDWAlw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Apr 2021 20:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237048AbhDVVe2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 17:34:28 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75908C06174A;
-        Thu, 22 Apr 2021 14:33:52 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 528E41F43784
-Subject: Re: next/master bisection: baseline.dmesg.alert on bcm2837-rpi-3-b
-References: <60809bd4.1c69fb81.7752a.1894@mx.google.com>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernelci-results@groups.io
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Message-ID: <bd28c734-4964-319f-fe4e-f6787ffe22fd@collabora.com>
-Date:   Thu, 22 Apr 2021 22:33:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        with ESMTP id S229865AbhDWAlw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Apr 2021 20:41:52 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE7AC061574;
+        Thu, 22 Apr 2021 17:41:15 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id x11so48184826qkp.11;
+        Thu, 22 Apr 2021 17:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=00AZkOPFLYj+78Qt8S3aqJKmQoaYOsFThULUOdLSMzA=;
+        b=RNSJMv2Rh5SwI0FMZCxGC0218anlBgJ7WBNTX/iJPPXDsKmmBLzgb51LsFU3z94693
+         RSEtYtVRIM0XVHEsh0OV/jecGJwslJEEUY/UEKfRCKRVu534YDjWKAkoxo6j+FiUIR8J
+         60JS7U/x0gQ0Rcr5w/neFU3fMJDOPPyyNWUNfPlmBJNJ3pZe6wW/g08fDTcbl8eeALB2
+         tcLDDvqszc4UbuK4XU4O1DiKBrVCCbrjmh+dtXygZu/2VOOOo1m1ZPAf4jeNcyyXsBJI
+         Z2DshIUmBJPcuiwkYp8nNIU6Bij3E6qd3z6nF2pGdwCmg38rRH64qezopwEpuleNWHNg
+         UQQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=00AZkOPFLYj+78Qt8S3aqJKmQoaYOsFThULUOdLSMzA=;
+        b=j21vp3Br7FucM/o4ZZVUQFglVt90wcTeHu6CG905I2RryY41rm/Nv92TNCd483LY9B
+         9r4vqwWYVXhHn5hxLbc0l+bRt9pGtmES5A+tLbZ6bbMw9zewzKDcfrr8qlyKhfGI8ea+
+         grPkvCQs3sahZp5pEeczko8wb7wjR9T4/xKvwOXSeflCw8qPMAAa7jaMjnGC3vKMtEW0
+         sC5kziIvZ11+7hfXO5/0MHdQYkWDX5BRTDpEFl/jaom2e8NJ3wqf0G5JNKKztruktVew
+         ws/oKx5weDoji3nbPkKx76sGj7o1KOPZdQbJsqX3/XrDXAJkJ3mnexFSNxMtyw+Cf8Qn
+         VONw==
+X-Gm-Message-State: AOAM531c3elqgTnDnKg4wHjPWWLrTJp+iZaAdnnpzbtpdWU+lV4k5yzY
+        GodNz0YJnn3OTuBmZIeziH4=
+X-Google-Smtp-Source: ABdhPJyR2S5b6/1ydJk3KUu8WyKefqvEd8qvKpIcFmbUHtaL38NWVjIKngUYMa4hcawYeFABMEnYLA==
+X-Received: by 2002:a37:e47:: with SMTP id 68mr1536814qko.372.1619138475053;
+        Thu, 22 Apr 2021 17:41:15 -0700 (PDT)
+Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
+        by smtp.gmail.com with ESMTPSA id n15sm3241586qkk.109.2021.04.22.17.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Apr 2021 17:41:14 -0700 (PDT)
+From:   Liam Beguin <liambeguin@gmail.com>
+To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     julia.lawall@inria.fr, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: [PATCH v5 0/3] add support for the lmk04832
+Date:   Thu, 22 Apr 2021 20:40:54 -0400
+Message-Id: <20210423004057.283926-1-liambeguin@gmail.com>
+X-Mailer: git-send-email 2.30.1.489.g328c10930387
 MIME-Version: 1.0
-In-Reply-To: <60809bd4.1c69fb81.7752a.1894@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tudor,
+From: Liam Beguin <lvb@xiphos.com>
 
-Please see the bisection report below about a NULL pointer
-dereference on RPi-3B with 64K pages.
+Hi,
 
-Reports aren't automatically sent to the public while we're
-trialing new bisection features on kernelci.org but this one
-looks valid.
+The LMK04832 is an ultra-high performance clock conditioner with JEDEC
+JESD204B support and is also pin compatible with the LMK0482x family of
+devices.
 
-This is the kernel error message in the full boot log:
+This driver adds initial support to configure the LMK04832 clocks using
+the clock framework.
 
-  https://storage.kernelci.org/next/master/next-20210421/arm64/defconfig+CONFIG_ARM64_64K_PAGES=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html#L336
+This has been tested on a system using JESD204B subclass 1.
 
-More details can be found here:
+At the moment, the VCO rate has to be set manually from the devicetree
+and a dclk (or sclk) rate change isn't propagated to the VCO
+automatically.
 
-  https://linux.kernelci.org/test/case/id/60801a28ecf57fef7d9b77af/
+Changes since v1:
+- add yaml devicetree documentation,
+- add links to datasheet,
+- use {u8,u16,u32} instead of Uint_ variants,
+- drop redundant debugfs code,
+- use a pointer to device_info instead of struct copy,
+- add of_device_id table,
+- add support for SYSREF digital delay and JESD204B subclass 1
+
+Changes since v2:
+- fix dt-bindings documentation, apologies for the broken build
+- fix property vendor prefixes
+- split dt-bindings into a separate patch
+
+Changes since v3:
+- add missing properties in dt-bindings
+
+Changes since v3:
+- address coccicheck comments
+- update dt-bindings
 
 
-Please let us know if you need any help to debug this issue or
-try a fix.
+Thanks for your time,
+Liam
 
-Best wishes,
-Guillaume
+Liam Beguin (3):
+  clk: add support for the lmk04832
+  clk: lmk04832: add support for digital delay
+  dt-bindings: clock: add ti,lmk04832 bindings
 
+ .../bindings/clock/ti,lmk04832.yaml           |  209 +++
+ drivers/clk/Kconfig                           |    7 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-lmk04832.c                    | 1596 +++++++++++++++++
+ 4 files changed, 1813 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+ create mode 100644 drivers/clk/clk-lmk04832.c
 
-On 21/04/2021 22:40, KernelCI bot wrote:
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> *                                                               *
-> * If you do send a fix, please include this trailer:            *
-> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-> *                                                               *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> 
-> next/master bisection: baseline.dmesg.alert on bcm2837-rpi-3-b
-> 
-> Summary:
->   Start:      b74523885a71 Add linux-next specific files for 20210421
->   Plain log:  https://storage.kernelci.org/next/master/next-20210421/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.txt
->   HTML log:   https://storage.kernelci.org/next/master/next-20210421/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html
->   Result:     6579c8d97ad7 clk: Mark fwnodes when their clock provider is added
-> 
-> Checks:
->   revert:     PASS
->   verify:     PASS
-> 
-> Parameters:
->   Tree:       next
->   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   Branch:     master
->   Target:     bcm2837-rpi-3-b
->   CPU arch:   arm64
->   Lab:        lab-baylibre
->   Compiler:   gcc-8
->   Config:     defconfig+CONFIG_RANDOMIZE_BASE=y
->   Test case:  baseline.dmesg.alert
-> 
-> Breaking commit found:
-> 
-> -------------------------------------------------------------------------------
-> commit 6579c8d97ad7fc5671ee60234f3b8388abee5f77
-> Author: Tudor Ambarus <tudor.ambarus@microchip.com>
-> Date:   Wed Feb 10 13:44:35 2021 +0200
-> 
->     clk: Mark fwnodes when their clock provider is added
->     
->     This is a follow-up for:
->     commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
->     
->     The above commit updated the deprecated of_clk_add_provider(),
->     but missed to update the preferred of_clk_add_hw_provider().
->     Update it now.
->     
->     Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->     Acked-by: Stephen Boyd <sboyd@kernel.org>
->     Reviewed-by: Saravana Kannan <saravanak@google.com>
->     Link: https://lore.kernel.org/r/20210210114435.122242-2-tudor.ambarus@microchip.com
->     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 5052541a0986..60e12e0c036a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4615,6 +4615,8 @@ int of_clk_add_hw_provider(struct device_node *np,
->  	if (ret < 0)
->  		of_clk_del_provider(np);
->  
-> +	fwnode_dev_initialized(&np->fwnode, true);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
-> -------------------------------------------------------------------------------
-> 
-> 
-> Git bisection log:
-> 
-> -------------------------------------------------------------------------------
-> git bisect start
-> # good: [1fe5501ba1abf2b7e78295df73675423bd6899a0] Merge tag 'trace-v5.12-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
-> git bisect good 1fe5501ba1abf2b7e78295df73675423bd6899a0
-> # bad: [b74523885a715463203d4ccc3cf8c85952d3701a] Add linux-next specific files for 20210421
-> git bisect bad b74523885a715463203d4ccc3cf8c85952d3701a
-> # good: [a59aa904b6f45af01f1f87179437e31ba98506fc] Merge remote-tracking branch 'crypto/master'
-> git bisect good a59aa904b6f45af01f1f87179437e31ba98506fc
-> # good: [58af1162bdd0819bbec853afb574190f2be62464] Merge remote-tracking branch 'tip/auto-latest'
-> git bisect good 58af1162bdd0819bbec853afb574190f2be62464
-> # bad: [2e490d45230a23b07b7b2dc5f89ec213b677b032] Merge remote-tracking branch 'vfio/next'
-> git bisect bad 2e490d45230a23b07b7b2dc5f89ec213b677b032
-> # bad: [5941c9263bb2b27b5018f66a6f4111a6ba659a49] Merge remote-tracking branch 'driver-core/driver-core-next'
-> git bisect bad 5941c9263bb2b27b5018f66a6f4111a6ba659a49
-> # good: [3fe24bd182cc22c8e7e577553ae8efe3b4236afe] Merge remote-tracking branch 'kvm/next'
-> git bisect good 3fe24bd182cc22c8e7e577553ae8efe3b4236afe
-> # good: [dbb7b6249662b1a303e275c2e0dcdbefbae681bc] Merge remote-tracking branch 'percpu/for-next'
-> git bisect good dbb7b6249662b1a303e275c2e0dcdbefbae681bc
-> # good: [e5b20246d0707a4deee2e172b55a73b05309c05d] Merge remote-tracking branch 'drivers-x86/for-next'
-> git bisect good e5b20246d0707a4deee2e172b55a73b05309c05d
-> # bad: [c8a9c285f136f0cc65ac8328cd1710b155ad3df8] debugfs: drop pointless nul-termination in debugfs_read_file_bool()
-> git bisect bad c8a9c285f136f0cc65ac8328cd1710b155ad3df8
-> # bad: [b82a7b018b93d282d0f1a41a854ca3d071e02759] platform/x86: gpd pocket fan: Clean-up by using managed work init
-> git bisect bad b82a7b018b93d282d0f1a41a854ca3d071e02759
-> # good: [b6f617df4fa936c1ab1831c2b23563f6c1add6c4] driver core: Update device link status properly for device_bind_driver()
-> git bisect good b6f617df4fa936c1ab1831c2b23563f6c1add6c4
-> # bad: [53f95c55349e75b73f69ce36b0ae2a83b3f28fde] devcoredump: avoid -Wempty-body warnings
-> git bisect bad 53f95c55349e75b73f69ce36b0ae2a83b3f28fde
-> # bad: [6579c8d97ad7fc5671ee60234f3b8388abee5f77] clk: Mark fwnodes when their clock provider is added
-> git bisect bad 6579c8d97ad7fc5671ee60234f3b8388abee5f77
-> # good: [ea718c699055c8566eb64432388a04974c43b2ea] Revert "Revert "driver core: Set fw_devlink=on by default""
-> git bisect good ea718c699055c8566eb64432388a04974c43b2ea
-> # first bad commit: [6579c8d97ad7fc5671ee60234f3b8388abee5f77] clk: Mark fwnodes when their clock provider is added
-> -------------------------------------------------------------------------------
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Groups.io Links: You receive all messages sent to this group.
-> View/Reply Online (#10226): https://groups.io/g/kernelci-results/message/10226
-> Mute This Topic: https://groups.io/mt/82249004/924702
-> Group Owner: kernelci-results+owner@groups.io
-> Unsubscribe: https://groups.io/g/kernelci-results/unsub [guillaume.tucker@collabora.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
+Range-diff against v4:
+1:  cb6a8ea514d8 ! 1:  11461912b3c4 clk: add support for the lmk04832
+    @@ drivers/clk/clk-lmk04832.c (new)
+     +		if (ret) {
+     +			dev_err(lmk->dev, "missing reg property in child: %s\n",
+     +				child->full_name);
+    ++			of_node_put(child);
+     +			goto err_disable_oscin;
+     +		}
+     +
+    @@ drivers/clk/clk-lmk04832.c (new)
+     +
+     +		lmk->clkout[reg].sysref =
+     +			of_property_read_bool(child, "ti,clkout-sysref");
+    -+	};
+    ++	}
+     +
+     +	lmk->regmap = devm_regmap_init_spi(spi, &regmap_config);
+     +	if (IS_ERR(lmk->regmap)) {
+2:  8464eac02aab = 2:  01b64b5af4ed clk: lmk04832: add support for digital delay
+3:  a2c4e8d53d1c ! 3:  96b514765de0 dt-bindings: clock: add ti,lmk04832 bindings
+    @@ Documentation/devicetree/bindings/clock/ti,lmk04832.yaml (new)
+     +    const: 1
+     +
+     +  spi-max-frequency:
+    -+    $ref: /schemas/types.yaml#/definitions/uint32
+    -+    description:
+    -+      Maximum SPI clocking speed of the device in Hz.
+    ++    maximum: 5000000
+     +
+     +  clocks:
+     +    items:
+    @@ Documentation/devicetree/bindings/clock/ti,lmk04832.yaml (new)
+     +    required:
+     +      - reg
+     +
+    ++    additionalProperties: false
+    ++
+     +required:
+     +  - compatible
+     +  - reg
+
+base-commit: f40ddce88593482919761f74910f42f4b84c004b
+-- 
+2.30.1.489.g328c10930387
 
