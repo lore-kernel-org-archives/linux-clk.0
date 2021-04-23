@@ -2,86 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C34C433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 08:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55899C433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 09:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D27F613C9
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 08:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20DCC6120F
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Apr 2021 09:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbhDWIu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Apr 2021 04:50:28 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:32043 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbhDWIu2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Apr 2021 04:50:28 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d05 with ME
-        id w8pq2400Q21Fzsu038pqH9; Fri, 23 Apr 2021 10:49:51 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 23 Apr 2021 10:49:51 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH 0/4] clk: mvebu: Fix some error handling paths + do some
- clean-up
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com, thomas.petazzoni@free-electrons.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
- <20210423092700.6a857460@windsurf>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <dd6f8b77-ac24-0339-0b38-4f62b004dc9c@wanadoo.fr>
-Date:   Fri, 23 Apr 2021 10:49:49 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S229939AbhDWJge convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Apr 2021 05:36:34 -0400
+Received: from mail-vs1-f43.google.com ([209.85.217.43]:35535 "EHLO
+        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230006AbhDWJge (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Apr 2021 05:36:34 -0400
+Received: by mail-vs1-f43.google.com with SMTP id g20so24355417vst.2;
+        Fri, 23 Apr 2021 02:35:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZlsnD+/yMmsZHwVBAU+yyMMtrgUWUBC70Kuq95HkFpg=;
+        b=Mtr7gPfTtwxlLlqibhFaL6VO+jvOUyQAyWDM8JzP5JkkmP5yij0YA+2zSZF5bG4j+x
+         hYji7X6b/xPZYEcGozws2LlBMc4BqIMkpcs0XZu3b1PN64Rm9gKsb5Mroz69oJARGiWt
+         mBiyu+wDvSWLVhXwhWHl+RW41a/+cMw40JOThuqHjg5sKuVS++aOohJEWNR+3b4gqabM
+         1pRANNwXejW66mjqvOomW9gEe6GCvrlXfWQhx+NuQd5QnRgmRlTV3Yx0aLVJJX0AiJ1k
+         VG3GQW4EloehyuVbQkavcMBZhP80OMjGzd3BIV+6TIQJgekF2GxqHI2fQZ+LdahUtPe5
+         XAMA==
+X-Gm-Message-State: AOAM530LCTluOXc064taKrxB5Zh19ecsRLD/Fn3sJgE51gDXBXru9afT
+        w2q8PRJjobm174jm9ank+IlhuNd0tETQgXUFE7U=
+X-Google-Smtp-Source: ABdhPJzgFUpnjKealiX1Us6N/axnBjG1ohxe0Jm/07slQ5sbQF5zE9pYnmWk5bvlBLkBlDIvJeLFU1ElIS9n1ZrORws=
+X-Received: by 2002:a05:6102:814:: with SMTP id g20mr2455801vsb.42.1619170556142;
+ Fri, 23 Apr 2021 02:35:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210423092700.6a857460@windsurf>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210329223220.1139211-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20210329223220.1139211-1-niklas.soderlund+renesas@ragnatech.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 23 Apr 2021 11:35:45 +0200
+Message-ID: <CAMuHMdWFy=hS8=f3s+tims1pJnvnXn76n5SCp+v+mbM8Gi5hvA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a779a0: Add ISPCS clocks
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le 23/04/2021 à 09:27, Thomas Petazzoni a écrit :
-> Hello,
-> 
-> On Fri, 23 Apr 2021 08:24:52 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
->> Also, I wonder if the drivers in drivers/clk/mvebu are used by anyone.
->> In order to compile-test the changes, I also had to change the 'bool' in Kconfig
->> by 'bool "blah"'. Without this change, it was not possible to set
->> CONFIG_MVEBU_CLK_CPU required by Makefile.
-> 
-> CONFIG_MVEBU_CLK_CPU is selected by ARMADA_370_CLK and ARMADA_XP_CLK,
-> which themselves are selected by MACH_ARMADA_370 and MACH_ARMADA_XP
-> respectively.
+Hi Niklas,
 
-Hi, thanks for the clarification.
+On Tue, Mar 30, 2021 at 12:33 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add support for the ISPCS clocks on V3U.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Usually, only slightly modifying dependencies in Kconfig is enough for 
-me to trigger a built, even if I don't have the correct toolchain for 
-this architecture. In this case, the tweak I had to do was "spurious" 
-and Kconfig "looked strange" to me, hence my comment.
+Thanks for your patch!
 
-Glad to here that this code is still alive. So, my patches may make 
-sense :).
+> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> @@ -180,6 +180,10 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+>         DEF_MOD("i2c4",         522,    R8A779A0_CLK_S1D4),
+>         DEF_MOD("i2c5",         523,    R8A779A0_CLK_S1D4),
+>         DEF_MOD("i2c6",         524,    R8A779A0_CLK_S1D4),
+> +       DEF_MOD("ispcs0",       612,    R8A779A0_CLK_S1D1),
+> +       DEF_MOD("ispcs1",       613,    R8A779A0_CLK_S1D1),
+> +       DEF_MOD("ispcs2",       614,    R8A779A0_CLK_S1D1),
+> +       DEF_MOD("ispcs3",       615,    R8A779A0_CLK_S1D1),
 
-CJ
+Unfortunately the parent clock is not explicitly documented in the
+hardware manual.  But S1D1 does match max. 479 Mpixel/s.
 
-> 
-> So unless I'm missing something, this code is definitely reachable and
-> compiled. You can use the mvebu_v7_defconfig of ARM32, and the code
-> will be built.
-> 
-> Best regards,
-> 
-> Thomas
-> 
+>         DEF_MOD("msi0",         618,    R8A779A0_CLK_MSO),
+>         DEF_MOD("msi1",         619,    R8A779A0_CLK_MSO),
+>         DEF_MOD("msi2",         620,    R8A779A0_CLK_MSO),
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
