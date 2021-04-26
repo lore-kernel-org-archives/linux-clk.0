@@ -2,171 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCD5C43462
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9867DC433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 15:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECD2C6101B
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ABAA61158
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 15:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233787AbhDZOSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Apr 2021 10:18:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233753AbhDZOSb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 10:18:31 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B929C06175F
-        for <linux-clk@vger.kernel.org>; Mon, 26 Apr 2021 07:17:49 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lb23K-0002KC-IP; Mon, 26 Apr 2021 16:17:34 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lb23J-0005nX-4u; Mon, 26 Apr 2021 16:17:33 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v6 1/6] clk: generalize devm_clk_get() a bit
-Date:   Mon, 26 Apr 2021 16:17:25 +0200
-Message-Id: <20210426141730.2826832-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210426141730.2826832-1-u.kleine-koenig@pengutronix.de>
-References: <20210426141730.2826832-1-u.kleine-koenig@pengutronix.de>
+        id S233971AbhDZPz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Apr 2021 11:55:58 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53078 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233829AbhDZPz6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 11:55:58 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13QFt6mh122076;
+        Mon, 26 Apr 2021 10:55:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1619452506;
+        bh=J4jxh7+jB7x/KGB+qTcnBnMfZHCBkbpPdUuOvHr6Hnc=;
+        h=From:To:CC:Subject:Date;
+        b=gk6aphIaK9pOSsztWoJBKH074sVA6V85v++/6lXaqUzrvsmydsu8OGiqtWGhnh0mv
+         Z/VPwIViGdUdf9wNn7pwT/GY+OiezMeIJ0WIYIIjjv6PaLKuC36moPtAVpAQsjIjt5
+         /yA8dMkcmw+xE2kT4rpKOKjdtYwWgIFt/pQjiYn8=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13QFt5em117314
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 26 Apr 2021 10:55:06 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 26
+ Apr 2021 10:55:05 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Mon, 26 Apr 2021 10:55:05 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13QFt5CO089440;
+        Mon, 26 Apr 2021 10:55:05 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>
+Subject: [PATCH V2 0/4] dt-bindings: soc/arm: Convert pending ti, sci* bindings to json format
+Date:   Mon, 26 Apr 2021 10:54:53 -0500
+Message-ID: <20210426155457.21221-1-nm@ti.com>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow to add an exit hook to devm managed clocks. Also use
-clk_get_optional() in devm_clk_get_optional instead of open coding it.
-The generalisation will be used in the next commit to add some more
-devm_clk helpers.
+Hi,
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/clk/clk-devres.c | 67 ++++++++++++++++++++++++++++++----------
- 1 file changed, 50 insertions(+), 17 deletions(-)
+V2 of the series posted in [1] to convert the remaining ti,sci bindings
+to json schema format. V2 is mostly review comments being incorporated -
+details in each of the patches and in applicable patches, I have picked
+up Rob's and Tero's reviewed bys.
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index be160764911b..91c995815b57 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -4,39 +4,72 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- 
-+struct devm_clk_state {
-+	struct clk *clk;
-+	void (*exit)(struct clk *clk);
-+};
-+
- static void devm_clk_release(struct device *dev, void *res)
- {
--	clk_put(*(struct clk **)res);
-+	struct devm_clk_state *state = *(struct devm_clk_state **)res;
-+
-+	if (state->exit)
-+		state->exit(state->clk);
-+
-+	clk_put(state->clk);
- }
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
-+static struct clk *__devm_clk_get(struct device *dev, const char *id,
-+				  struct clk *(*get)(struct device *dev, const char *id),
-+				  int (*init)(struct clk *clk),
-+				  void (*exit)(struct clk *clk))
- {
--	struct clk **ptr, *clk;
-+	struct devm_clk_state *state;
-+	struct clk *clk;
-+	int ret;
- 
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
-+	state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
-+	if (!state)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk = clk_get(dev, id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
-+	clk = get(dev, id);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto err_clk_get;
- 	}
- 
-+	if (init) {
-+		ret = init(clk);
-+		if (ret)
-+			goto err_clk_init;
-+	}
-+
-+	state->clk = clk;
-+	state->exit = exit;
-+
-+	devres_add(dev, state);
-+
- 	return clk;
-+
-+err_clk_init:
-+
-+	clk_put(clk);
-+err_clk_get:
-+
-+	devres_free(state);
-+	return ERR_PTR(ret);
- }
--EXPORT_SYMBOL(devm_clk_get);
- 
--struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	struct clk *clk = devm_clk_get(dev, id);
-+	return __devm_clk_get(dev, id, clk_get, NULL, NULL);
- 
--	if (clk == ERR_PTR(-ENOENT))
--		return NULL;
-+}
-+EXPORT_SYMBOL(devm_clk_get);
- 
--	return clk;
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, clk_get_optional, NULL, NULL);
- }
- EXPORT_SYMBOL(devm_clk_get_optional);
- 
+There are also dts fixups that this series exposes, which is good, but
+I chose to hold them back for now pending binding review at least. The
+complete series is available in [2] if folks are curious - to be posted
+once v5.13-rc1 is available for fixes.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20210416063721.20538-1-nm@ti.com/
+[2] https://github.com/nmenon/linux-2.6-playground/commits/yaml/tisci
+
+Nishanth Menon (4):
+  dt-bindings: reset: Convert ti,sci-reset to json schema
+  dt-bindings: clock: Convert ti,sci-clk to json schema
+  dt-bindings: soc: ti: Convert ti,sci-pm-domain to json schema
+  dt-bindings: arm: keystone: Convert ti,sci to json schema
+
+ .../bindings/arm/keystone/ti,sci.txt          |  86 ------------
+ .../bindings/arm/keystone/ti,sci.yaml         | 129 ++++++++++++++++++
+ .../devicetree/bindings/clock/ti,sci-clk.txt  |  36 -----
+ .../devicetree/bindings/clock/ti,sci-clk.yaml |  49 +++++++
+ .../bindings/reset/ti,sci-reset.txt           |  62 ---------
+ .../bindings/reset/ti,sci-reset.yaml          |  51 +++++++
+ .../bindings/soc/ti/sci-pm-domain.txt         |  65 ---------
+ .../bindings/soc/ti/sci-pm-domain.yaml        |  59 ++++++++
+ 8 files changed, 288 insertions(+), 249 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+ create mode 100644 Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+ delete mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+
+Regards,
+Nishanth Menon
 -- 
-2.30.2
+2.31.0
 
