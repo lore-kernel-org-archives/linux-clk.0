@@ -2,143 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE5CC433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 06:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BC4C433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 08:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0B360698
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 06:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6F4610C8
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 08:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbhDZG5M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Apr 2021 02:57:12 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:23292 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbhDZG5L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 02:57:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1619420190; x=1650956190;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=uhDMDx6U8lKJACDDMg5wJ1xGShyMkk8ZFuePWaxHS1A=;
-  b=I4NZFXczk40EQQ/Nhzl1I86VCKQr30BOqZ7Yd6HdL+tmHgFqi2S4iRg2
-   Jdd1ubPhMpCigXqHdGxDpi95Dt6UPX04yu6gw/7Du3wv0HGvfEbFQdaaW
-   J95xJALTAQD3GzuxkUJ2j42dAITlaXIVllyioECvofvpzIUbCl0tH8+c+
-   mFCBR/mopW+CTS+8a3sluYkQtDlqBeDoy1qHwUVxU7UUlgvS8FxgXpdgO
-   0shaefzdjS5nTI1O8PXVyPF0FTuGy5aNjSAyacu1QALLLqz5kywUMd36X
-   RzA6FcDQRJiZjV3E/8eqdLAcUKkqLfG1dH6DlnY+OugJsGRZ8KfQ4xvz5
-   w==;
-IronPort-SDR: eQx0XRS0qdgNtEscfcMgNylm24Yn6OdQCsMYQ/JM+r0a2OLPJWPoIAGuTJkX2E7JJ4azYberSY
- pTbQTH3KHNSQBuPHfR3uiIZ0ECAkZsAOLTnDm1rUpmG16AOf/oXI1Cs3iuuhuXANXlgHO5C2LI
- qGON2LKbum09IQQUT62FJeOo5mxoQKMiFq7fDViWaZXqT9uTgxAsu6vSJGOwb9Zm72sova0vMf
- 5qecgKuyfyeYMMhpsZway34KiQkqBgdq2xm881kQvgLvvktY53qH52eq/Au5msKIZ0Q2KCbK5l
- kCs=
-X-IronPort-AV: E=Sophos;i="5.82,251,1613458800"; 
-   d="scan'208";a="118343164"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Apr 2021 23:56:27 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Sun, 25 Apr 2021 23:56:27 -0700
-Received: from ROB-ULT-M18064N.mchp-main.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Sun, 25 Apr 2021 23:56:20 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <nsaenz@kernel.org>,
-        <maxime@cerno.tech>, <khilman@kernel.org>,
-        <ulf.hansson@linaro.org>, <len.brown@intel.com>, <pavel@ucw.cz>,
-        <robh+dt@kernel.org>, <frowand.list@gmail.com>, <maz@kernel.org>,
-        <tglx@linutronix.de>, <saravanak@google.com>,
-        <geert@linux-m68k.org>, <nsaenzjulienne@suse.de>,
-        <linux@roeck-us.net>, <guillaume.tucker@collabora.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-        <claudiu.beznea@microchip.com>, <linux-doc@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <kernel-team@android.com>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] clk: Skip clk provider registration when np is NULL
-Date:   Mon, 26 Apr 2021 09:56:18 +0300
-Message-ID: <20210426065618.588144-1-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.25.1
+        id S231821AbhDZIX1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Apr 2021 04:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231171AbhDZIX1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 04:23:27 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E61C061574;
+        Mon, 26 Apr 2021 01:22:46 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id p17so652113pjz.3;
+        Mon, 26 Apr 2021 01:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QyVyK6NZHpEBoT8Dh2MKzH5N2Nwh3NVtxSsAuNCzreA=;
+        b=KD3qCBndmR4TwscZh6X8h9DgEAtH4PeoOnCG66VNlrk9P8UZI2Wu534oU7Il/pPHoL
+         VaNY2DQm3mFGNdd7E283OoMWcZqkWK4ClEy7VkVAHkeIlRvh6OjhJ03Z5EXVb5PBXnwB
+         pRFCTC39slumj5QwwlUz2acSkPvTHzfl6w6JHhIdnsvXTos3ate2ezbBSeJYP3VAV+1j
+         Uir5d2VHRMt3FJCC7t9C1itOtQZjAKLApWzF2OkevEfqobWt7zw3Hd2wVRR+mm7uU8CJ
+         /yTatM2g7CMp4q9fcgkJtb+6TYehVM9Wh/MXUXYNG+GklvnD7ZRUYlw4f00r27XcdpZa
+         629Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QyVyK6NZHpEBoT8Dh2MKzH5N2Nwh3NVtxSsAuNCzreA=;
+        b=VsXTCQWb2QRcQLiWSH6DryysV8V1zYFTsn1i8ffVC1dq58yM18D1AYGK7h2nwj36xS
+         nfJZKQnPhC3qiRZRPdJLxcZrL3i9jW77GVzEo43GhKWABuR+paM2ckssrw+krL7a5+cL
+         4cFe0tNwsSI01pqOw8Pkxcbnq0gAD+mIcpRvGt2uRT9D76qG6VgGD6RXGmi2lRAVYZ1H
+         CqjUXdGbXtOZ7ZfBMq/FAUkmsM11vN3jQ8jP2GrmsyethN/ZxOp4WYHLzziMxXyMLq6F
+         7P5LA+V0wCqMJgvd8vXqU2VUhmQu/CjwZyTXeIP1owY//ilRhy3UHtz7ecBoDOCTefSv
+         MiyA==
+X-Gm-Message-State: AOAM533d3CR4yx1cW5UKEBNF+YavX3qW449zi/IEYbUtkM4CVCOiZt0y
+        qX3GP5bz6AtBW0LiY4ykTnYV1EGRtaitdyOvDKzmtIdu8RA=
+X-Google-Smtp-Source: ABdhPJwnKOwW7l0uVAF5Dr0g52/3HxdSbXZgt63VQpp1yw1IjB+8ND2NP69oqvTiPDS/He6DkF0ABUV1dBmqzZsSp2M=
+X-Received: by 2002:a17:902:a406:b029:e6:78c4:71c8 with SMTP id
+ p6-20020a170902a406b02900e678c471c8mr17196879plq.17.1619425365521; Mon, 26
+ Apr 2021 01:22:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <202103162301.oomY9NwI-lkp@intel.com> <ac51550d-c72e-4a85-ed0e-a4cddbf495be@infradead.org>
+In-Reply-To: <ac51550d-c72e-4a85-ed0e-a4cddbf495be@infradead.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 26 Apr 2021 11:22:29 +0300
+Message-ID: <CAHp75VdZ6v7zV4_4YJ-rXAE2_ZLZw04AHib1yGPiwYS_JYYGOg@mail.gmail.com>
+Subject: Re: ingenic-adc.c:undefined reference to `clk_get_parent'
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     kernel test robot <lkp@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        kbuild-all@lists.01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-commit 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-revealed that clk/bcm/clk-raspberrypi.c driver calls
-devm_of_clk_add_hw_provider(), with a NULL dev->of_node, which resulted in a
-NULL pointer dereference in of_clk_add_hw_provider() when calling
-fwnode_dev_initialized().
+On Mon, Apr 26, 2021 at 8:43 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> [add linux-clk + maintainers]
+>
+> On 3/16/21 8:54 AM, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > head:   1a4431a5db2bf800c647ee0ed87f2727b8d6c29c
+> > commit: a07a4fe5ff460e99293c0d682421920d54e31d7f iio:adc:ingenic: drop of_match_ptr protection and include mod_devicetable.h
+> > date:   8 months ago
+> > config: mips-randconfig-p001-20210316 (attached as .config)
+> > compiler: mips-linux-gcc (GCC) 9.3.0
+> > reproduce (this is a W=1 build):
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a07a4fe5ff460e99293c0d682421920d54e31d7f
+> >         git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> >         git fetch --no-tags linus master
+> >         git checkout a07a4fe5ff460e99293c0d682421920d54e31d7f
+> >         # save the attached .config to linux build tree
+> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=mips
+> >
+> > If you fix the issue, kindly add following tag as appropriate
+> > Reported-by: kernel test robot <lkp@intel.com>
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4770_adc_init_clk_div':
+> >>> ingenic-adc.c:(.text+0x8c): undefined reference to `clk_get_parent'
+> >    mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4725b_adc_init_clk_div':
+> >    ingenic-adc.c:(.text+0x164): undefined reference to `clk_get_parent'
+>
+> Hi,
+>
+> My guess (analysis) suggests that this problem is due to
+> a difference in when clk_get_parent() is available between
+> <linux/clk.h> where it depends on CONFIG_HAVE_CLK and
+> drivers/clk/clk.c, which is built iff CONFIG_COMMON_CLK.
+>
+> Any comments/suggestions?
 
-Returning 0 is reducing the if conditions in driver code and is being
-consistent with the CONFIG_OF=n inline stub that returns 0 when CONFIG_OF
-is disabled. The downside is that drivers will maybe register clkdev lookups
-when they don't need to and waste some memory.
+I haven't looked into it, but IIRC MIPS has its own clock API
+implementation (or I mixed it with another arch?) and that's the root
+of many issues like this around the kernel.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-Fixes: 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
----
-v2:
-- s/return 0;/return; in void of_clk_del_provider()
-- add second fixes tag and Stephen's R-b tag
-The opinions on whether to return an error or zero were split. Returning 0
-and skipping the logic was considered safer as we don't know for sure if
-other drivers are affected. See:
-https://lore.kernel.org/lkml/d24bebc5-0f78-021f-293f-e58defa32531@samsung.com/
-https://lore.kernel.org/lkml/20210423171335.262316-1-tudor.ambarus@microchip.com/
-
- drivers/clk/clk.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a3b30f7de2ef..b47460b40d14 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4552,6 +4552,9 @@ int of_clk_add_provider(struct device_node *np,
- 	struct of_clk_provider *cp;
- 	int ret;
- 
-+	if (!np)
-+		return 0;
-+
- 	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
- 	if (!cp)
- 		return -ENOMEM;
-@@ -4591,6 +4594,9 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	struct of_clk_provider *cp;
- 	int ret;
- 
-+	if (!np)
-+		return 0;
-+
- 	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
- 	if (!cp)
- 		return -ENOMEM;
-@@ -4688,6 +4694,9 @@ void of_clk_del_provider(struct device_node *np)
- {
- 	struct of_clk_provider *cp;
- 
-+	if (!np)
-+		return;
-+
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(cp, &of_clk_providers, link) {
- 		if (cp->node == np) {
 -- 
-2.25.1
-
+With Best Regards,
+Andy Shevchenko
