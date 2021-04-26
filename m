@@ -7,44 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE5AC433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A62C433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D5496101B
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4750A6101C
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 14:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233603AbhDZOSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Apr 2021 10:18:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44026 "EHLO
+        id S233720AbhDZOS2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Apr 2021 10:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbhDZOSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 10:18:23 -0400
+        with ESMTP id S231862AbhDZOS0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 10:18:26 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90141C061574
-        for <linux-clk@vger.kernel.org>; Mon, 26 Apr 2021 07:17:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F6ACC061756
+        for <linux-clk@vger.kernel.org>; Mon, 26 Apr 2021 07:17:44 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lb23K-0002KE-D7; Mon, 26 Apr 2021 16:17:34 +0200
+        id 1lb23K-0002KF-LM; Mon, 26 Apr 2021 16:17:34 +0200
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lb23J-0005nd-R2; Mon, 26 Apr 2021 16:17:33 +0200
+        id 1lb23K-0005nh-A0; Mon, 26 Apr 2021 16:17:34 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-pwm@vger.kernel.org
-Subject: [PATCH v6 3/6] pwm: atmel: Simplify using devm_clk_get_prepared()
-Date:   Mon, 26 Apr 2021 16:17:27 +0200
-Message-Id: <20210426141730.2826832-4-u.kleine-koenig@pengutronix.de>
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 4/6] rtc: at91sam9: Simplify using devm_clk_get_enabled()
+Date:   Mon, 26 Apr 2021 16:17:28 +0200
+Message-Id: <20210426141730.2826832-5-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210426141730.2826832-1-u.kleine-koenig@pengutronix.de>
 References: <20210426141730.2826832-1-u.kleine-koenig@pengutronix.de>
@@ -59,62 +57,83 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With devm_clk_get_prepared() caring to unprepare the clock the error
-path and remove callback can be simplified accordingly.
+devm_clk_get_enabled() returns the clk already (prepared and) enabled
+and the automatically called cleanup cares for disabling (and
+unpreparing). So simplify .probe() and .remove() accordingly.
 
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pwm/pwm-atmel.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ drivers/rtc/rtc-at91sam9.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 5813339b597b..d65e23da2582 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -415,16 +415,10 @@ static int atmel_pwm_probe(struct platform_device *pdev)
- 	if (IS_ERR(atmel_pwm->base))
- 		return PTR_ERR(atmel_pwm->base);
+diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+index 2216be429ab7..b52e7bd26303 100644
+--- a/drivers/rtc/rtc-at91sam9.c
++++ b/drivers/rtc/rtc-at91sam9.c
+@@ -374,21 +374,14 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
--	atmel_pwm->clk = devm_clk_get(&pdev->dev, NULL);
-+	atmel_pwm->clk = devm_clk_get_prepared(&pdev->dev, NULL);
- 	if (IS_ERR(atmel_pwm->clk))
- 		return PTR_ERR(atmel_pwm->clk);
+-	rtc->sclk = devm_clk_get(&pdev->dev, NULL);
++	rtc->sclk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(rtc->sclk))
+ 		return PTR_ERR(rtc->sclk);
  
--	ret = clk_prepare(atmel_pwm->clk);
+-	ret = clk_prepare_enable(rtc->sclk);
 -	if (ret) {
--		dev_err(&pdev->dev, "failed to prepare PWM clock\n");
+-		dev_err(&pdev->dev, "Could not enable slow clock\n");
 -		return ret;
 -	}
 -
- 	atmel_pwm->chip.dev = &pdev->dev;
- 	atmel_pwm->chip.ops = &atmel_pwm_ops;
- 	atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
-@@ -435,23 +429,18 @@ static int atmel_pwm_probe(struct platform_device *pdev)
- 	ret = pwmchip_add(&atmel_pwm->chip);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add PWM chip %d\n", ret);
--		goto unprepare_clk;
+ 	sclk_rate = clk_get_rate(rtc->sclk);
+ 	if (!sclk_rate || sclk_rate > AT91_RTT_RTPRES) {
+ 		dev_err(&pdev->dev, "Invalid slow clock rate\n");
+-		ret = -EINVAL;
+-		goto err_clk;
++		return -EINVAL;
+ 	}
+ 
+ 	mr = rtt_readl(rtc, MR);
+@@ -406,7 +399,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc->rtcdev)) {
+ 		ret = PTR_ERR(rtc->rtcdev);
+-		goto err_clk;
 +		return ret;
  	}
  
- 	platform_set_drvdata(pdev, atmel_pwm);
+ 	rtc->rtcdev->ops = &at91_rtc_ops;
+@@ -418,7 +411,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 			       dev_name(&rtc->rtcdev->dev), rtc);
+ 	if (ret) {
+ 		dev_dbg(&pdev->dev, "can't share IRQ %d?\n", rtc->irq);
+-		goto err_clk;
++		return ret;
+ 	}
  
- 	return ret;
+ 	/* NOTE:  sam9260 rev A silicon has a ROM bug which resets the
+@@ -432,11 +425,6 @@ static int at91_rtc_probe(struct platform_device *pdev)
+ 			 dev_name(&rtc->rtcdev->dev));
+ 
+ 	return devm_rtc_register_device(rtc->rtcdev);
 -
--unprepare_clk:
--	clk_unprepare(atmel_pwm->clk);
+-err_clk:
+-	clk_disable_unprepare(rtc->sclk);
+-
 -	return ret;
  }
  
- static int atmel_pwm_remove(struct platform_device *pdev)
- {
- 	struct atmel_pwm_chip *atmel_pwm = platform_get_drvdata(pdev);
+ /*
+@@ -450,8 +438,6 @@ static int at91_rtc_remove(struct platform_device *pdev)
+ 	/* disable all interrupts */
+ 	rtt_writel(rtc, MR, mr & ~(AT91_RTT_ALMIEN | AT91_RTT_RTTINCIEN));
  
--	clk_unprepare(atmel_pwm->clk);
- 	mutex_destroy(&atmel_pwm->isr_lock);
+-	clk_disable_unprepare(rtc->sclk);
+-
+ 	return 0;
+ }
  
- 	return pwmchip_remove(&atmel_pwm->chip);
 -- 
 2.30.2
 
