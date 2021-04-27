@@ -2,85 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE31C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 14:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DB8C433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 16:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D824E61151
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 14:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76DE0613E8
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 16:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237429AbhD0O6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Apr 2021 10:58:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236173AbhD0O6X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Apr 2021 10:58:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C49760FDB;
-        Tue, 27 Apr 2021 14:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619535459;
-        bh=IC/cBF67bAQkQJea+wXRX+PkxeJ9br/yn1UuwM/SBRQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jmNiLztt2E/Vn/QBmGbMJbeK8FfWWYI438idwUCHKmX9ijedQvc9V4V0DVdXk8wQT
-         n890w17w8y2p+hwT6SDAv2S3ZQgvbS1SX4kPI5h5oOzw7FUgI0WjNd1zAA9FhPCjyB
-         U6wibuNGaypvDnXv4tOzlU+VO8yHUiWUyzUPTXgm8su0SbI6+5IjCJVfh8gpMdmPgl
-         0GSteCRoQnfSHqWyPvhTW35Z2RqngYPh9AvS7fdBr3h/JRsFHN4Oilj1u9fAOBDaem
-         wIqNygkCji+fROnI4BCiLFPI/VjKKMt/5n62Ub8+PsWPAAhihL1jD+leLlBEITVwtG
-         0V4Wpu1pEcwvA==
-Message-ID: <19c1c262382d73dbf3ec37b7651c5ab05253e0f9.camel@kernel.org>
-Subject: Re: [PATCH v2] clk: Skip clk provider registration when np is NULL
-From:   nicolas saenz julienne <nsaenz@kernel.org>
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, maxime@cerno.tech,
-        khilman@kernel.org, ulf.hansson@linaro.org, len.brown@intel.com,
-        pavel@ucw.cz, robh+dt@kernel.org, frowand.list@gmail.com,
-        maz@kernel.org, tglx@linutronix.de, saravanak@google.com,
-        geert@linux-m68k.org, nsaenzjulienne@suse.de, linux@roeck-us.net,
-        guillaume.tucker@collabora.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, nicolas.ferre@microchip.com,
-        claudiu.beznea@microchip.com, linux-doc@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-acpi@vger.kernel.org, kernel-team@android.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Tue, 27 Apr 2021 16:57:30 +0200
-In-Reply-To: <20210426065618.588144-1-tudor.ambarus@microchip.com>
-References: <20210426065618.588144-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+        id S236572AbhD0QqS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Apr 2021 12:46:18 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:57268 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236397AbhD0QqP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Apr 2021 12:46:15 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id A11A4B7D487; Tue, 27 Apr 2021 18:45:26 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: qcom: Simplify usage of dev_err_probe()
+Date:   Tue, 27 Apr 2021 18:45:22 +0200
+Message-Id: <20210427164522.2886825-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2021-04-26 at 09:56 +0300, Tudor Ambarus wrote:
-> commit 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-> revealed that clk/bcm/clk-raspberrypi.c driver calls
-> devm_of_clk_add_hw_provider(), with a NULL dev->of_node, which resulted in a
-> NULL pointer dereference in of_clk_add_hw_provider() when calling
-> fwnode_dev_initialized().
-> 
-> Returning 0 is reducing the if conditions in driver code and is being
-> consistent with the CONFIG_OF=n inline stub that returns 0 when CONFIG_OF
-> is disabled. The downside is that drivers will maybe register clkdev lookups
-> when they don't need to and waste some memory.
-> 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
-> Fixes: 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+dev_err_probe() returns the error code passed as second parameter. Also if
+the error code is -EPROBE_DEFER dev_err_probe() is silent, so there is no
+need to check for this value before calling dev_err_probe().
 
-Reviewed-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+ drivers/clk/qcom/apcs-sdx55.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-Regards,
-Nicolas
+diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
+index d0edabebf9c2..6810637f32e3 100644
+--- a/drivers/clk/qcom/apcs-sdx55.c
++++ b/drivers/clk/qcom/apcs-sdx55.c
+@@ -56,10 +56,8 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	regmap = dev_get_regmap(parent, NULL);
+-	if (!regmap) {
+-		dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
+-		return -ENODEV;
+-	}
++	if (!regmap)
++		return dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
+ 
+ 	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
+ 	if (!a7cc)
+@@ -80,19 +78,15 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
+ 	a7cc->parent_map = apcs_mux_clk_parent_map;
+ 
+ 	a7cc->pclk = devm_clk_get(parent, "pll");
+-	if (IS_ERR(a7cc->pclk)) {
+-		ret = PTR_ERR(a7cc->pclk);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err_probe(dev, ret, "Failed to get PLL clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(a7cc->pclk))
++		return dev_err_probe(dev, PTR_ERR(a7cc->pclk),
++				     "Failed to get PLL clk\n");
+ 
+ 	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
+ 	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
+-	if (ret) {
+-		dev_err_probe(dev, ret, "Failed to register clock notifier\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to register clock notifier\n");
+ 
+ 	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
+ 	if (ret) {
+-- 
+2.30.2
 
