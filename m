@@ -2,85 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD20C433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 11:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE31C433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 14:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49806613D0
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 11:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D824E61151
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 14:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235428AbhD0LNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Apr 2021 07:13:09 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:14411 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230285AbhD0LNI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Apr 2021 07:13:08 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1619521945; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=8lv1OWsj+GVLo78cEr2hD2WbvjUDufklM8o8mR8l/P4=; b=cMreoxZR1IJOal3POx+DDNTJSBzssm5zZU8bSJVuhGpakz0G6bDsNmg4GTTKad6yvTeoXHm0
- XnZC2pW0P9BXceVGfSVNJ2tS6mF7jPLwjvyH0WfzhfUeWT+bSq0pECZES0QQ+3KSuTeAdiAM
- CBL0XBq+zkCaagnhw9gD2N6hrvE=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 6087f1992cc44d3aea1730d5 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 27 Apr 2021 11:12:25
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2EF12C433D3; Tue, 27 Apr 2021 11:12:25 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A1345C433D3;
-        Tue, 27 Apr 2021 11:12:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A1345C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: gcc: dd support for a new frequency for SC7280
-Date:   Tue, 27 Apr 2021 16:42:12 +0530
-Message-Id: <1619521932-18973-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S237429AbhD0O6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Apr 2021 10:58:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236173AbhD0O6X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Apr 2021 10:58:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C49760FDB;
+        Tue, 27 Apr 2021 14:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619535459;
+        bh=IC/cBF67bAQkQJea+wXRX+PkxeJ9br/yn1UuwM/SBRQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jmNiLztt2E/Vn/QBmGbMJbeK8FfWWYI438idwUCHKmX9ijedQvc9V4V0DVdXk8wQT
+         n890w17w8y2p+hwT6SDAv2S3ZQgvbS1SX4kPI5h5oOzw7FUgI0WjNd1zAA9FhPCjyB
+         U6wibuNGaypvDnXv4tOzlU+VO8yHUiWUyzUPTXgm8su0SbI6+5IjCJVfh8gpMdmPgl
+         0GSteCRoQnfSHqWyPvhTW35Z2RqngYPh9AvS7fdBr3h/JRsFHN4Oilj1u9fAOBDaem
+         wIqNygkCji+fROnI4BCiLFPI/VjKKMt/5n62Ub8+PsWPAAhihL1jD+leLlBEITVwtG
+         0V4Wpu1pEcwvA==
+Message-ID: <19c1c262382d73dbf3ec37b7651c5ab05253e0f9.camel@kernel.org>
+Subject: Re: [PATCH v2] clk: Skip clk provider registration when np is NULL
+From:   nicolas saenz julienne <nsaenz@kernel.org>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, maxime@cerno.tech,
+        khilman@kernel.org, ulf.hansson@linaro.org, len.brown@intel.com,
+        pavel@ucw.cz, robh+dt@kernel.org, frowand.list@gmail.com,
+        maz@kernel.org, tglx@linutronix.de, saravanak@google.com,
+        geert@linux-m68k.org, nsaenzjulienne@suse.de, linux@roeck-us.net,
+        guillaume.tucker@collabora.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, nicolas.ferre@microchip.com,
+        claudiu.beznea@microchip.com, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-acpi@vger.kernel.org, kernel-team@android.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Tue, 27 Apr 2021 16:57:30 +0200
+In-Reply-To: <20210426065618.588144-1-tudor.ambarus@microchip.com>
+References: <20210426065618.588144-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a requirement to support 52MHz for qup clocks for bluetoothe
-usecase, thus update the frequency table to support the frequency.
+On Mon, 2021-04-26 at 09:56 +0300, Tudor Ambarus wrote:
+> commit 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
+> revealed that clk/bcm/clk-raspberrypi.c driver calls
+> devm_of_clk_add_hw_provider(), with a NULL dev->of_node, which resulted in a
+> NULL pointer dereference in of_clk_add_hw_provider() when calling
+> fwnode_dev_initialized().
+> 
+> Returning 0 is reducing the if conditions in driver code and is being
+> consistent with the CONFIG_OF=n inline stub that returns 0 when CONFIG_OF
+> is disabled. The downside is that drivers will maybe register clkdev lookups
+> when they don't need to and waste some memory.
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
+> Fixes: 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gcc-sc7280.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
 
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index ef734db..6cefcdc 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -716,6 +716,7 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s2_clk_src[] = {
- 	F(29491200, P_GCC_GPLL0_OUT_EVEN, 1, 1536, 15625),
- 	F(32000000, P_GCC_GPLL0_OUT_EVEN, 1, 8, 75),
- 	F(48000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 25),
-+	F(52174000, P_GCC_GPLL0_OUT_MAIN, 1, 2, 23),
- 	F(64000000, P_GCC_GPLL0_OUT_EVEN, 1, 16, 75),
- 	F(75000000, P_GCC_GPLL0_OUT_EVEN, 4, 0, 0),
- 	F(80000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 15),
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Regards,
+Nicolas
 
