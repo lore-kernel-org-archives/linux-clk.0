@@ -2,117 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33CBC433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 21:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92175C433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 03:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8468661040
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Apr 2021 21:05:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FBD61164
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 03:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235348AbhDZVGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Apr 2021 17:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
+        id S231450AbhD0DOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Apr 2021 23:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234864AbhDZVGM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 17:06:12 -0400
+        with ESMTP id S231363AbhD0DOh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Apr 2021 23:14:37 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73094C061574;
-        Mon, 26 Apr 2021 14:05:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B52C061574;
+        Mon, 26 Apr 2021 20:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=o18bPOCg8Vev9yuxfiIQ9pnCFydFMd9gnR+8URq20pU=; b=aA7GIIBmhj69nk9f8lfNZc8zkr
-        5zF4hx0WTkHLfrb5XFPHrapGUOHJSsiEpPHNZfjTpxnPrD60NLHlmgequhbVCXmHY/Hv97bsICynK
-        UekEa0IzQecG1Da3h6+YMyfH86t8D0denvfuxJzv2sBS6YJC72Cpde6t/XWBdHJCs5k/sQ7T+CO1J
-        KlNO5IS2gUB8CB4vQnBaEC5NU3OnDYKCHZ+rKkVMfdgIiZMOrbWVl9e53/eeUOeQbN+fHkzXjRlPi
-        Q5RiAbJg405juMTyNTpUSzwaq5otGlGKorPsJHzMbzwiwe8qNUasCIah1u68OLkHFQ6kBtaxJT5oZ
-        jrhCKFsA==;
-Received: from [2601:1c0:6280:3f0::df68]
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=CgpK97dwQ7jxO/6Xiazk1B15iaHiHK4/6xEOZQpL8nc=; b=esSVxOBZiXjZRu/R53mWWIlSVr
+        qTS4lxp3siZv6iEuYOLEAvQKD3PFP7ycbteCBLz7722M7K2ljd8WFZrPE/4q+xKwbfsWLUaju91Dl
+        CxLfS0yvfW4nK1zOWgcbKwyiFOWG1Z0kWpbUrk60dh1hFoG7YZ2nDopoHwhkvYioK6f6rU22kme7d
+        5xixmRVko7OY6QqUIhhgP5tv5b5QE+t2q+RkBIlIi6zdjpu14XQxqhLwvqhHDExSNvbeg7MzehRrL
+        ZEeNe0oD9qZApHO/w7/zruuHpyHJOXOEUGOaud4gyW2/YeUiZ6Y4LpwUKLVoQpFHBBySLerbda9Ne
+        zN59SHGg==;
+Received: from [2601:1c0:6280:3f0::df68] (helo=casper.infradead.org)
         by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lb8Pk-00665i-7r; Mon, 26 Apr 2021 21:05:09 +0000
-Subject: Re: ingenic-adc.c:undefined reference to `clk_get_parent'
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        kbuild-all@lists.01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-References: <202103162301.oomY9NwI-lkp@intel.com>
- <ac51550d-c72e-4a85-ed0e-a4cddbf495be@infradead.org>
- <CAHp75VdZ6v7zV4_4YJ-rXAE2_ZLZw04AHib1yGPiwYS_JYYGOg@mail.gmail.com>
+        id 1lbEAV-006PF2-A5; Tue, 27 Apr 2021 03:13:50 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8a41b718-a6f6-6b7f-1699-18ab619884c3@infradead.org>
-Date:   Mon, 26 Apr 2021 14:05:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: <linux/clk.h>: correct clk_get_parent() documentation
+Date:   Mon, 26 Apr 2021 20:13:42 -0700
+Message-Id: <20210427031342.5333-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdZ6v7zV4_4YJ-rXAE2_ZLZw04AHib1yGPiwYS_JYYGOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/26/21 1:22 AM, Andy Shevchenko wrote:
-> On Mon, Apr 26, 2021 at 8:43 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> [add linux-clk + maintainers]
->>
->> On 3/16/21 8:54 AM, kernel test robot wrote:
->>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->>> head:   1a4431a5db2bf800c647ee0ed87f2727b8d6c29c
->>> commit: a07a4fe5ff460e99293c0d682421920d54e31d7f iio:adc:ingenic: drop of_match_ptr protection and include mod_devicetable.h
->>> date:   8 months ago
->>> config: mips-randconfig-p001-20210316 (attached as .config)
->>> compiler: mips-linux-gcc (GCC) 9.3.0
->>> reproduce (this is a W=1 build):
->>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>>         chmod +x ~/bin/make.cross
->>>         # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a07a4fe5ff460e99293c0d682421920d54e31d7f
->>>         git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>         git fetch --no-tags linus master
->>>         git checkout a07a4fe5ff460e99293c0d682421920d54e31d7f
->>>         # save the attached .config to linux build tree
->>>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=mips
->>>
->>> If you fix the issue, kindly add following tag as appropriate
->>> Reported-by: kernel test robot <lkp@intel.com>
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4770_adc_init_clk_div':
->>>>> ingenic-adc.c:(.text+0x8c): undefined reference to `clk_get_parent'
->>>    mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4725b_adc_init_clk_div':
->>>    ingenic-adc.c:(.text+0x164): undefined reference to `clk_get_parent'
->>
->> Hi,
->>
->> My guess (analysis) suggests that this problem is due to
->> a difference in when clk_get_parent() is available between
->> <linux/clk.h> where it depends on CONFIG_HAVE_CLK and
->> drivers/clk/clk.c, which is built iff CONFIG_COMMON_CLK.
->>
->> Any comments/suggestions?
-> 
-> I haven't looked into it, but IIRC MIPS has its own clock API
-> implementation (or I mixed it with another arch?) and that's the root
-> of many issues like this around the kernel.
+Make the kernel-doc return value agree with both the stub implementation
+in <linux/clk.h> and the non-stub function in drivers/clk/clk.c.
 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org
+---
+There are several drivers that call clk_get_parent() and use its
+return value as though it returns an ERR_PTR(). I am working on a
+patch series to fix those.
 
-Thanks. I do see that (MIPS) CONFIG_RA7 and CONFIG_RALINK
-provide their own clk_get_parent(), but neither of those is
-enabled in the kernel config file.
+ include/linux/clk.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'll post some kind of patch later today.
-
--- 
-~Randy
-
+--- linux-next-20210426.orig/include/linux/clk.h
++++ linux-next-20210426/include/linux/clk.h
+@@ -744,8 +744,8 @@ int clk_set_parent(struct clk *clk, stru
+  * clk_get_parent - get the parent clock source for this clock
+  * @clk: clock source
+  *
+- * Returns struct clk corresponding to parent clock source, or
+- * valid IS_ERR() condition containing errno.
++ * Return: &struct clk corresponding to parent clock source, or
++ * %NULL if clk is %NULL.
+  */
+ struct clk *clk_get_parent(struct clk *clk);
+ 
