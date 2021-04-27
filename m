@@ -2,105 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA69C43460
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 09:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035D2C433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 10:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46C2A613C3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 09:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C61C3613D1
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 10:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235299AbhD0JtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Apr 2021 05:49:25 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:20117 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235254AbhD0JtY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Apr 2021 05:49:24 -0400
+        id S235370AbhD0Kf6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Apr 2021 06:35:58 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:16316 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238773AbhD0KeH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Apr 2021 06:34:07 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1619516921; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=8AsmZyBIhvhaE3uaf1AcLPrkdQJjpoWFs7gTSVdvoi0=; b=hWvZ+xfWRhBOTpIhso6iM9iNAhASRMyzJxBdv7vh2MwR0svayzVh+V2HpZE9TBSPKMysw4zL
- GvRjcOZy16hLs69A1lsobxZJAJ0Tz96YXS1407NMQ7rgw28T8v5cW6I7QZOIBVHm/U3BON2g
- BHGeZPzmN9E18gMYqldHS5goWy8=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1619519604; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=oH1oYniAqSDMIKhFPaHssEXlcSQIe5vDLRgliZ+9o70=; b=LgWhRd9oU7tTQ02wsJUcwQnYsOqyAG/IYDagj8qlbVW3lPm0FDvqNay9mX2zRRdOin1YJ5QD
+ pz8+YPkEB5uR3eIVYWo0lnjXboh7YIVgvbGQzq1V+qAzzPIKA9SlkL7Kq/dnDxLM8LdV9UW7
+ ZPoeAuTuKrN9JKC6EmYDd7Oav3k=
+X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 6087ddea2cc44d3aeac4ddfa (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 27 Apr 2021 09:48:26
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 6087e873f34440a9d4621f8b (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 27 Apr 2021 10:33:23
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B28D0C4338A; Tue, 27 Apr 2021 09:48:26 +0000 (UTC)
-Received: from [192.168.0.102] (unknown [49.204.181.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id C3215C2E87E; Tue, 27 Apr 2021 10:33:22 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 666EDC433D3;
-        Tue, 27 Apr 2021 09:48:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 666EDC433D3
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 36A77C4160D;
+        Tue, 27 Apr 2021 10:33:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36A77C4160D
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1 4/6] clk: qcom: Add graphics clock controller driver
- for SC7280
+From:   Taniya Das <tdas@codeaurora.org>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
 Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-References: <1615944142-12171-1-git-send-email-tdas@codeaurora.org>
- <1615944142-12171-5-git-send-email-tdas@codeaurora.org>
- <161786654585.3790633.12597782416303763853@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <575a9235-7753-d589-2173-050a16063b71@codeaurora.org>
-Date:   Tue, 27 Apr 2021 15:18:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
-MIME-Version: 1.0
-In-Reply-To: <161786654585.3790633.12597782416303763853@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 0/6] Add support for DISP/VIDEO/GPU CCs for SC7280
+Date:   Tue, 27 Apr 2021 16:03:04 +0530
+Message-Id: <1619519590-3019-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+Add support for display, video & graphics clock controllers on SC7280
+along with the bindings for each of the clock controllers.
 
-Thank you for your review.
+[v2]
+ * Use the .hws instead of clk_parent_data when the whole array is
+   clk_hw pointers for all the clock drivers.
 
-On 4/8/2021 12:52 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2021-03-16 18:22:20)
->> +static struct clk_regmap_div gpu_cc_hub_ahb_div_clk_src = {
->> +       .reg = 0x11c0,
->> +       .shift = 0,
->> +       .width = 4,
->> +       .clkr.hw.init = &(struct clk_init_data) {
->> +               .name = "gpu_cc_hub_ahb_div_clk_src",
->> +               .parent_data = &(const struct clk_parent_data){
->> +                       .hw = &gpu_cc_hub_clk_src.clkr.hw,
-> 
-> Can you follow what Dmitry has done and use .hws instead of
-> clk_parent_data when the whole array is clk_hw pointers?
-> 
+[v1]
+ * Documentation binding for DISP, GPU, VIDEO clock controller for SC7280.
+ * Add the DISP, GPU, VIDEO clock drivers for SC7280.
 
-Will update them in the next patch.
+Taniya Das (6):
+  dt-bindings: clock: Add SC7280 DISPCC clock binding
+  clk: qcom: Add display clock controller driver for SC7280
+  dt-bindings: clock: Add SC7280 GPUCC clock binding
+  clk: qcom: Add graphics clock controller driver for SC7280
+  dt-bindings: clock: Add SC7280 VideoCC clock binding
+  clk: qcom: Add video clock controller driver for SC7280
 
->> +               },
->> +               .num_parents = 1,
->> +               .flags = CLK_SET_RATE_PARENT,
->> +               .ops = &clk_regmap_div_ro_ops,
->> +       },
->> +};
->> +
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |   4 +-
+ .../bindings/clock/qcom,sc7280-dispcc.yaml         |  94 +++
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |   4 +-
+ drivers/clk/qcom/Kconfig                           |  25 +
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/dispcc-sc7280.c                   | 908 +++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sc7280.c                    | 491 +++++++++++
+ drivers/clk/qcom/videocc-sc7280.c                  | 372 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sc7280.h     |  55 ++
+ include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  35 +
+ include/dt-bindings/clock/qcom,videocc-sc7280.h    |  27 +
+ 11 files changed, 2016 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sc7280.c
+ create mode 100644 drivers/clk/qcom/gpucc-sc7280.c
+ create mode 100644 drivers/clk/qcom/videocc-sc7280.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7280.h
 
 --
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
