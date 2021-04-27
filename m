@@ -2,139 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DBCC433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 16:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531BEC433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 17:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DBD6613D9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 16:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C482613DC
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Apr 2021 17:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbhD0Q5H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Apr 2021 12:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59400 "EHLO
+        id S236172AbhD0RIR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Apr 2021 13:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236169AbhD0Q5A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Apr 2021 12:57:00 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBEEC061574
-        for <linux-clk@vger.kernel.org>; Tue, 27 Apr 2021 09:56:15 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id g4-20020a9d6b040000b029029debbbb3ecso22926734otp.7
-        for <linux-clk@vger.kernel.org>; Tue, 27 Apr 2021 09:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=QRk2LvR9iUeYUREemfpr9zlZCwG60wzOzlEIrhDF+Sg=;
-        b=Mg+t1ygXrSkyxRN21CcAGfN2N/VQdb4dgdgUfkavIbfI2gQgU7S8Nbe51ZwxofMVDU
-         DYxBPwjRWZ9tS+Ug6DYhw2NAiUv7Uslduh4g+ydfGiIYOYTm/odkCkywuPwLZvHhj001
-         Nj76hMs3eS3KfwykOKdI2OhQ9LHIhLJEa84Ta/11rYHscKb0aXmkdvrQWm8lFW9/FG8q
-         nAyilNN4zPagDYfM4X7VhKJ1MgX3WwBwb1a6EpknAj709oogxffAOByohP4Q44tOELnZ
-         bffkB0gpXwabU1fluAFKfXzyPFet69d8VhnZp1pwISPsVuVy1ffFomb3a2pu7YyCEwsj
-         R44w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=QRk2LvR9iUeYUREemfpr9zlZCwG60wzOzlEIrhDF+Sg=;
-        b=sxVX80cHiTr5FSR8YfYox9A2/Af28rhFEcD+Z2GlG4uyAGaoq5OhZvtCQK2w7JNYZh
-         +UF4nqF3NuJ4G07d3OCPNXp4+dqw/B6vE5CwmnUgf03/gujEysI2LtUPlDSYagXxBZSh
-         nweINt0KeLZNH3VJRjC72/kFj++eU0shSkxgoiYMxmPLyNueetNKBqcseW/43VvOR/sp
-         MxJO7wAOZD7Dr3aZP9CHVqGexVVWepvReTtoAVXgQC9PBhhZCCZk/GChqrNp5HLocPbv
-         yhpR/dWgqHB64kUelIDPLog7/UTelPUIqGOeJQfSTaNfoOVIA0cPbmj2jpuFZqYOIUdU
-         WS7A==
-X-Gm-Message-State: AOAM531X2oQSkOUzpMDYYlvZ/R5CwoF6oD1Qqw5CeL1lX4kByFYczdtl
-        ULc17LRM/fUZESXPoMOO9omTHQ==
-X-Google-Smtp-Source: ABdhPJx6aYECW2V68OVpAtpfvKHO13slnZFmPrq/7DqZK4gwjAfbgfVW4NSwSDtRTK5yExrvhCPV2g==
-X-Received: by 2002:a05:6830:2004:: with SMTP id e4mr20470372otp.78.1619542574606;
-        Tue, 27 Apr 2021 09:56:14 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id q189sm90658oih.25.2021.04.27.09.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Apr 2021 09:56:14 -0700 (PDT)
-Date:   Tue, 27 Apr 2021 11:56:12 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Uwe Kleine-K?nig <uwe@kleine-koenig.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Simplify usage of dev_err_probe()
-Message-ID: <20210427165612.GH1908499@yoga>
-References: <20210427164522.2886825-1-uwe@kleine-koenig.org>
+        with ESMTP id S236279AbhD0RIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Apr 2021 13:08:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2546BC061574;
+        Tue, 27 Apr 2021 10:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=2Z+EfoLqOBtnltnlA2u82HBsjGCzlQ5xCYdLzak28VE=; b=j/w/B0X+MzMF/1PAxftgLNIxOH
+        b/BwpYu8Rw4erCBS29WORYMPsE/VL0ITbRt30JGfvHjcBInMBeEfGDOaG7NIEJs2MJdjTK5SGYrGx
+        Rir55JAp3v9Qpy3rFmVKMiFgLOmtwV2+JlhMomnPcOkdCcDQDS8v+7pO+D/I4ysAoR0ftlAn8PlxL
+        7sOqMj6SApj4AUvnJLWWiTD5FR+yq+4oqgoc7ysFIP7rb9zkComXbyAfJTvAxxF6SD8ufiYnmuiHn
+        n1zzE4A4pG7QwKXPSLL3ogJZW1Aq4Vy3/QQfyE7ZiDT4mlwR29LxEp/B2Flp1UVBMbKCd9knLCuhf
+        a5gUNcXg==;
+Received: from [2601:1c0:6280:3f0::df68]
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lbRAx-007B32-8f; Tue, 27 Apr 2021 17:07:12 +0000
+Subject: Re: [PATCH] clk: <linux/clk.h>: correct clk_get_parent()
+ documentation
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20210427031342.5333-1-rdunlap@infradead.org>
+ <20210427093809.GU1463@shell.armlinux.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9574eefa-84ed-8674-f575-be47d2a51a1c@infradead.org>
+Date:   Tue, 27 Apr 2021 10:07:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210427164522.2886825-1-uwe@kleine-koenig.org>
+In-Reply-To: <20210427093809.GU1463@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 27 Apr 11:45 CDT 2021, Uwe Kleine-K?nig wrote:
-
-> dev_err_probe() returns the error code passed as second parameter. Also if
-> the error code is -EPROBE_DEFER dev_err_probe() is silent, so there is no
-> need to check for this value before calling dev_err_probe().
+On 4/27/21 2:38 AM, Russell King - ARM Linux admin wrote:
+> On Mon, Apr 26, 2021 at 08:13:42PM -0700, Randy Dunlap wrote:
+>> Make the kernel-doc return value agree with both the stub implementation
+>> in <linux/clk.h> and the non-stub function in drivers/clk/clk.c.
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: linux-clk@vger.kernel.org
+>> ---
+>> There are several drivers that call clk_get_parent() and use its
+>> return value as though it returns an ERR_PTR(). I am working on a
+>> patch series to fix those.
 > 
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
-> ---
->  drivers/clk/qcom/apcs-sdx55.c | 22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
+> The whole premise of the CLK API is that:
 > 
-> diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
-> index d0edabebf9c2..6810637f32e3 100644
-> --- a/drivers/clk/qcom/apcs-sdx55.c
-> +++ b/drivers/clk/qcom/apcs-sdx55.c
-> @@ -56,10 +56,8 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
->  	int ret;
->  
->  	regmap = dev_get_regmap(parent, NULL);
-> -	if (!regmap) {
-> -		dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
-> -		return -ENODEV;
-> -	}
-> +	if (!regmap)
-> +		return dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
->  
->  	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
->  	if (!a7cc)
-> @@ -80,19 +78,15 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
->  	a7cc->parent_map = apcs_mux_clk_parent_map;
->  
->  	a7cc->pclk = devm_clk_get(parent, "pll");
-> -	if (IS_ERR(a7cc->pclk)) {
-> -		ret = PTR_ERR(a7cc->pclk);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err_probe(dev, ret, "Failed to get PLL clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(a7cc->pclk))
-> +		return dev_err_probe(dev, PTR_ERR(a7cc->pclk),
-> +				     "Failed to get PLL clk\n");
->  
->  	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
->  	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
-> -	if (ret) {
-> -		dev_err_probe(dev, ret, "Failed to register clock notifier\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to register clock notifier\n");
->  
->  	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
->  	if (ret) {
-> -- 
-> 2.30.2
+> - clk values that IS_ERR() returns true are errors
+> - clk values that IS_ERR() returns false are valid
 > 
+> and that is that - nice, simple, easy to understand. So the
+> documentation is correct. If clk_get_parent() needs to return an
+> error, it does so by returning an error-pointer, not by returning
+> NULL.
+
+Hm, so the 6 drivers that do this are OK then, if
+clk_get_parent() returns NULL?
+
+
+	parent = clk_get_parent(clk);
+	if (IS_ERR(parent)) {
+		dev_err(cpu_dev, "Cannot get parent clock for CPU0\n");
+		clk_put(clk);
+		return PTR_ERR(parent);
+	}
+
+	/* Get parent CPU frequency */
+	base_frequency =  clk_get_rate(parent);
+
+boom?
+
+-- 
+~Randy
+
