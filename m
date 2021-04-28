@@ -4,61 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC2EC433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 00:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455CBC433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 00:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33DA061154
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 00:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E6461040
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 00:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbhD1Agl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Apr 2021 20:36:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60568 "EHLO mail.kernel.org"
+        id S236224AbhD1Aiw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Apr 2021 20:38:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230368AbhD1Agk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Apr 2021 20:36:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 714B661402;
-        Wed, 28 Apr 2021 00:35:56 +0000 (UTC)
+        id S230368AbhD1Aiu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Apr 2021 20:38:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D8B0961059;
+        Wed, 28 Apr 2021 00:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619570156;
-        bh=V9JXvGRNOedswhyMXA4l/r3YLbqKuGnw2SqrumNCfYA=;
+        s=k20201202; t=1619570286;
+        bh=CMfqp2ysuA3/D1+ryUnOiQl7FNrAM41qVmw5/edbOug=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QrVjdUNef5TUDv/i0n3YhvovSQzvoy6lsIzDna30Oui0yvP9Z8XI90oTBEqVS2YWk
-         5Jn1juFh4gwBpzAqXRrDYhqTfrfS28qpiSOsdK1CWFCx2gihtlG8OSRYqqvfNqrWRb
-         TnBL9W86+9vlMbWjFX7MV70hHbXK3471gqKIVdvTIj1Vk+Nuqyi1c4R/GCGZlFSDKG
-         mJ4JKeiILdYEZKyFRlbgDGrLwQUhLjiJjBNahqef5h1cKOBW2EGmB9zRCPpRIXAZtK
-         vvMNlVUrU1OKKgLa9aNP+HlWikVC+F78TxzMKyNC14nWE7bpCYUyAERVdv+8UOZskY
-         AIIzHkM9BWMLg==
+        b=l2lV0b14X26qEd1HY1IrJldUvviWVRsUx7emUc9OSSzsoAebev0EZxHHX7CVG55Nt
+         VO9dKSQrrYIZYU9+AXyAtcte+5pp713PARYKBdcbwrzQnUTDfhqWj7d6chT9EiSHrL
+         v74841cOMn1zyrmQKHZwOk2LEheBRTcLyyW1jW5dqsb7TWK1XimkNihoVy1l/r0mY6
+         Rs0sEiGm5yu5N1e3gZCNAowYuPW0yrib+bpFrlvYDX4Vo/lli8KKqYxv6cr4LnN+T5
+         RnyWmJtwIixPDc99HtS39ejY+jSEZZZvIK2fVnlYId7eZMRtu6RVLGUh8N7aecFAf4
+         L6IFVcRCWR/og==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1619521932-18973-1-git-send-email-tdas@codeaurora.org>
-References: <1619521932-18973-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1] clk: qcom: gcc: dd support for a new frequency for SC7280
+In-Reply-To: <20210426155457.21221-1-nm@ti.com>
+References: <20210426155457.21221-1-nm@ti.com>
+Subject: Re: [PATCH V2 0/4] dt-bindings: soc/arm: Convert pending ti, sci* bindings to json format
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 27 Apr 2021 17:35:55 -0700
-Message-ID: <161957015504.177949.13285002036192713660@swboyd.mtv.corp.google.com>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nishanth Menon <nm@ti.com>
+To:     Nishanth Menon <nm@ti.com>, Rob Herring <robh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>
+Date:   Tue, 27 Apr 2021 17:38:04 -0700
+Message-ID: <161957028464.177949.14790878722521589025@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Is the subject supposed to say "Add"?
-
-Quoting Taniya Das (2021-04-27 04:12:12)
-> There is a requirement to support 52MHz for qup clocks for bluetoothe
-
-s/bluetoothe/bluetooth/
-
-> usecase, thus update the frequency table to support the frequency.
+Quoting Nishanth Menon (2021-04-26 08:54:53)
+> Hi,
 >=20
-> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver=
- for SC7280")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> V2 of the series posted in [1] to convert the remaining ti,sci bindings
+> to json schema format. V2 is mostly review comments being incorporated -
+> details in each of the patches and in applicable patches, I have picked
+> up Rob's and Tero's reviewed bys.
+>=20
+> There are also dts fixups that this series exposes, which is good, but
+> I chose to hold them back for now pending binding review at least. The
+> complete series is available in [2] if folks are curious - to be posted
+> once v5.13-rc1 is available for fixes.
+
+Is Rob going to pick this up? If so
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
