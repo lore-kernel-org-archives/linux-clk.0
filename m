@@ -2,588 +2,347 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B462CC433ED
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 12:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B60C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 23:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81A6D61423
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 12:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 297EB61447
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Apr 2021 23:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236545AbhD1M2W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Apr 2021 08:28:22 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:5854 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236539AbhD1M2W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Apr 2021 08:28:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1619612857; x=1651148857;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3/kUEZLFrtJTlt4+sEtnmMMIRRxSmYDcZ0MnWaY3T1M=;
-  b=g/0D0hgrjMF/Zp0vNe//8acfashbi8Zh67JHsVwSY8D1q/T8XmOoNted
-   Y7m8qazoPgvlu+MowpRLDRE+HDT29HWN49W+clHo/hb1sUheUYw8RXFn6
-   h9ORWbIGDtJr9+klIY1pPij2trTYJxGRcRg/E6AQRU34X+b095Ou055Lc
-   r81Z8iZeh6y+GTXw7kA10qhMIbmf+ShM4Wlg5wAAvbecrPGanfJULQKdJ
-   ryX8X9tN2beLcZQ7unSMp9Y5VO86fWQPUdUAwCZCgPCcdjOdIr0FLsQty
-   Dsysj2hRokv59qupvi+4hCkzL4c4YUaollNEuOZ9l4avoqf49M90NIdMP
-   Q==;
-IronPort-SDR: 7oPAelhJiDHLUN07dcHnv80OEuELeBcrqLAx0pM/MEA5kpxyOanyfDR4UTzaVXiq0cOJugbSjl
- ter29OS5OWrarQ4D1qrtV3Wg03/EYVLzrEkPcdza/wU6T9fGKfxfmWwVLEj1B0ETMOMH8gWKIe
- E18vlqpqrU8HXNq2m2OeiWIeedirzMbrcCadDn/BM2Cl/6sXN8mVUezWYyq8lHjAqLcCvpSQNY
- /KZANILuRSUVHic1lc+y3gghP8/VRNdt5MrGClGThc1RnpjZ+swiT0UFxyTrhKvSlZ9hMUGj1p
- GAo=
-X-IronPort-AV: E=Sophos;i="5.82,258,1613458800"; 
-   d="scan'208";a="115190408"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Apr 2021 05:27:22 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 28 Apr 2021 05:27:21 -0700
-Received: from daire-ubuntu.school.villiers.net (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Wed, 28 Apr 2021 05:27:19 -0700
-From:   <daire.mcnamara@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <palmer@dabbelt.com>, <cyril.jean@microchip.com>,
-        <padmarao.begari@microchip.com>, <lewis.hanly@microchip.com>,
-        <conor.dooley@microchip.com>, <david.abdurachmanov@gmail.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>
-Subject: [PATCH v4 2/2] clk: microchip: Add driver for Microchip PolarFire SoC
-Date:   Wed, 28 Apr 2021 13:27:11 +0100
-Message-ID: <20210428122711.2136467-3-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210428122711.2136467-1-daire.mcnamara@microchip.com>
-References: <20210428122711.2136467-1-daire.mcnamara@microchip.com>
+        id S231600AbhD1X6I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Apr 2021 19:58:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229474AbhD1X6G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Apr 2021 19:58:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E2316608FC;
+        Wed, 28 Apr 2021 23:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619654241;
+        bh=/ueQqo5YaSqjV/QP5cIf9RZfTa/LlUJScV2gSzNYyCY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MuSCA5G75SbaymuUCsuobM3lCOSS2AvupKaBEh2Yp6Zc2P6c7ExOq6HanKR0cFxmP
+         CjE0usQNa2dF3TJegs/xNtmxwSBw44FQzg/8lyFPIDgOgKSBS+cMHQ5kFr7RvwqCMl
+         FsXkw+OzRYPdEIU+nY3CKDeVQTMfYnvXcJRvgDWlhzoQ4PAoL4qK6g3zB0/nwZkb+W
+         BBsuHxi/dqz0W9B2n3pPsNWuAdYSJ0T5FWA3UXEU7yKtd4nwInPUxqW0jraLthHtBQ
+         ZuyK4KSWubn2zYeToYzLAzXb87xvJAUAy8Oc5n+5nImAJcdV3Fv6sQvug7vGv9f+WK
+         QXKoUb5KR9QGA==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk changes for the merge window
+Date:   Wed, 28 Apr 2021 16:57:20 -0700
+Message-Id: <20210428235720.624250-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.31.1.498.g6c1eba8ee3d-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Daire McNamara <daire.mcnamara@microchip.com>
+The following changes since commit e5c359f70e4b5e7b6c2bf4b0ca2d2686d543a37b:
 
-Add support for clock configuration on Microchip PolarFire SoC
+  clk: qcom: camcc: Update the clock ops for the SC7180 (2021-03-29 14:08:32 -0700)
 
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
----
- drivers/clk/Kconfig              |   1 +
- drivers/clk/Makefile             |   2 +-
- drivers/clk/microchip/Kconfig    |   7 +
- drivers/clk/microchip/Makefile   |   6 +-
- drivers/clk/microchip/clk-mpfs.c | 444 +++++++++++++++++++++++++++++++
- 5 files changed, 457 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/microchip/Kconfig
- create mode 100644 drivers/clk/microchip/clk-mpfs.c
+are available in the Git repository at:
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1d1891b9cad2..487218ad3348 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -388,6 +388,7 @@ source "drivers/clk/keystone/Kconfig"
- source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/meson/Kconfig"
- source "drivers/clk/mstar/Kconfig"
-+source "drivers/clk/microchip/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 9b582b3fca34..5c821c3b2fc6 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -89,7 +89,7 @@ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-y					+= mediatek/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
--obj-$(CONFIG_MACH_PIC32)		+= microchip/
-+obj-y					+= microchip/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
-diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
-new file mode 100644
-index 000000000000..f5edc7b3c07c
---- /dev/null
-+++ b/drivers/clk/microchip/Kconfig
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config MCHP_CLK_MPFS
-+	bool "Clk driver for PolarFire SoC"
-+	depends on (RISCV && SOC_MICROCHIP_POLARFIRE) || COMPILE_TEST
-+	help
-+	  Supports Clock Configuration for PolarFire SoC
-diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
-index f34b247e870f..0dce0b12eac4 100644
---- a/drivers/clk/microchip/Makefile
-+++ b/drivers/clk/microchip/Makefile
-@@ -1,3 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_COMMON_CLK_PIC32) += clk-core.o
--obj-$(CONFIG_PIC32MZDA) += clk-pic32mzda.o
-+
-+obj-$(CONFIG_COMMON_CLK_PIC32)	+= clk-core.o
-+obj-$(CONFIG_PIC32MZDA)		+= clk-pic32mzda.o
-+obj-$(CONFIG_MCHP_CLK_MPFS)	+= clk-mpfs.o
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-new file mode 100644
-index 000000000000..541f88181877
---- /dev/null
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -0,0 +1,444 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Daire McNamara,<daire.mcnamara@microchip.com>
-+ * Copyright (C) 2020 Microchip Technology Inc.  All rights reserved.
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <dt-bindings/clock/microchip,mpfs-clock.h>
-+
-+/* address offset of control registers */
-+#define REG_CLOCK_CONFIG_CR	0x08u
-+#define REG_SUBBLK_CLOCK_CR	0x84u
-+#define REG_SUBBLK_RESET_CR	0x88u
-+
-+struct mpfs_clock_data {
-+	void __iomem *base;
-+	struct clk_hw_onecell_data hw_data;
-+};
-+
-+struct mpfs_cfg_clock {
-+	unsigned int id;
-+	const char *name;
-+	u8 shift;
-+	u8 width;
-+	const struct clk_div_table *table;
-+	unsigned long flags;
-+};
-+
-+struct mpfs_cfg_hw_clock {
-+	struct mpfs_cfg_clock cfg;
-+	void __iomem *sys_base;
-+	/* lock is used to prevent multiple writes */
-+	spinlock_t *lock;
-+	struct clk_hw hw;
-+	struct clk_init_data init;
-+};
-+
-+#define to_mpfs_cfg_clk(_hw) container_of(_hw, struct mpfs_cfg_hw_clock, hw)
-+
-+struct mpfs_periph_clock {
-+	unsigned int id;
-+	const char *name;
-+	u8 shift;
-+	unsigned long flags;
-+};
-+
-+struct mpfs_periph_hw_clock {
-+	struct mpfs_periph_clock periph;
-+	void __iomem *sys_base;
-+	/* lock is used to prevent multiple writes */
-+	spinlock_t *lock;
-+	struct clk_hw hw;
-+};
-+
-+#define to_mpfs_periph_clk(_hw) container_of(_hw, struct mpfs_periph_hw_clock, hw)
-+
-+/*
-+ * mpfs_clk_lock prevents anything else from writing to the
-+ * mpfs clk block while a software locked register is being written.
-+ */
-+static DEFINE_SPINLOCK(mpfs_clk_lock);
-+
-+static struct clk_parent_data mpfs_cfg_parent[] = {
-+	{ .fw_name = "msspllclk", .name = "msspllclk" },
-+};
-+
-+static const struct clk_div_table mpfs_div_cpu_axi_table[] = {
-+	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
-+	{ 0, 0 }
-+};
-+
-+static const struct clk_div_table mpfs_div_ahb_table[] = {
-+	{ 1, 2 }, { 2, 4}, { 3, 8 },
-+	{ 0, 0 }
-+};
-+
-+static unsigned long mpfs_cfg_clk_recalc_rate(struct clk_hw *hw, unsigned long prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+	void __iomem *base_addr = cfg_hw->sys_base;
-+	unsigned long rate;
-+	u32 val;
-+
-+	val = readl_relaxed(base_addr + REG_CLOCK_CONFIG_CR) >> cfg->shift;
-+	val &= clk_div_mask(cfg->width);
-+	rate = prate / (1u << val);
-+
-+	return rate;
-+}
-+
-+static long mpfs_cfg_clk_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+
-+	return divider_round_rate(hw, rate, prate, cfg->table, cfg->width, cfg->flags);
-+}
-+
-+static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+	void __iomem *base_addr = cfg_hw->sys_base;
-+	unsigned long flags = 0;
-+	u32 val;
-+	int divider_setting;
-+
-+	divider_setting = divider_get_val(rate, prate, cfg->table, cfg->width, cfg_hw->cfg.flags);
-+
-+	if (divider_setting < 0)
-+		return divider_setting;
-+
-+	if (cfg_hw->lock)
-+		spin_lock_irqsave(cfg_hw->lock, flags);
-+	else
-+		__acquire(cfg_hw->lock);
-+
-+	val = readl_relaxed(base_addr + REG_CLOCK_CONFIG_CR);
-+	val &= ~(clk_div_mask(cfg->width) << cfg_hw->cfg.shift);
-+	val |= divider_setting << cfg->shift;
-+	writel_relaxed(val, base_addr + REG_CLOCK_CONFIG_CR);
-+
-+	if (cfg_hw->lock)
-+		spin_unlock_irqrestore(cfg_hw->lock, flags);
-+	else
-+		__release(cfg_hw->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops mpfs_clk_cfg_ops = {
-+	.recalc_rate = mpfs_cfg_clk_recalc_rate,
-+	.round_rate = mpfs_cfg_clk_round_rate,
-+	.set_rate = mpfs_cfg_clk_set_rate,
-+};
-+
-+#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags) {	\
-+		.cfg.id = _id,								\
-+		.cfg.name = _name,							\
-+		.cfg.shift = _shift,							\
-+		.cfg.width = _width,							\
-+		.cfg.table = _table,							\
-+		.hw.init = CLK_HW_INIT_PARENTS_DATA(_name, _parent, &mpfs_clk_cfg_ops,	\
-+						    _flags),				\
-+	}
-+
-+static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
-+	CLK_CFG(CLK_CPU, "clk_cpu", mpfs_cfg_parent, 0, 2, mpfs_div_cpu_axi_table, 0),
-+	CLK_CFG(CLK_AXI, "clk_axi", mpfs_cfg_parent, 2, 2, mpfs_div_cpu_axi_table, 0),
-+	CLK_CFG(CLK_AHB, "clk_ahb", mpfs_cfg_parent, 4, 2, mpfs_div_ahb_table, 0),
-+};
-+
-+static void mpfs_clk_unregister_cfg(struct device *dev, struct clk_hw *hw)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+
-+	devm_clk_hw_unregister(dev, hw);
-+	kfree(cfg_hw);
-+}
-+
-+static struct clk_hw *mpfs_clk_register_cfg(struct device *dev,
-+					    struct mpfs_cfg_hw_clock *cfg_hw,
-+					    void __iomem *sys_base)
-+{
-+	struct clk_hw *hw;
-+	int err;
-+
-+	cfg_hw->sys_base = sys_base;
-+	cfg_hw->lock = &mpfs_clk_lock;
-+
-+	hw = &cfg_hw->hw;
-+	err = devm_clk_hw_register(dev, hw);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return hw;
-+}
-+
-+static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
-+				  int num_clks, struct mpfs_clock_data *data)
-+{
-+	struct clk_hw *hw;
-+	void __iomem *sys_base = data->base;
-+	unsigned int i, id;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
-+
-+		hw = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "%s: failed to register clock %s\n", __func__,
-+				cfg_hw->cfg.name);
-+			goto err_clk;
-+		}
-+
-+		id = cfg_hws[i].cfg.id;
-+		data->hw_data.hws[id] = hw;
-+	}
-+
-+	return 0;
-+
-+err_clk:
-+	while (i--)
-+		mpfs_clk_unregister_cfg(dev, data->hw_data.hws[cfg_hws[i].cfg.id]);
-+
-+	return PTR_ERR(hw);
-+}
-+
-+static int mpfs_periph_clk_enable(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg, val;
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	val = reg & ~(1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+	val = reg | (1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
-+
-+	return 0;
-+}
-+
-+static void mpfs_periph_clk_disable(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg, val;
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	val = reg | (1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+	val = reg & ~(1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
-+}
-+
-+static int mpfs_periph_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg;
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	if ((reg & (1u << periph->shift)) == 0u) {
-+		reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+		if (reg & (1u << periph->shift))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static unsigned long mpfs_periph_clk_recalc_rate(struct clk_hw *hw, unsigned long prate)
-+{
-+	return prate;
-+}
-+
-+static const struct clk_ops mpfs_periph_clk_ops = {
-+	.enable = mpfs_periph_clk_enable,
-+	.disable = mpfs_periph_clk_disable,
-+	.is_enabled = mpfs_periph_clk_is_enabled,
-+	.recalc_rate = mpfs_periph_clk_recalc_rate,
-+};
-+
-+#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {				\
-+		.periph.id = _id,							\
-+		.periph.name = _name,							\
-+		.periph.shift = _shift,							\
-+		.hw.init = CLK_HW_INIT_HW(_name, _parent, &mpfs_periph_clk_ops,	\
-+					  _flags),					\
-+	}
-+
-+#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT].hw)
-+
-+static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
-+	CLK_PERIPH(CLK_ENVM, "clk_periph_envm", PARENT_CLK(AHB), 0, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_MAC0, "clk_periph_mac0", PARENT_CLK(AHB), 1, 0),
-+	CLK_PERIPH(CLK_MAC1, "clk_periph_mac1", PARENT_CLK(AHB), 2, 0),
-+	CLK_PERIPH(CLK_MMC, "clk_periph_mmc", PARENT_CLK(AHB), 3, 0),
-+	CLK_PERIPH(CLK_TIMER, "clk_periph_timer", PARENT_CLK(AHB), 4, 0),
-+	CLK_PERIPH(CLK_MMUART0, "clk_periph_mmuart0", PARENT_CLK(AHB), 5, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_MMUART1, "clk_periph_mmuart1", PARENT_CLK(AHB), 6, 0),
-+	CLK_PERIPH(CLK_MMUART2, "clk_periph_mmuart2", PARENT_CLK(AHB), 7, 0),
-+	CLK_PERIPH(CLK_MMUART3, "clk_periph_mmuart3", PARENT_CLK(AHB), 8, 0),
-+	CLK_PERIPH(CLK_MMUART4, "clk_periph_mmuart4", PARENT_CLK(AHB), 9, 0),
-+	CLK_PERIPH(CLK_SPI0, "clk_periph_spi0", PARENT_CLK(AHB), 10, 0),
-+	CLK_PERIPH(CLK_SPI1, "clk_periph_spi1", PARENT_CLK(AHB), 11, 0),
-+	CLK_PERIPH(CLK_I2C0, "clk_periph_i2c0", PARENT_CLK(AHB), 12, 0),
-+	CLK_PERIPH(CLK_I2C1, "clk_periph_i2c1", PARENT_CLK(AHB), 13, 0),
-+	CLK_PERIPH(CLK_CAN0, "clk_periph_can0", PARENT_CLK(AHB), 14, 0),
-+	CLK_PERIPH(CLK_CAN1, "clk_periph_can1", PARENT_CLK(AHB), 15, 0),
-+	CLK_PERIPH(CLK_USB, "clk_periph_usb", PARENT_CLK(AHB), 16, 0),
-+	CLK_PERIPH(CLK_RTC, "clk_periph_rtc", PARENT_CLK(AHB), 18, 0),
-+	CLK_PERIPH(CLK_QSPI, "clk_periph_qspi", PARENT_CLK(AHB), 19, 0),
-+	CLK_PERIPH(CLK_GPIO0, "clk_periph_gpio0", PARENT_CLK(AHB), 20, 0),
-+	CLK_PERIPH(CLK_GPIO1, "clk_periph_gpio1", PARENT_CLK(AHB), 21, 0),
-+	CLK_PERIPH(CLK_GPIO2, "clk_periph_gpio2", PARENT_CLK(AHB), 22, 0),
-+	CLK_PERIPH(CLK_DDRC, "clk_periph_ddrc", PARENT_CLK(AHB), 23, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_FIC0, "clk_periph_fic0", PARENT_CLK(AHB), 24, 0),
-+	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AHB), 25, 0),
-+	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AHB), 26, 0),
-+	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AHB), 27, 0),
-+	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AHB), 28, 0),
-+	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
-+};
-+
-+static void mpfs_clk_unregister_periph(struct device *dev, struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+
-+	devm_clk_hw_unregister(dev, hw);
-+	kfree(periph_hw);
-+}
-+
-+static struct clk_hw *mpfs_clk_register_periph(struct device *dev,
-+					       struct mpfs_periph_hw_clock *periph_hw,
-+					       void __iomem *sys_base)
-+{
-+	struct clk_hw *hw;
-+	int err;
-+
-+	periph_hw->sys_base = sys_base;
-+	periph_hw->lock = &mpfs_clk_lock;
-+
-+	hw = &periph_hw->hw;
-+	err = devm_clk_hw_register(dev, hw);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return hw;
-+}
-+
-+static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_clock *periph_hws,
-+				     int num_clks, struct mpfs_clock_data *data)
-+{
-+	struct clk_hw *hw;
-+	void __iomem *sys_base = data->base;
-+	unsigned int i, id;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
-+
-+		hw = mpfs_clk_register_periph(dev, periph_hw, sys_base);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "%s: failed to register clock %s\n", __func__,
-+				periph_hw->periph.name);
-+			goto err_clk;
-+		}
-+
-+		id = periph_hws[i].periph.id;
-+		data->hw_data.hws[id] = hw;
-+	}
-+
-+	return 0;
-+
-+err_clk:
-+	while (i--)
-+		mpfs_clk_unregister_periph(dev, data->hw_data.hws[periph_hws[i].periph.id]);
-+
-+	return PTR_ERR(hw);
-+}
-+
-+static int mpfs_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mpfs_clock_data *clk_data;
-+	struct resource *res;
-+	int num_clks;
-+	int ret;
-+
-+	num_clks = ARRAY_SIZE(mpfs_cfg_clks) + ARRAY_SIZE(mpfs_periph_clks);
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hw_data.hws, num_clks), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	clk_data->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(clk_data->base))
-+		return PTR_ERR(clk_data->base);
-+
-+	clk_data->hw_data.num = num_clks;
-+
-+	ret = mpfs_clk_register_cfgs(dev, mpfs_cfg_clks, ARRAY_SIZE(mpfs_cfg_clks), clk_data);
-+	if (ret)
-+		goto err_clk;
-+
-+	ret = mpfs_clk_register_periphs(dev, mpfs_periph_clks, ARRAY_SIZE(mpfs_periph_clks),
-+					clk_data);
-+	if (ret)
-+		goto err_clk;
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
-+	if (ret)
-+		goto err_clk;
-+
-+	dev_info(dev, "registered MPFS core clocks\n");
-+	return ret;
-+
-+err_clk:
-+	dev_err(dev, "failed to register MPFS core clocks\n");
-+	return ret;
-+}
-+
-+static const struct of_device_id mpfs_clk_of_match_table[] = {
-+	{ .compatible = "microchip,mpfs-clkcfg", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mpfs_clk_match_table);
-+
-+static struct platform_driver mpfs_clk_driver = {
-+	.probe = mpfs_clk_probe,
-+	.driver	= {
-+		.name = "microchip-mpfs-clkcfg",
-+		.of_match_table = mpfs_clk_of_match_table,
-+	},
-+};
-+
-+static int __init clk_mpfs_init(void)
-+{
-+	return platform_driver_register(&mpfs_clk_driver);
-+}
-+core_initcall(clk_mpfs_init);
-+
-+static void __exit clk_mpfs_exit(void)
-+{
-+	platform_driver_unregister(&mpfs_clk_driver);
-+}
-+module_exit(clk_mpfs_exit);
-+
-+MODULE_DESCRIPTION("Microchip PolarFire SoC Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:clk-mpfs");
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+
+for you to fetch changes up to 3ba2d41dca14e1afbea0c41ba8164064df407c8b:
+
+  Merge branch 'clk-ralink' into clk-next (2021-04-27 16:34:56 -0700)
+
+----------------------------------------------------------------
+Here's a collection of largely clk driver updates for the merge window. The
+usual suspects are here: i.MX, Qualcomm, Renesas, Allwinner, Samsung, and
+Rockchip, but it feels pretty light on commits. There's only one real commit to
+the framework core and that's to consolidate code. Otherwise the diffstat is
+dominated by many Qualcomm clk driver patches that modernize the driver for the
+proper way of speciying clk parents. That's shifting data around, which could
+subtly break things so I'll be on the lookout for fixes.
+
+New Drivers:
+ - Proper clk driver for Mediatek MT7621 SoCs
+ - Support for the clock controller on the new Rockchip rk3568
+
+Updates:
+ - Simplify Zynq Kconfig dependencies
+ - Use clk_hw pointers in socfpga driver
+ - Cleanup parent data in qcom clk drivers
+ - Some cleanups for rk3399 modularization
+ - Fix reparenting of i.MX UART clocks by initializing only the ones
+   associated to stdout
+ - Correct the PCIE clocks for i.MX8MP and i.MX8MQ
+ - Make i.MX LPCG and SCU clocks return on registering failure
+ - Kernel doc fixes
+ - Add DAB hardware accelerator clocks on Renesas R-Car E3 and M3-N
+ - Add timer (TMU) clocks on Renesas R-Car H3 ES1.0
+ - Add Timer (TMU & CMT) and thermal sensor (TSC) clocks on Renesas R-Car V3U
+ - Sigma-delta modulation on Allwinner V3s audio PLL
+
+----------------------------------------------------------------
+Adam Ford (1):
+      clk: imx: Fix reparenting of UARTs not associated with stdout
+
+Alex Elder (1):
+      clk: qcom: rpmh: add support for SDX55 rpmh IPA clock
+
+Bhaskar Chowdhury (2):
+      clk: at91: Trivial typo fixes in the file sama7g5.c
+      clk: renesas: Couple of spelling fixes
+
+Chen Hui (4):
+      clk: samsung: Remove redundant dev_err calls
+      clk: qcom: a7-pll: Add missing MODULE_DEVICE_TABLE
+      clk: qcom: a53-pll: Add missing MODULE_DEVICE_TABLE
+      clk: qcom: apss-ipq-pll: Add missing MODULE_DEVICE_TABLE
+
+Colin Ian King (3):
+      clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+      clk: socfpga: remove redundant initialization of variable div
+      clk: uniphier: Fix potential infinite loop
+
+Dinh Nguyen (3):
+      clk: socfpga: use clk_hw_register for a5/c5
+      clk: socfpga: arria10: convert to use clk_hw
+      clk: socfpga: Convert to s10/agilex/n5x to use clk_hw
+
+Dmitry Baryshkov (36):
+      clk: qcom: dispcc-sc7180: drop unused enum entries
+      clk: qcom: dispcc-sm8250: drop unused enum entries
+      clk: qcom: gcc-sm8250: drop unused enum entries
+      clk: qcom: gpucc-sc7180: drop unused enum entries
+      clk: qcom: gpucc-sdm845: drop unused enum entries
+      clk: qcom: gpucc-sm8150: drop unused enum entries
+      clk: qcom: gpucc-sm8250: drop unused enum entries
+      clk: qcom: videocc-sc7180: drop unused enum entries
+      clk: qcom: videocc-sm8150: drop unused enum entries
+      clk: qcom: videocc-sm8250: drop unused enum entries
+      clk: qcom: dispcc-sdm845: convert to parent data
+      clk: qcom: gpucc-sdm845: convert to parent data
+      clk: qcom: videocc-sdm845: convert to parent data
+      clk: qcom: gpucc-sdm845: get rid of the test clock
+      clk: qcom: dispcc-sdm845: get rid of the test clock
+      clk: qcom: videocc-sdm845: get rid of the test clock
+      clk: qcom: dispcc-sc7180: use parent_hws where possible
+      clk: qcom: dispcc-sm8250: use parent_hws where possible
+      clk: qcom: gcc-sc7180: use parent_hws where possible
+      clk: qcom: gcc-sc7280: use parent_hws where possible
+      clk: qcom: gcc-sdx55: use parent_hws where possible
+      clk: qcom: gcc-sm8150: use parent_hws where possible
+      clk: qcom: gcc-sm8250: use parent_hws where possible
+      clk: qcom: gcc-sm8350: use parent_hws where possible
+      clk: qcom: gpucc-sm8150: use parent_hws where possible
+      clk: qcom: gpucc-sm8250: use parent_hws where possible
+      clk: qcom: videocc-sm8150: use parent_hws where possible
+      clk: qcom: videocc-sm8250: use parent_hws where possible
+      clk: qcom: gcc-sc7180: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: gcc-sc8180x: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: gcc-sm8150: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: gcc-sm8250: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: gcc-sm8350: use ARRAY_SIZE instead of specifying num_parents
+      dt-bindings: clock: separate SDM845 GCC clock bindings
+      clk: qcom: convert SDM845 Global Clock Controller to parent_data
+      clk: qcom: gcc-sdm845: get rid of the test clock
+
+Elaine Zhang (4):
+      clk: rockchip: add dt-binding header for rk3568
+      dt-binding: clock: Document rockchip, rk3568-cru bindings
+      clk: rockchip: support more core div setting
+      clk: rockchip: add clock controller for rk3568
+
+Fabrizio Castro (2):
+      clk: renesas: r8a77990: Add DAB clock
+      clk: renesas: r8a77965: Add DAB clock
+
+Geert Uytterhoeven (2):
+      clk: Drop double "if" in clk_core_determine_round_nolock() comment
+      clk: renesas: Zero init clk_init_data
+
+Heiko Stuebner (2):
+      clk: rockchip: drop parenthesis from ARM || COMPILE_TEST depends
+      clk: rockchip: drop MODULE_ALIAS from rk3399 clock controller
+
+Jian Dong (1):
+      clk: imx: Reference preceded by free
+
+Lee Jones (1):
+      clk: sunxi: Demote non-conformant kernel-doc headers
+
+Niklas Söderlund (2):
+      clk: renesas: r8a779a0: Add TSC clock
+      clk: renesas: r8a7795: Add TMU clocks
+
+Paweł Chmiel (1):
+      clk: exynos7: Mark aclk_fsys1_200 as critical
+
+Punit Agrawal (2):
+      clk: zynqmp: Enable the driver if ZYNQMP_FIRMWARE is selected
+      clk: zynqmp: Drop dependency on ARCH_ZYNQMP
+
+Quanyang Wang (2):
+      clk: zynqmp: move zynqmp_pll_set_mode out of round_rate callback
+      clk: zynqmp: pll: add set_pll_mode to check condition in zynqmp_pll_enable
+
+Rasmus Villemoes (1):
+      clk: use clk_core_enable_lock() a bit more
+
+Richard Zhu (2):
+      clk: imx8mp: Remove the none exist pcie clocks
+      clk: imx8mq: Correct the pcie1 sels
+
+Sergio Paracuellos (6):
+      dt-bindings: clock: add dt binding header for mt7621 clocks
+      dt: bindings: add mt7621-sysc device tree binding documentation
+      clk: ralink: add clock driver for mt7621 SoC
+      staging: mt7621-dts: make use of new 'mt7621-clk'
+      staging: mt7621-dts: use valid vendor 'mediatek' instead of invalid 'mtk'
+      MAINTAINERS: add MT7621 CLOCK maintainer
+
+Stephen Boyd (10):
+      Merge tag 'renesas-clk-for-v5.13-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into clk-renesas
+      clk: socfpga: Fix code formatting
+      Merge tag 'renesas-clk-for-v5.13-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into clk-renesas
+      Merge tag 'sunxi-clk-for-5.13-1' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-allwinner
+      Merge tag 'clk-imx-5.13' of https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux into clk-imx
+      Merge tag 'clk-v5.13-samsung' of https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk into clk-samsung
+      Merge tag 'v5.13-rockchip-clocks' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-rockchip
+      Merge branches 'clk-cleanup', 'clk-renesas', 'clk-socfpga', 'clk-allwinner' and 'clk-qcom' into clk-next
+      Merge branches 'clk-imx', 'clk-samsung', 'clk-zynq', 'clk-rockchip' and 'clk-uniphier' into clk-next
+      Merge branch 'clk-ralink' into clk-next
+
+Tobias Schramm (1):
+      clk: sunxi-ng: v3s: use sigma-delta modulation for audio-pll
+
+Wolfram Sang (2):
+      clk: renesas: r8a779a0: Add TMU clocks
+      clk: renesas: r8a779a0: Add CMT clocks
+
+ .../bindings/clock/mediatek,mt7621-sysc.yaml       |   68 +
+ .../devicetree/bindings/clock/qcom,gcc-sdm845.yaml |   82 +
+ .../devicetree/bindings/clock/qcom,gcc.yaml        |    2 -
+ .../bindings/clock/rockchip,rk3568-cru.yaml        |   60 +
+ MAINTAINERS                                        |    6 +
+ arch/mips/ralink/mt7621.c                          |    6 +-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/at91/sama7g5.c                         |    6 +-
+ drivers/clk/clk.c                                  |   20 +-
+ drivers/clk/imx/clk-imx25.c                        |   12 +-
+ drivers/clk/imx/clk-imx27.c                        |   13 +-
+ drivers/clk/imx/clk-imx35.c                        |   10 +-
+ drivers/clk/imx/clk-imx5.c                         |   30 +-
+ drivers/clk/imx/clk-imx6q.c                        |   16 +-
+ drivers/clk/imx/clk-imx6sl.c                       |   16 +-
+ drivers/clk/imx/clk-imx6sll.c                      |   24 +-
+ drivers/clk/imx/clk-imx6sx.c                       |   16 +-
+ drivers/clk/imx/clk-imx7d.c                        |   22 +-
+ drivers/clk/imx/clk-imx7ulp.c                      |   31 +-
+ drivers/clk/imx/clk-imx8mm.c                       |   18 +-
+ drivers/clk/imx/clk-imx8mn.c                       |   18 +-
+ drivers/clk/imx/clk-imx8mp.c                       |   32 +-
+ drivers/clk/imx/clk-imx8mq.c                       |   22 +-
+ drivers/clk/imx/clk-lpcg-scu.c                     |    1 +
+ drivers/clk/imx/clk-scu.c                          |    1 +
+ drivers/clk/imx/clk.c                              |   41 +-
+ drivers/clk/imx/clk.h                              |    4 +-
+ drivers/clk/qcom/a53-pll.c                         |    1 +
+ drivers/clk/qcom/a7-pll.c                          |    1 +
+ drivers/clk/qcom/apss-ipq-pll.c                    |    1 +
+ drivers/clk/qcom/clk-rpmh.c                        |    2 +
+ drivers/clk/qcom/dispcc-sc7180.c                   |   70 +-
+ drivers/clk/qcom/dispcc-sdm845.c                   |  217 ++-
+ drivers/clk/qcom/dispcc-sm8250.c                   |  124 +-
+ drivers/clk/qcom/gcc-sc7180.c                      |  196 +--
+ drivers/clk/qcom/gcc-sc7280.c                      |  248 +--
+ drivers/clk/qcom/gcc-sc8180x.c                     |  122 +-
+ drivers/clk/qcom/gcc-sdm845.c                      |  650 ++++----
+ drivers/clk/qcom/gcc-sdx55.c                       |    8 +-
+ drivers/clk/qcom/gcc-sm8150.c                      |  100 +-
+ drivers/clk/qcom/gcc-sm8250.c                      |  345 ++--
+ drivers/clk/qcom/gcc-sm8350.c                      |  418 +++--
+ drivers/clk/qcom/gpucc-sc7180.c                    |    3 -
+ drivers/clk/qcom/gpucc-sdm845.c                    |   45 +-
+ drivers/clk/qcom/gpucc-sm8150.c                    |    9 +-
+ drivers/clk/qcom/gpucc-sm8250.c                    |    9 +-
+ drivers/clk/qcom/videocc-sc7180.c                  |    4 -
+ drivers/clk/qcom/videocc-sdm845.c                  |   55 +-
+ drivers/clk/qcom/videocc-sm8150.c                  |   20 +-
+ drivers/clk/qcom/videocc-sm8250.c                  |   30 +-
+ drivers/clk/ralink/Kconfig                         |   11 +
+ drivers/clk/ralink/Makefile                        |    2 +
+ drivers/clk/ralink/clk-mt7621.c                    |  495 ++++++
+ drivers/clk/renesas/clk-div6.c                     |    3 +-
+ drivers/clk/renesas/clk-mstp.c                     |    2 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |    6 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |    1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |    1 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |   11 +
+ drivers/clk/renesas/r9a06g032-clocks.c             |   12 +-
+ drivers/clk/renesas/rcar-cpg-lib.c                 |    2 +-
+ drivers/clk/renesas/rcar-gen2-cpg.c                |    3 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c                |    2 +-
+ drivers/clk/renesas/rcar-usb2-clock-sel.c          |    5 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |    2 +-
+ drivers/clk/rockchip/Kconfig                       |   29 +-
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-cpu.c                     |   53 +-
+ drivers/clk/rockchip/clk-px30.c                    |    7 +-
+ drivers/clk/rockchip/clk-rk3036.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3128.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3188.c                  |   14 +-
+ drivers/clk/rockchip/clk-rk3228.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3308.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3328.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |   14 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |   15 +-
+ drivers/clk/rockchip/clk-rk3568.c                  | 1725 ++++++++++++++++++++
+ drivers/clk/rockchip/clk-rv1108.c                  |    7 +-
+ drivers/clk/rockchip/clk.h                         |   54 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |    4 +-
+ drivers/clk/samsung/clk-exynos7.c                  |    7 +-
+ drivers/clk/samsung/clk-s5pv210-audss.c            |    4 +-
+ drivers/clk/socfpga/clk-agilex.c                   |  117 +-
+ drivers/clk/socfpga/clk-gate-a10.c                 |    9 +-
+ drivers/clk/socfpga/clk-gate-s10.c                 |   17 +-
+ drivers/clk/socfpga/clk-gate.c                     |   11 +-
+ drivers/clk/socfpga/clk-periph-a10.c               |   11 +-
+ drivers/clk/socfpga/clk-periph-s10.c               |   42 +-
+ drivers/clk/socfpga/clk-periph.c                   |    8 +-
+ drivers/clk/socfpga/clk-pll-a10.c                  |   12 +-
+ drivers/clk/socfpga/clk-pll-s10.c                  |   45 +-
+ drivers/clk/socfpga/clk-pll.c                      |   18 +-
+ drivers/clk/socfpga/clk-s10.c                      |   68 +-
+ drivers/clk/socfpga/stratix10-clk.h                |   24 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c               |   33 +-
+ drivers/clk/sunxi/clk-sun6i-ar100.c                |    2 +-
+ drivers/clk/sunxi/clk-sun9i-core.c                 |    8 +-
+ drivers/clk/sunxi/clk-usb.c                        |    2 +-
+ drivers/clk/uniphier/clk-uniphier-mux.c            |    4 +-
+ drivers/clk/zynqmp/Kconfig                         |    4 +-
+ drivers/clk/zynqmp/pll.c                           |   24 +-
+ drivers/staging/mt7621-dts/gbpc1.dts               |   11 -
+ drivers/staging/mt7621-dts/mt7621.dtsi             |   82 +-
+ include/dt-bindings/clock/imx8mp-clock.h           |    3 -
+ include/dt-bindings/clock/mt7621-clk.h             |   41 +
+ include/dt-bindings/clock/rk3568-cru.h             |  926 +++++++++++
+ 109 files changed, 5279 insertions(+), 2034 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
+ create mode 100644 drivers/clk/ralink/Kconfig
+ create mode 100644 drivers/clk/ralink/Makefile
+ create mode 100644 drivers/clk/ralink/clk-mt7621.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3568.c
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+ create mode 100644 include/dt-bindings/clock/rk3568-cru.h
+
 -- 
-2.25.1
-
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
