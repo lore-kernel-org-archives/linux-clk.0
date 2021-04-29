@@ -2,64 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0058CC433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 00:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3668AC433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 06:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8E8C61447
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 00:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3C8B6141E
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 06:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbhD2A07 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Apr 2021 20:26:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229474AbhD2A04 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Apr 2021 20:26:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id CF2E061447;
-        Thu, 29 Apr 2021 00:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619655970;
-        bh=/ErUyZEicO4Bzk/4RSCp2AAbO5ZcooZcOS+GacLwlAI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=gFCyW58KOLdoWhVD/Qs6XiFRvUv2wPxp9TJ/BHUIlIogEeD5RD9AoEiKvO2ukrMpX
-         LNIPb81YOgobQoBVPxXF1oAMxg1rcuCJah51Z4xL5Ejt5S9suxRGaa7vVNk2KxEUNW
-         kmdTXIGK6VIKbOYlBsvuPO+dzwxqERhGL6yl7fWNrOArNdPNW7ycfbdPlX8fU8q5Yw
-         uqxw/5ZOYveKTX5h1WdTdFJKk4bKVC+Tqne63NTP9bWHNRvN9Pdm60SH4vWpi9UBM/
-         /V1c8ghJFro/pv9noahLd3Fu559HFwmuS0oopSmyK+ZJR7BlPWQaXggrbbAHrrKYCn
-         BQMlGqwFvZcXg==
-Subject: Re: [GIT PULL] clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210428235720.624250-1-sboyd@kernel.org>
-References: <20210428235720.624250-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210428235720.624250-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: 3ba2d41dca14e1afbea0c41ba8164064df407c8b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 35655ceb31b56cd1cb52635a725dfcdb9662d7b7
-Message-Id: <161965597071.15418.9480484155814017533.pr-tracker-bot@kernel.org>
-Date:   Thu, 29 Apr 2021 00:26:10 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S234443AbhD2G4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Apr 2021 02:56:11 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:28272 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229814AbhD2G4K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Apr 2021 02:56:10 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619679323; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=i6nhprnTP7+B3o9IhSRHaKC/LVUmcR5lx3xKcdEqRdI=; b=rxX0ULKilDLXfcY+s0l/4VqeaQrj3KD73GeEt2svXlEqwzZjlxLVuSlimhY4p2E5eNGeYEXJ
+ moOUN6Hp1bCod0TUKzUPjVGdGx4AALWFS/OPTGRNN6URoL7b6RGdlYybxb2Z0Puel6b+vJbT
+ UQTWKq820xfIxAwBScRWdZ9HEIU=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 608a585a853c0a2c469bab8a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 29 Apr 2021 06:55:22
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0FEA9C433F1; Thu, 29 Apr 2021 06:55:22 +0000 (UTC)
+Received: from [192.168.0.103] (unknown [49.204.182.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD9C3C433F1;
+        Thu, 29 Apr 2021 06:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD9C3C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3] Add support for duty-cycle for RCG
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1619334502-9880-1-git-send-email-tdas@codeaurora.org>
+ <161956919717.177949.9925740807826300314@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <ed64fe46-361b-5bf9-88a6-d35cac2c98e7@codeaurora.org>
+Date:   Thu, 29 Apr 2021 12:25:16 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
+MIME-Version: 1.0
+In-Reply-To: <161956919717.177949.9925740807826300314@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Wed, 28 Apr 2021 16:57:20 -0700:
+Thank you for your review.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+On 4/28/2021 5:49 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2021-04-25 00:08:21)
+>> The root clock generators with MND divider has the capability to support
+>> change in duty-cycle by updating the 'D'. Add the clock ops which would
+>> check all the boundary conditions and enable setting the desired duty-cycle
+>> as per the consumer.
+>>
+>> [v3]
+>>    * Implement clockops for get_duty_cycle.
+>>    * Return -EINVAL for Non-MND or HID RCGs.
+> 
+> We don't need cover letters for single patches. Please add these details
+> after the dash before the diffstat on the single patch.
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/35655ceb31b56cd1cb52635a725dfcdb9662d7b7
+Sure Stephen, will take care from next time. Let me know in case I need 
+to re-submit the patch again.
 
-Thank you!
+>>
+>> Taniya Das (1):
+>>    clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
+>>
+>>   drivers/clk/qcom/clk-rcg2.c | 81 +++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 81 insertions(+)
+>>
+>> --
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
