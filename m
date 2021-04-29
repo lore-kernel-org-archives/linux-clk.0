@@ -2,99 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92C4C433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D1DC433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6346161400
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:18:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CF29613B1
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236924AbhD2UT1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Apr 2021 16:19:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236920AbhD2UT1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Apr 2021 16:19:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CFF7613AD;
-        Thu, 29 Apr 2021 20:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619727520;
-        bh=1Jlm5w7yjpdS8rVcgR+Mk9yJz6ypGJk1aLizdWq4K2o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=GNbr4NFJuOUv+LYf9LMx/Mk1LwzNEHsPUWRp29Dq5Dd6bhqwpbPSv8bcP25EpoHeS
-         MMQUmhPG3jXYKv5ZjhkRJ1YJ6ycfb5jXC4l2MP72Ab0EIWPz5VkimopL71N1AIzrwB
-         hHM6xUxWP2AzF15+WIjyd+tSUiz0DQ2Jb5Xg6xt5/mujADem+SBp4xCh7wXuJD1Esy
-         8rgFIFykULOx7BJMILv6Jip++oHklf0s6g++SvOeOML+mocGTexPxrAb5faCinFkQD
-         AJT2TORlqim5ZCeNTmGFVNC4BeII/1nZ8W7qKgPffRkwMMuZUce9pLg9u60DGzRET3
-         0+xTG6z+KzqhQ==
-Date:   Thu, 29 Apr 2021 15:18:38 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Greentime Hu <greentime.hu@sifive.com>, paul.walmsley@sifive.com,
-        hes@sifive.com, erik.danie@sifive.com, zong.li@sifive.com,
-        bhelgaas@google.com, robh+dt@kernel.org, aou@eecs.berkeley.edu,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        alex.dewar90@gmail.com, khilman@baylibre.com,
-        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
-        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] PCI: fu740: Add SiFive FU740 PCIe host controller
- driver
-Message-ID: <20210429201838.GA576947@bjorn-Precision-5520>
+        id S233753AbhD2Uux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Apr 2021 16:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229966AbhD2Uux (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Apr 2021 16:50:53 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B653C06138B;
+        Thu, 29 Apr 2021 13:50:06 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id h8so40068976edb.2;
+        Thu, 29 Apr 2021 13:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gYep7DOlIrBwf9rsY4DQWIcoFlibsgvSZY3B/DcJdfg=;
+        b=I25T9hixgQAsDaNe83dVEDp50wP1nN6G63BPhGqPcFsE2D5fUk/NTom7hVS70E4DRA
+         VhvrxRR9YtQ02ExDrIkFXqjDFp7mnrpJjQA5Ra+hqaL3IgOFJelW95+rYKQ8OsL9Ft44
+         flHVH0IVmclqSFS4asalpYPc6lQO4ZKkbEzXzh//j2DVZOjxObUaLKKltYPxXMydK9W2
+         1bVV6+GIol/5a1eM/UxaYzBucIDBoDQPP58MneazC6EflvUABOhm8q2qXH3XI17dt+vt
+         GhyWVd3H6XsBoQCZjSpfoMkwt6PfobGaiV/j5dc1Npb4cgLIE67REI/XQ4rJogA9YNFc
+         Nkag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gYep7DOlIrBwf9rsY4DQWIcoFlibsgvSZY3B/DcJdfg=;
+        b=sXPGUL6tEGudHvQWNIBxn1jIkmtBw3CnsqQPi15yOklg9xQ327AyLABF8GxZKL0xYi
+         /IttLG46pJVnQuRChzYcB207VPHhl8aMcb1+4PTvn5Wq8ULsyUIdzGgdd/CjSIQsp/8w
+         BzGKMsAwqtTGr6tYimvS+hSq8kaSBn3gqnZYLvbCBC+mImnr18QpLJab8P0hjSKM1y42
+         qJT5csnfHvMV/hpbdYudwwjruGtMaQaKwvGZJk3hgW+pAQSO4NcX28G8jt4245qLizoB
+         MlBBoPbvoZLYHQQj3u47SQcMO/o0/RvqUpJNyASL+sBQGzZn3/JSkEPUunesT3llZqnK
+         +39Q==
+X-Gm-Message-State: AOAM531bY0JKP9vzC3V7gnuazukAOXSvzUF7T4Cwpss8EvFFB3KYoDeR
+        wZrH9nvMiNltS//QqiVydU0eX3xVx6qG25FwaeQ=
+X-Google-Smtp-Source: ABdhPJz8oW/YGEAMbGIiBMqPkwePjgTRbJCwGYkAtXYds2j96mVj2F2/CsZH1CG9WOp4AOfV5vP0fYnhzUgu+uuDVEU=
+X-Received: by 2002:a05:6402:3109:: with SMTP id dc9mr1833460edb.13.1619729404817;
+ Thu, 29 Apr 2021 13:50:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210429164010.GA31397@lpieralisi>
+References: <20210429090516.61085-1-jbrunet@baylibre.com>
+In-Reply-To: <20210429090516.61085-1-jbrunet@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 29 Apr 2021 22:49:54 +0200
+Message-ID: <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: axg-audio: do not print error on defer
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 05:40:11PM +0100, Lorenzo Pieralisi wrote:
-> On Thu, Apr 29, 2021 at 10:15:22AM -0500, Bjorn Helgaas wrote:
-> > On Thu, Apr 29, 2021 at 03:59:54PM +0100, Lorenzo Pieralisi wrote:
-> > > On Wed, Apr 28, 2021 at 02:47:13PM -0500, Bjorn Helgaas wrote:
-> > > > On Tue, Apr 06, 2021 at 05:26:33PM +0800, Greentime Hu wrote:
-> > > > > From: Paul Walmsley <paul.walmsley@sifive.com>
-> > > > > 
-> > > > > Add driver for the SiFive FU740 PCIe host controller.
-> > > > > This controller is based on the DesignWare PCIe core.
-> > > > > 
-> > > > > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> > > > > Co-developed-by: Henry Styles <hes@sifive.com>
-> > > > > Signed-off-by: Henry Styles <hes@sifive.com>
-> > > > > Co-developed-by: Erik Danie <erik.danie@sifive.com>
-> > > > > Signed-off-by: Erik Danie <erik.danie@sifive.com>
-> > > > > Co-developed-by: Greentime Hu <greentime.hu@sifive.com>
-> > > > > Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> > > > 
-> > > > Tripped over these errors while build testing with the .config below.
-> > > 
-> > > Sorry about that - the kbot did not managed to test it. Is it a
-> > > randconfig ? I think we should ask the kbuild bot guys to add it,
-> > > I think it can be done on a per-repo basis.
-> > 
-> > I don't know enough about the bot.  The lkp@intel.com reports I get
-> > include allyesconfig for x86_64; not sure why that wouldn't catch
-> > this.
-> > > Waiting for a fix asap - I can move/rebase some commits if the fix
-> > > takes time.
-> > 
-> > If it's feasible you could just move the FU740 stuff to a different
-> > branch so we can be sure to include the other dwc stuff.  Same for
-> > brcmstb.
-> > 
-> > Oh, and Colin just posted a NULL pointer check that could be squashed
-> > into the new mediatek-gen3 driver.
-> 
-> All done. Updated pci/dwc, pci/brcmstb and pci/mediatek, parked the
-> changes requiring a fix-up in separate branches, will push them out
-> when fixed.
+Hi Jerome,
 
-Thanks, I updated my "next" branch with these.
+On Thu, Apr 29, 2021 at 11:06 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+[...]
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 7c8d02164443..5e501eff0840 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -1811,7 +1811,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+>
+>         ret = device_reset(dev);
+>         if (ret) {
+> -               dev_err(dev, "failed to reset device\n");
+> +               if (ret != -EPROBE_DEFER)
+> +                       dev_err(dev, "failed to reset device\n");
+many drivers are switching to dev_err_probe nowadays
+According to it's documentation:
+  In case of -EPROBE_DEFER it sets also defer probe reason, which can be
+  checked later by reading devices_deferred debugfs attribute.
 
-Bjorn
+so I think it makes sense to use dev_err_probe here as well
+
+
+Best regards,
+Martin
