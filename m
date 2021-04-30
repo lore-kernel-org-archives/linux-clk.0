@@ -2,94 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D1DC433B4
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D704C433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 01:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF29613B1
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Apr 2021 20:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 546FB613D8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 01:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233753AbhD2Uux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Apr 2021 16:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbhD2Uux (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Apr 2021 16:50:53 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B653C06138B;
-        Thu, 29 Apr 2021 13:50:06 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id h8so40068976edb.2;
-        Thu, 29 Apr 2021 13:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gYep7DOlIrBwf9rsY4DQWIcoFlibsgvSZY3B/DcJdfg=;
-        b=I25T9hixgQAsDaNe83dVEDp50wP1nN6G63BPhGqPcFsE2D5fUk/NTom7hVS70E4DRA
-         VhvrxRR9YtQ02ExDrIkFXqjDFp7mnrpJjQA5Ra+hqaL3IgOFJelW95+rYKQ8OsL9Ft44
-         flHVH0IVmclqSFS4asalpYPc6lQO4ZKkbEzXzh//j2DVZOjxObUaLKKltYPxXMydK9W2
-         1bVV6+GIol/5a1eM/UxaYzBucIDBoDQPP58MneazC6EflvUABOhm8q2qXH3XI17dt+vt
-         GhyWVd3H6XsBoQCZjSpfoMkwt6PfobGaiV/j5dc1Npb4cgLIE67REI/XQ4rJogA9YNFc
-         Nkag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gYep7DOlIrBwf9rsY4DQWIcoFlibsgvSZY3B/DcJdfg=;
-        b=sXPGUL6tEGudHvQWNIBxn1jIkmtBw3CnsqQPi15yOklg9xQ327AyLABF8GxZKL0xYi
-         /IttLG46pJVnQuRChzYcB207VPHhl8aMcb1+4PTvn5Wq8ULsyUIdzGgdd/CjSIQsp/8w
-         BzGKMsAwqtTGr6tYimvS+hSq8kaSBn3gqnZYLvbCBC+mImnr18QpLJab8P0hjSKM1y42
-         qJT5csnfHvMV/hpbdYudwwjruGtMaQaKwvGZJk3hgW+pAQSO4NcX28G8jt4245qLizoB
-         MlBBoPbvoZLYHQQj3u47SQcMO/o0/RvqUpJNyASL+sBQGzZn3/JSkEPUunesT3llZqnK
-         +39Q==
-X-Gm-Message-State: AOAM531bY0JKP9vzC3V7gnuazukAOXSvzUF7T4Cwpss8EvFFB3KYoDeR
-        wZrH9nvMiNltS//QqiVydU0eX3xVx6qG25FwaeQ=
-X-Google-Smtp-Source: ABdhPJz8oW/YGEAMbGIiBMqPkwePjgTRbJCwGYkAtXYds2j96mVj2F2/CsZH1CG9WOp4AOfV5vP0fYnhzUgu+uuDVEU=
-X-Received: by 2002:a05:6402:3109:: with SMTP id dc9mr1833460edb.13.1619729404817;
- Thu, 29 Apr 2021 13:50:04 -0700 (PDT)
+        id S229591AbhD3Bts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Apr 2021 21:49:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229577AbhD3Bts (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Apr 2021 21:49:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BD541613D8;
+        Fri, 30 Apr 2021 01:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619747340;
+        bh=iDnUCQQDJ3MIsmkOk4baseFwZTJouygmu6Enm0MvHgM=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=CoDv3rKfFJs8rJl4KW3Bjna/alIvJKUwxH/F2vxYAuklpKrNWERFe/Qx2DHp+a0QN
+         BLOlM3A9Nx1gMh/TxdKWnbGqR54PvZMxR1NVWJ2LFIUgCcOfuIMQpSw+DmbvYxO8mU
+         JBc0b31aeP8UBhce4duktmicc4kQWoSvaeyUXhHdqM0ZtTVI0Kw8kydExYzIcM8kX2
+         hfwxJi5X11z1PsDUVJ8pUVA+qBx4WVkHYrHaPCZjxuRakJngqe76gDSxa1Al/pcYOf
+         wviVsjaBA6m5tMa+XrHB25gCAgrrhdiYUtfYaPu3owFJ1WOavnmvGyFcQTPs/D/peN
+         5zF1UEHvFQwbA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210429090516.61085-1-jbrunet@baylibre.com>
-In-Reply-To: <20210429090516.61085-1-jbrunet@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 29 Apr 2021 22:49:54 +0200
-Message-ID: <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: axg-audio: do not print error on defer
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b8088e6d-cea3-6dfd-dffb-c1645cbc95cd@ivitera.com>
+References: <fceb112b-2241-5f67-2b29-3dda161f7c48@ivitera.com> <e07b3b45-2500-4a0e-4874-3bc1ebe75918@ivitera.com> <161956915591.177949.3064618109796640887@swboyd.mtv.corp.google.com> <b8088e6d-cea3-6dfd-dffb-c1645cbc95cd@ivitera.com>
+Subject: Re: Recommended method for changing clk params dynamically from user space?
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Pavel Hofman <pavel.hofman@ivitera.com>, linux-clk@vger.kernel.org
+Date:   Thu, 29 Apr 2021 18:48:59 -0700
+Message-ID: <161974733948.177949.2462163593797505108@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+Quoting Pavel Hofman (2021-04-28 00:08:55)
+> Dne 28. 04. 21 v 2:19 Stephen Boyd napsal(a):
+> > Quoting Pavel Hofman (2021-04-24 01:00:47)
+> >> Dne 23. 04. 21 v 9:38 Pavel Hofman napsal(a):
+> >>> Hi, I would like to add some missing features to clk-si5341.c that I
+> >>> need for my project. From user-space I need to tune delays at each
+> >>> output (the driver does not control corresponding registers yet) and
+> >>> fine-tune frequency while the clock is running (likely the nom/denom
+> >>> values).
+> >>>
+> >>> IIUC all driver parameters are currently configured via DT. Please wh=
+at
+> >>> is the recommended method/best practice for changing clk params
+> >>> dynamically from user space? SysFS, configFS? I would like to have the
+> >>> patches accepted upstream eventually.
+> >>>
+> >>
+> >> From what I have read sysfs seems the most suitable option. But I am
+> >> surprised I could not find any driver-specific sysfs code in the clk
+> >> drivers. Theoretically I could fine-tune the device via I2C directly
+> >> from userspace but that feels wrong. Plus others could potentially
+> >> benefit from the features added to the clk driver. Please any suggesti=
+ons?
+> >>
+> >=20
+> > So far there isn't a userspace clk interface. Clk control is fairly low
+> > level so I think nobody has implemented it so far. This topic comes up
+> > every year or two, so you can probably search the mailing list archives
+> > if you're interested in previous discussions.
+> >=20
+> > Can you avoid implementing a userspace API? Are you implementing
+> > userspace drivers?
+> >=20
+>=20
+> Hi Stephen, thanks a lot for your info. I searched a bit and found
+> https://www.spinics.net/lists/linux-clk/msg06704.html .
+>=20
+> I do not want to implement any userspace clock API, but user-space
+> control of extended features of a specific chip, currently missing in
+> the particular driver. Clock generators Si5340/1 (and many more, but
+> they are not my focus) can adjust output skew/delay on each output.
 
-On Thu, Apr 29, 2021 at 11:06 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-[...]
-> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index 7c8d02164443..5e501eff0840 100644
-> --- a/drivers/clk/meson/axg-audio.c
-> +++ b/drivers/clk/meson/axg-audio.c
-> @@ -1811,7 +1811,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
->
->         ret = device_reset(dev);
->         if (ret) {
-> -               dev_err(dev, "failed to reset device\n");
-> +               if (ret != -EPROBE_DEFER)
-> +                       dev_err(dev, "failed to reset device\n");
-many drivers are switching to dev_err_probe nowadays
-According to it's documentation:
-  In case of -EPROBE_DEFER it sets also defer probe reason, which can be
-  checked later by reading devices_deferred debugfs attribute.
+Is the output skew/delay to control clk phase?
 
-so I think it makes sense to use dev_err_probe here as well
+> Also
+> they allow fine-tuning the frequencies while running, by tiny
+> incremental steps. These features need to be controlled dynamically from
+> user space, by the application using them.
 
+Can you share more details on the application?
 
-Best regards,
-Martin
+> None of the features iteract
+> with the in-kernel clock API. The fine-tuning control would not change
+> the set_rate/get_rate values, but adjust the real frequency, similarly
+> to alsa control 'PCM Rate Shift 100000' in snd-aloop loopback. So my
+> question is whether sysfs is the currently preferred interface for
+> specific-module control like this, or what other method should be used.
+>=20
+
+Given that you're comparing to alsa control, is this for some audio
+processing feature? Perhaps it needs to be controlled via alsa then and
+eventually call into the clk driver to fine tune the clk that the
+sound driver consumes.
