@@ -2,138 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E645DC433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 08:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E19C433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 16:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B28DA6144F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 08:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF00613BD
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 16:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229529AbhD3Itc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Apr 2021 04:49:32 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46035 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229507AbhD3Itc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Apr 2021 04:49:32 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 474F258097D;
-        Fri, 30 Apr 2021 04:48:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 30 Apr 2021 04:48:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=oUiXz1OlQ54S4d1LeQRnI53gSCx
-        TXESTKHtOkdxho+A=; b=hoCQdFtxDSK6UbfCGFYvv4TufwxJgDZL4/9hZpTmt3G
-        IDyRQW6DeUtd3QE8zRgKO1tTCnqZ1qI2WUsnXYFQUJGf2IYSAvPiMBY18vAS/I/9
-        xz4NsAEZqwL+JWXVYYq6sinO5hc5NbLREH3sW5oJDQW9EeNk6odbXD4nqOUvG4Ls
-        xjw9yFS12w+/F60Ysq95IatfYDFZAvz5UmDqMtU+AW2D+NNHUUfZPRnlPV+bbX5c
-        MdoHHNq0dWanAT4CNqQwjH0ssse5Mq2o2qL6HQywLqEA2tQeuFGHYXpO8+g8rkB6
-        ESylDPQz7LHNdntBdNqYw5iU/N0Du5/Y0b3huDggSfw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=oUiXz1
-        OlQ54S4d1LeQRnI53gSCxTXESTKHtOkdxho+A=; b=KsarDeBnF2RCHx6yUzdD+Z
-        Kt4Th+wOYTKmjc6DGrVr1aMJFrYKSfS7IBBh6BWQPIEOqn8x279iLr2hja+A+FuG
-        P5JkTxAdjfJHv4k5TCmlNWdB+59cPrwQSgnDxDsG8LCwsA2qTwUk13HWIpphZeYZ
-        aRJUIbC7V0mWVziFOnofqdQ6sTZyTqAHYY2gV7R0cCqP1AzT9c8w54zT5PSAxsec
-        DjVGdAA6gLEGXH8VACvJeyJhKbba61RK0juLx+S8QrhS4cBUXCacWcUu4CTwu5W0
-        DTbZ2APp50nnR7Dys9jxS2jO0kDaq+Wp9qvVzignIl2Y0j0Hlmm8G6imSlOih1qA
-        ==
-X-ME-Sender: <xms:asSLYGFkuaoda_aUdWnWjDa4fXG4YFA1lHvHY4X-T5yO_gnGge7nPg>
-    <xme:asSLYHX_gDBnCAg15Saed0wEQ4NRiKlqEJUYAX3QRJyylkT_pMyEtn2uuR8rJN4az
-    IknHLMavSNtKptfG9I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvddviedgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepveevfeffudeviedtgeethffhteeuffetfeffvdehvedvheetteehvdelfffg
-    jedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrieekrd
-    ejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
-    rgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:asSLYAI7rHlydogoT6wgI4x4S5i6HNCIkZh3EKqIyOMtsmhj0jwKuA>
-    <xmx:asSLYAFYFPIl788caQs-jmqj9ybujWnoKXDydLJbgdl-w14nIRyy8A>
-    <xmx:asSLYMUi6pSeFPncrAJAUWYFrC9n4lGs6fMo4DurcrwHI7YjSHvJzQ>
-    <xmx:bMSLYNVcx537Xg1x5xiBD_bP8UltEDfoKFcpB1iuFu9Ww8_eeDip8w>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Fri, 30 Apr 2021 04:48:42 -0400 (EDT)
-Date:   Fri, 30 Apr 2021 10:48:39 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S230507AbhD3Q5o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Apr 2021 12:57:44 -0400
+Received: from ms11p00im-qufo17291901.me.com ([17.58.38.48]:47117 "EHLO
+        ms11p00im-qufo17291901.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230514AbhD3Q5n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Apr 2021 12:57:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1619801323; bh=gKPg4laKAZy+RHF+D3ii19N0LJXtiXVtOwEzgUk8ws8=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=0fMvPTXZl/U10xLNN7Azbfa6h2gCnmFs8IsrXw2Kzg3a8g8MkG7EfFbtpbvfASNGp
+         Q3D2O3XLBT3f42D6QQI8/JinbPlES5tAtXr2OL+hT5fh+fMPcg4oO2kfqOwMbpHUjI
+         gtnfS00rfXjqUWOLl8/I1BdFuwnloSemHH8qIoAH4vFWUzlJAjRNTA8wkdNSrageYh
+         DvOIRJyaYfgdiuZtp6G4I+NlHvw0h4tZ31ZhOtUY2L/YwrJKTGvP/F3GDJFlC5OGKJ
+         F/x5z0ezR4GRhovArt2CqpmtlTm5iVy8k2sCcD5P1OurUlUT5p92UBZHRAoUAjfW38
+         l4ysE6hag5A8A==
+Received: from gnbcxl0029.gnb.st.com (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by ms11p00im-qufo17291901.me.com (Postfix) with ESMTPSA id 3E7B3CA0477;
+        Fri, 30 Apr 2021 16:48:40 +0000 (UTC)
+Date:   Fri, 30 Apr 2021 18:48:31 +0200
+From:   Alain Volmat <avolmat@me.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Eric Anholt <eric@anholt.net>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: Implement a clock request API
-Message-ID: <20210430084839.dwjey7qobtc7vi5q@gilmour>
-References: <20210413101320.321584-1-maxime@cerno.tech>
+        Rob Herring <robh+dt@kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/7] clk: st: embed clock outputs within drivers
+Message-ID: <20210430164830.GA6248@gnbcxl0029.gnb.st.com>
+Mail-Followup-To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210331201632.24530-1-avolmat@me.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lsyads3gv67wbw5p"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210413101320.321584-1-maxime@cerno.tech>
+In-Reply-To: <20210331201632.24530-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
+ =?UTF-8?Q?2903e8d5c8f:6.0.391,18.0.761,17.0.607.475.0000000_definitions?=
+ =?UTF-8?Q?=3D2021-04-30=5F08:2021-04-30=5F02,2021-04-30=5F08,2020-04-07?=
+ =?UTF-8?Q?=5F01_signatures=3D0?=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=862 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2104300110
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---lsyads3gv67wbw5p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Gentle reminder about this serie concerning STi platform clock drivers.
+Could you have a look at them ?
 
-Hi Mike, Stephen,
+Thanks.
+Alain
 
-On Tue, Apr 13, 2021 at 12:13:18PM +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> This is a follow-up of the discussion here:
-> https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmour/
->=20
-> This implements a mechanism to raise and lower clock rates based on consu=
-mer
-> workloads, with an example of such an implementation for the RaspberryPi4=
- HDMI
-> controller.
->=20
-> There's a couple of things worth discussing:
->=20
->   - The name is in conflict with clk_request_rate, and even though it fee=
-ls
->     like the right name to me, we should probably avoid any confusion
->=20
->   - The code so far implements a policy of always going for the lowest ra=
-te
->     possible. While we don't have an use-case for something else, this sh=
-ould
->     maybe be made more flexible?
-
-Ping?
-
-Maxime
-
---lsyads3gv67wbw5p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYIvEWgAKCRDj7w1vZxhR
-xagEAP9KnN1cSuEGzs5QoVF1FGdo8VaW24bbM0i/ttjNxkFH+AD/TWU3q0YuBFlL
-6g93rwgyrmu9GDsqBS06BEr+FVlJgQk=
-=oTRU
------END PGP SIGNATURE-----
-
---lsyads3gv67wbw5p--
+On Wed, Mar 31, 2021 at 10:16:25PM +0200, Alain Volmat wrote:
+> Most of ST clock drivers used by STi platform are updated in
+> order to introduce clock outputs informations within each drivers
+> and thus allow to avoid having to rely on clock-output-names properties
+> within DT clock nodes.
+> For that purpose, drivers are updated to allow handling both modes
+> (with or without clock-output-names).
+> Once all DT will have been updated, the legacy mode could be removed
+> from the drivers.
+> This will also allow, once all STi DT will be corrected, to remove the
+> of_clk_detect_critical API from clk core code since STi clock drivers
+> are the only drivers using this API.
+> 
+> Alain Volmat (7):
+>   clk: st: clkgen-pll: remove unused variable of struct clkgen_pll
+>   clk: st: flexgen: embed soc clock outputs within compatible data
+>   dt-bindings: clock: st: flexgen: add new introduced compatible
+>   clk: st: clkgen-pll: embed soc clock outputs within compatible data
+>   dt-bindings: clock: st: clkgen-pll: add new introduced compatible
+>   clk: st: clkgen-fsyn: embed soc clock outputs within compatible data
+>   dt-bindings: clock: st: clkgen-fsyn: add new introduced compatible
+> 
+>  .../bindings/clock/st/st,clkgen-pll.txt       |   3 +
+>  .../bindings/clock/st/st,flexgen.txt          |  10 +
+>  .../bindings/clock/st/st,quadfs.txt           |   3 +
+>  drivers/clk/st/clk-flexgen.c                  | 367 +++++++++++++++++-
+>  drivers/clk/st/clkgen-fsyn.c                  | 113 +++++-
+>  drivers/clk/st/clkgen-pll.c                   | 121 +++++-
+>  6 files changed, 576 insertions(+), 41 deletions(-)
+> 
+> ---
+> v4: - add an additional CLK_IS_CRITICAL within flexgen driver
+> v3: - removal some useless CLK_IS_CRITICAL and add some comments
+>     - only keep clk drivers/binding patches within the serie
+> 
+> -- 
+> 2.17.1
+> 
