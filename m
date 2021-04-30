@@ -3,79 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF85BC433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF8EC433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA8A613D8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1CBC61418
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbhD3CDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Apr 2021 22:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41992 "EHLO mail.kernel.org"
+        id S229609AbhD3CSF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Apr 2021 22:18:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229577AbhD3CDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Apr 2021 22:03:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4743E613B4;
-        Fri, 30 Apr 2021 02:02:27 +0000 (UTC)
+        id S229577AbhD3CSD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Apr 2021 22:18:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F239613EE;
+        Fri, 30 Apr 2021 02:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619748147;
-        bh=FHzujwGmdMUBeThmjTcOfbavQK2/+QHmQ2rFXtDGaNo=;
+        s=k20201202; t=1619749035;
+        bh=Hv1C2LyXJqO2i3JKRnZtQbt4ua6L32rnPt3ObKyL2NI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=dYboXGZsaAygY3Sd9pzVuSPtxPquPZe38FhvP9d5GrYeebWEOvOjvIsXlMptguvLL
-         nB0OwFo+ngDKl3uSc/WpwBpWaD0v8+0KFLgh0IUHxKbm0We/2NGoi3qXgIBCcyHhbi
-         pMCowSpPZVGrD8e3BcpUX4MS0dwdlTgs1PJFhHpPRqkS5bPt1A/XV3ticIAA5iPXIH
-         YXHvTVsLOVT6DN4sZZSMQ8r5FuXEuo/Qwbm+z8M6RZ7SAPmulZfncnXjL0Fnu0+ELw
-         neUh0fWgCKuyMZ2ATB0FS6bdkZvwSGpuXo60I+7wdMqOeSwbxHJrzslzfPQJKuKGP1
-         V1UbIUimAhAzw==
+        b=M6wiVI4fIVtHzldUu5wZztmxWCZp/lKGbCnzCkiorRaFxMy9wHWvnfcvh94LQBi5H
+         nZI/789x4cNgbLqMo8Yp8QxSnE8+h/fZ6Gm2cM0pZ81pShzZ0H26VPHJGENYglAjdA
+         exSaEp/8+m8mgKr+kla8Qd9+Ha6TylTvNXhbiAElKBso+qbND2N0hL/bH2VyIUL41m
+         ZF1qzzkM8QQaJbPNICeTiB1wQ2ezV/XCHgsXOUQOccmAnxhhNppNiqHUYxjFPtv+MZ
+         Tkyit8DYSzQc+/TcCA7SVUcUMLTSaqrOox5m3rFyw/xBemDFGnLB2gxnnr6XVcqAoF
+         ZIRxFXwmjZL4w==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
-References: <20210429090516.61085-1-jbrunet@baylibre.com> <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: axg-audio: do not print error on defer
+In-Reply-To: <87v98dqzfe.fsf@kokedama.swc.toshiba.co.jp>
+References: <20210421134844.3297838-1-arnd@kernel.org> <871rb2swd9.fsf@kokedama.swc.toshiba.co.jp> <01e78b64-8ad1-dfc8-9fc0-6afff4841492@xilinx.com> <87v98dqzfe.fsf@kokedama.swc.toshiba.co.jp>
+Subject: Re: [PATCH] clk: zynqmp: fix compile testing without ZYNQMP_FIRMWARE
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 29 Apr 2021 19:02:26 -0700
-Message-ID: <161974814600.177949.13534344520666393105@swboyd.mtv.corp.google.com>
+To:     Michal Simek <michal.simek@xilinx.com>,
+        Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+Date:   Thu, 29 Apr 2021 19:17:14 -0700
+Message-ID: <161974903429.177949.6659170601321970979@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2021-04-29 13:49:54)
-> Hi Jerome,
->=20
-> On Thu, Apr 29, 2021 at 11:06 AM Jerome Brunet <jbrunet@baylibre.com> wro=
-te:
-> [...]
-> > diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audi=
-o.c
-> > index 7c8d02164443..5e501eff0840 100644
-> > --- a/drivers/clk/meson/axg-audio.c
-> > +++ b/drivers/clk/meson/axg-audio.c
-> > @@ -1811,7 +1811,8 @@ static int axg_audio_clkc_probe(struct platform_d=
-evice *pdev)
+Quoting Punit Agrawal (2021-04-22 23:37:25)
+> Michal Simek <michal.simek@xilinx.com> writes:
 > >
-> >         ret =3D device_reset(dev);
-> >         if (ret) {
-> > -               dev_err(dev, "failed to reset device\n");
-> > +               if (ret !=3D -EPROBE_DEFER)
-> > +                       dev_err(dev, "failed to reset device\n");
-> many drivers are switching to dev_err_probe nowadays
-> According to it's documentation:
->   In case of -EPROBE_DEFER it sets also defer probe reason, which can be
->   checked later by reading devices_deferred debugfs attribute.
+> >
+> >>> =20
+> >>>     rate =3D  parent_rate * fbdiv;
+> >>>     if (zynqmp_pll_get_mode(hw) =3D=3D PLL_MODE_FRAC) {
+> >>=20
+> >> The changes make sense in that the functions error out sensibly when t=
+he
+> >> zynqmp firmware driver is not enabled.
+> >>=20
+> >> Acked-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+> >
+> > I think code should be checked that these error values are handled how
+> > they should be handled.
 >=20
-> so I think it makes sense to use dev_err_probe here as well
->=20
->=20
+> I only looked at it from the point of view of getting rid of the
+> warnings - based on the commit log, Arnd's patch is only taking care of
+> the compiler warnings when the driver is built with
+> CONFIG_COMPILE_TEST=3Dy and likely CONFIG_ZYNQMP_FIRMWARE=3Dn.
 
-Yes please use dev_err_probe()
+The subject line basically says this.
+
+>=20
+> In practice, the code should not be hit at runtime due to the dependency
+> on the firmware driver. Even then, a better fix would indeed be taking
+> the returned values at call sites into account.
+
+Still needs to be fixed. If a better patch is sent I would apply it, but
+if that isn't going to happen I'll apply this one.
