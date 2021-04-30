@@ -2,109 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D704C433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 01:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF85BC433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 546FB613D8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 01:49:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA8A613D8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Apr 2021 02:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbhD3Bts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Apr 2021 21:49:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41038 "EHLO mail.kernel.org"
+        id S229582AbhD3CDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Apr 2021 22:03:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229577AbhD3Bts (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Apr 2021 21:49:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BD541613D8;
-        Fri, 30 Apr 2021 01:49:00 +0000 (UTC)
+        id S229577AbhD3CDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Apr 2021 22:03:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4743E613B4;
+        Fri, 30 Apr 2021 02:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619747340;
-        bh=iDnUCQQDJ3MIsmkOk4baseFwZTJouygmu6Enm0MvHgM=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=CoDv3rKfFJs8rJl4KW3Bjna/alIvJKUwxH/F2vxYAuklpKrNWERFe/Qx2DHp+a0QN
-         BLOlM3A9Nx1gMh/TxdKWnbGqR54PvZMxR1NVWJ2LFIUgCcOfuIMQpSw+DmbvYxO8mU
-         JBc0b31aeP8UBhce4duktmicc4kQWoSvaeyUXhHdqM0ZtTVI0Kw8kydExYzIcM8kX2
-         hfwxJi5X11z1PsDUVJ8pUVA+qBx4WVkHYrHaPCZjxuRakJngqe76gDSxa1Al/pcYOf
-         wviVsjaBA6m5tMa+XrHB25gCAgrrhdiYUtfYaPu3owFJ1WOavnmvGyFcQTPs/D/peN
-         5zF1UEHvFQwbA==
+        s=k20201202; t=1619748147;
+        bh=FHzujwGmdMUBeThmjTcOfbavQK2/+QHmQ2rFXtDGaNo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=dYboXGZsaAygY3Sd9pzVuSPtxPquPZe38FhvP9d5GrYeebWEOvOjvIsXlMptguvLL
+         nB0OwFo+ngDKl3uSc/WpwBpWaD0v8+0KFLgh0IUHxKbm0We/2NGoi3qXgIBCcyHhbi
+         pMCowSpPZVGrD8e3BcpUX4MS0dwdlTgs1PJFhHpPRqkS5bPt1A/XV3ticIAA5iPXIH
+         YXHvTVsLOVT6DN4sZZSMQ8r5FuXEuo/Qwbm+z8M6RZ7SAPmulZfncnXjL0Fnu0+ELw
+         neUh0fWgCKuyMZ2ATB0FS6bdkZvwSGpuXo60I+7wdMqOeSwbxHJrzslzfPQJKuKGP1
+         V1UbIUimAhAzw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b8088e6d-cea3-6dfd-dffb-c1645cbc95cd@ivitera.com>
-References: <fceb112b-2241-5f67-2b29-3dda161f7c48@ivitera.com> <e07b3b45-2500-4a0e-4874-3bc1ebe75918@ivitera.com> <161956915591.177949.3064618109796640887@swboyd.mtv.corp.google.com> <b8088e6d-cea3-6dfd-dffb-c1645cbc95cd@ivitera.com>
-Subject: Re: Recommended method for changing clk params dynamically from user space?
+In-Reply-To: <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
+References: <20210429090516.61085-1-jbrunet@baylibre.com> <CAFBinCCcKHqd7Mh3bV9NyyWzi=96pCWxzSZBOjg5Puy9wOuihQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: axg-audio: do not print error on defer
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Pavel Hofman <pavel.hofman@ivitera.com>, linux-clk@vger.kernel.org
-Date:   Thu, 29 Apr 2021 18:48:59 -0700
-Message-ID: <161974733948.177949.2462163593797505108@swboyd.mtv.corp.google.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 29 Apr 2021 19:02:26 -0700
+Message-ID: <161974814600.177949.13534344520666393105@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Pavel Hofman (2021-04-28 00:08:55)
-> Dne 28. 04. 21 v 2:19 Stephen Boyd napsal(a):
-> > Quoting Pavel Hofman (2021-04-24 01:00:47)
-> >> Dne 23. 04. 21 v 9:38 Pavel Hofman napsal(a):
-> >>> Hi, I would like to add some missing features to clk-si5341.c that I
-> >>> need for my project. From user-space I need to tune delays at each
-> >>> output (the driver does not control corresponding registers yet) and
-> >>> fine-tune frequency while the clock is running (likely the nom/denom
-> >>> values).
-> >>>
-> >>> IIUC all driver parameters are currently configured via DT. Please wh=
-at
-> >>> is the recommended method/best practice for changing clk params
-> >>> dynamically from user space? SysFS, configFS? I would like to have the
-> >>> patches accepted upstream eventually.
-> >>>
-> >>
-> >> From what I have read sysfs seems the most suitable option. But I am
-> >> surprised I could not find any driver-specific sysfs code in the clk
-> >> drivers. Theoretically I could fine-tune the device via I2C directly
-> >> from userspace but that feels wrong. Plus others could potentially
-> >> benefit from the features added to the clk driver. Please any suggesti=
-ons?
-> >>
-> >=20
-> > So far there isn't a userspace clk interface. Clk control is fairly low
-> > level so I think nobody has implemented it so far. This topic comes up
-> > every year or two, so you can probably search the mailing list archives
-> > if you're interested in previous discussions.
-> >=20
-> > Can you avoid implementing a userspace API? Are you implementing
-> > userspace drivers?
-> >=20
+Quoting Martin Blumenstingl (2021-04-29 13:49:54)
+> Hi Jerome,
 >=20
-> Hi Stephen, thanks a lot for your info. I searched a bit and found
-> https://www.spinics.net/lists/linux-clk/msg06704.html .
+> On Thu, Apr 29, 2021 at 11:06 AM Jerome Brunet <jbrunet@baylibre.com> wro=
+te:
+> [...]
+> > diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audi=
+o.c
+> > index 7c8d02164443..5e501eff0840 100644
+> > --- a/drivers/clk/meson/axg-audio.c
+> > +++ b/drivers/clk/meson/axg-audio.c
+> > @@ -1811,7 +1811,8 @@ static int axg_audio_clkc_probe(struct platform_d=
+evice *pdev)
+> >
+> >         ret =3D device_reset(dev);
+> >         if (ret) {
+> > -               dev_err(dev, "failed to reset device\n");
+> > +               if (ret !=3D -EPROBE_DEFER)
+> > +                       dev_err(dev, "failed to reset device\n");
+> many drivers are switching to dev_err_probe nowadays
+> According to it's documentation:
+>   In case of -EPROBE_DEFER it sets also defer probe reason, which can be
+>   checked later by reading devices_deferred debugfs attribute.
 >=20
-> I do not want to implement any userspace clock API, but user-space
-> control of extended features of a specific chip, currently missing in
-> the particular driver. Clock generators Si5340/1 (and many more, but
-> they are not my focus) can adjust output skew/delay on each output.
-
-Is the output skew/delay to control clk phase?
-
-> Also
-> they allow fine-tuning the frequencies while running, by tiny
-> incremental steps. These features need to be controlled dynamically from
-> user space, by the application using them.
-
-Can you share more details on the application?
-
-> None of the features iteract
-> with the in-kernel clock API. The fine-tuning control would not change
-> the set_rate/get_rate values, but adjust the real frequency, similarly
-> to alsa control 'PCM Rate Shift 100000' in snd-aloop loopback. So my
-> question is whether sysfs is the currently preferred interface for
-> specific-module control like this, or what other method should be used.
+> so I think it makes sense to use dev_err_probe here as well
+>=20
 >=20
 
-Given that you're comparing to alsa control, is this for some audio
-processing feature? Perhaps it needs to be controlled via alsa then and
-eventually call into the clk driver to fine tune the clk that the
-sound driver consumes.
+Yes please use dev_err_probe()
