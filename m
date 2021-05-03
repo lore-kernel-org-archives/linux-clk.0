@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E777C43460
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C24C433ED
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55B25610A5
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C11CD61059
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234476AbhECQyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 12:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        id S234614AbhECQ6q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 12:58:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233657AbhECQwB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 May 2021 12:52:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F387161363;
-        Mon,  3 May 2021 16:41:38 +0000 (UTC)
+        id S234838AbhECQzD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 May 2021 12:55:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 43B1661428;
+        Mon,  3 May 2021 16:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620060100;
+        s=k20201202; t=1620060153;
         bh=ORvfsTPWidhMijguO6X2vUt3yYaF9/7ZZj8+OK9Lx3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JqdNJZNF1bRLri9RAGyBG/Z4ZeX1MiAcXPA62mpONvk7Bnv8zrj9jfP085hwT/f3+
-         I5mw+5J1MmLH9xeGCQAYupt1yrODelLN9z7L70fO5v/BVM6iq0xVdGUqs3yJGcB0TO
-         Wn9Il6vLSIyrciy2bkfFLWMoGfm+aggj/Y/P36UIevWEnRAE/JayTOY5Mz7bMZ/KXc
-         2SxAh3ch2ze/ShmvNMQ5XPtlP3vT0SQfYkAD1gnkzatXt3EnrbLMZuxkAcY6MIsLLx
-         Xl4galK1nZfKclTsfD+XErGOkoAwLK0ZNfbdtoWNMZ/xg000/o8TswM/5lFGPiGSj8
-         sa635md08u2Tg==
+        b=FFKGRWrpdCO7FcfVPp1eIp8EQI8SdHbtsNx+oOVpFPBAn1dMQdZ1fEKU14uqJqnnA
+         JtuwvLqrHiOlaxEsmPX2tOQqVYi7pabTqrNhxCCV8EYNRcJg68mOOw9PCA4A1QCENc
+         r/pCkoEnuO6IHI6Bfkpy6TGTzKCyU3NmVEfuWDLHJ90qJlyfCexqtVei35nobuq2PS
+         73aN675tTqb/lzssQd6N0CxZ32lAweBaSusitg+SCLHMQ9omg21Q87sVJs0qLjeuXU
+         8d1kgeQQN7k7K5QunYHJROJiQ8GleIdLoomk5s5cHfz5+owAz9YrI1x1Kemk7d73oG
+         QjvMI6+nyKt3g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Colin Ian King <colin.king@canonical.com>,
@@ -38,12 +38,12 @@ Cc:     Colin Ian King <colin.king@canonical.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 20/35] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
-Date:   Mon,  3 May 2021 12:40:54 -0400
-Message-Id: <20210503164109.2853838-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 19/31] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+Date:   Mon,  3 May 2021 12:41:52 -0400
+Message-Id: <20210503164204.2854178-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210503164109.2853838-1-sashal@kernel.org>
-References: <20210503164109.2853838-1-sashal@kernel.org>
+In-Reply-To: <20210503164204.2854178-1-sashal@kernel.org>
+References: <20210503164204.2854178-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
