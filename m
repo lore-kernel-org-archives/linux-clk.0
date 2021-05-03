@@ -2,157 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7388C433B4
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 07:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50679C433ED
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 08:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE07E61153
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 07:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE4561221
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 08:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbhECHjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 03:39:01 -0400
-Received: from cable.insite.cz ([84.242.75.189]:36168 "EHLO cable.insite.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230364AbhECHjB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 May 2021 03:39:01 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by cable.insite.cz (Postfix) with ESMTP id 5A35EA1A3D401;
-        Mon,  3 May 2021 09:38:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
-        t=1620027485; bh=x5nI6Y/TftiwHufO8w7oc+3ZTayQxrZ6H7uCE7zZPWk=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=COFx/rLwjjwIJjubWFMGZ3Y9vAA0GwN46HxRJEUuqrvvFHb2bOAj5kQlfy0uDfqEH
-         7Z9MGaNmW8nd4hVS7TKrxPyQ7PmuOISOKJvzoN4qPoR/rNoz+SKQyOHqROgU1poNIx
-         jDFm5i43fW6c/LEFYRz4ea+T56zOYfuHV+HGyNsg=
-Received: from cable.insite.cz ([84.242.75.189])
-        by localhost (server.insite.cz [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id H3Zu7aK6qZ3F; Mon,  3 May 2021 09:37:59 +0200 (CEST)
-Received: from [192.168.105.22] (ip28.insite.cz [81.0.237.28])
-        (Authenticated sender: pavel)
-        by cable.insite.cz (Postfix) with ESMTPSA id 9CA3EA1A3D400;
-        Mon,  3 May 2021 09:37:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
-        t=1620027479; bh=x5nI6Y/TftiwHufO8w7oc+3ZTayQxrZ6H7uCE7zZPWk=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=I2N697IiCL+rHrKNXZaVOhGnbPvVgiybmZB7Ci2qlj7ByE8wcfGqWY6KyXeUguupY
-         H2U8+DD+mf8fuIFP7L3/b+FVP9IuTJDsoi5T4y5DexHWybcm9kh6fRn/RwUWn1UVPA
-         rogQyon6GQncNF6pkCPQXB5cxlQOgAUZLsz5DfHc=
-Subject: Re: Recommended method for changing clk params dynamically from user
- space?
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <fceb112b-2241-5f67-2b29-3dda161f7c48@ivitera.com>
- <e07b3b45-2500-4a0e-4874-3bc1ebe75918@ivitera.com>
- <161956915591.177949.3064618109796640887@swboyd.mtv.corp.google.com>
- <b8088e6d-cea3-6dfd-dffb-c1645cbc95cd@ivitera.com>
- <161974733948.177949.2462163593797505108@swboyd.mtv.corp.google.com>
-From:   Pavel Hofman <pavel.hofman@ivitera.com>
-Message-ID: <4fc66ca5-7ec3-130a-975e-2d84610878e1@ivitera.com>
-Date:   Mon, 3 May 2021 09:37:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S230364AbhECIdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 04:33:18 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:42601 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229817AbhECIdR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 May 2021 04:33:17 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id CCB7E580B19;
+        Mon,  3 May 2021 04:32:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 03 May 2021 04:32:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=J6nQ0/KfuR+05YIPzSL8wfLQo2Q
+        of4u03261kWGVE+g=; b=kClSMLa5mcDshITiOjB2rxcqeMGTFa5by0oppWXQlz4
+        vS8Bj7jKdxV+CP6iR+nvNh5Fab+DFHTJgBZxcq1Ta8g1nVgdRblFsHloyA21nkwX
+        +1u06G7CJOVI0IfY7cmlZ4xYSdRn74j+D9dxKYMZW7sqQ+0z8gDHIiSvqgMNrWIx
+        uxVSXmKmyHeJN0CYEXQRmUsLtb+ThsMqjvkeRJo6kVeAyqXN0ePSvwLX1Z+QAwLe
+        lzABQtw3knzhzD3VYPQ6wnU4eBIsHndtYlzXgnOr7unV3LB4PzfvWH2MtuYESk9+
+        G+QNoz2YOx8yqVTaQbp4vOLQzTuM1GUx+GItnG/kgGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=J6nQ0/
+        KfuR+05YIPzSL8wfLQo2Qof4u03261kWGVE+g=; b=JsnGR/sSFj0eVVrpr/pGFq
+        KX90ABdFWvenrIUsi7fxr/Hj+GRf4o8oRwGH1uhfIzQM+sdrNZ0FZekhB3OSddCY
+        6COh+a9fwX7JR/ElWdVSO9mjvvhQF/t5b4qHehenVizxXniaU4BZzWpAbgiGuDao
+        HgowfPShNjKyTuwAlv32cvElFbHn6mBzcNxcHmiVvFZX4/8OFXLIIQLf92sw8AzV
+        LaI0CG1wYNuQpvJTDVewkCbxmOSaMO3dszxlPIx8Y+hwj5YsZlq6uFQKy+Y473v9
+        YnqIYal0vZZ1MH3aIDle5Shomnsp3SqdGb8lTfmP69lzzvicFGX6u4dlowTXk58Q
+        ==
+X-ME-Sender: <xms:F7WPYD7iri4vLANzRxeF5W2FB7GkVagnPPvTN-Z6EavRAkmR9mITVA>
+    <xme:F7WPYI4k2Jzudz3tDq2s0M9LiZ-dWuiWRz9awgjCdjd1hjfi865e63Gx_EbwN5Or3
+    Cmwyhpa6OxLe6EHEUA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdefgedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepveevfeffudeviedtgeethffhteeuffetfeffvdehvedvheetteehvdelfffg
+    jedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrieekrd
+    ejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    rgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:F7WPYKd8J8eQLyF6iI4Mf2SPPIDv1lNCwary5ppNbv4YvM5EljQ1Yw>
+    <xmx:F7WPYEKJpUYybaaQsIf9DxUu1WV7xzCPwxcYDM-QPlyL34GmevKJZw>
+    <xmx:F7WPYHKB6M4eZwZ3Hu_OOvViQ7qUmBzyPiGAuzzHRNzvC_B_wvH8pQ>
+    <xmx:GLWPYGZ3NBRKwPqZDtsJOKCoJ3DAyeWaj4SuO5wsWFy3y_xaDZIFlw>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Mon,  3 May 2021 04:32:22 -0400 (EDT)
+Date:   Mon, 3 May 2021 10:32:21 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: Implement a clock request API
+Message-ID: <20210503083221.qsdurp2f3bkwfa6d@gilmour>
+References: <20210413101320.321584-1-maxime@cerno.tech>
+ <161981637939.1363782.4943687720432536625@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <161974733948.177949.2462163593797505108@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ojju5rho7xzck4mj"
+Content-Disposition: inline
+In-Reply-To: <161981637939.1363782.4943687720432536625@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne 30. 04. 21 v 3:48 Stephen Boyd napsal(a):
-> Quoting Pavel Hofman (2021-04-28 00:08:55)
->> Dne 28. 04. 21 v 2:19 Stephen Boyd napsal(a):
->>> Quoting Pavel Hofman (2021-04-24 01:00:47)
->>>> Dne 23. 04. 21 v 9:38 Pavel Hofman napsal(a):
->>>>> Hi, I would like to add some missing features to clk-si5341.c that I
->>>>> need for my project. From user-space I need to tune delays at each
->>>>> output (the driver does not control corresponding registers yet) and
->>>>> fine-tune frequency while the clock is running (likely the nom/denom
->>>>> values).
->>>>>
->>>>> IIUC all driver parameters are currently configured via DT. Please what
->>>>> is the recommended method/best practice for changing clk params
->>>>> dynamically from user space? SysFS, configFS? I would like to have the
->>>>> patches accepted upstream eventually.
->>>>>
->>>>
->>>> From what I have read sysfs seems the most suitable option. But I am
->>>> surprised I could not find any driver-specific sysfs code in the clk
->>>> drivers. Theoretically I could fine-tune the device via I2C directly
->>>> from userspace but that feels wrong. Plus others could potentially
->>>> benefit from the features added to the clk driver. Please any suggestions?
->>>>
->>>
->>> So far there isn't a userspace clk interface. Clk control is fairly low
->>> level so I think nobody has implemented it so far. This topic comes up
->>> every year or two, so you can probably search the mailing list archives
->>> if you're interested in previous discussions.
->>>
->>> Can you avoid implementing a userspace API? Are you implementing
->>> userspace drivers?
->>>
->>
->> Hi Stephen, thanks a lot for your info. I searched a bit and found
->> https://www.spinics.net/lists/linux-clk/msg06704.html .
->>
->> I do not want to implement any userspace clock API, but user-space
->> control of extended features of a specific chip, currently missing in
->> the particular driver. Clock generators Si5340/1 (and many more, but
->> they are not my focus) can adjust output skew/delay on each output.
-> 
-> Is the output skew/delay to control clk phase?
 
-The skew controls delay of the clk signal for the given output. So
-basically it is phase, but enumerated in fractions of the internal
-oscillator.
+--ojju5rho7xzck4mj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> Also
->> they allow fine-tuning the frequencies while running, by tiny
->> incremental steps. These features need to be controlled dynamically from
->> user space, by the application using them.
-> 
-> Can you share more details on the application?
+Hi Stephen,
 
-Audio analyzer (DAC, ADC, clock, protection, ranging, etc.). Fine-tuning
-the frequency can be used e.g. for sampling an analog oscillator with
-slowly drifting frequency. Clock skew is required for adjusting delays
-introduced by the various HW components so that all synchronous clock
-signals reaching the DAC/ADC correct delays against each other. It will
-take some experimentation and hard-coding the values in the device tree
-config is not practical.
+On Fri, Apr 30, 2021 at 01:59:39PM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2021-04-13 03:13:18)
+> > Hi,
+> >=20
+> > This is a follow-up of the discussion here:
+> > https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmo=
+ur/
+> >=20
+> > This implements a mechanism to raise and lower clock rates based on con=
+sumer
+> > workloads, with an example of such an implementation for the RaspberryP=
+i4 HDMI
+> > controller.
+> >=20
+> > There's a couple of things worth discussing:
+> >=20
+> >   - The name is in conflict with clk_request_rate, and even though it f=
+eels
+> >     like the right name to me, we should probably avoid any confusion
+> >=20
+> >   - The code so far implements a policy of always going for the lowest =
+rate
+> >     possible. While we don't have an use-case for something else, this =
+should
+> >     maybe be made more flexible?
+>=20
+> I'm definitely confused how it is different from the
+> clk_set_rate_exclusive() API and associated
+> clk_rate_exclusive_get()/clk_rate_exclusive_put(). Can you explain
+> further the differences in the cover letter here?
 
-> 
->> None of the features iteract
->> with the in-kernel clock API. The fine-tuning control would not change
->> the set_rate/get_rate values, but adjust the real frequency, similarly
->> to alsa control 'PCM Rate Shift 100000' in snd-aloop loopback. So my
->> question is whether sysfs is the currently preferred interface for
->> specific-module control like this, or what other method should be used.
->>
-> 
-> Given that you're comparing to alsa control, is this for some audio
-> processing feature? Perhaps it needs to be controlled via alsa then and
-> eventually call into the clk driver to fine tune the clk that the
-> sound driver consumes.
+The exclusive API is meant to prevent the clock rate from changing,
+allowing a single user to make sure that no other user will be able to
+change it.
 
-The alsa controls in snd-aloop are directly used by that module. In my
-case the alsa driver would have to know how to operate specific features
-of the specific clk driver, yet serving just as a proxy for the
-controls. The alsa driver itself needs only the standard clk API for its
-operation. IMO controlling the specific clock features directly is
-correct as the features are provided by the specific clock HW and do not
-interact with the standard clock API.
+What we want here is instead to allow multiple users to be able to
+express a set of minimum rates and then let the CCF figure out a rate
+for that clock that matches those constraints (so basically what
+clk_set_min_rate does), but then does allow for the clock to go back to
+its initial rate once that constraint is not needed anymore.
 
-Nevertheless, in the end I decided to control all the Si5340 features
-via I2C from my userspace application (incl. clk frequency settings),
-avoiding the existing kernel Si5340 driver alltogether.
+So I guess it's more akin to clk_set_min_rate with rollback than the
+exclusive API?
 
-Thanks a lot,
+Maxime
 
-Pavel.
+--ojju5rho7xzck4mj
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYI+1FQAKCRDj7w1vZxhR
+xTMQAP0elV2uSlbu/N/umOikVWwqHSR4+Zjv9XZ1+PjRVm0tYwEAtNHYYQWnyauP
+n0zWwwpA17OqaRECQDk7YDIPgiLPYg4=
+=IIJ9
+-----END PGP SIGNATURE-----
+
+--ojju5rho7xzck4mj--
