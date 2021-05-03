@@ -2,76 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7CDC4360C
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30E5C4363C
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8BD6161E
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C19C0613C0
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbhECQvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 12:51:01 -0400
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:45705 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233342AbhECQrr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 May 2021 12:47:47 -0400
-Received: by mail-oi1-f181.google.com with SMTP id n184so5967417oia.12;
-        Mon, 03 May 2021 09:46:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Oa/st9F1XP28j94dX0qihiVLsde8Rf9/JSN308vzmVU=;
-        b=PmWkDZw3021Vo5u5uEACN5924U8fo7T7pxfmqFYu586ujb+KDpX0qdlSOhrbdp4Nv9
-         urLqk7YQqsAqJHkmlGzmYtVbOOnfoiDV79IGGi4mkWwK4jb1cB+GSPBl2lyXGAVbwemM
-         2artgnWhmJ4nf+rpvWOp5TS5J8Kls8/QU4oZPZm8VfTTDFJDMSK7OlDTguxqJfhTSRDd
-         JxBCUlrqrIsxB21xU8zh3C2DO1WEYaavYdnXmm5FtIubVTVhQXosqGwdMqO0GfI2/VBA
-         re2AhSF8Oe87+mrAYCsTXXWqdXRVBJ/78A3umzlF8BAgNSWgf53cAaegfOtpfaTBwkV5
-         GoEg==
-X-Gm-Message-State: AOAM53262syApEbv0Yw7RrWfJEKAz6dX12s2Ty5TP5LPIShIBtf6J0uL
-        qMmv4YJ6rN/s6uc3kFQiXcYQhXKB6g==
-X-Google-Smtp-Source: ABdhPJx/tnhQ6vjn0DMxTGdwocCI3DWXlq2L4NQ3u/Pul1LIighzqliVGW/oOL5Q/ygSfKhXPNw3gw==
-X-Received: by 2002:aca:484e:: with SMTP id v75mr8582859oia.149.1620060413854;
-        Mon, 03 May 2021 09:46:53 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 16sm74840otu.79.2021.05.03.09.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 May 2021 09:46:53 -0700 (PDT)
-Received: (nullmailer pid 1986883 invoked by uid 1000);
-        Mon, 03 May 2021 16:46:52 -0000
-Date:   Mon, 3 May 2021 11:46:52 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     devicetree@vger.kernel.org, abel.vesa@nxp.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, shawnguo@kernel.org, linux-imx@nxp.com,
-        dongas86@gmail.com
-Subject: Re: [PATCH 1/6] dt-bindings: arm: imx: scu: fix naming typo of clk
- compatible string
-Message-ID: <20210503164652.GA1986853@robh.at.kernel.org>
-References: <20210423033334.3317992-1-aisheng.dong@nxp.com>
+        id S232858AbhECQvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 12:51:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234252AbhECQt7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 May 2021 12:49:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A766A617ED;
+        Mon,  3 May 2021 16:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620060035;
+        bh=VYfmhFt2W1DZcgIXrOOh7ooiC4aHcLCuxvOApxAU6hY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oR8VGTbrb3kicRkkfjoIzzzka9nPAEjjN73rnurnGIDBUKUsZwAslIO8COx6fcdFX
+         85+lF+rArJ++boL/HujKBaZUl2RrsF4kUv08kOPOSECDmYi3mhpt1edATsc7qgHae/
+         Rw886ZOwnpIP2FWZfVREEDAjSt72yOSDAbjjkdaghhv0YcQyEVueXUJ8iZ2/+DKvl8
+         8nnHp1uyT0GoGcvn6l4oxHGkF+2VdaToKIzRKtFgiQR1OydW5X8Jn7F2QNedRYC16a
+         uIQLVbk3pJ9ews52NL0/H/z1I8XG3OVPNpnGvn6/4dupPKfKrQqy2bKuq04I6R/BWq
+         uFabe2oTJWScQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 35/57] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+Date:   Mon,  3 May 2021 12:39:19 -0400
+Message-Id: <20210503163941.2853291-35-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210503163941.2853291-1-sashal@kernel.org>
+References: <20210503163941.2853291-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210423033334.3317992-1-aisheng.dong@nxp.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 23 Apr 2021 11:33:29 +0800, Dong Aisheng wrote:
-> There is a typo in binding doc that the name of compatible string of
-> scu clock should be "fsl,xxx-clk" rather than "fsl,xxx-clock".
-> In reality, both example and dts using "fsl,xxx-clk", so fixing the doc
-> is enough.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+[ Upstream commit 657d4d1934f75a2d978c3cf2086495eaa542e7a9 ]
+
+There is an error return path that is not kfree'ing socfpga_clk leading
+to a memory leak. Fix this by adding in the missing kfree call.
+
+Addresses-Coverity: ("Resource leak")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20210406170115.430990-1-colin.king@canonical.com
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/socfpga/clk-gate-a10.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+index cd5df9103614..d62778884208 100644
+--- a/drivers/clk/socfpga/clk-gate-a10.c
++++ b/drivers/clk/socfpga/clk-gate-a10.c
+@@ -146,6 +146,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 		if (IS_ERR(socfpga_clk->sys_mgr_base_addr)) {
+ 			pr_err("%s: failed to find altr,sys-mgr regmap!\n",
+ 					__func__);
++			kfree(socfpga_clk);
+ 			return;
+ 		}
+ 	}
+-- 
+2.30.2
+
