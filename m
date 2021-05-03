@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C24C433ED
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BE8C43470
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C11CD61059
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875D6613C7
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234614AbhECQ6q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 12:58:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43348 "EHLO mail.kernel.org"
+        id S234731AbhECQ6s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 12:58:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234838AbhECQzD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 May 2021 12:55:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 43B1661428;
-        Mon,  3 May 2021 16:42:32 +0000 (UTC)
+        id S235189AbhECQz4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 May 2021 12:55:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B813261971;
+        Mon,  3 May 2021 16:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620060153;
-        bh=ORvfsTPWidhMijguO6X2vUt3yYaF9/7ZZj8+OK9Lx3k=;
+        s=k20201202; t=1620060191;
+        bh=aVlOtKwCDPxINj7HQcYw/DTsDeNva4fCUjEGyQMqxy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFKGRWrpdCO7FcfVPp1eIp8EQI8SdHbtsNx+oOVpFPBAn1dMQdZ1fEKU14uqJqnnA
-         JtuwvLqrHiOlaxEsmPX2tOQqVYi7pabTqrNhxCCV8EYNRcJg68mOOw9PCA4A1QCENc
-         r/pCkoEnuO6IHI6Bfkpy6TGTzKCyU3NmVEfuWDLHJ90qJlyfCexqtVei35nobuq2PS
-         73aN675tTqb/lzssQd6N0CxZ32lAweBaSusitg+SCLHMQ9omg21Q87sVJs0qLjeuXU
-         8d1kgeQQN7k7K5QunYHJROJiQ8GleIdLoomk5s5cHfz5+owAz9YrI1x1Kemk7d73oG
-         QjvMI6+nyKt3g==
+        b=FTtyVWwCxt3tgoEKw1vB+TJK/MHkFA0UG/d1sq7wLP9h/0u3FIc0cmei/EXeCYAIV
+         t52vWRmxq0LKbQF3vxkIYlbo1wioEeWf2ExhdNpL0aOBgKn1d0/PqFDWD1FnRTnRsR
+         3NEDecVydl8ZGsDNs+87axCwE0zxryMvXNNNCiVTHv1mk/lgsomiqQCzSDEZbrj1Y6
+         HoRpmDVlgjvW4wA/Ek/wN9Ig0GjEzkaoTso7zkgyUVsoRkgEc+gV2CWOvlJmmjpYO/
+         n+YoqDRI5qxDwq5/kOIfJARSEfpwJY97ZwGQCl8MoQiBatB/5MFmPVQCeBe7vNi1wh
+         X9pBJZ8aUMwgA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Colin Ian King <colin.king@canonical.com>,
@@ -38,12 +38,12 @@ Cc:     Colin Ian King <colin.king@canonical.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 19/31] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
-Date:   Mon,  3 May 2021 12:41:52 -0400
-Message-Id: <20210503164204.2854178-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 13/24] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+Date:   Mon,  3 May 2021 12:42:41 -0400
+Message-Id: <20210503164252.2854487-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210503164204.2854178-1-sashal@kernel.org>
-References: <20210503164204.2854178-1-sashal@kernel.org>
+In-Reply-To: <20210503164252.2854487-1-sashal@kernel.org>
+References: <20210503164252.2854487-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -71,7 +71,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index 36376c542055..637e26babf89 100644
+index c2d572748167..7913dbedba89 100644
 --- a/drivers/clk/socfpga/clk-gate-a10.c
 +++ b/drivers/clk/socfpga/clk-gate-a10.c
 @@ -157,6 +157,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
