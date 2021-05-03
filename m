@@ -2,133 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B64C4361A
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E777C43460
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 254656141A
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55B25610A5
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 16:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232571AbhECQvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 12:51:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32838 "EHLO mail.kernel.org"
+        id S234476AbhECQyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 12:54:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233843AbhECQtc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 May 2021 12:49:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F1AD06191F;
-        Mon,  3 May 2021 16:40:24 +0000 (UTC)
+        id S233657AbhECQwB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 May 2021 12:52:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F387161363;
+        Mon,  3 May 2021 16:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620060025;
-        bh=tHYHD0jT1jG1itD5UPajDk4y8ocfKR79gQ2CjG/pTbE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=JLcFn19J2apAX5K6ef/KUYrOmvgNsunQdt63eKOmDkGhDnGLgDFdRB28ot7D5pyH1
-         h7FjPDwLxcv/lBZoRCqschRbNQJyuaUlQEvu6LAdC3EPK6IB3XuPpz/haaWUPJoqRA
-         178OmpJBsTkGhHwdI7FrX7de02BLp77vbKCE4zWBQBHUaTZ0T+UfPOnhSEXca2f50h
-         VFgjuxVEQafjC+uGCmls8vfTGrwMsu4HVWLvww0OzwbF4wsLh4+NBwIIg+WMwqGw9r
-         Ao/8VK+gu4mPYmjitl2EcyaxWahhfbK+p7wOpx881wxfeiSp1TOv+tMN1sGNYOhwxj
-         JWfD4/WsFmLiQ==
-Date:   Mon, 3 May 2021 11:40:23 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
-        zong.li@sifive.com, bhelgaas@google.com, robh+dt@kernel.org,
-        aou@eecs.berkeley.edu, mturquette@baylibre.com, sboyd@kernel.org,
-        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
-        alex.dewar90@gmail.com, khilman@baylibre.com,
-        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
-        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] Add SiFive FU740 PCIe host controller driver
- support
-Message-ID: <20210503164023.GA919777@bjorn-Precision-5520>
+        s=k20201202; t=1620060100;
+        bh=ORvfsTPWidhMijguO6X2vUt3yYaF9/7ZZj8+OK9Lx3k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JqdNJZNF1bRLri9RAGyBG/Z4ZeX1MiAcXPA62mpONvk7Bnv8zrj9jfP085hwT/f3+
+         I5mw+5J1MmLH9xeGCQAYupt1yrODelLN9z7L70fO5v/BVM6iq0xVdGUqs3yJGcB0TO
+         Wn9Il6vLSIyrciy2bkfFLWMoGfm+aggj/Y/P36UIevWEnRAE/JayTOY5Mz7bMZ/KXc
+         2SxAh3ch2ze/ShmvNMQ5XPtlP3vT0SQfYkAD1gnkzatXt3EnrbLMZuxkAcY6MIsLLx
+         Xl4galK1nZfKclTsfD+XErGOkoAwLK0ZNfbdtoWNMZ/xg000/o8TswM/5lFGPiGSj8
+         sa635md08u2Tg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 20/35] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+Date:   Mon,  3 May 2021 12:40:54 -0400
+Message-Id: <20210503164109.2853838-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210503164109.2853838-1-sashal@kernel.org>
+References: <20210503164109.2853838-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210406092634.50465-1-greentime.hu@sifive.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 05:26:28PM +0800, Greentime Hu wrote:
-> This patchset includes SiFive FU740 PCIe host controller driver. We also
-> add pcie_aux clock and pcie_power_on_reset controller to prci driver for
-> PCIe driver to use it.
+From: Colin Ian King <colin.king@canonical.com>
 
-I dropped this series because of the build problem I mentioned [1].
-It will not be included in v5.13 unless the build problem is fixed
-ASAP.
+[ Upstream commit 657d4d1934f75a2d978c3cf2086495eaa542e7a9 ]
 
-[1] https://lore.kernel.org/r/20210428194713.GA314975@bjorn-Precision-5520
+There is an error return path that is not kfree'ing socfpga_clk leading
+to a memory leak. Fix this by adding in the missing kfree call.
 
-> This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon R5
-> 230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based on
-> v5.11 Linux kernel.
-> 
-> Changes in v5:
->  - Fix typo in comments
->  - Keep comments style consistent
->  - Refine some error handling codes
->  - Remove unneeded header file including
->  - Merge fu740_pcie_ltssm_enable implementation to fu740_pcie_start_link
-> 
-> Changes in v4:
->  - Fix Wunused-but-set-variable warning in prci driver
-> 
-> Changes in v3:
->  - Remove items that has been defined
->  - Refine format of sifive,fu740-pcie.yaml
->  - Replace perstn-gpios with the common one
->  - Change DBI mapping space to 2GB from 4GB
->  - Refine drivers/reset/Kconfig
-> 
-> Changes in v2:
->  - Refine codes based on reviewers' feedback
->  - Remove define and use the common one
->  - Replace __raw_writel with writel_relaxed
->  - Split fu740_phyregreadwrite to write function
->  - Use readl_poll_timeout in stead of while loop checking
->  - Use dwc common codes
->  - Use gpio descriptors and the gpiod_* api.
->  - Replace devm_ioremap_resource with devm_platform_ioremap_resource_byname
->  - Replace devm_reset_control_get with devm_reset_control_get_exclusive
->  - Add more comments for delay and sleep
->  - Remove "phy ? x : y" expressions
->  - Refine code logic to remove possible infinite loop
->  - Replace magic number with meaningful define
->  - Remove fu740_pcie_pm_ops
->  - Use builtin_platform_driver
-> 
-> Greentime Hu (5):
->   clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
->   clk: sifive: Use reset-simple in prci driver for PCIe driver
->   MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
->   dt-bindings: PCI: Add SiFive FU740 PCIe host controller
->   riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
-> 
-> Paul Walmsley (1):
->   PCI: fu740: Add SiFive FU740 PCIe host controller driver
-> 
->  .../bindings/pci/sifive,fu740-pcie.yaml       | 113 +++++++
->  MAINTAINERS                                   |   8 +
->  arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  33 ++
->  drivers/clk/sifive/Kconfig                    |   2 +
->  drivers/clk/sifive/fu740-prci.c               |  11 +
->  drivers/clk/sifive/fu740-prci.h               |   2 +-
->  drivers/clk/sifive/sifive-prci.c              |  54 +++
->  drivers/clk/sifive/sifive-prci.h              |  13 +
->  drivers/pci/controller/dwc/Kconfig            |   9 +
->  drivers/pci/controller/dwc/Makefile           |   1 +
->  drivers/pci/controller/dwc/pcie-fu740.c       | 308 ++++++++++++++++++
->  drivers/reset/Kconfig                         |   1 +
->  include/dt-bindings/clock/sifive-fu740-prci.h |   1 +
->  13 files changed, 555 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
->  create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
-> 
-> -- 
-> 2.30.2
-> 
+Addresses-Coverity: ("Resource leak")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20210406170115.430990-1-colin.king@canonical.com
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/socfpga/clk-gate-a10.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+index 36376c542055..637e26babf89 100644
+--- a/drivers/clk/socfpga/clk-gate-a10.c
++++ b/drivers/clk/socfpga/clk-gate-a10.c
+@@ -157,6 +157,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 		if (IS_ERR(socfpga_clk->sys_mgr_base_addr)) {
+ 			pr_err("%s: failed to find altr,sys-mgr regmap!\n",
+ 					__func__);
++			kfree(socfpga_clk);
+ 			return;
+ 		}
+ 	}
+-- 
+2.30.2
+
