@@ -2,184 +2,180 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F035C43460
-	for <linux-clk@archiver.kernel.org>; Sun,  2 May 2021 12:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05147C433ED
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 04:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E767661139
-	for <linux-clk@archiver.kernel.org>; Sun,  2 May 2021 12:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB8AF61139
+	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 04:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232267AbhEBMVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 May 2021 08:21:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232225AbhEBMVo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 May 2021 08:21:44 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71AD8C06138B
-        for <linux-clk@vger.kernel.org>; Sun,  2 May 2021 05:20:52 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id f24so3808238ejc.6
-        for <linux-clk@vger.kernel.org>; Sun, 02 May 2021 05:20:52 -0700 (PDT)
+        id S229817AbhECE6C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 May 2021 00:58:02 -0400
+Received: from mail-dm6nam12on2060.outbound.protection.outlook.com ([40.107.243.60]:8925
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229489AbhECE5z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 May 2021 00:57:55 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TP5J+xU2wMicXfC3h0I+4+RPkkP3Oy0M9I7UsPQ/trsk2D+kkLlRRh9dyhXHEibGkF50lZL+dWlxEo7x9V82Xha8ZO9HlDO91HjdMxTlvhIV/jv2Z1pm+C+Qx4ahJyq31/08jqBaee+J2HTWzI4wzaU3n6wny4ulAB8S8AHjg0HkdfJzvXXzqrcjVy3UdxHIBLPyedYK7HEd011vI1LIb3uwgNlTVLj5CGz+/NyqgNvYSHLio4lbm+k8EHSDcoRc1+zYKa3dZAu2SkPJNQ961q9Jwp7YGwig0whxu6fEYJSZ0UdmR4yURBQxG2jBkX8Q7mW4eBpjsjCFk4hj6buwVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1vVmL11QL+b29NL1iFjJS9Jp8yuHqKsX75eDjunB2A=;
+ b=PRrT3x5aWRLXjRz9KrZdqnoJj90yz5q8pMgKOznmlRDS3sd7Vqa7W3l6X/m5zY5j1V01NCrmpLrKpc5dxVZFdOYzkVeZBc4jLSNr4qYljbUrF6RiJODxn5kW919+JsFQuZjNhdO1yffF1rl3cageAyRg5DyeWG70knfT6avQ/qRIeOSMqUR7TAX+1kwBtOSsb852qqQMyJ6YA05xirvJ5xAOwsqZcaaG3Z2Pb5suYxaxxBLXyt/dlTTiJiNmZ54ZP6pN9yfMTkra7mcKxd72RshT1A486AwsZEGrxjHbJhK7MRaV1fnuFbFriLuUPBfFmpss7uhg8YxK4O11jrogtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snejp.pl; s=gmail;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ya5wMfdEkx9QjeJilhrqhBrRqFB0sVhXi8RtY/gF6qQ=;
-        b=jxWpdUwoiSrJ1AI4PDLcYPV6mjHb6JsrQNILNXt07NYoelSSnUxIBnfzQvymFnAhsf
-         EOyX2TJxNLmAbo8Umukg12B9bMUd1pNaZnXIth6PmmAp/POUqPntZZaa6tbvuN8Qzfcu
-         XCZdvmkZ/lB16iRTEFG2REQs5C9ngLvB2T94K6hJTyHaPtDpJpl48VSKGzQLaZj46wWl
-         zviSEmHzgJgezVPkTZU33jBHOVgfabZWzK3KkVlTllB1UebHJdRTG6ACwseUR5JFiCPG
-         n18k3FE/ICoNnozofmHEQTg4DlvupeG+2M+7++/45c7oMuVUjAq41jTqzZPZF/hdA6vJ
-         kSag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ya5wMfdEkx9QjeJilhrqhBrRqFB0sVhXi8RtY/gF6qQ=;
-        b=tfmC4u0e34j/wAiCbhgrRM0DqxtLoNHFzmdH4RAdiwG/iDKFON/+jyVqD2OgszXRfQ
-         tQPhKIFAJ8HmUe9ApLS+YaPorWBZaTQfuozqmfY+6EzsUfXZwqxdQvWNX8tFO/0ZzIW2
-         0ueVBQh4UzXSyY29P1lfr6ak5LdSKoG5ca65wyowMiIwTI3mwvodaOqs0VG9DajYggHB
-         6UQzGdvi31OybGm39WV3bllNg5m6dd9Ky5TzeqqW/K1snGe4+8naZKFiGkX3NcoGa6qb
-         pE2ZaLVeiHktyAR0wad6vIdvE+evpadTOxO5h0EF4jhd1ZMH3q+hkAnSv6SxKm0DdmTi
-         VsaQ==
-X-Gm-Message-State: AOAM530veUaj9yYZMVc71Mi3vdUC40wCyL3Vrj6AZQhxCUYFs9NBu+XK
-        M39cUMPargUayH/BPs+tDf3i8Q==
-X-Google-Smtp-Source: ABdhPJzUTQSM5bIfVnbb47T7ek9zbvta3E2+1hJuIqQJH78A5aee/BfJ2E8BLgt03+Q9LC2M89mQCA==
-X-Received: by 2002:a17:907:100e:: with SMTP id ox14mr12683839ejb.484.1619958051180;
-        Sun, 02 May 2021 05:20:51 -0700 (PDT)
-Received: from PackardBell (192038133011.mbb.telenor.dk. [192.38.133.11])
-        by smtp.googlemail.com with ESMTPSA id p21sm10064085edw.18.2021.05.02.05.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 May 2021 05:20:50 -0700 (PDT)
-Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 7e88a667;
-        Sun, 2 May 2021 12:20:32 +0000 (UTC)
-From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH 4/4] clk: qcom: smd-rpm: Add support for MSM8226 RPM clocks
-Date:   Sun,  2 May 2021 14:20:27 +0200
-Message-Id: <20210502122027.9351-5-bartosz.dudziak@snejp.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210502122027.9351-1-bartosz.dudziak@snejp.pl>
-References: <20210502122027.9351-1-bartosz.dudziak@snejp.pl>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1vVmL11QL+b29NL1iFjJS9Jp8yuHqKsX75eDjunB2A=;
+ b=powq8NbYIZAH8te6EpXObYgF4MpnMOh4wIGyxOhEj+14B5l0AiXOhzA6J15qrOBMoSOOy0h4RWzRiEYSLLpGhf6vziOJf7gpLOE0JT1FiTwy75wUEGZd7IoKvJXos5Y11ch64tWOFVRZCPJtsAqVKYgudAsqQKDfZJNxtZ+D2KY=
+Received: from BYAPR02MB3941.namprd02.prod.outlook.com (2603:10b6:a02:f8::18)
+ by SJ0PR02MB7600.namprd02.prod.outlook.com (2603:10b6:a03:320::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.40; Mon, 3 May
+ 2021 04:56:44 +0000
+Received: from BYAPR02MB3941.namprd02.prod.outlook.com
+ ([fe80::f9c6:6c2f:3084:89b8]) by BYAPR02MB3941.namprd02.prod.outlook.com
+ ([fe80::f9c6:6c2f:3084:89b8%3]) with mapi id 15.20.4065.036; Mon, 3 May 2021
+ 04:56:44 +0000
+From:   Rajan Vaja <RAJANV@xilinx.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "quanyang.wang@windriver.com" <quanyang.wang@windriver.com>,
+        Jolly Shah <JOLLYS@xilinx.com>,
+        Tejas Patel <tejasp@xlnx.xilinx.com>,
+        Shubhrajyoti Datta <shubhraj@xilinx.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] clk: zynqmp: pll: Remove some dead code
+Thread-Topic: [PATCH] clk: zynqmp: pll: Remove some dead code
+Thread-Index: AQHXPn2fNc4/u5hEg0mmySXeuab37arRM+wQ
+Date:   Mon, 3 May 2021 04:56:43 +0000
+Message-ID: <BYAPR02MB394182A55D073BC6061F6D76B75B9@BYAPR02MB3941.namprd02.prod.outlook.com>
+References: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: wanadoo.fr; dkim=none (message not signed)
+ header.d=none;wanadoo.fr; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1536ac42-0e5d-4ce3-2b09-08d90defd929
+x-ms-traffictypediagnostic: SJ0PR02MB7600:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SJ0PR02MB7600C6FD0D330E8F9C022DCFB75B9@SJ0PR02MB7600.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 5FT3W8cgFdqjZcMpdrKFaqMws1/KIbQFtePn6nsTI16AY0m2Oq4aewNuefBpUilzNmjXNTlNVa9k5isMOEAFjA4HMc0tHieBqGOB/1ptHbG2O+Q2MygaeWmO7nUcHLQH/aCjladWN2qPc7LFFdkBdMBpka6SXLultIXcpFoqNJQt2XVpj1SDdNfWOEJ62m2/9APIvM7Aly5Yw32Cdkl/hJxHI1VzdKzMOjq+099qkRXXgnLWdfvPU0N/M8TmGBLaE9cGkkjJf/4B6Uz8joELDvuDLArYu5DdndP0ZOjM3xgg9r/XhKgX36nlZSLOfH9DbD//ebtZ+Ct88TBv2CsxbT/z6fAbq7W1g02y2bZoPnNI9bgj+pzyT4P2Ez25SeV3TbkE9zQus646vRyIE6v1bo2vVgsMz3JJycyjLZeiRuaqEeHlU5DxbFPu2OXMv8oo4J/9UMZFKaRemz6yCTRXe6mPSNPacxLj40gOuVqgy/t79a3keew5xRi9g0JVjm9zrU0r7ZS+/V6oS2CCNR+11GODyFmzU5PpdQJtTqAguKSw0zoky0FXdVzSdDXSuYgTHR2uS/e8BecNuWcw+Bvg0zMxveY3PwdJ5a6GZuPhxzYyD4FhLFX2AZBMqjXkXBR5eUYLNv+JshFwMa6WTso0FA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB3941.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39850400004)(396003)(376002)(346002)(366004)(66946007)(53546011)(64756008)(5660300002)(66446008)(66556008)(66476007)(6506007)(86362001)(54906003)(76116006)(110136005)(83380400001)(33656002)(52536014)(38100700002)(7696005)(478600001)(186003)(26005)(8936002)(316002)(2906002)(9686003)(71200400001)(4326008)(8676002)(55016002)(6636002)(122000001)(21314003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?0Hgxv9LAKWbp67HxMVLSqGtCLsw+bG1UEFV306F3ARTHv4vFxfmRsZfTIVox?=
+ =?us-ascii?Q?PM6lr3PgWlchmTygbp/utWE61Rf9afeW2C7FscXtIoL+6tuMg+4xRqLzPeyE?=
+ =?us-ascii?Q?2+I9ZDxuvO2gPS/cAx0zWIeggF4PFomlEMzYHTRr/sE5e/DE2wAsaSzdQmH/?=
+ =?us-ascii?Q?fU6LHcNNvTHGJRkalha1kHXDNacLKoSHssByKSB5l2jPQkFtRHcwxgKAp5b0?=
+ =?us-ascii?Q?RuyQNNB/WUDXGtgtL3H88cqKzzN9R/gN5lIx2Nris7WzvRV1RW7qjfd8SJMY?=
+ =?us-ascii?Q?MAtnWQOp5JIy7C+/0+etNs+yyMGZUgSeQdpbMIPpjhF6hC7fzMTICtsb6YiZ?=
+ =?us-ascii?Q?SOGbbwFmd4uBWaJDcpjb9b2FFb9TA29RUkMORf0P8cYwBI684wZOT7GlijJ/?=
+ =?us-ascii?Q?td+9lW95dEWr4IfiKo77uUNrCIecqftNihPAAbj0L9FJTtKnaIEMKDg4VIy1?=
+ =?us-ascii?Q?dd5oOOplf/LN/1HKwn0/SHuK5Fl7gyNLeajIxUXrmEw+rKKnOnEfmBcAG9Fc?=
+ =?us-ascii?Q?QLTJ5lGk6l6XkTZSUdjqmYMs+zqoTDd7whDLl95KYUX+tDdH8cABV13eRUiD?=
+ =?us-ascii?Q?TgBJhI/s/qzDf9rpa1HeOr668AbM/F9odyiljQYl7CFvRb2yb8Wbyu8E6Ig+?=
+ =?us-ascii?Q?AXO8Z3JmoSj0IyCwfxaOR5XWIQIo/vR3JCFRsTY2gCeSZcDzi/1rMBeAkZ/s?=
+ =?us-ascii?Q?rsLaa0ZGoHVIU8E9wjYF2I2EvdsTGeOYFthfymJmcMbd7XammOYAl84SK/YZ?=
+ =?us-ascii?Q?SBz4lH94ZSbyclR0WIhk0KOGnXvtpfgKNc7PNouXu+40cROqvlaEspThq67z?=
+ =?us-ascii?Q?V+EVNko+iDsz27ju/FRiawTlgOAGZIKltJMEPk3hTyscJLSBB5aokG6rk6WA?=
+ =?us-ascii?Q?L8HUHXEi1gs9tqTkd0p+OKVCU12EkGfWIe/xguLUZkdcSaSr1dbZAgXFyBlK?=
+ =?us-ascii?Q?nA+wAZWCeG6Zf5HrLNk7P/o7r3LjMTawp4wvjBWXZSRv9Ob78QywX0aVPkIQ?=
+ =?us-ascii?Q?uFusaotb+dNN9COdO8MxH7BnHRPzUe0tKdm2xmd51rr1V6IrCdfdOXqijONX?=
+ =?us-ascii?Q?71yMNysqd1oyQVrM7+rxk2/qz7RIWuNvfmHS+VuG9aH1INtQVscryckdtuMY?=
+ =?us-ascii?Q?y6izkFZUXbe1LtaWqHbwdMIp2D0moVvOXTykraG16hwRhOOLn9Z/HNYeMDqX?=
+ =?us-ascii?Q?ZJhqTCjkTRNMZIMvY93MKCYo6tY1ywlvLPz4n7I0ZCw0MSPKFvDEsrVAnaLv?=
+ =?us-ascii?Q?JbFfWONLk7rfdKfKturVP/BMMUB/fIfeuDUB+AVcc4zPVmpkg2ceoCLfOtTO?=
+ =?us-ascii?Q?UY5zqn2uwBSMhX66jhybMZt0?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB3941.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1536ac42-0e5d-4ce3-2b09-08d90defd929
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2021 04:56:44.0005
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +Jyttt/DWOgZQvVwLcpUpp7m6jfNvuL+G7cA3ruSFceJedEDTUfZMlquDv+QWUlCv1VODP8lqb8DYSCc0H37pQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB7600
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add rmp smd clocks, PMIC and bus clocks which are required on MSM8226
-for clients to vote on.
+Hi,
 
-Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
----
- drivers/clk/qcom/clk-smd-rpm.c | 74 ++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+Thanks for the patch.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 0e1dfa8948..bf73942e86 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -406,6 +406,79 @@ static const struct clk_ops clk_smd_rpm_branch_ops = {
- 	.unprepare	= clk_smd_rpm_unprepare,
- };
- 
-+/* msm8226 */
-+DEFINE_CLK_SMD_RPM(msm8226, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8226, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8226, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8226, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk, QCOM_SMD_RPM_BUS_CLK, 3);
-+DEFINE_CLK_SMD_RPM(msm8226, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8226, gfx3d_clk_src, gfx3d_a_clk_src, QCOM_SMD_RPM_MEM_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8226, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8226, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, cxo_d0, cxo_d0_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, cxo_d1, cxo_d1_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, cxo_a0, cxo_a0_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, cxo_a1, cxo_a1_a, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, cxo_a2, cxo_a2_a, 6);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, diff_clk, diff_a_clk, 7);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, div_clk1, div_a_clk1, 11);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8226, div_clk2, div_a_clk2, 12);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8226, cxo_d0_pin, cxo_d0_a_pin, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8226, cxo_d1_pin, cxo_d1_a_pin, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8226, cxo_a0_pin, cxo_a0_a_pin, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8226, cxo_a1_pin, cxo_a1_a_pin, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8226, cxo_a2_pin, cxo_a2_a_pin, 6);
-+
-+static struct clk_smd_rpm *msm8226_clks[] = {
-+	[RPM_SMD_PNOC_CLK]		= &msm8226_pnoc_clk,
-+	[RPM_SMD_PNOC_A_CLK]		= &msm8226_pnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK]		= &msm8226_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK]		= &msm8226_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK]		= &msm8226_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK]		= &msm8226_cnoc_a_clk,
-+	[RPM_SMD_MMSSNOC_AHB_CLK]	= &msm8226_mmssnoc_ahb_clk,
-+	[RPM_SMD_MMSSNOC_AHB_A_CLK]	= &msm8226_mmssnoc_ahb_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &msm8226_bimc_clk,
-+	[RPM_SMD_GFX3D_CLK_SRC]		= &msm8226_gfx3d_clk_src,
-+	[RPM_SMD_GFX3D_A_CLK_SRC]	= &msm8226_gfx3d_a_clk_src,
-+	[RPM_SMD_BIMC_A_CLK]		= &msm8226_bimc_a_clk,
-+	[RPM_SMD_OCMEMGX_CLK]		= &msm8226_ocmemgx_clk,
-+	[RPM_SMD_OCMEMGX_A_CLK]		= &msm8226_ocmemgx_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &msm8226_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &msm8226_qdss_a_clk,
-+	[RPM_SMD_CXO_D0]		= &msm8226_cxo_d0,
-+	[RPM_SMD_CXO_D0_A]		= &msm8226_cxo_d0_a,
-+	[RPM_SMD_CXO_D1]		= &msm8226_cxo_d1,
-+	[RPM_SMD_CXO_D1_A]		= &msm8226_cxo_d1_a,
-+	[RPM_SMD_CXO_A0]		= &msm8226_cxo_a0,
-+	[RPM_SMD_CXO_A0_A]		= &msm8226_cxo_a0_a,
-+	[RPM_SMD_CXO_A1]		= &msm8226_cxo_a1,
-+	[RPM_SMD_CXO_A1_A]		= &msm8226_cxo_a1_a,
-+	[RPM_SMD_CXO_A2]		= &msm8226_cxo_a2,
-+	[RPM_SMD_CXO_A2_A]		= &msm8226_cxo_a2_a,
-+	[RPM_SMD_DIFF_CLK]		= &msm8226_diff_clk,
-+	[RPM_SMD_DIFF_A_CLK]		= &msm8226_diff_a_clk,
-+	[RPM_SMD_DIV_CLK1]		= &msm8226_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1]		= &msm8226_div_a_clk1,
-+	[RPM_SMD_DIV_CLK2]		= &msm8226_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2]		= &msm8226_div_a_clk2,
-+	[RPM_SMD_CXO_D0_PIN]		= &msm8226_cxo_d0_pin,
-+	[RPM_SMD_CXO_D0_A_PIN]		= &msm8226_cxo_d0_a_pin,
-+	[RPM_SMD_CXO_D1_PIN]		= &msm8226_cxo_d1_pin,
-+	[RPM_SMD_CXO_D1_A_PIN]		= &msm8226_cxo_d1_a_pin,
-+	[RPM_SMD_CXO_A0_PIN]		= &msm8226_cxo_a0_pin,
-+	[RPM_SMD_CXO_A0_A_PIN]		= &msm8226_cxo_a0_a_pin,
-+	[RPM_SMD_CXO_A1_PIN]		= &msm8226_cxo_a1_pin,
-+	[RPM_SMD_CXO_A1_A_PIN]		= &msm8226_cxo_a1_a_pin,
-+	[RPM_SMD_CXO_A2_PIN]		= &msm8226_cxo_a2_pin,
-+	[RPM_SMD_CXO_A2_A_PIN]		= &msm8226_cxo_a2_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8226 = {
-+	.clks = msm8226_clks,
-+	.num_clks = ARRAY_SIZE(msm8226_clks),
-+};
-+
- /* msm8916 */
- DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8916, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-@@ -1060,6 +1133,7 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
- };
- 
- static const struct of_device_id rpm_smd_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8226 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
--- 
-2.25.1
+> -----Original Message-----
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Sent: 01 May 2021 04:55 PM
+> To: mturquette@baylibre.com; sboyd@kernel.org; Michal Simek
+> <michals@xilinx.com>; quanyang.wang@windriver.com; Rajan Vaja
+> <RAJANV@xilinx.com>; Jolly Shah <JOLLYS@xilinx.com>; Tejas Patel
+> <tejasp@xlnx.xilinx.com>; Shubhrajyoti Datta <shubhraj@xilinx.com>
+> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
+x-
+> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILL=
+ET
+> <christophe.jaillet@wanadoo.fr>
+> Subject: [PATCH] clk: zynqmp: pll: Remove some dead code
+>=20
+> 'clk_hw_set_rate_range()' does not return any error code and 'ret' is
+> known to be 0 at this point, so this message can never be displayed.
+>=20
+> Remove it.
+>=20
+> Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> HOWEVER, the message is about 'clk_set_rate_range()', not
+> 'clk_hw_set_rate_range()'. So the message is maybe correct and the
+> 'xxx_rate_range()' function incorrect.
+> ---
+>  drivers/clk/zynqmp/pll.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+> index abe6afbf3407..af11e9400058 100644
+> --- a/drivers/clk/zynqmp/pll.c
+> +++ b/drivers/clk/zynqmp/pll.c
+> @@ -331,8 +331,6 @@ struct clk_hw *zynqmp_clk_register_pll(const char *na=
+me,
+> u32 clk_id,
+>  	}
+>=20
+>  	clk_hw_set_rate_range(hw, PS_PLL_VCO_MIN, PS_PLL_VCO_MAX);
+> -	if (ret < 0)
+> -		pr_err("%s:ERROR clk_set_rate_range failed %d\n", name, ret);
+[Rajan] Instead of removing, can we get return value of clk_hw_set_rate_ran=
+ge() and
+print in case of an error.
+
+>=20
+>  	return hw;
+>  }
+> --
+> 2.30.2
 
