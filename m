@@ -2,193 +2,323 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D604FC433B4
-	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 07:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3812BC433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 09:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB1B661159
-	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 07:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F6B613B3
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 09:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhEDHVI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 May 2021 03:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48084 "EHLO
+        id S229905AbhEDJLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 May 2021 05:11:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbhEDHVH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 May 2021 03:21:07 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4799CC061574
-        for <linux-clk@vger.kernel.org>; Tue,  4 May 2021 00:20:13 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id u20so7625011qku.10
-        for <linux-clk@vger.kernel.org>; Tue, 04 May 2021 00:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JggnRH2z+C5c6q5fwkNF9u7IZivIlxcnTgChvJQFvSA=;
-        b=csBKU8aJUh6TfQKqWkRRJuwzqfCx/gxbV1DQ6d4id1eoGXBhg76xsbhY2fA34UDX22
-         sZhPa7vaekhSABqSq3q7znGNkTGTxRXlf8Kiac//bM/Z3oVYKoZXXB9zyWWTH7tsAue2
-         1B3yweWVmqGH2oSfzokpJ9flNMRRfs9Ch/TZUvIWlFbtChX6zJmSSKrgWOdoAyamxI4t
-         MWCSaYfX4b6HMUDdhbJ98JhjtDEInNQGjQWG3kd5N5U5xZzC2NZbKSwi8I2ED9rQfmrz
-         7UAGrCn8PAB1iTBuS+TzkQAplICSN9l3apNNyz3X/NdhP+azrqtYr3WMCOS/YtBXCUbQ
-         fB6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JggnRH2z+C5c6q5fwkNF9u7IZivIlxcnTgChvJQFvSA=;
-        b=RDfm06T2lHJGW3HJjI6cC4T+VxwvGSe1ZmhN2SrQzNZSF15ckpoRiMwZHoEcyWfp6V
-         RIyx+9ZNvwC8XVKgLYQFutF9LOA94SumUhamouaJFoAW6CciZxqRxZzlxneymHeZa196
-         GjmuSF04+v0Y+PXnmf7AXs7+QqDK0msf8mz/dJPQBnWB3gKxqJYstiliqN6zDlCE22IY
-         xWLitr+dcWKYCs470mwQ/PTGIMifLkytFC5KteO5nig7VTpMtOtB/j+Q6Y8Z9+7odxZo
-         whVyjmSq4n9bym+04MoUPPMhJ/PL8bDRUE4AyDI0AiFS2MvC5qc8Dz/HvQ/9oBv8s7Im
-         jnqg==
-X-Gm-Message-State: AOAM533S3R+wMe+cAp3yV8OgFJUZoaSy8meBFTrxId24LyPUXLlGD/CF
-        J7IjDqnuzxMsa1MXjd9EHPQ6MIQxzKOlPKzhWqP50g==
-X-Google-Smtp-Source: ABdhPJwSV0cJLUMNNy0lL94PwJnsWKOoPmVIkjaGTOqFfwKqrXom5YgkvcZWXnSt5nztkk0zIFsVQOCkdjO4/mVSk1Q=
-X-Received: by 2002:a05:620a:29c4:: with SMTP id s4mr20672337qkp.401.1620112812489;
- Tue, 04 May 2021 00:20:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210406092634.50465-1-greentime.hu@sifive.com> <20210503164023.GA919777@bjorn-Precision-5520>
-In-Reply-To: <20210503164023.GA919777@bjorn-Precision-5520>
-From:   Greentime Hu <greentime.hu@sifive.com>
-Date:   Tue, 4 May 2021 15:20:00 +0800
-Message-ID: <CAHCEeh+cMrEnHNG3W3ZNzdgT-m7BMorDawF6D8qkFYGg=RJMOw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Add SiFive FU740 PCIe host controller driver support
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>, hes@sifive.com,
-        Erik Danie <erik.danie@sifive.com>,
-        Zong Li <zong.li@sifive.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230123AbhEDJLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 May 2021 05:11:31 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7ACC061574
+        for <linux-clk@vger.kernel.org>; Tue,  4 May 2021 02:10:32 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1ca1:e52f:3ec5:3ac5])
+        by xavier.telenet-ops.be with bizsmtp
+        id 0ZAW2500T3aEpPb01ZAW7K; Tue, 04 May 2021 11:10:30 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ldr4Y-002j8K-4H; Tue, 04 May 2021 11:10:30 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ldr4X-00H77s-LB; Tue, 04 May 2021 11:10:29 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, alex.dewar90@gmail.com,
-        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
-        vidyas@nvidia.com, jh80.chung@samsung.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: clk: emev2: Convert to json-schema
+Date:   Tue,  4 May 2021 11:10:20 +0200
+Message-Id: <526e1a412145a0fcc5a43dcf6de5c580301017cb.1620119350.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Bjorn Helgaas <helgaas@kernel.org> =E6=96=BC 2021=E5=B9=B45=E6=9C=884=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=8812:40=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Apr 06, 2021 at 05:26:28PM +0800, Greentime Hu wrote:
-> > This patchset includes SiFive FU740 PCIe host controller driver. We als=
-o
-> > add pcie_aux clock and pcie_power_on_reset controller to prci driver fo=
-r
-> > PCIe driver to use it.
->
-> I dropped this series because of the build problem I mentioned [1].
-> It will not be included in v5.13 unless the build problem is fixed
-> ASAP.
->
-> [1] https://lore.kernel.org/r/20210428194713.GA314975@bjorn-Precision-552=
-0
->
+Convert the Renesas EMMA Mobile EV2 System Management Unit (SMU) Device
+Tree binding documentation to json-schema.
 
-Hi all,
+Drop the separate provider examples, as they mostly duplicate the global
+example.  Drop the consumer example, as it doesn't belong here.
+Update the global example to match reality.
 
-This build failed in x86_64 is because CONFIG_GPIOLIB is disabled in
-the testing config.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is a very old common clock binding, describing all clocks in detail
+in DT, grouped under a "clocks" node.
+---
+ .../bindings/clock/renesas,emev2-smu.txt      |  98 ------------
+ .../bindings/clock/renesas,emev2-smu.yaml     | 140 ++++++++++++++++++
+ 2 files changed, 140 insertions(+), 98 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,emev2-smu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,emev2-smu.yaml
 
-diff --git a/drivers/pci/controller/dwc/Kconfig
-b/drivers/pci/controller/dwc/Kconfig
-index 0a37d21ed64e..56b66e1fed53 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -323,6 +323,7 @@ config PCIE_FU740
-        depends on PCI_MSI_IRQ_DOMAIN
-        depends on SOC_SIFIVE || COMPILE_TEST
-        select PCIE_DW_HOST
-+       select GPIOLIB
-        help
-          Say Y here if you want PCIe controller support for the SiFive
-          FU740.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,emev2-smu.txt b/Documentation/devicetree/bindings/clock/renesas,emev2-smu.txt
+deleted file mode 100644
+index 268ca615459e7549..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,emev2-smu.txt
++++ /dev/null
+@@ -1,98 +0,0 @@
+-Device tree Clock bindings for Renesas EMMA Mobile EV2
+-
+-This binding uses the common clock binding.
+-
+-* SMU
+-System Management Unit described in user's manual R19UH0037EJ1000_SMU.
+-This is not a clock provider, but clocks under SMU depend on it.
+-
+-Required properties:
+-- compatible: Should be "renesas,emev2-smu"
+-- reg: Address and Size of SMU registers
+-
+-* SMU_CLKDIV
+-Function block with an input mux and a divider, which corresponds to
+-"Serial clock generator" in fig."Clock System Overview" of the manual,
+-and "xxx frequency division setting register" (XXXCLKDIV) registers.
+-This makes internal (neither input nor output) clock that is provided
+-to input of xxxGCLK block.
+-
+-Required properties:
+-- compatible: Should be "renesas,emev2-smu-clkdiv"
+-- reg: Byte offset from SMU base and Bit position in the register
+-- clocks: Parent clocks. Input clocks as described in clock-bindings.txt
+-- #clock-cells: Should be <0>
+-
+-* SMU_GCLK
+-Clock gating node shown as "Clock stop processing block" in the
+-fig."Clock System Overview" of the manual.
+-Registers are "xxx clock gate control register" (XXXGCLKCTRL).
+-
+-Required properties:
+-- compatible: Should be "renesas,emev2-smu-gclk"
+-- reg: Byte offset from SMU base and Bit position in the register
+-- clocks: Input clock as described in clock-bindings.txt
+-- #clock-cells: Should be <0>
+-
+-Example of provider:
+-
+-usia_u0_sclkdiv: usia_u0_sclkdiv {
+-	compatible = "renesas,emev2-smu-clkdiv";
+-	reg = <0x610 0>;
+-	clocks = <&pll3_fo>, <&pll4_fo>, <&pll1_fo>, <&osc1_fo>;
+-	#clock-cells = <0>;
+-};
+-
+-usia_u0_sclk: usia_u0_sclk {
+-	compatible = "renesas,emev2-smu-gclk";
+-	reg = <0x4a0 1>;
+-	clocks = <&usia_u0_sclkdiv>;
+-	#clock-cells = <0>;
+-};
+-
+-Example of consumer:
+-
+-serial@e1020000 {
+-	compatible = "renesas,em-uart";
+-	reg = <0xe1020000 0x38>;
+-	interrupts = <0 8 0>;
+-	clocks = <&usia_u0_sclk>;
+-	clock-names = "sclk";
+-};
+-
+-Example of clock-tree description:
+-
+- This describes a clock path in the clock tree
+-  c32ki -> pll3_fo -> usia_u0_sclkdiv -> usia_u0_sclk
+-
+-smu@e0110000 {
+-	compatible = "renesas,emev2-smu";
+-	reg = <0xe0110000 0x10000>;
+-	#address-cells = <2>;
+-	#size-cells = <0>;
+-
+-	c32ki: c32ki {
+-		compatible = "fixed-clock";
+-		clock-frequency = <32768>;
+-		#clock-cells = <0>;
+-	};
+-	pll3_fo: pll3_fo {
+-		compatible = "fixed-factor-clock";
+-		clocks = <&c32ki>;
+-		clock-div = <1>;
+-		clock-mult = <7000>;
+-		#clock-cells = <0>;
+-	};
+-	usia_u0_sclkdiv: usia_u0_sclkdiv {
+-		compatible = "renesas,emev2-smu-clkdiv";
+-		reg = <0x610 0>;
+-		clocks = <&pll3_fo>;
+-		#clock-cells = <0>;
+-	};
+-	usia_u0_sclk: usia_u0_sclk {
+-		compatible = "renesas,emev2-smu-gclk";
+-		reg = <0x4a0 1>;
+-		clocks = <&usia_u0_sclkdiv>;
+-		#clock-cells = <0>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,emev2-smu.yaml b/Documentation/devicetree/bindings/clock/renesas,emev2-smu.yaml
+new file mode 100644
+index 0000000000000000..4d9a6480048108b1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,emev2-smu.yaml
+@@ -0,0 +1,140 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,emev2-smu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas EMMA Mobile EV2 System Management Unit
++
++maintainers:
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++  - Magnus Damm <magnus.damm@gmail.com>
++
++description: |
++  The System Management Unit is described in user's manual R19UH0037EJ1000_SMU.
++  This is not a clock provider, but clocks under SMU depend on it.
++
++properties:
++  compatible:
++    const: renesas,emev2-smu
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 2
++
++  '#size-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++
++patternProperties:
++  ".*sclkdiv@.*":
++    type: object
++
++    description: |
++      Function block with an input mux and a divider, which corresponds to
++      "Serial clock generator" in fig. "Clock System Overview" of the manual,
++      and "xxx frequency division setting register" (XXXCLKDIV) registers.
++      This makes internal (neither input nor output) clock that is provided
++      to input of xxxGCLK block.
++
++    properties:
++      compatible:
++        const: renesas,emev2-smu-clkdiv
++
++      reg:
++        maxItems: 1
++        description:
++          Byte offset from SMU base and Bit position in the register.
++
++      clocks:
++        minItems: 1
++        maxItems: 4
++
++      '#clock-cells':
++        const: 0
++
++    required:
++      - compatible
++      - reg
++      - clocks
++      - '#clock-cells'
++
++    additionalProperties: false
++
++  ".*sclk@.*":
++    type: object
++
++    description: |
++      Clock gating node shown as "Clock stop processing block" in the
++      fig. "Clock System Overview" of the manual.
++      Registers are "xxx clock gate control register" (XXXGCLKCTRL).
++
++    properties:
++      compatible:
++        const: renesas,emev2-smu-gclk
++
++      reg:
++        maxItems: 1
++        description:
++          Byte offset from SMU base and Bit position in the register.
++
++      clocks:
++        maxItems: 1
++
++      '#clock-cells':
++        const: 0
++
++    required:
++      - compatible
++      - reg
++      - clocks
++      - '#clock-cells'
++
++    additionalProperties: false
++
++additionalProperties: true
++
++examples:
++  - |
++    // Example of clock-tree description:
++    //
++    //  This describes a clock path in the clock tree
++    //   c32ki -> pll3_fo -> usia_u0_sclkdiv -> usia_u0_sclk
++    clocks@e0110000 {
++            compatible = "renesas,emev2-smu";
++            reg = <0xe0110000 0x10000>;
++            #address-cells = <2>;
++            #size-cells = <0>;
++
++            c32ki: c32ki {
++                    compatible = "fixed-clock";
++                    clock-frequency = <32768>;
++                    #clock-cells = <0>;
++            };
++            pll3_fo: pll3_fo {
++                    compatible = "fixed-factor-clock";
++                    clocks = <&c32ki>;
++                    clock-div = <1>;
++                    clock-mult = <7000>;
++                    #clock-cells = <0>;
++            };
++            usia_u0_sclkdiv: usia_u0_sclkdiv@610,0 {
++                    compatible = "renesas,emev2-smu-clkdiv";
++                    reg = <0x610 0>;
++                    clocks = <&pll3_fo>;
++                    #clock-cells = <0>;
++            };
++            usia_u0_sclk: usia_u0_sclk@4a0,1 {
++                    compatible = "renesas,emev2-smu-gclk";
++                    reg = <0x4a0 1>;
++                    clocks = <&usia_u0_sclkdiv>;
++                    #clock-cells = <0>;
++            };
++    };
+-- 
+2.25.1
 
-After applying this change, it can build pass.
-
-> > This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon =
-R5
-> > 230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based o=
-n
-> > v5.11 Linux kernel.
-> >
-> > Changes in v5:
-> >  - Fix typo in comments
-> >  - Keep comments style consistent
-> >  - Refine some error handling codes
-> >  - Remove unneeded header file including
-> >  - Merge fu740_pcie_ltssm_enable implementation to fu740_pcie_start_lin=
-k
-> >
-> > Changes in v4:
-> >  - Fix Wunused-but-set-variable warning in prci driver
-> >
-> > Changes in v3:
-> >  - Remove items that has been defined
-> >  - Refine format of sifive,fu740-pcie.yaml
-> >  - Replace perstn-gpios with the common one
-> >  - Change DBI mapping space to 2GB from 4GB
-> >  - Refine drivers/reset/Kconfig
-> >
-> > Changes in v2:
-> >  - Refine codes based on reviewers' feedback
-> >  - Remove define and use the common one
-> >  - Replace __raw_writel with writel_relaxed
-> >  - Split fu740_phyregreadwrite to write function
-> >  - Use readl_poll_timeout in stead of while loop checking
-> >  - Use dwc common codes
-> >  - Use gpio descriptors and the gpiod_* api.
-> >  - Replace devm_ioremap_resource with devm_platform_ioremap_resource_by=
-name
-> >  - Replace devm_reset_control_get with devm_reset_control_get_exclusive
-> >  - Add more comments for delay and sleep
-> >  - Remove "phy ? x : y" expressions
-> >  - Refine code logic to remove possible infinite loop
-> >  - Replace magic number with meaningful define
-> >  - Remove fu740_pcie_pm_ops
-> >  - Use builtin_platform_driver
-> >
-> > Greentime Hu (5):
-> >   clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
-> >   clk: sifive: Use reset-simple in prci driver for PCIe driver
-> >   MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
-> >   dt-bindings: PCI: Add SiFive FU740 PCIe host controller
-> >   riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
-> >
-> > Paul Walmsley (1):
-> >   PCI: fu740: Add SiFive FU740 PCIe host controller driver
-> >
-> >  .../bindings/pci/sifive,fu740-pcie.yaml       | 113 +++++++
-> >  MAINTAINERS                                   |   8 +
-> >  arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  33 ++
-> >  drivers/clk/sifive/Kconfig                    |   2 +
-> >  drivers/clk/sifive/fu740-prci.c               |  11 +
-> >  drivers/clk/sifive/fu740-prci.h               |   2 +-
-> >  drivers/clk/sifive/sifive-prci.c              |  54 +++
-> >  drivers/clk/sifive/sifive-prci.h              |  13 +
-> >  drivers/pci/controller/dwc/Kconfig            |   9 +
-> >  drivers/pci/controller/dwc/Makefile           |   1 +
-> >  drivers/pci/controller/dwc/pcie-fu740.c       | 308 ++++++++++++++++++
-> >  drivers/reset/Kconfig                         |   1 +
-> >  include/dt-bindings/clock/sifive-fu740-prci.h |   1 +
-> >  13 files changed, 555 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-=
-pcie.yaml
-> >  create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
-> >
-> > --
-> > 2.30.2
-> >
