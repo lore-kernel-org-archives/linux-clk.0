@@ -2,190 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E03DC433ED
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 19:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC86C433B4
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 05:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EAE26115C
-	for <linux-clk@archiver.kernel.org>; Mon,  3 May 2021 19:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C775E61186
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 05:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbhECTTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 May 2021 15:19:35 -0400
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:39467 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbhECTTe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 May 2021 15:19:34 -0400
-Received: by mail-oi1-f169.google.com with SMTP id i81so6435765oif.6;
-        Mon, 03 May 2021 12:18:40 -0700 (PDT)
+        id S229742AbhEDF3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 May 2021 01:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50228 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229721AbhEDF3t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 May 2021 01:29:49 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE56C06174A
+        for <linux-clk@vger.kernel.org>; Mon,  3 May 2021 22:28:54 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id p4so6311737pfo.3
+        for <linux-clk@vger.kernel.org>; Mon, 03 May 2021 22:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=d1/AzVVrNidYL1JjR1YC/Peao5Mw1ewmpCW6nzrTArc=;
+        b=c5b+/FRo57MbHTEAez+tIFj/mbxJ/4TPCMLMKwqCj1QxrLBFwTpK57F4kMxLtQGXMt
+         mc7iFXrws3C9/0+t9VmgFbSBgs2t4h9EU+fyLsJPks8kYl13VW0oUYsRTS++of+93ixc
+         kAemPYkMm9g85Wigz1LOS9AEvABZmYQsJ0vR13prGzBfzTB8Unocu+YjUS/pioB7vHLF
+         Yu4NSzzNdLswqoqn01CvWc3CuFr/BDC78spqKJgjz5Y0ebrRMg7Xnxpo9PkfhCBLgeVM
+         Qp+C2ryA2xWsDsMsiAqMYQqZQ5kEZE9RMMKwo8lbRkCT8S4kDOI7fuSesaba+1SdIhDS
+         956w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b8N/TlRdWAZ9L/+h5q9FoCTxTuyKpkIVXey/8miQuVQ=;
-        b=BdnVu/2e5F6Mhoa/EnOiFGRKsE4ONp3opNKPdpb5jYhdXwMm7uKTmwnNTxXq1wi+x3
-         Oz8dVBqC/QXA43dbCr5uSrNNlqa3QJqf+PkhGDxQALg8befpBeplNwKKzFkoVCUgW+Db
-         /xndq45AsMPVf+pHt9B41rKd8O6rIFebOc03CQvkzokuuiOZRu1i/o8RtV+quOtSfPSs
-         g6+EV+OQt/pPCWCERSqnMkjYRTyvBMUZCpUj30/woqVkhlDkyFXYCxLwuAz6E7+M0V1u
-         Jnq8yqMxfqwdMKZcuZzS1So7G+73CYpQYadgpRlOLEm6rBi0RFbPG2Zq47cY3Rntbw1g
-         pebw==
-X-Gm-Message-State: AOAM531h++F/VJye7irypOtiuYckIqbEaO7tVY3aRi5toGeX0AM2z1Z/
-        MTbFiHN9v6EkM8q8yqt9sZhQ7kumoQ==
-X-Google-Smtp-Source: ABdhPJz4HIRxdrj6jbmbSz3F1g0tQTObZ+/Q2IG3irc0yGp2meJilfPa7b8h8KuJe6ZAiPrOaMR3zw==
-X-Received: by 2002:aca:da89:: with SMTP id r131mr8153435oig.3.1620069519822;
-        Mon, 03 May 2021 12:18:39 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n37sm181424otn.9.2021.05.03.12.18.38
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d1/AzVVrNidYL1JjR1YC/Peao5Mw1ewmpCW6nzrTArc=;
+        b=dYp+garZgAnyfCsVoEetFOvDx6ZlxWEXUSzBTUo9tZUHje75lM9s15ctOlO0mt3/j8
+         Hy80OFT7tNILxKFajYTOj+fQatdTa+ssIOFtY6lWQtDdKFb26hlHtoJKzGRAwBSnrH3q
+         MaDUKy6+8kJPO1MdNA+UVmhGyWM+OmR6BDHA9u7pfFGvbm2Zz1BUbHpkWF5X1+nFPbNz
+         us5xJXCPX1BOkPei5/ubR11rpqT8SHxp+d54K0T6SIK2l3DjtH1ha6H3nAuqE8tKznZ5
+         Wbc+KcyDftjC49r9lbxvJ9TknWwRt7H2HLHVn+EjGcOrW1vGw8oUqwRtDvBL2u3nHTkK
+         z5zA==
+X-Gm-Message-State: AOAM531MIN/iYZw0solwOycWZLMRMOFI+r1gnimUeo93dwNndgh2GS01
+        FcHEVHMiNk8y4MBkJ13ppAAo8g==
+X-Google-Smtp-Source: ABdhPJzdS4ViNq2A7okdWhYQ2+fzIzBEVaEgOXbmwhyYrZjKUPwp7RHhi6GILgShVLSSoTLLZuHlaA==
+X-Received: by 2002:a63:f258:: with SMTP id d24mr21482075pgk.174.1620106133811;
+        Mon, 03 May 2021 22:28:53 -0700 (PDT)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id 145sm5933229pfv.196.2021.05.03.22.28.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 May 2021 12:18:38 -0700 (PDT)
-Received: (nullmailer pid 2226015 invoked by uid 1000);
-        Mon, 03 May 2021 19:18:37 -0000
-Date:   Mon, 3 May 2021 14:18:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add SC7280 DISPCC clock
- binding
-Message-ID: <20210503191837.GA2220566@robh.at.kernel.org>
-References: <1619519590-3019-1-git-send-email-tdas@codeaurora.org>
- <1619519590-3019-2-git-send-email-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1619519590-3019-2-git-send-email-tdas@codeaurora.org>
+        Mon, 03 May 2021 22:28:53 -0700 (PDT)
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH 0/5] Add MSM8939 APCS/A53PLL clock support
+Date:   Tue,  4 May 2021 13:28:39 +0800
+Message-Id: <20210504052844.21096-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 04:03:05PM +0530, Taniya Das wrote:
-> Add device tree bindings for display clock controller subsystem for
-> Qualcomm Technology Inc's SC7280 SoCs.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../bindings/clock/qcom,sc7280-dispcc.yaml         | 94 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,dispcc-sc7280.h     | 55 +++++++++++++
->  2 files changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-> new file mode 100644
-> index 0000000..2178666
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sc7280-dispcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Display Clock & Reset Controller Binding for SC7280
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Qualcomm display clock control module which supports the clocks, resets and
-> +  power domains on SC7280.
-> +
-> +  See also dt-bindings/clock/qcom,dispcc-sc7280.h.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sc7280-dispcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 source from GCC
-> +      - description: Byte clock from DSI PHY
-> +      - description: Pixel clock from DSI PHY
-> +      - description: Link clock from DP PHY
-> +      - description: VCO DIV clock from DP PHY
-> +      - description: Link clock from EDP PHY
-> +      - description: VCO DIV clock from EDP PHY
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: gcc_disp_gpll0_clk
-> +      - const: dsi0_phy_pll_out_byteclk
-> +      - const: dsi0_phy_pll_out_dsiclk
-> +      - const: dp_phy_pll_link_clk
-> +      - const: dp_phy_pll_vco_div_clk
-> +      - const: edp_phy_pll_link_clk
-> +      - const: edp_phy_pll_vco_div_clk
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@af00000 {
-> +      compatible = "qcom,sc7280-dispcc";
-> +      reg = <0x0af00000 0x200000>;
-> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-> +               <&dsi_phy 0>,
-> +               <&dsi_phy 1>,
-> +               <&dp_phy 0>,
-> +               <&dp_phy 1>,
-> +               <&edp_phy 0>,
-> +               <&edp_phy 1>;
-> +      clock-names = "bi_tcxo",
-> +                    "gcc_disp_gpll0_clk",
-> +                    "dsi0_phy_pll_out_byteclk",
-> +                    "dsi0_phy_pll_out_dsiclk",
-> +                    "dp_phy_pll_link_clk",
-> +                    "dp_phy_pll_vco_div_clk",
-> +                    "edp_phy_pll_link_clk",
-> +                    "edp_phy_pll_vco_div_clk";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> new file mode 100644
-> index 0000000..2074b30
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> @@ -0,0 +1,55 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+This series adds MSM8939 APCS/A53PLL clock support.  Most outstanding
+thing about MSM8939 is that it integrates 3 APCS instances, for Cluster0
+(little cores), Cluster1 (big cores) and CCI (Cache Coherent Interconnect)
+respectively.
 
-Dual license please. I'm tired of telling the company that complained to 
-me about having dual licensing for DT stuff not dual license their
-stuff. Please pass that on to your coworkers.
+Note: the first one is a small improvement which is not specific to
+MSM8939 support.
 
-Rob
+
+Shawn Guo (5):
+  clk: qcom: apcs-msm8916: Flag a53mux instead of a53pll as critical
+  dt-bindings: clock: update qcom,a53pll bindings for MSM8939 support
+  clk: qcom: apcs-msm8916: Retrieve clock name from DT
+  clk: qcom: a53-pll: Pass freq_tbl via match data
+  clk: qcom: a53-pll: Add MSM8939 a53pll clocks
+
+ .../bindings/clock/qcom,a53pll.yaml           | 34 +++++++++++
+ drivers/clk/qcom/a53-pll.c                    | 59 +++++++++++++++++--
+ drivers/clk/qcom/apcs-msm8916.c               |  7 ++-
+ 3 files changed, 93 insertions(+), 7 deletions(-)
+
+-- 
+2.17.1
+
