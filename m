@@ -2,78 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F9FC433ED
-	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 11:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F3BC433ED
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 12:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63C9E61185
-	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 11:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9979D61075
+	for <linux-clk@archiver.kernel.org>; Tue,  4 May 2021 12:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbhEDL3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 May 2021 07:29:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:57058 "EHLO foss.arm.com"
+        id S230133AbhEDMZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 May 2021 08:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229903AbhEDL3v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 May 2021 07:29:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C159D6E;
-        Tue,  4 May 2021 04:28:56 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.46.190])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 908CA3F73B;
-        Tue,  4 May 2021 04:28:51 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        paul.walmsley@sifive.com, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, hayashi.kunihiko@socionext.com,
-        sboyd@kernel.org, vidyas@nvidia.com, aou@eecs.berkeley.edu,
-        helgaas@kernel.org, linux-clk@vger.kernel.org, bhelgaas@google.com,
-        zong.li@sifive.com, hes@sifive.com, alex.dewar90@gmail.com,
-        erik.danie@sifive.com, jh80.chung@samsung.com,
-        Greentime Hu <greentime.hu@sifive.com>,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, khilman@baylibre.com
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v6 0/6] Add SiFive FU740 PCIe host controller driver support
-Date:   Tue,  4 May 2021 12:28:45 +0100
-Message-Id: <162012762098.17915.18389066004997041156.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210504105940.100004-1-greentime.hu@sifive.com>
+        id S230110AbhEDMZS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 May 2021 08:25:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 54735613B4;
+        Tue,  4 May 2021 12:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620131064;
+        bh=vArYzEMEwRqDbMRFkfiHNa4Cgeb/07wrYgojfXEM6ig=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f8ApvRPhpj1ghZ3GYlONwF21yByVn6tOlm5gExHU9CgVbE38i4gVlkktgw2fcqEBT
+         2BI1Kc+8aoqMzhiK+LgMM/mkS/TOu4WchUA47NAZFl56Od8RreTRfQOpguR2XoJgc2
+         0ojolL9ZtF/h6+OfVzabe/ChOlHh35FJ8K09aqkFtpcDgj6RQm88Axlyp5z1fqHelY
+         S7CNTilkyJ2Cgs79Vz8LRogTJt2ixK1EkztsdanK089ZE6wdtQB/Kj5eplasCOxeGc
+         y7osxn+gPLsTO5KkTVn073nXPICN6pUipqsNZOOte8gfA4ULES81Kz9N2FB/7R1JP/
+         bHMrKkSRsKxBw==
+Date:   Tue, 4 May 2021 15:24:19 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Greentime Hu <greentime.hu@sifive.com>
+Cc:     paul.walmsley@sifive.com, hes@sifive.com, erik.danie@sifive.com,
+        zong.li@sifive.com, bhelgaas@google.com, robh+dt@kernel.org,
+        aou@eecs.berkeley.edu, mturquette@baylibre.com, sboyd@kernel.org,
+        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
+        alex.dewar90@gmail.com, khilman@baylibre.com,
+        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
+        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        helgaas@kernel.org
+Subject: Re: [PATCH v6 1/6] clk: sifive: Add pcie_aux clock in prci driver
+ for PCIe driver
+Message-ID: <YJE886bhppqes5LQ@unreal>
 References: <20210504105940.100004-1-greentime.hu@sifive.com>
+ <20210504105940.100004-2-greentime.hu@sifive.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210504105940.100004-2-greentime.hu@sifive.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 4 May 2021 18:59:34 +0800, Greentime Hu wrote:
-> This patchset includes SiFive FU740 PCIe host controller driver. We also
-> add pcie_aux clock and pcie_power_on_reset controller to prci driver for
-> PCIe driver to use it.
+On Tue, May 04, 2021 at 06:59:35PM +0800, Greentime Hu wrote:
+> We add pcie_aux clock in this patch so that pcie driver can use
+> clk_prepare_enable() and clk_disable_unprepare() to enable and disable
+> pcie_aux clock.
 > 
-> This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon R5
-> 230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based on
-> v5.11 Linux kernel.
+> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/sifive/fu740-prci.c               | 11 +++++
+>  drivers/clk/sifive/fu740-prci.h               |  2 +-
+>  drivers/clk/sifive/sifive-prci.c              | 41 +++++++++++++++++++
+>  drivers/clk/sifive/sifive-prci.h              |  9 ++++
+>  include/dt-bindings/clock/sifive-fu740-prci.h |  1 +
+>  5 files changed, 63 insertions(+), 1 deletion(-)
 > 
-> [...]
+> diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
+> index 764d1097aa51..53f6e00a03b9 100644
+> --- a/drivers/clk/sifive/fu740-prci.c
+> +++ b/drivers/clk/sifive/fu740-prci.c
+> @@ -72,6 +72,12 @@ static const struct clk_ops sifive_fu740_prci_hfpclkplldiv_clk_ops = {
+>  	.recalc_rate = sifive_prci_hfpclkplldiv_recalc_rate,
 
-Applied to pci/risc-v, thanks.
+<...>
 
-[1/6] clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
-      https://git.kernel.org/lpieralisi/pci/c/c61287bf17
-[2/6] clk: sifive: Use reset-simple in prci driver for PCIe driver
-      https://git.kernel.org/lpieralisi/pci/c/e4d368e0b6
-[3/6] MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
-      https://git.kernel.org/lpieralisi/pci/c/2da0dd5e30
-[4/6] dt-bindings: PCI: Add SiFive FU740 PCIe host controller
-      https://git.kernel.org/lpieralisi/pci/c/43cea116be
-[5/6] PCI: fu740: Add SiFive FU740 PCIe host controller driver
-      https://git.kernel.org/lpieralisi/pci/c/d5f9eb3dbb
-[6/6] riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
-      https://git.kernel.org/lpieralisi/pci/c/dc69e229c1
+> +/* PCIE AUX clock APIs for enable, disable. */
+> +int sifive_prci_pcie_aux_clock_is_enabled(struct clk_hw *hw)
 
-Thanks,
-Lorenzo
+It should be bool
+
+> +{
+> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
+> +	struct __prci_data *pd = pc->pd;
+> +	u32 r;
+> +
+> +	r = __prci_readl(pd, PRCI_PCIE_AUX_OFFSET);
+> +
+> +	if (r & PRCI_PCIE_AUX_EN_MASK)
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+
+and here simple "return r & PRCI_PCIE_AUX_EN_MASK;"
+
+> +
+> +int sifive_prci_pcie_aux_clock_enable(struct clk_hw *hw)
+> +{
+> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
+> +	struct __prci_data *pd = pc->pd;
+> +	u32 r __maybe_unused;
+> +
+> +	if (sifive_prci_pcie_aux_clock_is_enabled(hw))
+> +		return 0;
+
+You actually call to this new function only once, put your
+__prci_readl() here.
+
+Thanks
