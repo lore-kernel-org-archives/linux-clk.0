@@ -2,187 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB60C43460
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 12:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D72DC433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 14:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D52B613C4
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 12:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 544B26115C
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 14:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233263AbhEENAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 May 2021 09:00:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231899AbhEENAf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 09:00:35 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FEAAC061574;
-        Wed,  5 May 2021 05:59:38 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id y26so1913883eds.4;
-        Wed, 05 May 2021 05:59:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q3TUXql89bkOBKVdZb/N0fDACBtYAZwgrTC4aNZ/0kc=;
-        b=uV29I9tLk7ANTNzFA1wxHQJbNKWCXsHVRbRSEBzO5LsmthoqIERDma5lAafkKTeqir
-         HRvCo6sKwWjdy7gWqurDdr/67LoqJ0eeHBZ931slpmjfCNWd6P0PrbKlMn6sGUUx8MJN
-         c5QszoiquPtLswpAkmublRPb/jbOHJp3cuYHkTctZYmuz6PYScf7zOeeCgFXnCIkUijp
-         ZJHWbTWEN2m2AMCT4yu9W4ud1xjLX5UZMZ7Xf0k9QItiBUvcyI0vH88x37QXbjAhbYkB
-         ArO45VAh4ZkSl5R0eace/5p9Br8N3bvgCUVjRSh0CEigbskH5hEpAHvoD5f4Y1BDHTUV
-         ++AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q3TUXql89bkOBKVdZb/N0fDACBtYAZwgrTC4aNZ/0kc=;
-        b=oeVidgfzWLKg45M1PI/4Un+fINWpSURJh4wM5jQgQHXeJKdi43gzbl8hz5JgAAsBSV
-         39ySjBCg80Vnim9yvskJ4/SIV3d/RDgT/poahfbaUTPIr4egsdb2q/WRweYQ+8R8ca81
-         +FIErInut3V2w7ypbA7w6xosvz83hxHkxrBcE20LmMfS7EdAp8Z+PJ9l2WM6R6GgyyN/
-         +iYw+IuDuwD5kQc4NzwOhxegOMIeIIaSzuAQ8yPXier2igYVl+xEhVelIzpQjq65fz88
-         25vOQtP7XPQ6J2sVpVIbM4OoV4Nk04XlZIDH7O/zKA3txLnwWINJCgFkqGbdk5Ut3IAL
-         1vOA==
-X-Gm-Message-State: AOAM532SzPYQlILGwghAKPdGwKL9vwah77DVUP8tFsdJRXnuZEiYBndx
-        GuroROrtz3hI/3Vy/dV+2jMkfWGQTrzVlHXf2j4=
-X-Google-Smtp-Source: ABdhPJyx/n0JkMbp0gnpwsKd3yP6nSHrkixNPJdYcwGzCflujmMm1KivqO2G9w8ig4+I7PoAx2bOod9QJHoAI5/GHJE=
-X-Received: by 2002:a05:6402:20f:: with SMTP id t15mr32166134edv.370.1620219576979;
- Wed, 05 May 2021 05:59:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210409125732.376589-1-luca@lucaceresoli.net>
-In-Reply-To: <20210409125732.376589-1-luca@lucaceresoli.net>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 5 May 2021 07:59:25 -0500
-Message-ID: <CAHCN7xLSgkJKs-8baa9O303=x1jB=7khedyBMcoHP_33Obqdbg@mail.gmail.com>
-Subject: Re: [PATCH] clk: vc5: fix output disabling when enabling a FOD
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        id S233055AbhEEOiF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 May 2021 10:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229707AbhEEOiC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 May 2021 10:38:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7075961157;
+        Wed,  5 May 2021 14:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620225425;
+        bh=Ehq7zR5EL010xOPMeZxXULfS9dLTcxOv/Y8XH3TPNrg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=AzPXRTqmdq8Gz1ySQkPfIP+VwZ8kSkK6//JYOAbDkcwfoDIkqxchIywlAiyKINUW/
+         swIh3U5xJndPjHMTVXtNVGmEbpZURJADcYop7RZYbbCzqs8UUzopXq0gggYYsoyUEf
+         LwHXJDv/SjP21Y7DWJAHJvySXeRqlMJDIL8jnoWwhC87n5FdymnbKGtLLZUhtlJx2V
+         vTvyFjkVO4dZGm2fI9HuFRr0eaFdSLvEvH4LA0o+RHPFCCFg2HjNHLqzuU6/d2Co+h
+         vbAOkNH4d/Daab1BGohc7xqjj9AdhcCUblGAB/UuScxBK9Q9/asI7LG1ZBTPQlyUu+
+         5jqeISgj6Of1g==
+Date:   Wed, 5 May 2021 09:37:04 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Greentime Hu <greentime.hu@sifive.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>, hes@sifive.com,
+        Erik Danie <erik.danie@sifive.com>,
+        Zong Li <zong.li@sifive.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, alex.dewar90@gmail.com,
+        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
+        vidyas@nvidia.com, jh80.chung@samsung.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] PCI: fu740: Add SiFive FU740 PCIe host controller
+ driver
+Message-ID: <20210505143704.GA1298791@bjorn-Precision-5520>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCEehL21cFLp+JWMhKP8rAVtGunMv2fmfo6C6tbTGpgL9q2RA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 9, 2021 at 7:57 AM Luca Ceresoli <luca@lucaceresoli.net> wrote:
->
-> On 5P49V6965, when an output is enabled we enable the corresponding
-> FOD. When this happens for the first time, and specifically when writing
-> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
-> are stopped for a short time and then restarted.
->
-> According to Renesas support this is intended: "The reason for that is VC=
-6E
-> has synced up all output function".
->
-> This behaviour can be disabled at least on VersaClock 6E devices, of whic=
-h
-> only the 5P49V6965 is currently implemented by this driver. This requires
-> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those register=
-s
-> are named "Unused Factory Reserved Register", and the bits are documented
-> as "Skip VDDO<N> verification", which does not clearly explain the relati=
-on
-> to FOD sync. However according to Renesas support as well as my testing
-> setting this bit does prevent disabling of all clock outputs when enablin=
-g
-> a FOD.
->
-> See "VersaClock =C2=AE 6E Family Register Descriptions and Programming Gu=
-ide"
-> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
-> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-=
-descriptions-and-programming-guide
->
-Reviewed-by: Adam Ford <aford173@gmail.com>
+On Wed, May 05, 2021 at 12:26:31PM +0800, Greentime Hu wrote:
+> Bjorn Helgaas <helgaas@kernel.org> 於 2021年5月4日 週二 下午9:46寫道：
+> > On Tue, May 04, 2021 at 06:59:39PM +0800, Greentime Hu wrote:
+> > > From: Paul Walmsley <paul.walmsley@sifive.com>
+> > >
+> > > Add driver for the SiFive FU740 PCIe host controller.
+> > > This controller is based on the DesignWare PCIe core.
+> > >
+> > > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> > > Co-developed-by: Henry Styles <hes@sifive.com>
+> > > Signed-off-by: Henry Styles <hes@sifive.com>
+> > > Co-developed-by: Erik Danie <erik.danie@sifive.com>
+> > > Signed-off-by: Erik Danie <erik.danie@sifive.com>
+> > > Co-developed-by: Greentime Hu <greentime.hu@sifive.com>
+> > > Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/Kconfig      |  10 +
+> > >  drivers/pci/controller/dwc/Makefile     |   1 +
+> > >  drivers/pci/controller/dwc/pcie-fu740.c | 309 ++++++++++++++++++++++++
+> > >  3 files changed, 320 insertions(+)
+> > >  create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > > index 22c5529e9a65..255d43b1661b 100644
+> > > --- a/drivers/pci/controller/dwc/Kconfig
+> > > +++ b/drivers/pci/controller/dwc/Kconfig
+> > > @@ -318,4 +318,14 @@ config PCIE_AL
+> > >         required only for DT-based platforms. ACPI platforms with the
+> > >         Annapurna Labs PCIe controller don't need to enable this.
+> > >
+> > > +config PCIE_FU740
+> > > +     bool "SiFive FU740 PCIe host controller"
+> > > +     depends on PCI_MSI_IRQ_DOMAIN
+> > > +     depends on SOC_SIFIVE || COMPILE_TEST
+> > > +     depends on GPIOLIB
+> > ...
+> > 2) I would prefer not to depend on GPIOLIB because it reduces
+> >    compile-test coverage.  For example, the x86_64 defconfig does not
+> >    enable GPIOLIB, so one must manually enable it to even be able to
+> >    enable PCIE_FU740.
+> > ...
 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  drivers/clk/clk-versaclock5.c | 27 ++++++++++++++++++++++++---
->  1 file changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.=
-c
-> index 344cd6c61188..3c737742c2a9 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -69,7 +69,10 @@
->  #define VC5_FEEDBACK_FRAC_DIV(n)               (0x19 + (n))
->  #define VC5_RC_CONTROL0                                0x1e
->  #define VC5_RC_CONTROL1                                0x1f
-> -/* Register 0x20 is factory reserved */
-> +
-> +/* These registers are named "Unused Factory Reserved Registers" */
-> +#define VC5_RESERVED_X0(idx)           (0x20 + ((idx) * 0x10))
-> +#define VC5_RESERVED_X0_BYPASS_SYNC    BIT(7) /* bypass_sync<idx> bit */
->
->  /* Output divider control for divider 1,2,3,4 */
->  #define VC5_OUT_DIV_CONTROL(idx)       (0x21 + ((idx) * 0x10))
-> @@ -87,7 +90,6 @@
->  #define VC5_OUT_DIV_SKEW_INT(idx, n)   (0x2b + ((idx) * 0x10) + (n))
->  #define VC5_OUT_DIV_INT(idx, n)                (0x2d + ((idx) * 0x10) + =
-(n))
->  #define VC5_OUT_DIV_SKEW_FRAC(idx)     (0x2f + ((idx) * 0x10))
-> -/* Registers 0x30, 0x40, 0x50 are factory reserved */
->
->  /* Clock control register for clock 1,2 */
->  #define VC5_CLK_OUTPUT_CFG(idx, n)     (0x60 + ((idx) * 0x2) + (n))
-> @@ -140,6 +142,8 @@
->  #define VC5_HAS_INTERNAL_XTAL  BIT(0)
->  /* chip has PFD requency doubler */
->  #define VC5_HAS_PFD_FREQ_DBL   BIT(1)
-> +/* chip has bits to disable FOD sync */
-> +#define VC5_HAS_BYPASS_SYNC_BIT        BIT(2)
->
->  /* Supported IDT VC5 models. */
->  enum vc5_model {
-> @@ -581,6 +585,23 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
->         unsigned int src;
->         int ret;
->
-> +       /*
-> +        * When enabling a FOD, all currently enabled FODs are briefly
-> +        * stopped in order to synchronize all of them. This causes a clo=
-ck
-> +        * disruption to any unrelated chips that might be already using
-> +        * other clock outputs. Bypass the sync feature to avoid the issu=
-e,
-> +        * which is possible on the VersaClock 6E family via reserved
-> +        * registers.
-> +        */
+> Sorry for late to debug this case. I was working on other works and
+> just missed the email.
+> How about this?
 
-Thanks for the comments here.  I with IDT/Renesas would better
-document this. I might see if I can convince one of the hardware guys
-at my office to test the impact of radiated emissions.
+We already dropped the "depends on GPIOLIB" for v5.13.
 
-> +       if (vc5->chip_info->flags & VC5_HAS_BYPASS_SYNC_BIT) {
-> +               ret =3D regmap_update_bits(vc5->regmap,
-> +                                        VC5_RESERVED_X0(hwdata->num),
-> +                                        VC5_RESERVED_X0_BYPASS_SYNC,
-> +                                        VC5_RESERVED_X0_BYPASS_SYNC);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
->         /*
->          * If the input mux is disabled, enable it first and
->          * select source from matching FOD.
-> @@ -1166,7 +1187,7 @@ static const struct vc5_chip_info idt_5p49v6965_inf=
-o =3D {
->         .model =3D IDT_VC6_5P49V6965,
->         .clk_fod_cnt =3D 4,
->         .clk_out_cnt =3D 5,
-> -       .flags =3D 0,
-> +       .flags =3D VC5_HAS_BYPASS_SYNC_BIT,
->  };
->
->  static const struct i2c_device_id vc5_id[] =3D {
-> --
-> 2.25.1
->
+You can add a select later, for v5.14.  Of course, you should post a
+complete patch including commit log and signed-off-by.
+
+And please take a look at how other drivers handle this so you do it
+the same way.
+
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index e1b2690b6e45..66f57f2db49d 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -7,6 +7,7 @@ config SOC_SIFIVE
+>         select CLK_SIFIVE
+>         select CLK_SIFIVE_PRCI
+>         select SIFIVE_PLIC
+> +       select GPIOLIB if PCIE_FU740
+>         help
+>           This enables support for SiFive SoC platform hardware.
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig
+> b/drivers/pci/controller/dwc/Kconfig
+> index 255d43b1661b..0a37d21ed64e 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -322,7 +322,6 @@ config PCIE_FU740
+>         bool "SiFive FU740 PCIe host controller"
+>         depends on PCI_MSI_IRQ_DOMAIN
+>         depends on SOC_SIFIVE || COMPILE_TEST
+> -       depends on GPIOLIB
+>         select PCIE_DW_HOST
+>         help
+>           Say Y here if you want PCIe controller support for the SiFive
