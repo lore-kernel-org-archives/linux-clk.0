@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 570A5C43460
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A821CC433ED
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1F1613EC
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AFA1613D6
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbhEEVlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 May 2021 17:41:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
+        id S230372AbhEEVlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 May 2021 17:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234882AbhEEVkx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 17:40:53 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C77BC06135A
-        for <linux-clk@vger.kernel.org>; Wed,  5 May 2021 14:39:43 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id j6-20020a17090adc86b02900cbfe6f2c96so1744168pjv.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 May 2021 14:39:43 -0700 (PDT)
+        with ESMTP id S234375AbhEEVlB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 17:41:01 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7500CC06134E
+        for <linux-clk@vger.kernel.org>; Wed,  5 May 2021 14:39:49 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id gq14-20020a17090b104eb029015be008ab0fso1754672pjb.1
+        for <linux-clk@vger.kernel.org>; Wed, 05 May 2021 14:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gqMsEIhJm5EqUOgNeJCrpzezZPASaD0w7LK6NRTqosc=;
-        b=pzbOscr85X4EFeeMDqwg9QrjOk6I1RQdc7g7pzKkYlY3dH0iLlhi72s1X2XWWMpM2s
-         QvGZNRQjdPZvog/lGq4VdeZwsy30G1ovMEGiKDjmnF3dpiEVc4VY5vkv6HYQJFCfUfTf
-         i2bPSmolUuj9lE2IcWYgkJhuddwgjd4LvHe7l2qploh7CB3JM4FVgmVE1glQAwOS5XQq
-         wXIuEO7FDs7Fxr281q7alYvVu70/98vHSffE3Mt3lSJZom2aMOIdBTKI+W/EJDYnSKVP
-         +3vhZCJfnYs76p4pTF/qWbBBv+Gnqoqrb8c0v7bdxxb6M0wFGRWsHruT524pi7sgCoQC
-         nisA==
+        bh=e3tF0fKUCMUyKii5LLb+0W4Qsi0cFNspuvqMpLYFV6k=;
+        b=u/Of22GLFJE2eKTv36F1cFasXy8NMQLIsXpJRN7knibzKd/OCG2Tn+Be3Eug506BmH
+         QsIqmIfxFNiewYklKQ6Qf5FpNYkipqYaX8tDPnFVjyw+5d1pT6yhtpPZQANmW/ys1dIr
+         ZSG4zRXBXWa2J9QzutqpqxWmVCNwycER67xWzGaRu9AvogRPSieaAY1MSiAb+50vjFsJ
+         smIyEZt+PVE8cA5HEVxWQ9RhAp70YQktkUhGJaD8E6w8CoATbrB0coT3LlejBOrJKfm4
+         ApaHW6sRHncSgSa8WE6d4TvnZ/YlrKZ2tl47q1qHoKhjA77fNiR9U2XaKwU83VvIcIG0
+         vT4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gqMsEIhJm5EqUOgNeJCrpzezZPASaD0w7LK6NRTqosc=;
-        b=SfvnAGIZct4ver/Ikz0Cq7lkwv/qumyjE3WYtyGnzsCCDUI4oso7lpDYspdSNwRc7U
-         /xZVgWGEdSuzWXlgfSZx3Zw24AopkfezCp0IfHLbAz+ZCgottLGZYkiruLmcjaBYiqt0
-         clu8U3ElUCiBaIHDlimQqpN4J2Od77OEn1hjciiTmWHkmd1KH8Qr4WRyCjQRA/9665D+
-         a1LPwxCZP2HdHKURPEK1E6rZxRPSZVEmxu3k9JtohRaV80BQ0nMxw/ARBA2WRQOVbqri
-         ekFJIDFkgKw029+X5hGnWuU8RXSR6JKgn38HF1APClixpMpfOdNtBJCaisPZ1RJlepCA
-         cBDA==
-X-Gm-Message-State: AOAM533eJ4Rr371hJfjRg2Xj+P3EQjE07JgH3nYS0xjR7/tQsfkIk8vx
-        kaFsEc0Gp2HCgb1jVS9ZOgw8SA==
-X-Google-Smtp-Source: ABdhPJyf8nn6KA3HWAacIkBqf+Zbuzkl16c37vrDWzE9zSrrG100mjqBC57zNCVbO7cuI0BgF0fwNw==
-X-Received: by 2002:a17:902:b609:b029:ec:e80d:7ebd with SMTP id b9-20020a170902b609b02900ece80d7ebdmr771721pls.75.1620250782828;
-        Wed, 05 May 2021 14:39:42 -0700 (PDT)
+        bh=e3tF0fKUCMUyKii5LLb+0W4Qsi0cFNspuvqMpLYFV6k=;
+        b=AqeN7voiADVbCBiijwmwgIYdzUohGLcAi/594y1hW9sewjolFfswXGkrTkwUl/wllA
+         CMbNsOGdHs2CSJyt53lHw+i8Fqnvrant1anHf+WDbDs4mfhgf23Rkc9wiItivcFm6ivw
+         y3Y8AuM6viKyPUJtPwqJYjVXtBbAdesHen0bbrIAPiDjwiQa2YbUL1OXrrOdS2fn5o+k
+         W5C4YYRqECVFdOGemJkbHxWM6p+eWc8NmTsF8lqz+G12iwRiUydF2OsL+hSahT4hYBX0
+         cQ0WlkNoQ6dMzlOoCcPyiLppivKmw8H10Yl8aiUkdUW35AvM2j1GWEfblUNzCg/ICFNT
+         eWvQ==
+X-Gm-Message-State: AOAM5333oEhxXXV+tHoSECubJHP27QqlzcxbeyjlcSX7N8eedB2d1gvC
+        SS4R8W/vqmore+fw6SdQ89Q3Ow==
+X-Google-Smtp-Source: ABdhPJwLoU+W/goJcXpIScKgIuMNJgQX3eUKHlYvuWyhf6SjstywoX+HrXzLPj3YfTKq+WFNQrf4/w==
+X-Received: by 2002:a17:90a:4e81:: with SMTP id o1mr13200739pjh.7.1620250789083;
+        Wed, 05 May 2021 14:39:49 -0700 (PDT)
 Received: from localhost.localdomain.name ([223.235.141.68])
-        by smtp.gmail.com with ESMTPSA id z26sm167031pfq.86.2021.05.05.14.39.36
+        by smtp.gmail.com with ESMTPSA id z26sm167031pfq.86.2021.05.05.14.39.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 May 2021 14:39:42 -0700 (PDT)
+        Wed, 05 May 2021 14:39:48 -0700 (PDT)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -70,9 +70,9 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH v2 16/17] crypto: qce: Defer probe in case interconnect is not yet initialized
-Date:   Thu,  6 May 2021 03:07:30 +0530
-Message-Id: <20210505213731.538612-17-bhupesh.sharma@linaro.org>
+Subject: [PATCH v2 17/17] arm64/dts: qcom: sm8250: Add dt entries to support crypto engine.
+Date:   Thu,  6 May 2021 03:07:31 +0530
+Message-Id: <20210505213731.538612-18-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
 References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
@@ -82,13 +82,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On some Qualcomm parts the qce crypto driver needs the interconnect between
-the crypto block and main memory to be initialized first before the crypto
-registers can be accessed. So it makes sense to defer the qce crypto driver
-probing in case the interconnect driver is not yet probed.
-
-This fixes the qce probe failure issues when both qce and
-interconnect drivers are compiled as static part of the kernel.
+Add crypto engine (CE) and CE BAM related nodes and definitions to
+"sm8250.dtsi".
 
 Cc: Thara Gopinath <thara.gopinath@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -106,35 +101,50 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- drivers/crypto/qce/core.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm64/boot/dts/qcom/sm8250.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-index 3e742e9911fa..9915b184f780 100644
---- a/drivers/crypto/qce/core.c
-+++ b/drivers/crypto/qce/core.c
-@@ -222,6 +222,20 @@ static int qce_crypto_probe(struct platform_device *pdev)
- 		return ret;
+diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+index 4c0de12aaba6..6700d609a7b8 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+@@ -3796,6 +3796,34 @@ cpufreq_hw: cpufreq@18591000 {
  
- 	qce->mem_path = of_icc_get(qce->dev, "memory");
+ 			#freq-domain-cells = <1>;
+ 		};
 +
-+	/* Check for NULL return path, which indicates
-+	 * interconnect API is disabled or the "interconnects"
-+	 * DT property is missing.
-+	 */
-+	if (!qce->mem_path)
-+		/* On some qcom parts, the qce crypto block needs interconnect
-+		 * paths to be configured before the registers can be accessed.
-+		 * Check here for the same.
-+		 */
-+		if (!strcmp(of_id->compatible, "qcom,ipq6018-qce") ||
-+		    !strcmp(of_id->compatible, "qcom,sdm845-qce"))
-+			return -EPROBE_DEFER;
++		cryptobam: dma@1dc4000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0 0x01dc4000 0 0x24000>;
++			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++			qcom,controlled-remotely = <1>;
++			iommus = <&apps_smmu 0x584 0x0011>,
++				 <&apps_smmu 0x586 0x0011>,
++				 <&apps_smmu 0x594 0x0011>,
++				 <&apps_smmu 0x596 0x0011>;
++			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE_0 &mc_virt SLAVE_EBI_CH0>;
++			interconnect-names = "memory";
++		};
 +
- 	if (IS_ERR(qce->mem_path))
- 		return PTR_ERR(qce->mem_path);
++		crypto: crypto@1dfa000 {
++			compatible = "qcom,sm8250-qce";
++			reg = <0 0x01dfa000 0 0x6000>;
++			dmas = <&cryptobam 4>, <&cryptobam 5>;
++			dma-names = "rx", "tx";
++			iommus = <&apps_smmu 0x584 0x0011>,
++				 <&apps_smmu 0x586 0x0011>,
++				 <&apps_smmu 0x594 0x0011>,
++				 <&apps_smmu 0x596 0x0011>;
++			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE_0 &mc_virt SLAVE_EBI_CH0>;
++			interconnect-names = "memory";
++		};
+ 	};
  
+ 	timer {
 -- 
 2.30.2
 
