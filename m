@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F62EC433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72A6C43461
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35C08613F9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E616613D6
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 21:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbhEEVkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 May 2021 17:40:10 -0400
+        id S234539AbhEEVkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 May 2021 17:40:31 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234467AbhEEVkB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 17:40:01 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8412BC061574
-        for <linux-clk@vger.kernel.org>; Wed,  5 May 2021 14:39:03 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id gc22-20020a17090b3116b02901558435aec1so1739823pjb.4
-        for <linux-clk@vger.kernel.org>; Wed, 05 May 2021 14:39:03 -0700 (PDT)
+        with ESMTP id S234590AbhEEVkH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 17:40:07 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF73DC061348
+        for <linux-clk@vger.kernel.org>; Wed,  5 May 2021 14:39:09 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id t22so2889553pgu.0
+        for <linux-clk@vger.kernel.org>; Wed, 05 May 2021 14:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QTs/SEbir+LcEB2TCs+hMhq7sImYAohAveDk3rTOiyw=;
-        b=dmGQrXTwqbRU0YhX8eT/Ex5erqUOL1+ceNi/hWVzGZ5pm6zXm6j41AkvT2l4wXcg2F
-         a4Q5kq4KdcUGN9y7nl20+l2xT57h+f+xE4ZEB3PFSLU4v2PV/fg9zYinl0kYHLweLfTJ
-         WdAw4b8nkdbvaO9WpBXCEQKdDQUfrWELQlKbOeyLRyAyLc6y/+7PMTTPhU7NldrvQ0V1
-         mG6/93fRQVrAKi8rtrRDnn4yK9PjFO9vEC75sCjPSMR8wM3UsO2FWlavpIbAdEFrI6HB
-         BrWNmV0H4O+cJ6J+Q8LYysunkKODrLQuU1EBMpzMhdowQbgAHzXyb6rUVzKjbdL5gBOa
-         7GZw==
+        bh=/siEfisWfBJM0n73hN/umrsNr10CV8eOAzqRCMOQV70=;
+        b=tHz4qVImXJSw44ix7PkNJLpPXT9cB/ns98mZEirUEBuNj5aP/lzKoYOVppEePIm4Ey
+         0iVsIJN1x8zO20EEl+V9sG/hgend/EOUoINR+qq5TEotIL5clwrVaNOx20zmghwPxzFf
+         CBrYFvwYgnSo/fzvdkLVpsxReBsqRjAER66cSYuM8mOxwvcaC94h09FaQ8RT1ZSdG0jD
+         eXKHneXHWOjkFTPcB0YAtFxvRANzfxEqUyDa5AIqA/anv9SBwiGhpLgAPu6/qoal3jMt
+         m5m/uUXPiATtLObVA3c0dyfrmT9z20nprwEN5Mn7Zb53oyZsWfO4OFDgwCK10hoXrD+1
+         O30Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QTs/SEbir+LcEB2TCs+hMhq7sImYAohAveDk3rTOiyw=;
-        b=iolT0kC7CNrGwY/OF5bkQy+c8eQJgPXiG5YL2uj6aMbPCJswbGGpp7FSAQEH8fNLtr
-         WjopJFBtsdl5JG7ZC8ttGsv4x9ckqO7352uIjDTp6lJ3dNtNODxdCE5qCSHSn+x4bxpi
-         /FtDummGCRS4RWmPWndTz6yJeh2D0IikCf6y0w5DpYa6gE2kbB5eNOfEGrJToJzN5oLz
-         GMc62r+y3250R+LgZdZ8HH9OGdNNYOsRl8s94vPYSrajyxRJzkVlFz0nI0KpWBSOufkr
-         4OnOSjCaSMVmTMW6mTPwQNNoQkxueC6hsJGAhNu+y5w/RU/KkCbbevTODO+NwOzHfKC3
-         febQ==
-X-Gm-Message-State: AOAM533kbVhKoc5ixYb8eWGrGOQQQKBQEdKHkP/e6sPuEZp46srqQlsA
-        NH7h9K4e0uhHSI+UmHQiGGthoQ==
-X-Google-Smtp-Source: ABdhPJxkzMArkMxXqIrhQRb74mSjr059HhOAUNBZubYzmJ6xexzehYn/V21P3TskEk5VEAZYSKsdkw==
-X-Received: by 2002:a17:90a:c687:: with SMTP id n7mr13795495pjt.104.1620250743115;
-        Wed, 05 May 2021 14:39:03 -0700 (PDT)
+        bh=/siEfisWfBJM0n73hN/umrsNr10CV8eOAzqRCMOQV70=;
+        b=qEQ3KC9ejqdaPfej4adIbU+jl45v6i021uFMwgZlrO+bfFs+2eJp8xUqm/t3r8CQfN
+         OyAU/pQfI1UugRdxZTL767yDj5l4VFng3KXTJegILjCxiYzyhOlKB90txRIqXqkUHCy0
+         +oVt8gm9Ojn0ZgSX2wTlHxZ7L8idxBtGsUtc+Z4zzny3PNzCc/0s9GN0ixcdGV2FKH/l
+         NSKwTk4s/pYOgfTzZjyBgw1APERfZihkiKW63OQpGtmYa2DNRj891dp1F7zO1oX0BQGk
+         uRyCGKAa46MBrFiayAusU0csTPBDsNskANQnAxXwukD/aPASF8MuNiwNYN4hX/ytwlOb
+         0+Zw==
+X-Gm-Message-State: AOAM531+dRB2qaVLPj39nF6EuhLecnh4eq74t+6kNprunQ1JsTmfHP1x
+        yXJ6nb9gxJAinBST4izSC0sQYA==
+X-Google-Smtp-Source: ABdhPJxx405bODF7L4idMIDItqAp6iCwVvXHGmuHWaLOHjAXU0qFlarx10b4GPxtSbwUE+1QqTFs+g==
+X-Received: by 2002:aa7:860e:0:b029:28e:b4a9:297f with SMTP id p14-20020aa7860e0000b029028eb4a9297fmr994740pfn.46.1620250749520;
+        Wed, 05 May 2021 14:39:09 -0700 (PDT)
 Received: from localhost.localdomain.name ([223.235.141.68])
-        by smtp.gmail.com with ESMTPSA id z26sm167031pfq.86.2021.05.05.14.38.56
+        by smtp.gmail.com with ESMTPSA id z26sm167031pfq.86.2021.05.05.14.39.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 May 2021 14:39:02 -0700 (PDT)
+        Wed, 05 May 2021 14:39:09 -0700 (PDT)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -70,9 +70,9 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH v2 10/17] crypto: qce: Add new compatibles for qce crypto driver
-Date:   Thu,  6 May 2021 03:07:24 +0530
-Message-Id: <20210505213731.538612-11-bhupesh.sharma@linaro.org>
+Subject: [PATCH v2 11/17] crypto: qce: core: Make clocks optional
+Date:   Thu,  6 May 2021 03:07:25 +0530
+Message-Id: <20210505213731.538612-12-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
 References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
@@ -82,11 +82,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since we decided to use soc specific compatibles for describing
-the qce crypto IP nodes in the device-trees, adapt the driver
-now to handle the same.
+From: Thara Gopinath <thara.gopinath@linaro.org>
 
-Cc: Thara Gopinath <thara.gopinath@linaro.org>
+On certain Snapdragon processors, the crypto engine clocks are enabled by
+default by security firmware and the driver need not handle the
+clocks. Make acquiring of all the clocks optional in crypto enginer driver
+so that the driver intializes properly even if no clocks are specified in
+the dt.
+
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Andy Gross <agross@kernel.org>
@@ -102,25 +105,163 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+[Make clock enablement optional only for qcom parts where
+ firmware has already initialized them, using a bool variable]
+Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- drivers/crypto/qce/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/qce/core.c | 85 +++++++++++++++++++++++----------------
+ drivers/crypto/qce/core.h |  2 +
+ 2 files changed, 53 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-index 92a0ff1d357e..f6032c303c8c 100644
+index f6032c303c8c..293d0bfe3aab 100644
 --- a/drivers/crypto/qce/core.c
 +++ b/drivers/crypto/qce/core.c
-@@ -294,8 +294,8 @@ static int qce_crypto_remove(struct platform_device *pdev)
+@@ -9,6 +9,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+@@ -184,12 +185,23 @@ static int qce_check_version(struct qce_device *qce)
+ 	return 0;
  }
  
- static const struct of_device_id qce_crypto_of_match[] = {
--	{ .compatible = "qcom,crypto-v5.1", },
--	{ .compatible = "qcom,crypto-v5.4", },
++static const struct of_device_id qce_crypto_of_match[] = {
 +	{ .compatible = "qcom,ipq6018-qce", },
 +	{ .compatible = "qcom,sdm845-qce", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, qce_crypto_of_match);
++	{ .compatible = "qcom,sm8250-qce", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, qce_crypto_of_match);
++
+ static int qce_crypto_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct qce_device *qce;
++	const struct of_device_id *of_id =
++			of_match_device(qce_crypto_of_match, &pdev->dev);
+ 	int ret;
+ 
++
+ 	qce = devm_kzalloc(dev, sizeof(*qce), GFP_KERNEL);
+ 	if (!qce)
+ 		return -ENOMEM;
+@@ -209,39 +221,51 @@ static int qce_crypto_probe(struct platform_device *pdev)
+ 	if (IS_ERR(qce->mem_path))
+ 		return PTR_ERR(qce->mem_path);
+ 
+-	qce->core = devm_clk_get(qce->dev, "core");
+-	if (IS_ERR(qce->core)) {
+-		ret = PTR_ERR(qce->core);
+-		goto err_mem_path_put;
+-	}
+-
+-	qce->iface = devm_clk_get(qce->dev, "iface");
+-	if (IS_ERR(qce->iface)) {
+-		ret = PTR_ERR(qce->iface);
+-		goto err_mem_path_put;
+-	}
+-
+-	qce->bus = devm_clk_get(qce->dev, "bus");
+-	if (IS_ERR(qce->bus)) {
+-		ret = PTR_ERR(qce->bus);
+-		goto err_mem_path_put;
+-	}
+-
+ 	ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
+ 	if (ret)
+ 		goto err_mem_path_put;
+ 
+-	ret = clk_prepare_enable(qce->core);
+-	if (ret)
+-		goto err_mem_path_disable;
++	/* On some qcom parts the crypto clocks are already configured by
++	 * the firmware running before linux. In such cases we don't need to
++	 * enable/configure them again. Check here for the same.
++	 */
++	if (!strcmp(of_id->compatible, "qcom,ipq6018-qce") ||
++	    !strcmp(of_id->compatible, "qcom,sdm845-qce"))
++		qce->clks_configured_by_fw = false;
++	else
++		qce->clks_configured_by_fw = true;
++
++	if (!qce->clks_configured_by_fw) {
++		qce->core = devm_clk_get(qce->dev, "core");
++		if (IS_ERR(qce->core)) {
++			ret = PTR_ERR(qce->core);
++			goto err_mem_path_put;
++		}
++
++		qce->iface = devm_clk_get(qce->dev, "iface");
++		if (IS_ERR(qce->iface)) {
++			ret = PTR_ERR(qce->iface);
++			goto err_mem_path_put;
++		}
++
++		qce->bus = devm_clk_get(qce->dev, "bus");
++		if (IS_ERR(qce->bus)) {
++			ret = PTR_ERR(qce->bus);
++			goto err_mem_path_put;
++		}
++
++		ret = clk_prepare_enable(qce->core);
++		if (ret)
++			goto err_mem_path_disable;
+ 
+-	ret = clk_prepare_enable(qce->iface);
+-	if (ret)
+-		goto err_clks_core;
++		ret = clk_prepare_enable(qce->iface);
++		if (ret)
++			goto err_clks_core;
+ 
+-	ret = clk_prepare_enable(qce->bus);
+-	if (ret)
+-		goto err_clks_iface;
++		ret = clk_prepare_enable(qce->bus);
++		if (ret)
++			goto err_clks_iface;
++	}
+ 
+ 	ret = qce_dma_request(qce->dev, &qce->dma);
+ 	if (ret)
+@@ -293,13 +317,6 @@ static int qce_crypto_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id qce_crypto_of_match[] = {
+-	{ .compatible = "qcom,ipq6018-qce", },
+-	{ .compatible = "qcom,sdm845-qce", },
+-	{}
+-};
+-MODULE_DEVICE_TABLE(of, qce_crypto_of_match);
+-
+ static struct platform_driver qce_crypto_driver = {
+ 	.probe = qce_crypto_probe,
+ 	.remove = qce_crypto_remove,
+diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
+index 228fcd69ec51..d9bf05babecc 100644
+--- a/drivers/crypto/qce/core.h
++++ b/drivers/crypto/qce/core.h
+@@ -23,6 +23,7 @@
+  * @dma: pointer to dma data
+  * @burst_size: the crypto burst size
+  * @pipe_pair_id: which pipe pair id the device using
++ * @clks_configured_by_fw: clocks are already configured by fw
+  * @async_req_enqueue: invoked by every algorithm to enqueue a request
+  * @async_req_done: invoked by every algorithm to finish its request
+  */
+@@ -39,6 +40,7 @@ struct qce_device {
+ 	struct qce_dma_data dma;
+ 	int burst_size;
+ 	unsigned int pipe_pair_id;
++	bool clks_configured_by_fw;
+ 	int (*async_req_enqueue)(struct qce_device *qce,
+ 				 struct crypto_async_request *req);
+ 	void (*async_req_done)(struct qce_device *qce, int ret);
 -- 
 2.30.2
 
