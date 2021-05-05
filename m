@@ -2,188 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D610C433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 10:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB60C43460
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 12:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E946861176
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 10:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D52B613C4
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 12:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231995AbhEEKLv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 May 2021 06:11:51 -0400
-Received: from mail-bn8nam11on2050.outbound.protection.outlook.com ([40.107.236.50]:34465
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229689AbhEEKLv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 May 2021 06:11:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gsodtuWwSZObq83oTYnHF7DJS3/8HxbuEKbx08uVYEtpJVaCnqarrDl38buv2Kuem/dKK5Cuk4/TCvvfFhs9qYYXV6PDfRjECVEvgLeeM5FqfS/ufrHDtv42ZS62P14Dhe5KmCX7i5MKr8lssz6U7K3cBE4x52CacmO5Qm4BIuRdVNFHVl2g20sNm0TDWam+HxSZNH1MIANoAVN4xGfsT5aBkdNDapDXOOemJiJZjzA6dz2r0vnMYbAdY6I2oA0X/MS7xd9Yozpzs8lKFU1eu/XWEkEVMz4cIo1Ngn68VlMk5+4lDQvoMg/R6jeFOSZBTA1sP0VFPElS592tnjFB/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nrpbyIPvJMvzJD+6x6EM4ErVvU1VwpwqS2A62aqC5os=;
- b=oc6s9wbVDYS2C4j3oPhg4gl0zgTaOPBTspXY/ceb6GpcU9YoYIxpTrq+j62munOoeIKpdZdEXPfwk7LSmQmkUIfXe+t0b5B0FjBQAz/n3aC738VPXKc0r+tnxZIukHlqOc657pIFJihhIa81XdmELWV2gHqNFpOSdt6WhGbKS6DxnZY5EQcASCqTUu+IwTvUvMIkxKcof3B2QlaS3clDVVUffdpNFsVN/LEdYHVeG+d0byCgoyFOFumY1z4qKoJtvi96mF8ehBIV5BUNfJyYMHIXpTb2U/8pR12gtZPTIhUeXmrGT9uUZ+3W3M+zDTGCcPYgmRT/F3nWr4p6OHpB1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S233263AbhEENAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 May 2021 09:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231899AbhEENAf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 09:00:35 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FEAAC061574;
+        Wed,  5 May 2021 05:59:38 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id y26so1913883eds.4;
+        Wed, 05 May 2021 05:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nrpbyIPvJMvzJD+6x6EM4ErVvU1VwpwqS2A62aqC5os=;
- b=Q6dLm6RDj8OWVINK8/6PMEQNvHECUmRyA3h1NQuVgkOogXwZhcT9qxIwHO8EBHrX4Mu4aHPDyUyGdpj/DrspZlN9HLIPEhTS00QdWHDFWz5nIidtzFHasCC1eD3oTBXvT6zyfqA51Yzs2P2E9X7ptPYXcw7tldkefwksXJaeygI=
-Received: from BYAPR02MB3941.namprd02.prod.outlook.com (2603:10b6:a02:f8::18)
- by BYAPR02MB4344.namprd02.prod.outlook.com (2603:10b6:a03:58::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.44; Wed, 5 May
- 2021 10:10:52 +0000
-Received: from BYAPR02MB3941.namprd02.prod.outlook.com
- ([fe80::f9c6:6c2f:3084:89b8]) by BYAPR02MB3941.namprd02.prod.outlook.com
- ([fe80::f9c6:6c2f:3084:89b8%3]) with mapi id 15.20.4087.044; Wed, 5 May 2021
- 10:10:52 +0000
-From:   Rajan Vaja <RAJANV@xilinx.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "quanyang.wang@windriver.com" <quanyang.wang@windriver.com>,
-        Jolly Shah <JOLLYS@xilinx.com>,
-        Tejas Patel <tejasp@xlnx.xilinx.com>,
-        Shubhrajyoti Datta <shubhraj@xilinx.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] clk: zynqmp: pll: Remove some dead code
-Thread-Topic: [PATCH] clk: zynqmp: pll: Remove some dead code
-Thread-Index: AQHXPn2fNc4/u5hEg0mmySXeuab37arRM+wQgAAPdgCAA20E0A==
-Date:   Wed, 5 May 2021 10:10:52 +0000
-Message-ID: <BYAPR02MB3941426A2E28DC3B3D38CBD3B7599@BYAPR02MB3941.namprd02.prod.outlook.com>
-References: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
- <BYAPR02MB394182A55D073BC6061F6D76B75B9@BYAPR02MB3941.namprd02.prod.outlook.com>
- <d47c05e0-14b9-c64e-1468-4bae7db83840@wanadoo.fr>
-In-Reply-To: <d47c05e0-14b9-c64e-1468-4bae7db83840@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: wanadoo.fr; dkim=none (message not signed)
- header.d=none;wanadoo.fr; dmarc=none action=none header.from=xilinx.com;
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fd30640b-4bab-4cd9-fc2c-08d90fae106e
-x-ms-traffictypediagnostic: BYAPR02MB4344:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR02MB434401B6FB2E0AB3E466428DB7599@BYAPR02MB4344.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EAQlt6rKcWXEXlAJ4+f6UESv8apL2wiIvANPAe9CPE39nnVv9tG8X/iv9W9hxQz6sIZAzaSEs3D0pFfiN4rwn/Dddbs8n9FGOXRJvJrghmLDy3AmX/tznju+M+skgG//pHYeEFJoj6fscPeZWJmuks31Bn+m1c2LAatxfSX9kz9S6kt1f1LVcMX3ksBGTjpYEPPz+5sQc7b9+Q+DNHXyKwIGPU/f57sxyutnUtcnIzD2FNOnIXXsLMkmuhUEu1wU10mOntbguZZ8/JqKQiZztFCr9MPKx32NydJwu4L8S9N4GOrDgCGghLKeGW6QzVGPVYbVrxJHdHVstKqgw3Kkcrmjm6NtnEIUlSea+UgGH1NH3LblY2VtQbHPDgAA0mJurzfD4lwvr2+vURwzDd+mJRdWsjt96EFQ+MwwzJY2p4rteoUI0rS2FAZ8SSsw8f5maGmyQ9DBbglnw2su+lMYZNAoO94nGQR2pE5o65nEZMHga0k+jyLJKkV2vzvDjA5mTjfOxQD0EEJW6NghCbp8CAiwPuUJnJBYxQ1lzPjq6CDfilAZ8ND4Ii/1Q7aoA9T7D61lyPLNJg8Vhi1rRlhlic3hHp5k02Ed0MjtnyozYL39pDfReOzqC6wZw2yJ2lt39FrL+su0io4ul0FFjC1WNw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB3941.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(376002)(39860400002)(366004)(54906003)(83380400001)(33656002)(4326008)(86362001)(122000001)(110136005)(478600001)(9686003)(66556008)(52536014)(2906002)(8936002)(53546011)(186003)(6636002)(8676002)(71200400001)(5660300002)(55016002)(7696005)(76116006)(66946007)(66446008)(316002)(66476007)(38100700002)(6506007)(64756008)(26005)(21314003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?MnVJTEJOR1lZOXk0V1J3TS8rOHExZUVuZ00yVE1pSXI5bmJZQmhnOThFNjNS?=
- =?utf-8?B?ODNXTjZ4RUF4eXVpem41Zmd6TW9EVk0waVNvcS81bmVpME1jYVExTXgxaGxR?=
- =?utf-8?B?SWdMY0JOQUI2Z2NGZEJmdktlaTZDQVpsKzdJU3dRMEZMS1NYamxsSG81cTla?=
- =?utf-8?B?V2ExV1lVU05nTkpYdTFyRHVHR0xzNndSQzkycXpMUmdKSDVJWnJYakhFZGlm?=
- =?utf-8?B?U3VPZjJGOFNDM2l1OWsxd1YxSHh3SmVHOE1IckpsaERLTnpaSEkzUmRYa2Nw?=
- =?utf-8?B?SGJQZElmR3NYUkF6cHFmbVF6a1FmWTVwSUwzMGg2M2tUczQvbWFmOGhaU0Rr?=
- =?utf-8?B?ajZsTkJ2VTlnNWVuWVBOMlZXLzdGWUJqbE9kVk5qbHZHQndTSGk4cEMrWHRy?=
- =?utf-8?B?YkVMaXFSRU04WnBmR0xQVldWRnhBa2Zha1lqZjgxRDNJSi9KK2NQemZ0VFlH?=
- =?utf-8?B?eEFJalFKTkFwbUZXRFpvbmRiVjVreCtxUWVKSUJFVWZFY2VBMnZJbHd4b1Va?=
- =?utf-8?B?bkRlWWFPTDdaWE9oNjJxbGdDYjh5NFYyVXIzdVA2NlN0RjN2YnBQU0JrVVhw?=
- =?utf-8?B?OTh0VkdVT082bVRUNlpnU1pCUGE5T0k5MkJGelpjTUhVZ0tlVWtDRzBsdEVR?=
- =?utf-8?B?WHRocTRLRzVUeEtQQllLSm5FVDBjYitGNjRZM0NzQVdwZ0hMWlFqSVF3OXh3?=
- =?utf-8?B?RDBNVlRRRkhFYUtTQnh4anEzbXNQcVNzMWRvOTI5TkZiNTREOHpJV09sakxz?=
- =?utf-8?B?Q2pSVTEwTVVRVGxCT0h0dkVRcVlmRFZadTVXNlZrd3pnbUxFTHllTTJibnhD?=
- =?utf-8?B?UnU0cTdyL1k5ZmNLbXgwMVBuTTVORGM2ZlVLRTByang2cVpjdVdOMk91Vk0y?=
- =?utf-8?B?bXlCVmdYQXVlZElFOW83RFFVdVdxdnRYc0FBaUVuMUtCZmdFTlpIbHRkYnRE?=
- =?utf-8?B?eGFXUUUzS2FxRVBVZW5ma0tvaUMzVDhzWUtKMFVEQ0xydVJNRHZ0VnpqK28z?=
- =?utf-8?B?Wm1PNEdPY3R6ZDZIVVl5a0oyN2dGbGIzMElJNlpuNndqUkdTZ01jOEcwV3Z4?=
- =?utf-8?B?aDFoQlRpS0Y5M3VLN0cyckc4d3lHeGhPazRFb1BDaVZDTTc1eVBOVUlUWUxQ?=
- =?utf-8?B?WXoveFVEYWxGVit3bjduejY2Mm5DSC9FR2I3MDFqZ0syVjRISXlkOXRCT1Z2?=
- =?utf-8?B?dVF4SlQrOFRUazNzS04reEtxamRJTDJONWxHRll4ekxLWEYxZDJ3dDUvWmJy?=
- =?utf-8?B?K3N2Y2x6MXd1Q1FWS2FpN2VHV2pLbUUrSU1rNFRTc3FrNmhaSXBXTHhkMi9Z?=
- =?utf-8?B?QzRjTDcrNVBXSEZER3E0eVE0c3A3Z1l6ZHdYMExjVm5iOUFVaG9HaUgxMWNL?=
- =?utf-8?B?dGsxalRhSVNDK3g1OGErcm9XYkRYN1BlN05MNDE1VHN6UGxJQ2hURVZqY01m?=
- =?utf-8?B?RmhRZElLbDlQck5OVGxOc1BnTnNQL2xYdW1NMitBcEg5QjJqMHpHNXBUL0dD?=
- =?utf-8?B?bzFQeDhCS01ERTVlK2pMYjN3UE9yWDFCZmVwL2ZPOGFCL3VsMGVaWXpUK3lo?=
- =?utf-8?B?RE9MU2RSRjVQTXdoZmFmb2ZuWE4yWmVGY21JbTh5WENSclpRWndtSlNFMlNk?=
- =?utf-8?B?SHZ2RHlrWlJRUWFubFl5NUtPeitRalk0b2VTVk4zQlhFVFk3dHNCSU0yMU1L?=
- =?utf-8?B?M2loN0hZL2ExZCsrYkpwcFY2RFhtZGZkeks2WlJKL3dJVlN0NzZMUTFuQWg2?=
- =?utf-8?Q?VWsr7Xn134SoVzVK4KeocjGTjjqJk9YagMW0iVP?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=q3TUXql89bkOBKVdZb/N0fDACBtYAZwgrTC4aNZ/0kc=;
+        b=uV29I9tLk7ANTNzFA1wxHQJbNKWCXsHVRbRSEBzO5LsmthoqIERDma5lAafkKTeqir
+         HRvCo6sKwWjdy7gWqurDdr/67LoqJ0eeHBZ931slpmjfCNWd6P0PrbKlMn6sGUUx8MJN
+         c5QszoiquPtLswpAkmublRPb/jbOHJp3cuYHkTctZYmuz6PYScf7zOeeCgFXnCIkUijp
+         ZJHWbTWEN2m2AMCT4yu9W4ud1xjLX5UZMZ7Xf0k9QItiBUvcyI0vH88x37QXbjAhbYkB
+         ArO45VAh4ZkSl5R0eace/5p9Br8N3bvgCUVjRSh0CEigbskH5hEpAHvoD5f4Y1BDHTUV
+         ++AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q3TUXql89bkOBKVdZb/N0fDACBtYAZwgrTC4aNZ/0kc=;
+        b=oeVidgfzWLKg45M1PI/4Un+fINWpSURJh4wM5jQgQHXeJKdi43gzbl8hz5JgAAsBSV
+         39ySjBCg80Vnim9yvskJ4/SIV3d/RDgT/poahfbaUTPIr4egsdb2q/WRweYQ+8R8ca81
+         +FIErInut3V2w7ypbA7w6xosvz83hxHkxrBcE20LmMfS7EdAp8Z+PJ9l2WM6R6GgyyN/
+         +iYw+IuDuwD5kQc4NzwOhxegOMIeIIaSzuAQ8yPXier2igYVl+xEhVelIzpQjq65fz88
+         25vOQtP7XPQ6J2sVpVIbM4OoV4Nk04XlZIDH7O/zKA3txLnwWINJCgFkqGbdk5Ut3IAL
+         1vOA==
+X-Gm-Message-State: AOAM532SzPYQlILGwghAKPdGwKL9vwah77DVUP8tFsdJRXnuZEiYBndx
+        GuroROrtz3hI/3Vy/dV+2jMkfWGQTrzVlHXf2j4=
+X-Google-Smtp-Source: ABdhPJyx/n0JkMbp0gnpwsKd3yP6nSHrkixNPJdYcwGzCflujmMm1KivqO2G9w8ig4+I7PoAx2bOod9QJHoAI5/GHJE=
+X-Received: by 2002:a05:6402:20f:: with SMTP id t15mr32166134edv.370.1620219576979;
+ Wed, 05 May 2021 05:59:36 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB3941.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd30640b-4bab-4cd9-fc2c-08d90fae106e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2021 10:10:52.2851
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5aeqZbVxGyZVDbyQNlFOHTsnJ5Cm1A99ox6KgAQMjxvAuzRh1aCgiHkG1hU3uBK1gb95941ahzWvAMWoK6XgTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4344
+References: <20210409125732.376589-1-luca@lucaceresoli.net>
+In-Reply-To: <20210409125732.376589-1-luca@lucaceresoli.net>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 5 May 2021 07:59:25 -0500
+Message-ID: <CAHCN7xLSgkJKs-8baa9O303=x1jB=7khedyBMcoHP_33Obqdbg@mail.gmail.com>
+Subject: Re: [PATCH] clk: vc5: fix output disabling when enabling a FOD
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgQ2hyaXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2hyaXN0
-b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4NCj4gU2VudDogMDMg
-TWF5IDIwMjEgMTE6MjAgQU0NCj4gVG86IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsg
-bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGtlcm5lbC5vcmc7IE1pY2hhbCBTaW1l
-ayA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gcXVhbnlhbmcud2FuZ0B3aW5kcml2ZXIuY29tOyBK
-b2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IFRlamFzIFBhdGVsDQo+IDx0ZWphc3BAeGxu
-eC54aWxpbnguY29tPjsgU2h1YmhyYWp5b3RpIERhdHRhIDxzaHViaHJhakB4aWxpbnguY29tPg0K
-PiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
-bmZyYWRlYWQub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsga2VybmVsLWph
-bml0b3JzQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBjbGs6IHp5bnFt
-cDogcGxsOiBSZW1vdmUgc29tZSBkZWFkIGNvZGUNCj4gDQo+IA0KPiBMZSAwMy8wNS8yMDIxIMOg
-IDA2OjU2LCBSYWphbiBWYWphIGEgw6ljcml0wqA6DQo+ID4gSGksDQo+ID4NCj4gPiBUaGFua3Mg
-Zm9yIHRoZSBwYXRjaC4NCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+
-PiBGcm9tOiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
-Pg0KPiA+PiBTZW50OiAwMSBNYXkgMjAyMSAwNDo1NSBQTQ0KPiA+PiBUbzogbXR1cnF1ZXR0ZUBi
-YXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5vcmc7IE1pY2hhbCBTaW1law0KPiA+PiA8bWljaGFs
-c0B4aWxpbnguY29tPjsgcXVhbnlhbmcud2FuZ0B3aW5kcml2ZXIuY29tOyBSYWphbiBWYWphDQo+
-ID4+IDxSQUpBTlZAeGlsaW54LmNvbT47IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPjsg
-VGVqYXMgUGF0ZWwNCj4gPj4gPHRlamFzcEB4bG54LnhpbGlueC5jb20+OyBTaHViaHJhanlvdGkg
-RGF0dGEgPHNodWJocmFqQHhpbGlueC5jb20+DQo+ID4+IENjOiBsaW51eC1jbGtAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LQ0KPiA+
-PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3Jn
-OyBDaHJpc3RvcGhlIEpBSUxMRVQNCj4gPj4gPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
-Pg0KPiA+PiBTdWJqZWN0OiBbUEFUQ0hdIGNsazogenlucW1wOiBwbGw6IFJlbW92ZSBzb21lIGRl
-YWQgY29kZQ0KPiA+Pg0KPiA+PiAnY2xrX2h3X3NldF9yYXRlX3JhbmdlKCknIGRvZXMgbm90IHJl
-dHVybiBhbnkgZXJyb3IgY29kZSBhbmQgJ3JldCcgaXMNCj4gPj4ga25vd24gdG8gYmUgMCBhdCB0
-aGlzIHBvaW50LCBzbyB0aGlzIG1lc3NhZ2UgY2FuIG5ldmVyIGJlIGRpc3BsYXllZC4NCj4gPj4N
-Cj4gPj4gUmVtb3ZlIGl0Lg0KPiA+Pg0KPiA+PiBGaXhlczogM2ZkZTBlMTZkMDE2ICgiZHJpdmVy
-czogY2xrOiBBZGQgWnlucU1QIGNsb2NrIGRyaXZlciIpDQo+ID4+IFNpZ25lZC1vZmYtYnk6IENo
-cmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI+DQo+ID4+IC0t
-LQ0KPiA+PiBIT1dFVkVSLCB0aGUgbWVzc2FnZSBpcyBhYm91dCAnY2xrX3NldF9yYXRlX3Jhbmdl
-KCknLCBub3QNCj4gPj4gJ2Nsa19od19zZXRfcmF0ZV9yYW5nZSgpJy4gU28gdGhlIG1lc3NhZ2Ug
-aXMgbWF5YmUgY29ycmVjdCBhbmQgdGhlDQo+ID4+ICd4eHhfcmF0ZV9yYW5nZSgpJyBmdW5jdGlv
-biBpbmNvcnJlY3QuDQo+ID4+IC0tLQ0KPiA+PiAgIGRyaXZlcnMvY2xrL3p5bnFtcC9wbGwuYyB8
-IDIgLS0NCj4gPj4gICAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkNCj4gPj4NCj4gPj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3p5bnFtcC9wbGwuYyBiL2RyaXZlcnMvY2xrL3p5bnFt
-cC9wbGwuYw0KPiA+PiBpbmRleCBhYmU2YWZiZjM0MDcuLmFmMTFlOTQwMDA1OCAxMDA2NDQNCj4g
-Pj4gLS0tIGEvZHJpdmVycy9jbGsvenlucW1wL3BsbC5jDQo+ID4+ICsrKyBiL2RyaXZlcnMvY2xr
-L3p5bnFtcC9wbGwuYw0KPiA+PiBAQCAtMzMxLDggKzMzMSw2IEBAIHN0cnVjdCBjbGtfaHcgKnp5
-bnFtcF9jbGtfcmVnaXN0ZXJfcGxsKGNvbnN0IGNoYXINCj4gKm5hbWUsDQo+ID4+IHUzMiBjbGtf
-aWQsDQo+ID4+ICAgCX0NCj4gPj4NCj4gPj4gICAJY2xrX2h3X3NldF9yYXRlX3JhbmdlKGh3LCBQ
-U19QTExfVkNPX01JTiwgUFNfUExMX1ZDT19NQVgpOw0KPiA+PiAtCWlmIChyZXQgPCAwKQ0KPiA+
-PiAtCQlwcl9lcnIoIiVzOkVSUk9SIGNsa19zZXRfcmF0ZV9yYW5nZSBmYWlsZWQgJWRcbiIsIG5h
-bWUsIHJldCk7DQo+ID4gW1JhamFuXSBJbnN0ZWFkIG9mIHJlbW92aW5nLCBjYW4gd2UgZ2V0IHJl
-dHVybiB2YWx1ZSBvZiBjbGtfaHdfc2V0X3JhdGVfcmFuZ2UoKQ0KPiBhbmQNCj4gPiBwcmludCBp
-biBjYXNlIG9mIGFuIGVycm9yLg0KPiANCj4gSGksDQo+IA0KPiBpZiBpdCB3YXMgcG9zc2libGUs
-IGl0IGlzIHdoYXQgSSB3b3VsZCBoYXZlIHByb3Bvc2VkIGJlY2F1c2UgaXQgbG9va3MNCj4gJ2xv
-Z2ljYWwnLg0KPiANCj4gSG93ZXZlciwgJ2Nsa19od19zZXRfcmF0ZV9yYW5nZSgpJyByZXR1cm5z
-IHZvaWQuDQo+IEhlbmNlIG15IGNvbW1lbnQgYWJvdXQgJ2Nsa19od19zZXRfcmF0ZV9yYW5nZScg
-YmVpbmcgdGhlIGNvcnJlY3QNCj4gZnVuY3Rpb24gdG8gY2FsbCBvciBub3QuIChpLmUuIGlzIHRo
-ZSBjb21tZW50IHJpZ2h0IGFuZA0KPiAnY2xrX2h3X3NldF9yYXRlX3JhbmdlJyB3cm9uZz8pDQpb
-UmFqYW5dIFRoYW5rcyBmb3IgdGhlIGNsYXJpZmljYXRpb24uIFRoZW4sIGl0IGxvb2tzIGZpbmUu
-DQoNCj4gDQo+IENKDQo+IA0KPiANCj4gDQo+ID4+ICAgCXJldHVybiBodzsNCj4gPj4gICB9DQo+
-ID4+IC0tDQo+ID4+IDIuMzAuMg0K
+On Fri, Apr 9, 2021 at 7:57 AM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+>
+> On 5P49V6965, when an output is enabled we enable the corresponding
+> FOD. When this happens for the first time, and specifically when writing
+> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
+> are stopped for a short time and then restarted.
+>
+> According to Renesas support this is intended: "The reason for that is VC=
+6E
+> has synced up all output function".
+>
+> This behaviour can be disabled at least on VersaClock 6E devices, of whic=
+h
+> only the 5P49V6965 is currently implemented by this driver. This requires
+> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those register=
+s
+> are named "Unused Factory Reserved Register", and the bits are documented
+> as "Skip VDDO<N> verification", which does not clearly explain the relati=
+on
+> to FOD sync. However according to Renesas support as well as my testing
+> setting this bit does prevent disabling of all clock outputs when enablin=
+g
+> a FOD.
+>
+> See "VersaClock =C2=AE 6E Family Register Descriptions and Programming Gu=
+ide"
+> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
+> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-=
+descriptions-and-programming-guide
+>
+Reviewed-by: Adam Ford <aford173@gmail.com>
+
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  drivers/clk/clk-versaclock5.c | 27 ++++++++++++++++++++++++---
+>  1 file changed, 24 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.=
+c
+> index 344cd6c61188..3c737742c2a9 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -69,7 +69,10 @@
+>  #define VC5_FEEDBACK_FRAC_DIV(n)               (0x19 + (n))
+>  #define VC5_RC_CONTROL0                                0x1e
+>  #define VC5_RC_CONTROL1                                0x1f
+> -/* Register 0x20 is factory reserved */
+> +
+> +/* These registers are named "Unused Factory Reserved Registers" */
+> +#define VC5_RESERVED_X0(idx)           (0x20 + ((idx) * 0x10))
+> +#define VC5_RESERVED_X0_BYPASS_SYNC    BIT(7) /* bypass_sync<idx> bit */
+>
+>  /* Output divider control for divider 1,2,3,4 */
+>  #define VC5_OUT_DIV_CONTROL(idx)       (0x21 + ((idx) * 0x10))
+> @@ -87,7 +90,6 @@
+>  #define VC5_OUT_DIV_SKEW_INT(idx, n)   (0x2b + ((idx) * 0x10) + (n))
+>  #define VC5_OUT_DIV_INT(idx, n)                (0x2d + ((idx) * 0x10) + =
+(n))
+>  #define VC5_OUT_DIV_SKEW_FRAC(idx)     (0x2f + ((idx) * 0x10))
+> -/* Registers 0x30, 0x40, 0x50 are factory reserved */
+>
+>  /* Clock control register for clock 1,2 */
+>  #define VC5_CLK_OUTPUT_CFG(idx, n)     (0x60 + ((idx) * 0x2) + (n))
+> @@ -140,6 +142,8 @@
+>  #define VC5_HAS_INTERNAL_XTAL  BIT(0)
+>  /* chip has PFD requency doubler */
+>  #define VC5_HAS_PFD_FREQ_DBL   BIT(1)
+> +/* chip has bits to disable FOD sync */
+> +#define VC5_HAS_BYPASS_SYNC_BIT        BIT(2)
+>
+>  /* Supported IDT VC5 models. */
+>  enum vc5_model {
+> @@ -581,6 +585,23 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+>         unsigned int src;
+>         int ret;
+>
+> +       /*
+> +        * When enabling a FOD, all currently enabled FODs are briefly
+> +        * stopped in order to synchronize all of them. This causes a clo=
+ck
+> +        * disruption to any unrelated chips that might be already using
+> +        * other clock outputs. Bypass the sync feature to avoid the issu=
+e,
+> +        * which is possible on the VersaClock 6E family via reserved
+> +        * registers.
+> +        */
+
+Thanks for the comments here.  I with IDT/Renesas would better
+document this. I might see if I can convince one of the hardware guys
+at my office to test the impact of radiated emissions.
+
+> +       if (vc5->chip_info->flags & VC5_HAS_BYPASS_SYNC_BIT) {
+> +               ret =3D regmap_update_bits(vc5->regmap,
+> +                                        VC5_RESERVED_X0(hwdata->num),
+> +                                        VC5_RESERVED_X0_BYPASS_SYNC,
+> +                                        VC5_RESERVED_X0_BYPASS_SYNC);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+>         /*
+>          * If the input mux is disabled, enable it first and
+>          * select source from matching FOD.
+> @@ -1166,7 +1187,7 @@ static const struct vc5_chip_info idt_5p49v6965_inf=
+o =3D {
+>         .model =3D IDT_VC6_5P49V6965,
+>         .clk_fod_cnt =3D 4,
+>         .clk_out_cnt =3D 5,
+> -       .flags =3D 0,
+> +       .flags =3D VC5_HAS_BYPASS_SYNC_BIT,
+>  };
+>
+>  static const struct i2c_device_id vc5_id[] =3D {
+> --
+> 2.25.1
+>
