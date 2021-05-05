@@ -2,141 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D72DC433ED
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 14:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F06C43462
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 16:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 544B26115C
-	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 14:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C829F6140F
+	for <linux-clk@archiver.kernel.org>; Wed,  5 May 2021 16:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233055AbhEEOiF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 May 2021 10:38:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229707AbhEEOiC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 May 2021 10:38:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7075961157;
-        Wed,  5 May 2021 14:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620225425;
-        bh=Ehq7zR5EL010xOPMeZxXULfS9dLTcxOv/Y8XH3TPNrg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=AzPXRTqmdq8Gz1ySQkPfIP+VwZ8kSkK6//JYOAbDkcwfoDIkqxchIywlAiyKINUW/
-         swIh3U5xJndPjHMTVXtNVGmEbpZURJADcYop7RZYbbCzqs8UUzopXq0gggYYsoyUEf
-         LwHXJDv/SjP21Y7DWJAHJvySXeRqlMJDIL8jnoWwhC87n5FdymnbKGtLLZUhtlJx2V
-         vTvyFjkVO4dZGm2fI9HuFRr0eaFdSLvEvH4LA0o+RHPFCCFg2HjNHLqzuU6/d2Co+h
-         vbAOkNH4d/Daab1BGohc7xqjj9AdhcCUblGAB/UuScxBK9Q9/asI7LG1ZBTPQlyUu+
-         5jqeISgj6Of1g==
-Date:   Wed, 5 May 2021 09:37:04 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>, hes@sifive.com,
-        Erik Danie <erik.danie@sifive.com>,
-        Zong Li <zong.li@sifive.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
+        id S235946AbhEEQ6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 May 2021 12:58:42 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:33694 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235844AbhEEQ4f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 May 2021 12:56:35 -0400
+Received: from [77.244.183.192] (port=65286 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1leKo8-0004SH-Tg; Wed, 05 May 2021 18:55:33 +0200
+Subject: Re: [PATCH] clk: vc5: fix output disabling when enabling a FOD
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, alex.dewar90@gmail.com,
-        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
-        vidyas@nvidia.com, jh80.chung@samsung.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 5/6] PCI: fu740: Add SiFive FU740 PCIe host controller
- driver
-Message-ID: <20210505143704.GA1298791@bjorn-Precision-5520>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210409125732.376589-1-luca@lucaceresoli.net>
+ <CAHCN7xLSgkJKs-8baa9O303=x1jB=7khedyBMcoHP_33Obqdbg@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <a1ecb31b-8969-62d6-fccf-9196e595dd21@lucaceresoli.net>
+Date:   Wed, 5 May 2021 18:55:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
+In-Reply-To: <CAHCN7xLSgkJKs-8baa9O303=x1jB=7khedyBMcoHP_33Obqdbg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCEehL21cFLp+JWMhKP8rAVtGunMv2fmfo6C6tbTGpgL9q2RA@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 05, 2021 at 12:26:31PM +0800, Greentime Hu wrote:
-> Bjorn Helgaas <helgaas@kernel.org> 於 2021年5月4日 週二 下午9:46寫道：
-> > On Tue, May 04, 2021 at 06:59:39PM +0800, Greentime Hu wrote:
-> > > From: Paul Walmsley <paul.walmsley@sifive.com>
-> > >
-> > > Add driver for the SiFive FU740 PCIe host controller.
-> > > This controller is based on the DesignWare PCIe core.
-> > >
-> > > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> > > Co-developed-by: Henry Styles <hes@sifive.com>
-> > > Signed-off-by: Henry Styles <hes@sifive.com>
-> > > Co-developed-by: Erik Danie <erik.danie@sifive.com>
-> > > Signed-off-by: Erik Danie <erik.danie@sifive.com>
-> > > Co-developed-by: Greentime Hu <greentime.hu@sifive.com>
-> > > Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/Kconfig      |  10 +
-> > >  drivers/pci/controller/dwc/Makefile     |   1 +
-> > >  drivers/pci/controller/dwc/pcie-fu740.c | 309 ++++++++++++++++++++++++
-> > >  3 files changed, 320 insertions(+)
-> > >  create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > > index 22c5529e9a65..255d43b1661b 100644
-> > > --- a/drivers/pci/controller/dwc/Kconfig
-> > > +++ b/drivers/pci/controller/dwc/Kconfig
-> > > @@ -318,4 +318,14 @@ config PCIE_AL
-> > >         required only for DT-based platforms. ACPI platforms with the
-> > >         Annapurna Labs PCIe controller don't need to enable this.
-> > >
-> > > +config PCIE_FU740
-> > > +     bool "SiFive FU740 PCIe host controller"
-> > > +     depends on PCI_MSI_IRQ_DOMAIN
-> > > +     depends on SOC_SIFIVE || COMPILE_TEST
-> > > +     depends on GPIOLIB
-> > ...
-> > 2) I would prefer not to depend on GPIOLIB because it reduces
-> >    compile-test coverage.  For example, the x86_64 defconfig does not
-> >    enable GPIOLIB, so one must manually enable it to even be able to
-> >    enable PCIE_FU740.
-> > ...
+Hi Adam,
 
-> Sorry for late to debug this case. I was working on other works and
-> just missed the email.
-> How about this?
+thanks for reviewing.
 
-We already dropped the "depends on GPIOLIB" for v5.13.
+On 05/05/21 14:59, Adam Ford wrote:
 
-You can add a select later, for v5.14.  Of course, you should post a
-complete patch including commit log and signed-off-by.
+[...]
 
-And please take a look at how other drivers handle this so you do it
-the same way.
-
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index e1b2690b6e45..66f57f2db49d 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -7,6 +7,7 @@ config SOC_SIFIVE
->         select CLK_SIFIVE
->         select CLK_SIFIVE_PRCI
->         select SIFIVE_PLIC
-> +       select GPIOLIB if PCIE_FU740
->         help
->           This enables support for SiFive SoC platform hardware.
+>> @@ -581,6 +585,23 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+>>         unsigned int src;
+>>         int ret;
+>>
+>> +       /*
+>> +        * When enabling a FOD, all currently enabled FODs are briefly
+>> +        * stopped in order to synchronize all of them. This causes a clock
+>> +        * disruption to any unrelated chips that might be already using
+>> +        * other clock outputs. Bypass the sync feature to avoid the issue,
+>> +        * which is possible on the VersaClock 6E family via reserved
+>> +        * registers.
+>> +        */
 > 
-> diff --git a/drivers/pci/controller/dwc/Kconfig
-> b/drivers/pci/controller/dwc/Kconfig
-> index 255d43b1661b..0a37d21ed64e 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -322,7 +322,6 @@ config PCIE_FU740
->         bool "SiFive FU740 PCIe host controller"
->         depends on PCI_MSI_IRQ_DOMAIN
->         depends on SOC_SIFIVE || COMPILE_TEST
-> -       depends on GPIOLIB
->         select PCIE_DW_HOST
->         help
->           Say Y here if you want PCIe controller support for the SiFive
+> Thanks for the comments here.  I with IDT/Renesas would better
+> document this.
+
+The support person who assisted me said he would suggest to document
+this better. It would be good if you could add to their work.
+
+> I might see if I can convince one of the hardware guys
+> at my office to test the impact of radiated emissions.
+
+That would be interesting to know, sure.
+
+-- 
+Luca
