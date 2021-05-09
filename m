@@ -2,122 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DD8C43461
-	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3CBC433B4
+	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0788613D6
-	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E65613B6
+	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbhEINHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 May 2021 09:07:44 -0400
-Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:57248 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229563AbhEINHn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 9 May 2021 09:07:43 -0400
-Received: from oxapps-31-138.iol.local ([10.101.8.184])
-        by smtp-18.iol.local with ESMTPA
-        id fj8mlSlt1gCmjfj8mlX7w1; Sun, 09 May 2021 15:06:37 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1620565597; bh=LI1EWWQ3YXRDXMn9xnQOuvXpJUlF/VXkWjyGguHRlqQ=;
-        h=From;
-        b=MgSaZ5IGEUsby9GMmihGm1lkw5paHxrm5JpZLGyOYwcXjnEHtbkGkEFiuh3NcwX9u
-         QbTDfqprZk6PAz8KPaxdkMZIq7u4vBTg0zxURa6i2TJy8xZJn8cuJe3gvLf0uMNQHX
-         kgh/MjuCqAJwmzDCi+rT1Sf+hkpMhPY7fX25ezK5xg6dgMrlvInCYIGGVJp7bFGuKi
-         8wqsRCkz3jtBgwH5h1A8A0bGA3GwXOIux/JFuiFBzK6H3YFFNlh/rkfLZL6HwyNq5f
-         HaAglxVf9ZWZ7cyhjeck8npYabM6aXJC9HmC/nhGdTi28ZLPnwb2RxR9atXc/l4E7b
-         NX5JOGYMMKeeA==
-X-CNFS-Analysis: v=2.4 cv=X5uXlEfe c=1 sm=1 tr=0 ts=6097de5d cx=a_exe
- a=SkAuTGSu9wVn7tcq8ZjrZA==:117 a=VYA5D5F8Gk0A:10 a=IkcTkHD0fZMA:10
- a=4ehuGOvBq5EA:10 a=VwQbUJbxAAAA:8 a=inwdKGJjCKPWPO92qNgA:9 a=QEXdDO2ut3YA:10
- a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
-Date:   Sun, 9 May 2021 15:06:36 +0200 (CEST)
-From:   Dario Binacchi <dariobin@libero.it>
-To:     Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S229619AbhEIN7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 May 2021 09:59:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229602AbhEIN7u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 9 May 2021 09:59:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5462761352;
+        Sun,  9 May 2021 13:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620568727;
+        bh=jy+c/MRGNZzgQtvHeGWu7ND4F9yRMF4b7fI/CJwYVns=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nD1bNRPFbBq+ZolvfhDr6AiLY5D7wGlRM577dux5QDuU8g44Mp69o8BD5tDu5ev+L
+         j1ryqq+2usS2Lv6b0mFCAS27tsoxXYgxu+231Nxcq0gcD8KlRby4zV5S7CKZ3qtiFx
+         10b+DJ31rJ8SdYsYq5bA4lkwCG97xxhho+6HDaUpDDTpzZftAF3ASUnihX7EdL0CcJ
+         s8Iiz8apBa/CFa1dlmObQtMnKF7GzKY6pqoBKmoLBKIodaNgl4qSsSyb8jVLu6kwRp
+         ZvAW9TymeAgzpU9xipIopW4dMLnySrWFtLzHym0i727I3W+TCT+Rv4YORlO0NpbQeV
+         bkMdU0cZzSNtQ==
+Date:   Sun, 9 May 2021 19:28:43 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
-Message-ID: <1870803595.135812.1620565596917@mail1.libero.it>
-In-Reply-To: <161724167065.2260335.15543151418752525635@swboyd.mtv.corp.google.com>
-References: <20210329164222.26794-1-dariobin@libero.it>
- <161707108197.3012082.13148389244272034996@swboyd.mtv.corp.google.com>
- <YGQNyGDkAbUXRYtA@atomide.com>
- <161724167065.2260335.15543151418752525635@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 0/4] clk: ti: add am33xx spread spectrum clock
- support
+        Andy Gross <agross@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com
+Subject: Re: [PATCH v2 14/17] dma: qcom: bam_dma: Create a new header file
+ for BAM DMA driver
+Message-ID: <YJfqk/0Whr2Qfxjb@vkoul-mobl.Dlink>
+References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
+ <20210505213731.538612-15-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
-X-Originating-IP: 95.244.94.151
-X-Originating-Client: open-xchange-appsuite
-x-libjamsun: 70Pb3JSJkMjw5JvbakU3Wh7D4w5S68w2
-x-libjamv: dvoWA22thEM=
-X-CMAE-Envelope: MS4xfIH95fOfdA6rNtVjj/ofgnk4DRxWUlcrXrOqNDwFhhDQr3MeNFf0hYJ4Dtm/vRGkCkXLvHriNKTexv5Xn0Nkst52KU+Wsr0wzDkgK8n1AzXn5U+Wog/9
- f85Nkzfl/SDDpnVbGch7pcxJX0g5UCorPxQtVW3zANy+j9vUCklfQeasIPUboJZq1REgR/ALtnT19X2UyX8ZAc5NUPKikfYdUG2zcaPqxOC+g2jl1A9+JBNh
- 31va2+j2JDvjGmKos0ch+dLqCbQjtzdZWVUydBGOMVxFFFzOCHUqYp22jNYtTK0H6O3TfYZbfoA4qWcfpoJuQIDNKKejDGA/SEBjVh4MD6w4nDRl8ItckCZ8
- KpGMI0lw9t+yjdanalzMHnBCncYltMlJRWuhG2gl4oI2mfu40YsqYjsg7JEfOU1IcFmFD15cKq/3w7WY582t96tdxV0xBt4xN85+4S4LfbvOpBYX+dMelX+H
- wlsgGDQhUUwYwc44osQATdqQeYKBeGOrWsm/i4Q6Wg/dF0IY+qqL+vmx6nnCyLEM0UXXHgp+/15fl1GEGaF8ma67eoSv1miZeNjtWQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210505213731.538612-15-bhupesh.sharma@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Hi Tony
+On 06-05-21, 03:07, Bhupesh Sharma wrote:
+> Create a new header file for BAM DMA driver to make sure
+> that it can be included in the follow-up patch to defer probing
+> drivers which require BAM DMA driver to be first probed successfully.
+> 
+> Cc: Thara Gopinath <thara.gopinath@linaro.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: dmaengine@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: bhupesh.linux@gmail.com
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> ---
+>  drivers/dma/qcom/bam_dma.c | 283 +-----------------------------------
+>  include/soc/qcom/bam_dma.h | 290 +++++++++++++++++++++++++++++++++++++
 
-> Il 01/04/2021 03:47 Stephen Boyd <sboyd@kernel.org> ha scritto:
->=20
-> =20
-> Quoting Tony Lindgren (2021-03-30 22:51:04)
-> > * Stephen Boyd <sboyd@kernel.org> [210330 02:25]:
-> > > Quoting Dario Binacchi (2021-03-29 09:42:17)
-> > > >=20
-> > > > As reported by the TI spruh73x RM, MPU and LCD modules support spre=
-ad
-> > > > spectrum clocking (SSC) on their output clocks. SSC is used to spre=
-ad
-> > > > the spectral peaking of the clock to reduce any electromagnetic
-> > > > interference (EMI) that may be caused due to the clock=E2=80=99s fu=
-ndamental
-> > > > or any of its harmonics.
-> > > > The series allows you to enable and adjust the spread spectrum cloc=
-king
-> > > > for all am33xx PLLs for which it is supported.
-> > > >=20
-> > >=20
-> > > What is your merge strategy? Should all the patches go through clk tr=
-ee?
-> > > Or you'll send via arm-soc?
-> >=20
-> > Probably best to just merge all via the clk tree as that's where most o=
-f
-> > the changes are.
-> >=20
->=20
-> Ok. If nobody reviews/acks the last patch in a few days I'll merge the
-> pile through clk tree.
+1. Please use -M with move patches...
 
-It's been over a month since I submitted the patches. Meanwhile Tero Kristo=
- has=20
-reviewed the most important patch of the series. However, I have not seen a=
-ny=20
-progress in the state of the series. Furthermore, I don't see the DTS patch=
-es=20
-in the clk tree. Am I missing something? Or do I have to do something? Sorr=
-y=20
-for the questions but I don't have much experience with patch merge strateg=
-ies.
+2. susbsytem is dmaengine
 
-Thanks and regards,
-Dario
+3. Why move..? These things are internal to the driver and I dont think
+it is wise for clients to use everything here... If the client needs to
+know defer probe, it should request a channel and check the status
+returned for EPROBE_DEFER
+
+Thanks
+
+-- 
+~Vinod
