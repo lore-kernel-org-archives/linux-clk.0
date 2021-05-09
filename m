@@ -2,175 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79948C433ED
-	for <linux-clk@archiver.kernel.org>; Sat,  8 May 2021 18:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DD8C43461
+	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45E4061040
-	for <linux-clk@archiver.kernel.org>; Sat,  8 May 2021 18:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0788613D6
+	for <linux-clk@archiver.kernel.org>; Sun,  9 May 2021 13:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbhEHS5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 May 2021 14:57:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbhEHS5T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 May 2021 14:57:19 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0823BC061761
-        for <linux-clk@vger.kernel.org>; Sat,  8 May 2021 11:56:17 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id 69-20020a9d0a4b0000b02902ed42f141e1so672259otg.2
-        for <linux-clk@vger.kernel.org>; Sat, 08 May 2021 11:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IF7Fac0YjVDycbq5PH+VvNCEX38AVPA4fKxY5+X2pvM=;
-        b=PUqcaScEb9tsf7vUvHj3CnZsCwzWf3odcLsWYZX9AtdI1hc4sT58bXGsUhazsSPyWI
-         6Q6kBqJcVBJZgaxWMz3M7RZJYw4eqyTkDsILIbnC1E1xxqSzc316q931UtbagBNF20ma
-         156h+ehNaRPmn35EfI/9L4A5U6GjV4KBICyzI1eHarm/92TJyfZ0rREoWPcNWGegyDVv
-         L1yO/eZLul0v1cZ41ndHwaMbCGiPESt4zyISiWKNkIHF5wwVjA84EkC9VkLvHvxF0RRb
-         UzbBBWKZy5vRQlr9iE1nZLtvcescqeEuUx9GHyqoND2oK+jyGr+AZVrK+LrPt6b5XP1H
-         j2CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IF7Fac0YjVDycbq5PH+VvNCEX38AVPA4fKxY5+X2pvM=;
-        b=EK5zATzFDFEA/804iBuiZTgqPvyoyLBi+uT6lNJfQsvDjpT5BvRxLh+NycDj7OUTZ6
-         kzokkcUFxXg88GNFj9cGP9QuC9WosxjGgUAf725MqWggkK2b+l+zem3VZPzAtRCYGlIg
-         oLT0RVhaOUJZRKdyG9JVSiKQ2GqiB5eJ92XhbPGbiCUEGEWDOwIC+qWU1g5H7Fyy+hOb
-         /a+sJjo08+fjTky5QY77cP0eA4sKkJhI+hTmJGBlsc3Xs8huvSOkDmrfzb6m2TXZ/sHM
-         GOMLZp8DRdVBaFY83ZIcBjEIUpp9xCuoDwOeyIuv1jtKbPpKeuHNjiESV+S5NWnADcbE
-         cIGw==
-X-Gm-Message-State: AOAM530yzwkXPvUslaK7MwGKad2Or9relignmza6V1YUjO8ahI7d8Srh
-        f5Lu+A86CxLQvW8uaHYJAgevgz+wGhY8tUCMVTSt2A==
-X-Google-Smtp-Source: ABdhPJwSVaVB5oB3yhUXmvXMdKhgh8GWruFZ82+rfw+bzS/cGv/WjBJnJLO0ry+vEzbyw1Po+3sMwFzSUAbOpuPcAsg=
-X-Received: by 2002:a9d:51c7:: with SMTP id d7mr5449017oth.51.1620500177155;
- Sat, 08 May 2021 11:56:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210505213731.538612-1-bhupesh.sharma@linaro.org> <20210507211434.GA2879094@robh.at.kernel.org>
-In-Reply-To: <20210507211434.GA2879094@robh.at.kernel.org>
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Date:   Sun, 9 May 2021 00:26:06 +0530
-Message-ID: <CAH=2Ntwwzu5Ftwj=r9RWnKv6xvRdKz0qjyqvJvxFwmoTP1zTqg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/17] Enable Qualcomm Crypto Engine on sm8250
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S229636AbhEINHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 May 2021 09:07:44 -0400
+Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:57248 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229563AbhEINHn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 9 May 2021 09:07:43 -0400
+Received: from oxapps-31-138.iol.local ([10.101.8.184])
+        by smtp-18.iol.local with ESMTPA
+        id fj8mlSlt1gCmjfj8mlX7w1; Sun, 09 May 2021 15:06:37 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1620565597; bh=LI1EWWQ3YXRDXMn9xnQOuvXpJUlF/VXkWjyGguHRlqQ=;
+        h=From;
+        b=MgSaZ5IGEUsby9GMmihGm1lkw5paHxrm5JpZLGyOYwcXjnEHtbkGkEFiuh3NcwX9u
+         QbTDfqprZk6PAz8KPaxdkMZIq7u4vBTg0zxURa6i2TJy8xZJn8cuJe3gvLf0uMNQHX
+         kgh/MjuCqAJwmzDCi+rT1Sf+hkpMhPY7fX25ezK5xg6dgMrlvInCYIGGVJp7bFGuKi
+         8wqsRCkz3jtBgwH5h1A8A0bGA3GwXOIux/JFuiFBzK6H3YFFNlh/rkfLZL6HwyNq5f
+         HaAglxVf9ZWZ7cyhjeck8npYabM6aXJC9HmC/nhGdTi28ZLPnwb2RxR9atXc/l4E7b
+         NX5JOGYMMKeeA==
+X-CNFS-Analysis: v=2.4 cv=X5uXlEfe c=1 sm=1 tr=0 ts=6097de5d cx=a_exe
+ a=SkAuTGSu9wVn7tcq8ZjrZA==:117 a=VYA5D5F8Gk0A:10 a=IkcTkHD0fZMA:10
+ a=4ehuGOvBq5EA:10 a=VwQbUJbxAAAA:8 a=inwdKGJjCKPWPO92qNgA:9 a=QEXdDO2ut3YA:10
+ a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
+Date:   Sun, 9 May 2021 15:06:36 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
+Message-ID: <1870803595.135812.1620565596917@mail1.libero.it>
+In-Reply-To: <161724167065.2260335.15543151418752525635@swboyd.mtv.corp.google.com>
+References: <20210329164222.26794-1-dariobin@libero.it>
+ <161707108197.3012082.13148389244272034996@swboyd.mtv.corp.google.com>
+ <YGQNyGDkAbUXRYtA@atomide.com>
+ <161724167065.2260335.15543151418752525635@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 0/4] clk: ti: add am33xx spread spectrum clock
+ support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 95.244.94.151
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: 70Pb3JSJkMjw5JvbakU3Wh7D4w5S68w2
+x-libjamv: dvoWA22thEM=
+X-CMAE-Envelope: MS4xfIH95fOfdA6rNtVjj/ofgnk4DRxWUlcrXrOqNDwFhhDQr3MeNFf0hYJ4Dtm/vRGkCkXLvHriNKTexv5Xn0Nkst52KU+Wsr0wzDkgK8n1AzXn5U+Wog/9
+ f85Nkzfl/SDDpnVbGch7pcxJX0g5UCorPxQtVW3zANy+j9vUCklfQeasIPUboJZq1REgR/ALtnT19X2UyX8ZAc5NUPKikfYdUG2zcaPqxOC+g2jl1A9+JBNh
+ 31va2+j2JDvjGmKos0ch+dLqCbQjtzdZWVUydBGOMVxFFFzOCHUqYp22jNYtTK0H6O3TfYZbfoA4qWcfpoJuQIDNKKejDGA/SEBjVh4MD6w4nDRl8ItckCZ8
+ KpGMI0lw9t+yjdanalzMHnBCncYltMlJRWuhG2gl4oI2mfu40YsqYjsg7JEfOU1IcFmFD15cKq/3w7WY582t96tdxV0xBt4xN85+4S4LfbvOpBYX+dMelX+H
+ wlsgGDQhUUwYwc44osQATdqQeYKBeGOrWsm/i4Q6Wg/dF0IY+qqL+vmx6nnCyLEM0UXXHgp+/15fl1GEGaF8ma67eoSv1miZeNjtWQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+Hi Stephen, Hi Tony
 
-On Sat, 8 May 2021 at 02:44, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, May 06, 2021 at 03:07:14AM +0530, Bhupesh Sharma wrote:
-> > Changes since v1:
-> > =================
-> > - v1 can be seen here: https://lore.kernel.org/linux-arm-msm/20210310052503.3618486-1-bhupesh.sharma@linaro.org/
-> > - v1 did not work well as reported earlier by Dmitry, so v2 contains the following
-> >   changes/fixes:
-> >   ~ Enable the interconnect path b/w BAM DMA and main memory first
-> >     before trying to access the BAM DMA registers.
-> >   ~ Enable the interconnect path b/w qce crytpo and main memory first
-> >     before trying to access the qce crypto registers.
-> >   ~ Make sure to document the required and optional properties for both
-> >     BAM DMA and qce crypto drivers.
-> >   ~ Add a few debug related print messages in case the qce crypto driver
-> >     passes or fails to probe.
-> >   ~ Convert the qce crypto driver probe to a defered one in case the BAM DMA
-> >     or the interconnect driver(s) (needed on specific Qualcomm parts) are not
-> >     yet probed.
-> >
-> > Qualcomm crypto engine is also available on sm8250 SoC.
-> > It supports hardware accelerated algorithms for encryption
-> > and authentication. It also provides support for aes, des, 3des
-> > encryption algorithms and sha1, sha256, hmac(sha1), hmac(sha256)
-> > authentication algorithms.
-> >
-> > Tested the enabled crypto algorithms with cryptsetup test utilities
-> > on sm8250-mtp and RB5 board (see [1]).
-> >
-> > While at it, also make a minor fix in 'sdm845.dtsi', to make
-> > sure it confirms with the other .dtsi files which expose
-> > crypto nodes on qcom SoCs.
-> >
-> > Cc: Thara Gopinath <thara.gopinath@linaro.org>
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Andy Gross <agross@kernel.org>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: David S. Miller <davem@davemloft.net>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Cc: dmaengine@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-crypto@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: bhupesh.linux@gmail.com
-> >
-> > Bhupesh Sharma (14):
-> >   dt-bindings: qcom-bam: Add 'interconnects' & 'interconnect-names' to
-> >     optional properties
-> >   dt-bindings: qcom-bam: Add 'iommus' to required properties
-> >   dt-bindings: qcom-qce: Add 'iommus' to required properties
-> >   dt-bindings: qcom-qce: Add 'interconnects' and move 'clocks' to
-> >     optional properties
-> >   arm64/dts: qcom: sdm845: Use RPMH_CE_CLK macro directly
-> >   dt-bindings: crypto : Add new compatible strings for qcom-qce
->
-> Please convert these bindings to schemas.
+> Il 01/04/2021 03:47 Stephen Boyd <sboyd@kernel.org> ha scritto:
+>=20
+> =20
+> Quoting Tony Lindgren (2021-03-30 22:51:04)
+> > * Stephen Boyd <sboyd@kernel.org> [210330 02:25]:
+> > > Quoting Dario Binacchi (2021-03-29 09:42:17)
+> > > >=20
+> > > > As reported by the TI spruh73x RM, MPU and LCD modules support spre=
+ad
+> > > > spectrum clocking (SSC) on their output clocks. SSC is used to spre=
+ad
+> > > > the spectral peaking of the clock to reduce any electromagnetic
+> > > > interference (EMI) that may be caused due to the clock=E2=80=99s fu=
+ndamental
+> > > > or any of its harmonics.
+> > > > The series allows you to enable and adjust the spread spectrum cloc=
+king
+> > > > for all am33xx PLLs for which it is supported.
+> > > >=20
+> > >=20
+> > > What is your merge strategy? Should all the patches go through clk tr=
+ee?
+> > > Or you'll send via arm-soc?
+> >=20
+> > Probably best to just merge all via the clk tree as that's where most o=
+f
+> > the changes are.
+> >=20
+>=20
+> Ok. If nobody reviews/acks the last patch in a few days I'll merge the
+> pile through clk tree.
 
-Ok, will fix it in v3.
+It's been over a month since I submitted the patches. Meanwhile Tero Kristo=
+ has=20
+reviewed the most important patch of the series. However, I have not seen a=
+ny=20
+progress in the state of the series. Furthermore, I don't see the DTS patch=
+es=20
+in the clk tree. Am I missing something? Or do I have to do something? Sorr=
+y=20
+for the questions but I don't have much experience with patch merge strateg=
+ies.
 
-Thanks,
-Bhupesh
-
->
-> >   arm64/dts: qcom: Use new compatibles for crypto nodes
-> >   crypto: qce: Add new compatibles for qce crypto driver
-> >   crypto: qce: Print a failure msg in case probe() fails
-> >   crypto: qce: Convert the device found dev_dbg() to dev_info()
-> >   dma: qcom: bam_dma: Create a new header file for BAM DMA driver
-> >   crypto: qce: Defer probing if BAM dma is not yet initialized
-> >   crypto: qce: Defer probe in case interconnect is not yet initialized
-> >   arm64/dts: qcom: sm8250: Add dt entries to support crypto engine.
-> >
-> > Thara Gopinath (3):
-> >   dma: qcom: bam_dma: Add support to initialize interconnect path
-> >   crypto: qce: core: Add support to initialize interconnect path
-> >   crypto: qce: core: Make clocks optional
-> >
-> >  .../devicetree/bindings/crypto/qcom-qce.txt   |  22 +-
-> >  .../devicetree/bindings/dma/qcom_bam_dma.txt  |   5 +
-> >  arch/arm64/boot/dts/qcom/ipq6018.dtsi         |   2 +-
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi          |   6 +-
-> >  arch/arm64/boot/dts/qcom/sm8250.dtsi          |  28 ++
-> >  drivers/crypto/qce/core.c                     | 112 +++++--
-> >  drivers/crypto/qce/core.h                     |   3 +
-> >  drivers/dma/qcom/bam_dma.c                    | 306 ++----------------
-> >  include/soc/qcom/bam_dma.h                    | 290 +++++++++++++++++
-> >  9 files changed, 457 insertions(+), 317 deletions(-)
-> >  create mode 100644 include/soc/qcom/bam_dma.h
-> >
-> > --
-> > 2.30.2
-> >
+Thanks and regards,
+Dario
