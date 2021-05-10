@@ -2,92 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE40C43462
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A4CC433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 08:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA606143C
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D96E66143C
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 08:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230116AbhEJGSz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 May 2021 02:18:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38316 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbhEJGSv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 02:18:51 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C2FC061763
-        for <linux-clk@vger.kernel.org>; Sun,  9 May 2021 23:17:45 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lfzEU-0007Z9-So; Mon, 10 May 2021 08:17:34 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lfzET-0004Zw-F8; Mon, 10 May 2021 08:17:33 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v6 RESEND 0/6] clk: provide new devm helpers for prepared and enabled clocks
-Date:   Mon, 10 May 2021 08:17:18 +0200
-Message-Id: <20210510061724.940447-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        id S230170AbhEJIzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 May 2021 04:55:48 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:55500 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230050AbhEJIzr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 May 2021 04:55:47 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6EF7F2041D1;
+        Mon, 10 May 2021 10:54:42 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6217D2041D0;
+        Mon, 10 May 2021 10:54:42 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 4DF6B203B6;
+        Mon, 10 May 2021 10:54:42 +0200 (CEST)
+Date:   Mon, 10 May 2021 11:54:42 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Subject: Re: [PATCH] clk: imx8mq: prevent sys1_pll_266m gating
+Message-ID: <20210510085442.wn4vz2fgstym4rrj@fsr-ub1664-175>
+References: <20210507171028.157728-1-l.stach@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210507171028.157728-1-l.stach@pengutronix.de>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+On 21-05-07 19:10:28, Lucas Stach wrote:
+> Gating sys1_pll_266m while the usdhc_nand_bus clock is still active (due
+> to being enabled in to bootloader) leads to spurious failures of the
+> uSDHC module.
+> 
+> b04383b6a558 ("clk: imx8mq: Define gates for pll1/2 fixed dividers")
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+> We probably need some solution to keep parent clocks active on the i.MX8M clock
+> architecture, as long as any consumers are active, as the reference manual
+> states that disabling a parent clock may lead to undefined behavior. This needs
+> more work in the clock framework and/or driver. This patch fixes the obvious
+> regression until we have such a solution.
 
-this is just a resend as I didn't get any feedback in the two weeks
-since the original v6 submission. Would be nice to hear something back,
-I'm trying for more than half a year now to get feedback. :-\
+I believe the solution here should be a core clock flag that forces
+the core to read the gate bit value from register. The problem with this approach
+is the clock core doesn't check if the child clocks are enabled when
+disabling the parent clock, instead it relies on cached enabled count of the parent.
+Basically, the CCF, as of now, isn't able to cope with clocks that can be
+enabled/disabled from outside. This should be improved at some point.
 
-Best regards
-Uwe
-
-Uwe Kleine-König (6):
-  clk: generalize devm_clk_get() a bit
-  clk: Provide new devm_clk_helpers for prepared and enabled clocks
-  pwm: atmel: Simplify using devm_clk_get_prepared()
-  rtc: at91sam9: Simplify using devm_clk_get_enabled()
-  i2c: imx: Simplify using devm_clk_get_enabled()
-  spi: davinci: Simplify using devm_clk_get_enabled()
-
- drivers/clk/clk-devres.c     | 96 ++++++++++++++++++++++++++++++------
- drivers/i2c/busses/i2c-imx.c | 12 +----
- drivers/pwm/pwm-atmel.c      | 15 +-----
- drivers/rtc/rtc-at91sam9.c   | 22 ++-------
- drivers/spi/spi-davinci.c    | 11 +----
- include/linux/clk.h          | 87 +++++++++++++++++++++++++++++++-
- 6 files changed, 176 insertions(+), 67 deletions(-)
-
-
-base-commit: a38fd8748464831584a19438cbb3082b5a2dab15
--- 
-2.30.2
-
+> ---
+>  drivers/clk/imx/clk-imx8mq.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> index 4dd4ae9d022b..fce983add1fc 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -372,7 +372,6 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MQ_SYS1_PLL_133M_CG] = imx_clk_hw_gate("sys1_pll_133m_cg", "sys1_pll_out", base + 0x30, 15);
+>  	hws[IMX8MQ_SYS1_PLL_160M_CG] = imx_clk_hw_gate("sys1_pll_160m_cg", "sys1_pll_out", base + 0x30, 17);
+>  	hws[IMX8MQ_SYS1_PLL_200M_CG] = imx_clk_hw_gate("sys1_pll_200m_cg", "sys1_pll_out", base + 0x30, 19);
+> -	hws[IMX8MQ_SYS1_PLL_266M_CG] = imx_clk_hw_gate("sys1_pll_266m_cg", "sys1_pll_out", base + 0x30, 21);
+>  	hws[IMX8MQ_SYS1_PLL_400M_CG] = imx_clk_hw_gate("sys1_pll_400m_cg", "sys1_pll_out", base + 0x30, 23);
+>  	hws[IMX8MQ_SYS1_PLL_800M_CG] = imx_clk_hw_gate("sys1_pll_800m_cg", "sys1_pll_out", base + 0x30, 25);
+>  
+> @@ -382,7 +381,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MQ_SYS1_PLL_133M] = imx_clk_hw_fixed_factor("sys1_pll_133m", "sys1_pll_133m_cg", 1, 6);
+>  	hws[IMX8MQ_SYS1_PLL_160M] = imx_clk_hw_fixed_factor("sys1_pll_160m", "sys1_pll_160m_cg", 1, 5);
+>  	hws[IMX8MQ_SYS1_PLL_200M] = imx_clk_hw_fixed_factor("sys1_pll_200m", "sys1_pll_200m_cg", 1, 4);
+> -	hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_266m_cg", 1, 3);
+> +	hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_out", 1, 3);
+>  	hws[IMX8MQ_SYS1_PLL_400M] = imx_clk_hw_fixed_factor("sys1_pll_400m", "sys1_pll_400m_cg", 1, 2);
+>  	hws[IMX8MQ_SYS1_PLL_800M] = imx_clk_hw_fixed_factor("sys1_pll_800m", "sys1_pll_800m_cg", 1, 1);
+>  
+> -- 
+> 2.29.2
+> 
