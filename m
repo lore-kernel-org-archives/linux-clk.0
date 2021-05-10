@@ -1,77 +1,186 @@
 Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=BAYES_50,DKIMWL_BL,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0017BC43461
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 14:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9331FC433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 17:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D62B6610A0
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 14:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63AF9611BE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 17:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234631AbhEJPAe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 May 2021 11:00:34 -0400
-Received: from flippiebeckerswealth.xyz ([62.173.147.206]:35092 "EHLO
-        host.flippiebeckerswealth.xyz" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235823AbhEJO6J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 10:58:09 -0400
-X-Greylist: delayed 2455 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 May 2021 10:58:09 EDT
-Received: from flippiebeckerswealth.xyz (ec2-3-142-218-249.us-east-2.compute.amazonaws.com [3.142.218.249])
-        by host.flippiebeckerswealth.xyz (Postfix) with ESMTPA id 5B9D61E01D9
-        for <linux-clk@vger.kernel.org>; Mon, 10 May 2021 17:06:49 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippiebeckerswealth.xyz 5B9D61E01D9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippiebeckerswealth.xyz; s=default; t=1620655609;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=dEZcUAVv0ZdI130VqUcrbHvTjaLFIaASdUNrXd6OIQLuT9IXcPOTEqnp9jRz3rkVr
-         fmNjCWb63xTXvoqVpGzT9qadiuH5YL4FIbN8BTGrMWKsNwwVPojs6XVtK9ma2ixGJS
-         w/qqef1Y5QU6QcHGDb/Q7OLzQ4p/hOHJs5NfuU7E=
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippiebeckerswealth.xyz 5B9D61E01D9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippiebeckerswealth.xyz; s=default; t=1620655609;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=dEZcUAVv0ZdI130VqUcrbHvTjaLFIaASdUNrXd6OIQLuT9IXcPOTEqnp9jRz3rkVr
-         fmNjCWb63xTXvoqVpGzT9qadiuH5YL4FIbN8BTGrMWKsNwwVPojs6XVtK9ma2ixGJS
-         w/qqef1Y5QU6QcHGDb/Q7OLzQ4p/hOHJs5NfuU7E=
-Reply-To: cpavlides@flippiebeckerwealthservices.com
-From:   Chris Pavlides <cpavlides@flippiebeckerswealth.xyz>
-To:     linux-clk@vger.kernel.org
-Subject: Personal
-Date:   10 May 2021 14:06:49 +0000
-Message-ID: <20210510140648.4C3D065D7BD2DDD3@flippiebeckerswealth.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        id S232373AbhEJRFc convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 May 2021 13:05:32 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3051 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232316AbhEJRE5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 13:04:57 -0400
+Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Ff6gN1SSkz6rnFt;
+        Tue, 11 May 2021 00:57:52 +0800 (CST)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 10 May 2021 19:03:48 +0200
+Received: from localhost (10.52.123.16) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Mon, 10 May
+ 2021 18:03:47 +0100
+Date:   Mon, 10 May 2021 18:02:05 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Brown <broonie@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        "Oleksij Rempel" <o.rempel@pengutronix.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <kernel@pengutronix.de>, Andrew Morton <akpm@linux-foundation.org>,
+        <linux-spi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 RESEND 1/6] clk: generalize devm_clk_get() a bit
+Message-ID: <20210510180205.000004dd@Huawei.com>
+In-Reply-To: <20210510061724.940447-2-u.kleine-koenig@pengutronix.de>
+References: <20210510061724.940447-1-u.kleine-koenig@pengutronix.de>
+        <20210510061724.940447-2-u.kleine-koenig@pengutronix.de>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.52.123.16]
+X-ClientProxiedBy: lhreml720-chm.china.huawei.com (10.201.108.71) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello there,
+On Mon, 10 May 2021 08:17:19 +0200
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
 
-I hope this message finds you in good spirits especially during=20
-this challenging time of coronavirus pandemic. I hope you and=20
-your family are well and keeping safe. Anyway, I am Chris=20
-Pavlides, a broker working with Flippiebecker Wealth. I got your=20
-contact (along with few other contacts) through an online=20
-business directory and I thought I should contact you to see if=20
-you are interested in this opportunity. I am contacting you=20
-because one of my high profile clients is interested in investing=20
-abroad and has asked me to look for individuals and companies=20
-with interesting business ideas and projects that he can invest=20
-in. He wants to invest a substantial amount of asset abroad.
+> Allow to add an exit hook to devm managed clocks. Also use
+> clk_get_optional() in devm_clk_get_optional instead of open coding it.
+> The generalisation will be used in the next commit to add some more
+> devm_clk helpers.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Please kindly respond back to this email if you are interested in=20
-this opportunity. Once I receive your response, I will give you=20
-more details and we can plan a strategy that will be beneficial=20
-to all parties.
+If feels marginally odd to register cleanup that we know won't do anything
+for the optional case, but it works as far as I can tell and it would be
+a little fiddly to special case it.
 
-Best regards
+FWIW
 
-C Pavlides
-Flippiebecker Wealth
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/clk/clk-devres.c | 67 ++++++++++++++++++++++++++++++----------
+>  1 file changed, 50 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index be160764911b..91c995815b57 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -4,39 +4,72 @@
+>  #include <linux/export.h>
+>  #include <linux/gfp.h>
+>  
+> +struct devm_clk_state {
+> +	struct clk *clk;
+> +	void (*exit)(struct clk *clk);
+> +};
+> +
+>  static void devm_clk_release(struct device *dev, void *res)
+>  {
+> -	clk_put(*(struct clk **)res);
+> +	struct devm_clk_state *state = *(struct devm_clk_state **)res;
+> +
+> +	if (state->exit)
+> +		state->exit(state->clk);
+> +
+> +	clk_put(state->clk);
+>  }
+>  
+> -struct clk *devm_clk_get(struct device *dev, const char *id)
+> +static struct clk *__devm_clk_get(struct device *dev, const char *id,
+> +				  struct clk *(*get)(struct device *dev, const char *id),
+> +				  int (*init)(struct clk *clk),
+> +				  void (*exit)(struct clk *clk))
+>  {
+> -	struct clk **ptr, *clk;
+> +	struct devm_clk_state *state;
+> +	struct clk *clk;
+> +	int ret;
+>  
+> -	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> +	state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
+> +	if (!state)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	clk = clk_get(dev, id);
+> -	if (!IS_ERR(clk)) {
+> -		*ptr = clk;
+> -		devres_add(dev, ptr);
+> -	} else {
+> -		devres_free(ptr);
+> +	clk = get(dev, id);
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+> +		goto err_clk_get;
+>  	}
+>  
+> +	if (init) {
+> +		ret = init(clk);
+> +		if (ret)
+> +			goto err_clk_init;
+> +	}
+> +
+> +	state->clk = clk;
+> +	state->exit = exit;
+> +
+> +	devres_add(dev, state);
+> +
+>  	return clk;
+> +
+> +err_clk_init:
+> +
+> +	clk_put(clk);
+> +err_clk_get:
+> +
+> +	devres_free(state);
+> +	return ERR_PTR(ret);
+>  }
+> -EXPORT_SYMBOL(devm_clk_get);
+>  
+> -struct clk *devm_clk_get_optional(struct device *dev, const char *id)
+> +struct clk *devm_clk_get(struct device *dev, const char *id)
+>  {
+> -	struct clk *clk = devm_clk_get(dev, id);
+> +	return __devm_clk_get(dev, id, clk_get, NULL, NULL);
+>  
+> -	if (clk == ERR_PTR(-ENOENT))
+> -		return NULL;
+> +}
+> +EXPORT_SYMBOL(devm_clk_get);
+>  
+> -	return clk;
+> +struct clk *devm_clk_get_optional(struct device *dev, const char *id)
+> +{
+> +	return __devm_clk_get(dev, id, clk_get_optional, NULL, NULL);
+>  }
+>  EXPORT_SYMBOL(devm_clk_get_optional);
+>  
+
