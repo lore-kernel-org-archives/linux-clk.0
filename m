@@ -4,43 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450CFC433ED
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A501AC43460
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B894613CD
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89F0F6142D
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 06:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhEJGSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229998AbhEJGSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 10 May 2021 02:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38272 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbhEJGSo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 02:18:44 -0400
+        with ESMTP id S230023AbhEJGSr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 02:18:47 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F364C06175F
-        for <linux-clk@vger.kernel.org>; Sun,  9 May 2021 23:17:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FB1C061573
+        for <linux-clk@vger.kernel.org>; Sun,  9 May 2021 23:17:42 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lfzEV-0007ZF-1Z; Mon, 10 May 2021 08:17:35 +0200
+        id 1lfzEU-0007ZC-QR; Mon, 10 May 2021 08:17:34 +0200
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1lfzEU-0004aE-MQ; Mon, 10 May 2021 08:17:34 +0200
+        id 1lfzEU-0004a5-4T; Mon, 10 May 2021 08:17:34 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-spi@vger.kernel.org
-Subject: [PATCH v6 RESEND 6/6] spi: davinci: Simplify using devm_clk_get_enabled()
-Date:   Mon, 10 May 2021 08:17:24 +0200
-Message-Id: <20210510061724.940447-7-u.kleine-koenig@pengutronix.de>
+        linux-pwm@vger.kernel.org
+Subject: [PATCH v6 RESEND 3/6] pwm: atmel: Simplify using devm_clk_get_prepared()
+Date:   Mon, 10 May 2021 08:17:21 +0200
+Message-Id: <20210510061724.940447-4-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510061724.940447-1-u.kleine-koenig@pengutronix.de>
 References: <20210510061724.940447-1-u.kleine-koenig@pengutronix.de>
@@ -55,63 +60,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-devm_clk_get_enabled() returns the clk already (prepared and) enabled
-and the automatically called cleanup cares for disabling (and
-unpreparing). So simplify .probe() and .remove() accordingly.
+With devm_clk_get_prepared() caring to unprepare the clock the error
+path and remove callback can be simplified accordingly.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/spi/spi-davinci.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/pwm/pwm-atmel.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index 7453a1dbbc06..63ee918ecdb0 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -936,14 +936,11 @@ static int davinci_spi_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+index 5813339b597b..d65e23da2582 100644
+--- a/drivers/pwm/pwm-atmel.c
++++ b/drivers/pwm/pwm-atmel.c
+@@ -415,16 +415,10 @@ static int atmel_pwm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(atmel_pwm->base))
+ 		return PTR_ERR(atmel_pwm->base);
  
- 	dspi->bitbang.master = master;
+-	atmel_pwm->clk = devm_clk_get(&pdev->dev, NULL);
++	atmel_pwm->clk = devm_clk_get_prepared(&pdev->dev, NULL);
+ 	if (IS_ERR(atmel_pwm->clk))
+ 		return PTR_ERR(atmel_pwm->clk);
  
--	dspi->clk = devm_clk_get(&pdev->dev, NULL);
-+	dspi->clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(dspi->clk)) {
- 		ret = -ENODEV;
- 		goto free_master;
- 	}
--	ret = clk_prepare_enable(dspi->clk);
--	if (ret)
--		goto free_master;
- 
- 	master->use_gpio_descriptors = true;
- 	master->dev.of_node = pdev->dev.of_node;
-@@ -968,7 +965,7 @@ static int davinci_spi_probe(struct platform_device *pdev)
- 
- 	ret = davinci_spi_request_dma(dspi);
- 	if (ret == -EPROBE_DEFER) {
--		goto free_clk;
-+		goto free_master;
- 	} else if (ret) {
- 		dev_info(&pdev->dev, "DMA is not supported (%d)\n", ret);
- 		dspi->dma_rx = NULL;
-@@ -1012,8 +1009,6 @@ static int davinci_spi_probe(struct platform_device *pdev)
- 		dma_release_channel(dspi->dma_rx);
- 		dma_release_channel(dspi->dma_tx);
- 	}
--free_clk:
--	clk_disable_unprepare(dspi->clk);
- free_master:
- 	spi_master_put(master);
- err:
-@@ -1039,8 +1034,6 @@ static int davinci_spi_remove(struct platform_device *pdev)
- 
- 	spi_bitbang_stop(&dspi->bitbang);
- 
--	clk_disable_unprepare(dspi->clk);
+-	ret = clk_prepare(atmel_pwm->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to prepare PWM clock\n");
+-		return ret;
+-	}
 -
- 	if (dspi->dma_rx) {
- 		dma_release_channel(dspi->dma_rx);
- 		dma_release_channel(dspi->dma_tx);
+ 	atmel_pwm->chip.dev = &pdev->dev;
+ 	atmel_pwm->chip.ops = &atmel_pwm_ops;
+ 	atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
+@@ -435,23 +429,18 @@ static int atmel_pwm_probe(struct platform_device *pdev)
+ 	ret = pwmchip_add(&atmel_pwm->chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to add PWM chip %d\n", ret);
+-		goto unprepare_clk;
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, atmel_pwm);
+ 
+ 	return ret;
+-
+-unprepare_clk:
+-	clk_unprepare(atmel_pwm->clk);
+-	return ret;
+ }
+ 
+ static int atmel_pwm_remove(struct platform_device *pdev)
+ {
+ 	struct atmel_pwm_chip *atmel_pwm = platform_get_drvdata(pdev);
+ 
+-	clk_unprepare(atmel_pwm->clk);
+ 	mutex_destroy(&atmel_pwm->isr_lock);
+ 
+ 	return pwmchip_remove(&atmel_pwm->chip);
 -- 
 2.30.2
 
