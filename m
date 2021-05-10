@@ -2,96 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F05C0C43460
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 17:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA203C433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 19:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA941611C9
-	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 17:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFE13611C2
+	for <linux-clk@archiver.kernel.org>; Mon, 10 May 2021 19:36:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231601AbhEJRnM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 May 2021 13:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
+        id S231151AbhEJThy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 May 2021 15:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232217AbhEJRnH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 13:43:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8ABC061760
-        for <linux-clk@vger.kernel.org>; Mon, 10 May 2021 10:42:01 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lg9ug-0005HH-GV; Mon, 10 May 2021 19:41:50 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lg9ue-0006aQ-Pr; Mon, 10 May 2021 19:41:48 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel@pengutronix.de,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v7 0/6] clk: provide new devm helpers for prepared and enabled clocks
-Date:   Mon, 10 May 2021 19:41:36 +0200
-Message-Id: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S230002AbhEJThx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 May 2021 15:37:53 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72466C061574;
+        Mon, 10 May 2021 12:36:48 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id l6so16876867oii.1;
+        Mon, 10 May 2021 12:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rfwM6aeV64dlStCtynVwqpYhrKx+20fvdPRxkUUNoPk=;
+        b=mxmiFt5qvY4oygWWBZxPyrzPAzIDNPiRcZSHCSYNuvlWGg8DdQseRAuHq9FSY4Tulj
+         rTPDmvc2kJn1gm/Rc5Oyhvk22cnWgQ6DwjLFryi8ks3TwScNLTffiDchRZYJGv7cU0Ho
+         3cQ/72SWBHLm95nxpzNwLYuBEnTRnMg7Wjx7k1FQcwJ+yXpiErHlCMIU/wENp432qolY
+         XsgfAxICnVrKS2y6S44pXIiBJoJZ+F13bL9LW3esNjjfCmViHQj55iiCYPRwZswAF4EO
+         gIG6z/C2KJGqNXH2ElAzW9TWhgwYULSpttiV0EBleBsYBCgEjnYYioHiwotB8K0Rb37c
+         uzJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=rfwM6aeV64dlStCtynVwqpYhrKx+20fvdPRxkUUNoPk=;
+        b=hE0ItELCGgYlU4JX0txKaZQElbOT+i+fYQnIeX18Wg5rEdUdU08YNWCrNoV1BUT1Fz
+         poZi8O6HsJVGYA90f0Ijh0ssHGpuK9S2LhgLriUD3SM6Cn7C7hhiTfseSVuei+VeEFe1
+         w2URoWGAfO4SPPoj4VZtbk30jlMQMyjrnxfUUYvfUFqaP/peHOPbAT1XXeOprsZMzMRn
+         Vxfp+HaDtYmVvaqzBdpsVikXjSYBOoCbjv+dSqSSdK52n2RNvoY8+hioUf7oQ563Zevl
+         KEHCLP/cdmDNLbNkZp9jJKKYRkCwiwRmkHjK23BOLVVZmy1XX6DCeK9DyDjj31jUce5A
+         AV4w==
+X-Gm-Message-State: AOAM530OwcOcXZrZJPXLvVzEzQ8yj4ljIxkXQm+uKs4V0EqClhVATGdU
+        CW2rHROXaTPnYPf6Vq000Yw=
+X-Google-Smtp-Source: ABdhPJz99SSWF74iI7aVgrfSha6fpI7t5Ox7OPhvT9ZInZpyUwZvMG07nJMrZkS9zEDf/bXgZ7WPdQ==
+X-Received: by 2002:aca:4004:: with SMTP id n4mr19028827oia.89.1620675407817;
+        Mon, 10 May 2021 12:36:47 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g11sm288735oif.27.2021.05.10.12.36.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 May 2021 12:36:47 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Mon, 10 May 2021 12:36:45 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, nsaenz@kernel.org,
+        maxime@cerno.tech, khilman@kernel.org, ulf.hansson@linaro.org,
+        len.brown@intel.com, pavel@ucw.cz, robh+dt@kernel.org,
+        frowand.list@gmail.com, maz@kernel.org, tglx@linutronix.de,
+        saravanak@google.com, geert@linux-m68k.org, nsaenzjulienne@suse.de,
+        guillaume.tucker@collabora.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        kernel-team@android.com, linux-rpi-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] clk: Skip clk provider registration when np is NULL
+Message-ID: <20210510193645.GA3920948@roeck-us.net>
+References: <20210426065618.588144-1-tudor.ambarus@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210426065618.588144-1-tudor.ambarus@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+On Mon, Apr 26, 2021 at 09:56:18AM +0300, Tudor Ambarus wrote:
+> commit 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
+> revealed that clk/bcm/clk-raspberrypi.c driver calls
+> devm_of_clk_add_hw_provider(), with a NULL dev->of_node, which resulted in a
+> NULL pointer dereference in of_clk_add_hw_provider() when calling
+> fwnode_dev_initialized().
+> 
+> Returning 0 is reducing the if conditions in driver code and is being
+> consistent with the CONFIG_OF=n inline stub that returns 0 when CONFIG_OF
+> is disabled. The downside is that drivers will maybe register clkdev lookups
+> when they don't need to and waste some memory.
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: 6579c8d97ad7 ("clk: Mark fwnodes when their clock provider is added")
+> Fixes: 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-compared to v6 I rebased to v5.13-rc1 (which resulted in a conflict in
-the pwm-atmel patch), reformated the doc comments in patch 2 (as
-suggested by Jonathan Cameron) and added the two Reviewed-by tags for
-Jonathan Cameron.
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Best regards
-Uwe
-
-Uwe Kleine-König (6):
-  clk: generalize devm_clk_get() a bit
-  clk: Provide new devm_clk_helpers for prepared and enabled clocks
-  pwm: atmel: Simplify using devm_clk_get_prepared()
-  rtc: at91sam9: Simplify using devm_clk_get_enabled()
-  i2c: imx: Simplify using devm_clk_get_enabled()
-  spi: davinci: Simplify using devm_clk_get_enabled()
-
- drivers/clk/clk-devres.c     | 96 ++++++++++++++++++++++++++++++------
- drivers/i2c/busses/i2c-imx.c | 12 +----
- drivers/pwm/pwm-atmel.c      | 15 +-----
- drivers/rtc/rtc-at91sam9.c   | 22 ++-------
- drivers/spi/spi-davinci.c    | 11 +----
- include/linux/clk.h          | 90 ++++++++++++++++++++++++++++++++-
- 6 files changed, 179 insertions(+), 67 deletions(-)
-
-
-base-commit: 6efb943b8616ec53a5e444193dccf1af9ad627b5
--- 
-2.30.2
-
+> ---
+> v2:
+> - s/return 0;/return; in void of_clk_del_provider()
+> - add second fixes tag and Stephen's R-b tag
+> The opinions on whether to return an error or zero were split. Returning 0
+> and skipping the logic was considered safer as we don't know for sure if
+> other drivers are affected. See:
+> https://lore.kernel.org/lkml/d24bebc5-0f78-021f-293f-e58defa32531@samsung.com/
+> https://lore.kernel.org/lkml/20210423171335.262316-1-tudor.ambarus@microchip.com/
+> 
+>  drivers/clk/clk.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index a3b30f7de2ef..b47460b40d14 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4552,6 +4552,9 @@ int of_clk_add_provider(struct device_node *np,
+>  	struct of_clk_provider *cp;
+>  	int ret;
+>  
+> +	if (!np)
+> +		return 0;
+> +
+>  	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
+>  	if (!cp)
+>  		return -ENOMEM;
+> @@ -4591,6 +4594,9 @@ int of_clk_add_hw_provider(struct device_node *np,
+>  	struct of_clk_provider *cp;
+>  	int ret;
+>  
+> +	if (!np)
+> +		return 0;
+> +
+>  	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
+>  	if (!cp)
+>  		return -ENOMEM;
+> @@ -4688,6 +4694,9 @@ void of_clk_del_provider(struct device_node *np)
+>  {
+>  	struct of_clk_provider *cp;
+>  
+> +	if (!np)
+> +		return;
+> +
+>  	mutex_lock(&of_clk_mutex);
+>  	list_for_each_entry(cp, &of_clk_providers, link) {
+>  		if (cp->node == np) {
+> -- 
+> 2.25.1
+> 
