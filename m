@@ -2,143 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E342DC43616
-	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 14:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D6FC433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 14:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC8ED61261
-	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 14:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D10B461376
+	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 14:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbhEKOhG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 May 2021 10:37:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231917AbhEKOhF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 May 2021 10:37:05 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3D3C06138E
-        for <linux-clk@vger.kernel.org>; Tue, 11 May 2021 07:35:58 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id b25so13975376oic.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 May 2021 07:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=subject:to:references:from:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ETXAFKWQdH8/eG9YgJ2MyXQqUI4w0G+a8+7kidOetNw=;
-        b=D+8UcMkB2GUwjj2F27jdDoxAVAL9rdC9MdMoJFlDBNeHzfe67XWP/sw3xSweHhjvu0
-         L7zFyh43n9/fy4cUZSlUsyNvNqDkT2TqDuEFXFN77WQ7UwdcaxgaJydbt2h0Tqt9neqT
-         2ljICDLxSDdscBg19eDiJRfFGl65YBejwUIvU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ETXAFKWQdH8/eG9YgJ2MyXQqUI4w0G+a8+7kidOetNw=;
-        b=iri9suSgaQJeNoSvR8PrlNKCoOmDxORXn8t4P8lU4t8wtliaoMXvu0oFhBXtFQfIua
-         e2SyXlFiBT94njsKCQnbZ/i32eF+yI4m+qgIkhY0FCRq9jrV8ioZ7Uj9v/PZmffnOMZU
-         TIC6fDD1T8zxGGSQ3VXKwHmoxRq4JOKhkvcVucleC4yta9Xb1vyXjd9Qp235RrlA0nkN
-         y+exDvHWGLHAccmXdg97X4ZtFZpIaa2PQgnVoKRZ5WMsZgiJxPgJi7AExZCtLiR/o0VB
-         deAy/GvB3G0Y1XNgrhl8JLO+g13zU38w48aO4aGtTTbj5rKrwdiZmS7U1ZrjJf5ZfpPf
-         bfEw==
-X-Gm-Message-State: AOAM5322sOHCLonPPwYPtbOSYMXsyhQUj2HfuYGt68BtQw73Zq3dQv+M
-        wIT1bN3SOUE7bv63OU6+Mq8DAQ==
-X-Google-Smtp-Source: ABdhPJyvp7T0CdewBKkqMXtDA5ThSmqkKCGgPnZJ05uagz+Vq5z9FBuvh4nrA0ZkdxuooO6UIklVPg==
-X-Received: by 2002:aca:53d8:: with SMTP id h207mr3883260oib.177.1620743757147;
-        Tue, 11 May 2021 07:35:57 -0700 (PDT)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id 2sm3341540ota.67.2021.05.11.07.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 May 2021 07:35:56 -0700 (PDT)
-Subject: Re: [PATCH v3 1/1] kernel.h: Split out panic and oops helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20210511074137.33666-1-andriy.shevchenko@linux.intel.com>
-From:   Alex Elder <elder@ieee.org>
-Cc:     linux-xtensa@linux-xtensa.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, xen-devel@lists.xenproject.org
-Message-ID: <c6fa5d2c-84e2-2046-19f0-66cf5dd72077@ieee.org>
-Date:   Tue, 11 May 2021 09:35:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S231681AbhEKOmu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 May 2021 10:42:50 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:42450 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231154AbhEKOmt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 May 2021 10:42:49 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Ffgbm5xsrz9C;
+        Tue, 11 May 2021 16:41:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1620744101; bh=alDLovz9iqFt3O77cStCTYCIAdPi55MO/8EF8bUpQ3s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sa2q+cby28kKsaAx3hfbOXDavD4tPAJ9t3BYIMh4qRzvK4tTH+4BvZjUH/LVk+SFK
+         PGTKiUzPvgWG1A18jyRLp7kQRFJJmSLmD9SO9WsA6Lonv8fkU+swRmkbLlux5G0FiM
+         TILAT+Y75EbkFvlDTGN27R/4XKbXpO+csCT7XyD7xb3NChIQ2vpDYQR9x4Jjh5wwXi
+         mLmFdUY3D8yVk9l1pt4BANuU8Y5malxWuP0dQFZopsgd+KH+bfJK6bwvFAHlWyepNY
+         x7N1B/wGyn3d3ep/Mh2DeNHlWwuX5M3JwoIegv59AkyUfFQxSOJMtODkuJVDsknMyT
+         tUZ3ykevttXVQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.2 at mail
+Date:   Tue, 11 May 2021 16:41:39 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 6/8] clk: tegra: cclk: Handle thermal DIV2 CPU
+ frequency throttling
+Message-ID: <20210511144139.GB4413@qmqm.qmqm.pl>
+References: <20210510231737.30313-1-digetx@gmail.com>
+ <20210510231737.30313-7-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210511074137.33666-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210510231737.30313-7-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/11/21 2:41 AM, Andy Shevchenko wrote:
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out panic and
-> oops helpers.
+On Tue, May 11, 2021 at 02:17:35AM +0300, Dmitry Osipenko wrote:
+> Check whether thermal DIV2 throttle is active in order to report
+> the CPU frequency properly. This very useful for userspace tools
+> like cpufreq-info which show actual frequency asserted from hardware.
 > 
-> There are several purposes of doing this:
-> - dropping dependency in bug.h
-> - dropping a loop by moving out panic_notifier.h
-> - unload kernel.h from something which has its own domain
-> 
-> At the same time convert users tree-wide to use new headers, although
-> for the time being include new header back to kernel.h to avoid twisted
-> indirected includes for existing users.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> Acked-by: Corey Minyard <cminyard@mvista.com>
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Wei Liu <wei.liu@kernel.org>
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Co-developed-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Acked-by: Sebastian Reichel <sre@kernel.org>
-> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Acked-by: Helge Deller <deller@gmx.de> # parisc
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> v3: rebased on top of v5.13-rc1, collected a few more tags
+>  drivers/clk/tegra/clk-tegra-super-cclk.c | 16 ++++++++++++++--
+>  drivers/clk/tegra/clk-tegra30.c          |  2 +-
+>  2 files changed, 15 insertions(+), 3 deletions(-)
 > 
-> Note WRT Andrew's SoB tag above: I have added it since part of the cases
-> I took from him. Andrew, feel free to amend or tell me how you want me
-> to do.
-> 
+> diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
+> index a03119c30456..f75822b71d0e 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+> @@ -25,6 +25,8 @@
+>  
+>  #define SUPER_CDIV_ENB		BIT(31)
+>  
+> +#define TSENSOR_SLOWDOWN	BIT(23)
+> +
+>  static struct tegra_clk_super_mux *cclk_super;
+>  static bool cclk_on_pllx;
+>  
+> @@ -47,10 +49,20 @@ static int cclk_super_set_rate(struct clk_hw *hw, unsigned long rate,
+>  static unsigned long cclk_super_recalc_rate(struct clk_hw *hw,
+>  					    unsigned long parent_rate)
+>  {
+> +	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+> +	u32 val = readl_relaxed(super->reg);
+> +	unsigned int div2;
+> +
+> +	/* check whether thermal throttling is active */
+> +	if (val & TSENSOR_SLOWDOWN)
+> +		div2 = 2;
+> +	else
+> +		div2 = 1;
+> +
+>  	if (cclk_super_get_parent(hw) == PLLX_INDEX)
+> -		return parent_rate;
+> +		return parent_rate / div2;
+>  
+> -	return tegra_clk_super_ops.recalc_rate(hw, parent_rate);
+> +	return tegra_clk_super_ops.recalc_rate(hw, parent_rate) / div2;
+>  }
 
-Acked-by: Alex Elder <elder@kernel.org>
+Could you check if the compiler can optimize out the division? I know this
+is a slow path, but nevertheless the 'shr' version would be the same amount
+of source code.
 
-. . .
-
-> diff --git a/drivers/net/ipa/ipa_smp2p.c b/drivers/net/ipa/ipa_smp2p.c
-> index a5f7a79a1923..34b68dc43886 100644
-> --- a/drivers/net/ipa/ipa_smp2p.c
-> +++ b/drivers/net/ipa/ipa_smp2p.c
-> @@ -8,6 +8,7 @@
->   #include <linux/device.h>
->   #include <linux/interrupt.h>
->   #include <linux/notifier.h>
-> +#include <linux/panic_notifier.h>
->   #include <linux/soc/qcom/smem.h>
->   #include <linux/soc/qcom/smem_state.h>
->   
-
-. . .
+Best Regrads
+Micha³ Miros³aw
