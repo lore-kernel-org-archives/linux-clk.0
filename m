@@ -2,225 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECB4C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 07:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC39C433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 07:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5116C6192C
-	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 07:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AEC061400
+	for <linux-clk@archiver.kernel.org>; Tue, 11 May 2021 07:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbhEKHxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 May 2021 03:53:36 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3059 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbhEKHxd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 May 2021 03:53:33 -0400
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FfVNg53Pnz6wm4T;
-        Tue, 11 May 2021 15:46:27 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Tue, 11 May 2021 09:52:24 +0200
-Received: from localhost (10.52.125.126) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 11 May
- 2021 08:52:23 +0100
-Date:   Tue, 11 May 2021 08:50:41 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Luca Ceresoli" <luca@lucaceresoli.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Olivier Moysan" <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        "Orson Zhai" <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        "Chunyan Zhang" <zhang.lyra@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Alex Elder <elder@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-input@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: More removals of type references on common
- properties
-Message-ID: <20210511085041.00000d39@Huawei.com>
-In-Reply-To: <20210510204524.617390-1-robh@kernel.org>
-References: <20210510204524.617390-1-robh@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+        id S230443AbhEKH71 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 May 2021 03:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230070AbhEKH70 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 May 2021 03:59:26 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564E7C06175F
+        for <linux-clk@vger.kernel.org>; Tue, 11 May 2021 00:58:19 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id d30so6059055uae.13
+        for <linux-clk@vger.kernel.org>; Tue, 11 May 2021 00:58:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deviqon.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PWykHEF/p6NwGSHpfqdT0ahXeKs26eIMYauFhcuYvYs=;
+        b=X4NGL3EXhHONloTO2d8GpmmbopovhciNQUA0iaEVqjrszgS+cbhwdBnLKF8OUVer7J
+         HVQA1aDGYRqlFctzvyxEzFm2+r5RcWejJaZLavQapvWisFZ8GcDu+7Aomj3cHv5oombr
+         bUUAxTdXwa20QyFrTn6wkuxXPlWEaiU8ZaFGkTmGkH531RpWkdFgKVlhRpWxoF+yh0T+
+         RJ72JKiFqdyPnYOMEd/JKpVo8O7OBHmogyRXTrp+XYtm5iLAyY8X7pqdihBgfI6N/9TX
+         ZtS8z9kdk6dAyxq0D8KeDKAEXjzVZOgQgR7gNJwG0PIwjnCrm8yh4qfnK+7Un15UqM7B
+         wpwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PWykHEF/p6NwGSHpfqdT0ahXeKs26eIMYauFhcuYvYs=;
+        b=E2hiy7sXiOTl0WoFgYDJCq5eof2RmB76K1kUhS/5QrxtZW19YARxKOx8v6+OuvmlYh
+         GOVaPLgSZ8rshcVM15rF+0J50ErtUbFmABBrGrXAgHJJ/TzbnGyVl6ne0UboLdbPOUPf
+         lFF1q12Ch332COlWIFt6LwSP/OMqmP9urqq9R8gYpZg24B4SmAEtgvoSi71fB8lOLVvH
+         joE2JglioGYLUacjGpXj3X72a4of4sFFsgVkP7l7/rhtsnW8vk735wgsn1u4PBFt6CTf
+         eOqetcKvqUQEvzKnr0ljc2mNt6uB8jqT2oU3tv0YTguExXdKbFN3MJfIt45pf8mz8eqq
+         i3Vw==
+X-Gm-Message-State: AOAM531acgDIsbMp8DSjQuwBtma8mEModzZKp+vjOkqrXNt6oXSMSrmh
+        ePlBQI9Jz2bBD1Cs1exmNOXGzynmQRTMjZqNzWYhn3MLEw3MDw==
+X-Google-Smtp-Source: ABdhPJz1qn4vWXTypydfHbwRxov7+bqFPgxM3p17wb2yl0rDv8dYJmGDgoEb0YxK/aVVVkQjMptfvyFwRPAm2ggPW9o=
+X-Received: by 2002:ab0:260b:: with SMTP id c11mr24557170uao.42.1620719898512;
+ Tue, 11 May 2021 00:58:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.52.125.126]
-X-ClientProxiedBy: lhreml730-chm.china.huawei.com (10.201.108.81) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+From:   Alexandru Ardelean <aardelean@deviqon.com>
+Date:   Tue, 11 May 2021 10:58:07 +0300
+Message-ID: <CAASAkoZroYcCTa6A0PtNsBe-rRJrNzaa+qiO4YpNZoVMrTaYHQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] clk: provide new devm helpers for prepared and
+ enabled clocks
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel@pengutronix.de,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 10 May 2021 15:45:24 -0500
-Rob Herring <robh@kernel.org> wrote:
+On Mon, 10 May 2021 at 20:41, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello,
+>
+> compared to v6 I rebased to v5.13-rc1 (which resulted in a conflict in
+> the pwm-atmel patch), reformated the doc comments in patch 2 (as
+> suggested by Jonathan Cameron) and added the two Reviewed-by tags for
+> Jonathan Cameron.
 
-> Users of common properties shouldn't have a type definition as the
-> common schemas already have one. A few new ones slipped in and
-> *-names was missed in the last clean-up pass. Drop all the unnecessary
-> type references in the tree.
-> 
-> A meta-schema update to catch these is pending.
-> 
-> Cc: Luca Ceresoli <luca@lucaceresoli.net>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
-> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Georgi Djakov <djakov@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Orson Zhai <orsonzhai@gmail.com>
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Fabrice Gasnier <fabrice.gasnier@st.com>
-> Cc: Odelu Kukatla <okukatla@codeaurora.org>
-> Cc: Alex Elder <elder@kernel.org>
-> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+This will definitely cleanup a lot of boiler-plate code for probe()/remove(=
+).
+What I'm noticing, is that some remove hooks [in the drivers in this
+series] are being slightly re-ordered;
+i.e. the clk_disable/unprepare may happen in a slightly different
+order, but it doesn't look like those would be problematic.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+So, for the series:
+Reviewed-by: Alexandru Ardelean <aardelean@deviqon.com>
 
-> ---
->  Documentation/devicetree/bindings/clock/idt,versaclock5.yaml    | 2 --
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml         | 1 -
->  Documentation/devicetree/bindings/input/input.yaml              | 1 -
->  Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml   | 1 -
->  Documentation/devicetree/bindings/net/qcom,ipa.yaml             | 1 -
->  .../devicetree/bindings/power/supply/sc2731-charger.yaml        | 2 +-
->  Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml          | 2 +-
->  7 files changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> index c268debe5b8d..28675b0b80f1 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> @@ -60,7 +60,6 @@ properties:
->      maxItems: 2
->  
->    idt,xtal-load-femtofarads:
-> -    $ref: /schemas/types.yaml#/definitions/uint32
->      minimum: 9000
->      maximum: 22760
->      description: Optional load capacitor for XTAL1 and XTAL2
-> @@ -84,7 +83,6 @@ patternProperties:
->          enum: [ 1800000, 2500000, 3300000 ]
->        idt,slew-percent:
->          description: The Slew rate control for CMOS single-ended.
-> -        $ref: /schemas/types.yaml#/definitions/uint32
->          enum: [ 80, 85, 90, 100 ]
->  
->  required:
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> index 6f2398cdc82d..1e7894e524f9 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> @@ -102,7 +102,6 @@ patternProperties:
->  
->        st,adc-channel-names:
->          description: List of single-ended channel names.
-> -        $ref: /schemas/types.yaml#/definitions/string-array
->  
->        st,filter-order:
->          description: |
-> diff --git a/Documentation/devicetree/bindings/input/input.yaml b/Documentation/devicetree/bindings/input/input.yaml
-> index 74244d21d2b3..d41d8743aad4 100644
-> --- a/Documentation/devicetree/bindings/input/input.yaml
-> +++ b/Documentation/devicetree/bindings/input/input.yaml
-> @@ -38,6 +38,5 @@ properties:
->        Duration in seconds which the key should be kept pressed for device to
->        reset automatically. Device with key pressed reset feature can specify
->        this property.
-> -    $ref: /schemas/types.yaml#/definitions/uint32
->  
->  additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-> index cb6498108b78..36c955965d90 100644
-> --- a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-> @@ -92,7 +92,6 @@ properties:
->        this interconnect to send RPMh commands.
->  
->    qcom,bcm-voter-names:
-> -    $ref: /schemas/types.yaml#/definitions/string-array
->      description: |
->        Names for each of the qcom,bcm-voters specified.
->  
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> index 7443490d4cc6..5fe6d3dceb08 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> @@ -105,7 +105,6 @@ properties:
->        - description: Whether the IPA clock is enabled (if valid)
->  
->    qcom,smem-state-names:
-> -    $ref: /schemas/types.yaml#/definitions/string-array
->      description: The names of the state bits used for SMP2P output
->      items:
->        - const: ipa-clock-enabled-valid
-> diff --git a/Documentation/devicetree/bindings/power/supply/sc2731-charger.yaml b/Documentation/devicetree/bindings/power/supply/sc2731-charger.yaml
-> index db1aa238cda5..b62c2431f94e 100644
-> --- a/Documentation/devicetree/bindings/power/supply/sc2731-charger.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/sc2731-charger.yaml
-> @@ -20,7 +20,7 @@ properties:
->      maxItems: 1
->  
->    phys:
-> -    $ref: /schemas/types.yaml#/definitions/phandle
-> +    maxItems: 1
->      description: phandle to the USB phy
->  
->    monitored-battery:
-> diff --git a/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml b/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
-> index b4c190bddd84..61802a11baf4 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
-> +++ b/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
-> @@ -49,7 +49,7 @@ properties:
->      maxItems: 1
->  
->    memory-region:
-> -    $ref: /schemas/types.yaml#/definitions/phandle
-> +    maxItems: 1
->      description:
->        phandle to a node describing reserved memory (System RAM memory)
->        The M core can't access all the DDR memory space on some platform,
+Thanks
+Alex
 
+>
+> Best regards
+> Uwe
+>
+> Uwe Kleine-K=C3=B6nig (6):
+>   clk: generalize devm_clk_get() a bit
+>   clk: Provide new devm_clk_helpers for prepared and enabled clocks
+>   pwm: atmel: Simplify using devm_clk_get_prepared()
+>   rtc: at91sam9: Simplify using devm_clk_get_enabled()
+>   i2c: imx: Simplify using devm_clk_get_enabled()
+>   spi: davinci: Simplify using devm_clk_get_enabled()
+>
+>  drivers/clk/clk-devres.c     | 96 ++++++++++++++++++++++++++++++------
+>  drivers/i2c/busses/i2c-imx.c | 12 +----
+>  drivers/pwm/pwm-atmel.c      | 15 +-----
+>  drivers/rtc/rtc-at91sam9.c   | 22 ++-------
+>  drivers/spi/spi-davinci.c    | 11 +----
+>  include/linux/clk.h          | 90 ++++++++++++++++++++++++++++++++-
+>  6 files changed, 179 insertions(+), 67 deletions(-)
+>
+>
+> base-commit: 6efb943b8616ec53a5e444193dccf1af9ad627b5
+> --
+> 2.30.2
+>
