@@ -4,89 +4,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4A8C433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 13:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E7BC433ED
+	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 15:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9C93613B6
-	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 13:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20533611AC
+	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 15:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234016AbhEMNbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 May 2021 09:31:22 -0400
-Received: from mail.manjaro.org ([176.9.38.148]:57534 "EHLO mail.manjaro.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233682AbhEMNbR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 May 2021 09:31:17 -0400
-X-Greylist: delayed 1081 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 May 2021 09:31:16 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.manjaro.org (Postfix) with ESMTP id 03107220FF6;
-        Thu, 13 May 2021 15:12:05 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at manjaro.org
-Received: from mail.manjaro.org ([127.0.0.1])
-        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uvKiGvuW2myG; Thu, 13 May 2021 15:12:01 +0200 (CEST)
-From:   Tobias Schramm <t.schramm@manjaro.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org,
-        Tobias Schramm <t.schramm@manjaro.org>
-Subject: [PATCH] clk: sunxi-ng: v3s: fix incorrect postdivider on pll-audio
-Date:   Thu, 13 May 2021 15:13:15 +0200
-Message-Id: <20210513131315.2059451-1-t.schramm@manjaro.org>
+        id S234816AbhEMPfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 May 2021 11:35:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57956 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231296AbhEMPfS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 May 2021 11:35:18 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 952BBC061574;
+        Thu, 13 May 2021 08:34:08 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 4FF711F42C47
+Received: by earth.universe (Postfix, from userid 1000)
+        id D36D73C0C95; Thu, 13 May 2021 17:34:02 +0200 (CEST)
+Date:   Thu, 13 May 2021 17:34:02 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Alex Elder <elder@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-input@vger.kernel.org, linux-pm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: More removals of type references on common
+ properties
+Message-ID: <20210513153402.q3w42oayif2l7rf4@earth.universe>
+References: <20210510204524.617390-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6zntmlcncahxaxdz"
+Content-Disposition: inline
+In-Reply-To: <20210510204524.617390-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for audio-pll")
-changed the audio pll on the Allwinner V3s and V3 SoCs to use
-sigma-delta modulation. In the process the declaration of fixed postdivider
-providing "pll-audio" was adjusted to provide the desired clock rates from
-the now sigma-delta modulated pll.
-However, while the divider used for calculations by the clock framework
-was adjusted the actual divider programmed into the hardware in
-sun8i_v3_v3s_ccu_init was left at "divide by four". This broke the
-"pll-audio" clock, now only providing quater the expected clock rate.
-It would in general be desirable to program the postdivider for
-"pll-audio" to four, such that a broader range of frequencies were
-available on the pll outputs. But the clock for the integrated codec
-"ac-dig" does not feature a mux that allows to select from all pll outputs
-as it is just a simple clock gate connected to "pll-audio". Thus we need
-to set the postdivider to one to be able to provide the 22.5792MHz and
-24.576MHz rates required by the internal sun4i codec.
 
-This patches fixes the incorrect clock rate by forcing the postdivider to
-one in sun8i_v3_v3s_ccu_init.
+--6zntmlcncahxaxdz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for audio-pll")
-Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index a774942cb153..f49724a22540 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -817,10 +817,10 @@ static void __init sun8i_v3_v3s_ccu_init(struct device_node *node,
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN8I_V3S_PLL_AUDIO_REG);
- 	val &= ~GENMASK(19, 16);
--	writel(val | (3 << 16), reg + SUN8I_V3S_PLL_AUDIO_REG);
-+	writel(val, reg + SUN8I_V3S_PLL_AUDIO_REG);
- 
- 	sunxi_ccu_probe(node, reg, ccu_desc);
- }
--- 
-2.30.1
+On Mon, May 10, 2021 at 03:45:24PM -0500, Rob Herring wrote:
+> Users of common properties shouldn't have a type definition as the
+> common schemas already have one. A few new ones slipped in and
+> *-names was missed in the last clean-up pass. Drop all the unnecessary
+> type references in the tree.
+>=20
+> A meta-schema update to catch these is pending.
+>=20
+> Cc: Luca Ceresoli <luca@lucaceresoli.net>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Georgi Djakov <djakov@kernel.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Orson Zhai <orsonzhai@gmail.com>
+> Cc: Baolin Wang <baolin.wang7@gmail.com>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Cc: Odelu Kukatla <okukatla@codeaurora.org>
+> Cc: Alex Elder <elder@kernel.org>
+> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> [...]
+>  .../devicetree/bindings/power/supply/sc2731-charger.yaml        | 2 +-
+> [...]
 
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
+--6zntmlcncahxaxdz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmCdRuoACgkQ2O7X88g7
++pp2eRAAji89IV6U3huPwd3QFqIvXt4J/smg1VWppBF8MRaAl/GQyC0ulamRL7Nw
+JjkjziYNiLcykycKuiWb89OfBsoCPVS5WKRNvI5ckZTu2egIE+lEr7mACjughIpk
+xp0NvbW8iIO3WxjnYh8LkFwJm4GxphCqlUkl32HKbafHkW9UKVEh8Ex6eoqnUk63
+RXluSTs0bDdfkeGzWaR4/2ZBJh+iHoaoVbPiqTr4lLCfIEpg+6tERKBeIHFL82fE
+8bxpm8/YAiG3ymllKDDzQIMTt1NHbBs4WtUcUq4X2gIlRFrLnV8w0DXmVPwDynKW
+tN9mYEhHqR1y8bc0dx5X++M9ZEWX67GbuGa1+Om1rdSnnM2uxEwQEjht7JjpLFg3
+n4urCpUbQjh+uW/hkNZjQlWb43TuUmslUrutHts+vlwf2vD6srxH0uy9I/GwtVGg
+7CtZBtofKACRiYO2Aud7iaMuWYd8wYFx6gfuw7WY9tUJ5vlwQacPeLqedRcYWLPj
+N5y/tY01/DqTBHFJmjUqCsvR2R+W17P9zO0Q4sB+wYLtE82H7O5suUkZFpe79bn5
+rVpnaz3YAWirzucHrMpOsPVP8gs5taBkdSTKClnSQLek1Z/WJKwPAq26gqZ/EPOw
+EJBYc0TMSmzTJIoRSkXxJGAeSwiDp8wCTFJA6r/QyASeQkGfqrM=
+=Tg1h
+-----END PGP SIGNATURE-----
+
+--6zntmlcncahxaxdz--
