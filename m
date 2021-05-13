@@ -2,82 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F03BC43460
-	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 09:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4A8C433ED
+	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 13:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 395C961438
-	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 09:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C93613B6
+	for <linux-clk@archiver.kernel.org>; Thu, 13 May 2021 13:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbhEMJmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 May 2021 05:42:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47094 "EHLO mail.kernel.org"
+        id S234016AbhEMNbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 May 2021 09:31:22 -0400
+Received: from mail.manjaro.org ([176.9.38.148]:57534 "EHLO mail.manjaro.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232353AbhEMJma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 May 2021 05:42:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 715B861285;
-        Thu, 13 May 2021 09:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620898880;
-        bh=5REy0cBkp2rSOWKa8qbir57z+YBnFCooUTiOwGD5oCE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GElZOuF1/N35y4cmpxHVtdnKHX0/5E1SLFc67kCL9TvRpwvOMiuoYxhJ1hvl3iMTO
-         cAWfCFHhTEO1AxmDfcW2L/QTfEPh1y3Kv0YLYeEkORfau2XFEHRL/bVQY3YxInPbBe
-         K43YxKW9m10NtGofcIzWs5noSkXgBaBM2aYzn2s9q85S/BBRyJYgwFbWMF5gRjoNcH
-         DErVLFit3vcwStOMsHXMTiJj3ZSkmAZ6Wj4chtRWQ06T5qzxs9yRy1ifiRVI+EokUS
-         ojl1RjkAjlreTHmVTrOVqCs4LgNgeoZwpL3Cy3Mwft/xy2Zx59jg9lptX/Wd2Srxw1
-         2RJ/Tm+oz0R8g==
-Date:   Thu, 13 May 2021 12:41:15 +0300
-From:   Abel Vesa <abelvesa@kernel.org>
-To:     Jacky Bai <ping.bai@nxp.com>
-Cc:     shawnguo@kernel.org, robh+dt@kernel.org, abel.vesa@nxp.com,
-        s.hauer@pengutronix.de, sboyd@kernel.org, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: Re: [PATCH v2 2/2] clk: imx: Remove the audio ipg clock from imx8mp
-Message-ID: <YJz0O5Du/A3Cmi2r@ryzen.lan>
-References: <20210420055453.1235297-1-ping.bai@nxp.com>
- <20210420055453.1235297-2-ping.bai@nxp.com>
+        id S233682AbhEMNbR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 May 2021 09:31:17 -0400
+X-Greylist: delayed 1081 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 May 2021 09:31:16 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id 03107220FF6;
+        Thu, 13 May 2021 15:12:05 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id uvKiGvuW2myG; Thu, 13 May 2021 15:12:01 +0200 (CEST)
+From:   Tobias Schramm <t.schramm@manjaro.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        Tobias Schramm <t.schramm@manjaro.org>
+Subject: [PATCH] clk: sunxi-ng: v3s: fix incorrect postdivider on pll-audio
+Date:   Thu, 13 May 2021 15:13:15 +0200
+Message-Id: <20210513131315.2059451-1-t.schramm@manjaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210420055453.1235297-2-ping.bai@nxp.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-04-20 13:54:53, Jacky Bai wrote:
-> There is no audio ipg clock on i.MX8MP, so remove this from
-> the clock driver.
-> 
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+Commit 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for audio-pll")
+changed the audio pll on the Allwinner V3s and V3 SoCs to use
+sigma-delta modulation. In the process the declaration of fixed postdivider
+providing "pll-audio" was adjusted to provide the desired clock rates from
+the now sigma-delta modulated pll.
+However, while the divider used for calculations by the clock framework
+was adjusted the actual divider programmed into the hardware in
+sun8i_v3_v3s_ccu_init was left at "divide by four". This broke the
+"pll-audio" clock, now only providing quater the expected clock rate.
+It would in general be desirable to program the postdivider for
+"pll-audio" to four, such that a broader range of frequencies were
+available on the pll outputs. But the clock for the integrated codec
+"ac-dig" does not feature a mux that allows to select from all pll outputs
+as it is just a simple clock gate connected to "pll-audio". Thus we need
+to set the postdivider to one to be able to provide the 22.5792MHz and
+24.576MHz rates required by the internal sun4i codec.
 
-Applied, thanks.
+This patches fixes the incorrect clock rate by forcing the postdivider to
+one in sun8i_v3_v3s_ccu_init.
 
-> ---
-> - changes v2:
->   keep the clock binding define no changes to fix the cross tree
->   dependency with dts.
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index e39c9c907c38..12837304545d 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -556,7 +556,6 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
->  
->  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
-> -	hws[IMX8MP_CLK_IPG_AUDIO_ROOT] = imx_clk_hw_divider2("ipg_audio_root", "audio_ahb", ccm_base + 0x9180, 0, 1);
->  
->  	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
->  	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
-> -- 
-> 2.26.2
-> 
+Fixes: 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for audio-pll")
+Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index a774942cb153..f49724a22540 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -817,10 +817,10 @@ static void __init sun8i_v3_v3s_ccu_init(struct device_node *node,
+ 		return;
+ 	}
+ 
+-	/* Force the PLL-Audio-1x divider to 4 */
++	/* Force the PLL-Audio-1x divider to 1 */
+ 	val = readl(reg + SUN8I_V3S_PLL_AUDIO_REG);
+ 	val &= ~GENMASK(19, 16);
+-	writel(val | (3 << 16), reg + SUN8I_V3S_PLL_AUDIO_REG);
++	writel(val, reg + SUN8I_V3S_PLL_AUDIO_REG);
+ 
+ 	sunxi_ccu_probe(node, reg, ccu_desc);
+ }
+-- 
+2.30.1
+
