@@ -2,198 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2933FC43461
-	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 13:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CD0C433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 15:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05F7461480
-	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 13:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D0DD613E6
+	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 15:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233879AbhENNIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 May 2021 09:08:13 -0400
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:36701 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231217AbhENNIM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 May 2021 09:08:12 -0400
-Received: by mail-oi1-f181.google.com with SMTP id f184so8171694oig.3;
-        Fri, 14 May 2021 06:07:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=xsr+bWKwuW4tk5N9DGDtkhdre8uPMY0bSblwLz/bg7A=;
-        b=diRd6of1VnkOd2gXE+rO2lt0RXHmFgsvUHP0fFd7VXP6/5BAQuJh28ZJn6VYBlsVgo
-         GdH/1ClhAUrulW7QQjthPEWrHikrthdH3CnGztvoQ1HqQ9NNXmgmedr1ct5BvITUwErx
-         WWWxb2Uo25lHCOiEs8sUdOxeS6GiKZN7cN7tt2n+kytVTisO0T6NuSNVIBXpQU/Msxfa
-         16veCczM0kD7SBFPRY7vt6ddTKLkXmj4rLbsj/bxvFnUa07De+L+I64V5GHAPysb/M2/
-         dIYbgOnR4WyRyAflkhI+DuESda6oMKIu335Imp7KxTBFaM6Sj5ITcMgDIbQRXiX4ultK
-         gt4w==
-X-Gm-Message-State: AOAM531KegglMWgX4z1KGcNjSlnZu3ehuBcuJ67boR108K/Amp8wkt9M
-        mvGTBg/60SVLtv4Az83Rneyp3f5Bvg==
-X-Google-Smtp-Source: ABdhPJyTLkIGalK7Hhz9McZmfImPTNomf+7yyVG+dUjpHbgMR3nw3fADc9HjeU0kaxCmXkvYKiEiyQ==
-X-Received: by 2002:aca:bdc6:: with SMTP id n189mr6747381oif.156.1620997619918;
-        Fri, 14 May 2021 06:06:59 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e7sm1299368oos.15.2021.05.14.06.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 May 2021 06:06:58 -0700 (PDT)
-Received: (nullmailer pid 3936689 invoked by uid 1000);
-        Fri, 14 May 2021 13:06:56 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jonathan Marek <jonathan@marek.ca>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, robert.foss@linaro.org,
-        devicetree@vger.kernel.org, andrey.konovalov@linaro.org,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20210513175258.5842-3-jonathan@marek.ca>
-References: <20210513175258.5842-1-jonathan@marek.ca> <20210513175258.5842-3-jonathan@marek.ca>
-Subject: Re: [PATCH 2/3] dt-bindings: clock: add QCOM SM8250 camera clock bindings
-Date:   Fri, 14 May 2021 08:06:56 -0500
-Message-Id: <1620997616.581063.3936688.nullmailer@robh.at.kernel.org>
+        id S233233AbhENPNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 May 2021 11:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229524AbhENPNJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 May 2021 11:13:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 95BEC613AF;
+        Fri, 14 May 2021 15:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621005118;
+        bh=eme2e7HJkMlbGwvCXTVrQTdbAt9gbHgcBXlx+tOw9p4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kiY/zGHBoKFVARznQj/wPcUvARwS/ciBM5r+GXeyL01xJLzJPvkzCfKg6mLv8w3GO
+         QL/reQ53YLcFdF853bwk8EGY4QTJ2tuNQt0Hn1ps0MHz3SRRfr8MtmQ3nhhtDbiANS
+         Djea3wgqCnjQjwOXDeCw8fgoof96T3w4f8Vd1hAC6MmZH0+E+mNdsfh+9MYRbO9Hvo
+         6JBa+tiXVL2eD3xs+SNo5qORQbFc3XYGr9GBeE9KLIWyAkZ7dKnaAGJgXh7PQbZKep
+         jWY6+r3HPF+MZtpK8R9UTvwLxl+ZpCzQg4WAAc6Q1LsZg0GbqqUdWEfPKZCpOHmYJR
+         yoJ6gLrv4v+yg==
+Subject: Re: [PATCH] clk: socfpga: remove set but not used variable 'rc'
+To:     Yu Kuai <yukuai3@huawei.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, s.trumtrar@pengutronix.de
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com
+References: <20210514062234.3534615-1-yukuai3@huawei.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <786d67c5-1470-098b-79cd-801b06a72bf3@kernel.org>
+Date:   Fri, 14 May 2021 10:11:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20210514062234.3534615-1-yukuai3@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 13 May 2021 13:52:54 -0400, Jonathan Marek wrote:
-> Add device tree bindings for camera clock controller for
-> Qualcomm Technology Inc's SM8250 SoC.
+
+
+On 5/14/21 1:22 AM, Yu Kuai wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but
+> not used [-Wunused-but-set-variable]
+> 
+> The returned value of of_clk_add_provider() is never used, and so
+> can be removed.
+> 
+> Fixes: 97259e99bdc9 ("clk: socfpga: split clk code")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->  .../bindings/clock/qcom,camcc-sm8250.yaml     |  73 +++++++++
->  include/dt-bindings/clock/qcom,camcc-sm8250.h | 138 ++++++++++++++++++
->  2 files changed, 211 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,camcc-sm8250.h
+>   drivers/clk/socfpga/clk-pll.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+> index dcb573d44034..127cc849c5ee 100644
+> --- a/drivers/clk/socfpga/clk-pll.c
+> +++ b/drivers/clk/socfpga/clk-pll.c
+> @@ -80,7 +80,6 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
+>   	const char *parent_name[SOCFPGA_MAX_PARENTS];
+>   	struct clk_init_data init;
+>   	struct device_node *clkmgr_np;
+> -	int rc;
+>   	int err;
+>   
+>   	of_property_read_u32(node, "reg", &reg);
+> @@ -114,7 +113,7 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
+>   		kfree(pll_clk);
+>   		return ERR_PTR(err);
+>   	}
+> -	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+> +	of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+>   	return hw_clk;
+>   }
+>   
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml:22:1: [error] duplication of key "properties" in mapping (key-duplicates)
-
-dtschema/dtc warnings/errors:
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.example.dts'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 45, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 421, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
-    return self.construct_document(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 121, in construct_document
-    for _dummy in generator:
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 714, in construct_yaml_map
-    value = self.construct_mapping(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 435, in construct_mapping
-    return BaseConstructor.construct_mapping(self, node, deep=deep)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 253, in construct_mapping
-    if self.check_mapping_key(node, key_node, mapping, key, value):
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 284, in check_mapping_key
-    raise DuplicateKeyError(*args)
-ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
-  in "<unicode string>", line 4, column 1
-found duplicate key "properties" with value "{}" (original value: "{}")
-  in "<unicode string>", line 22, column 1
-
-To suppress this check see:
-    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
-
-Duplicate keys will become an error in future releases, and are errors
-by default when using the new API.
-
-make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 67, in <module>
-    ret = check_doc(f)
-  File "/usr/local/bin/dt-doc-validate", line 25, in check_doc
-    testtree = dtschema.load(filename, line_number=line_number)
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 625, in load
-    return yaml.load(f.read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 421, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
-    return self.construct_document(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 121, in construct_document
-    for _dummy in generator:
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 714, in construct_yaml_map
-    value = self.construct_mapping(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 435, in construct_mapping
-    return BaseConstructor.construct_mapping(self, node, deep=deep)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 253, in construct_mapping
-    if self.check_mapping_key(node, key_node, mapping, key, value):
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 284, in check_mapping_key
-    raise DuplicateKeyError(*args)
-ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
-  in "<unicode string>", line 4, column 1
-found duplicate key "properties" with value "{}" (original value: "{}")
-  in "<unicode string>", line 22, column 1
-
-To suppress this check see:
-    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
-
-Duplicate keys will become an error in future releases, and are errors
-by default when using the new API.
-
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/processed-schema-examples.json'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-mk-schema", line 38, in <module>
-    schemas = dtschema.process_schemas(args.schemas, core_schema=(not args.useronly))
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 587, in process_schemas
-    sch = process_schema(os.path.abspath(filename))
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 561, in process_schema
-    schema = load_schema(filename)
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 126, in load_schema
-    return do_load(os.path.join(schema_basedir, schema))
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 112, in do_load
-    return yaml.load(tmp)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 421, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
-    return self.construct_document(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 121, in construct_document
-    for _dummy in generator:
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 714, in construct_yaml_map
-    value = self.construct_mapping(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 435, in construct_mapping
-    return BaseConstructor.construct_mapping(self, node, deep=deep)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 253, in construct_mapping
-    if self.check_mapping_key(node, key_node, mapping, key, value):
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 284, in check_mapping_key
-    raise DuplicateKeyError(*args)
-ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
-  in "<unicode string>", line 4, column 1
-found duplicate key "properties" with value "{}" (original value: "{}")
-  in "<unicode string>", line 22, column 1
-
-To suppress this check see:
-    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
-
-Duplicate keys will become an error in future releases, and are errors
-by default when using the new API.
-
-make[1]: *** [Documentation/devicetree/bindings/Makefile:62: Documentation/devicetree/bindings/processed-schema-examples.json] Error 1
-make: *** [Makefile:1416: dt_binding_check] Error 2
-
-See https://patchwork.ozlabs.org/patch/1478165
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
