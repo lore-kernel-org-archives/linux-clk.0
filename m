@@ -2,82 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30968C433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 06:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD237C433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 11:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 073226144A
-	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 06:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8420061459
+	for <linux-clk@archiver.kernel.org>; Fri, 14 May 2021 11:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbhENGQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 May 2021 02:16:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3681 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbhENGQV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 May 2021 02:16:21 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FhJ8q71tbz16PpQ;
-        Fri, 14 May 2021 14:12:27 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Fri, 14 May 2021
- 14:15:01 +0800
-From:   Yu Kuai <yukuai3@huawei.com>
-To:     <dinguyen@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <s.trumtrar@pengutronix.de>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] clk: socfpga: remove set but not used variable 'rc'
-Date:   Fri, 14 May 2021 14:22:34 +0800
-Message-ID: <20210514062234.3534615-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.25.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.127.227]
-X-CFilter-Loop: Reflected
+        id S232155AbhENLDv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 May 2021 07:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231777AbhENLDv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 May 2021 07:03:51 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6F0C061574;
+        Fri, 14 May 2021 04:02:38 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id i5so19112324pgm.0;
+        Fri, 14 May 2021 04:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=g7DkEbR2JcQCbOxkMhdC26BeBE1YwkunloMTb/SDIZc=;
+        b=TPBiLWV/NQn/o4Os0P4M/SsGh0ZuidyhHWzGQieQPX0qaKdDvntKEKGuI2k+UWP9UV
+         0JFkGypQMuPK9kdymjMT64VZofeIz/FLcvpZCvW+PhnPxq1r4pWFKWwjKZ45IqUlKIqI
+         xnRQgvBUQOvQCunnoMxY32zrpKwgT9WQ0PAbnwPaFGvjoGBlsTaTnBi8sp2dFyd+FcWM
+         a7cOOgn+mMaTwe2xrA11UcqPbOPVi8xMo/BtDOIt73434TAsPV5ngVnQFTWLVl9ixZfV
+         Efmz2Rji/0z1brCmNAums5zhFOO+uLGKXDgUTMsDJwBi/KnhY+lqIew0SINYzuNVSfzS
+         zw0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=g7DkEbR2JcQCbOxkMhdC26BeBE1YwkunloMTb/SDIZc=;
+        b=qxiDBRPnq3lCeiYWPxaYJ8D/8y6GwcOphjzs1zGZmcu5NVOmdgoy5JXvqT0k1QJdJX
+         gL5aqRKpCNWrvASqNNbbZBkjiF1ps1ate6eotr+qL6C80LI+y4pkJn2zAjLx/7D4eonY
+         2HIn1re5mLA2A7gDdzAIHDGChj2Lag5XDMLKvicvu0+nyWHFVqU3R3xZnO+YS+RE8wc1
+         W7I3z+1iX9UZxqbwYcVgMMbVMdhDf80Ke4uBkI9czndFWqo7Wvlw31PeudibRe16s89z
+         XGDn6FzJ8PSELUt3QGyVEZZtM9nMDYElUodG/wlkFRb8bIMC4GhOYrNY7eVcKP5KURER
+         h90Q==
+X-Gm-Message-State: AOAM531vUdcEAirFRsyZaYpyYRNEidr074T5Qs/OrxvupTTpOlE6FqN7
+        9Bbacq52fVLaBqidBVXuu98=
+X-Google-Smtp-Source: ABdhPJzI0fGVTZCZdc30Z3TaVpb0GVm4cmbsGmevnEN/twwgl1TCynmfAE+pe70r417S9GkSp3vXSA==
+X-Received: by 2002:a63:465f:: with SMTP id v31mr13437876pgk.6.1620990157678;
+        Fri, 14 May 2021 04:02:37 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([137.59.103.165])
+        by smtp.gmail.com with ESMTPSA id 202sm4193402pgg.59.2021.05.14.04.02.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 May 2021 04:02:37 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     patrice.chotard@foss.st.com, pierre-yves.mordret@foss.st.com,
+        alain.volmat@foss.st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, sumit.semwal@linaro.org,
+        christian.koenig@amd.com, mturquette@baylibre.com
+Cc:     sboyd@kernel.org, linux-i2c@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-clk@vger.kernel.org,
+        Dillon Min <dillon.minfei@gmail.com>
+Subject: [PATCH 0/4] Fix the i2c/clk bug of stm32 mcu platform
+Date:   Fri, 14 May 2021 19:02:28 +0800
+Message-Id: <1620990152-19255-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Dillon Min <dillon.minfei@gmail.com>
 
-drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but
-not used [-Wunused-but-set-variable]
+This seriese fix three i2c/clk bug for stm32 f4/f7
+- kernel runing in sdram, i2c driver get data timeout
+- ltdc clk turn off after kernel console active
+- kernel hang in set ltdc clock rate
 
-The returned value of of_clk_add_provider() is never used, and so
-can be removed.
+clk bug found on stm32f429/f469-disco board
 
-Fixes: 97259e99bdc9 ("clk: socfpga: split clk code")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/clk/socfpga/clk-pll.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi Patrice:
+below is the guide to verify the patch:
 
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index dcb573d44034..127cc849c5ee 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -80,7 +80,6 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	struct device_node *clkmgr_np;
--	int rc;
- 	int err;
- 
- 	of_property_read_u32(node, "reg", &reg);
-@@ -114,7 +113,7 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
- 		kfree(pll_clk);
- 		return ERR_PTR(err);
- 	}
--	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
-+	of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
- 	return hw_clk;
- }
- 
+setup test env with following files(link at below 'files link'):
+[1] u-boot-dtb.bin
+[2] rootfs zip file (used in kernel initramfs)
+[3] u-boot's mkimage to create itb file
+[4] kernel config file
+[5] my itb with-or-without i2c patch
+
+This patch based on kernel commit:
+88b06399c9c766c283e070b022b5ceafa4f63f19
+
+Note:
+panel-ilitek-ili9341.c is the driver which was submitted last year, but not
+get accepted. it's used to setup touch screen calibration, then test i2c.
+
+create itb file(please correct path of 'data'):
+./mkimage -f stm32.its stm32.itb
+
+HW setup:
+console:
+       PA9, PA10
+       usart0
+       serial@40011000
+       115200 8n1
+
+-- flash u-boot.bin to stm32f429-disco on PC
+$ sudo openocd -f board/stm32f429discovery.cfg -c \
+  '{PATH-TO-YOUR-UBOOT}/u-boot-dtb.bin 0x08000000 exit reset'
+
+-- setup kernel load bootargs at u-boot
+U-Boot > setenv bootargs 'console=tty0 console=ttySTM0,115200
+                    root=/dev/ram rdinit=/linuxrc loglevel=8 fbcon=rotate:2'
+U-Boot > loady;bootm
+(download stm32.dtb or your kernel with itb format, or download zImage, dtb)
+
+-- setup ts_calibrate running env on stm32f429-disco
+/ # export TSLIB_CONFFILE=/etc/ts.conf
+/ # export TSLIB_TSDEVICE=/dev/input/event0
+/ # export TSLIB_CONSOLEDEVICE=none
+/ # export TSLIB_FBDEVICE=/dev/fb0
+
+-- clear screen
+/ # ./fb
+
+-- run ts_calibrate 
+/ # ts_calibrate
+(you can calibrate touchscreen now, and get below errors)
+
+[  113.942087] stmpe-i2c0-0041: failed to read regs 0x52: -110
+[  114.063598] stmpe-i2c 0-0041: failed to read reg 0x4b: -16
+[  114.185629] stmpe-i2c 0-0041: failed to read reg 0x40: -16
+[  114.307257] stmpe-i2c 0-0041: failed to write reg 0xb: -16
+
+...
+with i2c patch applied, you will find below logs:
+
+RAW---------------------> 3164 908 183 118.110884
+TS_READ_RAW----> x = 3164, y =908, pressure = 183
+RAW---------------------> 3166 922 126 118.138946
+TS_READ_RAW----> x = 3166, y = 922, pressure = 126
+....
+
+files link:
+https://drive.google.com/drive/folders/1qNbjChcB6UGtKzne2F5x9_WG_sZFyo3o?usp=sharing
+
+
+
+
+Dillon Min (4):
+  drm/panel: Add ilitek ili9341 panel driver
+  i2c: stm32f4: Fix stmpe811 get xyz data timeout issue
+  clk: stm32: Fix stm32f429's ltdc driver hang in set clock rate
+  clk: stm32: Fix ltdc's clock turn off by clk_disable_unused() after
+    kernel startup
+
+ drivers/clk/clk-stm32f4.c                    |   10 +-
+ drivers/gpu/drm/panel/Kconfig                |   12 +
+ drivers/gpu/drm/panel/Makefile               |    1 +
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 1285 ++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-stm32f4.c             |   12 +-
+ 5 files changed, 1310 insertions(+), 10 deletions(-)
+ create mode 100755 drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+
 -- 
-2.25.4
+2.7.4
 
