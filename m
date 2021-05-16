@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8343C43616
-	for <linux-clk@archiver.kernel.org>; Sun, 16 May 2021 16:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F130C4361B
+	for <linux-clk@archiver.kernel.org>; Sun, 16 May 2021 16:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98A4C61206
-	for <linux-clk@archiver.kernel.org>; Sun, 16 May 2021 16:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7411A61074
+	for <linux-clk@archiver.kernel.org>; Sun, 16 May 2021 16:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbhEPQcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 May 2021 12:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58438 "EHLO
+        id S232955AbhEPQcW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 May 2021 12:32:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231590AbhEPQcR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 May 2021 12:32:17 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE24BC06175F;
-        Sun, 16 May 2021 09:31:02 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id c15so4327396ljr.7;
-        Sun, 16 May 2021 09:31:02 -0700 (PDT)
+        with ESMTP id S232532AbhEPQcU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 May 2021 12:32:20 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF765C061756;
+        Sun, 16 May 2021 09:31:04 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id w4so4321741ljw.9;
+        Sun, 16 May 2021 09:31:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=99TMTkahJ4QCgWUEiSLbnT5JfgAic6E8hP6s4tmViRw=;
-        b=YI4TPdlKM5GeI4naXWaXkV54rqr2x5yThRcxcnFiYDQmlffwzoCdG3YRzL3wUxjrMx
-         uXDsLXDbMasoz68QVesEoGrL6lBZTyDLfHqCjYtb5GSGt7ozw44uT7S9W0VbkK2HBxK+
-         ru8fEnqo8var6KabGNFwk04137aB0c9v2KY7iu5djX7TWYnGYrXkhiaFl6IRw+4Gt1vT
-         5ggUJlCHDoc7hqdrk16486RFd+KbjSI4ipcrxZaRDYo8gv70R/F0ZGIX10GE/xD1RF0i
-         9LDEIoCN3QPTsb90zXSD9sGE4gH9L0FJMMD/wrMntaIvm7PkyG07y63jODpOvdO5vP2H
-         oy3Q==
+        bh=1RqC6a+NZMuHcUfGq6LxuBL+QnW+oPmIqETkbY0cfZw=;
+        b=eJgFxWANPyZ28kO3ZDxEInp4DxExvrjr9xbbEv2SB481W0ndSezPksTmbZCs2B41I9
+         nUDbM6DBEsnerQS758pONq0HEH9pmzRFFh92o+Z3CbUY4RZI1+b+LTUgXEDZgvxk323C
+         CSYKP33I2PMOf1/yM7tFbGuj9qQkFO0qcwngTPZkpOnYYox3530Rxvcp85LoQ8p6jTS+
+         S/73bvdnqZyr+4hiPvc5LzC6xvhvYJXGxm+8DG/lHdhme6UZuWen2TAiom54NC7EoRe6
+         3sylaIvuijxz/KrVeR7lhK7Xbrhf72KiTXX65VtSTSdvgMBzEWeo5dYwuNJiNI8DUn1/
+         4nBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=99TMTkahJ4QCgWUEiSLbnT5JfgAic6E8hP6s4tmViRw=;
-        b=Fo0hh3sQQ+jMH/qj7kCSUk5IkLKP3KiwyoGR3SsgiyGSYYlTqbUcu67AzKCdX8LAny
-         iLEId7Y2Z6qk7S0joIWFdFyWUwBJTlPeBB87GXS3JaXAP3Hq8Mq3eLgUZUbAofyquE4u
-         JugwVqoKrVY7n3ZgB8PhatVl5vTUTkl3UsH7EhyZYoql+qtpMIZfu0jlY4cPa3uYQeKQ
-         bwgRDRmQJ1Aoqh0Ix6+j7U+g9XGbDC8jHSzXKKCZXFiYxcj63V61qre27ytHHKCDcd+O
-         UNi+HnAp/GOYPT+X9vaAautyT0RXPc9HMrmFsqh3DEOKmmW06q27j3nYAe+r7KBqgmMW
-         mSOA==
-X-Gm-Message-State: AOAM531aERpP3OM4YTV9ll8ls9QpbetuZ1vs8klgT4UJ0uDgKiNtcBaG
-        EuDcBRP+NzgC0Dji3BCCeXI=
-X-Google-Smtp-Source: ABdhPJzRZGeZ3SQYeuSacr6aWc7bzfsbE2McV8zcCgsJbjRSw7hHlf97aRVJxHTTEoc0ng2wI5Z+ig==
-X-Received: by 2002:a2e:5342:: with SMTP id t2mr39064234ljd.321.1621182661367;
-        Sun, 16 May 2021 09:31:01 -0700 (PDT)
+        bh=1RqC6a+NZMuHcUfGq6LxuBL+QnW+oPmIqETkbY0cfZw=;
+        b=UDogRy5Z06+FquNyh1sUSEcz2H4DL6i8ax4GqcSYS/TjpKF/aCSv9VBE+xWeYG07PL
+         RrBJw+xM+LPX0FvBevQXtWAIIwRvinEDvWWWfKLpBA30G6JIsH6QsbitJWbjOph5cf7h
+         hMwCvyVR4YR41Eze4ymJP0x/OVFUV1SGtx9zvz3XDgjojoznh+0hA1eaBOIsKjNI+DfU
+         nGiRVJwgD8omUjDAEa84oSGZsS0hpzLcb/Ix53X0uzyRQtdlqww3vOmI0a9R0S/bpVmm
+         lvpyapzno9NqZ632b6Wxp5LhzMQiIZi+Rc2mcB2KCV/wgAALNB9F/UGBMisyIjukjFQ7
+         /IFg==
+X-Gm-Message-State: AOAM5327IkSwpTyVKteXK1HVJRTdMTT2SF7LNX+ZKwVb40D18kVWrSAD
+        uQo5PT61T2vVirhoXRhvuFY=
+X-Google-Smtp-Source: ABdhPJzlmUMG4qGBtOldAsBml+5bry1JrKAKGxYoPq3S53eQEGzqeDwi2Xty3FISDVu5oNZjgYdMPA==
+X-Received: by 2002:a2e:b5b0:: with SMTP id f16mr46031988ljn.52.1621182663383;
+        Sun, 16 May 2021 09:31:03 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id m2sm1704548lfo.23.2021.05.16.09.31.00
+        by smtp.gmail.com with ESMTPSA id m2sm1704548lfo.23.2021.05.16.09.31.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 May 2021 09:31:01 -0700 (PDT)
+        Sun, 16 May 2021 09:31:03 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v8 3/9] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Sun, 16 May 2021 19:30:35 +0300
-Message-Id: <20210516163041.12818-4-digetx@gmail.com>
+Subject: [PATCH v8 6/9] clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
+Date:   Sun, 16 May 2021 19:30:38 +0300
+Message-Id: <20210516163041.12818-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210516163041.12818-1-digetx@gmail.com>
 References: <20210516163041.12818-1-digetx@gmail.com>
@@ -79,53 +79,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PLLU (USB) consists of the PLL configuration itself and configuration
-of the PLLU outputs. The PLLU programming is inconsistent on T30 vs T114,
-where T114 immediately bails out if PLLU is enabled and T30 re-enables
-a potentially already enabled PLL (left after bootloader) and then fully
-reprograms it, which could be unsafe to do. The correct way should be to
-skip enabling of the PLL if it's already enabled and then apply
-configuration to the outputs. This patch doesn't fix any known problems,
-it's a minor improvement.
+Check whether thermal DIV2 throttle is active in order to report
+the CPU frequency properly. This very useful for userspace tools
+like cpufreq-info which show actual frequency asserted from hardware.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra-super-cclk.c | 16 ++++++++++++++--
+ drivers/clk/tegra/clk-tegra30.c          |  2 +-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0193cebe8c5a..823a567f2adc 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1131,7 +1131,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
+index a03119c30456..68d7bcd5fc8a 100644
+--- a/drivers/clk/tegra/clk-tegra-super-cclk.c
++++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+@@ -25,6 +25,8 @@
  
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
+ #define SUPER_CDIV_ENB		BIT(31)
  
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
-@@ -1748,15 +1749,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
++#define TSENSOR_SLOWDOWN	BIT(23)
++
+ static struct tegra_clk_super_mux *cclk_super;
+ static bool cclk_on_pllx;
  
--	if (clk_pll_is_enabled(hw))
--		return 0;
--
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
+@@ -47,10 +49,20 @@ static int cclk_super_set_rate(struct clk_hw *hw, unsigned long rate,
+ static unsigned long cclk_super_recalc_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+ {
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	u32 val = readl_relaxed(super->reg);
++	unsigned int div2;
++
++	/* check whether thermal throttling is active */
++	if (val & TSENSOR_SLOWDOWN)
++		div2 = 1;
++	else
++		div2 = 0;
++
+ 	if (cclk_super_get_parent(hw) == PLLX_INDEX)
+-		return parent_rate;
++		return parent_rate >> div2;
  
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+-	return tegra_clk_super_ops.recalc_rate(hw, parent_rate);
++	return tegra_clk_super_ops.recalc_rate(hw, parent_rate) >> div2;
+ }
  
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
+ static int cclk_super_determine_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a33688b2359e..5b6bd138be84 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -930,7 +930,7 @@ static void __init tegra30_super_clk_init(void)
+ 	/* CCLKG */
+ 	clk = tegra_clk_register_super_cclk("cclk_g", cclk_g_parents,
+ 				  ARRAY_SIZE(cclk_g_parents),
+-				  CLK_SET_RATE_PARENT,
++				  CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+ 				  clk_base + CCLKG_BURST_POLICY,
+ 				  0, NULL);
+ 	clks[TEGRA30_CLK_CCLK_G] = clk;
 -- 
 2.30.2
 
