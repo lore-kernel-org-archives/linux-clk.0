@@ -2,150 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147C7C43462
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 12:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060A4C433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 13:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBE6E61074
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 12:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D6D61059
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 13:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235330AbhEQMiN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 08:38:13 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:40684 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231732AbhEQMiN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 May 2021 08:38:13 -0400
-Received: from hq-00021.Speedport_W_724V_01011603_07_002 (p200300d83f181dcec1913e3a7e010a83.dip0.t-ipconnect.de [IPv6:2003:d8:3f18:1dce:c191:3e3a:7e01:a83])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id A9BAB4E2F00;
-        Mon, 17 May 2021 12:29:33 +0000 (UTC)
-From:   Daniel Mack <daniel@zonque.org>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     robh+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Daniel Mack <daniel@zonque.org>
-Subject: [PATCH 1/3] dt-bindings: clock: convert cs2000-cp bindings to yaml
-Date:   Mon, 17 May 2021 14:29:24 +0200
-Message-Id: <20210517122926.3263455-1-daniel@zonque.org>
-X-Mailer: git-send-email 2.31.1
+        id S237377AbhEQNhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 09:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237379AbhEQNhH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 09:37:07 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03EF4C061756;
+        Mon, 17 May 2021 06:35:50 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id v6so7280082ljj.5;
+        Mon, 17 May 2021 06:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WQqDABHDGgDQCU0WnTFwCSsQA9jF51qzAZtjkZ18AOU=;
+        b=I1RXfaR+fQaCMswosSWi6tpGukzhRb3nEIRrgwDshVD4JWgGPCaYncHyUcfiGgpTYv
+         q8+LYoXpZ4yUAJdPJgbAxMAx0Xompgtm5vMgehYbmlEdmBPghejbOxbr1iO9JTrznqdQ
+         FRDLcCYbmyeis2gIfFsnoM06Vb4a4meVjfQ9kz24/DlNHeSlugf6YMpg7O6VS8DIjcLU
+         oLce8CT73ZVcZMdAisEVg6rID4detd8vdc1giOQUDmDTZArfjJeFyrZt/0/l+c9djIiZ
+         mOJLullq7A1zmTyNWeJnbos7uQPPgldvpBRugOfsSSvdCronpcATZjBfntWkAIyLv9yt
+         MTKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WQqDABHDGgDQCU0WnTFwCSsQA9jF51qzAZtjkZ18AOU=;
+        b=PndERzeBVDFftRGNhF/KLCSizDrgp0wxfb1gMLfXCcsV1HB2HmHhn1tah7IRFmY5KE
+         PkYxaJSw6KfG5lO0zES67OY5LGd6j0g5jqqkzsHqeJ93kSL4mCtBnJtFsuwzfZoBLJ3F
+         IBmfLK3pbVkV4EOrzfAYBJp3+YaeR9WNsAVsDNJDEOJxrEovJNO295/qP6ohoFcfJueJ
+         gzxuGckLLNeIUkaRMIDJlXnvHW4AaLFC0+S9drJQOVOH4apRJfwB26lfDLtodxdm8Ywt
+         JYzXnNmMHLHvi+znjacnGWGJNXxAuajnjU+s6ennYJ4HtGlBGcRlE4bxytcdx3i3vmbI
+         DzTA==
+X-Gm-Message-State: AOAM531tcWK8kXr8FfLQfsjGdUarqnVI+TH5Bj6Iy02qALJJXVnINvet
+        bbmmiOQ906AB+YFon7NI6wfNlfgFJ0I=
+X-Google-Smtp-Source: ABdhPJxLvlETmFTqcDLi1Mn2/MUIK3cxp4Q7EAzvHXI+H41aZhEIHklSeJOjZvMqbABjHI51UQb9IA==
+X-Received: by 2002:a2e:b4b1:: with SMTP id q17mr41060196ljm.40.1621258548300;
+        Mon, 17 May 2021 06:35:48 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
+        by smtp.googlemail.com with ESMTPSA id a9sm145819ljb.73.2021.05.17.06.35.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 06:35:47 -0700 (PDT)
+Subject: Re: [PATCH v2 3/4] memory: tegra124-emc: Fix compilation warnings on
+ 64bit platforms
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210516161214.4693-1-digetx@gmail.com>
+ <20210516161214.4693-4-digetx@gmail.com>
+ <936cfc7d-737e-a582-ea60-ad2ba5b4ca72@canonical.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1d80ee0f-de4c-24d0-154f-20841874bf20@gmail.com>
+Date:   Mon, 17 May 2021 16:35:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <936cfc7d-737e-a582-ea60-ad2ba5b4ca72@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The original author of the file was added as maintainer.
+17.05.2021 14:28, Krzysztof Kozlowski пишет:
+> On 16/05/2021 12:12, Dmitry Osipenko wrote:
+>> Fix compilation warning on 64bit platforms caused by implicit promotion
+>> of 32bit signed integer to a 64bit unsigned value which happens after
+>> enabling compile-testing of the driver.
+>>
+>> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/memory/tegra/tegra124-emc.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+>> index 5699d909abc2..c9eb948cf4df 100644
+>> --- a/drivers/memory/tegra/tegra124-emc.c
+>> +++ b/drivers/memory/tegra/tegra124-emc.c
+>> @@ -272,8 +272,8 @@
+>>  #define EMC_PUTERM_ADJ				0x574
+>>  
+>>  #define DRAM_DEV_SEL_ALL			0
+>> -#define DRAM_DEV_SEL_0				(2 << 30)
+>> -#define DRAM_DEV_SEL_1				(1 << 30)
+>> +#define DRAM_DEV_SEL_0				(2u << 30)
+>> +#define DRAM_DEV_SEL_1				(1u << 30)
+> 
+> Why not using BIT()? This would make even this 2<<30 less awkard...
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
- .../bindings/clock/cirrus,cs2000-cp.yaml      | 64 +++++++++++++++++++
- .../devicetree/bindings/clock/cs2000-cp.txt   | 22 -------
- 2 files changed, 64 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-new file mode 100644
-index 000000000000..3af81087e5f9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/cirrus,cs2000-cp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Binding CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
-+
-+maintainers:
-+  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+
-+description: |
-+  The CS2000-CP is an extremely versatile system clocking device that
-+  utilizes a programmable phase lock loop.
-+
-+  Link: https://www.cirrus.com/products/cs2000/
-+
-+properties:
-+  compatible:
-+    enum:
-+      - cirrus,cs2000-cp
-+
-+  clocks:
-+    description:
-+      Common clock binding for CLK_IN, XTI/REF_CLK
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 2
-+
-+  '#clock-cells':
-+    const: 0
-+
-+  reg:
-+    description:
-+      The chip select number on the I2C bus
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c@0 {
-+      reg = <0x0 0x100>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      cs2000: clk_multiplier@4f {
-+        #clock-cells = <0>;
-+        compatible = "cirrus,cs2000-cp";
-+        reg = <0x4f>;
-+        clocks = <&rcar_sound 0>, <&x12_clk>;
-+        clock-names = "clk_in", "ref_clk";
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-deleted file mode 100644
-index 54e6df0bee8a..000000000000
---- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-+++ /dev/null
-@@ -1,22 +0,0 @@
--CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
--
--Required properties:
--
--- compatible:		"cirrus,cs2000-cp"
--- reg:			The chip select number on the I2C bus
--- clocks:		common clock binding for CLK_IN, XTI/REF_CLK
--- clock-names:		CLK_IN : clk_in, XTI/REF_CLK : ref_clk
--- #clock-cells:		must be <0>
--
--Example:
--
--&i2c2 {
--	...
--	cs2000: clk_multiplier@4f {
--		#clock-cells = <0>;
--		compatible = "cirrus,cs2000-cp";
--		reg = <0x4f>;
--		clocks = <&rcar_sound 0>, <&x12_clk>;
--		clock-names = "clk_in", "ref_clk";
--	};
--};
--- 
-2.31.1
-
+The bitfield 31:30 is a enum, 3 is a wrong value. Formally it's
+incorrect to use the BIT() macro here.
