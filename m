@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168CEC433ED
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6957EC433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB14761359
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44132619B2
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235623AbhEQOGR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 10:06:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41271 "EHLO
+        id S239124AbhEQO1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 10:27:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42119 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237865AbhEQOFm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 10:05:42 -0400
-Received: from mail-qk1-f198.google.com ([209.85.222.198])
+        with ESMTP id S239273AbhEQOZi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 10:25:38 -0400
+Received: from mail-qt1-f199.google.com ([209.85.160.199])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lidr7-0004TU-1p
-        for linux-clk@vger.kernel.org; Mon, 17 May 2021 14:04:25 +0000
-Received: by mail-qk1-f198.google.com with SMTP id n142-20020a3727940000b02902fa8eadfa9eso4804566qkn.7
-        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 07:04:25 -0700 (PDT)
+        id 1lieAP-0006eN-8t
+        for linux-clk@vger.kernel.org; Mon, 17 May 2021 14:24:21 +0000
+Received: by mail-qt1-f199.google.com with SMTP id g13-20020ac8580d0000b02901e117526d0fso5316408qtg.5
+        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 07:24:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8nNt7p8/XpkMjdfYomnfwPohk68DN8/DKf++9T5aVd0=;
-        b=UwvwWCNcmME1P9nmSPZ0DrcbxenIC2GgzAGz3iCuS+7hIIpq9QW6Fa62yXYjQi3Nx7
-         YRD034meA4Di0RicHxTSiGV6gwhaJqQy5yRwA4Q4ayw9tmBjU01FtpYeT7qAM+Y0Ab8y
-         fwNqwqBYUq7JUBhwkp3pKH/2TKw8hi1g++w/rK/eSqJ2z9G+QM7KKt4u3XCYTm5JfqZB
-         VqF2Mf+0y0K/pNvPTOK47Fv8LtWDrCDyMvn+7jyBzUUhoXumXACS0VWh6tihvKd8RuaF
-         scuRF9dGxjWwFrKIKNdF7YUdrX4lE4OOqFbJxCWk3g9GYke/IXqexNAM4aVJER4JLhxv
-         stxg==
-X-Gm-Message-State: AOAM5331cOasMUK0C0b7bEqhpFZTKI/6rrh9AI1RcPGiZuSFFqC6QdZQ
-        o2JdvzPqHXua5kmGtczES9gNveoNzaxfUjZ7Ce0AlBXW2/cifXtNWNwIcxFJdhBBxEBpwQ3cgBn
-        1wEuEW/wp+OfT6pIcnXB6jQzeihBgPL92eOzRYQ==
-X-Received: by 2002:ac8:4319:: with SMTP id z25mr58437001qtm.262.1621260263528;
-        Mon, 17 May 2021 07:04:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzWt/qyHrHTiRrV9XefovdlniWXO+Q/V4ZIQpCKkD+hCnqGqyLmKZ5nKHMU30KlJqDxYO14Ug==
-X-Received: by 2002:ac8:4319:: with SMTP id z25mr58436977qtm.262.1621260263312;
-        Mon, 17 May 2021 07:04:23 -0700 (PDT)
-Received: from [192.168.1.4] ([45.237.48.5])
-        by smtp.gmail.com with ESMTPSA id i129sm10505301qke.103.2021.05.17.07.04.21
+        bh=b8fOlxYIjxroeXZaPApUy+9pShAujZ8BOr3a1vv0QfM=;
+        b=KnREpDnz7wOlWyW532bzHBB+OePn+c3m5UD0cJMF/a/9L/fU1yQMCEyo7aHxwxTFxe
+         ZVKsH3lXRJwzM49BE8tZ42ky1MpjpCjw7eSlRrmQ29Suq1Lo5jJ7HWM6o75NRIaNDnxt
+         /UV7yeoPacCQIKuY20UBx8jgKTszR+PV+iZJw0akimGoRwajRL3rGM8wIMKbKhx50brw
+         Tu8RrvitgvwhrsyNm6+NFyhIAD6aOc5w4KqL/SLU7g69D5aezf37fSOiPD+IkaXfJcMd
+         dvtOGCbaLkmBuMJxkxozLr9wNDN+DBZwD+iQTSJmESa8rzscaZo9u5zGM2S1ITJ81wQA
+         hKgA==
+X-Gm-Message-State: AOAM531l7un6BEFjrecqzADqIWC9Uht/ZicxnTqBuB/jONpe5F24yD9q
+        UDi16YikMQpACAWmRDwAPtwX38RZhsg/ejCXOqNL6XfcVw/cO2qIt73+YBVIu/Ijk5mRtOqU5dj
+        M6POvFVatp41LVPt2xD/h8EBIOfhsrP/dWdWdWQ==
+X-Received: by 2002:a0c:d80b:: with SMTP id h11mr211348qvj.10.1621261460009;
+        Mon, 17 May 2021 07:24:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFThVtFmA2e59WhPfODKDeGjLXwwKQduT0MHPDWTRVXP0ipfgDODV9fTCnG5Tk19ONs5RSmg==
+X-Received: by 2002:a0c:d80b:: with SMTP id h11mr211331qvj.10.1621261459879;
+        Mon, 17 May 2021 07:24:19 -0700 (PDT)
+Received: from [192.168.1.4] ([45.237.48.1])
+        by smtp.gmail.com with ESMTPSA id u27sm10534108qku.33.2021.05.17.07.24.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 07:04:22 -0700 (PDT)
+        Mon, 17 May 2021 07:24:19 -0700 (PDT)
 Subject: Re: [PATCH v2 3/4] memory: tegra124-emc: Fix compilation warnings on
  64bit platforms
 To:     Dmitry Osipenko <digetx@gmail.com>,
@@ -63,65 +63,33 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20210516161214.4693-1-digetx@gmail.com>
  <20210516161214.4693-4-digetx@gmail.com>
- <936cfc7d-737e-a582-ea60-ad2ba5b4ca72@canonical.com>
- <1d80ee0f-de4c-24d0-154f-20841874bf20@gmail.com>
- <4ea1bf29-c353-6fcf-5248-bfee67d5c361@canonical.com>
- <c120ecf5-7202-9f1d-6e70-a99db2f5335f@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <1cde1d43-f139-cb90-395e-8f8fceb41bce@canonical.com>
-Date:   Mon, 17 May 2021 10:04:21 -0400
+Message-ID: <ae6dfddd-0e08-bb40-fd4f-36276be30cef@canonical.com>
+Date:   Mon, 17 May 2021 10:24:16 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <c120ecf5-7202-9f1d-6e70-a99db2f5335f@gmail.com>
+In-Reply-To: <20210516161214.4693-4-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/05/2021 09:47, Dmitry Osipenko wrote:
-> 17.05.2021 16:39, Krzysztof Kozlowski пишет:
->>>>>  #define DRAM_DEV_SEL_ALL			0
->>>>> -#define DRAM_DEV_SEL_0				(2 << 30)
->>>>> -#define DRAM_DEV_SEL_1				(1 << 30)
->>>>> +#define DRAM_DEV_SEL_0				(2u << 30)
->>>>> +#define DRAM_DEV_SEL_1				(1u << 30)
->>>>
->>>> Why not using BIT()? This would make even this 2<<30 less awkard...
->>>
->>> The bitfield 31:30 is a enum, 3 is a wrong value. Formally it's
->>> incorrect to use the BIT() macro here.
->>
->> Why "3"? BIT(31) is the same as 2<<30.
+On 16/05/2021 12:12, Dmitry Osipenko wrote:
+> Fix compilation warning on 64bit platforms caused by implicit promotion
+> of 32bit signed integer to a 64bit unsigned value which happens after
+> enabling compile-testing of the driver.
 > 
-> By 3 I meant BIT(31)|BIT(30). This bitfield is explicitly designated as
-> a enum in the hardware documentation.
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+The patch was not suggested by Nathan but it was:
+Reported-by: kernel test robot <lkp@intel.com>
 
-I understand it and using BIT() here does not mean someone has to set
-both of them. BIT() is a helper pointing out that you want to toggle one
-bit. It does not mean that it is allowed to do so always!
-
-> 
->> It's common to use BIT for
->> register fields which do not accept all possible values. Now you
->> basically reimplement BIT() which is error-prone.
-> 
-> Could you please show couple examples? The common practice today is to
-> use FIELD_PREP helpers, but this driver was written before these helpers
-> existed.
-
-
-There are plenty of such examples so I guess it would be easier to ask
-you to provide counter ones. Few IT for enum-like registers found within 2 minutes:
-
-https://elixir.bootlin.com/linux/latest/C/ident/MAX77620_CNFG_GPIO_INT_MASK
-https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/max77650-regulator.c#L18
-https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps6524x-regulator.c#L62
-https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps80031-regulator.c#L39
-https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L200
-https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L231
+Nathan however provided analysis and proper solution, so co-developed or
+his SoB fits better. This is not that important as comment above -
+including robot's credits.
 
 Best regards,
 Krzysztof
