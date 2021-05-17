@@ -2,160 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBA3C433ED
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 20:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8677AC433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D0FB610CC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 20:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69EC8611CC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238896AbhEQUiz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 16:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238372AbhEQUiy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 16:38:54 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED4CC06175F;
-        Mon, 17 May 2021 13:37:37 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so291089wmh.4;
-        Mon, 17 May 2021 13:37:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JdlOUWCFrqhk74UvYiMcqHdWI1N1+oYHII4ZRq2kZ3Q=;
-        b=iGYBbJ7VV+sih5JcSVBhAw+WygMf8lzLPqsrC86lDfO6oZdOx7a8AdYoopCJYyhvOQ
-         7VM0R4hkIWexulCPuRs5G41v6DhcisDIhFvO5wY5mO4iy5ZFgM2wAHmzLbJIjlVFdMRs
-         K8gas4JH270iFfnPW2id7L0eyizQl3gPfQ0R95gZc5aOKqPfziCTyJ6e4hhCWIFJ1iKP
-         1cBuDoA6YvvMtU3s4N3IuPdOSXoFR7dAncB8QyfG7cFtYDQ8S12Mo7in+3ySv0fgOSad
-         VOBaglZ5ViFafsKgH1SGAlSl9rkV/J/9Ln2shol0Wx6uxgghiDW7KItMlGX/CMfHvvKZ
-         AfXw==
+        id S244385AbhEQVWD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 17:22:03 -0400
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:44571 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238105AbhEQVWC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 17:22:02 -0400
+Received: by mail-ot1-f41.google.com with SMTP id r26-20020a056830121ab02902a5ff1c9b81so6801804otp.11;
+        Mon, 17 May 2021 14:20:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JdlOUWCFrqhk74UvYiMcqHdWI1N1+oYHII4ZRq2kZ3Q=;
-        b=f3hF24tCsbQfCtrNRjbuph9o7+nyZ2+sTpBO8XurAMlJSXGDbnQjx6wco6V1pg3Vwr
-         67SmmVZglzy+TT5hvxpmLTz6J1360d1C8VPM/LlOwCO/XJth41zx6tt3VVoisgoqmM1S
-         gkqOKlRLwGXJWrGP4np7Zc0BXz4jgVNGG5wL3u6Aqpc+EpOIQ9wOjjygqi2Q1Yff3R2M
-         ZgpkHklbfOpd9GpLcS/ztVGkDBhh2hs/SmZxtj8qj6xt272VvFhfkB93lJBm2t4DRxur
-         pR/UUgAgh5uwrN0SLV3mpMvc4rZ9HWUh+D0PX3sh1aPZq4SQIyEpm20YcCGuqWIBB2r5
-         rzbw==
-X-Gm-Message-State: AOAM530h3VRXQPEqQ9Tv1IEWE40pxZiAQCTsmt6hIBrHYSP6NrzHvGSd
-        Gi50960eLM6EtbZRSsU+kHeeu+sb6dE=
-X-Google-Smtp-Source: ABdhPJyUym/2wMl+zRWG2tm3iJbsKFKDbcljcr3Vp0/EZQwKDXOiJPSAJif7+TfZO0XWr0cKN3EUuw==
-X-Received: by 2002:a7b:c346:: with SMTP id l6mr1351729wmj.109.1621283856162;
-        Mon, 17 May 2021 13:37:36 -0700 (PDT)
-Received: from localhost.localdomain (p200300f1371adf00428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:371a:df00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id p6sm3840448wma.4.2021.05.17.13.37.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YcPVqnyxUoQRqLqrcd+xwOvSykAyUXn6XXyXXfewed8=;
+        b=mtIO+EMTrhG0OFp22u7lFtRl2KcrfioE8we6bdl6QaDdVzWKkrjHzr5NSSAzjEfEK3
+         +uC0PnHiL6yYpt1AU4vERZqQmbpY0DjPYBf1fbnyA7YiQA1MCdMW9mLCjiwlTmMU+N4/
+         C3WYlQy0Khqzn9C37V4N0EUpchIEmyJbqV3Sj2eFj3omkuG/OLNte89KxujUC53b9WbV
+         pD1ynqWGamMaXuxblqlVsvvRx/ohfMs+gCoq51AmF7iU2TijaEvRJsCunU9XHG5tmkAD
+         1VBX4N6KZsa5IL6TSd/8fmHaS93FpVilsALOrBrjAHcb8eNild+zKygDTLrOgE5q+bsg
+         in9w==
+X-Gm-Message-State: AOAM533tbhNUmyfK3yNKFx8XdslE0i57ER21Ol71btaIivjk1+1+c3m9
+        dldr3jWbHRl0fXuhG+Cxvg==
+X-Google-Smtp-Source: ABdhPJyETxg9k9XJAKSPDZnyLWwwIHaYxzn+ovOlDY4J+ItNb3j1tMU05rQr9vzb7eu8lf00QgA4Rw==
+X-Received: by 2002:a9d:5a1a:: with SMTP id v26mr1334412oth.50.1621286444548;
+        Mon, 17 May 2021 14:20:44 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y191sm2998370oia.50.2021.05.17.14.19.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 May 2021 13:37:35 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
-        jbrunet@baylibre.com, linux-clk@vger.kernel.org
-Cc:     khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH RFC v1 3/3] clk: meson: pll: switch to determine_rate for the PLL ops
-Date:   Mon, 17 May 2021 22:37:24 +0200
-Message-Id: <20210517203724.1006254-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
-References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
+        Mon, 17 May 2021 14:19:33 -0700 (PDT)
+Received: (nullmailer pid 3215069 invoked by uid 1000);
+        Mon, 17 May 2021 21:18:28 -0000
+Date:   Mon, 17 May 2021 16:18:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, alsa-devel@alsa-project.org,
+        Georgi Djakov <djakov@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-pm@vger.kernel.org, Alex Elder <elder@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        devicetree@vger.kernel.org,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        linux-input@vger.kernel.org,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <jic23@kernel.org>, netdev@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>
+Subject: Re: [PATCH] dt-bindings: More removals of type references on common
+ properties
+Message-ID: <20210517211828.GA3214995@robh.at.kernel.org>
+References: <20210510204524.617390-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210510204524.617390-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This increases the maxmium supported frequency on 32-bit systems from
-2^31 (signed long as used by clk_ops.round_rate, maximum value:
-approx. 2.14GHz) to 2^32 (unsigned long as used by
-clk_ops.determine_rate, maximum value: approx. 4.29GHz).
-On Meson8/8b/8m2 the HDMI PLL and it's OD (post-dividers) are
-capable of running at up to 2.97GHz. So switch the divider
-implementation in clk-regmap to clk_ops.determine_rate to support these
-higher frequencies on 32-bit systems.
+On Mon, 10 May 2021 15:45:24 -0500, Rob Herring wrote:
+> Users of common properties shouldn't have a type definition as the
+> common schemas already have one. A few new ones slipped in and
+> *-names was missed in the last clean-up pass. Drop all the unnecessary
+> type references in the tree.
+> 
+> A meta-schema update to catch these is pending.
+> 
+> Cc: Luca Ceresoli <luca@lucaceresoli.net>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Georgi Djakov <djakov@kernel.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Orson Zhai <orsonzhai@gmail.com>
+> Cc: Baolin Wang <baolin.wang7@gmail.com>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Cc: Odelu Kukatla <okukatla@codeaurora.org>
+> Cc: Alex Elder <elder@kernel.org>
+> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/idt,versaclock5.yaml    | 2 --
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml         | 1 -
+>  Documentation/devicetree/bindings/input/input.yaml              | 1 -
+>  Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml   | 1 -
+>  Documentation/devicetree/bindings/net/qcom,ipa.yaml             | 1 -
+>  .../devicetree/bindings/power/supply/sc2731-charger.yaml        | 2 +-
+>  Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml          | 2 +-
+>  7 files changed, 2 insertions(+), 8 deletions(-)
+> 
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/clk-pll.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 49f27fe53213..9e55617bc3b4 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -242,8 +242,8 @@ static int meson_clk_get_pll_settings(unsigned long rate,
- 	return best ? 0 : -EINVAL;
- }
- 
--static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *parent_rate)
-+static int meson_clk_pll_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-@@ -251,22 +251,26 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long round;
- 	int ret;
- 
--	ret = meson_clk_get_pll_settings(rate, *parent_rate, &m, &n, pll);
-+	ret = meson_clk_get_pll_settings(req->rate, req->best_parent_rate,
-+					 &m, &n, pll);
- 	if (ret)
--		return meson_clk_pll_recalc_rate(hw, *parent_rate);
-+		return ret;
- 
--	round = __pll_params_to_rate(*parent_rate, m, n, 0, pll);
-+	round = __pll_params_to_rate(req->best_parent_rate, m, n, 0, pll);
- 
--	if (!MESON_PARM_APPLICABLE(&pll->frac) || rate == round)
--		return round;
-+	if (!MESON_PARM_APPLICABLE(&pll->frac) || req->rate == round) {
-+		req->rate = round;
-+		return 0;
-+	}
- 
- 	/*
- 	 * The rate provided by the setting is not an exact match, let's
- 	 * try to improve the result using the fractional parameter
- 	 */
--	frac = __pll_params_with_frac(rate, *parent_rate, m, n, pll);
-+	frac = __pll_params_with_frac(req->rate, req->best_parent_rate, m, n, pll);
-+	req->rate = __pll_params_to_rate(req->best_parent_rate, m, n, frac, pll);
- 
--	return __pll_params_to_rate(*parent_rate, m, n, frac, pll);
-+	return 0;
- }
- 
- static int meson_clk_pll_wait_lock(struct clk_hw *hw)
-@@ -419,7 +423,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-  */
- const struct clk_ops meson_clk_pcie_pll_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
--	.round_rate	= meson_clk_pll_round_rate,
-+	.determine_rate	= meson_clk_pll_determine_rate,
- 	.is_enabled	= meson_clk_pll_is_enabled,
- 	.enable		= meson_clk_pcie_pll_enable,
- 	.disable	= meson_clk_pll_disable
-@@ -429,7 +433,7 @@ EXPORT_SYMBOL_GPL(meson_clk_pcie_pll_ops);
- const struct clk_ops meson_clk_pll_ops = {
- 	.init		= meson_clk_pll_init,
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
--	.round_rate	= meson_clk_pll_round_rate,
-+	.determine_rate	= meson_clk_pll_determine_rate,
- 	.set_rate	= meson_clk_pll_set_rate,
- 	.is_enabled	= meson_clk_pll_is_enabled,
- 	.enable		= meson_clk_pll_enable,
--- 
-2.31.1
-
+Applied, thanks!
