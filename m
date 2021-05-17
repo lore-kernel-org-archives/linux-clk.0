@@ -2,58 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6957EC433ED
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D07C43461
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 15:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44132619B2
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 14:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D99461029
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 15:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239124AbhEQO1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 10:27:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42119 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239273AbhEQOZi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 10:25:38 -0400
-Received: from mail-qt1-f199.google.com ([209.85.160.199])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lieAP-0006eN-8t
-        for linux-clk@vger.kernel.org; Mon, 17 May 2021 14:24:21 +0000
-Received: by mail-qt1-f199.google.com with SMTP id g13-20020ac8580d0000b02901e117526d0fso5316408qtg.5
-        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 07:24:21 -0700 (PDT)
+        id S241769AbhEQPFl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 11:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241665AbhEQPCx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 11:02:53 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E350BC0613ED;
+        Mon, 17 May 2021 07:23:40 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id y9so7489641ljn.6;
+        Mon, 17 May 2021 07:23:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iS/P8JiADakXJGpN4rrcz4d8YhejJnZchwPjq0v9rUg=;
+        b=qdykRinAL18KEqBuWZcfNfQwfm2z5zM89Pt2ZxhKeISsCCNJXp+34w7VvYYx6RrRyu
+         7uJYpa4fylSL7d1W+5w8a9LMZE6J9PWjkINlF6GzajPwIOnsZE7xssJUL6dHHVpHhsJD
+         7+xGKFL9Jo4LWYRhb4I2/DkGGJ9CPhFNRGHcOlfBJPCyq4NdMS9X54gD06rEMXJVoYxD
+         8gWRTUX7ORdkJ2jN5QvAtchpQJglMSmGJWdrMLgbdntkE42ufH6ImzjChsnMnT6yJ/fB
+         9TsJnQcU02+vQiKTS2qQOJhxOQK6pXLWipGJ0o8E3lQJtTgsTIZm/8Z5GJjWTc+6TRyQ
+         qSCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=b8fOlxYIjxroeXZaPApUy+9pShAujZ8BOr3a1vv0QfM=;
-        b=KnREpDnz7wOlWyW532bzHBB+OePn+c3m5UD0cJMF/a/9L/fU1yQMCEyo7aHxwxTFxe
-         ZVKsH3lXRJwzM49BE8tZ42ky1MpjpCjw7eSlRrmQ29Suq1Lo5jJ7HWM6o75NRIaNDnxt
-         /UV7yeoPacCQIKuY20UBx8jgKTszR+PV+iZJw0akimGoRwajRL3rGM8wIMKbKhx50brw
-         Tu8RrvitgvwhrsyNm6+NFyhIAD6aOc5w4KqL/SLU7g69D5aezf37fSOiPD+IkaXfJcMd
-         dvtOGCbaLkmBuMJxkxozLr9wNDN+DBZwD+iQTSJmESa8rzscaZo9u5zGM2S1ITJ81wQA
-         hKgA==
-X-Gm-Message-State: AOAM531l7un6BEFjrecqzADqIWC9Uht/ZicxnTqBuB/jONpe5F24yD9q
-        UDi16YikMQpACAWmRDwAPtwX38RZhsg/ejCXOqNL6XfcVw/cO2qIt73+YBVIu/Ijk5mRtOqU5dj
-        M6POvFVatp41LVPt2xD/h8EBIOfhsrP/dWdWdWQ==
-X-Received: by 2002:a0c:d80b:: with SMTP id h11mr211348qvj.10.1621261460009;
-        Mon, 17 May 2021 07:24:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzFThVtFmA2e59WhPfODKDeGjLXwwKQduT0MHPDWTRVXP0ipfgDODV9fTCnG5Tk19ONs5RSmg==
-X-Received: by 2002:a0c:d80b:: with SMTP id h11mr211331qvj.10.1621261459879;
-        Mon, 17 May 2021 07:24:19 -0700 (PDT)
-Received: from [192.168.1.4] ([45.237.48.1])
-        by smtp.gmail.com with ESMTPSA id u27sm10534108qku.33.2021.05.17.07.24.18
+        bh=iS/P8JiADakXJGpN4rrcz4d8YhejJnZchwPjq0v9rUg=;
+        b=Pl2DwaYXTywtr6IvwFf3yb+aJVXGwPD1eduVaAfgtCfbUNE0FVACp2FVk9NtmuYffH
+         jZU4InijRBywiHbGFwWHUotv4OOyUcSu67IpeO+uYP0a7JZpyW3/b582Pz/7Cu7q5kib
+         /Lv/3eAgPx64MZq/AQGZN8c5sFyg4jeR703n2Y+ktPn/IKOMTqjvwV57Vf3pSXoTkwQI
+         RcVBBLp5jMxX4PkzxwsQ24sKeTcSOKBBwQ+NRtXgYKWwphXMAOKXNxZJ9X8tCJRJq+Z9
+         2bITaJq9ZTePy2dknWq5hNTSXVDmZ9flVQQNTiEv06DPY1N5NwgNb+JyJ+4B149P/ufB
+         BYIQ==
+X-Gm-Message-State: AOAM532Rh/eH7f1H0AXy/OuTOJ4TmjCa9EEd18BdYnRzBjhdcs38wUpJ
+        DGg2hmtlgZ9y7QpnVezHjOPZcSVETiI=
+X-Google-Smtp-Source: ABdhPJxBqu6DBuFtNyji6ErZhGCmOHqKJY0GsPKMO5PS+6vo4jWyVaEXfhEZ6RwwNRXxtnui0t3jNg==
+X-Received: by 2002:a2e:884c:: with SMTP id z12mr51260433ljj.276.1621261419242;
+        Mon, 17 May 2021 07:23:39 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
+        by smtp.googlemail.com with ESMTPSA id s11sm2821069ljc.66.2021.05.17.07.23.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 07:24:19 -0700 (PDT)
+        Mon, 17 May 2021 07:23:39 -0700 (PDT)
 Subject: Re: [PATCH v2 3/4] memory: tegra124-emc: Fix compilation warnings on
  64bit platforms
-To:     Dmitry Osipenko <digetx@gmail.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -63,33 +69,70 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20210516161214.4693-1-digetx@gmail.com>
  <20210516161214.4693-4-digetx@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <ae6dfddd-0e08-bb40-fd4f-36276be30cef@canonical.com>
-Date:   Mon, 17 May 2021 10:24:16 -0400
+ <936cfc7d-737e-a582-ea60-ad2ba5b4ca72@canonical.com>
+ <1d80ee0f-de4c-24d0-154f-20841874bf20@gmail.com>
+ <4ea1bf29-c353-6fcf-5248-bfee67d5c361@canonical.com>
+ <c120ecf5-7202-9f1d-6e70-a99db2f5335f@gmail.com>
+ <1cde1d43-f139-cb90-395e-8f8fceb41bce@canonical.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9c2b7fe8-551f-288d-eeab-37810aa3f6ba@gmail.com>
+Date:   Mon, 17 May 2021 17:23:38 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210516161214.4693-4-digetx@gmail.com>
+In-Reply-To: <1cde1d43-f139-cb90-395e-8f8fceb41bce@canonical.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/05/2021 12:12, Dmitry Osipenko wrote:
-> Fix compilation warning on 64bit platforms caused by implicit promotion
-> of 32bit signed integer to a 64bit unsigned value which happens after
-> enabling compile-testing of the driver.
+17.05.2021 17:04, Krzysztof Kozlowski пишет:
+> On 17/05/2021 09:47, Dmitry Osipenko wrote:
+>> 17.05.2021 16:39, Krzysztof Kozlowski пишет:
+>>>>>>  #define DRAM_DEV_SEL_ALL			0
+>>>>>> -#define DRAM_DEV_SEL_0				(2 << 30)
+>>>>>> -#define DRAM_DEV_SEL_1				(1 << 30)
+>>>>>> +#define DRAM_DEV_SEL_0				(2u << 30)
+>>>>>> +#define DRAM_DEV_SEL_1				(1u << 30)
+>>>>>
+>>>>> Why not using BIT()? This would make even this 2<<30 less awkard...
+>>>>
+>>>> The bitfield 31:30 is a enum, 3 is a wrong value. Formally it's
+>>>> incorrect to use the BIT() macro here.
+>>>
+>>> Why "3"? BIT(31) is the same as 2<<30.
+>>
+>> By 3 I meant BIT(31)|BIT(30). This bitfield is explicitly designated as
+>> a enum in the hardware documentation.
 > 
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-The patch was not suggested by Nathan but it was:
-Reported-by: kernel test robot <lkp@intel.com>
+> I understand it and using BIT() here does not mean someone has to set
+> both of them. BIT() is a helper pointing out that you want to toggle one
+> bit. It does not mean that it is allowed to do so always!
+> 
+>>
+>>> It's common to use BIT for
+>>> register fields which do not accept all possible values. Now you
+>>> basically reimplement BIT() which is error-prone.
+>>
+>> Could you please show couple examples? The common practice today is to
+>> use FIELD_PREP helpers, but this driver was written before these helpers
+>> existed.
+> 
+> 
+> There are plenty of such examples so I guess it would be easier to ask
+> you to provide counter ones. Few IT for enum-like registers found within 2 minutes:
+> 
+> https://elixir.bootlin.com/linux/latest/C/ident/MAX77620_CNFG_GPIO_INT_MASK
+> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/max77650-regulator.c#L18
+> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps6524x-regulator.c#L62
+> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps80031-regulator.c#L39
+> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L200
+> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L231
 
-Nathan however provided analysis and proper solution, so co-developed or
-his SoB fits better. This is not that important as comment above -
-including robot's credits.
+Alright, I'll use the BIT macro in the v3.
 
-Best regards,
-Krzysztof
+I also realized now that the tegra30-emc drivers needs the same change.
+
+Thank you for the review.
