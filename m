@@ -2,64 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CB8C433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 09:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1EDC433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 09:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2861206
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 09:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D276261242
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 09:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235911AbhEQJuY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 05:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
+        id S236032AbhEQJv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 05:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236263AbhEQJuV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 05:50:21 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6341EC06174A
-        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 02:49:04 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id w127so2114559oig.12
-        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 02:49:04 -0700 (PDT)
+        with ESMTP id S235952AbhEQJv0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 05:51:26 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9E8C061573
+        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 02:50:10 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id u25-20020a0568302319b02902ac3d54c25eso5059238ote.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 May 2021 02:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=o+P8gjr7M/h2UlTgJTWvf23zDkDK3L7sIHwx3sonWtk=;
-        b=YMo5moPoE0ynz44kdQHCn1UoE3RAI/W5b4dLuA4bH+QYvKcyjZC8jS9JQ8fPNkLFDu
-         1xG6jla9DWUI7swIi+JqYG7seL7X/Oz6a7y+TfHQmim46QJU4JdOwgc5GIwk82uWW9gc
-         qksD3jNfDEl1UHqGMpiSLzweMYgGHG39vJivdDpq+7SnalxJXFrJgn9rPxRA+p0qmp3a
-         lSt+gyAAzbyC4ElSdX9+UHNET6ilV9IOUqOlRHIEVdXbiTIrBAgxbN7Xgsxx/OwRz3X+
-         Nf6iuoQedriEyjhVZqBB/ar/n8KrZVEGTX8wniSzkS0d6VwssLJAfolHJBLUIgMHRsB4
-         dIoA==
+        bh=s1N4FDkxTckn3KWOFBKUj2pqqxn5FvRwP+9ZDL95BIs=;
+        b=L6IyNOn76xUHBRkD5iXbOWseTItJEcUisNY+EnMMBQVge9DSDe7Lkxas0yAFubegM5
+         Fiw32GF8mAuRTIAOKXvLks9oj39tejKRFbalomL/orh+1buE4t/SYDpj4aR9YMIZjujN
+         gnEyVxoFY8FgyfI9UE54uEaML81U+AljFUtxlKE8ZWHpk+7sKgpgtREQHk5125r+aqWj
+         3ctY+Rn0oVTeaTzALFIYE1Ek0uW87s5b8acROAA0mfSFbf+SGr4f04+Ip2GIrEijXMCq
+         skxrWzi7ZIXlcOV5vbL0IkkYuHsADEh2WDa8mLbBFSLatH5mOl3jQwtcwCc87drqefmA
+         cZlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=o+P8gjr7M/h2UlTgJTWvf23zDkDK3L7sIHwx3sonWtk=;
-        b=VI2OMi0ulkJHLowkW9/Ows49nHX2oKfXkHBxkiM9Xz7t97uq0T7VgQ1zVfNjsJsae/
-         4e/6JAwddAZdObZpAFjeZ187uID/tq0KvdUj5zdVdDtfvTVQ16B/Tn+nqq2d22Tr2vAO
-         qWZz/dlCjiQW4KdBAdbgfUMltIf7wC9rXyH3jOoy91iiGL60Jq3jDst0c1o3YaaGlT4F
-         QXUsxdjTbPDwJ1ZwHn59DEMF4jv6rM9bEpZSNX3k4ePA0pMztszvZQbbsBQV8dtTYlfb
-         jwB95jsg2DWq3GMl/2d1ZfcPSt9x/RalvwTm01ZkPfbF2YgvdIa14DGCzIOTmzjTe4uW
-         A7QQ==
-X-Gm-Message-State: AOAM530G15zxUvPjdmehZCAjq/EdptvkJBuOs1Skzg8BhZFzRzEiHaj4
-        Dy9HJr5GkV02DmWx4FS0EKuYowkBKV/MbFqDCeE=
-X-Google-Smtp-Source: ABdhPJw/3KYJciUllyNYelJ7XT2bxAobFqfexSJ5K2toXEdb3vFGqnwGjTOSptpxcOm6UAaZegkF5n/iFUWomQNd9Aw=
-X-Received: by 2002:a05:6808:1304:: with SMTP id y4mr8472078oiv.20.1621244943778;
- Mon, 17 May 2021 02:49:03 -0700 (PDT)
+        bh=s1N4FDkxTckn3KWOFBKUj2pqqxn5FvRwP+9ZDL95BIs=;
+        b=Gy0jiJFa+7b1v5GuzZiDDfq+B6Ah7DkRjHILiyWnHHfZEGUmwNaLTg4ysMceTljKYJ
+         YmSuaC8j6H4xW28JUXiCHFOyb5pSRjE603tzoOAnpAtieUuM6KvPprXRwikTFBRrHsVu
+         E7DzzC7jXQQeiT0882i+B331d33RPKAqP23lKNk/TSvbWvyNtk32cazwUYnnXSkU4YwB
+         BVCYiaZCaGNC/TgXXWgTGh5JIYbWxjeaOYdAH52lbYVfrwKZns6pOgXira9oRthM0kNc
+         s2mTXJHbv/3H8TJ73NVfED3O42Tt0G5F3q1TjApN12TJtnQ5oa/YmbZmO2p8cJSjQqLE
+         54FQ==
+X-Gm-Message-State: AOAM533vri1s/+GrPtEqIIgXOVKbchu7xMS/ml+ptjwG+CtSCX0xaJTH
+        1/zL2Z/jUL6MdDO0TPsFzokcD2GUX5XHjDN+53M=
+X-Google-Smtp-Source: ABdhPJw2xWwlbLO5es2S0q08sRbqkGJuG9J7eRRzjAHESu+Ht+PbF1zqaUslxSi6P7TmqpoFwhXHB2RVxIePF5G9uUA=
+X-Received: by 2002:a9d:4115:: with SMTP id o21mr49834045ote.52.1621245009486;
+ Mon, 17 May 2021 02:50:09 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210423033334.3317992-1-aisheng.dong@nxp.com>
- <20210423033334.3317992-5-aisheng.dong@nxp.com> <YJzRolRFt5+aVyFX@ryzen.lan>
-In-Reply-To: <YJzRolRFt5+aVyFX@ryzen.lan>
+ <20210423033334.3317992-4-aisheng.dong@nxp.com> <YJzN/MLXf22E/OQd@ryzen.lan>
+In-Reply-To: <YJzN/MLXf22E/OQd@ryzen.lan>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 17 May 2021 17:48:01 +0800
-Message-ID: <CAA+hA=T8DS4sXLEyByQZoBunPq-gjYvC2dMNseXM-iKLJ5Bk0w@mail.gmail.com>
-Subject: Re: [PATCH 5/6] clk: imx8qxp: add clock valid checking mechnism
+Date:   Mon, 17 May 2021 17:49:08 +0800
+Message-ID: <CAA+hA=S4Bvf_LFRMvKmC5VDWR_rgSZPyWCYO+cfU+X-2sN-xkQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: imx: scu: add gpr clocks support
 To:     Abel Vesa <abelvesa@kernel.org>
 Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -74,312 +74,287 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 13, 2021 at 3:13 PM Abel Vesa <abelvesa@kernel.org> wrote:
+On Thu, May 13, 2021 at 2:58 PM Abel Vesa <abelvesa@kernel.org> wrote:
 >
-> On 21-04-23 11:33:33, Dong Aisheng wrote:
-> > clk-imx8qxp is a common SCU clock driver used by both QM and QXP
+> On 21-04-23 11:33:32, Dong Aisheng wrote:
+> > SCU clock protocol supports a few clocks based on GPR controller
+> > registers including mux/divider/gate.
+> > And a general clock register API to support them all.
 >
-> Do you think we should maybe rename it to clk-imx8qdx ?
-> Might be confusing though. If we leave it like it is, people
-> will be looking for clk-imx8qm and get frustrated. But then maybe
-> the same thing would happen with the 8qdx. I have no clue what to
-> do with the naming here.
->
+> You mean "Add a generic", right ?
 
-Originally I planned to merge clk-imx8qxp.c into clk-scu.c as the
-driver itself is
-platform independent. But i'm not sure if it's quite necessary as clk-scu keeps
-some core libraries.
-And for dt platforms, it is common using a previous platform driver on
-new platforms.
-Anyway, we may consider it in the future.
+Good catch.
+Please let me know if you want a resend.
+Thanks
 
 Regards
 Aisheng
 
-> Everything else looks OK to me.
+>
+> Otherwise, looks OK to me.
 >
 > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 >
-> > platforms. The clock numbers vary a bit between those two platforms.
-> > This patch introduces a mechanism to only register the valid clocks
-> > for one platform by checking the clk resource id table.
 > >
 > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > > ---
-> >  drivers/clk/imx/Makefile           |  3 +-
-> >  drivers/clk/imx/clk-imx8qxp-rsrc.c | 89 ++++++++++++++++++++++++++++++
-> >  drivers/clk/imx/clk-imx8qxp.c      |  9 ++-
-> >  drivers/clk/imx/clk-scu.c          | 33 ++++++++++-
-> >  drivers/clk/imx/clk-scu.h          | 11 +++-
-> >  5 files changed, 137 insertions(+), 8 deletions(-)
-> >  create mode 100644 drivers/clk/imx/clk-imx8qxp-rsrc.c
-> >
-> > diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> > index dd6a737d060b..2fdd2fff16c7 100644
-> > --- a/drivers/clk/imx/Makefile
-> > +++ b/drivers/clk/imx/Makefile
-> > @@ -27,7 +27,8 @@ obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
-> >  obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
-> >
-> >  obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
-> > -clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o
-> > +clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
-> > +                                  clk-imx8qxp-rsrc.o
-> >  clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
-> >
-> >  obj-$(CONFIG_CLK_IMX1)   += clk-imx1.o
-> > diff --git a/drivers/clk/imx/clk-imx8qxp-rsrc.c b/drivers/clk/imx/clk-imx8qxp-rsrc.c
-> > new file mode 100644
-> > index 000000000000..ab66811ba9c1
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/clk-imx8qxp-rsrc.c
-> > @@ -0,0 +1,89 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/*
-> > + * Copyright 2019-2021 NXP
-> > + *   Dong Aisheng <aisheng.dong@nxp.com>
-> > + */
-> > +
-> > +#include <dt-bindings/firmware/imx/rsrc.h>
-> > +
-> > +#include "clk-scu.h"
-> > +
-> > +/* Keep sorted in the ascending order */
-> > +static u32 imx8qxp_clk_scu_rsrc_table[] = {
-> > +     IMX_SC_R_DC_0_VIDEO0,
-> > +     IMX_SC_R_DC_0_VIDEO1,
-> > +     IMX_SC_R_DC_0,
-> > +     IMX_SC_R_DC_0_PLL_0,
-> > +     IMX_SC_R_DC_0_PLL_1,
-> > +     IMX_SC_R_SPI_0,
-> > +     IMX_SC_R_SPI_1,
-> > +     IMX_SC_R_SPI_2,
-> > +     IMX_SC_R_SPI_3,
-> > +     IMX_SC_R_UART_0,
-> > +     IMX_SC_R_UART_1,
-> > +     IMX_SC_R_UART_2,
-> > +     IMX_SC_R_UART_3,
-> > +     IMX_SC_R_I2C_0,
-> > +     IMX_SC_R_I2C_1,
-> > +     IMX_SC_R_I2C_2,
-> > +     IMX_SC_R_I2C_3,
-> > +     IMX_SC_R_ADC_0,
-> > +     IMX_SC_R_FTM_0,
-> > +     IMX_SC_R_FTM_1,
-> > +     IMX_SC_R_CAN_0,
-> > +     IMX_SC_R_GPU_0_PID0,
-> > +     IMX_SC_R_LCD_0,
-> > +     IMX_SC_R_LCD_0_PWM_0,
-> > +     IMX_SC_R_PWM_0,
-> > +     IMX_SC_R_PWM_1,
-> > +     IMX_SC_R_PWM_2,
-> > +     IMX_SC_R_PWM_3,
-> > +     IMX_SC_R_PWM_4,
-> > +     IMX_SC_R_PWM_5,
-> > +     IMX_SC_R_PWM_6,
-> > +     IMX_SC_R_PWM_7,
-> > +     IMX_SC_R_GPT_0,
-> > +     IMX_SC_R_GPT_1,
-> > +     IMX_SC_R_GPT_2,
-> > +     IMX_SC_R_GPT_3,
-> > +     IMX_SC_R_GPT_4,
-> > +     IMX_SC_R_FSPI_0,
-> > +     IMX_SC_R_FSPI_1,
-> > +     IMX_SC_R_SDHC_0,
-> > +     IMX_SC_R_SDHC_1,
-> > +     IMX_SC_R_SDHC_2,
-> > +     IMX_SC_R_ENET_0,
-> > +     IMX_SC_R_ENET_1,
-> > +     IMX_SC_R_MLB_0,
-> > +     IMX_SC_R_USB_2,
-> > +     IMX_SC_R_NAND,
-> > +     IMX_SC_R_LVDS_0,
-> > +     IMX_SC_R_LVDS_1,
-> > +     IMX_SC_R_M4_0_I2C,
-> > +     IMX_SC_R_ELCDIF_PLL,
-> > +     IMX_SC_R_AUDIO_PLL_0,
-> > +     IMX_SC_R_PI_0,
-> > +     IMX_SC_R_PI_0_PLL,
-> > +     IMX_SC_R_MIPI_0,
-> > +     IMX_SC_R_MIPI_0_PWM_0,
-> > +     IMX_SC_R_MIPI_0_I2C_0,
-> > +     IMX_SC_R_MIPI_0_I2C_1,
-> > +     IMX_SC_R_MIPI_1,
-> > +     IMX_SC_R_MIPI_1_PWM_0,
-> > +     IMX_SC_R_MIPI_1_I2C_0,
-> > +     IMX_SC_R_MIPI_1_I2C_1,
-> > +     IMX_SC_R_CSI_0,
-> > +     IMX_SC_R_CSI_0_PWM_0,
-> > +     IMX_SC_R_CSI_0_I2C_0,
-> > +     IMX_SC_R_AUDIO_PLL_1,
-> > +     IMX_SC_R_AUDIO_CLK_0,
-> > +     IMX_SC_R_AUDIO_CLK_1,
-> > +     IMX_SC_R_A35,
-> > +     IMX_SC_R_VPU_DEC_0,
-> > +     IMX_SC_R_VPU_ENC_0,
-> > +};
-> > +
-> > +const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qxp = {
-> > +     .rsrc = imx8qxp_clk_scu_rsrc_table,
-> > +     .num = ARRAY_SIZE(imx8qxp_clk_scu_rsrc_table),
-> > +};
-> > diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-> > index d17b418ac577..9e35ae45b3a0 100644
-> > --- a/drivers/clk/imx/clk-imx8qxp.c
-> > +++ b/drivers/clk/imx/clk-imx8qxp.c
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: GPL-2.0+
-> >  /*
-> > - * Copyright 2018 NXP
-> > + * Copyright 2018-2021 NXP
-> >   *   Dong Aisheng <aisheng.dong@nxp.com>
-> >   */
-> >
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/io.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_device.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/slab.h>
-> >
-> > @@ -27,9 +28,11 @@ static const char *dc0_sels[] = {
-> >  static int imx8qxp_clk_probe(struct platform_device *pdev)
-> >  {
-> >       struct device_node *ccm_node = pdev->dev.of_node;
-> > +     const struct imx_clk_scu_rsrc_table *rsrc_table;
-> >       int ret;
-> >
-> > -     ret = imx_clk_scu_init(ccm_node);
-> > +     rsrc_table = of_device_get_match_data(&pdev->dev);
-> > +     ret = imx_clk_scu_init(ccm_node, rsrc_table);
-> >       if (ret)
-> >               return ret;
-> >
-> > @@ -130,7 +133,7 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
-> >
-> >  static const struct of_device_id imx8qxp_match[] = {
-> >       { .compatible = "fsl,scu-clk", },
-> > -     { .compatible = "fsl,imx8qxp-clk", },
-> > +     { .compatible = "fsl,imx8qxp-clk", &imx_clk_scu_rsrc_imx8qxp, },
-> >       { /* sentinel */ }
-> >  };
+> >  drivers/clk/imx/clk-scu.c | 186 ++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/imx/clk-scu.h |  29 ++++++
+> >  2 files changed, 215 insertions(+)
 > >
 > > diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-> > index cff0e1bd7030..02044d48d9bc 100644
+> > index 1f5518b7ab39..cff0e1bd7030 100644
 > > --- a/drivers/clk/imx/clk-scu.c
 > > +++ b/drivers/clk/imx/clk-scu.c
-> > @@ -1,11 +1,12 @@
-> >  // SPDX-License-Identifier: GPL-2.0+
+> > @@ -52,6 +52,22 @@ struct clk_scu {
+> >       u32 rate;
+> >  };
+> >
+> > +/*
+> > + * struct clk_gpr_scu - Description of one SCU GPR clock
+> > + * @hw: the common clk_hw
+> > + * @rsrc_id: resource ID of this SCU clock
+> > + * @gpr_id: GPR ID index to control the divider
+> > + */
+> > +struct clk_gpr_scu {
+> > +     struct clk_hw hw;
+> > +     u16 rsrc_id;
+> > +     u8 gpr_id;
+> > +     u8 flags;
+> > +     bool gate_invert;
+> > +};
+> > +
+> > +#define to_clk_gpr_scu(_hw) container_of(_hw, struct clk_gpr_scu, hw)
+> > +
 > >  /*
-> > - * Copyright 2018 NXP
-> > + * Copyright 2018-2021 NXP
-> >   *   Dong Aisheng <aisheng.dong@nxp.com>
-> >   */
-> >
-> >  #include <dt-bindings/firmware/imx/rsrc.h>
-> >  #include <linux/arm-smccc.h>
-> > +#include <linux/bsearch.h>
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/err.h>
-> >  #include <linux/of_platform.h>
-> > @@ -22,6 +23,7 @@
-> >  static struct imx_sc_ipc *ccm_ipc_handle;
-> >  static struct device_node *pd_np;
-> >  static struct platform_driver imx_clk_scu_driver;
-> > +static const struct imx_clk_scu_rsrc_table *rsrc_table;
-> >
-> >  struct imx_scu_clk_node {
-> >       const char *name;
-> > @@ -167,7 +169,26 @@ static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
-> >       return container_of(hw, struct clk_scu, hw);
-> >  }
-> >
-> > -int imx_clk_scu_init(struct device_node *np)
-> > +static inline int imx_scu_clk_search_cmp(const void *rsrc, const void *rsrc_p)
-> > +{
-> > +     return *(u32 *)rsrc - *(u32 *)rsrc_p;
-> > +}
-> > +
-> > +static bool imx_scu_clk_is_valid(u32 rsrc_id)
-> > +{
-> > +     void *p;
-> > +
-> > +     if (!rsrc_table)
-> > +             return true;
-> > +
-> > +     p = bsearch(&rsrc_id, rsrc_table->rsrc, rsrc_table->num,
-> > +                 sizeof(rsrc_table->rsrc[0]), imx_scu_clk_search_cmp);
-> > +
-> > +     return p != NULL;
-> > +}
-> > +
-> > +int imx_clk_scu_init(struct device_node *np,
-> > +                  const struct imx_clk_scu_rsrc_table *data)
-> >  {
-> >       u32 clk_cells;
-> >       int ret, i;
-> > @@ -186,6 +207,8 @@ int imx_clk_scu_init(struct device_node *np)
-> >               pd_np = of_find_compatible_node(NULL, NULL, "fsl,scu-pd");
-> >               if (!pd_np)
-> >                       return -EINVAL;
-> > +
-> > +             rsrc_table = data;
+> >   * struct imx_sc_msg_req_set_clock_rate - clock set rate protocol
+> >   * @hdr: SCU protocol header
+> > @@ -604,3 +620,173 @@ void imx_clk_scu_unregister(void)
+> >               }
 > >       }
-> >
-> >       return platform_driver_register(&imx_clk_scu_driver);
-> > @@ -582,6 +605,9 @@ struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
-> >       struct platform_device *pdev;
-> >       int ret;
-> >
-> > +     if (!imx_scu_clk_is_valid(rsrc_id))
+> >  }
+> > +
+> > +static unsigned long clk_gpr_div_scu_recalc_rate(struct clk_hw *hw,
+> > +                                              unsigned long parent_rate)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +     unsigned long rate = 0;
+> > +     u32 val;
+> > +     int err;
+> > +
+> > +     err = imx_sc_misc_get_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                   clk->gpr_id, &val);
+> > +
+> > +     rate  = val ? parent_rate / 2 : parent_rate;
+> > +
+> > +     return err ? 0 : rate;
+> > +}
+> > +
+> > +static long clk_gpr_div_scu_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                unsigned long *prate)
+> > +{
+> > +     if (rate < *prate)
+> > +             rate = *prate / 2;
+> > +     else
+> > +             rate = *prate;
+> > +
+> > +     return rate;
+> > +}
+> > +
+> > +static int clk_gpr_div_scu_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                 unsigned long parent_rate)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +     uint32_t val;
+> > +     int err;
+> > +
+> > +     val = (rate < parent_rate) ? 1 : 0;
+> > +     err = imx_sc_misc_set_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                   clk->gpr_id, val);
+> > +
+> > +     return err ? -EINVAL : 0;
+> > +}
+> > +
+> > +static const struct clk_ops clk_gpr_div_scu_ops = {
+> > +     .recalc_rate = clk_gpr_div_scu_recalc_rate,
+> > +     .round_rate = clk_gpr_div_scu_round_rate,
+> > +     .set_rate = clk_gpr_div_scu_set_rate,
+> > +};
+> > +
+> > +static u8 clk_gpr_mux_scu_get_parent(struct clk_hw *hw)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +     u32 val = 0;
+> > +
+> > +     imx_sc_misc_get_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                             clk->gpr_id, &val);
+> > +
+> > +     return (u8)val;
+> > +}
+> > +
+> > +static int clk_gpr_mux_scu_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +
+> > +     return imx_sc_misc_set_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                    clk->gpr_id, index);
+> > +}
+> > +
+> > +static const struct clk_ops clk_gpr_mux_scu_ops = {
+> > +     .get_parent = clk_gpr_mux_scu_get_parent,
+> > +     .set_parent = clk_gpr_mux_scu_set_parent,
+> > +};
+> > +
+> > +static int clk_gpr_gate_scu_prepare(struct clk_hw *hw)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +
+> > +     return imx_sc_misc_set_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                    clk->gpr_id, !clk->gate_invert);
+> > +}
+> > +
+> > +static void clk_gpr_gate_scu_unprepare(struct clk_hw *hw)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +     int ret;
+> > +
+> > +     ret = imx_sc_misc_set_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                   clk->gpr_id, clk->gate_invert);
+> > +     if (ret)
+> > +             pr_err("%s: clk unprepare failed %d\n", clk_hw_get_name(hw),
+> > +                    ret);
+> > +}
+> > +
+> > +static int clk_gpr_gate_scu_is_prepared(struct clk_hw *hw)
+> > +{
+> > +     struct clk_gpr_scu *clk = to_clk_gpr_scu(hw);
+> > +     int ret;
+> > +     u32 val;
+> > +
+> > +     ret = imx_sc_misc_get_control(ccm_ipc_handle, clk->rsrc_id,
+> > +                                   clk->gpr_id, &val);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return clk->gate_invert ? !val : val;
+> > +}
+> > +
+> > +static const struct clk_ops clk_gpr_gate_scu_ops = {
+> > +     .prepare = clk_gpr_gate_scu_prepare,
+> > +     .unprepare = clk_gpr_gate_scu_unprepare,
+> > +     .is_prepared = clk_gpr_gate_scu_is_prepared,
+> > +};
+> > +
+> > +struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_name,
+> > +                              int num_parents, u32 rsrc_id, u8 gpr_id, u8 flags,
+> > +                              bool invert)
+> > +{
+> > +     struct imx_scu_clk_node *clk_node;
+> > +     struct clk_gpr_scu *clk;
+> > +     struct clk_hw *hw;
+> > +     struct clk_init_data init;
+> > +     int ret;
+> > +
+> > +     if (rsrc_id >= IMX_SC_R_LAST || gpr_id >= IMX_SC_C_LAST)
 > > +             return ERR_PTR(-EINVAL);
 > > +
-> >       pdev = platform_device_alloc(name, PLATFORM_DEVID_NONE);
-> >       if (!pdev) {
-> >               pr_err("%s: failed to allocate scu clk dev rsrc %d type %d\n",
-> > @@ -749,6 +775,9 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_na
-> >       if (!clk_node)
-> >               return ERR_PTR(-ENOMEM);
-> >
-> > +     if (!imx_scu_clk_is_valid(rsrc_id))
-> > +             return ERR_PTR(-EINVAL);
+> > +     clk_node = kzalloc(sizeof(*clk_node), GFP_KERNEL);
+> > +     if (!clk_node)
+> > +             return ERR_PTR(-ENOMEM);
 > > +
-> >       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-> >       if (!clk) {
-> >               kfree(clk_node);
+> > +     clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+> > +     if (!clk) {
+> > +             kfree(clk_node);
+> > +             return ERR_PTR(-ENOMEM);
+> > +     }
+> > +
+> > +     clk->rsrc_id = rsrc_id;
+> > +     clk->gpr_id = gpr_id;
+> > +     clk->flags = flags;
+> > +     clk->gate_invert = invert;
+> > +
+> > +     if (flags & IMX_SCU_GPR_CLK_GATE)
+> > +             init.ops = &clk_gpr_gate_scu_ops;
+> > +
+> > +     if (flags & IMX_SCU_GPR_CLK_DIV)
+> > +             init.ops = &clk_gpr_div_scu_ops;
+> > +
+> > +     if (flags & IMX_SCU_GPR_CLK_MUX)
+> > +             init.ops = &clk_gpr_mux_scu_ops;
+> > +
+> > +     init.flags = 0;
+> > +     init.name = name;
+> > +     init.parent_names = parent_name;
+> > +     init.num_parents = num_parents;
+> > +
+> > +     clk->hw.init = &init;
+> > +
+> > +     hw = &clk->hw;
+> > +     ret = clk_hw_register(NULL, hw);
+> > +     if (ret) {
+> > +             kfree(clk);
+> > +             kfree(clk_node);
+> > +             hw = ERR_PTR(ret);
+> > +     } else {
+> > +             clk_node->hw = hw;
+> > +             clk_node->clk_type = gpr_id;
+> > +             list_add_tail(&clk_node->node, &imx_scu_clks[rsrc_id]);
+> > +     }
+> > +
+> > +     return hw;
+> > +}
 > > diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
-> > index 8ebee0cb0fe6..bcacd8b1d1ab 100644
+> > index a6c6d3103e94..8ebee0cb0fe6 100644
 > > --- a/drivers/clk/imx/clk-scu.h
 > > +++ b/drivers/clk/imx/clk-scu.h
-> > @@ -1,6 +1,6 @@
-> >  /* SPDX-License-Identifier: GPL-2.0+ */
-> >  /*
-> > - * Copyright 2018 NXP
-> > + * Copyright 2018-2021 NXP
-> >   *   Dong Aisheng <aisheng.dong@nxp.com>
-> >   */
+> > @@ -10,6 +10,10 @@
+> >  #include <linux/firmware/imx/sci.h>
+> >  #include <linux/of.h>
 > >
-> > @@ -14,10 +14,17 @@
-> >  #define IMX_SCU_GPR_CLK_DIV  BIT(1)
-> >  #define IMX_SCU_GPR_CLK_MUX  BIT(2)
-> >
-> > +struct imx_clk_scu_rsrc_table {
-> > +     const u32 *rsrc;
-> > +     u8 num;
-> > +};
+> > +#define IMX_SCU_GPR_CLK_GATE BIT(0)
+> > +#define IMX_SCU_GPR_CLK_DIV  BIT(1)
+> > +#define IMX_SCU_GPR_CLK_MUX  BIT(2)
 > > +
 > >  extern struct list_head imx_scu_clks[];
 > >  extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
-> > +extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qxp;
 > >
-> > -int imx_clk_scu_init(struct device_node *np);
-> > +int imx_clk_scu_init(struct device_node *np,
-> > +                  const struct imx_clk_scu_rsrc_table *data);
-> >  struct clk_hw *imx_scu_of_clk_src_get(struct of_phandle_args *clkspec,
-> >                                     void *data);
-> >  struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+> > @@ -31,6 +35,10 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
+> >                                 void __iomem *reg, u8 bit_idx, bool hw_gate);
+> >  void imx_clk_lpcg_scu_unregister(struct clk_hw *hw);
+> >
+> > +struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_name,
+> > +                              int num_parents, u32 rsrc_id, u8 gpr_id, u8 flags,
+> > +                              bool invert);
+> > +
+> >  static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
+> >                                        u8 clk_type)
+> >  {
+> > @@ -58,4 +66,25 @@ static inline struct clk_hw *imx_clk_lpcg_scu(const char *name, const char *pare
+> >       return __imx_clk_lpcg_scu(NULL, name, parent_name, flags, reg,
+> >                                 bit_idx, hw_gate);
+> >  }
+> > +
+> > +static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *parent_name,
+> > +                                               u32 rsrc_id, u8 gpr_id, bool invert)
+> > +{
+> > +     return __imx_clk_gpr_scu(name, &parent_name, 1, rsrc_id, gpr_id,
+> > +                              IMX_SCU_GPR_CLK_GATE, invert);
+> > +}
+> > +
+> > +static inline struct clk_hw *imx_clk_divider_gpr_scu(const char *name, const char *parent_name,
+> > +                                                  u32 rsrc_id, u8 gpr_id)
+> > +{
+> > +     return __imx_clk_gpr_scu(name, &parent_name, 1, rsrc_id, gpr_id,
+> > +                              IMX_SCU_GPR_CLK_DIV, 0);
+> > +}
+> > +
+> > +static inline struct clk_hw *imx_clk_mux_gpr_scu(const char *name, const char * const *parent_names,
+> > +                                              int num_parents, u32 rsrc_id, u8 gpr_id)
+> > +{
+> > +     return __imx_clk_gpr_scu(name, parent_names, num_parents, rsrc_id,
+> > +                              gpr_id, IMX_SCU_GPR_CLK_MUX, 0);
+> > +}
+> >  #endif
 > > --
 > > 2.25.1
 > >
