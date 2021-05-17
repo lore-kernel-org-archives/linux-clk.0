@@ -2,110 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31959C43461
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 02:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4079CC433ED
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 06:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E83861166
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 02:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1949261209
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 06:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbhEQC20 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 May 2021 22:28:26 -0400
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:35496 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231338AbhEQC20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 May 2021 22:28:26 -0400
-Received: by mail-ot1-f54.google.com with SMTP id 69-20020a9d0a4b0000b02902ed42f141e1so4340676otg.2;
-        Sun, 16 May 2021 19:27:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=R03QDnkN9zqsgroSoJg97D5ffisyGbIPB9o/7Bcnl+o=;
-        b=fDQp+jtSwBvzyH37RcNm0ePY0xGbGXKfj6INtjLbjMh+oUBEEBU46D+s/VeKK7g4BO
-         jdu0KbN8XCvcY9LIQkI8KZcg+4j1h3da9D/dpK/EFSgEbvqWbWwAn4ybtrIFmzbCFI3m
-         1UoKGZQnZzUyr+JSs2pNwj9wAYZQyK3ibb4/DBYkVyH1AZQFn5kvKiXUb8P6RelhHM2O
-         eDFEgQg67HngOIOMcwwzEAbVa6gcxF92mifXcozPXfp1Bueo77JJbuGwfnFmEIVrdesw
-         pUaOcBfTnTJPRRdKn/okC6FMtc3GLC5uz54G41GtVxW3gjuMxDxc02tndcvIlMyJl+JU
-         YoEA==
-X-Gm-Message-State: AOAM531aeT9izr2pTDFGKTbBpQA0KFmlgtjZDP4Gj9MVR7BM67t1SAeS
-        nvhI/soaDwzhxOggo29eEg==
-X-Google-Smtp-Source: ABdhPJwDIoiUywYuLTEq2x9lqWjoXgQgSJ8aRn8Y3IG0/gCe2Dd/S3PXka7/ZUEjsCsQdUMD4rEP1A==
-X-Received: by 2002:a9d:5a9b:: with SMTP id w27mr45874171oth.362.1621218430403;
-        Sun, 16 May 2021 19:27:10 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v19sm2891231otq.35.2021.05.16.19.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 May 2021 19:27:09 -0700 (PDT)
-Received: (nullmailer pid 1315834 invoked by uid 1000);
-        Mon, 17 May 2021 02:27:03 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org,
+        id S233981AbhEQG2L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 02:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229452AbhEQG2K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 May 2021 02:28:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6458D60E09;
+        Mon, 17 May 2021 06:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621232814;
+        bh=jn2SaI7axFVBIYRBlUnEKjgE+jA5zwUtTS1nY4T5GBc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=RURx+nQZJGT2S5mQ3MTr+VEbsnXhDppToXBTwfzFQx20iPzHDMBZT2NJs6yo+M9vF
+         jaiu5nOftR4PvTHQSYfqpQ6g/O7Mm4BrJE78EvxdzOMc1x8L3LoGO+SxsFHxG0Sk1T
+         RiqTIQt80Nro/CWaWaxovn43+I3KzwDkq1iN2boehg+6WW2QJjgDSoeaPOvvWaAOl/
+         NZYOgy4DmHr0s+82wv70lDwi7NL54Ol4t0D8snxKA94jgHGr8Ui1+48RgZdWdIwm42
+         bIernAz/EOvxCOc7AMARuOtWJ4HoEcebrz+EPODXxixArVJ5Byp0is16fEkFBLsSlB
+         eAc/ndNzVpW2g==
+Subject: Re: [PATCH v2 3/4] memory: tegra124-emc: Fix compilation warnings on
+ 64bit platforms
+To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        =?utf-8?b?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20210516163041.12818-10-digetx@gmail.com>
-References: <20210516163041.12818-1-digetx@gmail.com> <20210516163041.12818-10-digetx@gmail.com>
-Subject: Re: [PATCH v8 9/9] dt-bindings: clock: tegra: Convert to schema
-Date:   Sun, 16 May 2021 21:27:03 -0500
-Message-Id: <1621218423.813065.1315833.nullmailer@robh.at.kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210516161214.4693-1-digetx@gmail.com>
+ <20210516161214.4693-4-digetx@gmail.com>
+From:   Nathan Chancellor <nathan@kernel.org>
+Message-ID: <831d3af5-1e4a-f3c0-f69d-3fff145fde08@kernel.org>
+Date:   Sun, 16 May 2021 23:26:51 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20210516161214.4693-4-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 16 May 2021 19:30:41 +0300, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra clock bindings to schema.
+On 5/16/2021 9:12 AM, Dmitry Osipenko wrote:
+> Fix compilation warning on 64bit platforms caused by implicit promotion
+> of 32bit signed integer to a 64bit unsigned value which happens after
+> enabling compile-testing of the driver.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
->  .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
->  .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
->  .../bindings/clock/nvidia,tegra124-car.yaml   | 115 ++++++++++++++++++
->  .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  69 +++++++++++
->  .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
->  .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
->  7 files changed, 184 insertions(+), 352 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+>   drivers/memory/tegra/tegra124-emc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/nvidia,tegra20-car.example.dt.yaml:0:0: /example-0/usb-controller@c5004000: failed to match any schema with compatible: ['nvidia,tegra20-ehci']
-Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml:0:0: /example-0/usb-controller@c5004000: failed to match any schema with compatible: ['nvidia,tegra20-ehci']
-
-See https://patchwork.ozlabs.org/patch/1479105
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+> diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+> index 5699d909abc2..c9eb948cf4df 100644
+> --- a/drivers/memory/tegra/tegra124-emc.c
+> +++ b/drivers/memory/tegra/tegra124-emc.c
+> @@ -272,8 +272,8 @@
+>   #define EMC_PUTERM_ADJ				0x574
+>   
+>   #define DRAM_DEV_SEL_ALL			0
+> -#define DRAM_DEV_SEL_0				(2 << 30)
+> -#define DRAM_DEV_SEL_1				(1 << 30)
+> +#define DRAM_DEV_SEL_0				(2u << 30)
+> +#define DRAM_DEV_SEL_1				(1u << 30)
+>   
+>   #define EMC_CFG_POWER_FEATURES_MASK		\
+>   	(EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_SR | \
+> 
 
