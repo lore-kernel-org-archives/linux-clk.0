@@ -6,128 +6,72 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8677AC433B4
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13619C433B4
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69EC8611CC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2FD761350
+	for <linux-clk@archiver.kernel.org>; Mon, 17 May 2021 21:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244385AbhEQVWD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 May 2021 17:22:03 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:44571 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238105AbhEQVWC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 17:22:02 -0400
-Received: by mail-ot1-f41.google.com with SMTP id r26-20020a056830121ab02902a5ff1c9b81so6801804otp.11;
-        Mon, 17 May 2021 14:20:45 -0700 (PDT)
+        id S245294AbhEQVmE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 May 2021 17:42:04 -0400
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:33699 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237766AbhEQVmE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 May 2021 17:42:04 -0400
+Received: by mail-oi1-f170.google.com with SMTP id b25so7896224oic.0;
+        Mon, 17 May 2021 14:40:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YcPVqnyxUoQRqLqrcd+xwOvSykAyUXn6XXyXXfewed8=;
-        b=mtIO+EMTrhG0OFp22u7lFtRl2KcrfioE8we6bdl6QaDdVzWKkrjHzr5NSSAzjEfEK3
-         +uC0PnHiL6yYpt1AU4vERZqQmbpY0DjPYBf1fbnyA7YiQA1MCdMW9mLCjiwlTmMU+N4/
-         C3WYlQy0Khqzn9C37V4N0EUpchIEmyJbqV3Sj2eFj3omkuG/OLNte89KxujUC53b9WbV
-         pD1ynqWGamMaXuxblqlVsvvRx/ohfMs+gCoq51AmF7iU2TijaEvRJsCunU9XHG5tmkAD
-         1VBX4N6KZsa5IL6TSd/8fmHaS93FpVilsALOrBrjAHcb8eNild+zKygDTLrOgE5q+bsg
-         in9w==
-X-Gm-Message-State: AOAM533tbhNUmyfK3yNKFx8XdslE0i57ER21Ol71btaIivjk1+1+c3m9
-        dldr3jWbHRl0fXuhG+Cxvg==
-X-Google-Smtp-Source: ABdhPJyETxg9k9XJAKSPDZnyLWwwIHaYxzn+ovOlDY4J+ItNb3j1tMU05rQr9vzb7eu8lf00QgA4Rw==
-X-Received: by 2002:a9d:5a1a:: with SMTP id v26mr1334412oth.50.1621286444548;
-        Mon, 17 May 2021 14:20:44 -0700 (PDT)
+        bh=yUN0fqrTxElDEO12Fng6p1MRYBZ1KCEP1NdaNKcV0iQ=;
+        b=EsOjHPXXCaz2XjnzvOGA4GaL8YdjfeZzUbQvmtGxg6o3+SG9xsxM5wz+rxxUcLj3k1
+         y1T44XHFBlwA4WjpBxHuOROvqxhFN86WHw0qO1Fb5x+sVwswMSvTV+l+8Li5UErZok6z
+         YrmOyQb/r0EAU99/GWBQQDcxiL54qf32TVyeq4LrLdkMdjw5Oc931N/dachyFjeWSKna
+         pxYmwMGchav3UcGJrsgTUXecoRhoCFyBwEgJeWU8xVq436d9EtEU7g/9dycErg8exW0e
+         oJ9MinQoDSXLSpMIEEfKwhSj+S50kFcHSN2Y/oh5RS1SMVhgD9AcS2ryr/3svVxZ9Uxj
+         G91A==
+X-Gm-Message-State: AOAM533WiGBP8pWn5C3V1Bak9r5pyancBqFzfwh8L131nzjvhxWBIZCs
+        Qjs96Wpi0L0AyblNtsiQyf8liMBiRw==
+X-Google-Smtp-Source: ABdhPJx2H7OQ7/3ST3OABk4Iu6mFxGH3X6TdWosJdDKDx9qGf6vbKJGhFvsPapny4okRNFIXuw2Mow==
+X-Received: by 2002:aca:5758:: with SMTP id l85mr916863oib.120.1621287646951;
+        Mon, 17 May 2021 14:40:46 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y191sm2998370oia.50.2021.05.17.14.19.23
+        by smtp.gmail.com with ESMTPSA id c17sm3485875otn.45.2021.05.17.14.40.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 May 2021 14:19:33 -0700 (PDT)
-Received: (nullmailer pid 3215069 invoked by uid 1000);
-        Mon, 17 May 2021 21:18:28 -0000
-Date:   Mon, 17 May 2021 16:18:28 -0500
+        Mon, 17 May 2021 14:40:43 -0700 (PDT)
+Received: (nullmailer pid 3249683 invoked by uid 1000);
+        Mon, 17 May 2021 21:40:34 -0000
+Date:   Mon, 17 May 2021 16:40:34 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, alsa-devel@alsa-project.org,
-        Georgi Djakov <djakov@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Alex Elder <elder@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        devicetree@vger.kernel.org,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        linux-input@vger.kernel.org,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>, netdev@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>
-Subject: Re: [PATCH] dt-bindings: More removals of type references on common
- properties
-Message-ID: <20210517211828.GA3214995@robh.at.kernel.org>
-References: <20210510204524.617390-1-robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: dispcc-sm8250: Add sc8180x support
+Message-ID: <20210517214034.GA3249633@robh.at.kernel.org>
+References: <20210511041719.591969-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210510204524.617390-1-robh@kernel.org>
+In-Reply-To: <20210511041719.591969-1-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 10 May 2021 15:45:24 -0500, Rob Herring wrote:
-> Users of common properties shouldn't have a type definition as the
-> common schemas already have one. A few new ones slipped in and
-> *-names was missed in the last clean-up pass. Drop all the unnecessary
-> type references in the tree.
+On Mon, 10 May 2021 23:17:18 -0500, Bjorn Andersson wrote:
+> The display clock controller in SC8180x is reused from SM8150, so add
+> the necessary compatible and wire up the driver to enable this.
 > 
-> A meta-schema update to catch these is pending.
-> 
-> Cc: Luca Ceresoli <luca@lucaceresoli.net>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
-> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Georgi Djakov <djakov@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Orson Zhai <orsonzhai@gmail.com>
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Fabrice Gasnier <fabrice.gasnier@st.com>
-> Cc: Odelu Kukatla <okukatla@codeaurora.org>
-> Cc: Alex Elder <elder@kernel.org>
-> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  Documentation/devicetree/bindings/clock/idt,versaclock5.yaml    | 2 --
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml         | 1 -
->  Documentation/devicetree/bindings/input/input.yaml              | 1 -
->  Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml   | 1 -
->  Documentation/devicetree/bindings/net/qcom,ipa.yaml             | 1 -
->  .../devicetree/bindings/power/supply/sc2731-charger.yaml        | 2 +-
->  Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml          | 2 +-
->  7 files changed, 2 insertions(+), 8 deletions(-)
+>  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml         | 1 +
+>  drivers/clk/qcom/dispcc-sm8250.c                              | 4 +++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 > 
 
-Applied, thanks!
+Acked-by: Rob Herring <robh@kernel.org>
