@@ -2,65 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D89CC43461
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DE5C433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1262B61261
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 658E9600EF
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245457AbhERPIy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 11:08:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35796 "EHLO
+        id S1350251AbhERPja (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 11:39:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344988AbhERPI0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 11:08:26 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D273BC0613ED
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:07:05 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id u11so10077292oiv.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:07:05 -0700 (PDT)
+        with ESMTP id S1350246AbhERPj3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 11:39:29 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFBEC061763
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:38:11 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id l129so9656004qke.8
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+lBDaMrVcXCmNsGsG2GHtvXuohiK3y1fAq9YmDvlMUI=;
-        b=TfFm6XUl8usCh+YDjlrfsKSJsgSrVFG2r9LmR7R1O2boLhrRI/yzD+CcQ7RfAWEW9G
-         7G+47UqXAauSsG+54SqM9HVYBdDYo/eaoP/L5ii3Q9P2D/x3jy+65MFG9CAcg+6f7ubV
-         nkteko1WvbfFYxK5vzaBCi9lyvCoyzi1EpfJWTaqsXcNJMfq5msijgBvR0LginJIqtXY
-         iIVWtcx+P3Zhkr7PNkHKEqIKbEWdR8qPJWTdwUdouIt3Wyi3RVmKZibaZzUK7VO1HbJw
-         mDXXeol1aIdYxWhMn9tiOg/8P1P1NQQ+rt0K9VZvIp38iHFX9yIqi/CTxb1kk56P5Jum
-         rxtw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fHk8jTLjGRhBkosG/Y9mmV4IXiwYJNJWhiEHtFbYDBE=;
+        b=KL8aoq2dBknGdwjLoxfcvrplt+zbdX4cbam2aZQNX1/s4a3hyLLKwCL570ng4FkciW
+         caehR6MGKn8Jz6XiEa5lcmt+/9BX+B8mJBcgl9LSiD4UWG9UsnzX40ErxOeUnaNbBQQz
+         9Y+Yn83CBn0i8D/AH4OsAwGCEsDLShH9uzUevV2+AaHC95xUJhgGsC2oKcfNpDuUSgaI
+         beZF5lY9Ga/E97/OoUd/G77UkrnKBseOWRBsnr0zWAAriMrqSanKC/a1+uT5Yg5yU0L2
+         A/eSTy4mgkHx9KiTf9AuQQ/HqD7RhNspwhPF0DL7BG2jCf+hfgvX3nAFk8xWUkd7POrf
+         PJxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+lBDaMrVcXCmNsGsG2GHtvXuohiK3y1fAq9YmDvlMUI=;
-        b=Bs+j8Yl4ot+rNeLXPPlsSs9J9kd0OTY8JcNVDkxMir3aN23KA44u0aLjXXD5KqINLH
-         wEwbRvKOc6knNtzD2QRnMcpycolKWiVrAb75tRisMZfhaUBkQtMaLI3UZbXfhPgzHO9U
-         StyrDFQZRy/r0/QowA8MATLc8VEDqqLExyeg2FV+r/Yg41Y5IdzxMIgrNWG8DpLS0u4R
-         9LI53LtSIUNa70PeYCgXLpkc5P8JYAtPHuhiOa1eIy4723oAa4Hfyz2q9Ov4mIsP02kf
-         pMp6kcnSyChMrmV/QmhiOkmuLTJSIGRgSyKIrw5tcgU4xMzBpWD42P4u8McMlCwjFaiv
-         h9rA==
-X-Gm-Message-State: AOAM531XTjzla5FwU5rxGSym4xNJDgMt/68LyoPmZf9bLeTAcJpKmvsp
-        GOrUj5O08SkIY77gGcJBCFCLfw==
-X-Google-Smtp-Source: ABdhPJze1PGjl6NkBbu38cuIam83kD4ddjg9LMGeI1tzvfuEQnG7R6F7031etdypFyPiWOgWhRxTpQ==
-X-Received: by 2002:a05:6808:8ee:: with SMTP id d14mr3858352oic.18.1621350424989;
-        Tue, 18 May 2021 08:07:04 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id h20sm3451707oie.33.2021.05.18.08.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 08:07:04 -0700 (PDT)
-Date:   Tue, 18 May 2021 10:07:02 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fHk8jTLjGRhBkosG/Y9mmV4IXiwYJNJWhiEHtFbYDBE=;
+        b=LBP+WUnRd9XJQRA9+CAYt4X+1wpiZuV4LzneiVd8RDKXMhq79YufAUQ8zn4hnBBv4C
+         elWq6Pmytao/II/lBTqRhkv04EybPxoL92Yc8Thi3j2EKTmhO/b0nncyoNI7iCOLDph5
+         56yj3BsywUCLypEViYVOWjcEHPVoF+OOEIqQ0Tns2PnblqRVhWF04pOhNPA44cjbj8ky
+         i8wjzlZ7SiZCONkgp/+nAusuKR4TP8zD4GOIBAUYLPMIi7MmLv8jTtU4dxIgaWk0WEJg
+         GAvgq98Qc5GY84ulLTZxahMYovhukBiIuBf9u/SRi2pZTOYaE09A9P9gigA1s1oHnWU/
+         ZAnQ==
+X-Gm-Message-State: AOAM531KPoqcXKzafj3BKo/eoJ7UYCQc7B7+wHM8D+kRiEwibt0/dYEJ
+        DJCGyTkVbT4j1L9Cl0sprvJ7Ug==
+X-Google-Smtp-Source: ABdhPJzDZ3tqdXRScQz088nvn5Uj75hTZPqJ2TQAAvPz7G51zpOw4SlYxu/1Iko+aKuPUXfhFo0aCQ==
+X-Received: by 2002:a05:620a:2291:: with SMTP id o17mr6071185qkh.150.1621352290394;
+        Tue, 18 May 2021 08:38:10 -0700 (PDT)
+Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
+        by smtp.gmail.com with ESMTPSA id o4sm7155973qkb.29.2021.05.18.08.38.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 May 2021 08:38:09 -0700 (PDT)
+Subject: Re: [PATCH v2 09/17] crypto: qce: core: Add support to initialize
+ interconnect path
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>,
@@ -70,159 +70,102 @@ Cc:     linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: Re: [PATCH v2 09/17] crypto: qce: core: Add support to initialize
- interconnect path
-Message-ID: <20210518150702.GW2484@yoga>
 References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
  <20210505213731.538612-10-bhupesh.sharma@linaro.org>
+ <20210518150702.GW2484@yoga>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <180046b9-35fb-f7c1-fc92-a0fb5eecace5@linaro.org>
+Date:   Tue, 18 May 2021 11:38:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210505213731.538612-10-bhupesh.sharma@linaro.org>
+In-Reply-To: <20210518150702.GW2484@yoga>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 05 May 16:37 CDT 2021, Bhupesh Sharma wrote:
 
-> From: Thara Gopinath <thara.gopinath@linaro.org>
+
+On 5/18/21 11:07 AM, Bjorn Andersson wrote:
+> On Wed 05 May 16:37 CDT 2021, Bhupesh Sharma wrote:
 > 
-> Crypto engine on certain Snapdragon processors like sm8150, sm8250, sm8350
-> etc. requires interconnect path between the engine and memory to be
-> explicitly enabled and bandwidth set prior to any operations. Add support
-> in the qce core to enable the interconnect path appropriately.
+>> From: Thara Gopinath <thara.gopinath@linaro.org>
+>>
+>> Crypto engine on certain Snapdragon processors like sm8150, sm8250, sm8350
+>> etc. requires interconnect path between the engine and memory to be
+>> explicitly enabled and bandwidth set prior to any operations. Add support
+>> in the qce core to enable the interconnect path appropriately.
+>>
+>> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Andy Gross <agross@kernel.org>
+>> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+>> Cc: David S. Miller <davem@davemloft.net>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Vinod Koul <vkoul@kernel.org>
+>> Cc: dmaengine@vger.kernel.org
+>> Cc: linux-clk@vger.kernel.org
+>> Cc: linux-crypto@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: bhupesh.linux@gmail.com
+>> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+>> [Make header file inclusion alphabetical]
+>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 > 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: dmaengine@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: bhupesh.linux@gmail.com
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> [Make header file inclusion alphabetical]
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-
-This says that you prepared the patch, then Thara picked up the patch
-and sorted the includes. But somehow you then sent the patch.
-
-I.e. you name should be the last - unless you jointly wrote the path, in
-which case you should also add a "Co-developed-by: Thara".
-
-> ---
->  drivers/crypto/qce/core.c | 35 ++++++++++++++++++++++++++++-------
->  drivers/crypto/qce/core.h |  1 +
->  2 files changed, 29 insertions(+), 7 deletions(-)
+> This says that you prepared the patch, then Thara picked up the patch
+> and sorted the includes. But somehow you then sent the patch.
 > 
-> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> index 80b75085c265..92a0ff1d357e 100644
-> --- a/drivers/crypto/qce/core.c
-> +++ b/drivers/crypto/qce/core.c
-> @@ -5,6 +5,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/dma-mapping.h>
-> +#include <linux/interconnect.h>
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
-> @@ -21,6 +22,8 @@
->  #define QCE_MAJOR_VERSION5	0x05
->  #define QCE_QUEUE_LENGTH	1
->  
-> +#define QCE_DEFAULT_MEM_BANDWIDTH	393600
-
-Do we know what this rate is?
-
-> +
->  static const struct qce_algo_ops *qce_ops[] = {
->  #ifdef CONFIG_CRYPTO_DEV_QCE_SKCIPHER
->  	&skcipher_ops,
-> @@ -202,21 +205,35 @@ static int qce_crypto_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		return ret;
->  
-> +	qce->mem_path = of_icc_get(qce->dev, "memory");
-
-Using devm_of_icc_get() would save you some changes to the error path.
-
-> +	if (IS_ERR(qce->mem_path))
-> +		return PTR_ERR(qce->mem_path);
-> +
->  	qce->core = devm_clk_get(qce->dev, "core");
-> -	if (IS_ERR(qce->core))
-> -		return PTR_ERR(qce->core);
-> +	if (IS_ERR(qce->core)) {
-> +		ret = PTR_ERR(qce->core);
-> +		goto err_mem_path_put;
-> +	}
->  
->  	qce->iface = devm_clk_get(qce->dev, "iface");
-> -	if (IS_ERR(qce->iface))
-> -		return PTR_ERR(qce->iface);
-> +	if (IS_ERR(qce->iface)) {
-> +		ret = PTR_ERR(qce->iface);
-> +		goto err_mem_path_put;
-> +	}
->  
->  	qce->bus = devm_clk_get(qce->dev, "bus");
-> -	if (IS_ERR(qce->bus))
-> -		return PTR_ERR(qce->bus);
-> +	if (IS_ERR(qce->bus)) {
-> +		ret = PTR_ERR(qce->bus);
-> +		goto err_mem_path_put;
-> +	}
-> +
-> +	ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
-> +	if (ret)
-> +		goto err_mem_path_put;
->  
->  	ret = clk_prepare_enable(qce->core);
->  	if (ret)
-> -		return ret;
-> +		goto err_mem_path_disable;
->  
->  	ret = clk_prepare_enable(qce->iface);
->  	if (ret)
-> @@ -256,6 +273,10 @@ static int qce_crypto_probe(struct platform_device *pdev)
->  	clk_disable_unprepare(qce->iface);
->  err_clks_core:
->  	clk_disable_unprepare(qce->core);
-> +err_mem_path_disable:
-> +	icc_set_bw(qce->mem_path, 0, 0);
-
-When you icc_put() (or devm_of_icc_get() does it for you) the path's
-votes are implicitly set to 0, so you don't need to do this.
-
-And as such, you don't need to change the error path at all.
-
-Regards,
-Bjorn
-
-> +err_mem_path_put:
-> +	icc_put(qce->mem_path);
->  	return ret;
->  }
->  
-> diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
-> index 085774cdf641..228fcd69ec51 100644
-> --- a/drivers/crypto/qce/core.h
-> +++ b/drivers/crypto/qce/core.h
-> @@ -35,6 +35,7 @@ struct qce_device {
->  	void __iomem *base;
->  	struct device *dev;
->  	struct clk *core, *iface, *bus;
-> +	struct icc_path *mem_path;
->  	struct qce_dma_data dma;
->  	int burst_size;
->  	unsigned int pipe_pair_id;
-> -- 
-> 2.30.2
+> I.e. you name should be the last - unless you jointly wrote the path, in
+> which case you should also add a "Co-developed-by: Thara".
 > 
+>> ---
+>>   drivers/crypto/qce/core.c | 35 ++++++++++++++++++++++++++++-------
+>>   drivers/crypto/qce/core.h |  1 +
+>>   2 files changed, 29 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
+>> index 80b75085c265..92a0ff1d357e 100644
+>> --- a/drivers/crypto/qce/core.c
+>> +++ b/drivers/crypto/qce/core.c
+>> @@ -5,6 +5,7 @@
+>>   
+>>   #include <linux/clk.h>
+>>   #include <linux/dma-mapping.h>
+>> +#include <linux/interconnect.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/module.h>
+>>   #include <linux/mod_devicetable.h>
+>> @@ -21,6 +22,8 @@
+>>   #define QCE_MAJOR_VERSION5	0x05
+>>   #define QCE_QUEUE_LENGTH	1
+>>   
+>> +#define QCE_DEFAULT_MEM_BANDWIDTH	393600
+> 
+> Do we know what this rate is?
+> 
+>> +
+>>   static const struct qce_algo_ops *qce_ops[] = {
+>>   #ifdef CONFIG_CRYPTO_DEV_QCE_SKCIPHER
+>>   	&skcipher_ops,
+>> @@ -202,21 +205,35 @@ static int qce_crypto_probe(struct platform_device *pdev)
+>>   	if (ret < 0)
+>>   		return ret;
+>>   
+>> +	qce->mem_path = of_icc_get(qce->dev, "memory");
+> 
+> Using devm_of_icc_get() would save you some changes to the error path.
+
+Right. I keep forgetting to use the devm_ version! Bhupesh, will you do 
+these changes or do you want me to ?
+
+-- 
+Warm Regards
+Thara
+
+
+
