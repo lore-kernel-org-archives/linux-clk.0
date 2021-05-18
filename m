@@ -7,57 +7,58 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9732AC433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0E5C433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D826610E9
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 698176100A
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236208AbhERUW2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 16:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50456 "EHLO
+        id S241699AbhERUfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 16:35:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236196AbhERUW2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 16:22:28 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779B9C061573;
-        Tue, 18 May 2021 13:21:09 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id n2so16558548ejy.7;
-        Tue, 18 May 2021 13:21:09 -0700 (PDT)
+        with ESMTP id S236628AbhERUfV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 16:35:21 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1B5C061573;
+        Tue, 18 May 2021 13:34:02 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id di13so12778927edb.2;
+        Tue, 18 May 2021 13:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DVNv5/TDmW8eM40E1W+6CajDOqer3LA7KeZK68HD9Zs=;
-        b=JwZWuXuCe98MYT7W12V96e3b9dep79J9PWj4LM1kbhWhl2+dQdFvEBqO7vVCgH/zmd
-         bbBdLLKAFhxgtHYT0wU+RUdWvDlnARir3FUtsdIVLStHZFtDq7nCJVWfSfB86APhvu1O
-         ONx6f1F1ToiX5fNUpJhuI8CwPzYd0OXMuvEOwxDGBBA+t22b+bprk8Es+Eub55S1f5lE
-         dok3qBiZS8sDbmSgswdCGxq6L+rJKZC5pjI1+brMAbg8nToe+TQYOn4RdEJ/kD561E4K
-         n2qZj++K1Z7WclksBofNU5+jcFYzzIqO6rhBFSZWtv3rypEDac6vbBw+X4QelFjWBZ5Q
-         XMrQ==
+        bh=VL0CiSI2cCMpvavhlqOGujTCEJkTFDfxgkJ3VFbEVN0=;
+        b=tCf4kXKZGny3QAzUEQsa42a3Pz4W7zBX0TeOv1Q2bQcYu8GlWd4+5YNLmGj3m0cOcI
+         lyiE/Qa1agYrgU9q/OTa7uhmSSWIJCkaF7ZaaRpA7lPNQDtw1gFB2gg3m7hB0skg7ZlM
+         DIihpuethbuhsPuugQhEUpZYnDfwgrnoVl6te07kNgrYEKyKwq/DHUq1puu7Ddq214pt
+         Evq2WkkaiYfzHt9dFHqJOXXfx8kSiEpC62vYZLQRwk1zw8Em3Del2yTPc2onTNzgsT7v
+         NkXiwvA5VVTLTlo9upGkv1KzM4Xm4ML76CyRz+T8boS0L/rin+0/lYaqroVQCCp3e74e
+         IoCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DVNv5/TDmW8eM40E1W+6CajDOqer3LA7KeZK68HD9Zs=;
-        b=GL/O6oBCT80gURAk3F5GdQ73vesDIATgl7/jYs/MfsfXgJtb2FKCbnIRn/Q1GLmGiJ
-         jMYJFcTIkZupu8+FUZDxYAD2QlPpzl36/ewdThrgJpdoVnHF51vntUnjuM3hnA6T/er5
-         ONaGzkPdTrXPQzluvChZlrsiBJ4DcW/6sZnZcnbVJEEHsHmUZWskdutslC1OF41w434c
-         MiH2VfCB5roz2bJMiN3E+0aNA6fRjcWmHyHpm+LhM8N1vl2NMFUke4x8EwL5jZu+ZJ/i
-         obz1ePF1R2wMqeQDAJw40BgQu5yryrr1LJ28CDH9+DHbEQI2vWO0s15VQ8Cv1LxjvzV3
-         0diA==
-X-Gm-Message-State: AOAM530zywoxgQNvljqkAAesyAx25vvCy5uTkhwiRmstaczKDXQqG/Lq
-        LisAMEFp2CWA+0ogYUulK5iddAd4fJeNWkj0RiE=
-X-Google-Smtp-Source: ABdhPJy2AsTEVS+ozAIFEFGVHQL0XNARwMZwotEQDopeDSzuLKKsBAyTLvSfx6+POAaeZiVm0mr8VeVo42xbAy/nVAw=
-X-Received: by 2002:a17:906:fcb4:: with SMTP id qw20mr7996726ejb.216.1621369268217;
- Tue, 18 May 2021 13:21:08 -0700 (PDT)
+        bh=VL0CiSI2cCMpvavhlqOGujTCEJkTFDfxgkJ3VFbEVN0=;
+        b=TqQ8jdkfwAMnZemCnvjproE6z36dnWZ7q927y/0f3eDr/q8eJK6dQEFtOkC2yyT/4P
+         mutOJAEFz2DZsbm+xOaybfMKKq+EhH8Dhaq0fOf6HVnlvxFQVqrzE4WzSps3nqpkAPf1
+         4XWdJXrfBiD42JrpfK8IiHx92hzz6fJ4DwOhYvyFq6cxVZzMbcaDSqwSR8LcgI4uoBXI
+         AYqywZvCfO4OsUmKtzr6gZIKzViEgTdg68EHi0PEAYkb4QGtKtwygVu/nKM0Nr5MQ0om
+         3Gpob6phgwHj0EDRrw43Ta4eL0Ea9jDc9KdBdFmMnhAFQm+E7Z29K9niQewSx1Omzk8w
+         NRyg==
+X-Gm-Message-State: AOAM533eYcJDTczvJDj9JLhGar1faGfDm0QcMedvdDF1fpNARgVuZXVo
+        tKU7Qhf5rWRf5nT7952f6WMcfqJUTOlnMWtfaXU=
+X-Google-Smtp-Source: ABdhPJxFsjBTmyqIIgerb2xmITvpZs23MeN0JixS8tgK6778SQkUt7m40fSCNQkRan58QA2fHYFlANPEyZx6nlUKHik=
+X-Received: by 2002:a50:9346:: with SMTP id n6mr9158222eda.365.1621370041309;
+ Tue, 18 May 2021 13:34:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com> <1jwnrw1ohh.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jwnrw1ohh.fsf@starbuckisacylon.baylibre.com>
+References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
+ <20210517203724.1006254-2-martin.blumenstingl@googlemail.com> <1jtun01o5p.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jtun01o5p.fsf@starbuckisacylon.baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 18 May 2021 22:20:57 +0200
-Message-ID: <CAFBinCCnEXNLL0rvi1XNYKb0xY1+3KMwB=xz24kPgN2H97yzOg@mail.gmail.com>
-Subject: Re: [PATCH RFC v1 0/3] clk: meson: rounding for fast clocks on 32-bit SoCs
+Date:   Tue, 18 May 2021 22:33:50 +0200
+Message-ID: <CAFBinCB+5bFH0LW4rqYGCiO-X-xmer67cp5kXpyU0d-OfxiOvw@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 1/3] clk: divider: Add re-usable determine_rate implementations
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -71,37 +72,49 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Jerome,
 
-On Tue, May 18, 2021 at 9:37 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Tue, May 18, 2021 at 9:44 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+[...]
+> > +int divider_ro_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> > +                           const struct clk_div_table *table, u8 width,
+> > +                           unsigned long flags, unsigned int val)
+> > +{
+> > +     int div;
+> > +
+> > +     div = _get_div(table, val, flags, width);
+> > +
+> > +     /* Even a read-only clock can propagate a rate change */
+> > +     if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+> > +             if (!req->best_parent_hw)
+> > +                     return -EINVAL;
+> > +
+> > +             req->best_parent_rate = clk_hw_round_rate(req->best_parent_hw,
+> > +                                                       req->rate * div);
+> > +     }
+> > +
+> > +     req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(divider_ro_determine_rate);
 >
->
-> On Mon 17 May 2021 at 22:37, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->
-> > On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
-> > fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
-> > up to approx. 3GHz.
-> > This however causes a problem, because these rates require BIT(31) to
-> > be usable. Unfortunately this is not the case with clk_ops.round_rate
-> > on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
-> >
-> > clk_ops.determine_rate does not suffer from this limitation. It uses
-> > an int to signal any errors and can then take all availble 32 bits for
-> > the clock rate.
-> >
-> > I am sending this as RFC to start a discussion whether:
-> > - this is a good way to solve it?
->
-> .determine_rate() was meant to replace .round_rate() so I guess it is
-> good to do it :)
-ah, now things make more sense.
-thanks for the background info
+> For a final version, could you factorize the code with the .round_rate()
+> variant ? It would remove a bit of duplication.
+my first idea was to basically let the new _determine_rate code just
+forward all relevant parameters to _round_rate
+however, I discarded that as it turned out to be less understandable
+for me as parameters need to be mapped in both ways
 
-> > - what are the alternatives?
->
-> I don't see any ATM. Even with determine_rate(), 4.29GHz limitation
-> seems a bit low nowadays. In AML SoC, most PLLs should be able to reach
-> 6GHz ... hopefully we won't need that on the 32bits variant ;)
-according to the public datasheet the maximum PLL frequency is at around 3GHz
-so I also hope that we're safe with this
+while writing this mail I noticed that the opposite direction
+(meaning: _round_rate forwards to _determine_rate) will probably work.
+I'll give it a try in the next days
+if you had anything else in mind then please let me know
+
+> Maybe determine_rate() can also replace round_rate() in the generic
+> divider ops ?
+sure, I'll add that as a separate patch in this series
+note to myself: testing can be done with the MMC drivers as we're
+using the generic clk_divider_ops there
 
 
+Best regards,
 Martin
