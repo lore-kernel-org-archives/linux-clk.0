@@ -2,59 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDC4C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 07:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D12CC433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 07:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F17B2611AD
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 07:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DCA61350
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 07:45:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240826AbhERHjH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 03:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45324 "EHLO
+        id S1347243AbhERHqV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 03:46:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240180AbhERHjG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 03:39:06 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32FDC061756
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 00:37:48 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id n2so9096115wrm.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 00:37:48 -0700 (PDT)
+        with ESMTP id S1347246AbhERHqQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 03:46:16 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68316C06175F
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 00:44:53 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id f6-20020a1c1f060000b0290175ca89f698so888352wmf.5
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 00:44:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
          :date:mime-version;
-        bh=n5szVkmDytzCFFysXlMeXwZdOmvmm3DgEonzhUe+NZs=;
-        b=E9wXKYF6dL0El8ZNRN65Z6CmACcbkRqJR3ZdX8ValaoldrM/XVIlDGsbcVc9xM+eIL
-         qNvdHiv/6JBpkiFlAvlqvlZn1/nKz9+JP/QfDvqQSCqcgZ5rUSU+0wE0TH4SYRoHgMPJ
-         bQE4TSBPniexesWLhEm+mpLR0LM1++5YwBNGa6bNyk073bQxgjhIllLpWRoHNFGNeggN
-         zhjsU/phSkKoOOTRiq26uymQ1N5S2qjEtjSxxpX+nQRoEHt924OgQe2pz8DSg/mi8cDO
-         wizZ6nWKkVlz19TbhpglLLQK9n3n+Jf82tptgiaIrqEAzsVBoITATd61rVnfLIr40eGe
-         4rPQ==
+        bh=HHcWoO4qJ8z0RqAAJdfXOss/jtjNrhOer7gnZ5JwlNk=;
+        b=cnHtN5ydl39hoEoQp12yh3wyRiuCSnUFSBcG7KUqsL0HqsM6P/fSCQvyqUYrqaDq4+
+         dvn2coapU7/6HOoOjLlpLGrm3reiFq3qHgumlHMlKHupx4FIMkxrCX3+/lO1L8DF7hOb
+         44NXrMYXogA17PtpMO5Z1MepdMUUvB/JCplVOi9CxRjs75JDVEg18Af9AkBlGKg+Gr30
+         LC9ldVR5xcmpDjuSrnbjXmq3jevgjcnoBC3t0P9a4zK+TDOjnF78N98qSVLPqC1sDm1w
+         bYswhfwojgADJ9SuflmWLtTw6Rfv+NGb+KrEX+xWAsrIMci2LNJCdjfsC3erxDEnGXNF
+         YuIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:message-id:date:mime-version;
-        bh=n5szVkmDytzCFFysXlMeXwZdOmvmm3DgEonzhUe+NZs=;
-        b=MyxBkmDepUs5V0Fy8JAVaSvgRxU00CSZ32TCcGaZC8dIkXoDx/eoCACd550Wto+p/4
-         K/uHZGmmFM4uuqPU3xHeFZJ+Ab04B2UFbg4j68xUL2zrTjEABYBUgrle5kxmgWxXtPkZ
-         h5R8+wFwE9WgZw6Paacs17a4KNfL44VkLMwjckS36Y3DlEhr+iwDYm4+CNeQ4TqnSd+6
-         n9P2TqYDLzfB1LqMjG6wb+4voTMKRmqq01y67SIeT9+/Nhy024uYaL+06PIqs5MhCReQ
-         mYmJJPeoC68slsNNa1KE3uJIQRkTMoBGXcXIUxjuMFGLA3jkCjv399tcTgoSvC79NWv5
-         wwDg==
-X-Gm-Message-State: AOAM532PWRzaK8FOYbaM1kQwNfifqjI3IkQyQPW4Do+AWj4zaGl1CGo7
-        Mljg+UqsgLQTqbzR0BMjiPCBbQ==
-X-Google-Smtp-Source: ABdhPJxPm4kXQ/GUstw9/tmCmcx/mApmQsELG0ZEwn97QcrRxaG2c/FQ3PsX076/9/osBLg+SZV2eQ==
-X-Received: by 2002:a5d:63c1:: with SMTP id c1mr5049978wrw.71.1621323467412;
-        Tue, 18 May 2021 00:37:47 -0700 (PDT)
+        bh=HHcWoO4qJ8z0RqAAJdfXOss/jtjNrhOer7gnZ5JwlNk=;
+        b=WN5RW8g1bOXmAa7POPX84XN6Ww+SAQUWsCJ+bcu6zo3X11tc/eQyBetcS747gsJaGl
+         7lOjmQPCwfHjFuCKZ5DYb2yt8Jnfv+uKL+JUX8JIvypTZWPzkEmaH2rT8vOFhJ/MlRja
+         bX5FQB5lIiqCGkm5cJBf+7lEQ/6eVU7ZQffzEcIXdKuazxzCUwYYsD5WO/4Ou2eX3X42
+         xU+/oi/A5HpntTwJGZKDXERHHbqeQZM8b6MGbQxRiT+g/a5yOWqaDisVWKVOP9+AF5x4
+         j3FwRp7PSXtMOOXkxYKwuuNbCWgPVSHbsko4tHjVMao7KqS552FP/fr8QImSvadZ0Zqv
+         0qnw==
+X-Gm-Message-State: AOAM532CKOVgNydXhFkmxzLifJEmev6/0qpd9k5SbWmYGmz2nSw2RgYv
+        9SDIKP481n0ZyRoYcCoPIy/Xrg==
+X-Google-Smtp-Source: ABdhPJzZRuey5G4igcKlxuyw+V6B6t+IcAlmcEYLPisqKqdq6MRdavqmGNDg+CvK4/J5B8Xh6v0K3A==
+X-Received: by 2002:a1c:7901:: with SMTP id l1mr3449311wme.98.1621323891914;
+        Tue, 18 May 2021 00:44:51 -0700 (PDT)
 Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id p6sm5037371wma.4.2021.05.18.00.37.46
+        by smtp.gmail.com with ESMTPSA id m9sm20557689wrq.78.2021.05.18.00.44.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 00:37:47 -0700 (PDT)
+        Tue, 18 May 2021 00:44:51 -0700 (PDT)
 References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
+ <20210517203724.1006254-2-martin.blumenstingl@googlemail.com>
 User-agent: mu4e 1.4.15; emacs 27.1
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -63,11 +65,11 @@ To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
 Cc:     khilman@baylibre.com, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v1 0/3] clk: meson: rounding for fast clocks on
- 32-bit SoCs
-In-reply-to: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
-Message-ID: <1jwnrw1ohh.fsf@starbuckisacylon.baylibre.com>
-Date:   Tue, 18 May 2021 09:37:46 +0200
+Subject: Re: [PATCH RFC v1 1/3] clk: divider: Add re-usable determine_rate
+ implementations
+In-reply-to: <20210517203724.1006254-2-martin.blumenstingl@googlemail.com>
+Message-ID: <1jtun01o5p.fsf@starbuckisacylon.baylibre.com>
+Date:   Tue, 18 May 2021 09:44:51 +0200
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -77,50 +79,97 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 17 May 2021 at 22:37, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-> On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
-> fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
-> up to approx. 3GHz.
-> This however causes a problem, because these rates require BIT(31) to
-> be usable. Unfortunately this is not the case with clk_ops.round_rate
-> on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
+> These are useful when running on 32-bit systems to increase the upper
+> supported frequency limit. clk_ops.round_rate returns a signed long
+> which limits the maximum rate on 32-bit systems to 2^31 (or approx.
+> 2.14GHz). clk_ops.determine_rate internally uses an unsigned long so
+> the maximum rate on 32-bit systems is 2^32 or approx. 4.29GHz.
 >
-> clk_ops.determine_rate does not suffer from this limitation. It uses
-> an int to signal any errors and can then take all availble 32 bits for
-> the clock rate.
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/clk-divider.c    | 39 +++++++++++++++++++++++++++++++++++-
+>  include/linux/clk-provider.h |  6 ++++++
+>  2 files changed, 44 insertions(+), 1 deletion(-)
 >
-> I am sending this as RFC to start a discussion whether:
-> - this is a good way to solve it?
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 344997203f0e..24c94d2a3643 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -377,7 +377,6 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+>  }
+>  EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
+>  
+> -
+>  static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>  				unsigned long *prate)
+>  {
+> @@ -399,6 +398,44 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>  				  divider->width, divider->flags);
+>  }
+>  
+> +int divider_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> +			   const struct clk_div_table *table, u8 width,
+> +			   unsigned long flags)
+> +{
+> +	int div;
+> +
+> +	div = clk_divider_bestdiv(hw, req->best_parent_hw, req->rate,
+> +				  &req->best_parent_rate, table, width, flags);
+> +
+> +	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(divider_determine_rate);
+> +
+> +int divider_ro_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> +			      const struct clk_div_table *table, u8 width,
+> +			      unsigned long flags, unsigned int val)
+> +{
+> +	int div;
+> +
+> +	div = _get_div(table, val, flags, width);
+> +
+> +	/* Even a read-only clock can propagate a rate change */
+> +	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+> +		if (!req->best_parent_hw)
+> +			return -EINVAL;
+> +
+> +		req->best_parent_rate = clk_hw_round_rate(req->best_parent_hw,
+> +							  req->rate * div);
+> +	}
+> +
+> +	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(divider_ro_determine_rate);
 
-.determine_rate() was meant to replace .round_rate() so I guess it is
-good to do it :)
+For a final version, could you factorize the code with the .round_rate()
+variant ? It would remove a bit of duplication. 
 
-> - what are the alternatives?
+Maybe determine_rate() can also replace round_rate() in the generic
+divider ops ?
 
-I don't see any ATM. Even with determine_rate(), 4.29GHz limitation
-seems a bit low nowadays. In AML SoC, most PLLs should be able to reach
-6GHz ... hopefully we won't need that on the 32bits variant ;)
-
-> - getting some feedback on areas that need to be improved
->
->
-> As always: any feedback is welcome!
->
-
-Overall, looks good to me.
-
->
-> Thank you!
-> Martin
->
->
-> Martin Blumenstingl (3):
->   clk: divider: Add re-usable determine_rate implementations
->   clk: meson: regmap: switch to determine_rate for the dividers
->   clk: meson: pll: switch to determine_rate for the PLL ops
->
->  drivers/clk/clk-divider.c      | 39 +++++++++++++++++++++++++++++++++-
->  drivers/clk/meson/clk-pll.c    | 26 +++++++++++++----------
->  drivers/clk/meson/clk-regmap.c | 19 ++++++++---------
->  include/linux/clk-provider.h   |  6 ++++++
->  4 files changed, 68 insertions(+), 22 deletions(-)
+> +
+>  int divider_get_val(unsigned long rate, unsigned long parent_rate,
+>  		    const struct clk_div_table *table, u8 width,
+>  		    unsigned long flags)
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 162a2e5546a3..d83b829305c0 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -629,6 +629,12 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+>  				  unsigned long rate, unsigned long *prate,
+>  				  const struct clk_div_table *table, u8 width,
+>  				  unsigned long flags, unsigned int val);
+> +int divider_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> +			   const struct clk_div_table *table, u8 width,
+> +			   unsigned long flags);
+> +int divider_ro_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
+> +			      const struct clk_div_table *table, u8 width,
+> +			      unsigned long flags, unsigned int val);
+>  int divider_get_val(unsigned long rate, unsigned long parent_rate,
+>  		const struct clk_div_table *table, u8 width,
+>  		unsigned long flags);
 
