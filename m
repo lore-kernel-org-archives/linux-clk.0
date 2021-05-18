@@ -2,127 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7731C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 17:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C64FC433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3A51611AD
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 17:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156796109F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351125AbhERRxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 13:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45082 "EHLO
+        id S235085AbhERUSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 16:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237923AbhERRxT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 13:53:19 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82BDC061573;
-        Tue, 18 May 2021 10:51:59 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id et19so8875517ejc.4;
-        Tue, 18 May 2021 10:51:59 -0700 (PDT)
+        with ESMTP id S230248AbhERUSu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 16:18:50 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23CCC061573;
+        Tue, 18 May 2021 13:17:31 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id lg14so16548002ejb.9;
+        Tue, 18 May 2021 13:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lsP0X9SD53wNifUOWr66qcQ19cCdk8WhX9LQttz6sIY=;
-        b=FdWvFUcLxCoxgP1buQNZhEGSzhIHgFkHCRHBfPdFYJ1OIehb32ub9sZjPb1nr0s8uX
-         3l0bc+a5rMbDhXeDqIRf91Bpe5v7182nqMGTofj1RWsKVFjCjUVqogm+CyzFoDksUoBe
-         x0onZULmcG2mrCjtztIaSthMQtRVJHuyOYnpTe8dhfONXB3kNEJtpxAx3uMWF5deQJe1
-         hiZFJi9bXkkN4vj8/owdWxTH3PHXo4kDsEZBO1kadVrkeE8pTsbx5iPRgJPAgbnSTf3y
-         g2GVT5EfyUol13i4LDS7pr0s77k1ic3BwiUUaM48XVUgPV77sR0po7hd8yuZietlfD9f
-         1fmQ==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u3J8CL4Kku/3J5MKdzSmZWuexbF26F3wECGjeGWRhKg=;
+        b=fpfMiAu3isF6LHOLZkGWFknEu73N1fOnorzRPQi69EwtY+NAlrj/NB445vlcmtch0S
+         RGYIlkgb+m9NDCZ8M32vV+A3W0iOGRN66/5MTZPEujvmG7bHtHcxFbWS9r30dic7oYwe
+         /EC56S38OG7FrxkvNZl3jg070wgVTEpQu+QHVSYM0vhLhhnf1a0M0ZZQZUtDQus9OXB1
+         nxYClaFZfS+m6H5Na40RxPAbDFeCRpFpDuldg9M8DotbUBFwsmzfIee38Q6Kr2spdx/t
+         PPgENtlj2R90cXOgXz+MB7PdjBNX6BFl+PNozHo+G9kpOL14fU+EM2c0j/1gP9py4Wsr
+         6ggw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lsP0X9SD53wNifUOWr66qcQ19cCdk8WhX9LQttz6sIY=;
-        b=keEa9E4mGZ2hxGbDuOXvFBcdWWeB8M0dXfAgA63maVJvwmUAdQ1U8dGICRZkAb7zzX
-         SXSHkYsVyT2aNn3uWStWzwJROnaZXPzrbHA6tLPza29JjGOv1kSD/zuVRdfhhy5Ouhbt
-         vX9kD4i52TYUcZIZSL1M7H1nk1HH4rDGBZhci/pjA3dIWUOy/Hwzvs5G/L2s2X0EnmCa
-         PxyGZxLgRS8tFYP0JX7xnM6DLYBq+zD5tEjn2sGGeMVGU8+UGbVNof5+UeB0SgzDwIUu
-         ksAnK9U9wnUSSdvrI2sR2WO+q3QFgGqnOpXL+eiUWWIkJ1Cch4W44Cuut0PIREOAoqat
-         GlYw==
-X-Gm-Message-State: AOAM533UxHwXxjN9SF/7uykFP9yu2/Z2/o1BB8r11t/jE0F0VA5moMf9
-        sfS+lWXxFefXyZWIK/I9OMY=
-X-Google-Smtp-Source: ABdhPJyAQTCsHL5sZsq0vnHwyze01i0vgx3SISlC7frKJMr+wLWxjjDHrqUF/e9gI5X/3/uvDL6eBA==
-X-Received: by 2002:a17:906:3419:: with SMTP id c25mr7139419ejb.96.1621360318465;
-        Tue, 18 May 2021 10:51:58 -0700 (PDT)
-Received: from localhost.localdomain (dh207-99-66.xnet.hr. [88.207.99.66])
-        by smtp.googlemail.com with ESMTPSA id w14sm13511513edj.6.2021.05.18.10.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 10:51:57 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, speriaka@codeaurora.org,
-        sivaprak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH] clk: qcom: ipq8074: fix PCI-E clock oops
-Date:   Tue, 18 May 2021 19:51:53 +0200
-Message-Id: <20210518175153.3176764-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u3J8CL4Kku/3J5MKdzSmZWuexbF26F3wECGjeGWRhKg=;
+        b=NWIHXVdyXwgp6xEoxQ7fSAC8WrN7t6M3FOuepydWLZlQh3JAIaBHEO9a52bDiBbMSt
+         GXs5yhrlZgxSUU1feRndVYhjeurXdM+/XelQeZKf0eY9cufXJXv0Cf4kXJTkGApCW9TY
+         5U8/ZWNOyAZnDdNTYaSCE1pPWJqUd634Czs99oZTj/8tJs3PyMRZrkUfZSTt7rI0M9ch
+         2hEfIZR6NZ4o5z9ivE+53RqKXUHEWSbEqim+4hX70UZDh0pcLyOQe8xEerlrKKWS/S9N
+         ax0jLY/ySHIHqIkY57/IhWtjjnJmtVJx68V4JBnNuvQwXeT3j5v0iMYjhY95iWyqU06C
+         7dRQ==
+X-Gm-Message-State: AOAM530us9NPeK6dq82AbcICDHa6Y0vmSB6U+dJzZZiKiMgPVs1+laR4
+        H0UxAt4hWyIN6YnKSXHTXxutDPdLzQI4StSkFOY=
+X-Google-Smtp-Source: ABdhPJzsMxFuu/rnJeQroifD1yPbnbttaZmc4s+1erBEeCemW50Kj4x36wY/D+9J7SnHhJWCj0D/54S5QXfthG2Tfhs=
+X-Received: by 2002:a17:906:3ce9:: with SMTP id d9mr7864716ejh.172.1621369050674;
+ Tue, 18 May 2021 13:17:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
+ <20210517203724.1006254-4-martin.blumenstingl@googlemail.com> <1jo8d81nw3.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jo8d81nw3.fsf@starbuckisacylon.baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 18 May 2021 22:17:19 +0200
+Message-ID: <CAFBinCBREyEp0gj_-ac2OccjSruULPG1m2=L5D7GEA4HoqQqLg@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 3/3] clk: meson: pll: switch to determine_rate for
+ the PLL ops
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix PCI-E clock related kernel oops that are causes by missing
-parent_names.
+Hi Jerome,
 
-Without the use of parent_names kernel will panic on
-clk_core_get_parent_by_index() due to a NULL pointer.
+On Tue, May 18, 2021 at 9:50 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>
+> On Mon 17 May 2021 at 22:37, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>
+> > This increases the maxmium supported frequency on 32-bit systems from
+> > 2^31 (signed long as used by clk_ops.round_rate, maximum value:
+> > approx. 2.14GHz) to 2^32 (unsigned long as used by
+> > clk_ops.determine_rate, maximum value: approx. 4.29GHz).
+> > On Meson8/8b/8m2 the HDMI PLL and it's OD (post-dividers) are
+> > capable of running at up to 2.97GHz. So switch the divider
+> > implementation in clk-regmap to clk_ops.determine_rate to support these
+> > higher frequencies on 32-bit systems.
+> >
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>
+> Looks good. I see no reason to keep this one as RFC.
+Great, thanks for checking!
 
-Without this earlycon is needed to even catch the OOPS as it will reset
-the board before serial is initialized.
+> I can take it directly if this is OK with you ?
+That would be amazing.
+Obviously no objections from my side :-)
 
-Fixes: f0cfcf1ade20 ("clk: qcom: ipq8074: Add missing clocks for pcie")
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- drivers/clk/qcom/gcc-ipq8074.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 0c619ed35c82..8d8b1717a203 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4357,8 +4357,7 @@ static struct clk_rcg2 pcie0_rchng_clk_src = {
- 	.parent_map = gcc_xo_gpll0_map,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pcie0_rchng_clk_src",
--		.parent_hws = (const struct clk_hw *[]) {
--				&gpll0.clkr.hw },
-+		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -4372,8 +4371,8 @@ static struct clk_branch gcc_pcie0_rchng_clk = {
- 		.enable_mask = BIT(1),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie0_rchng_clk",
--			.parent_hws = (const struct clk_hw *[]){
--				&pcie0_rchng_clk_src.clkr.hw,
-+			.parent_names = (const char *[]){
-+				"pcie0_rchng_clk_src",
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -4390,8 +4389,8 @@ static struct clk_branch gcc_pcie0_axi_s_bridge_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie0_axi_s_bridge_clk",
--			.parent_hws = (const struct clk_hw *[]){
--				&pcie0_axi_clk_src.clkr.hw,
-+			.parent_names = (const char *[]){
-+				"pcie0_axi_clk_src"
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
--- 
-2.31.1
-
+Best regards,
+Martin
