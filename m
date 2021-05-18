@@ -2,145 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D06C433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 13:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17960C433B4
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 14:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE4B06112F
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 13:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB99361209
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 14:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243287AbhERNIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 09:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
+        id S233784AbhEROlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 10:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231857AbhERNIp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 09:08:45 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB29DC061573
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 06:07:27 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id l129so9106956qke.8
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 06:07:27 -0700 (PDT)
+        with ESMTP id S234482AbhEROlG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 10:41:06 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A1A6C061763
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 07:39:49 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id z3so9955887oib.5
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 07:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kK7zU0MuVwUNky+tAuT/EbQK9GNOBzJsw7o2A7V1ieE=;
-        b=ItCEjJEtY3vK4wnQz5FO9YQa38LyQZnhI1Qb2TVwWBUHRd8lvhiGiQmXqIDvovfvwq
-         7M9ACH5kpT6f2tuxQLflujx1P9bfkNI19YWH6Cl5xeAjQwahGWQg8yxoTQflXKJERBrz
-         RT+KcpoGrudqOpMeDFHjK/PIHJ0ir572jG0/TYqFKpMRi4e4OwkLAI4vGZiwZRLHJ4+Q
-         Hl2NKulwr2CXN0XSllyylby3KnyuDhsqVQ8BomeNa6u299T1C2o68xqomQT40BBuMnH3
-         vgMnFPwLF+3FSoBafMdZs+Gug88NX4y7XS4VmgQBBZSyZni3aAKjsl2w4su0/wuHOU0l
-         G5FQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zp3it5Zu0KA9JHtt+jDEOh0cwWAwW8S1nVYQo9cUI6g=;
+        b=M+LBCcMHMPB69ojN8igqTaiE33ZRMpEcF1APy9OlgsLWEwTLhd++g9E5r/PdgPXEYk
+         Sf+oWKImVvjttXeuquw1tqKq5sDT5hjJaJrr+UNwmVU4yyHWnKmjWyMw/MlpRuRujG3f
+         OPz9XnatcZBy1chC6V/PUTr8885yi7PK0DlXuwh780MM5fxWeByS/rU5afx+k05h1jpm
+         6Fcu7iuPNq3rkO4cA5dE3C1+aLyOA0g1mfkf0PgTpooOLOhwOnpmJucMbwAHPEXBoGUI
+         M0YmbK1i3TawT2Kq/MdoI37cIF1l4xEwiO9riemaM2il88FrHe0Ly8xeiVsF219JVpb/
+         6zcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kK7zU0MuVwUNky+tAuT/EbQK9GNOBzJsw7o2A7V1ieE=;
-        b=aCiNIHtYoBaBFWZUi6wMFUMQ5t7GlNV4nyfUF0pK1mHPoX6XOsIHj5WMdc9rOML4L8
-         ISNd3035hFOHG6OqHpRs5gw7S3wMaF599rfSWWY1s3fN/tKFe5T3nWH9u1iuL69si7T0
-         cnM5QYaUVfbkhab1cYor6dSSvD1e3XHICBtQs5BEafFT8QYHHSMNWK31m90X/Rd9QSKF
-         pl+H4ZnYlxTxo//ZdHQ78ASe6eUHDnSUvtqAdFoKNqi/YiSfqEdsM7UJZCXWTbBugBRL
-         8ULe+oxmns5s8TbIbzx4mrXDvxryUWlcmLQRPiMhDhJOVOJ7rR9qJrtJJ4GzZHGfCaGa
-         MtQg==
-X-Gm-Message-State: AOAM530SVJfKL6D21q7EUhkA8TvSbZ6C2BlEKclQbjDMDnKmr87XG5bZ
-        hhbHO27VaKfowPMEfJcyaCJpRw==
-X-Google-Smtp-Source: ABdhPJwApcF5a0aa+3VfsA3Xqbbaadymn7VcM3CgV9JFtjgMps/fSevqkf8x8V828WSWXTmhtbW6DQ==
-X-Received: by 2002:a05:620a:e8a:: with SMTP id w10mr5334852qkm.248.1621343246919;
-        Tue, 18 May 2021 06:07:26 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable068.184-131-66.mc.videotron.ca. [66.131.184.68])
-        by smtp.gmail.com with ESMTPSA id m67sm12648132qkd.108.2021.05.18.06.07.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 May 2021 06:07:26 -0700 (PDT)
-Subject: Re: [PATCH 1/3] clk: qcom: clk-alpha-pll: add support for zonda pll
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, robert.foss@linaro.org,
-        andrey.konovalov@linaro.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20210513175258.5842-1-jonathan@marek.ca>
- <20210513175258.5842-2-jonathan@marek.ca> <YKOltGEDEY1WXQN6@vkoul-mobl.Dlink>
-From:   Jonathan Marek <jonathan@marek.ca>
-Message-ID: <abc662f3-8c36-862d-4d50-3628d3a02ee2@marek.ca>
-Date:   Tue, 18 May 2021 09:06:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zp3it5Zu0KA9JHtt+jDEOh0cwWAwW8S1nVYQo9cUI6g=;
+        b=IaSBxK7A+QF++ohxqOWRhGDpqJfihUQjV7mwhJyyMytX8Jv9lae/cs4CHlmx299Nml
+         qeDuA8Hhl/W/iMCQ+gwbcGHtsNyswb13dn5ZJLyf+6Ve0Pcyz1Qxr2qOrBNEUxRAstDq
+         0z9UOnTNgor/b05cU3gPnMQjKEbmqko7PlfoQ0wUuXEf9MzvoiPYCnV+3E52IZEVYX3R
+         AAgmC2/DecjGx9wIxOQZLBYK2hl7F9MixSwiCQZs9WUku2SJJgoaCudOMrCAzhzvDmZ7
+         DugbUeatPQdI0xjbAuEU8W48LgaG6k+wSND4FksBmgfqYJSSbVoiQdfjUFNt0YOEydv5
+         sZaw==
+X-Gm-Message-State: AOAM533XHF15AgW3pCICWBwhatIh/iaTFePYqDjmM0LjGFAhP1MVTmRH
+        al00nHAlA2kI0p9iKsxk9fSmskUVaofTRMvaO09hjg==
+X-Google-Smtp-Source: ABdhPJztinWXNYTl+kiATtOdsiKD/CaM/e4dVlbDyWrHV5TSscaWHVYcyb9gQYVDavq46dJM3FBF4Qd71vU3cs+rKMU=
+X-Received: by 2002:a05:6808:f0b:: with SMTP id m11mr3641199oiw.12.1621348788489;
+ Tue, 18 May 2021 07:39:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YKOltGEDEY1WXQN6@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
+ <20210505213731.538612-17-bhupesh.sharma@linaro.org> <d809f290-ed94-7e35-bc4d-bd695965fa04@linaro.org>
+In-Reply-To: <d809f290-ed94-7e35-bc4d-bd695965fa04@linaro.org>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Date:   Tue, 18 May 2021 20:09:37 +0530
+Message-ID: <CAH=2NtwS+WBbwbp1tftyMjOCWo9ORZfiZFRr+UNxKQLc9aUNcA@mail.gmail.com>
+Subject: Re: [PATCH v2 16/17] crypto: qce: Defer probe in case interconnect is
+ not yet initialized
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/18/21 7:32 AM, Vinod Koul wrote:
-> On 13-05-21, 13:52, Jonathan Marek wrote:
+Hi Thara,
 
-...
+On Mon, 10 May 2021 at 18:53, Thara Gopinath <thara.gopinath@linaro.org> wrote:
+>
+>
+>
+> On 5/5/21 5:37 PM, Bhupesh Sharma wrote:
+> > On some Qualcomm parts the qce crypto driver needs the interconnect between
+> > the crypto block and main memory to be initialized first before the crypto
+> > registers can be accessed. So it makes sense to defer the qce crypto driver
+> > probing in case the interconnect driver is not yet probed.
+> >
+> > This fixes the qce probe failure issues when both qce and
+> > interconnect drivers are compiled as static part of the kernel.
+> >
+> > Cc: Thara Gopinath <thara.gopinath@linaro.org>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Andy Gross <agross@kernel.org>
+> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> > Cc: David S. Miller <davem@davemloft.net>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Vinod Koul <vkoul@kernel.org>
+> > Cc: dmaengine@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-crypto@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: bhupesh.linux@gmail.com
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > ---
+> >   drivers/crypto/qce/core.c | 14 ++++++++++++++
+> >   1 file changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
+> > index 3e742e9911fa..9915b184f780 100644
+> > --- a/drivers/crypto/qce/core.c
+> > +++ b/drivers/crypto/qce/core.c
+> > @@ -222,6 +222,20 @@ static int qce_crypto_probe(struct platform_device *pdev)
+> >               return ret;
+> >
+> >       qce->mem_path = of_icc_get(qce->dev, "memory");
+> > +
+> > +     /* Check for NULL return path, which indicates
+> > +      * interconnect API is disabled or the "interconnects"
+> > +      * DT property is missing.
+> > +      */
+> > +     if (!qce->mem_path)
+> > +             /* On some qcom parts, the qce crypto block needs interconnect
+> > +              * paths to be configured before the registers can be accessed.
+> > +              * Check here for the same.
+> > +              */
+> > +             if (!strcmp(of_id->compatible, "qcom,ipq6018-qce") ||
+> > +                 !strcmp(of_id->compatible, "qcom,sdm845-qce"))
+> > +                     return -EPROBE_DEFER;
+> > +
+>
+> Hi Bhupesh,
+>
+> You don't need this here. of_icc_get returns -EPROBE_DEFER if the
+> interconnect provider is not initialized yet.
 
->> +/* ZONDA PLL specific */
->> +#define ZONDA_PLL_OUT_MASK	0xf
->> +#define ZONDA_STAY_IN_CFA	BIT(16)
->> +#define ZONDA_PLL_FREQ_LOCK_DET	BIT(29)
-> 
-> This seems similar to ALPHA_PLL_ACK_LATCH..?
-> 
+Thanks for the review.
 
-The bit is the same, and it is also used with wait_for_pll(), but the 
-meaning seems different (the usage pattern is different).
+Yes, I finished testing all the possible combinations with qce, bam
+dma and interconnect drivers compiled as modules v/s as static parts
+of the kernel and we don't need this extra check for the interconnect
+here. We should be fine with checking just the qce_dma_request()
+return value and returning early in the qce probe() flow if no dma
+channels are yet available from the bam dma driver.
 
->> +const struct clk_ops clk_alpha_pll_postdiv_zonda_ops = {
->> +	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
->> +	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
->> +	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
->> +};
->> +EXPORT_SYMBOL(clk_alpha_pll_postdiv_zonda_ops);
-> 
-> Why add one more ops when we can reuse clk_alpha_pll_postdiv_fabia_ops
-> for this?
-> 
+I have made the changes in v3 and will post it for review shortly.
 
-No reason (copied from downstream), will fix.
-
->> +
->> +	/* Set operation mode to OFF */
->> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
->> +
->> +	/* PLL should be in OFF mode before continuing */
->> +	wmb();
-> 
-> Why a barrier?
-> 
-
-Again no reason (copied from downstream, but it doesn't make sense to 
-have this barrier).
-
->> +static unsigned long
->> +clk_zonda_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->> +{
->> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +	u32 l, frac;
->> +
->> +	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
->> +	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
->> +
->> +	return alpha_pll_calc_rate(parent_rate, l, frac, ALPHA_BITWIDTH);
->> +}
-> 
-> sounds like you could use clk_trion_pll_recalc_rate() instead
-> 
-
-I had this thought as well, but alpha_width in 
-clk_trion_pll_recalc()_rate is 16, here ALPHA_BITWIDTH is 32, so I just 
-copied this from downstream.
-
-I think changing pll_alpha_width() to return the right value for zonda 
-will work and allow sharing the function, if you think that's a good idea?
+Regards,
+Bhupesh
