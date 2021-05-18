@@ -2,246 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E33C433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B39C43460
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E291A600EF
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7765E60698
+	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 15:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350262AbhERPkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 11:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43070 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350244AbhERPkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 11:40:42 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9EEC061573
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:39:24 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id q7-20020a9d57870000b02902a5c2bd8c17so9005602oth.5
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 08:39:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2hSwqPBR8xk5peOjp8r36zshPTihxbD5KyZ7/NEBH24=;
-        b=mvj1ormvns6c8e+ic/PsSJNg9DLr9kf/17VvtRI2XtMI//1llYzD/QpQuvPakUJYQQ
-         DS+Xo/uoPIJyjHoavYY7zuWK4qVVV83WVk5nAn7MDmEsl2vw0uz1xsLweQYC/9dTzzRV
-         ghr128tExjqZBppdRqp8xWwxJxE68i7ZTjFXGbfJPFUT9aWJyvLRdh3QWPkRkYnXtm3T
-         zrCwTYgf17p8ER1Pg5Xx1kYVK5BPy71uz1Lto2qzL+gIYXWfHrE0RCY/SPzUIGJYMqlV
-         +BRUesvZx2dingYSETXNoJPVsjGINfdPZ7JjYsY39BlCrS8AMVaG+GwJF7MJ4hKWkcDX
-         W6lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2hSwqPBR8xk5peOjp8r36zshPTihxbD5KyZ7/NEBH24=;
-        b=ciEjJD0kZZ9FbDJUPQcS3D7I6m0JL8MT5fDPpZUtvsphljdcSBG8flOgy9vf4RV0Ea
-         V8bwTRMlUk5+yI02K/BPY82fhasNhCOgIyAf8EFDsPlQBKg0KNNikQRtiuQDpjgEmHNt
-         /4bRHeq0JA70tfagtDMDEV3C4OWzffNQVHZYnUopM00jTEW8C+cSuUseM42rb4pn+tln
-         hkVq8rp/r4Z2HXN08BHgg9elj5qB6XTcg6X0dQ+f7kierGUv8BZnpmO41eHDZlXLmKCY
-         /PEve9/13Lzdz2Ga8A45ObJ4IYmyJdpMJMYxMDQEXy2K8bYpV06MdLcrsgfDlqMh42QM
-         2Deg==
-X-Gm-Message-State: AOAM533k/0ZbCQ2kbZ0YSSq8QT6dbt8yWLDEJv2BJyzWIoy8Z/2lWB4y
-        /TIW/eU8uMEuHsi6MPwHN/+4OPCbJOe7xZo8xKY96g==
-X-Google-Smtp-Source: ABdhPJxs5EkaQ8cVqMmDDyuAeI4LeAKT2u8OFSqwXjSjLKhqFVkkYjQ9FPfi1Tdv13wngOPWcvaW1DPF7TKLro0KyJ0=
-X-Received: by 2002:a9d:4f15:: with SMTP id d21mr4807826otl.155.1621352363686;
- Tue, 18 May 2021 08:39:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210505213731.538612-1-bhupesh.sharma@linaro.org>
- <20210505213731.538612-10-bhupesh.sharma@linaro.org> <20210518150702.GW2484@yoga>
-In-Reply-To: <20210518150702.GW2484@yoga>
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Date:   Tue, 18 May 2021 21:09:12 +0530
-Message-ID: <CAH=2NtxMR5zCBJ7_u3kT9Koewv3Ay4baH8YQ9frX2uhO2gDM=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 09/17] crypto: qce: core: Add support to initialize
- interconnect path
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1350493AbhERP6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 11:58:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1350480AbhERP6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 May 2021 11:58:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 618AC60725;
+        Tue, 18 May 2021 15:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621353415;
+        bh=OokC8+bnxFyFbf/GDIqIQeRgogXRic6z9luyu193nn8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NSzQ7FoPd5T2GA0WI1QgC6PGR821TZrlCFmpayA/Yw4D9x5gwjLsS65qR+YQNyZIz
+         lHerHfR7bORG8hCk460VKYPtMp0KEThg+Sw7k3mPUvgcnW4usRWYtAKWpVZRpUzae9
+         tsbEknOqrvaFpMTySh6GVpxFdIsRZoL0K2CvXzbbIV4LcNzRnpvz7kMiUAPz6nDGiZ
+         TctYxrYlv3eMg5JMgHHQbFbE6b3V59X8zj5yRrel/EjzFFHau6S1ba/5MaA3qkgbr8
+         /qv4x7aTu5YGLET9x4p9O0ziUAPLObjFJMI85RtCf+k+QNFCNIU8RGVYSJguGtecsA
+         wO4icOtwsSpMw==
+Date:   Tue, 18 May 2021 21:26:50 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jonathan Marek <jonathan@marek.ca>
+Cc:     linux-arm-msm@vger.kernel.org, robert.foss@linaro.org,
+        andrey.konovalov@linaro.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] clk: qcom: clk-alpha-pll: add support for zonda pll
+Message-ID: <YKPjwvMh3sj56sOG@vkoul-mobl.Dlink>
+References: <20210513175258.5842-1-jonathan@marek.ca>
+ <20210513175258.5842-2-jonathan@marek.ca>
+ <YKOltGEDEY1WXQN6@vkoul-mobl.Dlink>
+ <abc662f3-8c36-862d-4d50-3628d3a02ee2@marek.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abc662f3-8c36-862d-4d50-3628d3a02ee2@marek.ca>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
+On 18-05-21, 09:06, Jonathan Marek wrote:
+> On 5/18/21 7:32 AM, Vinod Koul wrote:
 
-Thanks for the review.
+> > > +static unsigned long
+> > > +clk_zonda_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> > > +{
+> > > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > > +	u32 l, frac;
+> > > +
+> > > +	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+> > > +	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
+> > > +
+> > > +	return alpha_pll_calc_rate(parent_rate, l, frac, ALPHA_BITWIDTH);
+> > > +}
+> > 
+> > sounds like you could use clk_trion_pll_recalc_rate() instead
+> > 
+> 
+> I had this thought as well, but alpha_width in clk_trion_pll_recalc()_rate
+> is 16, here ALPHA_BITWIDTH is 32, so I just copied this from downstream.
+> 
+> I think changing pll_alpha_width() to return the right value for zonda will
+> work and allow sharing the function, if you think that's a good idea?
 
-On Tue, 18 May 2021 at 20:37, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Wed 05 May 16:37 CDT 2021, Bhupesh Sharma wrote:
->
-> > From: Thara Gopinath <thara.gopinath@linaro.org>
-> >
-> > Crypto engine on certain Snapdragon processors like sm8150, sm8250, sm8350
-> > etc. requires interconnect path between the engine and memory to be
-> > explicitly enabled and bandwidth set prior to any operations. Add support
-> > in the qce core to enable the interconnect path appropriately.
-> >
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Andy Gross <agross@kernel.org>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: David S. Miller <davem@davemloft.net>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Cc: dmaengine@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-crypto@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: bhupesh.linux@gmail.com
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > [Make header file inclusion alphabetical]
-> > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
->
-> This says that you prepared the patch, then Thara picked up the patch
-> and sorted the includes. But somehow you then sent the patch.
->
-> I.e. you name should be the last - unless you jointly wrote the path, in
-> which case you should also add a "Co-developed-by: Thara".
+Yes I thinking pll_alpha_width() should do the trick here
 
-No, it's the other way around. Thara prepared the patch (as the
-'From:' field suggests) and I just changed the inclusion order of the
-header files and made it in alphabetical order.
-
-I will move my S-o-b later in the order.
-
-> > ---
-> >  drivers/crypto/qce/core.c | 35 ++++++++++++++++++++++++++++-------
-> >  drivers/crypto/qce/core.h |  1 +
-> >  2 files changed, 29 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> > index 80b75085c265..92a0ff1d357e 100644
-> > --- a/drivers/crypto/qce/core.c
-> > +++ b/drivers/crypto/qce/core.c
-> > @@ -5,6 +5,7 @@
-> >
-> >  #include <linux/clk.h>
-> >  #include <linux/dma-mapping.h>
-> > +#include <linux/interconnect.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/module.h>
-> >  #include <linux/mod_devicetable.h>
-> > @@ -21,6 +22,8 @@
-> >  #define QCE_MAJOR_VERSION5   0x05
-> >  #define QCE_QUEUE_LENGTH     1
-> >
-> > +#define QCE_DEFAULT_MEM_BANDWIDTH    393600
->
-> Do we know what this rate is?
-
-I think this corresponds to the arbitrated bandwidth / instantaneous
-bandwidth (in KBps)
-for the qce crypto part [I think 'average/peak bandwidth' would be a
-better terminology :) ].
-
-Maybe Thara can add more comments here.
-
-> > +
-> >  static const struct qce_algo_ops *qce_ops[] = {
-> >  #ifdef CONFIG_CRYPTO_DEV_QCE_SKCIPHER
-> >       &skcipher_ops,
-> > @@ -202,21 +205,35 @@ static int qce_crypto_probe(struct platform_device *pdev)
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > +     qce->mem_path = of_icc_get(qce->dev, "memory");
->
-> Using devm_of_icc_get() would save you some changes to the error path.
-
-Ok, I can address this in v3.
-
-> > +     if (IS_ERR(qce->mem_path))
-> > +             return PTR_ERR(qce->mem_path);
-> > +
-> >       qce->core = devm_clk_get(qce->dev, "core");
-> > -     if (IS_ERR(qce->core))
-> > -             return PTR_ERR(qce->core);
-> > +     if (IS_ERR(qce->core)) {
-> > +             ret = PTR_ERR(qce->core);
-> > +             goto err_mem_path_put;
-> > +     }
-> >
-> >       qce->iface = devm_clk_get(qce->dev, "iface");
-> > -     if (IS_ERR(qce->iface))
-> > -             return PTR_ERR(qce->iface);
-> > +     if (IS_ERR(qce->iface)) {
-> > +             ret = PTR_ERR(qce->iface);
-> > +             goto err_mem_path_put;
-> > +     }
-> >
-> >       qce->bus = devm_clk_get(qce->dev, "bus");
-> > -     if (IS_ERR(qce->bus))
-> > -             return PTR_ERR(qce->bus);
-> > +     if (IS_ERR(qce->bus)) {
-> > +             ret = PTR_ERR(qce->bus);
-> > +             goto err_mem_path_put;
-> > +     }
-> > +
-> > +     ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
-> > +     if (ret)
-> > +             goto err_mem_path_put;
-> >
-> >       ret = clk_prepare_enable(qce->core);
-> >       if (ret)
-> > -             return ret;
-> > +             goto err_mem_path_disable;
-> >
-> >       ret = clk_prepare_enable(qce->iface);
-> >       if (ret)
-> > @@ -256,6 +273,10 @@ static int qce_crypto_probe(struct platform_device *pdev)
-> >       clk_disable_unprepare(qce->iface);
-> >  err_clks_core:
-> >       clk_disable_unprepare(qce->core);
-> > +err_mem_path_disable:
-> > +     icc_set_bw(qce->mem_path, 0, 0);
->
-> When you icc_put() (or devm_of_icc_get() does it for you) the path's
-> votes are implicitly set to 0, so you don't need to do this.
->
-> And as such, you don't need to change the error path at all.
-
-Ok, got it. Will change v3 accordingly.
-
-Thanks,
-Bhupesh
-
-> > +err_mem_path_put:
-> > +     icc_put(qce->mem_path);
-> >       return ret;
-> >  }
-> >
-> > diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
-> > index 085774cdf641..228fcd69ec51 100644
-> > --- a/drivers/crypto/qce/core.h
-> > +++ b/drivers/crypto/qce/core.h
-> > @@ -35,6 +35,7 @@ struct qce_device {
-> >       void __iomem *base;
-> >       struct device *dev;
-> >       struct clk *core, *iface, *bus;
-> > +     struct icc_path *mem_path;
-> >       struct qce_dma_data dma;
-> >       int burst_size;
-> >       unsigned int pipe_pair_id;
-> > --
-> > 2.30.2
-> >
+Thanks
+-- 
+~Vinod
