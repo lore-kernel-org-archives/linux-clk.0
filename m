@@ -2,149 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04685C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DF3C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 15:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7EFF61355
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCDE561059
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 15:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348474AbhESOlu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 May 2021 10:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43596 "EHLO
+        id S231680AbhESPLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 11:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354501AbhESOlN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 10:41:13 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A633C061349
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:39:19 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id f22so1673436pfn.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:39:19 -0700 (PDT)
+        with ESMTP id S231361AbhESPLs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 11:11:48 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E1AC061760
+        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 08:10:28 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id d11so14382370wrw.8
+        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 08:10:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ha/LaDJaWqJqGFUOZ/CIIY7Ny0kkYMvLA61pIJyDFZ0=;
-        b=WLOYc+Zws2OfLaWguoyIkyA1m4y1KdTsBz7yZ364G202kFhg5Cz8wae1i/DUrnQHh1
-         HBeM5YDGHk7LZ98IXVwaHuqR6OYbgMNOt9yY43rqwglS9/2svFr72RgIxvfI7HyIe0vc
-         gBjIwofSIcAXXCjfK7daf+hKjL/Ov9zRgQVvNfI+sW2xNj+oUyJk2cHZDPRxC9d7PyLj
-         AjUBTsoIlgPuTpoNBp/SqFHUBY4G59V5KiNlfdFPX2sWdvG/ykFt3dJY4iHLokwCDR4T
-         VGAL6RoKhXBZn6TUmJxWyNrcHT2Nsxa/gVWl+XiW3yAWyOwzHT03zZTVDjnTVJUYKxxW
-         ez+A==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=pZTrmzjRk0JsfMU4NJ6gfhJKpkFDNAJqvtFPV6c7aqI=;
+        b=sPbtHp+UyY0QZk3Slfytp2HlLx5k++0LMnr/g/kaaRlHRT625kD3YaS5w2vxJasi6s
+         c3p+6gAW3YGpU3+vzRWDafgfn+rUbUgIDgtOcnFSBpO0YZbIpgx0SZXmxGi4St2tSPMF
+         lQAx3VMVcZapIWxpApznRvFQnbQtdpq/ZaUrva1Z69laBzJkwxYPHxOtduY5dXgr50gp
+         6JMDPnj1ltLmanag9oczTddqe6IInR7gQV4/3O5eWeVZMq2xQq4lmF1lrVqUyJeWM8hQ
+         mJmDVSx1SJTZ851+BDiXZLMTQV0ipWJhnyDZwol3gULGVpnghldw/XlH/y56pLgdyola
+         evCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ha/LaDJaWqJqGFUOZ/CIIY7Ny0kkYMvLA61pIJyDFZ0=;
-        b=o2UsWy311ObQFI707FfnxVGY6VQrKHHmQIkd+jCQjkwdM0wNy3qkiPE6bMhi7V3NhI
-         8ST/uoVKajQUsQ73e4v4rj12mg8pDr6+vdE6NKQBvONt71dvcq29/AbP2JI7kefrEE6G
-         aZ8Q7UUIi/H9YV7uqVnMA4gRHtTFZZFT3d6+0ZQ/bFqgnYrn1F/AcWJbr4t/NsOoJXTS
-         Tfk+C+cZw6tOP3SEFZstj9cbinaPVyZqvGMTRNY4F+lHbJsUWH4YQlDRjFKdqyX/mgu9
-         /NoWXIvu3MSpVmmWHdXshaILR793Z0YydJY16VmwCSGZgB+s2TuoTi12SbnS20tID4YC
-         RWkA==
-X-Gm-Message-State: AOAM5329kO+gudprDitE6kUGu3Imu3cUdTSOb0/zSbeFkoX8R05mKbVB
-        dFbs2bH+rphV8bpV5R7QK7uvWg==
-X-Google-Smtp-Source: ABdhPJy6oYXhdskz+Yn8nt3Y0Tv5dRWI5TVs9gHJNz0N7OYXa/C/ddOSJ9Mb0VgSbzLMrAfiYCZtuQ==
-X-Received: by 2002:aa7:8588:0:b029:28e:dfa1:e31a with SMTP id w8-20020aa785880000b029028edfa1e31amr10952488pfn.77.1621435158778;
-        Wed, 19 May 2021 07:39:18 -0700 (PDT)
-Received: from localhost.localdomain.name ([122.177.135.250])
-        by smtp.gmail.com with ESMTPSA id o24sm9239515pgl.55.2021.05.19.07.39.12
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=pZTrmzjRk0JsfMU4NJ6gfhJKpkFDNAJqvtFPV6c7aqI=;
+        b=ZBNCQD65BrAdsEjBSZ8pOtlOW5XEykC+Q9s4LdGaap/NYR/xlaPC8x8+w0T5H/Jn4q
+         U25drKCw2/ksIrdqbvo8nn3UsFPdRT4eQ+gbeE9WLVJg+QINDF6sPw3UcYBpXZNSK8tC
+         B45Gj0BvoaRha/bocHt06Ltf26Hodwjp0qbzcc/bslFq0LK7/X4xIdrYLdcTkDByLDxd
+         ynUhcI2HgFJbxrRkWr+GoAhAbMttE9uAeqqnlsl6P5nYHJMZWOM8/cKcErOwN7d9wH5G
+         o7uVDx2b12cQ85X8g7lc1sL3r5VxlyB2xXXruXNZWLwVWlzLYM19Bt9sFgVAIfTTKtCJ
+         B6tA==
+X-Gm-Message-State: AOAM532AbHup5Vi01x6btqeCmNs9SMkN6adk1Vtnt2IY+EYJ9xcPXIBA
+        0qlus8N67pW+jGI32VL6txv7OQ==
+X-Google-Smtp-Source: ABdhPJzuKJrQL7ukPErjV9xAxeYsKK2e9MVgKM+TWHESmAB3zfHQlkZ07BgfBUGY9o+FLk0Oal812Q==
+X-Received: by 2002:a5d:598d:: with SMTP id n13mr15262787wri.38.1621437027253;
+        Wed, 19 May 2021 08:10:27 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id h13sm22758075wml.26.2021.05.19.08.10.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 May 2021 07:39:18 -0700 (PDT)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Subject: [PATCH v3 17/17] arm64/dts: qcom: sm8250: Add dt entries to support crypto engine.
-Date:   Wed, 19 May 2021 20:07:00 +0530
-Message-Id: <20210519143700.27392-18-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
-References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
+        Wed, 19 May 2021 08:10:26 -0700 (PDT)
+References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
+ <20210517203724.1006254-4-martin.blumenstingl@googlemail.com>
+ <1jo8d81nw3.fsf@starbuckisacylon.baylibre.com>
+ <CAFBinCBREyEp0gj_-ac2OccjSruULPG1m2=L5D7GEA4HoqQqLg@mail.gmail.com>
+User-agent: mu4e 1.4.15; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v1 3/3] clk: meson: pll: switch to determine_rate
+ for the PLL ops
+In-reply-to: <CAFBinCBREyEp0gj_-ac2OccjSruULPG1m2=L5D7GEA4HoqQqLg@mail.gmail.com>
+Message-ID: <1j1ra2dajh.fsf@starbuckisacylon.baylibre.com>
+Date:   Wed, 19 May 2021 17:10:26 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add crypto engine (CE) and CE BAM related nodes and definitions to
-"sm8250.dtsi".
 
-Cc: Thara Gopinath <thara.gopinath@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: bhupesh.linux@gmail.com
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8250.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+On Tue 18 May 2021 at 22:17, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index 4c0de12aaba6..6700d609a7b8 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -3796,6 +3796,34 @@ cpufreq_hw: cpufreq@18591000 {
- 
- 			#freq-domain-cells = <1>;
- 		};
-+
-+		cryptobam: dma@1dc4000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0 0x01dc4000 0 0x24000>;
-+			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+			qcom,controlled-remotely = <1>;
-+			iommus = <&apps_smmu 0x584 0x0011>,
-+				 <&apps_smmu 0x586 0x0011>,
-+				 <&apps_smmu 0x594 0x0011>,
-+				 <&apps_smmu 0x596 0x0011>;
-+			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE_0 &mc_virt SLAVE_EBI_CH0>;
-+			interconnect-names = "memory";
-+		};
-+
-+		crypto: crypto@1dfa000 {
-+			compatible = "qcom,sm8250-qce";
-+			reg = <0 0x01dfa000 0 0x6000>;
-+			dmas = <&cryptobam 4>, <&cryptobam 5>;
-+			dma-names = "rx", "tx";
-+			iommus = <&apps_smmu 0x584 0x0011>,
-+				 <&apps_smmu 0x586 0x0011>,
-+				 <&apps_smmu 0x594 0x0011>,
-+				 <&apps_smmu 0x596 0x0011>;
-+			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE_0 &mc_virt SLAVE_EBI_CH0>;
-+			interconnect-names = "memory";
-+		};
- 	};
- 
- 	timer {
--- 
-2.31.1
+> Hi Jerome,
+>
+> On Tue, May 18, 2021 at 9:50 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>
+>>
+>> On Mon 17 May 2021 at 22:37, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>>
+>> > This increases the maxmium supported frequency on 32-bit systems from
+>> > 2^31 (signed long as used by clk_ops.round_rate, maximum value:
+>> > approx. 2.14GHz) to 2^32 (unsigned long as used by
+>> > clk_ops.determine_rate, maximum value: approx. 4.29GHz).
+>> > On Meson8/8b/8m2 the HDMI PLL and it's OD (post-dividers) are
+>> > capable of running at up to 2.97GHz. So switch the divider
+>> > implementation in clk-regmap to clk_ops.determine_rate to support these
+>> > higher frequencies on 32-bit systems.
+>> >
+>> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>
+>> Looks good. I see no reason to keep this one as RFC.
+> Great, thanks for checking!
+>
+>> I can take it directly if this is OK with you ?
+> That would be amazing.
+> Obviously no objections from my side :-)
+>
+>
+> Best regards,
+> Martin
 
+Applied then. Thx
