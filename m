@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E749C433ED
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D239CC433ED
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 061B4611C2
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62D1613AD
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 14:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354219AbhESOjK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 May 2021 10:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43292 "EHLO
+        id S1354256AbhESOj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 10:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354257AbhESOjF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 10:39:05 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F47C0613ED
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:37:44 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id ot16so5489442pjb.3
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:37:44 -0700 (PDT)
+        with ESMTP id S1354388AbhESOjS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 10:39:18 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F59DC061761
+        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:37:58 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id b7so2988012plg.0
+        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 07:37:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tfYY0SynHLUvKImA0WJS6vFoZYpwQQ4sgm9paKqwl54=;
-        b=LMDyQ/zuyHaHFHZdUKNQlFAxMEqlWRr2VaQPfUkGnDJDmV1+yF8C00rnS4gCFd5v3o
-         wmKj8D69QYlT2IY21LKAQ0umZwSOx99YlOm4ZSXhnsW99gHN8TXUbgLX0Eb8fK0zkumk
-         FdBnnYmInjarV5Kb4JQQZNhGs7UyCgGhYZP2EaVOV5jar1VxohlN80/G1vglN9Fd8ggq
-         Ob3cnQ5JAkQIJOWIEfUR8y8ZCpf5ftFAVaI1C3nk1Hiet1VVrGz47+vRcGsbpknC9fSF
-         PVRMdV64UtNnZqwUmS3jKeDnvAOLOMsfnQ3rQ/EQkvoZS1dkgakaTpK7VDyUKEZGSSJC
-         FClw==
+        bh=gLAnCBqQqsONCjJBDJE0yrv+GAq9KPhwa4QXZbYyuMc=;
+        b=c9bg2n3awUNosoxiqlWahS89fYJ+gyP54aVvYVGfNLcJPtw/1INOIfKLsyffRjjfBu
+         TsbHHAXnsVT5Dky72Lnt2Nl6JBO4pQtt2P1TgmUXynMkgZEcbcAgcbT3bSiLCpu5YAC7
+         99A7JRffauR+Gd30PcQsD47/eiTs2P8anCAoLNTp5ms5/cCLTYD3rS1HwcyczXQw/YlU
+         uV5h51GL4KrPnNBdOnbtPCCUn7VzlFZLrwq2PPqHWnPqmwciMgeQxlLvbF2nCKhY5zh9
+         hOUch6L1bcRqNl2VylFqMl5GDcUgqJh09qxe6ZxQAlyuXMV6AHXRQz4o7RhQHCTFw0qW
+         EIBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tfYY0SynHLUvKImA0WJS6vFoZYpwQQ4sgm9paKqwl54=;
-        b=sPPodGRaz00USCEAOLUOtZ9Q50PZ7u2ZEhXwE6g9NCr1H/4mwzp+nwBzmfP7IUvOTt
-         haHEO5+rgq6uFDTKJP7jf5EEEpBamuw3i7+6tZS4r2wKyoPBN7GTn+PVLPYQRiRMjIhJ
-         ZKwP1w4FMzZPVhMS7br2XDKXf9KuhWbEjzETmlymly/quaIEgxIHOHgpzOqyfRReVuO0
-         njdurVGoNy40qDqioHV7v8w3WlRRAPgE6/11C4RcTsxb0AFW3Mx3zF8aFidSRhLWGQhx
-         tfK8ZKlerkjVSO31pPSVI9wJkcJG9Ud/hl5YKL1QY2/IAwkyQwH+CXNU/SXmYpct0EcF
-         p26g==
-X-Gm-Message-State: AOAM5303IuhnDKU3zT+zWFqSmHkFlMFX4YcXUNm1ACYFiAK+zCLXazKX
-        VK9/MUfsUh20YdZ2ys97zqZnHw==
-X-Google-Smtp-Source: ABdhPJwy849Ca+hXXvP504HCbRthfcaqff/Mo+T2X7D7E2ExfjN7Ipe/+RyMBbaOmwnYSCCO9oSKDw==
-X-Received: by 2002:a17:90b:4ac2:: with SMTP id mh2mr11697000pjb.33.1621435064459;
-        Wed, 19 May 2021 07:37:44 -0700 (PDT)
+        bh=gLAnCBqQqsONCjJBDJE0yrv+GAq9KPhwa4QXZbYyuMc=;
+        b=hdq/MzPREZzykvxjy0F4m7kpHksCBPUEppO8a228hnb/tu0AXaiDamlfbkrR6ECP8q
+         gON5FgNxODiF3ZSuGn1q+fw9PL/vIV6Mp5ECZWYGg1aRkI9cx9EydV0L3XLyRTpdJpoT
+         0GQioFsrPh45m2gmYQq7m3OOfeG/nOF6emgVOxBuWskrezq+X7zRPa+uPzQpPKo/v4R9
+         YmumTriS6efdlWvKddnya0X3z3n3WdZ3LdZIFx0rz3rVvGi+9dii1HJRWIore4ex5BQa
+         1jNmlrK/awUcQN/cAxiDCBw1faiB/t4pN6kpl1bQMsws4s9cXa2Khg6Q+3PTR4c//ZoY
+         4IWQ==
+X-Gm-Message-State: AOAM5315ECoRSJKUDzHYW7172cRH7jTco9F/GbN6ghCkkQFuRPFogkus
+        L0G9oNeCET9VmoHP1xMGfXTmiA==
+X-Google-Smtp-Source: ABdhPJwWLUgDVcf71X7gGMbQ99Sae9tunGUiXGB07T59dA9jnSueiZzrbe8btSVLrlVTHea+QELaXg==
+X-Received: by 2002:a17:90b:713:: with SMTP id s19mr12238075pjz.144.1621435077893;
+        Wed, 19 May 2021 07:37:57 -0700 (PDT)
 Received: from localhost.localdomain.name ([122.177.135.250])
-        by smtp.gmail.com with ESMTPSA id o24sm9239515pgl.55.2021.05.19.07.37.38
+        by smtp.gmail.com with ESMTPSA id o24sm9239515pgl.55.2021.05.19.07.37.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 May 2021 07:37:44 -0700 (PDT)
+        Wed, 19 May 2021 07:37:57 -0700 (PDT)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -70,9 +70,9 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH v3 03/17] dt-bindings: qcom-bam: Add 'iommus' to required properties
-Date:   Wed, 19 May 2021 20:06:46 +0530
-Message-Id: <20210519143700.27392-4-bhupesh.sharma@linaro.org>
+Subject: [PATCH v3 05/17] dt-bindings: qcom-qce: Add 'interconnects' and move 'clocks' to optional properties
+Date:   Wed, 19 May 2021 20:06:48 +0530
+Message-Id: <20210519143700.27392-6-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
 References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
@@ -82,10 +82,16 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing required property - 'iommus' to the
-device-tree binding documentation for qcom-bam DMA IP.
+Add 'interconnects' and 'interconnect-names' to the device-tree binding
+documentation for qcom crypto IP.
 
-This property describes the phandle(s) to apps_smmu node with sid mask.
+These properties describe the interconnect path between crypto and main
+memory and the interconnect type respectively.
+
+While at it also move 'clocks' to the optional properties sections,
+as crypto IPs on SoCs like sm8150, sm8250, sm8350 (and so on), don't
+require linux to setup the clocks (this is already done by the secure
+firmware running before linux).
 
 Cc: Thara Gopinath <thara.gopinath@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -104,43 +110,37 @@ Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
- .../devicetree/bindings/dma/qcom_bam_dma.yaml         | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-index d2900616006c..2479862a3654 100644
---- a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-+++ b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-@@ -55,6 +55,12 @@ properties:
-   interconnect-names:
-     const: memory
+diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+index a691cd08f372..f8d3ea8b0d08 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+@@ -34,6 +34,14 @@ properties:
+       - const: bus
+       - const: core
  
-+  iommus:
-+    minItems: 1
-+    maxItems: 8
++  interconnects:
++    maxItems: 1
 +    description: |
-+      phandle to apps_smmu node with sid mask.
++      Interconnect path between qce crypto and main memory.
 +
-   qcom,ee:
-     $ref: /schemas/types.yaml#/definitions/uint8
-     description:
-@@ -81,6 +87,7 @@ required:
-   - clocks
-   - clock-names
-   - "#dma-cells"
-+  - iommus
-   - qcom,ee
++  interconnect-names:
++    const: memory
++
+   dmas:
+     items:
+       - description: DMA specifiers for tx dma channel.
+@@ -47,8 +55,6 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - clocks
+-  - clock-names
+   - dmas
+   - dma-names
  
- additionalProperties: false
-@@ -96,4 +103,8 @@ examples:
-         clock-names = "bam_clk";
-         #dma-cells = <1>;
-         qcom,ee = /bits/ 8 <0>;
-+        iommus = <&apps_smmu 0x584 0x0011>,
-+                 <&apps_smmu 0x586 0x0011>,
-+                 <&apps_smmu 0x594 0x0011>,
-+                 <&apps_smmu 0x596 0x0011>;
-     };
 -- 
 2.31.1
 
