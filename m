@@ -2,131 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979C2C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 18:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD39C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 19:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5A56124C
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 18:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADFC6109F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 19:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbhESSSy convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 May 2021 14:18:54 -0400
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:42959 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbhESSSw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 14:18:52 -0400
-Received: by mail-ua1-f51.google.com with SMTP id 14so4731898uac.9;
-        Wed, 19 May 2021 11:17:29 -0700 (PDT)
+        id S231847AbhESTCA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 15:02:00 -0400
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:41567 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231599AbhESTB7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 15:01:59 -0400
+Received: by mail-oi1-f180.google.com with SMTP id c3so14057277oic.8;
+        Wed, 19 May 2021 12:00:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2rY1yW/YsvOZYFTiuIc2+ehXyRnGQoCM7oBhn+XshDI=;
-        b=fk6eP+41rU/FeynydG46bB4kpyT7GEIseuXdHSTqtvJd6z7CX1p/kkanj3Krv5Nk0H
-         OGlZDIPGlKBs4xPoFFAxcW/KP6DD4PTUOyQ5SLAEeGtcItjKnFWuAVV93WI0yy2mf8g7
-         uQW9t2wVKKYPKutb74kN3OFbKDq16ySgqo9OXOHqT+t0fZ56rJVX43W9do7lL7dZMWSn
-         UcmpgIVGOUE1tr8yRsyxuB4j6f7NOl8wzqj/8czdSdHfq/puyZbDxyujoh0AHw/roGzT
-         evlAmz1BqXaN5/Qen1GZLLDt0p67MiIiG7gRqYCMBcP8Jj1G41mxWQCElzDb5p7N4Msp
-         x72A==
-X-Gm-Message-State: AOAM531CQXTOB5UVUst849HhJX47jwwXU7/pDQU62jkxJwSpL2xVmSfi
-        lkx09clmJWQ0CszimT0GiU5dZbvGnQ8PZIGkVvo=
-X-Google-Smtp-Source: ABdhPJwW7PwgWmazkSCrWv4XAkCvSaYsIKLalnqHAOYA26PIBau9vsCcc8rqJcC2rad2wL1KTwP6PI8LTRXqT3PWq4A=
-X-Received: by 2002:ab0:7705:: with SMTP id z5mr1011167uaq.2.1621448248375;
- Wed, 19 May 2021 11:17:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sijrQ01g/GiA5+mxy/bT/LDRTY/DN4cmmbkW83oKgmo=;
+        b=ZARpigs5zuy+P/R16SvldNKKhBl5F3RHIsMMgc7z/Q1I3yTnOSZ3ABKHcVrjUavhZR
+         99COjtBQxmVvJDycqOaAY6xb8WZNUluk+dK15KwCpOf12ro5vPcKFxCJr0YNKF/qh65C
+         vBzAthBiCCn4VGslxVQmQIgN3dTZ9VBGeL1OvoqyQgm03S6ibaqxPHaL0zAhKDjGba3f
+         AH/y2BMLop9GL68TFIfISjAY1ilwuHklBpjBc5UTUmrOeZsUtB4hx0jEXZU9tOgX0Z6w
+         bDEOcsFXzGZD+V3uc1ITptd+x/+DPsH1X/04mqaxmKLN+SDW8eGlHem62Ca6eNz+/3uI
+         EoKg==
+X-Gm-Message-State: AOAM533NV5/+L85ak2+kW/taI8qHaE65Ofyxi87W/tYxqcF6BDT/nwU4
+        pZTbhMU2cifng2C3dg9D6g==
+X-Google-Smtp-Source: ABdhPJyU9mqfSTQ9V+xTABwTX3FRwu7WZUGXl5T+EEN0a/xilQkZw/2FrdUgtocQJwrFUgIBf3oM5Q==
+X-Received: by 2002:a05:6808:2d3:: with SMTP id a19mr617556oid.133.1621450838163;
+        Wed, 19 May 2021 12:00:38 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v19sm126714otk.22.2021.05.19.12.00.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 May 2021 12:00:37 -0700 (PDT)
+Received: (nullmailer pid 3458043 invoked by uid 1000);
+        Wed, 19 May 2021 19:00:36 -0000
+Date:   Wed, 19 May 2021 14:00:36 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: convert cs2000-cp bindings to
+ yaml
+Message-ID: <20210519190036.GA3453934@robh.at.kernel.org>
+References: <20210517122926.3263455-1-daniel@zonque.org>
 MIME-Version: 1.0
-References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
- <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
- <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
- <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
- <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
- <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
- <87h7kukzy4.fsf@igel.home> <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
- <87tuob7n8g.fsf@igel.home> <CANXhq0rTC8grpRe_Q0vG6_52b-41OuN4vHum8RvouMbE6xiXpQ@mail.gmail.com>
- <CALecT5jQ7_-d7j+MXrG++Bnr_wYmbWgCK20Ju5Pgjbu9xmwQBA@mail.gmail.com> <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com>
-In-Reply-To: <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 19 May 2021 20:17:16 +0200
-Message-ID: <CAMuHMdWGakAT1LKg_sje=ZYTbLX1_BjjOsqOYP9KrzhMmMi6Ag@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
-To:     Zong Li <zong.li@sifive.com>
-Cc:     Yixun Lan <yixun.lan@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pragnesh Patel <pragnesh.patel@openfive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210517122926.3263455-1-daniel@zonque.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Zong,
+On Mon, May 17, 2021 at 02:29:24PM +0200, Daniel Mack wrote:
+> The original author of the file was added as maintainer.
+> 
+> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  .../bindings/clock/cirrus,cs2000-cp.yaml      | 64 +++++++++++++++++++
+>  .../devicetree/bindings/clock/cs2000-cp.txt   | 22 -------
+>  2 files changed, 64 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+> new file mode 100644
+> index 000000000000..3af81087e5f9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/cirrus,cs2000-cp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Binding CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+> +
+> +maintainers:
+> +  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> +
+> +description: |
+> +  The CS2000-CP is an extremely versatile system clocking device that
+> +  utilizes a programmable phase lock loop.
+> +
+> +  Link: https://www.cirrus.com/products/cs2000/
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cirrus,cs2000-cp
+> +
+> +  clocks:
+> +    description:
+> +      Common clock binding for CLK_IN, XTI/REF_CLK
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 2
 
-On Wed, May 19, 2021 at 5:55 PM Zong Li <zong.li@sifive.com> wrote:
-> On Tue, May 11, 2021 at 4:57 PM Yixun Lan <yixun.lan@gmail.com> wrote:
-> > On Wed, Apr 14, 2021 at 2:25 PM Zong Li <zong.li@sifive.com> wrote:
-> > > On Mon, Apr 12, 2021 at 7:31 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
-> > > > On Mär 31 2021, Zong Li wrote:
-> > > > > I found that the gemgxlpll was disabled immediately by power
-> > > > > management after macb driver install. The mainline's defconfig doesn't
-> > > > > enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
-> > > > > enables CONFIG_PM, and the patch
-> > > > > 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
-> > > > > callback functions, so the gemgxlpll PLL, I have no idea why power
-> > > > > management disable it, I would keep trace it.
-> > > >
-> > > > Does that mean that CONFIG_PM also affects the FU740?
-> > >
-> > > Yes, we got the same problem on the FU740. We are checking the issue.
-> > >
-> > Just a mild ping, any progress regarding this issue?
->
-> Currently, if runtime power management is enabled, macb driver would
-> go to sleep at the end of macb_probe, then the gigabit ethernet PLL
-> would be disabled.  During this period of time, the system would hang
-> up if we try to access GEMGXL control registers, it means that we
-> can't access GEMGXL control registers before the gigabit ethernet PLL
-> is resumed again. There are some cases, for example, if we execute the
+Need to define the names and order.
 
-Sounds familiar.
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +  reg:
+> +    description:
+> +      The chip select number on the I2C bus
 
-> 'ifconfig' command, it would eventually go to the macb_get_status to
+Drop. That's 'reg' for every I2C device.
 
-Do you mean mac_get_stats()? macb_get_status() does not exist.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c@0 {
+> +      reg = <0x0 0x100>;
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      cs2000: clk_multiplier@4f {
 
-> access GEMGXL control registers and cause the system to hang up. Give
-> more example here, if we execute 'ip link set lo up & ip addr add
-> 127.0.0.1/8 dev lo', it would cause the system to hang up, because
-> these commands would try to query the interfaces and eventually go to
-> macb_get_status as well. However, if we can resume the gigabit
-> ethernet PLL first, such as 'ip link set eth0 up' or 'udhcpc', then
-> everything goes well. I'm trying to figure out if there are some hooks
-> that we can check the PLL status in the macb driver before it actually
-> touches the control registers. If anyone has an idea about that,
-> please feel free to point it out to me, thanks.
+clock-controller@4f
 
-And you cannot call pm_runtime_get_sync(), as this is called from
-atomic contect. Other drivers avoid accessing the registers while
-the device is not up, cfr. e.g. commit 7fa2955ff70ce453 ("sh_eth:
-Fix sleeping function called from invalid context").
+And drop cs2000 as it is unused here.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +        #clock-cells = <0>;
+> +        compatible = "cirrus,cs2000-cp";
+> +        reg = <0x4f>;
+> +        clocks = <&rcar_sound 0>, <&x12_clk>;
+> +        clock-names = "clk_in", "ref_clk";
+> +      };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> deleted file mode 100644
+> index 54e6df0bee8a..000000000000
+> --- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> +++ /dev/null
+> @@ -1,22 +0,0 @@
+> -CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+> -
+> -Required properties:
+> -
+> -- compatible:		"cirrus,cs2000-cp"
+> -- reg:			The chip select number on the I2C bus
+> -- clocks:		common clock binding for CLK_IN, XTI/REF_CLK
+> -- clock-names:		CLK_IN : clk_in, XTI/REF_CLK : ref_clk
+> -- #clock-cells:		must be <0>
+> -
+> -Example:
+> -
+> -&i2c2 {
+> -	...
+> -	cs2000: clk_multiplier@4f {
+> -		#clock-cells = <0>;
+> -		compatible = "cirrus,cs2000-cp";
+> -		reg = <0x4f>;
+> -		clocks = <&rcar_sound 0>, <&x12_clk>;
+> -		clock-names = "clk_in", "ref_clk";
+> -	};
+> -};
+> -- 
+> 2.31.1
+> 
