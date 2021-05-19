@@ -2,119 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0E5C433B4
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0048CC433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 00:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 698176100A
-	for <linux-clk@archiver.kernel.org>; Tue, 18 May 2021 20:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD84610CC
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 00:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241699AbhERUfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 16:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
+        id S234503AbhESAUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 May 2021 20:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236628AbhERUfV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 16:35:21 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1B5C061573;
-        Tue, 18 May 2021 13:34:02 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id di13so12778927edb.2;
-        Tue, 18 May 2021 13:34:02 -0700 (PDT)
+        with ESMTP id S233554AbhESAUf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 20:20:35 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C0CC061760
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 17:19:16 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id v8so11205026qkv.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 17:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VL0CiSI2cCMpvavhlqOGujTCEJkTFDfxgkJ3VFbEVN0=;
-        b=tCf4kXKZGny3QAzUEQsa42a3Pz4W7zBX0TeOv1Q2bQcYu8GlWd4+5YNLmGj3m0cOcI
-         lyiE/Qa1agYrgU9q/OTa7uhmSSWIJCkaF7ZaaRpA7lPNQDtw1gFB2gg3m7hB0skg7ZlM
-         DIihpuethbuhsPuugQhEUpZYnDfwgrnoVl6te07kNgrYEKyKwq/DHUq1puu7Ddq214pt
-         Evq2WkkaiYfzHt9dFHqJOXXfx8kSiEpC62vYZLQRwk1zw8Em3Del2yTPc2onTNzgsT7v
-         NkXiwvA5VVTLTlo9upGkv1KzM4Xm4ML76CyRz+T8boS0L/rin+0/lYaqroVQCCp3e74e
-         IoCg==
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SKHZjDXS5Wk7oWjMpFocEspWZD3JWVlcV2qAjmTuWhk=;
+        b=HMiopDQucCjfiXNt32/go7m4wssBFM7T1K752VqyhVTW1UeiJP2rBbbbaaYPta2I5V
+         M5X62LeR+JgJEKzFH2T8VVpQmU3G5+9Ru3pHwJ6fsncG4tzTPG1JDsYk8/WcLeiRjW9y
+         0+g2u3RtNrN+sLRGSUmiVl0DqRw5/0qehKrCePW3iEm4xZusCIoPJneH1nlzGJZ1iHF9
+         9bcrrWVliAPBhLUFD8gv1qYwOgA3G6CM8NVMzNECEsx+h9yTk8IZXS5TutCrxvs9j9fA
+         6b/ib0ebNNRwVv0gfrfdZvrZbB4eA7qcTYeeILEEVxkZbZKscg8IC3K4fYOstWUeMEJm
+         WJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VL0CiSI2cCMpvavhlqOGujTCEJkTFDfxgkJ3VFbEVN0=;
-        b=TqQ8jdkfwAMnZemCnvjproE6z36dnWZ7q927y/0f3eDr/q8eJK6dQEFtOkC2yyT/4P
-         mutOJAEFz2DZsbm+xOaybfMKKq+EhH8Dhaq0fOf6HVnlvxFQVqrzE4WzSps3nqpkAPf1
-         4XWdJXrfBiD42JrpfK8IiHx92hzz6fJ4DwOhYvyFq6cxVZzMbcaDSqwSR8LcgI4uoBXI
-         AYqywZvCfO4OsUmKtzr6gZIKzViEgTdg68EHi0PEAYkb4QGtKtwygVu/nKM0Nr5MQ0om
-         3Gpob6phgwHj0EDRrw43Ta4eL0Ea9jDc9KdBdFmMnhAFQm+E7Z29K9niQewSx1Omzk8w
-         NRyg==
-X-Gm-Message-State: AOAM533eYcJDTczvJDj9JLhGar1faGfDm0QcMedvdDF1fpNARgVuZXVo
-        tKU7Qhf5rWRf5nT7952f6WMcfqJUTOlnMWtfaXU=
-X-Google-Smtp-Source: ABdhPJxFsjBTmyqIIgerb2xmITvpZs23MeN0JixS8tgK6778SQkUt7m40fSCNQkRan58QA2fHYFlANPEyZx6nlUKHik=
-X-Received: by 2002:a50:9346:: with SMTP id n6mr9158222eda.365.1621370041309;
- Tue, 18 May 2021 13:34:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SKHZjDXS5Wk7oWjMpFocEspWZD3JWVlcV2qAjmTuWhk=;
+        b=naj7Lyv/xYPTuvjNRVIZ/hsG6Bb7r8lv0l9DjhZR2RrdnnlaOO/VhQT2ouaXHPs58z
+         aYQXLaZmITBRNFMoYZ7nFq1ST6uLcDfHTg69B4XGrfO3nnsYzkZh8eSqK+4NxVSrFRg5
+         JSv5I/W6IGxC6ulLxFvuNUEeUPqlPGxsqdHNZWIXCcuu4YXuq3jVlZRWmhF66zzT5EWq
+         flpYQxw1Tc3FrCgneUPG/M9gImAckjzfFmvQE2pNRDEj7SMi5a4boJQIl4EzPizmI02F
+         kPIdRh6O7uFLfI5E6BWMNWDPQLJXfmEcQBpYIG0hYwDQJFnHJ9TiV6//FqlSBNikVW6z
+         P4ng==
+X-Gm-Message-State: AOAM533WuO/BbzaMz8qTu7KKGp4Z2wGIzjEOTGXXdwp0sO0DB9KJxHe7
+        XwPaIOmIpSow0gED2PhYNA7A7Q==
+X-Google-Smtp-Source: ABdhPJxEI9CTrcH7cLKH8SMK+/MqFoD5eOLr8+HmyVYK7rNQiRfzPxdhs2RmQDuhmV9TbA0vDEp+SA==
+X-Received: by 2002:a05:620a:25b:: with SMTP id q27mr8802956qkn.180.1621383556055;
+        Tue, 18 May 2021 17:19:16 -0700 (PDT)
+Received: from localhost.localdomain (modemcable068.184-131-66.mc.videotron.ca. [66.131.184.68])
+        by smtp.gmail.com with ESMTPSA id i9sm14998529qtg.18.2021.05.18.17.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 May 2021 17:19:15 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] clk: qcom: add support for SM8350 DISPCC
+Date:   Tue, 18 May 2021 20:18:01 -0400
+Message-Id: <20210519001802.1863-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-References: <20210517203724.1006254-1-martin.blumenstingl@googlemail.com>
- <20210517203724.1006254-2-martin.blumenstingl@googlemail.com> <1jtun01o5p.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jtun01o5p.fsf@starbuckisacylon.baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 18 May 2021 22:33:50 +0200
-Message-ID: <CAFBinCB+5bFH0LW4rqYGCiO-X-xmer67cp5kXpyU0d-OfxiOvw@mail.gmail.com>
-Subject: Re: [PATCH RFC v1 1/3] clk: divider: Add re-usable determine_rate implementations
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, khilman@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+Add support to the SM8350 display clock controller by extending the SM8250
+display clock controller, which is almost identical but has some minor
+differences.
 
-On Tue, May 18, 2021 at 9:44 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-[...]
-> > +int divider_ro_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
-> > +                           const struct clk_div_table *table, u8 width,
-> > +                           unsigned long flags, unsigned int val)
-> > +{
-> > +     int div;
-> > +
-> > +     div = _get_div(table, val, flags, width);
-> > +
-> > +     /* Even a read-only clock can propagate a rate change */
-> > +     if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> > +             if (!req->best_parent_hw)
-> > +                     return -EINVAL;
-> > +
-> > +             req->best_parent_rate = clk_hw_round_rate(req->best_parent_hw,
-> > +                                                       req->rate * div);
-> > +     }
-> > +
-> > +     req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
-> > +
-> > +     return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(divider_ro_determine_rate);
->
-> For a final version, could you factorize the code with the .round_rate()
-> variant ? It would remove a bit of duplication.
-my first idea was to basically let the new _determine_rate code just
-forward all relevant parameters to _round_rate
-however, I discarded that as it turned out to be less understandable
-for me as parameters need to be mapped in both ways
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+v2: improved diff (don't move sm8150 case around), update comment
 
-while writing this mail I noticed that the opposite direction
-(meaning: _round_rate forwards to _determine_rate) will probably work.
-I'll give it a try in the next days
-if you had anything else in mind then please let me know
+ drivers/clk/qcom/Kconfig         |  4 +--
+ drivers/clk/qcom/dispcc-sm8250.c | 61 +++++++++++++++++++++++++++++++-
+ 2 files changed, 62 insertions(+), 3 deletions(-)
 
-> Maybe determine_rate() can also replace round_rate() in the generic
-> divider ops ?
-sure, I'll add that as a separate patch in this series
-note to myself: testing can be done with the MMC drivers as we're
-using the generic clk_divider_ops there
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 45646b867cdb..cc60e6ee1654 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -484,11 +484,11 @@ config SDX_GCC_55
+ 	  SPI, I2C, USB, SD/UFS, PCIe etc.
+ 
+ config SM_DISPCC_8250
+-	tristate "SM8150 and SM8250 Display Clock Controller"
++	tristate "SM8150/SM8250/SM8350 Display Clock Controller"
+ 	depends on SM_GCC_8150 || SM_GCC_8250
+ 	help
+ 	  Support for the display clock controller on Qualcomm Technologies, Inc
+-	  SM8150 and SM8250 devices.
++	  SM8150/SM8250/SM8350 devices.
+ 	  Say Y if you want to support display devices and functionality such as
+ 	  splash screen.
+ 
+diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+index de09cd5c209f..5f22a715e2f0 100644
+--- a/drivers/clk/qcom/dispcc-sm8250.c
++++ b/drivers/clk/qcom/dispcc-sm8250.c
+@@ -36,6 +36,10 @@ static struct pll_vco vco_table[] = {
+ 	{ 249600000, 2000000000, 0 },
+ };
+ 
++static struct pll_vco lucid_5lpe_vco[] = {
++	{ 249600000, 1750000000, 0 },
++};
++
+ static struct alpha_pll_config disp_cc_pll0_config = {
+ 	.l = 0x47,
+ 	.alpha = 0xE000,
+@@ -1039,6 +1043,7 @@ static const struct qcom_cc_desc disp_cc_sm8250_desc = {
+ static const struct of_device_id disp_cc_sm8250_match_table[] = {
+ 	{ .compatible = "qcom,sm8150-dispcc" },
+ 	{ .compatible = "qcom,sm8250-dispcc" },
++	{ .compatible = "qcom,sm8350-dispcc" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, disp_cc_sm8250_match_table);
+@@ -1051,7 +1056,7 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	/* note: trion == lucid, except for the prepare() op */
++	/* Apply differences for SM8150 and SM8350 */
+ 	BUILD_BUG_ON(CLK_ALPHA_PLL_TYPE_TRION != CLK_ALPHA_PLL_TYPE_LUCID);
+ 	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8150-dispcc")) {
+ 		disp_cc_pll0_config.config_ctl_hi_val = 0x00002267;
+@@ -1062,8 +1067,62 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+ 		disp_cc_pll1_config.config_ctl_hi1_val = 0x00000024;
+ 		disp_cc_pll1_config.user_ctl_hi1_val = 0x000000D0;
+ 		disp_cc_pll1_init.ops = &clk_alpha_pll_trion_ops;
++	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8350-dispcc")) {
++		static struct clk_rcg2* const rcgs[] = {
++			&disp_cc_mdss_byte0_clk_src,
++			&disp_cc_mdss_byte1_clk_src,
++			&disp_cc_mdss_dp_aux1_clk_src,
++			&disp_cc_mdss_dp_aux_clk_src,
++			&disp_cc_mdss_dp_link1_clk_src,
++			&disp_cc_mdss_dp_link_clk_src,
++			&disp_cc_mdss_dp_pixel1_clk_src,
++			&disp_cc_mdss_dp_pixel2_clk_src,
++			&disp_cc_mdss_dp_pixel_clk_src,
++			&disp_cc_mdss_esc0_clk_src,
++			&disp_cc_mdss_mdp_clk_src,
++			&disp_cc_mdss_pclk0_clk_src,
++			&disp_cc_mdss_pclk1_clk_src,
++			&disp_cc_mdss_rot_clk_src,
++			&disp_cc_mdss_vsync_clk_src,
++		};
++		static struct clk_regmap_div* const divs[] = {
++			&disp_cc_mdss_byte0_div_clk_src,
++			&disp_cc_mdss_byte1_div_clk_src,
++			&disp_cc_mdss_dp_link1_div_clk_src,
++			&disp_cc_mdss_dp_link_div_clk_src,
++		};
++		unsigned i;
++		static bool offset_applied = false;
++
++		/* only apply the offsets once (in case of deferred probe) */
++		if (!offset_applied) {
++			for (i = 0; i < ARRAY_SIZE(rcgs); i++)
++				rcgs[i]->cmd_rcgr -= 4;
++
++			for (i = 0; i < ARRAY_SIZE(divs); i++) {
++				divs[i]->reg -= 4;
++				divs[i]->width = 4;
++			}
++
++			disp_cc_mdss_ahb_clk.halt_reg -= 4;
++			disp_cc_mdss_ahb_clk.clkr.enable_reg -= 4;
++
++			offset_applied = true;
++		}
++
++		disp_cc_mdss_ahb_clk_src.cmd_rcgr = 0x22a0;
++
++		disp_cc_pll0_config.config_ctl_hi1_val = 0x2A9A699C;
++		disp_cc_pll0_config.test_ctl_hi1_val = 0x01800000;
++		disp_cc_pll0_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
++		disp_cc_pll0.vco_table = lucid_5lpe_vco;
++		disp_cc_pll1_config.config_ctl_hi1_val = 0x2A9A699C;
++		disp_cc_pll1_config.test_ctl_hi1_val = 0x01800000;
++		disp_cc_pll1_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
++		disp_cc_pll1.vco_table = lucid_5lpe_vco;
+ 	}
+ 
++	/* note for SM8350: downstream lucid_5lpe configure differs slightly */
+ 	clk_lucid_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+ 	clk_lucid_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
+ 
+-- 
+2.26.1
 
-
-Best regards,
-Martin
