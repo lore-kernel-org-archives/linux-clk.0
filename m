@@ -2,131 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B286C433B4
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 15:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB77C433ED
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 17:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD2C6135C
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 15:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C9AA611AE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 17:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354034AbhESPzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 May 2021 11:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32846 "EHLO
+        id S229919AbhESRnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 13:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346825AbhESPzK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 11:55:10 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A58C061760
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 08:53:48 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id f12so16238345ljp.2
-        for <linux-clk@vger.kernel.org>; Wed, 19 May 2021 08:53:48 -0700 (PDT)
+        with ESMTP id S229845AbhESRnS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 13:43:18 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83EBC06175F;
+        Wed, 19 May 2021 10:41:57 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id k127so13533174qkc.6;
+        Wed, 19 May 2021 10:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+h7qBn31/XdOKJhJupPMTX05eKZyP5qewLWYYYVaOa4=;
-        b=gKAxLopmId1irlMMaOBYM3XHjyy4rHKldUhIsjxpaOh9yF9PBe6/8DOnOcJXOhSxtL
-         PRmQH/6/tIZrJJS3wFonduNEGuEv9Ii602QKjuPmttmSXX5fDNq9ra4edMdO5My3eJSw
-         JD1SwaSsm+0yuudPCgmJRpSORU8xHb0guqz0Dh5HjW4D8axJBJYR+O5siDmC8qR3n/vG
-         dyC0ksMpziDxYgH2Hc1z6f/xmCKdEbGCW0K6EryBUD5+oQ9ZVG8CNFF5MGLzQXIkuuni
-         1xKxAFQPNxtkYAvbkMLcV9DtXl2z4wGunp+DxMHQQO7rc0OVmymqJhzuy27+e+A1jzwz
-         2Itg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UMV7QsTgPPQWeHZACgAJTLak2uBSFbgGNVbitXpkumY=;
+        b=CTMANwDtXaZ5Sx/ObdGSKt93E1OgGIain6uNRfKCke4FfgEHk2C+3N09zLtXCVtCT5
+         BNts0q2AQgbzRAiCb/yXEL4F6I/lCAidlFy9C4F+tskJRyp2if/dlU+XU+raP+NSN5b2
+         AV1XOOLuMfUzBAsxqbzr5no9uK6oeyjmNuR7oJjgTcOmcmWkNZpD43ITieb95h+t/FZs
+         xsIyes6D2gULmM7mBwVrIDKxQFXtOIf4s+6gDP4CxOUVYii2T+BvKtCfe+mleREsk80k
+         zQOEI50CfXPhC0wH/efwblMLpPXBYN99p+2I/qJo6nRkmpxAZ3c/eFYfi8MinFPCqXHh
+         KQpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+h7qBn31/XdOKJhJupPMTX05eKZyP5qewLWYYYVaOa4=;
-        b=ay8cpvCQh4COhHmyrYqKjbwjEo8QIauh8L86AcmSgSONV0/RCL9vy0J7Ay4ut17Q/6
-         LkMby691vBZz7HEXbupsgDXLwHQxZPEzFq25UU1k/IBltAS3cTD8y6mZ3LN4L2lQcUXp
-         uNyzSonl07zxvII/YDdsExfYV4rs0mYwr1GEhHUUAzT4cFkxepeOCvDAvn0IMQhovD1i
-         M9ztHOkDTPWZVzRHDD/nwsJIqszjOU428vZlJH/JJZSgd5MQAvaS1h4rs6qySoJKbHKN
-         TwBbcCGMjxOgxHkw3qKGoJWUpQx0ksl2UD1TbbJIbO/EnSARmJGjabVP2w0I9KiyLwTi
-         Vb+w==
-X-Gm-Message-State: AOAM530OHnW1QIyobIyNMyzyUv33KU5P5DOSVGLafZr18IaV+a8foo3r
-        4LhWbuxw+XMzoR4LPbKMvHh44M6jOl32yCpPJn0s9Q==
-X-Google-Smtp-Source: ABdhPJzstoito5f6ig1I5Nm25wwkcDeVPsvWfkNlrovbdfFlE/8m1RtVJDkkMeKMpjcycWYhfwUlgpNCBUxdQbnJWaE=
-X-Received: by 2002:a2e:82c5:: with SMTP id n5mr9289881ljh.191.1621439626369;
- Wed, 19 May 2021 08:53:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
- <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
- <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
- <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
- <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
- <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
- <87h7kukzy4.fsf@igel.home> <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
- <87tuob7n8g.fsf@igel.home> <CANXhq0rTC8grpRe_Q0vG6_52b-41OuN4vHum8RvouMbE6xiXpQ@mail.gmail.com>
- <CALecT5jQ7_-d7j+MXrG++Bnr_wYmbWgCK20Ju5Pgjbu9xmwQBA@mail.gmail.com>
-In-Reply-To: <CALecT5jQ7_-d7j+MXrG++Bnr_wYmbWgCK20Ju5Pgjbu9xmwQBA@mail.gmail.com>
-From:   Zong Li <zong.li@sifive.com>
-Date:   Wed, 19 May 2021 23:53:33 +0800
-Message-ID: <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
-To:     Yixun Lan <yixun.lan@gmail.com>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UMV7QsTgPPQWeHZACgAJTLak2uBSFbgGNVbitXpkumY=;
+        b=WU9EY+iuewhPewynaALD08IxueEvw8rA8HFI1DOIsDeblXXxxdNwObaU5nhoLwwk+m
+         VyDNlvNBqqvfCJLo3Hm6W3EndhUuijuikponpjMP0vGLFV88U1UvsmdouQlZKxM1ve4M
+         mxAqttfjzzOaz/MFXwDeRRIYrvifNEkypSk2BvoileOQh4rj16D14ZlWIV3/Spoah/wG
+         y30k0QOXMlj1kVaCoYBBfS9cUJa4FjKrRArXvfODjXGcyQBsAYYj0tChoHXtDv7zqlrl
+         Nm9Z/CVYSu/MGygTqy9hYCGbMMgZrf0jiRYHQwhNUoN4rALispitDy00M6J3eZMoag4Q
+         86mw==
+X-Gm-Message-State: AOAM5308O04IUbzVu5Q+NGLKYZraRhA604owWTaMADirb/ngvhmzFGrt
+        8R929TEPS1apldFJh+2GN/k=
+X-Google-Smtp-Source: ABdhPJzIFT/6iKFcpgqqZGn/WXeltIuFnyxwyWHx+EoZfc1DaoTOk8qlYPNqJ1+vWpugaseUlQyLRA==
+X-Received: by 2002:a05:620a:4543:: with SMTP id u3mr549497qkp.118.1621446116804;
+        Wed, 19 May 2021 10:41:56 -0700 (PDT)
+Received: from master-laptop.sparksnet ([2601:153:980:85b1:de7c:b0e3:ef92:cf37])
+        by smtp.gmail.com with ESMTPSA id k125sm280021qkf.53.2021.05.19.10.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 May 2021 10:41:56 -0700 (PDT)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Pragnesh Patel <pragnesh.patel@openfive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Heiko Stuebner <heiko@sntech.de>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH] clk: rockchip: fix rk3568 cpll clk gate bits
+Date:   Wed, 19 May 2021 13:41:49 -0400
+Message-Id: <20210519174149.3691335-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 11, 2021 at 4:57 PM Yixun Lan <yixun.lan@gmail.com> wrote:
->
-> On Wed, Apr 14, 2021 at 2:25 PM Zong Li <zong.li@sifive.com> wrote:
-> >
-> > On Mon, Apr 12, 2021 at 7:31 PM Andreas Schwab <schwab@linux-m68k.org> =
-wrote:
-> > >
-> > > On M=C3=A4r 31 2021, Zong Li wrote:
-> > >
-> > > > I found that the gemgxlpll was disabled immediately by power
-> > > > management after macb driver install. The mainline's defconfig does=
-n't
-> > > > enable CONFIG_PM, so the network is fine on it. The opensuse defcon=
-fig
-> > > > enables CONFIG_PM, and the patch
-> > > > 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
-> > > > callback functions, so the gemgxlpll PLL, I have no idea why power
-> > > > management disable it, I would keep trace it.
-> > >
-> > > Does that mean that CONFIG_PM also affects the FU740?
-> > >
-> >
-> > Yes, we got the same problem on the FU740. We are checking the issue.
-> >
-> Just a mild ping, any progress regarding this issue?
+The cpll clk gate bits had an ordering issue. This led to the loss of
+the boot sdmmc controller when the gmac was shut down with:
+`ip link set eth0 down`
+as the cpll_100m was shut off instead of the cpll_62p5.
+cpll_62p5, cpll_50m, cpll_25m were all off by one with cpll_100m
+misplaced.
 
-Currently, if runtime power management is enabled, macb driver would
-go to sleep at the end of macb_probe, then the gigabit ethernet PLL
-would be disabled.  During this period of time, the system would hang
-up if we try to access GEMGXL control registers, it means that we
-can't access GEMGXL control registers before the gigabit ethernet PLL
-is resumed again. There are some cases, for example, if we execute the
-'ifconfig' command, it would eventually go to the macb_get_status to
-access GEMGXL control registers and cause the system to hang up. Give
-more example here, if we execute 'ip link set lo up & ip addr add
-127.0.0.1/8 dev lo', it would cause the system to hang up, because
-these commands would try to query the interfaces and eventually go to
-macb_get_status as well. However, if we can resume the gigabit
-ethernet PLL first, such as 'ip link set eth0 up' or 'udhcpc', then
-everything goes well. I'm trying to figure out if there are some hooks
-that we can check the PLL status in the macb driver before it actually
-touches the control registers. If anyone has an idea about that,
-please feel free to point it out to me, thanks.
+Fixes: cf911d89c4c5 ("clk: rockchip: add clock controller for rk3568")
 
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3568.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->
-> Yxun
+diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
+index 946ea2f45bf3..75ca855e720d 100644
+--- a/drivers/clk/rockchip/clk-rk3568.c
++++ b/drivers/clk/rockchip/clk-rk3568.c
+@@ -454,17 +454,17 @@ static struct rockchip_clk_branch rk3568_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(CPLL_125M, "cpll_125m", "cpll", CLK_IGNORE_UNUSED,
+ 			RK3568_CLKSEL_CON(80), 0, 5, DFLAGS,
+ 			RK3568_CLKGATE_CON(35), 10, GFLAGS),
++	COMPOSITE_NOMUX(CPLL_100M, "cpll_100m", "cpll", CLK_IGNORE_UNUSED,
++			RK3568_CLKSEL_CON(82), 0, 5, DFLAGS,
++			RK3568_CLKGATE_CON(35), 11, GFLAGS),
+ 	COMPOSITE_NOMUX(CPLL_62P5M, "cpll_62p5", "cpll", CLK_IGNORE_UNUSED,
+ 			RK3568_CLKSEL_CON(80), 8, 5, DFLAGS,
+-			RK3568_CLKGATE_CON(35), 11, GFLAGS),
++			RK3568_CLKGATE_CON(35), 12, GFLAGS),
+ 	COMPOSITE_NOMUX(CPLL_50M, "cpll_50m", "cpll", CLK_IGNORE_UNUSED,
+ 			RK3568_CLKSEL_CON(81), 0, 5, DFLAGS,
+-			RK3568_CLKGATE_CON(35), 12, GFLAGS),
++			RK3568_CLKGATE_CON(35), 13, GFLAGS),
+ 	COMPOSITE_NOMUX(CPLL_25M, "cpll_25m", "cpll", CLK_IGNORE_UNUSED,
+ 			RK3568_CLKSEL_CON(81), 8, 6, DFLAGS,
+-			RK3568_CLKGATE_CON(35), 13, GFLAGS),
+-	COMPOSITE_NOMUX(CPLL_100M, "cpll_100m", "cpll", CLK_IGNORE_UNUSED,
+-			RK3568_CLKSEL_CON(82), 0, 5, DFLAGS,
+ 			RK3568_CLKGATE_CON(35), 14, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "clk_osc0_div_750k", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3568_CLKSEL_CON(82), 8, 6, DFLAGS,
+-- 
+2.25.1
+
