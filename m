@@ -2,120 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB77C433ED
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 17:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979C2C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 18:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9AA611AE
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 17:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A5A56124C
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 18:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhESRnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 May 2021 13:43:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229845AbhESRnS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 13:43:18 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83EBC06175F;
-        Wed, 19 May 2021 10:41:57 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id k127so13533174qkc.6;
-        Wed, 19 May 2021 10:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UMV7QsTgPPQWeHZACgAJTLak2uBSFbgGNVbitXpkumY=;
-        b=CTMANwDtXaZ5Sx/ObdGSKt93E1OgGIain6uNRfKCke4FfgEHk2C+3N09zLtXCVtCT5
-         BNts0q2AQgbzRAiCb/yXEL4F6I/lCAidlFy9C4F+tskJRyp2if/dlU+XU+raP+NSN5b2
-         AV1XOOLuMfUzBAsxqbzr5no9uK6oeyjmNuR7oJjgTcOmcmWkNZpD43ITieb95h+t/FZs
-         xsIyes6D2gULmM7mBwVrIDKxQFXtOIf4s+6gDP4CxOUVYii2T+BvKtCfe+mleREsk80k
-         zQOEI50CfXPhC0wH/efwblMLpPXBYN99p+2I/qJo6nRkmpxAZ3c/eFYfi8MinFPCqXHh
-         KQpA==
+        id S231296AbhESSSy convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 14:18:54 -0400
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:42959 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230363AbhESSSw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 May 2021 14:18:52 -0400
+Received: by mail-ua1-f51.google.com with SMTP id 14so4731898uac.9;
+        Wed, 19 May 2021 11:17:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UMV7QsTgPPQWeHZACgAJTLak2uBSFbgGNVbitXpkumY=;
-        b=WU9EY+iuewhPewynaALD08IxueEvw8rA8HFI1DOIsDeblXXxxdNwObaU5nhoLwwk+m
-         VyDNlvNBqqvfCJLo3Hm6W3EndhUuijuikponpjMP0vGLFV88U1UvsmdouQlZKxM1ve4M
-         mxAqttfjzzOaz/MFXwDeRRIYrvifNEkypSk2BvoileOQh4rj16D14ZlWIV3/Spoah/wG
-         y30k0QOXMlj1kVaCoYBBfS9cUJa4FjKrRArXvfODjXGcyQBsAYYj0tChoHXtDv7zqlrl
-         Nm9Z/CVYSu/MGygTqy9hYCGbMMgZrf0jiRYHQwhNUoN4rALispitDy00M6J3eZMoag4Q
-         86mw==
-X-Gm-Message-State: AOAM5308O04IUbzVu5Q+NGLKYZraRhA604owWTaMADirb/ngvhmzFGrt
-        8R929TEPS1apldFJh+2GN/k=
-X-Google-Smtp-Source: ABdhPJzIFT/6iKFcpgqqZGn/WXeltIuFnyxwyWHx+EoZfc1DaoTOk8qlYPNqJ1+vWpugaseUlQyLRA==
-X-Received: by 2002:a05:620a:4543:: with SMTP id u3mr549497qkp.118.1621446116804;
-        Wed, 19 May 2021 10:41:56 -0700 (PDT)
-Received: from master-laptop.sparksnet ([2601:153:980:85b1:de7c:b0e3:ef92:cf37])
-        by smtp.gmail.com with ESMTPSA id k125sm280021qkf.53.2021.05.19.10.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 May 2021 10:41:56 -0700 (PDT)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH] clk: rockchip: fix rk3568 cpll clk gate bits
-Date:   Wed, 19 May 2021 13:41:49 -0400
-Message-Id: <20210519174149.3691335-1-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2rY1yW/YsvOZYFTiuIc2+ehXyRnGQoCM7oBhn+XshDI=;
+        b=fk6eP+41rU/FeynydG46bB4kpyT7GEIseuXdHSTqtvJd6z7CX1p/kkanj3Krv5Nk0H
+         OGlZDIPGlKBs4xPoFFAxcW/KP6DD4PTUOyQ5SLAEeGtcItjKnFWuAVV93WI0yy2mf8g7
+         uQW9t2wVKKYPKutb74kN3OFbKDq16ySgqo9OXOHqT+t0fZ56rJVX43W9do7lL7dZMWSn
+         UcmpgIVGOUE1tr8yRsyxuB4j6f7NOl8wzqj/8czdSdHfq/puyZbDxyujoh0AHw/roGzT
+         evlAmz1BqXaN5/Qen1GZLLDt0p67MiIiG7gRqYCMBcP8Jj1G41mxWQCElzDb5p7N4Msp
+         x72A==
+X-Gm-Message-State: AOAM531CQXTOB5UVUst849HhJX47jwwXU7/pDQU62jkxJwSpL2xVmSfi
+        lkx09clmJWQ0CszimT0GiU5dZbvGnQ8PZIGkVvo=
+X-Google-Smtp-Source: ABdhPJwW7PwgWmazkSCrWv4XAkCvSaYsIKLalnqHAOYA26PIBau9vsCcc8rqJcC2rad2wL1KTwP6PI8LTRXqT3PWq4A=
+X-Received: by 2002:ab0:7705:: with SMTP id z5mr1011167uaq.2.1621448248375;
+ Wed, 19 May 2021 11:17:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
+ <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+ <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
+ <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
+ <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
+ <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
+ <87h7kukzy4.fsf@igel.home> <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
+ <87tuob7n8g.fsf@igel.home> <CANXhq0rTC8grpRe_Q0vG6_52b-41OuN4vHum8RvouMbE6xiXpQ@mail.gmail.com>
+ <CALecT5jQ7_-d7j+MXrG++Bnr_wYmbWgCK20Ju5Pgjbu9xmwQBA@mail.gmail.com> <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com>
+In-Reply-To: <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 19 May 2021 20:17:16 +0200
+Message-ID: <CAMuHMdWGakAT1LKg_sje=ZYTbLX1_BjjOsqOYP9KrzhMmMi6Ag@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+To:     Zong Li <zong.li@sifive.com>
+Cc:     Yixun Lan <yixun.lan@gmail.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The cpll clk gate bits had an ordering issue. This led to the loss of
-the boot sdmmc controller when the gmac was shut down with:
-`ip link set eth0 down`
-as the cpll_100m was shut off instead of the cpll_62p5.
-cpll_62p5, cpll_50m, cpll_25m were all off by one with cpll_100m
-misplaced.
+Hi Zong,
 
-Fixes: cf911d89c4c5 ("clk: rockchip: add clock controller for rk3568")
+On Wed, May 19, 2021 at 5:55 PM Zong Li <zong.li@sifive.com> wrote:
+> On Tue, May 11, 2021 at 4:57 PM Yixun Lan <yixun.lan@gmail.com> wrote:
+> > On Wed, Apr 14, 2021 at 2:25 PM Zong Li <zong.li@sifive.com> wrote:
+> > > On Mon, Apr 12, 2021 at 7:31 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
+> > > > On Mär 31 2021, Zong Li wrote:
+> > > > > I found that the gemgxlpll was disabled immediately by power
+> > > > > management after macb driver install. The mainline's defconfig doesn't
+> > > > > enable CONFIG_PM, so the network is fine on it. The opensuse defconfig
+> > > > > enables CONFIG_PM, and the patch
+> > > > > 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disable
+> > > > > callback functions, so the gemgxlpll PLL, I have no idea why power
+> > > > > management disable it, I would keep trace it.
+> > > >
+> > > > Does that mean that CONFIG_PM also affects the FU740?
+> > >
+> > > Yes, we got the same problem on the FU740. We are checking the issue.
+> > >
+> > Just a mild ping, any progress regarding this issue?
+>
+> Currently, if runtime power management is enabled, macb driver would
+> go to sleep at the end of macb_probe, then the gigabit ethernet PLL
+> would be disabled.  During this period of time, the system would hang
+> up if we try to access GEMGXL control registers, it means that we
+> can't access GEMGXL control registers before the gigabit ethernet PLL
+> is resumed again. There are some cases, for example, if we execute the
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
- drivers/clk/rockchip/clk-rk3568.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Sounds familiar.
 
-diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
-index 946ea2f45bf3..75ca855e720d 100644
---- a/drivers/clk/rockchip/clk-rk3568.c
-+++ b/drivers/clk/rockchip/clk-rk3568.c
-@@ -454,17 +454,17 @@ static struct rockchip_clk_branch rk3568_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(CPLL_125M, "cpll_125m", "cpll", CLK_IGNORE_UNUSED,
- 			RK3568_CLKSEL_CON(80), 0, 5, DFLAGS,
- 			RK3568_CLKGATE_CON(35), 10, GFLAGS),
-+	COMPOSITE_NOMUX(CPLL_100M, "cpll_100m", "cpll", CLK_IGNORE_UNUSED,
-+			RK3568_CLKSEL_CON(82), 0, 5, DFLAGS,
-+			RK3568_CLKGATE_CON(35), 11, GFLAGS),
- 	COMPOSITE_NOMUX(CPLL_62P5M, "cpll_62p5", "cpll", CLK_IGNORE_UNUSED,
- 			RK3568_CLKSEL_CON(80), 8, 5, DFLAGS,
--			RK3568_CLKGATE_CON(35), 11, GFLAGS),
-+			RK3568_CLKGATE_CON(35), 12, GFLAGS),
- 	COMPOSITE_NOMUX(CPLL_50M, "cpll_50m", "cpll", CLK_IGNORE_UNUSED,
- 			RK3568_CLKSEL_CON(81), 0, 5, DFLAGS,
--			RK3568_CLKGATE_CON(35), 12, GFLAGS),
-+			RK3568_CLKGATE_CON(35), 13, GFLAGS),
- 	COMPOSITE_NOMUX(CPLL_25M, "cpll_25m", "cpll", CLK_IGNORE_UNUSED,
- 			RK3568_CLKSEL_CON(81), 8, 6, DFLAGS,
--			RK3568_CLKGATE_CON(35), 13, GFLAGS),
--	COMPOSITE_NOMUX(CPLL_100M, "cpll_100m", "cpll", CLK_IGNORE_UNUSED,
--			RK3568_CLKSEL_CON(82), 0, 5, DFLAGS,
- 			RK3568_CLKGATE_CON(35), 14, GFLAGS),
- 	COMPOSITE_NOMUX(0, "clk_osc0_div_750k", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3568_CLKSEL_CON(82), 8, 6, DFLAGS,
+> 'ifconfig' command, it would eventually go to the macb_get_status to
+
+Do you mean mac_get_stats()? macb_get_status() does not exist.
+
+> access GEMGXL control registers and cause the system to hang up. Give
+> more example here, if we execute 'ip link set lo up & ip addr add
+> 127.0.0.1/8 dev lo', it would cause the system to hang up, because
+> these commands would try to query the interfaces and eventually go to
+> macb_get_status as well. However, if we can resume the gigabit
+> ethernet PLL first, such as 'ip link set eth0 up' or 'udhcpc', then
+> everything goes well. I'm trying to figure out if there are some hooks
+> that we can check the PLL status in the macb driver before it actually
+> touches the control registers. If anyone has an idea about that,
+> please feel free to point it out to me, thanks.
+
+And you cannot call pm_runtime_get_sync(), as this is called from
+atomic contect. Other drivers avoid accessing the registers while
+the device is not up, cfr. e.g. commit 7fa2955ff70ce453 ("sh_eth:
+Fix sleeping function called from invalid context").
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
