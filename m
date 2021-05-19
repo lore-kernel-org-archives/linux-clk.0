@@ -2,133 +2,439 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 945E8C433ED
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 00:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C565C433B4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 04:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A18E61246
-	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 00:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7447E61040
+	for <linux-clk@archiver.kernel.org>; Wed, 19 May 2021 04:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234721AbhESAUj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 May 2021 20:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234542AbhESAUi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 May 2021 20:20:38 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9044C061761
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 17:19:19 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id h7so5293850qvs.12
-        for <linux-clk@vger.kernel.org>; Tue, 18 May 2021 17:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ya4sSOjySMHGjVVWLWrWfBjZGU/UNkNaSi2rQLK5WkI=;
-        b=dgR0jZfPugb1vJ6AMdf0SFLrD7qlnWMdO85o1cRnR++JEcxOi464/LprwILu/TDG1T
-         GXfq4n65XTy653sRWBW4Gmm3Eq2RPYoMdVC5VmtnEhr6JQFnvZWRrhoqcfMJDtBLGCvH
-         CnF2K+6XwGU+dd7cbE1e5b7JsS1ek7cABHLqn+Qp30zp7C3Cfa/GB2mH78GutSI6zTDF
-         qShfcvujoAF2FX3OndvJmtB3GMacy1AZypxOqK0Zhq9LuedC/a0SmvlbSU+HYXCIGCsx
-         L9Zw2G1BSmTNkwGxDtd17hOSrFoUA8o5F2p5UezVPI7VuhpQXaRUENPAyMSHz8/RxG7a
-         HTPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ya4sSOjySMHGjVVWLWrWfBjZGU/UNkNaSi2rQLK5WkI=;
-        b=t1YIWPgc5q1W4CDmEXjoM0Z8aX0jOmghSj6BVma65wYpWeOm8TxpeMejRmwzRIXDBL
-         6ivqxJmD7IIHJeno3Y75H+KxRX/JUr6K9Mya+DKN46/H7z3HUcktee8nDwQ3CysooII0
-         VY6WSasKI52e8WH58e3GSmvZYCbYc1atoc8fMlvW3u5boSf+r3r46sEo3jMfIahppjvz
-         Rcjk/vIIkmOX8sJDV+AtZQlnmfxDq+V85+57HygLxZ+y59JZmgZ4OR9/DID+hqkg5Bl1
-         7dpwV8L/h0zaG/hNCanaPDfJZTmIQe5m6p+KZheakyi9r/Oj86rZ9+Fvw45Bqudt8/vm
-         RMkg==
-X-Gm-Message-State: AOAM530GGnNEhxJJiz1teUuF69/I/0mZSvpEyX8afwcLbtQQ8L6h4guo
-        4rFXiWrW9QEC0QNWwTa1z1XL9Q==
-X-Google-Smtp-Source: ABdhPJwYXbSRGZh4yAsyxeZTUi/2xCvEgR/QeTo+ZBXTGsrF34zvxgnmkdi2Js6f+e2PAkuYw9il+g==
-X-Received: by 2002:a0c:eed4:: with SMTP id h20mr9086949qvs.40.1621383558985;
-        Tue, 18 May 2021 17:19:18 -0700 (PDT)
-Received: from localhost.localdomain (modemcable068.184-131-66.mc.videotron.ca. [66.131.184.68])
-        by smtp.gmail.com with ESMTPSA id i9sm14998529qtg.18.2021.05.18.17.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 17:19:18 -0700 (PDT)
-From:   Jonathan Marek <jonathan@marek.ca>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        id S238344AbhESEyO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 May 2021 00:54:14 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38260 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229624AbhESEyM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 May 2021 00:54:12 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1621399973; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=biQAgZtIGeNKjHpI4mfXzWmFX5OBoK8r2h37DkAtphg=; b=hqEPQnDy6Icm9RY+R60SBxUwkWpaNGBCEafrs4uf38aKSwZMC6MBOzL97/E3IEX5zEov9plG
+ JqnLOFTJSPjZcu36755lCNt4DCGgGHuZHmisGN5yIuIST2b3DyQQgMr1knb8gLZ+eqOPkzJ6
+ 9Zzet74r1R+bT3WmlGLc6SGL0gI=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 60a49994063320cd13776b5d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 19 May 2021 04:52:35
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 121C6C43460; Wed, 19 May 2021 04:52:35 +0000 (UTC)
+Received: from [192.168.0.101] (unknown [49.204.183.26])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9100C433D3;
+        Wed, 19 May 2021 04:52:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9100C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 1/3] clk: qcom: clk-alpha-pll: add support for zonda pll
+To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc:     robert.foss@linaro.org, andrey.konovalov@linaro.org,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] dt-bindings: clock: add QCOM SM8350 display clock bindings
-Date:   Tue, 18 May 2021 20:18:02 -0400
-Message-Id: <20210519001802.1863-2-jonathan@marek.ca>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210519001802.1863-1-jonathan@marek.ca>
-References: <20210519001802.1863-1-jonathan@marek.ca>
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20210513175258.5842-1-jonathan@marek.ca>
+ <20210513175258.5842-2-jonathan@marek.ca>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <8c3ccbab-4d5e-e968-4eb4-645136556333@codeaurora.org>
+Date:   Wed, 19 May 2021 10:22:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210513175258.5842-2-jonathan@marek.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
-bindings. Update the documentation with the new compatible.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
- include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
- create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-index 0cdf53f41f84..8f414642445e 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-@@ -4,24 +4,26 @@
- $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
- 
- maintainers:
-   - Jonathan Marek <jonathan@marek.ca>
- 
- description: |
-   Qualcomm display clock control module which supports the clocks, resets and
--  power domains on SM8150 and SM8250.
-+  power domains on SM8150/SM8250/SM8350.
- 
-   See also:
-     dt-bindings/clock/qcom,dispcc-sm8150.h
-     dt-bindings/clock/qcom,dispcc-sm8250.h
-+    dt-bindings/clock/qcom,dispcc-sm8350.h
- 
- properties:
-   compatible:
-     enum:
-       - qcom,sm8150-dispcc
-       - qcom,sm8250-dispcc
-+      - qcom,sm8350-dispcc
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-new file mode 120000
-index 000000000000..0312b4544acb
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-@@ -0,0 +1 @@
-+qcom,dispcc-sm8250.h
-\ No newline at end of file
+On 5/13/2021 11:22 PM, Jonathan Marek wrote:
+> Ported over from the downstream driver. Will be used by SM8250 CAMCC.
+> 
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>   drivers/clk/qcom/clk-alpha-pll.c | 245 +++++++++++++++++++++++++++++++
+>   drivers/clk/qcom/clk-alpha-pll.h |   6 +
+>   2 files changed, 251 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index c6eb99169ddc..7b332a8935f4 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -126,6 +126,19 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+>   		[PLL_OFF_TEST_CTL_U] = 0x1c,
+>   		[PLL_OFF_STATUS] = 0x2c,
+>   	},
+> +	[CLK_ALPHA_PLL_TYPE_ZONDA] =  {
+> +		[PLL_OFF_L_VAL] = 0x04,
+> +		[PLL_OFF_ALPHA_VAL] = 0x08,
+> +		[PLL_OFF_USER_CTL] = 0x0c,
+> +		[PLL_OFF_CONFIG_CTL] = 0x10,
+> +		[PLL_OFF_CONFIG_CTL_U] = 0x14,
+> +		[PLL_OFF_CONFIG_CTL_U1] = 0x18,
+> +		[PLL_OFF_TEST_CTL] = 0x1c,
+> +		[PLL_OFF_TEST_CTL_U] = 0x20,
+> +		[PLL_OFF_TEST_CTL_U1] = 0x24,
+> +		[PLL_OFF_OPMODE] = 0x28,
+> +		[PLL_OFF_STATUS] = 0x38,
+> +	},
+>   };
+>   EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>   
+> @@ -162,6 +175,11 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>   #define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
+>   #define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
+>   
+> +/* ZONDA PLL specific */
+> +#define ZONDA_PLL_OUT_MASK	0xf
+> +#define ZONDA_STAY_IN_CFA	BIT(16)
+> +#define ZONDA_PLL_FREQ_LOCK_DET	BIT(29)
+> +
+>   #define pll_alpha_width(p)					\
+>   		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+>   				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+> @@ -208,6 +226,9 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+>   #define wait_for_pll_enable_lock(pll) \
+>   	wait_for_pll(pll, PLL_LOCK_DET, 0, "enable")
+>   
+> +#define wait_for_zonda_pll_freq_lock(pll) \
+> +	wait_for_pll(pll, ZONDA_PLL_FREQ_LOCK_DET, 0, "freq enable")
+> +
+>   #define wait_for_pll_disable(pll) \
+>   	wait_for_pll(pll, PLL_ACTIVE_FLAG, 1, "disable")
+>   
+> @@ -1398,6 +1419,13 @@ const struct clk_ops clk_alpha_pll_postdiv_fabia_ops = {
+>   };
+>   EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
+>   
+> +const struct clk_ops clk_alpha_pll_postdiv_zonda_ops = {
+> +	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
+> +	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
+> +	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_postdiv_zonda_ops);
+> +
+>   /**
+>    * clk_lucid_pll_configure - configure the lucid pll
+>    *
+> @@ -1777,3 +1805,220 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
+>   	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
+>   };
+>   EXPORT_SYMBOL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
+> +
+> +void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> +				const struct alpha_pll_config *config)
+> +{
+> +	if (config->l)
+> +		regmap_write(regmap, PLL_L_VAL(pll), config->l);
+> +
+
+Please use
+clk_alpha_pll_write_config
+
+
+
+         clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
+         clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), 
+config->alpha);
+         clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll),
+                                 config->config_ctl_val);
+         clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll),
+                                 config->config_ctl_hi_val);
+         clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll),
+                                 config->config_ctl_hi1_val);
+         clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll),
+                                 config->user_ctl_val);
+         clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll),
+                                 config->user_ctl_hi_val);
+         clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U1(pll),
+                                 config->user_ctl_hi1_val);
+         clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll),
+                                 config->test_ctl_val);
+         clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll),
+                                 config->test_ctl_hi_val);
+         clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll),
+                                 config->test_ctl_hi1_val);
+
+
+
+> +	if (config->alpha)
+> +		regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+> +
+> +	if (config->config_ctl_val)
+> +		regmap_write(regmap, PLL_CONFIG_CTL(pll),
+> +				config->config_ctl_val);
+> +
+> +	if (config->config_ctl_hi_val)
+> +		regmap_write(regmap, PLL_CONFIG_CTL_U(pll),
+> +				config->config_ctl_hi_val);
+> +
+> +	if (config->config_ctl_hi1_val)
+> +		regmap_write(regmap, PLL_CONFIG_CTL_U1(pll),
+> +				config->config_ctl_hi1_val);
+> +
+> +	if (config->user_ctl_val)
+> +		regmap_write(regmap, PLL_USER_CTL(pll),
+> +				config->user_ctl_val);
+> +
+> +	if (config->user_ctl_hi_val)
+> +		regmap_write(regmap, PLL_USER_CTL_U(pll),
+> +				config->user_ctl_hi_val);
+> +
+> +	if (config->user_ctl_hi1_val)
+> +		regmap_write(regmap, PLL_USER_CTL_U1(pll),
+> +				config->user_ctl_hi1_val);
+> +
+> +	if (config->test_ctl_val)
+> +		regmap_write(regmap, PLL_TEST_CTL(pll),
+> +				config->test_ctl_val);
+> +
+> +	if (config->test_ctl_hi_val)
+> +		regmap_write(regmap, PLL_TEST_CTL_U(pll),
+> +				config->test_ctl_hi_val);
+> +
+> +	if (config->test_ctl_hi1_val)
+> +		regmap_write(regmap, PLL_TEST_CTL_U1(pll),
+> +				config->test_ctl_hi1_val);
+> +
+> +	regmap_update_bits(regmap, PLL_MODE(pll),
+> +			 PLL_BYPASSNL, 0);
+> +
+> +	/* Disable PLL output */
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+> +
+> +	/* Set operation mode to OFF */
+> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+> +
+> +	/* PLL should be in OFF mode before continuing */
+> +	wmb();
+> +
+> +	/* Place the PLL in STANDBY mode */
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+> +}
+> +
+> +static int clk_zonda_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	struct regmap *regmap = pll->clkr.regmap;
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If in FSM mode, just vote for it */
+> +	if (val & PLL_VOTE_FSM_ENA) {
+> +		ret = clk_enable_regmap(hw);
+> +		if (ret)
+> +			return ret;
+> +		return wait_for_pll_enable_active(pll);
+> +	}
+> +
+> +	/* Get the PLL out of bypass mode */
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_BYPASSNL, PLL_BYPASSNL);
+> +
+> +	/*
+> +	 * H/W requires a 1us delay between disabling the bypass and
+> +	 * de-asserting the reset.
+> +	 */
+> +	mb();
+> +	udelay(1);
+> +
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+> +
+> +	/* Set operation mode to RUN */
+> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_RUN);
+> +
+> +	ret = regmap_read(regmap, PLL_TEST_CTL(pll), &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If cfa mode then poll for freq lock */
+> +	if (val & ZONDA_STAY_IN_CFA)
+> +		ret = wait_for_zonda_pll_freq_lock(pll);
+> +	else
+> +		ret = wait_for_pll_enable_lock(pll);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable the PLL outputs */
+> +	ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
+> +				 ZONDA_PLL_OUT_MASK, ZONDA_PLL_OUT_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable the global PLL outputs */
+> +	ret = regmap_update_bits(regmap, PLL_MODE(pll),
+> +				 PLL_OUTCTRL, PLL_OUTCTRL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Ensure that the write above goes through before returning. */
+> +	mb();
+> +
+> +	return 0;
+> +}
+> +
+> +static void clk_zonda_pll_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	struct regmap *regmap = pll->clkr.regmap;
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
+> +	if (ret)
+> +		return;
+> +
+> +	/* If in FSM mode, just unvote it */
+> +	if (val & PLL_VOTE_FSM_ENA) {
+> +		clk_disable_regmap(hw);
+> +		return;
+> +	}
+> +
+> +	/* Disable the global PLL output */
+> +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+> +
+> +	/* Disable the PLL outputs */
+> +	regmap_update_bits(regmap, PLL_USER_CTL(pll), ZONDA_PLL_OUT_MASK, 0);
+> +
+> +	/* Put the PLL in bypass and reset */
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N | PLL_BYPASSNL, 0);
+> +
+> +	/* Place the PLL mode in OFF state */
+> +	regmap_write(regmap, PLL_OPMODE(pll), 0x0);
+> +}
+> +
+> +static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				  unsigned long prate)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	unsigned long rrate;
+> +	u32 test_ctl_val;
+> +	u32 l;
+alpha_width = pll_alpha_width(pll);
+
+> +	u64 a;
+> +	int ret;
+> +
+> +	rrate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_BITWIDTH);
+> +
+
+rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+
+> +	ret = alpha_pll_check_rate_margin(hw, rrate, rate);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +
+> +	/* Wait before polling for the frequency latch */
+> +	udelay(5);
+> +
+> +	/* Read stay in cfa mode */
+> +	ret = regmap_read(pll->clkr.regmap, PLL_TEST_CTL(pll), &test_ctl_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If cfa mode then poll for freq lock */
+> +	if (test_ctl_val & ZONDA_STAY_IN_CFA)
+> +		ret = wait_for_zonda_pll_freq_lock(pll);
+> +	else
+> +		ret = wait_for_pll_enable_lock(pll);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for PLL output to stabilize */
+> +	udelay(100);
+> +	return 0;
+> +}
+> +
+> +static unsigned long
+> +clk_zonda_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	u32 l, frac;
+> +
+> +	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+> +	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
+> +
+> +	return alpha_pll_calc_rate(parent_rate, l, frac, ALPHA_BITWIDTH);
+
+alpha_width = pll_alpha_width(pll);
+
+> +}
+> +
+> +const struct clk_ops clk_alpha_pll_zonda_ops = {
+> +	.enable = clk_zonda_pll_enable,
+> +	.disable = clk_zonda_pll_disable,
+> +	.is_enabled = clk_trion_pll_is_enabled,
+> +	.recalc_rate = clk_zonda_pll_recalc_rate,
+> +	.round_rate = clk_alpha_pll_round_rate,
+> +	.set_rate = clk_zonda_pll_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_zonda_ops);
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+> index 6943e933be0f..4871af27cf76 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.h
+> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+> @@ -16,6 +16,7 @@ enum {
+>   	CLK_ALPHA_PLL_TYPE_TRION,
+>   	CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+>   	CLK_ALPHA_PLL_TYPE_AGERA,
+> +	CLK_ALPHA_PLL_TYPE_ZONDA,
+>   	CLK_ALPHA_PLL_TYPE_MAX,
+>   };
+>   
+> @@ -148,6 +149,9 @@ extern const struct clk_ops clk_alpha_pll_lucid_5lpe_ops;
+>   extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
+>   extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
+>   
+> +extern const struct clk_ops clk_alpha_pll_zonda_ops;
+> +extern const struct clk_ops clk_alpha_pll_postdiv_zonda_ops;
+> +
+>   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>   			     const struct alpha_pll_config *config);
+>   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> @@ -159,6 +163,8 @@ void clk_agera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>   #define clk_lucid_pll_configure(pll, regmap, config) \
+>   	clk_trion_pll_configure(pll, regmap, config)
+>   
+> +void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> +			     const struct alpha_pll_config *config);
+>   
+>   
+>   #endif
+> 
+
 -- 
-2.26.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
