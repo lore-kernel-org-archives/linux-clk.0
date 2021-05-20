@@ -2,130 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867FEC433ED
-	for <linux-clk@archiver.kernel.org>; Thu, 20 May 2021 19:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E195C433B4
+	for <linux-clk@archiver.kernel.org>; Thu, 20 May 2021 20:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69BE7613B9
-	for <linux-clk@archiver.kernel.org>; Thu, 20 May 2021 19:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C56E6128A
+	for <linux-clk@archiver.kernel.org>; Thu, 20 May 2021 20:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237275AbhETTPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 May 2021 15:15:55 -0400
-Received: from smtp-34-i2.italiaonline.it ([213.209.12.34]:39705 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237261AbhETTPs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 20 May 2021 15:15:48 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
- ([82.60.150.250])
-        by smtp-34.iol.local with ESMTPA
-        id jo6clK7DY5WrZjo6llTD7d; Thu, 20 May 2021 21:13:26 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1621538006; bh=hqdToKdXep6rD2t3+5/OUkGokVRGwUGIXwri9qp4guU=;
-        h=From;
-        b=hUnDQhl5+FF2LtbPN7uCikaowH+8P7C86snzpG/1Tf+vWsTDBsuRKVHvoQ2aOYMES
-         4Z2S0V67pN6sKF/K5z916FF6y0aBSe8EvnqEhhi0j9g+2O5OiKIX1uKE4HbtXzc+cK
-         NxX+/xlDORmR+cmI53zMRmFPCI5rVxUnpVuBfX/t6sF4R2MVWnKB7oE2UDieaWjDXf
-         wZRaBhSwoiB2n9Q+b2Pc4UKO0d9qWODS68PSXin9PE8ShklA3jzdQ5AJ0WEtkj710S
-         ehZHG6D6SzfL/nIm+k1QrJ47oMsmFO+IL3fatKy1N87f6jz/BWHyWkqOEvp5zRmZms
-         Sf9ll4JMJYslQ==
-X-CNFS-Analysis: v=2.4 cv=W4/96Tak c=1 sm=1 tr=0 ts=60a6b4d6 cx=a_exe
- a=QSJ1svMVA5tvcuOEAX2Bgw==:117 a=QSJ1svMVA5tvcuOEAX2Bgw==:17 a=VwQbUJbxAAAA:8
- a=IXkOJODCewQtKEFu2i4A:9 a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-kernel@vger.kernel.org
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dario Binacchi <dariobin@libero.it>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v6 2/5] dt-bindings: ti: dpll: add spread spectrum support
-Date:   Thu, 20 May 2021 21:13:02 +0200
-Message-Id: <20210520191306.21711-3-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210520191306.21711-1-dariobin@libero.it>
-References: <20210520191306.21711-1-dariobin@libero.it>
-X-CMAE-Envelope: MS4xfAzkv4+WDkc+LoumzzdwPTDPiSFA5uUBkTMVOM508MuLoM3Q2faBmN1k+QAdcgNX5NOGEVjg9tBcmIYTRSroXmcdEK7zPo/tefGJnvExs3j74OUKiFJh
- Ut89JdsOoowGPe2maxf5Uj3uJjyJwyRh5NdjcfhWRTt6dYJAz9AnIhD1sfLvyvaOsGY5JcGbM4vVhg28za2vyC4a6AteHt7IYNp0mZefo+YyPWXvwIdYVAiF
- v0E+QoC/uRqbuHNXQkJh0ni8ab/04nzQHC74xiUH3QBpoJp/ckvQusGqkSMoTYGWXzvItNGSNXoDyl1oijHoTbBCV5eqB8eDjSRsMhJf6/ZGgjrP7WyM8qHq
- 7twrMKZU+Sn58oKkxsJVLNuqHg1amTwwFPkSHr//5XtLON4HnkxP8+VAhUCpzewqhwT3gat0QwDSxitp0TiS7cF+tEGMV8rGSh9r0V2YGEk8GM2Gu65a45zT
- dKkKSrWuLrQTEnBhTM5p9b/6W+7LkZf83wc6TUhzGAyq4+ZZMoqNPB7D1dvP4QD5yndEDvN/NRv5HyEc9jiyVhyVBTwzx4opwITSi/4BOEh1Lg+xzhxlcmfy
- 1fo=
+        id S237467AbhETUT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 May 2021 16:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233159AbhETUT4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 16:19:56 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC5EC061574;
+        Thu, 20 May 2021 13:18:32 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id s6so20802561edu.10;
+        Thu, 20 May 2021 13:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yiN+nJM5afs1OG+wImwlgCn2IyQHVphWRabagEo0dzQ=;
+        b=QSGvHqzhGYJ4117Wqeq8ym6kwRhKgpJqNuh6Bvx8zZ0kLJifGJbY5egYAe4aJZmzXb
+         nX242ZRJzpWZN77DMgaY0D7g/lhMHmt/716EAIr4mjMIQf9MJpvBEVAO+FHf4HYTrrL1
+         TuZPO+xs6iVdZYaXEEzpnqWfBUwsrJk5bbrRlAZx3JYFUzs0tLw2INE2fWL9ADmtyznQ
+         iUle1zltt8OvTEMAe7rnfRtjlpK4hQjvnEF2PVZ5OBFfhok+obxgKZrDAhD6nyw8POmH
+         tNAY68O/j8Ox/wSjCyYTL8mm4xw2ZEwU6nuj4U2VVpxXHl1t9qs0jUczgAoLgpJlDB3m
+         Vwag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yiN+nJM5afs1OG+wImwlgCn2IyQHVphWRabagEo0dzQ=;
+        b=rfmSvVr85L83spHO/JBOhS+bvfgRqbQsCcPOsdgW2ugvuO4pVi/xdeu+0K11/TJ3PG
+         QF1CDLcduQ/oYxMQe2dY4e6d00dNMGg3vHxU3/KaqRfz09VC80ZmSz/yB/bPYjTpbdWL
+         VADDu99jIoI1PBgWln3yFAKuk18yKwlhqrtw+UTDwgl9dvHFGUJ77F5HFxISDGHNzmkR
+         g9qvEk+UVHT40RKY/74DkFa3m77v71z+opjQPzAtB6YaJbs/0w4TDdJ3HLYbBmiWa6SU
+         TJinmZgFFcmvcS0yr7ETaX5kOZ9xt2NAsKarq4donGhSElr7ONdBxqbT3fDK8ODQmY52
+         4s6A==
+X-Gm-Message-State: AOAM532w4pcjOfvfjsZQ0r2hY3n7zVFTo+42JdmYUhG8OZ5LQbXUB9j7
+        9NmACNc8jwx4sykPYL/3xVP9C97H+AAl0bip1BKxecfO44E=
+X-Google-Smtp-Source: ABdhPJybuLLiK/78YthsNpjiYoeKG9AfUVaCV5etxUAmLyjkMi3piYNmFQTmaU4a4YpzM7zukNVg4eVG9cgUxSq9B3M=
+X-Received: by 2002:aa7:dc12:: with SMTP id b18mr6789458edu.52.1621541910921;
+ Thu, 20 May 2021 13:18:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210520073136.272925-1-jbrunet@baylibre.com>
+In-Reply-To: <20210520073136.272925-1-jbrunet@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 20 May 2021 22:18:20 +0200
+Message-ID: <CAFBinCB=pAipcZOi8S005SyO8ptfzy8oGpW4S8Pi++A5-Jc5eA@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: axg-audio: improve deferral handling
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DT bindings for enabling and adjusting spread spectrum clocking have
-been added.
-
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
----
-
-(no changes since v4)
-
-Changes in v4:
-- Add Rob Herring review tag.
-
-Changes in v3:
-- Add '-hz' suffix to "ti,ssc-modfreq" binding.
-
- .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-index df57009ff8e7..37a7cb6ad07d 100644
---- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-@@ -42,6 +42,11 @@ Required properties:
- 	"idlest" - contains the idle status register base address
- 	"mult-div1" - contains the multiplier / divider register base address
- 	"autoidle" - contains the autoidle register base address (optional)
-+	"ssc-deltam" - DPLL supports spread spectrum clocking (SSC), contains
-+		       the frequency spreading register base address (optional)
-+	"ssc-modfreq" - DPLL supports spread spectrum clocking (SSC), contains
-+		        the modulation frequency register base address
-+			(optional)
-   ti,am3-* dpll types do not have autoidle register
-   ti,omap2-* dpll type does not support idlest / autoidle registers
- 
-@@ -51,6 +56,14 @@ Optional properties:
- 	- ti,low-power-stop : DPLL supports low power stop mode, gating output
- 	- ti,low-power-bypass : DPLL output matches rate of parent bypass clock
- 	- ti,lock : DPLL locks in programmed rate
-+	- ti,min-div : the minimum divisor to start from to round the DPLL
-+		       target rate
-+	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
-+			  spreading in permille (10th of a percent)
-+	- ti,ssc-modfreq-hz : DPLL supports spread spectrum clocking, spread
-+			      spectrum modulation frequency
-+	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
-+			      to enable the downspread feature
- 
- Examples:
- 	dpll_core_ck: dpll_core_ck@44e00490 {
-@@ -83,3 +96,10 @@ Examples:
- 		clocks = <&sys_ck>, <&sys_ck>;
- 		reg = <0x0500>, <0x0540>;
- 	};
-+
-+	dpll_disp_ck: dpll_disp_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,am3-dpll-no-gate-clock";
-+		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-+		reg = <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
-+	};
--- 
-2.17.1
-
+On Thu, May 20, 2021 at 9:32 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> Use dev_err_probe() for clock and reset resources to indicate the deferral
+> reason through sysfs when waiting for the resource to come up.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
