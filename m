@@ -2,298 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28C8C433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 08:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8471DC433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 10:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC91613B6
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 08:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF62613BE
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 10:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbhEUIV4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 May 2021 04:21:56 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:24501 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbhEUIV4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 May 2021 04:21:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1621584509; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=WnStYCS0s6bErnovsJDk1gugRQyu9VwuOWhwjPZb2ay5EuIVqpteFehdFfnBTDa3lt
-    LRpWeL1NzTZ+J3k3LjW0Yo3Ad6lF9reSSArRA9g7EGJbt+OERjnhsEQY3+6rDzBAIBIq
-    Erjc47MEQxKvtFTqUWiiIwbamNaJKW0EPyb7yyAUSyg4SlsPy6aQ8DFsx/vR/J39Txe1
-    sxYPuTYNBDXaMRXSaT8ECoS6UjxtRuYdQVXj/JjHo/dE460nqe+0ZHy3cJ0qBeMf3kUD
-    yYlsgP8lJNZ6jx0cnl042aLG9QaFnTJn3SVhB/vZLkL55oFGDl1InSb+2rOsCB3omLfC
-    8MJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1621584509;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=MwwA+IfVWfIO/BBfDy71s/uZxMJCnYrLsxZz67Xo1pk=;
-    b=rI0QN8RN9CGnqzt7aw5VqajcOJT5g6pkrz5Lt1aJ5T9vO0XEcd4adkQz9cO10odCj4
-    GuSfGrHr1kIQ3+IH6TQLi8or67aP/Rb3anWTXtmvhrC9znWAvz4SY7VWhCTbIfHrL4Es
-    XRF/Xic7h6KfNaX4Z0zNtJxKVBvKjX7fHz9dAfAfeVZQSZCipS+Wz9epefVGhpL9NWMH
-    3nmUVldz51LwELTRruBSQlrKMRAONsnTwSJJ7VbUKAob+E/hdi56xXS9wnH0LS3WZWWw
-    6Hf6IXnsdn3aqp3ZkFHLBJx861UMwekI5FbFHo+LrTTzpIs/spEjnxQmUtM7kBHYVPiA
-    wbtA==
-ARC-Authentication-Results: i=1; strato.com;
-    dkim=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1621584509;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=MwwA+IfVWfIO/BBfDy71s/uZxMJCnYrLsxZz67Xo1pk=;
-    b=Vpv5DAGhIr6m1ehEr/6ramNSVMl3B+sCLfIlj8hPcuOhDZ9SzTPmE5bikFMl8Kt7O5
-    f0vLUwC7NHnNJVQCBwzHvNGmoq/rq/sc53MsSthyvl2ihynTgza/bhgHRfJzFw2yadAu
-    2H40DN4nMCv65hpA7HyoTATKkwrFm8lYj8VX0Jnp9IrHIdjjl/cxbw0eRzRH58p372nK
-    hndVO9DgU1SneOaJH92rR5sWyhGRCGa70AcIenvlaWeCvO0vxTyFDf9XRyjfu/huMYjj
-    lJHR6DdhEogPIzDI32iwTetXDpLKEE0WNxqPoNQOvQcKqTaKjXx0Y0dD5GMuvupaaD2S
-    xzZQ==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j8IcvEBg=="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.26.1 DYNA|AUTH)
-    with ESMTPSA id 2037acx4L88R0Oi
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Fri, 21 May 2021 10:08:27 +0200 (CEST)
-Date:   Fri, 21 May 2021 10:08:23 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com
-Subject: Re: [PATCH v3 01/17] dt-bindings: qcom-bam: Convert binding to YAML
-Message-ID: <YKdqd6nreHwCV3te@gerhold.net>
-References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
- <20210519143700.27392-2-bhupesh.sharma@linaro.org>
+        id S229655AbhEUKgM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 May 2021 06:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230317AbhEUKgF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 May 2021 06:36:05 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769E3C061763
+        for <linux-clk@vger.kernel.org>; Fri, 21 May 2021 03:34:41 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id a2so28937563lfc.9
+        for <linux-clk@vger.kernel.org>; Fri, 21 May 2021 03:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kK6AgO7HXHFP2fUm42xaKIkwVFtfr7s4UEqCfpCwl+E=;
+        b=KLXsG/m7VYE4A5kFfihQ0nvrjjtWr64VfJ9MIsUDEDaoUyzf2ksfVsY/hmHWk438jS
+         gLj5ArZ5pG1grRrw5FkQnoUQqQE+U7K5HcAHszoNLaxEkUxhOrVwF4qrvota1Kw2P2fe
+         pWOQPAwZuwM86fZcM9Qamfdw6W8EZbZhEVbaHAxlS4c92PbRxLfLOk7VUZXk7wezpPQD
+         Jvbi6GwEMC7NQBO8wtaqJIXJ/xzYIVlWYtwWcXOwtsrIdV0U6Ggiug4zcNbKq6f6svKx
+         fRTRkXhcnT6KVbQFcDaqdUxDGlslzVyddWeW13BVjEfs5MEZsJKGOJhaXYTHvvNv+Wpr
+         BuXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kK6AgO7HXHFP2fUm42xaKIkwVFtfr7s4UEqCfpCwl+E=;
+        b=jvA0M3McZ8n1d842E6/oYGwtqvouFRZ7Ga3IXD6d71F5QoK6JLI8mxLP+4J3DRecUN
+         aqEuD/wLWYnFOzSzXlmcgUPHhvc40zrnDToiijD3iytF2y94LUusVHLIprdN8YckyERj
+         3Nchg7o5kJPRw+0BuvcOsm4/9oZyoHt6km/Rkl7OEy4tjocfwnxRs4r1M4nPPLqhO7NR
+         Y2j0QqCcXOGiObg0EoF7uL0Oc+A0A19XTDcdqQ5mVAy8z5b5SDYA2Rly9orlp8O9G9Mm
+         tOf8vtXT0d6EHy3rCoXlQwXq0Q7KVU4U7KeGQvFO1Fwo80ixiN+iIgG5WVzhJvRMFcy0
+         hy4w==
+X-Gm-Message-State: AOAM5324oNvlrXKDcDUOXLHGBYDzLbx6tlSX7hLSFLTbpY0ir+RGXzBU
+        APL1c0GHsE8ChHV5AM8fOi23Aay6DfZZaEBWqdT0bg==
+X-Google-Smtp-Source: ABdhPJxr8ksjnYYXAwQIU7SpRtn3uwwJcFL9tmSo9bdWPAP79uBcFzKF+7mYOD4NtS1AzPmeD2LebBnkFx9Z60j91qk=
+X-Received: by 2002:a05:6512:471:: with SMTP id x17mr1771096lfd.553.1621593279771;
+ Fri, 21 May 2021 03:34:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210519143700.27392-2-bhupesh.sharma@linaro.org>
+References: <20201209094916.17383-1-zong.li@sifive.com> <87v99qyjaz.fsf@igel.home>
+ <CANXhq0oLxFK1431WmTj5HRO5k_omYkQZCBTG+HORTk9=W_XyNg@mail.gmail.com>
+ <CANXhq0p90Cgha_zLzxamK9mxmVPn3effh_cZq_CTLrcAkKZg2Q@mail.gmail.com>
+ <87lfaj7cki.fsf@igel.home> <871rc4on36.fsf@igel.home> <CANXhq0pDge0BPgAjoLrX7Y2qtofb3dhV1_CPHBaCg0o4cEMrbQ@mail.gmail.com>
+ <87a6qrk2pw.fsf@igel.home> <CANXhq0rOeAWnRYHAYKJfDeY4kYz6+5mU_dJSqU67+2p9u0STHQ@mail.gmail.com>
+ <874kgyfetu.fsf@igel.home> <CANXhq0rE-ZcPBp02Pvozpk_s-j6NhxHUmso75uz6ji9bejO8gA@mail.gmail.com>
+ <87h7kukzy4.fsf@igel.home> <CANXhq0r5_xhFu3W9mUFkp_7BYUVBzvHZE1A6jpBDcL_KwTc1cA@mail.gmail.com>
+ <87tuob7n8g.fsf@igel.home> <CANXhq0rTC8grpRe_Q0vG6_52b-41OuN4vHum8RvouMbE6xiXpQ@mail.gmail.com>
+ <CALecT5jQ7_-d7j+MXrG++Bnr_wYmbWgCK20Ju5Pgjbu9xmwQBA@mail.gmail.com>
+ <CANXhq0q-ou6h_Qxjtq52RQ_V2ERu8JLNa7Vq77Rpv_+SFX4LNA@mail.gmail.com> <CAMuHMdWGakAT1LKg_sje=ZYTbLX1_BjjOsqOYP9KrzhMmMi6Ag@mail.gmail.com>
+In-Reply-To: <CAMuHMdWGakAT1LKg_sje=ZYTbLX1_BjjOsqOYP9KrzhMmMi6Ag@mail.gmail.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Fri, 21 May 2021 18:34:28 +0800
+Message-ID: <CANXhq0oa+Sbk0jgXAkOYfutGqx+W+ToD5LuTLSkNCRFOm_=WYQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Yixun Lan <yixun.lan@gmail.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, May 20, 2021 at 2:17 AM Geert Uytterhoeven <geert@linux-m68k.org> w=
+rote:
+>
+> Hi Zong,
+>
+> On Wed, May 19, 2021 at 5:55 PM Zong Li <zong.li@sifive.com> wrote:
+> > On Tue, May 11, 2021 at 4:57 PM Yixun Lan <yixun.lan@gmail.com> wrote:
+> > > On Wed, Apr 14, 2021 at 2:25 PM Zong Li <zong.li@sifive.com> wrote:
+> > > > On Mon, Apr 12, 2021 at 7:31 PM Andreas Schwab <schwab@linux-m68k.o=
+rg> wrote:
+> > > > > On M=C3=A4r 31 2021, Zong Li wrote:
+> > > > > > I found that the gemgxlpll was disabled immediately by power
+> > > > > > management after macb driver install. The mainline's defconfig =
+doesn't
+> > > > > > enable CONFIG_PM, so the network is fine on it. The opensuse de=
+fconfig
+> > > > > > enables CONFIG_PM, and the patch
+> > > > > > 732374a0b440d9a79c8412f318a25cd37ba6f4e2 added the enable/disab=
+le
+> > > > > > callback functions, so the gemgxlpll PLL, I have no idea why po=
+wer
+> > > > > > management disable it, I would keep trace it.
+> > > > >
+> > > > > Does that mean that CONFIG_PM also affects the FU740?
+> > > >
+> > > > Yes, we got the same problem on the FU740. We are checking the issu=
+e.
+> > > >
+> > > Just a mild ping, any progress regarding this issue?
+> >
+> > Currently, if runtime power management is enabled, macb driver would
+> > go to sleep at the end of macb_probe, then the gigabit ethernet PLL
+> > would be disabled.  During this period of time, the system would hang
+> > up if we try to access GEMGXL control registers, it means that we
+> > can't access GEMGXL control registers before the gigabit ethernet PLL
+> > is resumed again. There are some cases, for example, if we execute the
+>
+> Sounds familiar.
+>
+> > 'ifconfig' command, it would eventually go to the macb_get_status to
+>
+> Do you mean mac_get_stats()? macb_get_status() does not exist.
 
-On Wed, May 19, 2021 at 08:06:44PM +0530, Bhupesh Sharma wrote:
-> Convert Qualcomm BAM DMA devicetree binding to YAML.
-> 
-> Cc: Thara Gopinath <thara.gopinath@linaro.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: dmaengine@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: bhupesh.linux@gmail.com
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> ---
->  .../devicetree/bindings/dma/qcom_bam_dma.txt  | 50 ----------
->  .../devicetree/bindings/dma/qcom_bam_dma.yaml | 91 +++++++++++++++++++
->  2 files changed, 91 insertions(+), 50 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
->  create mode 100644 Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt b/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
-> deleted file mode 100644
-> index cf5b9e44432c..000000000000
-> --- a/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -QCOM BAM DMA controller
-> -
-> -Required properties:
-> -- compatible: must be one of the following:
-> - * "qcom,bam-v1.4.0" for MSM8974, APQ8074 and APQ8084
-> - * "qcom,bam-v1.3.0" for APQ8064, IPQ8064 and MSM8960
-> - * "qcom,bam-v1.7.0" for MSM8916
-> -- reg: Address range for DMA registers
-> -- interrupts: Should contain the one interrupt shared by all channels
-> -- #dma-cells: must be <1>, the cell in the dmas property of the client device
-> -  represents the channel number
-> -- clocks: required clock
-> -- clock-names: must contain "bam_clk" entry
-> -- qcom,ee : indicates the active Execution Environment identifier (0-7) used in
-> -  the secure world.
-> -- qcom,controlled-remotely : optional, indicates that the bam is controlled by
-> -  remote proccessor i.e. execution environment.
-> -- num-channels : optional, indicates supported number of DMA channels in a
-> -  remotely controlled bam.
-> -- qcom,num-ees : optional, indicates supported number of Execution Environments
-> -  in a remotely controlled bam.
-> -
-> -Example:
-> -
-> -	uart-bam: dma@f9984000 = {
-> -		compatible = "qcom,bam-v1.4.0";
-> -		reg = <0xf9984000 0x15000>;
-> -		interrupts = <0 94 0>;
-> -		clocks = <&gcc GCC_BAM_DMA_AHB_CLK>;
-> -		clock-names = "bam_clk";
-> -		#dma-cells = <1>;
-> -		qcom,ee = <0>;
-> -	};
-> -
-> -DMA clients must use the format described in the dma.txt file, using a two cell
-> -specifier for each channel.
-> -
-> -Example:
-> -	serial@f991e000 {
-> -		compatible = "qcom,msm-uart";
-> -		reg = <0xf991e000 0x1000>
-> -			<0xf9944000 0x19000>;
-> -		interrupts = <0 108 0>;
-> -		clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
-> -			<&gcc GCC_BLSP1_AHB_CLK>;
-> -		clock-names = "core", "iface";
-> -
-> -		dmas = <&uart-bam 0>, <&uart-bam 1>;
-> -		dma-names = "rx", "tx";
-> -	};
-> diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> new file mode 100644
-> index 000000000000..173e4d7508a6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/qcom_bam_dma.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: QCOM BAM DMA controller binding
-> +
-> +maintainers:
-> +  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> +
-> +description: |
-> +  This document defines the binding for the BAM DMA controller
-> +  found on Qualcomm parts.
-> +
-> +allOf:
-> +  - $ref: "dma-controller.yaml#"
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,bam-v1.4.0
-> +      - qcom,bam-v1.3.0
-> +      - qcom,bam-v1.7.0
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: Address range of the DMA registers.
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 8
-> +
-> +  clock-names:
-> +    const: bam_clk
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Single interrupt line shared by all channels.
-> +
-> +  num-channels:
-> +    maxItems: 31
+Sorry for the typo, it should be macb_get_stats.
 
-maxItems doesn't seem right here, since num-channels isn't an array.
-Perhaps you meant maximum: 31?
+>
+> > access GEMGXL control registers and cause the system to hang up. Give
+> > more example here, if we execute 'ip link set lo up & ip addr add
+> > 127.0.0.1/8 dev lo', it would cause the system to hang up, because
+> > these commands would try to query the interfaces and eventually go to
+> > macb_get_status as well. However, if we can resume the gigabit
+> > ethernet PLL first, such as 'ip link set eth0 up' or 'udhcpc', then
+> > everything goes well. I'm trying to figure out if there are some hooks
+> > that we can check the PLL status in the macb driver before it actually
+> > touches the control registers. If anyone has an idea about that,
+> > please feel free to point it out to me, thanks.
+>
+> And you cannot call pm_runtime_get_sync(), as this is called from
+> atomic contect. Other drivers avoid accessing the registers while
+> the device is not up, cfr. e.g. commit 7fa2955ff70ce453 ("sh_eth:
+> Fix sleeping function called from invalid context").
+>
 
-Can you check your bindings on the existing device trees with
-"make dtbs_check" and make sure that only reasonable errors remain?
+Thanks for your help. I have done the similar modification by
+following the patch you provided. I also verified the bug that we use
+pm_runtime_get_sync there. I'm going to post the fix patch by adding
+the is_opened flag.
 
-This fails on pretty much every device tree:
+Thanks again.
 
-arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml: dma-controller@9184000: num-channels: [[31]] is too short
-        From schema: Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-
-> +    description: |
-> +      Indicates supported number of DMA channels in a remotely controlled bam.
-> +
-> +  "#dma-cells":
-> +    const: 1
-> +    description: The single cell represents the channel index.
-> +
-> +  qcom,ee:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    description:
-> +      Indicates the active Execution Environment identifier (0-7)
-> +      used in the secure world.
-> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-> +
-
-bam_dma.c reads this as uint32 and all existing device tree specify it
-as uint32. I don't think adding the /bits/ 8 to all existing device
-trees is really worth it.
-
-arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml: dma-controller@9184000: qcom,ee: missing size tag in [[1]]
-        From schema: Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-
-
-> +  qcom,controlled-remotely:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Indicates that the bam is controlled by remote proccessor i.e.
-> +      execution environment.
-> +
-> +  qcom,num-ees:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Indicates supported number of Execution Environments in a
-> +      remotely controlled bam.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-
-clocks is often missing if qcom,controlled-remotely is set, e.g.
-
-		slimbam: dma-controller@9184000 {
-			compatible = "qcom,bam-v1.7.0";
-			qcom,controlled-remotely;
-			reg = <0x09184000 0x32000>;
-			num-channels  = <31>;
-			interrupts = <0 164 IRQ_TYPE_LEVEL_HIGH>;
-			#dma-cells = <1>;
-			qcom,ee = <1>;
-			qcom,num-ees = <2>;
-		};
-
-arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml: dma-controller@9184000: 'clocks' is a required property
-        From schema: Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-arch/arm64/boot/dts/qcom/apq8096-db820c.dt.yaml: dma-controller@9184000: 'clock-names' is a required property
-        From schema: Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-
-You might be able to encode this with an if: statement (clocks required
-if qcom,controlled-remotely not specified), not sure.
-
-Stephan
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
