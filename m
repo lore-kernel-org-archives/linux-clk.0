@@ -3,75 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3A3C433B4
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79F9C433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3BB06138C
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965376135B
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:03:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237809AbhEUCBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 May 2021 22:01:41 -0400
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:42722 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237368AbhEUCBi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 22:01:38 -0400
-Received: by mail-oi1-f182.google.com with SMTP id c196so10087190oib.9;
-        Thu, 20 May 2021 19:00:16 -0700 (PDT)
+        id S236335AbhEUCEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 May 2021 22:04:53 -0400
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:46987 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235427AbhEUCEv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 22:04:51 -0400
+Received: by mail-oi1-f171.google.com with SMTP id x15so18247033oic.13;
+        Thu, 20 May 2021 19:03:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=AIzyCD7tcMQFaCHRjYF433tE/tVUbCpzDEpVWvyVp2g=;
-        b=JdCOVtHO2KBkvfb1Z4bK69NnFGlzoaSyQRBRDM2pBnY5yGb3eGBBpvvXJs9zswhG4R
-         qlk+LobmbCDYtp39E83FtdigPTCu7rnEFXI7MDkydW8cf4yaUk5n+X+PJwu9LGIeQ/Ro
-         zkbC3GefW7NJ4/aHMrdybo8vxCsO2mlPcXbi7Jay7gB3yXZsBbVvgp0EjV0hEDzbGVPs
-         QhzdmY8k8y8EOoummg05bPje/UGtQZKdN+PiKsYiJ9wHEFzYRd90D6E/DMIUkbMuiIx/
-         TUy/GcsLU2Un7p6tsR1nzzUsY7XzPn1S080x/xEkVJio+qqY5ircLFQco4tEoTKbMPqK
-         Vb3Q==
-X-Gm-Message-State: AOAM5325aMqeocVxJFg0k2NFHoXSs1V5IOYVVjaAbw3ldrFxheKoSP32
-        ciRNZuNPOHhrM4Y0gyyJIQ==
-X-Google-Smtp-Source: ABdhPJxQdvWlSyDQb5BZCJMmUarQEihQIZIZqdmCgpX9Qu2IMO4NVRwHYOC+17BuKPPyW2TYSIC//A==
-X-Received: by 2002:aca:cf09:: with SMTP id f9mr330658oig.37.1621562415873;
-        Thu, 20 May 2021 19:00:15 -0700 (PDT)
+        bh=WhAeh+dZi9+3yK3kntKir0Vq+lwI30Bn7MsSEyHVbZU=;
+        b=eSL3Dq5saR/VLfdjH7XP2GkiOAGWKElrYSpIdojm2lTA6j2oRAt9dNq91sx+wdZ2K0
+         eowuNWqcMVfdSI0+P+UwCNuRwLTNnIoAFN0I1g1kW7//Z41e7L8Y1PxlgKrN/z9Rki80
+         LXabCue4B8GwLzlSqs37VOJr3y5YmM90ADB87nxYmeNCsKCQHh51Jmduobzjx7GyWvef
+         KGsml7WhJXNN4Z+SGeE6RKzu9Xz4aTMes/+ZgW+/75Ngi7j8LVj+rCKAF3FIUn6TnWhF
+         PKd7jPKh+0ytLok3KlE8k+MdXsiD15XeeL+w4zBrBzdKC01AMBCH0ygtNeeNgmvz0MOK
+         WYpw==
+X-Gm-Message-State: AOAM530jycmH+LmEf7aNfR/5/8jVpEc+ZYW2L8832BvmaS/peQcWTh9p
+        x9w+mGrvF0JD4NgkVYf11g==
+X-Google-Smtp-Source: ABdhPJyQqDX59bgvgmDRWgwVJcOyJeV8oVHeEjcOjQRXCo0m49J2PqCCHAFfmM3cT0row6pVQGk9MA==
+X-Received: by 2002:a05:6808:f90:: with SMTP id o16mr315450oiw.163.1621562607986;
+        Thu, 20 May 2021 19:03:27 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d185sm900734oib.25.2021.05.20.19.00.14
+        by smtp.gmail.com with ESMTPSA id e21sm919703oie.32.2021.05.20.19.03.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 May 2021 19:00:15 -0700 (PDT)
-Received: (nullmailer pid 2499621 invoked by uid 1000);
-        Fri, 21 May 2021 02:00:14 -0000
-Date:   Thu, 20 May 2021 21:00:14 -0500
+        Thu, 20 May 2021 19:03:27 -0700 (PDT)
+Received: (nullmailer pid 2505823 invoked by uid 1000);
+        Fri, 21 May 2021 02:03:26 -0000
+Date:   Thu, 20 May 2021 21:03:26 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Daniel Mack <daniel@zonque.org>
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com,
-        kuninori.morimoto.gx@renesas.com, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: cs2000-cp: Document
- aux-output-source
-Message-ID: <20210521020014.GA2499566@robh.at.kernel.org>
-References: <20210519201551.690654-1-daniel@zonque.org>
- <20210519201551.690654-3-daniel@zonque.org>
+To:     dillon.minfei@gmail.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+        hverkuil-cisco@xs4all.nl, mchehab@kernel.org,
+        alexandre.torgue@foss.st.com, patrice.chotard@foss.st.com,
+        mchehab+huawei@kernel.org, pihsun@chromium.org, gnurou@gmail.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        mcoquelin.stm32@gmail.com, linux-clk@vger.kernel.org,
+        linux-media@vger.kernel.org, ezequiel@collabora.com,
+        devicetree@vger.kernel.org, hugues.fruchet@foss.st.com
+Subject: Re: [PATCH 2/7] media: dt-bindings: media: add document for STM32
+ DMA2D bindings
+Message-ID: <20210521020326.GA2505733@robh.at.kernel.org>
+References: <1621508727-24486-1-git-send-email-dillon.minfei@gmail.com>
+ <1621508727-24486-3-git-send-email-dillon.minfei@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210519201551.690654-3-daniel@zonque.org>
+In-Reply-To: <1621508727-24486-3-git-send-email-dillon.minfei@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 May 2021 22:15:50 +0200, Daniel Mack wrote:
-> This new optional property can be used to control the function of the
-> auxiliary output pin. Introduce a new dt-bindings include file that
-> contains the numerical values.
+On Thu, 20 May 2021 19:05:22 +0800, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
 > 
-> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> This adds documentation of device tree bindings for the STM32 DMA2D
+> 
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
 > ---
->  .../bindings/clock/cirrus,cs2000-cp.yaml           | 13 +++++++++++++
->  include/dt-bindings/clock/cirrus,cs2000-cp.h       | 14 ++++++++++++++
->  2 files changed, 27 insertions(+)
->  create mode 100644 include/dt-bindings/clock/cirrus,cs2000-cp.h
+>  .../devicetree/bindings/media/st,stm32-dma2d.yaml  | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/st,stm32-dma2d.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
