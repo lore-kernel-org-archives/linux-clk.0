@@ -2,179 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12107C43461
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 01:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556FEC433B4
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 01:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E54266135C
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 01:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 327046135C
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 01:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238140AbhEUB7P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 May 2021 21:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237958AbhEUB7J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 21:59:09 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A49AC0613ED
-        for <linux-clk@vger.kernel.org>; Thu, 20 May 2021 18:57:46 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id i19so7793558qtw.9
-        for <linux-clk@vger.kernel.org>; Thu, 20 May 2021 18:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=buMCqeHtuyOXGkkJdrNGUndmaHGXH2/Q3tPpeh7Q5cA=;
-        b=hT2PUE9pbBqC/T2A7RTVjvJ1O766UgLwHeIEZJM8DBHFPqQBoZn8X4MrbGh2wDjIak
-         tcQQyXqdxHneAQLSty9xqo4R7U3vAfuTcByWCRfTcpMwL+h+zgGhm6xhwOAmJKTspVh0
-         +Jk+y2ArCyP5RdULKTjGO67uFJblHvxvZe34rNye+fxoYZhbqtvE3cl0VtF1Q66oPrHe
-         DhfKfaugXta1FsdxFteRefQBZKm8Fdh1oQVMScrykfCe/oUgtkssJ0CjqaF3ad+AHMQb
-         VLSPXzoMFg/1m3/Sx+8J+mJNiwPaVoZGETobFfr4tcJdCAn8u9NL7Hh1Max4vfPTsRLX
-         oDug==
+        id S237728AbhEUCBR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 May 2021 22:01:17 -0400
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:42660 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237368AbhEUCBR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 22:01:17 -0400
+Received: by mail-ot1-f45.google.com with SMTP id g7-20020a9d12870000b0290328b1342b73so8836168otg.9;
+        Thu, 20 May 2021 18:59:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=buMCqeHtuyOXGkkJdrNGUndmaHGXH2/Q3tPpeh7Q5cA=;
-        b=jMtWF8Z1ZaXTWuIKbYRL8rVD3widudzppueEuCbuy5riUGg4KqGJV08FvvB/WB0Tzs
-         sJ6pzEcGtt6/oW/tAP2ROkuQ7UGMqrcuMvVfhIIP0UIPDvuw1OyKKyMO6Vc1+CRKFhCd
-         Dn3jFpdsfGxFp+PMIE4Tah/3J+oijFUgwDRYTX90fO1Ku1eLGDfP04SITJ2BLf2Yo5wy
-         +T+G3lyB2uPmuijaxrnvvWrzmmIZbdgSeCfd5nM1xvbZbL1i+PXmiteGJKK9tfPwvdmf
-         xMZcyglydIGLO3/FhsKrocJ4B3ayBocpFwlvbn5UlsD4PDGYSMU6Co3VpLmAsd3ZachR
-         6fJg==
-X-Gm-Message-State: AOAM532AWmUggcHyEWsjktb7gAMByf13tCtONqZ0hxEvUvmQyzYKo4Uw
-        T/h6Dy2FDk+YOr7QmBBnkx96mQ==
-X-Google-Smtp-Source: ABdhPJxWquzOWfEHbrPOV1dhDOji1d36s6wy7ft8gWYN4OvhvNr2UmKZNm1DSRqV1XmS5MeSzLDKUg==
-X-Received: by 2002:ac8:5396:: with SMTP id x22mr8556084qtp.170.1621562265469;
-        Thu, 20 May 2021 18:57:45 -0700 (PDT)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id p11sm3365920qtl.82.2021.05.20.18.57.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 May 2021 18:57:45 -0700 (PDT)
-Subject: Re: [PATCH v3 16/17] crypto: qce: Defer probing if BAM dma channel is
- not yet initialized
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com
-References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
- <20210519143700.27392-17-bhupesh.sharma@linaro.org>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <ca0e576d-0231-d1a8-06c5-e85f0706c993@linaro.org>
-Date:   Thu, 20 May 2021 21:57:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eqK8c/oEUeOyU0aEXf7v8U4QtFxi0t8bo1m9NwBjQo0=;
+        b=ahir52BCPsVko4KugxkY0SWnR2kiJmT7oCfMSQEDQWY9Rv4u5hRF4fkFDeNqyjW/Ai
+         oVr+4LncH6W3we+adbNKn6Eg2TTJfo30N0KDvRGEwXzSgigRjnDBsipf8ACNHlJwvWTJ
+         6YVouGisRnQFgE+CT0IFEWevqZzK2+nPU+oN6kC7/o554m0RI4rLcOi0NnTFPcSL6rof
+         EYO6LkxLEgjktlK5jG8uwVSAQgKGQ/uojvYuVcuQ/jkpHNEAK73odkpnJ144mi7YHI8W
+         2lGfMJYX0u7jm95P283c+r4u5tnplKqDIW6ocK+VhwFlamqHYBugz8DqaQAW8TMjOh4L
+         C/NA==
+X-Gm-Message-State: AOAM533jhPkFKiJjK6HTXloEhiEg1/slC7LA4VkJmo5ZKv/HqF5qBsnL
+        xFnOqJ6kGUkRq5ePcyTbEQ==
+X-Google-Smtp-Source: ABdhPJzJ2wYHc1sx4DiWJUKYH4vfz36nebuSzNoHjb6qaCX1TlZwAlT1N0ixZr+ABf+VF/1QUBw29w==
+X-Received: by 2002:a9d:69c5:: with SMTP id v5mr6154296oto.108.1621562394803;
+        Thu, 20 May 2021 18:59:54 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a18sm1026886otp.48.2021.05.20.18.59.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 May 2021 18:59:54 -0700 (PDT)
+Received: (nullmailer pid 2498876 invoked by uid 1000);
+        Fri, 21 May 2021 01:59:53 -0000
+Date:   Thu, 20 May 2021 20:59:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, kuninori.morimoto.gx@renesas.com,
+        robh+dt@kernel.org, sboyd@kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: convert cs2000-cp bindings to
+ yaml
+Message-ID: <20210521015953.GA2498846@robh.at.kernel.org>
+References: <20210519201551.690654-1-daniel@zonque.org>
+ <20210519201551.690654-2-daniel@zonque.org>
 MIME-Version: 1.0
-In-Reply-To: <20210519143700.27392-17-bhupesh.sharma@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210519201551.690654-2-daniel@zonque.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 5/19/21 10:36 AM, Bhupesh Sharma wrote:
-> Since the Qualcomm qce crypto driver needs the BAM dma driver to be
-> setup first (to allow crypto operations), it makes sense to defer
-> the qce crypto driver probing in case the BAM dma driver is not yet
-> probed.
+On Wed, 19 May 2021 22:15:49 +0200, Daniel Mack wrote:
+> The original author of the file was added as maintainer.
 > 
-> Move the code leg requesting dma channels earlier in the
-> probe() flow. This fixes the qce probe failure issues when both qce
-> and BMA dma are compiled as static part of the kernel.
-
-So, I do not understand what issue you faced with the current code 
-ordering. When bam dma is not initialized, qce_dma_request will fail and
-rest the error path kicks in.
-To me the correct ordering for enabling a driver is to turn on clocks 
-and interconnect before requesting for dma. Unless, there is a specific 
-issue, I will ask for that order to be maintained.
-
-Warm Regards
-Thara
-
-> 
-> Cc: Thara Gopinath <thara.gopinath@linaro.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: dmaengine@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: bhupesh.linux@gmail.com
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Daniel Mack <daniel@zonque.org>
 > ---
->   drivers/crypto/qce/core.c | 16 +++++++++-------
->   1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> index 8b3e2b4580c2..207221d5b996 100644
-> --- a/drivers/crypto/qce/core.c
-> +++ b/drivers/crypto/qce/core.c
-> @@ -218,6 +218,14 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   	if (ret < 0)
->   		goto err_out;
->   
-> +	/* qce driver requires BAM dma driver to be setup first.
-> +	 * In case the dma channel are not set yet, this check
-> +	 * helps use to return -EPROBE_DEFER earlier.
-> +	 */
-> +	ret = qce_dma_request(qce->dev, &qce->dma);
-> +	if (ret)
-> +		return ret;
-> +
->   	qce->mem_path = devm_of_icc_get(qce->dev, "memory");
->   	if (IS_ERR(qce->mem_path))
->   		return dev_err_probe(dev, PTR_ERR(qce->mem_path),
-> @@ -269,10 +277,6 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   			goto err_clks_iface;
->   	}
->   
-> -	ret = qce_dma_request(qce->dev, &qce->dma);
-> -	if (ret)
-> -		goto err_clks;
-> -
->   	ret = qce_check_version(qce);
->   	if (ret)
->   		goto err_clks;
-> @@ -287,12 +291,10 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   
->   	ret = qce_register_algs(qce);
->   	if (ret)
-> -		goto err_dma;
-> +		goto err_clks;
->   
->   	return 0;
->   
-> -err_dma:
-> -	qce_dma_release(&qce->dma);
->   err_clks:
->   	clk_disable_unprepare(qce->bus);
->   err_clks_iface:
+>  .../bindings/clock/cirrus,cs2000-cp.yaml      | 63 +++++++++++++++++++
+>  .../devicetree/bindings/clock/cs2000-cp.txt   | 22 -------
+>  2 files changed, 63 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
 > 
 
-
+Reviewed-by: Rob Herring <robh@kernel.org>
