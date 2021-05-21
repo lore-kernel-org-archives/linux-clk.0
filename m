@@ -2,65 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E476C43460
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89363C433ED
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 08:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4BC60FD9
-	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 02:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6832861363
+	for <linux-clk@archiver.kernel.org>; Fri, 21 May 2021 08:18:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233997AbhEUCNT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 May 2021 22:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238409AbhEUCNS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 May 2021 22:13:18 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3AEC0613CE
-        for <linux-clk@vger.kernel.org>; Thu, 20 May 2021 19:11:56 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id f18so18343656qko.7
-        for <linux-clk@vger.kernel.org>; Thu, 20 May 2021 19:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aBM+iI0qSzAgR4v/IlJ1mhN5B469z/KN8UZgQ8XD1ec=;
-        b=Pd8QHT9I9ZzCAyXCQOGSN4z8Qrt29+k82+Pq2c7Er2DGM07zP8Se/eYuazzBGmSVUX
-         EEWdiRc4S/oVJeokMqAqgrhUzt/xk29XlDocVXV2VK3x2N3wPoN3GtEnjqjE8hNnA3Ut
-         G5uvdBTSwLEqu8qdkV8vQj/GnOyuyQjKvA57egZgiuFhn++8QSDqQS03Lbf3xTd4VTVn
-         IyzO3GhNv01zS2W+en7umdXccMKj18VVo+dIiYqBDE6AA3danMD38Ig8Untp/YyRzl7o
-         Xx+tMco1pQ+MhYtM/LbTEYlU9Dv9j8RmVYLNhNe4y6DdTMV5t/Ai4oWUJ4IEmFdT7nfh
-         61Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aBM+iI0qSzAgR4v/IlJ1mhN5B469z/KN8UZgQ8XD1ec=;
-        b=J5ynrK5LbFk75VfGH52u1B+dhK5Ne3tRv1HqxIjSv6MMthXTZzBpvn2QSAeGSzKunH
-         F9FI1GOA5tHnSJz/C8NuFNyfgMvYBH8Ub17zNiET1nw71zsMbOuvnssu9f831TlIiwtd
-         VB/XdQO3W0IEQgtfV9drx3SKN9quh4W/Mfn3635CGCPuD1c7FD6Iua1Lu9Z3sFFsQh7c
-         e1wPLuC2L2nLinp+ROKOGwdHpYKBOmWI7cqU/QWrboKJLq6jJUTQSw1fvxTc2FhrTdS5
-         gvbMH40EY2ZvC7gUaLb90J//WVa91+rHL7sNNuM2Ue4OlbBNra+u+M/LRINOfiezCWP0
-         H/4Q==
-X-Gm-Message-State: AOAM532Mr2BQwBMAKcAPeZmGGDQAS1hVX1FS7V6rYV47mTY3mLPBiS/3
-        bgZVeCqCM7MsykQNN++IerjwHw==
-X-Google-Smtp-Source: ABdhPJwUF9ChpTwtKJPB8FzviVnCFCgvQeNTzJZjYLfqL7nUynVm01d3MiGRwFGjo4Zm+uQ9n9RZWQ==
-X-Received: by 2002:a05:620a:4043:: with SMTP id i3mr8772288qko.380.1621563115682;
-        Thu, 20 May 2021 19:11:55 -0700 (PDT)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id m22sm3780687qkk.65.2021.05.20.19.11.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 May 2021 19:11:55 -0700 (PDT)
-Subject: Re: [PATCH v3 13/17] crypto: qce: core: Make clocks optional
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S230408AbhEUIUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 May 2021 04:20:13 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:19236 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230366AbhEUIUG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 May 2021 04:20:06 -0400
+X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 May 2021 04:20:04 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1621584692; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=px0a8MPK74qUXfzV5oznTizuZ6wSYWw1PnTyWPCWdSDm/VNlPpcX9mJnG6EcNy9+al
+    IrLqSd+SHTUy+MUh4/hS/NujOZyXCwe5HSxvwd14I4cIgw7AXjiqrNMEjfoNtHxIys+M
+    a14YcQqlLi/YEf8/g4X4ZGU/AalgcmEhdVB1NzRcUZHOqu2GPZZa5cXxBMD4g12p5vTr
+    1ZuiaGzrocf8qKnkp/grY2j8Mk/T8asPYHcGr9U72ssFsDrf0PwyrMIcLvz2THFrDc1E
+    Q0RN+6nMx63661R9AByJ0js93R8df2y6lfNya9k+aTx+RhVCKBFHq6sggs8ml9fW/Mm+
+    GM3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1621584692;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=P7QD5eRHBuT1lh8i7wzUly3dzKODxjJ0OhwZcPAUEZs=;
+    b=qOvPJEGTxcu4ftC0OhXI8oXRU/fO3ZYD1+OJWQuXaRw0/0pVx5jb5rJU6Tdvzny/1t
+    q9kdVB/kSfoQheuv6mQ2ldYRUjTTQWfloUKYv3uVD0uaGqjs/fn7oRNK+GbfNjfg7Xvc
+    oUwGQB8uW6oqv/0EjOr4ISA5eEP8c1nv/XkFEjtEDjcj6fHN0WqmL1pno8Ifjy2Nd4K3
+    NdgKAgA3gzct4XSyv4PdgbwS4wJseRljsozSAgx2sM2h8w9XhYASEBzMbh0TPkqJ1at7
+    r35/EciNY0gCLtIMeKlIFzHsRjCNrgxe50OG6ghPv/pdNOM+7tuATln42+LmxkY73GCk
+    MHaA==
+ARC-Authentication-Results: i=1; strato.com;
+    dkim=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1621584692;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=P7QD5eRHBuT1lh8i7wzUly3dzKODxjJ0OhwZcPAUEZs=;
+    b=DqIzGoyybqPjiuFKLTxGZ6dWr/44ExmlF0FdJwNkGyMj6i0q4h4RS5yv5ONtvUEhMS
+    UB0osp8RELueRhSHyAG5nZgDxXvuGtfICJE1uWislHsnMqjyaoixsw9e0L2IB7+Z3uIW
+    RQtga13/EQTxsVG5KS78sR+Kfez1hbP5UGPbr7omd2Z31kDFcdrTBCDtWtX2TPhwj/eh
+    0XHq1pF8QHpkCFwA9SryKT0kGu9MW/fI/sqNvv1N+EVOA2jnEP92M667faGDxbN8Y4Pz
+    PyaZDAzCgW4Hd4v8hXWa0dly72EjDd9Fi45Fze1iyvh4hrfANIvuems9VscDkHxCxDia
+    JaFQ==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j8IcvEBg=="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.26.1 DYNA|AUTH)
+    with ESMTPSA id 2037acx4L8BW0Pp
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Fri, 21 May 2021 10:11:32 +0200 (CEST)
+Date:   Fri, 21 May 2021 10:11:30 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -71,33 +78,28 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
+Subject: Re: [PATCH v3 03/17] dt-bindings: qcom-bam: Add 'iommus' to required
+ properties
+Message-ID: <YKdrMoSFAh1bR3xT@gerhold.net>
 References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
- <20210519143700.27392-14-bhupesh.sharma@linaro.org>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <125e1f83-e340-9cd3-91a8-cd1ee3ee8b7f@linaro.org>
-Date:   Thu, 20 May 2021 22:11:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20210519143700.27392-4-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20210519143700.27392-14-bhupesh.sharma@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210519143700.27392-4-bhupesh.sharma@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bhupesh,
+Hi,
 
-On 5/19/21 10:36 AM, Bhupesh Sharma wrote:
-> From: Thara Gopinath <thara.gopinath@linaro.org>
+On Wed, May 19, 2021 at 08:06:46PM +0530, Bhupesh Sharma wrote:
+> Add the missing required property - 'iommus' to the
+> device-tree binding documentation for qcom-bam DMA IP.
 > 
-> On certain Snapdragon processors, the crypto engine clocks are enabled by
-> default by security firmware and the driver need not handle the
-> clocks. Make acquiring of all the clocks optional in crypto enginer driver
-> so that the driver intializes properly even if no clocks are specified in
-> the dt.
+> This property describes the phandle(s) to apps_smmu node with sid mask.
 > 
+> Cc: Thara Gopinath <thara.gopinath@linaro.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Cc: Rob Herring <robh+dt@kernel.org>
 > Cc: Andy Gross <agross@kernel.org>
@@ -112,200 +114,38 @@ On 5/19/21 10:36 AM, Bhupesh Sharma wrote:
 > Cc: devicetree@vger.kernel.org
 > Cc: linux-kernel@vger.kernel.org
 > Cc: bhupesh.linux@gmail.com
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> [ bhupesh.sharma@linaro.org: Make clock enablement optional only for qcom parts where
->    firmware has already initialized them, using a bool variable and fix
->    error paths ]
 > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 > ---
->   drivers/crypto/qce/core.c | 89 +++++++++++++++++++++++++--------------
->   drivers/crypto/qce/core.h |  2 +
->   2 files changed, 59 insertions(+), 32 deletions(-)
+>  .../devicetree/bindings/dma/qcom_bam_dma.yaml         | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> index 905378906ac7..8c3c68ba579e 100644
-> --- a/drivers/crypto/qce/core.c
-> +++ b/drivers/crypto/qce/core.c
-> @@ -9,6 +9,7 @@
->   #include <linux/interrupt.h>
->   #include <linux/module.h>
->   #include <linux/mod_devicetable.h>
-> +#include <linux/of_device.h>
->   #include <linux/platform_device.h>
->   #include <linux/spinlock.h>
->   #include <linux/types.h>
-> @@ -184,10 +185,20 @@ static int qce_check_version(struct qce_device *qce)
->   	return 0;
->   }
->   
-> +static const struct of_device_id qce_crypto_of_match[] = {
-> +	{ .compatible = "qcom,ipq6018-qce", },
-> +	{ .compatible = "qcom,sdm845-qce", },
-> +	{ .compatible = "qcom,sm8250-qce", },
-
-Adding qcom,sm8250-qce does not belong in this patch. It deserves a 
-separate patch of it's own.
-
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, qce_crypto_of_match);
+> diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
+> index d2900616006c..2479862a3654 100644
+> --- a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
+> @@ -55,6 +55,12 @@ properties:
+>    interconnect-names:
+>      const: memory
+>  
+> +  iommus:
+> +    minItems: 1
+> +    maxItems: 8
+> +    description: |
+> +      phandle to apps_smmu node with sid mask.
 > +
->   static int qce_crypto_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct qce_device *qce;
-> +	const struct of_device_id *of_id =
-> +			of_match_device(qce_crypto_of_match, &pdev->dev);
->   	int ret;
->   
->   	qce = devm_kzalloc(dev, sizeof(*qce), GFP_KERNEL);
-> @@ -198,45 +209,65 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   	platform_set_drvdata(pdev, qce);
->   
->   	qce->base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(qce->base))
-> -		return PTR_ERR(qce->base);
-> +	if (IS_ERR(qce->base)) {
-> +		ret = PTR_ERR(qce->base);
-> +		goto err_out;
-> +	}
+>    qcom,ee:
+>      $ref: /schemas/types.yaml#/definitions/uint8
+>      description:
+> @@ -81,6 +87,7 @@ required:
+>    - clocks
+>    - clock-names
+>    - "#dma-cells"
+> +  - iommus
 
-I don't see the reason for change in error handling here or below. But 
-,for whatever reason this is changed, it has to be a separate patch.
+I don't think we can make this required, older SoCs don't use "iommus"
+for bam_dma.
 
->   
->   	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
->   	if (ret < 0)
-> -		return ret;
-> +		goto err_out;
->   
->   	qce->mem_path = devm_of_icc_get(qce->dev, "memory");
->   	if (IS_ERR(qce->mem_path))
->   		return dev_err_probe(dev, PTR_ERR(qce->mem_path),
->   				     "Failed to get mem path\n");
->   
-> -	qce->core = devm_clk_get(qce->dev, "core");
-> -	if (IS_ERR(qce->core))
-> -		return PTR_ERR(qce->core);
-> -
-> -	qce->iface = devm_clk_get(qce->dev, "iface");
-> -	if (IS_ERR(qce->iface))
-> -		return PTR_ERR(qce->iface);
-> -
-> -	qce->bus = devm_clk_get(qce->dev, "bus");
-> -	if (IS_ERR(qce->bus))
-> -		return PTR_ERR(qce->bus);
-> -
->   	ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
->   	if (ret)
-> -		return ret;
-> +		goto err_out;
->   
-> -	ret = clk_prepare_enable(qce->core);
-> -	if (ret)
-> -		return ret;
-> +	/* On some qcom parts the crypto clocks are already configured by
-> +	 * the firmware running before linux. In such cases we don't need to
-> +	 * enable/configure them again. Check here for the same.
-> +	 */
-> +	if (!strcmp(of_id->compatible, "qcom,ipq6018-qce") ||
-> +	    !strcmp(of_id->compatible, "qcom,sdm845-qce"))
+arch/arm64/boot/dts/qcom/apq8016-sbc.dt.yaml: dma-controller@7884000: 'iommus' is a required property
+        From schema: Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
 
-You can avoid this and most of this patch by using 
-devm_clk_get_optional. This patch can be like just three lines of code 
-change. clk_prepare_enable returns 0 if the clock is null. There is no 
-need to check for the compatibles above. Use devm_clk_get_optional 
-instead of devm_clk_get and everything else can be left as is.
-
-Warm Regards
-Thara
-
-> +		qce->clks_configured_by_fw = false;
-> +	else
-> +		qce->clks_configured_by_fw = true;
-> +
-> +	if (!qce->clks_configured_by_fw) {
-> +		qce->core = devm_clk_get(qce->dev, "core");
-> +		if (IS_ERR(qce->core)) {
-> +			ret = PTR_ERR(qce->core);
-> +			goto err_out;
-> +		}
-> +
-> +		qce->iface = devm_clk_get(qce->dev, "iface");
-> +		if (IS_ERR(qce->iface)) {
-> +			ret = PTR_ERR(qce->iface);
-> +			goto err_out;
-> +		}
-> +
-> +		qce->bus = devm_clk_get(qce->dev, "bus");
-> +		if (IS_ERR(qce->bus)) {
-> +			ret = PTR_ERR(qce->bus);
-> +			goto err_out;
-> +		}
-> +
-> +		ret = clk_prepare_enable(qce->core);
-> +		if (ret)
-> +			goto err_out;
->   
-> -	ret = clk_prepare_enable(qce->iface);
-> -	if (ret)
-> -		goto err_clks_core;
-> +		ret = clk_prepare_enable(qce->iface);
-> +		if (ret)
-> +			goto err_clks_core;
->   
-> -	ret = clk_prepare_enable(qce->bus);
-> -	if (ret)
-> -		goto err_clks_iface;
-> +		ret = clk_prepare_enable(qce->bus);
-> +		if (ret)
-> +			goto err_clks_iface;
-> +	}
->   
->   	ret = qce_dma_request(qce->dev, &qce->dma);
->   	if (ret)
-> @@ -268,6 +299,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   	clk_disable_unprepare(qce->iface);
->   err_clks_core:
->   	clk_disable_unprepare(qce->core);
-> +err_out:
->   	return ret;
->   }
->   
-> @@ -284,13 +316,6 @@ static int qce_crypto_remove(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -static const struct of_device_id qce_crypto_of_match[] = {
-> -	{ .compatible = "qcom,ipq6018-qce", },
-> -	{ .compatible = "qcom,sdm845-qce", },
-> -	{}
-> -};
-> -MODULE_DEVICE_TABLE(of, qce_crypto_of_match);
-> -
->   static struct platform_driver qce_crypto_driver = {
->   	.probe = qce_crypto_probe,
->   	.remove = qce_crypto_remove,
-> diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
-> index 228fcd69ec51..d9bf05babecc 100644
-> --- a/drivers/crypto/qce/core.h
-> +++ b/drivers/crypto/qce/core.h
-> @@ -23,6 +23,7 @@
->    * @dma: pointer to dma data
->    * @burst_size: the crypto burst size
->    * @pipe_pair_id: which pipe pair id the device using
-> + * @clks_configured_by_fw: clocks are already configured by fw
->    * @async_req_enqueue: invoked by every algorithm to enqueue a request
->    * @async_req_done: invoked by every algorithm to finish its request
->    */
-> @@ -39,6 +40,7 @@ struct qce_device {
->   	struct qce_dma_data dma;
->   	int burst_size;
->   	unsigned int pipe_pair_id;
-> +	bool clks_configured_by_fw;
->   	int (*async_req_enqueue)(struct qce_device *qce,
->   				 struct crypto_async_request *req);
->   	void (*async_req_done)(struct qce_device *qce, int ret);
-> 
-
-
+Stephan
