@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC76C47083
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 20:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CE3C47083
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 21:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9F761159
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 20:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A90611CB
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 21:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232047AbhEWUk2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 May 2021 16:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48466 "EHLO
+        id S232004AbhEWVLv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 May 2021 17:11:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232035AbhEWUk1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 May 2021 16:40:27 -0400
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B224AC061574;
-        Sun, 23 May 2021 13:39:00 -0700 (PDT)
+        with ESMTP id S231994AbhEWVLv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 May 2021 17:11:51 -0400
+Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE3AC061574;
+        Sun, 23 May 2021 14:10:24 -0700 (PDT)
 Received: from TimeMachine.localdomain (bband-dyn255.178-41-232.t-com.sk [178.41.232.255])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 2B9421F6AF;
-        Sun, 23 May 2021 22:32:09 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id C26A33E7AE;
+        Sun, 23 May 2021 23:10:22 +0200 (CEST)
 From:   Martin Botka <martin.botka@somainline.org>
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         konrad.dybcio@somainline.org,
@@ -38,9 +38,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/2] dt-bindings: clk: qcom: gcc-sm6125: Document SM6125 GCC driver
-Date:   Sun, 23 May 2021 22:31:59 +0200
-Message-Id: <20210523203202.691900-1-martin.botka@somainline.org>
+Subject: [PATCH V2 1/2] dt-bindings: clk: qcom: gcc-sm6125: Document SM6125 GCC driver
+Date:   Sun, 23 May 2021 23:10:13 +0200
+Message-Id: <20210523211016.726736-1-martin.botka@somainline.org>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,8 +49,12 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Document the newly added SM6125 GCC driver.
+
 Signed-off-by: Martin Botka <martin.botka@somainline.org>
 ---
+Changes in V2:
+Add commit description.
  .../bindings/clock/qcom,gcc-sm6125.yaml       | 72 +++++++++++++++++++
  1 file changed, 72 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml
