@@ -2,117 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEC5C2B9F2
-	for <linux-clk@archiver.kernel.org>; Sat, 22 May 2021 14:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8735C47084
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 20:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFE3D61152
-	for <linux-clk@archiver.kernel.org>; Sat, 22 May 2021 14:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE001611CE
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 20:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhEVO6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 May 2021 10:58:20 -0400
-Received: from antares.kleine-koenig.org ([94.130.110.236]:53592 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbhEVO6T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 May 2021 10:58:19 -0400
-Received: from antares.kleine-koenig.org (localhost [127.0.0.1])
-        by antares.kleine-koenig.org (Postfix) with ESMTP id 340FEBA731A;
-        Sat, 22 May 2021 16:56:53 +0200 (CEST)
-Received: from antares.kleine-koenig.org ([94.130.110.236])
-        by antares.kleine-koenig.org (antares.kleine-koenig.org [94.130.110.236]) (amavisd-new, port 10024)
-        with ESMTP id 0W5ZC5VCjR6Y; Sat, 22 May 2021 16:56:51 +0200 (CEST)
-Received: from taurus.defre.kleine-koenig.org (unknown [IPv6:2a02:8071:b5c8:7b00:dbda:c056:f5db:7aa3])
-        by antares.kleine-koenig.org (Postfix) with ESMTPSA;
-        Sat, 22 May 2021 16:56:51 +0200 (CEST)
-Subject: Re: [PATCH] clk: qcom: Simplify usage of dev_err_probe()
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S232001AbhEWUjw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 May 2021 16:39:52 -0400
+Received: from relay06.th.seeweb.it ([5.144.164.167]:36283 "EHLO
+        relay06.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231982AbhEWUju (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 May 2021 16:39:50 -0400
+Received: from TimeMachine.localdomain (bband-dyn255.178-41-232.t-com.sk [178.41.232.255])
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 8BAA63E905;
+        Sun, 23 May 2021 22:38:22 +0200 (CEST)
+From:   Martin Botka <martin.botka@somainline.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        konrad.dybcio@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org,
+        Martin Botka <martin.botka@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20210427164522.2886825-1-uwe@kleine-koenig.org>
- <20210427165612.GH1908499@yoga>
-From:   =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Message-ID: <6137d093-7b63-aead-e94d-548b70c34b7c@kleine-koenig.org>
-Date:   Sat, 22 May 2021 16:56:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH 5/5] rpmcc: Add support for SM6125
+Date:   Sun, 23 May 2021 22:38:13 +0200
+Message-Id: <20210523203814.697586-5-martin.botka@somainline.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210523203814.697586-1-martin.botka@somainline.org>
+References: <20210523203814.697586-1-martin.botka@somainline.org>
 MIME-Version: 1.0
-In-Reply-To: <20210427165612.GH1908499@yoga>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0MBJHBZwzPGENCIYSjuON4oJ54LNvT0gB"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0MBJHBZwzPGENCIYSjuON4oJ54LNvT0gB
-Content-Type: multipart/mixed; boundary="Ga9Xhj853vmYjKG2VhxJRCmmvNLO3fTnL";
- protected-headers="v1"
-From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org
-Message-ID: <6137d093-7b63-aead-e94d-548b70c34b7c@kleine-koenig.org>
-Subject: Re: [PATCH] clk: qcom: Simplify usage of dev_err_probe()
-References: <20210427164522.2886825-1-uwe@kleine-koenig.org>
- <20210427165612.GH1908499@yoga>
-In-Reply-To: <20210427165612.GH1908499@yoga>
+This commit adds support for RPM clocks found in SM6125 SoC
 
---Ga9Xhj853vmYjKG2VhxJRCmmvNLO3fTnL
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Martin Botka <martin.botka@somainline.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c   | 55 ++++++++++++++++++++++++++++++++
+ include/linux/soc/qcom/smd-rpm.h |  1 +
+ 2 files changed, 56 insertions(+)
 
-Hello,
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 8200c26b968c..51458f740ba0 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -1059,6 +1059,61 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
+ 	.num_clks = ARRAY_SIZE(sdm660_clks),
+ };
+ 
++/* SM6125 */
++DEFINE_CLK_SMD_RPM_BRANCH(sm6125, bi_tcxo, bi_tcxo_ao,
++					QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
++DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(sm6125, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk,
++					QCOM_SMD_RPM_MISC_CLK, 1, 19200000);
++DEFINE_CLK_SMD_RPM(sm6125, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, QCOM_SMD_RPM_QUP_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 1);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk,
++						QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk,
++						QCOM_SMD_RPM_BUS_CLK, 5);
++
++/* SMD_XO_BUFFER */
++DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk1, ln_bb_clk1_a, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk2, ln_bb_clk2_a, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk3, ln_bb_clk3_a, 3);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk2, rf_clk2_a, 5);
++
++static struct clk_smd_rpm *sm6125_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &sm6125_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &sm6125_bi_tcxo_ao,
++	[RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
++	[RPM_SMD_BIMC_CLK] = &sm6125_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK] = &sm6125_bimc_a_clk,
++	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
++	[RPM_SMD_RF_CLK1] = &sm6125_rf_clk1,
++	[RPM_SMD_RF_CLK1_A] = &sm6125_rf_clk1_a,
++	[RPM_SMD_RF_CLK2] = &sm6125_rf_clk2,
++	[RPM_SMD_RF_CLK2_A] = &sm6125_rf_clk2_a,
++	[RPM_SMD_LN_BB_CLK1] = &sm6125_ln_bb_clk1,
++	[RPM_SMD_LN_BB_CLK1_A] = &sm6125_ln_bb_clk1_a,
++	[RPM_SMD_LN_BB_CLK2] = &sm6125_ln_bb_clk2,
++	[RPM_SMD_LN_BB_CLK2_A] = &sm6125_ln_bb_clk2_a,
++	[RPM_SMD_LN_BB_CLK3] = &sm6125_ln_bb_clk3,
++	[RPM_SMD_LN_BB_CLK3_A] = &sm6125_ln_bb_clk3_a,
++	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
++	[RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
++	[RPM_SMD_CE1_CLK] = &sm6125_ce1_clk,
++	[RPM_SMD_CE1_A_CLK] = &sm6125_ce1_a_clk,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_sm6125 = {
++	.clks = sm6125_clks,
++	.num_clks = ARRAY_SIZE(sm6125_clks),
++};
++
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
+diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
+index f2645ec52520..b737d7e456e4 100644
+--- a/include/linux/soc/qcom/smd-rpm.h
++++ b/include/linux/soc/qcom/smd-rpm.h
+@@ -28,6 +28,7 @@ struct qcom_smd_rpm;
+ #define QCOM_SMD_RPM_NCPA	0x6170636E
+ #define QCOM_SMD_RPM_NCPB	0x6270636E
+ #define QCOM_SMD_RPM_OCMEM_PWR	0x706d636f
++#define QCOM_SMD_RPM_QUP_CLK	0x00707571
+ #define QCOM_SMD_RPM_QPIC_CLK	0x63697071
+ #define QCOM_SMD_RPM_SMPA	0x61706d73
+ #define QCOM_SMD_RPM_SMPB	0x62706d73
+-- 
+2.31.1
 
-On 4/27/21 6:56 PM, Bjorn Andersson wrote:
-> On Tue 27 Apr 11:45 CDT 2021, Uwe Kleine-K?nig wrote:
-
-@Bjorn Andersson: Your MUA is broken, it misquotes the =C3=B6 in my name =
-(in=20
-the mail and the To header).
-
->> dev_err_probe() returns the error code passed as second parameter. Als=
-o if
->> the error code is -EPROBE_DEFER dev_err_probe() is silent, so there is=20
-no
->> need to check for this value before calling dev_err_probe().
->>
->=20
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-thanks.
-
-This patch is nearly a month old now. Is drivers/clk still maintained?
-
-Best regards
-Uwe
-
-
---Ga9Xhj853vmYjKG2VhxJRCmmvNLO3fTnL--
-
---0MBJHBZwzPGENCIYSjuON4oJ54LNvT0gB
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCpG64ACgkQwfwUeK3K
-7AkGUQgAnLol06BKwtGCxgtikEEwwXgUC2F4MoktyUyRAlG+bBPqRsYBbnbvagOL
-gxK7X+jn+bk/22F2Sf75GOzsH7pP88FkVAdp3sZgQ1Y+nsy1B2PzB0pGYi8qWtZS
-6qOckKRN4KRZQpVtHiYO9mIZ1cDtSRru7XQ6TnKpdso/JpVe2qV+kan+NJd71d2l
-YDNaPYlvV/JsTZAGMU8Pg8oOkhQwgkCOKrU8aaorrAcNiXqtYhSgVumMlVjlhm0c
-mUOsz9ul6Kj61+anD9KpmPPI6SUqZaVVkicGHxnTlZaeXnx+ls/Lqv8xn7na3kqE
-igi5SrKFm3GuxIWzJcFnFyyUraKyXw==
-=aCV9
------END PGP SIGNATURE-----
-
---0MBJHBZwzPGENCIYSjuON4oJ54LNvT0gB--
