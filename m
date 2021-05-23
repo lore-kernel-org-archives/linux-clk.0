@@ -2,138 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD885C47088
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 21:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D2EC47083
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 23:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB2A0611CB
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 21:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 459846115C
+	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 23:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232058AbhEWVRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 May 2021 17:17:36 -0400
-Received: from relay02.th.seeweb.it ([5.144.164.163]:56953 "EHLO
-        relay02.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232024AbhEWVRf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 May 2021 17:17:35 -0400
-Received: from TimeMachine.localdomain (bband-dyn255.178-41-232.t-com.sk [178.41.232.255])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id DABB520084;
-        Sun, 23 May 2021 23:16:06 +0200 (CEST)
-From:   Martin Botka <martin.botka@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org,
-        Martin Botka <martin.botka@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH V2 5/5] rpmcc: Add support for SM6125
-Date:   Sun, 23 May 2021 23:15:56 +0200
-Message-Id: <20210523211556.731976-5-martin.botka@somainline.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210523211556.731976-1-martin.botka@somainline.org>
-References: <20210523211556.731976-1-martin.botka@somainline.org>
+        id S232033AbhEWXPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 May 2021 19:15:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231980AbhEWXPR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 May 2021 19:15:17 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A92EC061574;
+        Sun, 23 May 2021 16:13:49 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id w7so17766816lji.6;
+        Sun, 23 May 2021 16:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9TDs1IAuMTt6gby5ta7NVUMJ5XPCBAna36AQ7KVr83o=;
+        b=lyrKSMXHrbOdnfD1gaEYeGAfa2LIOGMcOtHP+USmjM/zk0CRAJfZ2wcH3SwVPwLz8R
+         /i5F7C2o+x5JWZL8U242sJbwwiaJmiyWmXbf+fvYtZ3OydpbHr8dpIOXJ/811XMGyaXi
+         dg9CxqhX6o0pFm32CjAa7k57osEM9hYTdQdfA3mT4ecIXamq+qcN8N/B6HU1qw5SiUM/
+         JvesnZsb+N8sLjH0JmZnGAplu6FJngT32y0rjcU99RNkL+xmpK3it5j7x0XD4iNitlh9
+         pLGTKIdaLawBkALufqo1THA11G0SlPDc7GpNN9k6mY+VBl7QWZFelFl56lNLrdha0TzO
+         VjGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9TDs1IAuMTt6gby5ta7NVUMJ5XPCBAna36AQ7KVr83o=;
+        b=aYf8Ov2kecDzjF3CM3WIwHq4F228ig5B8XxqzY+9qWDGW7NyJ4NkayWHcE15hKKTaU
+         bVM1/gVl6PaqDltL4h+TQPv0k+mweRuNcOzggBwUNPoIL2CB0xV68AC06tjLYA98/hZS
+         SauTFGJeTygxYIagP5FfvrWzHsBv3jKBrjiGfd3iPhQudwyGbstYrMDGOjPw1txEz3OO
+         Wvn/YcJiMSo8RGKCOTPr3qQs/bqFbjvWN6TR+I2t6V2ofF25wLen6mvC/4d25JaYykO5
+         tliHf1pI0JUEzyLv8ICnxPV3wEM4PdG/zoeGjlIMrIlGI3cH4+3lnbgT4MipSBpyyltX
+         5zHA==
+X-Gm-Message-State: AOAM532HI6+BBN5BAY47L8biSl1IpO7+mC7Qzg8Twp/l6alqnZJyhPtj
+        apQ2pIvxDxqvqHNqIBk9L1A=
+X-Google-Smtp-Source: ABdhPJyIl0e0RtyHHomQK9YyIH1PJZ8hNKhrksCU8b/rx2eg8Sm5HzEg0cBbW8tHO22veni57ChuMw==
+X-Received: by 2002:a2e:850d:: with SMTP id j13mr14926426lji.19.1621811626771;
+        Sun, 23 May 2021 16:13:46 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.gmail.com with ESMTPSA id p7sm1268619lfr.184.2021.05.23.16.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 May 2021 16:13:46 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 00/14] NVIDIA Tegra memory and power management changes for 5.14
+Date:   Mon, 24 May 2021 02:13:21 +0300
+Message-Id: <20210523231335.8238-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This commit adds support for RPM clocks found in SM6125 SoC
+This series:
 
-Signed-off-by: Martin Botka <martin.botka@somainline.org>
----
-Changes in V2:
-None
- drivers/clk/qcom/clk-smd-rpm.c   | 55 ++++++++++++++++++++++++++++++++
- include/linux/soc/qcom/smd-rpm.h |  1 +
- 2 files changed, 56 insertions(+)
+  1. Adds CPU/core voltage bump before system is rebooted.
+  2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
+     Tegra memory drivers to use it.
+  3. Adds compile-testing support to the Tegra memory drivers.
+  4. Adds Tegra SoC core power domain support.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 8200c26b968c..51458f740ba0 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -1059,6 +1059,61 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
- 	.num_clks = ARRAY_SIZE(sdm660_clks),
- };
- 
-+/* SM6125 */
-+DEFINE_CLK_SMD_RPM_BRANCH(sm6125, bi_tcxo, bi_tcxo_ao,
-+					QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
-+DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(sm6125, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk,
-+					QCOM_SMD_RPM_MISC_CLK, 1, 19200000);
-+DEFINE_CLK_SMD_RPM(sm6125, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, QCOM_SMD_RPM_QUP_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 1);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk,
-+						QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk,
-+						QCOM_SMD_RPM_BUS_CLK, 5);
-+
-+/* SMD_XO_BUFFER */
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk1, ln_bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk2, ln_bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk3, ln_bb_clk3_a, 3);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk2, rf_clk2_a, 5);
-+
-+static struct clk_smd_rpm *sm6125_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &sm6125_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &sm6125_bi_tcxo_ao,
-+	[RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK] = &sm6125_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &sm6125_bimc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &sm6125_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &sm6125_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2] = &sm6125_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A] = &sm6125_rf_clk2_a,
-+	[RPM_SMD_LN_BB_CLK1] = &sm6125_ln_bb_clk1,
-+	[RPM_SMD_LN_BB_CLK1_A] = &sm6125_ln_bb_clk1_a,
-+	[RPM_SMD_LN_BB_CLK2] = &sm6125_ln_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &sm6125_ln_bb_clk2_a,
-+	[RPM_SMD_LN_BB_CLK3] = &sm6125_ln_bb_clk3,
-+	[RPM_SMD_LN_BB_CLK3_A] = &sm6125_ln_bb_clk3_a,
-+	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
-+	[RPM_SMD_CE1_CLK] = &sm6125_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &sm6125_ce1_a_clk,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_sm6125 = {
-+	.clks = sm6125_clks,
-+	.num_clks = ARRAY_SIZE(sm6125_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index f2645ec52520..b737d7e456e4 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -28,6 +28,7 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_NCPA	0x6170636E
- #define QCOM_SMD_RPM_NCPB	0x6270636E
- #define QCOM_SMD_RPM_OCMEM_PWR	0x706d636f
-+#define QCOM_SMD_RPM_QUP_CLK	0x00707571
- #define QCOM_SMD_RPM_QPIC_CLK	0x63697071
- #define QCOM_SMD_RPM_SMPA	0x61706d73
- #define QCOM_SMD_RPM_SMPB	0x62706d73
+Changelog:
+
+v2: - Added more clk stubs that should fix build error reported by the
+      kernel bot to v1 for the T210 memory driver.
+
+    - Added r-b from Krzysztof Kozlowski to the memory patches.
+
+    - Added back voltage restore on detaching of coupled regulators to
+      the T20 regulator coupler which previously got missed by accident.
+
+    - Added new patch:
+
+        regulator: core: Detach coupled regulator before coupling count is dropped
+
+      It fixes skipped voltage balancing on detaching of regulators which I
+      happened to notice due to the recent regression of the MAX77620 driver
+      that made driver to re-probe and detach coupled regulators.
+
+v1: - Merged previous patches into this single series.
+
+    - Added ack from Rob Herring to the core domain DT binding patch.
+
+    - Implemented suggestions that were given by Krzysztof Kozlowski:
+
+        - Factored out soc_is_tegra() stub into standalone patch.
+        - Updated tags of the "Fix compilation warnings on 64bit platforms"
+          patch, added reported-by from lkp robot and removed suggested-by
+          from Nathan Chancellor.
+        - Switched to use use BIT() macro.
+
+    - Added r-b from Krzysztof Kozlowski to "Enable compile testing for
+      all drivers" patch.
+
+    - Added r-b from Nathan Chancellor.
+
+    - Dropped voltage floor/ceiling from devm_tegra_core_dev_init_opp_table()
+      since only memory drivers now need to initialize voltage vote and they
+      don't need floor/ceil. This was suggested by Viresh Kumar.
+
+Dmitry Osipenko (14):
+  regulator: core: Add regulator_sync_voltage_rdev()
+  regulator: core: Detach coupled regulator before coupling count is
+    dropped
+  soc/tegra: regulators: Bump voltages on system reboot
+  soc/tegra: Add stub for soc_is_tegra()
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+  soc/tegra: fuse: Add stubs needed for compile-testing
+  clk: tegra: Add stubs needed for compile-testing
+  memory: tegra: Fix compilation warnings on 64bit platforms
+  memory: tegra: Enable compile testing for all drivers
+  memory: tegra20-emc: Use devm_tegra_core_dev_init_opp_table()
+  memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
+  dt-bindings: soc: tegra-pmc: Document core power domain
+  soc/tegra: pmc: Add core power domain
+  soc/tegra: regulators: Support core domain state syncing
+
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         |  35 +++++
+ drivers/memory/tegra/Kconfig                  |  16 +-
+ drivers/memory/tegra/tegra124-emc.c           |   4 +-
+ drivers/memory/tegra/tegra20-emc.c            |  48 +-----
+ drivers/memory/tegra/tegra30-emc.c            |  52 +------
+ drivers/regulator/core.c                      |  37 ++++-
+ drivers/soc/tegra/Kconfig                     |  14 ++
+ drivers/soc/tegra/common.c                    |  97 ++++++++++++
+ drivers/soc/tegra/pmc.c                       | 143 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra20.c        |  97 +++++++++++-
+ drivers/soc/tegra/regulators-tegra30.c        |  96 +++++++++++-
+ include/linux/clk/tegra.h                     |  82 +++++++---
+ include/linux/regulator/driver.h              |   1 +
+ include/soc/tegra/common.h                    |  38 +++++
+ include/soc/tegra/fuse.h                      |  20 ++-
+ 15 files changed, 650 insertions(+), 130 deletions(-)
+
 -- 
-2.31.1
+2.30.2
 
