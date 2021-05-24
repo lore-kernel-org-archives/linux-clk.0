@@ -2,65 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEDAC47082
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 23:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BFEC47080
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80794611CB
-	for <linux-clk@archiver.kernel.org>; Sun, 23 May 2021 23:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03FC611CE
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232021AbhEWXwu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 May 2021 19:52:50 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:36960 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231982AbhEWXwu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 May 2021 19:52:50 -0400
-Received: from p5b127ecf.dip0.t-ipconnect.de ([91.18.126.207] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lkxsF-0003D5-NC; Mon, 24 May 2021 01:51:11 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Kever Yang <kever.yang@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: fix rk3568 cpll clk gate bits
-Date:   Mon, 24 May 2021 01:51:10 +0200
-Message-Id: <162181382840.2545380.4133939469375306641.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210519174149.3691335-1-pgwipeout@gmail.com>
-References: <20210519174149.3691335-1-pgwipeout@gmail.com>
+        id S232479AbhEXI4i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 04:56:38 -0400
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:42496 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232362AbhEXI4g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 04:56:36 -0400
+Received: by mail-ua1-f51.google.com with SMTP id 14so9083664uac.9;
+        Mon, 24 May 2021 01:55:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5H0qZkzumrdkYcAyVjQDQA6Hje2p2FxbSu2Plzs94Cg=;
+        b=Bn/c6Kw7q0MNLCbshYdbAYgS97X7nKSJGRbi6LfqPjQuE8DXHOElGQnZ5C3wKeIgcy
+         4KkM51ueXOpt1GLBYOfYiUylUogOKUgzWQLvNYK9gmnBPRLAPq5/vg1YblRRFhYqlETi
+         oejDUHfGr+TTCKy/8RkHw8U639RPilcjlMeJRFkv9UJk3j6BlpbJT1SS5NsyttGttx54
+         VoiIW5IeABFkIEIEb6x9K37WzXB+Max8o5z9nBwyXvPuOSNl8uGK2lul+dTRbFr4E3d8
+         9Ak4hbkPX4bWQXLg8KIyOOj0lZJn+OyE3NgXUoVAYLeqC5e5fR+ZViFlgZSo7X+rvQCU
+         yJ8Q==
+X-Gm-Message-State: AOAM5311EDvujXylHpzfASl67Hhlo2oCu5I2vwwRODy8IjlTmaGwMlVy
+        oBQaOAua/sxGfVg4R77llrw4sf7V/VGQhC3Znig=
+X-Google-Smtp-Source: ABdhPJxxyosYrdj1GqNypPiBnYRArw2E3/38homNMO1Av1PFu0RXXr0Dh8t9Utur9chqZtb0X55m4PfZQwmS3BcBlZQ=
+X-Received: by 2002:ab0:7705:: with SMTP id z5mr20481974uaq.2.1621846508208;
+ Mon, 24 May 2021 01:55:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210523232556.15017-1-digetx@gmail.com>
+In-Reply-To: <20210523232556.15017-1-digetx@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 May 2021 10:54:57 +0200
+Message-ID: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK enabled
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <john@phrozen.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 May 2021 13:41:49 -0400, Peter Geis wrote:
-> The cpll clk gate bits had an ordering issue. This led to the loss of
-> the boot sdmmc controller when the gmac was shut down with:
-> `ip link set eth0 down`
-> as the cpll_100m was shut off instead of the cpll_62p5.
-> cpll_62p5, cpll_50m, cpll_25m were all off by one with cpll_100m
-> misplaced.
-> 
-> [...]
+Hi Dmitry,
 
-Applied, thanks!
+On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+> There are couple older platforms that can't be compile-tested because they
+> partially implement CLK API. It causes build failure of kernel drivers due
+> to the missing symbols of the unimplemented part of CLK API.
+>
+> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
+>                      MIPS Ralink.
+>
+> Disable compile-testing for HAVE_LEGACY_CLK=y.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-[1/1] clk: rockchip: fix rk3568 cpll clk gate bits
-      commit: 2f3877d609e7951ef96d24979eb9d163f1f004f8
+Thanks for your patch!
 
-Best regards,
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
+>
+>  config COMPILE_TEST
+>         bool "Compile also drivers which will not load"
+> -       depends on HAS_IOMEM
+> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
+
+That sounds a bit drastic to me.  Usually we just try to implement the
+missing functionality, or provide stubs.
+Which functions are missing?
+
+>         help
+>           Some drivers can be compiled on a different platform than they are
+>           intended to be run on. Despite they cannot be loaded there (or even
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
