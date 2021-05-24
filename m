@@ -2,123 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11263C04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 20:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5818C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 21:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0B886140B
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 20:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C0F56140F
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 21:39:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232829AbhEXU0k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 16:26:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbhEXU0k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 16:26:40 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8848C061574;
-        Mon, 24 May 2021 13:25:10 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id c15so35252316ljr.7;
-        Mon, 24 May 2021 13:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g9hgNwmOuDP5DthgeuaSKULnhUo7ubNRfZKms1Tzv8E=;
-        b=uK3ppJAGePAn590fa0VNgjuAvFP6VPLQ4E6Zcop0dEpa33bKhMkltSH1KrnoPw2liA
-         gzgY5alIPL4LDkf8ok2by6JZRu0bedLT7p8Gq1Im66WB3yfmDtjZ26R/zsfeVyyOQSUL
-         o/JCpoMy58arwwyhOlPq4nU8vzCyJad12WNXBajLRRYL1Q59ZxRLi9CKbI8zfa43cwia
-         cCm+ATVNeB0rxXMvb36poYjerFWKlBawfzoOrEDXXf3EWMNdwag92wvRYQzFwKMjSvP3
-         yhwfWuDuJVFaz968/q84ArWT0H72LPXY3kWvqhMEC7ocOFHXwj+Vtc5Yamkw4B+uu5KW
-         mQYA==
+        id S233294AbhEXVlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 17:41:08 -0400
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:34499 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232547AbhEXVlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 17:41:07 -0400
+Received: by mail-oi1-f175.google.com with SMTP id u11so28374580oiv.1;
+        Mon, 24 May 2021 14:39:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g9hgNwmOuDP5DthgeuaSKULnhUo7ubNRfZKms1Tzv8E=;
-        b=OUCUPs3N6S48yohq4uHpJCez7jX6NkYIOAX6adPHTWOfXoUrXLbWmBbNTQ4eM3xsdM
-         LstcaDB7iQiWa+AfuDzt1nrvHQnyQuVB+QCFlzYO7c5vDkYcADZM8mwP63gYGKIHyAJ2
-         1b7fnTYAHF7do5RFWEsm8993kKPXhmGXIsAb2rk5PNHWCrSw8cdBYNB4SqOgt7VOggh0
-         /4cBeqE1GJ8nIGUgsBYHA3BeDKebhZVhuY0JuDmtL5UB61pg6EnTwIv6yvOBTkOQMyW/
-         lcuJEg2KCIohF/Iqo4L9JZ3H2vdrdfzLnkPr6a9khQEhcPeydBzIUfJNQNswvBaW745d
-         hAhg==
-X-Gm-Message-State: AOAM53072oR2Gnns+kJW7cN6NQ+Zi3CAMxvNGL9C56E6eYniH/UcX5my
-        Fr9ALqZv7XW35jmieYtD9BQfS8SYuYs=
-X-Google-Smtp-Source: ABdhPJwIo76DFE3Csz9R+vPmfQuF0txDCYX+lFv5TGE4as15O/HmFYS80FS1l9HZDl3DZ5jfU1mC5Q==
-X-Received: by 2002:a2e:95c6:: with SMTP id y6mr18642398ljh.155.1621887909009;
-        Mon, 24 May 2021 13:25:09 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
-        by smtp.googlemail.com with ESMTPSA id x68sm1508832lff.92.2021.05.24.13.25.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 May 2021 13:25:08 -0700 (PDT)
-Subject: Re: [PATCH v2 13/14] soc/tegra: pmc: Add core power domain
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=oZgYZTZUD5+APBZoaT6l8ZwbOZbqbgSkGLzVf/tRBGA=;
+        b=tuUw7U+ItT4IJoN5Q/l+/A8NYQYXlaxLu7Xj1ufISMOOdXKBUNAAN+24K8TkejlCG8
+         4FkKuJhZc79psds/WpPYY8Jxyxbp3xQYeF5a66taK+ZVPr/IPBVEPVJoUhJnH//XeCXd
+         nVg9fblwc5nMBddipLX5WRoIGsVC1NGBPLSaxfOB+mwi5lYt9PLfkMloZFUwhnmyS6wo
+         KoCmrbl8QyBGC7w2pUzk6jUqm0m+E8Zy/SKCNNqqbvW7yuVq8vAPqpWpY7Zb4WQKaiPH
+         Q35SwCztPUOuq6ogAUHbeAJYBJGm/dK9RDERVQljVBT8klyYrgS3G0WfwW9cJ3MDk+H8
+         3pfQ==
+X-Gm-Message-State: AOAM531vCskIiJpdyfXTAWqFQqGjFOGBXTn29oapmIu+809QKn37zU83
+        tXWf0h2q1/sFdjTlvBnLGg==
+X-Google-Smtp-Source: ABdhPJwzD4unQyBP4EbhN+KSVb7mCjgNBOrrwEZLKwwF2vGlsNzBa3Otszl7AocZmk/cI829T8E5Kw==
+X-Received: by 2002:aca:2115:: with SMTP id 21mr4966103oiz.12.1621892377488;
+        Mon, 24 May 2021 14:39:37 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e21sm2919793oie.32.2021.05.24.14.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 14:39:36 -0700 (PDT)
+Received: (nullmailer pid 1190594 invoked by uid 1000);
+        Mon, 24 May 2021 21:39:35 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Martin Botka <martin.botka@somainline.org>
+Cc:     konrad.dybcio@somainline.org, linux-arm-msm@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210523231335.8238-1-digetx@gmail.com>
- <20210523231335.8238-14-digetx@gmail.com>
- <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <65f65cb9-a25f-9c2c-2902-7e1776d66661@gmail.com>
-Date:   Mon, 24 May 2021 23:25:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        ~postmarketos/upstreaming@lists.sr.ht, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        angelogioacchino.delregno@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        marijn.suijten@somainline.org
+In-Reply-To: <20210523211016.726736-1-martin.botka@somainline.org>
+References: <20210523211016.726736-1-martin.botka@somainline.org>
+Subject: Re: [PATCH V2 1/2] dt-bindings: clk: qcom: gcc-sm6125: Document SM6125 GCC driver
+Date:   Mon, 24 May 2021 16:39:35 -0500
+Message-Id: <1621892375.408287.1190593.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-24.05.2021 20:04, Ulf Hansson пишет:
->> +static void tegra_pmc_sync_state(struct device *dev)
->> +{
->> +       int err;
->> +
->> +       pmc->core_domain_state_synced = true;
->> +
->> +       /* this is a no-op if core regulator isn't used */
->> +       mutex_lock(&pmc->powergates_lock);
->> +       err = dev_pm_opp_sync_regulators(dev);
->> +       mutex_unlock(&pmc->powergates_lock);
->> +
->> +       if (err)
->> +               dev_err(dev, "failed to sync regulators: %d\n", err);
->> +}
->> +
-> Nitpick.
+On Sun, 23 May 2021 23:10:13 +0200, Martin Botka wrote:
+> Document the newly added SM6125 GCC driver.
 > 
-> Would you mind splitting the "sync_state" thingy out into a separate
-> patch on top of $subject patch?
-> 
-> I think it would be nice, especially since it shares a function via
-> include/soc/tegra/common.h - that would make it clear to what part
-> that belongs to.
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+> ---
+> Changes in V2:
+> Add commit description.
+>  .../bindings/clock/qcom,gcc-sm6125.yaml       | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml
 > 
 
-I'll split it in v3. Thank you for the review.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.example.dts:27.28-29 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1416: dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1482526
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
