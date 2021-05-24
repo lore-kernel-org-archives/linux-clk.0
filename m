@@ -2,65 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5D4C04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905F8C2B9F7
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC54761074
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C25C6109F
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232445AbhEXKXo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 06:23:44 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:45570 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232433AbhEXKXo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 06:23:44 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UZvuTug_1621851732;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0UZvuTug_1621851732)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 24 May 2021 18:22:13 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH] clk: sifive: Fix kernel-doc
-Date:   Mon, 24 May 2021 18:22:10 +0800
-Message-Id: <1621851730-32287-1-git-send-email-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S232644AbhEXKjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 06:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232643AbhEXKjQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 06:39:16 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A12C061574;
+        Mon, 24 May 2021 03:37:48 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id s6so31281549edu.10;
+        Mon, 24 May 2021 03:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yM3g27MTcN+1fkL6tqTGZDpmJiATWPK1JGlSl5Sc8kk=;
+        b=G+f9++7xXxQcJLSEzdH6NpXF3TNWNQw6drAatX9YSB2jHZobP97kBKK0SfXVPDbwh2
+         UzV6kbzxstJKg3AmS6NqQGhRch8Fab+7g/wPTeoNhlVB6IVAM35oeB2asr1zkGvrFMfn
+         7MXkYhveIKVjWACHRl75N1YLbTUyFftlkxDcypFBmSmNVQ1SzfJy7UgS+YxVNJZ+6RhH
+         r11Zo/nJH0ghm9bWip3K2HmFfTPKPKHBFlOrvHk0kCRpb43DwZQJfhz84zkgP9wKRaJR
+         JHxAsbgrc1Fx/Il1sAJxuaNIIyvbkCMsqpw0Mf8MRhIagfnjPzt+LeafJ6WfvYu3LH4Y
+         vx+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yM3g27MTcN+1fkL6tqTGZDpmJiATWPK1JGlSl5Sc8kk=;
+        b=WWP7YqZt07Ywgc6/9B5er2kOtkYgqg5lgOfsOpJ20oYP8PrjgU0yAqOfFuCV0/YXie
+         YCs8QRLLXCUTJB6mtpfHOf2b9Qu6MpGFtRgX3tpROiW1o2WAlGnJIJEcI3VCsTzUkQ60
+         m1dGbCwIk9485iD6MQR1ZZx8Cgbp0x48U5hkRs2lAgr+XiOpZ0zKwUyjIILjUD5xWt9g
+         Wnpyq5sd1n14XULgVPX9ekXSghsK/8jeuiGeCAXmg80hS/IiDE94Q7Ve0s2xc4GzOlFE
+         QUsSNvs0xKaR1w/gdyA2+6/xJ/o+7FGfT/rUzcEYUL7rkItrw5JsJPhcOClGFeMGT3pT
+         PmnQ==
+X-Gm-Message-State: AOAM531vTfXGkVLAdyZ5lbGydj7t7o6hyhB4lpdn/jDKaCHjCrdhAG3/
+        Tb20aTzs/kPj+u14d8oZXFA=
+X-Google-Smtp-Source: ABdhPJyyzLozFM4BKK5sAQA70oWdkP63q8tTbSOhZxfxvUduzsEJsTs/J8MBcLkMTJgjv/LEa88a3w==
+X-Received: by 2002:aa7:d786:: with SMTP id s6mr24643204edq.239.1621852667363;
+        Mon, 24 May 2021 03:37:47 -0700 (PDT)
+Received: from localhost.localdomain (p200300f1370a3a00f22f74fffe210725.dip0.t-ipconnect.de. [2003:f1:370a:3a00:f22f:74ff:fe21:725])
+        by smtp.googlemail.com with ESMTPSA id r15sm2616418edm.61.2021.05.24.03.37.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 03:37:47 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
+        jbrunet@baylibre.com, linux-clk@vger.kernel.org
+Cc:     khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/3] clk: meson: rounding for fast clocks on 32-bit SoCs
+Date:   Mon, 24 May 2021 12:37:30 +0200
+Message-Id: <20210524103733.554878-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix function name in sifive-prci.c kernel-doc comment
-to remove a warning.
+On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
+fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
+up to approx. 3GHz.
+This however causes a problem, because these rates require BIT(31) to
+be usable. Unfortunately this is not the case with clk_ops.round_rate
+on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
 
-drivers/clk/sifive/sifive-prci.c:573: warning: expecting prototype for
-sifive_prci_init(). Prototype was for sifive_prci_probe() instead
+clk_ops.determine_rate does not suffer from this limitation. It uses
+an int to signal any errors and can then take all availble 32 bits for
+the clock rate.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- drivers/clk/sifive/sifive-prci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1 from [0]:
+- reworked the first patch so the the existing
+  divider_{ro_}round_rate_parent implementations are using the new
+  divider_{ro_}determine_rate implementations to avoid code duplication
+  (thanks Jerome for the suggestion)
+- added a patch to switch the default clk_divider_{ro_}ops to use
+  .determine_rate instead of .round_rate as suggested by Jerome
+  (thanks)
+- dropped a patch for the Meson PLL ops as these are independent from
+  the divider patches and Jerome has applied that one directly (thanks)
+- added Jerome's Reviewed-by to the meson clk-regmap patch (thanks!)
+- dropped the RFC prefix
 
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index 0d79ba3..80a288c 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -564,7 +564,7 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd,
- }
- 
- /**
-- * sifive_prci_init() - initialize prci data and check parent count
-+ * sifive_prci_probe() - initialize prci data and check parent count
-  * @pdev: platform device pointer for the prci
-  *
-  * Return: 0 upon success or a negative error code upon failure.
+
+
+[0] https://patchwork.kernel.org/project/linux-clk/cover/20210517203724.1006254-1-martin.blumenstingl@googlemail.com/
+
+
+Martin Blumenstingl (3):
+  clk: divider: Add re-usable determine_rate implementations
+  clk: divider: Switch from .round_rate to .determine_rate by default
+  clk: meson: regmap: switch to determine_rate for the dividers
+
+ drivers/clk/clk-divider.c      | 93 +++++++++++++++++++++++++---------
+ drivers/clk/meson/clk-regmap.c | 19 ++++---
+ include/linux/clk-provider.h   |  6 +++
+ 3 files changed, 85 insertions(+), 33 deletions(-)
+
 -- 
-1.8.3.1
+2.31.1
 
