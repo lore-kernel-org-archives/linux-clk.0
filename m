@@ -2,155 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E508C47089
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 14:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF629C2B9F8
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 749546143C
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 14:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861A761406
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233296AbhEXOuX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 10:50:23 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56042 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233529AbhEXOs4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 10:48:56 -0400
-X-UUID: ac2a00628f5a485abed5080d04600562-20210524
-X-UUID: ac2a00628f5a485abed5080d04600562-20210524
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 2036859258; Mon, 24 May 2021 20:29:14 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 24 May 2021 20:29:13 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 24 May 2021 20:29:13 +0800
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        "chun-jie . chen" <chun-jie.chen@mediatek.com>
-Subject: [PATCH v9 20/22] clk: mediatek: Add MT8192 scp adsp clock support
-Date:   Mon, 24 May 2021 20:20:51 +0800
-Message-ID: <20210524122053.17155-21-chun-jie.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
-References: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
+        id S233322AbhEXRFF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 13:05:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233294AbhEXRFD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 13:05:03 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE43FC06138C
+        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 10:03:35 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id x22so6576096vsn.2
+        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 10:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MrqSOYj5g/obDVKIYAxmyXoOnQCVk6QwshkTvwsi7m4=;
+        b=XyizKqOVbO1O1kqzeiPXF8NjsBV2U9Z+KYkApDRPMhoQY9Wd7aF4XJyesh+GK1YVA5
+         Ub6EukTa0vgpcTPIyPKsHpKh8SRsQbQFCcP+++VNYz1YXYz2lXhoZ9bBghOFurhlwHUk
+         ntb6/JFWmPTTq0gQYS4pNRcJkazgXeDtfbxp9tzTP5JJPQigo4i7WjDXP7dQV6MLvvtw
+         Qq5CbguJpgjiczI1re747pjjYIB5h37C9+mXIwbmORKayNQgqiFyUkiDzDaCY3IBenHt
+         FoTmh0hk4Y2MQQcmxH9KYKLxjMIIAayyNq0B4tqy1nc2mlsNk7avsezzUrjOaV2gKEQJ
+         ohfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MrqSOYj5g/obDVKIYAxmyXoOnQCVk6QwshkTvwsi7m4=;
+        b=MccJO2sDcIH3clJGNNbEPJgYvWDr/Z6Om4JmniVWZde6CpHtF7NbJoe7BOCHP+qJEr
+         nEKiNbmlovXiaqe0Mhk1VQgsb3qCsSTTLS3F7PXQtxMy8Vw9P4p5GZCaSY5ke3VCdzPv
+         ZPBa9Bc3X8ZQitGhbxpevXmcd2TjIhmdnY3XX9FX3Ywk6aTQ14qtByc0210ztGEQQkLq
+         vvu9EKqNvGo48vm81Cv0uJH7BkfwsEEYQH9AMboWTfNkEIkMp3oQsJ+fOmJCHwyGYYgi
+         QWUIN26Is/1+5MFkGvumIt+5///rUoc7Pon+5zcyZaOsgnENI6B9uaPNDnqwkUdMGAxD
+         SnCQ==
+X-Gm-Message-State: AOAM531boAVAAz5/XS/CsYxbDhlmosIj4eRBgqkY4dUjrKeMQtHUkjWp
+        BQgKyzFJlsllH6SF67nUGTeuJwhSp55xjtzEYT9KYA==
+X-Google-Smtp-Source: ABdhPJwH7kYxWSa0u/62FyAK1s59dR0TfrwpFa2o7rML8WoewkAZu/jGtDNEsxL3yqDKybD0PBSBisVCRwo/3Ef5YLg=
+X-Received: by 2002:a05:6102:7b4:: with SMTP id x20mr23350062vsg.48.1621875814897;
+ Mon, 24 May 2021 10:03:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20210523231335.8238-1-digetx@gmail.com> <20210523231335.8238-13-digetx@gmail.com>
+In-Reply-To: <20210523231335.8238-13-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 May 2021 19:02:58 +0200
+Message-ID: <CAPDyKFqp1TN1JUa9R3c2VZ3tyD+FRVhYEVc1rw76Uq5r8n9dWw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] dt-bindings: soc: tegra-pmc: Document core power domain
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8192 scp adsp clock provider
+On Mon, 24 May 2021 at 01:13, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Document the new core power domain properties.
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: chun-jie.chen <chun-jie.chen@mediatek.com>
----
- drivers/clk/mediatek/Kconfig               |  6 +++
- drivers/clk/mediatek/Makefile              |  1 +
- drivers/clk/mediatek/clk-mt8192-scp_adsp.c | 50 ++++++++++++++++++++++
- 3 files changed, 57 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8192-scp_adsp.c
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 88b24f74aff2..eb4aa29d8106 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -562,6 +562,12 @@ config COMMON_CLK_MT8192_MSDC
- 	help
- 	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
- 
-+config COMMON_CLK_MT8192_SCP_ADSP
-+	bool "Clock driver for MediaTek MT8192 scp_adsp"
-+	depends on COMMON_CLK_MT8192
-+	help
-+	  This driver supports MediaTek MT8192 scp_adsp clocks.
-+
- config COMMON_CLK_MT8516
- 	bool "Clock driver for MediaTek MT8516"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 8e4e343d4af4..a336fe753e9a 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -77,5 +77,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_MDPSYS) += clk-mt8192-mdp.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MFGCFG) += clk-mt8192-mfg.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MMSYS) += clk-mt8192-mm.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MSDC) += clk-mt8192-msdc.o
-+obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
- obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
- obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8192-scp_adsp.c b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-new file mode 100644
-index 000000000000..4bc2403fef3f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright (c) 2020 MediaTek Inc.
-+// Author: Weiyi Lu <weiyi.lu@mediatek.com>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt8192-clk.h>
-+
-+static const struct mtk_gate_regs scp_adsp_cg_regs = {
-+	.set_ofs = 0x180,
-+	.clr_ofs = 0x180,
-+	.sta_ofs = 0x180,
-+};
-+
-+#define GATE_SCP_ADSP(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &scp_adsp_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
-+
-+static const struct mtk_gate scp_adsp_clks[] = {
-+	GATE_SCP_ADSP(CLK_SCP_ADSP_AUDIODSP, "scp_adsp_audiodsp", "adsp_sel", 0),
-+};
-+
-+static const struct mtk_clk_desc scp_adsp_desc = {
-+	.clks = scp_adsp_clks,
-+	.num_clks = ARRAY_SIZE(scp_adsp_clks),
-+};
-+
-+static const struct of_device_id of_match_clk_mt8192_scp_adsp[] = {
-+	{
-+		.compatible = "mediatek,mt8192-scp_adsp",
-+		.data = &scp_adsp_desc,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver clk_mt8192_scp_adsp_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.driver = {
-+		.name = "clk-mt8192-scp_adsp",
-+		.of_match_table = of_match_clk_mt8192_scp_adsp,
-+	},
-+};
-+
-+builtin_platform_driver(clk_mt8192_scp_adsp_drv);
--- 
-2.18.0
+Kind regards
+Uffe
 
+
+> ---
+>  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> index 43fd2f8927d0..0afec83cc723 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> @@ -301,6 +301,33 @@ patternProperties:
+>
+>      additionalProperties: false
+>
+> +  core-domain:
+> +    type: object
+> +    description: |
+> +      The vast majority of hardware blocks of Tegra SoC belong to a
+> +      Core power domain, which has a dedicated voltage rail that powers
+> +      the blocks.
+> +
+> +    properties:
+> +      operating-points-v2:
+> +        description:
+> +          Should contain level, voltages and opp-supported-hw property.
+> +          The supported-hw is a bitfield indicating SoC speedo or process
+> +          ID mask.
+> +
+> +      "#power-domain-cells":
+> +        const: 0
+> +
+> +    required:
+> +      - operating-points-v2
+> +      - "#power-domain-cells"
+> +
+> +    additionalProperties: false
+> +
+> +  core-supply:
+> +    description:
+> +      Phandle to voltage regulator connected to the SoC Core power rail.
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -325,6 +352,7 @@ examples:
+>      tegra_pmc: pmc@7000e400 {
+>                compatible = "nvidia,tegra210-pmc";
+>                reg = <0x7000e400 0x400>;
+> +              core-supply = <&regulator>;
+>                clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+>                clock-names = "pclk", "clk32k_in";
+>                #clock-cells = <1>;
+> @@ -338,17 +366,24 @@ examples:
+>                nvidia,core-power-req-active-high;
+>                nvidia,sys-clock-req-active-high;
+>
+> +              pd_core: core-domain {
+> +                      operating-points-v2 = <&core_opp_table>;
+> +                      #power-domain-cells = <0>;
+> +              };
+> +
+>                powergates {
+>                      pd_audio: aud {
+>                              clocks = <&tegra_car TEGRA210_CLK_APE>,
+>                                       <&tegra_car TEGRA210_CLK_APB2APE>;
+>                              resets = <&tegra_car 198>;
+> +                            power-domains = <&pd_core>;
+>                              #power-domain-cells = <0>;
+>                      };
+>
+>                      pd_xusbss: xusba {
+>                              clocks = <&tegra_car TEGRA210_CLK_XUSB_SS>;
+>                              resets = <&tegra_car TEGRA210_CLK_XUSB_SS>;
+> +                            power-domains = <&pd_core>;
+>                              #power-domain-cells = <0>;
+>                      };
+>                };
+> --
+> 2.30.2
+>
