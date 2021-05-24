@@ -2,111 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BFEC47080
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817A8C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 09:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C03FC611CE
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5326B611EE
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 09:37:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbhEXI4i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 04:56:38 -0400
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:42496 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232362AbhEXI4g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 04:56:36 -0400
-Received: by mail-ua1-f51.google.com with SMTP id 14so9083664uac.9;
-        Mon, 24 May 2021 01:55:08 -0700 (PDT)
+        id S232397AbhEXJis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 05:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232313AbhEXJir (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 05:38:47 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BDCC061574
+        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 02:37:19 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id y14so25734617wrm.13
+        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 02:37:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=eDrYI330g2FzhYKn+4hPogmPRz25LSNoxfJ23kSyb5s=;
+        b=tJ0hM2HiTfP+YC6rqU8Hf9M4qSZMUM/bEXPJyVK2XaI5QBuI01GybBYIiLPWmTPsDc
+         gPrRZJ1A6FMrkqdw/G8l1cw53JSD54otveALt429Ks6gahJkpIFqZWFeg/MZ7hDQH4oH
+         ZE8olc/FI/kO9m/0RvKVsDjBFgdGtDKtVTlR+itw1HSGRdWl5R4MkvMEjfH9kAFMofw7
+         6BO4mMjkeUHTMDdZUOyN0+7gdG+EESIFSNctYRlsQOEbYNQqRtF5pUnEKgTG9X934Vi3
+         /CpirNJRlSxfzJ0EA1muZSCbcybqnLDOrkacNqPxo+xez6TKs429RQaiMv393PQ3ni1n
+         PZzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5H0qZkzumrdkYcAyVjQDQA6Hje2p2FxbSu2Plzs94Cg=;
-        b=Bn/c6Kw7q0MNLCbshYdbAYgS97X7nKSJGRbi6LfqPjQuE8DXHOElGQnZ5C3wKeIgcy
-         4KkM51ueXOpt1GLBYOfYiUylUogOKUgzWQLvNYK9gmnBPRLAPq5/vg1YblRRFhYqlETi
-         oejDUHfGr+TTCKy/8RkHw8U639RPilcjlMeJRFkv9UJk3j6BlpbJT1SS5NsyttGttx54
-         VoiIW5IeABFkIEIEb6x9K37WzXB+Max8o5z9nBwyXvPuOSNl8uGK2lul+dTRbFr4E3d8
-         9Ak4hbkPX4bWQXLg8KIyOOj0lZJn+OyE3NgXUoVAYLeqC5e5fR+ZViFlgZSo7X+rvQCU
-         yJ8Q==
-X-Gm-Message-State: AOAM5311EDvujXylHpzfASl67Hhlo2oCu5I2vwwRODy8IjlTmaGwMlVy
-        oBQaOAua/sxGfVg4R77llrw4sf7V/VGQhC3Znig=
-X-Google-Smtp-Source: ABdhPJxxyosYrdj1GqNypPiBnYRArw2E3/38homNMO1Av1PFu0RXXr0Dh8t9Utur9chqZtb0X55m4PfZQwmS3BcBlZQ=
-X-Received: by 2002:ab0:7705:: with SMTP id z5mr20481974uaq.2.1621846508208;
- Mon, 24 May 2021 01:55:08 -0700 (PDT)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=eDrYI330g2FzhYKn+4hPogmPRz25LSNoxfJ23kSyb5s=;
+        b=TppjDFx/PuBIsbglqI9vWFuA8nyrOxzq9vBHtq97HahiLoaH7aEBAXWDsowzqcnHPv
+         S+HF8HZP8khFZCNu9DHOhtHu48WfXq4d+oAHVeQXtp0H9CfpohNIo4Q99dhm9IB53hVd
+         mCyfsXdZm0E3bXzyTWtJ6q3RFB1sZTFhIEe27i3vF++V+MR545mGlVz7BtCdS1Iy6C5j
+         NMq7f28lNOFV8twAlxiN9XboXLV+j+GEjkXKjKvVgEH5opkgcl0qyD8GLYiEYTXny8W5
+         2kKrogdGNco3MZsaX9fXrygVHOjApomUwVmHVXQgC+IO8Ln+G1FHtKf9deyvhHpucw5D
+         HdCQ==
+X-Gm-Message-State: AOAM532CblXkUamlUkcCHvtmc0au8LCWnyIDrgQ9rEMQ5h6/z3aznCxO
+        eoCc/uHNoxEizniENX/o7yqWOg==
+X-Google-Smtp-Source: ABdhPJyxP4K03dqX+BVEirSz7HMQ95Xnk4RY0NTu/bRcZAbWtqcKa2tYpeP7fH6NjTaC+VDVjR9TTw==
+X-Received: by 2002:adf:ffd2:: with SMTP id x18mr21126282wrs.144.1621849038532;
+        Mon, 24 May 2021 02:37:18 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id i5sm11881875wrw.29.2021.05.24.02.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 02:37:18 -0700 (PDT)
+References: <20210520073136.272925-1-jbrunet@baylibre.com>
+ <CAFBinCB=pAipcZOi8S005SyO8ptfzy8oGpW4S8Pi++A5-Jc5eA@mail.gmail.com>
+User-agent: mu4e 1.4.15; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: axg-audio: improve deferral handling
+In-reply-to: <CAFBinCB=pAipcZOi8S005SyO8ptfzy8oGpW4S8Pi++A5-Jc5eA@mail.gmail.com>
+Message-ID: <1jy2c4bhgy.fsf@starbuckisacylon.baylibre.com>
+Date:   Mon, 24 May 2021 11:37:17 +0200
 MIME-Version: 1.0
-References: <20210523232556.15017-1-digetx@gmail.com>
-In-Reply-To: <20210523232556.15017-1-digetx@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 May 2021 10:54:57 +0200
-Message-ID: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
-Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK enabled
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
 
-On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-> There are couple older platforms that can't be compile-tested because they
-> partially implement CLK API. It causes build failure of kernel drivers due
-> to the missing symbols of the unimplemented part of CLK API.
->
-> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
->                      MIPS Ralink.
->
-> Disable compile-testing for HAVE_LEGACY_CLK=y.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+On Thu 20 May 2021 at 22:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-Thanks for your patch!
+> On Thu, May 20, 2021 at 9:32 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>
+>> Use dev_err_probe() for clock and reset resources to indicate the deferral
+>> reason through sysfs when waiting for the resource to come up.
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
->
->  config COMPILE_TEST
->         bool "Compile also drivers which will not load"
-> -       depends on HAS_IOMEM
-> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
-
-That sounds a bit drastic to me.  Usually we just try to implement the
-missing functionality, or provide stubs.
-Which functions are missing?
-
->         help
->           Some drivers can be compiled on a different platform than they are
->           intended to be run on. Despite they cannot be loaded there (or even
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied
