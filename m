@@ -2,118 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4330FC04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81C4C47085
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18645610C8
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8CA6611CD
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232494AbhEXK73 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 06:59:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40608 "EHLO
+        id S232689AbhEXLLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 07:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232422AbhEXK72 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 06:59:28 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E76C061574
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 03:58:00 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id y14so25988368wrm.13
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 03:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=ca+wrM4nB27tPYpaZYyNnd8UcG3q9suStj34yK6Un7E=;
-        b=p3yXEgVCpGPrz9zkR6Zzuc5sDlLkQsKfiO/YoCMpdgz/ppvHr3bBjfNdf6c8SO4Iy/
-         3K4Me5eoSg1GfVsQ+vl+Y8h6tAZRQVkZywVQW5HfemqRb7oCD97DOP+vOIqdUH195DMh
-         kdA+6kLyl0Tih2LJxM6s5zJ0PFppcWT8ZCKu4RkERu18521jybeh+W8iaxywnLDYA7ui
-         drnCnPOOJbqicvtdRs4n8+qTlrAQj5mp9jvT586dbNovojbzqEXQOF4kctU7Wed5h2uz
-         zFswvwM0itvuQUWyz8vMVw25IzZmSTm/CiT5BJh5J1x9E5xoOZ3QAvXkfqie/QFTIkDf
-         R0qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=ca+wrM4nB27tPYpaZYyNnd8UcG3q9suStj34yK6Un7E=;
-        b=PkUOsHs7in8JUn+xP/f8I4Jd08O+q9vmadS3nBgVOK4Am+InOQLguqr4iqg451qenr
-         v1fqLA4qgtwFysE5K+v0yU5HPJr1LT4GNYwzM+OGRF8gBTVuqICjeckYxWn5vHDXL+gr
-         AkX0LugRsNNsMs3xOEknTEdjZw9g3azTIpT82my1kzX3mL8btuexdQD4h4dRXLBlh5/D
-         8yCodoc044QKrdZfdo04TOAFfX/TkxZgILSRy9FK81MQyW4ciZ8MfwrPfkWkTySu0fHN
-         9zvV7C3bHhwiu8/seLoDKFAkPfD9eeKSjB31InQJbHn7QCL4ywEICEZ4pNDw5Ce6icLp
-         GNFw==
-X-Gm-Message-State: AOAM531cGR4zWohEIE3IMdrdtNRu8IhWSoRuMktzvoqmsjYVk+P5UULN
-        rYGXA8FIrvHGs6JuuIHy/Hloiw==
-X-Google-Smtp-Source: ABdhPJwnA1Tof4wfbC4fiInMwYqNaO7wHn6JjxWaZbqPVDjThgdzOsS0GgofwNSeJB8C0OKQ3zGdGg==
-X-Received: by 2002:adf:ce02:: with SMTP id p2mr21626617wrn.156.1621853879397;
-        Mon, 24 May 2021 03:57:59 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id o15sm7636877wmh.36.2021.05.24.03.57.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 03:57:58 -0700 (PDT)
-References: <20210524104533.555953-1-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.4.15; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        khilman@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: meson8b: Don't use MPLL1 as parent of
- vclk_in_sel
-In-reply-to: <20210524104533.555953-1-martin.blumenstingl@googlemail.com>
-Message-ID: <1jsg2cbdqh.fsf@starbuckisacylon.baylibre.com>
-Date:   Mon, 24 May 2021 12:57:58 +0200
+        with ESMTP id S232805AbhEXLLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:11:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E77C06138A
+        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 04:10:16 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ll8TF-00051P-01; Mon, 24 May 2021 13:10:05 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ll8TB-0003A0-Qt; Mon, 24 May 2021 13:10:01 +0200
+Date:   Mon, 24 May 2021 13:09:58 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+        linux-spi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 0/6] clk: provide new devm helpers for prepared and
+ enabled clocks
+Message-ID: <20210524110958.ytcqzdgkqw6jeah5@pengutronix.de>
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7put5ziwze3atjbn"
+Content-Disposition: inline
+In-Reply-To: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon 24 May 2021 at 12:45, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+--7put5ziwze3atjbn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> MPLL1 is needed for audio output. Drop it from the vclk_in_sel parent
-> list so we only use the (mutable) vid_pll_final_div tree or one of the
-> (fixed) FCLK_DIV{3,4,5} clocks.
+On Mon, May 10, 2021 at 07:41:36PM +0200, Uwe Kleine-K=F6nig wrote:
+> compared to v6 I rebased to v5.13-rc1 (which resulted in a conflict in
+> the pwm-atmel patch), reformated the doc comments in patch 2 (as
+> suggested by Jonathan Cameron) and added the two Reviewed-by tags for
+> Jonathan Cameron.
 
-Are the fixed ones actually needed ?
+Another two weeks without maintainer feedback. I didn't find a single
+mail by either Michael Turquette nor by Stephen Boyd on the linux-clk
+list on lore dating from this month. This patch set didn't get a reply
+since more than half a year.
 
-If the consumer actually lives on the vid_pll only, I'd prefer if you
-could add CLK_SET_RATE_NOREPARENT and assign the proper parent in DT with
-`assigned-clock-parents`
+Is the clk tree still maintained?  Would a pull request help? There are
+several people who expressed interest in this series and the cleanup it
+allows.
 
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/meson8b.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index a844d35b553a..f8bd211db720 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -1154,6 +1154,10 @@ static struct clk_regmap meson8b_vid_pll_final_div = {
->  	},
->  };
->  
-> +/*
-> + * parent 0x6 is meson8b_mpll1 but we don't use it here because it's reserved
-> + * for the audio outputs.
-> + */
->  static const struct clk_hw *meson8b_vclk_mux_parent_hws[] = {
->  	&meson8b_vid_pll_final_div.hw,
->  	&meson8b_fclk_div4.hw,
-> @@ -1161,7 +1165,6 @@ static const struct clk_hw *meson8b_vclk_mux_parent_hws[] = {
->  	&meson8b_fclk_div5.hw,
->  	&meson8b_vid_pll_final_div.hw,
->  	&meson8b_fclk_div7.hw,
-> -	&meson8b_mpll1.hw,
->  };
->  
->  static struct clk_regmap meson8b_vclk_in_sel = {
+@Andrew: Would you be willing to take the first two patches if Michael
+and Stephen don't react in the near future?
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--7put5ziwze3atjbn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCriYMACgkQwfwUeK3K
+7Amfngf9Ga4caGfJs9XN3dun54N+DsOf8YkklfYBiAAjCixalrvdei8QJA3djFos
+TTUqAA5pZSaT5RZBoXVn7bwDkIOTJHIKgD05+7uZL01XZ6LaO0b6euqhSnpUSWV5
+yB8DteZUg4+FPgxa8a0DPgfBq5dRr1ADn3U2YBAvZXUnpIk49chH5viOQ7CockL/
+28GJcNA94L87QFKtUMiw5myBy+ThHJiA5G8WKSXbSJB4JpI24B113XZH9lmCpxEg
+1H9Z23S68CuV+9uvzIZAEhDPgwrSon7ILGeszXEYgBmGE2O/mL9WPptcCkRS0H35
+DfScTBSMeU7Cw4q6705OV82DdPyFmQ==
+=0Iaw
+-----END PGP SIGNATURE-----
+
+--7put5ziwze3atjbn--
