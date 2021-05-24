@@ -2,133 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2914C04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C836DC2B9F8
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C21BD6128B
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFEEC613AD
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232476AbhEXL7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 07:59:19 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44701 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232110AbhEXL7S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:59:18 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 72FDE5C0054;
-        Mon, 24 May 2021 07:57:50 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 24 May 2021 07:57:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=B529eywUmsR9JY3AcBFsjJlGcRP
-        HY45DQE7bzyzTCZE=; b=Gvo1WFDSk4JVECXX4xz0uR4964zfHSzzK+CPdWJ/9rp
-        KNJgy8jEttsQConKjtmfTjNYN97e2IZ6sWkVMuuJuxeoJvMxLmne7pAlYaW+61XD
-        TdsOq4DcQBVN/iFqNS2vQZ/xhlIXJAOr+l+EeJEeJyja82xFtKL2EcAThz//4vcY
-        D1CTahLU/Ix7CX58gudibB/otx4naGtErahE8sQOzvtoIfKSu1YuOGrzsggHmLh1
-        OQCU4dZFYsEMLSnQvdBAXZY8Vd+F/mgSMmrKLzPoWpOEZZ4FKv0vRAiR44T0ublH
-        nTxFDLMJw2GN/KsHkMNeg4qG+zHyy19Sz8dvYfrBKcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=B529ey
-        wUmsR9JY3AcBFsjJlGcRPHY45DQE7bzyzTCZE=; b=r9YY7HYEPhLJGKReZe8hqK
-        6jaGqem1mqRyycpkyf8tv5RcDvbePNPXqebSuhb5G4sv7xdkW16rltqGuFOuSSOX
-        ljCYwnIGQns3LbAlUHXpu9FwCyvHbOpKnaNJLC3t7GPGfwqKSX2E0ycR+gMRYY5M
-        JFT7IEYFOr4VroQ8y4itji22occbG6dT3GTlsHHX23PfiCJYeLUTJwpKTEDmSQCk
-        dM0zpMe+/uV18VK7J+ttCnFda4fV6W0kCIs7VJvlLWwlra7LvZBPas8ix70cX1ZY
-        GibV5IixRj99tctnpOOTjQDpRVu2/1QnNcC31stEEbsLYl6hCm7YrezynwgxjZyg
-        ==
-X-ME-Sender: <xms:vJSrYCFltTNSWLEvXZpuoWBQtcyumqjnUZ61_RNjr1ia5kalxCEUQg>
-    <xme:vJSrYDXReR2553hORjr7sj2zXlIVOTxv4gSzYWaJS7HkAkzYkG8_JVy0IEZAdKxmR
-    2N95483tIocx7ASmA8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdejledggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:vJSrYMIJEMlx79njkJiInd1DWyP9iHRjIR7KLxSHy_D9wz5P4uLrXw>
-    <xmx:vJSrYMHfU4RGHfiu8TubRjC8oQr_E7BIIHBDIBi4SEiyQhwCZ7Gyeg>
-    <xmx:vJSrYIVv7ZLHrOaCKIjeIsAC_fM2Uv4f0HyAxtW-cfqoaUg9JtpCQQ>
-    <xmx:vpSrYKJUOmr7bQKgO52pbx5mHWAQNDVxJjmXD06g8LbNAI8GcaPO2A>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Mon, 24 May 2021 07:57:48 -0400 (EDT)
-Date:   Mon, 24 May 2021 13:57:47 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Tobias Schramm <t.schramm@manjaro.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: v3s: fix incorrect postdivider on
- pll-audio
-Message-ID: <20210524115747.2vv3kigu7wcrgpmj@gilmour>
-References: <20210513131315.2059451-1-t.schramm@manjaro.org>
+        id S232401AbhEXMkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 08:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232700AbhEXMkv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 08:40:51 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4253FC061574;
+        Mon, 24 May 2021 05:39:23 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id i9so40451808lfe.13;
+        Mon, 24 May 2021 05:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
+        b=Ukzs1lpffefInt+Tc3rj13rbWCFBfbLYbuOBDb1j5YTp/JNEMJrM+0BS9pYYP38s9n
+         7HnDgswflfy/VLz9qqAzPEQ99K+h8Qw9BP4SNjW8CFWmWgh5JMUSDfFAJeK+RZdsaGGL
+         E/Dufo5c9cUI5wYk5ZS925uvNbuEl/D0DVzT9JJnHjAK1LG65AMdNhVEY5bjp2L2ZkJx
+         xTyf1oVqYbmYguDJ4dsI4rGt5dv+nSIZOdciE20NRNrrOmtUf9V4AfSlhip/ALqlXDCi
+         a3xqCn7eZwwF4XtCyKGnbWeeDVyinyJ8tey0f34ksGlX16trBozo1SFW0R8FUHxTuMe2
+         gCpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
+        b=JPtwYE8hRhKABXJqAdQPEmS/j++lk9UmOM98vt2+exheyVdkYJyhD3XKbkieLeMkqL
+         /UHrG5P34T7pgyKMjm7tYUro2k/bNz5UjhoS0FeZtZeMRMrF+PUZDhp2E6Nexp93rb1f
+         DVVmp2GE0TIukOoJtXuZoF9czCz2kJ3gmg+tGP5aQRuWZb6Hg8CDqHeWhOmUvWH6SkVx
+         VUVniWHnHdYwP0nz2h3s4ZhLVBgyW5KMY2K4TIG2Uf6Qck41AbhHhcSAyEpiIIVdieG9
+         2wkXGhDq7EseZM03ePl8uRyWjf6rPdDGtFegsHRW6OgBREFluVHCx3ZKSM7UvuOhJlug
+         9OfQ==
+X-Gm-Message-State: AOAM533KhURQfuH5gHNIe/ch3AcEg24inlOXm8PTgtQ+2smqFB8dpza0
+        JZsPVjBoZ88+S3e9qraZZZD7vr48hSM=
+X-Google-Smtp-Source: ABdhPJyhCOFQn/Z1pKRmtZeJWu1d4dSY2QLiSj+ONw56eIR3cGKanVoF3Tn/DOinhtQ09s5N7gDupw==
+X-Received: by 2002:a05:6512:128c:: with SMTP id u12mr10567429lfs.160.1621859961442;
+        Mon, 24 May 2021 05:39:21 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.googlemail.com with ESMTPSA id p21sm1409745lfg.97.2021.05.24.05.39.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 05:39:21 -0700 (PDT)
+Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
+ enabled
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <john@phrozen.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>
+References: <20210523232556.15017-1-digetx@gmail.com>
+ <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
+Date:   Mon, 24 May 2021 15:39:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3klzeylg2lfcluf4"
-Content-Disposition: inline
-In-Reply-To: <20210513131315.2059451-1-t.schramm@manjaro.org>
+In-Reply-To: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+24.05.2021 11:54, Geert Uytterhoeven пишет:
+> Hi Dmitry,
+> 
+> On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>> There are couple older platforms that can't be compile-tested because they
+>> partially implement CLK API. It causes build failure of kernel drivers due
+>> to the missing symbols of the unimplemented part of CLK API.
+>>
+>> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
+>>                      MIPS Ralink.
+>>
+>> Disable compile-testing for HAVE_LEGACY_CLK=y.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
+>>
+>>  config COMPILE_TEST
+>>         bool "Compile also drivers which will not load"
+>> -       depends on HAS_IOMEM
+>> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
+> 
+> That sounds a bit drastic to me.  Usually we just try to implement the
+> missing functionality, or provide stubs.
+> Which functions are missing?
 
---3klzeylg2lfcluf4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Everything that belongs to CONFIG_COMMON_CLK needs stubs.
 
-On Thu, May 13, 2021 at 03:13:15PM +0200, Tobias Schramm wrote:
-> Commit 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for =
-audio-pll")
-> changed the audio pll on the Allwinner V3s and V3 SoCs to use
-> sigma-delta modulation. In the process the declaration of fixed postdivid=
-er
-> providing "pll-audio" was adjusted to provide the desired clock rates from
-> the now sigma-delta modulated pll.
-> However, while the divider used for calculations by the clock framework
-> was adjusted the actual divider programmed into the hardware in
-> sun8i_v3_v3s_ccu_init was left at "divide by four". This broke the
-> "pll-audio" clock, now only providing quater the expected clock rate.
-> It would in general be desirable to program the postdivider for
-> "pll-audio" to four, such that a broader range of frequencies were
-> available on the pll outputs. But the clock for the integrated codec
-> "ac-dig" does not feature a mux that allows to select from all pll outputs
-> as it is just a simple clock gate connected to "pll-audio". Thus we need
-> to set the postdivider to one to be able to provide the 22.5792MHz and
-> 24.576MHz rates required by the internal sun4i codec.
->=20
-> This patches fixes the incorrect clock rate by forcing the postdivider to
-> one in sun8i_v3_v3s_ccu_init.
->=20
-> Fixes: 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for =
-audio-pll")
-> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+That is everything under CONFIG_HAVE_CLK [1], excluding functions
+belonging to clk-devres.o and clk-bulk.o [2]. The HAVE_LEGACY_CLK
+selects HAVE_CLK, but the COMMON_CLK is under HAVE_CLK too.
 
-Applied, thanks
-Maxime
+[1]
+https://elixir.bootlin.com/linux/v5.13-rc3/source/include/linux/clk.h#L786
+[2]
+https://elixir.bootlin.com/linux/v5.13-rc3/source/drivers/clk/Makefile#L3
 
---3klzeylg2lfcluf4
-Content-Type: application/pgp-signature; name="signature.asc"
+This problem is repeated over and over again for the past years. Some
+maintainers are adding "depends on COMMON_CLK" for COMPILE_TEST of each
+driver, but this doesn't solve the root of the problem, and thus, it's
+constantly reoccurring.
 
------BEGIN PGP SIGNATURE-----
+Recently Krzysztof Kozlowski added couple more clk stubs for MIPS, but
+still lots of stubs are missing. Some platforms don't have any stubs at
+all and apparently nobody cares to fix them.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYKuUuwAKCRDj7w1vZxhR
-xfLuAQDbALcSH3I9sN3aT7SM2BKzG79hN9v5u7zkilw8NofhGAEA1n9Sx3Vp0Z4M
-/DY6a26+9XAGkK7BByoqG2qVMCw7RQQ=
-=CHIg
------END PGP SIGNATURE-----
+There 3 possible solutions:
 
---3klzeylg2lfcluf4--
+1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
+2. Build stubs universally, maybe using weak functions.
+3. Disable compile-testing for HAVE_LEGACY_CLK
+
+The third option is the simplest. If anyone will care to fix those
+legacy platforms properly, then compile-testing could be re-enabled for
+them. This is my proposal.
