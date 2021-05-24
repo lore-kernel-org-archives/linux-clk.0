@@ -2,235 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79257C2B9F7
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57597C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E60961411
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341AE61406
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 17:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233175AbhEXRGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 13:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39754 "EHLO
+        id S232543AbhEXRQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 13:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233282AbhEXRGq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 13:06:46 -0400
-Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580BFC06138C
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 10:05:17 -0700 (PDT)
-Received: by mail-ua1-x92e.google.com with SMTP id z14so8455666uan.7
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 10:05:17 -0700 (PDT)
+        with ESMTP id S233464AbhEXRQi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 13:16:38 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A5C2C061574;
+        Mon, 24 May 2021 10:15:09 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id df21so32867641edb.3;
+        Mon, 24 May 2021 10:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eZESf2+UaWJEsGgPUeGFqkYRrVF4ir0zTy9O8j+JZj0=;
-        b=F7m/3fCzNq2FjVowZE3b6kOUYNK0yc/QidlGDaLPRVfmD9v1gRRu7OVOrRBpTgyBAq
-         RN6dpQp83jnaFaGvshIYnM+xXVDEAHcTxHRfUPB/SmG3IQsfVTPBnvWXIelgpaqEIIRp
-         RbgRetkJQ+yYYTmV5IcLZ929/NeBfAGKyLUmXky1ShOLjOahGqBcLXtVlRg11DvEYpYd
-         eIADl4LA6Dvl82BB+Ief4vDAB6PximvEmlgWhpWBcG4HyoBXvYyA9llRubapIvYM1pJi
-         IwFJz0jr7NufaHk0RMW3QO5k29azEzEUM8yNELd2fPWiK5/1i9kbxxYnfWv9zDUII/Nj
-         ggDg==
+        bh=+NqymAOfKkJSvsQ9cL9DRucWC0MzQQIr199sZKb1IYM=;
+        b=Y3oJTV7yKehEVsznvxHyHGR9MACEMlTosuXANvqXj+TKXkico5Q1nWxe87O3mhMu+y
+         q5sUZl6rY3onoY6gDEHJiPoZ25WOoxsLCXuaQBePhn3L4N4L0D/bRNJdmp3xfY7uwll3
+         1SMt/rKRlhHl3E9/FvL9S5U/3XqL8hV4YDipZtbpBht4WU3YmK6E4ImC4TA8adUJOAV2
+         k1nWmzizfos4yQ7SM3DeXDodKYvk8A3dIE3EImzmavHmEPUmsWh4DT3EWS8byDWtz6ra
+         xd2kdLFp9r4+XrCgzM9jcPINsYZ29hweQ2PYiq0OyK65JFgL6PHxOum3UeFlYUC8gyT5
+         PksQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eZESf2+UaWJEsGgPUeGFqkYRrVF4ir0zTy9O8j+JZj0=;
-        b=hzBcXhamzi1siUuChL3UlRn9j9sEMhqggRZZ/CTRmil0iPFTMPQEAnGUUsaDljKOe7
-         uYBFhNQVqLuxLUSb4CqgA8gOYGUktPRLywDuGLqZVjp0Yvhx6/zGKq1hinN8FfC0qS7I
-         aXLO6vWN9PrFfJrScPBElXKQbRBK7JA4zEe5orhFFDUUABInComBViwyaqdji7mfqCP2
-         GfOrPnkuLT86tMy0zJWRgeiSS1rTvO/BUEd6TOzbuITzsxBv4B40qOcxOOhtVp7Docvs
-         kRmLvpja+ytT30PLAWbbf9XfaKHfaZ6xImPHKXjqvzkF+TsdVFgPqh9idiL6n3BNUdt1
-         3JhQ==
-X-Gm-Message-State: AOAM5336hB3M+rUK+lOOAfe+Zuk4qZy1Gju1WF/YlKAEaiK1hEIic6FN
-        f76PeqCwrSgnqgAGwUiszW/6i4WM+OUxiVrddls0LQ==
-X-Google-Smtp-Source: ABdhPJwVnMsBxavUG6WhLD7276brAnw7avHoO4W5DwCb7iPsdb9pe0vuL7T8bKsnZFn6ouLaui6EqThOSbhN4pDxRHE=
-X-Received: by 2002:ab0:d8f:: with SMTP id i15mr4749618uak.104.1621875916371;
- Mon, 24 May 2021 10:05:16 -0700 (PDT)
+        bh=+NqymAOfKkJSvsQ9cL9DRucWC0MzQQIr199sZKb1IYM=;
+        b=guJf1wImabc0bS618FSjkya5LfV3D5GD0pz1jPB/Jxkl1BLRqRbJ44JBLHcE6XVLLg
+         1FIaFmyyUKOnhRW3KV/cm8oLa2ZiRZ5brUnsPYQ+sHw0zGVysBNNmWkpaL7z/U/w19NG
+         5Xvr9qHrWUaIlgxEGaRdlNY5qfpehXTDgSNot+u9jHc7l/OQVy4C3sg4/fAgwPKIXTVK
+         DQrd0eInoQuTzhiuim75nzbW0i12KuoLy+xdzfylYnRijxGTjHhxjrnVFqelvx9IB0v+
+         sUvnkfylgeMLcWDrOCEw2GgZezc8h3N/sUSnZejjNrw9hcqFBoFPF0ICGVrCRCnqfnB9
+         W6jQ==
+X-Gm-Message-State: AOAM530+Ln1VG9VdFVt3RSu3x4r2xrPR8N7zqheRxgAQsOt2Bggvqfj1
+        dkw4bzJ91eyF32EOmBwI3IU1Zpwsdm1NVWuU+KHM1MDN
+X-Google-Smtp-Source: ABdhPJzbauczmKWwr8OghHMny4dnkH5wJ73w40kBJBuHpYhBIe6XjgJRNeCTMtESQ4MBP9Htvbs3jaoGwJIB25n9x/o=
+X-Received: by 2002:a50:d54c:: with SMTP id f12mr26271733edj.301.1621876507863;
+ Mon, 24 May 2021 10:15:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210523231335.8238-1-digetx@gmail.com> <20210523231335.8238-14-digetx@gmail.com>
-In-Reply-To: <20210523231335.8238-14-digetx@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 24 May 2021 19:04:40 +0200
-Message-ID: <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
-Subject: Re: [PATCH v2 13/14] soc/tegra: pmc: Add core power domain
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?Q?Nikola_Milosavljevi=C4=87?= <mnidza@outlook.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+References: <20210524134517.687089-1-martin.blumenstingl@googlemail.com> <1jmtskb3w2.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jmtskb3w2.fsf@starbuckisacylon.baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 24 May 2021 19:14:57 +0200
+Message-ID: <CAFBinCA-JADYi4C4P0cm4fpD6Bg5GyOo0iwferhB0mDW2XEk0w@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: meson: meson8b: Use CLK_SET_RATE_NO_REPARENT for vclk{,2}_in_sel
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 24 May 2021 at 01:13, Dmitry Osipenko <digetx@gmail.com> wrote:
+Hi Jerome,
+
+On Mon, May 24, 2021 at 4:30 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> NVIDIA Tegra SoCs have multiple power domains, each domain corresponds
-> to an external SoC power rail. Core power domain covers vast majority of
-> hardware blocks within a Tegra SoC. The voltage of a power domain should
-> be set to a level which satisfies all devices within the power domain.
-> Add support for the core power domain which controls voltage state of the
-> domain. This allows us to support system-wide DVFS on Tegra20-210 SoCs.
-> The PMC powergate domains now are sub-domains of the core domain, this
-> requires device-tree updating, older DTBs are unaffected.
 >
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-[...]
-
-> +
-> +static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
-> +{
-> +       static struct lock_class_key tegra_core_domain_lock_class;
-> +       struct generic_pm_domain *genpd;
-> +       const char *rname = "core";
-> +       int err;
-> +
-> +       genpd = devm_kzalloc(pmc->dev, sizeof(*genpd), GFP_KERNEL);
-> +       if (!genpd)
-> +               return -ENOMEM;
-> +
-> +       genpd->name = np->name;
-> +       genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
-> +       genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
-> +
-> +       err = devm_pm_opp_set_regulators(pmc->dev, &rname, 1);
-> +       if (err)
-> +               return dev_err_probe(pmc->dev, err,
-> +                                    "failed to set core OPP regulator\n");
-> +
-> +       err = pm_genpd_init(genpd, NULL, false);
-> +       if (err) {
-> +               dev_err(pmc->dev, "failed to init core genpd: %d\n", err);
-> +               return err;
-> +       }
-> +
-> +       /*
-> +        * We have a "PMC pwrgate -> Core" hierarchy of the power domains
-> +        * where PMC needs to resume and change performance (voltage) of the
-> +        * Core domain from the PMC GENPD on/off callbacks, hence we need
-> +        * to annotate the lock in order to remove confusion from the
-> +        * lockdep checker when a nested access happens.
-> +        */
-
-Can you elaborate a bit more on this?
-
-Are you saying that when the child domain (PMC pwrgate) gets powered
-off, you want to drop its aggregated votes it may hold for the
-performance state, as otherwise it may affect the parent domain (core
-domain)?
-
-I guess this would be a valid scenario to optimize for, especially if
-you have more than one child domain of the core power domain, right?
-
-If you have only one child domain, would it be sufficient to assign
-->power_on|off() callbacks for the core domain and deal with the
-performance stare votes from there instead?
-
-> +       lockdep_set_class(&genpd->mlock, &tegra_core_domain_lock_class);
-> +
-> +       err = of_genpd_add_provider_simple(np, genpd);
-> +       if (err) {
-> +               dev_err(pmc->dev, "failed to add core genpd: %d\n", err);
-> +               goto remove_genpd;
-> +       }
-> +
-> +       return 0;
-> +
-> +remove_genpd:
-> +       pm_genpd_remove(genpd);
-> +
-> +       return err;
-> +}
-
-[...]
-
-> +static void tegra_pmc_sync_state(struct device *dev)
-> +{
-> +       int err;
-> +
-> +       pmc->core_domain_state_synced = true;
-> +
-> +       /* this is a no-op if core regulator isn't used */
-> +       mutex_lock(&pmc->powergates_lock);
-> +       err = dev_pm_opp_sync_regulators(dev);
-> +       mutex_unlock(&pmc->powergates_lock);
-> +
-> +       if (err)
-> +               dev_err(dev, "failed to sync regulators: %d\n", err);
-> +}
-> +
-
-Nitpick.
-
-Would you mind splitting the "sync_state" thingy out into a separate
-patch on top of $subject patch?
-
-I think it would be nice, especially since it shares a function via
-include/soc/tegra/common.h - that would make it clear to what part
-that belongs to.
-
->  static struct platform_driver tegra_pmc_driver = {
->         .driver = {
->                 .name = "tegra-pmc",
-> @@ -3680,6 +3822,7 @@ static struct platform_driver tegra_pmc_driver = {
->  #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
->                 .pm = &tegra_pmc_pm_ops,
->  #endif
-> +               .sync_state = tegra_pmc_sync_state,
->         },
->         .probe = tegra_pmc_probe,
->  };
-> diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
-> index af41ad80ec21..135a6956a18c 100644
-> --- a/include/soc/tegra/common.h
-> +++ b/include/soc/tegra/common.h
-> @@ -23,6 +23,8 @@ struct tegra_core_opp_params {
->  #ifdef CONFIG_ARCH_TEGRA
->  bool soc_is_tegra(void);
+> On Mon 24 May 2021 at 15:45, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 >
-> +bool tegra_soc_core_domain_state_synced(void);
-> +
->  int devm_tegra_core_dev_init_opp_table(struct device *dev,
->                                        struct tegra_core_opp_params *params);
->  #else
-> @@ -31,6 +33,11 @@ static inline bool soc_is_tegra(void)
->         return false;
->  }
+> > Use CLK_SET_RATE_NO_REPARENT for the vclk{,2}_in_sel clocks. The only
+> > parent which is actually used is vid_pll_final_div. This should be set
+> > using assigned-clock-parents in the .dts rather than removing some
+> > "unwanted" clock parents from the clock driver.
+> >
+> > Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > ---
+> > After a hint from Jerome (thanks) this is the improved version of
+> > "clk: meson: meson8b: Don't use MPLL1 as parent of vclk_in_sel" from [0]
+> >
+> >
+> > [0] https://patchwork.kernel.org/project/linux-clk/patch/20210524104533.555953-1-martin.blumenstingl@googlemail.com/
+> >
+> >
+> >  drivers/clk/meson/meson8b.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> > index a844d35b553a..0f8bd707217a 100644
+> > --- a/drivers/clk/meson/meson8b.c
+> > +++ b/drivers/clk/meson/meson8b.c
+> > @@ -1175,7 +1175,7 @@ static struct clk_regmap meson8b_vclk_in_sel = {
+> >               .ops = &clk_regmap_mux_ro_ops,
 >
-> +static inline bool tegra_soc_core_domain_state_synced(void)
-> +{
-> +       return false;
-> +}
-> +
->  static inline int
->  devm_tegra_core_dev_init_opp_table(struct device *dev,
->                                    struct tegra_core_opp_params *params)
+> I just noticed that these muxes are read-only ATM.
+> It does not make this change (or the previous one) wrong but it does not
+> make much sense as the mux won't ever change.
+indeed, as-is the patch is a no-op
 
-Kind regards
-Uffe
+> I suppose you make this mutable with another patch later on ?
+correct, I have a patch in my queue which will make all relevant
+clocks in the vclk and vclk2 trees mutable
+my idea behind this is to not mix any _ro_ops to _ops conversion with
+other types of changes (so the actual reason for a change is still
+documented in the git history)
+
+
+Best regards,
+Martin
