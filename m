@@ -2,87 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D18C04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 09:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C86C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 608C261076
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 09:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BB36101B
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 10:20:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbhEXJkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 05:40:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
+        id S232575AbhEXKWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 06:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232318AbhEXJkC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 05:40:02 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48554C061756
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 02:38:34 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id p7so24102391wru.10
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 02:38:34 -0700 (PDT)
+        with ESMTP id S232422AbhEXKWQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 06:22:16 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6AD6C061574;
+        Mon, 24 May 2021 03:20:47 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id j6so37244815lfr.11;
+        Mon, 24 May 2021 03:20:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=zHFH7Plck20fV+guAcmidVBsnyZcvavYbuQkUm8U9zI=;
-        b=mKRuK76nF+Y6y2U20Pv7Z/CyAKe4Rjy6qHBLniv2W4ZJVtoJEb3rF7qXJ06S7BVrbI
-         7yEDNW1NxJLWVjdCqs1qD81bibm3OL4Ld/+xIk8qTUVfW656t/hh9TpKOOfdxOr58CUC
-         zM4zEliSMrKeI3r45bC5ieA3Na0ljCUpPYLwepxCk1OzV4w8zSuTyWkGDlT12n/wzzyQ
-         OSUUTvyXM49Dk1MexccKaV/8WBZY8siAUtl0D3XiI83+aa0B60FBTd5BVamKgXzjedp6
-         eXSeRU3ppcqq1HGxUAPuVSeogXVjng0NtDVzpaaSW0rkG52TcyIJ2HPsIqvrCee6OBVq
-         63eg==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+yxfVj7jKw45QrlrhnP2dyoysNu/SHiHa0fZjF/qcQ0=;
+        b=TEuKP8ZT44wcv2P28T7veECGsfNWN5/tjRGeEbBLT9ckwElAo2/G7M3YS9/I5AfcX0
+         cQCItZCZyHhWSMqPRUyFfm8o3StpIsWSKCAxVUfzQvdDVs0Ss6xQB6JuSIIuBkR0QHEP
+         J2hadytj6P1ujmmzrzxjJ06aGPk8/svT/F1KDFjrim78oH/jpmwBQ+z3VSP6f3x6tl4L
+         145LaqeDDrG8QIj0CHX+ppwjCUqM24O5oipjgzRrZiWSKIawOX3klSrNc+fl6w2xGkNP
+         vNZgNmdNod2Hij0o//7QA/KxfBLQ4ob6cU3PZFumy+JGMaIuMn7VPmlgARnn1iu867Nv
+         88Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=zHFH7Plck20fV+guAcmidVBsnyZcvavYbuQkUm8U9zI=;
-        b=nwURHGfajZB43d9CI3Wn6RjXHfIWJlb8r+4CF5lxbCyurhVuUmOzsqYATizqoEiYNL
-         L8+p8VPceVEBFJtoKu8HnMMy/iNSjSjGQ2GNyXCLf2kjBG9DySDpZ00Q4DVWeq/paqCF
-         TYTOKWPqP+W1x5qsfE2Bsbm6cc46xwIRigMv+9WctH6WHfL0GqjjDePs0nMxkaai8C/m
-         un4z2msuWAZrifv8DZj0FIId7s56m3ZaJu4Uq/lXOP9tU9qA0hkWuaTgZ/6dtvP6Pxvl
-         wG5ul0lo8PcF/5av0blTInFtChsEle7vIIqX8FJK/qbdkR9m78u+tTmKIjsZlu4QvbXo
-         UpGg==
-X-Gm-Message-State: AOAM531rwPXBgM6SSS5+qN+p3QeuBWGc1j+55/eLw3c33+gGAO4Jo+sf
-        A1p+VczccOIkOJIVyBFsruTPGA==
-X-Google-Smtp-Source: ABdhPJwK/tWaJpBRU28y1BG55+5omYls82OT5wCKeAK/at6GNOVMWYAiaT1XZMuaZi9erT7XOfvH5w==
-X-Received: by 2002:a05:6000:1c2:: with SMTP id t2mr20755996wrx.424.1621849112854;
-        Mon, 24 May 2021 02:38:32 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id i15sm11445544wru.17.2021.05.24.02.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 02:38:32 -0700 (PDT)
-References: <20210429090325.60970-1-jbrunet@baylibre.com>
- <df839588-1ff2-2d7f-4364-2b0d8942d6ef@baylibre.com>
-User-agent: mu4e 1.4.15; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: g12a: fix gp0 and hifi ranges
-In-reply-to: <df839588-1ff2-2d7f-4364-2b0d8942d6ef@baylibre.com>
-Message-ID: <1jv978bhew.fsf@starbuckisacylon.baylibre.com>
-Date:   Mon, 24 May 2021 11:38:31 +0200
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+yxfVj7jKw45QrlrhnP2dyoysNu/SHiHa0fZjF/qcQ0=;
+        b=pRBH/3Uaeo00/1KcV1pyXd+UMmZPkGvp7gQvhulAB5ugY9T+V0Mcr1b8cA9Wnij7PG
+         iF4ackqyCtS0PZzHanAby7SCTUwTvJcA6e0wHnqVbVNGtDpKhk6y8LO4Kv2Q64TSVKtW
+         pK33XKtoVKMBpGPyWTtjzD1JTAR7tDucwowy3Jce7SoGss9NFNKiLMbcq14cP3Ppp8oG
+         JdOff4VMmqmBzBHew7Pt/6qM8Yf+omWfiBSyPokLwAb+0RZk04TBuMaoZXjupjyDUEI2
+         FTt/nTVkgVqQIvJkwPrj/QVLMqLzWJwF0sTybXHlLXMCAnnSpRUnqya4bhUMducBGLg/
+         hY5A==
+X-Gm-Message-State: AOAM532mhHNZwOeftPt7X4IShvErq+Hew2C8F83BVpwJcflwMiEGagPr
+        4+RJ7wcE+3iwmG5OVnNzwQvpZ5pyWTY=
+X-Google-Smtp-Source: ABdhPJyple+XJHadP4SOsxTYxSH8E8EyGwgFHnwIzBn43eRvrU5XxLQIOX++TAMI6HQeat+eU1BY7Q==
+X-Received: by 2002:ac2:50c2:: with SMTP id h2mr9709116lfm.499.1621851645960;
+        Mon, 24 May 2021 03:20:45 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.googlemail.com with ESMTPSA id q6sm1391573lfn.11.2021.05.24.03.20.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 03:20:45 -0700 (PDT)
+Subject: Re: [PATCH v2 02/14] regulator: core: Detach coupled regulator before
+ coupling count is dropped
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210523231335.8238-1-digetx@gmail.com>
+ <20210523231335.8238-3-digetx@gmail.com>
+Message-ID: <b5329801-ef0b-0c8d-aced-75c44f076f29@gmail.com>
+Date:   Mon, 24 May 2021 13:20:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20210523231335.8238-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+24.05.2021 02:13, Dmitry Osipenko пишет:
+> Detach coupled regulator before dropping coupling count in order to allow
+> detaching callback to balance voltage of regulators. This is needed by
+> NVIDIA Tegra regulator couplers in order to bring back voltage to a value
+> that is safe for reboot once regulators are decoupled.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/regulator/core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index aae978c0c148..83571f83af04 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -5084,6 +5084,13 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+>  
+>  	n_coupled = c_desc->n_coupled;
+>  
+> +	if (coupler && coupler->detach_regulator) {
+> +		err = coupler->detach_regulator(coupler, rdev);
+> +		if (err)
+> +			rdev_err(rdev, "failed to detach from coupler: %pe\n",
+> +				 ERR_PTR(err));
+> +	}
+> +
+>  	for (i = 1; i < n_coupled; i++) {
+>  		c_rdev = c_desc->coupled_rdevs[i];
+>  
+> @@ -5111,13 +5118,6 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+>  		c_desc->n_resolved--;
+>  	}
+>  
+> -	if (coupler && coupler->detach_regulator) {
+> -		err = coupler->detach_regulator(coupler, rdev);
+> -		if (err)
+> -			rdev_err(rdev, "failed to detach from coupler: %pe\n",
+> -				 ERR_PTR(err));
+> -	}
+> -
+>  	kfree(rdev->coupling_desc.coupled_rdevs);
+>  	rdev->coupling_desc.coupled_rdevs = NULL;
+>  }
+> 
 
-On Thu 20 May 2021 at 16:02, Neil Armstrong <narmstrong@baylibre.com> wrote:
-
-> On 29/04/2021 11:03, Jerome Brunet wrote:
-> Sorry for bothering with the DSI stuff, I'll fix this when we are ready to upstream DSI support for G12A.
->
-> I had this patch for a while in my integration branches, so:
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
->
->
-> Neil
-
-Applied
+I now realized that this is a bit too fragile approach. I'll drop this
+patch in v3, there are better options of how to manage balancing on
+detaching and this is not critical feature for now anyways.
