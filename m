@@ -2,114 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81C4C47085
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BDBC04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8CA6611CD
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804216109F
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232689AbhEXLLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 07:11:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43398 "EHLO
+        id S232666AbhEXLvP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 07:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232805AbhEXLLo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:11:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E77C06138A
-        for <linux-clk@vger.kernel.org>; Mon, 24 May 2021 04:10:16 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ll8TF-00051P-01; Mon, 24 May 2021 13:10:05 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ll8TB-0003A0-Qt; Mon, 24 May 2021 13:10:01 +0200
-Date:   Mon, 24 May 2021 13:09:58 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        linux-spi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 0/6] clk: provide new devm helpers for prepared and
- enabled clocks
-Message-ID: <20210524110958.ytcqzdgkqw6jeah5@pengutronix.de>
-References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S232476AbhEXLvP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:51:15 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AECC061574;
+        Mon, 24 May 2021 04:49:46 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gb17so23294559ejc.8;
+        Mon, 24 May 2021 04:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CmDg0OPTc/Mfj+nfatUnRkw+P07W4/4NyprXDsEBySk=;
+        b=M+KshWcevyw3gQMskiFellZq+xtrLGDuoL87DH6TQrGPYgG6+WtwHqkFMteifIoZDy
+         IUx04svtQOuCDeWD0yPirVmgprpN9L1d37Hr3tApiluwUuMG3UcHsi06JSxHrWLKAdZf
+         0qPjLHkAH23x9Gw0GmIFXkd8LPoTtMwWQRAsV+i/XVej/nAhg6czR6PVGTQCAKDmT1RT
+         sTxSwnZnPSjtlksPRLbLvzIxGxy5R8yNg8th+V7l6igzmZKPtQV3gaznhNCZiqKGqgfb
+         CjkpWhoLGuNCEEON1hxJUGJlw9WMFkzafaGFL3bhsKaUP6nxn2Xud4hRSh1PVUsI8SK1
+         gt3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CmDg0OPTc/Mfj+nfatUnRkw+P07W4/4NyprXDsEBySk=;
+        b=SzqCMth/bafDRq6uoffVkwW9mem9yLyyz593qaEO9Mna8RhAeZJFMkQ2SyFkaeOoJ9
+         ntrmMaHMNkyjD5hn3nmiKvWOB4JFaVHEfV048TSwNuElIh+ub8S+Fc6T2OJgNZNKYtqE
+         5vkSMakDBFxxMm4f+Ynn+TXIoq4X9b+SU69TwA97WMZv3jjA3aCFRzGLVzub0BivnU9R
+         8JRmy3Kx8SQLa0HmOXWrxHTlA8Hq8mJCNc+4K3B82wxhJxmb+pAR7guI/PJIkd4jk76B
+         SiBcDWxjOnj2MxyMi7LgPX/+3kKwFeGDzjaA9A5m8e84uzugrr11YdYOxivuIOXTE5RC
+         vMvg==
+X-Gm-Message-State: AOAM530x3daZ9JuvmfSjtd6ctWUaDdR8oMi0RGnNEFkwvr+jO/grdiIw
+        jlX75QZSJzqpzoEjk7a4BDvnXJpAzJTp6ClXz2A=
+X-Google-Smtp-Source: ABdhPJzD07dr5GAsLpaU3/MVHZTTnESWRgVvV5yJipcm5OF6jyEnTMkNYlSFvgDvRdDvG1QT4gLJcBIjaoRniROlDqU=
+X-Received: by 2002:a17:907:2d8d:: with SMTP id gt13mr6315823ejc.162.1621856984608;
+ Mon, 24 May 2021 04:49:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7put5ziwze3atjbn"
-Content-Disposition: inline
-In-Reply-To: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20210524104533.555953-1-martin.blumenstingl@googlemail.com> <1jsg2cbdqh.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jsg2cbdqh.fsf@starbuckisacylon.baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 24 May 2021 13:49:33 +0200
+Message-ID: <CAFBinCBs=vj_rp1yk_5bvYsMQUE6Pmq8xyc6JEwBPf6CewWm0w@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: meson8b: Don't use MPLL1 as parent of vclk_in_sel
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Jerome,
 
---7put5ziwze3atjbn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 24, 2021 at 12:57 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>
+> On Mon 24 May 2021 at 12:45, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>
+> > MPLL1 is needed for audio output. Drop it from the vclk_in_sel parent
+> > list so we only use the (mutable) vid_pll_final_div tree or one of the
+> > (fixed) FCLK_DIV{3,4,5} clocks.
+>
+> Are the fixed ones actually needed ?
+>
+> If the consumer actually lives on the vid_pll only, I'd prefer if you
+> could add CLK_SET_RATE_NOREPARENT and assign the proper parent in DT with
+> `assigned-clock-parents`
+you're right, only the vid_pll_final_div tree is used
+I just tested it with assigned-clock-parents and
+CLK_SET_RATE_NO_REPARENT and it's working fine. I'll send a v2 later
+today
 
-On Mon, May 10, 2021 at 07:41:36PM +0200, Uwe Kleine-K=F6nig wrote:
-> compared to v6 I rebased to v5.13-rc1 (which resulted in a conflict in
-> the pwm-atmel patch), reformated the doc comments in patch 2 (as
-> suggested by Jonathan Cameron) and added the two Reviewed-by tags for
-> Jonathan Cameron.
+Thanks for this suggestion!
 
-Another two weeks without maintainer feedback. I didn't find a single
-mail by either Michael Turquette nor by Stephen Boyd on the linux-clk
-list on lore dating from this month. This patch set didn't get a reply
-since more than half a year.
 
-Is the clk tree still maintained?  Would a pull request help? There are
-several people who expressed interest in this series and the cleanup it
-allows.
-
-@Andrew: Would you be willing to take the first two patches if Michael
-and Stephen don't react in the near future?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---7put5ziwze3atjbn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCriYMACgkQwfwUeK3K
-7Amfngf9Ga4caGfJs9XN3dun54N+DsOf8YkklfYBiAAjCixalrvdei8QJA3djFos
-TTUqAA5pZSaT5RZBoXVn7bwDkIOTJHIKgD05+7uZL01XZ6LaO0b6euqhSnpUSWV5
-yB8DteZUg4+FPgxa8a0DPgfBq5dRr1ADn3U2YBAvZXUnpIk49chH5viOQ7CockL/
-28GJcNA94L87QFKtUMiw5myBy+ThHJiA5G8WKSXbSJB4JpI24B113XZH9lmCpxEg
-1H9Z23S68CuV+9uvzIZAEhDPgwrSon7ILGeszXEYgBmGE2O/mL9WPptcCkRS0H35
-DfScTBSMeU7Cw4q6705OV82DdPyFmQ==
-=0Iaw
------END PGP SIGNATURE-----
-
---7put5ziwze3atjbn--
+Best regards,
+Martin
