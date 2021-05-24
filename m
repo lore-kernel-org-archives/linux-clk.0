@@ -2,96 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BDBC04FF3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2914C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 804216109F
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C21BD6128B
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 11:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232666AbhEXLvP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 07:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232476AbhEXLvP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:51:15 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AECC061574;
-        Mon, 24 May 2021 04:49:46 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id gb17so23294559ejc.8;
-        Mon, 24 May 2021 04:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CmDg0OPTc/Mfj+nfatUnRkw+P07W4/4NyprXDsEBySk=;
-        b=M+KshWcevyw3gQMskiFellZq+xtrLGDuoL87DH6TQrGPYgG6+WtwHqkFMteifIoZDy
-         IUx04svtQOuCDeWD0yPirVmgprpN9L1d37Hr3tApiluwUuMG3UcHsi06JSxHrWLKAdZf
-         0qPjLHkAH23x9Gw0GmIFXkd8LPoTtMwWQRAsV+i/XVej/nAhg6czR6PVGTQCAKDmT1RT
-         sTxSwnZnPSjtlksPRLbLvzIxGxy5R8yNg8th+V7l6igzmZKPtQV3gaznhNCZiqKGqgfb
-         CjkpWhoLGuNCEEON1hxJUGJlw9WMFkzafaGFL3bhsKaUP6nxn2Xud4hRSh1PVUsI8SK1
-         gt3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CmDg0OPTc/Mfj+nfatUnRkw+P07W4/4NyprXDsEBySk=;
-        b=SzqCMth/bafDRq6uoffVkwW9mem9yLyyz593qaEO9Mna8RhAeZJFMkQ2SyFkaeOoJ9
-         ntrmMaHMNkyjD5hn3nmiKvWOB4JFaVHEfV048TSwNuElIh+ub8S+Fc6T2OJgNZNKYtqE
-         5vkSMakDBFxxMm4f+Ynn+TXIoq4X9b+SU69TwA97WMZv3jjA3aCFRzGLVzub0BivnU9R
-         8JRmy3Kx8SQLa0HmOXWrxHTlA8Hq8mJCNc+4K3B82wxhJxmb+pAR7guI/PJIkd4jk76B
-         SiBcDWxjOnj2MxyMi7LgPX/+3kKwFeGDzjaA9A5m8e84uzugrr11YdYOxivuIOXTE5RC
-         vMvg==
-X-Gm-Message-State: AOAM530x3daZ9JuvmfSjtd6ctWUaDdR8oMi0RGnNEFkwvr+jO/grdiIw
-        jlX75QZSJzqpzoEjk7a4BDvnXJpAzJTp6ClXz2A=
-X-Google-Smtp-Source: ABdhPJzD07dr5GAsLpaU3/MVHZTTnESWRgVvV5yJipcm5OF6jyEnTMkNYlSFvgDvRdDvG1QT4gLJcBIjaoRniROlDqU=
-X-Received: by 2002:a17:907:2d8d:: with SMTP id gt13mr6315823ejc.162.1621856984608;
- Mon, 24 May 2021 04:49:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210524104533.555953-1-martin.blumenstingl@googlemail.com> <1jsg2cbdqh.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jsg2cbdqh.fsf@starbuckisacylon.baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 24 May 2021 13:49:33 +0200
-Message-ID: <CAFBinCBs=vj_rp1yk_5bvYsMQUE6Pmq8xyc6JEwBPf6CewWm0w@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: meson8b: Don't use MPLL1 as parent of vclk_in_sel
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S232476AbhEXL7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 07:59:19 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44701 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232110AbhEXL7S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 07:59:18 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 72FDE5C0054;
+        Mon, 24 May 2021 07:57:50 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 24 May 2021 07:57:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=B529eywUmsR9JY3AcBFsjJlGcRP
+        HY45DQE7bzyzTCZE=; b=Gvo1WFDSk4JVECXX4xz0uR4964zfHSzzK+CPdWJ/9rp
+        KNJgy8jEttsQConKjtmfTjNYN97e2IZ6sWkVMuuJuxeoJvMxLmne7pAlYaW+61XD
+        TdsOq4DcQBVN/iFqNS2vQZ/xhlIXJAOr+l+EeJEeJyja82xFtKL2EcAThz//4vcY
+        D1CTahLU/Ix7CX58gudibB/otx4naGtErahE8sQOzvtoIfKSu1YuOGrzsggHmLh1
+        OQCU4dZFYsEMLSnQvdBAXZY8Vd+F/mgSMmrKLzPoWpOEZZ4FKv0vRAiR44T0ublH
+        nTxFDLMJw2GN/KsHkMNeg4qG+zHyy19Sz8dvYfrBKcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=B529ey
+        wUmsR9JY3AcBFsjJlGcRPHY45DQE7bzyzTCZE=; b=r9YY7HYEPhLJGKReZe8hqK
+        6jaGqem1mqRyycpkyf8tv5RcDvbePNPXqebSuhb5G4sv7xdkW16rltqGuFOuSSOX
+        ljCYwnIGQns3LbAlUHXpu9FwCyvHbOpKnaNJLC3t7GPGfwqKSX2E0ycR+gMRYY5M
+        JFT7IEYFOr4VroQ8y4itji22occbG6dT3GTlsHHX23PfiCJYeLUTJwpKTEDmSQCk
+        dM0zpMe+/uV18VK7J+ttCnFda4fV6W0kCIs7VJvlLWwlra7LvZBPas8ix70cX1ZY
+        GibV5IixRj99tctnpOOTjQDpRVu2/1QnNcC31stEEbsLYl6hCm7YrezynwgxjZyg
+        ==
+X-ME-Sender: <xms:vJSrYCFltTNSWLEvXZpuoWBQtcyumqjnUZ61_RNjr1ia5kalxCEUQg>
+    <xme:vJSrYDXReR2553hORjr7sj2zXlIVOTxv4gSzYWaJS7HkAkzYkG8_JVy0IEZAdKxmR
+    2N95483tIocx7ASmA8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdejledggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:vJSrYMIJEMlx79njkJiInd1DWyP9iHRjIR7KLxSHy_D9wz5P4uLrXw>
+    <xmx:vJSrYMHfU4RGHfiu8TubRjC8oQr_E7BIIHBDIBi4SEiyQhwCZ7Gyeg>
+    <xmx:vJSrYIVv7ZLHrOaCKIjeIsAC_fM2Uv4f0HyAxtW-cfqoaUg9JtpCQQ>
+    <xmx:vpSrYKJUOmr7bQKgO52pbx5mHWAQNDVxJjmXD06g8LbNAI8GcaPO2A>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Mon, 24 May 2021 07:57:48 -0400 (EDT)
+Date:   Mon, 24 May 2021 13:57:47 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: fix incorrect postdivider on
+ pll-audio
+Message-ID: <20210524115747.2vv3kigu7wcrgpmj@gilmour>
+References: <20210513131315.2059451-1-t.schramm@manjaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3klzeylg2lfcluf4"
+Content-Disposition: inline
+In-Reply-To: <20210513131315.2059451-1-t.schramm@manjaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
 
-On Mon, May 24, 2021 at 12:57 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
->
-> On Mon 24 May 2021 at 12:45, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->
-> > MPLL1 is needed for audio output. Drop it from the vclk_in_sel parent
-> > list so we only use the (mutable) vid_pll_final_div tree or one of the
-> > (fixed) FCLK_DIV{3,4,5} clocks.
->
-> Are the fixed ones actually needed ?
->
-> If the consumer actually lives on the vid_pll only, I'd prefer if you
-> could add CLK_SET_RATE_NOREPARENT and assign the proper parent in DT with
-> `assigned-clock-parents`
-you're right, only the vid_pll_final_div tree is used
-I just tested it with assigned-clock-parents and
-CLK_SET_RATE_NO_REPARENT and it's working fine. I'll send a v2 later
-today
+--3klzeylg2lfcluf4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for this suggestion!
+On Thu, May 13, 2021 at 03:13:15PM +0200, Tobias Schramm wrote:
+> Commit 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for =
+audio-pll")
+> changed the audio pll on the Allwinner V3s and V3 SoCs to use
+> sigma-delta modulation. In the process the declaration of fixed postdivid=
+er
+> providing "pll-audio" was adjusted to provide the desired clock rates from
+> the now sigma-delta modulated pll.
+> However, while the divider used for calculations by the clock framework
+> was adjusted the actual divider programmed into the hardware in
+> sun8i_v3_v3s_ccu_init was left at "divide by four". This broke the
+> "pll-audio" clock, now only providing quater the expected clock rate.
+> It would in general be desirable to program the postdivider for
+> "pll-audio" to four, such that a broader range of frequencies were
+> available on the pll outputs. But the clock for the integrated codec
+> "ac-dig" does not feature a mux that allows to select from all pll outputs
+> as it is just a simple clock gate connected to "pll-audio". Thus we need
+> to set the postdivider to one to be able to provide the 22.5792MHz and
+> 24.576MHz rates required by the internal sun4i codec.
+>=20
+> This patches fixes the incorrect clock rate by forcing the postdivider to
+> one in sun8i_v3_v3s_ccu_init.
+>=20
+> Fixes: 46060be6d840 ("clk: sunxi-ng: v3s: use sigma-delta modulation for =
+audio-pll")
+> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
 
+Applied, thanks
+Maxime
 
-Best regards,
-Martin
+--3klzeylg2lfcluf4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYKuUuwAKCRDj7w1vZxhR
+xfLuAQDbALcSH3I9sN3aT7SM2BKzG79hN9v5u7zkilw8NofhGAEA1n9Sx3Vp0Z4M
+/DY6a26+9XAGkK7BByoqG2qVMCw7RQQ=
+=CHIg
+-----END PGP SIGNATURE-----
+
+--3klzeylg2lfcluf4--
