@@ -2,153 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C836DC2B9F8
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6E0C04FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFEEC613AD
-	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEAC361151
+	for <linux-clk@archiver.kernel.org>; Mon, 24 May 2021 12:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbhEXMkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 May 2021 08:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232700AbhEXMkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 08:40:51 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4253FC061574;
-        Mon, 24 May 2021 05:39:23 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id i9so40451808lfe.13;
-        Mon, 24 May 2021 05:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
-        b=Ukzs1lpffefInt+Tc3rj13rbWCFBfbLYbuOBDb1j5YTp/JNEMJrM+0BS9pYYP38s9n
-         7HnDgswflfy/VLz9qqAzPEQ99K+h8Qw9BP4SNjW8CFWmWgh5JMUSDfFAJeK+RZdsaGGL
-         E/Dufo5c9cUI5wYk5ZS925uvNbuEl/D0DVzT9JJnHjAK1LG65AMdNhVEY5bjp2L2ZkJx
-         xTyf1oVqYbmYguDJ4dsI4rGt5dv+nSIZOdciE20NRNrrOmtUf9V4AfSlhip/ALqlXDCi
-         a3xqCn7eZwwF4XtCyKGnbWeeDVyinyJ8tey0f34ksGlX16trBozo1SFW0R8FUHxTuMe2
-         gCpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
-        b=JPtwYE8hRhKABXJqAdQPEmS/j++lk9UmOM98vt2+exheyVdkYJyhD3XKbkieLeMkqL
-         /UHrG5P34T7pgyKMjm7tYUro2k/bNz5UjhoS0FeZtZeMRMrF+PUZDhp2E6Nexp93rb1f
-         DVVmp2GE0TIukOoJtXuZoF9czCz2kJ3gmg+tGP5aQRuWZb6Hg8CDqHeWhOmUvWH6SkVx
-         VUVniWHnHdYwP0nz2h3s4ZhLVBgyW5KMY2K4TIG2Uf6Qck41AbhHhcSAyEpiIIVdieG9
-         2wkXGhDq7EseZM03ePl8uRyWjf6rPdDGtFegsHRW6OgBREFluVHCx3ZKSM7UvuOhJlug
-         9OfQ==
-X-Gm-Message-State: AOAM533KhURQfuH5gHNIe/ch3AcEg24inlOXm8PTgtQ+2smqFB8dpza0
-        JZsPVjBoZ88+S3e9qraZZZD7vr48hSM=
-X-Google-Smtp-Source: ABdhPJyhCOFQn/Z1pKRmtZeJWu1d4dSY2QLiSj+ONw56eIR3cGKanVoF3Tn/DOinhtQ09s5N7gDupw==
-X-Received: by 2002:a05:6512:128c:: with SMTP id u12mr10567429lfs.160.1621859961442;
-        Mon, 24 May 2021 05:39:21 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
-        by smtp.googlemail.com with ESMTPSA id p21sm1409745lfg.97.2021.05.24.05.39.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 May 2021 05:39:21 -0700 (PDT)
-Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
- enabled
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-References: <20210523232556.15017-1-digetx@gmail.com>
- <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
-Date:   Mon, 24 May 2021 15:39:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S232512AbhEXMtp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 May 2021 08:49:45 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:58117 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232371AbhEXMtp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 May 2021 08:49:45 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id 548F64325;
+        Mon, 24 May 2021 08:48:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 24 May 2021 08:48:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=Zhabnp0Atjp47VD9T0LRqk1Zy/z
+        s00zil61rTDyPJR8=; b=FT9hbmq8gbEzT4OkklXO1rElEc5ELJlcfpEsV7YU4WZ
+        Lj0yyXKdaApfhPHYKeA9heqeSVegL1kTukkdVzEQSoCPfrVn8uf1HWYPp8mEtVlD
+        MFY+/LnYjr7nCTswTfl95PU/aD5gNUdwerdYOP3yUJSfnQK3MBksIftJ9NPA5z5q
+        FY6wOvm1e6kG/Ng+eJxULQYfS7YoExr2hK7z2spABQkO8jcFZtO6EmFkkrKWr5xG
+        Vs5rMA8xZ5k0bxRvbLyW73FlERHjaRDfym3ClrSjOfCDfcwh0oBhmtFljZcwQcd9
+        m/x1pB3q8f+M/kdN48bVZ/E1ejYLV+iZ474V4e8qM1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Zhabnp
+        0Atjp47VD9T0LRqk1Zy/zs00zil61rTDyPJR8=; b=Z5eaM2WNbZ5hpcmp817ZPt
+        XXfhNkayDUzL29zLPZuCC1x6hBGIscA0MBdtZXs8QaLBsFGQrjkYEpmmCulcvNgY
+        2YWnfMy0lDWojbztYindj2G071z2zVALbKiExeAe0198CESrkjvMfZbWDD9EPx92
+        P+DueEeROV/djPFgzb9Pe6XnVFQkYFn45PgT/w/j4WfgkOHs5dm1NAg9WbLrSa3c
+        7SsGxxb8HboQQT88GtcEk0qrOBUgmuTuFw5/lMBC7LzlwVQ6kcmkgzaDOEV6U0i4
+        ydFA0IF5FW4cYwvxvoMRa2SgdEsHFivgKy+DNHj/9/5j0cU8qJi4Sffvo2UybqCQ
+        ==
+X-ME-Sender: <xms:jaCrYFtF4JDSGBBKA4cG-3x1MmHAEemYkH_rgg7BO7JfMriEa0J1ig>
+    <xme:jaCrYOdlp0-dKrD7Lh6nZsKzZSjg-QxcJRqBeyz2rjWSz3KK5uOxnoKVZgEo5gZgC
+    e5QD-2lOmMlifi1lCY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdejledgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepveevfeffudeviedtgeethffhteeuffetfeffvdehvedvheetteehvdelfffg
+    jedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrieekrd
+    ejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    rgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:jqCrYIxFKIp2HdjVDCKyUWJd0ILiBzXkJopqRbncDM0WviI5wp-Bag>
+    <xmx:jqCrYMPQlMvZ_A2KhrnIXz_o6MlgdJ3rgG8C6qQZbFvww4YiPZ-xwg>
+    <xmx:jqCrYF_Z8ytZps9byNoiJywYnUYij6BZE6pZGudtJJnmmdLWGUla2A>
+    <xmx:j6CrYDfc5YVwxJ9Ca5_4aabGjfk3r-mYYA3NkLFRMVddjpP0kCEjYmSDhYk>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Mon, 24 May 2021 08:48:13 -0400 (EDT)
+Date:   Mon, 24 May 2021 14:48:11 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: Implement a clock request API
+Message-ID: <20210524124811.74g75n672wrpzqqi@gilmour>
+References: <20210413101320.321584-1-maxime@cerno.tech>
+ <161981637939.1363782.4943687720432536625@swboyd.mtv.corp.google.com>
+ <20210503083221.qsdurp2f3bkwfa6d@gilmour>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cpltpodfwo6nlz4l"
+Content-Disposition: inline
+In-Reply-To: <20210503083221.qsdurp2f3bkwfa6d@gilmour>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-24.05.2021 11:54, Geert Uytterhoeven пишет:
-> Hi Dmitry,
-> 
-> On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->> There are couple older platforms that can't be compile-tested because they
->> partially implement CLK API. It causes build failure of kernel drivers due
->> to the missing symbols of the unimplemented part of CLK API.
->>
->> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
->>                      MIPS Ralink.
->>
->> Disable compile-testing for HAVE_LEGACY_CLK=y.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
->>
->>  config COMPILE_TEST
->>         bool "Compile also drivers which will not load"
->> -       depends on HAS_IOMEM
->> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
-> 
-> That sounds a bit drastic to me.  Usually we just try to implement the
-> missing functionality, or provide stubs.
-> Which functions are missing?
 
-Everything that belongs to CONFIG_COMMON_CLK needs stubs.
+--cpltpodfwo6nlz4l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That is everything under CONFIG_HAVE_CLK [1], excluding functions
-belonging to clk-devres.o and clk-bulk.o [2]. The HAVE_LEGACY_CLK
-selects HAVE_CLK, but the COMMON_CLK is under HAVE_CLK too.
+Hi Stephen, Mike,
 
-[1]
-https://elixir.bootlin.com/linux/v5.13-rc3/source/include/linux/clk.h#L786
-[2]
-https://elixir.bootlin.com/linux/v5.13-rc3/source/drivers/clk/Makefile#L3
+On Mon, May 03, 2021 at 10:32:21AM +0200, Maxime Ripard wrote:
+> Hi Stephen,
+>=20
+> On Fri, Apr 30, 2021 at 01:59:39PM -0700, Stephen Boyd wrote:
+> > Quoting Maxime Ripard (2021-04-13 03:13:18)
+> > > Hi,
+> > >=20
+> > > This is a follow-up of the discussion here:
+> > > https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gil=
+mour/
+> > >=20
+> > > This implements a mechanism to raise and lower clock rates based on c=
+onsumer
+> > > workloads, with an example of such an implementation for the Raspberr=
+yPi4 HDMI
+> > > controller.
+> > >=20
+> > > There's a couple of things worth discussing:
+> > >=20
+> > >   - The name is in conflict with clk_request_rate, and even though it=
+ feels
+> > >     like the right name to me, we should probably avoid any confusion
+> > >=20
+> > >   - The code so far implements a policy of always going for the lowes=
+t rate
+> > >     possible. While we don't have an use-case for something else, thi=
+s should
+> > >     maybe be made more flexible?
+> >=20
+> > I'm definitely confused how it is different from the
+> > clk_set_rate_exclusive() API and associated
+> > clk_rate_exclusive_get()/clk_rate_exclusive_put(). Can you explain
+> > further the differences in the cover letter here?
+>=20
+> The exclusive API is meant to prevent the clock rate from changing,
+> allowing a single user to make sure that no other user will be able to
+> change it.
+>=20
+> What we want here is instead to allow multiple users to be able to
+> express a set of minimum rates and then let the CCF figure out a rate
+> for that clock that matches those constraints (so basically what
+> clk_set_min_rate does), but then does allow for the clock to go back to
+> its initial rate once that constraint is not needed anymore.
+>=20
+> So I guess it's more akin to clk_set_min_rate with rollback than the
+> exclusive API?
 
-This problem is repeated over and over again for the past years. Some
-maintainers are adding "depends on COMMON_CLK" for COMPILE_TEST of each
-driver, but this doesn't solve the root of the problem, and thus, it's
-constantly reoccurring.
+Is that rationale good enough, or did you expect something else?
 
-Recently Krzysztof Kozlowski added couple more clk stubs for MIPS, but
-still lots of stubs are missing. Some platforms don't have any stubs at
-all and apparently nobody cares to fix them.
+Maxime
 
-There 3 possible solutions:
+--cpltpodfwo6nlz4l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
-2. Build stubs universally, maybe using weak functions.
-3. Disable compile-testing for HAVE_LEGACY_CLK
+-----BEGIN PGP SIGNATURE-----
 
-The third option is the simplest. If anyone will care to fix those
-legacy platforms properly, then compile-testing could be re-enabled for
-them. This is my proposal.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYKugiwAKCRDj7w1vZxhR
+xfYRAQDtffPhF2gxVCSqs9qlsbYhMeB+mxY9DPPqNO5CWL1J7wD9EnCQq5BwT/3m
+HLrSMGMCFo8qkNFISkn29LFniki7bwA=
+=urn9
+-----END PGP SIGNATURE-----
+
+--cpltpodfwo6nlz4l--
