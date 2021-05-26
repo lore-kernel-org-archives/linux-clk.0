@@ -2,124 +2,271 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AC1C47087
-	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 00:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6167C2B9F7
+	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 03:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6BEE6142B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 00:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A515A61436
+	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 03:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232547AbhEZAlf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 May 2021 20:41:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230106AbhEZAle (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 May 2021 20:41:34 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9995C061574;
-        Tue, 25 May 2021 17:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=tETNDjNyS9VWp0lmkXGYY/OSTeXZstfAPKUdqUv0Z6g=; b=cuho+FlC0QiW7LCkxQwvlW2LIn
-        vdATixI4JJu6Nb5GPntqn1h36tTA2GAp4u6SqyHeh4v/U8os2HHd7AJ/qdpILv+k7W42QdTck2XWp
-        1JNEx++xFzzmG/OqOkdDRyqor7KWVOXZlaDgM5qdCCy4aTs/dbpv9AHRjiYmlFO0D6i/OWquSxpkO
-        qeUqZahCEgKwivrncyTcomGUWpOtgWIr5NwvudL22BrVdrI6GA11Ps039sQ6LcjvsUEDYGNXXWPzI
-        H9DZWM9o05gvYQiMEMB6c1Ey3T+ysWCYP18tsz3oEA7nbelPsDblH6/nnLJHpyNVnqgdwRAHAsJsK
-        6lhywPkA==;
-Received: from [2601:1c0:6280:3f0::7376]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1llhaa-009Y5s-Ge; Wed, 26 May 2021 00:40:00 +0000
-Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
- enabled
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-References: <20210523232556.15017-1-digetx@gmail.com>
- <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
- <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
- <f12b4622-6cea-ac65-2d94-f50a85c29215@canonical.com>
- <CAMuHMdW_G259Nwx1EEf38h0AcVH8yjmjqp9Mh-vQ4LJJMzD8Dg@mail.gmail.com>
- <2e5bb7c2-62d9-b1f7-7f35-2b379d3692d5@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3661fdba-ad32-5d16-7714-1ebc58caf435@infradead.org>
-Date:   Tue, 25 May 2021 17:39:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S230075AbhEZDKp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 May 2021 23:10:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229750AbhEZDKp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 May 2021 23:10:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8FCEA6128B;
+        Wed, 26 May 2021 03:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621998554;
+        bh=wBPtpL04qpK8gH7qVHwO7jhI8IygzE0yr7WFFNC43vQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=E3royAXjOPJ38N54cFneV51m2i4IlRsDZUlyjN5R6nml3ui3qywPLe7phxAQpCGcE
+         KwB05Y8bnHo8/n7s/tC/Hl3rMKFHrg+pXD1iy4KKUcAWN7S/3NruQ9ElEiDeBmIMUe
+         CqhVz7b53aEfxGi/3MZ54csT93+gvxb0OvlyQvV8EkAdlG3grJ3sWiDj7LijDKJjK7
+         C3IBeST1wwtMhXWaxojh2G+48NH/NeRobOZ2Ozi6jJV8RYTv64Zq/GNALeNwNEdcnS
+         IbIjnzbLDPYLqVHKwc09Pxc8tq7rS7KiVJWxsKKKfUrDQ7xQ6p/3ABoJ6ga5GHrXMF
+         yvyTUDJWYOQKg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <2e5bb7c2-62d9-b1f7-7f35-2b379d3692d5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210524182745.22923-3-sven@svenpeter.dev>
+References: <20210524182745.22923-1-sven@svenpeter.dev> <20210524182745.22923-3-sven@svenpeter.dev>
+Subject: Re: [PATCH 2/3] clk: add support for gate clocks on Apple SoCs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sven Peter <sven@svenpeter.dev>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Hector Martin <marcan@marcan.st>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Arnd Bergmann <arnd@kernel.org>
+To:     Sven Peter <sven@svenpeter.dev>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Date:   Tue, 25 May 2021 20:09:13 -0700
+Message-ID: <162199855335.4130789.17766958356597249549@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/25/21 2:29 PM, Dmitry Osipenko wrote:
-> 25.05.2021 15:19, Geert Uytterhoeven пишет:
-> ...
->>>> There 3 possible solutions:
->>>>
->>>> 1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
->>>> 2. Build stubs universally, maybe using weak functions.
->>>
->>> I vote for this one - global stubs.
->>
->> Yep.
->>
->>> Or for a new one:
->>> 4. Disable COMPILE_TEST for specific platforms (mentioned in commit
->>> msg). Eventually could be like:
->>> config RALINK
->>>         depends !COMPILE_TEST || (COMPILE_TEST && COMMON_CLK)
->>
->> That's a neat idea!
->>
->> Of course there's a fifth option:
->>
->> 5. Convert legacy platforms to COMMON_CLK.
->>
->> Which is already happening for ARM EP93XX.
-> 
-> I'll try to take a closer look at alternative options, thank you for
-> yours input.
+Quoting Sven Peter (2021-05-24 11:27:44)
+> Add a simple driver for gate clocks found on Apple SoCs. These don't
+> have any frequency associated with them and are only used to enable
+> access to MMIO regions of various peripherals.
 
-Hi,
+Can we figure out what frequency they are clocking at?
 
-If you are messing around with HAVE_LEGACY_CLK and COMMON_CLK
-and don't mind, please have a look at this report from
-'kernel test robot':
-  https://lore.kernel.org/lkml/202103162301.oomY9NwI-lkp@intel.com/
+>=20
+> Signed-off-by: Sven Peter <sven@svenpeter.dev>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index e80918be8e9c..ac987a8cf318 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -245,6 +245,18 @@ config CLK_TWL6040
+>           McPDM. McPDM module is using the external bit clock on the McPD=
+M bus
+>           as functional clock.
+> =20
+> +config COMMON_CLK_APPLE
+> +       tristate "Clock driver for Apple platforms"
+> +       depends on ARCH_APPLE && COMMON_CLK
 
+The COMMON_CLK depend is redundant. Please remove.
 
-Maybe this one is more MIPS-specific. I dunno.
-I tried to come up with a patch for it and failed.
+> +       default ARCH_APPLE
+> +       help
+> +         Support for clock gates on Apple SoCs such as the M1.
+> +
+> +         These clock gates do not have a frequency associated with them =
+and
+> +         are only used to power on/off various peripherals. Generally, a=
+ clock
+> +         gate needs to be enabled before the respective MMIO region can =
+be
+> +         accessed.
+> +
+>  config COMMON_CLK_AXI_CLKGEN
+>         tristate "AXI clkgen driver"
+>         depends on HAS_IOMEM || COMPILE_TEST
+> diff --git a/drivers/clk/clk-apple-gate.c b/drivers/clk/clk-apple-gate.c
+> new file mode 100644
+> index 000000000000..799e9269758f
+> --- /dev/null
+> +++ b/drivers/clk/clk-apple-gate.c
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Apple SoC clock/power gating driver
+> + *
+> + * Copyright The Asahi Linux Contributors
+> + */
+> +
+> +#include <linux/clk.h>
 
-I will be happy to built-test any patches that you come up with.
+Hopefully this can be droped.
 
-Maybe I have just looked at this too long...
+> +#include <linux/clkdev.h>
 
-thanks.
--- 
-~Randy
+And this one too. clkdev is not modern.
 
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +
+> +#define CLOCK_TARGET_MODE_MASK 0x0f
+
+APPLE_ prefix on all these?
+
+> +#define CLOCK_TARGET_MODE(m) (((m)&0xf))
+> +#define CLOCK_ACTUAL_MODE_MASK 0xf0
+> +#define CLOCK_ACTUAL_MODE(m) (((m)&0xf) << 4)
+> +
+> +#define CLOCK_MODE_ENABLE 0xf
+> +#define CLOCK_MODE_DISABLE 0
+> +
+> +#define CLOCK_ENDISABLE_TIMEOUT 100
+> +
+> +struct apple_clk_gate {
+> +       struct clk_hw hw;
+> +       void __iomem *reg;
+> +};
+> +
+> +#define to_apple_clk_gate(_hw) container_of(_hw, struct apple_clk_gate, =
+hw)
+> +
+> +static int apple_clk_gate_endisable(struct clk_hw *hw, int enable)
+> +{
+> +       struct apple_clk_gate *gate =3D to_apple_clk_gate(hw);
+> +       u32 reg;
+> +       u32 mode;
+> +
+> +       if (enable)
+> +               mode =3D CLOCK_MODE_ENABLE;
+> +       else
+> +               mode =3D CLOCK_MODE_DISABLE;
+> +
+> +       reg =3D readl(gate->reg);
+> +       reg &=3D ~CLOCK_TARGET_MODE_MASK;
+> +       reg |=3D CLOCK_TARGET_MODE(mode);
+> +       writel(reg, gate->reg);
+> +
+> +       return readl_poll_timeout_atomic(gate->reg, reg,
+> +                                        (reg & CLOCK_ACTUAL_MODE_MASK) =
+=3D=3D
+> +                                                CLOCK_ACTUAL_MODE(mode),
+> +                                        1, CLOCK_ENDISABLE_TIMEOUT);
+
+Maybe this
+
+          return readl_poll_timeout_atomic(gate->reg, reg,
+		   (reg & CLOCK_ACTUAL_MODE_MASK) =3D=3D CLOCK_ACTUAL_MODE(mode),
+		   1, CLOCK_ENDISABLE_TIMEOUT);
+
+at the least please don't break the =3D=3D across two lines.
+
+> +}
+> +
+> +static int apple_clk_gate_enable(struct clk_hw *hw)
+> +{
+> +       return apple_clk_gate_endisable(hw, 1);
+> +}
+> +
+> +static void apple_clk_gate_disable(struct clk_hw *hw)
+> +{
+> +       apple_clk_gate_endisable(hw, 0);
+> +}
+> +
+> +static int apple_clk_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct apple_clk_gate *gate =3D to_apple_clk_gate(hw);
+> +       u32 reg;
+> +
+> +       reg =3D readl(gate->reg);
+> +
+> +       if ((reg & CLOCK_ACTUAL_MODE_MASK) =3D=3D CLOCK_ACTUAL_MODE(CLOCK=
+_MODE_ENABLE))
+
+Any chance we can use FIELD_GET() and friends? Please don't do bit
+shifting stuff inside conditionals as it just makes life more
+complicated than it needs to be.
+
+> +               return 1;
+> +       return 0;
+
+How about just return <logic>?
+
+> +}
+> +
+> +static const struct clk_ops apple_clk_gate_ops =3D {
+> +       .enable =3D apple_clk_gate_enable,
+> +       .disable =3D apple_clk_gate_disable,
+> +       .is_enabled =3D apple_clk_gate_is_enabled,
+> +};
+> +
+> +static int apple_gate_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct device_node *node =3D dev->of_node;
+> +       const struct clk_parent_data parent_data[] =3D {
+> +               { .index =3D 0 },
+> +       };
+
+Yay thanks for not doing it the old way!
+
+> +       struct apple_clk_gate *data;
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init;
+> +       struct resource *res;
+> +       int num_parents;
+> +       int ret;
+> +
+> +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       data->reg =3D devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(data->reg))
+> +               return PTR_ERR(data->reg);
+> +
+> +       num_parents =3D of_clk_get_parent_count(node);
+
+Oh no I spoke too soon.
+
+> +       if (num_parents > 1) {
+> +               dev_err(dev, "clock supports at most one parent\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       init.name =3D dev->of_node->name;
+> +       init.ops =3D &apple_clk_gate_ops;
+> +       init.flags =3D 0;
+> +       init.parent_names =3D NULL;
+> +       init.parent_data =3D parent_data;
+> +       init.num_parents =3D num_parents;
+> +
+> +       data->hw.init =3D &init;
+> +       hw =3D &data->hw;
+> +
+> +       ret =3D devm_clk_hw_register(dev, hw);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
+
+It looks like a one clk per DT node binding which is not how we do it. I
+see Rob has started that discussion on the binding so we can keep that
+there.
+
+> +}
+> +
