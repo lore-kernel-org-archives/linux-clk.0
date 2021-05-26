@@ -2,173 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E3C47082
-	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 03:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449F5C2B9F7
+	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 07:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48F0061417
-	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 03:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C15861408
+	for <linux-clk@archiver.kernel.org>; Wed, 26 May 2021 07:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231530AbhEZDhg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 May 2021 23:37:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50922 "EHLO mail.kernel.org"
+        id S233066AbhEZHTt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 May 2021 03:19:49 -0400
+Received: from muru.com ([72.249.23.125]:60568 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231519AbhEZDhg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 May 2021 23:37:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D7723613BF;
-        Wed, 26 May 2021 03:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622000166;
-        bh=M1Id63aaB1aallh3019UiD0//S980+aU2GCI7HZMGsk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=twXQwn2ovA5RExg8oiNnUvhD68HF6CcrEwLyVavCd1MHms+I5p6IUY/eyrSCGqOqO
-         5juzuyno1xNfZNiGj3XordRCg3KlW8Q0yKA+Imj3JfWqqD/f2UGXUMzbGCCW5rVEVF
-         pGbEVT3FpqyoS9bst4GHWkrIKMTdWnTvlymRLqKrdUutQyseLv6KZmuwYHDJxJAmIr
-         BhqppZCIvKrYfRdUtki2MeUmVcGWDJn9GOrJSKS5egXo0sE6FI3H6Cb6dkimItEPcr
-         JIZSHPHT2aXOJCOM9DH0PRdOt6NKjWEaUl5OdkMO/BmHBmZN/v8Cbrgutt6RL9jQSB
-         DVQ5EjSp1j/Ew==
-Content-Type: text/plain; charset="utf-8"
+        id S233030AbhEZHTq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 May 2021 03:19:46 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 581CE80AE;
+        Wed, 26 May 2021 07:18:19 +0000 (UTC)
+Date:   Wed, 26 May 2021 10:18:10 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Sven Peter <sven@svenpeter.dev>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hector Martin <marcan@marcan.st>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH 0/3] Apple M1 clock gate driver
+Message-ID: <YK32Mmiq9QXGkELF@atomide.com>
+References: <20210524182745.22923-1-sven@svenpeter.dev>
+ <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1619334502-9880-2-git-send-email-tdas@codeaurora.org>
-References: <1619334502-9880-1-git-send-email-tdas@codeaurora.org> <1619334502-9880-2-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v3] clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 25 May 2021 20:36:04 -0700
-Message-ID: <162200016458.4130789.5041222615667409232@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2021-04-25 00:08:22)
-> The root clock generators with MND divider has the capability to support
-> change in duty-cycle by updating the 'D'. Add the clock ops which would
-> check all the boundary conditions and enable setting the desired duty-cyc=
-le
-> as per the consumer.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+Hi,
 
-Applied to clk-next with '_val' removed everywhere as it made it super
-hard to read. I also don't like the (d / 2) stuff but I can live with
-it.
+* Rob Herring <robh+dt@kernel.org> [210525 18:09]:
+> I would do a single node per mmio region with the register offset (or
+> offset / 4) being the clock id. This can still support new SoCs easily
+> if you have a fallback compatible. If you want/need to get all the
+> clocks, just walk the DT 'clocks' properties and extract all the IDs.
 
----8<---
+I mostly agree.. Except I'd also leave out the artificial clock ID and
+just use real register offsets from the clock controller base instead.
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index aa03e315d891..e1b1b426fae4 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -360,7 +360,7 @@ static int clk_rcg2_set_floor_rate_and_parent(struct cl=
-k_hw *hw,
- static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *dut=
-y)
- {
- 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
--	u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask;
-+	u32 notn_m, n, m, d, not2d, mask;
-=20
- 	if (!rcg->mnd_width) {
- 		/* 50 % duty-cycle for Non-MND RCGs */
-@@ -369,11 +369,11 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw,=
- struct clk_duty *duty)
- 		return 0;
- 	}
-=20
--	regmap_read(rcg->clkr.regmap, RCG_D_OFFSET(rcg), &not2d_val);
--	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
--	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
-+	regmap_read(rcg->clkr.regmap, RCG_D_OFFSET(rcg), &not2d);
-+	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
-+	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m);
-=20
--	if (!not2d_val && !m_val && !notn_m_val) {
-+	if (!not2d && !m && !notn_m) {
- 		/* 50 % duty-cycle always */
- 		duty->num =3D 1;
- 		duty->den =3D 2;
-@@ -382,13 +382,13 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw,=
- struct clk_duty *duty)
-=20
- 	mask =3D BIT(rcg->mnd_width) - 1;
-=20
--	d_val =3D ~(not2d_val) & mask;
--	d_val =3D DIV_ROUND_CLOSEST(d_val, 2);
-+	d =3D ~(not2d) & mask;
-+	d =3D DIV_ROUND_CLOSEST(d, 2);
-=20
--	n_val =3D (~(notn_m_val) + m_val) & mask;
-+	n =3D (~(notn_m) + m) & mask;
-=20
--	duty->num =3D d_val;
--	duty->den =3D n_val;
-+	duty->num =3D d;
-+	duty->den =3D n;
-=20
- 	return 0;
- }
-@@ -396,7 +396,7 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, s=
-truct clk_duty *duty)
- static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *dut=
-y)
- {
- 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
--	u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask, duty_per;
-+	u32 notn_m, n, m, d, not2d, mask, duty_per;
- 	int ret;
-=20
- 	/* Duty-cycle cannot be modified for non-MND RCGs */
-@@ -405,29 +405,29 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw,=
- struct clk_duty *duty)
-=20
- 	mask =3D BIT(rcg->mnd_width) - 1;
-=20
--	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
--	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
-+	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m);
-+	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
-=20
--	n_val =3D (~(notn_m_val) + m_val) & mask;
-+	n =3D (~(notn_m) + m) & mask;
-=20
- 	duty_per =3D (duty->num * 100) / duty->den;
-=20
- 	/* Calculate 2d value */
--	d_val =3D DIV_ROUND_CLOSEST(n_val * duty_per * 2, 100);
-+	d =3D DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
-=20
- 	 /* Check bit widths of 2d. If D is too big reduce duty cycle. */
--	if (d_val > mask)
--		d_val =3D mask;
-+	if (d > mask)
-+		d =3D mask;
-=20
--	if ((d_val / 2) > (n_val - m_val))
--		d_val =3D (n_val - m_val) * 2;
--	else if ((d_val / 2) < (m_val / 2))
--		d_val =3D m_val;
-+	if ((d / 2) > (n - m))
-+		d =3D (n - m) * 2;
-+	else if ((d / 2) < (m / 2))
-+		d =3D m;
-=20
--	not2d_val =3D ~d_val & mask;
-+	not2d =3D ~d & mask;
-=20
- 	ret =3D regmap_update_bits(rcg->clkr.regmap, RCG_D_OFFSET(rcg), mask,
--				 not2d_val);
-+				 not2d);
- 	if (ret)
- 		return ret;
+So a single clock controller node for each MMIO range, then set
+#clock=cells = <1>. Then the binding follows what we have for the
+interrupts-extended binding for example.
+
+If the clock controller optionally needs some data in the dts,
+that can be added to the clock controller node. Or it can be driver
+internal built-in data. If the data for dts can be described in a
+generic way, even better :)
+
+This would make the consumer interface look like below with a
+clock controller node and register offset from it:
+
+clocks = <&clock_controller1 0x1234>;
+
+Regards,
+
+Tony
+
+
+
