@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBEFC47089
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B71C47089
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D787613AC
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E5D613BA
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236107AbhE0Ngc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 09:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36330 "EHLO
+        id S236576AbhE0NrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 09:47:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236007AbhE0Ngb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:36:31 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43999C061574;
-        Thu, 27 May 2021 06:34:57 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id z12so227278ejw.0;
-        Thu, 27 May 2021 06:34:57 -0700 (PDT)
+        with ESMTP id S236335AbhE0NrV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:47:21 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE16C061574;
+        Thu, 27 May 2021 06:45:46 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id a25so878949edr.12;
+        Thu, 27 May 2021 06:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=VEI5bLvXgbpeUivVBaEMqx+txchbLnpQpbqyYjt+PAM=;
-        b=cwm5LW0GBakp8nRYV1jRDGSh9pRg91ZkgADzzEoCwe6WGyqpBqUwZwOY0Kaa01Rn6E
-         2eH+iw7H89o8RiEyS3uLIpmFoaKTU9tTkuRLm2Uw+7ZYJeEsv+KtReXC6x3Y8PGfFbSS
-         2sko2odHhgWqu2WVo6nYS29ZmZhTTAoV5/J8SdRy7Y7/oP4h0NxO2lkTCeGUWnUrCm98
-         SYJFvX3O0iAG9CAPJDE3c2+2mXJ5sG86j7vl/ajWDh4gESiz5d/1PLfVMLWVQnZjinmV
-         +Ddl8TRlEsPNlCiavUhszTUx+C/vqbFiJaZS0Kh5zbwDsa8te5H0iSF1syEQjLB+x1iz
-         CQ3Q==
+        bh=Uz4JiPh2mkktY6ONKOwk6wNsblTCy+bn5Eg1MPFuJRQ=;
+        b=tii8EUBiYfnHQlXnEiyPGmcAemLKeSVonfxJJlE8kmpWYW4H8QWzdpIEH9p6tv495U
+         pU28A2qZroVl8qu305uOoJWln5qbh/zqYc7w+60/1ytjtsEDQHXRLu2NCTuoaWjNq+vq
+         QkZ5EWFwH59yeKTZI1OEGO3758YEfIaxzx4rFKAXejZPM5H9SxlwUdU1zzF44CQoYlfx
+         FRWGVIfsUYB4a0Rjg6jUvPoDfN/L6WhqB+qDpht5oAPTsPqg9/fRgO+kQ8Re3hEACIdC
+         HuYY1P+Rv8vX8xQEOdPDwwzkj90Ph1I3ZkJr3RX7Y1nUZAr8coFiE86AWJ6Y1rmhlADp
+         Whdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=VEI5bLvXgbpeUivVBaEMqx+txchbLnpQpbqyYjt+PAM=;
-        b=VVzcsmPX/Nm8H6xStwP05AzAVO5PHvSiDR+twI1y9UC9QMtHd0KqS1j31o8jlbOPTP
-         aIyiJ97PZLsY6sApJAiJVqUNn1wbYscmTJOvLYmCSbSBmCu/SBLNwWXTokjZ2S0llkNN
-         JyqkqNoOT826Iz+ydqYtGA+rur+PEDBleJtKDhbUAgpiSl/bjtGXRWy4gBygZFYjWkB3
-         ChSWeoYFiRdrl0JtOEXNbtFrL9+HZlwnVFGqS8arOdolqsjwXfDh3Sw9sQQnQTE7edb8
-         toWF1hSvCeoCj8iRsX85Xjky7bH/GivQb7boV8vAgkhBptpTjagJ2WGGHG3EWf9TAjXr
-         Qp9g==
-X-Gm-Message-State: AOAM532AOnEUhyf0vKHVXnimil8yNpkn9lg95uEWGLPPVaKFDtURTolt
-        dvpYuR6N95qZS4i63ATO94A=
-X-Google-Smtp-Source: ABdhPJyNoWNmDmTgjQkaLfmJlu3gcChA52ovRWg4GgXNQwjckGRj6Ti+j+d0suc/pmb3jV4D1m44wA==
-X-Received: by 2002:a17:906:d1d2:: with SMTP id bs18mr3864295ejb.56.1622122495798;
-        Thu, 27 May 2021 06:34:55 -0700 (PDT)
+        bh=Uz4JiPh2mkktY6ONKOwk6wNsblTCy+bn5Eg1MPFuJRQ=;
+        b=nvu07vZ7gm6WbxJkeq/zGY6B4BeOrgzmIVuSkcG8TYtj4Hfim9OQVkb5R9pjyH5VTJ
+         LliG45js1drD8VYYB1fsp4hsv1BQ9DUeW4vMGyuIeu7lbMVz41csvfv14CgTe+XyFefT
+         Ba0GKmbuftwsGAcNcUCOklSLOtUa9+DC4GEhOVyTjZE8Gwxd6t9VJPKCyLeY9tQkGYUj
+         Cm5MYAKSFg5loKrlAZdi5Sa8RoWzHybmYhKzC4faKKoCJUba/Rc0q+28O43w1f7MjgmF
+         RLYG7NsCD3kRqTnXzonx/fq8kUbeEidWVP7YXjyj9uU3Yaic2jAHowvCk1aFUCy/Ioyf
+         B3zg==
+X-Gm-Message-State: AOAM530ynnwPzLEWCB3cLHexgR4k9j2Tu0JDYf6CVy75m7EoZAXQDk4p
+        xYidZEkyYOinJGvFXhjU0g4=
+X-Google-Smtp-Source: ABdhPJxvfo409sxjk47TCXCwzT2oD8Z/0787fzvIb3u1rUtHxcqRi+NpmleKyh/Jh3UrG5cDLiItAg==
+X-Received: by 2002:aa7:c24d:: with SMTP id y13mr4170373edo.155.1622123145454;
+        Thu, 27 May 2021 06:45:45 -0700 (PDT)
 Received: from BV030612LT ([188.24.140.160])
-        by smtp.gmail.com with ESMTPSA id y15sm1011399ejc.48.2021.05.27.06.34.54
+        by smtp.gmail.com with ESMTPSA id l22sm1015204ejk.67.2021.05.27.06.45.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 06:34:55 -0700 (PDT)
-Date:   Thu, 27 May 2021 16:34:52 +0300
+        Thu, 27 May 2021 06:45:44 -0700 (PDT)
+Date:   Thu, 27 May 2021 16:45:42 +0300
 From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -65,97 +65,77 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/6] clk: actions: Fix bisp_factor_table based clocks on
- Owl S500 SoC
-Message-ID: <20210527133452.GB1300160@BV030612LT>
+Subject: Re: [PATCH 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl
+ S500 SoC
+Message-ID: <20210527134542.GC1300160@BV030612LT>
 References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
- <13576ddb604a9097603d95cd2605275c20fb2f56.1615221459.git.cristian.ciocaltea@gmail.com>
- <20210316041739.GC1798@thinkpad>
- <20210316183753.GC1111731@BV030612LT>
- <20210526101830.GE10723@work>
+ <58225ced4893018792d581c0476a0f1c70e08907.1615221459.git.cristian.ciocaltea@gmail.com>
+ <20210316054547.GD1798@thinkpad>
+ <20210316185014.GD1111731@BV030612LT>
+ <20210526101230.GD10723@work>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210526101830.GE10723@work>
+In-Reply-To: <20210526101230.GD10723@work>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 26, 2021 at 03:48:30PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Mar 16, 2021 at 08:37:53PM +0200, Cristian Ciocaltea wrote:
-> > On Tue, Mar 16, 2021 at 09:47:39AM +0530, Manivannan Sadhasivam wrote:
-> > > On Mon, Mar 08, 2021 at 07:18:28PM +0200, Cristian Ciocaltea wrote:
-> > > > The following clocks of the Actions Semi Owl S500 SoC have been defined
-> > > > to use a shared clock factor table 'bisp_factor_table[]': DE[1-2], VCE,
-> > > > VDE, BISP, SENSOR[0-1]
+On Wed, May 26, 2021 at 03:42:30PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Mar 16, 2021 at 08:50:14PM +0200, Cristian Ciocaltea wrote:
+> > On Tue, Mar 16, 2021 at 11:15:47AM +0530, Manivannan Sadhasivam wrote:
+> > > On Mon, Mar 08, 2021 at 07:18:29PM +0200, Cristian Ciocaltea wrote:
+> > > > There are a few issues with the setup of the Actions Semi Owl S500 SoC's
+> > > > clock chain involving AHPPREDIV, H and AHB clocks:
 > > > > 
-> > > > There are several issues involved in this approach:
-> > > > 
-> > > > * 'bisp_factor_table[]' describes the configuration of a regular 8-rates
-> > > >   divider, so its usage is redundant. Additionally, judging by the BISP
-> > > >   clock context, it is incomplete since it maps only 8 out of 12
-> > > >   possible entries.
-> > > > 
-> > > > * The clocks mentioned above are not identical in terms of the available
-> > > >   rates, therefore cannot rely on the same factor table. Specifically,
-> > > >   BISP and SENSOR* are standard 12-rate dividers so their configuration
-> > > >   should rely on a proper clock div table, while VCE and VDE require a
-> > > >   factor table that is a actually a subset of the one needed for DE[1-2]
-> > > >   clocks.
-> > > > 
-> > > > Let's fix this by implementing the following:
-> > > > 
-> > > > * Add new factor tables 'de_factor_table' and 'hde_factor_table' to
-> > > >   properly handle DE[1-2], VCE and VDE clocks.
-> > > > 
-> > > > * Add a common div table 'std12rate_div_table' for BISP and SENSOR[0-1]
-> > > >   clocks converted to OWL_COMP_DIV.
-> > > > 
-> > > > * Drop the now unused 'bisp_factor_table[]'.
-> > > > 
+> > > > * AHBPREDIV clock is defined as a muxer only, although it also acts as
+> > > >   a divider.
+> > > > * H clock is defined as a standard divider, although the raw value zero
+> > > >   is not supported.
 > > > 
-> > > Nice!
-> > > 
-> > > > Additionally, since SENSOR[0-1] are not gated, unset the OWL_GATE_HW
-> > > > configuration and drop the CLK_IGNORE_UNUSED flag in their definitions.
-> > > > 
-> > > 
-> > > No. You should not screen the functionality exposed by the hw, that's what the
-> > > purpose of these CLK_ flags.
+> > > What do you mean by not supported? The datasheet lists "0" as the valid divisor
+> > > value for divide by 1.
 > > 
-> > I'm not sure I get this, or maybe I wasn't clear enough with my
-> > explanation regarding the changes to SENSOR clocks: they are not gated
-> > in hardware, hence the statement 'OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0)' 
-> > was invalid and I replaced it with '{ 0 }'.
+> > Unfortunately CMU_BUSCLK1 is not documented in my S500 Datasheet
+> > (Version: 1.6, 2016-03-07). Do you have a newer (or a more official)
+> > one?
 > > 
 > 
-> This clock is gated in hw as per the datasheet. Again, please don't make
-> judgements based on the vendor code as it is not upto date with HW. I
-> know it is silly but that's how things are...
+> Yes I do have a newer version of the datasheet (v1.8) and there I can
+> see the divisor 0.
 
-Indeed, a newer datasheet states the clock is gated. I fixed the patch
-accordingly in v2.
+I got an updated datasheet (v1.9) and I confirm dividing by 1 is valid.
 
-> > Additionally, I assumed the 'CLK_IGNORE_UNUSED' flag makes sense only
-> > for the gated clocks. Do I miss something?
+> > The reference xapp-le code snipped is:
+> > 
+> > static struct owl_div divider_H_CLK = {
+> >     .type = DIV_T_NATURE,
+> >     .range_from = 1,  /* reserve H_CLK divsor 1 */
+> >     .range_to = 3,
+> >     .reg = &divbit_H_CLK,
+> > };
+> > 
+> > Not sure why divisor 1 has been reserved..
 > > 
 > 
-> CLK_IGNORE_UNUSED is used by the clk framework to essentially skip
-> gating the clocks which are turned ON by the bootloader and there is no
-> other driver using it. But I think you can remove this flag because
-> there is no reason to leave this specific clock to be ON always.
+> It is not as per the datasheet. Did you run into any issues with this?
+> Else I'd suggest to keep it as it is.
 
-Thanks for the explanation, I kept the flag removed in v2.
+I reverted the changes (please see v2) and did not encounter any issues
+so far, so let's ignore the vendor driver implementation.
 
-Regards,
+Thanks for the review,
 Cristi
 
 > Thanks,
 > Mani
 > 
-> > > Other than that, this patch looks good to me.
-> > 
 > > Thanks,
 > > Cristi
 > > 
+> > > Rest looks good to me.
+> > > 
+> > > Thanks,
+> > > Mani
+> > > 
 > > [...]
