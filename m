@@ -2,152 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA11C4707F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 21:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9F2C4708B
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 21:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FCCD6128D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 21:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0F5613BA
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 21:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233759AbhE0VSl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 17:18:41 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:56902 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233629AbhE0VSl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 17:18:41 -0400
-Received: from [77.244.183.192] (port=63784 helo=melee.fritz.box)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1lmNNJ-00062h-WA; Thu, 27 May 2021 23:17:06 +0200
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-clk@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH RESEND] clk: vc5: fix output disabling when enabling a FOD
-Date:   Thu, 27 May 2021 23:16:47 +0200
-Message-Id: <20210527211647.1520720-1-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.25.1
+        id S234752AbhE0Vp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 17:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234673AbhE0Vp0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 17:45:26 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F4BC061574;
+        Thu, 27 May 2021 14:43:51 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id a4so2722210ljd.5;
+        Thu, 27 May 2021 14:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IpKg7JupX016vkUr8LOBgfofAtv2uGPF5PgtxjtNaI0=;
+        b=q48ZaJwOcW6DIZbMe4yJ397qZinEcuaakxc3qOiuHjGiAonqMfLueNuCYSOSGMMN40
+         Z1enQcIXdclsZ0lqW0uwA0/uZWbzqzYO7S2wMCkBXKrugGHiV9VFD0dUZyuGBAZ63Ous
+         PyFbnryMJq0LAl/J68ttdsQTo+Vhu1jPLvH+K/OhDlQHFeOJZgga43yFpCxq6T5kUSdI
+         oQ+hlcr59g6pQbnUqiOaoOEADn8HuBzn+o4yxGrmJLWGro19+khhVYENnmqi81fccLbl
+         46DFmNy/t5WwBXUDUnfthzjo2JfhtjJEgrWsFlEoRfDyvHenAM7+J5W9ppggz4tCCw2b
+         UFdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IpKg7JupX016vkUr8LOBgfofAtv2uGPF5PgtxjtNaI0=;
+        b=X8MtTPLSs10saApDUtZJUjub3LCEx7a9GYFtasJtjkmqy4YoA4wjvoStUKK3WE4kFa
+         wOB8+aFHnAHep3L/zDv3NyVhe9hZ3ACJfpR89LevsS+Dcyy+LNKwo5bu2IAcpQ/CkXWe
+         EtXWnLB2GLO0jtX10rNmf8OtosmXNBEDmiaa0RATZh3lqIMahnIPTMKBIv7wiAW8bNO1
+         qOSVIyFOPQyu1+e1xc+iux7hHsyo98kTXDdo0EMn0V/VMDGEE0s4VZbB3joLdmcTKlg3
+         s2CNZs7YkgrjU4Rn0GMK2aK9mLeVzPqHCX4aRJ1mVpEFOCDaHPpp4Z8ZjL+92WgaVcbt
+         /zew==
+X-Gm-Message-State: AOAM532/uCye/bEtHuPgvoWFsLAeAyHiwCBnuKppFa3EhA237NWc0RwD
+        Fcm6tBpJ84lX7UGGYgrNBIM=
+X-Google-Smtp-Source: ABdhPJz0SBD2NKypES3+FRERvocR1HDhJD13DgR4oIkb8gggc7e8g/B/P9TMGJRAwXEFVGQ59m0UvQ==
+X-Received: by 2002:a05:651c:329:: with SMTP id b9mr4172125ljp.128.1622151830017;
+        Thu, 27 May 2021 14:43:50 -0700 (PDT)
+Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
+        by smtp.gmail.com with ESMTPSA id v11sm298153lfr.44.2021.05.27.14.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 May 2021 14:43:49 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v4 00/14] NVIDIA Tegra memory and power management changes for 5.14
+Date:   Fri, 28 May 2021 00:43:03 +0300
+Message-Id: <20210527214317.31014-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5P49V6965, when an output is enabled we enable the corresponding
-FOD. When this happens for the first time, and specifically when writing
-register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
-are stopped for a short time and then restarted.
+This series:
 
-According to Renesas support this is intended: "The reason for that is VC6E
-has synced up all output function".
+  1. Adds CPU/core voltage bump before system is rebooted.
+  2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
+     Tegra memory drivers to use it.
+  3. Adds compile-testing support to the Tegra memory drivers.
+  4. Adds Tegra SoC core power domain support.
 
-This behaviour can be disabled at least on VersaClock 6E devices, of which
-only the 5P49V6965 is currently implemented by this driver. This requires
-writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those registers
-are named "Unused Factory Reserved Register", and the bits are documented
-as "Skip VDDO<N> verification", which does not clearly explain the relation
-to FOD sync. However according to Renesas support as well as my testing
-setting this bit does prevent disabling of all clock outputs when enabling
-a FOD.
+Changelog:
 
-See "VersaClock ® 6E Family Register Descriptions and Programming Guide"
-(August 30, 2018), Table 116 "Power Up VDD check", page 58:
-https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-descriptions-and-programming-guide
+v4: - Fixed misplaced prototypes of tegra_pmc_core_domain_state_synced(),
+      which I noticed only after sending out v3. This fixes building with
+      !CONFIG_PM_SLEEP.
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Reviewed-by: Adam Ford <aford173@gmail.com>
+v3: - Dropped "Detach coupled regulator before coupling count is dropped"
+      patch that was added in v2 since it missed regulator locking and
+      it should be more reasonable to add a new generic hook for syncing
+      before detaching. For now it's optional to sync Tegra SoC regulators
+      before detaching since it's not something that happens in practice,
+      hence it's more optimal to simply drop that feature.
 
----
+    - Added more stubs for T210 clk driver which should fix compile-testing
+      problem reported for v2 by kernel robot.
 
-Changes v1 -> v2:
- - add Adam's Reviewed-by tag
----
- drivers/clk/clk-versaclock5.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+    - Added COMMON_CLK for COMPILE_TEST of memory drivers since for
+      today the problem of compile-testing of legacy platforms that use
+      HAVE_LEGACY_CLK isn't solved, we will be able to remove it after
+      fixing the legacy platforms.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 344cd6c61188..3c737742c2a9 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -69,7 +69,10 @@
- #define VC5_FEEDBACK_FRAC_DIV(n)		(0x19 + (n))
- #define VC5_RC_CONTROL0				0x1e
- #define VC5_RC_CONTROL1				0x1f
--/* Register 0x20 is factory reserved */
-+
-+/* These registers are named "Unused Factory Reserved Registers" */
-+#define VC5_RESERVED_X0(idx)		(0x20 + ((idx) * 0x10))
-+#define VC5_RESERVED_X0_BYPASS_SYNC	BIT(7) /* bypass_sync<idx> bit */
- 
- /* Output divider control for divider 1,2,3,4 */
- #define VC5_OUT_DIV_CONTROL(idx)	(0x21 + ((idx) * 0x10))
-@@ -87,7 +90,6 @@
- #define VC5_OUT_DIV_SKEW_INT(idx, n)	(0x2b + ((idx) * 0x10) + (n))
- #define VC5_OUT_DIV_INT(idx, n)		(0x2d + ((idx) * 0x10) + (n))
- #define VC5_OUT_DIV_SKEW_FRAC(idx)	(0x2f + ((idx) * 0x10))
--/* Registers 0x30, 0x40, 0x50 are factory reserved */
- 
- /* Clock control register for clock 1,2 */
- #define VC5_CLK_OUTPUT_CFG(idx, n)	(0x60 + ((idx) * 0x2) + (n))
-@@ -140,6 +142,8 @@
- #define VC5_HAS_INTERNAL_XTAL	BIT(0)
- /* chip has PFD requency doubler */
- #define VC5_HAS_PFD_FREQ_DBL	BIT(1)
-+/* chip has bits to disable FOD sync */
-+#define VC5_HAS_BYPASS_SYNC_BIT	BIT(2)
- 
- /* Supported IDT VC5 models. */
- enum vc5_model {
-@@ -581,6 +585,23 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- 	unsigned int src;
- 	int ret;
- 
-+	/*
-+	 * When enabling a FOD, all currently enabled FODs are briefly
-+	 * stopped in order to synchronize all of them. This causes a clock
-+	 * disruption to any unrelated chips that might be already using
-+	 * other clock outputs. Bypass the sync feature to avoid the issue,
-+	 * which is possible on the VersaClock 6E family via reserved
-+	 * registers.
-+	 */
-+	if (vc5->chip_info->flags & VC5_HAS_BYPASS_SYNC_BIT) {
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_RESERVED_X0(hwdata->num),
-+					 VC5_RESERVED_X0_BYPASS_SYNC,
-+					 VC5_RESERVED_X0_BYPASS_SYNC);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/*
- 	 * If the input mux is disabled, enable it first and
- 	 * select source from matching FOD.
-@@ -1166,7 +1187,7 @@ static const struct vc5_chip_info idt_5p49v6965_info = {
- 	.model = IDT_VC6_5P49V6965,
- 	.clk_fod_cnt = 4,
- 	.clk_out_cnt = 5,
--	.flags = 0,
-+	.flags = VC5_HAS_BYPASS_SYNC_BIT,
- };
- 
- static const struct i2c_device_id vc5_id[] = {
+    - Factored out new PMC driver state syncing feature into a separate
+      patch "pmc: Add driver state syncing", which was requested by
+      Ulf Hansson in a review comment to v2.
+
+    - Added r-b from Ulf Hansson to the PMC binding-update patch that he
+      gave to v2.
+
+v2: - Added more clk stubs that should fix build error reported by the
+      kernel bot to v1 for the T210 memory driver.
+
+    - Added r-b from Krzysztof Kozlowski to the memory patches.
+
+    - Added back voltage restore on detaching of coupled regulators to
+      the T20 regulator coupler which previously got missed by accident.
+
+    - Added new patch:
+
+        regulator: core: Detach coupled regulator before coupling count is dropped
+
+      It fixes skipped voltage balancing on detaching of regulators which I
+      happened to notice due to the recent regression of the MAX77620 driver
+      that made driver to re-probe and detach coupled regulators.
+
+v1: - Merged previous patches into this single series.
+
+    - Added ack from Rob Herring to the core domain DT binding patch.
+
+    - Implemented suggestions that were given by Krzysztof Kozlowski:
+
+        - Factored out soc_is_tegra() stub into standalone patch.
+        - Updated tags of the "Fix compilation warnings on 64bit platforms"
+          patch, added reported-by from lkp robot and removed suggested-by
+          from Nathan Chancellor.
+        - Switched to use use BIT() macro.
+
+    - Added r-b from Krzysztof Kozlowski to "Enable compile testing for
+      all drivers" patch.
+
+    - Added r-b from Nathan Chancellor.
+
+    - Dropped voltage floor/ceiling from devm_tegra_core_dev_init_opp_table()
+      since only memory drivers now need to initialize voltage vote and they
+      don't need floor/ceil. This was suggested by Viresh Kumar.
+
+Dmitry Osipenko (14):
+  regulator: core: Add regulator_sync_voltage_rdev()
+  soc/tegra: regulators: Bump voltages on system reboot
+  soc/tegra: Add stub for soc_is_tegra()
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+  soc/tegra: fuse: Add stubs needed for compile-testing
+  clk: tegra: Add stubs needed for compile-testing
+  memory: tegra: Fix compilation warnings on 64bit platforms
+  memory: tegra: Enable compile testing for all drivers
+  memory: tegra20-emc: Use devm_tegra_core_dev_init_opp_table()
+  memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
+  dt-bindings: soc: tegra-pmc: Document core power domain
+  soc/tegra: pmc: Add core power domain
+  soc/tegra: pmc: Add driver state syncing
+  soc/tegra: regulators: Support core domain state syncing
+
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         |  35 +++++
+ drivers/memory/tegra/Kconfig                  |  16 +-
+ drivers/memory/tegra/tegra124-emc.c           |   4 +-
+ drivers/memory/tegra/tegra20-emc.c            |  48 +-----
+ drivers/memory/tegra/tegra30-emc.c            |  52 +------
+ drivers/regulator/core.c                      |  23 +++
+ drivers/soc/tegra/Kconfig                     |  14 ++
+ drivers/soc/tegra/common.c                    |  97 ++++++++++++
+ drivers/soc/tegra/pmc.c                       | 143 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra20.c        |  94 +++++++++++-
+ drivers/soc/tegra/regulators-tegra30.c        |  93 +++++++++++-
+ include/linux/clk/tegra.h                     |  96 +++++++++---
+ include/linux/regulator/driver.h              |   1 +
+ include/soc/tegra/common.h                    |  31 ++++
+ include/soc/tegra/fuse.h                      |  20 ++-
+ include/soc/tegra/pmc.h                       |   7 +
+ 16 files changed, 648 insertions(+), 126 deletions(-)
+
 -- 
-2.25.1
+2.30.2
 
