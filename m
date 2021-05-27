@@ -2,140 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B71C47089
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE93C47089
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7E5D613BA
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 339C9613EC
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236576AbhE0NrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 09:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38840 "EHLO
+        id S235780AbhE0Uta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 16:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236335AbhE0NrV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:47:21 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE16C061574;
-        Thu, 27 May 2021 06:45:46 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id a25so878949edr.12;
-        Thu, 27 May 2021 06:45:46 -0700 (PDT)
+        with ESMTP id S235754AbhE0Ut3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 16:49:29 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DB0BC061574;
+        Thu, 27 May 2021 13:47:55 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id b12so2595582ljp.1;
+        Thu, 27 May 2021 13:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Uz4JiPh2mkktY6ONKOwk6wNsblTCy+bn5Eg1MPFuJRQ=;
-        b=tii8EUBiYfnHQlXnEiyPGmcAemLKeSVonfxJJlE8kmpWYW4H8QWzdpIEH9p6tv495U
-         pU28A2qZroVl8qu305uOoJWln5qbh/zqYc7w+60/1ytjtsEDQHXRLu2NCTuoaWjNq+vq
-         QkZ5EWFwH59yeKTZI1OEGO3758YEfIaxzx4rFKAXejZPM5H9SxlwUdU1zzF44CQoYlfx
-         FRWGVIfsUYB4a0Rjg6jUvPoDfN/L6WhqB+qDpht5oAPTsPqg9/fRgO+kQ8Re3hEACIdC
-         HuYY1P+Rv8vX8xQEOdPDwwzkj90Ph1I3ZkJr3RX7Y1nUZAr8coFiE86AWJ6Y1rmhlADp
-         Whdg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z6XYLh1xsU0IYTP+MRwPK4s+JoJz/GD/n26DAwUG3/U=;
+        b=G1G+vfJswwk+rozkW+WEdxgpHHU+plUQ4ORzfZGu1PMRR+/UAk7MaetTvxldQDVWEs
+         Fi+7+bGDMXoPhK1s6hDjnHZ3unpdNk48ANdLdPXAsCncuTaX+L+6Q/0zZcFCPyiZjBC1
+         q33MF77CJ+hemLwh+8wviihF6Zqz+PcyEkySt8mWX9b4i7Vs4vCFDwHWYnkndXSwbMqL
+         g1NyZIegndBbaJrz4x3buRGgmkMIMgyJbAQjnBxo52GUFX0orGU81qtlwxoXp6+G220P
+         YEpU/yc8f8iCI8p/jxUHnzaR7DmEX6UHaMn3HsbnjQ3Jdub4T2MYIXVVC7DMQCmZ6vpY
+         pkhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Uz4JiPh2mkktY6ONKOwk6wNsblTCy+bn5Eg1MPFuJRQ=;
-        b=nvu07vZ7gm6WbxJkeq/zGY6B4BeOrgzmIVuSkcG8TYtj4Hfim9OQVkb5R9pjyH5VTJ
-         LliG45js1drD8VYYB1fsp4hsv1BQ9DUeW4vMGyuIeu7lbMVz41csvfv14CgTe+XyFefT
-         Ba0GKmbuftwsGAcNcUCOklSLOtUa9+DC4GEhOVyTjZE8Gwxd6t9VJPKCyLeY9tQkGYUj
-         Cm5MYAKSFg5loKrlAZdi5Sa8RoWzHybmYhKzC4faKKoCJUba/Rc0q+28O43w1f7MjgmF
-         RLYG7NsCD3kRqTnXzonx/fq8kUbeEidWVP7YXjyj9uU3Yaic2jAHowvCk1aFUCy/Ioyf
-         B3zg==
-X-Gm-Message-State: AOAM530ynnwPzLEWCB3cLHexgR4k9j2Tu0JDYf6CVy75m7EoZAXQDk4p
-        xYidZEkyYOinJGvFXhjU0g4=
-X-Google-Smtp-Source: ABdhPJxvfo409sxjk47TCXCwzT2oD8Z/0787fzvIb3u1rUtHxcqRi+NpmleKyh/Jh3UrG5cDLiItAg==
-X-Received: by 2002:aa7:c24d:: with SMTP id y13mr4170373edo.155.1622123145454;
-        Thu, 27 May 2021 06:45:45 -0700 (PDT)
-Received: from BV030612LT ([188.24.140.160])
-        by smtp.gmail.com with ESMTPSA id l22sm1015204ejk.67.2021.05.27.06.45.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z6XYLh1xsU0IYTP+MRwPK4s+JoJz/GD/n26DAwUG3/U=;
+        b=bRGvTDhb+0zuIeqwxy+cOQIstQw2oysDNOb7vhuh0q2mk5keuYrQbsp0CrBq/Kaa+d
+         GikcV5/6bQCjjN00jqifylDCqSq9Oja1DYK8BqD5vv2uCrunJEh/XDjdX2LLJ/ei1Enn
+         bStu0kr1ZeZUpxUTTbmPnai6KQyq7pWPdqUfZkqe4WeXgfASs9uySOxgvje53QPjTGmN
+         Hh733HZmPBhGjSUmk9pQWpSQ3E3NEmFgsrd4q+wsgHLyyAeItxZIZg9gwwn6zF1qBoyP
+         OjkiWusbQEf+3GHFVwq5w0hFTsohMssbq7M5054mRLSrsuYfcy3luX4mCLZNNfd/Qd7t
+         q4OA==
+X-Gm-Message-State: AOAM530251JzjjwCjfB39Jte9RM96DIaGxGfUzGUxwLbyECVusJtvwej
+        pGIUAvM31cZJb1TI11wXawo=
+X-Google-Smtp-Source: ABdhPJyi8sS76DRNiEIxSXwhc7gTO6BgdB5Vso6aUr4xGW+Yej3cyCZC1Oh3l2969uWldtr1vJA7CQ==
+X-Received: by 2002:a2e:a41c:: with SMTP id p28mr4041248ljn.427.1622148473873;
+        Thu, 27 May 2021 13:47:53 -0700 (PDT)
+Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
+        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 06:45:44 -0700 (PDT)
-Date:   Thu, 27 May 2021 16:45:42 +0300
-From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl
- S500 SoC
-Message-ID: <20210527134542.GC1300160@BV030612LT>
-References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
- <58225ced4893018792d581c0476a0f1c70e08907.1615221459.git.cristian.ciocaltea@gmail.com>
- <20210316054547.GD1798@thinkpad>
- <20210316185014.GD1111731@BV030612LT>
- <20210526101230.GD10723@work>
+        Thu, 27 May 2021 13:47:53 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 00/14] NVIDIA Tegra memory and power management changes for 5.14
+Date:   Thu, 27 May 2021 23:47:28 +0300
+Message-Id: <20210527204742.10379-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210526101230.GD10723@work>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 26, 2021 at 03:42:30PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Mar 16, 2021 at 08:50:14PM +0200, Cristian Ciocaltea wrote:
-> > On Tue, Mar 16, 2021 at 11:15:47AM +0530, Manivannan Sadhasivam wrote:
-> > > On Mon, Mar 08, 2021 at 07:18:29PM +0200, Cristian Ciocaltea wrote:
-> > > > There are a few issues with the setup of the Actions Semi Owl S500 SoC's
-> > > > clock chain involving AHPPREDIV, H and AHB clocks:
-> > > > 
-> > > > * AHBPREDIV clock is defined as a muxer only, although it also acts as
-> > > >   a divider.
-> > > > * H clock is defined as a standard divider, although the raw value zero
-> > > >   is not supported.
-> > > 
-> > > What do you mean by not supported? The datasheet lists "0" as the valid divisor
-> > > value for divide by 1.
-> > 
-> > Unfortunately CMU_BUSCLK1 is not documented in my S500 Datasheet
-> > (Version: 1.6, 2016-03-07). Do you have a newer (or a more official)
-> > one?
-> > 
-> 
-> Yes I do have a newer version of the datasheet (v1.8) and there I can
-> see the divisor 0.
+This series:
 
-I got an updated datasheet (v1.9) and I confirm dividing by 1 is valid.
+  1. Adds CPU/core voltage bump before system is rebooted.
+  2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
+     Tegra memory drivers to use it.
+  3. Adds compile-testing support to the Tegra memory drivers.
+  4. Adds Tegra SoC core power domain support.
 
-> > The reference xapp-le code snipped is:
-> > 
-> > static struct owl_div divider_H_CLK = {
-> >     .type = DIV_T_NATURE,
-> >     .range_from = 1,  /* reserve H_CLK divsor 1 */
-> >     .range_to = 3,
-> >     .reg = &divbit_H_CLK,
-> > };
-> > 
-> > Not sure why divisor 1 has been reserved..
-> > 
-> 
-> It is not as per the datasheet. Did you run into any issues with this?
-> Else I'd suggest to keep it as it is.
+Changelog:
 
-I reverted the changes (please see v2) and did not encounter any issues
-so far, so let's ignore the vendor driver implementation.
+v3: - Dropped "Detach coupled regulator before coupling count is dropped"
+      patch that was added in v2 since it missed regulator locking and
+      it should be more reasonable to add a new generic hook for syncing
+      before detaching. For now it's optional to sync Tegra SoC regulators
+      before detaching since it's not something that happens in practice,
+      hence it's more optimal to simply drop that feature.
 
-Thanks for the review,
-Cristi
+    - Added more stubs for T210 clk driver which should fix compile-testing
+      problem reported for v2 by kernel robot.
 
-> Thanks,
-> Mani
-> 
-> > Thanks,
-> > Cristi
-> > 
-> > > Rest looks good to me.
-> > > 
-> > > Thanks,
-> > > Mani
-> > > 
-> > [...]
+    - Added COMMON_CLK for COMPILE_TEST of memory drivers since for
+      today the problem of compile-testing of legacy platforms that use
+      HAVE_LEGACY_CLK isn't solved, we will be able to remove it after
+      fixing the legacy platforms.
+
+    - Factored out new PMC driver state syncing feature into a separate
+      patch "pmc: Add driver state syncing", which was requested by
+      Ulf Hansson in a review comment to v2.
+
+    - Added r-b from Ulf Hansson to the PMC binding-update patch that he
+      gave to v2.
+
+v2: - Added more clk stubs that should fix build error reported by the
+      kernel bot to v1 for the T210 memory driver.
+
+    - Added r-b from Krzysztof Kozlowski to the memory patches.
+
+    - Added back voltage restore on detaching of coupled regulators to
+      the T20 regulator coupler which previously got missed by accident.
+
+    - Added new patch:
+
+        regulator: core: Detach coupled regulator before coupling count is dropped
+
+      It fixes skipped voltage balancing on detaching of regulators which I
+      happened to notice due to the recent regression of the MAX77620 driver
+      that made driver to re-probe and detach coupled regulators.
+
+v1: - Merged previous patches into this single series.
+
+    - Added ack from Rob Herring to the core domain DT binding patch.
+
+    - Implemented suggestions that were given by Krzysztof Kozlowski:
+
+        - Factored out soc_is_tegra() stub into standalone patch.
+        - Updated tags of the "Fix compilation warnings on 64bit platforms"
+          patch, added reported-by from lkp robot and removed suggested-by
+          from Nathan Chancellor.
+        - Switched to use use BIT() macro.
+
+    - Added r-b from Krzysztof Kozlowski to "Enable compile testing for
+      all drivers" patch.
+
+    - Added r-b from Nathan Chancellor.
+
+    - Dropped voltage floor/ceiling from devm_tegra_core_dev_init_opp_table()
+      since only memory drivers now need to initialize voltage vote and they
+      don't need floor/ceil. This was suggested by Viresh Kumar.
+
+Dmitry Osipenko (14):
+  regulator: core: Add regulator_sync_voltage_rdev()
+  soc/tegra: regulators: Bump voltages on system reboot
+  soc/tegra: Add stub for soc_is_tegra()
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+  soc/tegra: fuse: Add stubs needed for compile-testing
+  clk: tegra: Add stubs needed for compile-testing
+  memory: tegra: Fix compilation warnings on 64bit platforms
+  memory: tegra: Enable compile testing for all drivers
+  memory: tegra20-emc: Use devm_tegra_core_dev_init_opp_table()
+  memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
+  dt-bindings: soc: tegra-pmc: Document core power domain
+  soc/tegra: pmc: Add core power domain
+  soc/tegra: pmc: Add driver state syncing
+  soc/tegra: regulators: Support core domain state syncing
+
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         |  35 +++++
+ drivers/memory/tegra/Kconfig                  |  16 +-
+ drivers/memory/tegra/tegra124-emc.c           |   4 +-
+ drivers/memory/tegra/tegra20-emc.c            |  48 +-----
+ drivers/memory/tegra/tegra30-emc.c            |  52 +------
+ drivers/regulator/core.c                      |  23 +++
+ drivers/soc/tegra/Kconfig                     |  14 ++
+ drivers/soc/tegra/common.c                    |  97 ++++++++++++
+ drivers/soc/tegra/pmc.c                       | 143 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra20.c        |  94 +++++++++++-
+ drivers/soc/tegra/regulators-tegra30.c        |  93 +++++++++++-
+ include/linux/clk/tegra.h                     |  96 +++++++++---
+ include/linux/regulator/driver.h              |   1 +
+ include/soc/tegra/common.h                    |  31 ++++
+ include/soc/tegra/fuse.h                      |  20 ++-
+ include/soc/tegra/pmc.h                       |   6 +
+ 16 files changed, 647 insertions(+), 126 deletions(-)
+
+-- 
+2.30.2
+
