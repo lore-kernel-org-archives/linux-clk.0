@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9B3C47096
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7C1C4708E
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51C9E613E2
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B74A613EB
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 20:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235999AbhE0Utt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 16:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
+        id S236053AbhE0Utx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 16:49:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236097AbhE0Utj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 16:49:39 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD01C061574;
-        Thu, 27 May 2021 13:48:04 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 131so2589804ljj.3;
-        Thu, 27 May 2021 13:48:04 -0700 (PDT)
+        with ESMTP id S236042AbhE0Utp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 16:49:45 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9EFC0613CE;
+        Thu, 27 May 2021 13:48:11 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id e11so2527308ljn.13;
+        Thu, 27 May 2021 13:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XRjE9GrdNwqNM0RZjj5ET9YAbdAVTqOUbODt0FYhk9w=;
-        b=uHd+rf/sXV179Vp4dFHGFGojkUiRIuuzgDbP0HRJGRhiI+4MmlvuzYd4GtqItt2NMy
-         SJSAJDSq4zC23XErSSRgY5vAlu2358aW/vhJb15/Hsixs3vlTv2mAZe6XxEXpqodj05w
-         S/sLhGSIZYoCrTENPCaruK0Mq2s/O86E+VrqYK4rL8IJAPTsG0PS+YkNPYNjydgg9Nju
-         bHQlnQ8CmZeSPdZnwS2l2QjbfRg6V0lYgQNF1LjjwqrqhUT+LhRg06W6pEnNTXIH4H+F
-         BSdll5qHkr85BAwWgChGJXkoYymQgmdvQ5WNWHsW+ubJthEreDmWZCTb0tf++pzpjr7q
-         F6+A==
+        bh=ifCod93ETyGPmmfLtl3IBeFp9blcjqCRjZs9HqcoCbk=;
+        b=HXx5VplKtApznnBMsGhMwfJJ/1HgSlKoAULdNti6EwIh+hm21xkO7Ycr3HmCciYnB2
+         mqLuAJt3KtFaeNPreeaVVizs+UR2aL5g3fq99YoKrN+P8vuYCD9nu85gu2r9tiWIkqZh
+         wiz41nNkk7nDf1Q9ULGpBRoukLAEGOUxBw17Cm+3ok4XgKN7mM0Y4t37MBRd+t7v4kr4
+         Ja6G6RfYABUiYLdmHYJ6XOuH8sWFgXeZW1sG2fZs3X1AV+MAy9kxAGb5DW3zUdoxVk8K
+         FcQ3DjwHri5Ed0/74rN0zuZ5m65biBI3uoEQ3WnFwShH/lqfHOAXldNX92RGfBiAaFiP
+         Tc8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XRjE9GrdNwqNM0RZjj5ET9YAbdAVTqOUbODt0FYhk9w=;
-        b=XbdADIJGvmv2BBSwjaqvpCtepSvITgcZvqPeUPo6m65MHBIcbq8KGpcOsiT8OGtJQD
-         fmeUWD3/b98r6d6gdYvPb+Q/Ecrj1mDAIsRdtPDHqPhcbdVGGOpxioXA88JMdN1uRQgO
-         UsOUel5TfJcUcuCfyItw9XvkYZN+0x4c/Sj1v+uk/LFYcape9hyvQm/bBny2zD6jMSGJ
-         4qQSMsIkl6N5BGBInZfFEggvY50WA4fxFLE9wEUW0B5KdXaHPrLSrcxBG8dPXvkCaGP8
-         05sNoZXnGKAbZe6zYhJzToegLJOcfd3UdHNKdVrY6lkCLGJnziEMWJrv5LAfkKIhY33M
-         rdlA==
-X-Gm-Message-State: AOAM531NXjqMRq2pm7kz8tgjp7YO6R+VOAP5bdItCtHC5KTmpliFxO9+
-        Z+LXAWdBYRpkoljCVz3Y3wA=
-X-Google-Smtp-Source: ABdhPJxRWNM7CQmXXEzjfx6OqKbUFUiuz1NT6iXFUqtChlWkyWeBo+w/0mgPWC5YDzr/1WPDdPFFiw==
-X-Received: by 2002:a05:651c:102f:: with SMTP id w15mr3848141ljm.367.1622148482863;
-        Thu, 27 May 2021 13:48:02 -0700 (PDT)
+        bh=ifCod93ETyGPmmfLtl3IBeFp9blcjqCRjZs9HqcoCbk=;
+        b=uGZwch5I6WkWKnBQiuyAXCCAaj4Ho0Sf8aWUOU6AGyC0xkLOjdM1TlIrBYe6PqTMaX
+         aEk4p4JyZArl6HUraRoBkKS1T2v7wg2HDW6KtUt2cskNMl1LC0susum1XszKem8FNNFq
+         RBYsX4rZTCv2xE3aMPGwftifG8Yi2WYFhtRPg2+S7qkSU3bBiYQiDKmpBp0hNfB1at5l
+         6CKGxiL3L/AWHtWaUgqvUJ27JymfWfTym0+Dldb50cpAC8m/bgSUNT6F/kjSGQgL6JEA
+         UsDAhdNIjX/frY7ixJRIbHCRKydUfQUI1D/2wAWyqGvrtn9DmlXAjx3BemV1uUz82UMu
+         WgHA==
+X-Gm-Message-State: AOAM5301aJmmSG62lPb3MNoaHRCUKHkILT0D2nu+iZHtbyRM3Onh8q23
+        9cKwynH7PkPymuKaaamvsP0=
+X-Google-Smtp-Source: ABdhPJwQLGmTLhhiV49/LcNCHUNcZy6+j55Jk0k/xGmLLgcZH4dsu2oM4NM/NjtsJNtlN8k3P18KAQ==
+X-Received: by 2002:a05:651c:3cc:: with SMTP id f12mr4051203ljp.364.1622148489571;
+        Thu, 27 May 2021 13:48:09 -0700 (PDT)
 Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
-        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.48.01
+        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 13:48:02 -0700 (PDT)
+        Thu, 27 May 2021 13:48:09 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH v3 08/14] memory: tegra: Enable compile testing for all drivers
-Date:   Thu, 27 May 2021 23:47:36 +0300
-Message-Id: <20210527204742.10379-9-digetx@gmail.com>
+Subject: [PATCH v3 14/14] soc/tegra: regulators: Support core domain state syncing
+Date:   Thu, 27 May 2021 23:47:42 +0300
+Message-Id: <20210527204742.10379-15-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210527204742.10379-1-digetx@gmail.com>
 References: <20210527204742.10379-1-digetx@gmail.com>
@@ -88,73 +88,112 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable compile testing for all Tegra memory drivers.
+The core voltage shall not drop until state of core domain is synced,
+i.e. all device drivers that use core domain are loaded and ready.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Support core domain state syncing. The core domain driver invokes the
+core-regulator voltage syncing once the state of domain is synced, at
+this point the core voltage is allowed to go lower than the level left
+after bootloader.
+
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/Kconfig | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/soc/tegra/regulators-tegra20.c | 19 ++++++++++++++++++-
+ drivers/soc/tegra/regulators-tegra30.c | 18 +++++++++++++++++-
+ 2 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index a70967a56e52..71bba2345bce 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -2,16 +2,18 @@
- config TEGRA_MC
- 	bool "NVIDIA Tegra Memory Controller support"
- 	default y
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || (COMPILE_TEST && COMMON_CLK)
- 	select INTERCONNECT
- 	help
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
+diff --git a/drivers/soc/tegra/regulators-tegra20.c b/drivers/soc/tegra/regulators-tegra20.c
+index 3479be5ee494..b8ce9fd0650d 100644
+--- a/drivers/soc/tegra/regulators-tegra20.c
++++ b/drivers/soc/tegra/regulators-tegra20.c
+@@ -17,6 +17,8 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
  
-+if TEGRA_MC
++#include <soc/tegra/pmc.h>
 +
- config TEGRA20_EMC
- 	tristate "NVIDIA Tegra20 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-+	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
- 	help
-@@ -23,7 +25,7 @@ config TEGRA20_EMC
- config TEGRA30_EMC
- 	tristate "NVIDIA Tegra30 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_3x_SOC
-+	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -34,8 +36,8 @@ config TEGRA30_EMC
- config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_124_SOC
--	select TEGRA124_CLK_EMC
-+	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
-+	select TEGRA124_CLK_EMC if ARCH_TEGRA
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -49,10 +51,12 @@ config TEGRA210_EMC_TABLE
+ struct tegra_regulator_coupler {
+ 	struct regulator_coupler coupler;
+ 	struct regulator_dev *core_rdev;
+@@ -42,6 +44,21 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
+ 	int core_cur_uV;
+ 	int err;
  
- config TEGRA210_EMC
- 	tristate "NVIDIA Tegra210 External Memory Controller driver"
--	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
- 	select TEGRA210_EMC_TABLE
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
- 	  Tegra210 chips. The EMC controls the external DRAM on the board.
- 	  This driver is required to change memory timings / clock rate for
- 	  external memory.
++	/*
++	 * Tegra20 SoC has critical DVFS-capable devices that are
++	 * permanently-active or active at a boot time, like EMC
++	 * (DRAM controller) or Display controller for example.
++	 *
++	 * The voltage of a CORE SoC power domain shall not be dropped below
++	 * a minimum level, which is determined by device's clock rate.
++	 * This means that we can't fully allow CORE voltage scaling until
++	 * the state of all DVFS-critical CORE devices is synced.
++	 */
++	if (tegra_pmc_core_domain_state_synced() && !tegra->sys_reboot_mode) {
++		pr_info_once("voltage state synced\n");
++		return 0;
++	}
 +
-+endif
+ 	if (tegra->core_min_uV > 0)
+ 		return tegra->core_min_uV;
+ 
+@@ -62,7 +79,7 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
+ 	 */
+ 	tegra->core_min_uV = core_max_uV;
+ 
+-	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
++	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
+ 
+ 	return tegra->core_min_uV;
+ }
+diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
+index 18fe53d0a870..e74bbc9c7859 100644
+--- a/drivers/soc/tegra/regulators-tegra30.c
++++ b/drivers/soc/tegra/regulators-tegra30.c
+@@ -18,6 +18,7 @@
+ #include <linux/regulator/machine.h>
+ 
+ #include <soc/tegra/fuse.h>
++#include <soc/tegra/pmc.h>
+ 
+ struct tegra_regulator_coupler {
+ 	struct regulator_coupler coupler;
+@@ -43,6 +44,21 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
+ 	int core_cur_uV;
+ 	int err;
+ 
++	/*
++	 * Tegra30 SoC has critical DVFS-capable devices that are
++	 * permanently-active or active at a boot time, like EMC
++	 * (DRAM controller) or Display controller for example.
++	 *
++	 * The voltage of a CORE SoC power domain shall not be dropped below
++	 * a minimum level, which is determined by device's clock rate.
++	 * This means that we can't fully allow CORE voltage scaling until
++	 * the state of all DVFS-critical CORE devices is synced.
++	 */
++	if (tegra_pmc_core_domain_state_synced() && !tegra->sys_reboot_mode) {
++		pr_info_once("voltage state synced\n");
++		return 0;
++	}
++
+ 	if (tegra->core_min_uV > 0)
+ 		return tegra->core_min_uV;
+ 
+@@ -63,7 +79,7 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
+ 	 */
+ 	tegra->core_min_uV = core_max_uV;
+ 
+-	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
++	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
+ 
+ 	return tegra->core_min_uV;
+ }
 -- 
 2.30.2
 
