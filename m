@@ -2,130 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2871C4707F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 12:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03A4C47089
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D71C6613E2
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 12:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA771611AE
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234772AbhE0MG0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 08:06:26 -0400
-Received: from mail-vs1-f48.google.com ([209.85.217.48]:35737 "EHLO
-        mail-vs1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234540AbhE0MG0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 08:06:26 -0400
-Received: by mail-vs1-f48.google.com with SMTP id x22so236297vsn.2;
-        Thu, 27 May 2021 05:04:51 -0700 (PDT)
+        id S236361AbhE0NSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 09:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235996AbhE0NSW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:18:22 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA805C061574;
+        Thu, 27 May 2021 06:16:48 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id gb17so7969071ejc.8;
+        Thu, 27 May 2021 06:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3TKX6UNfeQq3WZk8B3GWpeEI9lZ4hogpPt1mzI6b/B8=;
+        b=Y/dktLEgafQ1yisGN5JQY4g+/sBKCpKIsJ7Y6eIfX3esJO3osva49CIhhDqbCo5s59
+         WB5QLcPJe60vPsB+ex4yFoqZpg5YyZV7WsVLwBgyNly3llcLKRTHzK6cTrL4gSbGyHus
+         fK7JDLdYGHh87Y10M9SYgeDleTmv+G3p26UPoOAowX4/ROg0AscWET3NzVr3Ol+d6+ef
+         CJWN03f1xWNhPOiwCm2rvK/90Zxw3931w/aP3aFQtdiFunkJHQZsqoZPe5xS8qvY5Has
+         o2CKtakT9b5uw56l2s/lLDutkc03KFDZL3+GBYKlPYQIRKtTfeU4HiEuspBVngFU7dow
+         dpXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uh4zzMKY6luxk0/SSNclejeRcmWG2GmwP9Z21NWThdc=;
-        b=asW3k569xrt+g9/xBoM3MSOxqw+0cWd14K6oi1Wl3YNxZqS2q569Pga0JdbTa25w21
-         YcodyfhNLPuUtzEsspO1dbMv9TQ/kSEiQsa6qxVvV6goaponRUkXg02xR52X/kVxsiyU
-         K5Li9uInR0M/PFGYPWdS97hK7SiVmx+juwkLizPeV/wjMBXbE1NqKngzY+spnqldSMCm
-         gs7qmUv72ybHsCFZrLFGcls1TBgCerkPb0bBf0kd0efe8ZwwoYuan5AbBmFacKIgHXoj
-         jYwWiS7230iEH2sJBTRFjbgbBtz5KXtrli8LOsxIl0+GJDxcXFZ6/Ugbbw8PuLSnaTBn
-         Vqbg==
-X-Gm-Message-State: AOAM530c6j/Y4vJLigg2kcF7oxi9XuwzzLtQRQdYcZQtr0SoSdfDf8c6
-        OyHzPaaa1lXWbOQKtQp4TPC6uRa/3Bvz0XDOtBU=
-X-Google-Smtp-Source: ABdhPJzBFvcXREuBIQYuRn70o9fXD4fkLjhIMPBlK3HLIgpWiKiyIy29QjGBrmD2cFoYRf6BqEL19Uz/PEFSKm9Yabc=
-X-Received: by 2002:a05:6102:392:: with SMTP id m18mr1556875vsq.40.1622117091488;
- Thu, 27 May 2021 05:04:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210514192218.13022-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210514192218.13022-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210514192218.13022-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 May 2021 14:04:39 +0200
-Message-ID: <CAMuHMdXd==dM2QJN5gg0ka_7-HDQbeKZK66nmyASFJAnsVsSQA@mail.gmail.com>
-Subject: Re: [PATCH 13/16] clk: renesas: Add CPG core wrapper for RZ/G2L SoC
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3TKX6UNfeQq3WZk8B3GWpeEI9lZ4hogpPt1mzI6b/B8=;
+        b=XTb5rKrFIRXDnhBgnIm4Dhzzfj8cABlQgCrsidZ9FrcpUtmmYpbO1B1UZLqFWKkO5k
+         lssRjGEh4X/YLDhfBiUhdHLp93uwlMxKhZVTe2+vd/Fr4oYyp6CPBvyaKna1Zn7B5VQi
+         flfIox+g0+i2gHscnkaBjmot6trB8nxtt5F2GR40LUKl0+2X5dIWjbHH/Gj8SGeMwf9H
+         gGfHMaISvFb/xj6q6T5KSFJtwiEoK8ejpOouiYlzAQJwBMqxHG+Ze6Mq1SIUaU9YvxKY
+         Xf2wGJ7l0iNc0xzfMglBX+B0bXuWndZdbuQdsq9KRl5gmcT2iQg8/7gAMqtwt7apxLb8
+         bIjg==
+X-Gm-Message-State: AOAM532dJK6F6kQubZiB4KGDs4eD64+0oczUPqA45pcdhaPLnfOhxw0N
+        gpwAeAQ8+MQ6IczqU02a0c4=
+X-Google-Smtp-Source: ABdhPJwBVB9+hl2sioh4pL46AM9iKCqMLQa0H3gAXYKW2Szd632xngaLhF46xSoMTLP6IWTG/8X6ag==
+X-Received: by 2002:a17:906:949a:: with SMTP id t26mr3752351ejx.475.1622121407365;
+        Thu, 27 May 2021 06:16:47 -0700 (PDT)
+Received: from localhost.localdomain ([188.24.140.160])
+        by smtp.gmail.com with ESMTPSA id r23sm1104206edq.59.2021.05.27.06.16.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 May 2021 06:16:46 -0700 (PDT)
+From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 0/6] Improve clock support for Actions S500 SoC
+Date:   Thu, 27 May 2021 16:16:38 +0300
+Message-Id: <cover.1622119892.git.cristian.ciocaltea@gmail.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+While working on a driver to support the Actions Semi Owl Ethernet MAC,
+I found and fixed some issues on the existing implementation of the S500
+SoC clock subsystem and, additionally, I added two missing clocks.
 
-On Fri, May 14, 2021 at 9:24 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add CPG core wrapper for RZ/G2L family.
->
-> Based on a patch in the BSP by Binh Nguyen
-> <binh.nguyen.jz@renesas.com>.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Thanks,
+Cristi
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+Changes in v2 (according to Mani's review):
+- Re-added entry "{ 24, 1, 25 }" to sd_factor_table, according to the
+  datasheet (V1.8+), this is a valid divider
+- Re-added OWL_GATE_HW to SENSOR[0-1], according to the datasheet they
+  are gated, even though the vendor implementation states the opposite
+- Reverted the addition of the clock div table for H clock to support the
+  '1' divider (according to the datasheet), even though the vendor
+  implementation marks it as reserved
+- Reordered "nic_clk_mux_p" after "ahbprediv_clk_mux_p" to follow the reg
+  field ordering
+- Rebased patch series on v5.13-rc3
 
-> +static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
-> +{
-> +       struct mstp_clock *clock = to_mod_clock(hw);
-> +       struct cpg_mssr_priv *priv = clock->priv;
-> +       unsigned int reg = MSSR_OFF(clock->bit) * 4;
+Cristian Ciocaltea (6):
+  clk: actions: Fix UART clock dividers on Owl S500 SoC
+  clk: actions: Fix SD clocks factor table on Owl S500 SoC
+  clk: actions: Fix bisp_factor_table based clocks on Owl S500 SoC
+  clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl S500 SoC
+  dt-bindings: clock: Add NIC and ETHERNET bindings for Actions S500 SoC
+  clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
 
-The "* 4" here makes it difficult to review the module clock tables.
+ drivers/clk/actions/owl-s500.c               | 92 +++++++++++++-------
+ include/dt-bindings/clock/actions,s500-cmu.h |  6 +-
+ 2 files changed, 65 insertions(+), 33 deletions(-)
 
-E.g.
+-- 
+2.31.1
 
-       DEF_MOD("gic",          R9A07G044_CLK_GIC600,
-                               R9A07G044_CLK_P1,
-                               MSSR(5, BIT(0), (BIT(0) | BIT(1)))),
-
-The "5" means the CLK_ON_GIC600 register is at offset CLK_ON_R(5 * 4)
- = 0x514.  Removing the "* 4" means you could use
-"MSSR(0x14, BIT(0), (BIT(0) | BIT(1))" instead.
-
-Unless it has unpleasant side effects, I'd even consider putting
-the full CLK_ON offset there, i.e.
-"MSSR(0x514, BIT(0), (BIT(0) | BIT(1))" and change the macros like:
-
-    #define CLK_ON_R(reg)          (reg)
-    #define CLK_MON_R(reg)         (0x680 - 0x500 + (reg))
-
-> --- /dev/null
-> +++ b/drivers/clk/renesas/renesas-rzg2l-cpg.h
-
-> +#define CLK_ON_R(reg)          (0x500 + reg)
-> +#define CLK_MON_R(reg)         (0x680 + reg)
-> +#define CLK_RST_R(reg)         (0x800 + reg)
-> +#define CLK_MRST_R(reg)                (0x980 + reg)
-
-The last three don't seem to be documented?
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
