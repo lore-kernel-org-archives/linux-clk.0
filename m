@@ -2,158 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DF8C4707F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB83C47089
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2BE0610FC
-	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E2A9613BA
+	for <linux-clk@archiver.kernel.org>; Thu, 27 May 2021 13:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236465AbhE0NSk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 May 2021 09:18:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60260 "EHLO
+        id S236115AbhE0N3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 May 2021 09:29:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236416AbhE0NSb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:18:31 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C4FC06138C;
-        Thu, 27 May 2021 06:16:56 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id l1so22736ejb.6;
-        Thu, 27 May 2021 06:16:56 -0700 (PDT)
+        with ESMTP id S236483AbhE0N3M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 May 2021 09:29:12 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B91C061574;
+        Thu, 27 May 2021 06:27:37 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id s22so18231ejv.12;
+        Thu, 27 May 2021 06:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qDp+pjL8u9TTvxzEepWTwup8whUcX1eXB/WptTlt9e0=;
-        b=s0fnsdwLr45qkf4CZn1JxS4nBDV5pSTUnd82Xj/SCH/G3U+MGcDcZYtSIabAsJUh+c
-         b96jp2GcWbWp/UaN34T319qvzF1H6nPqSwu9S774nyR8pcuJ3DDcuu09pQWq0ofAoz8J
-         vyvuZQXnh99+EuAtDR4PzAc6KkK8N5ORKS3uyL3xq8eF2GD/FIl0+Rdqdo+nrrGPtU46
-         w6OKJNpfTte/NEWkC/Srmk5tZw0BF0LMqUX1TYzX7JgVJ4n7FocjgPLByOqZ3gmkQvS0
-         d/LgsDV7UiUEWS25jEsGwAsKcqi0QG3bKRrY43p6K728tCZNDiSDtuMwHkHFgTmmn6Lk
-         bn6g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ppiS+kUHEmNMA/rfiFdU2fGCovIYKgvsvBDMkMx1l8g=;
+        b=N1ld5ltqPVFeWqGp+B9xVK3nRLjNtJfBEO3iq55ubS3wXZjWH65JSzfQL20TnWsEwg
+         Qw1WwKn39XWjuFxzRXL6jAu6RJJymed0cbr5GjwRlZABwYYffYfVrlXuyYLQAZENPvJD
+         CiPKtinmr7xwogY5ChiR2cMTCrW1G5C0ZSTGtSDF/L88GmokztHKdFSzX/fU+fzu7HiM
+         sodB2E25l3ZqtpXhJDpcOv/zm/vIH2TWjY/dQECaj/IAVweEe4lLx+KO1IxKYs0K8pns
+         jlVj9lmjcZM5OJL0BLeF6bqI/nDvTt5VCpb7MovQHrGafqNpIqd4388FoH9ucvjv0JOq
+         ylsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qDp+pjL8u9TTvxzEepWTwup8whUcX1eXB/WptTlt9e0=;
-        b=B6nNspzZFjmT3eBcIouVHKzDvOIREX/vx6eUeOiWtVBbQoa1KCNVtkfZ3xY/5kmaio
-         rLIlFi+AacjrMs4i22JYkjVOeW3KD1bYbx0U5paxxF43I2oQeKaBGg8bv8oH8u5fyaXQ
-         PnyU0wOQRQesvF7bhArHDZe792zo476q/TV2R8RxutjfH9WEdjJf+neHYE/rHzeEgNAY
-         tmErHhgSTWssq93kBphrWjWTBwRM448Fijl6umQWs88taWH3T2mpAHJaB86O0Fnhe+Uw
-         /CEVrn7Zt5awlg8Yy8skX+hUZcSCV04jDo3orS7LBBvKf+uSr2dE/1I2BWYHPo+Z+t3Y
-         DQ/g==
-X-Gm-Message-State: AOAM5325Nq6QOqDfQWA2dsJ8VdDO8LduqXr2Grqeq3t70YqH+fCVtqyo
-        jOaTt1FFLj9VPJvh5lksvnE=
-X-Google-Smtp-Source: ABdhPJyUbuiCDS8W6AcHzx60wAAVddrQEg39dMErk3zlG0aQPtEDEGUEaJpjSD5TRhw+TNVswGhWgQ==
-X-Received: by 2002:a17:906:4c54:: with SMTP id d20mr3812329ejw.513.1622121415293;
-        Thu, 27 May 2021 06:16:55 -0700 (PDT)
-Received: from localhost.localdomain ([188.24.140.160])
-        by smtp.gmail.com with ESMTPSA id r23sm1104206edq.59.2021.05.27.06.16.54
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ppiS+kUHEmNMA/rfiFdU2fGCovIYKgvsvBDMkMx1l8g=;
+        b=qqadja0NUmDxLQaw148Vknbl7WeBfpigH+4uk9qYYdovl8EcxiWuZ0aikI03TA9nT2
+         Q8JvKVyMMXVeMXnY04uFRipu8HhTRH4WTEg2JG4RmYBWwll9mVnhz1F6CL0wm1aE39RP
+         0/+A5RckpNJRCdYW/0pOyyJcps/pFwC6CJwC+fyaOZugFDgHC2kAYp0DljDvl7e6IC89
+         jPdpG5da0Pnk9IwkIKwockGeY6kW0XNE8L+puGhdd1NIBrV3Pc46/gDOmPAlr787VrUq
+         JjAJMx5F3DALS1cJzqSnx71cmuMP1ZNYZo7BwTRzRInV3N0zrTLF3GeuEIOdBvMXTS3F
+         PwlA==
+X-Gm-Message-State: AOAM533qdGex8ym7yGVksPecJSH7arPJc+Fx/d+G5C22A1n6Fo0qBvBz
+        j7G6Gwa8YmbcYdWsnQA71sc=
+X-Google-Smtp-Source: ABdhPJwHz+PO0bxmokSeO7kLTi0+JZ/h/GLDeWjzuo/3J0bHnA1plBUGwNC8SjCRQyMwcMX/Beskxw==
+X-Received: by 2002:a17:906:90c9:: with SMTP id v9mr3813868ejw.102.1622122056454;
+        Thu, 27 May 2021 06:27:36 -0700 (PDT)
+Received: from BV030612LT ([188.24.140.160])
+        by smtp.gmail.com with ESMTPSA id p25sm1011450eja.35.2021.05.27.06.27.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 06:16:54 -0700 (PDT)
+        Thu, 27 May 2021 06:27:35 -0700 (PDT)
+Date:   Thu, 27 May 2021 16:27:33 +0300
 From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 6/6] clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
-Date:   Thu, 27 May 2021 16:16:44 +0300
-Message-Id: <fb8085722305af11311ca2661cba2bf73a71abea.1622119892.git.cristian.ciocaltea@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1622119892.git.cristian.ciocaltea@gmail.com>
-References: <cover.1622119892.git.cristian.ciocaltea@gmail.com>
+Subject: Re: [PATCH 2/6] clk: actions: Fix SD clocks factor table on Owl S500
+ SoC
+Message-ID: <20210527132733.GA1300160@BV030612LT>
+References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
+ <973b08fe414321ba4ade096a4917cadc2013426e.1615221459.git.cristian.ciocaltea@gmail.com>
+ <20210316035845.GB1798@thinkpad>
+ <20210316181437.GB1111731@BV030612LT>
+ <20210526100719.GC10723@work>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210526100719.GC10723@work>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the missing NIC and ETHERNET clocks in the Actions Semi
-Owl S500 SoC clock driver.
+On Wed, May 26, 2021 at 03:37:43PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Mar 16, 2021 at 08:14:37PM +0200, Cristian Ciocaltea wrote:
+> > Hi Mani,
+> > 
+> > Thanks for reviewing this patch series!
+> > 
+> > On Tue, Mar 16, 2021 at 09:28:45AM +0530, Manivannan Sadhasivam wrote:
+> > > On Mon, Mar 08, 2021 at 07:18:27PM +0200, Cristian Ciocaltea wrote:
+> > > > Drop the unsupported entries in the factor table used for the SD[0-2]
+> > > > clocks definitions on the Actions Semi Owl S500 SoC.
+> > > > 
+> > > > Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
+> > > > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+> > > > ---
+> > > >  drivers/clk/actions/owl-s500.c | 4 ----
+> > > >  1 file changed, 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+> > > > index 75b7186185b0..69cd959205f5 100644
+> > > > --- a/drivers/clk/actions/owl-s500.c
+> > > > +++ b/drivers/clk/actions/owl-s500.c
+> > > > @@ -127,8 +127,6 @@ static struct clk_factor_table sd_factor_table[] = {
+> > > >  	{ 12, 1, 13 }, { 13, 1, 14 }, { 14, 1, 15 }, { 15, 1, 16 },
+> > > >  	{ 16, 1, 17 }, { 17, 1, 18 }, { 18, 1, 19 }, { 19, 1, 20 },
+> > > >  	{ 20, 1, 21 }, { 21, 1, 22 }, { 22, 1, 23 }, { 23, 1, 24 },
+> > > > -	{ 24, 1, 25 }, { 25, 1, 26 }, { 26, 1, 27 }, { 27, 1, 28 },
+> > > > -	{ 28, 1, 29 }, { 29, 1, 30 }, { 30, 1, 31 }, { 31, 1, 32 },
+> > > 
+> 
+> [...]
+> 
+> > This is basically what gets translated to sd_factor_table and I removed
+> > the extra entries 25..31. Actually I also dropped the 24th one, since
+> > that would give us an odd number of items, although I'm not quite sure
+> > this is a bug in the xapp-le code or the HW is really supposed to work
+> > like that.
+> > 
+> 
+> In my datasheet I can see the factor values till 24. So let's remove the
+> entries from 25-31.
 
-Additionally, change APB clock parent from AHB to the newly added NIC.
+I got an updated datasheet and I confirm 24 is a valid selector. Applied
+the correction in v2:
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
----
-Changes in v2:
- - Reordered "nic_clk_mux_p" after "ahbprediv_clk_mux_p" to follow the reg
-   field ordering
+https://lore.kernel.org/lkml/cover.1622119892.git.cristian.ciocaltea@gmail.com/
 
- drivers/clk/actions/owl-s500.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Thanks,
+Cristi
 
-diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-index 257923bd5386..a9c7e06ebcd6 100644
---- a/drivers/clk/actions/owl-s500.c
-+++ b/drivers/clk/actions/owl-s500.c
-@@ -113,6 +113,7 @@ static const char * const sensor_clk_mux_p[] = { "hosc", "bisp_clk" };
- static const char * const sd_clk_mux_p[] = { "dev_clk", "nand_pll_clk" };
- static const char * const pwm_clk_mux_p[] = { "losc", "hosc" };
- static const char * const ahbprediv_clk_mux_p[] = { "dev_clk", "display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
-+static const char * const nic_clk_mux_p[] = { "dev_clk", "display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
- static const char * const uart_clk_mux_p[] = { "hosc", "dev_pll_clk" };
- static const char * const de_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
- static const char * const i2s_clk_mux_p[] = { "audio_pll_clk" };
-@@ -194,7 +195,7 @@ static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
- 
- /* divider clocks */
- static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
--static OWL_DIVIDER(apb_clk, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
-+static OWL_DIVIDER(apb_clk, "apb_clk", "nic_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
- static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
- 
- /* factor clocks */
-@@ -202,6 +203,12 @@ static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table
- static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
- 
- /* composite clocks */
-+static OWL_COMP_DIV(nic_clk, "nic_clk", nic_clk_mux_p,
-+			OWL_MUX_HW(CMU_BUSCLK1, 4, 3),
-+			{ 0 },
-+			OWL_DIVIDER_HW(CMU_BUSCLK1, 16, 2, 0, NULL),
-+			0);
-+
- static OWL_COMP_DIV(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
- 			OWL_MUX_HW(CMU_BUSCLK1, 8, 3),
- 			{ 0 },
-@@ -317,6 +324,10 @@ static OWL_COMP_FIXED_FACTOR(i2c3_clk, "i2c3_clk", "ethernet_pll_clk",
- 			OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
- 			1, 5, 0);
- 
-+static OWL_COMP_FIXED_FACTOR(ethernet_clk, "ethernet_clk", "ethernet_pll_clk",
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 22, 0),
-+			1, 20, 0);
-+
- static OWL_COMP_DIV(uart0_clk, "uart0_clk", uart_clk_mux_p,
- 			OWL_MUX_HW(CMU_UART0CLK, 16, 1),
- 			OWL_GATE_HW(CMU_DEVCLKEN1, 6, 0),
-@@ -451,6 +462,8 @@ static struct owl_clk_common *s500_clks[] = {
- 	&apb_clk.common,
- 	&dmac_clk.common,
- 	&gpio_clk.common,
-+	&nic_clk.common,
-+	&ethernet_clk.common,
- };
- 
- static struct clk_hw_onecell_data s500_hw_clks = {
-@@ -510,6 +523,8 @@ static struct clk_hw_onecell_data s500_hw_clks = {
- 		[CLK_APB]		= &apb_clk.common.hw,
- 		[CLK_DMAC]		= &dmac_clk.common.hw,
- 		[CLK_GPIO]		= &gpio_clk.common.hw,
-+		[CLK_NIC]		= &nic_clk.common.hw,
-+		[CLK_ETHERNET]		= &ethernet_clk.common.hw,
- 	},
- 	.num = CLK_NR_CLKS,
- };
--- 
-2.31.1
-
+> Thanks,
+> Mani
+> 
+> > Kind regards,
+> > Cristi
+> > 
+> > > Thanks,
+> > > Mani
+> > > 
+> > > >  
+> > > >  	/* bit8: /128 */
+> > > >  	{ 256, 1, 1 * 128 }, { 257, 1, 2 * 128 }, { 258, 1, 3 * 128 }, { 259, 1, 4 * 128 },
+> > > > @@ -137,8 +135,6 @@ static struct clk_factor_table sd_factor_table[] = {
+> > > >  	{ 268, 1, 13 * 128 }, { 269, 1, 14 * 128 }, { 270, 1, 15 * 128 }, { 271, 1, 16 * 128 },
+> > > >  	{ 272, 1, 17 * 128 }, { 273, 1, 18 * 128 }, { 274, 1, 19 * 128 }, { 275, 1, 20 * 128 },
+> > > >  	{ 276, 1, 21 * 128 }, { 277, 1, 22 * 128 }, { 278, 1, 23 * 128 }, { 279, 1, 24 * 128 },
+> > > > -	{ 280, 1, 25 * 128 }, { 281, 1, 26 * 128 }, { 282, 1, 27 * 128 }, { 283, 1, 28 * 128 },
+> > > > -	{ 284, 1, 29 * 128 }, { 285, 1, 30 * 128 }, { 286, 1, 31 * 128 }, { 287, 1, 32 * 128 },
+> > > >  	{ 0, 0, 0 },
+> > > >  };
+> > > >  
+> > > > -- 
+> > > > 2.30.1
+> > > > 
