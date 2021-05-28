@@ -2,104 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68111C4708E
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 09:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB19C47094
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 10:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4F96128D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 09:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E509661248
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 10:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234153AbhE1JbA convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 May 2021 05:31:00 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:58163 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234226AbhE1JbA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 05:31:00 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]) by
- mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MacWq-1lFysY0aKY-00c6fR; Fri, 28 May 2021 11:29:24 +0200
-Received: by mail-wr1-f41.google.com with SMTP id g17so2549179wrs.13;
-        Fri, 28 May 2021 02:29:23 -0700 (PDT)
-X-Gm-Message-State: AOAM530U6aZLjGHwXiJQS/XnB5Sn/ZI7RYmqqRXO30ZAi5onlVnzNcRb
-        3HRNc+WMi8Nhfb0HoLD+m2j+39I+QOokukfTJeM=
-X-Google-Smtp-Source: ABdhPJywgALYfevaZchWg8EzzxwlRe7/w4FsfnLHzqy7k0scBlUV9N7AwRL3lgV5nPFvp2XIyNLmAh0ZEV+CX3zrcmU=
-X-Received: by 2002:a5d:53cc:: with SMTP id a12mr7140748wrw.99.1622194163736;
- Fri, 28 May 2021 02:29:23 -0700 (PDT)
+        id S236484AbhE1Khc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 May 2021 06:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236502AbhE1Kha (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 06:37:30 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D13BC06138C
+        for <linux-clk@vger.kernel.org>; Fri, 28 May 2021 03:35:54 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:751e:82a3:f2a2:3459])
+        by baptiste.telenet-ops.be with bizsmtp
+        id AAbs2500T20MPSF01AbsAc; Fri, 28 May 2021 12:35:52 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmZqK-00AD9W-CA; Fri, 28 May 2021 12:35:52 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmYBn-007GS2-0o; Fri, 28 May 2021 10:49:55 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.14
+Date:   Fri, 28 May 2021 10:49:48 +0200
+Message-Id: <cover.1622191519.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210523232556.15017-1-digetx@gmail.com> <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
- <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com> <f12b4622-6cea-ac65-2d94-f50a85c29215@canonical.com>
- <CAMuHMdW_G259Nwx1EEf38h0AcVH8yjmjqp9Mh-vQ4LJJMzD8Dg@mail.gmail.com>
- <2e5bb7c2-62d9-b1f7-7f35-2b379d3692d5@gmail.com> <3661fdba-ad32-5d16-7714-1ebc58caf435@infradead.org>
-In-Reply-To: <3661fdba-ad32-5d16-7714-1ebc58caf435@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 28 May 2021 11:27:54 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0hZGEOh0jckDvt-386KopCCL09RM6hv4qAUie31LDSTQ@mail.gmail.com>
-Message-ID: <CAK8P3a0hZGEOh0jckDvt-386KopCCL09RM6hv4qAUie31LDSTQ@mail.gmail.com>
-Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK enabled
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:tRfCYgyoPaTocN4/TJgdyNhWfvo5WQP/i9Ts8dKcu0wJedhE7HE
- ZW01rAxMYdnlGI6bBVhc+mMStv3U0YD3N5lv+eLhRWfynXb0u6UUOymuj77o2eTECDdaJKU
- pEu7LZ/ovSDL0Xmya2mAs0a7VB1ivMvz2pJ+nFUgPz2fHQLa5P5H5/JsCdRjhwp4wJ0seKK
- p99WTQ38U25agHnbmmMPg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VeAq1yubPvo=:jguehIBFhjnP27Z5dXYlDq
- jB1KAYY96bu52wJjl0FqOqzEi/+AQHYQcmFkPfk60dt5ZK3C+4zbQhqZ0DEQmzETPRZ7Y1RV5
- pwglJ0GsU5FnzwlYkUzy5ebId/hW5ivP1HYkEBR+6VlL6feb+re9FMmTXFqQjBYM+vNwqqEco
- axq3q9Reqr4eLlXGTRher9mWGP5Y5QeUWXzjTxQ7syKFUF2GTRy8aB7XpHHUVuoH/95iTNXhf
- NUQrNU4FRNeCg+dN4lMn3ROR8QW36DC+jYE0/O26V5MKVItebJ2byfkf5XjCzoluBFVgA6Dpn
- PbrqPSCWr2tZuj5uPX8P1AWP8Y19A0x/FI5w881J4AVg06jnXbVuZ+swbWmaIvd4wJjy2xVq/
- 3lDfMuB6KnF2PFSO94c2QVWSoZYRxQ6229AF8Kxcw3XuYDkhc+oIcsd+G06r7QULuIdC3Fko6
- LRtDtx6b5jbtCjEsPLObWosboLP2L0CWQm0TpjFe8wmzJnlyxmTFU2xMX0iMcv6iaFbg903hq
- KLkQGXFvZVPQQ2KAOrgAiH39ukXwvpDFX8jvx3RIay4JYKrdXUAB7JScPgNj8mw0Y9n7YI5mz
- kXrFkWpnRP3Q2sJTfX9InBK3r+vnkxlXJ6R+bIorW4suD+yRRy7m1MYAkHZcdzFx47Y1s2Y/n
- KmPQ=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 26, 2021 at 2:39 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 5/25/21 2:29 PM, Dmitry Osipenko wrote:
-> > 25.05.2021 15:19, Geert Uytterhoeven пишет:
-> If you are messing around with HAVE_LEGACY_CLK and COMMON_CLK
-> and don't mind, please have a look at this report from
-> 'kernel test robot':
->   https://lore.kernel.org/lkml/202103162301.oomY9NwI-lkp@intel.com/
->
->
-> Maybe this one is more MIPS-specific. I dunno.
-> I tried to come up with a patch for it and failed.
->
-> I will be happy to built-test any patches that you come up with.
->
-> Maybe I have just looked at this too long...
+	Hi Mike, Stephen,
 
-This is exactly the case that Dmitry is trying to solve. The problem
-is that bcm63xx
-and lantiq set CONFIG_HAVE_LEGACY_CLK but lack the clk_set_parent()
-and clk_get_parent() functions. We could add the same stubs for these
-two that we have for the other legacy clk implementations, or rework the
-handling of legacy clocks completely.
+The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
-       Arnd
+  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.14-tag1
+
+for you to fetch changes up to 790c06cc5df263cdaff748670cc65958c81b0951:
+
+  clk: renesas: r8a77995: Add ZA2 clock (2021-05-27 15:27:28 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.14
+
+  - Add support for CPU core clock boost modes on R-Car Gen3,
+  - Add ISPCS (Image Signal Processor) clocks on R-Car V3U,
+  - Switch SH/R-Mobile and R-Car "DIV6" clocks to .determine_rate(),
+    and improve support for multiple parents,
+  - Switch RZ/N1 divider clocks to .determine_rate(),
+  - Add ZA2 (Audio Clock Generator) clock on R-Car D3,
+  - Minor fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Dinghao Liu (1):
+      clk: renesas: rcar-usb2-clock-sel: Fix error handling in .probe()
+
+Geert Uytterhoeven (15):
+      clk: renesas: rcar-gen3: Update Z clock rate formula in comments
+      clk: renesas: rcar-gen3: Make cpg_z_clk.mask u32
+      clk: renesas: rcar-gen3: Remove superfluous masking in cpg_z_clk_set_rate()
+      clk: renesas: rcar-gen3: Grammar s/dependent of/dependent on/
+      clk: renesas: rcar-gen3: Increase Z clock accuracy
+      clk: renesas: rcar-gen3: Add custom clock for PLLs
+      clk: renesas: rcar-gen3: Add boost support to Z clocks
+      clk: renesas: div6: Use clamp() instead of clamp_t()
+      clk: renesas: div6: Simplify src mask handling
+      clk: renesas: div6: Switch to .determine_rate()
+      clk: renesas: div6: Consider all parents for requested rate
+      clk: renesas: div6: Implement range checking
+      clk: renesas: r9a06g032: Switch to .determine_rate()
+      clk: renesas: cpg-mssr: Remove unused [RM]MSTPCR() definitions
+      clk: renesas: cpg-mssr: Make srstclr[] comment block consistent
+
+Kuninori Morimoto (1):
+      clk: renesas: r8a77995: Add ZA2 clock
+
+Niklas Söderlund (1):
+      clk: renesas: r8a779a0: Add ISPCS clocks
+
+ drivers/clk/renesas/clk-div6.c            |  80 ++++++++-----
+ drivers/clk/renesas/r8a77995-cpg-mssr.c   |   1 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c   |   4 +
+ drivers/clk/renesas/r9a06g032-clocks.c    |  25 ++--
+ drivers/clk/renesas/rcar-gen3-cpg.c       | 183 +++++++++++++++++++++++++-----
+ drivers/clk/renesas/rcar-usb2-clock-sel.c |  24 ++--
+ drivers/clk/renesas/renesas-cpg-mssr.c    |  10 +-
+ 7 files changed, 244 insertions(+), 83 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
