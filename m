@@ -2,101 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9F2C2B9F7
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 14:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449E5C47087
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 14:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32C99613B6
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 14:07:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25F48613B6
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 14:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236396AbhE1OJW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 May 2021 10:09:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56500 "EHLO
+        id S235232AbhE1OYt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 May 2021 10:24:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236424AbhE1OJS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 10:09:18 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C95C061574;
-        Fri, 28 May 2021 07:07:42 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id y7so5012916eda.2;
-        Fri, 28 May 2021 07:07:42 -0700 (PDT)
+        with ESMTP id S234626AbhE1OYs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 10:24:48 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA16EC061760
+        for <linux-clk@vger.kernel.org>; Fri, 28 May 2021 07:23:13 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id e10so5736471ybb.7
+        for <linux-clk@vger.kernel.org>; Fri, 28 May 2021 07:23:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gmeSm8o0KnklsZ4e5IrRfjO+jG/+LdBVNPQF2l/4OlA=;
-        b=i0NGwOcoQW/Xe5YSw61VwzlX5fLiNTLQQfXFRqC9saqhlVpRBGI1F/TvMT6xqu74xp
-         v0nZOa6qca4TPgUsSucOi2U35jbKRPyMXUAgHEQcZWokuANdlou6lUtXQpn4gqvpIn2/
-         YVaKD6DP0Z/G5XcIt1ZpinVB88UexKQUcph/+mPmPqmCjxYow1Er9CV5zEgsHqGVsg6o
-         y6PLOMKPOtDQp8IAhBo4MWo6QoKT2PdDsMpPGcYguEhKyw3CZ2XWvAVp+hqDdsLkQ4XU
-         4So1qcnp2rFbg1Xw8mv0vR/jDG2HHa2g2qCjhXqCVszFKaHGOqXwXY8qgt9Fr8uioFAI
-         U9qg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=syysfoCLQhlZX4I15Hdgek+czZDdAMbqNxcJPk1EsOQ=;
+        b=Bi4g/rtry3daF+gwc3vRtRNefr36ib+72ReLa3GeeD9O3ybgsW5H+StLvG598fcTA2
+         MxJCazJmuhXChu6NvwkTut4KABCZtDklevvhSdJrjzkGSFpjSB9y1qKrfSy/NJ2F9zqa
+         SZ1tZs0U6q14X/bQF2A24cWdOm+OoG6tGIOcgxXj07e6xNBC4d2gkVJuryB4N0qhMpSv
+         vjosCTpmqAA7DzXW5J9O4/xo9afKZ9gPBnxKBSRuGMrT6i6aZSDO3XwKpRv4Txh494Db
+         xnpj5063UpPa68aZM8xfll+N3FUZukP1ajAbSd7u4yzb1znukr81z6bLt4hdid2Qss8i
+         6bRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gmeSm8o0KnklsZ4e5IrRfjO+jG/+LdBVNPQF2l/4OlA=;
-        b=rE4BLHGiRaTe7w8HRi9JTzazb50O1pWYatwBvDWF0H/BEau/F0XJnCgWBxS3IMQ0As
-         rrD7IZtmh6+iXdMdx052Hj4uRkYkLStoPmmT1OlN1C+eNmSnnd93hLbtO9IrsBk3L8P3
-         Ua87kc/l9NL+q10OyxyLWm8g7VjMqe7R45l69Sb7EW299sJCA05q0462516tLfpIU0gA
-         vNEIaOBI2lzQYDWCxn+wW8DYY8Lugi8XfqmOpjRNxzVKM2NCkdy/V6OdGp9MHLFTOwf+
-         u77nJcY1JKaf0EO/59E2AXV+igjG3m7SsUes3PQHjXy1mUNVInNmL5wrtiesgF6ehpAv
-         0s6Q==
-X-Gm-Message-State: AOAM531nN2nYBj9nFzAOFZX8yEsZYzx5SwIP6jsY1+rVxcuVAX4PFW5L
-        YtVje/CiGN/Y99iqSxAH3A==
-X-Google-Smtp-Source: ABdhPJxKPgSY9GkyhdHngZk+RvVE3sVtTWqSwT9kL7gKgmXpjd77U+2R98FBLEQ1l0t6+X8VG8yd9g==
-X-Received: by 2002:a05:6402:14c1:: with SMTP id f1mr9753808edx.334.1622210861554;
-        Fri, 28 May 2021 07:07:41 -0700 (PDT)
-Received: from localhost.localdomain (ip4d17b4b8.dynamic.kabel-deutschland.de. [77.23.180.184])
-        by smtp.googlemail.com with ESMTPSA id bh2sm2389309ejb.80.2021.05.28.07.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 07:07:41 -0700 (PDT)
-From:   Alex Bee <knaerzche@gmail.com>
-To:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH] clk: rockchip: export ACLK_VCODEC for RK3036
-Date:   Fri, 28 May 2021 16:07:36 +0200
-Message-Id: <20210528140736.79686-1-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=syysfoCLQhlZX4I15Hdgek+czZDdAMbqNxcJPk1EsOQ=;
+        b=EEX7kfd4+pNi+nrEGDvpGHEoIa50gS7/ESqk3tvP2I/Y+wxfYbS9GH3uqM3gmU1Sxi
+         CVsPsBc3YtwZu1ckOo8DNkfCoiAzYNGlDeSE0JMGtBhtbUt+NP5AqqyEYxdYamTRrn5r
+         iWD/WuS2zQPHZgP2qWURS8cenKQqECuJfpBluNjXMFZf8T6NF7pbu7GWUEJCW/RTXwTc
+         at1cDIyY/4zcohCpr7WVBQtqb5g7DSvJVBjmlINXGQCkF1klDM5+I9RFsAF+Yu5ReP3b
+         QOpXQOjUv9/nFggF+aSWcDavRDXwhrsy13Lwcu4ZLI7ZhXHiX5jQhZIg5znhKwywPBMj
+         fbAQ==
+X-Gm-Message-State: AOAM530ZwbDEY1FsqUOq66tBFjde4IzHDH+v3+w5LhatBi/G7XGAj3ym
+        ay6MpvpW7JCNiVSU9nPirPaH/mQT5YvhM4LckTN1Gg==
+X-Google-Smtp-Source: ABdhPJx8mHtOAu17ADz6J7AwfAXA/YIRldt+oDMdzuZLRNE9q/0fTWnkdiCMlbQ3GUS+scmZ1tLW01HbzK50dqSraow=
+X-Received: by 2002:a25:420c:: with SMTP id p12mr9823321yba.25.1622211792670;
+ Fri, 28 May 2021 07:23:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1621937490.git.matti.vaittinen@fi.rohmeurope.com> <dba3927a575645e5bf1ff35edea5ad74ea86885e.1621937490.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <dba3927a575645e5bf1ff35edea5ad74ea86885e.1621937490.git.matti.vaittinen@fi.rohmeurope.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 28 May 2021 16:23:02 +0200
+Message-ID: <CAMpxmJU8GY568LwEyKnxiN3vPgOreyCYYJF_sD2dFKuMOm6A4A@mail.gmail.com>
+Subject: Re: [PATCH 6/9] gpio: bd70528 Drop BD70528 support
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-power <linux-power@fi.rohmeurope.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>, linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is required for the series at [1] to let hantro driver aquire the
-clock and set the rate for RK3036 correctly, but I didn't want to
-add a patch for yet another subsystem to this series.
+On Tue, May 25, 2021 at 12:15 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+>
+> The only known BD70528 use-cases are such that the PMIC is controlled
+> from separate MCU which is not running Linux. I am not aware of
+> any Linux driver users. Furthermore, it seems there is no demand for
+> this IC. Let's ease the maintenance burden and drop the driver. We can
+> always add it back if there is sudden need for it.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+>
+> ---
 
-[1] https://lore.kernel.org/linux-media/20210525152225.154302-1-knaerzche@gmail.com/
-
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 91d56ad45817..614845cc5b4a 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -259,7 +259,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(1), 13, GFLAGS,
- 			&rk3036_uart2_fracmux),
- 
--	COMPOSITE(0, "aclk_vcodec", mux_pll_src_3plls_p, 0,
-+	COMPOSITE(ACLK_VCODEC, "aclk_vcodec", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(3), 11, GFLAGS),
- 	FACTOR_GATE(HCLK_VCODEC, "hclk_vcodec", "aclk_vcodec", 0, 1, 4,
--- 
-2.27.0
-
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
