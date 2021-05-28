@@ -2,167 +2,310 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B48C2B9F7
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 18:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD16FC2B9F7
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 19:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3555610CC
-	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 18:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B8A961378
+	for <linux-clk@archiver.kernel.org>; Fri, 28 May 2021 19:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbhE1SDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 May 2021 14:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbhE1SDR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 14:03:17 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D269FC061574
-        for <linux-clk@vger.kernel.org>; Fri, 28 May 2021 11:01:41 -0700 (PDT)
-Received: from dude03.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::39])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1lmgng-0000qQ-7S; Fri, 28 May 2021 20:01:36 +0200
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>,
+        id S229482AbhE1T1Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 May 2021 15:27:24 -0400
+Received: from relay02.th.seeweb.it ([5.144.164.163]:52223 "EHLO
+        relay02.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229476AbhE1T1Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 May 2021 15:27:24 -0400
+Received: from localhost.localdomain (83.6.168.57.neoplus.adsl.tpnet.pl [83.6.168.57])
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 3EDB720344;
+        Fri, 28 May 2021 21:25:45 +0200 (CEST)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: [PATCH] clk: imx8mq: remove SYS PLL 1/2 clock gates
-Date:   Fri, 28 May 2021 20:01:35 +0200
-Message-Id: <20210528180135.1640876-1-l.stach@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: qcom: msm8996-cpu: Add CBF support
+Date:   Fri, 28 May 2021 21:25:40 +0200
+Message-Id: <20210528192541.1120703-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove the PLL clock gates as the allowing to gate the sys1_pll_266m breaks
-the uSDHC module which is sporadically unable to enumerate devices after
-this change. Also it makes AMP clock management harder with no obvious
-benefit to Linux, so just revert the change.
+Add the required code to support the CBF clock, which is responsible for
+core cluster interconnect frequency on msm8996.
 
-Fixes: b04383b6a558 ("clk: imx8mq: Define gates for pll1/2 fixed dividers")
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
-Previously this was a more targeted change only reverting the problematic
-bit for uSDHC, but Jacky Bai expressed the desire to just revert the whole
-change, as it makes things harder for AMP use-cases.
----
- drivers/clk/imx/clk-imx8mq.c             | 56 ++++++++----------------
- include/dt-bindings/clock/imx8mq-clock.h | 19 --------
- 2 files changed, 18 insertions(+), 57 deletions(-)
+Somewhat based on AngeloGioacchino del Regno's work at:
+https://github.com/sonyxperiadev/kernel/blob/aosp/LE.UM.2.3.2.r1.4/drivers/clk/qcom/clk-cpu-8996.c
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index b08019e1faf9..c491bc9c61ce 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -358,46 +358,26 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MQ_VIDEO2_PLL_OUT] = imx_clk_hw_sscg_pll("video2_pll_out", video2_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
+This fixes the issue with booting with all 4 cores enabled.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 162 +++++++++++++++++++++++++++++++-
+ 1 file changed, 159 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 4a4fde8dd12d..8afc271f92d0 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -68,10 +68,19 @@ enum _pmux_input {
+ 	NUM_OF_PMUX_INPUTS
+ };
  
- 	/* SYS PLL1 fixed output */
--	hws[IMX8MQ_SYS1_PLL_40M_CG] = imx_clk_hw_gate("sys1_pll_40m_cg", "sys1_pll_out", base + 0x30, 9);
--	hws[IMX8MQ_SYS1_PLL_80M_CG] = imx_clk_hw_gate("sys1_pll_80m_cg", "sys1_pll_out", base + 0x30, 11);
--	hws[IMX8MQ_SYS1_PLL_100M_CG] = imx_clk_hw_gate("sys1_pll_100m_cg", "sys1_pll_out", base + 0x30, 13);
--	hws[IMX8MQ_SYS1_PLL_133M_CG] = imx_clk_hw_gate("sys1_pll_133m_cg", "sys1_pll_out", base + 0x30, 15);
--	hws[IMX8MQ_SYS1_PLL_160M_CG] = imx_clk_hw_gate("sys1_pll_160m_cg", "sys1_pll_out", base + 0x30, 17);
--	hws[IMX8MQ_SYS1_PLL_200M_CG] = imx_clk_hw_gate("sys1_pll_200m_cg", "sys1_pll_out", base + 0x30, 19);
--	hws[IMX8MQ_SYS1_PLL_266M_CG] = imx_clk_hw_gate("sys1_pll_266m_cg", "sys1_pll_out", base + 0x30, 21);
--	hws[IMX8MQ_SYS1_PLL_400M_CG] = imx_clk_hw_gate("sys1_pll_400m_cg", "sys1_pll_out", base + 0x30, 23);
--	hws[IMX8MQ_SYS1_PLL_800M_CG] = imx_clk_hw_gate("sys1_pll_800m_cg", "sys1_pll_out", base + 0x30, 25);
--
--	hws[IMX8MQ_SYS1_PLL_40M] = imx_clk_hw_fixed_factor("sys1_pll_40m", "sys1_pll_40m_cg", 1, 20);
--	hws[IMX8MQ_SYS1_PLL_80M] = imx_clk_hw_fixed_factor("sys1_pll_80m", "sys1_pll_80m_cg", 1, 10);
--	hws[IMX8MQ_SYS1_PLL_100M] = imx_clk_hw_fixed_factor("sys1_pll_100m", "sys1_pll_100m_cg", 1, 8);
--	hws[IMX8MQ_SYS1_PLL_133M] = imx_clk_hw_fixed_factor("sys1_pll_133m", "sys1_pll_133m_cg", 1, 6);
--	hws[IMX8MQ_SYS1_PLL_160M] = imx_clk_hw_fixed_factor("sys1_pll_160m", "sys1_pll_160m_cg", 1, 5);
--	hws[IMX8MQ_SYS1_PLL_200M] = imx_clk_hw_fixed_factor("sys1_pll_200m", "sys1_pll_200m_cg", 1, 4);
--	hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_266m_cg", 1, 3);
--	hws[IMX8MQ_SYS1_PLL_400M] = imx_clk_hw_fixed_factor("sys1_pll_400m", "sys1_pll_400m_cg", 1, 2);
--	hws[IMX8MQ_SYS1_PLL_800M] = imx_clk_hw_fixed_factor("sys1_pll_800m", "sys1_pll_800m_cg", 1, 1);
-+	hws[IMX8MQ_SYS1_PLL_40M] = imx_clk_hw_fixed_factor("sys1_pll_40m", "sys1_pll_out", 1, 20);
-+	hws[IMX8MQ_SYS1_PLL_80M] = imx_clk_hw_fixed_factor("sys1_pll_80m", "sys1_pll_out", 1, 10);
-+	hws[IMX8MQ_SYS1_PLL_100M] = imx_clk_hw_fixed_factor("sys1_pll_100m", "sys1_pll_out", 1, 8);
-+	hws[IMX8MQ_SYS1_PLL_133M] = imx_clk_hw_fixed_factor("sys1_pll_133m", "sys1_pll_out", 1, 6);
-+	hws[IMX8MQ_SYS1_PLL_160M] = imx_clk_hw_fixed_factor("sys1_pll_160m", "sys1_pll_out", 1, 5);
-+	hws[IMX8MQ_SYS1_PLL_200M] = imx_clk_hw_fixed_factor("sys1_pll_200m", "sys1_pll_out", 1, 4);
-+	hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_out", 1, 3);
-+	hws[IMX8MQ_SYS1_PLL_400M] = imx_clk_hw_fixed_factor("sys1_pll_400m", "sys1_pll_out", 1, 2);
-+	hws[IMX8MQ_SYS1_PLL_800M] = imx_clk_hw_fixed_factor("sys1_pll_800m", "sys1_pll_out", 1, 1);
++enum {
++	CBF_PLL_INDEX = 1,
++	CBF_DIV_2_INDEX,
++	CBF_SAFE_INDEX
++};
++
+ #define DIV_2_THRESHOLD		600000000
+ #define PWRCL_REG_OFFSET 0x0
+ #define PERFCL_REG_OFFSET 0x80000
+ #define MUX_OFFSET	0x40
++#define CBF_REG_OFFSET	0x0
++#define CBF_PLL_OFFSET	0xf000
++#define CBF_MUX_OFFSET 0x18
+ #define ALT_PLL_OFFSET	0x100
+ #define SSSCTL_OFFSET 0x160
  
- 	/* SYS PLL2 fixed output */
--	hws[IMX8MQ_SYS2_PLL_50M_CG] = imx_clk_hw_gate("sys2_pll_50m_cg", "sys2_pll_out", base + 0x3c, 9);
--	hws[IMX8MQ_SYS2_PLL_100M_CG] = imx_clk_hw_gate("sys2_pll_100m_cg", "sys2_pll_out", base + 0x3c, 11);
--	hws[IMX8MQ_SYS2_PLL_125M_CG] = imx_clk_hw_gate("sys2_pll_125m_cg", "sys2_pll_out", base + 0x3c, 13);
--	hws[IMX8MQ_SYS2_PLL_166M_CG] = imx_clk_hw_gate("sys2_pll_166m_cg", "sys2_pll_out", base + 0x3c, 15);
--	hws[IMX8MQ_SYS2_PLL_200M_CG] = imx_clk_hw_gate("sys2_pll_200m_cg", "sys2_pll_out", base + 0x3c, 17);
--	hws[IMX8MQ_SYS2_PLL_250M_CG] = imx_clk_hw_gate("sys2_pll_250m_cg", "sys2_pll_out", base + 0x3c, 19);
--	hws[IMX8MQ_SYS2_PLL_333M_CG] = imx_clk_hw_gate("sys2_pll_333m_cg", "sys2_pll_out", base + 0x3c, 21);
--	hws[IMX8MQ_SYS2_PLL_500M_CG] = imx_clk_hw_gate("sys2_pll_500m_cg", "sys2_pll_out", base + 0x3c, 23);
--	hws[IMX8MQ_SYS2_PLL_1000M_CG] = imx_clk_hw_gate("sys2_pll_1000m_cg", "sys2_pll_out", base + 0x3c, 25);
--
--	hws[IMX8MQ_SYS2_PLL_50M] = imx_clk_hw_fixed_factor("sys2_pll_50m", "sys2_pll_50m_cg", 1, 20);
--	hws[IMX8MQ_SYS2_PLL_100M] = imx_clk_hw_fixed_factor("sys2_pll_100m", "sys2_pll_100m_cg", 1, 10);
--	hws[IMX8MQ_SYS2_PLL_125M] = imx_clk_hw_fixed_factor("sys2_pll_125m", "sys2_pll_125m_cg", 1, 8);
--	hws[IMX8MQ_SYS2_PLL_166M] = imx_clk_hw_fixed_factor("sys2_pll_166m", "sys2_pll_166m_cg", 1, 6);
--	hws[IMX8MQ_SYS2_PLL_200M] = imx_clk_hw_fixed_factor("sys2_pll_200m", "sys2_pll_200m_cg", 1, 5);
--	hws[IMX8MQ_SYS2_PLL_250M] = imx_clk_hw_fixed_factor("sys2_pll_250m", "sys2_pll_250m_cg", 1, 4);
--	hws[IMX8MQ_SYS2_PLL_333M] = imx_clk_hw_fixed_factor("sys2_pll_333m", "sys2_pll_333m_cg", 1, 3);
--	hws[IMX8MQ_SYS2_PLL_500M] = imx_clk_hw_fixed_factor("sys2_pll_500m", "sys2_pll_500m_cg", 1, 2);
--	hws[IMX8MQ_SYS2_PLL_1000M] = imx_clk_hw_fixed_factor("sys2_pll_1000m", "sys2_pll_1000m_cg", 1, 1);
-+	hws[IMX8MQ_SYS2_PLL_50M] = imx_clk_hw_fixed_factor("sys2_pll_50m", "sys2_pll_out", 1, 20);
-+	hws[IMX8MQ_SYS2_PLL_100M] = imx_clk_hw_fixed_factor("sys2_pll_100m", "sys2_pll_out", 1, 10);
-+	hws[IMX8MQ_SYS2_PLL_125M] = imx_clk_hw_fixed_factor("sys2_pll_125m", "sys2_pll_out", 1, 8);
-+	hws[IMX8MQ_SYS2_PLL_166M] = imx_clk_hw_fixed_factor("sys2_pll_166m", "sys2_pll_out", 1, 6);
-+	hws[IMX8MQ_SYS2_PLL_200M] = imx_clk_hw_fixed_factor("sys2_pll_200m", "sys2_pll_out", 1, 5);
-+	hws[IMX8MQ_SYS2_PLL_250M] = imx_clk_hw_fixed_factor("sys2_pll_250m", "sys2_pll_out", 1, 4);
-+	hws[IMX8MQ_SYS2_PLL_333M] = imx_clk_hw_fixed_factor("sys2_pll_333m", "sys2_pll_out", 1, 3);
-+	hws[IMX8MQ_SYS2_PLL_500M] = imx_clk_hw_fixed_factor("sys2_pll_500m", "sys2_pll_out", 1, 2);
-+	hws[IMX8MQ_SYS2_PLL_1000M] = imx_clk_hw_fixed_factor("sys2_pll_1000m", "sys2_pll_out", 1, 1);
+@@ -98,6 +107,17 @@ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
+ 	[PLL_OFF_STATUS] = 0x28,
+ };
  
- 	hws[IMX8MQ_CLK_MON_AUDIO_PLL1_DIV] = imx_clk_hw_divider("audio_pll1_out_monitor", "audio_pll1_bypass", base + 0x78, 0, 3);
- 	hws[IMX8MQ_CLK_MON_AUDIO_PLL2_DIV] = imx_clk_hw_divider("audio_pll2_out_monitor", "audio_pll2_bypass", base + 0x78, 4, 3);
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-index 82e907ce7bdd..afa74d7ba100 100644
---- a/include/dt-bindings/clock/imx8mq-clock.h
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -405,25 +405,6 @@
++static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
++	[PLL_OFF_L_VAL] = 0x08,
++	[PLL_OFF_ALPHA_VAL] = 0x10,
++	[PLL_OFF_USER_CTL] = 0x18,
++	[PLL_OFF_CONFIG_CTL] = 0x20,
++	[PLL_OFF_CONFIG_CTL_U] = 0x24,
++	[PLL_OFF_TEST_CTL] = 0x30,
++	[PLL_OFF_TEST_CTL_U] = 0x34,
++	[PLL_OFF_STATUS] = 0x28,
++};
++
+ /* PLLs */
  
- #define IMX8MQ_VIDEO2_PLL1_REF_SEL		266
+ static const struct alpha_pll_config hfpll_config = {
+@@ -111,6 +131,17 @@ static const struct alpha_pll_config hfpll_config = {
+ 	.early_output_mask = BIT(3),
+ };
  
--#define IMX8MQ_SYS1_PLL_40M_CG			267
--#define IMX8MQ_SYS1_PLL_80M_CG			268
--#define IMX8MQ_SYS1_PLL_100M_CG			269
--#define IMX8MQ_SYS1_PLL_133M_CG			270
--#define IMX8MQ_SYS1_PLL_160M_CG			271
--#define IMX8MQ_SYS1_PLL_200M_CG			272
--#define IMX8MQ_SYS1_PLL_266M_CG			273
--#define IMX8MQ_SYS1_PLL_400M_CG			274
--#define IMX8MQ_SYS1_PLL_800M_CG			275
--#define IMX8MQ_SYS2_PLL_50M_CG			276
--#define IMX8MQ_SYS2_PLL_100M_CG			277
--#define IMX8MQ_SYS2_PLL_125M_CG			278
--#define IMX8MQ_SYS2_PLL_166M_CG			279
--#define IMX8MQ_SYS2_PLL_200M_CG			280
--#define IMX8MQ_SYS2_PLL_250M_CG			281
--#define IMX8MQ_SYS2_PLL_333M_CG			282
--#define IMX8MQ_SYS2_PLL_500M_CG			283
--#define IMX8MQ_SYS2_PLL_1000M_CG		284
--
- #define IMX8MQ_CLK_GPU_CORE			285
- #define IMX8MQ_CLK_GPU_SHADER			286
- #define IMX8MQ_CLK_M4_CORE			287
++static const struct alpha_pll_config cbfpll_config = {
++	.l = 72,
++	.config_ctl_val = 0x200d4aa8,
++	.config_ctl_hi_val = 0x006,
++	.pre_div_mask = BIT(12),
++	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
++	.main_output_mask = BIT(0),
++	.early_output_mask = BIT(3),
++};
++
+ static struct clk_alpha_pll perfcl_pll = {
+ 	.offset = PERFCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+@@ -135,6 +166,18 @@ static struct clk_alpha_pll pwrcl_pll = {
+ 	},
+ };
+ 
++static struct clk_alpha_pll cbf_pll = {
++	.offset = CBF_PLL_OFFSET,
++	.regs = cbf_pll_regs,
++	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cbf_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_huayra_ops,
++	},
++};
++
+ static const struct pll_vco alt_pll_vco_modes[] = {
+ 	VCO(3,  250000000,  500000000),
+ 	VCO(2,  500000000,  750000000),
+@@ -194,6 +237,9 @@ struct clk_cpu_8996_mux {
+ static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 			       void *data);
+ 
++static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			       void *data);
++
+ #define to_clk_cpu_8996_mux_nb(_nb) \
+ 	container_of(_nb, struct clk_cpu_8996_mux, nb)
+ 
+@@ -329,6 +375,35 @@ static struct clk_cpu_8996_mux perfcl_pmux = {
+ 	},
+ };
+ 
++static struct clk_cpu_8996_mux cbf_mux = {
++	.reg = CBF_REG_OFFSET + CBF_MUX_OFFSET,
++	.shift = 0,
++	.width = 2,
++	.pll = &cbf_pll.clkr.hw,
++	.nb.notifier_call = cbf_clk_notifier_cb,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "cbf_mux",
++		.parent_names = (const char *[]){
++			"xo",
++			"cbf_pll",
++			"cbf_pll_main",
++		},
++		.num_parents = 3,
++		.ops = &clk_cpu_8996_mux_ops,
++		/* CPU clock is critical and should never be gated */
++		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++	},
++};
++
++static const struct regmap_config cbf_msm8996_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x10000,
++	.fast_io		= true,
++	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
++};
++
+ static const struct regmap_config cpu_msm8996_regmap_config = {
+ 	.reg_bits		= 32,
+ 	.reg_stride		= 4,
+@@ -397,6 +472,35 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
+ 	return ret;
+ }
+ 
++static struct clk_regmap *cbf_msm8996_clks[] = {
++	&cbf_pll.clkr,
++	&cbf_mux.clkr,
++};
++
++static int qcom_cbf_clk_msm8996_register_clks(struct device *dev,
++					      struct regmap *regmap)
++{
++	int ret;
++
++	cbf_mux.pll_div_2 = clk_hw_register_fixed_factor(dev, "cbf_pll_main",
++						      "cbf_pll", CLK_SET_RATE_PARENT,
++						      1, 2);
++	if (IS_ERR(cbf_mux.pll_div_2)) {
++		dev_err(dev, "Failed to initialize cbf_pll_main\n");
++		return PTR_ERR(cbf_mux.pll_div_2);
++	}
++
++	ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[0]);
++	ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[1]);
++
++	clk_alpha_pll_configure(&cbf_pll, regmap, &cbfpll_config);
++	clk_set_rate(cbf_pll.clkr.hw.clk, 614400000);
++	clk_prepare_enable(cbf_pll.clkr.hw.clk);
++	clk_notifier_register(cbf_mux.clkr.hw.clk, &cbf_mux.nb);
++
++	return ret;
++}
++
+ static int qcom_cpu_clk_msm8996_unregister_clks(void)
+ {
+ 	int ret = 0;
+@@ -409,8 +513,13 @@ static int qcom_cpu_clk_msm8996_unregister_clks(void)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = clk_notifier_unregister(cbf_mux.clkr.hw.clk, &cbf_mux.nb);
++	if (ret)
++		return ret;
++
+ 	clk_hw_unregister(perfcl_smux.pll);
+ 	clk_hw_unregister(pwrcl_smux.pll);
++	clk_hw_unregister(cbf_mux.pll);
+ 
+ 	return 0;
+ }
+@@ -481,14 +590,48 @@ static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	return notifier_from_errno(ret);
+ };
+ 
++static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			       void *data)
++{
++	struct clk_cpu_8996_mux *cbfclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
++	struct clk_hw *parent;
++	int ret;
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		parent = clk_hw_get_parent_by_index(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
++		ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
++
++		if (cnd->old_rate > DIV_2_THRESHOLD && cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_set_rate(parent->clk, cnd->old_rate / 2);
++		break;
++	case POST_RATE_CHANGE:
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
++		else {
++			parent = clk_hw_get_parent_by_index(&cbfclk->clkr.hw, CBF_PLL_INDEX);
++			ret = clk_set_rate(parent->clk, cnd->new_rate);
++			ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_PLL_INDEX);
++		}
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
++
+ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ {
+-	struct regmap *regmap;
++	struct regmap *regmap, *regmap_cbf;
+ 	struct clk_hw_onecell_data *data;
+ 	struct device *dev = &pdev->dev;
++	static void __iomem *cbf_base;
+ 	int ret;
+ 
+-	data = devm_kzalloc(dev, struct_size(data, hws, 2), GFP_KERNEL);
++	data = devm_kzalloc(dev, struct_size(data, hws, 3), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+@@ -506,9 +649,22 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 
+ 	qcom_cpu_clk_msm8996_acd_init(base);
+ 
++	cbf_base = devm_platform_ioremap_resource(pdev, 1);
++	if (IS_ERR(cbf_base))
++		return PTR_ERR(cbf_base);
++
++	regmap_cbf = devm_regmap_init_mmio(dev, cbf_base, &cbf_msm8996_regmap_config);
++	if (IS_ERR(regmap_cbf))
++		return PTR_ERR(regmap_cbf);
++
++	ret = qcom_cbf_clk_msm8996_register_clks(dev, regmap_cbf);
++	if (ret)
++		return ret;
++
+ 	data->hws[0] = &pwrcl_pmux.clkr.hw;
+ 	data->hws[1] = &perfcl_pmux.clkr.hw;
+-	data->num = 2;
++	data->hws[2] = &cbf_mux.clkr.hw;
++	data->num = 3;
+ 
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
+ }
 -- 
-2.29.2
+2.31.1
 
