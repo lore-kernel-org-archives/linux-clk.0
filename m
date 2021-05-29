@@ -2,102 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29003C4708E
-	for <linux-clk@archiver.kernel.org>; Sat, 29 May 2021 09:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C94C47090
+	for <linux-clk@archiver.kernel.org>; Sat, 29 May 2021 23:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03E8F61107
-	for <linux-clk@archiver.kernel.org>; Sat, 29 May 2021 09:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A7E461090
+	for <linux-clk@archiver.kernel.org>; Sat, 29 May 2021 23:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbhE2JIP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 May 2021 05:08:15 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2462 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbhE2JIP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 May 2021 05:08:15 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FsbFV6r19z67c2;
-        Sat, 29 May 2021 17:03:42 +0800 (CST)
-Received: from dggema762-chm.china.huawei.com (10.1.198.204) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Sat, 29 May 2021 17:06:33 +0800
-Received: from [10.174.179.129] (10.174.179.129) by
- dggema762-chm.china.huawei.com (10.1.198.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Sat, 29 May 2021 17:06:32 +0800
-Subject: Re: [PATCH] clk: socfpga: remove set but not used variable 'rc'
-To:     Dinh Nguyen <dinguyen@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <s.trumtrar@pengutronix.de>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yi.zhang@huawei.com>
-References: <20210514062234.3534615-1-yukuai3@huawei.com>
- <786d67c5-1470-098b-79cd-801b06a72bf3@kernel.org>
-From:   "yukuai (C)" <yukuai3@huawei.com>
-Message-ID: <f6f902a0-575e-f73d-adcc-9f60c37bd22e@huawei.com>
-Date:   Sat, 29 May 2021 17:06:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <786d67c5-1470-098b-79cd-801b06a72bf3@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S229555AbhE2XJx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 May 2021 19:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35936 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229546AbhE2XJx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 May 2021 19:09:53 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4FFC06174A
+        for <linux-clk@vger.kernel.org>; Sat, 29 May 2021 16:08:14 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id f8so4568576pjh.0
+        for <linux-clk@vger.kernel.org>; Sat, 29 May 2021 16:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oz6WbJIayPIPGEgF0T14UBd14Ee4ocMxtgGqOTktA4o=;
+        b=KkpWKZcffZcA6m9H+fXFRQbgNJ2xVyY2yM/oi8uvoLZ88Sm4F2PfTII7WcT0nRsKY+
+         pOzth+EvBsbnkMU/7FsKJNeGnnE+MPHYX9zMwUxxbiFjmW15s6SIgaD2kSD5Sxlm98c+
+         0Ut6A/hCrZP4XuKM7ScqwTc3HkcM3ySnB8RZqE/KekxvT2V2eQjQP4DoHNWQDFDW8Foi
+         GAZUcxdVJE6eUDQy2xE8k1qI+OjpF+ghyL2C3ANtFfhNgAD+Q8/utbPrZo5wwloF+grQ
+         5sYhwpAJmBhS9ooGbt8sX07/CRCmLceDwEz8YlbUa90Kcbm1oohKX2no0qNse8uivjqO
+         MzAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Oz6WbJIayPIPGEgF0T14UBd14Ee4ocMxtgGqOTktA4o=;
+        b=nR7PaYO2i+pee0yDoG4AWhSfCIfFi6CqlkiRqr/AgumnyBi9tsONecE0ELHF+IIMxE
+         K7RjkBnWzAmNjq/YFVv4rCfU05JV/PhoiKp6yWrCe6CJxCyJaDDrfsilO8MyFD4PrNbT
+         2/c5CzVPJgawUZtizJBKfUvGy/oclfUl6StvrYQDawPrxsL27R+g2k4mFHlIWrr4eh0u
+         uGmOpsAlANOXYb5Da6axHXAQX53pydhl/7XhlHgHo8aSiAktIk/xw9xiU6IzY2Fcraqn
+         0zSyOUIJsl9cTB5fbDEe4gz8rRM1MjpR3XmpBmn+TQPXvfv27RBlYIRUkpnbLKA8buKx
+         2kHA==
+X-Gm-Message-State: AOAM532pJSk4tnk6Fqzv7PhbyrZgrDxz08lw1lejalFCQKI4yFTHxtOk
+        zcoDAjxmn8gXwuS1Ntm713LPdw==
+X-Google-Smtp-Source: ABdhPJxy8tTHJfiR+q/sQ1ZwCMi35M9UJBnTbnM2neGccG4Oq88chDZdi8Kkd+rmosgqHiIedpMQfg==
+X-Received: by 2002:a17:902:9b83:b029:ef:4dd5:beab with SMTP id y3-20020a1709029b83b02900ef4dd5beabmr13846708plp.76.1622329694231;
+        Sat, 29 May 2021 16:08:14 -0700 (PDT)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id v4sm2066778pfn.41.2021.05.29.16.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 May 2021 16:08:13 -0700 (PDT)
+Date:   Sat, 29 May 2021 16:08:13 -0700 (PDT)
+X-Google-Original-Date: Sat, 29 May 2021 15:51:03 PDT (-0700)
+Subject:     Re: [PATCH] clk: sifive: Fix kernel-doc
+In-Reply-To: <1621851730-32287-1-git-send-email-yang.lee@linux.alibaba.com>
+CC:     mturquette@baylibre.com, sboyd@kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, yang.lee@linux.alibaba.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     yang.lee@linux.alibaba.com
+Message-ID: <mhng-5e882346-b7ef-44de-ae79-af3873f0ffb8@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.179.129]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggema762-chm.china.huawei.com (10.1.198.204)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ping ...
+On Mon, 24 May 2021 03:22:10 PDT (-0700), yang.lee@linux.alibaba.com wrote:
+> Fix function name in sifive-prci.c kernel-doc comment
+> to remove a warning.
+>
+> drivers/clk/sifive/sifive-prci.c:573: warning: expecting prototype for
+> sifive_prci_init(). Prototype was for sifive_prci_probe() instead
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/clk/sifive/sifive-prci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+> index 0d79ba3..80a288c 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -564,7 +564,7 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd,
+>  }
+>
+>  /**
+> - * sifive_prci_init() - initialize prci data and check parent count
+> + * sifive_prci_probe() - initialize prci data and check parent count
+>   * @pdev: platform device pointer for the prci
+>   *
+>   * Return: 0 upon success or a negative error code upon failure.
 
-On 2021/05/14 23:11, Dinh Nguyen wrote:
-> 
-> 
-> On 5/14/21 1:22 AM, Yu Kuai wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but
->> not used [-Wunused-but-set-variable]
->>
->> The returned value of of_clk_add_provider() is never used, and so
->> can be removed.
->>
->> Fixes: 97259e99bdc9 ("clk: socfpga: split clk code")
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/clk/socfpga/clk-pll.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/socfpga/clk-pll.c 
->> b/drivers/clk/socfpga/clk-pll.c
->> index dcb573d44034..127cc849c5ee 100644
->> --- a/drivers/clk/socfpga/clk-pll.c
->> +++ b/drivers/clk/socfpga/clk-pll.c
->> @@ -80,7 +80,6 @@ static __init struct clk_hw 
->> *__socfpga_pll_init(struct device_node *node,
->>       const char *parent_name[SOCFPGA_MAX_PARENTS];
->>       struct clk_init_data init;
->>       struct device_node *clkmgr_np;
->> -    int rc;
->>       int err;
->>       of_property_read_u32(node, "reg", &reg);
->> @@ -114,7 +113,7 @@ static __init struct clk_hw 
->> *__socfpga_pll_init(struct device_node *node,
->>           kfree(pll_clk);
->>           return ERR_PTR(err);
->>       }
->> -    rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
->> +    of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
->>       return hw_clk;
->>   }
->>
-> 
-> Acked-by: Dinh Nguyen <dinguyen@kernel.org>
-> .
-> 
+Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+
+I'm assuming this is targeted for the clock tree, but LMK if you want me 
+to take it.
+
+Thanks!
