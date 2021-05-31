@@ -2,140 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A53C47082
-	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 10:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C87C47082
+	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 11:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B984611CA
-	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 10:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF5ED611CB
+	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 11:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231285AbhEaKKN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 May 2021 06:10:13 -0400
-Received: from mail-db8eur05on2080.outbound.protection.outlook.com ([40.107.20.80]:13281
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231208AbhEaKIk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 31 May 2021 06:08:40 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AQwuE9zUCtgG4K8x1aF/Prk5XUL078sn9irDX3wQ/jfoiiv6SwXDfSA0XFFIu9HnTi47nskCh8imFlFdoFt3huUUyfZqrtSFu394z/xS8tA8UtNqrpwpk9FDTsKfN4wVLq0fzyAiKDiFV7IzAoQ71/2tlFEQOlr/bbZPcmIr+embKg9+b5MyjlgtvoVmCg213qvaHINJG+3UZfltdV2BqoJm5JplyXVD3b7cdm80P1JVzOJSJK6yg6/L05arOSPCJcL5SQINEWGG1qnKEG9bUi8obwYlB8uDzn67yEqzfiF4Cmk3QEq2rI19KWnjYvdrV+zpv7PA/Tw2KC5CNMwOBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SuqIBIr2j3yBkDvU8OB0grujgWJQUTfM0/mfIyJzeI0=;
- b=HIbv9mdVhGuYr7BekH2pnIfIfWOYGNfS5RMqACPHAHIfpRLChB3jZkHA8Fdud3bzB4nwlmpcPfNwB9rrZ93GkyzUjj/L/7e72ABy7GgwXJYAb3Rqs0N0fFwjZDCMTwEXisGCe2WI6F1h500SXpVU5UlUfqlcgGCVm1mrpNLrMwPcYp50b47EPIsFR66ghIxCWs/p7DyY5lcb4gTllx8mSnQcymuaUtn20uJCCnivgY0uXtpoaT3ewKkrJCXlU3vvc7EbrojE0czd6V2UGbrS7ktO/fg30R2hsYSL0olX7kL92Xho22X+AT1ejy+lxn2rfdFEHaKbtNkPyJ9pZ1V/Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SuqIBIr2j3yBkDvU8OB0grujgWJQUTfM0/mfIyJzeI0=;
- b=gVFn8N2ki7XgOrpIfDKvEv5H19en5SawpGYVaxeCuaekK/7+Gks5Eeh2AKd5FNta5ZmSYq9I9YXsubo/vMpiyWzKrts4aWBDYQ6mtIWV2/ifimg37ieEmABPChECOdyqEiuIg655FrKDrAMb7b+xG76InEymql0kj1JOD1ikBmw=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=oss.nxp.com;
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DBBPR04MB7850.eurprd04.prod.outlook.com (2603:10a6:10:1e8::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Mon, 31 May
- 2021 10:06:58 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::45b9:c993:87ec:9a64]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::45b9:c993:87ec:9a64%8]) with mapi id 15.20.4173.030; Mon, 31 May 2021
- 10:06:58 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: not calculate new rate for protected clks
-Date:   Mon, 31 May 2021 18:39:57 +0800
-Message-Id: <20210531103957.21886-1-peng.fan@oss.nxp.com>
+        id S231464AbhEaMAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 May 2021 08:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231289AbhEaMAu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 May 2021 08:00:50 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E2EC061574
+        for <linux-clk@vger.kernel.org>; Mon, 31 May 2021 04:59:10 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 6so8190407pgk.5
+        for <linux-clk@vger.kernel.org>; Mon, 31 May 2021 04:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nigauri-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VBKMfrf99JWaDydMD97VUp77kKrBHAo3mwSgOYKx6mc=;
+        b=t/saIXTf4FHqHLfsP+uKU0qx55g0y18EoDx4qn13idEBQKZ6vhH7omOBBy553vlsEw
+         k3M+6YX3zk5yQZMgrsR6dvLzQUSxqwDE/d4eBddN0HgbvLdqSaWCGGx5XJzPDtxDlvpz
+         KEy4kT21+GRQ3tcYdD7HWxW9q1bWA+KmcZFZsXp9NNzPji14NEnvvD+tqBYTydKlg4fx
+         iHRVNdrD8cxZgXKF4gZ7rsKULZfMq33Q6tclMiTWfD92n4ssWQ6qzArcWJpJ0CCYpdUn
+         VhySdvFYMzX8zYR+8PlqR96amFcRngBbkQ6Z+zPYEAt/7KYk9Wca399crKICVXGoK4H8
+         55Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VBKMfrf99JWaDydMD97VUp77kKrBHAo3mwSgOYKx6mc=;
+        b=svTCwSpLLiBYFKPlPZ+CiYePmZYxAFybta7jvZEe8wBif6SAc9NvXYoTZsUnWA3URM
+         15pQYKyL18GPZ6/zUn+YQxckBDGmwVoZrzGJZ/JipVVr2xbCnv19f5EqwptTGN321vC9
+         EowKeM5OXILFpaJOTasTMeaDpeWD66u+1Jx7qWCKSY/EbLEn4FJRyl73nCdJlZwnUj1u
+         X5PU3YqPXpqqG9V1IEfnTjSyFQcRoQJYs1eG2T5x8oKGlbM9Arqb2fBIjSemBpMXsWUS
+         7b6RPXE3Ylreu5kI8ClRHzXwydGQrG3MZEekpXGlkw93je2t0+IumtSfzrM5d8RFlPRV
+         T+RA==
+X-Gm-Message-State: AOAM5308S0tu1cUhKpD7YfDXP99mRKpADyNFHfy+up1wUDKr5sswsYkq
+        Id9xXOYQVvaAYvcbAUZZxa1D
+X-Google-Smtp-Source: ABdhPJwY3gXkVBqAZgArKVxqDz8RrxrcHIB0WpZ0FR19ZGx5H1TrMdvTp6/tWbh1V9iram4OT0AbtQ==
+X-Received: by 2002:a05:6a00:2282:b029:2db:7cfe:a43b with SMTP id f2-20020a056a002282b02902db7cfea43bmr16480019pfe.34.1622462349775;
+        Mon, 31 May 2021 04:59:09 -0700 (PDT)
+Received: from localhost ([2405:6581:5360:1800:7285:c2ff:fec2:8f97])
+        by smtp.gmail.com with ESMTPSA id g2sm3355444pfv.106.2021.05.31.04.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 May 2021 04:59:09 -0700 (PDT)
+From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Subject: [PATCH] dt-bindings: clk: zynqmp: convert bindings to YAML
+Date:   Mon, 31 May 2021 20:58:57 +0900
+Message-Id: <20210531115857.718985-1-iwamatsu@nigauri.org>
 X-Mailer: git-send-email 2.30.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.71]
-X-ClientProxiedBy: SG2PR06CA0181.apcprd06.prod.outlook.com (2603:1096:4:1::13)
- To DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SG2PR06CA0181.apcprd06.prod.outlook.com (2603:1096:4:1::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend Transport; Mon, 31 May 2021 10:06:56 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7cb440e6-17d9-410e-4d82-08d9241bd3ae
-X-MS-TrafficTypeDiagnostic: DBBPR04MB7850:
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DBBPR04MB785059CD1394450E4EC87494C93F9@DBBPR04MB7850.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XUBkakfjp2IIHWFYdPa0RyZCSqRRXYLsDeG8XWfO59Vc4pHlRspFgVmeNTWcjd6VMkg/RFja95vBOMtWfSTPX2Z9bbUOCHhWQMK0mYk/lUd2Bf4j7Si3vOf1HcE5QvEZmd1vtXnjACmxivpAF2wa930oKtP7ZeFjBl85rlAtLtjOCdRcVkwJW+Q/MbO3SjWajTE3E0hWRD0ETvt22L6gexEaX/h9djSWXsLn+B+1AAeWAWGZGePREmR7wx2sNCXTx0sqTe+L3Lat7zLPhZTE0pwMahxJCha7ysRtyUtuzYdMgEpwdbxDYNFlsngbV4JEOGU0qFKuiELsUPCkaI/xUJZIlW1LkJG01A+tx4jlau+eWcCir0Ugmbrh3CGkU/gnJVE6pwfmsp2tOTwkuLBkZjsvcPSZ7hRk3pMCvfLHSMezal+uP+ySIow2744e6ftTpDNZzvS7+VeUdQoS214I0V8XHKANncN5ULRm6v8xkd1lXUdudq2chgpPOppIi/LlBH7iN8eNfX6LVgtxzfWeUE87CrRJrYRMi2plRNPBEspldRVRJkRIoqeyEfE4cf694pDo7gg7yr3YMOMYweRBz+iuvBGR3m2raP4On2W5vE0iQl836lYOzcSZxqeK/bowCxPfWZJKsbfvD5OecUaATN5DQnKfbPnP3md1jOsthHc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(346002)(396003)(39860400002)(376002)(478600001)(83380400001)(86362001)(38350700002)(38100700002)(8676002)(8936002)(4326008)(2616005)(6512007)(6506007)(16526019)(5660300002)(1076003)(52116002)(2906002)(66946007)(186003)(66476007)(66556008)(6486002)(316002)(956004)(26005)(4744005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?ww+t4GWGlDp+eRePpOl0o9JGC9osMOMu3lvmJb9fQ//H2IOHT/HNzTaRESEt?=
- =?us-ascii?Q?6IXHQSWVQGe8a3kA9qI8GrskgRKWkYapdMn+dcxiWWD5D2qh9QaX2yLhgz3t?=
- =?us-ascii?Q?PPveSiVb7iqZOqd7kM1M4LbLbzDvKHxE9s/+4mGJIuGDGlJV2HwU3b2Rf7e+?=
- =?us-ascii?Q?gtQQP1CCgwJBvkJiPvlFLhvYYNkEYvGzaChG8vdeOxWKADcfzQwIC5momLs3?=
- =?us-ascii?Q?CKIHtjxDRdgqCPdjUhamNQ/teh8oDXrqRAx7NSgWamTyhCCLKZ2yruIHN9ea?=
- =?us-ascii?Q?Gd+/zLh6DqCsxK0JyIitON1F1A5UTTMli4hyMz6vL75KOCCP7JvqZ78txekO?=
- =?us-ascii?Q?pDM5W/rd2Opn+Np6U49OeoFo15iox4oo/n/0t2ILuwpBv1v8I/X0Oakt34ug?=
- =?us-ascii?Q?5fTTtJcU6ja4Y9wJhwZ6JMFZUV28STkbtdHa+UoYgGmGbi/1fwSrYBBDOz2O?=
- =?us-ascii?Q?Rjq3m8tyHmeRIhK7FdMOpAQXVTVnKcOsZxzFACpNoDvkvInhN69/QY742vts?=
- =?us-ascii?Q?ItgxH2wo/M8F34vamX2Kj9Pvc8N7Y0XZKcdh9maOYh9LdQNAakIba/2CPqDa?=
- =?us-ascii?Q?G0bmZOxMZWuabSgg7wCiPbmhieRQ48/yYkRtDKehQa5rFH2FxG8hf9dkYEFs?=
- =?us-ascii?Q?icRXb2jpfqY6Nb8VMr76Ku4liYAdRNG02kKhu6MbUdpWrq9iGT6WI9DgOTHl?=
- =?us-ascii?Q?GnMJe+tid88U5mIfT8alf4qaOS+Ji/BbbSBx+En3l6bIAaYC6mQUsQr1qwAh?=
- =?us-ascii?Q?4ahy6D8Eu1GbOFxtIT0bfi9qjBFGhgHBEYavavBNTb04sl+0UHsQkisdoO9O?=
- =?us-ascii?Q?b7EsaVC4PNoUzkGOnd02U3/EKTQZKMDJW+NPvXDHw1Zyua4TwHXmrk4PQ3Lc?=
- =?us-ascii?Q?+p61md3yhgytfAz+dl9i+4LX0O2FEhuEuEDeihIweI8LjNYD6+yX2hXOc9wH?=
- =?us-ascii?Q?jJ2GazCQIbiOCTflrZ+k2fCl6mtEFVJ2uM3xiiXTRuEUcXK2Rsn4PiwquS5K?=
- =?us-ascii?Q?T6LoXWJl/i2Jg3KT0wKmojLDomNa5x0ScWHVfoRNUABCT3JWft5U1rajnQVI?=
- =?us-ascii?Q?viOh3j7/prTalKWmtSsq7rPUH7R9iMgifwI0lIihFxYtrO72VoDz4wUd6xnd?=
- =?us-ascii?Q?qjwtSYGlzp4qNpyKr1Qn7APUnZikIYLodoo+LvaCHU6FoqqgbWrFS31S/PCv?=
- =?us-ascii?Q?Ln7wCJZmKURJACc6+FY6sPgwSzZU3wmOsQVA17gv3VUH0q03QVCD0/LLOvGN?=
- =?us-ascii?Q?NBwFFTjnge1t9OxqL+5epq0FA7zdz+NWa1x+whfpNotVouthbXmSNIfbyDRK?=
- =?us-ascii?Q?8PWH5H9vWxBudO9cnnbVkbb0?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cb440e6-17d9-410e-4d82-08d9241bd3ae
-X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2021 10:06:58.7596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5TcpCu/B31OAoxNR3AhAcEgC4wyxVBIAFRJ09OUUfdX2j+xMPr93SsLfeHlFuhVXf4Ia0sYDIRdOEnWWtIgYTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7850
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Convert common clock for Xilinx Zynq MPSoC SoC bindings documentation
+to YAML.
 
-If the protect_count of the parent clk is not 0, we not calculate new
-rates for parent. Otherwise, the common clk framework may configure
-other child clks that is under using.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 ------------------
+ .../bindings/clock/xlnx,zynqmp-clk.yaml       | 65 +++++++++++++++++++
+ 2 files changed, 65 insertions(+), 63 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 65508eb89ec9..8ac121838e13 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2002,7 +2002,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	}
- 
- 	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
--	    best_parent_rate != parent->rate)
-+	    best_parent_rate != parent->rate && !clk_core_rate_is_protected(parent))
- 		top = clk_calc_new_rates(parent, best_parent_rate);
- 
- out:
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+deleted file mode 100644
+index 391ee1a60bed4a..00000000000000
+--- a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+---------------------------------------------------------------------------
+-Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
+-Zynq MPSoC firmware interface
+---------------------------------------------------------------------------
+-The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
+-tree. It reads required input clock frequencies from the devicetree and acts
+-as clock provider for all clock consumers of PS clocks.
+-
+-See clock_bindings.txt for more information on the generic clock bindings.
+-
+-Required properties:
+- - #clock-cells:	Must be 1
+- - compatible:		Must contain:	"xlnx,zynqmp-clk"
+- - clocks:		List of clock specifiers which are external input
+-			clocks to the given clock controller. Please refer
+-			the next section to find the input clocks for a
+-			given controller.
+- - clock-names:		List of clock names which are exteral input clocks
+-			to the given clock controller. Please refer to the
+-			clock bindings for more details.
+-
+-Input clocks for zynqmp Ultrascale+ clock controller:
+-
+-The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
+-inputs. These required clock inputs are:
+- - pss_ref_clk (PS reference clock)
+- - video_clk (reference clock for video system )
+- - pss_alt_ref_clk (alternative PS reference clock)
+- - aux_ref_clk
+- - gt_crx_ref_clk (transceiver reference clock)
+-
+-The following strings are optional parameters to the 'clock-names' property in
+-order to provide an optional (E)MIO clock source:
+- - swdt0_ext_clk
+- - swdt1_ext_clk
+- - gem0_emio_clk
+- - gem1_emio_clk
+- - gem2_emio_clk
+- - gem3_emio_clk
+- - mio_clk_XX		# with XX = 00..77
+- - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
+-
+-
+-Output clocks are registered based on clock information received
+-from firmware. Output clocks indexes are mentioned in
+-include/dt-bindings/clock/xlnx-zynqmp-clk.h.
+-
+--------
+-Example
+--------
+-
+-firmware {
+-	zynqmp_firmware: zynqmp-firmware {
+-		compatible = "xlnx,zynqmp-firmware";
+-		method = "smc";
+-		zynqmp_clk: clock-controller {
+-			#clock-cells = <1>;
+-			compatible = "xlnx,zynqmp-clk";
+-			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
+-			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+new file mode 100644
+index 00000000000000..6f081e7cf24153
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/xlnx,zynqmp-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx Zynq Ultrascale+ MPSoC clock controller Device Tree Bindings
++
++maintainers:
++  - Michal Simek <michal.simek@xilinx.com>
++
++description: |
++  The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
++  tree. It reads required input clock frequencies from the devicetree and acts
++  as clock provider for all clock consumers of PS clocks.
++
++properties:
++  compatible:
++    const: xlnx,zynqmp-clk
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    description: |
++      List of clock specifiers which are external input
++      clocks to the given clock controller.
++    items:
++      - description: PS reference clock
++      - description: reference clock for video system
++      - description: alternative PS reference clock
++      - description: auxiliary reference clock
++      - description: transceiver reference clock
++
++  clock-names:
++    items:
++      - const: pss_ref_clk
++      - const: video_clk
++      - const: pss_alt_ref_clk
++      - const: aux_ref_clk
++      - const: gt_crx_ref_clk
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    firmware {
++      zynqmp_firmware: zynqmp-firmware {
++        compatible = "xlnx,zynqmp-firmware";
++        method = "smc";
++        zynqmp_clk: clock-controller {
++          #clock-cells = <1>;
++          compatible = "xlnx,zynqmp-clk";
++          clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
++          clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
++        };
++      };
++    };
++...
 -- 
 2.30.0
 
