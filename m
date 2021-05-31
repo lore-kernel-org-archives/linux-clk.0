@@ -2,606 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DA3C47096
-	for <linux-clk@archiver.kernel.org>; Sun, 30 May 2021 16:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A53C47082
+	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 10:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D928E611F0
-	for <linux-clk@archiver.kernel.org>; Sun, 30 May 2021 16:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B984611CA
+	for <linux-clk@archiver.kernel.org>; Mon, 31 May 2021 10:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbhE3QwQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 May 2021 12:52:16 -0400
-Received: from aposti.net ([89.234.176.197]:33476 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230002AbhE3QwB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 30 May 2021 12:52:01 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        list@opendingux.net,
-        =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0?= <zhouyanjie@wanyeetech.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 6/6] clk: ingenic: Add support for the JZ4760
-Date:   Sun, 30 May 2021 17:49:23 +0100
-Message-Id: <20210530164923.18134-7-paul@crapouillou.net>
-In-Reply-To: <20210530164923.18134-1-paul@crapouillou.net>
-References: <20210530164923.18134-1-paul@crapouillou.net>
-MIME-Version: 1.0
+        id S231285AbhEaKKN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 May 2021 06:10:13 -0400
+Received: from mail-db8eur05on2080.outbound.protection.outlook.com ([40.107.20.80]:13281
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231208AbhEaKIk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 31 May 2021 06:08:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AQwuE9zUCtgG4K8x1aF/Prk5XUL078sn9irDX3wQ/jfoiiv6SwXDfSA0XFFIu9HnTi47nskCh8imFlFdoFt3huUUyfZqrtSFu394z/xS8tA8UtNqrpwpk9FDTsKfN4wVLq0fzyAiKDiFV7IzAoQ71/2tlFEQOlr/bbZPcmIr+embKg9+b5MyjlgtvoVmCg213qvaHINJG+3UZfltdV2BqoJm5JplyXVD3b7cdm80P1JVzOJSJK6yg6/L05arOSPCJcL5SQINEWGG1qnKEG9bUi8obwYlB8uDzn67yEqzfiF4Cmk3QEq2rI19KWnjYvdrV+zpv7PA/Tw2KC5CNMwOBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SuqIBIr2j3yBkDvU8OB0grujgWJQUTfM0/mfIyJzeI0=;
+ b=HIbv9mdVhGuYr7BekH2pnIfIfWOYGNfS5RMqACPHAHIfpRLChB3jZkHA8Fdud3bzB4nwlmpcPfNwB9rrZ93GkyzUjj/L/7e72ABy7GgwXJYAb3Rqs0N0fFwjZDCMTwEXisGCe2WI6F1h500SXpVU5UlUfqlcgGCVm1mrpNLrMwPcYp50b47EPIsFR66ghIxCWs/p7DyY5lcb4gTllx8mSnQcymuaUtn20uJCCnivgY0uXtpoaT3ewKkrJCXlU3vvc7EbrojE0czd6V2UGbrS7ktO/fg30R2hsYSL0olX7kL92Xho22X+AT1ejy+lxn2rfdFEHaKbtNkPyJ9pZ1V/Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SuqIBIr2j3yBkDvU8OB0grujgWJQUTfM0/mfIyJzeI0=;
+ b=gVFn8N2ki7XgOrpIfDKvEv5H19en5SawpGYVaxeCuaekK/7+Gks5Eeh2AKd5FNta5ZmSYq9I9YXsubo/vMpiyWzKrts4aWBDYQ6mtIWV2/ifimg37ieEmABPChECOdyqEiuIg655FrKDrAMb7b+xG76InEymql0kj1JOD1ikBmw=
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DBBPR04MB7850.eurprd04.prod.outlook.com (2603:10a6:10:1e8::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Mon, 31 May
+ 2021 10:06:58 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::45b9:c993:87ec:9a64]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::45b9:c993:87ec:9a64%8]) with mapi id 15.20.4173.030; Mon, 31 May 2021
+ 10:06:58 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: not calculate new rate for protected clks
+Date:   Mon, 31 May 2021 18:39:57 +0800
+Message-Id: <20210531103957.21886-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.30.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.71]
+X-ClientProxiedBy: SG2PR06CA0181.apcprd06.prod.outlook.com (2603:1096:4:1::13)
+ To DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SG2PR06CA0181.apcprd06.prod.outlook.com (2603:1096:4:1::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend Transport; Mon, 31 May 2021 10:06:56 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7cb440e6-17d9-410e-4d82-08d9241bd3ae
+X-MS-TrafficTypeDiagnostic: DBBPR04MB7850:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DBBPR04MB785059CD1394450E4EC87494C93F9@DBBPR04MB7850.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XUBkakfjp2IIHWFYdPa0RyZCSqRRXYLsDeG8XWfO59Vc4pHlRspFgVmeNTWcjd6VMkg/RFja95vBOMtWfSTPX2Z9bbUOCHhWQMK0mYk/lUd2Bf4j7Si3vOf1HcE5QvEZmd1vtXnjACmxivpAF2wa930oKtP7ZeFjBl85rlAtLtjOCdRcVkwJW+Q/MbO3SjWajTE3E0hWRD0ETvt22L6gexEaX/h9djSWXsLn+B+1AAeWAWGZGePREmR7wx2sNCXTx0sqTe+L3Lat7zLPhZTE0pwMahxJCha7ysRtyUtuzYdMgEpwdbxDYNFlsngbV4JEOGU0qFKuiELsUPCkaI/xUJZIlW1LkJG01A+tx4jlau+eWcCir0Ugmbrh3CGkU/gnJVE6pwfmsp2tOTwkuLBkZjsvcPSZ7hRk3pMCvfLHSMezal+uP+ySIow2744e6ftTpDNZzvS7+VeUdQoS214I0V8XHKANncN5ULRm6v8xkd1lXUdudq2chgpPOppIi/LlBH7iN8eNfX6LVgtxzfWeUE87CrRJrYRMi2plRNPBEspldRVRJkRIoqeyEfE4cf694pDo7gg7yr3YMOMYweRBz+iuvBGR3m2raP4On2W5vE0iQl836lYOzcSZxqeK/bowCxPfWZJKsbfvD5OecUaATN5DQnKfbPnP3md1jOsthHc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(346002)(396003)(39860400002)(376002)(478600001)(83380400001)(86362001)(38350700002)(38100700002)(8676002)(8936002)(4326008)(2616005)(6512007)(6506007)(16526019)(5660300002)(1076003)(52116002)(2906002)(66946007)(186003)(66476007)(66556008)(6486002)(316002)(956004)(26005)(4744005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?ww+t4GWGlDp+eRePpOl0o9JGC9osMOMu3lvmJb9fQ//H2IOHT/HNzTaRESEt?=
+ =?us-ascii?Q?6IXHQSWVQGe8a3kA9qI8GrskgRKWkYapdMn+dcxiWWD5D2qh9QaX2yLhgz3t?=
+ =?us-ascii?Q?PPveSiVb7iqZOqd7kM1M4LbLbzDvKHxE9s/+4mGJIuGDGlJV2HwU3b2Rf7e+?=
+ =?us-ascii?Q?gtQQP1CCgwJBvkJiPvlFLhvYYNkEYvGzaChG8vdeOxWKADcfzQwIC5momLs3?=
+ =?us-ascii?Q?CKIHtjxDRdgqCPdjUhamNQ/teh8oDXrqRAx7NSgWamTyhCCLKZ2yruIHN9ea?=
+ =?us-ascii?Q?Gd+/zLh6DqCsxK0JyIitON1F1A5UTTMli4hyMz6vL75KOCCP7JvqZ78txekO?=
+ =?us-ascii?Q?pDM5W/rd2Opn+Np6U49OeoFo15iox4oo/n/0t2ILuwpBv1v8I/X0Oakt34ug?=
+ =?us-ascii?Q?5fTTtJcU6ja4Y9wJhwZ6JMFZUV28STkbtdHa+UoYgGmGbi/1fwSrYBBDOz2O?=
+ =?us-ascii?Q?Rjq3m8tyHmeRIhK7FdMOpAQXVTVnKcOsZxzFACpNoDvkvInhN69/QY742vts?=
+ =?us-ascii?Q?ItgxH2wo/M8F34vamX2Kj9Pvc8N7Y0XZKcdh9maOYh9LdQNAakIba/2CPqDa?=
+ =?us-ascii?Q?G0bmZOxMZWuabSgg7wCiPbmhieRQ48/yYkRtDKehQa5rFH2FxG8hf9dkYEFs?=
+ =?us-ascii?Q?icRXb2jpfqY6Nb8VMr76Ku4liYAdRNG02kKhu6MbUdpWrq9iGT6WI9DgOTHl?=
+ =?us-ascii?Q?GnMJe+tid88U5mIfT8alf4qaOS+Ji/BbbSBx+En3l6bIAaYC6mQUsQr1qwAh?=
+ =?us-ascii?Q?4ahy6D8Eu1GbOFxtIT0bfi9qjBFGhgHBEYavavBNTb04sl+0UHsQkisdoO9O?=
+ =?us-ascii?Q?b7EsaVC4PNoUzkGOnd02U3/EKTQZKMDJW+NPvXDHw1Zyua4TwHXmrk4PQ3Lc?=
+ =?us-ascii?Q?+p61md3yhgytfAz+dl9i+4LX0O2FEhuEuEDeihIweI8LjNYD6+yX2hXOc9wH?=
+ =?us-ascii?Q?jJ2GazCQIbiOCTflrZ+k2fCl6mtEFVJ2uM3xiiXTRuEUcXK2Rsn4PiwquS5K?=
+ =?us-ascii?Q?T6LoXWJl/i2Jg3KT0wKmojLDomNa5x0ScWHVfoRNUABCT3JWft5U1rajnQVI?=
+ =?us-ascii?Q?viOh3j7/prTalKWmtSsq7rPUH7R9iMgifwI0lIihFxYtrO72VoDz4wUd6xnd?=
+ =?us-ascii?Q?qjwtSYGlzp4qNpyKr1Qn7APUnZikIYLodoo+LvaCHU6FoqqgbWrFS31S/PCv?=
+ =?us-ascii?Q?Ln7wCJZmKURJACc6+FY6sPgwSzZU3wmOsQVA17gv3VUH0q03QVCD0/LLOvGN?=
+ =?us-ascii?Q?NBwFFTjnge1t9OxqL+5epq0FA7zdz+NWa1x+whfpNotVouthbXmSNIfbyDRK?=
+ =?us-ascii?Q?8PWH5H9vWxBudO9cnnbVkbb0?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cb440e6-17d9-410e-4d82-08d9241bd3ae
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2021 10:06:58.7596
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5TcpCu/B31OAoxNR3AhAcEgC4wyxVBIAFRJ09OUUfdX2j+xMPr93SsLfeHlFuhVXf4Ia0sYDIRdOEnWWtIgYTQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7850
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CGU code and the compatible string to the TCU driver to support
-the JZ4760 SoC.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+If the protect_count of the parent clk is not 0, we not calculate new
+rates for parent. Otherwise, the common clk framework may configure
+other child clks that is under using.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Notes:
-    v2: Fix algorithm
-
- drivers/clk/ingenic/Kconfig            |  10 +
- drivers/clk/ingenic/Makefile           |   1 +
- drivers/clk/ingenic/jz4760-cgu.c       | 428 +++++++++++++++++++++++++
- drivers/clk/ingenic/tcu.c              |   2 +
- include/dt-bindings/clock/jz4760-cgu.h |  54 ++++
- 5 files changed, 495 insertions(+)
- create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
- create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
-
-diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
-index 580b0cf69ed5..898f1bc478c9 100644
---- a/drivers/clk/ingenic/Kconfig
-+++ b/drivers/clk/ingenic/Kconfig
-@@ -25,6 +25,16 @@ config INGENIC_CGU_JZ4725B
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65508eb89ec9..8ac121838e13 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2002,7 +2002,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	}
  
- 	  If building for a JZ4725B SoC, you want to say Y here.
+ 	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
+-	    best_parent_rate != parent->rate)
++	    best_parent_rate != parent->rate && !clk_core_rate_is_protected(parent))
+ 		top = clk_calc_new_rates(parent, best_parent_rate);
  
-+config INGENIC_CGU_JZ4760
-+	bool "Ingenic JZ4760 CGU driver"
-+	default MACH_JZ4760
-+	select INGENIC_CGU_COMMON
-+	help
-+	  Support the clocks provided by the CGU hardware on Ingenic JZ4760
-+	  and compatible SoCs.
-+
-+	  If building for a JZ4760 SoC, you want to say Y here.
-+
- config INGENIC_CGU_JZ4770
- 	bool "Ingenic JZ4770 CGU driver"
- 	default MACH_JZ4770
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index aaa4bffe03c6..9edfaf4610b9 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_INGENIC_CGU_COMMON)	+= cgu.o pm.o
- obj-$(CONFIG_INGENIC_CGU_JZ4740)	+= jz4740-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+= jz4725b-cgu.o
-+obj-$(CONFIG_INGENIC_CGU_JZ4760)	+= jz4760-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
- obj-$(CONFIG_INGENIC_CGU_X1000)		+= x1000-cgu.o
-diff --git a/drivers/clk/ingenic/jz4760-cgu.c b/drivers/clk/ingenic/jz4760-cgu.c
-new file mode 100644
-index 000000000000..14483797a4db
---- /dev/null
-+++ b/drivers/clk/ingenic/jz4760-cgu.c
-@@ -0,0 +1,428 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * JZ4760 SoC CGU driver
-+ * Copyright 2018, Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+
-+#include <linux/clk.h>
-+
-+#include <dt-bindings/clock/jz4760-cgu.h>
-+
-+#include "cgu.h"
-+#include "pm.h"
-+
-+#define MHZ (1000 * 1000)
-+
-+/*
-+ * CPM registers offset address definition
-+ */
-+#define CGU_REG_CPCCR		0x00
-+#define CGU_REG_LCR		0x04
-+#define CGU_REG_CPPCR0		0x10
-+#define CGU_REG_CLKGR0		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_CLKGR1		0x28
-+#define CGU_REG_CPPCR1		0x30
-+#define CGU_REG_USBPCR		0x3c
-+#define CGU_REG_USBCDR		0x50
-+#define CGU_REG_I2SCDR		0x60
-+#define CGU_REG_LPCDR		0x64
-+#define CGU_REG_MSCCDR		0x68
-+#define CGU_REG_UHCCDR		0x6c
-+#define CGU_REG_SSICDR		0x74
-+#define CGU_REG_CIMCDR		0x7c
-+#define CGU_REG_GPSCDR		0x80
-+#define CGU_REG_PCMCDR		0x84
-+#define CGU_REG_GPUCDR		0x88
-+
-+static const s8 pll_od_encoding[8] = {
-+	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
-+};
-+
-+static const u8 jz4760_cgu_cpccr_div_table[] = {
-+	1, 2, 3, 4, 6, 8,
-+};
-+
-+static const u8 jz4760_cgu_pll_half_div_table[] = {
-+	2, 1,
-+};
-+
-+static void
-+jz4760_cgu_calc_m_n_od(const struct ingenic_cgu_pll_info *pll_info,
-+		       unsigned long rate, unsigned long parent_rate,
-+		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
-+{
-+	unsigned int m, n, od, m_max = (1 << pll_info->m_bits) - 2;
-+
-+	/* The frequency after the N divider must be between 1 and 50 MHz. */
-+	n = parent_rate / (1 * MHZ);
-+
-+	/* The N divider must be >= 2. */
-+	n = clamp_val(n, 2, 1 << pll_info->n_bits);
-+
-+	for (;; n >>= 1) {
-+		od = (unsigned int)-1;
-+
-+		do {
-+			m = (rate / MHZ) * (1 << ++od) * n / (parent_rate / MHZ);
-+		} while ((m > m_max || m & 1) && (od < 4));
-+
-+		if (od < 4 && m >= 4 && m <= m_max)
-+			break;
-+	}
-+
-+	*pm = m;
-+	*pn = n;
-+	*pod = 1 << od;
-+}
-+
-+static const struct ingenic_cgu_clk_info jz4760_cgu_clocks[] = {
-+
-+	/* External clocks */
-+
-+	[JZ4760_CLK_EXT] = { "ext", CGU_CLK_EXT },
-+	[JZ4760_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
-+
-+	/* PLLs */
-+
-+	[JZ4760_CLK_PLL0] = {
-+		"pll0", CGU_CLK_PLL,
-+		.parents = { JZ4760_CLK_EXT },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR0,
-+			.rate_multiplier = 1,
-+			.m_shift = 23,
-+			.m_bits = 8,
-+			.m_offset = 0,
-+			.n_shift = 18,
-+			.n_bits = 4,
-+			.n_offset = 0,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 8,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_reg = CGU_REG_CPPCR0,
-+			.bypass_bit = 9,
-+			.enable_bit = 8,
-+			.stable_bit = 10,
-+			.calc_m_n_od = jz4760_cgu_calc_m_n_od,
-+		},
-+	},
-+
-+	[JZ4760_CLK_PLL1] = {
-+		/* TODO: PLL1 can depend on PLL0 */
-+		"pll1", CGU_CLK_PLL,
-+		.parents = { JZ4760_CLK_EXT },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR1,
-+			.rate_multiplier = 1,
-+			.m_shift = 23,
-+			.m_bits = 8,
-+			.m_offset = 0,
-+			.n_shift = 18,
-+			.n_bits = 4,
-+			.n_offset = 0,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 8,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = -1,
-+			.enable_bit = 7,
-+			.stable_bit = 6,
-+			.calc_m_n_od = jz4760_cgu_calc_m_n_od,
-+		},
-+	},
-+
-+	/* Main clocks */
-+
-+	[JZ4760_CLK_CCLK] = {
-+		"cclk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+	[JZ4760_CLK_HCLK] = {
-+		"hclk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+	[JZ4760_CLK_SCLK] = {
-+		"sclk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 24, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+	[JZ4760_CLK_H2CLK] = {
-+		"h2clk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+	[JZ4760_CLK_MCLK] = {
-+		"mclk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+	[JZ4760_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0, },
-+		.div = {
-+			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1, 0,
-+			jz4760_cgu_cpccr_div_table,
-+		},
-+	},
-+
-+	/* Divided clocks */
-+
-+	[JZ4760_CLK_PLL0_HALF] = {
-+		"pll0_half", CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_PLL0 },
-+		.div = {
-+			CGU_REG_CPCCR, 21, 1, 1, 22, -1, -1, 0,
-+			jz4760_cgu_pll_half_div_table,
-+		},
-+	},
-+
-+	/* Those divided clocks can connect to PLL0 or PLL1 */
-+
-+	[JZ4760_CLK_UHC] = {
-+		"uhc", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
-+		.mux = { CGU_REG_UHCCDR, 31, 1 },
-+		.div = { CGU_REG_UHCCDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 24 },
-+	},
-+	[JZ4760_CLK_GPU] = {
-+		"gpu", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
-+		.mux = { CGU_REG_GPUCDR, 31, 1 },
-+		.div = { CGU_REG_GPUCDR, 0, 1, 3, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR1, 9 },
-+	},
-+	[JZ4760_CLK_LPCLK_DIV] = {
-+		"lpclk_div", CGU_CLK_DIV | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
-+		.mux = { CGU_REG_LPCDR, 29, 1 },
-+		.div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
-+	},
-+	[JZ4760_CLK_TVE] = {
-+		"tve", CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_LPCLK_DIV, JZ4760_CLK_EXT, },
-+		.mux = { CGU_REG_LPCDR, 31, 1 },
-+		.gate = { CGU_REG_CLKGR0, 27 },
-+	},
-+	[JZ4760_CLK_LPCLK] = {
-+		"lpclk", CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_LPCLK_DIV, JZ4760_CLK_TVE, },
-+		.mux = { CGU_REG_LPCDR, 30, 1 },
-+		.gate = { CGU_REG_CLKGR0, 28 },
-+	},
-+	[JZ4760_CLK_GPS] = {
-+		"gps", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1, },
-+		.mux = { CGU_REG_GPSCDR, 31, 1 },
-+		.div = { CGU_REG_GPSCDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 22 },
-+	},
-+
-+	/* Those divided clocks can connect to EXT, PLL0 or PLL1 */
-+
-+	[JZ4760_CLK_PCM] = {
-+		"pcm", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_EXT, -1,
-+			JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
-+		.mux = { CGU_REG_PCMCDR, 30, 2 },
-+		.div = { CGU_REG_PCMCDR, 0, 1, 9, -1, -1, -1, BIT(0) },
-+		.gate = { CGU_REG_CLKGR1, 8 },
-+	},
-+	[JZ4760_CLK_I2S] = {
-+		"i2s", CGU_CLK_DIV | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_EXT, -1,
-+			JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
-+		.mux = { CGU_REG_I2SCDR, 30, 2 },
-+		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1, BIT(0) },
-+	},
-+	[JZ4760_CLK_OTG] = {
-+		"usb", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_EXT, -1,
-+			JZ4760_CLK_PLL0_HALF, JZ4760_CLK_PLL1 },
-+		.mux = { CGU_REG_USBCDR, 30, 2 },
-+		.div = { CGU_REG_USBCDR, 0, 1, 8, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 2 },
-+	},
-+
-+	/* Those divided clocks can connect to EXT or PLL0 */
-+	[JZ4760_CLK_MMC_MUX] = {
-+		"mmc_mux", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { JZ4760_CLK_EXT, JZ4760_CLK_PLL0_HALF, },
-+		.mux = { CGU_REG_MSCCDR, 31, 1 },
-+		.div = { CGU_REG_MSCCDR, 0, 1, 6, -1, -1, -1, BIT(0) },
-+	},
-+	[JZ4760_CLK_SSI_MUX] = {
-+		"ssi_mux", CGU_CLK_DIV | CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_EXT, JZ4760_CLK_PLL0_HALF, },
-+		.mux = { CGU_REG_SSICDR, 31, 1 },
-+		.div = { CGU_REG_SSICDR, 0, 1, 6, -1, -1, -1, BIT(0) },
-+	},
-+
-+	/* These divided clock can connect to PLL0 only */
-+	[JZ4760_CLK_CIM] = {
-+		"cim", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_PLL0_HALF },
-+		.div = { CGU_REG_CIMCDR, 0, 1, 8, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 26 },
-+	},
-+
-+	/* Gate-only clocks */
-+
-+	[JZ4760_CLK_SSI0] = {
-+		"ssi0", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 4 },
-+	},
-+	[JZ4760_CLK_SSI1] = {
-+		"ssi1", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 19 },
-+	},
-+	[JZ4760_CLK_SSI2] = {
-+		"ssi2", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 20 },
-+	},
-+	[JZ4760_CLK_DMA] = {
-+		"dma", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_H2CLK, },
-+		.gate = { CGU_REG_CLKGR0, 21 },
-+	},
-+	[JZ4760_CLK_I2C0] = {
-+		"i2c0", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 5 },
-+	},
-+	[JZ4760_CLK_I2C1] = {
-+		"i2c1", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 6 },
-+	},
-+	[JZ4760_CLK_UART0] = {
-+		"uart0", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 15 },
-+	},
-+	[JZ4760_CLK_UART1] = {
-+		"uart1", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 16 },
-+	},
-+	[JZ4760_CLK_UART2] = {
-+		"uart2", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 17 },
-+	},
-+	[JZ4760_CLK_UART3] = {
-+		"uart3", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 18 },
-+	},
-+	[JZ4760_CLK_IPU] = {
-+		"ipu", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_HCLK, },
-+		.gate = { CGU_REG_CLKGR0, 29 },
-+	},
-+	[JZ4760_CLK_ADC] = {
-+		"adc", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 14 },
-+	},
-+	[JZ4760_CLK_AIC] = {
-+		"aic", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 8 },
-+	},
-+	[JZ4760_CLK_VPU] = {
-+		"vpu", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_HCLK, },
-+		.gate = { CGU_REG_LCR, 30, false, 150 },
-+	},
-+	[JZ4760_CLK_MMC0] = {
-+		"mmc0", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_MMC_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 3 },
-+	},
-+	[JZ4760_CLK_MMC1] = {
-+		"mmc1", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_MMC_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 11 },
-+	},
-+	[JZ4760_CLK_MMC2] = {
-+		"mmc2", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_MMC_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 12 },
-+	},
-+	[JZ4760_CLK_UHC_PHY] = {
-+		"uhc_phy", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_UHC, },
-+		.gate = { CGU_REG_OPCR, 5 },
-+	},
-+	[JZ4760_CLK_OTG_PHY] = {
-+		"usb_phy", CGU_CLK_GATE,
-+		.parents = { JZ4760_CLK_OTG },
-+		.gate = { CGU_REG_OPCR, 7, true, 50 },
-+	},
-+
-+	/* Custom clocks */
-+	[JZ4760_CLK_EXT512] = {
-+		"ext/512", CGU_CLK_FIXDIV,
-+		.parents = { JZ4760_CLK_EXT },
-+		.fixdiv = { 512 },
-+	},
-+	[JZ4760_CLK_RTC] = {
-+		"rtc", CGU_CLK_MUX,
-+		.parents = { JZ4760_CLK_EXT512, JZ4760_CLK_OSC32K, },
-+		.mux = { CGU_REG_OPCR, 2, 1},
-+	},
-+};
-+
-+static void __init jz4760_cgu_init(struct device_node *np)
-+{
-+	struct ingenic_cgu *cgu;
-+	int retval;
-+
-+	cgu = ingenic_cgu_new(jz4760_cgu_clocks,
-+			      ARRAY_SIZE(jz4760_cgu_clocks), np);
-+	if (!cgu) {
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+		return;
-+	}
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval)
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+
-+	ingenic_cgu_register_syscore_ops(cgu);
-+}
-+
-+/* We only probe via devicetree, no need for a platform driver */
-+CLK_OF_DECLARE_DRIVER(jz4760_cgu, "ingenic,jz4760-cgu", jz4760_cgu_init);
-+
-+/* JZ4760B has some small differences, but we don't implement them. */
-+CLK_OF_DECLARE_DRIVER(jz4760b_cgu, "ingenic,jz4760b-cgu", jz4760_cgu_init);
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index 9382dc3aa27e..77acfbeb4830 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -326,6 +326,7 @@ static const struct ingenic_soc_info x1000_soc_info = {
- static const struct of_device_id __maybe_unused ingenic_tcu_of_match[] __initconst = {
- 	{ .compatible = "ingenic,jz4740-tcu", .data = &jz4740_soc_info, },
- 	{ .compatible = "ingenic,jz4725b-tcu", .data = &jz4725b_soc_info, },
-+	{ .compatible = "ingenic,jz4760-tcu", .data = &jz4770_soc_info, },
- 	{ .compatible = "ingenic,jz4770-tcu", .data = &jz4770_soc_info, },
- 	{ .compatible = "ingenic,x1000-tcu", .data = &x1000_soc_info, },
- 	{ /* sentinel */ }
-@@ -477,5 +478,6 @@ static void __init ingenic_tcu_init(struct device_node *np)
- 
- CLK_OF_DECLARE_DRIVER(jz4740_cgu, "ingenic,jz4740-tcu", ingenic_tcu_init);
- CLK_OF_DECLARE_DRIVER(jz4725b_cgu, "ingenic,jz4725b-tcu", ingenic_tcu_init);
-+CLK_OF_DECLARE_DRIVER(jz4760_cgu, "ingenic,jz4760-tcu", ingenic_tcu_init);
- CLK_OF_DECLARE_DRIVER(jz4770_cgu, "ingenic,jz4770-tcu", ingenic_tcu_init);
- CLK_OF_DECLARE_DRIVER(x1000_cgu, "ingenic,x1000-tcu", ingenic_tcu_init);
-diff --git a/include/dt-bindings/clock/jz4760-cgu.h b/include/dt-bindings/clock/jz4760-cgu.h
-new file mode 100644
-index 000000000000..4bb2e19c4743
---- /dev/null
-+++ b/include/dt-bindings/clock/jz4760-cgu.h
-@@ -0,0 +1,54 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,jz4760-cgu DT binding.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_JZ4760_CGU_H__
-+#define __DT_BINDINGS_CLOCK_JZ4760_CGU_H__
-+
-+#define JZ4760_CLK_EXT		0
-+#define JZ4760_CLK_OSC32K	1
-+#define JZ4760_CLK_PLL0		2
-+#define JZ4760_CLK_PLL0_HALF	3
-+#define JZ4760_CLK_PLL1		4
-+#define JZ4760_CLK_CCLK		5
-+#define JZ4760_CLK_HCLK		6
-+#define JZ4760_CLK_SCLK		7
-+#define JZ4760_CLK_H2CLK	8
-+#define JZ4760_CLK_MCLK		9
-+#define JZ4760_CLK_PCLK		10
-+#define JZ4760_CLK_MMC_MUX	11
-+#define JZ4760_CLK_MMC0		12
-+#define JZ4760_CLK_MMC1		13
-+#define JZ4760_CLK_MMC2		14
-+#define JZ4760_CLK_CIM		15
-+#define JZ4760_CLK_UHC		16
-+#define JZ4760_CLK_GPU		17
-+#define JZ4760_CLK_GPS		18
-+#define JZ4760_CLK_SSI_MUX	19
-+#define JZ4760_CLK_PCM		20
-+#define JZ4760_CLK_I2S		21
-+#define JZ4760_CLK_OTG		22
-+#define JZ4760_CLK_SSI0		23
-+#define JZ4760_CLK_SSI1		24
-+#define JZ4760_CLK_SSI2		25
-+#define JZ4760_CLK_DMA		26
-+#define JZ4760_CLK_I2C0		27
-+#define JZ4760_CLK_I2C1		28
-+#define JZ4760_CLK_UART0	29
-+#define JZ4760_CLK_UART1	30
-+#define JZ4760_CLK_UART2	31
-+#define JZ4760_CLK_UART3	32
-+#define JZ4760_CLK_IPU		33
-+#define JZ4760_CLK_ADC		34
-+#define JZ4760_CLK_AIC		35
-+#define JZ4760_CLK_VPU		36
-+#define JZ4760_CLK_UHC_PHY	37
-+#define JZ4760_CLK_OTG_PHY	38
-+#define JZ4760_CLK_EXT512	39
-+#define JZ4760_CLK_RTC		40
-+#define JZ4760_CLK_LPCLK_DIV	41
-+#define JZ4760_CLK_TVE		42
-+#define JZ4760_CLK_LPCLK	43
-+
-+#endif /* __DT_BINDINGS_CLOCK_JZ4760_CGU_H__ */
+ out:
 -- 
-2.30.2
+2.30.0
 
