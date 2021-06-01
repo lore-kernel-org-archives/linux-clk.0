@@ -2,81 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FBAC47080
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C77FC47080
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE3076101C
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F058A61028
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:48:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233657AbhFAM2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Jun 2021 08:28:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231219AbhFAM2T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Jun 2021 08:28:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E31906101C;
-        Tue,  1 Jun 2021 12:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622550397;
-        bh=a38jaUZv04UsqUYPlnPMQ/Li8l55DXCKECZNZOc94fw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LjWBiIfkvmWmsQzrfJN8zYBi345N11hLR9HtjejP6uJZOrIuE8H0QMpEVcNhi2utV
-         hwhspjvsqRBkH/SFSDqaRf4t5+K9HpwmSCeZufZpkPKxgUtAPiGN8lqIZ9Yao2q75j
-         O2WsP2ljNmU+hPhxyGOpW8kgFDs3rnf13715AbJo3WWfCNYSOfnVLrU2j3IiVdl8QB
-         ph91tSBRMwgHqvJZxZLuh9Ytp+m1xsBE1Tqr7+aRsNTAXRDEjm8vIQpVK69kLHGgpb
-         CagBQT1NPGdamHH8pu618DFrgvauUu3Bgz7IYrPpSFWK61ARN5dq4c58M++OmTXsC3
-         Y1Az9oq2CYgXw==
-Received: by mail-wr1-f50.google.com with SMTP id n2so14172567wrm.0;
-        Tue, 01 Jun 2021 05:26:37 -0700 (PDT)
-X-Gm-Message-State: AOAM530Js3Ghaz/dQJLfXwtbUqRjT7yuLniB5+RNl3duJSOlOwCu24h2
-        Z1FmA34F3NnDrJyUHBOvVGLlcOxYjC53tKz3YLg=
-X-Google-Smtp-Source: ABdhPJxUF1UZrgYDVHmwlggViBcMhY2+tVOR2r0G7VYUFDmeKMwNXeZTfixMnB96lpP9cP/oCVl8Sgxa7j2VZxic/lE=
-X-Received: by 2002:adf:a28c:: with SMTP id s12mr28983779wra.105.1622550396551;
- Tue, 01 Jun 2021 05:26:36 -0700 (PDT)
+        id S233921AbhFAMuQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Jun 2021 08:50:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60434 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233906AbhFAMuP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 08:50:15 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 151Clde2004573;
+        Tue, 1 Jun 2021 14:48:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=z1+Wnvit74uNghN0bCNQj3HecsTBaLmiImgMis/YHwU=;
+ b=m6qN6D0NZd1nY03SCvG9oPy643X1C31egKw8bmra2oATxq+McoF7xMx2fOlta7uFfA2h
+ PJFzo40m6sYSPuNf8l3wa5gp5AlmfObcpWO4M2D8DwzIaCgsqAnDvk/SpeH5beTUNtnP
+ 1SQXU3hREOMkH8J1vIcpHxu8yPpC4/CHdbtzJwRA1M6zcQ0Ot1eNSGPxg8udNQIhGE0W
+ txycQaNThTJrCMgPeGH4MSCrIAOdVsX2t6lgoJYueHn1luimRFtraLnEDfvDvbFzSGZf
+ RpZEGF6XCbR9VGrjjC47fcx0bd6USzk8vuuGB+tIdput8Zwts+gVBUNz7g6VxbcevsWt HA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 38wjdg0xth-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Jun 2021 14:48:13 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3C7BC10002A;
+        Tue,  1 Jun 2021 14:48:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2565322176F;
+        Tue,  1 Jun 2021 14:48:12 +0200 (CEST)
+Received: from lmecxl0573.lme.st.com (10.75.127.44) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 1 Jun
+ 2021 14:48:11 +0200
+Subject: Re: [PATCH 3/4] clk: stm32: Fix stm32f429's ltdc driver hang in set
+ clock rate
+To:     <dillon.minfei@gmail.com>, <pierre-yves.mordret@foss.st.com>,
+        <alain.volmat@foss.st.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <sumit.semwal@linaro.org>,
+        <christian.koenig@amd.com>, <mturquette@baylibre.com>
+CC:     <sboyd@kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-clk@vger.kernel.org>
+References: <1620990152-19255-1-git-send-email-dillon.minfei@gmail.com>
+ <1620990152-19255-4-git-send-email-dillon.minfei@gmail.com>
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+Message-ID: <6ecedc1d-3b80-0eba-a5f0-8feb3eae16cf@foss.st.com>
+Date:   Tue, 1 Jun 2021 14:48:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210531184749.2475868-1-arnd@kernel.org> <20210601095129.GF6961@alpha.franken.de>
-In-Reply-To: <20210601095129.GF6961@alpha.franken.de>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 1 Jun 2021 14:24:59 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2Ueg0UFZisrzrrL_MkBLnu6TbMtVGx4_wO0d6rj48weg@mail.gmail.com>
-Message-ID: <CAK8P3a2Ueg0UFZisrzrrL_MkBLnu6TbMtVGx4_wO0d6rj48weg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] clk: clean up legacy clock interfaces
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Florian Fainelli <florian@openwrt.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Crispin <john@phrozen.org>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1620990152-19255-4-git-send-email-dillon.minfei@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-06-01_06:2021-05-31,2021-06-01 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 1, 2021 at 11:51 AM Thomas Bogendoerfer
-<tsbogend@alpha.franken.de> wrote:
->
-> On Mon, May 31, 2021 at 08:47:42PM +0200, Arnd Bergmann wrote:
-> > As I noticed that the ar7 clock implementation and the ralink version
-> > are rather trivial, I ended up converting those to use the common-clk
-> > interfaces as well, though this is unrelated to the other changes.
->
-> excellent, how is your plan for merging the series ?
+Hi Dillon
 
-I have not decided yet. I think it would be best to keep the series together
-and merge it through the clk maintainer tree, or possibly my asm-generic
-tree, but as there is no rush, we could also do the mips and m68k bits
-through the architecture trees, and defer the rest for 5.15.
+On 5/14/21 1:02 PM, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
+> 
+> This is due to misuse ‘PLL_VCO_SAI' and'PLL_SAI' in clk-stm32f4.c
+> 'PLL_SAI' is 2, 'PLL_VCO_SAI' is 7(defined in
+> include/dt-bindings/clock/stm32fx-clock.h).
+> 
+> 'post_div' point to 'post_div_data[]', 'post_div->pll_num'
+> is PLL_I2S or PLL_SAI.
+> 
+> 'clks[PLL_VCO_SAI]' has valid 'struct clk_hw* ' return
+> from stm32f4_rcc_register_pll() but, at line 1777 of
+> driver/clk/clk-stm32f4.c, use the 'clks[post_div->pll_num]',
+> equal to 'clks[PLL_SAI]', this is invalid array member at that time.
+> 
+> Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Link: https://lore.kernel.org/linux-arm-kernel/1590564453-24499-6-git-send-email-dillon.minfei@gmail.com/
+> ---
+>  drivers/clk/clk-stm32f4.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 18117ce5ff85..42ca2dd86aea 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
+>  
+>  #define MAX_POST_DIV 3
+>  static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
+> -	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
+> +	{ CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
+>  		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
+>  
+> -	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
+> +	{ CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
+>  		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
+>  
+> -	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
+> +	{ NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
+>  		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
+>  };
+>  
+> 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-       Arnd
+Thanks
+Patrice
