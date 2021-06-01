@@ -2,104 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2F6C4708F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 14:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FACAC47092
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 15:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A181961378
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 14:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A23613AB
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 15:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234142AbhFAOwR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Jun 2021 10:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
+        id S230523AbhFAPnJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Jun 2021 11:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234043AbhFAOwR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 10:52:17 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 419ECC061574
-        for <linux-clk@vger.kernel.org>; Tue,  1 Jun 2021 07:50:35 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id n2so14709560wrm.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Jun 2021 07:50:35 -0700 (PDT)
+        with ESMTP id S233059AbhFAPnJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 11:43:09 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985BAC06175F
+        for <linux-clk@vger.kernel.org>; Tue,  1 Jun 2021 08:41:27 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id l2so7370333wrw.6
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jun 2021 08:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=fiX9yiBNX+zZ1kE/XRKiD14Uy6lLFGjkKYDmuZqizOM=;
-        b=n+OPwKb1kAJTjuQvvGIw9YDsHRKdYbDS5xSlDwqoYoirPYSA1nWXwyUauKcJflxAQg
-         tKZvQw3CrIcjXjb8Cm/kTvQzCvpq6RPm3JZq2UU3p1CgfrtpvMAmlLk0hSRfPf00+u9C
-         CP4Fs1I7n//dlZ5/0Oz8Le1vKn1Tkd/H6zocfxHTKGUYYRv1I2ujSJV66WbDX0mgVOkH
-         bBNTJdcjcv2it4bdNRzn/v2ksxuT3XEnmOMxQ1gLrU0oEvy/KoSqtyDjx96GrizGKIb6
-         WBVHkkinzAd9/3iMFTBtJbh401blDjk066yo6oc40eE3b2nCE1Z+amWfiXbiDLCa6Oel
-         Snvg==
+        bh=9ITtNZNwlQldiOHh3k8Zcr3KS2X5VoqbKBn+PkTuH9w=;
+        b=HWWIXMjpZY5Nv0Do85zKy0XnIH09Cv+I8O90aJOO3BSMIE4c5sIPyG45bCQfYVgiio
+         eYhGJVSbT+KqeN62w97gEPyDfsykx6JnyGdcBK+mpLrSUajv6ANshRbBGSqALbl3YNIQ
+         a/nWwSoYi1etW2NYalB9dhW5u/tJEf8kHUKOqjsh+HUwXk1fGB+GqNnL5y+XmIUi6BEb
+         SiEIMa6Xd3KhWGNURw6qE8q2vkZwJfXT7lXdpeCk3SvF96Ko0x45vLAJXwmU0DDSQ7se
+         aJg9JD7GZt0DuLh2vQqGCMLk2A0EVKfouceoqryeDu3pqPumOYK2PpxVDwzfiPZhtW0q
+         lvfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=fiX9yiBNX+zZ1kE/XRKiD14Uy6lLFGjkKYDmuZqizOM=;
-        b=l5GD4C2+Uq6xM056kna6KLWuZDTeO8CJJKBXjRHoGNSx1SWHl4ZrSNxUU3eXt+Gshb
-         nm6Ulw38fF5qZa6se6OSDuUIiwJiJFIAjgxbFHZKvrA7MsyDNpAprRb22mVulLoEyIfX
-         4kNxF7LFCjvO/+YhI20hk1/0KlmZI7J0h3OBnsgx1HVpyp9J24Cpmki3gInVu/jXG7Y8
-         TtWrjwUH9DmXZTMd+E8TFyW3U55I7qa6wcA5LqxZ6t4IBAK+ihRX0PYCsQblP4qfobV2
-         71M4F0GghEudO2pwepxxTOlSElm5DHwxzetIaok8ihMdm1T6E2MiXtr/cSZC53L7kSOZ
-         AdbQ==
-X-Gm-Message-State: AOAM531TEUSeD+pFeig96EWxtfdfi/UNHf+cEYa6Z/TFrF4Qmh9i+2Nx
-        Ff0wZwHGEFYimLex7C4LuIpOyg==
-X-Google-Smtp-Source: ABdhPJzfsLg/GOaS5q9dH68xf309SiGEIiSBWSqUJbsFz867TbDfwV361wLM3kGNCHrf73lHDtfYyQ==
-X-Received: by 2002:a5d:4dd1:: with SMTP id f17mr27680158wru.160.1622559033925;
-        Tue, 01 Jun 2021 07:50:33 -0700 (PDT)
+        bh=9ITtNZNwlQldiOHh3k8Zcr3KS2X5VoqbKBn+PkTuH9w=;
+        b=kuyUaoGML0YRyzeVGSzG4QQBL9GtqY04miUrj/3fy18c/VPJLkhmSguYWY0gGBoKnE
+         1SeW0eTKu5ZctZFRbQ6QjcuV0Yy3PlBNOhXfgqDaeItLRFDAVVOFF2hBE6hFBzU4c6CW
+         il/sJB+RwU9ZbgEtTP6xM81lp1c19m7+WvJ9oyl1QPLUpU8UA/TBK2jnVd3YW7XmzhZH
+         iBb30Pa+as2tO9hgOpqomAR70M6E7yaHKQRmA1cHUM3pAR+iezWkIdMe+wCF/U1SXh3N
+         Zle8LmOlUX0jmBfVrItI0x+tsI/CJfBZeSxY0QPS2qRp2kQxmZK/2VNv2Lg6BwkihSjp
+         QHOg==
+X-Gm-Message-State: AOAM532J2b5p7UBrG8vC4qN+yZrEvDZwsI4RZI5hcCXDe+lcWQb1HwLR
+        mIOIn2O8MXXnNmZDqjUWoEz+tg==
+X-Google-Smtp-Source: ABdhPJzHmIVw1vEegAeEcDl0WTBgV8jvsI8TadSWkcRQk7OSZx2qAUeHL1kPJexYHqY8+BXavqgFSA==
+X-Received: by 2002:a05:6000:180f:: with SMTP id m15mr1762181wrh.60.1622562086113;
+        Tue, 01 Jun 2021 08:41:26 -0700 (PDT)
 Received: from dell ([91.110.221.249])
-        by smtp.gmail.com with ESMTPSA id f6sm4125726wru.72.2021.06.01.07.50.33
+        by smtp.gmail.com with ESMTPSA id a123sm3414501wmd.2.2021.06.01.08.41.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 07:50:33 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 15:50:31 +0100
+        Tue, 01 Jun 2021 08:41:25 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 16:41:23 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Peter Collingbourne <pcc@google.com>
-Subject: Re: [RESEND 1/1] clk: versatile: remove dependency on ARCH_*
-Message-ID: <20210601145031.GK543307@dell>
-References: <20210520161702.3746174-1-lee.jones@linaro.org>
- <CACRpkdZgpFL4ALGr16hua-uSnM-5SrOZ1KGMkzTEDrZmwh_1=w@mail.gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mfd/power/rtc: Do not enforce (incorrect)
+ interrupt trigger type
+Message-ID: <20210601154123.GD2159518@dell>
+References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZgpFL4ALGr16hua-uSnM-5SrOZ1KGMkzTEDrZmwh_1=w@mail.gmail.com>
+In-Reply-To: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 21 May 2021, Linus Walleij wrote:
+On Wed, 26 May 2021, Krzysztof Kozlowski wrote:
 
-> On Thu, May 20, 2021 at 6:17 PM Lee Jones <lee.jones@linaro.org> wrote:
+> Hi,
 > 
-> > From: Peter Collingbourne <pcc@google.com>
-> >
-> > It is now possible to build a modular kernel for vexpress by
-> > not setting CONFIG_ARCH_VEXPRESS=y and instead setting =m on the
-> > drivers that it normally implies. This is with the exception of
-> > CLK_VEXPRESS_OSC which is currently hidden behind a dependency on
-> > one of several ARCH_* variables. Remove that dependency so that
-> > CLK_VEXPRESS_OSC may be enabled without it.
-> >
-> > Signed-off-by: Peter Collingbourne <pcc@google.com>
-> > Link: https://linux-review.googlesource.com/id/I435a21e2e5f6187db54f4ef2079b60028ab2ea69
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> This is a v2 with only minor changes:
+> 1. Drop patches which landed in mainline.
+> 2. Add acks.
+> 3. Rebase max17040 power supply (dtschema conversion).
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Patches are independent and there are no external dependencies, so
+> please pick up freely.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> Krzysztof Kozlowski (7):
+>   mfd: sec-irq: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max77686: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max77693: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max14577: Do not enforce (incorrect) interrupt trigger type
+>   rtc: max77686: Do not enforce (incorrect) interrupt trigger type
+>   power: supply: max17042: Do not enforce (incorrect) interrupt trigger
+>     type
+>   power: supply: max17040: Do not enforce (incorrect) interrupt trigger
+>     type
 
-Still not in -next.
+MFD patches (at least) do not apply.
 
-Who will take this please?
+Please rebase and resubmit with my:
+
+For my own reference (apply this as-is to your sign-off block):
+
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
 Lee Jones [李琼斯]
