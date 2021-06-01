@@ -2,94 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE3CC47092
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 13:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE86C47092
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 14:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA63B61159
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 13:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C9E613E1
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 14:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234170AbhFANea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Jun 2021 09:34:30 -0400
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:44564 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234165AbhFANeK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 09:34:10 -0400
-Received: by mail-oi1-f170.google.com with SMTP id d21so15453378oic.11;
-        Tue, 01 Jun 2021 06:32:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=QbAYTIfaJrRwRGehKFdwrYMDuX76Y6YqwRn38v62cLU=;
-        b=ngfZ5MCdYZlX8E9bUPZwWl5i/p0zRtvCm4IXLeWB6I+nQCOAnBEuC0ZQuzDchGi3zJ
-         6ko5QEbJdftXZwNnrTPwFcouVPHsSZgN9sIDO8ZZR/tfZYztM5mzTpOIf38IYRBoR2wf
-         zJxca6ciPZq0PXMIWVOQB2JQicSjgRtt5ukh3z29jXrMgNI4bsciI08s+U5bo0oZrLAx
-         MQZfUpaWTC02OTjaxiC1NZ4Ik3U/I6Jo711U3yXnfmi/WDr4mulUMd/l/FaGqhOTOQcQ
-         KYgufCu6QrUIRZzenv5wjzaUA0hLu/QfHGhNrz1xeMi7uelTnARdcS7RwMMv16f+jN2S
-         EqEA==
-X-Gm-Message-State: AOAM530zsrcmHnoaJIpMMtLkOC8IubPKgGUtDaVJORMNbSw2wngP3RkN
-        YQb1iZsTGMMLdhQIwEzq7A==
-X-Google-Smtp-Source: ABdhPJwPlU8tzCjo7uqUiStY1EgY0vdRyYQw7XSuzB+8lwNQUBS33GjtrZhyfgvuj4UZW3UZWTtaoQ==
-X-Received: by 2002:aca:f482:: with SMTP id s124mr1829703oih.167.1622554347934;
-        Tue, 01 Jun 2021 06:32:27 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a18sm3829863otp.48.2021.06.01.06.32.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 06:32:24 -0700 (PDT)
-Received: (nullmailer pid 242367 invoked by uid 1000);
-        Tue, 01 Jun 2021 13:32:10 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        id S234336AbhFAOJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Jun 2021 10:09:34 -0400
+Received: from out28-73.mail.aliyun.com ([115.124.28.73]:59720 "EHLO
+        out28-73.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234188AbhFAOJc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 10:09:32 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1111761|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.432646-0.00042108-0.566933;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047208;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.KM.eRxy_1622556466;
+Received: from 192.168.0.103(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KM.eRxy_1622556466)
+          by smtp.aliyun-inc.com(10.147.41.121);
+          Tue, 01 Jun 2021 22:07:47 +0800
+Subject: Re: [PATCH v2 4/6] clk: ingenic: Remove pll_info.no_bypass_bit
+To:     Paul Cercueil <paul@crapouillou.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20210531115857.718985-1-iwamatsu@nigauri.org>
-References: <20210531115857.718985-1-iwamatsu@nigauri.org>
-Subject: Re: [PATCH] dt-bindings: clk: zynqmp: convert bindings to YAML
-Date:   Tue, 01 Jun 2021 08:32:10 -0500
-Message-Id: <1622554330.051024.242366.nullmailer@robh.at.kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        list@opendingux.net
+References: <20210530164923.18134-1-paul@crapouillou.net>
+ <20210530164923.18134-5-paul@crapouillou.net>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <dd9a3581-1391-962e-c5b3-e8bed90f3087@wanyeetech.com>
+Date:   Tue, 1 Jun 2021 22:07:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20210530164923.18134-5-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 31 May 2021 20:58:57 +0900, Nobuhiro Iwamatsu wrote:
-> Convert common clock for Xilinx Zynq MPSoC SoC bindings documentation
-> to YAML.
-> 
-> Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+
+On 2021/5/31 上午12:49, Paul Cercueil wrote:
+> We can express that a PLL has no bypass bit by simply setting the
+> .bypass_bit field to a negative value.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 ------------------
->  .../bindings/clock/xlnx,zynqmp-clk.yaml       | 65 +++++++++++++++++++
->  2 files changed, 65 insertions(+), 63 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
-> 
+>   drivers/clk/ingenic/cgu.c        | 4 ++--
+>   drivers/clk/ingenic/cgu.h        | 7 +++----
+>   drivers/clk/ingenic/jz4770-cgu.c | 3 +--
+>   3 files changed, 6 insertions(+), 8 deletions(-)
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-yamllint warnings/errors:
+Tested-by: 周琰杰 (Zhou Yanjie)<zhouyanjie@wanyeetech.com>    # on CU1830-neo/X1830
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.example.dt.yaml:0:0: /example-0/firmware/zynqmp-firmware: failed to match any schema with compatible: ['xlnx,zynqmp-firmware']
 
-See https://patchwork.ozlabs.org/patch/1485640
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+>
+> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> index 7686072aff8f..58f7ab5cf0fe 100644
+> --- a/drivers/clk/ingenic/cgu.c
+> +++ b/drivers/clk/ingenic/cgu.c
+> @@ -99,7 +99,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>   	od_enc = ctl >> pll_info->od_shift;
+>   	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+>   
+> -	if (!pll_info->no_bypass_bit) {
+> +	if (pll_info->bypass_bit >= 0) {
+>   		ctl = readl(cgu->base + pll_info->bypass_reg);
+>   
+>   		bypass = !!(ctl & BIT(pll_info->bypass_bit));
+> @@ -226,7 +226,7 @@ static int ingenic_pll_enable(struct clk_hw *hw)
+>   	u32 ctl;
+>   
+>   	spin_lock_irqsave(&cgu->lock, flags);
+> -	if (!pll_info->no_bypass_bit) {
+> +	if (pll_info->bypass_bit >= 0) {
+>   		ctl = readl(cgu->base + pll_info->bypass_reg);
+>   
+>   		ctl &= ~BIT(pll_info->bypass_bit);
+> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+> index 44d97a259692..10521d1b7b12 100644
+> --- a/drivers/clk/ingenic/cgu.h
+> +++ b/drivers/clk/ingenic/cgu.h
+> @@ -39,10 +39,10 @@
+>    *               their encoded values in the PLL control register, or -1 for
+>    *               unsupported values
+>    * @bypass_reg: the offset of the bypass control register within the CGU
+> - * @bypass_bit: the index of the bypass bit in the PLL control register
+> + * @bypass_bit: the index of the bypass bit in the PLL control register, or
+> + *              -1 if there is no bypass bit
+>    * @enable_bit: the index of the enable bit in the PLL control register
+>    * @stable_bit: the index of the stable bit in the PLL control register
+> - * @no_bypass_bit: if set, the PLL has no bypass functionality
+>    */
+>   struct ingenic_cgu_pll_info {
+>   	unsigned reg;
+> @@ -52,10 +52,9 @@ struct ingenic_cgu_pll_info {
+>   	u8 n_shift, n_bits, n_offset;
+>   	u8 od_shift, od_bits, od_max;
+>   	unsigned bypass_reg;
+> -	u8 bypass_bit;
+> +	s8 bypass_bit;
+>   	u8 enable_bit;
+>   	u8 stable_bit;
+> -	bool no_bypass_bit;
+>   };
+>   
+>   /**
+> diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+> index 381a27f20b51..2321742b3471 100644
+> --- a/drivers/clk/ingenic/jz4770-cgu.c
+> +++ b/drivers/clk/ingenic/jz4770-cgu.c
+> @@ -139,8 +139,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+>   			.od_bits = 2,
+>   			.od_max = 8,
+>   			.od_encoding = pll_od_encoding,
+> -			.bypass_reg = CGU_REG_CPPCR1,
+> -			.no_bypass_bit = true,
+> +			.bypass_bit = -1,
+>   			.enable_bit = 7,
+>   			.stable_bit = 6,
+>   		},
