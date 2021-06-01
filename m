@@ -2,144 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39228C4708F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47289C47080
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 13:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D91C61028
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 12:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2611E610A1
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Jun 2021 13:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233577AbhFAMxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Jun 2021 08:53:18 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22124 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232965AbhFAMxS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 08:53:18 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 151CktPD021929;
-        Tue, 1 Jun 2021 14:51:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=jqYpN/UNu3odHWLK+8p7H6TTeD/AucvmO3pBsH3xEGk=;
- b=dcu7aBTpLB8gfc/6zSSIreMCIE4wNpje96Qm7bcjrqpKv98z+V0GfkZfTXot/Z0rTeDD
- Vky3EopOpjCng3tSjdPWwYoj6cGathGfAgIlAmd7IZa5KCbsJjBae7x0hQSjjTIEYN4/
- KFlK6Xq+DcgtkjOdKYEr/V1/kBRsRmkvhnn3efI7mocG+qzdOC3AaN/6m3OWpMTu58vs
- LITHPNCy6Z6JWQex7TSKWDkyJ5v5/qB7cLE27qUIfc3yROcLUKOvK+rMFdAkaDkrXFpW
- j3jbSjetSVMmb/+G2ihjY5lF3euzI7ANsz3D1MVPk7cK2QjXv31P16oVlS56OnV0GC6v 9A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 38w0y7nbbp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Jun 2021 14:51:23 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2B97210002A;
-        Tue,  1 Jun 2021 14:51:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 127BA221775;
-        Tue,  1 Jun 2021 14:51:22 +0200 (CEST)
-Received: from lmecxl0573.lme.st.com (10.75.127.46) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 1 Jun
- 2021 14:51:20 +0200
-Subject: Re: [PATCH 4/4] clk: stm32: Fix ltdc's clock turn off by
- clk_disable_unused() after kernel startup
-To:     <dillon.minfei@gmail.com>, <pierre-yves.mordret@foss.st.com>,
-        <alain.volmat@foss.st.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <sumit.semwal@linaro.org>,
-        <christian.koenig@amd.com>, <mturquette@baylibre.com>
-CC:     <sboyd@kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-clk@vger.kernel.org>
-References: <1620990152-19255-1-git-send-email-dillon.minfei@gmail.com>
- <1620990152-19255-5-git-send-email-dillon.minfei@gmail.com>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-Message-ID: <6915fa2a-e211-476f-8317-6825e280c322@foss.st.com>
-Date:   Tue, 1 Jun 2021 14:51:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S233992AbhFANZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Jun 2021 09:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39098 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233584AbhFANZO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Jun 2021 09:25:14 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EEDC061574;
+        Tue,  1 Jun 2021 06:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/dtiXdp0eZ6e655MRel5Bn3jci0kO9BH3UelOiZFbg0=; b=V9z+tNnh+pFSora35MQeQ/f+k
+        4BbXZCK9lVijgJNIoUV+jZW+fP1TbSFK+AuKliHz+Zp6jUP7h/6BbzC/0zDpen3lUh0UnV+5vrKze
+        clZDiwxsp8+/bnaKS1BfKZyVkDpBAzCdNsy4vEORxsPcE/H7ROqL8HvzfAqjfpIvhiq3AWMSXXM9E
+        Toa73mV2/aWqgRwRoXlLl9dBpLwtvfOkmeQlCBfYLo8w5L2OB5xGQAq/YACvYrj2TDf/K3urOpyEw
+        BlyBFeAeu5UHGgQH5uLg0/+JxWEnk3xV5V25ameB+ETmj5haIGNBR4scMap1T06pvqJ6uHtIsy9ZI
+        Ppk1TcSWQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44574)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1lo4Mj-00045a-7c; Tue, 01 Jun 2021 14:23:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1lo4Mh-00008v-EA; Tue, 01 Jun 2021 14:23:27 +0100
+Date:   Tue, 1 Jun 2021 14:23:27 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Florian Fainelli <florian@openwrt.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        John Crispin <john@phrozen.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH 1/7] mips: ar7: convert to clkdev_lookup
+Message-ID: <20210601132327.GX30436@shell.armlinux.org.uk>
+References: <20210531184749.2475868-1-arnd@kernel.org>
+ <20210531184749.2475868-2-arnd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1620990152-19255-5-git-send-email-dillon.minfei@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-01_06:2021-05-31,2021-06-01 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210531184749.2475868-2-arnd@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dillon
-
-On 5/14/21 1:02 PM, dillon.minfei@gmail.com wrote:
-> From: Dillon Min <dillon.minfei@gmail.com>
+On Mon, May 31, 2021 at 08:47:43PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> stm32's clk driver register two ltdc gate clk to clk core by
-> clk_hw_register_gate() and clk_hw_register_composite()
+> ar7 is one of only two platforms that provide the clock interface but
+> implement a custom version of the clkdev_lookup code.
 > 
-> first: 'stm32f429_gates[]', clk name is 'ltdc', which no user to use.
-> second: 'stm32f429_aux_clk[]', clk name is 'lcd-tft', used by ltdc driver
+> Change this to use the generic version instead.
 > 
-> both of them point to the same offset of stm32's RCC register. after
-> kernel enter console, clk core turn off ltdc's clk as 'stm32f429_gates[]'
-> is no one to use. but, actually 'stm32f429_aux_clk[]' is in use.
-> 
-> Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
-> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Link: https://lore.kernel.org/linux-arm-kernel/1590564453-24499-7-git-send-email-dillon.minfei@gmail.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/clk-stm32f4.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  arch/mips/Kconfig     |  1 +
+>  arch/mips/ar7/clock.c | 32 ++++++++++++--------------------
+>  2 files changed, 13 insertions(+), 20 deletions(-)
 > 
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 42ca2dd86aea..f4156a8a6041 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -129,7 +129,6 @@ static const struct stm32f4_gate_data stm32f429_gates[] __initconst = {
->  	{ STM32F4_RCC_APB2ENR, 20,	"spi5",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
-> -	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
->  };
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index ed51970c08e7..1cc03a7652a9 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -215,6 +215,7 @@ config AR7
+>  	select SYS_SUPPORTS_ZBOOT_UART16550
+>  	select GPIOLIB
+>  	select VLYNQ
+> +	select CLKDEV_LOOKUP
+>  	select HAVE_LEGACY_CLK
+>  	help
+>  	  Support for the Texas Instruments AR7 System-on-a-Chip
+> diff --git a/arch/mips/ar7/clock.c b/arch/mips/ar7/clock.c
+> index 95def949c971..c614f254f370 100644
+> --- a/arch/mips/ar7/clock.c
+> +++ b/arch/mips/ar7/clock.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2009 Florian Fainelli <florian@openwrt.org>
+>   */
 >  
->  static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
-> @@ -211,7 +210,6 @@ static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
->  	{ STM32F4_RCC_APB2ENR, 20,	"spi5",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
-> -	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
->  };
->  
->  static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
-> @@ -286,7 +284,6 @@ static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
->  	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 23,	"sai2",		"apb2_div" },
-> -	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
->  };
->  
->  static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
-> @@ -364,7 +361,6 @@ static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
->  	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 23,	"sai2",		"apb2_div" },
-> -	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 30,	"mdio",		"apb2_div" },
->  };
->  
-> 
+> +#include <linux/clkdev.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/types.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/io.h>
+>  #include <linux/err.h>
+>  #include <linux/clk.h>
+> +#include <linux/clkdev.h>
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+Did you mean to include this twice?
 
-Thanks
-Patrice
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
