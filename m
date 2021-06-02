@@ -2,130 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077B9C4708F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BA1C4708F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 16:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D96EB613B4
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 15:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DE4261C49
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 16:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbhFBPDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 11:03:02 -0400
-Received: from smtp-35-i2.italiaonline.it ([213.209.12.35]:35125 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231906AbhFBPDA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:03:00 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
- ([79.17.119.101])
-        by smtp-35.iol.local with ESMTPA
-        id oSLqlJ7WDsptioSLwlKAsn; Wed, 02 Jun 2021 17:00:16 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1622646016; bh=hqdToKdXep6rD2t3+5/OUkGokVRGwUGIXwri9qp4guU=;
-        h=From;
-        b=lMCqwkrCY79cVf3zHr14Swwpg+GwFMCMUWVLQbaIeD12HwwDSy9Jkhj/VWHGKg8NQ
-         UqZBEcN4CM2RpUKzOA3a0iLkJuyan/TD6RIcXmx/abP2Zi0vsxU5P9PX4PvvKQC8iE
-         dm7DHu89gmn66U0+6osUrTDFF3MldEgXUxeLot7qyhdypTs+vEfkEIM4Jss7sr8MYJ
-         1UZWY7imtOgmaApXBRyTLb9klt0wDDuj5Dkg+SPTWCvCtk3s9VH7ex4pzKsK2fHSTa
-         v6qmks/58/6mc0ShCZeiN2dBshMl9Ed2c7WjhZXV7xHFMf0AAWwVIlgfKOa5KIb3g8
-         yJrffJTjfXSDg==
-X-CNFS-Analysis: v=2.4 cv=Bo1Yfab5 c=1 sm=1 tr=0 ts=60b79d00 cx=a_exe
- a=do1bHx4A/kh2kuTIUQHSxQ==:117 a=do1bHx4A/kh2kuTIUQHSxQ==:17 a=VwQbUJbxAAAA:8
- a=IXkOJODCewQtKEFu2i4A:9 a=5yUOnwQy5QICz8m5uxDm:22 a=AjGcO6oz07-iQ99wixmX:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Dario Binacchi <dariobin@libero.it>,
-        Tero Kristo <kristo@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v7 2/5] dt-bindings: ti: dpll: add spread spectrum support
-Date:   Wed,  2 Jun 2021 17:00:05 +0200
-Message-Id: <20210602150009.17531-3-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210602150009.17531-1-dariobin@libero.it>
-References: <20210602150009.17531-1-dariobin@libero.it>
-X-CMAE-Envelope: MS4xfBLCgayubmjjCLak38s7cr4yfgaSyVJdTZ7yaAhrXkgcbkYka3zLoybxIsD243u5wKsZ/OFYitHRJqiGhNihDE8qZ2AYhVn+0BbDUHPRDHwIEKKczfZN
- 80RAQ0xpxCKhIhR88pIEw7Zh6ZwOL8TRRb6bs4ViNT3m5zewvZw70PaeGGjejO/AjFhDhxR483eSZLDal2v8nbAzH8R3oGl8lFxECYj7yUx3F/XTdA/hKL7z
- 1OR1AGEo9TAnq1KmExzf5O32Ws0iw2f1nKMkxvGnLjLGCokGjXHB2ulxpPdxPJfzuHQuOWoKCRL65dKw6MmcfyA8CwKmxNePjoI4VytTPfo39jhlw+U2kSpV
- TSU5GUMeY5DMuLTpKhQKgUtD0PAbwUy1RXI3aTuaIbU+8PcCMAIPPh5LgVvst9eublV5XnnPMQAkE8Sj9By25StkCCo9fF9mBuQriVcYoV6AZuGqOIQqFAU7
- h4w5AD8oy2Tzimo6Pvb8B+mM1pCn5QMrytfscTjldnWeXAd1zkRjxqxdv80KwozvtOJ+5RlBZC0Iz6HEvVJakC27Km+Jivh6H3hNitvRCuGj1Icrht98RE/u
- XXU=
+        id S230468AbhFBQwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 12:52:47 -0400
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:34329 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230153AbhFBQwq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 12:52:46 -0400
+Received: by mail-oi1-f175.google.com with SMTP id u11so3311461oiv.1;
+        Wed, 02 Jun 2021 09:51:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ng66G4jO/C51laojzG44dfW8z+IXfT9iwY5rC23LxMo=;
+        b=DBN7kDOqa0EOtstZ5A+ON+bDCeOyeqne+P+6iIkC8BamlEwIiEOz8xFZzPiF/RTyzI
+         eBp1w9O/urCOHGDVQ/0PxZ38i9O7O6lsM7cJh6E8GxDIjDDx3cAmR9wb5zB7G1SjWmta
+         Ex5DuNhfFIbbCfh3cD3IfLR8a6Ib0U64CqmWEfw41vJOUDu13a683lzRKusZ7Fi9INc6
+         N6TCRABz1EMp8J87d7YChKz9euVrMBaWg3jqbsGDalkqxCfWDT4O8dFWsil0yzOj119F
+         lfoyCZWYBsCmpAG7FUOH6iHASuUSnnLDrgceuupHNYE/wocavoTGqKaqehqGCat5IUB+
+         aWKA==
+X-Gm-Message-State: AOAM5336a6KLeUNIAptLU1KulThZG6TrPu+HCpbQfjLb93mya9MT/6jc
+        wf+Tqh5dE6mJUBXZSyEzye9P3pdOTg==
+X-Google-Smtp-Source: ABdhPJwroyXsMLOJAuiEN3lNLQsCsSjqI5eH+O8I1srDWPgJ16DIBnriDFaaStE2RWXa7LElaEC/3w==
+X-Received: by 2002:aca:2107:: with SMTP id 7mr4482878oiz.110.1622652662503;
+        Wed, 02 Jun 2021 09:51:02 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c32sm88395otu.13.2021.06.02.09.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jun 2021 09:51:01 -0700 (PDT)
+Received: (nullmailer pid 3551888 invoked by uid 1000);
+        Wed, 02 Jun 2021 16:51:00 -0000
+Date:   Wed, 2 Jun 2021 11:51:00 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     daire.mcnamara@microchip.com
+Cc:     devicetree@vger.kernel.org, lewis.hanly@microchip.com,
+        conor.dooley@microchip.com, david.abdurachmanov@gmail.com,
+        mturquette@baylibre.com, palmer@dabbelt.com,
+        linux-clk@vger.kernel.org, padmarao.begari@microchip.com,
+        robh+dt@kernel.org, cyril.jean@microchip.com, sboyd@kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: microchip: Add Microchip
+ PolarFire host binding
+Message-ID: <20210602165100.GA3551676@robh.at.kernel.org>
+References: <20210528134308.649769-1-daire.mcnamara@microchip.com>
+ <20210528134308.649769-2-daire.mcnamara@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210528134308.649769-2-daire.mcnamara@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DT bindings for enabling and adjusting spread spectrum clocking have
-been added.
+On Fri, 28 May 2021 14:43:07 +0100, daire.mcnamara@microchip.com wrote:
+> From: Daire McNamara <daire.mcnamara@microchip.com>
+> 
+> Add device tree bindings for the Microchip PolarFire system
+> clock controller
+> 
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> ---
+>  .../bindings/clock/microchip,mpfs.yaml        | 67 +++++++++++++++++++
+>  .../dt-bindings/clock/microchip,mpfs-clock.h  | 45 +++++++++++++
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+>  create mode 100644 include/dt-bindings/clock/microchip,mpfs-clock.h
+> 
 
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
 Reviewed-by: Rob Herring <robh@kernel.org>
-
----
-
-(no changes since v4)
-
-Changes in v4:
-- Add Rob Herring review tag.
-
-Changes in v3:
-- Add '-hz' suffix to "ti,ssc-modfreq" binding.
-
- .../devicetree/bindings/clock/ti/dpll.txt     | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-index df57009ff8e7..37a7cb6ad07d 100644
---- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
-@@ -42,6 +42,11 @@ Required properties:
- 	"idlest" - contains the idle status register base address
- 	"mult-div1" - contains the multiplier / divider register base address
- 	"autoidle" - contains the autoidle register base address (optional)
-+	"ssc-deltam" - DPLL supports spread spectrum clocking (SSC), contains
-+		       the frequency spreading register base address (optional)
-+	"ssc-modfreq" - DPLL supports spread spectrum clocking (SSC), contains
-+		        the modulation frequency register base address
-+			(optional)
-   ti,am3-* dpll types do not have autoidle register
-   ti,omap2-* dpll type does not support idlest / autoidle registers
- 
-@@ -51,6 +56,14 @@ Optional properties:
- 	- ti,low-power-stop : DPLL supports low power stop mode, gating output
- 	- ti,low-power-bypass : DPLL output matches rate of parent bypass clock
- 	- ti,lock : DPLL locks in programmed rate
-+	- ti,min-div : the minimum divisor to start from to round the DPLL
-+		       target rate
-+	- ti,ssc-deltam : DPLL supports spread spectrum clocking, frequency
-+			  spreading in permille (10th of a percent)
-+	- ti,ssc-modfreq-hz : DPLL supports spread spectrum clocking, spread
-+			      spectrum modulation frequency
-+	- ti,ssc-downspread : DPLL supports spread spectrum clocking, boolean
-+			      to enable the downspread feature
- 
- Examples:
- 	dpll_core_ck: dpll_core_ck@44e00490 {
-@@ -83,3 +96,10 @@ Examples:
- 		clocks = <&sys_ck>, <&sys_ck>;
- 		reg = <0x0500>, <0x0540>;
- 	};
-+
-+	dpll_disp_ck: dpll_disp_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,am3-dpll-no-gate-clock";
-+		clocks = <&sys_clkin_ck>, <&sys_clkin_ck>;
-+		reg = <0x0498>, <0x0448>, <0x0454>, <0x044c>, <0x0450>;
-+	};
--- 
-2.17.1
-
