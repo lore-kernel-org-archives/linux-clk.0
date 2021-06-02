@@ -2,102 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFBDC4708F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0CBC47083
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 21:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39E42613E9
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E2E613E7
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 21:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbhFBUIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 16:08:09 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:41937 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbhFBUII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 16:08:08 -0400
-Received: by mail-ot1-f44.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so3574392oth.8;
-        Wed, 02 Jun 2021 13:06:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Eqg/NhAI7hbUorU0sneYRdLeG0QUON8FK2Nid9hN1UY=;
-        b=VJSmbYP3HrQKqbOzjw3tpJjFjGkz61G7E0Wuyulqx7ljopCAyYQ1TkDsHiApCi2M5n
-         MYI57o9brvzNrMFGgsXjy58Ff4eB57diI5/D3B9m2lexq9ixRxZzqkiXo15OyK3lZLka
-         Dqy8445nnJqOBZoAmoovQ9qtRq3McP/J7J0j/y3ct9FNrlPocnVIwvC8EqHkqYA7DB8l
-         2aWxwia4N+wMkCPbJXgYF9gtpomNc5dHcXUtiNUb9z2uVKOHhtCjwOixJMo5yRpR7iKQ
-         Z3aQt/pd/rbTZWfXuPXXINdCu80dmK6ar7LWcSs7l3GF98DweiYpLmyz68qgW6VsBYHV
-         tnwA==
-X-Gm-Message-State: AOAM5314IrOlteVIYirBQpnNAbfiG78TzugS+N+DEyRcJGuPuV66nsIw
-        slaRP9+w/fULxl5Hbpwzuw==
-X-Google-Smtp-Source: ABdhPJwOOhWiTlBUVMkgdreVunVQq9Th2V0p/jeTk68tZ2BCDbzX7OWLgT1+YDeOhvnir4cNa8WV0A==
-X-Received: by 2002:a9d:6194:: with SMTP id g20mr4537073otk.8.1622664371257;
-        Wed, 02 Jun 2021 13:06:11 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i9sm189166oog.17.2021.06.02.13.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 13:06:10 -0700 (PDT)
-Received: (nullmailer pid 3900234 invoked by uid 1000);
-        Wed, 02 Jun 2021 20:06:09 -0000
-Date:   Wed, 2 Jun 2021 15:06:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        devicetree@vger.kernel.org,
-        Iskren Chernev <iskren.chernev@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] power: supply: max17040: Do not enforce
- (incorrect) interrupt trigger type
-Message-ID: <20210602200609.GA3900200@robh.at.kernel.org>
-References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
- <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
+        id S229600AbhFBV3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 17:29:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229467AbhFBV3U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jun 2021 17:29:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 16A2E613D2;
+        Wed,  2 Jun 2021 21:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622669257;
+        bh=lE85p69QGI6y7QaTePnues/2c+5McsZT084K1YrweNw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=B8DV6wOh3MIm5mi1YrXGOznlrfUuCZOeXpQiKZ6Y4RGio/y0ayYK32131jJflfu2o
+         7L6x9BIPlQ1HSWw84GBx2YkogJbaBC81Awr1gVz/gr+zmbrAPf7as0TWosv1VxAHq2
+         2K4CBf/t8TIjcl8XMfpbfIfe/bX2VT8/rIArQu/jJvj90vt/sZApPTQZJj6KQa7g4a
+         bygk9u92h8RhN+PfppdIqOtKIU8qjuGbYMWwnrACnzm/QNw5RJTcynYC9nA+Uo/jeB
+         I+i9L28XGEauUq4h7HxmU3Pb96IyJinOVmYSdJUTUwnoXO4eV4fewHyxx1jvDEizAa
+         Qnq/CagdimW8Q==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210519001802.1863-2-jonathan@marek.ca>
+References: <20210519001802.1863-1-jonathan@marek.ca> <20210519001802.1863-2-jonathan@marek.ca>
+Subject: Re: [PATCH v2 2/2] dt-bindings: clock: add QCOM SM8350 display clock bindings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Date:   Wed, 02 Jun 2021 14:27:35 -0700
+Message-ID: <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 May 2021 13:20:36 -0400, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Interrupt line can be configured on different hardware in different way,
-> even inverted.  Therefore driver should not enforce specific trigger
-> type - edge falling - but instead rely on Devicetree to configure it.
-> 
-> The Maxim 14577/77836 datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU therefore the edge
-> falling is not correct.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Iskren Chernev <iskren.chernev@gmail.com>
-> 
+Quoting Jonathan Marek (2021-05-18 17:18:02)
+> Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
+> bindings. Update the documentation with the new compatible.
+>=20
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
-> 
-> Changes since v1:
-> 1. Remove the 'flags' variable.
-> 2. Added ack.
-> 3. Rebase - the bindings were converted to dtschema.
-> ---
->  .../devicetree/bindings/power/supply/maxim,max17040.yaml      | 2 +-
->  drivers/power/supply/max17040_battery.c                       | 4 +---
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
+>  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
+>  include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
 
-Acked-by: Rob Herring <robh@kernel.org>
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+>  create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+
+Why the symlink? Can we have the dt authors use the existing header file
+instead?
+
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.y=
+aml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> index 0cdf53f41f84..8f414642445e 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> @@ -4,24 +4,26 @@
+>  $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM82=
+50
+> +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM82=
+50/SM8350
+
+Maybe just "Binding for SM8x50 SoCs"
+
+> =20
+>  maintainers:
+>    - Jonathan Marek <jonathan@marek.ca>
+> =20
+>  description: |
+>    Qualcomm display clock control module which supports the clocks, reset=
+s and
+> -  power domains on SM8150 and SM8250.
+> +  power domains on SM8150/SM8250/SM8350.
+
+same 8x50 comment.
+
+> =20
+>    See also:
+>      dt-bindings/clock/qcom,dispcc-sm8150.h
+>      dt-bindings/clock/qcom,dispcc-sm8250.h
+> +    dt-bindings/clock/qcom,dispcc-sm8350.h
+> =20
+>  properties:
+>    compatible:
+>      enum:
+>        - qcom,sm8150-dispcc
+>        - qcom,sm8250-dispcc
+> +      - qcom,sm8350-dispcc
+> =20
+>    clocks:
+>      items:
+> diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-=
+bindings/clock/qcom,dispcc-sm8350.h
+> new file mode 120000
+> index 000000000000..0312b4544acb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> @@ -0,0 +1 @@
+> +qcom,dispcc-sm8250.h
+> \ No newline at end of file
