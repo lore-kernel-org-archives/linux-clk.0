@@ -2,143 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6DAC4708F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEE7C47083
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 10:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A741E613B1
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65E9D613D3
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 10:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbhFBJei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 05:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbhFBJei (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 05:34:38 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4D2C061574
-        for <linux-clk@vger.kernel.org>; Wed,  2 Jun 2021 02:32:55 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id l11-20020a05600c4f0bb029017a7cd488f5so1300670wmq.0
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jun 2021 02:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=+4n68OhQQoaJqMJRmFarUHWhO6SLp5CZpVwSs3bY57M=;
-        b=QdtCH6OwgAWbnUTfXQQobKbEMVCsv/NfJBaCfk/cjIBLyX30zRtdf7I9yQR+a8zN7w
-         So9FhMuKA51H7t0Iz3VwB3j6Y+y0rR9b07MQUlWinb/vlJWd8I5IBTtQb069NU9HuDWP
-         fLeP7MfTvg2JL45gQzLpPV4+slEzo5rsKvvV2WtDTNP6vjH/3CInyKKzEF6Ma1rj2bM9
-         HUvJfc0h6LLqF35WgVDrMEElaxEE5nvXub1O7TidzmVnkRo0rYXaHG4Qmpj4k4njYByT
-         fxtAjVXR+oCPy33idGpVPAxm0H1Tchr1vktUJ8TIScJuR/CrW7k2vq9fxUDhLbJ2xoMh
-         mZcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=+4n68OhQQoaJqMJRmFarUHWhO6SLp5CZpVwSs3bY57M=;
-        b=VLpH4TdgpTIRbx/KgiIE2vDug76PiQ2/pS+ZyQfzxdvDcvXgPadta0mN7nZxZacxul
-         eqHhMeno/t8nBb62d5dYUeIaAEbTbuW3ms3sdzHo8Xz+wpRR75PYJbI+yI7H+9cilUBh
-         zW7H6vFbwlI7vMrPUFTC+sf3qt1V3YuI9wVsoqrlhzs1iftHswJWY/A4s03sIqeanijW
-         c0ejJKpWPvcwFdBos50PQwPBK3RptMeLQa6FCUjvv1MNo7S+NiYRPYttZIdLAabrNR5P
-         1RYWV3LwNvKUrEdG04a1pRe30yvLnU7BR9dqQI2KSDWx2MogXiSCh1QEiIyj+V6PNqkS
-         uGFA==
-X-Gm-Message-State: AOAM532uCeOImQPwiVHvz4aevXN9KLNttuneNruAJ/GCqxM7ebnQiDgW
-        g/lx3pt0ddbufoczoNc/d/RyhQ==
-X-Google-Smtp-Source: ABdhPJwZcWsNVrWqTEgyqX4RTciLjOYhDu9RIA3kyZPccOlhw3ys9rCcBYEhOiKNeMrrX03S7NOU+g==
-X-Received: by 2002:a1c:bcd6:: with SMTP id m205mr4378881wmf.12.1622626373963;
-        Wed, 02 Jun 2021 02:32:53 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id j14sm2093415wmi.32.2021.06.02.02.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 02:32:53 -0700 (PDT)
-References: <20210528113403.5374-1-peng.fan@oss.nxp.com>
- <162262192433.4130789.1017942859005253343@swboyd.mtv.corp.google.com>
- <a5833012-3e86-5be0-71f2-de4d9b32a152@pengutronix.de>
-User-agent: mu4e 1.4.15; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, mturquette@baylibre.com
-Cc:     Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] clk: support regmap
-In-reply-to: <a5833012-3e86-5be0-71f2-de4d9b32a152@pengutronix.de>
-Message-ID: <1j1r9kobln.fsf@starbuckisacylon.baylibre.com>
-Date:   Wed, 02 Jun 2021 11:32:52 +0200
+        id S231696AbhFBKkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 06:40:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229541AbhFBKkw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jun 2021 06:40:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4E25F613BE;
+        Wed,  2 Jun 2021 10:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622630349;
+        bh=xscBNGdgmKGqvdZAiQKuvfYAUc7B9BbcxRBT59+5ZOY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Hz/A98NJ/xcvhZd9ZNyMVQi6zUvnUC0/7LUrDDbXTguMX84mAQdH6yhT2gck95c2a
+         N/i3Hma2f2kRJOdtkvmq6jZ6zf1ZUha43C3lZjmkQnwSD4JTGzuOpHjr67lUnryRbg
+         p8QtEHupGkLdwAclzswPZgcIeG3BJsU533I0k6Op+iufhQ3qe09HiF7gX8bydjda8w
+         Wzfi4UDXUSyhQUHxDnHDoQ9suKhhi5OieKFlNFShWzmNkSKEBP3VfZbOmLNb39wr6y
+         2DA+ggnsYCNFipkC3tc4vF5gZrBcCp+sf9K/HPIm8GAsIoX3mR770sjC9fpG5ctNnp
+         3raIywYDT2VjQ==
+Received: by mail-wr1-f53.google.com with SMTP id c5so1757646wrq.9;
+        Wed, 02 Jun 2021 03:39:09 -0700 (PDT)
+X-Gm-Message-State: AOAM531nca26DQxZJRiEURKRRduLfUYCH59B/JzkN4bHNr/uy1bBVnvq
+        rV6IuZkbXRz3eGl/5v89YqtQzBFO/Nmt4zjvMHw=
+X-Google-Smtp-Source: ABdhPJw1yDtR1g+RhxgV73exD8GZ7Zlc3UlK2QOxfUHJQ0YgqPNiNyVgdN0aBIvksGMnFyNkUFE9lTL3NcJjxiDkPBk=
+X-Received: by 2002:adf:a28c:: with SMTP id s12mr34315203wra.105.1622630347892;
+ Wed, 02 Jun 2021 03:39:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210531184749.2475868-1-arnd@kernel.org> <20210601095129.GF6961@alpha.franken.de>
+ <CAK8P3a2Ueg0UFZisrzrrL_MkBLnu6TbMtVGx4_wO0d6rj48weg@mail.gmail.com> <162258513314.4130789.12039373985147120919@swboyd.mtv.corp.google.com>
+In-Reply-To: <162258513314.4130789.12039373985147120919@swboyd.mtv.corp.google.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Wed, 2 Jun 2021 12:37:29 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3VtsTfkJKuVzMP30qPSEUE+W4MJ0aUg=-v5n+cafn0Ag@mail.gmail.com>
+Message-ID: <CAK8P3a3VtsTfkJKuVzMP30qPSEUE+W4MJ0aUg=-v5n+cafn0Ag@mail.gmail.com>
+Subject: Re: [PATCH 0/7] clk: clean up legacy clock interfaces
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Florian Fainelli <florian@openwrt.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        John Crispin <john@phrozen.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        BROADCOM NVRAM DRIVER <linux-mips@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed 02 Jun 2021 at 10:21, Marc Kleine-Budde <mkl@pengutronix.de> wrote:
-
-> On 6/2/21 10:18 AM, Stephen Boyd wrote:
->> Quoting Peng Fan (OSS) (2021-05-28 04:34:00)
->>> From: Peng Fan <peng.fan@nxp.com>
->>>
->>> To i.MX8ULP, a PCC register provides clk(mux, gate, divider) and peripheral
->>> reset functionality, so we need make sure the access to the PCC register
->>> be protected to avoid concurrent access from clk and reset subsystem.
->>>
->>> So let's use regmap here.
->>>
->>> The i.MX specific code will be posted if this patchset is ok for you.
->> 
->> We have a couple regmap clk drivers in the tree. Either combine the
->> different regmap clk drivers or duplicate it into the imx directory. I'd
->> prefer we combine them but last time I couldn't agree on the approach
->> when Jerome wanted to do it. Maybe now is the time to combine them all
->> into one common piece of code.
+On Wed, Jun 2, 2021 at 12:05 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Arnd Bergmann (2021-06-01 05:24:59)
+> > On Tue, Jun 1, 2021 at 11:51 AM Thomas Bogendoerfer
+> > <tsbogend@alpha.franken.de> wrote:
+> > >
+> > > On Mon, May 31, 2021 at 08:47:42PM +0200, Arnd Bergmann wrote:
+> > > > As I noticed that the ar7 clock implementation and the ralink version
+> > > > are rather trivial, I ended up converting those to use the common-clk
+> > > > interfaces as well, though this is unrelated to the other changes.
+> > >
+> > > excellent, how is your plan for merging the series ?
+> >
+> > I have not decided yet. I think it would be best to keep the series together
+> > and merge it through the clk maintainer tree, or possibly my asm-generic
+> > tree, but as there is no rush, we could also do the mips and m68k bits
+> > through the architecture trees, and defer the rest for 5.15.
+> >
 >
-> IMHO for the basic drivers, such as gate, divider, mux, mux-div, etc... it makes
-> no sense to have them in an arch specific subdir, like meson.
+> I'm happy to take the series through clk tree if that helps.
 
-Indeed, those basic types were not meant to remain platform
-specific. Some framework (ASoC for ex) make heavy use of regmap and
-could welcome regmap based basic clock types.
+Ok, great. I've addressed all the issues that were pointed out, but it
+would be good to get an Acked-by or some testing for the MIPS
+(ar7 and ralink) bits. Thomas and John, let me know if you find
+something that needs to be addressed first, or if you are happy
+me to send the latest version for merging.
 
-At the time, Stephen (qcom) and I (meson) had slightly different
-approaches. Before having those types spread through the kernel, I think
-testing things out was a good thing ... this is why these are platform
-specific ATM.
-
-It's been 3 years now ... and it has not been a total disaster :)
-
-In the end things are not so different. Let's compare:
-a. Both have a generic "clk_regmap" type common to all regmap based
-  types. This is very useful to easily fix the regmap pointer in static
-  clocks (which are heavily used by both platform)
-
-b. Meson uses a generic pointer to store the type specific info.
-  Qcom embeds the generic clk_regmap into the specific type one.
-  => In the end, I don't see any advantage to the meson
-  approach. Switching to the qcom method would be quite a big bang
-  for meson but it is doable (nothing difficult, just a huge line count)
-  
-c. Qcom basic regmap type deviates a bit from the regular basic ones
-  when it comes to the actual data. The qcom "clk_regmap" also provides
-  the gate, mux have the qcom "parent_map". In meson, I tried to keep as
-  close as possible to regular basic types ... at least what they were 3
-  years ago. Only the register poking part should be different actually.
-  => I'd be in favor of keeping close to meson here.
-
-A possible plan could be:
-1. Rework meson as explained in [b] above.
-2. reword types in qcom where necessary to avoid name clashes (add
-   "_qcom" extension for ex)
-3. Move the clk_regmap implementation out of meson to drivers/clk
-4. Things are yours to play with ...
-
-I can take care of 1. and 3. I would welcome help for 2. especially since
-I won't be able to test it.
-
->
-> regards,
-> Marc
-
+       Arnd
