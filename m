@@ -3,79 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A36C47083
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 19:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFBDC4708F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68FAE610A8
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 19:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39E42613E9
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbhFBTsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 15:48:04 -0400
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:38685 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbhFBTsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 15:48:01 -0400
-Received: by mail-oi1-f181.google.com with SMTP id z3so3823386oib.5;
-        Wed, 02 Jun 2021 12:46:18 -0700 (PDT)
+        id S229629AbhFBUIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 16:08:09 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:41937 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229491AbhFBUII (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 16:08:08 -0400
+Received: by mail-ot1-f44.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so3574392oth.8;
+        Wed, 02 Jun 2021 13:06:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=2kBzbHf+t2QwClNMpCYUx+9WwCp8xziT/Ti8nd8I4XU=;
-        b=Du6VGJNM9BJr6taS00B9Ozjf29zmmSjfpz0rUvmgGzrD+ace96IO3LGSUoC3ERxkfH
-         yVSirPoqyOLwtekBReLE/dKQByGkgxAuunYVApMrXbSlyrxkWLBC3AtYh7ZvMmm6MK/k
-         ag6QSuhYEokF26Fkgcxn/MR7ElROu/cp+s1iHRokvzxElH7knO5FfZIliFZM0bHCUJqL
-         eiuj/8a4hO72zkazkt5TvkD3ChdH8bafjyGvQqqcFN39E4nKD+pp5+d183PCehzgFfxX
-         qGue5x4WLGTQf1hAMMW2EUc6JaB2eOBFnbaapmFeotuxBCHxZ5NQGpXxxZGyWvexYa8L
-         NR1w==
-X-Gm-Message-State: AOAM530j8o7ZzLi1+4zebgIkYxtaeBl75CdAdB7oLWDTET4S7RYjIIqx
-        aO6nWFOIMj5mXkSzANM+m6FCu4jArQ==
-X-Google-Smtp-Source: ABdhPJy+S0VAadtTwv3K5X6cKfI4p9bsh4HO8pKRa2oJ5/0+EPOIdtF2PP4Mx+/YixuSBx61JN17Hg==
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr3723606oix.82.1622663178009;
-        Wed, 02 Jun 2021 12:46:18 -0700 (PDT)
+        bh=Eqg/NhAI7hbUorU0sneYRdLeG0QUON8FK2Nid9hN1UY=;
+        b=VJSmbYP3HrQKqbOzjw3tpJjFjGkz61G7E0Wuyulqx7ljopCAyYQ1TkDsHiApCi2M5n
+         MYI57o9brvzNrMFGgsXjy58Ff4eB57diI5/D3B9m2lexq9ixRxZzqkiXo15OyK3lZLka
+         Dqy8445nnJqOBZoAmoovQ9qtRq3McP/J7J0j/y3ct9FNrlPocnVIwvC8EqHkqYA7DB8l
+         2aWxwia4N+wMkCPbJXgYF9gtpomNc5dHcXUtiNUb9z2uVKOHhtCjwOixJMo5yRpR7iKQ
+         Z3aQt/pd/rbTZWfXuPXXINdCu80dmK6ar7LWcSs7l3GF98DweiYpLmyz68qgW6VsBYHV
+         tnwA==
+X-Gm-Message-State: AOAM5314IrOlteVIYirBQpnNAbfiG78TzugS+N+DEyRcJGuPuV66nsIw
+        slaRP9+w/fULxl5Hbpwzuw==
+X-Google-Smtp-Source: ABdhPJwOOhWiTlBUVMkgdreVunVQq9Th2V0p/jeTk68tZ2BCDbzX7OWLgT1+YDeOhvnir4cNa8WV0A==
+X-Received: by 2002:a9d:6194:: with SMTP id g20mr4537073otk.8.1622664371257;
+        Wed, 02 Jun 2021 13:06:11 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q5sm190055oia.31.2021.06.02.12.46.16
+        by smtp.gmail.com with ESMTPSA id i9sm189166oog.17.2021.06.02.13.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 12:46:17 -0700 (PDT)
-Received: (nullmailer pid 3864945 invoked by uid 1000);
-        Wed, 02 Jun 2021 19:46:16 -0000
-Date:   Wed, 2 Jun 2021 14:46:16 -0500
+        Wed, 02 Jun 2021 13:06:10 -0700 (PDT)
+Received: (nullmailer pid 3900234 invoked by uid 1000);
+        Wed, 02 Jun 2021 20:06:09 -0000
+Date:   Wed, 2 Jun 2021 15:06:09 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Martin Botka <martin.botka@somainline.org>
-Cc:     linux-kernel@vger.kernel.org, marijn.suijten@somainline.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Brown <broonie@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        devicetree@vger.kernel.org,
+        Iskren Chernev <iskren.chernev@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        konrad.dybcio@somainline.org, Stephen Boyd <sboyd@kernel.org>,
-        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        angelogioacchino.delregno@somainline.org
-Subject: Re: [PATCH V2 4/5] dt-bindings: clk: qcom: smd-rpm: Document SM6125
- compatible
-Message-ID: <20210602194616.GA3864860@robh.at.kernel.org>
-References: <20210523211556.731976-1-martin.botka@somainline.org>
- <20210523211556.731976-4-martin.botka@somainline.org>
+        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] power: supply: max17040: Do not enforce
+ (incorrect) interrupt trigger type
+Message-ID: <20210602200609.GA3900200@robh.at.kernel.org>
+References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
+ <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210523211556.731976-4-martin.botka@somainline.org>
+In-Reply-To: <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 23 May 2021 23:15:55 +0200, Martin Botka wrote:
-> Document the newly added compatible for sm6125 rpmcc.
+On Wed, 26 May 2021 13:20:36 -0400, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+> Interrupt line can be configured on different hardware in different way,
+> even inverted.  Therefore driver should not enforce specific trigger
+> type - edge falling - but instead rely on Devicetree to configure it.
+> 
+> The Maxim 14577/77836 datasheets describe the interrupt line as active
+> low with a requirement of acknowledge from the CPU therefore the edge
+> falling is not correct.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Iskren Chernev <iskren.chernev@gmail.com>
+> 
 > ---
-> Changes in V2:
-> None
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> Changes since v1:
+> 1. Remove the 'flags' variable.
+> 2. Added ack.
+> 3. Rebase - the bindings were converted to dtschema.
+> ---
+>  .../devicetree/bindings/power/supply/maxim,max17040.yaml      | 2 +-
+>  drivers/power/supply/max17040_battery.c                       | 4 +---
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
