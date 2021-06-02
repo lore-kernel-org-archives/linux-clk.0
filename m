@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF23C47083
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203EDC47083
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE75613D8
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ADB3613B4
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 09:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231760AbhFBJ15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 05:27:57 -0400
-Received: from muru.com ([72.249.23.125]:35350 "EHLO muru.com"
+        id S231909AbhFBJ3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 05:29:54 -0400
+Received: from muru.com ([72.249.23.125]:35376 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231283AbhFBJ14 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jun 2021 05:27:56 -0400
+        id S229618AbhFBJ3y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jun 2021 05:29:54 -0400
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D2C858027;
-        Wed,  2 Jun 2021 09:26:18 +0000 (UTC)
-Date:   Wed, 2 Jun 2021 12:26:08 +0300
+        by muru.com (Postfix) with ESMTPS id D0BED8027;
+        Wed,  2 Jun 2021 09:28:16 +0000 (UTC)
+Date:   Wed, 2 Jun 2021 12:28:06 +0300
 From:   Tony Lindgren <tony@atomide.com>
 To:     Sven Peter <sven@svenpeter.dev>
 Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
@@ -34,62 +34,35 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Mark Kettenis <mark.kettenis@xs4all.nl>,
         Arnd Bergmann <arnd@kernel.org>
 Subject: Re: [PATCH 0/3] Apple M1 clock gate driver
-Message-ID: <YLdOsA63GyMj4SgR@atomide.com>
+Message-ID: <YLdPJk+RBNmw3zJz@atomide.com>
 References: <20210524182745.22923-1-sven@svenpeter.dev>
  <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
- <YK32Mmiq9QXGkELF@atomide.com>
- <9ff6ec26-4b78-4684-9c23-16d5cbfef857@www.fastmail.com>
+ <6052f2f1-1e3f-474e-a767-e08ca19fbd43@www.fastmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9ff6ec26-4b78-4684-9c23-16d5cbfef857@www.fastmail.com>
+In-Reply-To: <6052f2f1-1e3f-474e-a767-e08ca19fbd43@www.fastmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Sven Peter <sven@svenpeter.dev> [210530 11:09]:
-> Hi,
+* Sven Peter <sven@svenpeter.dev> [210530 11:11]:
+> The problem with that approach is that to enable e.g. UART_0 we actually need
+> to enable its parents as well, e.g. the Apple Device Tree for the M1 has the
+> following clock topology:
 > 
-> On Wed, May 26, 2021, at 09:18, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > * Rob Herring <robh+dt@kernel.org> [210525 18:09]:
-> > > I would do a single node per mmio region with the register offset (or
-> > > offset / 4) being the clock id. This can still support new SoCs easily
-> > > if you have a fallback compatible. If you want/need to get all the
-> > > clocks, just walk the DT 'clocks' properties and extract all the IDs.
-> > 
-> > I mostly agree.. Except I'd also leave out the artificial clock ID and
-> > just use real register offsets from the clock controller base instead.
+>     UART0  (0x23b700270), parent: UART_P
+>     UART_P (0x23b700220), parent: SIO
+>     SIO    (0x23b7001c0), parent: n/a
 > 
-> Sure, I'll do that.
-> 
-> > 
-> > So a single clock controller node for each MMIO range, then set
-> > #clock=cells = <1>. Then the binding follows what we have for the
-> > interrupts-extended binding for example.
-> > 
-> > If the clock controller optionally needs some data in the dts,
-> > that can be added to the clock controller node. Or it can be driver
-> > internal built-in data. If the data for dts can be described in a
-> > generic way, even better :)
-> 
-> Now the big question is *how* to describe this additional data in the
-> dts. Essentially I need to specify that e.g. to enable clock 0x270
-> I first need to enable the (internal) clocks 0x1c0 and then 0x220.
-> Are you aware of any generic way to describe this? I'm not even sure
-> how a sane non-generic way would look like when I just have a single
-> clock controller node.
+> The offsets and the parent/child relationship for all of these three clocks
+> change between SoCs. If I now use the offset as the clock id I still need
+> to specify that if e.g. UART uses <&clk_controller 0x270> I first need
+> to enable 0x1c0 and then 0x220 and only then 0x270.
 
-To me it seems you might be able to recycle the assigned-clocks and
-assigned-clock-parents etc properties in the clock controller node.
-
-Sure the assigned-clocks property will point to clocks in the
-clock controller itself, and will have tens of entries, but should
-work :)
-
-And sounds like you can generate that list with some script from the
-Apple dtb.
+Maybe take a look what I suggested on using assigned-clocks and related
+properties in the clock controller node. That might solve the issue in
+a generic way for other SoCs too.
 
 Regards,
 
