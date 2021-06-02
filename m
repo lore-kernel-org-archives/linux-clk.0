@@ -2,82 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240ECC47083
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 08:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F772C47083
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 08:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03E6E613CA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 08:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA329613D2
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 08:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232299AbhFBICl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 04:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232296AbhFBICj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jun 2021 04:02:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2BFFA613B4;
-        Wed,  2 Jun 2021 08:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622620847;
-        bh=Z54hpubbgVT9NT7jn4an5DgBd9VzYodLFQCiBkzQmMA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ze/jRPfT84VUKPhhGb8h20NBsOSmpeg2O4oiMcOeK2yFctrzaStBYXLr5zw4Z/Dwm
-         Fc3VSLo+p8eJmcYfZJLKe7c25EIqjLLc1RDjvCSbOykadpt6UtbDTh/zPRYED28DId
-         V0IJVYY5oafhOiRWHfdUMlw0/ys7lY3FedycE+XZb2qdomQdC8AMfPDvbOO7nyyrev
-         8hg+TZAHAj2/cBp2NXYpUXkzZ7CoZRtCZO18Tf0egoqPES9nICQ7o9WH8nNuc765Sl
-         H89rvvRC+t9su9rYt9q2Lre+bpV8VzP3vsjgGZgJKF7nocn/KR6NAotRj2vo/TZQvG
-         cJiuPS2wae20A==
-Content-Type: text/plain; charset="utf-8"
+        id S229978AbhFBINn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 04:13:43 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:3342 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229882AbhFBINn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Jun 2021 04:13:43 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Fw1pX0GhYz19S5g;
+        Wed,  2 Jun 2021 16:07:16 +0800 (CST)
+Received: from dggema762-chm.china.huawei.com (10.1.198.204) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Wed, 2 Jun 2021 16:11:57 +0800
+Received: from [10.174.179.129] (10.174.179.129) by
+ dggema762-chm.china.huawei.com (10.1.198.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 2 Jun 2021 16:11:57 +0800
+Subject: Re: [PATCH] clk: socfpga: remove set but not used variable 'rc'
+To:     Stephen Boyd <sboyd@kernel.org>, <dinguyen@kernel.org>,
+        <mturquette@baylibre.com>, <s.trumtrar@pengutronix.de>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yi.zhang@huawei.com>
+References: <20210514062234.3534615-1-yukuai3@huawei.com>
+ <162262008540.4130789.916741380026683860@swboyd.mtv.corp.google.com>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <86e34f50-ad3b-f34a-c5dd-0849496ffd67@huawei.com>
+Date:   Wed, 2 Jun 2021 16:11:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210527211647.1520720-1-luca@lucaceresoli.net>
-References: <20210527211647.1520720-1-luca@lucaceresoli.net>
-Subject: Re: [PATCH RESEND] clk: vc5: fix output disabling when enabling a FOD
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Adam Ford <aford173@gmail.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-clk@vger.kernel.org
-Date:   Wed, 02 Jun 2021 01:00:45 -0700
-Message-ID: <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <162262008540.4130789.916741380026683860@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.129]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggema762-chm.china.huawei.com (10.1.198.204)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Luca Ceresoli (2021-05-27 14:16:47)
-> On 5P49V6965, when an output is enabled we enable the corresponding
-> FOD. When this happens for the first time, and specifically when writing
-> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
-> are stopped for a short time and then restarted.
->=20
-> According to Renesas support this is intended: "The reason for that is VC=
-6E
-> has synced up all output function".
->=20
-> This behaviour can be disabled at least on VersaClock 6E devices, of which
-> only the 5P49V6965 is currently implemented by this driver. This requires
-> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those registers
-> are named "Unused Factory Reserved Register", and the bits are documented
-> as "Skip VDDO<N> verification", which does not clearly explain the relati=
-on
-> to FOD sync. However according to Renesas support as well as my testing
-> setting this bit does prevent disabling of all clock outputs when enabling
-> a FOD.
->=20
-> See "VersaClock =C2=AE 6E Family Register Descriptions and Programming Gu=
-ide"
-> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
-> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-=
-descriptions-and-programming-guide
->=20
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Reviewed-by: Adam Ford <aford173@gmail.com>
->=20
-> ---
+On 2021/06/02 15:48, Stephen Boyd wrote:
+> Quoting Yu Kuai (2021-05-13 23:22:34)
+>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>
+>> drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but
+>> not used [-Wunused-but-set-variable]
+>>
+>> The returned value of of_clk_add_provider() is never used, and so
+>> can be removed.
+>>
+>> Fixes: 97259e99bdc9 ("clk: socfpga: split clk code")
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/clk/socfpga/clk-pll.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+>> index dcb573d44034..127cc849c5ee 100644
+>> --- a/drivers/clk/socfpga/clk-pll.c
+>> +++ b/drivers/clk/socfpga/clk-pll.c
+>> @@ -80,7 +80,6 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
+>>          const char *parent_name[SOCFPGA_MAX_PARENTS];
+>>          struct clk_init_data init;
+>>          struct device_node *clkmgr_np;
+>> -       int rc;
+>>          int err;
+>>   
+>>          of_property_read_u32(node, "reg", &reg);
+>> @@ -114,7 +113,7 @@ static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
+>>                  kfree(pll_clk);
+>>                  return ERR_PTR(err);
+>>          }
+>> -       rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+>> +       of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+> 
+> Shouldn't we fail if of_clk_add_provider() fails? So return some sort of
+> error pointer and unwind allocations, etc.
 
-Any Fixes tag for this patch?
+Will send a v2 patch. By the way, do you think it's better to
+return error pointer instead of NULL pointer when kzalloc() failed?
+
+Thanks
+Yu Kuai
+> 
+>>          return hw_clk;
+>>   }
+>>
+> .
+> 
