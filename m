@@ -3,65 +3,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9258FC4708F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 06:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69ECC47092
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 06:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77045613C1
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 06:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE01A61359
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 06:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbhFBGwE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 02:52:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38034 "EHLO mail.kernel.org"
+        id S231151AbhFBG5H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 02:57:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229753AbhFBGwE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jun 2021 02:52:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8350361090;
-        Wed,  2 Jun 2021 06:50:21 +0000 (UTC)
+        id S229922AbhFBG4s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jun 2021 02:56:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5027E61359;
+        Wed,  2 Jun 2021 06:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622616621;
-        bh=zLYlC44JwKKSpRlcCYDmPAMa/Zf94xrsm6JGjdW7c5U=;
+        s=k20201202; t=1622616905;
+        bh=mK7o3GcfqjDeO63jrM5y3qHZM42ixi418rI06C5uYhk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QON80Ix//rxQJ95d36yEHlASvU3nMORXMjA6g4S6qdzCl196mK9BE4l8idCPt6Dte
-         pSHMHTsyY0FpxmpajkZh3PCrueOYXhXYacCFe7lcvfdEiAL74TDirT3o2eITx2t2v1
-         p60Un9+/65lLfOtRPRfENcfkiaRVnirgaFJWjCU4Dgdk2jURVh2meRQuClHibfVcvX
-         NO2GNDmLLoGvaBROm8UtLRLRYQnvrcSt46hr00vfniTaqml4L+jMnWP3PByWjQa4OD
-         6Snlp5Kv416DUS+yx1omotwNb0UZKuLISW8XpRgRhqJ93mt6I3fmeRpV46FWXogmHS
-         NAsBdpszjVJAQ==
+        b=gChyNay2GntgA3mPKCW57aX5IuhuLOVc6U8i6VSVCv7ZDXAPhlnTbwWBXOGj9wHAh
+         VbUuY2CdtTJpO1nrg2MNlG2RecCGStaUDGAsKbo0mrJ8N1WkDuJYizwcsJkuU9oUNI
+         HmWJoU2VopQLxFw2pQn7xf0AJ17kXTcd43pFDbk/PQTLaszqlVqhVzybHv+EqnCI7G
+         SLgkdrIWvFco5wwPySg2ntu2q+M8nvIcZ25F5vGdVBPKLG8iiFdFgIuFG5ebwFEGzD
+         /S47pOBHYNfVDSeHIV3eXDBRdBT4YdSw+0EduGhNHbzFhDIMLEIXlpwp2CBO15y6R8
+         gc8OY4cv7XuPg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210313020310.386152-1-konrad.dybcio@somainline.org>
-References: <20210313020310.386152-1-konrad.dybcio@somainline.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add MDM9607 GCC clock bindings
+In-Reply-To: <20210503191837.GA2220566@robh.at.kernel.org>
+References: <1619519590-3019-1-git-send-email-tdas@codeaurora.org> <1619519590-3019-2-git-send-email-tdas@codeaurora.org> <20210503191837.GA2220566@robh.at.kernel.org>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add SC7280 DISPCC clock binding
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        phone-devel@vger.kernel.org
-Date:   Tue, 01 Jun 2021 23:50:20 -0700
-Message-ID: <162261662040.4130789.3654997759500822604@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette =?utf-8?q?=C2=A0?= <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Rob Herring <robh@kernel.org>, Taniya Das <tdas@codeaurora.org>
+Date:   Tue, 01 Jun 2021 23:55:04 -0700
+Message-ID: <162261690404.4130789.10296098922791923637@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2021-03-12 18:03:07)
-> Add device tree bindings for global clock controller on MDM9607 SoC.
+Quoting Rob Herring (2021-05-03 12:18:37)
+> On Tue, Apr 27, 2021 at 04:03:05PM +0530, Taniya Das wrote:
+> > diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/d=
+t-bindings/clock/qcom,dispcc-sc7280.h
+> > new file mode 100644
+> > index 0000000..2074b30
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
+> > @@ -0,0 +1,55 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
 >=20
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> ---
+> Dual license please. I'm tired of telling the company that complained to =
 
-Applied to clk-next
+> me about having dual licensing for DT stuff not dual license their
+> stuff. Please pass that on to your coworkers.
+>=20
+
+Taniya, is this going to be resent?
