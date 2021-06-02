@@ -2,93 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0691FC47092
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 07:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4577AC47083
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 07:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4B2D6138C
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 07:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CDE06138C
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jun 2021 07:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbhFBHtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jun 2021 03:49:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
+        id S232272AbhFBH4J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jun 2021 03:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229833AbhFBHtt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jun 2021 03:49:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8CE6261042;
-        Wed,  2 Jun 2021 07:48:06 +0000 (UTC)
+        id S229810AbhFBH4I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jun 2021 03:56:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7168B61042;
+        Wed,  2 Jun 2021 07:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622620086;
-        bh=nYNnz0THp2276rJuXJQV6x29lBdkN0B8z+v4G8M3IHE=;
+        s=k20201202; t=1622620465;
+        bh=X3FXKtQRmh7PNWZo8YL0z+MrxH2lNOXEggG/o4VH4PY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oT4elmBzdnADIjOljvqOOEwR9sEPwA04wKZDoZKqdTMA10wFpJAMWqKLr30iKRt4p
-         vosBL87kKGa82Ql1+lR34RLCBZuSoAwd4cN4jy2oppmBG2C7XXhNYtmCn+whzh55yk
-         mzohRNLhVvDSCWmoSJw9y78ICz5ai2hGZ1i4rmZKQ1uV/GFPcF0Snmsfp7qWrqT8Oz
-         o3VyGiAr4XZHSbtgn1rWSxdQbTwSbX38twgQDgnaJNfggKl7NOOZi1CmjQT9zboum1
-         HmCKfeq7fGApC5IbmFLUNYNTd3e/duNEa5J9tKdjqAqLUnMNVypoLxRBh09F26SHe2
-         0GTSWcAoa2J+A==
+        b=m7ML+M1F3sZl715WG4XD0pK5pcFyRAXVDQV01KFdlItxJZzWWf2E5OQJGJvrRLpbn
+         eEEpwtMq+G9kUMOPpAfbxpeQY7BGpcmPwXMHHTPIFuwLDHtC0Tq1wvxkzbu+iMMYri
+         Z82VQno+hQ8r1sWeh7t0qCORkizidZPUM+tt4VJT/f8RG7s+zKRqU0NksIBHTmtIk0
+         SJj+2HndUEZV+S5r9/veguVu7K6IGiWuJ+QAAVxIxcgqt7XqH3LsnzAVjJab/pyuuP
+         eSaf6HqzgetagZjmUqCR0UfyESic9jBbxsxE5ZqaepiRP7SkbCqCrnnFX4sC2B82pP
+         KL3CIae8cwhuQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210514062234.3534615-1-yukuai3@huawei.com>
-References: <20210514062234.3534615-1-yukuai3@huawei.com>
-Subject: Re: [PATCH] clk: socfpga: remove set but not used variable 'rc'
+In-Reply-To: <20210531184749.2475868-8-arnd@kernel.org>
+References: <20210531184749.2475868-1-arnd@kernel.org> <20210531184749.2475868-8-arnd@kernel.org>
+Subject: Re: [PATCH 7/7] clkdev: remove unused clkdev_alloc() interfaces
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, yi.zhang@huawei.com
-To:     Yu Kuai <yukuai3@huawei.com>, dinguyen@kernel.org,
-        mturquette@baylibre.com, s.trumtrar@pengutronix.de
-Date:   Wed, 02 Jun 2021 00:48:05 -0700
-Message-ID: <162262008540.4130789.916741380026683860@swboyd.mtv.corp.google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>,
+        Florian Fainelli <florian@openwrt.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        John Crispin <john@phrozen.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org
+To:     Arnd Bergmann <arnd@kernel.org>, linux-clk@vger.kernel.org
+Date:   Wed, 02 Jun 2021 00:54:24 -0700
+Message-ID: <162262046414.4130789.1161354377550746226@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yu Kuai (2021-05-13 23:22:34)
-> Fixes gcc '-Wunused-but-set-variable' warning:
+Quoting Arnd Bergmann (2021-05-31 11:47:49)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> drivers/clk/socfpga/clk-pll.c:83:6: warning: variable =E2=80=98rc=E2=80=
-=99 set but
-> not used [-Wunused-but-set-variable]
+> The last user of clkdev_alloc() and clkdev_hw_alloc() was
+> removed last year, so everything now calls clkdev_create()
+> and clkdev_hw_create() instead.
 >=20
-> The returned value of of_clk_add_provider() is never used, and so
-> can be removed.
+> Removing the unused functions lets the compiler optimize
+> the remaining ones slightly better.
 >=20
-> Fixes: 97259e99bdc9 ("clk: socfpga: split clk code")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Fixes: e5006671acc7 ("clk: versatile: Drop the legacy IM-PD1 clock code")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/socfpga/clk-pll.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-> index dcb573d44034..127cc849c5ee 100644
-> --- a/drivers/clk/socfpga/clk-pll.c
-> +++ b/drivers/clk/socfpga/clk-pll.c
-> @@ -80,7 +80,6 @@ static __init struct clk_hw *__socfpga_pll_init(struct =
-device_node *node,
->         const char *parent_name[SOCFPGA_MAX_PARENTS];
->         struct clk_init_data init;
->         struct device_node *clkmgr_np;
-> -       int rc;
->         int err;
-> =20
->         of_property_read_u32(node, "reg", &reg);
-> @@ -114,7 +113,7 @@ static __init struct clk_hw *__socfpga_pll_init(struc=
-t device_node *node,
->                 kfree(pll_clk);
->                 return ERR_PTR(err);
->         }
-> -       rc =3D of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
-> +       of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
 
-Shouldn't we fail if of_clk_add_provider() fails? So return some sort of
-error pointer and unwind allocations, etc.
-
->         return hw_clk;
->  }
->
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
