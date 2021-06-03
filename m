@@ -2,135 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B4AC47082
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D36BC47082
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D36461400
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A284611C9
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbhFCUGw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Jun 2021 16:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
+        id S229617AbhFCUJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Jun 2021 16:09:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229576AbhFCUGw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Jun 2021 16:06:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3575A61008;
-        Thu,  3 Jun 2021 20:05:07 +0000 (UTC)
+        id S229576AbhFCUJA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Jun 2021 16:09:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07BBD613D7;
+        Thu,  3 Jun 2021 20:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622750707;
-        bh=9dFMwUhZOQPsj8oP08P5XGUubz+vM0Q1A+HJ57RO8IA=;
+        s=k20201202; t=1622750835;
+        bh=xWOfmDOvKdhrWNFeqpdIkMU9MPu5knIBzT/+q1yRejo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=No7rDqKu3Nc+EVIZvEP5nwx8P4hcRf6sYF3l1PViKvLwHKBXndnn+RkbZQkuhJKs0
-         IEGZH9DvUCgB0v6FTy8E7/uoqF8SGeaP6bmxhxgmzT491jjvHx+S1yAJFwiHclrnZO
-         SBN8EEIjKY8oJsCWOQIwDZLpYHzrKVDRQATbMXIh2hU9aO8mszcE9uoQZqF+2Tl2Tt
-         07C6abfSmB7JRpDlxHpnAjSMMvmgqLoaE2LGDzuvnWqLsLQMgliYPa0oSz9QvHuiuZ
-         97Lz0+WHma+sWudU6JXr0u1c655WViETL03keWzBz2BgIXZWjWphmVoByyYS6O0BnR
-         hW4WxsL3wfxjA==
+        b=WJiYXB/ORfPow8HKiWAVTSL711JV1C0dV4Hcxgt1448bqCv0OD9SVh3tdXMBqryqP
+         YAcN5gh9WCzHpncZn1knzx1D5Wi1Z94ToGRojheqnS4MDUOQAnYDFMqeurRfqmDJ60
+         VGr5zr34a6CzpluKhL9PMo8zB5zCJtu0j4H7xB4BfXAKdcDiwe9TIgQPS9bheGlzJ+
+         ykc9Zj+0LZKuqgPhYTb+suLwV8r27CAtFdSHdEeNql3C/4qzw6KwRF1jpumx5k7z6z
+         acC43r4s7b6TKbMcLJd9ZrE8YfFWOlqGfkQbgyH4oIxjvpZ0UdlwDmDpM40Meyz8ny
+         tb9L4E473Jctg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202106032204.RmTRwUJD-lkp@intel.com>
-References: <202106032204.RmTRwUJD-lkp@intel.com>
-Subject: Re: [clk:clk-versatile 1/1] clk-versatile.c:undefined reference to `of_iomap'
+In-Reply-To: <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
+References: <20210527211647.1520720-1-luca@lucaceresoli.net> <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com> <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
+Subject: Re: [PATCH RESEND] clk: vc5: fix output disabling when enabling a FOD
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-To:     Peter Collingbourne <pcc@google.com>,
-        kernel test robot <lkp@intel.com>
-Date:   Thu, 03 Jun 2021 13:05:05 -0700
-Message-ID: <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Adam Ford <aford173@gmail.com>
+To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-clk@vger.kernel.org
+Date:   Thu, 03 Jun 2021 13:07:13 -0700
+Message-ID: <162275083380.1835121.17366140869706759167@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting kernel test robot (2021-06-03 07:58:13)
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
--versatile
-> head:   419b3ab6987f2a108cc4710030184365b17467ac
-> commit: 419b3ab6987f2a108cc4710030184365b17467ac [1/1] clk: versatile: re=
-move dependency on ARCH_*
-> config: s390-allmodconfig (attached as .config)
-> compiler: s390-linux-gcc (GCC) 9.3.0
-> reproduce (this is a W=3D1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
-ommit/?id=3D419b3ab6987f2a108cc4710030184365b17467ac
->         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
-t/clk/linux.git
->         git fetch --no-tags clk clk-versatile
->         git checkout 419b3ab6987f2a108cc4710030184365b17467ac
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dgcc-9.3.0 make.cros=
-s ARCH=3Ds390=20
+Quoting Luca Ceresoli (2021-06-03 01:44:57)
+> Hi Stephen,
 >=20
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-
-Probably ought to depend on HAS_IOMEM. Linus or Lee?
-
-----8<----
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index 792315d893db..481de5657d85 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
-=20
- menu "Clock driver for ARM Reference designs"
-+	depends on HAS_IOMEM
-=20
- config ICST
- 	bool "Clock driver for ARM Reference designs ICST"
-
+> On 02/06/21 10:00, Stephen Boyd wrote:
+> > Quoting Luca Ceresoli (2021-05-27 14:16:47)
+> >> On 5P49V6965, when an output is enabled we enable the corresponding
+> >> FOD. When this happens for the first time, and specifically when writi=
+ng
+> >> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outpu=
+ts
+> >> are stopped for a short time and then restarted.
+> >>
+> >> According to Renesas support this is intended: "The reason for that is=
+ VC6E
+> >> has synced up all output function".
+> >>
+> >> This behaviour can be disabled at least on VersaClock 6E devices, of w=
+hich
+> >> only the 5P49V6965 is currently implemented by this driver. This requi=
+res
+> >> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those regis=
+ters
+> >> are named "Unused Factory Reserved Register", and the bits are documen=
+ted
+> >> as "Skip VDDO<N> verification", which does not clearly explain the rel=
+ation
+> >> to FOD sync. However according to Renesas support as well as my testing
+> >> setting this bit does prevent disabling of all clock outputs when enab=
+ling
+> >> a FOD.
+> >>
+> >> See "VersaClock =C2=AE 6E Family Register Descriptions and Programming=
+ Guide"
+> >> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
+> >> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-regist=
+er-descriptions-and-programming-guide
+> >>
+> >> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> >> Reviewed-by: Adam Ford <aford173@gmail.com>
+> >>
+> >> ---
+> >=20
+> > Any Fixes tag for this patch?
 >=20
-> All errors (new ones prefixed by >>):
+> I didn't add any as there is no commit that is clearly introducing the
+> problem. This patch fixes a behavior of the chip, which is there by
+> design by causes problems in some use cases.
 >=20
->    s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_m=
-emory':
->    coherent.c:(.text+0x3bc): undefined reference to `memremap'
->    s390-linux-ld: coherent.c:(.text+0x500): undefined reference to `memun=
-map'
->    s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coheren=
-t_memory':
->    coherent.c:(.text+0xae6): undefined reference to `memunmap'
->    s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_=
-dt':
->    irq-al-fic.c:(.init.text+0x98): undefined reference to `of_iomap'
->    s390-linux-ld: irq-al-fic.c:(.init.text+0x596): undefined reference to=
- `iounmap'
->    s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_c=
-lk_setup':
->    clk-fixed-mmio.c:(.text+0x9a): undefined reference to `of_iomap'
->    s390-linux-ld: clk-fixed-mmio.c:(.text+0xe6): undefined reference to `=
-iounmap'
->    s390-linux-ld: drivers/clk/versatile/clk-versatile.o: in function `cm_=
-osc_setup':
-> >> clk-versatile.c:(.init.text+0xbc): undefined reference to `of_iomap'
->    s390-linux-ld: drivers/clk/versatile/clk-sp810.o: in function `clk_sp8=
-10_of_setup':
-> >> clk-sp810.c:(.init.text+0x174): undefined reference to `of_iomap'
->    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_i=
-nit':
->    timer-of.c:(.init.text+0xcc): undefined reference to `of_iomap'
->    s390-linux-ld: timer-of.c:(.init.text+0x8ee): undefined reference to `=
-iounmap'
->    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_c=
-leanup':
->    timer-of.c:(.init.text+0xb9a): undefined reference to `iounmap'
->    s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in functi=
-on `mchp_pit64b_dt_init_timer':
->    timer-microchip-pit64b.c:(.init.text+0x150): undefined reference to `o=
-f_iomap'
->    s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xc78): undefined =
-reference to `iounmap'
->
+> If a Fixes tag is required than I guess it should be the commit adding
+> support for the 5P49V6965, which is the only supported variant of VC[56]
+> having having the problematic behavior _and_ the reserved register bits
+> to prevent it. However I hardly could blame the author of that code for
+> such a "peculiar" chip behaviour. Do you still want me to add such a tag?
+
+I tend to liberally apply the Fixes tag if something is being fixed. It
+helps understand that the patch is not introducing a new feature and
+when the incorrect code was introduced. I can slap on a Fixes tag
+myself, just not sure what to do.
