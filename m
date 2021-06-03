@@ -2,106 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D36BC47082
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B344BC47096
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 21:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A284611C9
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 20:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99F8961026
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 21:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbhFCUJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Jun 2021 16:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229576AbhFCUJA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Jun 2021 16:09:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 07BBD613D7;
-        Thu,  3 Jun 2021 20:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622750835;
-        bh=xWOfmDOvKdhrWNFeqpdIkMU9MPu5knIBzT/+q1yRejo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WJiYXB/ORfPow8HKiWAVTSL711JV1C0dV4Hcxgt1448bqCv0OD9SVh3tdXMBqryqP
-         YAcN5gh9WCzHpncZn1knzx1D5Wi1Z94ToGRojheqnS4MDUOQAnYDFMqeurRfqmDJ60
-         VGr5zr34a6CzpluKhL9PMo8zB5zCJtu0j4H7xB4BfXAKdcDiwe9TIgQPS9bheGlzJ+
-         ykc9Zj+0LZKuqgPhYTb+suLwV8r27CAtFdSHdEeNql3C/4qzw6KwRF1jpumx5k7z6z
-         acC43r4s7b6TKbMcLJd9ZrE8YfFWOlqGfkQbgyH4oIxjvpZ0UdlwDmDpM40Meyz8ny
-         tb9L4E473Jctg==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
-References: <20210527211647.1520720-1-luca@lucaceresoli.net> <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com> <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
+        id S229707AbhFCVIR convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Jun 2021 17:08:17 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:40334 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229576AbhFCVIR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Jun 2021 17:08:17 -0400
+Received: from [77.244.183.192] (port=63440 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1louXu-0000XU-OT; Thu, 03 Jun 2021 23:06:30 +0200
 Subject: Re: [PATCH RESEND] clk: vc5: fix output disabling when enabling a FOD
-From:   Stephen Boyd <sboyd@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, Adam Ford <aford173@gmail.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-clk@vger.kernel.org
-Date:   Thu, 03 Jun 2021 13:07:13 -0700
-Message-ID: <162275083380.1835121.17366140869706759167@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20210527211647.1520720-1-luca@lucaceresoli.net>
+ <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com>
+ <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
+ <162275083380.1835121.17366140869706759167@swboyd.mtv.corp.google.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <ee4ff8b3-ee57-3b45-7e9c-46fb67cd0305@lucaceresoli.net>
+Date:   Thu, 3 Jun 2021 23:06:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <162275083380.1835121.17366140869706759167@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Luca Ceresoli (2021-06-03 01:44:57)
-> Hi Stephen,
->=20
-> On 02/06/21 10:00, Stephen Boyd wrote:
-> > Quoting Luca Ceresoli (2021-05-27 14:16:47)
-> >> On 5P49V6965, when an output is enabled we enable the corresponding
-> >> FOD. When this happens for the first time, and specifically when writi=
-ng
-> >> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outpu=
-ts
-> >> are stopped for a short time and then restarted.
-> >>
-> >> According to Renesas support this is intended: "The reason for that is=
- VC6E
-> >> has synced up all output function".
-> >>
-> >> This behaviour can be disabled at least on VersaClock 6E devices, of w=
-hich
-> >> only the 5P49V6965 is currently implemented by this driver. This requi=
-res
-> >> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those regis=
-ters
-> >> are named "Unused Factory Reserved Register", and the bits are documen=
-ted
-> >> as "Skip VDDO<N> verification", which does not clearly explain the rel=
-ation
-> >> to FOD sync. However according to Renesas support as well as my testing
-> >> setting this bit does prevent disabling of all clock outputs when enab=
-ling
-> >> a FOD.
-> >>
-> >> See "VersaClock =C2=AE 6E Family Register Descriptions and Programming=
- Guide"
-> >> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
-> >> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-regist=
-er-descriptions-and-programming-guide
-> >>
-> >> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> >> Reviewed-by: Adam Ford <aford173@gmail.com>
-> >>
-> >> ---
-> >=20
-> > Any Fixes tag for this patch?
->=20
-> I didn't add any as there is no commit that is clearly introducing the
-> problem. This patch fixes a behavior of the chip, which is there by
-> design by causes problems in some use cases.
->=20
-> If a Fixes tag is required than I guess it should be the commit adding
-> support for the 5P49V6965, which is the only supported variant of VC[56]
-> having having the problematic behavior _and_ the reserved register bits
-> to prevent it. However I hardly could blame the author of that code for
-> such a "peculiar" chip behaviour. Do you still want me to add such a tag?
+Hi,
 
-I tend to liberally apply the Fixes tag if something is being fixed. It
-helps understand that the patch is not introducing a new feature and
-when the incorrect code was introduced. I can slap on a Fixes tag
-myself, just not sure what to do.
+On 03/06/21 22:07, Stephen Boyd wrote:
+> Quoting Luca Ceresoli (2021-06-03 01:44:57)
+>> Hi Stephen,
+>>
+>> On 02/06/21 10:00, Stephen Boyd wrote:
+>>> Quoting Luca Ceresoli (2021-05-27 14:16:47)
+>>>> On 5P49V6965, when an output is enabled we enable the corresponding
+>>>> FOD. When this happens for the first time, and specifically when writing
+>>>> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
+>>>> are stopped for a short time and then restarted.
+>>>>
+>>>> According to Renesas support this is intended: "The reason for that is VC6E
+>>>> has synced up all output function".
+>>>>
+>>>> This behaviour can be disabled at least on VersaClock 6E devices, of which
+>>>> only the 5P49V6965 is currently implemented by this driver. This requires
+>>>> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those registers
+>>>> are named "Unused Factory Reserved Register", and the bits are documented
+>>>> as "Skip VDDO<N> verification", which does not clearly explain the relation
+>>>> to FOD sync. However according to Renesas support as well as my testing
+>>>> setting this bit does prevent disabling of all clock outputs when enabling
+>>>> a FOD.
+>>>>
+>>>> See "VersaClock ® 6E Family Register Descriptions and Programming Guide"
+>>>> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
+>>>> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-descriptions-and-programming-guide
+>>>>
+>>>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>>>> Reviewed-by: Adam Ford <aford173@gmail.com>
+>>>>
+>>>> ---
+>>>
+>>> Any Fixes tag for this patch?
+>>
+>> I didn't add any as there is no commit that is clearly introducing the
+>> problem. This patch fixes a behavior of the chip, which is there by
+>> design by causes problems in some use cases.
+>>
+>> If a Fixes tag is required than I guess it should be the commit adding
+>> support for the 5P49V6965, which is the only supported variant of VC[56]
+>> having having the problematic behavior _and_ the reserved register bits
+>> to prevent it. However I hardly could blame the author of that code for
+>> such a "peculiar" chip behaviour. Do you still want me to add such a tag?
+> 
+> I tend to liberally apply the Fixes tag if something is being fixed. It
+> helps understand that the patch is not introducing a new feature and
+> when the incorrect code was introduced. I can slap on a Fixes tag
+> myself, just not sure what to do.
+> 
+
+If you're OK in adding it while applying, here it is:
+
+Fixes: 2bda748e6ad8 ("clk: vc5: Add support for IDT VersaClock 5P49V6965")
+
+Thanks.
+-- 
+Luca
+
