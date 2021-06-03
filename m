@@ -2,77 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D96C47082
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 06:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDCCC47082
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 08:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 270D8613E6
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 06:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BFE5613E3
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 08:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhFCGJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Jun 2021 02:09:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229635AbhFCGJy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Jun 2021 02:09:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1EDD0613D8;
-        Thu,  3 Jun 2021 06:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622700490;
-        bh=Ni4FnwlE7iP+i1fvRm3QaBqUK1LzsPVCrZOBTZaYPsU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KERH2u0PHxwtpkaqHqQzjbmTriH8O9Ta4Yv1C5sGFW/ak7tvzeqCHpgm2pOkTw/si
-         gQZG02/9Pdv8phpLohbPlgOsGwY6g1raCE7t3prKiUhq+0Q2qTY9mNPnLitxi9d3r0
-         StG757xSepAm2hVcOhnsZL/g4BFBylHZCqHnI/hjc35ZbNqXrqTPnWPPulynKflZyP
-         8iCI63iCFUZY74/6JnI9Micdv7B4QOQYVkvxwNgocFFEuKRyY95e4ZN6nZD+SyFsg1
-         KxjScARXMLmK7wuNQFxjk94eAjbfrPEOxiytR3YkKPGoMecjG0bEN3AwS+v3t8IlLK
-         FPtxhTjKXgMmQ==
-Subject: Re: [PATCH v2 0/2] clk: keystone: Add support for AM64 specific
- ehrpwm-tbclk
-To:     Lokesh Vutla <lokeshvutla@ti.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Device Tree Mailing List <devicetree@vger.kernel.org>,
-        ssantosh@kernel.org, Vignesh R <vigneshr@ti.com>,
-        linux-clk@vger.kernel.org,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Nishanth Menon <nm@ti.com>
-References: <20210528045743.16537-1-lokeshvutla@ti.com>
-From:   Tero Kristo <kristo@kernel.org>
-Message-ID: <a33393b0-db88-ca2d-a51c-9f25880ff0e3@kernel.org>
-Date:   Thu, 3 Jun 2021 09:08:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229576AbhFCIqn convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Jun 2021 04:46:43 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:34400 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229486AbhFCIqn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Jun 2021 04:46:43 -0400
+Received: from [77.244.183.192] (port=63380 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1loiyH-000Csm-Ra; Thu, 03 Jun 2021 10:44:57 +0200
+Subject: Re: [PATCH RESEND] clk: vc5: fix output disabling when enabling a FOD
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Adam Ford <aford173@gmail.com>
+References: <20210527211647.1520720-1-luca@lucaceresoli.net>
+ <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <8b763492-b2b3-93d3-9801-2f2f0ec90241@lucaceresoli.net>
+Date:   Thu, 3 Jun 2021 10:44:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210528045743.16537-1-lokeshvutla@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <162262084596.4130789.198191855440093780@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/05/2021 07:57, Lokesh Vutla wrote:
-> This series adds support for AM64 specific ehrpwm Time-base submodule
-> clock.
-> 
-> Changes since v1:
-> - Fixed register offsets and bits for clocks.
-> - Update the compatible to ti,am64-epwm-tbclk, as high resolution is not
->    supported in AM64.
-> 
-> Lokesh Vutla (2):
->    dt-bindings: clock: ehrpwm: Add support for AM64 specific compatible
->    clk: keystone: syscon-clk: Add support for AM64 specific ehrpwm-tbclk
-> 
->   .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml   |  4 +++-
->   drivers/clk/keystone/syscon-clk.c               | 17 +++++++++++++++++
->   2 files changed, 20 insertions(+), 1 deletion(-)
-> 
+Hi Stephen,
 
-For the whole series:
+On 02/06/21 10:00, Stephen Boyd wrote:
+> Quoting Luca Ceresoli (2021-05-27 14:16:47)
+>> On 5P49V6965, when an output is enabled we enable the corresponding
+>> FOD. When this happens for the first time, and specifically when writing
+>> register VC5_OUT_DIV_CONTROL in vc5_clk_out_prepare(), all other outputs
+>> are stopped for a short time and then restarted.
+>>
+>> According to Renesas support this is intended: "The reason for that is VC6E
+>> has synced up all output function".
+>>
+>> This behaviour can be disabled at least on VersaClock 6E devices, of which
+>> only the 5P49V6965 is currently implemented by this driver. This requires
+>> writing bit 7 (bypass_sync{1..4}) in register 0x20..0x50.  Those registers
+>> are named "Unused Factory Reserved Register", and the bits are documented
+>> as "Skip VDDO<N> verification", which does not clearly explain the relation
+>> to FOD sync. However according to Renesas support as well as my testing
+>> setting this bit does prevent disabling of all clock outputs when enabling
+>> a FOD.
+>>
+>> See "VersaClock ® 6E Family Register Descriptions and Programming Guide"
+>> (August 30, 2018), Table 116 "Power Up VDD check", page 58:
+>> https://www.renesas.com/us/en/document/mau/versaclock-6e-family-register-descriptions-and-programming-guide
+>>
+>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>> Reviewed-by: Adam Ford <aford173@gmail.com>
+>>
+>> ---
+> 
+> Any Fixes tag for this patch?
 
-Reviewed-by: Tero Kristo <kristo@kernel.org>
+I didn't add any as there is no commit that is clearly introducing the
+problem. This patch fixes a behavior of the chip, which is there by
+design by causes problems in some use cases.
+
+If a Fixes tag is required than I guess it should be the commit adding
+support for the 5P49V6965, which is the only supported variant of VC[56]
+having having the problematic behavior _and_ the reserved register bits
+to prevent it. However I hardly could blame the author of that code for
+such a "peculiar" chip behaviour. Do you still want me to add such a tag?
+
+-- 
+Luca
+
