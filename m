@@ -2,78 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DE2C4743C
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 19:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97DBC4743C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 20:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A00CE613F9
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 19:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A720C61403
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 20:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbhFDTZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jun 2021 15:25:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229501AbhFDTZI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Jun 2021 15:25:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1ABC1613F9;
-        Fri,  4 Jun 2021 19:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622834602;
-        bh=HRfrRBBjvQ0q3EsQR7+VV5+hU7WWE2FJdKqENhq9jtM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uQBpLqdw5MIVXsn5bqjOKR5KLH4r3vAZSBUHFk5tmeOn7tMmgfvc8YBLyWIONl3SZ
-         judGyFZGjwwBEmzLzS6+OZ8FxWfm9rW0QX3Mbz4yeY7WDVx0TCUy0ofScUfVtGbeLl
-         AB6sbezN816fZSOrfCuapSGNmb4PpBoFplO4RgECioOlx9U/wRnZpQ8c8sS/TRitbS
-         lkdf25EsL7HnpEyJcTJPKaW49cYUDyVQegBtTD+F8RlnOO8bRW+GhyNopJUL+YpoD5
-         NlpoY3u+MMfsPGZ/Cj3V5AealHWuir8eVpwMxcsY5m5tnLEzxKxP5Pe3yol+o3Fuaz
-         YrLzew7ifOarQ==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: versatile: Depend on HAS_IOMEM
-Date:   Fri,  4 Jun 2021 12:23:21 -0700
-Message-Id: <20210604192321.2594519-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.32.0.rc1.229.g3e70b5a671-goog
+        id S231211AbhFDU54 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jun 2021 16:57:56 -0400
+Received: from mail-oo1-f49.google.com ([209.85.161.49]:35811 "EHLO
+        mail-oo1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229906AbhFDU54 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jun 2021 16:57:56 -0400
+Received: by mail-oo1-f49.google.com with SMTP id s20-20020a4ae9940000b02902072d5df239so2548472ood.2;
+        Fri, 04 Jun 2021 13:56:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=M//mZgtCwbk1BSRJ1Wk3leMprXYCUHwVF8AJTmLsFS8=;
+        b=uBIO66RgpA/CHd7oLd6bxq1V6k1d/UeFsiZX4Hp5U+te25Jl5Eu10dMsw9mjfVb7j0
+         DcZRdPKR8Q71CgF+zC20XFgjCft8GOXrtF+4MOn5KxNsQp7KqCKPSUG9rV47OBDT9B7N
+         DgsLq7B5uFl1H3DtarRZ8cW6daU0M/TkHXW+jDFlwSIck78xjD5kKzlznpVOS8uFO3kc
+         +ECbStirf4qF+RXJAcXV46eXOT+HBQC/L8eP+k5aCxhDmb4YzXFwpV+dp4El/Gdnuo6i
+         jEoxffCLFJvRpa0GmHth3z96iC1nTKViuzylntGRXyaY681L5FxWh3311B7WvFiyi3dN
+         EsbQ==
+X-Gm-Message-State: AOAM530h4OlKYUVaU2BanDizuFIZRMTyrTjPcLLA0IGGJG0Aimu/Hr3a
+        tiSLSUEgOymc55IGz4tWIQ==
+X-Google-Smtp-Source: ABdhPJyKTIDHYQyp45mGfxFo+98JHE6cjlNCBJ6+fYk0DFrwAkCtgguQ9eAqK3cBXeOoYcR0nCjcEQ==
+X-Received: by 2002:a4a:6107:: with SMTP id n7mr5114746ooc.12.1622840169273;
+        Fri, 04 Jun 2021 13:56:09 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z14sm706688oti.29.2021.06.04.13.56.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jun 2021 13:56:08 -0700 (PDT)
+Received: (nullmailer pid 3901286 invoked by uid 1000);
+        Fri, 04 Jun 2021 20:56:07 -0000
+Date:   Fri, 4 Jun 2021 15:56:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Vignesh R <vigneshr@ti.com>, mturquette@baylibre.com,
+        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Tero Kristo <kristo@kernel.org>, sboyd@kernel.org,
+        ssantosh@kernel.org, linux-clk@vger.kernel.org,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ehrpwm: Add support for AM64
+ specific compatible
+Message-ID: <20210604205607.GA3901252@robh.at.kernel.org>
+References: <20210528045743.16537-1-lokeshvutla@ti.com>
+ <20210528045743.16537-2-lokeshvutla@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210528045743.16537-2-lokeshvutla@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-kbuild robot reports that s390 fails to build this driver with
-COMPILE_TEST. Let's depend on HAS_IOMEM so that s390 doesn't try to
-build it.
+On Fri, 28 May 2021 10:27:42 +0530, Lokesh Vutla wrote:
+> Introduce AM64 specific compatible for epwm time-base sub-module clock.
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+>  .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml      | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Fixes: 419b3ab6987f ("clk: versatile: remove dependency on ARCH_*")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/versatile/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index 792315d893db..481de5657d85 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- menu "Clock driver for ARM Reference designs"
-+	depends on HAS_IOMEM
- 
- config ICST
- 	bool "Clock driver for ARM Reference designs ICST"
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
+Acked-by: Rob Herring <robh@kernel.org>
