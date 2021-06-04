@@ -2,105 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A82FC4743C
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 17:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1290DC4743C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 17:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5C661414
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 17:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6B561402
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 17:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbhFDRUq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jun 2021 13:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbhFDRUq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jun 2021 13:20:46 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBF9C061766;
-        Fri,  4 Jun 2021 10:18:52 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id ho18so4636177ejc.8;
-        Fri, 04 Jun 2021 10:18:52 -0700 (PDT)
+        id S230348AbhFDRaL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jun 2021 13:30:11 -0400
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:33340 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229978AbhFDRaK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jun 2021 13:30:10 -0400
+Received: by mail-qt1-f172.google.com with SMTP id a15so7607131qta.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jun 2021 10:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aV8VFwDqQyLM7O/HC0yXgAxy4pRZKgMLngJbx9RyuLw=;
-        b=r0PFQO3W+KWBaNQd9bdmLdmneEcX0chXaML3BDsrowJ2hvRJ0KdPRAuw7blwxP/6lM
-         nwme2xV9y2H/tmYu33xcBcmrDVvaFkt6hCFm90AlnTOvEScyVVz1+Q5HMB2g25p0zKbi
-         l7mzBvLH/5tz6TBtsgvLHcdXtU8ADcWXoK6ekTlcc4XhfFuRiVq/XbN53NwVD6pjJLB6
-         xmLF2He5kAEwqrS4Zpq4NSEl8dXj2ppmntpg9mD5h32AWrxc+h2aLTqrm2CcaaYdsA3m
-         N3TgjGIbybuaRxsIM7giWe2zn/59EHbaW/wk9G8I6JR05zEH5n7gtmXqiGl48SWPYF2R
-         4sdQ==
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=W7q2U9QT7qAxj7hf+II4Z/nhms5EfM2onq31L99Ku2U=;
+        b=knyEhL7QEI32EeLzI2KT4Dljnurd8LSBl3eY1jsnandqQeKWQkPZUAoZo33Ipg4z6i
+         ebwNIk8PHzjI6iPgnKWu11xSJ7F8p2e1g4Ij1mMqWez1t91NnabPspncr395HhfNwHtT
+         XC3F3nkkrdCmEg76mV5KLl7EfwTEHmszTUNvOB7m+zA8CdMGorb7cs0OF0da1HKyrZAc
+         1/DVPkDnzn8KURWaYRlGNmlR8yNW1vy9Z+bnYexUzg5EymMymjArwtCVSzi+ETjbmrLA
+         NTXzipMQwxfXaZ8LqfiQ4TiM1rat14suhnFWwRgBiFbHi7rnenPJD/Q1GOUWkVp8kaei
+         tIBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aV8VFwDqQyLM7O/HC0yXgAxy4pRZKgMLngJbx9RyuLw=;
-        b=ONP6Ywn7S1xILS+N5xk5pBAoaSn5xIp+sMpjMUereJNmiVYTKgZmgviSStffoq9w6o
-         CoMosijw9RUwEpMiTPhv3aG9JN5zZOaEcCEshKUlOayxGVrX7G0t86fstlNdNBO9evsC
-         /KnRG7DoEjn0mr6Y7Wm+5UR+oXzu2SyUW1Qb4WjpH7wguBf0tAtlT++6D3pruqVtj9pE
-         AJ6Ltrfp2RwG3ZkAN/2gUR+ieOszreKBQe3Ob1AwasCDkeT/vhHU55p6P4+Usj1GxpF9
-         wwlYQ2jorhmA3Iwdso5LGJMtH281TFbyO3vkbBrsAt9nLf6ixL4M9XMI7zP8rBzAEuiD
-         jFQA==
-X-Gm-Message-State: AOAM531e5G7F/GLPZKwnXTOaipE1LR13rtfKk96yQho2vCKjoWgp3VPj
-        5lLJ6thXaFUGhCiDznT1XO7OowFnMPHjq/JdMyY=
-X-Google-Smtp-Source: ABdhPJzmfa3gSEAJuAKzn67r0Jj59tYYouwbp4UpcgEO7HHUdbgQpZjEUqVT3vW5n6TSpxJr7orxiv4DyldBSQSjhKg=
-X-Received: by 2002:a17:907:2d8d:: with SMTP id gt13mr5324328ejc.162.1622827130788;
- Fri, 04 Jun 2021 10:18:50 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W7q2U9QT7qAxj7hf+II4Z/nhms5EfM2onq31L99Ku2U=;
+        b=D7cmzNkuM3RGJMlOrWcVtIJfxRXcz6XBHLPYx1ZUlOYRV6SWI85+mqfoGDxk2MA9i+
+         H1h7k++dar/WcqRGq1AIY4RuM37G8/sVqgGPZmRKtzMtW0zgC1VCx07TGO17ETTdMPwY
+         fOuV/yTT36bxKl1b9QCciZBmZbyDzZvYX/lxABhFDlW8xZHnouqxSlBu3fI3IHxSbMf6
+         wzeEAztt7/17XtrQjPpONqOtj78goIEB9BcTTt62HL810ajHc7HDQ9HBsCyPl0Pgqve1
+         4NuQG20LWDbRCkKMF+AlcHYnMEEIy3vdMabUo1d7hvh4gg/1CmbiMahCSL2gfHdxSZd0
+         ZFSw==
+X-Gm-Message-State: AOAM532hIuX00/PUw9NfVFJnlDUA53McxrHb+TFNbQQgfCuwCNCroDd0
+        UPNGCOBRJozYtikaPIWdcziAqA==
+X-Google-Smtp-Source: ABdhPJxry73nGzw9vaNeSCAnH5NcGdzaokOeVX5S03eBqde14Jqq6PqvuHlpJHmbrHME98hK3aceEw==
+X-Received: by 2002:ac8:570b:: with SMTP id 11mr5643304qtw.287.1622827643909;
+        Fri, 04 Jun 2021 10:27:23 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable068.184-131-66.mc.videotron.ca. [66.131.184.68])
+        by smtp.gmail.com with ESMTPSA id l5sm3411632qkf.55.2021.06.04.10.27.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jun 2021 10:27:23 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] dt-bindings: clock: add QCOM SM8350 display clock
+ bindings
+To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210519001802.1863-1-jonathan@marek.ca>
+ <20210519001802.1863-2-jonathan@marek.ca>
+ <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com>
+From:   Jonathan Marek <jonathan@marek.ca>
+Message-ID: <56f3b0bd-5dd7-80d4-041a-0fd2daf4b1f2@marek.ca>
+Date:   Fri, 4 Jun 2021 13:25:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20210524103733.554878-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20210524103733.554878-1-martin.blumenstingl@googlemail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 4 Jun 2021 19:18:40 +0200
-Message-ID: <CAFBinCDn_0TeyLG9b9uB+4-4PdeNXgja11wf2CGcQ99tUNjkyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] clk: meson: rounding for fast clocks on 32-bit SoCs
-To:     sboyd@kernel.org, jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, mturquette@baylibre.com,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome, Hi Stephen,
+On 6/2/21 5:27 PM, Stephen Boyd wrote:
+> Quoting Jonathan Marek (2021-05-18 17:18:02)
+>> Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
+>> bindings. Update the documentation with the new compatible.
+>>
+>> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
+>>   include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
+> 
+>>   2 files changed, 5 insertions(+), 2 deletions(-)
+>>   create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> 
+> Why the symlink? Can we have the dt authors use the existing header file
+> instead?
+> 
 
-On Mon, May 24, 2021 at 12:37 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
-> fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
-> up to approx. 3GHz.
-> This however causes a problem, because these rates require BIT(31) to
-> be usable. Unfortunately this is not the case with clk_ops.round_rate
-> on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
->
-> clk_ops.determine_rate does not suffer from this limitation. It uses
-> an int to signal any errors and can then take all availble 32 bits for
-> the clock rate.
->
-> Changes since v1 from [0]:
-> - reworked the first patch so the the existing
->   divider_{ro_}round_rate_parent implementations are using the new
->   divider_{ro_}determine_rate implementations to avoid code duplication
->   (thanks Jerome for the suggestion)
-> - added a patch to switch the default clk_divider_{ro_}ops to use
->   .determine_rate instead of .round_rate as suggested by Jerome
->   (thanks)
-> - dropped a patch for the Meson PLL ops as these are independent from
->   the divider patches and Jerome has applied that one directly (thanks)
-> - added Jerome's Reviewed-by to the meson clk-regmap patch (thanks!)
-> - dropped the RFC prefix
-please let me know what you think about this v2
-I am asking because clk-divider is widely used, so I'd appreciate if
-this gets some time in linux-next (so for example Kernel CI can test
-this and report issues if there are any).
+It would be strange to include bindings with the name of a different 
+SoC. I guess it is a matter a preference, is there any good reason to 
+*not* do it like this?
 
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+>> index 0cdf53f41f84..8f414642445e 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+>> @@ -4,24 +4,26 @@
+>>   $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>> -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
+>> +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
+> 
+> Maybe just "Binding for SM8x50 SoCs"
+> 
 
-Best regards,
-Martin
+Its likely these bindings won't be compatible with future "SM8x50" SoCs, 
+listing supported SoCs explicitly will avoid confusion in the future.
+
+>>   
+>>   maintainers:
+>>     - Jonathan Marek <jonathan@marek.ca>
+>>   
+>>   description: |
+>>     Qualcomm display clock control module which supports the clocks, resets and
+>> -  power domains on SM8150 and SM8250.
+>> +  power domains on SM8150/SM8250/SM8350.
+> 
+> same 8x50 comment.
+> 
+>>   
+>>     See also:
+>>       dt-bindings/clock/qcom,dispcc-sm8150.h
+>>       dt-bindings/clock/qcom,dispcc-sm8250.h
+>> +    dt-bindings/clock/qcom,dispcc-sm8350.h
+>>   
+>>   properties:
+>>     compatible:
+>>       enum:
+>>         - qcom,sm8150-dispcc
+>>         - qcom,sm8250-dispcc
+>> +      - qcom,sm8350-dispcc
+>>   
+>>     clocks:
+>>       items:
+>> diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+>> new file mode 120000
+>> index 000000000000..0312b4544acb
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+>> @@ -0,0 +1 @@
+>> +qcom,dispcc-sm8250.h
+>> \ No newline at end of file
