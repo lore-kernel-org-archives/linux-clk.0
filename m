@@ -2,142 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421F0C47097
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 22:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800EEC47082
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 01:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 329FC61413
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Jun 2021 22:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A5C613F6
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 01:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231389AbhFCWUp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Jun 2021 18:20:45 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:39004 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230265AbhFCWUp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Jun 2021 18:20:45 -0400
-X-IronPort-AV: E=Sophos;i="5.83,246,1616425200"; 
-   d="scan'208";a="83182185"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Jun 2021 07:18:59 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 49437410B534;
-        Fri,  4 Jun 2021 07:18:55 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
-Cc:     Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for RZ/G2L SMARC EVK
-Date:   Thu,  3 Jun 2021 23:17:58 +0100
-Message-Id: <20210603221758.10305-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        id S229911AbhFDBVm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Jun 2021 21:21:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230158AbhFDBVl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Jun 2021 21:21:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 51F2A61168;
+        Fri,  4 Jun 2021 01:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622769596;
+        bh=R1Ykmxe4dRQWe/IJFA33H2rc+GDw9jPUumYFbEC6/+E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qMsYQOZSqdC5Az0dBoByEoJmhEMGQwl5IDkz4lJ+Jcwrcuqpp4qGGVC6M8Oc45VJ1
+         d1y4yQMxsfdcbrNlJ3y7Y7X4cbt2bAtNjEfAZW5QEgjIkFSIPOQYFXw2P+dniNefmz
+         foAPZRbc/S76Dm+2zN/LoNzCECbaN5X3XfwvBWau3jvZk4Z2MXWGdmByBErEt77vqR
+         5WlL10c6NtQSF3u5CIomIadlf1tdK6zR5nmM9Q26rKVeWCGOnkS1m2XdORErJtWqVr
+         htwAhG0bxgtatIy/OxtFa6ktJpBav13MsH1O6qk2/D5XLc9TnfBS2Al/vrhUwndb0m
+         NQcBeifYOtbbA==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202106031129.hK4xvnxz-lkp@intel.com>
+References: <202106031129.hK4xvnxz-lkp@intel.com>
+Subject: Re: [clk:clk-qcom 5/10] drivers/clk/qcom/gcc-mdm9607.c:37:32: warning: unused variable 'gcc_xo_sleep_map'
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        kernel test robot <lkp@intel.com>
+Date:   Thu, 03 Jun 2021 18:19:55 -0700
+Message-ID: <162276959506.1835121.3197175655380445671@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add basic support for RZ/G2L SMARC EVK (based on R9A07G044L2):
-- memory
-- External input clock
-- SCIF
+Quoting kernel test robot (2021-06-02 20:25:31)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
+-qcom
+> head:   ec7e22abec97b6bd577027380077ec395864a3c5
+> commit: 48b7253264eadc05a3d84db9ea11eef528a0108a [5/10] clk: qcom: Add MD=
+M9607 GCC driver
+> config: arm64-randconfig-r001-20210603 (attached as .config)
+> compiler: clang version 13.0.0 (https://github.com/llvm/llvm-project d8e0=
+ae9a76a62bdc6117630d59bf9967ac9bb4ea)
+> reproduce (this is a W=3D1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
+n/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # install arm64 cross compiling tool for clang build
+>         # apt-get install binutils-aarch64-linux-gnu
+>         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
+ommit/?id=3D48b7253264eadc05a3d84db9ea11eef528a0108a
+>         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
+t/clk/linux.git
+>         git fetch --no-tags clk clk-qcom
+>         git checkout 48b7253264eadc05a3d84db9ea11eef528a0108a
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross AR=
+CH=3Darm64=20
+>=20
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile          |  2 ++
- .../boot/dts/renesas/r9a07g044l2-smarc.dts    | 21 +++++++++++++++
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 27 +++++++++++++++++++
- 3 files changed, 50 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
- create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index f2de2fa0c8b8..68e30e26564b 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -62,3 +62,5 @@ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
- 
- dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
-+
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
-new file mode 100644
-index 000000000000..de2b86cac577
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L SMARC EVK board
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g044.dtsi"
-+#include "rzg2l-smarc.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK based on r9a07g044l2";
-+	compatible = "renesas,smarc-evk", "renesas,r9a07g044l2", "renesas,r9a07g044";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-new file mode 100644
-index 000000000000..adcd4f50519e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L SMARC EVK common parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <24000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
--- 
-2.17.1
-
+Thanks. I think we'll just have to delete them.
