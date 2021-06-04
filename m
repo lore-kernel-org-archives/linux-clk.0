@@ -2,147 +2,167 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0315EC4708F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 08:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE1C07E94
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 08:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC1AD61420
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 08:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B0C661421
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 08:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbhFDISP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jun 2021 04:18:15 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:35510 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbhFDISO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jun 2021 04:18:14 -0400
-Received: by mail-wr1-f44.google.com with SMTP id m18so8393822wrv.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jun 2021 01:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=OFcZXvFHiqa0WctRL3C9MJlLSmHi8sAjboiDNPgMnuc=;
-        b=BPg16v26Bm2NeIiW24CT9oW8rinG4l06kaIQIM6N58Y7ZQcuuFVdPZyTi22Gkw1qIg
-         x+0Y9PAqNbVVlOoF38QzYOXqq3V4tAYAWDrM35uO8ClsHvKjY9FeiZq30BMqYnwm5mff
-         IsDxn7hBvIdWUopMkZ1oOM385kRIOU8++YUywV5ZBPCTfwzumE0b09513rFcdyX0jZN6
-         gZIO+JBjuUPL+jwEXttEmvV/LKw7YceN4gVKxZjeeOnqU6LduCLcfAP6mUjv4S4qpkbv
-         QMwFmeofYpYxSH5xDeuswyYyt077FcLRm8OozeWpaOCRAOx6gJI0F912XZFEF920LhZl
-         SkVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=OFcZXvFHiqa0WctRL3C9MJlLSmHi8sAjboiDNPgMnuc=;
-        b=RHgePxx8GZmieG40roDDRDQ3dkT2QOSfis2s3fkhdC/r7zLYoRu/bq5ocuuK1j4zRc
-         8vypXS6TWzVlZU1csj2Ro80LN13+9oKZunpb0Zdb0BVRrouRuPeWKyRm+FUXriA8Yal3
-         4a3CvnmqrpIWBcgKzqkzAJ6pOeNueaLMUYauDCapVBUNXmb5qVstSijytQDEMr+ecxeE
-         +kpPRDBDFDzD0RSwnrbVrety3te9iNU3Cn+NgfRbfiNf4gvnlNf0WmXvU4KFp5ihtkTU
-         8yqR9BOH1L+a+xPRAx/Hc0YaXfekEm+dyPhkeJFqLO+Uu0u5XlY9HpJR3fUlM9EB+fXJ
-         Tc/Q==
-X-Gm-Message-State: AOAM533No1E7lXW5AKNR3OPdJFixyQQYPoH5UP3I6gzbCrX4jxjIeeKt
-        jeS+F3vcITjmdKTKSUi/gmfEAg==
-X-Google-Smtp-Source: ABdhPJzKCDG2S/MW+XSyWSgQNMBba3x+94mh+AHkRgSppUsF3NaVvfwn74rlzBJZ0efEk6lznwp62Q==
-X-Received: by 2002:a5d:65cd:: with SMTP id e13mr2522129wrw.93.1622794513918;
-        Fri, 04 Jun 2021 01:15:13 -0700 (PDT)
-Received: from dell ([91.110.221.214])
-        by smtp.gmail.com with ESMTPSA id l5sm7806358wmi.46.2021.06.04.01.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jun 2021 01:15:13 -0700 (PDT)
-Date:   Fri, 4 Jun 2021 09:15:11 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Peter Collingbourne <pcc@google.com>,
-        kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [clk:clk-versatile 1/1] clk-versatile.c:undefined reference to
- `of_iomap'
-Message-ID: <20210604081511.GD2435141@dell>
-References: <202106032204.RmTRwUJD-lkp@intel.com>
- <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S229958AbhFDIWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jun 2021 04:22:13 -0400
+Received: from mail-eopbgr20062.outbound.protection.outlook.com ([40.107.2.62]:26390
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229978AbhFDIWK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Jun 2021 04:22:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fooiaxjtuB0+f7O8N/G37P5WHNpvpIzEM25+cYAlMWUkcfC9FW4w8agXkc/UaEbIZ3vWa/oAIU2Kwzg/GCVq6DaFvYRRnumC9LTUi+F1fElJCbLi9oWXUW3nWXSjJE8fMJaS51BVcv38XNq/xh0OPDDOpHlBwiyTicwJ0+6/u6BH2PBB6OMK/X9iHWNI2dssMeOFBdDfmL3ztzzTrvNYFFYuCzakYbAzeWEGGME5bbpuOYosS6k5pq81O6xT6W7WFmYjGYGHWvw4CD6O61mPTv6W5tU6gv4Evw5RbMXNS8Ou14fbWesiESRmOhRA5yg28nyAV6gw4EkIbtFj+GqD5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1MK2Q8RG1tUf6Rf0OrAxhOJzi+XxxPJZdccym+ET8l4=;
+ b=nfz7RLau52DrcCwbXmAJxYd/8UQ+dl4BdalCQpv4+8cS0nZyFixX8SgHryDMjVi5GTXy0meHrUBv+el3ziFGzrMuQWLzUbGBoBSmy9TjYZ1j1HmheVn+KDc/lZ6nUms7KwQ2AmLFQ0ZzDZC2EkG3ch824mqCe9SfWrFK4gGs+p4dvW9/W1D+TJohAwWwrOtIl6lc378Z/eX0/RkfL7bNx9/XUAvD6Mfjsn0qMGKZ4b3qrBa94AbUiqnOSsyk90PJHwLkwBevU6ZjrPV6ACyZAHhcfm2cy+gPEemB+CDO4Wh44rilXT3Mi5oPGsViArIPPbF14+chqcCI/aXycf5ZCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1MK2Q8RG1tUf6Rf0OrAxhOJzi+XxxPJZdccym+ET8l4=;
+ b=rOJfdfXQJcBBhYT5oFo5ePJh5JdNhNe+wgsTCtNCY1/wzACub1UUr2Q4FRrNi1FrT3Vv4l9yZoiiNSYU1TLebXT3H5WPxERcl9oZkmgHLRWTFTnMsHi3TCQmvnr9innA+BFA04whvtKIAdFMkOqPddFoG43f0dP0oFqja8CcIkE=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com (2603:10a6:800:57::8)
+ by VI1PR04MB5088.eurprd04.prod.outlook.com (2603:10a6:803:5a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Fri, 4 Jun
+ 2021 08:20:22 +0000
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::49a5:9:d201:2382]) by VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::49a5:9:d201:2382%6]) with mapi id 15.20.4173.030; Fri, 4 Jun 2021
+ 08:20:22 +0000
+Date:   Fri, 4 Jun 2021 11:20:20 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Dong Aisheng <dongas86@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 6/6] clk: imx8qm: add clock valid resource checking
+Message-ID: <YLniRO+huV0+rytH@ryzen.lan>
+References: <20210423033334.3317992-1-aisheng.dong@nxp.com>
+ <20210423033334.3317992-6-aisheng.dong@nxp.com>
+ <162259860630.4130789.2941110953953498194@swboyd.mtv.corp.google.com>
+ <YLnMUtxEAxAq3vBO@ryzen.lan>
+ <CAA+hA=QO2CSAqFMcyEakADNPqVej09i9jkO7HLnQ=-pR_ESbeg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAA+hA=QO2CSAqFMcyEakADNPqVej09i9jkO7HLnQ=-pR_ESbeg@mail.gmail.com>
+X-Originating-IP: [188.27.175.31]
+X-ClientProxiedBy: VI1PR0501CA0005.eurprd05.prod.outlook.com
+ (2603:10a6:800:92::15) To VI1PR0401MB2559.eurprd04.prod.outlook.com
+ (2603:10a6:800:57::8)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ryzen.lan (188.27.175.31) by VI1PR0501CA0005.eurprd05.prod.outlook.com (2603:10a6:800:92::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.22 via Frontend Transport; Fri, 4 Jun 2021 08:20:22 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ce4ba2eb-a98e-4799-95d1-08d927319907
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5088:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR04MB5088BA52D40FB9A6E5E20FA0F63B9@VI1PR04MB5088.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wZSglPLXUW5Y8TPbXbWtK7YIE24ha7TrHYCKTvXSpVGZ2JM2azo7F/DFz0cIvuuN+pG+OZJplBUotmRPeN0CIicUt0mukwTcRPTdydzjNyrniwLbxkJCNIUuqxHdQdW0JBh9dI6t39jD6+vT7K3rsQr0BRjvShMA9BTwvGct/On5jIJVUqe/yevD5PbO3RFQoYsSYyL+C7sEXZf57Tl7IIHcgp4GHDocDcs1/j/8E3pcRGMRAjc9Y8OlQWrC3ZRYDK+clXEf7uCLJIOMB3pgdJ3jmFGOWRBZ8LwXgPGcgoXYUf5tZ1yHftgQe/0vTStAQ+C0+S1dpC9Zak03xoIMBc9empr6dWqNoQsCzDWTevDNU5jy3YitKe1PViZbsznrHazjSW61LK6ye51Rw1gqMCmagL9RllzPPsrUxbwvdr5nVhGrN1smJLy+acNW1cfX1CnKpILYo7pHvw3iZCf6XQ5ghMdlfusoYZzodyPgYysdSS9rn/zxBIoKOae+hYe6KzRzuUMB3KQC60dlF2JpMws36ZoHfhzVS/B7ls3SqrsymRzwSSYkygP06ocnZi9IqWvhn9NYfk2FKAZIhvQo921SSSaRF52HFx4Ysj2Q3cXdwUK/dY2ejq/sFKog2UG52VhR2RQtIyPabRk43WBNrUFwhx1tPnaGzGwUMHrdlJwMddY2j7qeFSbAYy4+Wpwp
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0401MB2559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(39860400002)(396003)(136003)(376002)(956004)(7696005)(52116002)(5660300002)(9686003)(316002)(54906003)(55016002)(8676002)(36756003)(8886007)(2906002)(66476007)(66556008)(478600001)(8936002)(4326008)(66946007)(186003)(16526019)(38350700002)(38100700002)(6506007)(44832011)(53546011)(86362001)(26005)(6916009)(83380400001)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?KIItpfeJEbvjBtnpS9VToRJ1z52QxyP5BRnQGhoy+AtASzzzDXhfChnksRcn?=
+ =?us-ascii?Q?1hE+cAAE63vdGljgKvTl0WXh4i8FXj31BchZqT2t/vLQn9RuzlVZDYcaIHF+?=
+ =?us-ascii?Q?6IBrOpkgxnhJfNbK1zZ9XV213rAQ87cHfdD4DFbONalCWv3BJsZTLQdvehJ0?=
+ =?us-ascii?Q?b4rLDa1fXTb0F8zBSxVL1peai6nDhCDSjhKG+AdVDdnrx52w2GkqfeWDmwP7?=
+ =?us-ascii?Q?DEjHHzo6jrkLIZoRyuQW+3ROZRVfGRqysoRI3VXe9abZ+1jlMg1nsyMsSj3p?=
+ =?us-ascii?Q?tz5Fg6WrUhJHEfWBORRbY4XPEbcK1m4zrpl3CqEMXe3vkrrxNMF3h4sctfrj?=
+ =?us-ascii?Q?v4KDdtHZ6US3qrZohoMMvMrHD/TED9Rxz70vMOfleCuouEoPwpZn/S3YtJkK?=
+ =?us-ascii?Q?x1pzBfschIX7+KflDjZZ8zVAwb61ebcLh7YRkICHUie4wwIcg2c7dcRMJlXg?=
+ =?us-ascii?Q?lrLqlm9zd8jNDGNMoHG2etvxlxXBGMNXAgwCFc8RMozPbh8ML0WhAoueHQIz?=
+ =?us-ascii?Q?2YHnXpMHZXTWLfMGNxTskqnOKZpBfriyz2db06RfiY77EWPX1g1JAXvHRnlA?=
+ =?us-ascii?Q?GHbynSVXukYG08hrD/FPRg4cbvqMC4SLzRVZCvk8dlHp7dB4LySD6Z/1HF/q?=
+ =?us-ascii?Q?MnQ/IGx+u8JMgFITvEGMlR8F4S+S0PD/rjf/B8IQLnpM0AjycFW71p9k3V6x?=
+ =?us-ascii?Q?fq5n+5g1unPCq2tlo2JmD5ZHH/BD85ZOx+rPZGFDfo8p5OM2ZNA6EpTHs3r2?=
+ =?us-ascii?Q?ItJvJ7wo1i2Qm74FP1Np7dgcrsOOIHGqjGn7nXbhHBAf/qNUuQSBcQohXzJc?=
+ =?us-ascii?Q?Sz+ajUKEMsH6KvY785rl99TesVtjx0oxqSmwBN4ATaJ3PJomCZbbnDGJrSoa?=
+ =?us-ascii?Q?bsR8b5vx//Z0fLoDUaQT81247OHImUjC2ngtifEPuP09QI7YAPowkzaF3Exk?=
+ =?us-ascii?Q?x0acl+yYjV2Wq3YID/Z6dLTaN7IvPfdr7cLilWfD+T3sVI+hev78T5iG+2Kp?=
+ =?us-ascii?Q?dFou7/VKglEvva2k6H0sSKa9pvpT0hEEC0kjKNhwvijnH3z57yMDbAuF7P9m?=
+ =?us-ascii?Q?CF6XKWs99yRZZg3qKTtH7Fj0PbjBwROhe+ndm3kMZ2fipQtZnK+EiEwnJjaP?=
+ =?us-ascii?Q?USSeAyEVRpA1Th5OPAWJcu7bCx/hYXENy1FiX96bZY36hmZrM5DVm/IrRNbJ?=
+ =?us-ascii?Q?YoUjMzo+/o0boyF+hbZS3npNgufpKyyCKyLitsUFE5B1WWO1p+6cWP8N1ztq?=
+ =?us-ascii?Q?AQeOUl48pi7SdkMCkZjalco3FB0MvlpkkCVTfP+2bNU1Bae4pTUs/t8gDat7?=
+ =?us-ascii?Q?l0M6oLmQlR/kl86QvC7PD99C?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce4ba2eb-a98e-4799-95d1-08d927319907
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0401MB2559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2021 08:20:22.6006
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rgsNDanscTXIZoNgar3PdMpalRKh7GxH4uNoVazWgkGQsM+Yiy5KTJx85BUwEl7dPDQYsv6WOMhBCC325dC/rw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5088
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 03 Jun 2021, Stephen Boyd wrote:
-65;6200;1c
-> Quoting kernel test robot (2021-06-03 07:58:13)
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-versatile
-> > head:   419b3ab6987f2a108cc4710030184365b17467ac
-> > commit: 419b3ab6987f2a108cc4710030184365b17467ac [1/1] clk: versatile: remove dependency on ARCH_*
-> > config: s390-allmodconfig (attached as .config)
-> > compiler: s390-linux-gcc (GCC) 9.3.0
-> > reproduce (this is a W=1 build):
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=419b3ab6987f2a108cc4710030184365b17467ac
-> >         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-> >         git fetch --no-tags clk clk-versatile
-> >         git checkout 419b3ab6987f2a108cc4710030184365b17467ac
-> >         # save the attached .config to linux build tree
-> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=s390 
-> > 
-> > If you fix the issue, kindly add following tag as appropriate
-> > Reported-by: kernel test robot <lkp@intel.com>
-> 
-> Probably ought to depend on HAS_IOMEM. Linus or Lee?
-
-That would be my best guess also.
-
-> ----8<----
-> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> index 792315d893db..481de5657d85 100644
-> --- a/drivers/clk/versatile/Kconfig
-> +++ b/drivers/clk/versatile/Kconfig
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  
->  menu "Clock driver for ARM Reference designs"
-> +	depends on HAS_IOMEM
->  
->  config ICST
->  	bool "Clock driver for ARM Reference designs ICST"
-> 
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_memory':
-> >    coherent.c:(.text+0x3bc): undefined reference to `memremap'
-> >    s390-linux-ld: coherent.c:(.text+0x500): undefined reference to `memunmap'
-> >    s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coherent_memory':
-> >    coherent.c:(.text+0xae6): undefined reference to `memunmap'
-> >    s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_dt':
-> >    irq-al-fic.c:(.init.text+0x98): undefined reference to `of_iomap'
-> >    s390-linux-ld: irq-al-fic.c:(.init.text+0x596): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
-> >    clk-fixed-mmio.c:(.text+0x9a): undefined reference to `of_iomap'
-> >    s390-linux-ld: clk-fixed-mmio.c:(.text+0xe6): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clk/versatile/clk-versatile.o: in function `cm_osc_setup':
-> > >> clk-versatile.c:(.init.text+0xbc): undefined reference to `of_iomap'
-> >    s390-linux-ld: drivers/clk/versatile/clk-sp810.o: in function `clk_sp810_of_setup':
-> > >> clk-sp810.c:(.init.text+0x174): undefined reference to `of_iomap'
-> >    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_init':
-> >    timer-of.c:(.init.text+0xcc): undefined reference to `of_iomap'
-> >    s390-linux-ld: timer-of.c:(.init.text+0x8ee): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_cleanup':
-> >    timer-of.c:(.init.text+0xb9a): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in function `mchp_pit64b_dt_init_timer':
-> >    timer-microchip-pit64b.c:(.init.text+0x150): undefined reference to `of_iomap'
-> >    s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xc78): undefined reference to `iounmap'
+On 21-06-04 15:04:03, Dong Aisheng wrote:
+> On Fri, Jun 4, 2021 at 2:46 PM Abel Vesa <abel.vesa@nxp.com> wrote:
 > >
+> > On 21-06-01 18:50:06, Stephen Boyd wrote:
+> > > Quoting Dong Aisheng (2021-04-22 20:33:34)
+> > > > diff --git a/drivers/clk/imx/clk-imx8qm-rsrc.c b/drivers/clk/imx/clk-imx8qm-rsrc.c
+> > > > new file mode 100644
+> > > > index 000000000000..183a071cbf20
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/imx/clk-imx8qm-rsrc.c
+> > > > @@ -0,0 +1,116 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0+
+> > > > +/*
+> > > > + * Copyright 2019-2021 NXP
+> > > > + *     Dong Aisheng <aisheng.dong@nxp.com>
+> > > > + */
+> > > > +
+> > > > +#include <dt-bindings/firmware/imx/rsrc.h>
+> > > > +
+> > > > +#include "clk-scu.h"
+> > > > +
+> > > > +/* Keep sorted in the ascending order */
+> > > > +static u32 imx8qm_clk_scu_rsrc_table[] = {
+> > >
+> > > const?
+> 
+> Stephen,
+> Thanks for pointing this out
+> 
+> > >
+> >
+> > Aisheng, no need to resend, I'll fold that in.
+> 
+> Thanks
+> 
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Applied all and folded the const change in.
+
+Thanks.
+
+> Regards
+> Aisheng
+> 
+> >
+> > > > +       IMX_SC_R_A53,
