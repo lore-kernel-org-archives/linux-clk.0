@@ -2,97 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB154C07E94
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 07:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB1FC47083
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 07:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1EB16141B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 07:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA51B6141D
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jun 2021 07:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbhFDH1u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jun 2021 03:27:50 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:43521 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbhFDH1u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jun 2021 03:27:50 -0400
-Received: by mail-lf1-f43.google.com with SMTP id n12so5613770lft.10
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jun 2021 00:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m8ATfzPqY7GqysToFJb3WK63gzrrYA8XxBMGOJX8heM=;
-        b=fPOnTgCtmbbaK4CDTHEqBMbRVg2o7mPRXgJjfWxPw+TnrNF+2Llu0d8TcFZwESKpXm
-         avLQL8IfgdVWwS5+Nu9xVBahKCY4EMYw9JSxrln8w2Np+gJqqtGRLBeeOPugLJxneF0U
-         SYncLUDsOQXiOmtRN/Q83uKD2hnf04XZT6mSFw9UuTdzHGM6goeNv0YK0eRyybsqCsV6
-         NuZfkRoQT5Aj3/WFbolZvX6qq/oNhQvWE1WcU37qkif5f3XkBa3atJj8fNnmIWao4TwM
-         oUSmjYvNNNH+mW3nSwF9wyPQCKTnPOabQaLVp1zmdgxSHg1xkdDuZijh9Q1rdRgvSXb6
-         1xBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m8ATfzPqY7GqysToFJb3WK63gzrrYA8XxBMGOJX8heM=;
-        b=CREn9KX5sKMgh65mWDO9943Q0y9f2lp4jBZ3pN30j9Zu2TtYaONQckTOiLKwdLws1+
-         e33eo6F+8Ay/KFOc2aM57g8WbXLZfcOQ0C/e7YfgUu/DB1O40hntTt4Oir6D0bTx1D1D
-         FGWRvYck9whVh9jznWWxUycbzmM+96+L95LBE11j/9Z/A56W8Gl8bChVHlBhtOr5P2xK
-         tnFcrcdBJrES9MBSWuBQ4GPGpASnZNPI1Gq5bwv02MwDC/Jk/3WdJYdovaKhqPbPPDc5
-         Q//64nWz3GmfwUQStG/aPsKqG9pXazCiFg8paFjdmRqdBr7WlR14A0U453oB+6vb8dvE
-         3DWQ==
-X-Gm-Message-State: AOAM533RZYm188s79MN+fnFS14MmA/hshsMCHwsKxfjNZ/f+plxzfs5L
-        Pc5iggjonDfryEjxQZDQRGS3ZJepgHl5s5PuuvnBsA==
-X-Google-Smtp-Source: ABdhPJxgPsVOc8qj+iVUicmkuoyZtvp3Ry4V7hIL2K1nWglkPMEgxrCVihzD4xA/QEOX59qZzhFtLOVnf31bejn/wxk=
-X-Received: by 2002:a19:f616:: with SMTP id x22mr1816951lfe.291.1622791493465;
- Fri, 04 Jun 2021 00:24:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <202106032204.RmTRwUJD-lkp@intel.com> <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
-In-Reply-To: <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 4 Jun 2021 09:24:42 +0200
-Message-ID: <CACRpkdaX7vY0DYToGOY_KBbAzr7W6c8ZurGThpCk3GsTFtK89g@mail.gmail.com>
-Subject: Re: [clk:clk-versatile 1/1] clk-versatile.c:undefined reference to `of_iomap'
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Peter Collingbourne <pcc@google.com>,
-        kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        id S230169AbhFDHpj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jun 2021 03:45:39 -0400
+Received: from muru.com ([72.249.23.125]:36152 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229958AbhFDHpj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Jun 2021 03:45:39 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E17AE8167;
+        Fri,  4 Jun 2021 07:43:58 +0000 (UTC)
+Date:   Fri, 4 Jun 2021 10:43:48 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sven Peter <sven@svenpeter.dev>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hector Martin <marcan@marcan.st>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH 0/3] Apple M1 clock gate driver
+Message-ID: <YLnZtJtUKdif47zE@atomide.com>
+References: <20210524182745.22923-1-sven@svenpeter.dev>
+ <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
+ <YK32Mmiq9QXGkELF@atomide.com>
+ <9ff6ec26-4b78-4684-9c23-16d5cbfef857@www.fastmail.com>
+ <YLdOsA63GyMj4SgR@atomide.com>
+ <1ff54382-7137-49d6-841d-318e400e956e@www.fastmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ff54382-7137-49d6-841d-318e400e956e@www.fastmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 3, 2021 at 10:05 PM Stephen Boyd <sboyd@kernel.org> wrote:
+Hi,
 
-> Quoting kernel test robot (2021-06-03 07:58:13)
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-versatile
-> > head:   419b3ab6987f2a108cc4710030184365b17467ac
-> > commit: 419b3ab6987f2a108cc4710030184365b17467ac [1/1] clk: versatile: remove dependency on ARCH_*
-> > config: s390-allmodconfig (attached as .config)
-> > compiler: s390-linux-gcc (GCC) 9.3.0
-> > reproduce (this is a W=1 build):
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=419b3ab6987f2a108cc4710030184365b17467ac
-> >         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-> >         git fetch --no-tags clk clk-versatile
-> >         git checkout 419b3ab6987f2a108cc4710030184365b17467ac
-> >         # save the attached .config to linux build tree
-> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=s390
-> >
-> > If you fix the issue, kindly add following tag as appropriate
-> > Reported-by: kernel test robot <lkp@intel.com>
->
-> Probably ought to depend on HAS_IOMEM. Linus or Lee?
+* Sven Peter <sven@svenpeter.dev> [210603 12:56]:
+> Another possibility this made me think of is to instead just use the clocks
+> property the way it's usually used and simply refer to the controller itself, e.g.
+> 
+> #define APPLE_CLK_UART0  0x270
+> #define APPLE_CLK_UART_P 0x220
+> #define APPLE_CLK_SIO    0x1c0
+> 
+> pmgr0: clock-controller@23b700000 {
+>         compatible = "apple,t8103-gate-clock";
+>         #clock-cells = <1>;
+>         reg = <0x2 0x3b700000 0x0 0x4000>;
+>         clock-indices = <APPLE_CLK_SIO>, <APPLE_CLK_UART_P>, <APPLE_CLK_UART0>;
+>         clock-output-names = "clock-sio", "clock-uart-", "clock-uart0";
+>         clocks = <&some_dummy_root_clock>, <&pmgr0 APPLE_CLK_SIO>,
+>                  <&pmgr0 APPLE_CLK_UART_P>;
+> };
 
-Probably! Not that I know how S390 access it's IO (Arnd knows)
-I bet it has big iron port-mapped IO or something.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-for the patch.
+How about the following where you set up the gate clocks as separate child nodes:
 
-Yours,
-Linus Walleij
+pmgr0: clock-controller@23b700000 {
+	compatible = "apple,foo-clock-controller";
+	#clock-cells = <1>;
+	reg = <0x2 0x3b700000 0x0 0x4000>;
+
+	clk_uart0: clock@270 {
+		compatible = "apple,t8103-gate-clock";
+		#clock-cells = <0>;
+		assigned-clock-parents = <&pmgr0 APPLE_CLK_SIO>,
+					 <&pmgr0 APPLE_CLK_UART_P>;
+		// ...
+	};
+
+};
+
+Keep the clock controller still addressable by offset from base as discussed,
+and additionally have the driver parse and set up the child node clocks.
+
+Then I think the consumer driver can just do:
+
+serial0: serial@235200000 {
+	// ...
+	clocks = <&clk_uart0>, <&clk24>;
+	clock-names = "uart", "clk_uart_baud0";
+	// ...
+};
+
+Regards,
+
+Tony
