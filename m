@@ -2,99 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F10C47082
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Jun 2021 10:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABDFC4743E
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Jun 2021 10:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 784766135D
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Jun 2021 10:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E634611CA
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Jun 2021 10:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbhFEKmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Jun 2021 06:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57692 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbhFEKmq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Jun 2021 06:42:46 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E3FC061767
-        for <linux-clk@vger.kernel.org>; Sat,  5 Jun 2021 03:40:58 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id g18so12060955edq.8
-        for <linux-clk@vger.kernel.org>; Sat, 05 Jun 2021 03:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snejp.pl; s=gmail;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hj3/Nk+tqYRB1c5ojPz5XgdR7/8/e5iUg8MA/Htec1o=;
-        b=ZyCuiia6imOYMBfDloSPJqp1YVwUtFj4UtM+6NJnEYdt9nB7GuzJzRtP391xT9A7AG
-         kki7mUZ/mb7g0esRxTYp7ZH/iG0KyHISO3cD7uGlxYIT28+vRcVmZ5yUaSKnQlyglTJQ
-         Lt8pJi2bVKJGhBjUIagF1fL20VfYm8GdVRDSZy6AsPY26eYs3PqExwEVwRDu+Tbsyner
-         OGpQfrfRwBWrBuMkJcIF22HRKd0Hnmzd5YvGeMaH11wnaixT0T0YDg+tZzW0g/Ip4h+k
-         8nDrPDBxld2cKHLTT7jgH1+eZdNNj1vkRbVYsh85sh36dG3IDN4Zbg/hae0bbMTiOrpB
-         +a8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hj3/Nk+tqYRB1c5ojPz5XgdR7/8/e5iUg8MA/Htec1o=;
-        b=evjoRYhpm0ako/ByAm0gF/ofB8tn9rIzqEqde8GGEpPC2cNnZl7/b6dKoC4qGsPEYt
-         MnHzOgeTC7hucQLiX3J+HkPpM9vrRmmt9z7uXn2jyDl9V1oiztTH8FEPPNdrVWppGNyk
-         mkkspOh2F9WL7FDBigosv1p+T6vH/mZ5b3pxdmrKAORVSAL1+GZ+u2dIMoZgh3zJKKTn
-         Quk6HnMxllWxAcb7Xkl4ge4aKs5rIoC8Ud/GpPOMEtGcd0CsDtbkLZL+HTmsiRWkVr2x
-         rsvxcqhF1PY9QExUo+58mzQ7BAYqAYx+RJv+5cymyNGfoYg772HpKhJJZNfHBOe6puPq
-         ndVQ==
-X-Gm-Message-State: AOAM532UjyRZQWElTROlP18fbac2Ca/JBL/WA5/IZ9X91Nzq1bhMVNSv
-        dACH2uB4ppJg/ApkPrpo2hCAwQ==
-X-Google-Smtp-Source: ABdhPJyE6j2DVkqFkGJfEn2XqF01kE5lQ5IRImg8mwauc2KXepuf/4gtvnDwnX7MeMrDSLt6OE9JYA==
-X-Received: by 2002:a05:6402:848:: with SMTP id b8mr9714418edz.159.1622889656790;
-        Sat, 05 Jun 2021 03:40:56 -0700 (PDT)
-Received: from PackardBell (192038129059.mbb.telenor.dk. [192.38.129.59])
-        by smtp.googlemail.com with ESMTPSA id gx28sm3991353ejc.107.2021.06.05.03.40.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jun 2021 03:40:56 -0700 (PDT)
-Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 315d7738;
-        Sat, 5 Jun 2021 10:40:53 +0000 (UTC)
-From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-To:     Andy Gross <agross@kernel.org>,
+        id S229931AbhFEK6C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Jun 2021 06:58:02 -0400
+Received: from relay08.th.seeweb.it ([5.144.164.169]:38751 "EHLO
+        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229892AbhFEK6C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Jun 2021 06:58:02 -0400
+Received: from [192.168.1.101] (83.6.168.161.neoplus.adsl.tpnet.pl [83.6.168.161])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 49C973F0B2;
+        Sat,  5 Jun 2021 12:56:12 +0200 (CEST)
+Subject: Re: [PATCH V3 1/2] dt-bindings: clk: qcom: gcc-sm6125: Document
+ SM6125 GCC driver
+To:     Rob Herring <robh@kernel.org>,
+        Martin Botka <martin.botka@somainline.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH v2] clk: qcom: smd-rpmcc: Add support for MSM8226 rpm clocks
-Date:   Sat,  5 Jun 2021 12:40:40 +0200
-Message-Id: <20210605104040.12960-1-bartosz.dudziak@snejp.pl>
-X-Mailer: git-send-email 2.25.1
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210526184325.675736-1-martin.botka@somainline.org>
+ <20210602190841.GA3792989@robh.at.kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+Message-ID: <4072d11b-0d5c-df57-399c-5ead810d8947@somainline.org>
+Date:   Sat, 5 Jun 2021 12:56:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210602190841.GA3792989@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add compatible for rpm smd clocks, PMIC and bus clocks which are required
-on MSM8226 for clients to vote on.
 
-Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
----
- drivers/clk/qcom/clk-smd-rpm.c | 1 +
- 1 file changed, 1 insertion(+)
+> Dual license new bindings please:
+>
+> GPL-2.0-only OR BSD-2-Clause
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 295fc08edd..8bced53b49 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -914,6 +914,7 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
- };
- 
- static const struct of_device_id rpm_smd_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
--- 
-2.25.1
+Ack.
+
+
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm6125.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller Binding for SM6125
+>> +
+>> +maintainers:
+>> +  - Konrad Dybcio <konrad.dybcio@somainline.org>
+>> +
+>> +description: |
+>> +  Qualcomm global clock control module which supports the clocks, resets and
+>> +  power domains on SM6125.
+>> +
+>> +  See also:
+>> +  - dt-bindings/clock/qcom,gcc-sm6125.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,gcc-sm6125
+> The normal ordering would be 'qcom,sm6125-gcc'
+
+The current one is in line with all the other qcom clk drivers.
+
+
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+>> +    clock-controller@1400000 {
+>> +    compatible = "qcom,gcc-sm6125";
+> Wrong indentation.
+
+Ack.
+
+
+Konrad
 
