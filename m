@@ -2,116 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8036FC47096
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 04:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906E7C47096
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 05:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65112613EF
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 04:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A816141D
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 05:59:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbhFFEOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Jun 2021 00:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbhFFEN7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Jun 2021 00:13:59 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3476BC061787
-        for <linux-clk@vger.kernel.org>; Sat,  5 Jun 2021 21:11:59 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id v27-20020a056830091bb02903cd67d40070so10255160ott.1
-        for <linux-clk@vger.kernel.org>; Sat, 05 Jun 2021 21:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PeBBPFzXzFLQyV93HqbVbvw6ixlWmMPKlmmW5KX4BdY=;
-        b=nK+f1wrx/mVYH3vIBVEAiJd5nccwAkI9qpr4LEweZvywpoBnvHIq3AshG3bQ3bEd3k
-         didBUftpsCN4tOM3XYmL6OlXddvPQe8bwn3JhxlfCWOuJI8Djs1RR1y0EayzvyiDOLbg
-         ItunPMn4ksyg7QA3w6ufxgJeU2D1Q++4SuyHjTDYPh/YDq6zPvBQPKa3KICKG5nJ9nW9
-         Ps9NkyV13O1izOgEGWkTihUIE2dL4C69h+Z7LvbreUSgFVpc05SFeyLx/6cxATwhFMNz
-         Ej+VK5MnVehLpNm2/aBU2E5SmZgCpfvhq4Xj96W4ccf6qzyZkdGIP3saimGgrxglTV1P
-         2Ncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PeBBPFzXzFLQyV93HqbVbvw6ixlWmMPKlmmW5KX4BdY=;
-        b=sBSGSI/bSNBZToDpbiOtEP8KuaxpZ+uIS0szNNy/4/zQXeqs7luB71v6hec2ZxW9rF
-         gxcMky7Bx/y3l2/pGGEaQtrbgQoRWqT3T9ddq56RsZmRm0yVZqwyzywF8BIURQeXld5v
-         ILqIeeJsEhSkDs81yGpV0FC3BmBgQMWqoOgm3Dqs8c56LWYTuCAbJ1rxkm1+dCbWq9xT
-         b/nxFqKk3eljJgN0ZTCsweAYixLnYSkUJDr5pbqFQx+W0iRMyKceGV0dqeQIlBqjsLf1
-         TRYDLLyMUhSaAKa3+4qEWJgwpkNgdwCFjYXU9JRnMObZS8YiAfCQGxLjAPCXos2WY2vR
-         CXYw==
-X-Gm-Message-State: AOAM533xFSrWC/GNsMTw4n64ZUGOrVk+//SF27qe3cSgWocZ3ii6mrui
-        uYEZtw8iQQFBa24VTUUV3N7CGg==
-X-Google-Smtp-Source: ABdhPJwzMB8YpnFsGxWqU2FCb3PeDcCD1oeRD+TlTDDu8UyZKIEQkeW4eJoDwud454SeT7QiyGRU1w==
-X-Received: by 2002:a05:6830:4103:: with SMTP id w3mr9585823ott.27.1622952718437;
-        Sat, 05 Jun 2021 21:11:58 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id x14sm1481109oic.3.2021.06.05.21.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jun 2021 21:11:57 -0700 (PDT)
-Date:   Sat, 5 Jun 2021 23:11:56 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        id S229531AbhFFGBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Jun 2021 02:01:15 -0400
+Received: from muru.com ([72.249.23.125]:36958 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229504AbhFFGBP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 6 Jun 2021 02:01:15 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 6A9FC80E5;
+        Sun,  6 Jun 2021 05:59:31 +0000 (UTC)
+Date:   Sun, 6 Jun 2021 08:59:20 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sven Peter <sven@svenpeter.dev>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hector Martin <marcan@marcan.st>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: add QCOM SM8350 display clock
- bindings
-Message-ID: <YLxLDCOpnbUL7gfL@builder.lan>
-References: <20210519001802.1863-1-jonathan@marek.ca>
- <20210519001802.1863-2-jonathan@marek.ca>
- <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH 0/3] Apple M1 clock gate driver
+Message-ID: <YLxkOIu7XAJJd0bN@atomide.com>
+References: <20210524182745.22923-1-sven@svenpeter.dev>
+ <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
+ <YK32Mmiq9QXGkELF@atomide.com>
+ <9ff6ec26-4b78-4684-9c23-16d5cbfef857@www.fastmail.com>
+ <YLdOsA63GyMj4SgR@atomide.com>
+ <1ff54382-7137-49d6-841d-318e400e956e@www.fastmail.com>
+ <YLnZtJtUKdif47zE@atomide.com>
+ <02176203-7f29-4ff4-933b-70235cf0dd22@www.fastmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com>
+In-Reply-To: <02176203-7f29-4ff4-933b-70235cf0dd22@www.fastmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 02 Jun 16:27 CDT 2021, Stephen Boyd wrote:
-
-> Quoting Jonathan Marek (2021-05-18 17:18:02)
-> > Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
-> > bindings. Update the documentation with the new compatible.
+* Sven Peter <sven@svenpeter.dev> [210605 12:13]:
+> Hi Tony,
+> 
+> On Fri, Jun 4, 2021, at 09:43, Tony Lindgren wrote:
+> > Hi,
 > > 
-> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
-> >  include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
-> 
-> >  2 files changed, 5 insertions(+), 2 deletions(-)
-> >  create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
-> 
-> Why the symlink? Can we have the dt authors use the existing header file
-> instead?
-> 
+> > How about the following where you set up the gate clocks as separate 
+> > child nodes:
 > > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > index 0cdf53f41f84..8f414642445e 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > @@ -4,24 +4,26 @@
-> >  $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
-> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  
-> > -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-> > +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
-> 
-> Maybe just "Binding for SM8x50 SoCs"
-> 
+> > pmgr0: clock-controller@23b700000 {
+> > 	compatible = "apple,foo-clock-controller";
+> > 	#clock-cells = <1>;
+> > 	reg = <0x2 0x3b700000 0x0 0x4000>;
+> > 
+> > 	clk_uart0: clock@270 {
+> > 		compatible = "apple,t8103-gate-clock";
+> > 		#clock-cells = <0>;
+> > 		assigned-clock-parents = <&pmgr0 APPLE_CLK_SIO>,
+> > 					 <&pmgr0 APPLE_CLK_UART_P>;
+> > 		// ...
+> > 	};
+> > 
+> > };
+> > 
+> > Keep the clock controller still addressable by offset from base as discussed,
+> > and additionally have the driver parse and set up the child node clocks.
+>
+> Nice, I like that one even better! We can keep the internal clocks "hidden"
+> inside the parent node and only need to model the actual consumer clocks
+> as separate nodes.
 
-That seems like a certain way to ensure that SM8450 etc will be
-different enough to not match this binding :)
+I guess the child nodes could also use just a clocks property above
+instead of assigned-clock related properties if there are no configurable
+source clock mux registers.
+
+> Are you aware of any clock driver that implements something similar?
+> I'd like to avoid reinventing the wheel if it's already been done before.
+
+I'm only aware of a partial implementation so far :) The "offset from
+clock controller base" approach has worked well for the TI clkctrl
+clocks. The clkctrl gate clocks still have the SoC specific source
+clock data build into the clock driver(s).
+
+That's the Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+binding. For the clkctrl clocks, the SoC specific source clock data
+is in drivers/clk/ti/clk-*.c files.
+
+With the Apple dtb describing the gate clock parents, you might be
+able to leave out most of the SoC specific built-in driver data
+sounds like.
 
 Regards,
-Bjorn
+
+Tony
