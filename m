@@ -2,106 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906E7C47096
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 05:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C21FC4743F
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 19:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61A816141D
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 05:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474616141E
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Jun 2021 19:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbhFFGBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Jun 2021 02:01:15 -0400
-Received: from muru.com ([72.249.23.125]:36958 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229504AbhFFGBP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 6 Jun 2021 02:01:15 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 6A9FC80E5;
-        Sun,  6 Jun 2021 05:59:31 +0000 (UTC)
-Date:   Sun, 6 Jun 2021 08:59:20 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Sven Peter <sven@svenpeter.dev>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hector Martin <marcan@marcan.st>,
+        id S229944AbhFFT3A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Jun 2021 15:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229721AbhFFT3A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Jun 2021 15:29:00 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E93C061767
+        for <linux-clk@vger.kernel.org>; Sun,  6 Jun 2021 12:27:10 -0700 (PDT)
+Received: from localhost.localdomain (83.6.168.161.neoplus.adsl.tpnet.pl [83.6.168.161])
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id D0EBE1F538;
+        Sun,  6 Jun 2021 21:27:05 +0200 (CEST)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH 0/3] Apple M1 clock gate driver
-Message-ID: <YLxkOIu7XAJJd0bN@atomide.com>
-References: <20210524182745.22923-1-sven@svenpeter.dev>
- <CAL_JsqKqpSQbdj_Crc-LSc12700kyFFkMTU29BDY2bwGNLXn9A@mail.gmail.com>
- <YK32Mmiq9QXGkELF@atomide.com>
- <9ff6ec26-4b78-4684-9c23-16d5cbfef857@www.fastmail.com>
- <YLdOsA63GyMj4SgR@atomide.com>
- <1ff54382-7137-49d6-841d-318e400e956e@www.fastmail.com>
- <YLnZtJtUKdif47zE@atomide.com>
- <02176203-7f29-4ff4-933b-70235cf0dd22@www.fastmail.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: smd-rpm: Fix wrongly assigned RPM_SMD_PNOC_CLK
+Date:   Sun,  6 Jun 2021 21:26:57 +0200
+Message-Id: <20210606192657.51037-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02176203-7f29-4ff4-933b-70235cf0dd22@www.fastmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Sven Peter <sven@svenpeter.dev> [210605 12:13]:
-> Hi Tony,
-> 
-> On Fri, Jun 4, 2021, at 09:43, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > How about the following where you set up the gate clocks as separate 
-> > child nodes:
-> > 
-> > pmgr0: clock-controller@23b700000 {
-> > 	compatible = "apple,foo-clock-controller";
-> > 	#clock-cells = <1>;
-> > 	reg = <0x2 0x3b700000 0x0 0x4000>;
-> > 
-> > 	clk_uart0: clock@270 {
-> > 		compatible = "apple,t8103-gate-clock";
-> > 		#clock-cells = <0>;
-> > 		assigned-clock-parents = <&pmgr0 APPLE_CLK_SIO>,
-> > 					 <&pmgr0 APPLE_CLK_UART_P>;
-> > 		// ...
-> > 	};
-> > 
-> > };
-> > 
-> > Keep the clock controller still addressable by offset from base as discussed,
-> > and additionally have the driver parse and set up the child node clocks.
->
-> Nice, I like that one even better! We can keep the internal clocks "hidden"
-> inside the parent node and only need to model the actual consumer clocks
-> as separate nodes.
+During my big cleanup I managed to assign an AO clock to its
+non-AO binding. Fix this.
 
-I guess the child nodes could also use just a clocks property above
-instead of assigned-clock related properties if there are no configurable
-source clock mux registers.
+Reported-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Are you aware of any clock driver that implements something similar?
-> I'd like to avoid reinventing the wheel if it's already been done before.
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 295fc08eddb9..daf09dd61055 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -518,7 +518,7 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a1_pin, cxo_a1_a_pin, 5);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a2_pin, cxo_a2_a_pin, 6);
+ 
+ static struct clk_smd_rpm *msm8974_clks[] = {
+-	[RPM_SMD_PNOC_CLK]		= &msm8916_pcnoc_a_clk,
++	[RPM_SMD_PNOC_CLK]		= &msm8916_pcnoc_clk,
+ 	[RPM_SMD_PNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
+ 	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
+-- 
+2.31.1
 
-I'm only aware of a partial implementation so far :) The "offset from
-clock controller base" approach has worked well for the TI clkctrl
-clocks. The clkctrl gate clocks still have the SoC specific source
-clock data build into the clock driver(s).
-
-That's the Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-binding. For the clkctrl clocks, the SoC specific source clock data
-is in drivers/clk/ti/clk-*.c files.
-
-With the Apple dtb describing the gate clock parents, you might be
-able to leave out most of the SoC specific built-in driver data
-sounds like.
-
-Regards,
-
-Tony
