@@ -2,112 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FFBC47082
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 05:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E026CC4743C
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB306120F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 05:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B8F6115B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbhFGFWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jun 2021 01:22:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50523 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229436AbhFGFWj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 01:22:39 -0400
-X-UUID: ddb6eafa474e4f78994749b7a036ff31-20210607
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=DmcodQK5B9rdSagRlyQ6T+J2oEgd2at//Gi+EqIPmDM=;
-        b=TBxMYrJGqW3JOYq0EOhj8hZED0AvDJH+Dbzea1IKq79PHjdkJzT9k+XzWxZD2mXrKmhPRj/KAs9SZr1kMHFANNoLcg0hvivpRavTKQJGrtuohKFhFPwy8A71OwGoB64jCmlq7UmKhQ7X87D5Hy4zOXi2SOw28gFqIt3id3mVGPE=;
-X-UUID: ddb6eafa474e4f78994749b7a036ff31-20210607
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1468748950; Mon, 07 Jun 2021 13:20:45 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 7 Jun 2021 13:20:43 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 7 Jun 2021 13:20:44 +0800
-Message-ID: <66e017401ab93aa02c5d2bbf11be9589b36649ac.camel@mediatek.com>
-Subject: Re: [PATCH v9 01/22] dt-bindings: ARM: Mediatek: Add new document
- bindings of imp i2c wrapper controller
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S230127AbhFGGDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jun 2021 02:03:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35012 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229470AbhFGGDW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 02:03:22 -0400
+Received: from mail-wr1-f70.google.com ([209.85.221.70])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lq8KJ-00013S-Be
+        for linux-clk@vger.kernel.org; Mon, 07 Jun 2021 06:01:31 +0000
+Received: by mail-wr1-f70.google.com with SMTP id e11-20020a056000178bb0290119c11bd29eso2533924wrg.2
+        for <linux-clk@vger.kernel.org>; Sun, 06 Jun 2021 23:01:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qAtq8fZxJa+xoWcGAlXfKDVfTmmln1jGGwqwLzPVz5w=;
+        b=gknvh8aufzK3J5nqbnbwSpktI9XnYp/ksWYoMKnkTp4Y6zTquh6Gm9BZKQPDennfDB
+         AzwZ6QSHTcT/DZYTofD49EhXEsNZr1AySiXOXLfnUbBhMgZd+T33s05nP4pO+/CXS6sv
+         6Bu4S8kO0H5d//AoQuFNtN0Ryhu0RdS1MRQSKhcqN2/opgz0tpXZt798y8JXnOhZLCup
+         KXEgKU49ORh4tkzC4wLRRSbfNl60SqhnRrhOuMyesFjEkykxcBwFrIPFcfneR4GagLGX
+         dlTcamtn2t0KM8JU+q0SPxJjHQleQ2e9mMmTxZ/NI7fWKli8ANRgVVpNXHGhd/rwYbVR
+         X8ng==
+X-Gm-Message-State: AOAM53171IUUtDKwWddX/Y3h+eV3YsNLii1mmvCq4b71Sl8VJP5xswcT
+        cdDxzzioI4K45FyvBoPuELZppP5QcvSlqmP3vgUdB1GhchPwINIztxf42MPxPEIah6mDAJxPHcP
+        45qpWWFKTqYlM2GnFwxUE1XDcXn2L7JUgem3puQ==
+X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833133wmc.94.1623045690461;
+        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxpu7m3EIJUyOBKcObfXEeEge07GsVcQb9YzJG8QvObto+R5NJsN0+hGkmIqmu4dspK7YMSzw==
+X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833107wmc.94.1623045690239;
+        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
+        by smtp.gmail.com with ESMTPSA id q20sm18398437wrf.45.2021.06.06.23.01.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Jun 2021 23:01:29 -0700 (PDT)
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Date:   Mon, 7 Jun 2021 13:20:43 +0800
-In-Reply-To: <20210602171201.GA3566462@robh.at.kernel.org>
-References: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
-         <20210524122053.17155-2-chun-jie.chen@mediatek.com>
-         <20210602171201.GA3566462@robh.at.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <20210601023119.22044-9-digetx@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
+Date:   Mon, 7 Jun 2021 08:01:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20210601023119.22044-9-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gV2VkLCAyMDIxLTA2LTAyIGF0IDEyOjEyIC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
-T24gTW9uLCBNYXkgMjQsIDIwMjEgYXQgMDg6MjA6MzJQTSArMDgwMCwgQ2h1bi1KaWUgQ2hlbiB3
-cm90ZToNCj4gPiBUaGlzIHBhdGNoIGFkZHMgdGhlIG5ldyBiaW5kaW5nIGRvY3VtZW50YXRpb24g
-b2YgaW1wIGkyYyB3cmFwcGVyDQo+ID4gY29udHJvbGxlcg0KPiA+IGZvciBNZWRpYXRlayBNVDgx
-OTIuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVr
-LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBjaHVuLWppZS5jaGVuIDxjaHVuLWppZS5jaGVuQG1l
-ZGlhdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgLi4uL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbXBf
-aWljX3dyYXAueWFtbCAgIHwgODANCj4gPiArKysrKysrKysrKysrKysrKysrDQo+ID4gIDEgZmls
-ZSBjaGFuZ2VkLCA4MCBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+
-IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWss
-aW1wX2lpY193cmENCj4gPiBwLnlhbWwNCj4gPiANCj4gPiBkaWZmIC0tZ2l0DQo+ID4gYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltcF9p
-aWNfdw0KPiA+IHJhcC55YW1sDQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltcF9paWNfdw0KPiA+IHJhcC55YW1sDQo+ID4gbmV3
-IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmZiNmNiOWU2MGVlMg0K
-PiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysNCj4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssaW1wX2lpY193DQo+ID4gcmFwLnlhbWwN
-Cj4gPiBAQCAtMCwwICsxLDgwIEBADQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChH
-UEwtMi4wIE9SIEJTRC0yLUNsYXVzZSkNCj4gPiArJVlBTUwgMS4yDQo+ID4gKy0tLQ0KPiA+ICsk
-aWQ6IA0KPiA+IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2FybS9tZWRpYXRlay9tZWRp
-YXRlayxpbXBfaWljX3dyYXAueWFtbCMNCj4gPiArJHNjaGVtYTogaHR0cDovL2RldmljZXRyZWUu
-b3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQo+ID4gKw0KPiA+ICt0aXRsZTogTWVkaWFUZWsg
-SU1QIEkyQyBXcmFwcGVyIENvbnRyb2xsZXINCj4gPiArDQo+ID4gK21haW50YWluZXJzOg0KPiA+
-ICsgIC0gQ2h1bi1KaWUgQ2hlbiA8Y2h1bi1qaWUuY2hlbkBtZWRpYXRlay5jb20+DQo+ID4gKw0K
-PiA+ICtkZXNjcmlwdGlvbjoNCj4gPiArICBUaGUgTWVkaWF0ZWsgaW1wIGkyYyB3cmFwcGVyIGNv
-bnRyb2xsZXIgcHJvdmlkZXMgZnVuY3Rpb25hbA0KPiA+IGNvbmZpZ3VyYXRpb25zIGFuZCBjbG9j
-a3MgdG8gdGhlIHN5c3RlbS4NCj4gPiArDQo+ID4gK3Byb3BlcnRpZXM6DQo+ID4gKyAgY29tcGF0
-aWJsZToNCj4gPiArICAgIGl0ZW1zOg0KPiA+ICsgICAgICAtIGVudW06DQo+ID4gKyAgICAgICAg
-ICAtIG1lZGlhdGVrLG10ODE5Mi1pbXBfaWljX3dyYXBfYw0KPiA+ICsgICAgICAgICAgLSBtZWRp
-YXRlayxtdDgxOTItaW1wX2lpY193cmFwX2UNCj4gPiArICAgICAgICAgIC0gbWVkaWF0ZWssbXQ4
-MTkyLWltcF9paWNfd3JhcF9zDQo+ID4gKyAgICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1pbXBf
-aWljX3dyYXBfd3MNCj4gPiArICAgICAgICAgIC0gbWVkaWF0ZWssbXQ4MTkyLWltcF9paWNfd3Jh
-cF93DQo+ID4gKyAgICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1pbXBfaWljX3dyYXBfbg0KPiAN
-Cj4gTG9va3MgdG8gbWUgbGlrZSB0aGVzZSBhcmUgYWxsIHRoZSBzYW1lIGgvdywgYnV0IGp1c3Qg
-aGF2ZSBkaWZmZXJpbmcgDQo+IHNldHMgb2YgY2xvY2tzLiBUaGF0J3Mgbm90IHJlYWxseSBhIHJl
-YXNvbiB0byBoYXZlIGRpZmZlcmVudCANCj4gY29tcGF0aWJsZXMuIA0KPiANCj4gSWYgeW91IG5l
-ZWQgdG8ga25vdyB3aGF0IGNsb2NrcyBhcmUgcHJlc2VudCwgeW91IGNhbiB3YWxrIHRoZSBEVCBm
-b3IgDQo+IGFsbCAnY2xvY2tzJyBwcm9wZXJ0aWVzIG1hdGNoaW5nIHRoaXMgY2xvY2sgY29udHJv
-bGxlciBpbnN0YW5jZS4gT3INCj4gdXNlIA0KPiAnY2xvY2staW5kaWNlcycgdG8gZGVmaW5lIHdo
-aWNoIG9uZXMgYXJlIHByZXNlbnQuDQo+IA0KPiBSb2INCg0KU29tZSBtb2R1bGUgaXMgZGl2aWRl
-ZCB0byBzdWItbW9kdWxlcyB3aGljaCBhcmUgZGVzaWduZWQgaW4gZGlmZmVyZW50DQpoL3cgYmxv
-Y2tzIGZvciBkaWZmZXJlbnQgdXNhZ2UsIGFuZCBpZiB3ZSB3YW50IHRvIHVzZSB0aGUgc2FtZQ0K
-Y29tcGF0aWJsZSB0byBwcmVzZW50IHRoZXNlIGgvdyBibG9ja3MsIHdlIG5lZWQgdG8gbW92ZSB0
-aGUgY2xvY2sgZGF0YQ0KcHJvdmlkZWQgYnkgdGhlc2UgaC93IGJsb2NrcyB0byBkdHMsIGJ1dCB3
-ZSB1c3VhbGx5IHVzZSBkaWZmZXJlbnQNCmNvbXBhdGlibGUgdG8gZ2V0IHRoZSBoL3cgYmxvY2tz
-IGRhdGEgaW4NCk1lZGlhdGVrJ3MgY2xvY2sgZHJpdmVyLCBzbyBkbyB5b3Ugc3VnZ2VzdCB0byBy
-ZWdpc3RlciBjbG9jayBwcm92aWRlZA0KYnkgZGlmZmVyZW50IGgvdyBibG9ja3MgdXNpbmcgc2Ft
-ZSBjb21wYXRpYmxlPw0KDQpCZXN0IFJlZ2FyZHMsDQpDaHVuLUppZQ0K
+On 01/06/2021 04:31, Dmitry Osipenko wrote:
+> Enable compile testing for all Tegra memory drivers.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/Kconfig | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
 
+Hi Dmitry,
+
+This fails on x86_64 and i386:
+https://krzk.eu/#/builders/38/builds/260
+https://krzk.eu/#/builders/40/builds/261
+
+/bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
+/bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
+
+It's a defconfig with:
+scripts/config --file out/.config -e COMPILE_TEST -e OF -e SRAM -e
+MEMORY -e PM_DEVFREQ -e ARM_PL172_MPMC -e ATMEL_SDRAMC -e ATMEL_EBI -e
+BRCMSTB_DPFE -e BT1_L2_CTL -e TI_AEMIF -e TI_EMIF -e OMAP_GPMC -e
+TI_EMIF_SRAM -e MVEBU_DEVBUS -e FSL_CORENET_CF -e FSL_IFC -e JZ4780_NEMC
+-e MTK_SMI -e DA8XX_DDRCTL -e PL353_SMC -e RENESAS_RPCIF -e
+STM32_FMC2_EBI -e SAMSUNG_MC -e EXYNOS5422_DMC -e EXYNOS_SROM -e
+TEGRA_MC -e TEGRA20_EMC -e TEGRA30_EMC -e TEGRA124_EMC -e
+TEGRA210_EMC_TABLE -e TEGRA210_EMC
+
+
+Best regards,
+Krzysztof
