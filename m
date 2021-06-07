@@ -2,123 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E026CC4743C
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E57BC47082
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 07:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7B8F6115B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6DB61209
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 07:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhFGGDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jun 2021 02:03:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35012 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbhFGGDW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 02:03:22 -0400
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lq8KJ-00013S-Be
-        for linux-clk@vger.kernel.org; Mon, 07 Jun 2021 06:01:31 +0000
-Received: by mail-wr1-f70.google.com with SMTP id e11-20020a056000178bb0290119c11bd29eso2533924wrg.2
-        for <linux-clk@vger.kernel.org>; Sun, 06 Jun 2021 23:01:31 -0700 (PDT)
+        id S229578AbhFGHGX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jun 2021 03:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229545AbhFGHGX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 03:06:23 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D8AC061766
+        for <linux-clk@vger.kernel.org>; Mon,  7 Jun 2021 00:04:16 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso11872614wmh.4
+        for <linux-clk@vger.kernel.org>; Mon, 07 Jun 2021 00:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=IXQ0rHuIq8Sp6ZPSHkZylxeYQH0sxVpoEqp3jeaqYmE=;
+        b=CusfUE99qmUxcpVDkjaGEVIrFMA4hxU1A186jcqV+McU6E+Nau4xkvIptLglW8Q7fx
+         mvNUugrdAmpkGz27Vpjk+wrZ9DqTJSf5o/I31z0NO/9FG2oWcH0DRYYeoKBvO9mqMDvH
+         aXWzNmhUaK43gb8N4fK2tvYHYNmFj2mTs4i0UpTuqCFTMJfLeUz7pGPFm1qYokleH5QI
+         p/aKxMcG8RQusn0Fpo2RffkWJE4xDF8CJxCkJpXu4+QpfVvW+QB0C2sCj/BVJU8dZ7Zh
+         f9LJijY+4Qq7zQxq52HYYFSac2GZgD4IONIZCtGlmYKdrcbbqNHWKtSA5yvv5pFbrnqJ
+         NBTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qAtq8fZxJa+xoWcGAlXfKDVfTmmln1jGGwqwLzPVz5w=;
-        b=gknvh8aufzK3J5nqbnbwSpktI9XnYp/ksWYoMKnkTp4Y6zTquh6Gm9BZKQPDennfDB
-         AzwZ6QSHTcT/DZYTofD49EhXEsNZr1AySiXOXLfnUbBhMgZd+T33s05nP4pO+/CXS6sv
-         6Bu4S8kO0H5d//AoQuFNtN0Ryhu0RdS1MRQSKhcqN2/opgz0tpXZt798y8JXnOhZLCup
-         KXEgKU49ORh4tkzC4wLRRSbfNl60SqhnRrhOuMyesFjEkykxcBwFrIPFcfneR4GagLGX
-         dlTcamtn2t0KM8JU+q0SPxJjHQleQ2e9mMmTxZ/NI7fWKli8ANRgVVpNXHGhd/rwYbVR
-         X8ng==
-X-Gm-Message-State: AOAM53171IUUtDKwWddX/Y3h+eV3YsNLii1mmvCq4b71Sl8VJP5xswcT
-        cdDxzzioI4K45FyvBoPuELZppP5QcvSlqmP3vgUdB1GhchPwINIztxf42MPxPEIah6mDAJxPHcP
-        45qpWWFKTqYlM2GnFwxUE1XDcXn2L7JUgem3puQ==
-X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833133wmc.94.1623045690461;
-        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxpu7m3EIJUyOBKcObfXEeEge07GsVcQb9YzJG8QvObto+R5NJsN0+hGkmIqmu4dspK7YMSzw==
-X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833107wmc.94.1623045690239;
-        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
-        by smtp.gmail.com with ESMTPSA id q20sm18398437wrf.45.2021.06.06.23.01.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Jun 2021 23:01:29 -0700 (PDT)
-Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
- drivers
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-clk@vger.kernel.org
-References: <20210601023119.22044-1-digetx@gmail.com>
- <20210601023119.22044-9-digetx@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
-Date:   Mon, 7 Jun 2021 08:01:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=IXQ0rHuIq8Sp6ZPSHkZylxeYQH0sxVpoEqp3jeaqYmE=;
+        b=tDNP/WgTaJ92zAxYOs3WxjDUSzaEyA08m0l0qPYAd5D6iH73wYxa8P8MKtkzcXX4mk
+         nnKh51MzP+O8bc1I8d5NYmgD7nrX/YwzEKx1SgX5HSQIlAEPYB3lXJIrZCL9A0tpShGv
+         yEB2wvOHVq6CQz0aJVVKmljTVPC0tZBuM4G6WhfdnxSpsB+d10yu4GoWrE0uq+f2v1qi
+         8xj6Se9w+XMoHmGet4Q9cptP1WjqB2cgtV491e6pgwIB51ZlhDjH+Kmy9HAdVqvfpq6N
+         iM9qLOU9AUL0JjiO8Jj4m5N+HGQm6xWgH5Cw6ZD0V01ywXhDV1L57SquqI/tgSETlRsj
+         l+cg==
+X-Gm-Message-State: AOAM530TtGD+uaLUGWv68KYs2+V5sJp6RKSq5L6XIcvt3yr4ExViJuai
+        dEeGuNlypi9/78mLcw9boES6iA==
+X-Google-Smtp-Source: ABdhPJyZOO/5rHk78956yRcE3dQpHyZg1qpWa64vJWaG0F4aawYYlClHtW4UBWk8JDkkqJx41AlDeA==
+X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr15430122wmi.174.1623049454701;
+        Mon, 07 Jun 2021 00:04:14 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id l9sm13019639wme.21.2021.06.07.00.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jun 2021 00:04:14 -0700 (PDT)
+References: <20210524103733.554878-1-martin.blumenstingl@googlemail.com>
+ <CAFBinCDn_0TeyLG9b9uB+4-4PdeNXgja11wf2CGcQ99tUNjkyQ@mail.gmail.com>
+User-agent: mu4e 1.4.15; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        sboyd@kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>, mturquette@baylibre.com,
+        khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] clk: meson: rounding for fast clocks on 32-bit SoCs
+In-reply-to: <CAFBinCDn_0TeyLG9b9uB+4-4PdeNXgja11wf2CGcQ99tUNjkyQ@mail.gmail.com>
+Message-ID: <1jr1heqhoy.fsf@starbuckisacylon.baylibre.com>
+Date:   Mon, 07 Jun 2021 09:04:13 +0200
 MIME-Version: 1.0
-In-Reply-To: <20210601023119.22044-9-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/06/2021 04:31, Dmitry Osipenko wrote:
-> Enable compile testing for all Tegra memory drivers.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/Kconfig | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
 
-Hi Dmitry,
+On Fri 04 Jun 2021 at 19:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-This fails on x86_64 and i386:
-https://krzk.eu/#/builders/38/builds/260
-https://krzk.eu/#/builders/40/builds/261
+> Hi Jerome, Hi Stephen,
+>
+> On Mon, May 24, 2021 at 12:37 PM Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+>>
+>> On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
+>> fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
+>> up to approx. 3GHz.
+>> This however causes a problem, because these rates require BIT(31) to
+>> be usable. Unfortunately this is not the case with clk_ops.round_rate
+>> on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
+>>
+>> clk_ops.determine_rate does not suffer from this limitation. It uses
+>> an int to signal any errors and can then take all availble 32 bits for
+>> the clock rate.
+>>
+>> Changes since v1 from [0]:
+>> - reworked the first patch so the the existing
+>>   divider_{ro_}round_rate_parent implementations are using the new
+>>   divider_{ro_}determine_rate implementations to avoid code duplication
+>>   (thanks Jerome for the suggestion)
+>> - added a patch to switch the default clk_divider_{ro_}ops to use
+>>   .determine_rate instead of .round_rate as suggested by Jerome
+>>   (thanks)
+>> - dropped a patch for the Meson PLL ops as these are independent from
+>>   the divider patches and Jerome has applied that one directly (thanks)
+>> - added Jerome's Reviewed-by to the meson clk-regmap patch (thanks!)
+>> - dropped the RFC prefix
+> please let me know what you think about this v2
+> I am asking because clk-divider is widely used, so I'd appreciate if
+> this gets some time in linux-next (so for example Kernel CI can test
+> this and report issues if there are any).
+>
 
-/bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
-/bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
-mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
-make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
+Looks good to me
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-It's a defconfig with:
-scripts/config --file out/.config -e COMPILE_TEST -e OF -e SRAM -e
-MEMORY -e PM_DEVFREQ -e ARM_PL172_MPMC -e ATMEL_SDRAMC -e ATMEL_EBI -e
-BRCMSTB_DPFE -e BT1_L2_CTL -e TI_AEMIF -e TI_EMIF -e OMAP_GPMC -e
-TI_EMIF_SRAM -e MVEBU_DEVBUS -e FSL_CORENET_CF -e FSL_IFC -e JZ4780_NEMC
--e MTK_SMI -e DA8XX_DDRCTL -e PL353_SMC -e RENESAS_RPCIF -e
-STM32_FMC2_EBI -e SAMSUNG_MC -e EXYNOS5422_DMC -e EXYNOS_SROM -e
-TEGRA_MC -e TEGRA20_EMC -e TEGRA30_EMC -e TEGRA124_EMC -e
-TEGRA210_EMC_TABLE -e TEGRA210_EMC
+>
+> Best regards,
+> Martin
 
-
-Best regards,
-Krzysztof
