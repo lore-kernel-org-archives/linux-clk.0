@@ -7,138 +7,151 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA1C47094
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 15:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C50DC47094
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 19:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C03EB61029
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 15:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 129C2608FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 19:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231287AbhFGPvj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jun 2021 11:51:39 -0400
-Received: from mail-eopbgr40081.outbound.protection.outlook.com ([40.107.4.81]:37445
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S230311AbhFGTHu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jun 2021 15:07:50 -0400
+Received: from mail-db8eur05on2054.outbound.protection.outlook.com ([40.107.20.54]:39630
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230440AbhFGPvi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Jun 2021 11:51:38 -0400
+        id S230264AbhFGTHu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Jun 2021 15:07:50 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eZ9+g40H/8bvuuQhyhGUtZq9HeAoks3cxsPKCO/ddhZ0d2RKJ6HYFIjY0h+JS2j19aWLOTmJv4eKQZF5NDfZL5tO6/XlWvsKUk10W/XdPpu1IP/mG2S4b2YQFv3Oh0x0Xyl+rbSGnvH1jKa4tKrnQ22l0JOWF2ipfgIccq5CmbUiSfRZN8HRcGZJFABikzTHznB+ujdc5EEpaUhpEpgqw/6q/1cA95l8n7WMbHr9ctGru9p51gHDIMoRDAUb29pj9VTJwPiNsioQKWf1cyzLfUpm8czbkQ9XJnKc+0j8U97H2LfonSPTK50URH3K3AtZV1WcBqJhDcoNG2VjQG5tGA==
+ b=fcEnI7C01S4Wb7C/5iG8rlak92zDfm4nADhGO8r1JHzONX3QwFYgCnyPDTB9NCqm3a553g6ya47EedxLlKlFwiE/DwDOvagZ9NGBXXaiQqxxB+jqO1S/Ar6jrx5c8ERISj89ZuEYMY7hSs1fOnhbPqRwE/gzTFPQwnQ1PJMLRpZnAn1E2ywyrZJtPy2Q4YWSuY4rzNo4wjsLUHC8GKrHUeXjVOa+hx1McyEX9J4mTeSvPejBaVt3rhg5PDCVqzAR6eXSIDiDkGJYwsn3ZPm1EyFxE1DKuNgjlgbZR7cmvY7Oyp2K6yVZ50ulrYIhzdqTKFKT/rFgxQFxQc9ajtAfag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a3Gnz6y6kMDjeGge38hRKYZBLfTWpnnqxp4/5KXvULo=;
- b=JO0Z28Hp48PpbFdh2RUUHtLdoQ8JSO1rzETgkql3mVbGeD4klCNr3XHkzza6DUkTL2+iFmasLApLQeQZHoYVjsE9bhs9Jd24WTrkoc0OKMpk3bjsmdYht3QsAdtMlawrkeZWW2UmqxSvzv/o/6nq/DppnJAioc/xG6RXwTVLuzHl0UuLKcwpXlptVH4TYqC4TZWGhV5+Lr2qOn9PALLR+wDduBzqPpgMJ7h2pShjWAQiYmq9mh126Tn6DEWgqHYwzcns9wlOTbOXyWAKSJaN2SVFOY+SkDD0d1OZnwzpLw8MCmXA9ehzcMuSHgXuej46pye+cHNTYhKhQwkp9rt2fQ==
+ bh=pkG2ZRt0kV2aoJYRo5BmzSnXNo6/QfmcF1PTapL6Hwg=;
+ b=ZsZ+kwHecBdEll89dsAbVQNqpwQoS3f7c4m+tOmFJ6NJr2bX/1jJR1w5QYeCEeyxPmvc+xcPdU01oZNOteG8ArCTlA/e0ZL01EKaqdqJu4xD6izH7AYvIo534LFGkDC5/WSy0li+IvlehIBY96VSozRMfqZex72QnfoTgTGeCDycHGVXwdICN4eStZI3GPlylXSUfhzG95wOT0pKJpGvhoBxABRVl0VO5BLYC3sJ3EtfvM2SijB/wJgaQ7Q+rJNSRO4MbJgUEoVNN3dHdB0qisECKbJpGgMS881jo5eRHx8MDxtl+NXr8gGFVQJbX7+IVqf6OlbN0vMa+uGgXjuZtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
  dkim=pass header.d=seco.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=secospa.onmicrosoft.com; s=selector2-secospa-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a3Gnz6y6kMDjeGge38hRKYZBLfTWpnnqxp4/5KXvULo=;
- b=QopKDEDwHyFeyEXyFNA42GQjVEGrh3E24RCqhgIo4xfAWj6d1UFluvOoSfPYCCma9CtRlnJmTPIoW9SzJ+3bZVJbky9BsRRS/L3uL3A0EN5a77gxDvQ9509WgaJNAK6JZnAaJewsbfRxQt5f3qz8t/rUNI7SVDqi6vrMsxOtYsc=
+ bh=pkG2ZRt0kV2aoJYRo5BmzSnXNo6/QfmcF1PTapL6Hwg=;
+ b=Xhg4MYjX55YrAbkVEPPRBrbGCQRwz13gG5yixgjbIn6OBBynh/X4mlc3WXVY+GHRMTPkqnISD6hRmDnXbeifALmEqUEHS1+Hv5EOLj9spwsGraPyobn1XCu5iOr/4aLE5e0k1cI9X9S7nEcAXgRncAbQX1VJRjiJc9L5fPTSnks=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=seco.com;
 Received: from DB7PR03MB4523.eurprd03.prod.outlook.com (2603:10a6:10:19::27)
- by DB8PR03MB5673.eurprd03.prod.outlook.com (2603:10a6:10:105::10) with
+ by DB8PR03MB5676.eurprd03.prod.outlook.com (2603:10a6:10:10b::30) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Mon, 7 Jun
- 2021 15:49:44 +0000
+ 2021 19:05:57 +0000
 Received: from DB7PR03MB4523.eurprd03.prod.outlook.com
  ([fe80::40d5:3554:c709:6b1b]) by DB7PR03MB4523.eurprd03.prod.outlook.com
  ([fe80::40d5:3554:c709:6b1b%5]) with mapi id 15.20.4195.030; Mon, 7 Jun 2021
- 15:49:44 +0000
+ 19:05:57 +0000
 From:   Sean Anderson <sean.anderson@seco.com>
-To:     linux-clk@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Adam Ford <aford173@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Sean Anderson <sean.anderson@seco.com>
-Subject: [PATCH 2/2] clk: vc5: Add property to set SD/OE pin polarity
-Date:   Mon,  7 Jun 2021 11:49:31 -0400
-Message-Id: <20210607154931.2491499-2-sean.anderson@seco.com>
+Subject: [PATCH] dt-bindings: clk: vc5: Fix example
+Date:   Mon,  7 Jun 2021 15:05:46 -0400
+Message-Id: <20210607190546.2616259-1-sean.anderson@seco.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210607154931.2491499-1-sean.anderson@seco.com>
-References: <20210607154931.2491499-1-sean.anderson@seco.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [50.195.82.171]
-X-ClientProxiedBy: MN2PR16CA0060.namprd16.prod.outlook.com
- (2603:10b6:208:234::29) To DB7PR03MB4523.eurprd03.prod.outlook.com
+X-ClientProxiedBy: MN2PR05CA0064.namprd05.prod.outlook.com
+ (2603:10b6:208:236::33) To DB7PR03MB4523.eurprd03.prod.outlook.com
  (2603:10a6:10:19::27)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from plantagenet.inhand.com (50.195.82.171) by MN2PR16CA0060.namprd16.prod.outlook.com (2603:10b6:208:234::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.15 via Frontend Transport; Mon, 7 Jun 2021 15:49:43 +0000
+Received: from plantagenet.inhand.com (50.195.82.171) by MN2PR05CA0064.namprd05.prod.outlook.com (2603:10b6:208:236::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.11 via Frontend Transport; Mon, 7 Jun 2021 19:05:56 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4587ecb1-0101-4baa-e4b6-08d929cbdead
-X-MS-TrafficTypeDiagnostic: DB8PR03MB5673:
+X-MS-Office365-Filtering-Correlation-Id: e214aed0-890d-4b01-46b1-08d929e747c0
+X-MS-TrafficTypeDiagnostic: DB8PR03MB5676:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB8PR03MB5673AD2C28157251BA57CB8996389@DB8PR03MB5673.eurprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Microsoft-Antispam-PRVS: <DB8PR03MB567631617C2B17DEF5EFB68696389@DB8PR03MB5676.eurprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gO2i2saX3D+FXm0mKBp6dTjsISx8Re7Pl58qTgpBCSO0ouwc/Eb4DB+4GULrtIQrY1dTURgxbPe7GtG0Ly5fymw5+xm6ZAGb9Md4hGgMrLUmIctGWoXw3uPRS7V2YMOZoA3VxOr7AtLxJR6C2agkFHdtZuhgVtOD574uV53vbvQXh4jW3uY9bFWB7OY1C29M5rC7eQSlAq1QuMB9nsNLc8Oh4Ml0uZul0RzZsZxsqkbzHd1Ybe6xKwjmdLgjnUcIV1nU23Y/dVOgHZ0CwMsPys7aeCY3zOA3FdNhjbk50cg8ps3kGAZLFurUv8TN6qlEuOODLV0g+94mcrjDAOWwRMEq5YltHlCe8uiR5F6u+iFapZBicPfpIhaQeXkr+e9vXfs4Qpi/T8tyGSm5qmxCLvkwhN6Evx7pW6YRzsnLg/XBKI9XjMa7sFQZOO5TXJCEkDpAx6OJgTWyzFFRi6clT79cbGfwGIP3rUQDBYXcBZ0JCUWWJbVPUCHzCzooEh5twAEvUvMLYNcgzRPJv/olaelP6hBSs0wY6BdJ2xq4Mj2heEhLDnPaqb9gqKD86D7IzLw2Sh/GNwk8lLuLcMM5FdNuMwksxpea74NQS6FFWwl6t7Pt/iVKpR0OpnGB3vQia2+1b4W9j4mRtsSyKELyPQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4523.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(52116002)(4326008)(5660300002)(54906003)(6486002)(6916009)(107886003)(6506007)(2906002)(6666004)(83380400001)(6512007)(186003)(26005)(44832011)(36756003)(1076003)(8676002)(956004)(2616005)(66946007)(8936002)(38350700002)(66556008)(66476007)(38100700002)(86362001)(16526019)(498600001)(4744005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?0HnExO49LCTj2RURerrPjhemD4N990lFgtv/Vxcddkp0AytrBk8vTkBjh4ti?=
- =?us-ascii?Q?ZVOLABPcTAFvYCIqiebLtqta2AUft7v7qobAlRxIfF8HlzbkXvIOZlS4g8sx?=
- =?us-ascii?Q?S2f8n+yPXLw6LQ71QKDr8VMfGhWHU0BL1PWCfOJLik3fUeWg9tvrrFAtN1eQ?=
- =?us-ascii?Q?NxY8Bdu88CNaQ4wWJlpM15mmUis17+iir0emhksTmhRhXQ93vf9b7RgVO68M?=
- =?us-ascii?Q?QW/LTw8spb28yoKjwxiVPvaj+4ArVPJho3k362rmtqf3WPEWMxKjPHKsyrq1?=
- =?us-ascii?Q?gwzlkZcQiKyCuYRN/cWRwXOAitg3mXv/H8HVQq868q8g44rJU8uYlJhGYAMf?=
- =?us-ascii?Q?LYXwsd4PmONrG2lFJ1HCJKaIsq77Far/hjobc6ZIJmxyOqzfH3ZlnlokHFqI?=
- =?us-ascii?Q?5tZ6jRpobVHLOZ1ZLo7LZS+0e9bYAyOLbiShld/B386tl+PciUi2ioefc0Bl?=
- =?us-ascii?Q?rtp2nJqRmtnGJhJLUTBtUjEFY97RB5znNAMu3fo/wshpSJISPGGk469Q54/r?=
- =?us-ascii?Q?aZ7KVKZuWP44LoB249tka/77ZaVpNkYGsMAqJxavA5rFrOG9LNP5V8koskrm?=
- =?us-ascii?Q?qk8j6jOVYBtxtwwcM+TR8CBHQX6Ak0WL/Od1e0Qwdb2Tcx7PM6M93IdxXv51?=
- =?us-ascii?Q?P1nAmQIRcw56hRwvGE+xh9xm5ohI4U4uahawCNWbYdpLPIdYuk2PUF3nk5Qs?=
- =?us-ascii?Q?gIIEkQC0c1K/9gRvASHWxYVyEfwGvEzBD5D7f3IRhdnOq/NBsKvjRaB3AHu/?=
- =?us-ascii?Q?E3gKhoSaw8HIX6mQGFogyOUoewEAO2B5gk6gjS343umnNC84TZAokjsdYJgB?=
- =?us-ascii?Q?X6XDHeQPJutbeF10YZdIKD8q0nkCjq6j+GNq55FJ2jvMHn2Ld8PRqaeg/BDx?=
- =?us-ascii?Q?mpFsQcEhYGU2pgQdMHDxQKTjEAlHSHm/B19937/yYuEaWyhqGP4Q3p7UfnW6?=
- =?us-ascii?Q?A6GblcxUIXbeqN2T7z21lnxqx1us5oH9VlREDqHy9Dt/DeaSU81qV6Alb0/5?=
- =?us-ascii?Q?+nKHCP1TOYkWZMLglmGKf6AqLw8pkeiO8VkVESr8qogPUyver1D0V3VhBlzR?=
- =?us-ascii?Q?nRhjWdX+WvXLJltSnBfw2CYZmhP1jEDb0b9/wquOs0CZW11CK1a43pK32n1w?=
- =?us-ascii?Q?EvTqDq5w15lGS024LnS2wCBsbkmp9ozjusXnf1TAzReB3v/bmHD4gedOBapY?=
- =?us-ascii?Q?9L1WkCZ1z2XIYRTe3J/dCqBuVIn9CbRdKy1Kpqx+Wb2uayqU6McNg51PE3kU?=
- =?us-ascii?Q?+DpW2Lb8mcP8O+MRbqWptcGAhzJ90z/IJR5QP6KG9oEOWRBACxudUoe01Mhj?=
- =?us-ascii?Q?jk/iTVTMNo4nFS0GIyin+idR?=
+X-Microsoft-Antispam-Message-Info: DVZbarpsvupyA3zmLjOVVsd8Z6VCHyA6GmdJmKEt+uIoK4n5ZcCxKQF7WT4AaAsoMG9iMO28aPQHfbNTiTC9IZQI7aH6/g5dACIAkxdiWGQRgvSgpvhVlrTEYC5q/M2ojZtS02APKcKIcmL4RVYIyG62Bc4R+XfafC9a3UMnkcMunvcYr1OQr2Ts4pORbgfNfMd13z9tSejqW1KNvIZaamgr6JumwpxdOJn1CDiWokHcAVrituSt3NebJ1uK+mb0Wm19D6V+xW0lUeRW++IrmgExixnmO8EY2OJVpsPGANvDNV0SSSIe0Pyc2/I4fNoelUB2vWvFS3l47exheVp6qc6XNLemdwSe/BCyfciPPRHN7XDp5X8R2O+9iI7He+sXPp3pKExtmImhQZ30uoV7s0AP8v84PTLkKJWA+V34vO41825g+CZVwrOxkXYjnJtT/XM/RAyquLvFPp+enS43HBj2UkiXpaQA18uTQ8yEY89W+NJ6oA+EO/Clm2dclOZhKQ1hk2lpNKHK8e0avcnkmgkpzXNRMSxmo2yJShgEO14uafEoeVvWYv+1WnxX2Yb5Fb5KLQvbS+rdHaTNu6xStJre6RP/I04IJY8wTrU5gPnQ0IEQ6fa1HWG/nnTba9KN9p6fMc2TjuiaiROVR5WNCw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4523.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(54906003)(6506007)(52116002)(86362001)(498600001)(5660300002)(4326008)(186003)(2616005)(16526019)(26005)(956004)(44832011)(6512007)(6916009)(6666004)(83380400001)(107886003)(6486002)(38100700002)(38350700002)(2906002)(8676002)(8936002)(1076003)(66556008)(66476007)(66946007)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?uDaKllxe75hwyQz6Gr5aozVzXnorq4aOY2Mcg2BRBX1tQnR5modqP25Uw3fL?=
+ =?us-ascii?Q?MJMKkl9dneWVR/+xJ/hflhI/T9q1OIoutxAGN4xHo5T1aJHZSu2EJ1o3NQoP?=
+ =?us-ascii?Q?p6g3x2k5kV10eKrqdDADQPTQJAOmWh629pymXdypioX6rUZx3Vuptt92SnQD?=
+ =?us-ascii?Q?GquYRLiViHVHE9W5lQd8kWmjkhqtuMtxRZLANlSYKWPFSVWLPhzA0ocEE2np?=
+ =?us-ascii?Q?BexMsl2E54ZZNIL9lxbi4Vkh8p+T/VKzwG710JrTf465ffu1R9IfNQvFKrSJ?=
+ =?us-ascii?Q?XToA/to/DJo0/hJh5s9qsmyA0dHUWav7I53Wj/8CiLyARmd60xzTsXpO+U6x?=
+ =?us-ascii?Q?bAZvRkNVCVG+ZA8oIBrPWZHRlTgXZUTN+lg/+JsdOezRQbjJ2lIen5BtZLTn?=
+ =?us-ascii?Q?cl3SYPnfMUr9oStPB4sRQQ7JHiurfSIC6IMJSo/ow6GWtyS1oBgnk30lLhL3?=
+ =?us-ascii?Q?9mSaHvidieCxyAcnEKaZ+wfG9aSzZe/fTa6YInGv/IKcDhOk+mcsrr6OpxTy?=
+ =?us-ascii?Q?mniCpXIkiyWzbpUX3FtcwoRX6Tz+Fok3tsb1sfWr0mtpFqACxuRwbwTMKvze?=
+ =?us-ascii?Q?DrX5LNuF4m7hL/AdbHRId4Cp4dub8otbnJLnRxcXWfLKc0EmQJtnkmLIaKKG?=
+ =?us-ascii?Q?Ihl3HSGvY+b8pdZYeBCye/5UTRFox5HErVtYGcu8NpQkfbYxH1+ZWliIv7dK?=
+ =?us-ascii?Q?KFZLuaQdYywFtmMd9s3seMZtlyChLGI0T41BuySkPdOCsMBUzJQZnsEfwUXN?=
+ =?us-ascii?Q?DtZM/CUVzlrNmXVRNpWwVqTnoIuItVEDFt3cO/1KlvBARQrO3EhrSkVsdhbd?=
+ =?us-ascii?Q?nvotkRqS5KsWKfWzVvUSAlfmh2QtB1JnjEaLEKdoLdtbIZqoH0oycJdP9KCt?=
+ =?us-ascii?Q?L3ZgUyZt3e+a2onczIs0dnfUI5DGLo6BPgrFVNJsg+6VhgTJY7GBRyBw3o/+?=
+ =?us-ascii?Q?snoEuwAHzrAOYSAgGfQDHE9nk71eZQ60olQ8mUesZBIkCjG0Jssx5BWrZCbP?=
+ =?us-ascii?Q?MAzZ4zimm1jB8/2MnZomLVMrHNRtHpnREx9ZZ8TKiL1QNRbrYTnSpTdz3diQ?=
+ =?us-ascii?Q?ZUydARsVYDYIdjVKoIYnfwD3QiNUkl0TcA8nBUzx0BKSdLbbRuaY1+Ojb5Qi?=
+ =?us-ascii?Q?/uYp5G7VIaKYcOIA17h0sxA7f8t1Xh+D9Rrm6A0qyCrX9hKQrRlKL61/aanm?=
+ =?us-ascii?Q?eGlcp/LgSy+um2lCcLoI2fzsa2T8hTcf1CN0nxj1wiY0yLnHqFzhs1hJSYiZ?=
+ =?us-ascii?Q?zqXnXAgpHogXvePWptZOjl7IFowfUEwDh2yNRra2I2GY6XE1KgfgH/ZLgkMz?=
+ =?us-ascii?Q?SH1VwbA3PHRgp+bDz6Ilrvsx?=
 X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4587ecb1-0101-4baa-e4b6-08d929cbdead
+X-MS-Exchange-CrossTenant-Network-Message-Id: e214aed0-890d-4b01-46b1-08d929e747c0
 X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4523.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2021 15:49:44.2722
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2021 19:05:56.9422
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NGbFhTe2OfeEPyIE7IWdoU2C8vDI6hputkd750HgfqvCSoHFx8/I8J4qTvhm9r0sfSPmBhZA7rlv1SLpPnSreQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR03MB5673
+X-MS-Exchange-CrossTenant-UserPrincipalName: QutQKxDUBS05fRsMgD91C0lav+8SD9508VOeSdNDsU482ca1R/zgC2pIsj1ASi8wXvIgmVnQBuMIbRX8OOuncQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR03MB5676
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This pin has configurable polarity, defaulting to active-low. Add a
-prioperty to allow setting it to active-high. This may be necessary if the
-pin is driven high and there is no GPIO allocated for it.
+The example properties do not match the binding. Fix them, and prohibit
+undocumented properties in clock nodes to prevent this from happening in
+the future.
 
+Fixes: 766e1b8608bf ("dt-bindings: clk: versaclock5: convert to yaml")
 Signed-off-by: Sean Anderson <sean.anderson@seco.com>
 ---
 
- drivers/clk/clk-versaclock5.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/clock/idt,versaclock5.yaml         | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 344cd6c61188..4e2461cb3950 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -914,6 +914,10 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		return PTR_ERR(vc5->regmap);
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 28675b0b80f1..26ed040bc717 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -84,6 +84,7 @@ patternProperties:
+       idt,slew-percent:
+         description: The Slew rate control for CMOS single-ended.
+         enum: [ 80, 85, 90, 100 ]
++    additionalProperties: false
  
-+	if (of_property_read_bool(client->dev.of_node, "idt,sd-active-high"))
-+		regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
-+				   VC5_PRIM_SRC_SHDN_SP, VC5_PRIM_SRC_SHDN_SP);
-+
- 	/* Register clock input mux */
- 	memset(&init, 0, sizeof(init));
+ required:
+   - compatible
+@@ -139,13 +140,13 @@ examples:
+             clock-names = "xin";
  
+             OUT1 {
+-                idt,drive-mode = <VC5_CMOSD>;
+-                idt,voltage-microvolts = <1800000>;
++                idt,mode = <VC5_CMOSD>;
++                idt,voltage-microvolt = <1800000>;
+                 idt,slew-percent = <80>;
+             };
+ 
+             OUT4 {
+-                idt,drive-mode = <VC5_LVDS>;
++                idt,mode = <VC5_LVDS>;
+             };
+         };
+     };
 -- 
 2.25.1
 
