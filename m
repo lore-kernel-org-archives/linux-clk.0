@@ -2,61 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95211C47094
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 13:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CE4C47094
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3C461153
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 13:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801DF61185
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230282AbhFGNjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jun 2021 09:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbhFGNjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 09:39:55 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D46FC061766;
-        Mon,  7 Jun 2021 06:37:51 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id v8so26296234lft.8;
-        Mon, 07 Jun 2021 06:37:51 -0700 (PDT)
+        id S230333AbhFGOEE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jun 2021 10:04:04 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:33506 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230282AbhFGOD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 10:03:56 -0400
+Received: by mail-lj1-f173.google.com with SMTP id o8so22415254ljp.0;
+        Mon, 07 Jun 2021 07:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lRMehmfHZcYJAVx0WUyZKmSVgdj8BgTPYFpCBqlVyAU=;
-        b=rZEHcwZRuiTW+TaagQbAr7mjVuRphBFC01PEJwE+EUppCA1xXx42ulg0nRQt5rxAHY
-         69hF/uBfIqPRYVfKV1F0/NMptfdbB5W6KpNx4hpMmeNlXXDhISFogZsTtFYTOsaQvHDz
-         dASsSNyx4mHGXzQqFz0IBZ7CVV4ZI02F049tSIwdII0aOWmqkvM38SiMJ5O1Jqf75FKE
-         MyRo5V7f1PwkPq0DCQBIBM3AJEDArOe6YLBxWbfx04ZIHu+OpoqgtO+6rYdewSilgW5M
-         0GxC/xiU/t+U1JVAHsndoO7rWDADBidFwI9nR/lRIZK+ojQ0Dl2SW26wBKvA5rBs3LyZ
-         76BA==
+        bh=j/h58gR4t5OdekYQSFNWFSj/ytcD8nEYOcwTds5lTpM=;
+        b=cZ7XwpDmaKUFyRGuU/gySPHGHuthR5dZLIB7M0erV4onywKe23DLtafLrWOETo7w7T
+         hec5JQpo9owxIclFPifVIDu5njeS1SVs4jF/KMo8rQKYpmQLn+fZ/9aAZ8EKKtFPNW7H
+         49F6BSpfSgBjMCBbl3KpmVCDfCM1TJKe4pC2Nk1/6WsjTHnKy7Gqzkv8XgHqnP5IBtZG
+         GencLDReN0jxgqKJnkJB+cv/pT3NPJVv2orkahuGhqhga+9z/r5KBWuqA2P8n3VqXVTi
+         MiwDtmfQdL4oAK20X0SqY/RmbPdbM9NkOAAjlxsXVM7dJjteoUxAo3fUGYWqUsUr3Pnb
+         LN/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lRMehmfHZcYJAVx0WUyZKmSVgdj8BgTPYFpCBqlVyAU=;
-        b=HlbX4M33RtQZx+la8E+2Ls+T6i1EnkivT4eunoa1YsTClKZJ8kyoF5WqBZFvkzKWHh
-         E4dtn0zc6SZsEkU67dUj9VrXTkj+c27K15Fpmi5pGKWDUjEY9Q9Fo5NPprKwHzndBx5T
-         wXJc7QOaT7ep8nL7J8P56110l2C+MFWgaXjKVBZiWFtXnSQ3w67dtPBzP9w6mL8z5PO8
-         5TGHLrUvPVjGNPKX09BKp3TpwC4NvVsAIikCNQOPO60IbUGVhCDeXVsVjeFrDBXy9LgZ
-         oU1q59NJt3e3xdr8GgmXFH+745hCGri0/pYEY+Z9ygqzX5O3nsQo62R43yPx5LWMAbLs
-         UxYg==
-X-Gm-Message-State: AOAM5303TU18URC9tm4FhIElaNrSWWltttfS6IkI3nU3wOCLJ0EMdXQo
-        0MuawutbHGmZabwLmN3uH1pKfrEcywU=
-X-Google-Smtp-Source: ABdhPJzkzlNBtcYquNR2vxBLPNUWLG3xsnTOuRRZMqFwkQkI4FHVi23K45sFGd+1RfVBkmVY37dImQ==
-X-Received: by 2002:a19:dc5e:: with SMTP id f30mr12132778lfj.318.1623073068322;
-        Mon, 07 Jun 2021 06:37:48 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-1-103.dynamic.spd-mgts.ru. [94.29.1.103])
-        by smtp.googlemail.com with ESMTPSA id d27sm647075lfv.261.2021.06.07.06.37.47
+        bh=j/h58gR4t5OdekYQSFNWFSj/ytcD8nEYOcwTds5lTpM=;
+        b=EC4Oj2EPBsKKvvLuCE2kkpoconoDvp/CyjZnUxiTA5OslhSKQtgO1HdCcN6rlGq8Xw
+         Jwr75EM3OR5w1/nB1hw5Tmghz5QQ963bhOZt9F2iUw1KszJvTGc360aN7ntPuWUDMDfY
+         2Y3xhXcnkyzBqEkl6aAFnsMWw0fwOnZUDz1DZupwPf3nJydpUmwtPzMILG3/klCDQ5SA
+         4e9FM7akhASUMT6ZmZOr/LJ5/SO8sGYWY4wc8s3X8R6CI85VX6QE4apkV3N4Gu26klPT
+         DED/WeTv8Pb2u8tG2Z93nKSL7EGXTxXs0wEj2ta/fKj2prrAxsgeWPdUDO9VwaERO/66
+         TfVw==
+X-Gm-Message-State: AOAM530x/m9odo1NPGv0ZJHAk3wgTSJ2JRb8k3k8tBUVSdhHPtcabGZL
+        4C2eQk2dhSnouuGEoHHMxg7Jwa1eA67Phg==
+X-Google-Smtp-Source: ABdhPJwJPJlxEzcJy2V7HIsl9pZaKXUR1EHrfEc7wtr6r3yjIsl4WVm+fC5F1nStGJ5G324XD61png==
+X-Received: by 2002:a2e:98b:: with SMTP id 133mr14370450ljj.88.1623074463327;
+        Mon, 07 Jun 2021 07:01:03 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
+        by smtp.googlemail.com with ESMTPSA id u25sm1871572ljo.56.2021.06.07.07.01.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jun 2021 06:37:48 -0700 (PDT)
+        Mon, 07 Jun 2021 07:01:02 -0700 (PDT)
 Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
  drivers
 To:     Thierry Reding <thierry.reding@gmail.com>,
@@ -83,8 +79,8 @@ References: <20210601023119.22044-1-digetx@gmail.com>
  <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
  <YL4gwxWopKT7LomG@orome.fritz.box>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c4839740-09d3-0f2b-e115-67bd74ad336d@gmail.com>
-Date:   Mon, 7 Jun 2021 16:37:47 +0300
+Message-ID: <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
+Date:   Mon, 7 Jun 2021 17:01:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
@@ -97,50 +93,14 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 07.06.2021 16:36, Thierry Reding пишет:
-> On Mon, Jun 07, 2021 at 08:01:28AM +0200, Krzysztof Kozlowski wrote:
->> On 01/06/2021 04:31, Dmitry Osipenko wrote:
->>> Enable compile testing for all Tegra memory drivers.
->>>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/memory/tegra/Kconfig | 16 ++++++++++------
->>>  1 file changed, 10 insertions(+), 6 deletions(-)
->>>
->>
->> Hi Dmitry,
->>
->> This fails on x86_64 and i386:
->> https://krzk.eu/#/builders/38/builds/260
->> https://krzk.eu/#/builders/40/builds/261
->>
 >> /bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
 >> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
 >> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
 >> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
->>
->> It's a defconfig with:
->> scripts/config --file out/.config -e COMPILE_TEST -e OF -e SRAM -e
->> MEMORY -e PM_DEVFREQ -e ARM_PL172_MPMC -e ATMEL_SDRAMC -e ATMEL_EBI -e
->> BRCMSTB_DPFE -e BT1_L2_CTL -e TI_AEMIF -e TI_EMIF -e OMAP_GPMC -e
->> TI_EMIF_SRAM -e MVEBU_DEVBUS -e FSL_CORENET_CF -e FSL_IFC -e JZ4780_NEMC
->> -e MTK_SMI -e DA8XX_DDRCTL -e PL353_SMC -e RENESAS_RPCIF -e
->> STM32_FMC2_EBI -e SAMSUNG_MC -e EXYNOS5422_DMC -e EXYNOS_SROM -e
->> TEGRA_MC -e TEGRA20_EMC -e TEGRA30_EMC -e TEGRA124_EMC -e
->> TEGRA210_EMC_TABLE -e TEGRA210_EMC
-> 
-> Ugh... that's exactly one of the reasons why I dislike COMPILE_TEST...
-> though admittedly it does point out a missing dependency here. I think
-> we need to add && RESET_CONTROLLER to that || branch of the depends on
-> to fix that. ARCH_TEGRA selects RESET_CONTROLLER explicitly, so the
-> COMPILE_TEST branch needs to mirror that.
-> 
-> Either that, or I suppose we could add the depends on RESET_CONTROLLER
-> explicitly to TEGRA_MC, or perhaps even select it (although that could
-> cause conflicts down the road, but should be fine right now because
-> RESET_CONTROLLER doesn't have any other dependencies right now).
+...
 
-The select will work.
+> Not sure what to do about that orphaned __reservedmem_of_table section.
+> Maybe all we need to do is to select OF_RESERVED_MEM from
+> TEGRA210_EMC_TABLE?
 
-The other option is to add stubs for the reset controller API.
-
+Select won't work easily, but the dependency for TEGRA210_EMC should.
