@@ -2,137 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B158C47094
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB28C47082
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35F4461130
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254FB610FC
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jun 2021 14:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhFGOXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jun 2021 10:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230211AbhFGOXk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Jun 2021 10:23:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 75CF261107
-        for <linux-clk@vger.kernel.org>; Mon,  7 Jun 2021 14:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623075709;
-        bh=lWHcDa4OhiqlseElm2iLScdN2nxYgGQwklng4lJ4Ot8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tR/S+Vc3j3XQMLZDB32QcER4iF6jzxB/QJuHKuK6HO2/m/PprXmsHcQojxB0DlQU5
-         e1pp2ubrdqB9TRDGxY3HRs8bXmlEIdbip42WinvFc9QIdgcPoS+EvV+hj7dIf6sqSX
-         Hh+hl6Yx8wcfXH0ugAit/N3SEpoH6UFICdKCqnbGfJlHCw7ERK3s96xGBclatE6vnu
-         ini1lGH7p8lkSsV3SbbDj+TfsXu2CXE92pvrsSOHj8EVPqld3lgu0CTsObRAmXYTkF
-         4Ht5fv4fh5dxZUqii+xDqMyJV4mtQHh+NeC4PgvjyJGu5F1LZiYUFXfjmDd8nOEr9U
-         lpow8HHqxFDyA==
-Received: by mail-ed1-f48.google.com with SMTP id s6so20573958edu.10
-        for <linux-clk@vger.kernel.org>; Mon, 07 Jun 2021 07:21:49 -0700 (PDT)
-X-Gm-Message-State: AOAM530nrjxHp8UXbqChnPPOFIQuJMZE4R5xeazTi3sVbbeC6X9XOF5v
-        9f4hFmr3L4UhLWwrPzruF6IP9kCOhsIzbv2swQ==
-X-Google-Smtp-Source: ABdhPJywpW19OXnqaT6nATu890OXJE4gGZtdJI7a9+unUtfl8xwtP8ncCEmK4Sl7zvmhByt9uZBMZywweKKdhigXGHw=
-X-Received: by 2002:aa7:cb19:: with SMTP id s25mr20576673edt.194.1623075707941;
- Mon, 07 Jun 2021 07:21:47 -0700 (PDT)
+        id S230241AbhFGOog (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jun 2021 10:44:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52880 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230220AbhFGOof (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jun 2021 10:44:35 -0400
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lqGSh-0000pQ-D9
+        for linux-clk@vger.kernel.org; Mon, 07 Jun 2021 14:42:43 +0000
+Received: by mail-wr1-f69.google.com with SMTP id f22-20020a5d58f60000b029011634e39889so7921298wrd.7
+        for <linux-clk@vger.kernel.org>; Mon, 07 Jun 2021 07:42:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LZouowOMeDZ6EndWSO8l3IpGbZlNHlcW3YYdxdPf/aY=;
+        b=aOd5fFN4cOaER89DmMOm5F6E4ZCFxINfHXHaUNnkajFA3QWypxTAjyIin/9fA0XtE5
+         F5qvrjKFDkcSITlj7e4ErBcZJdjaIouJU4DuCLJShTgLB00yWra8snRUfTbJD4y0BMYz
+         HVnu15mT6otnHVRUCgF0pqTdxOlUfcxK4py4rUwlWOSvxaX3DH60ZWiNk49kWLYxYpiC
+         KBfyWiweZXMT/6N7iCr3BuWg1qpBjnXmWh5otpYI02j6AX/aQDhQngKxI0O9vq+s23Iu
+         dfdQAP9Cff9FCfUgIh75cQtJSFbUxNTmlYQb1zyVmvqjy5WHSAxLbW2HExerGlnMATPq
+         W98g==
+X-Gm-Message-State: AOAM531jOCEw0QVFQejFy3zZK0RBG3iUkvTcPrpMgyGaVDGNZ9cxjBGW
+        n8+CvwQlwnP7ymfNxgYJsYN58liDaNN8bkvUgzz1LwnaNCshhk/fFQnid1MjvlOTsQXkX+35B3n
+        SKj3w+PuAzJnC7r2jdmFLI3bCU9pjbEBDlfEy8g==
+X-Received: by 2002:a05:6000:18ad:: with SMTP id b13mr17121005wri.134.1623076962918;
+        Mon, 07 Jun 2021 07:42:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyCR/qOJ2HOoz8Yaxcz1xb5SQF3ouTzcrIeE2rRHBxNtJtXVZtVdkLJ/2+fUMEntjBQHi/CIw==
+X-Received: by 2002:a05:6000:18ad:: with SMTP id b13mr17120979wri.134.1623076962784;
+        Mon, 07 Jun 2021 07:42:42 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
+        by smtp.gmail.com with ESMTPSA id l9sm14332397wme.21.2021.06.07.07.42.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jun 2021 07:42:42 -0700 (PDT)
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <20210601023119.22044-9-digetx@gmail.com>
+ <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
+ <YL4gwxWopKT7LomG@orome.fritz.box>
+ <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
+ <YL4rBYkWHpeit66m@orome.fritz.box>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <e4896499-e593-aa5d-9b74-c5a3725e334d@canonical.com>
+Date:   Mon, 7 Jun 2021 16:42:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <202106032204.RmTRwUJD-lkp@intel.com> <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
-In-Reply-To: <162275070593.1835121.5721436755445700602@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 7 Jun 2021 09:21:36 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+PW6nENg2tp1Yxp+EF2rH3kz-wZyBo4vKDQQmosk7haQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+PW6nENg2tp1Yxp+EF2rH3kz-wZyBo4vKDQQmosk7haQ@mail.gmail.com>
-Subject: Re: [clk:clk-versatile 1/1] clk-versatile.c:undefined reference to `of_iomap'
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     Peter Collingbourne <pcc@google.com>,
-        kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YL4rBYkWHpeit66m@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-+Randy
+On 07/06/2021 16:19, Thierry Reding wrote:
+> On Mon, Jun 07, 2021 at 05:01:02PM +0300, Dmitry Osipenko wrote:
+>> 07.06.2021 16:36, Thierry Reding пишет:
+>>>> /bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
+>>>> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+>>>> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+>>>> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
+>> ...
+>>
+>>> Not sure what to do about that orphaned __reservedmem_of_table section.
+>>> Maybe all we need to do is to select OF_RESERVED_MEM from
+>>> TEGRA210_EMC_TABLE?
+>>
+>> Select won't work easily, but the dependency for TEGRA210_EMC should.
+> 
+> Select works if I also select OF_EARLY_FLATTREE. That's slightly odd
+> because typically that's something that the platform would select, but
+> there's precedent for doing this in drivers/clk/x86/Kconfig, so I think
+> it'd be fine.
+> 
+> The attached patch resolves both of the above issues for me.
+> 
+> Krzysztof: do you want to squash that into the problematic patch or do
+> you want me to send this as a follow-up patch for you to apply? I guess
+> the latter since you've already sent out the PR for Will and ARM SoC?
 
-On Thu, Jun 3, 2021 at 3:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting kernel test robot (2021-06-03 07:58:13)
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-versatile
-> > head:   419b3ab6987f2a108cc4710030184365b17467ac
-> > commit: 419b3ab6987f2a108cc4710030184365b17467ac [1/1] clk: versatile: remove dependency on ARCH_*
-> > config: s390-allmodconfig (attached as .config)
-> > compiler: s390-linux-gcc (GCC) 9.3.0
-> > reproduce (this is a W=1 build):
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=419b3ab6987f2a108cc4710030184365b17467ac
-> >         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-> >         git fetch --no-tags clk clk-versatile
-> >         git checkout 419b3ab6987f2a108cc4710030184365b17467ac
-> >         # save the attached .config to linux build tree
-> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=s390
-> >
-> > If you fix the issue, kindly add following tag as appropriate
-> > Reported-by: kernel test robot <lkp@intel.com>
->
-> Probably ought to depend on HAS_IOMEM. Linus or Lee?
+Follow up, please, but I am not sure about selecting reset controller.
+From the tegra/mc.c code I see it can be optional - if "reset_ops" is
+provided. Therefore I think:
+1. Reset controller should provide proper stubs. This will fix building
+of mc.c when reset controller is not chosen (regardless of point #2 below).
 
-As you can see, there are lots of errors on s390 related to this.
-Randy has been looking at these and I've suggested we add static
-inlines. What makes HAS_IOMEM special compared to everywhere else we
-have static inline stubs? It is mainly a kconfig hiding mechanism (for
-UML and s390).
+2. Specific drivers should depend on it. Selecting user-visible symbols
+is rather discourage because might lead to circular dependencies.
 
-> ----8<----
-> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> index 792315d893db..481de5657d85 100644
-> --- a/drivers/clk/versatile/Kconfig
-> +++ b/drivers/clk/versatile/Kconfig
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->
->  menu "Clock driver for ARM Reference designs"
-> +       depends on HAS_IOMEM
->
->  config ICST
->         bool "Clock driver for ARM Reference designs ICST"
->
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_memory':
-> >    coherent.c:(.text+0x3bc): undefined reference to `memremap'
-> >    s390-linux-ld: coherent.c:(.text+0x500): undefined reference to `memunmap'
-> >    s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coherent_memory':
-> >    coherent.c:(.text+0xae6): undefined reference to `memunmap'
-> >    s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_dt':
-> >    irq-al-fic.c:(.init.text+0x98): undefined reference to `of_iomap'
-> >    s390-linux-ld: irq-al-fic.c:(.init.text+0x596): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
-> >    clk-fixed-mmio.c:(.text+0x9a): undefined reference to `of_iomap'
-> >    s390-linux-ld: clk-fixed-mmio.c:(.text+0xe6): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clk/versatile/clk-versatile.o: in function `cm_osc_setup':
-> > >> clk-versatile.c:(.init.text+0xbc): undefined reference to `of_iomap'
-> >    s390-linux-ld: drivers/clk/versatile/clk-sp810.o: in function `clk_sp810_of_setup':
-> > >> clk-sp810.c:(.init.text+0x174): undefined reference to `of_iomap'
-> >    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_init':
-> >    timer-of.c:(.init.text+0xcc): undefined reference to `of_iomap'
-> >    s390-linux-ld: timer-of.c:(.init.text+0x8ee): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_cleanup':
-> >    timer-of.c:(.init.text+0xb9a): undefined reference to `iounmap'
-> >    s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in function `mchp_pit64b_dt_init_timer':
-> >    timer-microchip-pit64b.c:(.init.text+0x150): undefined reference to `of_iomap'
-> >    s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xc78): undefined reference to `iounmap'
-> >
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
