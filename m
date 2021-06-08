@@ -2,167 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D45C47082
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79675C4743D
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFD1A6128A
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E05C6134F
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233804AbhFHPKv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:10:51 -0400
-Received: from mail-vs1-f43.google.com ([209.85.217.43]:37629 "EHLO
-        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233538AbhFHPKu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 11:10:50 -0400
-Received: by mail-vs1-f43.google.com with SMTP id f21so9319456vsl.4;
-        Tue, 08 Jun 2021 08:08:57 -0700 (PDT)
+        id S230450AbhFHPVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:21:30 -0400
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:33595 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229942AbhFHPV3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 11:21:29 -0400
+Received: by mail-lf1-f48.google.com with SMTP id t7so25567274lff.0;
+        Tue, 08 Jun 2021 08:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+ZQdXFWpJEUYm2HPd1TCaErdT12gtevimcDp8YdzDY4=;
+        b=DFEB8wDt/p44yutjfofgv6kWLwjFVGzDUweIAXNcva3bPS4NzmE3CrMUhi5gdBtN3j
+         M8+EORdTcFHID9lHno6kDtRRPjom9BEIFrwRbiyo8RDXD8xRIc4/hWfSssq4M9PY3B7K
+         B8FSh8mmeLeNzt2Su9FXOGsJYtimo9pR9J8d3Z4lqeKkgOe/B4LGIaVwjE8AXjevjrBU
+         08r9Gcb7ELphDeJsGUaS0l0Qw6/Y/tZLXMsvWnkG3sjJqxxradOvmyAdJQbKd4HFWVnS
+         16UHLPE1ww6IrNjcr3EfLfL0QRNeGDgxX3/6sU18Aoo/KYe3G3kyZNLXgDALk8fPYzn8
+         k58g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kDiaD0QpBOMcE0PMxzMhL3MWciIvjsNbxKoMrmcmJ1E=;
-        b=DVIaPQiMT2f6/br4gxxxljYR9VsAw4ZfIxPyT2aAhnwyi3mPEWB7PhWXxg4kAH1kGK
-         oo86pgy8/CzYjycUqzFS10DmvMcWZTrX4h8RBLoz+4vu9MzOvWunrPT+oF26UvsL9Tz2
-         ugxtYYzsrHSqWyHh40yrf2CgZa9Kdz779HvYKVlylIRKM/eqxWgdrRX8PYRdhPQBjfMT
-         FwzKgZswvbvYWp07vf4eecz2/8vI7VwAPl2awEAZqmO9V2nwYy0P8u+Cm236mH/gg9tb
-         EyDC3zEMzLZMBjTAwVP9KA/DyOHi/JtXjQbahdtoWdDAdlaT5Jv4StvlUSKZ4J1BaeNo
-         zguA==
-X-Gm-Message-State: AOAM532ryh2M3DYsGVgV3a/f7Rf8iA/RnXdchhfaD2PZAt+z2aDstZ6l
-        9F/w2gXxVjBDtVKnh5FXYlUWsSdj/z2gtZSAX1o=
-X-Google-Smtp-Source: ABdhPJxAAAqyrSL7AqH/7wFzHGB8g+Yzzx+HqBzJkZEZm1+whye88TFNXKhkrTDet/pSlZsQRcuT0CIkeZGOE4ejWC4=
-X-Received: by 2002:a05:6102:c4c:: with SMTP id y12mr658970vss.18.1623164936724;
- Tue, 08 Jun 2021 08:08:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210603221758.10305-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210603221758.10305-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Jun 2021 17:08:45 +0200
-Message-ID: <CAMuHMdX9En43TvWt_e5JyUOd7rV2AhMJsFqGi9OUnPs00jc=AQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/12] dt-bindings: clock: renesas: Document RZ/G2L SoC
- CPG driver
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+ZQdXFWpJEUYm2HPd1TCaErdT12gtevimcDp8YdzDY4=;
+        b=X8UbsM5WaVfUq31w4EEnHYdajBTiGFiVSLyn0oYtAZMJEICputgUg/v0pEmRmXhXn2
+         DKzXyDEZnV/ONWMmTYfJOPHHu/p/tI8hYEG6QNfuE7WmNGOVn0kfTwqacGE/0IR8bO72
+         3SLoV5pswqqCIe04lnYY1F4XViSksf1bfrn6JhMW5x9oBGkJsldR+0ElYfl9Bps1BEHc
+         uravlSy8BhUV5K7Pjp4n6mAWPkloasqiVIwnuIUZ/rvOl25QfMd6MO0hOsZWSsZa71Bt
+         HduQ20nfKwP4cmj+ow3NWq+fjs4UJwSHoFP6++M68E9+395BWsPbh25jlngGwsyK9ywb
+         LHKQ==
+X-Gm-Message-State: AOAM530Y+A7q+stmjaTVS1tBeqwf3VleoGYHwRwQ9RPUOnfo4Hqy75O4
+        R9KhgE+zGD098z7EAmQW3Yg2Qu17HfY=
+X-Google-Smtp-Source: ABdhPJw43kpao7o3/u2SJFT6tQ9eJmDDDd6oDB9e5wQ933ARQOu4BWLkd7hkFiT6ABEfEQVidYDxqA==
+X-Received: by 2002:a05:6512:310d:: with SMTP id n13mr15804450lfb.165.1623165514306;
+        Tue, 08 Jun 2021 08:18:34 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
+        by smtp.googlemail.com with ESMTPSA id h24sm2107455lfp.60.2021.06.08.08.18.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jun 2021 08:18:33 -0700 (PDT)
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <20210601023119.22044-9-digetx@gmail.com>
+ <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
+ <YL4gwxWopKT7LomG@orome.fritz.box>
+ <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
+ <YL4rBYkWHpeit66m@orome.fritz.box>
+ <e4896499-e593-aa5d-9b74-c5a3725e334d@canonical.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7595e6f2-327e-b80c-5e64-ccdec4700ddf@gmail.com>
+Date:   Tue, 8 Jun 2021 18:18:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <e4896499-e593-aa5d-9b74-c5a3725e334d@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+07.06.2021 17:42, Krzysztof Kozlowski пишет:
+> On 07/06/2021 16:19, Thierry Reding wrote:
+>> On Mon, Jun 07, 2021 at 05:01:02PM +0300, Dmitry Osipenko wrote:
+>>> 07.06.2021 16:36, Thierry Reding пишет:
+>>>>> /bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
+>>>>> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+>>>>> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+>>>>> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
+>>> ...
+>>>
+>>>> Not sure what to do about that orphaned __reservedmem_of_table section.
+>>>> Maybe all we need to do is to select OF_RESERVED_MEM from
+>>>> TEGRA210_EMC_TABLE?
+>>>
+>>> Select won't work easily, but the dependency for TEGRA210_EMC should.
+>>
+>> Select works if I also select OF_EARLY_FLATTREE. That's slightly odd
+>> because typically that's something that the platform would select, but
+>> there's precedent for doing this in drivers/clk/x86/Kconfig, so I think
+>> it'd be fine.
+>>
+>> The attached patch resolves both of the above issues for me.
+>>
+>> Krzysztof: do you want to squash that into the problematic patch or do
+>> you want me to send this as a follow-up patch for you to apply? I guess
+>> the latter since you've already sent out the PR for Will and ARM SoC?
+> 
+> Follow up, please, but I am not sure about selecting reset controller.
+> From the tegra/mc.c code I see it can be optional - if "reset_ops" is
+> provided. Therefore I think:
+> 1. Reset controller should provide proper stubs. This will fix building
+> of mc.c when reset controller is not chosen (regardless of point #2 below).
+> 
+> 2. Specific drivers should depend on it. Selecting user-visible symbols
+> is rather discourage because might lead to circular dependencies.
 
-On Fri, Jun 4, 2021 at 12:18 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Document the device tree bindings of the Renesas RZ/G2L SoC clock
-> driver in Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+Thierry, should I send the patches or you're willing to do it?
 
-IIRC, Rob gave his R-b, not his A-b.
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/clock/renesas,rzg2l-cpg.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Renesas RZ/G2L Clock Pulse Generator / Module Standby Mode
-> +
-> +maintainers:
-> +  - Geert Uytterhoeven <geert+renesas@glider.be>
-> +
-> +description: |
-> +  On Renesas RZ/G2L SoC, the CPG (Clock Pulse Generator) and Module
-> +  Standby Mode share the same register block.
-> +
-> +  They provide the following functionalities:
-> +    - The CPG block generates various core clocks,
-> +    - The Module Standby Mode block provides two functions:
-> +        1. Module Stop, providing a Clock Domain to control the clock supply
-> +           to individual SoC devices,
-> +        2. Reset Control, to perform a software reset of individual SoC devices.
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,r9a07g044-cpg  # RZ/G2{L,LC,UL}
-
-Shouldn't RZ/G2UL use renesas,r9a07g043-cpg?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: extal
-> +
-> +  '#clock-cells':
-> +    description: |
-> +      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
-> +        and a core clock reference, as defined in
-> +        <dt-bindings/clock/r9a07g044l-cpg.h>
-
-r9a07g044-cpg.h
-
-> +      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
-> +        a module number, as defined in the <dt-bindings/clock/r9a07g044l-cpg.h>.
-
-r9a07g044-cpg.h
-
-> +    const: 2
-> +
-> +  '#power-domain-cells':
-> +    description:
-> +      SoC devices that are part of the CPG/Module Standby Mode Clock Domain and
-> +      can be power-managed through Module Stop should refer to the CPG device
-
-Module Standby
-
-> +      node in their "power-domains" property, as documented by the generic PM
-> +      Domain bindings in Documentation/devicetree/bindings/power/power-domain.yaml.
-> +    const: 0
-> +
-> +  '#reset-cells':
-> +    description:
-> +      The single reset specifier cell must be the module number, as defined in
-> +      the <dt-bindings/clock/r9a07g044l-cpg.h>.
-
-r9a07g044-cpg.h
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
