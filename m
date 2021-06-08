@@ -2,143 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C895C4743E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D490C4743D
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 030A961246
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B3466136E
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231955AbhFHP0O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:26:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232000AbhFHP0C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jun 2021 11:26:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8845461285;
-        Tue,  8 Jun 2021 15:24:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623165849;
-        bh=ELZCBk9k9CjOt6JF1iTN+mUu2Bg/5DcQP0fFqbodGNY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TlBiZm/gJ1ShFMmHANGZbT+zZ1liz8j5kWd/hC6Avp3nmFRmG60FOLETd0qmhjLAy
-         2TcOce8KBvsOwKpZnFGRXlo3iFuC84KXhuqC+9Um7TEPItBwzIStJYANReBSc8EAOf
-         UvaEQGBh07RbHqYfGjDCUZOWKldPWNKzMQqywLLhL2IiWqQIZmHfBaMnAPFCwBkfv4
-         PqEqP+EYEI74M6m3/f6RMeAhlgDQA0GqIpG80X6A74TKpQuE7M+T+A7tzv7QnIeL9O
-         b/WNOSbvchpkbFuTNvhQFttYe/PH3iogBIVvpOA1wMECyksX6L+xGvbMhN1OcYRCme
-         jlMfd2T/wTKCw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>,
-        Florian Fainelli <florian@openwrt.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Crispin <john@phrozen.org>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/7] mips: ar7: convert to clkdev_lookup
-Date:   Tue,  8 Jun 2021 17:22:08 +0200
-Message-Id: <20210608152214.1231666-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210608152214.1231666-1-arnd@kernel.org>
-References: <20210608152214.1231666-1-arnd@kernel.org>
+        id S230176AbhFHP0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:26:15 -0400
+Received: from mail-vs1-f51.google.com ([209.85.217.51]:45039 "EHLO
+        mail-vs1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232034AbhFHP0E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 11:26:04 -0400
+Received: by mail-vs1-f51.google.com with SMTP id x13so2656121vsf.11;
+        Tue, 08 Jun 2021 08:24:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wx/M/vTCLzfAljvUsfDDC4hJP/0AZQpZIen1/HK/Vmc=;
+        b=PsnzhnDMDSVuw79UxY+VunKzhIipArXAZpMTDaXC66NWUTW3Hl507CXlJgq1ITWFWj
+         p0Z42BjmrQh0eWmVXn/Za1DAdSZXcWTxQPVWJN1TKu8TwGXK5e4o6VuSZZhl80JzHmpk
+         bINq570xRWq3RLNLiypaytCnkViHyrLbSI3ZUBUzSEhNFj7PB329HnOgrIuWASDLGzFb
+         ohvXM8+dvxUa/gQNVYmtFAXUMGnHhlsN1ge7//viGDnGx2DV3P4iQ9LVyOseEHMBn979
+         NAvUM2mdjErCWXVrsWrncwc3sz0eYAl2GrIWU5Ux5zv/Dfazcnrk00+yqmhDU34v487a
+         3mqg==
+X-Gm-Message-State: AOAM531kJd5WHGVZi1fmSeX4IrNIup4PTfe8LRPkExJNNB/8c3Afk29a
+        e32MzBeUr1HkhSScCXxjvViH8zoUJuK+5CpuNwI=
+X-Google-Smtp-Source: ABdhPJxUTGTA7RWZ/pMIrdZXxg8bzFtl4gl22fyPZdmiPQjuEV1RWdBcq833Nq8NonhQ83nFtMW9StC/w//jKatGSc4=
+X-Received: by 2002:a67:efd6:: with SMTP id s22mr394812vsp.3.1623165850476;
+ Tue, 08 Jun 2021 08:24:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210603221758.10305-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210603221758.10305-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Jun 2021 17:23:59 +0200
+Message-ID: <CAMuHMdXgMEB3YKJipbSmXuVE-BAwhHJ1JxOBRqziVYXAn18ZnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/12] dt-bindings: arm: renesas: Document SMARC EVK
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Jun 4, 2021 at 12:18 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Document Renesas SMARC EVK board which are based on RZ/G2L (R9A07G044)
+> SoC. The SMARC EVK consists of RZ/G2L SoM module and SMARC carrier board,
+> the SoM module sits on top of carrier board.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-ar7 is one of only two platforms that provide the clock interface but
-implement a custom version of the clkdev_lookup code.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Change this to use the generic version instead.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/mips/Kconfig     |  1 +
- arch/mips/ar7/clock.c | 31 +++++++++++--------------------
- 2 files changed, 12 insertions(+), 20 deletions(-)
+                        Geert
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index ed51970c08e7..1cc03a7652a9 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -215,6 +215,7 @@ config AR7
- 	select SYS_SUPPORTS_ZBOOT_UART16550
- 	select GPIOLIB
- 	select VLYNQ
-+	select CLKDEV_LOOKUP
- 	select HAVE_LEGACY_CLK
- 	help
- 	  Support for the Texas Instruments AR7 System-on-a-Chip
-diff --git a/arch/mips/ar7/clock.c b/arch/mips/ar7/clock.c
-index 95def949c971..e8648e3eb27b 100644
---- a/arch/mips/ar7/clock.c
-+++ b/arch/mips/ar7/clock.c
-@@ -13,6 +13,7 @@
- #include <linux/gcd.h>
- #include <linux/io.h>
- #include <linux/err.h>
-+#include <linux/clkdev.h>
- #include <linux/clk.h>
- 
- #include <asm/addrspace.h>
-@@ -424,27 +425,15 @@ unsigned long clk_get_rate(struct clk *clk)
- }
- EXPORT_SYMBOL(clk_get_rate);
- 
--struct clk *clk_get(struct device *dev, const char *id)
--{
--	if (!strcmp(id, "bus"))
--		return &bus_clk;
-+static struct clk_lookup ar7_clkdev_table[] = {
-+	CLKDEV_INIT(NULL, "bus", &bus_clk),
- 	/* cpmac and vbus share the same rate */
--	if (!strcmp(id, "cpmac"))
--		return &vbus_clk;
--	if (!strcmp(id, "cpu"))
--		return &cpu_clk;
--	if (!strcmp(id, "dsp"))
--		return &dsp_clk;
--	if (!strcmp(id, "vbus"))
--		return &vbus_clk;
--	return ERR_PTR(-ENOENT);
--}
--EXPORT_SYMBOL(clk_get);
--
--void clk_put(struct clk *clk)
--{
--}
--EXPORT_SYMBOL(clk_put);
-+	CLKDEV_INIT("cpmac.0", "cpmac", &vbus_clk),
-+	CLKDEV_INIT("cpmac.1", "cpmac", &vbus_clk),
-+	CLKDEV_INIT(NULL, "cpu", &cpu_clk),
-+	CLKDEV_INIT(NULL, "dsp", &dsp_clk),
-+	CLKDEV_INIT(NULL, "vbus", &vbus_clk),
-+};
- 
- void __init ar7_init_clocks(void)
- {
-@@ -462,6 +451,8 @@ void __init ar7_init_clocks(void)
- 	}
- 	/* adjust vbus clock rate */
- 	vbus_clk.rate = bus_clk.rate / 2;
-+
-+	clkdev_add_table(ar7_clkdev_table, ARRAY_SIZE(ar7_clkdev_table));
- }
- 
- /* dummy functions, should not be called */
--- 
-2.29.2
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
