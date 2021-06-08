@@ -2,93 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-29.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58754C4743D
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75ADC4743D
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 342C561363
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8EB6136D
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231961AbhFHP0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:26:02 -0400
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:33333 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231481AbhFHPZv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 11:25:51 -0400
-Received: by mail-ua1-f50.google.com with SMTP id l12so11724067uai.0;
-        Tue, 08 Jun 2021 08:23:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GCl6GAgMReDAs/7bqxGeGzaYaC6bBej11sTZvoGeehg=;
-        b=k2ZShmMu04hGzP0YkBqWvgQd6Bi/L5z25d0e9qWivXkyo6CwaH44128RmubgDldf/X
-         mZTV0KHSby+j+7x82yiiV6wK/LNsQ4M60luQcNvdo3riN92OQ1RiU/W/phAzEY/dTr/5
-         hcw5vdTImrf+3URDfZvPPoApnQSoqwSJgdtWJAHLzCj4MU8qAOYEeremdixWLCDDyq42
-         OKI4ZKq3WwKelQm2lWeQV0zIdEfa92PEkqwqSxJejyb4Cym0mYj5EMQG3IHjxv7yAGGJ
-         j3u1dEUwz9KkGuCZQ8VigadLpU5kFYclk7BQCF+lkN6UxIwBEdL7gxj0wegVwxyjXc0I
-         eSWQ==
-X-Gm-Message-State: AOAM532M+4aCnr/5LbxeAYj1iLeEYKuo0fVbRSNWZA/YOXEy9fIEUU5R
-        jJwLdAKK0QEtzDhhhMreQpqnkLsy7882dFzYQKQ=
-X-Google-Smtp-Source: ABdhPJxtLW1a83L11lI5EV/HpEvSwpwvtt1UzpSBbg4Lyf+jtHGrJZtVf73FKUKAJtYZbZrrLcOaesjIt64XjYPHo6w=
-X-Received: by 2002:ab0:708c:: with SMTP id m12mr14430400ual.4.1623165837564;
- Tue, 08 Jun 2021 08:23:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210603221758.10305-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210603221758.10305-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Jun 2021 17:23:46 +0200
-Message-ID: <CAMuHMdXHt9r52gS+PUiEAr5mjL=a3_3_DUfbfgRaiMZAqZ790w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] dt-bindings: arm: renesas: Document Renesas
- RZ/G2{L,LC} SoC variants
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S232056AbhFHP0H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:26:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46282 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231934AbhFHPZ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jun 2021 11:25:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4FE1361108;
+        Tue,  8 Jun 2021 15:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623165846;
+        bh=n0cuHdEnBZUYW5KoLbhUKaES1lTb5eTER3NCQ2J6Kiw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hrDy6QCCLVT/diEm7qbNC76WFH2eKrYJmog6zqI8Bdudt71ZlX6qsapzdsfqQ6032
+         XHhqRAR78pJlWwwaYd7a+hjAqXwjvyxJNC2MioEt/DSR0BdPsFOXPsukbJjmwharjQ
+         opc4xuLeIlJt6o3xMOAMJqpNMCkuDcKqYKT+7GtjsEPROCsiJqjcedzJht4IJ633Qs
+         LRBWv6T2ubJ1cnN1e+zD3YG1IWCslyfMEmQOAG4Qe+M6IY4WSFWq4V1oOgRNv9PdUE
+         Bm7+EQY0L89idUqPo9RFR0kXYHLhDEeltfTcTuOqPj2oeatgOGXawmEJcswJ0MW1pU
+         VxeSjQIc+bDXQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>,
+        Florian Fainelli <florian@openwrt.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        John Crispin <john@phrozen.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL v2] clk: clean up legacy clock interfaces
+Date:   Tue,  8 Jun 2021 17:22:07 +0200
+Message-Id: <20210608152214.1231666-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 4, 2021 at 12:18 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add device tree bindings documentation for Renesas RZ/G2{L,LC}
-> SoC variants.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The following changes since commit 8124c8a6b35386f73523d27eacb71b5364a68c4c:
 
-Gr{oetje,eeting}s,
+  Linux 5.13-rc4 (2021-05-30 11:58:25 -1000)
 
-                        Geert
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/clkdev-cleanup
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+for you to fetch changes up to 84587cb0f9ed09b9b7f787276ef05beda4ae0ba8:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  clkdev: remove unused clkdev_alloc() interfaces (2021-06-02 12:31:10 +0200)
+
+---
+clk: clean up legacy clock interfaces
+
+A recent discussion about legacy clk interface users revealed
+that there are only two platforms remaining that provide their own
+clk_get()/clk_put() implementations, MIPS ar7 and and m68k coldfire.
+
+I managed to rework both of these to just use the normal clkdev code,
+and fold CONFIG_CLKDEV_LOOKUP into CONFIG_HAVE_CLK as it is now shared
+among all users.
+
+As I noticed that the ar7 clock implementation and the ralink version
+are rather trivial, I ended up converting those to use the common-clk
+interfaces as well, though this is unrelated to the other changes.
+
+Link: https://lore.kernel.org/linux-clk/20210531184749.2475868-1-arnd@kernel.org/
+Link: https://lore.kernel.org/lkml/CAK8P3a2XsrfUJQQAfnGknh8HiA-D9L_wmEoAgXU89KqagE31NQ@mail.gmail.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+
+Stephen offered to merge these through the clk tree. I was waiting
+for an Ack/Nack from the MIPS/ar7/ralink maintainers but got no further
+reply, so sending this as a pull request now.
+
+Please pull or apply, assuming there are no further concerns.
+
+     Arnd
+
+Changes since v1:
+ - fix two typos on coldfire
+ - remove duplicate #include
+ - rebased to v5.13-rc1 to avoid backmerge
+
+Arnd Bergmann (7):
+  mips: ar7: convert to clkdev_lookup
+  mips: ar7: convert to CONFIG_COMMON_CLK
+  mips: ralink: convert to CONFIG_COMMON_CLK
+  m68k: coldfire: use clkdev_lookup on most coldfire
+  m68k: coldfire: remove private clk_get/clk_put
+  clkdev: remove CONFIG_CLKDEV_LOOKUP
+  clkdev: remove unused clkdev_alloc() interfaces
+
+ arch/arm/Kconfig                     |   2 -
+ arch/m68k/coldfire/clk.c             |  21 -----
+ arch/m68k/coldfire/m5206.c           |  25 +++---
+ arch/m68k/coldfire/m520x.c           |  51 +++++------
+ arch/m68k/coldfire/m523x.c           |  42 ++++-----
+ arch/m68k/coldfire/m5249.c           |  33 +++----
+ arch/m68k/coldfire/m525x.c           |  33 +++----
+ arch/m68k/coldfire/m5272.c           |  35 +++-----
+ arch/m68k/coldfire/m527x.c           |  44 ++++------
+ arch/m68k/coldfire/m528x.c           |  42 ++++-----
+ arch/m68k/coldfire/m5307.c           |  27 +++---
+ arch/m68k/coldfire/m53xx.c           |  78 ++++++++---------
+ arch/m68k/coldfire/m5407.c           |  25 +++---
+ arch/m68k/coldfire/m5441x.c          | 126 +++++++++++++--------------
+ arch/m68k/coldfire/m54xx.c           |  33 +++----
+ arch/m68k/include/asm/mcfclk.h       |   5 --
+ arch/mips/Kconfig                    |   6 +-
+ arch/mips/ar7/clock.c                | 113 ++++++------------------
+ arch/mips/include/asm/mach-ar7/ar7.h |   4 -
+ arch/mips/pic32/Kconfig              |   1 -
+ arch/mips/ralink/Kconfig             |   5 --
+ arch/mips/ralink/clk.c               |  64 +-------------
+ arch/sh/Kconfig                      |   1 -
+ drivers/clk/Kconfig                  |   6 +-
+ drivers/clk/Makefile                 |   3 +-
+ drivers/clk/clkdev.c                 |  28 ------
+ drivers/clocksource/Kconfig          |   6 +-
+ drivers/mmc/host/Kconfig             |   4 +-
+ drivers/staging/board/Kconfig        |   2 +-
+ include/linux/clkdev.h               |   5 --
+ sound/soc/dwc/Kconfig                |   2 +-
+ sound/soc/rockchip/Kconfig           |  14 +--
+ 32 files changed, 318 insertions(+), 568 deletions(-)
+
+-- 
+2.29.2
+
+Cc: Dmitry Osipenko <digetx@gmail.com>
+Cc: Florian Fainelli <florian@openwrt.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Cc: John Crispin <john@phrozen.org>
+Cc: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
