@@ -2,175 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3F0C47082
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 14:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FBCC4743F
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 906CF610A2
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 14:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5EEE6135D
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233522AbhFHOr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jun 2021 10:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233412AbhFHOr4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 10:47:56 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC3DC061574;
-        Tue,  8 Jun 2021 07:45:52 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id g204so1999986wmf.5;
-        Tue, 08 Jun 2021 07:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WhGg1GY2JArUC9JhigDKpkZ6Xe7W1oA3+93jKzq1f38=;
-        b=B4mRSioLZ6j//5zPneKMUDsP/wpDVCY3Wj2qLzdp4992p9GhKUIipAyWaUGsLm80Zw
-         7lOh10qeX5l99QNrs9GjEE0SrT9dVncEr473I1EEqcy6ycFzWJZEMzhRtb5qQB1qGoXB
-         n1qvMWoAU8FNr7m/0F3eLqtYp0M1FHOwPye6OgsWl4PIZXfTNb3xwWgOxJSyqSTd/M4O
-         hdtLDsr2QZ0beBYVm12UCEW8zy46M+XbtSIUCmVORs4b2ycGQgGOrK2W/LPyGcGIjkWN
-         dJ9dpdHl1qGnl2p3UDlMIf38FqT3dgYleFzwXRqEa71m7/zO11Hk/98O6f9f/4ECXNBA
-         s7RQ==
+        id S233756AbhFHPF1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:05:27 -0400
+Received: from mail-vs1-f47.google.com ([209.85.217.47]:38802 "EHLO
+        mail-vs1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233754AbhFHPF1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jun 2021 11:05:27 -0400
+Received: by mail-vs1-f47.google.com with SMTP id x8so11035418vso.5;
+        Tue, 08 Jun 2021 08:03:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WhGg1GY2JArUC9JhigDKpkZ6Xe7W1oA3+93jKzq1f38=;
-        b=LvpR36MOeDkIxqu3X7FZ7ZxoPbm3SEuhLldAx4HBxJOtRTIN33n0mgBocVXC2oCv1d
-         e1zurAFIYqWFn7TMfhHmER3jb/hNuV4ReSKazy7NywHry2fYMDLAcO9aUKrxZgML9qYP
-         Ff45PE23XAyWBDgOBR98AkJo+7ARs2zRlTK1D/MX9k0te/SgKxKbg1aUCtOFq1wZeM4o
-         f1hwZXVyA3n9cRKEPHbvD9c6Gy2DIQY5C7kqLhnzXMDqGyKMDSr0ojx+ULBdF5DZrOGY
-         /YN/K2MCfWAZjLK2bm83sZlV0PvatLKo5ijuBA1wyPUxUSD/jO2qDJtAhCcgYsoimfBg
-         rxfg==
-X-Gm-Message-State: AOAM532AGh6V/yZEafK/Qth5ThfdAj1Aymy/prbuOCovA1R56SFnIwi8
-        E4gD/PGBibEh0qTD++DKspl36niDP1I+/g==
-X-Google-Smtp-Source: ABdhPJzQhcjeRmC8c9aR3UirCowVfXJEx+lHuSu9dvfO3W5sxgdTcQ+GcLNJJx7hbfaGgRDGOE7ieg==
-X-Received: by 2002:a05:600c:1c84:: with SMTP id k4mr4726772wms.164.1623163551514;
-        Tue, 08 Jun 2021 07:45:51 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.126.134])
-        by smtp.gmail.com with ESMTPSA id n10sm7990257wri.77.2021.06.08.07.45.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jun 2021 07:45:50 -0700 (PDT)
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-References: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
- <20210524122053.17155-2-chun-jie.chen@mediatek.com>
- <20210602171201.GA3566462@robh.at.kernel.org>
- <66e017401ab93aa02c5d2bbf11be9589b36649ac.camel@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v9 01/22] dt-bindings: ARM: Mediatek: Add new document
- bindings of imp i2c wrapper controller
-Message-ID: <1f59ed31-4a0e-9719-bf84-1fe4cdd6c57d@gmail.com>
-Date:   Tue, 8 Jun 2021 16:45:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1tcavaqmFgqNru+gTTtU+o+V3Wc54CY1nbaCwXIhlxU=;
+        b=uIRTr4NTIrCrzyP8SpNuCQCiRF7hwTFyAUvth+zNPswaeRmLx6/XiaphAtAhbUog9L
+         j8t8l2E/RPGfzVZsJiz1/8wJscJ7eKCfv1STbsgyArkDPfi1xuxIOqPJWwacodinNKTo
+         s43JIQiiTCYU+qscWZAN7LBP6HUI0nBNBDpYYE249pr+nzCLSvW48nOx9DV/bPFbfjef
+         4RvfEt01SzXnCUfcXV2I0WWsEaJRfmgO35cYy4OFBUqg9m6qBhysEBcyLZaQtTEfbsP2
+         NkermI6r+JnN0GhJYntowmK5LNn43wTHS2eGxgb5b1TIkvyTdQxxG7/MdctclT3xnv/I
+         ZNgQ==
+X-Gm-Message-State: AOAM532JZoBDbkZ8yfxd8nxQJWiS3z36LpuShUvaKieH1sp3w/k/Acfe
+        MfLNHlWMzl0JWdBNodry0XkL+fTDmRWkbqH8AxE=
+X-Google-Smtp-Source: ABdhPJxLbvwTDX+9ZW5dPiJNBelOmingVkZ8kJ37buiWKcOpa7RYgnef9tMvJgQGeEA/J35nVuqllVSOzmn6Mcy2thE=
+X-Received: by 2002:a05:6102:c4c:: with SMTP id y12mr620420vss.18.1623164609788;
+ Tue, 08 Jun 2021 08:03:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <66e017401ab93aa02c5d2bbf11be9589b36649ac.camel@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210603221758.10305-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210603221758.10305-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Jun 2021 17:03:18 +0200
+Message-ID: <CAMuHMdVyEEA7q9eKRmVRSFMs8Jcfx-V9QjZJqqnf7mBeaKi8QQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] serial: sh-sci: Add support for RZ/G2L SoC
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Jun 4, 2021 at 12:18 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add serial support for RZ/G2L SoC with earlycon and
+> extended mode register support.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+FTR,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 07/06/2021 07:20, Chun-Jie Chen wrote:
-> On Wed, 2021-06-02 at 12:12 -0500, Rob Herring wrote:
->> On Mon, May 24, 2021 at 08:20:32PM +0800, Chun-Jie Chen wrote:
->>> This patch adds the new binding documentation of imp i2c wrapper
->>> controller
->>> for Mediatek MT8192.
->>>
->>> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
->>> Signed-off-by: chun-jie.chen <chun-jie.chen@mediatek.com>
->>> ---
->>>  .../arm/mediatek/mediatek,imp_iic_wrap.yaml   | 80
->>> +++++++++++++++++++
->>>  1 file changed, 80 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wra
->>> p.yaml
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_w
->>> rap.yaml
->>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_w
->>> rap.yaml
->>> new file mode 100644
->>> index 000000000000..fb6cb9e60ee2
->>> --- /dev/null
->>> +++
->>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_w
->>> rap.yaml
->>> @@ -0,0 +1,80 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: 
->>> http://devicetree.org/schemas/arm/mediatek/mediatek,imp_iic_wrap.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: MediaTek IMP I2C Wrapper Controller
->>> +
->>> +maintainers:
->>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
->>> +
->>> +description:
->>> +  The Mediatek imp i2c wrapper controller provides functional
->>> configurations and clocks to the system.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - mediatek,mt8192-imp_iic_wrap_c
->>> +          - mediatek,mt8192-imp_iic_wrap_e
->>> +          - mediatek,mt8192-imp_iic_wrap_s
->>> +          - mediatek,mt8192-imp_iic_wrap_ws
->>> +          - mediatek,mt8192-imp_iic_wrap_w
->>> +          - mediatek,mt8192-imp_iic_wrap_n
->>
->> Looks to me like these are all the same h/w, but just have differing 
->> sets of clocks. That's not really a reason to have different 
->> compatibles. 
->>
->> If you need to know what clocks are present, you can walk the DT for 
->> all 'clocks' properties matching this clock controller instance. Or
->> use 
->> 'clock-indices' to define which ones are present.
->>
->> Rob
-> 
-> Some module is divided to sub-modules which are designed in different
-> h/w blocks for different usage, and if we want to use the same
-> compatible to present these h/w blocks, we need to move the clock data
-> provided by these h/w blocks to dts, but we usually use different
-> compatible to get the h/w blocks data in
-> Mediatek's clock driver, so do you suggest to register clock provided
-> by different h/w blocks using same compatible?
-> 
+Gr{oetje,eeting}s,
 
-The mapping of them is as following:
-imp_iic_wrap_c:  11007000
-imp_iic_wrap_e:  11cb1000
-imp_iic_wrap_s:  11d03000
-imp_iic_wrap_ws: 11d23000
-imp_iic_wrap_w:  11e01000
-imp_iic_wrap_n:  11f02000
+                        Geert
 
-Regards,
-Matthias
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
