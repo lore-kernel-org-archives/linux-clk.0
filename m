@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CDAC4743F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBCAC48BCD
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2AB361363
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 491EF61363
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jun 2021 15:25:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232702AbhFHP0n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46574 "EHLO mail.kernel.org"
+        id S232263AbhFHP0w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:26:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232164AbhFHP0M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jun 2021 11:26:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 35C1861363;
-        Tue,  8 Jun 2021 15:24:16 +0000 (UTC)
+        id S232257AbhFHP0T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jun 2021 11:26:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C34376135D;
+        Tue,  8 Jun 2021 15:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623165859;
-        bh=PdZz9B63EHRkXDQiaojIFyTUyBIrwjIObW+Dr4UkDMs=;
+        s=k20201202; t=1623165865;
+        bh=CqS/REIRdXuu3G6qnyJfdGMwzUbALygTwd2BA259Hq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XJ/vaZlK1WMu2MqeelYFCwf2gFpfySB3fuuestOwO/UyOdUUL6EFzpBq3LLH+vIw5
-         iYXig+Lj+xGD09xsAL3nx9aQpa8/BKmWvbCHQ+POvm0y+J5xwJ3sY+M1St4iG+7Ggd
-         X971QgWn331B01mJaM5h6IWduMyXYQrtmG/v5oiOfJ9nvumUoZbNbUzxQ0kC9svmZn
-         iIls6tReqj4+m6m9ikJHDfY87wKvJeKjuramOln0Q/yUTF8qJmdzwW0cyXJJt8m6km
-         3MFZ6gzZ/mi8a2c+mu8nnc1n1Yu0zMgI4mO/sBxEPk/FCfLmheGScs/cmjoWnaAezP
-         oAxIXvtJgfwaQ==
+        b=qBxLwH481ndMsez7EFLya/wVNvkLj8yLgATcbOpHKwJNGJZkzmGGhKYgmWNgeMLBp
+         Ad8SH68NEJiTKkJ0goFifP7BZg9Dpx92A+GzC56VDEczF7BvCu6Hxc9rMVx9ITbpqn
+         P4Hk6hP7SMk1hTrmPrE0+kW+LAJb/bAOtpMERJM6GhF8PDnwjd5NqKNmVRxUBfTzDK
+         fGhD3ghzod+8zDQIcMPVXcCMyyrKhNwAQgTMmGQwB9Uxzf878VBObTa3Re+iBM2Ryt
+         sQN1fv93+BvH61gFUVlqCnhMDoG0TNEF/aRAOxcAr5/HIZeYTGCIndadmnkZhNQUOm
+         Nk2/KDB2+LJZA==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>,
@@ -45,9 +45,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Osipenko <digetx@gmail.com>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/7] m68k: coldfire: use clkdev_lookup on most coldfire
-Date:   Tue,  8 Jun 2021 17:22:11 +0200
-Message-Id: <20210608152214.1231666-5-arnd@kernel.org>
+Subject: [PATCH v2 6/7] clkdev: remove CONFIG_CLKDEV_LOOKUP
+Date:   Tue,  8 Jun 2021 17:22:13 +0200
+Message-Id: <20210608152214.1231666-7-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210608152214.1231666-1-arnd@kernel.org>
 References: <20210608152214.1231666-1-arnd@kernel.org>
@@ -59,680 +59,291 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Coldfire is now the only target that implements the clk_get()/clk_put()
-helpers itself rather than using the common implementation.
+This option is now synonymous with CONFIG_HAVE_CLK, so use
+the latter globally. Any out-of-tree platform ports that
+still use a private clk_get()/clk_put() implementation should
+move to CONFIG_COMMON_CLK.
 
-Most coldfire variants only have two distinct clocks and use the clk
-code purely for lookup. Change those over to use clkdev_lookup instead
-but leave the custom clk interface for those two clocks.
-
-Also leave the four SoCs that have gated clocks.
-
-Acked-by: Greg Ungerer <gerg@linux-m68k.org>
-Tested-by: Greg Ungerer <gerg@linux-m68k.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/m68k/Kconfig.cpu      |  4 ++++
- arch/m68k/coldfire/clk.c   | 16 +++++++-------
- arch/m68k/coldfire/m5206.c | 25 ++++++++++------------
- arch/m68k/coldfire/m523x.c | 42 +++++++++++++++---------------------
- arch/m68k/coldfire/m5249.c | 33 ++++++++++++----------------
- arch/m68k/coldfire/m525x.c | 33 ++++++++++++----------------
- arch/m68k/coldfire/m5272.c | 35 ++++++++++++------------------
- arch/m68k/coldfire/m527x.c | 44 +++++++++++++++-----------------------
- arch/m68k/coldfire/m528x.c | 42 +++++++++++++++---------------------
- arch/m68k/coldfire/m5307.c | 27 +++++++++++------------
- arch/m68k/coldfire/m5407.c | 25 ++++++++++------------
- arch/m68k/coldfire/m54xx.c | 33 ++++++++++++----------------
- 12 files changed, 153 insertions(+), 206 deletions(-)
+ arch/arm/Kconfig              |  2 --
+ arch/m68k/Kconfig.cpu         |  1 -
+ arch/mips/Kconfig             |  3 ---
+ arch/mips/pic32/Kconfig       |  1 -
+ arch/sh/Kconfig               |  1 -
+ drivers/clk/Kconfig           |  6 +-----
+ drivers/clk/Makefile          |  3 +--
+ drivers/clocksource/Kconfig   |  6 +++---
+ drivers/mmc/host/Kconfig      |  4 ++--
+ drivers/staging/board/Kconfig |  2 +-
+ sound/soc/dwc/Kconfig         |  2 +-
+ sound/soc/rockchip/Kconfig    | 14 +++++++-------
+ 12 files changed, 16 insertions(+), 29 deletions(-)
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 24804f11302d..809317b5a6c6 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -353,7 +353,6 @@ config ARCH_EP93XX
+ 	select ARM_VIC
+ 	select GENERIC_IRQ_MULTI_HANDLER
+ 	select AUTO_ZRELADDR
+-	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select CPU_ARM920T
+ 	select GPIOLIB
+@@ -504,7 +503,6 @@ config ARCH_OMAP1
+ 	bool "TI OMAP1"
+ 	depends on MMU
+ 	select ARCH_OMAP
+-	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select GENERIC_IRQ_CHIP
+ 	select GENERIC_IRQ_MULTI_HANDLER
 diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
-index f4d23977d2a5..b3483929b313 100644
+index e54167a64cbf..f4d23977d2a5 100644
 --- a/arch/m68k/Kconfig.cpu
 +++ b/arch/m68k/Kconfig.cpu
-@@ -328,6 +328,10 @@ config COLDFIRE_SLTIMERS
+@@ -29,7 +29,6 @@ config COLDFIRE
+ 	select CPU_HAS_NO_MULDIV64
+ 	select GENERIC_CSUM
+ 	select GPIOLIB
+-	select CLKDEV_LOOKUP
+ 	select HAVE_LEGACY_CLK
+ 
+ endchoice
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 8fe6b30de7dd..96ab1a2a9357 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -332,7 +332,6 @@ config BCM63XX
+ 	select SWAP_IO_SPACE
+ 	select GPIOLIB
+ 	select MIPS_L1_CACHE_SHIFT_4
+-	select CLKDEV_LOOKUP
+ 	select HAVE_LEGACY_CLK
+ 	help
+ 	  Support for BCM63XX based boards
+@@ -446,7 +445,6 @@ config LANTIQ
+ 	select GPIOLIB
+ 	select SWAP_IO_SPACE
+ 	select BOOT_RAW
+-	select CLKDEV_LOOKUP
+ 	select HAVE_LEGACY_CLK
+ 	select USE_OF
+ 	select PINCTRL
+@@ -643,7 +641,6 @@ config RALINK
+ 	select SYS_SUPPORTS_MIPS16
+ 	select SYS_SUPPORTS_ZBOOT
+ 	select SYS_HAS_EARLY_PRINTK
+-	select CLKDEV_LOOKUP
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+ 
+diff --git a/arch/mips/pic32/Kconfig b/arch/mips/pic32/Kconfig
+index 7acbb50c1dcd..bb6ab1f3e80d 100644
+--- a/arch/mips/pic32/Kconfig
++++ b/arch/mips/pic32/Kconfig
+@@ -17,7 +17,6 @@ config PIC32MZDA
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select GPIOLIB
+ 	select COMMON_CLK
+-	select CLKDEV_LOOKUP
+ 	select LIBFDT
+ 	select USE_OF
+ 	select PINCTRL
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 68129537e350..45a0549421cd 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -14,7 +14,6 @@ config SUPERH
+ 	select ARCH_HIBERNATION_POSSIBLE if MMU
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+-	select CLKDEV_LOOKUP
+ 	select CPU_NO_EFFICIENT_FFS
+ 	select DMA_DECLARE_COHERENT
+ 	select GENERIC_ATOMIC64
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e80918be8e9c..ed1364ac376b 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -6,10 +6,6 @@ config HAVE_CLK
+ 	  The <linux/clk.h> calls support software clock gating and
+ 	  thus are a key power management tool on many systems.
+ 
+-config CLKDEV_LOOKUP
+-	bool
+-	select HAVE_CLK
+-
+ config HAVE_CLK_PREPARE
  	bool
- 	select LEGACY_TIMER_TICK
  
-+config COLDFIRE_CLKDEV_LOOKUP
-+	def_bool !(M5206 || M5206e || M53xx || M5441x)
-+	select CLKDEV_LOOKUP
-+
- endif # COLDFIRE
+@@ -26,7 +22,7 @@ menuconfig COMMON_CLK
+ 	bool "Common Clock Framework"
+ 	depends on !HAVE_LEGACY_CLK
+ 	select HAVE_CLK_PREPARE
+-	select CLKDEV_LOOKUP
++	select HAVE_CLK
+ 	select SRCU
+ 	select RATIONAL
+ 	help
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 5f06879d7fe9..5341c37b62dc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # common clock types
+-obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o clk-bulk.o
+-obj-$(CONFIG_CLKDEV_LOOKUP)	+= clkdev.o
++obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o clk-bulk.o clkdev.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 39aa21d01e05..938087347927 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -360,7 +360,7 @@ config ARM_GLOBAL_TIMER
  
+ config ARM_TIMER_SP804
+ 	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
+-	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
++	depends on GENERIC_SCHED_CLOCK && HAVE_CLK
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF if OF
  
-diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
-index 076a9caa9557..ffe36627bab8 100644
---- a/arch/m68k/coldfire/clk.c
-+++ b/arch/m68k/coldfire/clk.c
-@@ -71,7 +71,6 @@ struct clk_ops clk_ops1 = {
- 	.disable	= __clk_disable1,
- };
- #endif /* MCFPM_PPMCR1 */
--#endif /* MCFPM_PPMCR0 */
+@@ -570,12 +570,12 @@ config H8300_TPU
  
- struct clk *clk_get(struct device *dev, const char *id)
- {
-@@ -87,6 +86,14 @@ struct clk *clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(clk_get);
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+-	depends on (ARM || ARM64) && CLKDEV_LOOKUP
++	depends on (ARM || ARM64) && HAVE_CLK
+ 	select CLKSRC_MMIO
  
-+void clk_put(struct clk *clk)
-+{
-+	if (clk->enabled != 0)
-+		pr_warn("clk_put %s still enabled\n", clk->name);
-+}
-+EXPORT_SYMBOL(clk_put);
-+#endif /* MCFPM_PPMCR0 */
-+
- int clk_enable(struct clk *clk)
- {
- 	unsigned long flags;
-@@ -117,13 +124,6 @@ void clk_disable(struct clk *clk)
- }
- EXPORT_SYMBOL(clk_disable);
+ config CLKSRC_IMX_TPM
+ 	bool "Clocksource using i.MX TPM" if COMPILE_TEST
+-	depends on (ARM || ARM64) && CLKDEV_LOOKUP
++	depends on (ARM || ARM64) && HAVE_CLK
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF
+ 	help
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index a4d4c757eea0..4f1468a79126 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -329,7 +329,7 @@ config MMC_SDHCI_S3C
  
--void clk_put(struct clk *clk)
--{
--	if (clk->enabled != 0)
--		pr_warn("clk_put %s still enabled\n", clk->name);
--}
--EXPORT_SYMBOL(clk_put);
--
- unsigned long clk_get_rate(struct clk *clk)
- {
- 	if (!clk)
-diff --git a/arch/m68k/coldfire/m5206.c b/arch/m68k/coldfire/m5206.c
-index 2f14ea95c391..5e726e94b5ab 100644
---- a/arch/m68k/coldfire/m5206.c
-+++ b/arch/m68k/coldfire/m5206.c
-@@ -10,6 +10,7 @@
+ config MMC_SDHCI_PXAV3
+ 	tristate "Marvell MMP2 SD Host Controller support (PXAV3)"
+-	depends on CLKDEV_LOOKUP
++	depends on HAVE_CLK
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on ARCH_BERLIN || ARCH_MMP || ARCH_MVEBU || COMPILE_TEST
+ 	default CPU_MMP2
+@@ -342,7 +342,7 @@ config MMC_SDHCI_PXAV3
  
- /***************************************************************************/
+ config MMC_SDHCI_PXAV2
+ 	tristate "Marvell PXA9XX SD Host Controller support (PXAV2)"
+-	depends on CLKDEV_LOOKUP
++	depends on HAVE_CLK
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on ARCH_MMP || COMPILE_TEST
+ 	default CPU_PXA910
+diff --git a/drivers/staging/board/Kconfig b/drivers/staging/board/Kconfig
+index 64c77970eee8..b49216768ef6 100644
+--- a/drivers/staging/board/Kconfig
++++ b/drivers/staging/board/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config STAGING_BOARD
+ 	bool "Staging Board Support"
+-	depends on OF_ADDRESS && OF_IRQ && CLKDEV_LOOKUP
++	depends on OF_ADDRESS && OF_IRQ && HAVE_CLK
+ 	help
+ 	  Staging board base is to support continuous upstream
+ 	  in-tree development and integration of platform devices.
+diff --git a/sound/soc/dwc/Kconfig b/sound/soc/dwc/Kconfig
+index 0cd1a15f40aa..71a58f7ac13a 100644
+--- a/sound/soc/dwc/Kconfig
++++ b/sound/soc/dwc/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SND_DESIGNWARE_I2S
+ 	tristate "Synopsys I2S Device Driver"
+-	depends on CLKDEV_LOOKUP
++	depends on HAVE_CLK
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	help
+ 	 Say Y or M if you want to add support for I2S driver for
+diff --git a/sound/soc/rockchip/Kconfig b/sound/soc/rockchip/Kconfig
+index d610b553ea3b..053097b73e28 100644
+--- a/sound/soc/rockchip/Kconfig
++++ b/sound/soc/rockchip/Kconfig
+@@ -9,7 +9,7 @@ config SND_SOC_ROCKCHIP
  
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -23,21 +24,15 @@
+ config SND_SOC_ROCKCHIP_I2S
+ 	tristate "Rockchip I2S Device Driver"
+-	depends on CLKDEV_LOOKUP && SND_SOC_ROCKCHIP
++	depends on HAVE_CLK && SND_SOC_ROCKCHIP
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	help
+ 	  Say Y or M if you want to add support for I2S driver for
+@@ -18,7 +18,7 @@ config SND_SOC_ROCKCHIP_I2S
  
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
+ config SND_SOC_ROCKCHIP_PDM
+ 	tristate "Rockchip PDM Controller Driver"
+-	depends on CLKDEV_LOOKUP && SND_SOC_ROCKCHIP
++	depends on HAVE_CLK && SND_SOC_ROCKCHIP
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	select RATIONAL
+ 	help
+@@ -28,7 +28,7 @@ config SND_SOC_ROCKCHIP_PDM
  
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfi2c0,
--	NULL
-+static struct clk_lookup m5206_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
+ config SND_SOC_ROCKCHIP_SPDIF
+ 	tristate "Rockchip SPDIF Device Driver"
+-	depends on CLKDEV_LOOKUP && SND_SOC_ROCKCHIP
++	depends on HAVE_CLK && SND_SOC_ROCKCHIP
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	help
+ 	  Say Y or M if you want to add support for SPDIF driver for
+@@ -36,7 +36,7 @@ config SND_SOC_ROCKCHIP_SPDIF
  
- /***************************************************************************/
-@@ -66,6 +61,8 @@ void __init config_BSP(char *commandp, int size)
- 	mcf_mapirq2imr(28, MCFINTC_EINT4);
- 	mcf_mapirq2imr(31, MCFINTC_EINT7);
- 	m5206_i2c_init();
-+
-+	clkdev_add_table(m5206_clk_lookup, ARRAY_SIZE(m5206_clk_lookup));
- }
+ config SND_SOC_ROCKCHIP_MAX98090
+ 	tristate "ASoC support for Rockchip boards using a MAX98090 codec"
+-	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
++	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && HAVE_CLK
+ 	select SND_SOC_ROCKCHIP_I2S
+ 	select SND_SOC_MAX98090
+ 	select SND_SOC_TS3A227E
+@@ -47,7 +47,7 @@ config SND_SOC_ROCKCHIP_MAX98090
  
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m523x.c b/arch/m68k/coldfire/m523x.c
-index ddf2496ed117..193c178162c1 100644
---- a/arch/m68k/coldfire/m523x.c
-+++ b/arch/m68k/coldfire/m523x.c
-@@ -13,6 +13,7 @@
+ config SND_SOC_ROCKCHIP_RT5645
+ 	tristate "ASoC support for Rockchip boards using a RT5645/RT5650 codec"
+-	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
++	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && HAVE_CLK
+ 	select SND_SOC_ROCKCHIP_I2S
+ 	select SND_SOC_RT5645
+ 	help
+@@ -56,7 +56,7 @@ config SND_SOC_ROCKCHIP_RT5645
  
- /***************************************************************************/
+ config SND_SOC_RK3288_HDMI_ANALOG
+ 	tristate "ASoC support multiple codecs for Rockchip RK3288 boards"
+-	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
++	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && HAVE_CLK
+ 	select SND_SOC_ROCKCHIP_I2S
+ 	select SND_SOC_HDMI_CODEC
+ 	select SND_SOC_ES8328_I2C
+@@ -68,7 +68,7 @@ config SND_SOC_RK3288_HDMI_ANALOG
  
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -26,31 +27,20 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcfpit0, "mcfpit.0", MCF_CLK);
--DEFINE_CLK(mcfpit1, "mcfpit.1", MCF_CLK);
--DEFINE_CLK(mcfpit2, "mcfpit.2", MCF_CLK);
--DEFINE_CLK(mcfpit3, "mcfpit.3", MCF_CLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart2, "mcfuart.2", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(fec0, "fec.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcfpit0,
--	&clk_mcfpit1,
--	&clk_mcfpit2,
--	&clk_mcfpit3,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfuart2,
--	&clk_mcfqspi0,
--	&clk_fec0,
--	&clk_mcfi2c0,
--	NULL
-+
-+struct clk_lookup m523x_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcfpit.0", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.1", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.2", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.3", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.2", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("fec.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -100,6 +90,8 @@ void __init config_BSP(char *commandp, int size)
- 	m523x_fec_init();
- 	m523x_qspi_init();
- 	m523x_i2c_init();
-+
-+	clkdev_add_table(m523x_clk_lookup, ARRAY_SIZE(m523x_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m5249.c b/arch/m68k/coldfire/m5249.c
-index 0590f8c421f1..6d66972de214 100644
---- a/arch/m68k/coldfire/m5249.c
-+++ b/arch/m68k/coldfire/m5249.c
-@@ -9,6 +9,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -23,25 +24,17 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c1, "imx1-i2c.1", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfqspi0,
--	&clk_mcfi2c0,
--	&clk_mcfi2c1,
--	NULL
-+
-+struct clk_lookup m5249_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.1", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -137,6 +130,8 @@ void __init config_BSP(char *commandp, int size)
- #endif
- 	m5249_qspi_init();
- 	m5249_i2c_init();
-+
-+	clkdev_add_table(m5249_clk_lookup, ARRAY_SIZE(m5249_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m525x.c b/arch/m68k/coldfire/m525x.c
-index 1772359c416c..2c4d2ca2f20d 100644
---- a/arch/m68k/coldfire/m525x.c
-+++ b/arch/m68k/coldfire/m525x.c
-@@ -9,6 +9,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -23,25 +24,17 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c1, "imx1-i2c.1", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfqspi0,
--	&clk_mcfi2c0,
--	&clk_mcfi2c1,
--	NULL
-+
-+static struct clk_lookup m525x_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.1", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -88,6 +81,8 @@ void __init config_BSP(char *commandp, int size)
- 
- 	m525x_qspi_init();
- 	m525x_i2c_init();
-+
-+	clkdev_add_table(m525x_clk_lookup, ARRAY_SIZE(m525x_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m5272.c b/arch/m68k/coldfire/m5272.c
-index 6b3ab583c698..734dab657fe3 100644
---- a/arch/m68k/coldfire/m5272.c
-+++ b/arch/m68k/coldfire/m5272.c
-@@ -10,6 +10,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -34,27 +35,18 @@ unsigned char ledbank = 0xff;
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcftmr2, "mcftmr.2", MCF_BUSCLK);
--DEFINE_CLK(mcftmr3, "mcftmr.3", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(fec0, "fec.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcftmr2,
--	&clk_mcftmr3,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfqspi0,
--	&clk_fec0,
--	NULL
-+
-+static struct clk_lookup m5272_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.2", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.3", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("fec.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -128,6 +120,7 @@ static int __init init_BSP(void)
- {
- 	m5272_uarts_init();
- 	fixed_phy_add(PHY_POLL, 0, &nettel_fixed_phy_status);
-+	clkdev_add_table(m5272_clk_lookup, ARRAY_SIZE(m5272_clk_lookup));
- 	return 0;
- }
- 
-diff --git a/arch/m68k/coldfire/m527x.c b/arch/m68k/coldfire/m527x.c
-index cad462df6861..037f3e520acc 100644
---- a/arch/m68k/coldfire/m527x.c
-+++ b/arch/m68k/coldfire/m527x.c
-@@ -13,6 +13,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -27,33 +28,21 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcfpit0, "mcfpit.0", MCF_CLK);
--DEFINE_CLK(mcfpit1, "mcfpit.1", MCF_CLK);
--DEFINE_CLK(mcfpit2, "mcfpit.2", MCF_CLK);
--DEFINE_CLK(mcfpit3, "mcfpit.3", MCF_CLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart2, "mcfuart.2", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(fec0, "fec.0", MCF_BUSCLK);
--DEFINE_CLK(fec1, "fec.1", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcfpit0,
--	&clk_mcfpit1,
--	&clk_mcfpit2,
--	&clk_mcfpit3,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfuart2,
--	&clk_mcfqspi0,
--	&clk_fec0,
--	&clk_fec1,
--	&clk_mcfi2c0,
--	NULL
-+
-+static struct clk_lookup m527x_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcfpit.0", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.1", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.2", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.3", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.2", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("fec.0", NULL, &clk_sys),
-+	CLKDEV_INIT("fec.1", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -151,6 +140,7 @@ void __init config_BSP(char *commandp, int size)
- 	m527x_fec_init();
- 	m527x_qspi_init();
- 	m527x_i2c_init();
-+	clkdev_add_table(m527x_clk_lookup, ARRAY_SIZE(m527x_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m528x.c b/arch/m68k/coldfire/m528x.c
-index 7ad3193887e8..51a6a6236e12 100644
---- a/arch/m68k/coldfire/m528x.c
-+++ b/arch/m68k/coldfire/m528x.c
-@@ -13,6 +13,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -28,31 +29,20 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcfpit0, "mcfpit.0", MCF_CLK);
--DEFINE_CLK(mcfpit1, "mcfpit.1", MCF_CLK);
--DEFINE_CLK(mcfpit2, "mcfpit.2", MCF_CLK);
--DEFINE_CLK(mcfpit3, "mcfpit.3", MCF_CLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart2, "mcfuart.2", MCF_BUSCLK);
--DEFINE_CLK(mcfqspi0, "mcfqspi.0", MCF_BUSCLK);
--DEFINE_CLK(fec0, "fec.0", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcfpit0,
--	&clk_mcfpit1,
--	&clk_mcfpit2,
--	&clk_mcfpit3,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfuart2,
--	&clk_mcfqspi0,
--	&clk_fec0,
--	&clk_mcfi2c0,
--	NULL
-+
-+static struct clk_lookup m528x_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcfpit.0", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.1", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.2", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfpit.3", NULL, &clk_pll),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.2", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfqspi.0", NULL, &clk_sys),
-+	CLKDEV_INIT("fec.0", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -146,6 +136,8 @@ void __init config_BSP(char *commandp, int size)
- 	m528x_fec_init();
- 	m528x_qspi_init();
- 	m528x_i2c_init();
-+
-+	clkdev_add_table(m528x_clk_lookup, ARRAY_SIZE(m528x_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m5307.c b/arch/m68k/coldfire/m5307.c
-index 64b4b1fd34ff..4ed2e43ab3ad 100644
---- a/arch/m68k/coldfire/m5307.c
-+++ b/arch/m68k/coldfire/m5307.c
-@@ -10,6 +10,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -32,21 +33,15 @@ unsigned char ledbank = 0xff;
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfi2c0,
--	NULL
-+
-+static struct clk_lookup m5307_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -88,6 +83,8 @@ void __init config_BSP(char *commandp, int size)
- 	wdebug(MCFDEBUG_CSR, MCFDEBUG_CSR_PSTCLK);
- #endif
- 	m5307_i2c_init();
-+
-+	clkdev_add_table(m5307_clk_lookup, ARRAY_SIZE(m5307_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m5407.c b/arch/m68k/coldfire/m5407.c
-index 0400d76115a1..b32efb3042a2 100644
---- a/arch/m68k/coldfire/m5407.c
-+++ b/arch/m68k/coldfire/m5407.c
-@@ -10,6 +10,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -23,21 +24,15 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr0, "mcftmr.0", MCF_BUSCLK);
--DEFINE_CLK(mcftmr1, "mcftmr.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
- 
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcftmr0,
--	&clk_mcftmr1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfi2c0,
--	NULL
-+static struct clk_lookup m5407_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcftmr.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcftmr.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -63,6 +58,8 @@ void __init config_BSP(char *commandp, int size)
- 	mcf_mapirq2imr(29, MCFINTC_EINT5);
- 	mcf_mapirq2imr(31, MCFINTC_EINT7);
- 	m5407_i2c_init();
-+
-+	clkdev_add_table(m5407_clk_lookup, ARRAY_SIZE(m5407_clk_lookup));
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68k/coldfire/m54xx.c b/arch/m68k/coldfire/m54xx.c
-index 360c723c0ae6..8e3c8fee8327 100644
---- a/arch/m68k/coldfire/m54xx.c
-+++ b/arch/m68k/coldfire/m54xx.c
-@@ -9,6 +9,7 @@
- 
- /***************************************************************************/
- 
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/param.h>
- #include <linux/init.h>
-@@ -32,25 +33,17 @@
- 
- DEFINE_CLK(pll, "pll.0", MCF_CLK);
- DEFINE_CLK(sys, "sys.0", MCF_BUSCLK);
--DEFINE_CLK(mcfslt0, "mcfslt.0", MCF_BUSCLK);
--DEFINE_CLK(mcfslt1, "mcfslt.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart0, "mcfuart.0", MCF_BUSCLK);
--DEFINE_CLK(mcfuart1, "mcfuart.1", MCF_BUSCLK);
--DEFINE_CLK(mcfuart2, "mcfuart.2", MCF_BUSCLK);
--DEFINE_CLK(mcfuart3, "mcfuart.3", MCF_BUSCLK);
--DEFINE_CLK(mcfi2c0, "imx1-i2c.0", MCF_BUSCLK);
--
--struct clk *mcf_clks[] = {
--	&clk_pll,
--	&clk_sys,
--	&clk_mcfslt0,
--	&clk_mcfslt1,
--	&clk_mcfuart0,
--	&clk_mcfuart1,
--	&clk_mcfuart2,
--	&clk_mcfuart3,
--	&clk_mcfi2c0,
--	NULL
-+
-+static struct clk_lookup m54xx_clk_lookup[] = {
-+	CLKDEV_INIT(NULL, "pll.0", &clk_pll),
-+	CLKDEV_INIT(NULL, "sys.0", &clk_sys),
-+	CLKDEV_INIT("mcfslt.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfslt.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.0", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.1", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.2", NULL, &clk_sys),
-+	CLKDEV_INIT("mcfuart.3", NULL, &clk_sys),
-+	CLKDEV_INIT("imx1-i2c.0", NULL, &clk_sys),
- };
- 
- /***************************************************************************/
-@@ -100,6 +93,8 @@ void __init config_BSP(char *commandp, int size)
- 	mach_sched_init = hw_timer_init;
- 	m54xx_uarts_init();
- 	m54xx_i2c_init();
-+
-+	clkdev_add_table(m54xx_clk_lookup, ARRAY_SIZE(m54xx_clk_lookup));
- }
- 
- /***************************************************************************/
+ config SND_SOC_RK3399_GRU_SOUND
+ 	tristate "ASoC support multiple codecs for Rockchip RK3399 GRU boards"
+-	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP && SPI
++	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && HAVE_CLK && SPI
+ 	select SND_SOC_ROCKCHIP_I2S
+ 	select SND_SOC_MAX98357A
+ 	select SND_SOC_RT5514
 -- 
 2.29.2
 
