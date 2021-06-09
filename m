@@ -2,92 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43B6C48BCD
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 21:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B708C48BCD
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 21:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82033613EF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 21:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405DC613EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 21:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbhFIVPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 17:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbhFIVPB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 17:15:01 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE7EEC061574
-        for <linux-clk@vger.kernel.org>; Wed,  9 Jun 2021 14:12:55 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id c5so26942615wrq.9
-        for <linux-clk@vger.kernel.org>; Wed, 09 Jun 2021 14:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=cAUmhDMcAs6pVQpZ39SGVcYjz64esmLkl1UKed+u18o=;
-        b=pNeRzIRnaTGmkgMPbCsKBqgdbBVn9dylp+G0Eqvxu807/HBsMAHxFUc5a+XIu1yHK6
-         SKaaUgzOTNFBC4rvP2sqwz3/JVHsQc+6eTBDV1LrgowQmYyY2ozO+r3AudwfHuKHMPOt
-         nGTVhRY7x9UToA6cGogqALMWoCpW1Q/oI5ZWOeIz6AqDIsPLFWHwkV40xCBf57Scki0W
-         chuyVwZKLNkuY0csTRr/Q2Pu3QnvfhgPVge/m3gQajCdvc6Xhcsz3s8PJvC/bTEeK9Mh
-         BS/28jwR12tLz6YgMI3N38oshG8cqKarWsMbTtKfAbFsGm1SAiDy1/0jJCJf3CZOQ/JX
-         ZaOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=cAUmhDMcAs6pVQpZ39SGVcYjz64esmLkl1UKed+u18o=;
-        b=bASAAjkz0mkEac6nNgifT5FIMfiedALSFZeJ6xXCzeibzc2htlv6Sk/j1wHZpEc5SA
-         bBAcoOR3X0k8cLpcfxr6wkrW4cJDLFsU7kXeg6fbnTKL8qEdaDegrVOm6bNRsEJpJkbM
-         Vo2fIaDZimF4ICfsJTSDKrFIKM6H48IojyUieHc6uL0HpeMmQ9d3N/An8lx9qi9crlbx
-         NxZ2BvlJqB3ZcRsVWBa8kdIhHfIWuGDyGvlMphkfxgFPaFKExQwABKL2ZSXOo2b+yVFq
-         pKoiTryl6v9MCu2lNXpVzaUyTN5GnxiGLdk6xvutln7KQy8fPzrs+JmIvtfiO7ESXZOD
-         b4NA==
-X-Gm-Message-State: AOAM531dJHQqiMBmGYP2fCWo80bkZXKZcvqZ4HwSthtWrWIUXy6ZJtL+
-        6zIhFqaBLOWsAMvQeYWwdT5uIA==
-X-Google-Smtp-Source: ABdhPJyQoNukEOdgVu3ZKB+pj81tAMSWz8KS/fjVm7EvL0ZxydElHHPfNS/0BXv1kWn2Op9TO/p/xA==
-X-Received: by 2002:a05:6000:8b:: with SMTP id m11mr1736396wrx.22.1623273172798;
-        Wed, 09 Jun 2021 14:12:52 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id m21sm7088297wms.42.2021.06.09.14.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 14:12:52 -0700 (PDT)
-References: <20210604032957.224496-1-xieqinick@gmail.com>
-User-agent: mu4e 1.4.15; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     xieqinick@gmail.com, narmstrong@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     nick@khadas.com, artem@khadas.com
-Subject: Re: [PATCH] clk: meson: g12a: Add missing NNA source clocks for g12b
-In-reply-to: <20210604032957.224496-1-xieqinick@gmail.com>
-Message-ID: <1j1r9a214c.fsf@starbuckisacylon.baylibre.com>
-Date:   Wed, 09 Jun 2021 23:12:51 +0200
+        id S229548AbhFIVg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 17:36:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229536AbhFIVg6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Jun 2021 17:36:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4614A613EE;
+        Wed,  9 Jun 2021 21:35:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623274503;
+        bh=AbkTqiqwokqEuxOjwzbARmRprGytNMuk0VTnsM6Erlg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=MVVCCXdRxXe3/nyZ1ITqTYtVuurVv9RRQ20kVSUIMP4kvVnUvcl01gtH2b30cik+t
+         OVvr8hSLX2l+ySBmA13BFDU2cCSKCsiQhS8jJOeTZLPIdQIct5ohx9qdM91ziSUTjC
+         QY+JJGAaxAP/F6ppRtBCPWYhHtMn6vvjnPXGKq0Gp3EiVe216LH4qAjniWXEkyd/Pw
+         PsYAbFlLsb4fo48k/SUJoratBhcFFIN+X1IivPaXXr/4TpNYaQgg6ei96KYUGqhgz3
+         0mq0A3Gro53jrSZoumqrTlpCbHFn0WGB4uPI+nxoXsCaGuGPX4ZZ9494WuFpS3Y0W1
+         5TAuaokkrR4xw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210607110154.1291335-1-sean@geanix.com>
+References: <20210607110154.1291335-1-sean@geanix.com>
+Subject: Re: [RFC PATCH] clk: fix possible circular locking in clk_notifier_register()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sean Nyekjaer <sean@geanix.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sean Nyekjaer <sean@geanix.com>
+Date:   Wed, 09 Jun 2021 14:35:02 -0700
+Message-ID: <162327450202.9598.6919065223406836263@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sean Nyekjaer (2021-06-07 04:01:54)
+> Allocating memory with prepare_lock mutex held makes lockdep unhappy
+> when memory pressure makes the system do fs_reclaim on eg. rawnand using
+> clk.
+>=20
+[...]
+> [  462.949628]  *** DEADLOCK ***
+> [  462.949628]
+> [  462.955563] 1 lock held by kswapd0/22:
+> [  462.959322]  #0: 11f3c233 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire=
++0x0/0x48
+>=20
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>=20
+> Could have used GPF_NOWAIT, but it seems wrong during memory reclaim.
+>=20
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 65508eb89ec9..eb2a547487d6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4348,7 +4348,7 @@ int clk_notifier_register(struct clk *clk, struct n=
+otifier_block *nb)
+>                         goto found;
+> =20
+>         /* if clk wasn't in the notifier list, allocate new clk_notifier =
+*/
+> -       cn =3D kzalloc(sizeof(*cn), GFP_KERNEL);
+> +       cn =3D kzalloc(sizeof(*cn), GFP_ATOMIC);
 
-On Fri 04 Jun 2021 at 05:29, xieqinick@gmail.com wrote:
-
-> From: Nick Xie <nick@khadas.com>
->
-> This adds the Neural Network Accelerator source clocks for g12b.
->
-> Initial support for sm1 already exist in
-> commit 2f1efa5340ef
-> ("clk: meson: g12a: Add support for NNA CLK source clocks")
->
-> The sm1 and g12b share the same NNA source clocks.
-> This patch add missing NNA clocks for A311D (g12b).
->
-> Signed-off-by: Nick Xie <nick@khadas.com>
-
-Applied. Thx.
+We could not allocate this here and instead allocate it before taking
+the lock with the assumption that we'll insert the notifier. That's
+probably the normal case. If we allocated it but didn't use it then we
+can free it on exit, outside the lock. Can you make that change and
+resend? Using GFP_ATOMIC is not the best solution here.
