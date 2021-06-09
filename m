@@ -2,169 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47D8C47095
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0C1C47095
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B758461364
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420D361359
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237009AbhFIILh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 04:11:37 -0400
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:52036 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236372AbhFIILh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 04:11:37 -0400
-Received: by mail-wm1-f50.google.com with SMTP id l9so3436151wms.1;
-        Wed, 09 Jun 2021 01:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VgaMltfJo1z7GEQx4rEQbem+9M1sDH5NvdC/cDT43co=;
-        b=K38NCOYzmomRJ7HWWg92jzk6WciNFspksJN9K+aaghil/1BPZ56e2OEPgPC/KwR+xx
-         BYPEkKu1yoAHFE83Wm70y+wV7xZAPbxxxZahvpqZwqB2lnJQVbzj9AJhP0PHD6Rv/Lm6
-         5sTL+YZAvkA1npgMW2b8D19Ld7BcREAG4q8crlscPMHV1B2QTzR3nKUp3iUpsRhHOS1b
-         O82AfCmcAM8am9kqWuTwwMug3a4ujAfFw+5Lv/UHECP62uteXLHh5Dn9neuUQjqUVwf5
-         oHl5bLlt7/yKLmjeTioQn5/lOLL5D5aTTSWnUCbwrQ5NKEeJDbi7iJNT8MIx7y1x/WaS
-         zyXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VgaMltfJo1z7GEQx4rEQbem+9M1sDH5NvdC/cDT43co=;
-        b=Kj4csUW1eguLKMj5KXia/ElwEe7RGtmjvwG1zg5EOTsgS1ixdpiAg5AnLsZsVqzMmH
-         X1tq/7T4DW4fySDt+7+SZGAC2FdH2WKDa8XvDTY541Ugl7rYc0ytOv+dEQLAOWuylmR2
-         y5akKHOpp8Mv08Hx/aNAiJbFib43424FcXkLMqPaf8cMVKrjULzTCVxQ7cpxbwlkyD65
-         GVIlcHsRI6NELHS94z+zyboWkxAfnsCh5TTGBH+doVtGn275MtDe4xo7Qa+mB6DPaiVf
-         Ux8TcMdF1WaqWHmMV1Xoau9w52L5RqEzCzDoKAKQZVoqwFYy6PjppsXXH3wA/X8qSyE1
-         MPOw==
-X-Gm-Message-State: AOAM533oa7rTtg0R3bs9cD2sK0Llaio+fTrZSnuzf0E57Y7hgj1MjdHf
-        axIFC/gGRVsp/NJuO+YDRgDZO9FQsO8=
-X-Google-Smtp-Source: ABdhPJwP8qnw2dQb0Xb9SRf3aYteDR/JAE2GjpZniv4ftFR/DjNOBtVPcBQB441WfOAoZNSbCiKllg==
-X-Received: by 2002:a1c:4d09:: with SMTP id o9mr26874571wmh.149.1623226122425;
-        Wed, 09 Jun 2021 01:08:42 -0700 (PDT)
-Received: from ziggy.stardust (81.172.61.185.dyn.user.ono.com. [81.172.61.185])
-        by smtp.gmail.com with ESMTPSA id f14sm4257008wri.16.2021.06.09.01.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 01:08:41 -0700 (PDT)
-Subject: Re: [PATCH v9 18/22] clk: mediatek: Add MT8192 mmsys clock support
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        id S234057AbhFIIc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 04:32:58 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:22171 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232333AbhFIIc6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 04:32:58 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id D449924000F;
+        Wed,  9 Jun 2021 08:31:01 +0000 (UTC)
+Date:   Wed, 9 Jun 2021 10:31:01 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-References: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
- <20210524122053.17155-19-chun-jie.chen@mediatek.com>
- <7520a10b-b362-03d4-e41b-e2098ae26621@gmail.com>
- <ef9441888d4ca82d79295106548dd3d463c9c8bc.camel@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <b7a1c230-3f09-d9be-1138-3a5fa87600e7@gmail.com>
-Date:   Wed, 9 Jun 2021 10:08:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: at91: fix count of periph clocks passed to
+ pmc_data_allocate
+Message-ID: <YMB8RYhCY4WVQXg+@piout.net>
+References: <20210609080145.44226-1-clement.leger@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <ef9441888d4ca82d79295106548dd3d463c9c8bc.camel@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210609080145.44226-1-clement.leger@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chun-Jie,
+hi,
 
-On 09/06/2021 00:38, Chun-Jie Chen wrote:
-> On Tue, 2021-06-08 at 16:44 +0200, Matthias Brugger wrote:
->>
->> On 24/05/2021 14:20, Chun-Jie Chen wrote:
->>> Add MT8192 mmsys clock provider
->>>
->>> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
->>> Signed-off-by: chun-jie.chen <chun-jie.chen@mediatek.com>
->>> ---
->>>  drivers/clk/mediatek/Kconfig         |   6 ++
->>>  drivers/clk/mediatek/Makefile        |   1 +
->>>  drivers/clk/mediatek/clk-mt8192-mm.c | 108
->>> +++++++++++++++++++++++++++
->>>  3 files changed, 115 insertions(+)
->>>  create mode 100644 drivers/clk/mediatek/clk-mt8192-mm.c
->>>
->>
->> [...]
->>> +
->>> +static int clk_mt8192_mm_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	struct device_node *node = dev->parent->of_node;
->>> +	struct clk_onecell_data *clk_data;
->>> +	int r;
->>> +
->>> +	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
->>> +	if (!clk_data)
->>> +		return -ENOMEM;
->>> +
->>> +	r = mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
->>> clk_data);
->>> +	if (r)
->>> +		return r;
->>> +
->>> +	return of_clk_add_provider(node, of_clk_src_onecell_get,
->>> clk_data);
->>> +}
->>> +
->>> +static struct platform_driver clk_mt8192_mm_drv = {
->>> +	.probe = clk_mt8192_mm_probe,
->>> +	.driver = {
->>> +		.name = "clk-mt8192-mm",
->>> +	},
->>> +};
->>
->> Did you had a look at drivers/soc/mediatek/mtk-mmsys.c? How is the
->> MMSYS
->> different from all the other SoCs? I suppose it is not. Please don't
->> just
->> implement the clock drivers, but check in existing code how they play
->> together
->> with the HW they are for. MediaTek unfortunately has the design to
->> add the clock
->> registers in the address space of the IP block that needs this
->> registers. Which
->> makes it more complicated to implement clock driver in the first
->> place.
->>
->> Regards,
->> Matthias
+Subject should have been:
+clk: at91: sama5d2: fix count of periph clocks passed to pmc_data_allocate
+
+
+
+On 09/06/2021 10:01:44+0200, Clément Léger wrote:
+> When allocating clk_hw structure, only the periph32 clocks are considered.
+> Since sama5d2_periphck are also added to the phws there is currently an
+> out of bound write. Fix this by adding the count of periphck to periph32ck.
 > 
-> Did you means binding the mm clock driver by creating a platform device
-> in drivers/soc/mediatek/mtk-mmsys.c? There is 8192 mmsys compatible
-> data in patch [1] but lack of it in the latest patch [2], I will check
-> it.
-> Thanks for your kind reminder.
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
+
+> ---
+>  drivers/clk/at91/sama5d2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+> index 3d1f78176c3e..663b73a032ee 100644
+> --- a/drivers/clk/at91/sama5d2.c
+> +++ b/drivers/clk/at91/sama5d2.c
+> @@ -170,7 +170,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  
+>  	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
+>  					nck(sama5d2_systemck),
+> -					nck(sama5d2_periph32ck),
+> +					nck(sama5d2_periphck) + nck(sama5d2_periph32ck),
+>  					nck(sama5d2_gck), 3);
+>  	if (!sama5d2_pmc)
+>  		return;
+> -- 
+> 2.32.0
 > 
 
-Yes, the clock driver should be a platform driver. Binding should be done
-through the soc driver.
-
-
-Thanks a lot,
-Matthias
-
-> [1] 
-> https://patchwork.kernel.org/project/linux-mediatek/patch/1609815993-22744-11-git-send-email-yongqiang.niu@mediatek.com/
-> [2] 
-> https://patchwork.kernel.org/project/linux-mediatek/patch/1618236288-1617-5-git-send-email-yongqiang.niu@mediatek.com/
-> 
-> Best Regards,
-> Chun-Jie
-> 
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
