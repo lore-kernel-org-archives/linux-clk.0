@@ -3,109 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D74C49EA4
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF8CC48BCF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 15:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDE22613D3
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5BE60FF0
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 15:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238569AbhFIO5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 10:57:49 -0400
-Received: from relay08.th.seeweb.it ([5.144.164.169]:51631 "EHLO
-        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238492AbhFIO5r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 10:57:47 -0400
-Received: from localhost.localdomain (83.6.168.161.neoplus.adsl.tpnet.pl [83.6.168.161])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 191803F629;
-        Wed,  9 Jun 2021 16:55:49 +0200 (CEST)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     ~postmarketos/upstreaming@lists.sr.ht
-Cc:     martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S235719AbhFIPew (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 11:34:52 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:53196 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231691AbhFIPev (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 11:34:51 -0400
+X-IronPort-AV: E=Sophos;i="5.83,261,1616425200"; 
+   d="scan'208";a="83886951"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jun 2021 00:32:54 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4DD6040090FB;
+        Thu, 10 Jun 2021 00:32:51 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] clk: qcom: gcc-msm8994: Add a quirk for a different SDCC configuration
-Date:   Wed,  9 Jun 2021 16:55:21 +0200
-Message-Id: <20210609145523.467090-9-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210609145523.467090-1-konrad.dybcio@somainline.org>
-References: <20210609145523.467090-1-konrad.dybcio@somainline.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 00/11] Add new Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK support
+Date:   Wed,  9 Jun 2021 16:32:19 +0100
+Message-Id: <20210609153230.6967-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some devices come with a different SDCC clock configuration,
-account for that.
+Hi All,
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- .../bindings/clock/qcom,gcc-msm8994.yaml         |  4 ++++
- drivers/clk/qcom/gcc-msm8994.c                   | 16 ++++++++++++++++
- 2 files changed, 20 insertions(+)
+This patch series adds initial support for Renesas RZ/G2L SoC and
+Renesas RZ/G2L SMARC EVK.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-index b44a844d894c..4ba2f72d3cad 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-@@ -49,6 +49,10 @@ properties:
-     description:
-       Protected clock specifier list as per common clock binding.
- 
-+  qcom,sdcc2-clk-src-40mhz:
-+    description: SDCC2_APPS clock source runs at 40MHz.
-+    type: boolean
-+
- required:
-   - compatible
-   - reg
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index bc8ad4973dd9..4903b07964dc 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -1012,6 +1012,19 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_sdcc2_40mhz_apps_clk_src[] = {
-+	F(144000, P_XO, 16, 3, 25),
-+	F(400000, P_XO, 12, 1, 4),
-+	F(20000000, P_GPLL0, 15, 1, 2),
-+	F(25000000, P_GPLL0, 12, 1, 2),
-+	F(40000000, P_GPLL0, 15, 0, 0),
-+	F(50000000, P_GPLL0, 12, 0, 0),
-+	F(80000000, P_GPLL0, 7.5, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	F(200000000, P_GPLL0, 3, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_sdcc2_4_apps_clk_src[] = {
- 	F(144000, P_XO, 16, 3, 25),
- 	F(400000, P_XO, 12, 1, 4),
-@@ -2788,6 +2801,9 @@ static int gcc_msm8994_probe(struct platform_device *pdev)
- 		gcc_msm8994_desc.clks[GCC_SYS_NOC_UFS_AXI_CLK] = NULL;
- 	}
- 
-+	if (of_find_property(dev->of_node, "qcom,sdcc2-clk-src-40mhz", NULL))
-+		sdcc2_apps_clk_src.freq_tbl = ftbl_sdcc2_40mhz_apps_clk_src;
-+
- 	return qcom_cc_probe(pdev, &gcc_msm8994_desc);
- }
- 
+Initial patches enables minimal peripherals on Renesas RZ/G2L
+SMARC EVK and booted via initramfs.
+* Documentation for RZ/G2{L,LC,UL} SoC variants
+* SoC identification support
+* CPG core support
+* Minimal SoC DTSi
+* Minimal DTS for SMARC EVK
+
+Changes for v3:
+* Updated tag from Rob for CPG binding doc
+* Included RB tags from Geert
+* Added description for clock-names property in CPG binding doc
+* Dropped serial driver patch (already merged)
+* Fixed CPG core issues for USB/ADC IP
+* Added r9a07g044l2.dtsi
+
+Changes for v2:
+* Included type-2 RZ/G2Ul SoC in binding doc
+* Added single entry for SMARC EVK "renesas,smarc-evk"
+* Renamed ARCH_R9A07G044L to ARCH_R9A07G044 and
+  dropped ARCH_R9A07G044LC config
+* Dropped SoC identification changes will post them as
+  separate patch.
+* Updated comment in sh-sci.c
+* Binding documentation patch for serial driver has been
+  accepted so dropped the patch from this series
+* Incorporated changes requested by Geert for CPG core
+* Fixed dtbs_check errors
+* Dropped 'clock-names'/'clocks'/'power-domains'/'resets'
+  properties from GIC node and will include them in a separate
+  patch along with arm,gic-v3.yaml binding updates
+* Included ACK's from Rob
+
+Patches are based on top of [1] master branch.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (11):
+  dt-bindings: arm: renesas: Document Renesas RZ/G2UL SoC
+  dt-bindings: arm: renesas: Document Renesas RZ/G2{L,LC} SoC variants
+  dt-bindings: arm: renesas: Document SMARC EVK
+  soc: renesas: Add ARCH_R9A07G044 for the new RZ/G2L SoC's
+  arm64: defconfig: Enable ARCH_R9A07G044
+  clk: renesas: Define RZ/G2L CPG Clock Definitions
+  dt-bindings: clock: renesas: Document RZ/G2L SoC CPG driver
+  clk: renesas: Add CPG core wrapper for RZ/G2L SoC
+  clk: renesas: Add support for R9A07G044 SoC
+  arm64: dts: renesas: Add initial DTSI for RZ/G2{L,LC} SoC's
+  arm64: dts: renesas: Add initial device tree for RZ/G2L SMARC EVK
+
+ .../devicetree/bindings/arm/renesas.yaml      |  18 +
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  83 ++
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    | 120 +++
+ arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi  |  25 +
+ .../boot/dts/renesas/r9a07g044l2-smarc.dts    |  21 +
+ arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi  |  13 +
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  27 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/Kconfig                   |  10 +
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r9a07g044-cpg.c           | 127 +++
+ drivers/clk/renesas/renesas-rzg2l-cpg.c       | 750 ++++++++++++++++++
+ drivers/clk/renesas/renesas-rzg2l-cpg.h       | 136 ++++
+ drivers/soc/renesas/Kconfig                   |   5 +
+ include/dt-bindings/clock/r9a07g044-cpg.h     |  89 +++
+ 16 files changed, 1429 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+ create mode 100644 drivers/clk/renesas/r9a07g044-cpg.c
+ create mode 100644 drivers/clk/renesas/renesas-rzg2l-cpg.c
+ create mode 100644 drivers/clk/renesas/renesas-rzg2l-cpg.h
+ create mode 100644 include/dt-bindings/clock/r9a07g044-cpg.h
+
 -- 
-2.31.1
+2.17.1
 
