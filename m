@@ -1,86 +1,76 @@
 Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=BAYES_50,DKIMWL_BL,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0C1C47095
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F07BC48BDF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 13:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 420D361359
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1576A613B8
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 13:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234057AbhFIIc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 04:32:58 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:22171 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232333AbhFIIc6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 04:32:58 -0400
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id D449924000F;
-        Wed,  9 Jun 2021 08:31:01 +0000 (UTC)
-Date:   Wed, 9 Jun 2021 10:31:01 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: fix count of periph clocks passed to
- pmc_data_allocate
-Message-ID: <YMB8RYhCY4WVQXg+@piout.net>
-References: <20210609080145.44226-1-clement.leger@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210609080145.44226-1-clement.leger@bootlin.com>
+        id S234114AbhFINaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 09:30:23 -0400
+Received: from flippie-beckerswealth-sa.xyz ([62.173.147.2]:57980 "EHLO
+        host.flippie-beckerswealth-sa.xyz" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233302AbhFINaX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 09:30:23 -0400
+Received: from flippie-beckerswealth-sa.xyz (ec2-3-131-99-163.us-east-2.compute.amazonaws.com [3.131.99.163])
+        by host.flippie-beckerswealth-sa.xyz (Postfix) with ESMTPA id 691DB30CF3A5
+        for <linux-clk@vger.kernel.org>; Wed,  9 Jun 2021 15:10:27 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz 691DB30CF3A5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240627;
+        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=Lc8Hcrm+apq2bIfTp78ihVsP9/YE41IyTM8YdLYi9TybTnAY3GdrYTabRSu7HVUNj
+         7fqB1DBFemU1JBNLEAMnX8RReVKrbCAHQts3oICDV2smEeBnadjp5EGUOTNfbLZqY2
+         ZXZ+GQPGBeQpnfGxuNP1aDcxv0jV+hkTrnA25c10=
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz 691DB30CF3A5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240627;
+        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=Lc8Hcrm+apq2bIfTp78ihVsP9/YE41IyTM8YdLYi9TybTnAY3GdrYTabRSu7HVUNj
+         7fqB1DBFemU1JBNLEAMnX8RReVKrbCAHQts3oICDV2smEeBnadjp5EGUOTNfbLZqY2
+         ZXZ+GQPGBeQpnfGxuNP1aDcxv0jV+hkTrnA25c10=
+Reply-To: jmasuku40@flippiebeckerwealthservices.com
+From:   Jotham Masuku <jmasuku40@flippie-beckerswealth-sa.xyz>
+To:     linux-clk@vger.kernel.org
+Subject: Proposal
+Date:   09 Jun 2021 12:10:27 +0000
+Message-ID: <20210609121027.02060D2FC4D09AC8@flippie-beckerswealth-sa.xyz>
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi,
+Hello there,
 
-Subject should have been:
-clk: at91: sama5d2: fix count of periph clocks passed to pmc_data_allocate
+I hope this message finds you in good spirits especially during=20
+this challenging time of coronavirus pandemic. I hope you and=20
+your family are well and keeping safe. Anyway, I am Jotham=20
+Masuku, a broker working with Flippiebecker Wealth. I got your=20
+contact (along with few other contacts) through an online=20
+business directory and I thought I should contact you to see if=20
+you are interested in this opportunity. I am contacting you=20
+because one of my high profile clients is interested in investing=20
+abroad and has asked me to look for individuals and companies=20
+with interesting business ideas and projects that he can invest=20
+in. He wants to invest a substantial amount of asset abroad.
 
+Please kindly respond back to this email if you are interested in=20
+this opportunity. Once I receive your response, I will give you=20
+more details and we can plan a strategy that will be beneficial=20
+to all parties.
 
+Best regards
 
-On 09/06/2021 10:01:44+0200, Clément Léger wrote:
-> When allocating clk_hw structure, only the periph32 clocks are considered.
-> Since sama5d2_periphck are also added to the phws there is currently an
-> out of bound write. Fix this by adding the count of periphck to periph32ck.
-> 
-> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
-
-> ---
->  drivers/clk/at91/sama5d2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> index 3d1f78176c3e..663b73a032ee 100644
-> --- a/drivers/clk/at91/sama5d2.c
-> +++ b/drivers/clk/at91/sama5d2.c
-> @@ -170,7 +170,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  
->  	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
->  					nck(sama5d2_systemck),
-> -					nck(sama5d2_periph32ck),
-> +					nck(sama5d2_periphck) + nck(sama5d2_periph32ck),
->  					nck(sama5d2_gck), 3);
->  	if (!sama5d2_pmc)
->  		return;
-> -- 
-> 2.32.0
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+J Masuku
+Flippiebecker Wealth
