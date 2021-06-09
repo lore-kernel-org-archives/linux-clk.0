@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F6EC48BCF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A420C48BE6
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AAC56128A
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 598E1611CC
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 14:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238339AbhFIO5e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 10:57:34 -0400
-Received: from m-r2.th.seeweb.it ([5.144.164.171]:35989 "EHLO
-        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbhFIO5d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 10:57:33 -0400
+        id S238467AbhFIO5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 10:57:38 -0400
+Received: from relay07.th.seeweb.it ([5.144.164.168]:43063 "EHLO
+        relay07.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238432AbhFIO5h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 10:57:37 -0400
 Received: from localhost.localdomain (83.6.168.161.neoplus.adsl.tpnet.pl [83.6.168.161])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id B0E6B3F5E6;
-        Wed,  9 Jun 2021 16:55:36 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 4F4D43F5D6;
+        Wed,  9 Jun 2021 16:55:40 +0200 (CEST)
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 To:     ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
@@ -36,102 +36,276 @@ Cc:     martin.botka@somainline.org,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
-Date:   Wed,  9 Jun 2021 16:55:13 +0200
-Message-Id: <20210609145523.467090-1-konrad.dybcio@somainline.org>
+Subject: [PATCH v2 3/9] clk: qcom: gcc-msm8994: Fix up SPI QUP clocks
+Date:   Wed,  9 Jun 2021 16:55:15 +0200
+Message-Id: <20210609145523.467090-3-konrad.dybcio@somainline.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210609145523.467090-1-konrad.dybcio@somainline.org>
+References: <20210609145523.467090-1-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation for the MSM8994 GCC driver.
+Fix up SPI QUP freq tables to account for the fact
+that not every QUP can run at the same set of frequencies.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 ---
- .../bindings/clock/qcom,gcc-msm8994.yaml      | 72 +++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+ drivers/clk/qcom/gcc-msm8994.c | 118 +++++++++++++++++++++++++++++----
+ 1 file changed, 105 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-new file mode 100644
-index 000000000000..b44a844d894c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 8e9a8ebadf73..78c06104854e 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -169,7 +169,7 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
+ 	},
+ };
+ 
+-static struct freq_tbl ftbl_blspqup_spi_apps_clk_src[] = {
++static struct freq_tbl ftbl_blsp1_qup1_spi_apps_clk_src[] = {
+ 	F(960000, P_XO, 10, 1, 2),
+ 	F(4800000, P_XO, 4, 0, 0),
+ 	F(9600000, P_XO, 2, 0, 0),
+@@ -187,7 +187,7 @@ static struct clk_rcg2 blsp1_qup1_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup1_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup1_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -209,12 +209,25 @@ static struct clk_rcg2 blsp1_qup2_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp1_qup2_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	F(46150000, P_GPLL0, 13, 0, 0),
++	{ }
++};
 +
-+title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
+ static struct clk_rcg2 blsp1_qup2_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x06cc,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup2_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup2_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -236,12 +249,25 @@ static struct clk_rcg2 blsp1_qup3_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp1_qup3_4_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	F(44440000, P_GPLL0, 13.5, 0, 0),
++	{ }
++};
 +
-+description: |
-+  Qualcomm global clock control module which supports the clocks, resets and
-+  power domains on MSM8994 and MSM8992.
+ static struct clk_rcg2 blsp1_qup3_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x074c,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup3_4_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup3_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -268,7 +294,7 @@ static struct clk_rcg2 blsp1_qup4_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup3_4_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup4_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -290,12 +316,25 @@ static struct clk_rcg2 blsp1_qup5_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp1_qup5_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(40000000, P_GPLL0, 15, 0, 0),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	{ }
++};
 +
-+  See also:
-+  - dt-bindings/clock/qcom,gcc-msm8994.h
+ static struct clk_rcg2 blsp1_qup5_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x084c,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup5_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup5_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -317,12 +356,25 @@ static struct clk_rcg2 blsp1_qup6_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp1_qup6_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(27906976, P_GPLL0, 1, 2, 43),
++	F(41380000, P_GPLL0, 15, 0, 0),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	{ }
++};
 +
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
-+  - Taniya Das <tdas@codeaurora.org>
+ static struct clk_rcg2 blsp1_qup6_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x08cc,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp1_qup6_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp1_qup6_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -447,12 +499,25 @@ static struct clk_rcg2 blsp2_qup1_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp2_qup1_2_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	F(44440000, P_GPLL0, 13.5, 0, 0),
++	{ }
++};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,gcc-msm8992
-+      - qcom,gcc-msm8994
+ static struct clk_rcg2 blsp2_qup1_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x098c,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp2_qup1_2_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup1_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -479,7 +544,7 @@ static struct clk_rcg2 blsp2_qup2_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp2_qup1_2_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup2_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -488,6 +553,19 @@ static struct clk_rcg2 blsp2_qup2_spi_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp2_qup3_4_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(42860000, P_GPLL0, 14, 0, 0),
++	F(48000000, P_GPLL0, 12.5, 0, 0),
++	{ }
++};
 +
-+  clocks:
-+    items:
-+      - description: XO source
-+      - description: Sleep clock source
+ static struct clk_rcg2 blsp2_qup3_i2c_apps_clk_src = {
+ 	.cmd_rcgr = 0x0aa0,
+ 	.hid_width = 5,
+@@ -506,7 +584,7 @@ static struct clk_rcg2 blsp2_qup3_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp2_qup3_4_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup3_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -533,7 +611,7 @@ static struct clk_rcg2 blsp2_qup4_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp2_qup3_4_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup4_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -560,7 +638,8 @@ static struct clk_rcg2 blsp2_qup5_spi_apps_clk_src = {
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	/* BLSP1 QUP1 and BLSP2 QUP5 use the same freqs */
++	.freq_tbl = ftbl_blsp1_qup1_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup5_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
+@@ -582,12 +661,25 @@ static struct clk_rcg2 blsp2_qup6_i2c_apps_clk_src = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_blsp2_qup6_spi_apps_clk_src[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_GPLL0, 12.5, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(44440000, P_GPLL0, 13.5, 0, 0),
++	F(48000000, P_GPLL0, 12.5, 0, 0),
++	{ }
++};
 +
-+  clock-names:
-+    items:
-+      - const: xo
-+      - const: sleep
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  protected-clocks:
-+    description:
-+      Protected clock specifier list as per common clock binding.
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@300000 {
-+      compatible = "qcom,gcc-msm8994";
-+      reg = <0x300000 0x90000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+      clocks = <&xo_board>, <&sleep_clk>;
-+      clock-names = "xo", "sleep";
-+    };
-+...
+ static struct clk_rcg2 blsp2_qup6_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x0c0c,
+ 	.mnd_width = 8,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
+-	.freq_tbl = ftbl_blspqup_spi_apps_clk_src,
++	.freq_tbl = ftbl_blsp2_qup6_spi_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "blsp2_qup6_spi_apps_clk_src",
+ 		.parent_data = gcc_xo_gpll0,
 -- 
 2.31.1
 
