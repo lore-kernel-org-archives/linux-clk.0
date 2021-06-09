@@ -2,138 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9AAC47095
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 07:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53BEC48BCD
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E11F6611BD
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 07:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E276128A
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 08:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235944AbhFIH6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 03:58:42 -0400
-Received: from mail-yb1-f173.google.com ([209.85.219.173]:43668 "EHLO
-        mail-yb1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235676AbhFIH6l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 03:58:41 -0400
-Received: by mail-yb1-f173.google.com with SMTP id b9so34189621ybg.10;
-        Wed, 09 Jun 2021 00:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KXMGHXTBrIil+I7I4kjVUCaxAzxvJ/gccp3wjNKkRTM=;
-        b=TdlrugkUXsgXQ/klf03KArJGCtrAiDPExNhLRnhLTnf0alb/+ecpu/0+DwhUwzslD8
-         nGjl98bGRk4TwWuui+zYqmbhQr9bE0tNad0C3W2RJJpCdV7bG1JYyCQyLp6E2zYgAgge
-         hYHrDcWoMprH8As++8E927poTTiodJXfPK8yQ60+diRba59Zs8p1OizhGYGLa2UCPvPO
-         shDuXeIIZjrEwzvPp0q8fRjng4RqUsXokYqWPTvr37PzK88XtWMX169uVCMYLKFj/Oy5
-         OaJ0Krnxml+yQE3E7NIdcLkIIdr83D4StVlpWWXnNynGmnQy5cXUCG7QldrHNjjwAuJB
-         p3QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KXMGHXTBrIil+I7I4kjVUCaxAzxvJ/gccp3wjNKkRTM=;
-        b=tqEBozAFRcT+wQhxQoyEFjz/b3tE7qI1nGAoGxyPpSxAUQvxT0sCk2ID7nKwz8ehDI
-         SIjSdhReWt5ufQMDcBoOwoUq/ceIsOdUwAnT+8jGKujRYRkIxRLRPf4XYOq9pbVUm1f1
-         /F8Sgy7hDpNZx11xo3cV2HpF7WR95rSdiAz35xTZnaKo4GsEwglED1MIQnH28jUugTF/
-         QImAYjzIVgbpx1ck8eiAhANvAgXhI0jAQJGSgo5lAmabbLFXySy4+OVnS4pm6H0qigfP
-         9DN0yjfT9ubCTgLq3xYG0e1xN7IXm34S9w0/IPI8rVeNqZ/jw8Bwxtd3eCgj6UTo92+a
-         LhgA==
-X-Gm-Message-State: AOAM530WV5PG2ASxpQPK9R0Rx6oDkMtjm4WzZ2ytRXc/ATR8LLJ5h2jD
-        1YXxyLXnculWQ2c2Az/Qh14dywP5T1zIMHDLSts=
-X-Google-Smtp-Source: ABdhPJwAbGPtDbZtlUcIsNuAqy/YZy5uVx2bQGCuOHQkm9uid77r2z6Qq8LBhTcmzyQfawpZBULT7hw/ULTpug/IjSw=
-X-Received: by 2002:a25:d888:: with SMTP id p130mr1010477ybg.179.1623225331965;
- Wed, 09 Jun 2021 00:55:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603221758.10305-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210603221758.10305-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXO1RyF9ZuXR2CGHqvPOh6jnf07_EEreTOmiwUzoEg5hQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXO1RyF9ZuXR2CGHqvPOh6jnf07_EEreTOmiwUzoEg5hQ@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 9 Jun 2021 08:55:06 +0100
-Message-ID: <CA+V-a8uaAcFOqqRzNVdjmSD2LsQO9yHjM8AcQRA8gOFmF5q8gg@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for
- RZ/G2L SMARC EVK
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S237434AbhFIIDx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 04:03:53 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:50751 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237471AbhFIIDl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 04:03:41 -0400
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 6005260014;
+        Wed,  9 Jun 2021 08:01:45 +0000 (UTC)
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: at91: fix count of periph clocks passed to pmc_data_allocate
+Date:   Wed,  9 Jun 2021 10:01:44 +0200
+Message-Id: <20210609080145.44226-1-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+When allocating clk_hw structure, only the periph32 clocks are considered.
+Since sama5d2_periphck are also added to the phws there is currently an
+out of bound write. Fix this by adding the count of periphck to periph32ck.
 
-Thank you for the review.
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+---
+ drivers/clk/at91/sama5d2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Jun 9, 2021 at 8:18 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Jun 4, 2021 at 12:19 AM Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > Add basic support for RZ/G2L SMARC EVK (based on R9A07G044L2):
-> > - memory
-> > - External input clock
-> > - SCIF
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
-> > @@ -0,0 +1,21 @@
-> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +/*
-> > + * Device Tree Source for the RZ/G2L SMARC EVK board
-> > + *
-> > + * Copyright (C) 2021 Renesas Electronics Corp.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "r9a07g044.dtsi"
->
-> So this should include r9a07g044l2.dtsi.
->
-Good point I'll create an empty r9a07g044l2.dtsi file including
-"r9a07g044.dtsi '' along with the compatible value and include it
-here.
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 3d1f78176c3e..663b73a032ee 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -170,7 +170,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 
+ 	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
+ 					nck(sama5d2_systemck),
+-					nck(sama5d2_periph32ck),
++					nck(sama5d2_periphck) + nck(sama5d2_periph32ck),
+ 					nck(sama5d2_gck), 3);
+ 	if (!sama5d2_pmc)
+ 		return;
+-- 
+2.32.0
 
-Cheers,
-Prabhakar
-
-> The rest looks fine, so
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
