@@ -2,146 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA087C48BCF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 20:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10507C48BCF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 20:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9560261278
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 20:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E687C61278
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jun 2021 20:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbhFIUXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jun 2021 16:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhFIUXk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 16:23:40 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0B8C06175F
-        for <linux-clk@vger.kernel.org>; Wed,  9 Jun 2021 13:21:44 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lr4hc-0002WB-Au; Wed, 09 Jun 2021 22:21:28 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lr4hX-0003g3-WB; Wed, 09 Jun 2021 22:21:24 +0200
-Date:   Wed, 9 Jun 2021 22:21:23 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-spi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PULL] Add variants of devm_clk_get for prepared and enabled clocks
- enabled clocks
-Message-ID: <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
-References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+        id S229910AbhFIU6k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jun 2021 16:58:40 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:56132 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229527AbhFIU6j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jun 2021 16:58:39 -0400
+Received: from [77.244.183.192] (port=64840 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1lr5Fi-0003sy-IX; Wed, 09 Jun 2021 22:56:42 +0200
+Subject: Re: [PATCH v5] dt-bindings: clk: versaclock5: Miscellaneous fixes and
+ improvements:
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Adam Ford <aford173@gmail.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
+References: <20210316162643.2442885-1-geert+renesas@glider.be>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <4d2edd16-2ca5-c732-d075-5c913e13114a@lucaceresoli.net>
+Date:   Wed, 9 Jun 2021 22:56:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jlb5tlnr3m7frksr"
-Content-Disposition: inline
-In-Reply-To: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20210316162643.2442885-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi All,
 
---jlb5tlnr3m7frksr
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 16/03/21 17:26, Geert Uytterhoeven wrote:
+>   - Remove unneeded references for "idt,xtal-load-femtofarads" and
+>     "idt,slew-percent", as vendor specific properties having a standard
+>     unit suffix don't need a type,
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
+> 
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Hello Stephen,
+This patch seems to have gone MIA. It really should be applied. Geert,
+would you please rebase&resend in case it does not not apply anymore?
+(or tell me if you prefer me to take it over)
 
-given that I don't succeed in getting any feedback for my patch set, I'm
-trying with a pull request today. It would be really great if this pull
-request made it finally in for the next merge window.
+> ---
+> This depends on dt-schema v2021.2.1.
+> 
+> v4:
+>   - Add Reviewed-by, Acked-by,
+> 
+> v3:
+>   - Drop references for "idt,voltage-microvolt" and "idt,slew-percent",
+> 
+> v2:
+>   - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
+>     ('clk: vc5: Use "idt,voltage-microvolt" instead of
+>     "idt,voltage-microvolts"'),
+>   - Drop reference to clock.yaml, which is already applied
+>     unconditionally,
+>   - Drop removal of allOf around if condition, as it is unnecessary
+>     churn.
+> 
+> squash! dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
 
-The changes are not as bad or complex as the diffstat suggests. The
-first patch contains all the complexity and only has
- 1 file changed, 50 insertions(+), 17 deletions(-)
-=2E The second patch makes use of this and just adds kernel-doc, four
-functions that are one-line wrappers around the newly introduced
-__devm_clk_get() function in the first patch and dummy implementations
-for the !CONFIG_HAVE_CLK case.
+heh, should be removed, but is's after --- so not a big deal.
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-
-are available in the Git repository at:
-
-  https://git.pengutronix.de/git/ukl/linux tags/devm-clk-get-enabled
-
-for you to fetch changes up to fec74d434d6f6016b6b2d5ab13aa28a0c657f5fb:
-
-  clk: Provide new devm_clk_helpers for prepared and enabled clocks (2021-0=
-5-11 14:20:13 +0200)
-
-----------------------------------------------------------------
-New variants of devm_clk_get() for prepared and enabled clocks
-
-These two patches create a set of new devm helpers that return clocks
-already prepared or prepared-and-enabled. The automatic cleanup cares
-for unpreparing and disabling+unpreparing respectively.
-
-This allows to simplify various drivers as was demonstrated with
-additional patches sent with the various revisions of this patch set.
-See
-https://lore.kernel.org/r/20210510174142.986250-1-u.kleine-koenig@pengutron=
-ix.de
-for the last submission round. This pull request doesn't contain these
-patches though.
-
-----------------------------------------------------------------
-Uwe Kleine-K=F6nig (2):
-      clk: generalize devm_clk_get() a bit
-      clk: Provide new devm_clk_helpers for prepared and enabled clocks
-
- drivers/clk/clk-devres.c | 96 ++++++++++++++++++++++++++++++++++++++++----=
-----
- include/linux/clk.h      | 90 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 169 insertions(+), 17 deletions(-)
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---jlb5tlnr3m7frksr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDBIsAACgkQwfwUeK3K
-7Alkugf/WZeWnWAV4qBqO+Z6x4ARRoga+Gjpg6BwHHpK+Kk9UNydeZtR0UeaVDZp
-hK/705S/EeZplYpkKxrxtsVV4EK2fqagBccxfYDtbcbjQsWEOZzqBAxtw+xoUPB0
-FXwwQcD6RIMMnMsILzsr43KX4gOmDp6rUSAGsQj9ctOJtGd0qp8Y0g2FxcUkXRYK
-tmLuixTBnOegyNmzK99qGA7bPNABkbt4wfnqPDrn30txhGV7ZOjeCm5FOApsgt2E
-BYIl6DTFCKRvE1EDQMFV1FHI8eX2ygJ/KjrDOm+OWkO4bEJfZxrS0I48gm3GFkbG
-l4kofwamfBagjIlMv2toKyH0CpDyEw==
-=OVXu
------END PGP SIGNATURE-----
-
---jlb5tlnr3m7frksr--
+-- 
+Luca
