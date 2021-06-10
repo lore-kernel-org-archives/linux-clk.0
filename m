@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C2EC48BD1
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8225C48BDF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49A7261419
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF4816136D
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230280AbhFJUHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 16:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35998 "EHLO
+        id S230416AbhFJUHl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 16:07:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbhFJUHf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 16:07:35 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D25C0617A8;
-        Thu, 10 Jun 2021 13:05:38 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id u24so34482862edy.11;
-        Thu, 10 Jun 2021 13:05:38 -0700 (PDT)
+        with ESMTP id S230392AbhFJUHl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 16:07:41 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B198C061760;
+        Thu, 10 Jun 2021 13:05:32 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id ci15so996864ejc.10;
+        Thu, 10 Jun 2021 13:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0gUA8fCofTJN4dSFDRWQ0LtpsjbZVq0HGtPwb2y+ZNk=;
-        b=pjUX2sX1hCuxJMXZzLkXI2KXrkiO2we8D5JQvdmkNjLXWO4ewuu6ZxBZ6hxK9yWmca
-         KpMPeB7EI4jD9MHCP7kUDJfbFJEVmImX47nuM30re0gUzQpQkDoqv4xBqkWjQLeaF79j
-         /rJzrECl78m6wl/oAubtrxGtkwZrz9fQ7AC/sgDb3O4DY8j9NCwXlwty8DBaTXV/KC9R
-         AhdOkHfpBD3grkwdLrzZD32012rSppYW6PV5Kjn9EI7gKSzHQ8PohorTqdEdPWddqVoZ
-         /sIrkiPy7Yc5aP8Cb3l+l/aAj5/Ac3PqLvDmAz+u/tBlUVLD2gxGyOAve9NfS3N4TW5K
-         jxBQ==
+        bh=LoitPLkETiydq84gXJtzggxZISPZQCmNnkixieE36b4=;
+        b=GMguz6OyEOl/Uvt2/gL8nKqtpkTkh1nIQNqm8qA7P5UIKaJC5V5+SrGOPGdBHBYlWH
+         rkYeFNN535MdA0sZ7TXn/8uemgSdLsbwlgvr1hwmayUXCJg18FKPgK2RRfi76/QZg33r
+         eDCNuwQwQIEhIW8/y09/AzcW+VQAD8MFvxY8LPDAD3aFvF0C3OLPLmpQ3baMGCikg1d/
+         Z7Q60VNCCvZcdpE0E2gjgAsg+NAIdemfUvsNHoX52lMW0dCqpwfCBJFJAQE48YCFpTIb
+         /aUIWm9X77xWUclbwV9xYclqedLyw4fPV6U3mACAtYPbaIy44aAbAVoRhgwjWgpHQo2x
+         WKTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0gUA8fCofTJN4dSFDRWQ0LtpsjbZVq0HGtPwb2y+ZNk=;
-        b=UemONWq2rpFBfGNGSIEcy9RAIgodYFVumo7KhbnD7LIpu/sO3xHBcC1PiykJxpI81G
-         7fRBIw8I878Hl6mVLhD/8DMp3wS65Lx6O5BChF0tJHjp9P+YsB0NjPuKS5c2t+ZzdTW7
-         LzDuEwmS77FuOX6PoNLzTiKoMun3PcM6Gyr2eKgTQYeC/GdqFnqW0RzE2BRHOj5j9jn1
-         6WYym1VTrGl2jtG+ZFG9gVD5CxnskZaM6f3NmWtNs6AJHukABmZF/ZLwbki+Ii8qltMd
-         CIFxDXK4kayo45F/Csa944rIefD+GE1np0xTYWu/q++oXtayQ9TmhuksqJB0+Xn7yI9W
-         0rjg==
-X-Gm-Message-State: AOAM5300OYxAS2WO9HX2Og7mO45n1jgWYLDi99Eue7CKMDrqm0r8iJzj
-        X8lYeIG4Oopd+N1MsxpSvGQ=
-X-Google-Smtp-Source: ABdhPJwzqCXrn8iL2XWZ/0drEfa0hsMCgS3V0Y3oGOF7Zv/CdbCHIq7Drgnn6v3LAFnvr7ohgr2e8A==
-X-Received: by 2002:a05:6402:cb4:: with SMTP id cn20mr195651edb.334.1623355536938;
-        Thu, 10 Jun 2021 13:05:36 -0700 (PDT)
+        bh=LoitPLkETiydq84gXJtzggxZISPZQCmNnkixieE36b4=;
+        b=QuuFQykj+hTx2y838Yb5rtQhj80H+8ptJzqCkGBTC+FjaxsS+BqDGopXPMzeDN+UIR
+         L5jAn+MEcT2nf8m/wUhim2o1uGo6BzgzPuSLUiXE1CMBLduzaYwoixuxlsok93qmA74P
+         GjfcaFWmbQD35F7jQ0QYiwP1J6V4B2IRPhYh3+75kjigWOboeTJdoOkkvFuUKLjfrGRE
+         bc5Bk7DCm5oN4oumXaNAuWWWpVY423RDgAxYfXsdw4E/dFJZBGSJ4QTjRGPQiZbHDwxu
+         q/zO5YKSLFq/4qyoa3fWFckj38CB2UVhMcMYVt+kNC5CjIyWszamH+2EPaf1tJ04AZAg
+         X5Nw==
+X-Gm-Message-State: AOAM530ThWwfdgpY2i9aVw+NbnoksJS70QxMFCARI61q4lRjDojrVwI1
+        pzH+c0H8x+jd/poTi3aFaNQ=
+X-Google-Smtp-Source: ABdhPJzJZ5JL4OUjg2j4Qk7l1gXhY1gqG//oQ8RpBSTrpixpPVGiqOi7opwqKgap95/c0/YT+6u91w==
+X-Received: by 2002:a17:906:5293:: with SMTP id c19mr268818ejm.245.1623355530546;
+        Thu, 10 Jun 2021 13:05:30 -0700 (PDT)
 Received: from localhost.localdomain ([188.24.178.25])
-        by smtp.gmail.com with ESMTPSA id du7sm1800978edb.1.2021.06.10.13.05.35
+        by smtp.gmail.com with ESMTPSA id du7sm1800978edb.1.2021.06.10.13.05.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 13:05:36 -0700 (PDT)
+        Thu, 10 Jun 2021 13:05:30 -0700 (PDT)
 From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
@@ -65,9 +65,9 @@ To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v3 6/6] clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
-Date:   Thu, 10 Jun 2021 23:05:26 +0300
-Message-Id: <d62e4f1f85c5cef05be14d9e8143e88bbddd2e0f.1623354574.git.cristian.ciocaltea@gmail.com>
+Subject: [PATCH v3 1/6] clk: actions: Fix UART clock dividers on Owl S500 SoC
+Date:   Thu, 10 Jun 2021 23:05:21 +0300
+Message-Id: <4714d05982b19ac5fec2ed74f54be42d8238e392.1623354574.git.cristian.ciocaltea@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
 References: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
@@ -77,87 +77,72 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the missing NIC and ETHERNET clocks in the Actions Semi
-Owl S500 SoC clock driver.
+Use correct divider registers for the Actions Semi Owl S500 SoC's UART
+clocks.
 
-Additionally, change APB clock parent from AHB to the newly added NIC.
-
+Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
 Changes in v3:
- - Added Reviewed-by tag from Mani
+ - None
 
 Changes in v2:
- - Reordered "nic_clk_mux_p" after "ahbprediv_clk_mux_p" to follow the reg
-   field ordering
+ - Added Reviewed-by from Mani
 
- drivers/clk/actions/owl-s500.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/clk/actions/owl-s500.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-index cbeb51c804eb..57d06e183dff 100644
+index 61bb224f6330..75b7186185b0 100644
 --- a/drivers/clk/actions/owl-s500.c
 +++ b/drivers/clk/actions/owl-s500.c
-@@ -113,6 +113,7 @@ static const char * const sensor_clk_mux_p[] = { "hosc", "bisp_clk" };
- static const char * const sd_clk_mux_p[] = { "dev_clk", "nand_pll_clk" };
- static const char * const pwm_clk_mux_p[] = { "losc", "hosc" };
- static const char * const ahbprediv_clk_mux_p[] = { "dev_clk", "display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
-+static const char * const nic_clk_mux_p[] = { "dev_clk", "display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
- static const char * const uart_clk_mux_p[] = { "hosc", "dev_pll_clk" };
- static const char * const de_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
- static const char * const i2s_clk_mux_p[] = { "audio_pll_clk" };
-@@ -194,7 +195,7 @@ static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
- 
- /* divider clocks */
- static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
--static OWL_DIVIDER(apb_clk, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
-+static OWL_DIVIDER(apb_clk, "apb_clk", "nic_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
- static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
- 
- /* factor clocks */
-@@ -202,6 +203,12 @@ static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table
- static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
- 
- /* composite clocks */
-+static OWL_COMP_DIV(nic_clk, "nic_clk", nic_clk_mux_p,
-+			OWL_MUX_HW(CMU_BUSCLK1, 4, 3),
-+			{ 0 },
-+			OWL_DIVIDER_HW(CMU_BUSCLK1, 16, 2, 0, NULL),
-+			0);
-+
- static OWL_COMP_DIV(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
- 			OWL_MUX_HW(CMU_BUSCLK1, 8, 3),
- 			{ 0 },
-@@ -317,6 +324,10 @@ static OWL_COMP_FIXED_FACTOR(i2c3_clk, "i2c3_clk", "ethernet_pll_clk",
- 			OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
- 			1, 5, 0);
- 
-+static OWL_COMP_FIXED_FACTOR(ethernet_clk, "ethernet_clk", "ethernet_pll_clk",
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 22, 0),
-+			1, 20, 0);
-+
+@@ -305,7 +305,7 @@ static OWL_COMP_FIXED_FACTOR(i2c3_clk, "i2c3_clk", "ethernet_pll_clk",
  static OWL_COMP_DIV(uart0_clk, "uart0_clk", uart_clk_mux_p,
  			OWL_MUX_HW(CMU_UART0CLK, 16, 1),
  			OWL_GATE_HW(CMU_DEVCLKEN1, 6, 0),
-@@ -451,6 +462,8 @@ static struct owl_clk_common *s500_clks[] = {
- 	&apb_clk.common,
- 	&dmac_clk.common,
- 	&gpio_clk.common,
-+	&nic_clk.common,
-+	&ethernet_clk.common,
- };
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART0CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
  
- static struct clk_hw_onecell_data s500_hw_clks = {
-@@ -510,6 +523,8 @@ static struct clk_hw_onecell_data s500_hw_clks = {
- 		[CLK_APB]		= &apb_clk.common.hw,
- 		[CLK_DMAC]		= &dmac_clk.common.hw,
- 		[CLK_GPIO]		= &gpio_clk.common.hw,
-+		[CLK_NIC]		= &nic_clk.common.hw,
-+		[CLK_ETHERNET]		= &ethernet_clk.common.hw,
- 	},
- 	.num = CLK_NR_CLKS,
- };
+ static OWL_COMP_DIV(uart1_clk, "uart1_clk", uart_clk_mux_p,
+@@ -317,31 +317,31 @@ static OWL_COMP_DIV(uart1_clk, "uart1_clk", uart_clk_mux_p,
+ static OWL_COMP_DIV(uart2_clk, "uart2_clk", uart_clk_mux_p,
+ 			OWL_MUX_HW(CMU_UART2CLK, 16, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN1, 8, 0),
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART2CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
+ 
+ static OWL_COMP_DIV(uart3_clk, "uart3_clk", uart_clk_mux_p,
+ 			OWL_MUX_HW(CMU_UART3CLK, 16, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN1, 19, 0),
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART3CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
+ 
+ static OWL_COMP_DIV(uart4_clk, "uart4_clk", uart_clk_mux_p,
+ 			OWL_MUX_HW(CMU_UART4CLK, 16, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN1, 20, 0),
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART4CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
+ 
+ static OWL_COMP_DIV(uart5_clk, "uart5_clk", uart_clk_mux_p,
+ 			OWL_MUX_HW(CMU_UART5CLK, 16, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN1, 21, 0),
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART5CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
+ 
+ static OWL_COMP_DIV(uart6_clk, "uart6_clk", uart_clk_mux_p,
+ 			OWL_MUX_HW(CMU_UART6CLK, 16, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN1, 18, 0),
+-			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++			OWL_DIVIDER_HW(CMU_UART6CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
+ 			CLK_IGNORE_UNUSED);
+ 
+ static OWL_COMP_DIV(i2srx_clk, "i2srx_clk", i2s_clk_mux_p,
 -- 
 2.32.0
 
