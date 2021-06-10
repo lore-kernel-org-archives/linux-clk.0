@@ -2,246 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA9CC48BE0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171FFC48BD1
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2182C61403
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93E56136D
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 20:05:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbhFJR7h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 13:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35956 "EHLO
+        id S230035AbhFJUHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 16:07:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbhFJR7g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 13:59:36 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BE0C061574;
-        Thu, 10 Jun 2021 10:57:38 -0700 (PDT)
-Received: from localhost.localdomain (unknown [IPv6:2804:14c:1a9:2978:fdf4:5e57:8aee:5d72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: nfraprado)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 301EF1F437D3;
-        Thu, 10 Jun 2021 18:57:33 +0100 (BST)
-From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>
-To:     devicetree@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Xing Zheng <zhengxing@rock-chips.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com
-Subject: [PATCH] dt-bindings: clk: Convert rockchip,rk3399-cru to DT schema
-Date:   Thu, 10 Jun 2021 14:56:13 -0300
-Message-Id: <20210610175613.167601-1-nfraprado@collabora.com>
+        with ESMTP id S229941AbhFJUHc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 16:07:32 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2167C0617A6;
+        Thu, 10 Jun 2021 13:05:35 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id g8so1060882ejx.1;
+        Thu, 10 Jun 2021 13:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2Y+aHwlcnZkPSrYqvChf+Kbr1B3VKSxdsI8c9mE1nNE=;
+        b=EpyOQUDfYGJ9ZVtaFp7XUoBlrRBvURH5jncEZ57YlJsClw9ldMcGZFvfOnRbC+2f9m
+         qY+Iu8LMgMpIsFAzJO+gmUgfVklnP0GVVbpUXRHqtN0P447fvA6TeZ7BT5nMjjjTsYq0
+         dDzpFUvNSOzuy9JQfogqRdX3Sp08hQYnoiliZvZTZWydh12xojayfA0j3vwbWYzdVXOc
+         iAfMR3Br9rJioyHGWSS7Hmin/PmM4jNHaCrGIudThyxTvqsJ1yTsdRGphzVB9lMVPqzM
+         ZIU73VO6/rLAef+j8Lt2c/g8PHpo6HA5c4MKdaQ7VCdM8+opobx7H66Fs+QEN++q0jFs
+         ORBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2Y+aHwlcnZkPSrYqvChf+Kbr1B3VKSxdsI8c9mE1nNE=;
+        b=dzZ+JVBhGz4gk74+NyrQxZHOschsx1dnM2elvwPB4BgPwWq+evBT5lmpdSYFmkko5A
+         y0YEfXZYj5YsH6vFPUdP8fS6lyrRrlAyRwjMEIC7RQo0ZKoBADr45XzOv//cJhorVrEr
+         GxhNNZT0v0MNiC++ClbiVAZSYVQvEMKkL/BDfzFK4lAxKnP6zwEZP2FMMESI41V8Qhlg
+         cK96fnB/HRG8TJxiqnpX7lHa48tVqygTKpFvKyEVWzEyxOpCxRo7BGPaoHQ3rdPautrk
+         uuYg45ZDDNJ2AMJdcX6NT2STwt+ReRbcse5ZWGSXYNoWnWHy7Ti5afbt3K06jJOwT7hH
+         xuzg==
+X-Gm-Message-State: AOAM531MMkFzvQskxbRU4aLiSSM433s6PeMhDnyD2EvtsmaaBUQ9nrMW
+        4EtqBm6reJtVzluAhba8ZxSj68pFPes=
+X-Google-Smtp-Source: ABdhPJw3sTaDY/SYhXrGVqheFvg5MBLkOnqjeQILmRnwcnOU5LKV2tr5xeLDZ+6K6Z9SR2w082SniA==
+X-Received: by 2002:a17:907:7b9e:: with SMTP id ne30mr275681ejc.389.1623355534392;
+        Thu, 10 Jun 2021 13:05:34 -0700 (PDT)
+Received: from localhost.localdomain ([188.24.178.25])
+        by smtp.gmail.com with ESMTPSA id du7sm1800978edb.1.2021.06.10.13.05.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jun 2021 13:05:33 -0700 (PDT)
+From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl S500 SoC
+Date:   Thu, 10 Jun 2021 23:05:24 +0300
+Message-Id: <21c1abd19a7089b65a34852ac6513961be88cbe1.1623354574.git.cristian.ciocaltea@gmail.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
+References: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the rockchip,rk3399-cru binding to DT schema format.
-Tested with
-ARCH=arm64 make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
+There are a few issues with the setup of the Actions Semi Owl S500 SoC's
+clock chain involving AHPPREDIV, H and AHB clocks:
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+* AHBPREDIV clock is defined as a muxer only, although it also acts as
+  a divider.
+* H clock is using a wrong divider register offset
+* AHB is defined as a multi-rate factor clock, but it is actually just
+  a fixed pass clock.
+
+Let's provide the following fixes:
+
+* Change AHBPREDIV clock to an ungated OWL_COMP_DIV definition.
+* Use the correct register shift value in the OWL_DIVIDER definition
+  for H clock
+* Drop the unneeded 'ahb_factor_table[]' and change AHB clock to an
+  ungated OWL_COMP_FIXED_FACTOR definition.
+
+Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 ---
+Changes in v3:
+ - Fixed the swapped flags between "ahbprediv_clk" and "ahb_clk" as noticed
+   by Mani
 
-One caveat is that this node expects certain external clocks, mainly 'xin24m'.
-From what I read of clock-bindings.txt, it seems the way to make this dependency
-explicit would be to add 'clocks' and 'clock-names' properties to both the DT
-and the binding. But since I'm not sure changing the DT ABI is desirable, I just
-moved that information to the binding description for now.
+Changes in v2:
+ - Reverted the addition of the clock div table for H clock to support the
+   '1' divider (according to the datasheet), even though the vendor
+   implementation marks it as reserved
+ 
+ drivers/clk/actions/owl-s500.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
- .../bindings/clock/rockchip,rk3399-cru.txt    | 68 --------------
- .../bindings/clock/rockchip,rk3399-cru.yaml   | 92 +++++++++++++++++++
- 2 files changed, 92 insertions(+), 68 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
-deleted file mode 100644
-index 3bc56fae90ac..000000000000
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
-+++ /dev/null
-@@ -1,68 +0,0 @@
--* Rockchip RK3399 Clock and Reset Unit
+diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+index 42d6899755e6..cbeb51c804eb 100644
+--- a/drivers/clk/actions/owl-s500.c
++++ b/drivers/clk/actions/owl-s500.c
+@@ -153,11 +153,6 @@ static struct clk_factor_table hde_factor_table[] = {
+ 	{ 0, 0, 0 },
+ };
+ 
+-static struct clk_factor_table ahb_factor_table[] = {
+-	{ 1, 1, 2 }, { 2, 1, 3 },
+-	{ 0, 0, 0 },
+-};
 -
--The RK3399 clock controller generates and supplies clock to various
--controllers within the SoC and also implements a reset controller for SoC
--peripherals.
--
--Required Properties:
--
--- compatible: PMU for CRU should be "rockchip,rk3399-pmucru"
--- compatible: CRU should be "rockchip,rk3399-cru"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Optional Properties:
--
--- rockchip,grf: phandle to the syscon managing the "general register files".
--  It is used for GRF muxes, if missing any muxes present in the GRF will not
--  be available.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. All available clocks are defined as
--preprocessor macros in the dt-bindings/clock/rk3399-cru.h headers and can be
--used in device tree sources. Similar macros exist for the reset sources in
--these files.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "xin24m" - crystal input - required,
-- - "xin32k" - rtc clock - optional,
-- - "clkin_gmac" - external GMAC clock - optional,
-- - "clkin_i2s" - external I2S clock - optional,
-- - "pclkin_cif" - external ISP clock - optional,
-- - "clk_usbphy0_480m" - output clock of the pll in the usbphy0
-- - "clk_usbphy1_480m" - output clock of the pll in the usbphy1
--
--Example: Clock controller node:
--
--	pmucru: pmu-clock-controller@ff750000 {
--		compatible = "rockchip,rk3399-pmucru";
--		reg = <0x0 0xff750000 0x0 0x1000>;
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--	cru: clock-controller@ff760000 {
--		compatible = "rockchip,rk3399-cru";
--		reg = <0x0 0xff760000 0x0 0x1000>;
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller:
--
--	uart0: serial@ff1a0000 {
--		compatible = "rockchip,rk3399-uart", "snps,dw-apb-uart";
--		reg = <0x0 0xff180000 0x0 0x100>;
--		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
--		clock-names = "baudclk", "apb_pclk";
--		interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-new file mode 100644
-index 000000000000..72b286a1beba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3399-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+ static struct clk_div_table rmii_ref_div_table[] = {
+ 	{ 0, 4 }, { 1, 10 },
+ 	{ 0, 0 },
+@@ -186,7 +181,6 @@ static struct clk_div_table nand_div_table[] = {
+ 
+ /* mux clock */
+ static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1, CLK_SET_RATE_PARENT);
+-static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p, CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
+ 
+ /* gate clocks */
+ static OWL_GATE(gpio_clk, "gpio_clk", "apb_clk", CMU_DEVCLKEN0, 18, 0, 0);
+@@ -199,16 +193,25 @@ static OWL_GATE(timer_clk, "timer_clk", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
+ static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
+ 
+ /* divider clocks */
+-static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 12, 2, NULL, 0, 0);
++static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
+ static OWL_DIVIDER(apb_clk, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
+ static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
+ 
+ /* factor clocks */
+-static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2, ahb_factor_table, 0, 0);
+ static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table, 0, 0);
+ static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
+ 
+ /* composite clocks */
++static OWL_COMP_DIV(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
++			OWL_MUX_HW(CMU_BUSCLK1, 8, 3),
++			{ 0 },
++			OWL_DIVIDER_HW(CMU_BUSCLK1, 12, 2, 0, NULL),
++			CLK_SET_RATE_PARENT);
 +
-+title: Rockchip RK3399 Clock and Reset Unit
++static OWL_COMP_FIXED_FACTOR(ahb_clk, "ahb_clk", "h_clk",
++			{ 0 },
++			1, 1, 0);
 +
-+maintainers:
-+  - Xing Zheng <zhengxing@rock-chips.com>
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description: |
-+  The RK3399 clock controller generates and supplies clock to various
-+  controllers within the SoC and also implements a reset controller for SoC
-+  peripherals.
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All available clocks are defined as
-+  preprocessor macros in the dt-bindings/clock/rk3399-cru.h headers and can be
-+  used in device tree sources. Similar macros exist for the reset sources in
-+  these files.
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+    - "xin24m" - crystal input - required,
-+    - "xin32k" - rtc clock - optional,
-+    - "clkin_gmac" - external GMAC clock - optional,
-+    - "clkin_i2s" - external I2S clock - optional,
-+    - "pclkin_cif" - external ISP clock - optional,
-+    - "clk_usbphy0_480m" - output clock of the pll in the usbphy0
-+    - "clk_usbphy1_480m" - output clock of the pll in the usbphy1
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3399-pmucru
-+      - rockchip,rk3399-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  clocks:
-+    minItems: 1
-+
-+  assigned-clocks:
-+    minItems: 1
-+    maxItems: 64
-+
-+  assigned-clock-parents:
-+    minItems: 1
-+    maxItems: 64
-+
-+  assigned-clock-rates:
-+    minItems: 1
-+    maxItems: 64
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: >
-+      phandle to the syscon managing the "general register files". It is used
-+      for GRF muxes, if missing any muxes present in the GRF will not be
-+      available.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pmucru: pmu-clock-controller@ff750000 {
-+      compatible = "rockchip,rk3399-pmucru";
-+      reg = <0xff750000 0x1000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+  - |
-+    cru: clock-controller@ff760000 {
-+      compatible = "rockchip,rk3399-cru";
-+      reg = <0xff760000 0x1000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
+ static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
+ 			OWL_MUX_HW(CMU_VCECLK, 4, 2),
+ 			OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
 -- 
 2.32.0
 
