@@ -2,165 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A420AC48BE0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A94CC48BD1
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89CF2613C8
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3E5611B0
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 17:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhFJRi5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 13:38:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbhFJRi4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 13:38:56 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62337C061574;
-        Thu, 10 Jun 2021 10:37:00 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id c13so2926442oib.13;
-        Thu, 10 Jun 2021 10:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WxflIbs/48qSISC+lCpr67Z9h2+PanKTJGd2chvt3SQ=;
-        b=sMYeb2dDv0woPkwS8dxtiJAZn5Nngn64wlnDijDEBm0grkbAohUHqruJBngyFaEUOj
-         bPTOw0+aoZDeLZXHUK6VApZGwIGHAzaz6gIKdy1WdAEHtJCy85OVtJo52W3Nicji/7z5
-         ZmLGGFZQZdrLupZ0UNPHHAafJAu5dFcIeQ95BuHviiUF6tkI4TT08A3aHQr9f5cldbt/
-         L9oi88V6lYN3YkzqJYvFkBTYhl6h1yIxzznDU4SLRQPy2tOkQaZ0Xd/C7q0VvQVMOQw+
-         RLSHp6tqNOhU0P7tWoypuHA5dwYkPV5umr7Hi1JWCYuZZMGseduU4YcQK5icTwln/Mac
-         FMVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WxflIbs/48qSISC+lCpr67Z9h2+PanKTJGd2chvt3SQ=;
-        b=fVBgbfUTPjpaI2+SYAX67UABKdPfHLBlcsa9C+WTTL4VlQ6fz4VzlNAictz5PABG9+
-         5ShKfNN8uba/NM/pb3y4gBoqc4RIRg/p1kM3YdgLKfVIc19voyMcHLiCyxgTmJLoFPpR
-         SurC6F2v4U4fxH+X5MYJt66mxrx3381gwmrG3IMCiWaucXOZ89Tx/V8pKHUqpLQngagk
-         ezGsFs0phy9ifivoO0tMuyJ47/0cotYKx7cUg8D7GVDR67k1nXJoK5V2VJOOrnG05LtD
-         GMw6P++aaJMIqZtUJVd/XQ2dUkxzU4myiwzyZuX/f35qyZaSlOM3qTVL1a4gmTuXeWME
-         OwjQ==
-X-Gm-Message-State: AOAM531n5uGl3AtaVv/J12GXYTkktZNta0N+E5AIDLGXvOwbHwaxhj8e
-        ZEq3YG4xH+DFoOkHKhwn/Ak=
-X-Google-Smtp-Source: ABdhPJwjCV1uWMlJ9KROgTfw2tgpkPH+P0jRB8KvKDtnhToT/kREHqzL6vWNrdVj3p+6zowc5WIgTw==
-X-Received: by 2002:a05:6808:14e:: with SMTP id h14mr7095904oie.151.1623346619783;
-        Thu, 10 Jun 2021 10:36:59 -0700 (PDT)
-Received: from wintermute.localdomain (cpe-76-183-134-35.tx.res.rr.com. [76.183.134.35])
-        by smtp.gmail.com with ESMTPSA id s15sm686945oih.15.2021.06.10.10.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 10:36:59 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 12:36:57 -0500
-From:   Chris Morgan <macroalpha82@gmail.com>
-To:     Jon Lin <jon.lin@rock-chips.com>
-Cc:     linux-spi@vger.kernel.org, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH v7 9/9] arm64: dts: rockchip: Enable SFC for Odroid Go
- Advance
-Message-ID: <20210610173657.GA20228@wintermute.localdomain>
-References: <20210609140412.16058-1-jon.lin@rock-chips.com>
- <20210609141348.19178-1-jon.lin@rock-chips.com>
- <20210609141348.19178-5-jon.lin@rock-chips.com>
+        id S230452AbhFJRnf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 13:43:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230395AbhFJRnf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Jun 2021 13:43:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A19C61181;
+        Thu, 10 Jun 2021 17:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623346899;
+        bh=0u44FGC7a3WziiHbQXDAv94V5GjTa76Zwoqq1R/GQjw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=shvP2bsedRa/2cISQn9YjvkvBzNfK1+DOwX24BdQsY/msUbHFudDXSaTCpZf0s9VT
+         cVN/K/c1J8qzWZvkGVRPGH3qvnZ9w+TSPYZ4sHik6rbpEDGcXQDqskzydtC9Z/vG96
+         sVwNijBS0/PLK83Zz2h9gxr4FRb14cKhxxbRMVhgTDuVA5sKGrhxcdvcPaoTiAUdAs
+         Jn8DbSCniWqOllpiAjska/fEk4jJwnfnqnl1d8cOD2Z6nZZfEK4frRZyaW5ogs03bW
+         FUDKty9KNZ1km4ycpAf3QNpMICQTBlJpA13fF4cyDxjkX94G91mEbB2ySTc3BjuDqK
+         fmj421TqhldfQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210609141348.19178-5-jon.lin@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1f59ed31-4a0e-9719-bf84-1fe4cdd6c57d@gmail.com>
+References: <20210524122053.17155-1-chun-jie.chen@mediatek.com> <20210524122053.17155-2-chun-jie.chen@mediatek.com> <20210602171201.GA3566462@robh.at.kernel.org> <66e017401ab93aa02c5d2bbf11be9589b36649ac.camel@mediatek.com> <1f59ed31-4a0e-9719-bf84-1fe4cdd6c57d@gmail.com>
+Subject: Re: [PATCH v9 01/22] dt-bindings: ARM: Mediatek: Add new document bindings of imp i2c wrapper controller
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Date:   Thu, 10 Jun 2021 10:41:37 -0700
+Message-ID: <162334689784.9598.2709970788186333494@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 09, 2021 at 10:13:48PM +0800, Jon Lin wrote:
-> From: Chris Morgan <macromorgan@hotmail.com>
-> 
-> This enables the Rockchip Serial Flash Controller for the Odroid Go
-> Advance. Note that while the attached SPI NOR flash and the controller
-> both support quad read mode, only 2 of the required 4 pins are present.
-> The rx and tx bus width is set to 2 for this reason.
-> 
-> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
-> ---
-> 
-> Changes in v7: None
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> Changes in v1: None
-> 
->  .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-> index 49c97f76df77..f78e11dd8447 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-> @@ -484,6 +484,22 @@
->  	status = "okay";
->  };
->  
-> +&sfc {
-> +	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
-> +	pinctrl-names = "default";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	status = "okay";
-> +
-> +	flash@0 {
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0>;
-> +		spi-max-frequency = <108000000>;
-> +		spi-rx-bus-width = <2>;
-> +		spi-tx-bus-width = <2>;
+Quoting Matthias Brugger (2021-06-08 07:45:49)
+>=20
+>=20
+> On 07/06/2021 07:20, Chun-Jie Chen wrote:
+> > On Wed, 2021-06-02 at 12:12 -0500, Rob Herring wrote:
+> >>> +
+> >>> +description:
+> >>> +  The Mediatek imp i2c wrapper controller provides functional
+> >>> configurations and clocks to the system.
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    items:
+> >>> +      - enum:
+> >>> +          - mediatek,mt8192-imp_iic_wrap_c
+> >>> +          - mediatek,mt8192-imp_iic_wrap_e
+> >>> +          - mediatek,mt8192-imp_iic_wrap_s
+> >>> +          - mediatek,mt8192-imp_iic_wrap_ws
+> >>> +          - mediatek,mt8192-imp_iic_wrap_w
+> >>> +          - mediatek,mt8192-imp_iic_wrap_n
+> >>
+> >> Looks to me like these are all the same h/w, but just have differing=20
+> >> sets of clocks. That's not really a reason to have different=20
+> >> compatibles.=20
+> >>
+> >> If you need to know what clocks are present, you can walk the DT for=20
+> >> all 'clocks' properties matching this clock controller instance. Or
+> >> use=20
+> >> 'clock-indices' to define which ones are present.
 
-Note that I am still working with Jon Lin to research this, but it was
-found in testing that if I set the tx bus width to 1 the problems I
-encountered in earlier are resolved. At this time I do not know if it
-is an issue with the driver for the flash controller, or if the NOR, or
-board itself has some sort of errata which prevent dual tx from working
-correctly. Note that as of right now the flash chip I am using (an
-XTX XT25F128B) is not currently supported in mainline, so it's very
-possible this is some sort of errata with the chip. It's also possible
-that there is something with the board that is interferring with dual
-mode TX.  When Jon comes back that he has tested dual mode on the SFC
-with a different board/chip I will recommend that we change the tx
-bus width here to a 1, and then once the XT25F128B gets mainlined we
-can see if someone else has issues with dual tx mode so we can note
-that as a problem with the chip. Or maybe there is something weird
-with dual tx mode yet on the SFC driver/controller, I don't know yet.
-I'm all too happy to work with a Rockchip engineer so things like
-this can be determined before we hit mainline. :-)
+Is the idea to use clock-indices and then list all the clock ids in
+there and match them up at driver probe time to register the clocks
+provided by the IO region? Feels like we'll do a lot of parsing at each
+boot to match up structures and register clks with the clk framework.
 
-The XTX25F128B driver is currently awaiting a decision on how to handle
-continuation codes, as this chip ID should be using continuation codes,
-but doesn't appear to return them when you query for manufacturer ID.
-So I should also note in the commit here that the SFC will still be
-unusable on the Odroid Go Advance until the XTX25F128B is also
-mainlined.
+If it's like other SoCs then the clk id maps to a hard macro for a type
+of clk, and those hard macros have been glued together with other clks
+and then partitioned into different IO regions to make up a clock
+controller. Or maybe in this case, those clk hard macros have been
+scattered into each IP block like SPI, i2c, uart, etc. so that the clock
+controller doesn't really exist and merely the gates and rate control
+(mux/divider) for the clk that's clocking some particular IP block all
+live inside the IP wrapper. If it's this case then I hope there are a
+bunch of PLLs that are fixed rate so that the i2c clk doesn't have to go
+outside the wrapper to change frequency (of which there should be two
+"standard" frequencies anyway).
 
-Thank you.
+> >>
+> >> Rob
+> >=20
+> > Some module is divided to sub-modules which are designed in different
+> > h/w blocks for different usage, and if we want to use the same
+> > compatible to present these h/w blocks, we need to move the clock data
+> > provided by these h/w blocks to dts, but we usually use different
+> > compatible to get the h/w blocks data in
+> > Mediatek's clock driver, so do you suggest to register clock provided
+> > by different h/w blocks using same compatible?
+> >=20
+>=20
+> The mapping of them is as following:
+> imp_iic_wrap_c:  11007000
+> imp_iic_wrap_e:  11cb1000
+> imp_iic_wrap_s:  11d03000
+> imp_iic_wrap_ws: 11d23000
+> imp_iic_wrap_w:  11e01000
+> imp_iic_wrap_n:  11f02000
+>=20
 
-> +	};
-> +};
-> +
->  &tsadc {
->  	status = "okay";
->  };
-> -- 
-> 2.17.1
-> 
-> 
-> 
+Sure. What is their purpose though? Are they simply a bunch of different
+i2c clks?
