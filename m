@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8708FC47094
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 14:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAADC48BDF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC86613CA
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 14:32:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C7161406
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 14:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbhFJOel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 10:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46590 "EHLO
+        id S231496AbhFJOgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 10:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbhFJOek (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 10:34:40 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C88C061574
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jun 2021 07:32:44 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id g24so3757793pji.4
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jun 2021 07:32:44 -0700 (PDT)
+        with ESMTP id S231150AbhFJOgR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 10:36:17 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8247C061574
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jun 2021 07:34:21 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id k22-20020a17090aef16b0290163512accedso5587453pjz.0
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jun 2021 07:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Cd2W8TOIgpOf1z4OGqH/3rBspOukbuxO7R8hv8hZEok=;
-        b=Vr4L/ooG51SPZk+BpTj8d3Dhl1MPAmW12L/bcFgrUWXomaGDgNIne38p4Bg9qIam6a
-         IbjJ8u/l/xYi1fQqs1g8O7t3W9cxDCRT5kZS/tWfjizizPkPYCb18eSZFMHwdyNTtQ54
-         DW9S4FB4cnqKT5sqNvviUXdL1+8+ufi3ziOr3q4Rs0uTKopYfpKH70CTulAV3faobYzv
-         ns3RltWPZMezuTIKGqZLTdTIiI8SoOwcC+b3d5ERYmdvB4F82Hyt4V3UsnrV3ol9Dp1W
-         j/5Oa0hh+mv3r6f+QHOLvDGPy3s89T+wY3jKJBxn21vk7jOCsH+9a/QF85/GhS4M1J0u
-         d/cw==
+        bh=6NoG4kcVr4onmC8GwKi74Fb0Au47jb6GQBPdI6ViJks=;
+        b=hb+gFlMZ5lsfye5orD2HfDm69xWdh0ImWNrad0GfmspEQe/MBdHf3Bdn/pBUdOTIMz
+         vJgQTkk6IKqPDE90d3GqXyh2lMetjiVYCHaV3koKdOWnzzgID5ZwFFkHT+ZPX+IB4CRY
+         pr3dfjU5mxgGZ6w4+rjHvKSGJTz66UdEwz0sLR7CbGHIgFF9Ym2QTPX2/GfUF6D8DPss
+         P5BIPLEtBNrVMVFTSElQ8fkBu7PASbQnkln+1NhijjL2ZqG9AHFg0BgVQZkSQhqzgSiZ
+         VTYSdElUzNXQ+Edo5gyAV9Pb5duRU0lNkY4AGZLZZQYR/ytYXMkQjCTeZICrqj64Nehu
+         zhVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Cd2W8TOIgpOf1z4OGqH/3rBspOukbuxO7R8hv8hZEok=;
-        b=PnCKCFXdtW7CgU+ol75NKh4osRb7hqvcEa++aVB4FNCY6wztCo0mySTTxOu1F5ilDs
-         HvhKTvJA12cr9loWKfE4JsdD+5/SEgs+p7VRA15ZPTiDKXT9LSic2JqroEGTk2wO+ume
-         ORr/VwJOFrVjn3eo91uziFcicWBftYAL8aim94xSSPq0wY/bmatqRGO3/ma6o9LkMljC
-         p96HlGRvC8ddQ/Z/c8J+SFoREOqbbRXu4OVdPK/4mZKukEFdNcuPBUan7O21TcSX55wh
-         rEMgf2wKHrGiXhxzWFzdlUuHs0h/stNeWQ951Zn3y27NPJpxY+n9NYtFTJHu7x7KipwQ
-         /9Sg==
-X-Gm-Message-State: AOAM531kRi83/wMZeJ4ccjBaFViYRxaXPpGZZyovJ9fNnOsPdJYaQUsS
-        aP9b/Z9KjSY0UNtZO8CkutYG
-X-Google-Smtp-Source: ABdhPJxNoILIsN8CwvQBVsBvPsJzIbXbbrpiAL77q3s8DI3eveLia7tMeqCgBT5x0WYEfg0Jp83zAA==
-X-Received: by 2002:a17:90b:2112:: with SMTP id kz18mr3553629pjb.58.1623335564050;
-        Thu, 10 Jun 2021 07:32:44 -0700 (PDT)
+        bh=6NoG4kcVr4onmC8GwKi74Fb0Au47jb6GQBPdI6ViJks=;
+        b=eiUgv84j/l5JvaUmg4pctEcgmyPvohBk0FYGBSDTQ5E6Oa3+b0dZgA/Jbwd1w5cO/1
+         wtRnCzg2BYLB8U4/5CwFuJYsaolaOQqY32QkXv2GsxQdAb7qEX2RVFD9408lP/+NFkyn
+         NAYgIg1CdcWSDV1HpVzdi01ZQ8Btd7gdTLjtv8iY/mTWCf7UQQkOt0J8AWYkJlT5HGVN
+         FuAqIc5JtbOvvOlX5sPmvwO7H2IsFhDdxZ3G23m7HDuoZ49fZtxv/RC3xuYt2yDeNaYV
+         +muLjztMxC56SQuepUIxVrGS4FE2mMkXSRts4lZ0sKBtjJhIdQmF89bF1lO8lYlu1WvF
+         +k7w==
+X-Gm-Message-State: AOAM531n6lWZ80PnNftWu/WG1+q43otp5C7Lf9Csyb4Af2Khh/5XeUwZ
+        px1VB3A+7ln1YK0gVXanxzxH
+X-Google-Smtp-Source: ABdhPJzbF7Z0yYFRdKQ/8/O7a/ocykejjMhtwCjk3txcAfux7Dj9U26puqA3/fd1ViStsxX6YI8mJw==
+X-Received: by 2002:a17:902:d917:b029:107:eca4:d5b4 with SMTP id c23-20020a170902d917b0290107eca4d5b4mr5063870plz.79.1623335661194;
+        Thu, 10 Jun 2021 07:34:21 -0700 (PDT)
 Received: from thinkpad ([2409:4072:6d9e:80ad:d341:9a16:2c5c:2249])
-        by smtp.gmail.com with ESMTPSA id l128sm3056864pgl.18.2021.06.10.07.32.38
+        by smtp.gmail.com with ESMTPSA id o133sm2804262pfd.49.2021.06.10.07.34.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 07:32:43 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 20:02:35 +0530
+        Thu, 10 Jun 2021 07:34:20 -0700 (PDT)
+Date:   Thu, 10 Jun 2021 20:04:13 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -65,157 +65,103 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clk: actions: Fix bisp_factor_table based clocks
- on Owl S500 SoC
-Message-ID: <20210610143235.GB315240@thinkpad>
+Subject: Re: [PATCH v2 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on
+ Owl S500 SoC
+Message-ID: <20210610143413.GC315240@thinkpad>
 References: <cover.1622119892.git.cristian.ciocaltea@gmail.com>
- <288f7a0a677a6bd8a3007b8b126f5a4637ec772e.1622119892.git.cristian.ciocaltea@gmail.com>
+ <107776b4a4e752ef83b143114d2baf52bf8c4107.1622119892.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <288f7a0a677a6bd8a3007b8b126f5a4637ec772e.1622119892.git.cristian.ciocaltea@gmail.com>
+In-Reply-To: <107776b4a4e752ef83b143114d2baf52bf8c4107.1622119892.git.cristian.ciocaltea@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 27, 2021 at 04:16:41PM +0300, Cristian Ciocaltea wrote:
-> The following clocks of the Actions Semi Owl S500 SoC have been defined
-> to use a shared clock factor table 'bisp_factor_table[]': DE[1-2], VCE,
-> VDE, BISP, SENSOR[0-1]
+On Thu, May 27, 2021 at 04:16:42PM +0300, Cristian Ciocaltea wrote:
+> There are a few issues with the setup of the Actions Semi Owl S500 SoC's
+> clock chain involving AHPPREDIV, H and AHB clocks:
 > 
-> There are several issues involved in this approach:
+> * AHBPREDIV clock is defined as a muxer only, although it also acts as
+>   a divider.
+> * H clock is using a wrong divider register offset
+> * AHB is defined as a multi-rate factor clock, but it is actually just
+>   a fixed pass clock.
 > 
-> * 'bisp_factor_table[]' describes the configuration of a regular 8-rates
->   divider, so its usage is redundant. Additionally, judging by the BISP
->   clock context, it is incomplete since it maps only 8 out of 12
->   possible entries.
+> Let's provide the following fixes:
 > 
-> * The clocks mentioned above are not identical in terms of the available
->   rates, therefore cannot rely on the same factor table. Specifically,
->   BISP and SENSOR* are standard 12-rate dividers so their configuration
->   should rely on a proper clock div table, while VCE and VDE require a
->   factor table that is a actually a subset of the one needed for DE[1-2]
->   clocks.
-> 
-> Let's fix this by implementing the following:
-> 
-> * Add new factor tables 'de_factor_table' and 'hde_factor_table' to
->   properly handle DE[1-2], VCE and VDE clocks.
-> 
-> * Add a common div table 'std12rate_div_table' for BISP and SENSOR[0-1]
->   clocks converted to OWL_COMP_DIV.
-> 
-> * Drop the now unused 'bisp_factor_table[]'.
-> 
-> Additionally, drop the CLK_IGNORE_UNUSED flag for SENSOR[0-1] since
-> there is no reason to always keep ON those clocks.
+> * Change AHBPREDIV clock to an ungated OWL_COMP_DIV definition.
+> * Use the correct register shift value in the OWL_DIVIDER definition
+>   for H clock
+> * Drop the unneeded 'ahb_factor_table[]' and change AHB clock to an
+>   ungated OWL_COMP_FIXED_FACTOR definition.
 > 
 > Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
 > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Thanks,
-Mani
-
 > ---
 > Changes in v2:
->  - Re-added OWL_GATE_HW to SENSOR[0-1], according to the datasheet they
->    are gated, even though the vendor implementation states the opposite
-> 
->  drivers/clk/actions/owl-s500.c | 44 ++++++++++++++++++++++------------
->  1 file changed, 29 insertions(+), 15 deletions(-)
+>  - Reverted the addition of the clock div table for H clock to support the
+>    '1' divider (according to the datasheet), even though the vendor
+>    implementation marks it as reserved
+>  
+>  drivers/clk/actions/owl-s500.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-> index 42abdf964044..42d6899755e6 100644
+> index 42d6899755e6..257923bd5386 100644
 > --- a/drivers/clk/actions/owl-s500.c
 > +++ b/drivers/clk/actions/owl-s500.c
-> @@ -140,9 +140,16 @@ static struct clk_factor_table sd_factor_table[] = {
+> @@ -153,11 +153,6 @@ static struct clk_factor_table hde_factor_table[] = {
 >  	{ 0, 0, 0 },
 >  };
 >  
-> -static struct clk_factor_table bisp_factor_table[] = {
-> -	{ 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
-> -	{ 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
-> +static struct clk_factor_table de_factor_table[] = {
-> +	{ 0, 1, 1 }, { 1, 2, 3 }, { 2, 1, 2 }, { 3, 2, 5 },
-> +	{ 4, 1, 3 }, { 5, 1, 4 }, { 6, 1, 6 }, { 7, 1, 8 },
-> +	{ 8, 1, 12 },
-> +	{ 0, 0, 0 },
-> +};
-> +
-> +static struct clk_factor_table hde_factor_table[] = {
-> +	{ 0, 1, 1 }, { 1, 2, 3 }, { 2, 1, 2 }, { 3, 2, 5 },
-> +	{ 4, 1, 3 }, { 5, 1, 4 }, { 6, 1, 6 }, { 7, 1, 8 },
->  	{ 0, 0, 0 },
->  };
->  
-> @@ -156,6 +163,13 @@ static struct clk_div_table rmii_ref_div_table[] = {
+> -static struct clk_factor_table ahb_factor_table[] = {
+> -	{ 1, 1, 2 }, { 2, 1, 3 },
+> -	{ 0, 0, 0 },
+> -};
+> -
+>  static struct clk_div_table rmii_ref_div_table[] = {
+>  	{ 0, 4 }, { 1, 10 },
 >  	{ 0, 0 },
->  };
+> @@ -186,7 +181,6 @@ static struct clk_div_table nand_div_table[] = {
 >  
-> +static struct clk_div_table std12rate_div_table[] = {
-> +	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
-> +	{ 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 8 },
-> +	{ 8, 9 }, { 9, 10 }, { 10, 11 }, { 11, 12 },
-> +	{ 0, 0 },
-> +};
-> +
->  static struct clk_div_table i2s_div_table[] = {
->  	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
->  	{ 4, 6 }, { 5, 8 }, { 6, 12 }, { 7, 16 },
-> @@ -191,39 +205,39 @@ static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNE
+>  /* mux clock */
+>  static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1, CLK_SET_RATE_PARENT);
+> -static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p, CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
+>  
+>  /* gate clocks */
+>  static OWL_GATE(gpio_clk, "gpio_clk", "apb_clk", CMU_DEVCLKEN0, 18, 0, 0);
+> @@ -199,16 +193,25 @@ static OWL_GATE(timer_clk, "timer_clk", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
+>  static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
+>  
+>  /* divider clocks */
+> -static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 12, 2, NULL, 0, 0);
+> +static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
+>  static OWL_DIVIDER(apb_clk, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
+>  static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
 >  
 >  /* factor clocks */
->  static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2, ahb_factor_table, 0, 0);
-> -static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 3, bisp_factor_table, 0, 0);
-> -static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 3, bisp_factor_table, 0, 0);
-> +static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table, 0, 0);
-> +static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
+> -static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2, ahb_factor_table, 0, 0);
+>  static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table, 0, 0);
+>  static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
 >  
 >  /* composite clocks */
+> +static OWL_COMP_DIV(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
+> +			OWL_MUX_HW(CMU_BUSCLK1, 8, 3),
+> +			{ 0 },
+> +			OWL_DIVIDER_HW(CMU_BUSCLK1, 12, 2, 0, NULL),
+> +			0);
+> +
+> +static OWL_COMP_FIXED_FACTOR(ahb_clk, "ahb_clk", "h_clk",
+> +			{ 0 },
+> +			1, 1, CLK_SET_RATE_PARENT);
+
+I think you swapped the flags between "ahbprediv_clk" and "ahb_clk"...
+
+> +
 >  static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
 >  			OWL_MUX_HW(CMU_VCECLK, 4, 2),
 >  			OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
-> -			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, bisp_factor_table),
-> +			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, hde_factor_table),
->  			0);
->  
->  static OWL_COMP_FACTOR(vde_clk, "vde_clk", hde_clk_mux_p,
->  			OWL_MUX_HW(CMU_VDECLK, 4, 2),
->  			OWL_GATE_HW(CMU_DEVCLKEN0, 25, 0),
-> -			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, bisp_factor_table),
-> +			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, hde_factor_table),
->  			0);
->  
-> -static OWL_COMP_FACTOR(bisp_clk, "bisp_clk", bisp_clk_mux_p,
-> +static OWL_COMP_DIV(bisp_clk, "bisp_clk", bisp_clk_mux_p,
->  			OWL_MUX_HW(CMU_BISPCLK, 4, 1),
->  			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-> -			OWL_FACTOR_HW(CMU_BISPCLK, 0, 3, 0, bisp_factor_table),
-> +			OWL_DIVIDER_HW(CMU_BISPCLK, 0, 4, 0, std12rate_div_table),
->  			0);
->  
-> -static OWL_COMP_FACTOR(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
-> +static OWL_COMP_DIV(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
->  			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
->  			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-> -			OWL_FACTOR_HW(CMU_SENSORCLK, 0, 3, 0, bisp_factor_table),
-> -			CLK_IGNORE_UNUSED);
-> +			OWL_DIVIDER_HW(CMU_SENSORCLK, 0, 4, 0, std12rate_div_table),
-> +			0);
->  
-> -static OWL_COMP_FACTOR(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
-> +static OWL_COMP_DIV(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
->  			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
->  			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-> -			OWL_FACTOR_HW(CMU_SENSORCLK, 8, 3, 0, bisp_factor_table),
-> -			CLK_IGNORE_UNUSED);
-> +			OWL_DIVIDER_HW(CMU_SENSORCLK, 8, 4, 0, std12rate_div_table),
-> +			0);
->  
->  static OWL_COMP_FACTOR(sd0_clk, "sd0_clk", sd_clk_mux_p,
->  			OWL_MUX_HW(CMU_SD0CLK, 9, 1),
 > -- 
 > 2.31.1
 > 
