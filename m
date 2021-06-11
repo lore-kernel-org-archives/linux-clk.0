@@ -2,122 +2,259 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7EC48BD1
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6DCC48BD1
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35A1460D07
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B823613D0
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:34:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbhFKQcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:32:51 -0400
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:43783 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbhFKQcv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 12:32:51 -0400
-Received: by mail-wm1-f52.google.com with SMTP id 3-20020a05600c0243b029019f2f9b2b8aso8918930wmj.2;
-        Fri, 11 Jun 2021 09:30:52 -0700 (PDT)
+        id S230188AbhFKQgD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:36:03 -0400
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:40947 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229584AbhFKQgC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 12:36:02 -0400
+Received: by mail-ed1-f44.google.com with SMTP id t3so37834021edc.7
+        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 09:34:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
-        b=hTXC7Hie1gRGarT55fC6mJx+T3VqGJkIwjx81Z8pmSncsd8hjBwagV5ntFXNadMgg8
-         G45wOjIvr/gKKl93a4McKVNH/aTOVPsDjTKTuVS21aMLFuk4WYzLzH9n6UJbJRTRD85c
-         9E0XNVlDFYcqxeAhXwCsxFH2zvB45v3vuhG9hBJ/epftpC9X9IdmtjVBlJ75TPW0tVc9
-         BPTJUtSIovF6ovV+ouuW194/cVPH+afFSUgQppbWthxgBKKqWYbjSVpHacPPgKFcbrOd
-         Si5Sr7Xcyb3G/+TT8FzbPAcgHIOO5Ehr9lbaXTeQaxp1tYOlScFgtn5DfigOG6pJjcrI
-         rmPA==
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WgSbcHoAYOInbkclLd+KPDy6aZgT3YURgKmL3Czt4iE=;
+        b=fVnqtDPnHyDeEDwW7lCfLTc6YqgBoQINeauUCk+FzpQk1NQM8ZKrzokTuRsjKcQD0a
+         7uc5EUmJLdvqhKwS9HPRkPSp6kOwxPiZMmdzeEkp9RQunoQXJnxMjul2NImsgdIPe9FH
+         H5bkyFkjRXTcKrbkpcnYuEg/P7rgWCklLX09bdAy0NSXUvXMFtzPCR86g/c3NEgLmf9P
+         xZUMnqKZx6cGgiOepfrBdCuYoE8ESNN39bl8zYn2H+kx/hJSuQ9kHXSWo+fofieg6ap/
+         98gd/jWrtGd7QZOXQsU/ZbLq6r3vJ4+hsXWc9FwzGL95S2JoxKhidNJJPzoZEHWH2dBl
+         NzBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
-        b=kSpdkSNgfU0gq3t6CLydl4bSXhDax6D6yBdOubDNSCgNdRDzQvL3GBxz7xF0E0OV/b
-         BeskrtNNlTh5Bdh6o37BLSqaT9M5WPIhzUQKK3x6ej862WvARwVzadhyxWs4pxPWHQfu
-         YjUYSWvCNRHso5n4+X2E6YDWrMPcTwFGKMzWdVp2j/eaDp7TfawkfZBlKiPK8WYuS3iQ
-         SOa4cxnTI5Gez88RSc+qpe+5hpdMFd6iB6QH1rlkdoX7+SkFpoGHuv5KML7c/9kpD9oK
-         gaZ2E0vCqSUX53VVVJ6mlCOMjPAJPrj/bL3n4UGOBeTAtfQD1tLxqkQT4e/tB4vkFSM3
-         MnQw==
-X-Gm-Message-State: AOAM532U7P8nVlZhZN5Toa+GIQdH8lKWbToIUsjlc4RzzqxWzo1IKjk0
-        XjYOyGvqMPgaPJ84+u8MQLw=
-X-Google-Smtp-Source: ABdhPJw+3dusjkCI0TJ8UjbL2moOvI7uUAjogH5hJt7P6l2UV05waVwV1DquOPcA3r4EDJ7VC2jDWA==
-X-Received: by 2002:a1c:7313:: with SMTP id d19mr4825397wmb.14.1623428992151;
-        Fri, 11 Jun 2021 09:29:52 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id h9sm6332809wmb.35.2021.06.11.09.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:29:51 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:31:24 +0200
-Message-Id: <20210611163124.3566027-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.32.0
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WgSbcHoAYOInbkclLd+KPDy6aZgT3YURgKmL3Czt4iE=;
+        b=Ld1NcZQeqzvQ/VfX0dh6K48UAI5frjNBU6G98xk3fBGjHKXtHlDiCTdwWpcnkIVIoo
+         jdFITmHcrkp+UILu+pOU7FOgyyGwtISBg7yN9fH44or3VoDVCShgBKEvnemT7ArKrBpB
+         5UiploTqr6RfJ+hDR0oaI8wfOWkzcOetBdWANOPuO3jI99H+GYjxMUu3naKkUI4Oxz/g
+         Ekqx7dW7Z7+bCQsneF9XIebq19yvJPQPnUKKzfXtAw9X4O14rnSqesgRP8lvEK7gvvdJ
+         OIweqmJo84g0U7CSUvxgnkwmTTKc8LHVhPglHZFwUKTakEhFvSvZg4cEPAPHlPBKtmiF
+         vbQA==
+X-Gm-Message-State: AOAM530Q1zC3YNPFFvx+LODuzpE6U/l7ZLrDgMzVxrX5ABEZT4UBEK1N
+        tSyLRML1F6WET8lEQIMjkDEWF6/jRcVamclbfH24xw==
+X-Google-Smtp-Source: ABdhPJyweZRqGe5U6/h4mKOvFHeHjvkHKmlB8Rwc9BFbDX+0O/I9sBlV7d6O3E0bdyYQXv53ZNs1dnhbXp4mwe1y1Bg=
+X-Received: by 2002:aa7:db16:: with SMTP id t22mr4619739eds.49.1623429183914;
+ Fri, 11 Jun 2021 09:33:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210609140412.16058-1-jon.lin@rock-chips.com>
+ <20210609140412.16058-2-jon.lin@rock-chips.com> <20210610024350.GA697147@robh.at.kernel.org>
+ <e8e7c8c1-4f71-538c-a8e1-b61a894bd4a8@rock-chips.com>
+In-Reply-To: <e8e7c8c1-4f71-538c-a8e1-b61a894bd4a8@rock-chips.com>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Fri, 11 Jun 2021 13:32:52 -0300
+Message-ID: <CAAEAJfCyXWvcqswXfmgXBX-et0mq3vxoUacUmHGso9t+XoNqOg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/9] dt-bindings: rockchip-sfc: Bindings for Rockchip
+ serial flash controller
+To:     Kever Yang <kever.yang@rock-chips.com>
+Cc:     Rob Herring <robh@kernel.org>, Jon Lin <jon.lin@rock-chips.com>,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Jonker <jbx6244@gmail.com>, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>, p.yadav@ti.com,
+        macroalpha82@gmail.com, devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Chris Morgan <macromorgan@hotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi all,
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
+On Thu, 10 Jun 2021 at 00:04, Kever Yang <kever.yang@rock-chips.com> wrote:
+>
+> Hi Rob,
+>
+> On 2021/6/10 =E4=B8=8A=E5=8D=8810:43, Rob Herring wrote:
+> > On Wed, Jun 09, 2021 at 10:04:04PM +0800, Jon Lin wrote:
+> >> From: Chris Morgan <macromorgan@hotmail.com>
+> >>
+> >> Add bindings for the Rockchip serial flash controller. New device
+> >> specific parameter of rockchip,sfc-no-dma included in documentation.
+> >>
+> >> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+> >> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+> >> ---
+> >>
+> >> Changes in v7:
+> >> - Fix up the sclk_sfc parent error in rk3036
+> >> - Unify to "rockchip,sfc" compatible id because all the feature update
+> >>    will have a new IP version, so the driver is used for the SFC IP in
+> >>    all SoCs
+> >> - Change to use node "sfc" to name the SFC pinctrl group
+> >> - Add subnode reg property check
+> >> - Add rockchip_sfc_adjust_op_size to workaround in CMD + DUMMY case
+> >> - Limit max_iosize to 32KB
+> >>
+> >> Changes in v6:
+> >> - Add support in device trees for rv1126(Declared in series 5 but not
+> >>    submitted)
+> >> - Change to use "clk_sfc" "hclk_sfc" as clock lable, since it does not
+> >>    affect interpretation and has been widely used
+> >> - Support sfc tx_dual, tx_quad(Declared in series 5 but not submitted)
+> >> - Simplify the code, such as remove "rockchip_sfc_register_all"(Declar=
+ed
+> >>    in series 5 but not submitted)
+> >> - Support SFC ver4 ver5(Declared in series 5 but not submitted)
+> >> - Add author Chris Morgan and Jon Lin to spi-rockchip-sfc.c
+> >> - Change to use devm_spi_alloc_master and spi_unregister_master
+> >>
+> >> Changes in v5:
+> >> - Add support in device trees for rv1126
+> >> - Support sfc tx_dual, tx_quad
+> >> - Simplify the code, such as remove "rockchip_sfc_register_all"
+> >> - Support SFC ver4 ver5
+> >>
+> >> Changes in v4:
+> >> - Changing patch back to an "RFC". An engineer from Rockchip
+> >>    reached out to me to let me know they are working on this patch for
+> >>    upstream, I am submitting this v4 for the community to see however
+> >>    I expect Jon Lin (jon.lin@rock-chips.com) will submit new patches
+> >>    soon and these are the ones we should pursue for mainlining. Jon's
+> >>    patch series should include support for more hardware than this
+> >>    series.
+> >> - Clean up documentation more and ensure it is correct per
+> >>    make dt_binding_check.
+> >> - Add support in device trees for rk3036, rk3308, and rv1108.
+> >> - Add ahb clock (hclk_sfc) support for rk3036.
+> >> - Change rockchip_sfc_wait_fifo_ready() to use a switch statement.
+> >> - Change IRQ code to only mark IRQ as handled if it handles the
+> >>    specific IRQ (DMA transfer finish) it is supposed to handle.
+> >>
+> >> Changes in v3:
+> >> - Changed the name of the clocks to sfc/ahb (from clk-sfc/clk-hsfc).
+> >> - Changed the compatible string from rockchip,sfc to
+> >>    rockchip,rk3036-sfc. A quick glance at the datasheets suggests this
+> >>    driver should work for the PX30, RK180x, RK3036, RK312x, RK3308 and
+> >>    RV1108 SoCs, and possibly more. However, I am currently only able
+> >>    to test this on a PX30 (an RK3326). The technical reference manuals
+> >>    appear to list the same registers for each device.
+> >> - Corrected devicetree documentation for formatting and to note these
+> >>    changes.
+> >> - Replaced the maintainer with Heiko Stuebner and myself, as we will
+> >>    take ownership of this going forward.
+> >> - Noted that the device (per the reference manual) supports 4 CS, but
+> >>    I am only able to test a single CS (CS 0).
+> >> - Reordered patches to comply with upstream rules.
+> >>
+> >> Changes in v2:
+> >> - Reimplemented driver using spi-mem subsystem.
+> >> - Removed power management code as I couldn't get it working properly.
+> >> - Added device tree bindings for Odroid Go Advance.
+> >>
+> >> Changes in v1:
+> >> hanges made in this new series versus the v8 of the old series:
+> >> - Added function to read spi-rx-bus-width from device tree, in the
+> >>    event that the SPI chip supports 4x mode but only has 2 pins
+> >>    wired (such as the Odroid Go Advance).
+> >> - Changed device tree documentation from txt to yaml format.
+> >> - Made "reset" message a dev_dbg from a dev_info.
+> >> - Changed read and write fifo functions to remove redundant checks.
+> >> - Changed the write and read from relaxed to non-relaxed when
+> >>    starting the DMA transfer or reading the DMA IRQ.
+> >> - Changed from dma_coerce_mask_and_coherent to just
+> >>    dma_set_mask_and_coherent.
+> >> - Changed name of get_if_type to rockchip_sfc_get_if_type.
+> >>
+> >>   .../devicetree/bindings/spi/rockchip-sfc.yaml | 88 +++++++++++++++++=
+++
+> >>   1 file changed, 88 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/spi/rockchip-sf=
+c.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b=
+/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> >> new file mode 100644
+> >> index 000000000000..42e4198e92af
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> >> @@ -0,0 +1,88 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/spi/rockchip-sfc.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Rockchip Serial Flash Controller (SFC)
+> >> +
+> >> +maintainers:
+> >> +  - Heiko Stuebner <heiko@sntech.de>
+> >> +  - Chris Morgan <macromorgan@hotmail.com>
+> >> +
+> >> +allOf:
+> >> +  - $ref: spi-controller.yaml#
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    oneOf:
+> >> +      - const: rockchip,sfc
+> > Use 'enum' instead of oneOf+const.
+> >
+> > You need an SoC specific compatible.
+>
+>
+> The rockchip sfc controller is a standalone IP with version register,
+> and the driver can
+>
+> handle all the feature difference inside the IP, so we would like to use
+> a more generic
+>
+> compatible name instead of bind to any of SoC name. So can we use
+> "rockchip,sfc"
+>
+> like "snps,designware-spi", which is a generic one, instead of an SoC
+> specific compatible?
+>
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+IIUC, the way this works is along these lines:
 
-are available in the Git repository at:
+* The SFC driver can only care for the rockchip,sfc compatible string
+and, if suitable, use the IP version register mentioned by Kever [1].
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-clk
+* The bindings doc specifies both the SoC-specific and the generic one
+with:
 
-for you to fetch changes up to f13570e7e830ca4fbf4869015af8492b8918445e:
+      - items:
+          - enum:
+              - rockchip,px30-sfc
+          - const: rockchip,sfc
 
-  clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing() (2021-06-02 11:08:00 +0200)
+* The device tree lists both as well:
 
-Thanks,
-Thierry
+compatible =3D "rockchip,px30-sfc", "rockchip,sfc";
 
-----------------------------------------------------------------
-clk: tegra: Changes for v5.14-rc1
+This can apply to all IP cores really; and will allow some
+compatibility between the downstream/vendor device tree
+and upstream.
 
-This contains a few fixes across the board and adds stubs to allow
-certain drivers to be compile-tested. One other notable change added
-here is that clock enabling no longer deasserts the reset. Drivers are
-now supposed to do that explicitly because doing it implicitly can get
-in the way of certain power-up sequences.
+This scheme is indeed more convoluted than just
+picking any SoC name for the compatible string, and
+use that compatible string for all the SoCs (given they
+are all compatible, again as per [1]).
 
-----------------------------------------------------------------
-Dmitry Osipenko (9):
-      clk: tegra30: Use 300MHz for video decoder by default
-      clk: tegra: Fix refcounting of gate clocks
-      clk: tegra: Ensure that PLLU configuration is applied properly
-      clk: tegra: Halve SCLK rate on Tegra20
-      clk: tegra: Don't allow zero clock rate for PLLs
-      clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
-      clk: tegra: Mark external clocks as not having reset control
-      clk: tegra: Don't deassert reset on enabling clocks
-      clk: tegra: Add stubs needed for compile-testing
+IOW, you only have "rockchip,px30-sfc" in the bindings,
+in the devicetree files and in the driver.
 
-Yang Yingliang (1):
-      clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing()
+[1] https://lkml.org/lkml/2021/6/8/2030
 
- drivers/clk/tegra/clk-periph-gate.c      |  80 +++++++++++++++----------
- drivers/clk/tegra/clk-periph.c           |  11 ++++
- drivers/clk/tegra/clk-pll.c              |  12 ++--
- drivers/clk/tegra/clk-tegra-periph.c     |   6 +-
- drivers/clk/tegra/clk-tegra-super-cclk.c |  16 ++++-
- drivers/clk/tegra/clk-tegra124-emc.c     |   4 +-
- drivers/clk/tegra/clk-tegra20.c          |   6 +-
- drivers/clk/tegra/clk-tegra30.c          |   6 +-
- drivers/clk/tegra/clk.h                  |   4 --
- drivers/soc/tegra/pmc.c                  |   5 --
- include/linux/clk/tegra.h                | 100 ++++++++++++++++++++++++-------
- 11 files changed, 170 insertions(+), 80 deletions(-)
+Thanks!
+Ezequiel
