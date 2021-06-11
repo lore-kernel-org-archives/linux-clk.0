@@ -2,163 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE85DC48BDF
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E64FC48BE5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4E48613AD
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC6C613B3
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhFKCgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 22:36:04 -0400
-Received: from regular1.263xmail.com ([211.150.70.195]:32818 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbhFKCgE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 22:36:04 -0400
-X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jun 2021 22:36:03 EDT
-Received: from localhost (unknown [192.168.167.32])
-        by regular1.263xmail.com (Postfix) with ESMTP id 75F991DAC;
-        Fri, 11 Jun 2021 10:26:37 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from [172.16.12.73] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P24500T139649095816960S1623378394803816_;
-        Fri, 11 Jun 2021 10:26:36 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <76434981b7eff221154a68cfe3f38365>
-X-RL-SENDER: jon.lin@rock-chips.com
-X-SENDER: jon.lin@rock-chips.com
-X-LOGIN-NAME: jon.lin@rock-chips.com
-X-FST-TO: macromorgan@hotmail.com
-X-RCPT-COUNT: 19
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-Subject: Re: [PATCH v7 9/9] arm64: dts: rockchip: Enable SFC for Odroid Go
- Advance
-To:     Chris Morgan <macroalpha82@gmail.com>
-Cc:     linux-spi@vger.kernel.org, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-References: <20210609140412.16058-1-jon.lin@rock-chips.com>
- <20210609141348.19178-1-jon.lin@rock-chips.com>
- <20210609141348.19178-5-jon.lin@rock-chips.com>
- <20210610173657.GA20228@wintermute.localdomain>
-From:   Jon Lin <jon.lin@rock-chips.com>
-Message-ID: <89283da6-b00e-4d0f-5c4a-0169bda101d3@rock-chips.com>
-Date:   Fri, 11 Jun 2021 10:26:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230304AbhFKCyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 22:54:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230405AbhFKCyJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Jun 2021 22:54:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1621D610A2;
+        Fri, 11 Jun 2021 02:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623379932;
+        bh=+r2jVvH9WqOCBgMNdsAunx0gUJk3gnllUkkTc9wxhms=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UY0DYDjbDv3RYzmI2qo3kQJkNGwH9A0U5i/UCI/hUFI3nPhH05bfeZ+cUTK+m2i5W
+         nCTU8eHTdF5HN4wPTLnkup8otgwWzrYKBZX6pz1peQHzF5uG2VbS4qqc95Ug43aM2V
+         9WFNi2Rom/NCHiOaDpBmMfj+zlClAsHQ1vqNOeJZu7IguFp+cIzan8NeMF7igr/qX1
+         enOuODRlVyGyno2RBUfNu5YKD1o3t52GBpY5ELqZ9NC+OE31R7NQ6WwsCxpNIJ7cAi
+         pdylmLGE0Y9hfZn6Tw98wgloCj7stw4EwyHuxxPHCmdzHB+67KObpQryIknYlfC5Iu
+         MzNK04Fe9Afzg==
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        stable@vger.kernel.org
+Subject: [PATCHv3 1/4] clk: agilex/stratix10: remove noc_clk
+Date:   Thu, 10 Jun 2021 21:51:58 -0500
+Message-Id: <20210611025201.118799-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210610173657.GA20228@wintermute.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris
+Early documentation had a noc_clk, but in reality, it's just the
+noc_free_clk. Remove the noc_clk clock and just use the noc_free_clk.
 
-May you attach the XT25F128B device code to me, and I'll try to work it out.
+Fixes: 80c6b7a0894f ("clk: socfpga: agilex: add clock driver for the Agilex platform")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v3: no change
+v2: add linux-stable to cc
+---
+ drivers/clk/socfpga/clk-agilex.c | 32 +++++++++++++++-----------------
+ drivers/clk/socfpga/clk-s10.c    | 32 +++++++++++++++-----------------
+ 2 files changed, 30 insertions(+), 34 deletions(-)
 
-On 6/11/21 1:36 AM, Chris Morgan wrote:
-> On Wed, Jun 09, 2021 at 10:13:48PM +0800, Jon Lin wrote:
->> From: Chris Morgan <macromorgan@hotmail.com>
->>
->> This enables the Rockchip Serial Flash Controller for the Odroid Go
->> Advance. Note that while the attached SPI NOR flash and the controller
->> both support quad read mode, only 2 of the required 4 pins are present.
->> The rx and tx bus width is set to 2 for this reason.
->>
->> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
->> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
->> ---
->>
->> Changes in v7: None
->> Changes in v6: None
->> Changes in v5: None
->> Changes in v4: None
->> Changes in v3: None
->> Changes in v2: None
->> Changes in v1: None
->>
->>   .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->> index 49c97f76df77..f78e11dd8447 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->> @@ -484,6 +484,22 @@
->>   	status = "okay";
->>   };
->>   
->> +&sfc {
->> +	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
->> +	pinctrl-names = "default";
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +	status = "okay";
->> +
->> +	flash@0 {
->> +		compatible = "jedec,spi-nor";
->> +		reg = <0>;
->> +		spi-max-frequency = <108000000>;
->> +		spi-rx-bus-width = <2>;
->> +		spi-tx-bus-width = <2>;
-> Note that I am still working with Jon Lin to research this, but it was
-> found in testing that if I set the tx bus width to 1 the problems I
-> encountered in earlier are resolved. At this time I do not know if it
-> is an issue with the driver for the flash controller, or if the NOR, or
-> board itself has some sort of errata which prevent dual tx from working
-> correctly. Note that as of right now the flash chip I am using (an
-> XTX XT25F128B) is not currently supported in mainline, so it's very
-> possible this is some sort of errata with the chip. It's also possible
-> that there is something with the board that is interferring with dual
-> mode TX.  When Jon comes back that he has tested dual mode on the SFC
-> with a different board/chip I will recommend that we change the tx
-> bus width here to a 1, and then once the XT25F128B gets mainlined we
-> can see if someone else has issues with dual tx mode so we can note
-> that as a problem with the chip. Or maybe there is something weird
-> with dual tx mode yet on the SFC driver/controller, I don't know yet.
-> I'm all too happy to work with a Rockchip engineer so things like
-> this can be determined before we hit mainline. :-)
->
-> The XTX25F128B driver is currently awaiting a decision on how to handle
-> continuation codes, as this chip ID should be using continuation codes,
-> but doesn't appear to return them when you query for manufacturer ID.
-> So I should also note in the commit here that the SFC will still be
-> unusable on the Odroid Go Advance until the XTX25F128B is also
-> mainlined.
->
-> Thank you.
->
->> +	};
->> +};
->> +
->>   &tsadc {
->>   	status = "okay";
->>   };
->> -- 
->> 2.17.1
->>
->>
->>
->
->
-
+diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+index 92a6d740a799..5b8131542218 100644
+--- a/drivers/clk/socfpga/clk-agilex.c
++++ b/drivers/clk/socfpga/clk-agilex.c
+@@ -222,11 +222,9 @@ static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
+ 	{ AGILEX_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
+ 	   0, 0x3C, 0, 0, 0},
+ 	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
+-	  0, 0x40, 0, 0, 1},
+-	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
+-	  0, 4, 0, 0},
+-	{ AGILEX_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
+-	  0, 0, 0, 0x30, 1},
++	  0, 0x40, 0, 0, 0},
++	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
++	  0, 4, 0x30, 1},
+ 	{ AGILEX_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
+ 	  0, 0xD4, 0, 0x88, 0},
+ 	{ AGILEX_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+@@ -252,24 +250,24 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
+ 	  0, 0, 0, 0, 0, 0, 4},
+ 	{ AGILEX_MPU_CCU_CLK, "mpu_ccu_clk", "mpu_clk", NULL, 1, 0, 0x24,
+ 	  0, 0, 0, 0, 0, 0, 2},
+-	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x24,
+-	  1, 0x44, 0, 2, 0, 0, 0},
+-	{ AGILEX_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x24,
+-	  2, 0x44, 8, 2, 0, 0, 0},
++	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
++	  1, 0x44, 0, 2, 0x30, 1, 0},
++	{ AGILEX_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
++	  2, 0x44, 8, 2, 0x30, 1, 0},
+ 	/*
+ 	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
+ 	 * being the SP timers, thus cannot get gated.
+ 	 */
+-	{ AGILEX_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x24,
+-	  3, 0x44, 16, 2, 0, 0, 0},
+-	{ AGILEX_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x24,
+-	  4, 0x44, 24, 2, 0, 0, 0},
+-	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x24,
+-	  4, 0x44, 26, 2, 0, 0, 0},
++	{ AGILEX_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x24,
++	  3, 0x44, 16, 2, 0x30, 1, 0},
++	{ AGILEX_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
++	  4, 0x44, 24, 2, 0x30, 1, 0},
++	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
++	  4, 0x44, 26, 2, 0x30, 1, 0},
+ 	{ AGILEX_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x24,
+ 	  4, 0x44, 28, 1, 0, 0, 0},
+-	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x24,
+-	  5, 0, 0, 0, 0, 0, 0},
++	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
++	  5, 0, 0, 0, 0x30, 1, 0},
+ 	{ AGILEX_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x24,
+ 	  6, 0, 0, 0, 0, 0, 0},
+ 	{ AGILEX_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index f0bd77138ecb..0199cffe4d77 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -167,7 +167,7 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+ 	{ STRATIX10_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
+ 	   0, 0x48, 0, 0, 0},
+ 	{ STRATIX10_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
+-	  0, 0x4C, 0, 0, 0},
++	  0, 0x4C, 0, 0x3C, 1},
+ 	{ STRATIX10_MAIN_EMACA_CLK, "main_emaca_clk", "main_noc_base_clk", NULL, 1, 0,
+ 	  0x50, 0, 0, 0},
+ 	{ STRATIX10_MAIN_EMACB_CLK, "main_emacb_clk", "main_noc_base_clk", NULL, 1, 0,
+@@ -200,10 +200,8 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+ 	  0, 0xD4, 0, 0, 0},
+ 	{ STRATIX10_PERI_PSI_REF_CLK, "peri_psi_ref_clk", "peri_noc_base_clk", NULL, 1, 0,
+ 	  0xD8, 0, 0, 0},
+-	{ STRATIX10_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
+-	  0, 4, 0, 0},
+-	{ STRATIX10_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
+-	  0, 0, 0, 0x3C, 1},
++	{ STRATIX10_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
++	  0, 4, 0x3C, 1},
+ 	{ STRATIX10_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
+ 	  0, 0, 2, 0xB0, 0},
+ 	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+@@ -227,20 +225,20 @@ static const struct stratix10_gate_clock s10_gate_clks[] = {
+ 	  0, 0, 0, 0, 0, 0, 4},
+ 	{ STRATIX10_MPU_L2RAM_CLK, "mpu_l2ram_clk", "mpu_clk", NULL, 1, 0, 0x30,
+ 	  0, 0, 0, 0, 0, 0, 2},
+-	{ STRATIX10_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x30,
+-	  1, 0x70, 0, 2, 0, 0, 0},
+-	{ STRATIX10_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x30,
+-	  2, 0x70, 8, 2, 0, 0, 0},
+-	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x30,
+-	  3, 0x70, 16, 2, 0, 0, 0},
+-	{ STRATIX10_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x30,
+-	  4, 0x70, 24, 2, 0, 0, 0},
+-	{ STRATIX10_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x30,
+-	  4, 0x70, 26, 2, 0, 0, 0},
++	{ STRATIX10_L4_MAIN_CLK, "l4_main_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
++	  1, 0x70, 0, 2, 0x3C, 1, 0},
++	{ STRATIX10_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
++	  2, 0x70, 8, 2, 0x3C, 1, 0},
++	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x30,
++	  3, 0x70, 16, 2, 0x3C, 1, 0},
++	{ STRATIX10_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
++	  4, 0x70, 24, 2, 0x3C, 1, 0},
++	{ STRATIX10_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
++	  4, 0x70, 26, 2, 0x3C, 1, 0},
+ 	{ STRATIX10_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x30,
+ 	  4, 0x70, 28, 1, 0, 0, 0},
+-	{ STRATIX10_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x30,
+-	  5, 0, 0, 0, 0, 0, 0},
++	{ STRATIX10_CS_TIMER_CLK, "cs_timer_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
++	  5, 0, 0, 0, 0x3C, 1, 0},
+ 	{ STRATIX10_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x30,
+ 	  6, 0, 0, 0, 0, 0, 0},
+ 	{ STRATIX10_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0xA4,
+-- 
+2.25.1
 
