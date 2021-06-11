@@ -2,65 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DABC48BD1
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 21:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE85DC48BDF
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA158613E3
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jun 2021 21:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E48613AD
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 02:34:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbhFJVUM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 17:20:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229963AbhFJVUM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Jun 2021 17:20:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8483F61362;
-        Thu, 10 Jun 2021 21:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623359895;
-        bh=so8eXo9V+y7UW0kzOqL7D9DbbcWmGxu3kpYV0WhOpbs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XxfqYczG8QwvrY8aclg9g8W9rROovo/65gGEIPDu6ebReuz/5cMhF1AWPIVjHJAIf
-         iJ3BIOxgP6Iu8OWz7FdO53fpWcGSO91yX+QWoEx1KkxyLnn2Z5roke4g5SDHyblGo9
-         mjU/4NXXLmRxUMKdpH9BY/q2f7R/1rh38udM8WlQZy58BDO81olRVp+XtFkCMjN4QS
-         JPqJ3GUWyQ1Lxg9YkZvNZWyKRr+zOk6h/YC6snjaKw7HpabO6ZJHmnx8bWwAhqkxX1
-         4UhCt6F8SumFGEAfyMjW4ggcEyKeyBroECNAeqHEdYUYaGbT3aNrHaF/+eDN/zT8AG
-         r7Aj/HxTJ0a+g==
-Content-Type: text/plain; charset="utf-8"
+        id S230212AbhFKCgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jun 2021 22:36:04 -0400
+Received: from regular1.263xmail.com ([211.150.70.195]:32818 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230160AbhFKCgE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 22:36:04 -0400
+X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jun 2021 22:36:03 EDT
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id 75F991DAC;
+        Fri, 11 Jun 2021 10:26:37 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.12.73] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P24500T139649095816960S1623378394803816_;
+        Fri, 11 Jun 2021 10:26:36 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <76434981b7eff221154a68cfe3f38365>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: macromorgan@hotmail.com
+X-RCPT-COUNT: 19
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+Subject: Re: [PATCH v7 9/9] arm64: dts: rockchip: Enable SFC for Odroid Go
+ Advance
+To:     Chris Morgan <macroalpha82@gmail.com>
+Cc:     linux-spi@vger.kernel.org, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+References: <20210609140412.16058-1-jon.lin@rock-chips.com>
+ <20210609141348.19178-1-jon.lin@rock-chips.com>
+ <20210609141348.19178-5-jon.lin@rock-chips.com>
+ <20210610173657.GA20228@wintermute.localdomain>
+From:   Jon Lin <jon.lin@rock-chips.com>
+Message-ID: <89283da6-b00e-4d0f-5c4a-0169bda101d3@rock-chips.com>
+Date:   Fri, 11 Jun 2021 10:26:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e9849007-8169-cb32-b0f1-5be6210f1319@geanix.com>
-References: <20210610071758.1560592-1-sean@geanix.com> <e9849007-8169-cb32-b0f1-5be6210f1319@geanix.com>
-Subject: Re: [PATCH] clk: fix possible circular locking in clk_notifier_register()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Sean Nyekjaer <sean@geanix.com>
-Date:   Thu, 10 Jun 2021 14:18:14 -0700
-Message-ID: <162335989440.9598.5831025849742947247@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20210610173657.GA20228@wintermute.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sean Nyekjaer (2021-06-10 00:23:30)
-> On 10/06/2021 09.17, Sean Nyekjaer wrote:
-> > Allocating memory with prepare_lock mutex held makes lockdep unhappy
-> > when memory pressure makes the system do fs_reclaim on eg. rawnand using
-> > clk.
-> >=20
-> > Push the allocation outside the lock.
-> >=20
-> [...]
-> >=20
-> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> Fixes: b2476490ef111 ("clk: introduce the common clock framework")
->=20
-> We could possibly add this fixes tag ^^
+Hi Chris
 
-Sure.
+May you attach the XT25F128B device code to me, and I'll try to work it out.
+
+On 6/11/21 1:36 AM, Chris Morgan wrote:
+> On Wed, Jun 09, 2021 at 10:13:48PM +0800, Jon Lin wrote:
+>> From: Chris Morgan <macromorgan@hotmail.com>
+>>
+>> This enables the Rockchip Serial Flash Controller for the Odroid Go
+>> Advance. Note that while the attached SPI NOR flash and the controller
+>> both support quad read mode, only 2 of the required 4 pins are present.
+>> The rx and tx bus width is set to 2 for this reason.
+>>
+>> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+>> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+>> ---
+>>
+>> Changes in v7: None
+>> Changes in v6: None
+>> Changes in v5: None
+>> Changes in v4: None
+>> Changes in v3: None
+>> Changes in v2: None
+>> Changes in v1: None
+>>
+>>   .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
+>> index 49c97f76df77..f78e11dd8447 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
+>> @@ -484,6 +484,22 @@
+>>   	status = "okay";
+>>   };
+>>   
+>> +&sfc {
+>> +	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
+>> +	pinctrl-names = "default";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	status = "okay";
+>> +
+>> +	flash@0 {
+>> +		compatible = "jedec,spi-nor";
+>> +		reg = <0>;
+>> +		spi-max-frequency = <108000000>;
+>> +		spi-rx-bus-width = <2>;
+>> +		spi-tx-bus-width = <2>;
+> Note that I am still working with Jon Lin to research this, but it was
+> found in testing that if I set the tx bus width to 1 the problems I
+> encountered in earlier are resolved. At this time I do not know if it
+> is an issue with the driver for the flash controller, or if the NOR, or
+> board itself has some sort of errata which prevent dual tx from working
+> correctly. Note that as of right now the flash chip I am using (an
+> XTX XT25F128B) is not currently supported in mainline, so it's very
+> possible this is some sort of errata with the chip. It's also possible
+> that there is something with the board that is interferring with dual
+> mode TX.  When Jon comes back that he has tested dual mode on the SFC
+> with a different board/chip I will recommend that we change the tx
+> bus width here to a 1, and then once the XT25F128B gets mainlined we
+> can see if someone else has issues with dual tx mode so we can note
+> that as a problem with the chip. Or maybe there is something weird
+> with dual tx mode yet on the SFC driver/controller, I don't know yet.
+> I'm all too happy to work with a Rockchip engineer so things like
+> this can be determined before we hit mainline. :-)
+>
+> The XTX25F128B driver is currently awaiting a decision on how to handle
+> continuation codes, as this chip ID should be using continuation codes,
+> but doesn't appear to return them when you query for manufacturer ID.
+> So I should also note in the commit here that the SFC will still be
+> unusable on the Odroid Go Advance until the XTX25F128B is also
+> mainlined.
+>
+> Thank you.
+>
+>> +	};
+>> +};
+>> +
+>>   &tsadc {
+>>   	status = "okay";
+>>   };
+>> -- 
+>> 2.17.1
+>>
+>>
+>>
+>
+>
+
+
