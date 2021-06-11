@@ -2,143 +2,642 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ADCC48BE0
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E595C4743D
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 08:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B3F613BA
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF0A613BA
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 08:03:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230467AbhFKH4S convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 03:56:18 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:55337 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229733AbhFKH4R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 03:56:17 -0400
-Received: from [77.244.183.192] (port=63938 helo=[192.168.178.41])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1lrbze-0000eL-75; Fri, 11 Jun 2021 09:54:18 +0200
-Subject: Re: [PATCH 1/2] dt-bindings: clk: vc5: Add property for SD polarity
-To:     Sean Anderson <sean.anderson@seco.com>, linux-clk@vger.kernel.org
-Cc:     Adam Ford <aford173@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-References: <20210607154931.2491499-1-sean.anderson@seco.com>
- <eafea6ac-fbfd-3f42-93fa-edb8cdced3ea@lucaceresoli.net>
- <5ef31cbd-473c-0916-85ff-860012ac694d@seco.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <a5c55357-e5e8-9e00-53cc-509e78fd6987@lucaceresoli.net>
-Date:   Fri, 11 Jun 2021 09:54:17 +0200
+        id S230034AbhFKIFQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 04:05:16 -0400
+Received: from first.geanix.com ([116.203.34.67]:60614 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229584AbhFKIFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Jun 2021 04:05:15 -0400
+Received: from [192.168.100.10] (unknown [185.233.254.173])
+        by first.geanix.com (Postfix) with ESMTPSA id C80E246261A;
+        Fri, 11 Jun 2021 08:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1623398595; bh=jlWW/C3JE54PVdquTldghsLZrbd70NGMHdD2G+9nIfM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=RGyp0HVNtjb2EEk7qKdqFvIue9IfR3gPWhbYRAAsc+N0TBNBeL4IxgToOCmBD7yFA
+         1n+9atV6VImN1N2QCpH9HIfF1Y1z1WOZun+sB+n5QFXEM99dZd3STj7FOPtEcvzSEa
+         pR7MKAqRk5lfBRugGaCUmTBzPH18l7762gXoDT0yvzY5vhExFAWEJY3i97Qch28G7W
+         IR4IOG8BJiELG+3L+vyb1VN4yOxLj9qND4SIA8hVTVwHpHHUER8M0UMej13doe9bFE
+         ZY8cmVEO4E4jxphmR/yftfhT/4Gf8/2dppSU03GjyPlIiKyeEaNCgvC6CUXDf0l0GV
+         IEAyWVV6IEhEg==
+Subject: Re: [PATCH] clk: fix possible circular locking in
+ clk_notifier_register()
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210610071758.1560592-1-sean@geanix.com>
+ <162335987382.9598.2377065226236202544@swboyd.mtv.corp.google.com>
+From:   Sean Nyekjaer <sean@geanix.com>
+Message-ID: <697130dd-df27-78e2-1eab-5db47e78f3b0@geanix.com>
+Date:   Fri, 11 Jun 2021 10:03:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <5ef31cbd-473c-0916-85ff-860012ac694d@seco.com>
+In-Reply-To: <162335987382.9598.2377065226236202544@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sean,
+On 10/06/2021 23.17, Stephen Boyd wrote:
 
-On 10/06/21 17:43, Sean Anderson wrote:
-> 
-> 
-> On 6/10/21 5:05 AM, Luca Ceresoli wrote:
->> Hi Sean,
->>
->> On 07/06/21 17:49, Sean Anderson wrote:
->>> This property allows setting the SD/OE pin's polarity to active-high,
->>> instead of the default of active-low.
->>>
->>> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
->>
->> Thanks.
->>
->>> +  idt,sd-active-high:
->>> +    $ref: /schemas/types.yaml#/definitions/flag
->>> +    description: SD/OE pin polarity is active-high
->>
->> I think the name "sd" is misleading.
-> 
-> I do as well. After sending this patch, I reviewed the documentation
-> again and discovered that the functionality was not as clear as I
-> initially thought.
-> 
->> In the Renesas docs (which are very confusing on their own about this
->> topic) this bit is called "SP" -- *S*D/OE *P*olarity. But actually it
->> controls polarity of the SD/OE pin only if the pin is configured for
->> "OE" function:
->>
->>> SP bit = “SD/OE pin Polarity Bit”: Set the polarity of the SD/OE
->>> pin where outputs enable or disable. Only works with OE, not with SD.
->> (VC6E register and programming guide [0])
->>
->> As such I suggest you use either "sp" to keep the naming used in the
->> Renesas docs or "oe" as it actually controls OE polarity only. I do
->> prefer "sp" as it helps matching with the datasheets, but maybe adding a
->> little more detail in bindings docs to clarify, as in:
->>
->>   idt,sp-active-high:
->>     $ref: /schemas/types.yaml#/definitions/flag
->>     description: SD/OE pin polarity is active-high
->>                  (only works when SD/OE pin is configured as OE)
->>
->> BTW is it only me finding the "Shutdown Function" of [0] completely
->> confusing? Also, Table 24 has contradictory lines and missing lines. I'm
->> sending a request to Renesas support to ask them to clarify it all.
-> 
-> I rearranged the table to highlight which bits cause the output to
-> become inactive:
-> 
-> SH    SP    OSn    OEn    SD/OE    OUT
-> x    x    1    0    x    Active
-> 0    0    1    1    0    Active
-> 0    0    1    1    1    Inactive
-> 0    1    1    1    0    Inactive
-> 0    1    1    1    1    Active
-> 1    0    1    1    0    Active
-> 1    0    x    x    1    Shutdown
-> 1    1    1    1    0    Inactive
-> 1    1    x    x    1    Shutdown
-> x    x    0    x    x    Inactive>
-> This may be condensed to
-> 
-> SH    SP    SD/OE function for 0/1
-> 0    0    Active/Inactive
-> 0    1    Inactive/Active
-> 1    0    Active/Shutdown
-> 1    1    Inactive/Shutdown
-> 
-> According to the datasheet, the default settings are SH=0 and SP=0. So
-> perhaps a good set of properties would be
-> 
-> idt,enable-shutdown:
->     Shutdown the device when the SD/OE pin is high. This would set
->     SH=1.
-> idt,output-enable-active-high:
->     Disable output when the SD/OE pin is low. This would set SP=1.
+> Quoting Sean Nyekjaer (2021-06-10 00:17:57)
 
-Seems good.
+>> Allocating memory with prepare_lock mutex held makes lockdep unhappy
 
--- 
-Luca
+>> when memory pressure makes the system do fs_reclaim on eg. rawnand using
 
+>> clk.
+
+>>
+
+>> Push the allocation outside the lock.
+
+>>
+
+>> [  462.466020] ======================================================
+
+>> [  462.472211] WARNING: possible circular locking dependency detected
+
+>> [  462.478406] 4.19.128-00489-gffc0949c2231 #2 Not tainted
+
+> 
+
+> 4.19 is quite old. Is it happening in mainline? I suppose so given that
+
+> the allocation is still under the prepare lock?
+
+
+I'm not able to reproduce on 5.10, as the oom killer is quite a lot smarter and
+
+kills my reproducer application...
+
+
+
+> 
+
+>> [  462.483641] ------------------------------------------------------
+
+>> [  462.489831] kswapd0/22 is trying to acquire lock:
+
+>> [  462.494553] 882c9532 (&c->commit_sem){++++}, at: make_reservation+0x68/0x41c
+
+
+[...]
+
+
+>> [  462.959322]  #0: 11f3c233 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
+
+> 
+
+> Please consider removing the timestamps on the log. Otherwise I will do
+
+> it myself next time.
+
+
+Sure will do, they are quite noisy...
+
+
+> 
+
+>>
+
+>> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+
+>> ---
+
+>>  drivers/clk/clk.c | 17 ++++++++++-------
+
+>>  1 file changed, 10 insertions(+), 7 deletions(-)
+
+>>
+
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+
+>> index 65508eb89ec9..c32b71b08ccb 100644
+
+>> --- a/drivers/clk/clk.c
+
+>> +++ b/drivers/clk/clk.c
+
+>> @@ -4340,17 +4340,20 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+
+>>         if (!clk || !nb)
+
+>>                 return -EINVAL;
+
+>>  
+
+>> +       /* allocate new clk_notifier */
+
+>> +       cn = kzalloc(sizeof(*cn), GFP_KERNEL);
+
+>> +       if (!cn)
+
+>> +               goto out;
+
+>> +
+
+>>         clk_prepare_lock();
+
+>>  
+
+>>         /* search the list of notifiers for this clk */
+
+>>         list_for_each_entry(cn, &clk_notifier_list, node)
+
+> 
+
+> Isn't this going to overwrite 'cn'?
+
+
+Yes :(
+
+
+
+> 
+
+>> -               if (cn->clk == clk)
+
+>> +               if (cn->clk == clk) {
+
+>> +                       /* if clk is in the notifier list, free new clk_notifier */
+
+>> +                       kfree(cn);
+
+> 
+
+> Ideally we also kfree() outside the lock.
+
+
+Ok.
+
+
+
+> 
+
+>>                         goto found;
+
+>> -
+
+>> -       /* if clk wasn't in the notifier list, allocate new clk_notifier */
+
+>> -       cn = kzalloc(sizeof(*cn), GFP_KERNEL);
+
+
+
+[...]
+
+
+
+>>  }
+
+>>  EXPORT_SYMBOL_GPL(clk_notifier_register);
+
+>>
+
+> 
+
+> How about this totally untested patch?
+
+> 
+
+[...]
+
+Yes it's also a fix, but i catches another circular dep :(
+
+
+======================================================
+
+
+WARNING: possible circular locking dependency detected
+
+
+4.19.128-00489-gffc0949c2231-dirty #5 Not tainted
+
+
+------------------------------------------------------
+
+
+kswapd0/22 is trying to acquire lock:
+
+
+cf8513b3 (&c->commit_sem){++++}, at: make_reservation+0x68/0x41c
+
+
+
+
+
+but task is already holding lock:
+
+
+0a27c3f4 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
+
+
+       
+
+
+which lock already depends on the new lock.
+
+
+       
+
+
+the existing dependency chain (in reverse order) is:
+
+
+       
+
+
+-> #5 (fs_reclaim){+.+.}:
+
+
+       fs_reclaim_acquire+0x78/0x88
+
+
+       __kmalloc+0x48/0x31c
+
+
+       pcpu_mem_zalloc+0x34/0x8c
+
+
+       pcpu_create_chunk+0x20/0x270
+
+
+       pcpu_balance_workfn+0x5dc/0x74c
+
+
+       process_one_work+0x2a4/0x744
+
+
+       worker_thread+0x5c/0x554
+
+
+       kthread+0x120/0x160
+
+
+       ret_from_fork+0x14/0x20
+
+
+         (null)
+
+
+       
+
+
+-> #4 (pcpu_alloc_mutex){+.+.}:
+
+
+       __mutex_lock+0x60/0x8dc
+
+
+       mutex_lock_killable_nested+0x24/0x30
+
+
+       pcpu_alloc+0x404/0x854
+
+
+       __alloc_percpu+0x18/0x20
+
+
+       init_srcu_struct_fields+0x3e4/0x460
+
+
+       __init_srcu_struct+0x50/0x5c
+
+
+       srcu_init_notifier_head+0x2c/0x54
+
+
+       clk_notifier_register+0xd0/0x130
+
+
+       i2c_imx_probe+0x23c/0x678
+
+
+       platform_drv_probe+0x50/0xa0
+
+
+       really_probe+0x2b8/0x3d8
+
+
+       driver_probe_device+0x64/0x16c
+
+
+       __driver_attach+0x120/0x144
+
+
+       bus_for_each_dev+0x7c/0xc4
+
+
+       driver_attach+0x20/0x28
+
+
+       bus_add_driver+0x174/0x208
+
+
+       driver_register+0x90/0x120
+
+
+       __platform_driver_register+0x38/0x4c
+
+
+       i2c_adap_imx_init+0x18/0x20
+
+
+       do_one_initcall+0x8c/0x32c
+
+
+       kernel_init_freeable+0x300/0x3e4
+
+
+       kernel_init+0x10/0x114
+
+
+       ret_from_fork+0x14/0x20
+
+
+         (null)
+
+
+       
+
+
+-> #3 (prepare_lock){+.+.}:
+
+
+       __mutex_lock+0x60/0x8dc
+
+
+       mutex_lock_nested+0x24/0x2c
+
+
+       clk_prepare_lock+0x44/0xec
+
+
+       clk_prepare+0x20/0x38
+
+
+       __gpmi_enable_clk+0x34/0xb8
+
+
+       gpmi_enable_clk+0x14/0x18
+
+
+       gpmi_select_chip+0x4c/0xa4
+
+
+       nand_read_oob+0xa0/0x7b8
+
+
+       part_read_oob+0x40/0x78
+
+
+       mtd_read+0x10c/0x13c
+
+
+       ubi_io_read+0xc8/0x354
+
+
+       ubi_eba_read_leb+0xc8/0x544
+
+
+       ubi_eba_read_leb_sg+0x70/0x170
+
+
+       ubi_leb_read_sg+0x7c/0xbc
+
+
+       ubiblock_do_work+0xcc/0x118
+
+
+       process_one_work+0x2a4/0x744
+
+
+       worker_thread+0x5c/0x554
+
+
+       kthread+0x120/0x160
+
+
+       ret_from_fork+0x14/0x20
+
+
+         (null)
+
+
+       
+
+
+-> #2 (&le->mutex){++++}:
+
+
+       down_read+0x3c/0x80
+
+
+       ubi_eba_read_leb+0x4c/0x544
+
+
+       ubi_leb_read+0x7c/0xbc
+
+
+       ubifs_leb_read+0x34/0x80
+
+
+       ubifs_read_nnode+0x194/0x208
+
+
+       ubifs_lpt_lookup_dirty+0x1e0/0x294
+
+
+       ubifs_replay_journal+0x48/0x15a8
+
+
+       ubifs_mount+0x104c/0x15f0
+
+
+       mount_fs+0x1c/0xb8
+
+
+       vfs_kern_mount.part.0+0x58/0x148
+
+
+       do_mount+0x6a4/0xec8
+
+
+       ksys_mount+0x90/0xbc
+
+
+       sys_mount+0x1c/0x24
+
+
+       ret_fast_syscall+0x0/0x28
+
+
+       0xbee78b38
+
+
+       
+
+
+-> #1 (&c->lp_mutex){+.+.}:
+
+
+       __mutex_lock+0x60/0x8dc
+
+
+       mutex_lock_nested+0x24/0x2c
+
+
+       ubifs_gc_start_commit+0x28/0x32c
+
+
+       do_commit+0x1cc/0x7e4
+
+
+       ubifs_run_commit+0x98/0xd0
+
+
+       grab_empty_leb+0x60/0x98
+
+
+       ubifs_rcvry_gc_commit+0x10c/0x1d8
+
+
+       ubifs_mount+0x1308/0x15f0
+
+
+       mount_fs+0x1c/0xb8
+
+
+       vfs_kern_mount.part.0+0x58/0x148
+
+
+       do_mount+0x6a4/0xec8
+
+
+       ksys_mount+0x90/0xbc
+
+
+       sys_mount+0x1c/0x24
+
+
+       ret_fast_syscall+0x0/0x28
+
+
+       0xbee78b38
+
+
+
+
+
+-> #0 (&c->commit_sem){++++}:
+
+
+       lock_acquire+0xd4/0x1f8
+
+
+       down_read+0x3c/0x80
+
+
+       make_reservation+0x68/0x41c
+
+
+       ubifs_jnl_write_data+0x134/0x2b8
+
+
+       do_writepage+0x88/0x210
+
+
+       ubifs_writepage+0x1b8/0x274
+
+
+       shrink_page_list+0x800/0xf68
+
+
+       shrink_inactive_list+0x1b4/0x4f0
+
+
+       shrink_node+0x44c/0x9c0
+
+
+       kswapd+0x3f8/0x928
+
+
+       kthread+0x120/0x160
+
+
+       ret_from_fork+0x14/0x20
+
+
+         (null)
+
+
+
+
+
+other info that might help us debug this:
+
+
+
+
+
+Chain exists of:
+
+
+  &c->commit_sem --> pcpu_alloc_mutex --> fs_reclaim
+
+
+
+
+
+ Possible unsafe locking scenario:
+
+
+
+
+
+       CPU0                    CPU1
+
+
+       ----                    ----
+
+
+  lock(fs_reclaim);     
+
+
+                               lock(pcpu_alloc_mutex);
+
+
+                               lock(fs_reclaim);
+
+
+  lock(&c->commit_sem); 
+
+
+
+
+
+ *** DEADLOCK ***
+
+
+
+
+
+1 lock held by kswapd0/22:
+
+
+ #0: 0a27c3f4 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
