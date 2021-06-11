@@ -2,64 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648F3C48BD1
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 14:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7EC48BD1
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F268613EE
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 14:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A1460D07
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhFKO5D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 10:57:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231555AbhFKO5D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Jun 2021 10:57:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B20A7611CD;
-        Fri, 11 Jun 2021 14:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623423305;
-        bh=tyRd2iKhXdWd2APAupfUWzpcuCFBRtPPHsVq01oaevE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kBdpO+auuA3t53ipU10LCIFGI4o9CuWzW5RzIJjj3hqbHN4Oc8PohBSFsNR0eW0f6
-         cOp7ERS2GsWDAnLvU/cQ+SienY0+H7RPJRtZ7gRElHl6UuEwdCLNym2UDsah4r7P7P
-         +hS4V1KByg3T4E/WeQgiPjMcPwtzWCDo3kg97ew6g/YrRV4/ORiodJnZ/RUWhR5uzX
-         yBTOZhPSzcFjJlOmN8e6zwz9XiRdm9JWBboNdj3xxIWvdiao+fXD4BURlRjsgamj81
-         IbQGFaiELm+rDaz7DB/Q0nUqw+r54lZn7SmW7AMMyzo43styFohhROKUjo/6yddS5Q
-         ZDRy6jSqHvUmQ==
-Date:   Fri, 11 Jun 2021 16:55:02 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S230305AbhFKQcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:32:51 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:43783 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230425AbhFKQcv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 12:32:51 -0400
+Received: by mail-wm1-f52.google.com with SMTP id 3-20020a05600c0243b029019f2f9b2b8aso8918930wmj.2;
+        Fri, 11 Jun 2021 09:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
+        b=hTXC7Hie1gRGarT55fC6mJx+T3VqGJkIwjx81Z8pmSncsd8hjBwagV5ntFXNadMgg8
+         G45wOjIvr/gKKl93a4McKVNH/aTOVPsDjTKTuVS21aMLFuk4WYzLzH9n6UJbJRTRD85c
+         9E0XNVlDFYcqxeAhXwCsxFH2zvB45v3vuhG9hBJ/epftpC9X9IdmtjVBlJ75TPW0tVc9
+         BPTJUtSIovF6ovV+ouuW194/cVPH+afFSUgQppbWthxgBKKqWYbjSVpHacPPgKFcbrOd
+         Si5Sr7Xcyb3G/+TT8FzbPAcgHIOO5Ehr9lbaXTeQaxp1tYOlScFgtn5DfigOG6pJjcrI
+         rmPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
+        b=kSpdkSNgfU0gq3t6CLydl4bSXhDax6D6yBdOubDNSCgNdRDzQvL3GBxz7xF0E0OV/b
+         BeskrtNNlTh5Bdh6o37BLSqaT9M5WPIhzUQKK3x6ej862WvARwVzadhyxWs4pxPWHQfu
+         YjUYSWvCNRHso5n4+X2E6YDWrMPcTwFGKMzWdVp2j/eaDp7TfawkfZBlKiPK8WYuS3iQ
+         SOa4cxnTI5Gez88RSc+qpe+5hpdMFd6iB6QH1rlkdoX7+SkFpoGHuv5KML7c/9kpD9oK
+         gaZ2E0vCqSUX53VVVJ6mlCOMjPAJPrj/bL3n4UGOBeTAtfQD1tLxqkQT4e/tB4vkFSM3
+         MnQw==
+X-Gm-Message-State: AOAM532U7P8nVlZhZN5Toa+GIQdH8lKWbToIUsjlc4RzzqxWzo1IKjk0
+        XjYOyGvqMPgaPJ84+u8MQLw=
+X-Google-Smtp-Source: ABdhPJw+3dusjkCI0TJ8UjbL2moOvI7uUAjogH5hJt7P6l2UV05waVwV1DquOPcA3r4EDJ7VC2jDWA==
+X-Received: by 2002:a1c:7313:: with SMTP id d19mr4825397wmb.14.1623428992151;
+        Fri, 11 Jun 2021 09:29:52 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id h9sm6332809wmb.35.2021.06.11.09.29.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jun 2021 09:29:51 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [GIT PULL] Allwinner Clock Fixes for 5.13
-Message-ID: <eede2490-c702-4a9d-97d0-217424727a09.lettre@localhost>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:31:24 +0200
+Message-Id: <20210611163124.3566027-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.32.0
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o8HGiXk6Ix1TOh80"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---o8HGiXk6Ix1TOh80
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Please pull the following changes for the current release.
-
-Thanks!
-Maxime
+Hi Mike, Stephen,
 
 The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
@@ -67,36 +76,48 @@ The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags=
-/sunxi-clk-fixes-for-5.13-1
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-clk
 
-for you to fetch changes up to 47e4dc4e63e1dcb8eec01c4214bcefc248eb72ed:
+for you to fetch changes up to f13570e7e830ca4fbf4869015af8492b8918445e:
 
-  clk: sunxi-ng: v3s: fix incorrect postdivider on pll-audio (2021-05-24 13=
-:57:37 +0200)
+  clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing() (2021-06-02 11:08:00 +0200)
 
-----------------------------------------------------------------
-One patch to fix a divider on the v3s Audio PLL=20
+Thanks,
+Thierry
 
 ----------------------------------------------------------------
-Tobias Schramm (1):
-      clk: sunxi-ng: v3s: fix incorrect postdivider on pll-audio
+clk: tegra: Changes for v5.14-rc1
 
+This contains a few fixes across the board and adds stubs to allow
+certain drivers to be compile-tested. One other notable change added
+here is that clock enabling no longer deasserts the reset. Drivers are
+now supposed to do that explicitly because doing it implicitly can get
+in the way of certain power-up sequences.
 
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
+Dmitry Osipenko (9):
+      clk: tegra30: Use 300MHz for video decoder by default
+      clk: tegra: Fix refcounting of gate clocks
+      clk: tegra: Ensure that PLLU configuration is applied properly
+      clk: tegra: Halve SCLK rate on Tegra20
+      clk: tegra: Don't allow zero clock rate for PLLs
+      clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
+      clk: tegra: Mark external clocks as not having reset control
+      clk: tegra: Don't deassert reset on enabling clocks
+      clk: tegra: Add stubs needed for compile-testing
 
+Yang Yingliang (1):
+      clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing()
 
-
---o8HGiXk6Ix1TOh80
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYMN5RgAKCRDj7w1vZxhR
-xUirAP9D82H/lTcHzXATNKSz83j/HMY0+xNK2KKtm8jctmSSEwEA8dKmXFRGoUFN
-6qdAcFR/AU0lyUNa0TefTUt2dXLMSwE=
-=u/n1
------END PGP SIGNATURE-----
-
---o8HGiXk6Ix1TOh80--
+ drivers/clk/tegra/clk-periph-gate.c      |  80 +++++++++++++++----------
+ drivers/clk/tegra/clk-periph.c           |  11 ++++
+ drivers/clk/tegra/clk-pll.c              |  12 ++--
+ drivers/clk/tegra/clk-tegra-periph.c     |   6 +-
+ drivers/clk/tegra/clk-tegra-super-cclk.c |  16 ++++-
+ drivers/clk/tegra/clk-tegra124-emc.c     |   4 +-
+ drivers/clk/tegra/clk-tegra20.c          |   6 +-
+ drivers/clk/tegra/clk-tegra30.c          |   6 +-
+ drivers/clk/tegra/clk.h                  |   4 --
+ drivers/soc/tegra/pmc.c                  |   5 --
+ include/linux/clk/tegra.h                | 100 ++++++++++++++++++++++++-------
+ 11 files changed, 170 insertions(+), 80 deletions(-)
