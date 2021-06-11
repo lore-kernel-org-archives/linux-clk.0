@@ -2,642 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E595C4743D
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 08:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B72C48BE0
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 09:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF0A613BA
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 08:03:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00154613C8
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 09:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbhFKIFQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 04:05:16 -0400
-Received: from first.geanix.com ([116.203.34.67]:60614 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229584AbhFKIFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Jun 2021 04:05:15 -0400
-Received: from [192.168.100.10] (unknown [185.233.254.173])
-        by first.geanix.com (Postfix) with ESMTPSA id C80E246261A;
-        Fri, 11 Jun 2021 08:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1623398595; bh=jlWW/C3JE54PVdquTldghsLZrbd70NGMHdD2G+9nIfM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=RGyp0HVNtjb2EEk7qKdqFvIue9IfR3gPWhbYRAAsc+N0TBNBeL4IxgToOCmBD7yFA
-         1n+9atV6VImN1N2QCpH9HIfF1Y1z1WOZun+sB+n5QFXEM99dZd3STj7FOPtEcvzSEa
-         pR7MKAqRk5lfBRugGaCUmTBzPH18l7762gXoDT0yvzY5vhExFAWEJY3i97Qch28G7W
-         IR4IOG8BJiELG+3L+vyb1VN4yOxLj9qND4SIA8hVTVwHpHHUER8M0UMej13doe9bFE
-         ZY8cmVEO4E4jxphmR/yftfhT/4Gf8/2dppSU03GjyPlIiKyeEaNCgvC6CUXDf0l0GV
-         IEAyWVV6IEhEg==
-Subject: Re: [PATCH] clk: fix possible circular locking in
- clk_notifier_register()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210610071758.1560592-1-sean@geanix.com>
- <162335987382.9598.2377065226236202544@swboyd.mtv.corp.google.com>
-From:   Sean Nyekjaer <sean@geanix.com>
-Message-ID: <697130dd-df27-78e2-1eab-5db47e78f3b0@geanix.com>
-Date:   Fri, 11 Jun 2021 10:03:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231479AbhFKJEU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 05:04:20 -0400
+Received: from mail-qt1-f173.google.com ([209.85.160.173]:46972 "EHLO
+        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231401AbhFKJET (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 05:04:19 -0400
+Received: by mail-qt1-f173.google.com with SMTP id a15so2007564qtx.13
+        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 02:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xfBuLm9X/ZFXx9ulil7rRE1PalBWgkaUHxCcK7gre2o=;
+        b=kMjVqKxFejQZaqNMlqj1gWhBGuhmgh5iPQVRw04gqH3ZfEB6cww+JUptb2jVQlxzKI
+         JUvi8JIWUBBUOR97GUCkAlrIZyOciy4wuVi9hEXTzZfZczG21NNBDCIzf3rkgsjqU8L1
+         x3Uv13sehkZBRO5vvhL6/l2UADxJgWYHeKLnUHza1K/D43tRVNIoYN4sRCGNVf9vE4hq
+         86hCkyEC37HrQY/FPTOE5+rhCwy0JlEITBk3q/d096R7zods0v93ooy2L8mRsAGXYVOT
+         sqW01ti1clKi3e/ImMRIMQePftSxwixyGOzyZJQq1hM9lJq6OWoue7pxmyY/UHJ1ZBHt
+         iV1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xfBuLm9X/ZFXx9ulil7rRE1PalBWgkaUHxCcK7gre2o=;
+        b=pfJbBinHEqrQFjbsLSBDosA1Rxr3QRc2py/KPrYDi8j21r8xKzIa1GsHz3YTajoA07
+         L5pbPoPl3LQb5koJlH6prpwSo2TNwoP6lzTBwWB7PXv+RjnzIlzAdynuntmwTnc35c+2
+         VSPx5Kz73rwkx9nMdbP/6mkeBsPM8NMfxHbmegPNtEZOljxoXIEBBZFVMmGV8t1oaqjh
+         y12ij3o4mfW5adjljYcLQ2FcrzdpCz/mKoccq/Fs73rSWMFBkJxh38lgv55yTyYsFSVT
+         yEPqzMDOn3/AGaYDSYEDWZsLX7ww+fRJNk1EjMZqghjd+rMHiEEGd70Wz6Fyn0MB43lQ
+         pC+A==
+X-Gm-Message-State: AOAM531MlQzAYxCjAQp+REJb/ebrjhdofCI0uwJD/B6X0I5Um/RQaHNl
+        t4eQIAixaMdtUQrn1XMyGnbA4K2A++gPOzTf1sz2DA==
+X-Google-Smtp-Source: ABdhPJyoSiWIM25RDZZZ6wPuwrZshCZyw4fcyOTmsNFEelVwi6tVKUBCLG6rTxGVPobpohofx+V8cSeSRpN6ph51sYo=
+X-Received: by 2002:ac8:7412:: with SMTP id p18mr2755368qtq.273.1623402067123;
+ Fri, 11 Jun 2021 02:01:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <162335987382.9598.2377065226236202544@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210331105735.3690009-1-dmitry.baryshkov@linaro.org>
+ <20210331105735.3690009-23-dmitry.baryshkov@linaro.org> <CALAqxLVwpLOsvjBVi+xb5S2VQNuGKgeOzrSqwZe5FN6RSeEEWA@mail.gmail.com>
+In-Reply-To: <CALAqxLVwpLOsvjBVi+xb5S2VQNuGKgeOzrSqwZe5FN6RSeEEWA@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 11 Jun 2021 12:00:55 +0300
+Message-ID: <CAA8EJprMKydEKQhHr=wk76H_a1-udjspVXSY1j2tqHNErAG-uQ@mail.gmail.com>
+Subject: Re: [PATCH v4 22/24] drm/msm/dsi: remove temp data from global pll structure
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Vinod Koul <vinod.koul@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/06/2021 23.17, Stephen Boyd wrote:
-
-> Quoting Sean Nyekjaer (2021-06-10 00:17:57)
-
->> Allocating memory with prepare_lock mutex held makes lockdep unhappy
-
->> when memory pressure makes the system do fs_reclaim on eg. rawnand using
-
->> clk.
-
->>
-
->> Push the allocation outside the lock.
-
->>
-
->> [  462.466020] ======================================================
-
->> [  462.472211] WARNING: possible circular locking dependency detected
-
->> [  462.478406] 4.19.128-00489-gffc0949c2231 #2 Not tainted
-
-> 
-
-> 4.19 is quite old. Is it happening in mainline? I suppose so given that
-
-> the allocation is still under the prepare lock?
-
-
-I'm not able to reproduce on 5.10, as the oom killer is quite a lot smarter and
-
-kills my reproducer application...
-
-
-
-> 
-
->> [  462.483641] ------------------------------------------------------
-
->> [  462.489831] kswapd0/22 is trying to acquire lock:
-
->> [  462.494553] 882c9532 (&c->commit_sem){++++}, at: make_reservation+0x68/0x41c
-
-
-[...]
-
-
->> [  462.959322]  #0: 11f3c233 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
-
-> 
-
-> Please consider removing the timestamps on the log. Otherwise I will do
-
-> it myself next time.
-
-
-Sure will do, they are quite noisy...
-
-
-> 
-
->>
-
->> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-
->> ---
-
->>  drivers/clk/clk.c | 17 ++++++++++-------
-
->>  1 file changed, 10 insertions(+), 7 deletions(-)
-
->>
-
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-
->> index 65508eb89ec9..c32b71b08ccb 100644
-
->> --- a/drivers/clk/clk.c
-
->> +++ b/drivers/clk/clk.c
-
->> @@ -4340,17 +4340,20 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
-
->>         if (!clk || !nb)
-
->>                 return -EINVAL;
-
->>  
-
->> +       /* allocate new clk_notifier */
-
->> +       cn = kzalloc(sizeof(*cn), GFP_KERNEL);
-
->> +       if (!cn)
-
->> +               goto out;
-
->> +
-
->>         clk_prepare_lock();
-
->>  
-
->>         /* search the list of notifiers for this clk */
-
->>         list_for_each_entry(cn, &clk_notifier_list, node)
-
-> 
-
-> Isn't this going to overwrite 'cn'?
-
-
-Yes :(
-
-
-
-> 
-
->> -               if (cn->clk == clk)
-
->> +               if (cn->clk == clk) {
-
->> +                       /* if clk is in the notifier list, free new clk_notifier */
-
->> +                       kfree(cn);
-
-> 
-
-> Ideally we also kfree() outside the lock.
-
-
-Ok.
-
-
-
-> 
-
->>                         goto found;
-
->> -
-
->> -       /* if clk wasn't in the notifier list, allocate new clk_notifier */
-
->> -       cn = kzalloc(sizeof(*cn), GFP_KERNEL);
-
-
-
-[...]
-
-
-
->>  }
-
->>  EXPORT_SYMBOL_GPL(clk_notifier_register);
-
->>
-
-> 
-
-> How about this totally untested patch?
-
-> 
-
-[...]
-
-Yes it's also a fix, but i catches another circular dep :(
-
-
-======================================================
-
-
-WARNING: possible circular locking dependency detected
-
-
-4.19.128-00489-gffc0949c2231-dirty #5 Not tainted
-
-
-------------------------------------------------------
-
-
-kswapd0/22 is trying to acquire lock:
-
-
-cf8513b3 (&c->commit_sem){++++}, at: make_reservation+0x68/0x41c
-
-
-
-
-
-but task is already holding lock:
-
-
-0a27c3f4 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
-
-
-       
-
-
-which lock already depends on the new lock.
-
-
-       
-
-
-the existing dependency chain (in reverse order) is:
-
-
-       
-
-
--> #5 (fs_reclaim){+.+.}:
-
-
-       fs_reclaim_acquire+0x78/0x88
-
-
-       __kmalloc+0x48/0x31c
-
-
-       pcpu_mem_zalloc+0x34/0x8c
-
-
-       pcpu_create_chunk+0x20/0x270
-
-
-       pcpu_balance_workfn+0x5dc/0x74c
-
-
-       process_one_work+0x2a4/0x744
-
-
-       worker_thread+0x5c/0x554
-
-
-       kthread+0x120/0x160
-
-
-       ret_from_fork+0x14/0x20
-
-
-         (null)
-
-
-       
-
-
--> #4 (pcpu_alloc_mutex){+.+.}:
-
-
-       __mutex_lock+0x60/0x8dc
-
-
-       mutex_lock_killable_nested+0x24/0x30
-
-
-       pcpu_alloc+0x404/0x854
-
-
-       __alloc_percpu+0x18/0x20
-
-
-       init_srcu_struct_fields+0x3e4/0x460
-
-
-       __init_srcu_struct+0x50/0x5c
-
-
-       srcu_init_notifier_head+0x2c/0x54
-
-
-       clk_notifier_register+0xd0/0x130
-
-
-       i2c_imx_probe+0x23c/0x678
-
-
-       platform_drv_probe+0x50/0xa0
-
-
-       really_probe+0x2b8/0x3d8
-
-
-       driver_probe_device+0x64/0x16c
-
-
-       __driver_attach+0x120/0x144
-
-
-       bus_for_each_dev+0x7c/0xc4
-
-
-       driver_attach+0x20/0x28
-
-
-       bus_add_driver+0x174/0x208
-
-
-       driver_register+0x90/0x120
-
-
-       __platform_driver_register+0x38/0x4c
-
-
-       i2c_adap_imx_init+0x18/0x20
-
-
-       do_one_initcall+0x8c/0x32c
-
-
-       kernel_init_freeable+0x300/0x3e4
-
-
-       kernel_init+0x10/0x114
-
-
-       ret_from_fork+0x14/0x20
-
-
-         (null)
-
-
-       
-
-
--> #3 (prepare_lock){+.+.}:
-
-
-       __mutex_lock+0x60/0x8dc
-
-
-       mutex_lock_nested+0x24/0x2c
-
-
-       clk_prepare_lock+0x44/0xec
-
-
-       clk_prepare+0x20/0x38
-
-
-       __gpmi_enable_clk+0x34/0xb8
-
-
-       gpmi_enable_clk+0x14/0x18
-
-
-       gpmi_select_chip+0x4c/0xa4
-
-
-       nand_read_oob+0xa0/0x7b8
-
-
-       part_read_oob+0x40/0x78
-
-
-       mtd_read+0x10c/0x13c
-
-
-       ubi_io_read+0xc8/0x354
-
-
-       ubi_eba_read_leb+0xc8/0x544
-
-
-       ubi_eba_read_leb_sg+0x70/0x170
-
-
-       ubi_leb_read_sg+0x7c/0xbc
-
-
-       ubiblock_do_work+0xcc/0x118
-
-
-       process_one_work+0x2a4/0x744
-
-
-       worker_thread+0x5c/0x554
-
-
-       kthread+0x120/0x160
-
-
-       ret_from_fork+0x14/0x20
-
-
-         (null)
-
-
-       
-
-
--> #2 (&le->mutex){++++}:
-
-
-       down_read+0x3c/0x80
-
-
-       ubi_eba_read_leb+0x4c/0x544
-
-
-       ubi_leb_read+0x7c/0xbc
-
-
-       ubifs_leb_read+0x34/0x80
-
-
-       ubifs_read_nnode+0x194/0x208
-
-
-       ubifs_lpt_lookup_dirty+0x1e0/0x294
-
-
-       ubifs_replay_journal+0x48/0x15a8
-
-
-       ubifs_mount+0x104c/0x15f0
-
-
-       mount_fs+0x1c/0xb8
-
-
-       vfs_kern_mount.part.0+0x58/0x148
-
-
-       do_mount+0x6a4/0xec8
-
-
-       ksys_mount+0x90/0xbc
-
-
-       sys_mount+0x1c/0x24
-
-
-       ret_fast_syscall+0x0/0x28
-
-
-       0xbee78b38
-
-
-       
-
-
--> #1 (&c->lp_mutex){+.+.}:
-
-
-       __mutex_lock+0x60/0x8dc
-
-
-       mutex_lock_nested+0x24/0x2c
-
-
-       ubifs_gc_start_commit+0x28/0x32c
-
-
-       do_commit+0x1cc/0x7e4
-
-
-       ubifs_run_commit+0x98/0xd0
-
-
-       grab_empty_leb+0x60/0x98
-
-
-       ubifs_rcvry_gc_commit+0x10c/0x1d8
-
-
-       ubifs_mount+0x1308/0x15f0
-
-
-       mount_fs+0x1c/0xb8
-
-
-       vfs_kern_mount.part.0+0x58/0x148
-
-
-       do_mount+0x6a4/0xec8
-
-
-       ksys_mount+0x90/0xbc
-
-
-       sys_mount+0x1c/0x24
-
-
-       ret_fast_syscall+0x0/0x28
-
-
-       0xbee78b38
-
-
-
-
-
--> #0 (&c->commit_sem){++++}:
-
-
-       lock_acquire+0xd4/0x1f8
-
-
-       down_read+0x3c/0x80
-
-
-       make_reservation+0x68/0x41c
-
-
-       ubifs_jnl_write_data+0x134/0x2b8
-
-
-       do_writepage+0x88/0x210
-
-
-       ubifs_writepage+0x1b8/0x274
-
-
-       shrink_page_list+0x800/0xf68
-
-
-       shrink_inactive_list+0x1b4/0x4f0
-
-
-       shrink_node+0x44c/0x9c0
-
-
-       kswapd+0x3f8/0x928
-
-
-       kthread+0x120/0x160
-
-
-       ret_from_fork+0x14/0x20
-
-
-         (null)
-
-
-
-
-
-other info that might help us debug this:
-
-
-
-
-
-Chain exists of:
-
-
-  &c->commit_sem --> pcpu_alloc_mutex --> fs_reclaim
-
-
-
-
-
- Possible unsafe locking scenario:
-
-
-
-
-
-       CPU0                    CPU1
-
-
-       ----                    ----
-
-
-  lock(fs_reclaim);     
-
-
-                               lock(pcpu_alloc_mutex);
-
-
-                               lock(fs_reclaim);
-
-
-  lock(&c->commit_sem); 
-
-
-
-
-
- *** DEADLOCK ***
-
-
-
-
-
-1 lock held by kswapd0/22:
-
-
- #0: 0a27c3f4 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x48
+Hi,
+
+On Fri, 11 Jun 2021 at 10:07, John Stultz <john.stultz@linaro.org> wrote:
+>
+> On Wed, Mar 31, 2021 at 3:58 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > The 7nm, 10nm and 14nm drivers would store interim data used during
+> > VCO/PLL rate setting in the global dsi_pll_Nnm structure. Move this data
+> > structures to the onstack storage. While we are at it, drop
+> > unused/static 'config' data, unused config fields, etc.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+> > Tested-by: Stephen Boyd <swboyd@chromium.org> # on sc7180 lazor
+>
+> Hey Dmitry,
+>   Just wanted to give you a heads up.  Peter Collingbourne reported
+> today that his db845c wasn't booting to display for him on his 4k
+> monitor. It works fine on a 1080p screen, and while 4k isn't supported
+> (yet?),  normally the board should fall back to 1080p when connected
+> to a 4k monitor.  I was able to reproduce this myself and I see the
+> errors below[1].
+
+It looks like I made a mistake testing these patches with the splash
+screen disabled.
+Stephen Boyd has proposed a fix few days ago (will be included into
+the 5.13). Could you check that it fixes the problem for you?
+
+https://lore.kernel.org/linux-arm-msm/20210608195519.125561-1-swboyd@chromium.org/
+
+>
+> I dug back and found that things were working ok on v5.12 w/ the
+> recently merged commit d1a97648ae028 ("drm/bridge: lt9611: Fix
+> handling of 4k panels"), and started digging around.
+>
+> Seeing a bunch of changes to the
+> drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c file, I tried reverting a
+> chunk of the changes since 5.12 to that, and that got it working
+> again. I've narrowed it down to this change -
+> 001d8dc33875 ("drm/msm/dsi: remove temp data from global pll
+> structure") upstream (also reverting following 6e2ad9c3bfca and
+> 36c5dde5fdf0 first - but its reverting this change that actually makes
+> it work again).
+>
+> I've not managed to really look into the change to see what might be
+> going wrong yet (its late and I'm about to crash), but I wanted to
+> give you a heads up. If you have any ideas for me to try I'm happy to
+> give them a go.
+>
+> thanks
+> -john
+>
+> [1]:
+> [   19.846857] msm_dsi_phy ae94400.dsi-phy:
+> [drm:dsi_pll_10nm_vco_prepare] *ERROR* DSI PLL(0) lock failed,
+> status=0x00000000
+> [   19.857925] msm_dsi_phy ae94400.dsi-phy:
+> [drm:dsi_pll_10nm_vco_prepare] *ERROR* PLL(0) lock failed
+> [   19.866978] dsi_link_clk_enable_6g: Failed to enable dsi byte clk
+> [   19.873124] msm_dsi_host_power_on: failed to enable link clocks. ret=-110
+> [   19.879987] dsi_mgr_bridge_pre_enable: power on host 0 failed, -110
+> [   19.886309] Turning OFF PHY while PLL is on
+> [   20.415019] lt9611 10-003b: video check: hactive_a=0, hactive_b=0,
+> vactive=0, v_total=0, h_total_sysclk=0
+> [   20.481062] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> [   20.489306] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+> for commit done returned -110
+> [   20.513031] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+> error]enc31 frame done timeout
+> [   20.553059] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> [   20.561300] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+> for commit done returned -110
+> [   20.625054] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> [   20.633299] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+> for commit done returned -110
+> [   20.657033] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+> error]enc31 frame done timeout
+> [   20.697065] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> [   20.705316] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+> for commit done returned -110
+> [   20.769066] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> [   20.777330] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+> for commit done returned -110
+> [   20.801035] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+> error]enc31 frame done timeout
+> [   20.845049] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+> [dpu error]vblank timeout
+> ...
+
+
+
+-- 
+With best wishes
+Dmitry
