@@ -2,162 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F9C4743D
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ADCC48BE0
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAE8261374
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B3F613BA
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbhFKHJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 03:09:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbhFKHJw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 03:09:52 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CADC061574
-        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 00:07:54 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id n17so8302067ljg.2
-        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 00:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PxFpUiTBSOnltlTTuoxtE/MZoSbFjI/MZKxUVQgI8q8=;
-        b=ZYjT8dDPO05s4Nxd0AQ8STha22n4BnZxWmH2oTD39tbjqjVmK9jaa59HgGtvtx5Xlx
-         5A7R9NJgwOVRZfdBStumOB+V94O+S3A5+3grjEPKwKvfCmz8ewwVht8m1wNcETwSW/EE
-         UftYmQneWlIOfFdvOmbP4xmNCBHaJXeYbowMINh5elwBKSyjF9T+ahWBHjFSeyMBi8+E
-         QyNZDc6j35P9lqWxJm3U3uzCIZozJGZ/cfIWm3o33wVZifwgn5nJt8MJJBAyMftjuUhv
-         IEXh1/UetcTm0YviYPJdXQMQuFopSaLSFQmmyBvmWwIB+RIDGh9H6fPyFKQhxmR4qVpQ
-         SV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PxFpUiTBSOnltlTTuoxtE/MZoSbFjI/MZKxUVQgI8q8=;
-        b=s1voDifPHuIr6dOUYHzUAzqAW91OU4yd6I+ExdNo0IiyN1n5LlTwGCK4dWXjv992mW
-         kWhS3y65tD3h4sDm7MNd3vIUk/4YYaMLlcf9VMi94XCukLakdxvEWBlY80Bsb/YM/opC
-         CwVhZ8IW91xFpN5/jRadis8N0ro54sDC/8QGF3LqamqdRd+bIrieCjeNxikFIAuNc+j/
-         dyd1zAGc55p88qfnTHaYeEv9OhrxRuLJIi4ZI+bESleNdwULVMWLioZI8MrYSGIRvxHj
-         KR3p9b7MV0IcoFfpoVp4HdP03LGeOx7AmN6Ht0HUchkKfPsH0yc9xUcC8mumo35ATkx5
-         7ZRw==
-X-Gm-Message-State: AOAM531EbvvPyR0U8VQ92uR2WlQfAM9CBCSGCKflk+PteBv7wjvsVrxJ
-        D2awwFJv5E5OZ5C8Jql71CEmRjFoUiquiBxgAwUnsA==
-X-Google-Smtp-Source: ABdhPJxFdVSnUksX286DvG4PTdewZfKAGkEQVnOslur2gbzC6wjjtNh1/CxiWSBsTLkGewkmusNA+12IaT8xHtxGgXk=
-X-Received: by 2002:a2e:a605:: with SMTP id v5mr1871284ljp.128.1623395273072;
- Fri, 11 Jun 2021 00:07:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210331105735.3690009-1-dmitry.baryshkov@linaro.org> <20210331105735.3690009-23-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20210331105735.3690009-23-dmitry.baryshkov@linaro.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 11 Jun 2021 00:07:41 -0700
-Message-ID: <CALAqxLVwpLOsvjBVi+xb5S2VQNuGKgeOzrSqwZe5FN6RSeEEWA@mail.gmail.com>
-Subject: Re: [PATCH v4 22/24] drm/msm/dsi: remove temp data from global pll structure
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
+        id S230467AbhFKH4S convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 03:56:18 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:55337 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229733AbhFKH4R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 03:56:17 -0400
+Received: from [77.244.183.192] (port=63938 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1lrbze-0000eL-75; Fri, 11 Jun 2021 09:54:18 +0200
+Subject: Re: [PATCH 1/2] dt-bindings: clk: vc5: Add property for SD polarity
+To:     Sean Anderson <sean.anderson@seco.com>, linux-clk@vger.kernel.org
+Cc:     Adam Ford <aford173@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>, linux-clk@vger.kernel.org,
-        Peter Collingbourne <pcc@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+References: <20210607154931.2491499-1-sean.anderson@seco.com>
+ <eafea6ac-fbfd-3f42-93fa-edb8cdced3ea@lucaceresoli.net>
+ <5ef31cbd-473c-0916-85ff-860012ac694d@seco.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <a5c55357-e5e8-9e00-53cc-509e78fd6987@lucaceresoli.net>
+Date:   Fri, 11 Jun 2021 09:54:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <5ef31cbd-473c-0916-85ff-860012ac694d@seco.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 3:58 AM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> The 7nm, 10nm and 14nm drivers would store interim data used during
-> VCO/PLL rate setting in the global dsi_pll_Nnm structure. Move this data
-> structures to the onstack storage. While we are at it, drop
-> unused/static 'config' data, unused config fields, etc.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-> Tested-by: Stephen Boyd <swboyd@chromium.org> # on sc7180 lazor
+Hi Sean,
 
-Hey Dmitry,
-  Just wanted to give you a heads up.  Peter Collingbourne reported
-today that his db845c wasn't booting to display for him on his 4k
-monitor. It works fine on a 1080p screen, and while 4k isn't supported
-(yet?),  normally the board should fall back to 1080p when connected
-to a 4k monitor.  I was able to reproduce this myself and I see the
-errors below[1].
+On 10/06/21 17:43, Sean Anderson wrote:
+> 
+> 
+> On 6/10/21 5:05 AM, Luca Ceresoli wrote:
+>> Hi Sean,
+>>
+>> On 07/06/21 17:49, Sean Anderson wrote:
+>>> This property allows setting the SD/OE pin's polarity to active-high,
+>>> instead of the default of active-low.
+>>>
+>>> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
+>>
+>> Thanks.
+>>
+>>> +  idt,sd-active-high:
+>>> +    $ref: /schemas/types.yaml#/definitions/flag
+>>> +    description: SD/OE pin polarity is active-high
+>>
+>> I think the name "sd" is misleading.
+> 
+> I do as well. After sending this patch, I reviewed the documentation
+> again and discovered that the functionality was not as clear as I
+> initially thought.
+> 
+>> In the Renesas docs (which are very confusing on their own about this
+>> topic) this bit is called "SP" -- *S*D/OE *P*olarity. But actually it
+>> controls polarity of the SD/OE pin only if the pin is configured for
+>> "OE" function:
+>>
+>>> SP bit = “SD/OE pin Polarity Bit”: Set the polarity of the SD/OE
+>>> pin where outputs enable or disable. Only works with OE, not with SD.
+>> (VC6E register and programming guide [0])
+>>
+>> As such I suggest you use either "sp" to keep the naming used in the
+>> Renesas docs or "oe" as it actually controls OE polarity only. I do
+>> prefer "sp" as it helps matching with the datasheets, but maybe adding a
+>> little more detail in bindings docs to clarify, as in:
+>>
+>>   idt,sp-active-high:
+>>     $ref: /schemas/types.yaml#/definitions/flag
+>>     description: SD/OE pin polarity is active-high
+>>                  (only works when SD/OE pin is configured as OE)
+>>
+>> BTW is it only me finding the "Shutdown Function" of [0] completely
+>> confusing? Also, Table 24 has contradictory lines and missing lines. I'm
+>> sending a request to Renesas support to ask them to clarify it all.
+> 
+> I rearranged the table to highlight which bits cause the output to
+> become inactive:
+> 
+> SH    SP    OSn    OEn    SD/OE    OUT
+> x    x    1    0    x    Active
+> 0    0    1    1    0    Active
+> 0    0    1    1    1    Inactive
+> 0    1    1    1    0    Inactive
+> 0    1    1    1    1    Active
+> 1    0    1    1    0    Active
+> 1    0    x    x    1    Shutdown
+> 1    1    1    1    0    Inactive
+> 1    1    x    x    1    Shutdown
+> x    x    0    x    x    Inactive>
+> This may be condensed to
+> 
+> SH    SP    SD/OE function for 0/1
+> 0    0    Active/Inactive
+> 0    1    Inactive/Active
+> 1    0    Active/Shutdown
+> 1    1    Inactive/Shutdown
+> 
+> According to the datasheet, the default settings are SH=0 and SP=0. So
+> perhaps a good set of properties would be
+> 
+> idt,enable-shutdown:
+>     Shutdown the device when the SD/OE pin is high. This would set
+>     SH=1.
+> idt,output-enable-active-high:
+>     Disable output when the SD/OE pin is low. This would set SP=1.
 
-I dug back and found that things were working ok on v5.12 w/ the
-recently merged commit d1a97648ae028 ("drm/bridge: lt9611: Fix
-handling of 4k panels"), and started digging around.
+Seems good.
 
-Seeing a bunch of changes to the
-drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c file, I tried reverting a
-chunk of the changes since 5.12 to that, and that got it working
-again. I've narrowed it down to this change -
-001d8dc33875 ("drm/msm/dsi: remove temp data from global pll
-structure") upstream (also reverting following 6e2ad9c3bfca and
-36c5dde5fdf0 first - but its reverting this change that actually makes
-it work again).
+-- 
+Luca
 
-I've not managed to really look into the change to see what might be
-going wrong yet (its late and I'm about to crash), but I wanted to
-give you a heads up. If you have any ideas for me to try I'm happy to
-give them a go.
-
-thanks
--john
-
-[1]:
-[   19.846857] msm_dsi_phy ae94400.dsi-phy:
-[drm:dsi_pll_10nm_vco_prepare] *ERROR* DSI PLL(0) lock failed,
-status=0x00000000
-[   19.857925] msm_dsi_phy ae94400.dsi-phy:
-[drm:dsi_pll_10nm_vco_prepare] *ERROR* PLL(0) lock failed
-[   19.866978] dsi_link_clk_enable_6g: Failed to enable dsi byte clk
-[   19.873124] msm_dsi_host_power_on: failed to enable link clocks. ret=-110
-[   19.879987] dsi_mgr_bridge_pre_enable: power on host 0 failed, -110
-[   19.886309] Turning OFF PHY while PLL is on
-[   20.415019] lt9611 10-003b: video check: hactive_a=0, hactive_b=0,
-vactive=0, v_total=0, h_total_sysclk=0
-[   20.481062] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-[   20.489306] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
-for commit done returned -110
-[   20.513031] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
-error]enc31 frame done timeout
-[   20.553059] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-[   20.561300] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
-for commit done returned -110
-[   20.625054] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-[   20.633299] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
-for commit done returned -110
-[   20.657033] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
-error]enc31 frame done timeout
-[   20.697065] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-[   20.705316] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
-for commit done returned -110
-[   20.769066] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-[   20.777330] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
-for commit done returned -110
-[   20.801035] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
-error]enc31 frame done timeout
-[   20.845049] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
-[dpu error]vblank timeout
-...
