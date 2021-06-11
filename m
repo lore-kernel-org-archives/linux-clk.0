@@ -2,142 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D86FC4743D
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 06:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F9C4743D
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5EC6136D
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 06:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAE8261374
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 07:07:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231491AbhFKGOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jun 2021 02:14:38 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:43946 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231495AbhFKGOi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 02:14:38 -0400
-Received: from localhost (unknown [192.168.167.16])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 346BEF4DB4;
-        Fri, 11 Jun 2021 14:12:39 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P16485T139917350926080S1623391944380017_;
-        Fri, 11 Jun 2021 14:12:29 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <f76b447990ee54f536a633c91d7a125d>
-X-RL-SENDER: jon.lin@rock-chips.com
-X-SENDER: jon.lin@rock-chips.com
-X-LOGIN-NAME: jon.lin@rock-chips.com
-X-FST-TO: linux-spi@vger.kernel.org
-X-RCPT-COUNT: 20
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-From:   Jon Lin <jon.lin@rock-chips.com>
-To:     linux-spi@vger.kernel.org
-Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH v8 7/9] arm: dts: rockchip: Add SFC to RV1108
-Date:   Fri, 11 Jun 2021 14:12:20 +0800
-Message-Id: <20210611061222.31644-3-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210611061222.31644-1-jon.lin@rock-chips.com>
-References: <20210611061134.31369-1-jon.lin@rock-chips.com>
- <20210611061222.31644-1-jon.lin@rock-chips.com>
+        id S230478AbhFKHJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 03:09:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229540AbhFKHJw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 03:09:52 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CADC061574
+        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 00:07:54 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id n17so8302067ljg.2
+        for <linux-clk@vger.kernel.org>; Fri, 11 Jun 2021 00:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PxFpUiTBSOnltlTTuoxtE/MZoSbFjI/MZKxUVQgI8q8=;
+        b=ZYjT8dDPO05s4Nxd0AQ8STha22n4BnZxWmH2oTD39tbjqjVmK9jaa59HgGtvtx5Xlx
+         5A7R9NJgwOVRZfdBStumOB+V94O+S3A5+3grjEPKwKvfCmz8ewwVht8m1wNcETwSW/EE
+         UftYmQneWlIOfFdvOmbP4xmNCBHaJXeYbowMINh5elwBKSyjF9T+ahWBHjFSeyMBi8+E
+         QyNZDc6j35P9lqWxJm3U3uzCIZozJGZ/cfIWm3o33wVZifwgn5nJt8MJJBAyMftjuUhv
+         IEXh1/UetcTm0YviYPJdXQMQuFopSaLSFQmmyBvmWwIB+RIDGh9H6fPyFKQhxmR4qVpQ
+         SV4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PxFpUiTBSOnltlTTuoxtE/MZoSbFjI/MZKxUVQgI8q8=;
+        b=s1voDifPHuIr6dOUYHzUAzqAW91OU4yd6I+ExdNo0IiyN1n5LlTwGCK4dWXjv992mW
+         kWhS3y65tD3h4sDm7MNd3vIUk/4YYaMLlcf9VMi94XCukLakdxvEWBlY80Bsb/YM/opC
+         CwVhZ8IW91xFpN5/jRadis8N0ro54sDC/8QGF3LqamqdRd+bIrieCjeNxikFIAuNc+j/
+         dyd1zAGc55p88qfnTHaYeEv9OhrxRuLJIi4ZI+bESleNdwULVMWLioZI8MrYSGIRvxHj
+         KR3p9b7MV0IcoFfpoVp4HdP03LGeOx7AmN6Ht0HUchkKfPsH0yc9xUcC8mumo35ATkx5
+         7ZRw==
+X-Gm-Message-State: AOAM531EbvvPyR0U8VQ92uR2WlQfAM9CBCSGCKflk+PteBv7wjvsVrxJ
+        D2awwFJv5E5OZ5C8Jql71CEmRjFoUiquiBxgAwUnsA==
+X-Google-Smtp-Source: ABdhPJxFdVSnUksX286DvG4PTdewZfKAGkEQVnOslur2gbzC6wjjtNh1/CxiWSBsTLkGewkmusNA+12IaT8xHtxGgXk=
+X-Received: by 2002:a2e:a605:: with SMTP id v5mr1871284ljp.128.1623395273072;
+ Fri, 11 Jun 2021 00:07:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210331105735.3690009-1-dmitry.baryshkov@linaro.org> <20210331105735.3690009-23-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20210331105735.3690009-23-dmitry.baryshkov@linaro.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 11 Jun 2021 00:07:41 -0700
+Message-ID: <CALAqxLVwpLOsvjBVi+xb5S2VQNuGKgeOzrSqwZe5FN6RSeEEWA@mail.gmail.com>
+Subject: Re: [PATCH v4 22/24] drm/msm/dsi: remove temp data from global pll structure
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>, linux-clk@vger.kernel.org,
+        Peter Collingbourne <pcc@google.com>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Vinod Koul <vinod.koul@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chris Morgan <macromorgan@hotmail.com>
+On Wed, Mar 31, 2021 at 3:58 AM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> The 7nm, 10nm and 14nm drivers would store interim data used during
+> VCO/PLL rate setting in the global dsi_pll_Nnm structure. Move this data
+> structures to the onstack storage. While we are at it, drop
+> unused/static 'config' data, unused config fields, etc.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+> Tested-by: Stephen Boyd <swboyd@chromium.org> # on sc7180 lazor
 
-Add a devicetree entry for the Rockchip SFC for the RV1108 SOC.
+Hey Dmitry,
+  Just wanted to give you a heads up.  Peter Collingbourne reported
+today that his db845c wasn't booting to display for him on his 4k
+monitor. It works fine on a 1080p screen, and while 4k isn't supported
+(yet?),  normally the board should fall back to 1080p when connected
+to a 4k monitor.  I was able to reproduce this myself and I see the
+errors below[1].
 
-Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
----
+I dug back and found that things were working ok on v5.12 w/ the
+recently merged commit d1a97648ae028 ("drm/bridge: lt9611: Fix
+handling of 4k panels"), and started digging around.
 
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-Changes in v1: None
+Seeing a bunch of changes to the
+drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c file, I tried reverting a
+chunk of the changes since 5.12 to that, and that got it working
+again. I've narrowed it down to this change -
+001d8dc33875 ("drm/msm/dsi: remove temp data from global pll
+structure") upstream (also reverting following 6e2ad9c3bfca and
+36c5dde5fdf0 first - but its reverting this change that actually makes
+it work again).
 
- arch/arm/boot/dts/rv1108.dtsi | 37 +++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+I've not managed to really look into the change to see what might be
+going wrong yet (its late and I'm about to crash), but I wanted to
+give you a heads up. If you have any ideas for me to try I'm happy to
+give them a go.
 
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 884872ca5207..6d4f289aff53 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -536,6 +536,17 @@
- 		status = "disabled";
- 	};
- 
-+	sfc: spi@301c0000 {
-+		compatible = "rockchip,sfc";
-+		reg = <0x301c0000 0x4000>;
-+		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
-+		clock-names = "clk_sfc", "hclk_sfc";
-+		pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus4>;
-+		pinctrl-names = "default";
-+		status = "disabled";
-+	};
-+
- 	gmac: eth@30200000 {
- 		compatible = "rockchip,rv1108-gmac";
- 		reg = <0x30200000 0x10000>;
-@@ -704,6 +715,32 @@
- 			};
- 		};
- 
-+		sfc {
-+			sfc_bus4: sfc-bus4 {
-+				rockchip,pins =
-+					<2 RK_PA0 3 &pcfg_pull_none>,
-+					<2 RK_PA1 3 &pcfg_pull_none>,
-+					<2 RK_PA2 3 &pcfg_pull_none>,
-+					<2 RK_PA3 3 &pcfg_pull_none>;
-+			};
-+
-+			sfc_bus2: sfc-bus2 {
-+				rockchip,pins =
-+					<2 RK_PA0 3 &pcfg_pull_none>,
-+					<2 RK_PA1 3 &pcfg_pull_none>;
-+			};
-+
-+			sfc_cs0: sfc-cs0 {
-+				rockchip,pins =
-+					<2 RK_PB4 3 &pcfg_pull_none>;
-+			};
-+
-+			sfc_clk: sfc-clk {
-+				rockchip,pins =
-+					<2 RK_PB7 2 &pcfg_pull_none>;
-+			};
-+		};
-+
- 		gmac {
- 			rmii_pins: rmii-pins {
- 				rockchip,pins =	<1 RK_PC5 2 &pcfg_pull_none>,
--- 
-2.17.1
+thanks
+-john
 
-
-
+[1]:
+[   19.846857] msm_dsi_phy ae94400.dsi-phy:
+[drm:dsi_pll_10nm_vco_prepare] *ERROR* DSI PLL(0) lock failed,
+status=0x00000000
+[   19.857925] msm_dsi_phy ae94400.dsi-phy:
+[drm:dsi_pll_10nm_vco_prepare] *ERROR* PLL(0) lock failed
+[   19.866978] dsi_link_clk_enable_6g: Failed to enable dsi byte clk
+[   19.873124] msm_dsi_host_power_on: failed to enable link clocks. ret=-110
+[   19.879987] dsi_mgr_bridge_pre_enable: power on host 0 failed, -110
+[   19.886309] Turning OFF PHY while PLL is on
+[   20.415019] lt9611 10-003b: video check: hactive_a=0, hactive_b=0,
+vactive=0, v_total=0, h_total_sysclk=0
+[   20.481062] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+[   20.489306] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+for commit done returned -110
+[   20.513031] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+error]enc31 frame done timeout
+[   20.553059] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+[   20.561300] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+for commit done returned -110
+[   20.625054] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+[   20.633299] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+for commit done returned -110
+[   20.657033] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+error]enc31 frame done timeout
+[   20.697065] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+[   20.705316] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+for commit done returned -110
+[   20.769066] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+[   20.777330] [drm:dpu_kms_wait_for_commit_done:453] [dpu error]wait
+for commit done returned -110
+[   20.801035] [drm:dpu_encoder_frame_done_timeout:2161] [dpu
+error]enc31 frame done timeout
+[   20.845049] [drm:dpu_encoder_phys_vid_wait_for_commit_done:528]
+[dpu error]vblank timeout
+...
