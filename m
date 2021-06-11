@@ -2,192 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F3EC48BE5
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 03:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1399C48BE0
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 04:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5E6610E6
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 03:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFE4E61364
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jun 2021 04:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbhFKD4N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jun 2021 23:56:13 -0400
-Received: from regular1.263xmail.com ([211.150.70.200]:45668 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbhFKD4N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jun 2021 23:56:13 -0400
-Received: from localhost (unknown [192.168.167.235])
-        by regular1.263xmail.com (Postfix) with ESMTP id 9B7FA1DB8;
-        Fri, 11 Jun 2021 11:54:10 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from [172.16.12.73] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P15328T140654309000960S1623383648787942_;
-        Fri, 11 Jun 2021 11:54:10 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <70eca2d5e53924834f14eb9922eb0b7d>
-X-RL-SENDER: jon.lin@rock-chips.com
-X-SENDER: jon.lin@rock-chips.com
-X-LOGIN-NAME: jon.lin@rock-chips.com
-X-FST-TO: linux-clk@vger.kernel.org
-X-RCPT-COUNT: 19
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-Subject: Re: [PATCH v7 9/9] arm64: dts: rockchip: Enable SFC for Odroid Go
- Advance
-To:     Chris Morgan <macromorgan@hotmail.com>
-Cc:     Chris Morgan <macroalpha82@gmail.com>, linux-spi@vger.kernel.org,
-        broonie@kernel.org, robh+dt@kernel.org, heiko@sntech.de,
-        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
-        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
-        linux-mtd@lists.infradead.org, p.yadav@ti.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org
-References: <20210609140412.16058-1-jon.lin@rock-chips.com>
- <20210609141348.19178-1-jon.lin@rock-chips.com>
- <20210609141348.19178-5-jon.lin@rock-chips.com>
- <20210610173657.GA20228@wintermute.localdomain>
- <89283da6-b00e-4d0f-5c4a-0169bda101d3@rock-chips.com>
- <SN6PR06MB5342327048383CC3D416C93DA5349@SN6PR06MB5342.namprd06.prod.outlook.com>
-From:   Jon Lin <jon.lin@rock-chips.com>
-Message-ID: <19481190-2a28-8602-8f5f-6258a967833d@rock-chips.com>
-Date:   Fri, 11 Jun 2021 11:54:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229480AbhFKEPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jun 2021 00:15:13 -0400
+Received: from mail-pj1-f54.google.com ([209.85.216.54]:52988 "EHLO
+        mail-pj1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231391AbhFKEPM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jun 2021 00:15:12 -0400
+Received: by mail-pj1-f54.google.com with SMTP id h16so4947208pjv.2
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jun 2021 21:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZpAKBzRtum++A6I+sQPu1wrLWwSoIBCUNQ7Vp72lb8E=;
+        b=fryvg3Qh73vZ5EZgeSi5omN3PED391AT8z36/quqA7pIW1a2JcrWsJ/wPANZhdilkq
+         EL40BLy1XoW2Vnp+Z9R40RmrDZvOHWty98Nzcsmby+1ul3SgyfdGmK3MWqdeSOrHL3MA
+         QAVA9uFE4wm1W1k/qGbaty+/cxsQmql3H9QnpR/jbO+SzexHCH11t0oZMnTMtAYNJnCB
+         xcWqp+pKMaGsUTjHJN3o0bDKYFpLGILNjAd9hZnNryQamaisL0epRO54rF5oFcFr0RCS
+         xcEzP1OKee3spwRv+yEilM9sGTu77La7/LOkEsthOo9Ou0xCl/tFW5MR3bPPRZXURDww
+         BDtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZpAKBzRtum++A6I+sQPu1wrLWwSoIBCUNQ7Vp72lb8E=;
+        b=ALpPnt/m8m64mB5DtvmIp2lT/duSLqTdI3YGtSgOn3vuHYfvJHpwEUwqw4DFIHK9cd
+         pyq9c8dfwAVI2H6fUmGISAbGmlaRjXra/+e7Bj2LsVbAUeqNQ8i8VdW6PPImj8V3iuHN
+         5ThriJZ9RO2Xrlxu8VrGlHR+aNIAgrpcIjhmAzhqqIsk4AAwEYFykaXqsBYscQF7xvPl
+         7urWHDfezDF924t+f0xbYJDwwmzGMW7NtMpAnqn99xXUBsXjcytOp/aa+7CoB/anwMj2
+         9WXepsekSYi1WyJobt0MJbfMG6i44SuvRZkHI6Hy3lGW6IamTT4EcV3I4BTz3mR4uQH7
+         vC6g==
+X-Gm-Message-State: AOAM5333HOzQwWrvyOzKs6z3ml1iVb4YlkghL0aG++OkX5HTXXsNYDCG
+        o7Zst5dNfdvIpjaKQKBgyfP4
+X-Google-Smtp-Source: ABdhPJyQNtV4HQWkIfjBIcoMAqHXA+VmwTmB0Hmc7bSteNAdGCzWAwJtPQJ5BnZQjxUTyGFWTt0yWg==
+X-Received: by 2002:a17:90b:1d0f:: with SMTP id on15mr6985029pjb.194.1623384722346;
+        Thu, 10 Jun 2021 21:12:02 -0700 (PDT)
+Received: from thinkpad ([2409:4072:6281:d9a2:40f:351d:828b:fc1a])
+        by smtp.gmail.com with ESMTPSA id y27sm3851881pff.202.2021.06.10.21.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jun 2021 21:12:01 -0700 (PDT)
+Date:   Fri, 11 Jun 2021 09:41:54 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on
+ Owl S500 SoC
+Message-ID: <20210611041154.GA5317@thinkpad>
+References: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
+ <21c1abd19a7089b65a34852ac6513961be88cbe1.1623354574.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <SN6PR06MB5342327048383CC3D416C93DA5349@SN6PR06MB5342.namprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21c1abd19a7089b65a34852ac6513961be88cbe1.1623354574.git.cristian.ciocaltea@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jun 10, 2021 at 11:05:24PM +0300, Cristian Ciocaltea wrote:
+> There are a few issues with the setup of the Actions Semi Owl S500 SoC's
+> clock chain involving AHPPREDIV, H and AHB clocks:
+> 
+> * AHBPREDIV clock is defined as a muxer only, although it also acts as
+>   a divider.
+> * H clock is using a wrong divider register offset
+> * AHB is defined as a multi-rate factor clock, but it is actually just
+>   a fixed pass clock.
+> 
+> Let's provide the following fixes:
+> 
+> * Change AHBPREDIV clock to an ungated OWL_COMP_DIV definition.
+> * Use the correct register shift value in the OWL_DIVIDER definition
+>   for H clock
+> * Drop the unneeded 'ahb_factor_table[]' and change AHB clock to an
+>   ungated OWL_COMP_FIXED_FACTOR definition.
+> 
+> Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 
-On 6/11/21 11:38 AM, Chris Morgan wrote:
-> On Fri, Jun 11, 2021 at 10:26:35AM +0800, Jon Lin wrote:
->> Hi Chris
->>
->> May you attach the XT25F128B device code to me, and I'll try to work it out.
-> Sure, here is the patch I am using:
->
-> https://patchwork.ozlabs.org/project/linux-mtd/patch/SN6PR06MB5342C82F372F37FB8E21B327A57A9@SN6PR06MB5342.namprd06.prod.outlook.com/
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-this patch works well in my rk3308 tx-2 rx-2 XT25F128BSSIGU case.
+Thanks,
+Mani
 
-# dd if=/tmp/rand.img of=/dev/mtdblock0 bs=4096 seek=1024
-1024+0 records in
-1024+0 records out
-#
-# dd if=/dev/mtd0 of=/tmp/rand1.img bs=4096 skip=1024 count=1024
-
-1024+0 records in
-1024+0 records out
-#
-#
-# md5sum /tmp/*.img
-83e45a56766168b47e6db1d41b1b403d  /tmp/rand.img
-83e45a56766168b47e6db1d41b1b403d  /tmp/rand1.img
-#
-# dmesg | grep XT25F128BSSIGU
-[    0.200738] spi-nor spi3.0: XT25F128BSSIGU (16384 Kbytes)
-#
-
->
->> On 6/11/21 1:36 AM, Chris Morgan wrote:
->>> On Wed, Jun 09, 2021 at 10:13:48PM +0800, Jon Lin wrote:
->>>> From: Chris Morgan <macromorgan@hotmail.com>
->>>>
->>>> This enables the Rockchip Serial Flash Controller for the Odroid Go
->>>> Advance. Note that while the attached SPI NOR flash and the controller
->>>> both support quad read mode, only 2 of the required 4 pins are present.
->>>> The rx and tx bus width is set to 2 for this reason.
->>>>
->>>> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
->>>> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
->>>> ---
->>>>
->>>> Changes in v7: None
->>>> Changes in v6: None
->>>> Changes in v5: None
->>>> Changes in v4: None
->>>> Changes in v3: None
->>>> Changes in v2: None
->>>> Changes in v1: None
->>>>
->>>>    .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
->>>>    1 file changed, 16 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->>>> index 49c97f76df77..f78e11dd8447 100644
->>>> --- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->>>> +++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
->>>> @@ -484,6 +484,22 @@
->>>>    	status = "okay";
->>>>    };
->>>> +&sfc {
->>>> +	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
->>>> +	pinctrl-names = "default";
->>>> +	#address-cells = <1>;
->>>> +	#size-cells = <0>;
->>>> +	status = "okay";
->>>> +
->>>> +	flash@0 {
->>>> +		compatible = "jedec,spi-nor";
->>>> +		reg = <0>;
->>>> +		spi-max-frequency = <108000000>;
->>>> +		spi-rx-bus-width = <2>;
->>>> +		spi-tx-bus-width = <2>;
->>> Note that I am still working with Jon Lin to research this, but it was
->>> found in testing that if I set the tx bus width to 1 the problems I
->>> encountered in earlier are resolved. At this time I do not know if it
->>> is an issue with the driver for the flash controller, or if the NOR, or
->>> board itself has some sort of errata which prevent dual tx from working
->>> correctly. Note that as of right now the flash chip I am using (an
->>> XTX XT25F128B) is not currently supported in mainline, so it's very
->>> possible this is some sort of errata with the chip. It's also possible
->>> that there is something with the board that is interferring with dual
->>> mode TX.  When Jon comes back that he has tested dual mode on the SFC
->>> with a different board/chip I will recommend that we change the tx
->>> bus width here to a 1, and then once the XT25F128B gets mainlined we
->>> can see if someone else has issues with dual tx mode so we can note
->>> that as a problem with the chip. Or maybe there is something weird
->>> with dual tx mode yet on the SFC driver/controller, I don't know yet.
->>> I'm all too happy to work with a Rockchip engineer so things like
->>> this can be determined before we hit mainline. :-)
->>>
->>> The XTX25F128B driver is currently awaiting a decision on how to handle
->>> continuation codes, as this chip ID should be using continuation codes,
->>> but doesn't appear to return them when you query for manufacturer ID.
->>> So I should also note in the commit here that the SFC will still be
->>> unusable on the Odroid Go Advance until the XTX25F128B is also
->>> mainlined.
->>>
->>> Thank you.
->>>
->>>> +	};
->>>> +};
->>>> +
->>>>    &tsadc {
->>>>    	status = "okay";
->>>>    };
->>>> -- 
->>>> 2.17.1
->>>>
->>>>
->>>>
->>>
->>
->
->
-
-
+> ---
+> Changes in v3:
+>  - Fixed the swapped flags between "ahbprediv_clk" and "ahb_clk" as noticed
+>    by Mani
+> 
+> Changes in v2:
+>  - Reverted the addition of the clock div table for H clock to support the
+>    '1' divider (according to the datasheet), even though the vendor
+>    implementation marks it as reserved
+>  
+>  drivers/clk/actions/owl-s500.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+> index 42d6899755e6..cbeb51c804eb 100644
+> --- a/drivers/clk/actions/owl-s500.c
+> +++ b/drivers/clk/actions/owl-s500.c
+> @@ -153,11 +153,6 @@ static struct clk_factor_table hde_factor_table[] = {
+>  	{ 0, 0, 0 },
+>  };
+>  
+> -static struct clk_factor_table ahb_factor_table[] = {
+> -	{ 1, 1, 2 }, { 2, 1, 3 },
+> -	{ 0, 0, 0 },
+> -};
+> -
+>  static struct clk_div_table rmii_ref_div_table[] = {
+>  	{ 0, 4 }, { 1, 10 },
+>  	{ 0, 0 },
+> @@ -186,7 +181,6 @@ static struct clk_div_table nand_div_table[] = {
+>  
+>  /* mux clock */
+>  static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1, CLK_SET_RATE_PARENT);
+> -static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p, CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
+>  
+>  /* gate clocks */
+>  static OWL_GATE(gpio_clk, "gpio_clk", "apb_clk", CMU_DEVCLKEN0, 18, 0, 0);
+> @@ -199,16 +193,25 @@ static OWL_GATE(timer_clk, "timer_clk", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
+>  static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
+>  
+>  /* divider clocks */
+> -static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 12, 2, NULL, 0, 0);
+> +static OWL_DIVIDER(h_clk, "h_clk", "ahbprediv_clk", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
+>  static OWL_DIVIDER(apb_clk, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
+>  static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
+>  
+>  /* factor clocks */
+> -static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2, ahb_factor_table, 0, 0);
+>  static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table, 0, 0);
+>  static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
+>  
+>  /* composite clocks */
+> +static OWL_COMP_DIV(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
+> +			OWL_MUX_HW(CMU_BUSCLK1, 8, 3),
+> +			{ 0 },
+> +			OWL_DIVIDER_HW(CMU_BUSCLK1, 12, 2, 0, NULL),
+> +			CLK_SET_RATE_PARENT);
+> +
+> +static OWL_COMP_FIXED_FACTOR(ahb_clk, "ahb_clk", "h_clk",
+> +			{ 0 },
+> +			1, 1, 0);
+> +
+>  static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
+>  			OWL_MUX_HW(CMU_VCECLK, 4, 2),
+>  			OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
+> -- 
+> 2.32.0
+> 
