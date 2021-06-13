@@ -7,63 +7,60 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EBAC48BDF
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B880C48BDF
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D02A96134F
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB0A61354
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232098AbhFMUr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Jun 2021 16:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231840AbhFMUr4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Jun 2021 16:47:56 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE880C061574
-        for <linux-clk@vger.kernel.org>; Sun, 13 Jun 2021 13:45:45 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id g22so1953686pgk.1
-        for <linux-clk@vger.kernel.org>; Sun, 13 Jun 2021 13:45:45 -0700 (PDT)
+        id S231840AbhFMUus (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Jun 2021 16:50:48 -0400
+Received: from mail-pg1-f178.google.com ([209.85.215.178]:44917 "EHLO
+        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232038AbhFMUus (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Jun 2021 16:50:48 -0400
+Received: by mail-pg1-f178.google.com with SMTP id y11so7020775pgp.11
+        for <linux-clk@vger.kernel.org>; Sun, 13 Jun 2021 13:48:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nigauri-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hj6PxG9Uu38xsSuh/hPwTGIxfZIdP7m3pLuGKjMI4Ig=;
-        b=bmu2JThxVHAxXOKEYhsFEtuH0nryHuVmYu4OmNnz+kZZWdpYhkWRc2E6+JxoadL7dt
-         2RbYeGwq0TA/zqWtVfOrLWuziOLWAsjYdJ4ajxfi7s7wxW7PWFmO9H/i2YxE7GIQFb8m
-         t88txhMBaBgPrkVc77atYDYUM2cx6EeSQWO32R5hX0fF7r+MV3FFncfZLuZq2Nk6TqXS
-         mIT7kmINjqLUpFEaaUwojPFAmIwXVyxAxWPN0JWtzvFbYz9pWXm0V6kLyQlnOjFL30iK
-         6iwoooocEtD888TmW/lxUiv+JSYIhHILQl/NvBHTxNhWN/tPAUU2cATvJiZp1e/d5tdX
-         wJIg==
+        bh=Z+nt2gxzCeIwwu5FmgBWJSi87ilyvtFgbF20fAbcptk=;
+        b=msqVap0O3FgrfRlVBY17+t6fSzvFm1flFjIeZ6hEZRw1mAO13Eh57ZO13eoowW2vGH
+         fUCqVryPmH9rcAX/e53KYl/11rAtU3dUZy6sANsOOPG3mBm/oukDFEpUFl49/yYtgYGw
+         yXgWBGP+clBkdN/iHYHCGD4xfJsLCwQ5PenzlMRVOQkm19jTF8UA0CU5pnO6XTTkTSTh
+         6wU8wQ4aikEQfFZWSdcY046urFMbipGVxNRZ8dGqQ2sznYUzgnkOcDNcmHlRkisSmfOj
+         bt23O6/GJPsbj7msd92UHzTLMhUQJXZyvNrrWdVVfZXJGu/es46putfMJE+kIQ9RvuPC
+         Hf3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hj6PxG9Uu38xsSuh/hPwTGIxfZIdP7m3pLuGKjMI4Ig=;
-        b=LKjh9Suj7CGMvskVOIGv8nHIK/sJybXl9n/N5Ui+J/9lBSJGkOHTJvoJ23pAFBOUIP
-         OUh/nfETR+TjLAkQVYWCB3uPB3gfDrAoXugqU5VhiOCoihF27rpDFNbp/HuY3afJY5L7
-         oE7f+pRjPCmCjmXds7md1mV2bMyIZ+q1DFEeYksgCWJk0H0evU9X/Pw0PjwTKNPa1ati
-         /3DrJ4UrKItyK/ZQVWuAnoQqW11E2QkArG9LN7p3etoiQwQNPpmX/cYYZLlba2yRIMNn
-         dFfU4myB8fn60XBZYvCyL5ayi4wX5i35pb/TnTV5HvxLpcIhlm/oqJ0bV8SdesvyZHeF
-         DdkA==
-X-Gm-Message-State: AOAM532WpmYiOD6OFhZLyx1buVSXAKMRtMq9eniswexw1mqles9Xm43X
-        9tURWFJKrSI9NlFRdSXl5kYu
-X-Google-Smtp-Source: ABdhPJySEgrWjFdxISwelgWe5aaaq9/MjvjjsiLJBt9wbvsLwYM8vvx3QL1cWls+noKMXLzqTlO/Pw==
-X-Received: by 2002:a62:ea1a:0:b029:2ec:9146:30be with SMTP id t26-20020a62ea1a0000b02902ec914630bemr18700202pfh.29.1623617145141;
-        Sun, 13 Jun 2021 13:45:45 -0700 (PDT)
+        bh=Z+nt2gxzCeIwwu5FmgBWJSi87ilyvtFgbF20fAbcptk=;
+        b=uaGUZDSQG7aTcn6q6ZPymy9A1U3c9UNOsmbQEJYhHCEshuPXsxz343GrhekMElvqYr
+         c5KyVWzhu7/DCfp7mk4WUMzQRuNYOeMHTE6ITvspfW+jz9imc9HQ4hf+YUZQ9CofqV0u
+         Quu8xSLUJcB828a99xaPOhWRpxI78qec7fb+Jg0dai32cwvtaxOIRPW0kovYDz5E9gVT
+         gu60iRLmKdho2k9qpBSSbnQIlCp5UBP2iMCdkqgfGGn7dwW9sqLLa52Zg5UfBron5BRX
+         2oeF9DCcIC+zfhygqqtpQzqg/JhIAeYRED4uQQaYYBO+JneUkE7OqQuvIBDBZ/tPCATg
+         U9Fw==
+X-Gm-Message-State: AOAM532Ym7AAjdqcuPjFF0MtiGv/UtWtVBdLUACIhYNYLClOAi4Zr6SO
+        eYT5iST06PXO6HQjx2pwKoLW
+X-Google-Smtp-Source: ABdhPJxeXSdmOh0ofTfS52IKc517CKWXYPl2uIUqdX+cLnnFL2hEr2df4+eB4FDB9vLWE6MFqzIhiA==
+X-Received: by 2002:aa7:8bd9:0:b029:2f2:f491:8836 with SMTP id s25-20020aa78bd90000b02902f2f4918836mr18654852pfd.47.1623617266443;
+        Sun, 13 Jun 2021 13:47:46 -0700 (PDT)
 Received: from localhost ([2405:6581:5360:1800:7285:c2ff:fec2:8f97])
-        by smtp.gmail.com with ESMTPSA id iq15sm14651277pjb.53.2021.06.13.13.45.44
+        by smtp.gmail.com with ESMTPSA id nn6sm9648463pjb.57.2021.06.13.13.47.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 13:45:44 -0700 (PDT)
+        Sun, 13 Jun 2021 13:47:45 -0700 (PDT)
 From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
 To:     michal.simek@xilinx.com, mturquette@baylibre.com, robh@kernel.org,
         sboyd@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: [PATCH v3] dt-bindings: rtc: zynqmp: convert bindings to YAML
-Date:   Mon, 14 Jun 2021 05:45:32 +0900
-Message-Id: <20210613204532.291512-1-iwamatsu@nigauri.org>
+Subject: [PATCH v3] dt-bindings: clk: zynqmp: convert bindings to YAML
+Date:   Mon, 14 Jun 2021 05:47:42 +0900
+Message-Id: <20210613204742.292053-1-iwamatsu@nigauri.org>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,125 +68,158 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Real Time Clock for Xilinx Zynq MPSoC SoC bindings documentation
-to YAML schemas.
-And this renamed the file to compatible string of DT.
+Convert common clock for Xilinx Zynq MPSoC SoC bindings documentation
+to YAML.
 
 Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
 ---
-v3: Fix description.
-    Add $refs to calibration property.
-    Add minimum, maximum and default to calibration property.
-v2: Fix warning with DT_CHECKER_FLAGS=-m
+v3: Drop commit for mailbox/xlnx,zynqmp-ipi-mailbox.txt
+v2: Fix warning with DT_CHECKER_FLAGS=-m.
 
- .../bindings/rtc/xlnx,zynqmp-rtc.yaml         | 65 +++++++++++++++++++
- .../devicetree/bindings/rtc/xlnx-rtc.txt      | 25 -------
- 2 files changed, 65 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/xlnx,zynqmp-rtc.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/xlnx-rtc.txt
+ .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 -------------------
+ .../bindings/clock/xlnx,zynqmp-clk.yaml       | 63 +++++++++++++++++++
+ 2 files changed, 63 insertions(+), 63 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
 
-diff --git a/Documentation/devicetree/bindings/rtc/xlnx,zynqmp-rtc.yaml b/Documentation/devicetree/bindings/rtc/xlnx,zynqmp-rtc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+deleted file mode 100644
+index 391ee1a60bed4a..00000000000000
+--- a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+---------------------------------------------------------------------------
+-Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
+-Zynq MPSoC firmware interface
+---------------------------------------------------------------------------
+-The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
+-tree. It reads required input clock frequencies from the devicetree and acts
+-as clock provider for all clock consumers of PS clocks.
+-
+-See clock_bindings.txt for more information on the generic clock bindings.
+-
+-Required properties:
+- - #clock-cells:	Must be 1
+- - compatible:		Must contain:	"xlnx,zynqmp-clk"
+- - clocks:		List of clock specifiers which are external input
+-			clocks to the given clock controller. Please refer
+-			the next section to find the input clocks for a
+-			given controller.
+- - clock-names:		List of clock names which are exteral input clocks
+-			to the given clock controller. Please refer to the
+-			clock bindings for more details.
+-
+-Input clocks for zynqmp Ultrascale+ clock controller:
+-
+-The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
+-inputs. These required clock inputs are:
+- - pss_ref_clk (PS reference clock)
+- - video_clk (reference clock for video system )
+- - pss_alt_ref_clk (alternative PS reference clock)
+- - aux_ref_clk
+- - gt_crx_ref_clk (transceiver reference clock)
+-
+-The following strings are optional parameters to the 'clock-names' property in
+-order to provide an optional (E)MIO clock source:
+- - swdt0_ext_clk
+- - swdt1_ext_clk
+- - gem0_emio_clk
+- - gem1_emio_clk
+- - gem2_emio_clk
+- - gem3_emio_clk
+- - mio_clk_XX		# with XX = 00..77
+- - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
+-
+-
+-Output clocks are registered based on clock information received
+-from firmware. Output clocks indexes are mentioned in
+-include/dt-bindings/clock/xlnx-zynqmp-clk.h.
+-
+--------
+-Example
+--------
+-
+-firmware {
+-	zynqmp_firmware: zynqmp-firmware {
+-		compatible = "xlnx,zynqmp-firmware";
+-		method = "smc";
+-		zynqmp_clk: clock-controller {
+-			#clock-cells = <1>;
+-			compatible = "xlnx,zynqmp-clk";
+-			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
+-			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
 new file mode 100644
-index 00000000000000..bdb72d3ddf2a93
+index 00000000000000..e7a1384fb646e4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/xlnx,zynqmp-rtc.yaml
-@@ -0,0 +1,65 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++++ b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/rtc/xlnx,zynqmp-rtc.yaml#
++$id: http://devicetree.org/schemas/clock/xlnx,zynqmp-clk.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Xilinx Zynq Ultrascale+ MPSoC Real Time Clock
-+
-+description:
-+  RTC controller for the Xilinx Zynq MPSoC Real Time Clock.
-+  The RTC controller has separate IRQ lines for seconds and alarm.
++title: Xilinx Zynq Ultrascale+ MPSoC clock controller Device Tree Bindings
 +
 +maintainers:
 +  - Michal Simek <michal.simek@xilinx.com>
 +
-+allOf:
-+  - $ref: rtc.yaml#
++description: |
++  The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
++  tree. It reads required input clock frequencies from the devicetree and acts
++  as clock provider for all clock consumers of PS clocks.
 +
 +properties:
 +  compatible:
-+    const: xlnx,zynqmp-rtc
++    const: xlnx,zynqmp-clk
 +
-+  reg:
-+    maxItems: 1
++  "#clock-cells":
++    const: 1
 +
-+  interrupts:
-+    minItems: 2
-+
-+  interrupt-names:
-+    items:
-+      - const: alarm
-+      - const: sec
-+
-+  calibration:
++  clocks:
 +    description: |
-+      calibration value for 1 sec period which will
-+      be programmed directly to calibration register.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 0x1
-+    maximum: 0x1FFFFF
-+    default: 0x198233
++      List of clock specifiers which are external input
++      clocks to the given clock controller.
++    items:
++      - description: PS reference clock
++      - description: reference clock for video system
++      - description: alternative PS reference clock
++      - description: auxiliary reference clock
++      - description: transceiver reference clock
++
++  clock-names:
++    items:
++      - const: pss_ref_clk
++      - const: video_clk
++      - const: pss_alt_ref_clk
++      - const: aux_ref_clk
++      - const: gt_crx_ref_clk
 +
 +required:
 +  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
++  - "#clock-cells"
++  - clocks
++  - clock-names
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      rtc: rtc@ffa60000 {
-+        compatible = "xlnx,zynqmp-rtc";
-+        reg = <0x0 0xffa60000 0x0 0x100>;
-+        interrupt-parent = <&gic>;
-+        interrupts = <0 26 4>, <0 27 4>;
-+        interrupt-names = "alarm", "sec";
-+        calibration = <0x198233>;
++    firmware {
++      zynqmp_firmware: zynqmp-firmware {
++        zynqmp_clk: clock-controller {
++          #clock-cells = <1>;
++          compatible = "xlnx,zynqmp-clk";
++          clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
++          clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
++        };
 +      };
 +    };
-diff --git a/Documentation/devicetree/bindings/rtc/xlnx-rtc.txt b/Documentation/devicetree/bindings/rtc/xlnx-rtc.txt
-deleted file mode 100644
-index 0df6f016b1b771..00000000000000
---- a/Documentation/devicetree/bindings/rtc/xlnx-rtc.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--* Xilinx Zynq Ultrascale+ MPSoC Real Time Clock
--
--RTC controller for the Xilinx Zynq MPSoC Real Time Clock
--Separate IRQ lines for seconds and alarm
--
--Required properties:
--- compatible: Should be "xlnx,zynqmp-rtc"
--- reg: Physical base address of the controller and length
--       of memory mapped region.
--- interrupts: IRQ lines for the RTC.
--- interrupt-names: interrupt line names eg. "sec" "alarm"
--
--Optional:
--- calibration: calibration value for 1 sec period which will
--		be programmed directly to calibration register
--
--Example:
--rtc: rtc@ffa60000 {
--	compatible = "xlnx,zynqmp-rtc";
--	reg = <0x0 0xffa60000 0x100>;
--	interrupt-parent = <&gic>;
--	interrupts = <0 26 4>, <0 27 4>;
--	interrupt-names = "alarm", "sec";
--	calibration = <0x198233>;
--};
++...
 -- 
 2.32.0
 
