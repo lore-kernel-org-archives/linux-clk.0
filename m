@@ -2,224 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B880C48BDF
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EB2C48BDF
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 02:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB0A61354
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Jun 2021 20:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16FF2613AB
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 02:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231840AbhFMUus (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Jun 2021 16:50:48 -0400
-Received: from mail-pg1-f178.google.com ([209.85.215.178]:44917 "EHLO
-        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhFMUus (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Jun 2021 16:50:48 -0400
-Received: by mail-pg1-f178.google.com with SMTP id y11so7020775pgp.11
-        for <linux-clk@vger.kernel.org>; Sun, 13 Jun 2021 13:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nigauri-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z+nt2gxzCeIwwu5FmgBWJSi87ilyvtFgbF20fAbcptk=;
-        b=msqVap0O3FgrfRlVBY17+t6fSzvFm1flFjIeZ6hEZRw1mAO13Eh57ZO13eoowW2vGH
-         fUCqVryPmH9rcAX/e53KYl/11rAtU3dUZy6sANsOOPG3mBm/oukDFEpUFl49/yYtgYGw
-         yXgWBGP+clBkdN/iHYHCGD4xfJsLCwQ5PenzlMRVOQkm19jTF8UA0CU5pnO6XTTkTSTh
-         6wU8wQ4aikEQfFZWSdcY046urFMbipGVxNRZ8dGqQ2sznYUzgnkOcDNcmHlRkisSmfOj
-         bt23O6/GJPsbj7msd92UHzTLMhUQJXZyvNrrWdVVfZXJGu/es46putfMJE+kIQ9RvuPC
-         Hf3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z+nt2gxzCeIwwu5FmgBWJSi87ilyvtFgbF20fAbcptk=;
-        b=uaGUZDSQG7aTcn6q6ZPymy9A1U3c9UNOsmbQEJYhHCEshuPXsxz343GrhekMElvqYr
-         c5KyVWzhu7/DCfp7mk4WUMzQRuNYOeMHTE6ITvspfW+jz9imc9HQ4hf+YUZQ9CofqV0u
-         Quu8xSLUJcB828a99xaPOhWRpxI78qec7fb+Jg0dai32cwvtaxOIRPW0kovYDz5E9gVT
-         gu60iRLmKdho2k9qpBSSbnQIlCp5UBP2iMCdkqgfGGn7dwW9sqLLa52Zg5UfBron5BRX
-         2oeF9DCcIC+zfhygqqtpQzqg/JhIAeYRED4uQQaYYBO+JneUkE7OqQuvIBDBZ/tPCATg
-         U9Fw==
-X-Gm-Message-State: AOAM532Ym7AAjdqcuPjFF0MtiGv/UtWtVBdLUACIhYNYLClOAi4Zr6SO
-        eYT5iST06PXO6HQjx2pwKoLW
-X-Google-Smtp-Source: ABdhPJxeXSdmOh0ofTfS52IKc517CKWXYPl2uIUqdX+cLnnFL2hEr2df4+eB4FDB9vLWE6MFqzIhiA==
-X-Received: by 2002:aa7:8bd9:0:b029:2f2:f491:8836 with SMTP id s25-20020aa78bd90000b02902f2f4918836mr18654852pfd.47.1623617266443;
-        Sun, 13 Jun 2021 13:47:46 -0700 (PDT)
-Received: from localhost ([2405:6581:5360:1800:7285:c2ff:fec2:8f97])
-        by smtp.gmail.com with ESMTPSA id nn6sm9648463pjb.57.2021.06.13.13.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jun 2021 13:47:45 -0700 (PDT)
-From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-To:     michal.simek@xilinx.com, mturquette@baylibre.com, robh@kernel.org,
-        sboyd@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: [PATCH v3] dt-bindings: clk: zynqmp: convert bindings to YAML
-Date:   Mon, 14 Jun 2021 05:47:42 +0900
-Message-Id: <20210613204742.292053-1-iwamatsu@nigauri.org>
-X-Mailer: git-send-email 2.32.0
+        id S232269AbhFNCFw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Jun 2021 22:05:52 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:25925 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232287AbhFNCFv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Jun 2021 22:05:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1623636229; x=1655172229;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9iBFXDazEbc4Fz32FNWxfNTGqRKiyXnKG9jtdTIHOcQ=;
+  b=P5JWk7TaSEHF7UMQ0QSaARwwVUBSL0WvbXwbNu3SlP57cnjNWiClplDr
+   fn/AM6KYdLre8SWvFz8hysXjZsluDvZ8pRC/E1/lZbew75mnF/6XIn+Jd
+   hJZ9Jz7dxanFRpH0cYqp3A62fLy5alDobQjERZupyfF+qM05gYRToLQnP
+   SMUVEfFYYvchHD4d+WjW5XYNSO0cxNTyMIiLwPw0TFyExV4n3OPtitswN
+   1085QtkwmQnV1lssHjt+oq9RRU3HgufXL0SIr1CS4mHowXwfVpbRq9rvo
+   +h7EARXeq0mQKu/bIthAGDGoylmz2vf4Tb7VqCpdeeok4M0xL5KGzTjDL
+   g==;
+IronPort-SDR: Rebp3FzKQMTBBQ6mEyWb1e0i6UskqixnFFfWkhkRVjixus6Y3A9Lc7LKwSgQ/dsE3Jhil45YgV
+ mTdaEU9qgJDJvN1S7KO3F+aNj1Ei5jtjE6oJrMTlP8YqIrPGJBoJf8ClXaYkFb8jAzgg48zbnb
+ 7VEbMPXesjS+zWA/E34Cy7AIkujLjVRTiwcGQ6dyXaElU3VwF0WozlyvSX2AL1UmQTtLcHX6I0
+ uWOhaLXoa9feVfeoFV9WczvB/6WfPsPKfueYcm02C+99tWjXZMbSAdshkJau/BZyU12MmkouAN
+ rMw=
+X-IronPort-AV: E=Sophos;i="5.83,272,1616428800"; 
+   d="scan'208";a="171046373"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Jun 2021 10:03:49 +0800
+IronPort-SDR: 6kQwzTD6RrRajbShLbPWun6FRi9rryQI0bcXjedAc2IcbFjnWUP9BCeoQgcH24+5GbHHkJJA5e
+ M8ZvAwDinN/ggLw/tKSXvfv+IcU6tmhkpYHwL4g0IyDzF/OSATuS2Kb5L05lu8FcO5+kYC0cP/
+ EYL5kyTKyXKgxTGmjuDE5JjEg/XxuYuvB9KXhMJR4JmRfzv2KSaUVA1lw7G3+SzIiCMnv00wKh
+ cPOPrM0RzEDYtJ+c8vHjPpBB+Tx2wM9+xRjhiJPM6FBhq83H5r9IXWV4Lx2cnFzoE71qhG/5Zg
+ nnrtcnIiDNXR2vgTAFQ3j3hr
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2021 18:42:46 -0700
+IronPort-SDR: v8VZfZkM2I8/6nkF4hXJ6XJq456S9+2zQiCp1xZzOcGyLLPS+kSIE8cQa2pq8+iwfFhV8xhomK
+ zQAPXwQ0b0/Ip4oHFgdGprZUdS6ZdvYyRqS48TDxSFWNPwniECCHLonR0hi1HugrPAdrQ2tbA9
+ PtV2is/+886YvXcXp/aaNVeoF4ynGf7h6BdYcb7Qwl3XJrQsZ0Rf+oQX2YHiSvUxxAi7t9j82C
+ jl3GYqKDdFNXCvEzYxC9jIJ4TQ6YrOjYkwm23jBSvKWkfEacGHtaL21CgVeQ4O7p9QV+aso3N4
+ vpE=
+WDCIronportException: Internal
+Received: from unknown (HELO twashi.fujisawa.hgst.com) ([10.225.163.118])
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Jun 2021 19:03:49 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        linux-clock <linux-clk@vger.kernel.org>
+Cc:     stable@vger.kernel.org
+Subject: [PATCH] clk: Fix k210_clk_set_parent() in k210 driver
+Date:   Mon, 14 Jun 2021 11:02:17 +0900
+Message-Id: <20210614020217.42323-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert common clock for Xilinx Zynq MPSoC SoC bindings documentation
-to YAML.
+In k210_clk_set_parent(), add missing writel() call to update the mux
+register of a clock to change its parent.
 
-Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Fixes: c6ca7616f7d5 ("clk: Add RISC-V Canaan Kendryte K210 clock driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
-v3: Drop commit for mailbox/xlnx,zynqmp-ipi-mailbox.txt
-v2: Fix warning with DT_CHECKER_FLAGS=-m.
+ drivers/clk/clk-k210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 -------------------
- .../bindings/clock/xlnx,zynqmp-clk.yaml       | 63 +++++++++++++++++++
- 2 files changed, 63 insertions(+), 63 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
-deleted file mode 100644
-index 391ee1a60bed4a..00000000000000
---- a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
-+++ /dev/null
-@@ -1,63 +0,0 @@
----------------------------------------------------------------------------
--Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
--Zynq MPSoC firmware interface
----------------------------------------------------------------------------
--The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
--tree. It reads required input clock frequencies from the devicetree and acts
--as clock provider for all clock consumers of PS clocks.
--
--See clock_bindings.txt for more information on the generic clock bindings.
--
--Required properties:
-- - #clock-cells:	Must be 1
-- - compatible:		Must contain:	"xlnx,zynqmp-clk"
-- - clocks:		List of clock specifiers which are external input
--			clocks to the given clock controller. Please refer
--			the next section to find the input clocks for a
--			given controller.
-- - clock-names:		List of clock names which are exteral input clocks
--			to the given clock controller. Please refer to the
--			clock bindings for more details.
--
--Input clocks for zynqmp Ultrascale+ clock controller:
--
--The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
--inputs. These required clock inputs are:
-- - pss_ref_clk (PS reference clock)
-- - video_clk (reference clock for video system )
-- - pss_alt_ref_clk (alternative PS reference clock)
-- - aux_ref_clk
-- - gt_crx_ref_clk (transceiver reference clock)
--
--The following strings are optional parameters to the 'clock-names' property in
--order to provide an optional (E)MIO clock source:
-- - swdt0_ext_clk
-- - swdt1_ext_clk
-- - gem0_emio_clk
-- - gem1_emio_clk
-- - gem2_emio_clk
-- - gem3_emio_clk
-- - mio_clk_XX		# with XX = 00..77
-- - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
--
--
--Output clocks are registered based on clock information received
--from firmware. Output clocks indexes are mentioned in
--include/dt-bindings/clock/xlnx-zynqmp-clk.h.
--
---------
--Example
---------
--
--firmware {
--	zynqmp_firmware: zynqmp-firmware {
--		compatible = "xlnx,zynqmp-firmware";
--		method = "smc";
--		zynqmp_clk: clock-controller {
--			#clock-cells = <1>;
--			compatible = "xlnx,zynqmp-clk";
--			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
--			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
-new file mode 100644
-index 00000000000000..e7a1384fb646e4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/xlnx,zynqmp-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Xilinx Zynq Ultrascale+ MPSoC clock controller Device Tree Bindings
-+
-+maintainers:
-+  - Michal Simek <michal.simek@xilinx.com>
-+
-+description: |
-+  The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
-+  tree. It reads required input clock frequencies from the devicetree and acts
-+  as clock provider for all clock consumers of PS clocks.
-+
-+properties:
-+  compatible:
-+    const: xlnx,zynqmp-clk
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clocks:
-+    description: |
-+      List of clock specifiers which are external input
-+      clocks to the given clock controller.
-+    items:
-+      - description: PS reference clock
-+      - description: reference clock for video system
-+      - description: alternative PS reference clock
-+      - description: auxiliary reference clock
-+      - description: transceiver reference clock
-+
-+  clock-names:
-+    items:
-+      - const: pss_ref_clk
-+      - const: video_clk
-+      - const: pss_alt_ref_clk
-+      - const: aux_ref_clk
-+      - const: gt_crx_ref_clk
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    firmware {
-+      zynqmp_firmware: zynqmp-firmware {
-+        zynqmp_clk: clock-controller {
-+          #clock-cells = <1>;
-+          compatible = "xlnx,zynqmp-clk";
-+          clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
-+          clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
-+        };
-+      };
-+    };
-+...
+diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
+index 6c84abf5b2e3..67a7cb3503c3 100644
+--- a/drivers/clk/clk-k210.c
++++ b/drivers/clk/clk-k210.c
+@@ -722,6 +722,7 @@ static int k210_clk_set_parent(struct clk_hw *hw, u8 index)
+ 		reg |= BIT(cfg->mux_bit);
+ 	else
+ 		reg &= ~BIT(cfg->mux_bit);
++	writel(reg, ksc->regs + cfg->mux_reg);
+ 	spin_unlock_irqrestore(&ksc->clk_lock, flags);
+ 
+ 	return 0;
 -- 
-2.32.0
+2.31.1
 
