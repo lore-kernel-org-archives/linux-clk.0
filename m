@@ -2,96 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EB2C48BDF
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 02:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C12F1C48BE6
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 06:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16FF2613AB
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 02:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96972610CD
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 06:57:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232269AbhFNCFw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Jun 2021 22:05:52 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:25925 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232287AbhFNCFv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Jun 2021 22:05:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1623636229; x=1655172229;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9iBFXDazEbc4Fz32FNWxfNTGqRKiyXnKG9jtdTIHOcQ=;
-  b=P5JWk7TaSEHF7UMQ0QSaARwwVUBSL0WvbXwbNu3SlP57cnjNWiClplDr
-   fn/AM6KYdLre8SWvFz8hysXjZsluDvZ8pRC/E1/lZbew75mnF/6XIn+Jd
-   hJZ9Jz7dxanFRpH0cYqp3A62fLy5alDobQjERZupyfF+qM05gYRToLQnP
-   SMUVEfFYYvchHD4d+WjW5XYNSO0cxNTyMIiLwPw0TFyExV4n3OPtitswN
-   1085QtkwmQnV1lssHjt+oq9RRU3HgufXL0SIr1CS4mHowXwfVpbRq9rvo
-   +h7EARXeq0mQKu/bIthAGDGoylmz2vf4Tb7VqCpdeeok4M0xL5KGzTjDL
-   g==;
-IronPort-SDR: Rebp3FzKQMTBBQ6mEyWb1e0i6UskqixnFFfWkhkRVjixus6Y3A9Lc7LKwSgQ/dsE3Jhil45YgV
- mTdaEU9qgJDJvN1S7KO3F+aNj1Ei5jtjE6oJrMTlP8YqIrPGJBoJf8ClXaYkFb8jAzgg48zbnb
- 7VEbMPXesjS+zWA/E34Cy7AIkujLjVRTiwcGQ6dyXaElU3VwF0WozlyvSX2AL1UmQTtLcHX6I0
- uWOhaLXoa9feVfeoFV9WczvB/6WfPsPKfueYcm02C+99tWjXZMbSAdshkJau/BZyU12MmkouAN
- rMw=
-X-IronPort-AV: E=Sophos;i="5.83,272,1616428800"; 
-   d="scan'208";a="171046373"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Jun 2021 10:03:49 +0800
-IronPort-SDR: 6kQwzTD6RrRajbShLbPWun6FRi9rryQI0bcXjedAc2IcbFjnWUP9BCeoQgcH24+5GbHHkJJA5e
- M8ZvAwDinN/ggLw/tKSXvfv+IcU6tmhkpYHwL4g0IyDzF/OSATuS2Kb5L05lu8FcO5+kYC0cP/
- EYL5kyTKyXKgxTGmjuDE5JjEg/XxuYuvB9KXhMJR4JmRfzv2KSaUVA1lw7G3+SzIiCMnv00wKh
- cPOPrM0RzEDYtJ+c8vHjPpBB+Tx2wM9+xRjhiJPM6FBhq83H5r9IXWV4Lx2cnFzoE71qhG/5Zg
- nnrtcnIiDNXR2vgTAFQ3j3hr
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2021 18:42:46 -0700
-IronPort-SDR: v8VZfZkM2I8/6nkF4hXJ6XJq456S9+2zQiCp1xZzOcGyLLPS+kSIE8cQa2pq8+iwfFhV8xhomK
- zQAPXwQ0b0/Ip4oHFgdGprZUdS6ZdvYyRqS48TDxSFWNPwniECCHLonR0hi1HugrPAdrQ2tbA9
- PtV2is/+886YvXcXp/aaNVeoF4ynGf7h6BdYcb7Qwl3XJrQsZ0Rf+oQX2YHiSvUxxAi7t9j82C
- jl3GYqKDdFNXCvEzYxC9jIJ4TQ6YrOjYkwm23jBSvKWkfEacGHtaL21CgVeQ4O7p9QV+aso3N4
- vpE=
-WDCIronportException: Internal
-Received: from unknown (HELO twashi.fujisawa.hgst.com) ([10.225.163.118])
-  by uls-op-cesaip02.wdc.com with ESMTP; 13 Jun 2021 19:03:49 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        linux-clock <linux-clk@vger.kernel.org>
-Cc:     stable@vger.kernel.org
-Subject: [PATCH] clk: Fix k210_clk_set_parent() in k210 driver
-Date:   Mon, 14 Jun 2021 11:02:17 +0900
-Message-Id: <20210614020217.42323-1-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.31.1
+        id S232384AbhFNG74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jun 2021 02:59:56 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:48924 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232434AbhFNG7z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 02:59:55 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15E6ucF6007613;
+        Mon, 14 Jun 2021 02:57:51 -0400
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 394su5e9nj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Jun 2021 02:57:51 -0400
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 15E6vnW2060166
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jun 2021 02:57:49 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
+ Mon, 14 Jun 2021 02:57:49 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
+ Mon, 14 Jun 2021 02:57:49 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.858.5 via Frontend Transport;
+ Mon, 14 Jun 2021 02:57:49 -0400
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 15E6vlpi028812;
+        Mon, 14 Jun 2021 02:57:47 -0400
+From:   <alexandru.tachici@analog.com>
+To:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>, <petre.minciunescu@analog.com>,
+        Alexandru Tachici <alexandru.tachici@analog.com>
+Subject: [PATCH v2 0/2] clk: ad9545: Add support
+Date:   Mon, 14 Jun 2021 10:07:16 +0300
+Message-ID: <20210614070718.78041-1-alexandru.tachici@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: GAzMq89hqKJRHd9KXjYeONVTX0IhzZ_R
+X-Proofpoint-GUID: GAzMq89hqKJRHd9KXjYeONVTX0IhzZ_R
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-06-14_01:2021-06-11,2021-06-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106140050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In k210_clk_set_parent(), add missing writel() call to update the mux
-register of a clock to change its parent.
+From: Alexandru Tachici <alexandru.tachici@analog.com>
 
-Fixes: c6ca7616f7d5 ("clk: Add RISC-V Canaan Kendryte K210 clock driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- drivers/clk/clk-k210.c | 1 +
- 1 file changed, 1 insertion(+)
+Add support for AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588,
+1 pps Synchronizer and Jitter Cleaner.
 
-diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
-index 6c84abf5b2e3..67a7cb3503c3 100644
---- a/drivers/clk/clk-k210.c
-+++ b/drivers/clk/clk-k210.c
-@@ -722,6 +722,7 @@ static int k210_clk_set_parent(struct clk_hw *hw, u8 index)
- 		reg |= BIT(cfg->mux_bit);
- 	else
- 		reg &= ~BIT(cfg->mux_bit);
-+	writel(reg, ksc->regs + cfg->mux_reg);
- 	spin_unlock_irqrestore(&ksc->clk_lock, flags);
- 
- 	return 0;
--- 
-2.31.1
+At the core of the device there are PLL blocks. Each block consists
+of one DPLL and one APLL. The DPLL can be fed timestamps from one of
+the 4 reference input dividers or one of the two auxiliary NCOs.
 
+The APLL takes the output of the DPLL and up-converts this
+frequency to 1.2-2.0 GHZ. First 6 output dividers are receiving
+clock from APLL0 and last 4 outputs are receiving clock from APLL1.
+
+Current approach is to register under common clock framework,
+depending whether they are mentioned in the device-tree,
+any of the used references input dividers, the two auxiliary
+NCOs, PLL blocks, output dividers.
+
+A clock tree example:
+Ref-B
+  Ref-B-Div
+    PLL0
+      Q0C-div
+    PLL1
+      Q1A-div
+      Q1B-div
+
+Alexandru Tachici (2):
+  clk: ad9545: Add support
+  dt-bindings: clock: ad9545: Add documentation
+
+Changelog v1 -> v2:
+- allow uHz DPLL loop bandwidth in DT
+- allow user to set different tub fill/drain rates per DPLL from DT
+for improved locking detection
+- added reference priorities, DPLLs now can have multiple parents selected based on
+the validity of the reference in question and priority
+- added fast ACQ process that can be configured in the DT
+- fixed DT bindings errors
+- added support for system clock compensation
+
+ .../devicetree/bindings/clock/clk-ad9545.yaml |  556 ++++
+ drivers/clk/Kconfig                           |    6 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/adi/Kconfig                       |   29 +
+ drivers/clk/adi/Makefile                      |    9 +
+ drivers/clk/adi/clk-ad9545-i2c.c              |   62 +
+ drivers/clk/adi/clk-ad9545-spi.c              |   76 +
+ drivers/clk/adi/clk-ad9545.c                  | 2428 +++++++++++++++++
+ drivers/clk/adi/clk-ad9545.h                  |   16 +
+ include/dt-bindings/clock/ad9545.h            |   69 +
+ 10 files changed, 3252 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/clk-ad9545.yaml
+ create mode 100644 drivers/clk/adi/Kconfig
+ create mode 100644 drivers/clk/adi/Makefile
+ create mode 100644 drivers/clk/adi/clk-ad9545-i2c.c
+ create mode 100644 drivers/clk/adi/clk-ad9545-spi.c
+ create mode 100644 drivers/clk/adi/clk-ad9545.c
+ create mode 100644 drivers/clk/adi/clk-ad9545.h
+ create mode 100644 include/dt-bindings/clock/ad9545.h
+
+--
+2.25.1
