@@ -2,106 +2,201 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE18BC2B9F4
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 13:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF56FC2B9F4
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 13:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92ED46109E
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 13:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88CCF611CE
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 13:44:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234157AbhFNNl7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jun 2021 09:41:59 -0400
-Received: from mail-io1-f45.google.com ([209.85.166.45]:36630 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234108AbhFNNl5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 09:41:57 -0400
-Received: by mail-io1-f45.google.com with SMTP id s19so29885317ioc.3;
-        Mon, 14 Jun 2021 06:39:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=UQo+V/Q8ujvQ1+LtWpa/t6KpgRcbSaC4jLowXnhsXv8=;
-        b=i9F+SrFn6dLlnXIIYihPzE4v8Vxnc6prvUIDbhXXiKgRPxG1ksJHm7bs6CWbqJWj0D
-         0uUQIahyjC1geyimoWz2l5+QWeVLUkZg0LwTfDjC5MMPKmDBAU8uktuU4GUdyFut9Zmt
-         zfiL7RwQ4vIFFONCc8XG8dQ4ZoPwBtam+2bVukiiEalMICOmBKZqr8mgviDXvj5PFJ6Z
-         AnhR3yXqE8O/RGoRbi0UG+4KNnDujaTSTWPOwcl0Ur55kgGHACmhysQy57IwwDoA4x4i
-         a4QzPp1+WUc4YRY1v+3E4f3pBTva5XU9Wsck0MD/NzqIJ2Ulys8/xvY38k+KKxfUnib1
-         s+gA==
-X-Gm-Message-State: AOAM533r+julw3DeteQnyUl3GkN1edR1jwZZkDAOFnlR38UdPsQIVdyQ
-        yB8aRn5zyc+B76wMg37DCSHL2fmIMg==
-X-Google-Smtp-Source: ABdhPJwClHKqYg1uOG84hcQcUsrnUnI87mNovKnSC2hVdKLbd4HUa3QFwYc04l6xz7mEXwDGqNywZg==
-X-Received: by 2002:a02:6944:: with SMTP id e65mr16771387jac.31.1623677993634;
-        Mon, 14 Jun 2021 06:39:53 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id z8sm8677395ilq.30.2021.06.14.06.39.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 06:39:52 -0700 (PDT)
-Received: (nullmailer pid 630753 invoked by uid 1000);
-        Mon, 14 Jun 2021 13:39:48 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     alexandru.tachici@analog.com
-Cc:     sboyd@kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        devicetree@vger.kernel.org, petre.minciunescu@analog.com
-In-Reply-To: <20210614070718.78041-3-alexandru.tachici@analog.com>
-References: <20210614070718.78041-1-alexandru.tachici@analog.com> <20210614070718.78041-3-alexandru.tachici@analog.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: ad9545: Add documentation
-Date:   Mon, 14 Jun 2021 07:39:48 -0600
-Message-Id: <1623677988.146956.630752.nullmailer@robh.at.kernel.org>
+        id S233831AbhFNNqH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jun 2021 09:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233429AbhFNNqH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 09:46:07 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EAB7C061574
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jun 2021 06:44:04 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1lsmsh-0005oX-82; Mon, 14 Jun 2021 15:43:59 +0200
+Message-ID: <24cd89bb32cae386003a188623cdd7730580b643.camel@pengutronix.de>
+Subject: Re: [PATCH] clk: imx8mq: remove SYS PLL 1/2 clock gates
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Date:   Mon, 14 Jun 2021 15:43:58 +0200
+In-Reply-To: <YMdZvv04Fl3S9bCh@ryzen.lan>
+References: <20210528180135.1640876-1-l.stach@pengutronix.de>
+         <162262001425.4130789.11065881280638357225@swboyd.mtv.corp.google.com>
+         <YMdZvv04Fl3S9bCh@ryzen.lan>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.1 (3.40.1-1.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 14 Jun 2021 10:07:18 +0300, alexandru.tachici@analog.com wrote:
-> From: Alexandru Tachici <alexandru.tachici@analog.com>
+Am Montag, dem 14.06.2021 um 16:29 +0300 schrieb Abel Vesa:
+> On 21-06-02 00:46:54, Stephen Boyd wrote:
+> > Quoting Lucas Stach (2021-05-28 11:01:35)
+> > > Remove the PLL clock gates as the allowing to gate the sys1_pll_266m breaks
+> > > the uSDHC module which is sporadically unable to enumerate devices after
+> > > this change. Also it makes AMP clock management harder with no obvious
+> > > benefit to Linux, so just revert the change.
+> > > 
+> > > Fixes: b04383b6a558 ("clk: imx8mq: Define gates for pll1/2 fixed dividers")
+> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > ---
+> > > Previously this was a more targeted change only reverting the problematic
+> > > bit for uSDHC, but Jacky Bai expressed the desire to just revert the whole
+> > > change, as it makes things harder for AMP use-cases.
+> > > ---
+> > 
+> > Do we need to take this via clk-fixes for this release? Or can it be
+> > punted to the next one? The commit it is fixing is not new this merge
+> > window, but if there are big problems then I guess it is OK. The patch
+> > is fairly large but if uSDHC works better with it applied that is
+> > probably good enough.
+> > 
 > 
-> Add dt bindings for ad9545.
+> If Lucas has nothing against, I'll send this along with my clk-imx for
+> 5.14 updates. Makes even more sense since it is touching the bindings.
+> See my comment below.
+
+Yea, the regression has been there long enough that it probably doesn't
+matter if this waits for one or two more weeks.
+
+Regards,
+Lucas
+
 > 
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-> ---
->  .../devicetree/bindings/clock/clk-ad9545.yaml | 556 ++++++++++++++++++
->  include/dt-bindings/clock/ad9545.h            |  69 +++
->  2 files changed, 625 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/clk-ad9545.yaml
->  create mode 100644 include/dt-bindings/clock/ad9545.h
+> > >  drivers/clk/imx/clk-imx8mq.c             | 56 ++++++++----------------
+> > >  include/dt-bindings/clock/imx8mq-clock.h | 19 --------
+> > >  2 files changed, 18 insertions(+), 57 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> > > index b08019e1faf9..c491bc9c61ce 100644
+> > > --- a/drivers/clk/imx/clk-imx8mq.c
+> > > +++ b/drivers/clk/imx/clk-imx8mq.c
+> > > @@ -358,46 +358,26 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> > >         hws[IMX8MQ_VIDEO2_PLL_OUT] = imx_clk_hw_sscg_pll("video2_pll_out", video2_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
+> > >  
+> > >         /* SYS PLL1 fixed output */
+> > > -       hws[IMX8MQ_SYS1_PLL_40M_CG] = imx_clk_hw_gate("sys1_pll_40m_cg", "sys1_pll_out", base + 0x30, 9);
+> > > -       hws[IMX8MQ_SYS1_PLL_80M_CG] = imx_clk_hw_gate("sys1_pll_80m_cg", "sys1_pll_out", base + 0x30, 11);
+> > > -       hws[IMX8MQ_SYS1_PLL_100M_CG] = imx_clk_hw_gate("sys1_pll_100m_cg", "sys1_pll_out", base + 0x30, 13);
+> > > -       hws[IMX8MQ_SYS1_PLL_133M_CG] = imx_clk_hw_gate("sys1_pll_133m_cg", "sys1_pll_out", base + 0x30, 15);
+> > > -       hws[IMX8MQ_SYS1_PLL_160M_CG] = imx_clk_hw_gate("sys1_pll_160m_cg", "sys1_pll_out", base + 0x30, 17);
+> > > -       hws[IMX8MQ_SYS1_PLL_200M_CG] = imx_clk_hw_gate("sys1_pll_200m_cg", "sys1_pll_out", base + 0x30, 19);
+> > > -       hws[IMX8MQ_SYS1_PLL_266M_CG] = imx_clk_hw_gate("sys1_pll_266m_cg", "sys1_pll_out", base + 0x30, 21);
+> > > -       hws[IMX8MQ_SYS1_PLL_400M_CG] = imx_clk_hw_gate("sys1_pll_400m_cg", "sys1_pll_out", base + 0x30, 23);
+> > > -       hws[IMX8MQ_SYS1_PLL_800M_CG] = imx_clk_hw_gate("sys1_pll_800m_cg", "sys1_pll_out", base + 0x30, 25);
+> > > -
+> > > -       hws[IMX8MQ_SYS1_PLL_40M] = imx_clk_hw_fixed_factor("sys1_pll_40m", "sys1_pll_40m_cg", 1, 20);
+> > > -       hws[IMX8MQ_SYS1_PLL_80M] = imx_clk_hw_fixed_factor("sys1_pll_80m", "sys1_pll_80m_cg", 1, 10);
+> > > -       hws[IMX8MQ_SYS1_PLL_100M] = imx_clk_hw_fixed_factor("sys1_pll_100m", "sys1_pll_100m_cg", 1, 8);
+> > > -       hws[IMX8MQ_SYS1_PLL_133M] = imx_clk_hw_fixed_factor("sys1_pll_133m", "sys1_pll_133m_cg", 1, 6);
+> > > -       hws[IMX8MQ_SYS1_PLL_160M] = imx_clk_hw_fixed_factor("sys1_pll_160m", "sys1_pll_160m_cg", 1, 5);
+> > > -       hws[IMX8MQ_SYS1_PLL_200M] = imx_clk_hw_fixed_factor("sys1_pll_200m", "sys1_pll_200m_cg", 1, 4);
+> > > -       hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_266m_cg", 1, 3);
+> > > -       hws[IMX8MQ_SYS1_PLL_400M] = imx_clk_hw_fixed_factor("sys1_pll_400m", "sys1_pll_400m_cg", 1, 2);
+> > > -       hws[IMX8MQ_SYS1_PLL_800M] = imx_clk_hw_fixed_factor("sys1_pll_800m", "sys1_pll_800m_cg", 1, 1);
+> > > +       hws[IMX8MQ_SYS1_PLL_40M] = imx_clk_hw_fixed_factor("sys1_pll_40m", "sys1_pll_out", 1, 20);
+> > > +       hws[IMX8MQ_SYS1_PLL_80M] = imx_clk_hw_fixed_factor("sys1_pll_80m", "sys1_pll_out", 1, 10);
+> > > +       hws[IMX8MQ_SYS1_PLL_100M] = imx_clk_hw_fixed_factor("sys1_pll_100m", "sys1_pll_out", 1, 8);
+> > > +       hws[IMX8MQ_SYS1_PLL_133M] = imx_clk_hw_fixed_factor("sys1_pll_133m", "sys1_pll_out", 1, 6);
+> > > +       hws[IMX8MQ_SYS1_PLL_160M] = imx_clk_hw_fixed_factor("sys1_pll_160m", "sys1_pll_out", 1, 5);
+> > > +       hws[IMX8MQ_SYS1_PLL_200M] = imx_clk_hw_fixed_factor("sys1_pll_200m", "sys1_pll_out", 1, 4);
+> > > +       hws[IMX8MQ_SYS1_PLL_266M] = imx_clk_hw_fixed_factor("sys1_pll_266m", "sys1_pll_out", 1, 3);
+> > > +       hws[IMX8MQ_SYS1_PLL_400M] = imx_clk_hw_fixed_factor("sys1_pll_400m", "sys1_pll_out", 1, 2);
+> > > +       hws[IMX8MQ_SYS1_PLL_800M] = imx_clk_hw_fixed_factor("sys1_pll_800m", "sys1_pll_out", 1, 1);
+> > >  
+> > >         /* SYS PLL2 fixed output */
+> > > -       hws[IMX8MQ_SYS2_PLL_50M_CG] = imx_clk_hw_gate("sys2_pll_50m_cg", "sys2_pll_out", base + 0x3c, 9);
+> > > -       hws[IMX8MQ_SYS2_PLL_100M_CG] = imx_clk_hw_gate("sys2_pll_100m_cg", "sys2_pll_out", base + 0x3c, 11);
+> > > -       hws[IMX8MQ_SYS2_PLL_125M_CG] = imx_clk_hw_gate("sys2_pll_125m_cg", "sys2_pll_out", base + 0x3c, 13);
+> > > -       hws[IMX8MQ_SYS2_PLL_166M_CG] = imx_clk_hw_gate("sys2_pll_166m_cg", "sys2_pll_out", base + 0x3c, 15);
+> > > -       hws[IMX8MQ_SYS2_PLL_200M_CG] = imx_clk_hw_gate("sys2_pll_200m_cg", "sys2_pll_out", base + 0x3c, 17);
+> > > -       hws[IMX8MQ_SYS2_PLL_250M_CG] = imx_clk_hw_gate("sys2_pll_250m_cg", "sys2_pll_out", base + 0x3c, 19);
+> > > -       hws[IMX8MQ_SYS2_PLL_333M_CG] = imx_clk_hw_gate("sys2_pll_333m_cg", "sys2_pll_out", base + 0x3c, 21);
+> > > -       hws[IMX8MQ_SYS2_PLL_500M_CG] = imx_clk_hw_gate("sys2_pll_500m_cg", "sys2_pll_out", base + 0x3c, 23);
+> > > -       hws[IMX8MQ_SYS2_PLL_1000M_CG] = imx_clk_hw_gate("sys2_pll_1000m_cg", "sys2_pll_out", base + 0x3c, 25);
+> > > -
+> > > -       hws[IMX8MQ_SYS2_PLL_50M] = imx_clk_hw_fixed_factor("sys2_pll_50m", "sys2_pll_50m_cg", 1, 20);
+> > > -       hws[IMX8MQ_SYS2_PLL_100M] = imx_clk_hw_fixed_factor("sys2_pll_100m", "sys2_pll_100m_cg", 1, 10);
+> > > -       hws[IMX8MQ_SYS2_PLL_125M] = imx_clk_hw_fixed_factor("sys2_pll_125m", "sys2_pll_125m_cg", 1, 8);
+> > > -       hws[IMX8MQ_SYS2_PLL_166M] = imx_clk_hw_fixed_factor("sys2_pll_166m", "sys2_pll_166m_cg", 1, 6);
+> > > -       hws[IMX8MQ_SYS2_PLL_200M] = imx_clk_hw_fixed_factor("sys2_pll_200m", "sys2_pll_200m_cg", 1, 5);
+> > > -       hws[IMX8MQ_SYS2_PLL_250M] = imx_clk_hw_fixed_factor("sys2_pll_250m", "sys2_pll_250m_cg", 1, 4);
+> > > -       hws[IMX8MQ_SYS2_PLL_333M] = imx_clk_hw_fixed_factor("sys2_pll_333m", "sys2_pll_333m_cg", 1, 3);
+> > > -       hws[IMX8MQ_SYS2_PLL_500M] = imx_clk_hw_fixed_factor("sys2_pll_500m", "sys2_pll_500m_cg", 1, 2);
+> > > -       hws[IMX8MQ_SYS2_PLL_1000M] = imx_clk_hw_fixed_factor("sys2_pll_1000m", "sys2_pll_1000m_cg", 1, 1);
+> > > +       hws[IMX8MQ_SYS2_PLL_50M] = imx_clk_hw_fixed_factor("sys2_pll_50m", "sys2_pll_out", 1, 20);
+> > > +       hws[IMX8MQ_SYS2_PLL_100M] = imx_clk_hw_fixed_factor("sys2_pll_100m", "sys2_pll_out", 1, 10);
+> > > +       hws[IMX8MQ_SYS2_PLL_125M] = imx_clk_hw_fixed_factor("sys2_pll_125m", "sys2_pll_out", 1, 8);
+> > > +       hws[IMX8MQ_SYS2_PLL_166M] = imx_clk_hw_fixed_factor("sys2_pll_166m", "sys2_pll_out", 1, 6);
+> > > +       hws[IMX8MQ_SYS2_PLL_200M] = imx_clk_hw_fixed_factor("sys2_pll_200m", "sys2_pll_out", 1, 5);
+> > > +       hws[IMX8MQ_SYS2_PLL_250M] = imx_clk_hw_fixed_factor("sys2_pll_250m", "sys2_pll_out", 1, 4);
+> > > +       hws[IMX8MQ_SYS2_PLL_333M] = imx_clk_hw_fixed_factor("sys2_pll_333m", "sys2_pll_out", 1, 3);
+> > > +       hws[IMX8MQ_SYS2_PLL_500M] = imx_clk_hw_fixed_factor("sys2_pll_500m", "sys2_pll_out", 1, 2);
+> > > +       hws[IMX8MQ_SYS2_PLL_1000M] = imx_clk_hw_fixed_factor("sys2_pll_1000m", "sys2_pll_out", 1, 1);
+> > >  
+> > >         hws[IMX8MQ_CLK_MON_AUDIO_PLL1_DIV] = imx_clk_hw_divider("audio_pll1_out_monitor", "audio_pll1_bypass", base + 0x78, 0, 3);
+> > >         hws[IMX8MQ_CLK_MON_AUDIO_PLL2_DIV] = imx_clk_hw_divider("audio_pll2_out_monitor", "audio_pll2_bypass", base + 0x78, 4, 3);
+> > > diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+> > > index 82e907ce7bdd..afa74d7ba100 100644
+> > > --- a/include/dt-bindings/clock/imx8mq-clock.h
+> > > +++ b/include/dt-bindings/clock/imx8mq-clock.h
+> > > @@ -405,25 +405,6 @@
+> > >  
+> > >  #define IMX8MQ_VIDEO2_PLL1_REF_SEL             266
+> > >  
+> > > -#define IMX8MQ_SYS1_PLL_40M_CG                 267
+> > > -#define IMX8MQ_SYS1_PLL_80M_CG                 268
+> > > -#define IMX8MQ_SYS1_PLL_100M_CG                        269
+> > > -#define IMX8MQ_SYS1_PLL_133M_CG                        270
+> > > -#define IMX8MQ_SYS1_PLL_160M_CG                        271
+> > > -#define IMX8MQ_SYS1_PLL_200M_CG                        272
+> > > -#define IMX8MQ_SYS1_PLL_266M_CG                        273
+> > > -#define IMX8MQ_SYS1_PLL_400M_CG                        274
+> > > -#define IMX8MQ_SYS1_PLL_800M_CG                        275
+> > > -#define IMX8MQ_SYS2_PLL_50M_CG                 276
+> > > -#define IMX8MQ_SYS2_PLL_100M_CG                        277
+> > > -#define IMX8MQ_SYS2_PLL_125M_CG                        278
+> > > -#define IMX8MQ_SYS2_PLL_166M_CG                        279
+> > > -#define IMX8MQ_SYS2_PLL_200M_CG                        280
+> > > -#define IMX8MQ_SYS2_PLL_250M_CG                        281
+> > > -#define IMX8MQ_SYS2_PLL_333M_CG                        282
+> > > -#define IMX8MQ_SYS2_PLL_500M_CG                        283
+> > > -#define IMX8MQ_SYS2_PLL_1000M_CG               284
+> > > -
+> > 
+> > Just to doubly confirm, none of these are being used in dts files? It
+> > would be simpler to leave these defines here and drop the clks from the
+> > driver to reduce risk.
+> > 
 > 
+> Double checked. These are not used in any dts files.
+> 
+> > >  #define IMX8MQ_CLK_GPU_CORE                    285
+> > >  #define IMX8MQ_CLK_GPU_SHADER                  286
+> > >  #define IMX8MQ_CLK_M4_CORE                     287
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:115:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:118:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:153:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:156:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:280:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:283:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:298:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:301:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:389:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:392:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:435:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-./Documentation/devicetree/bindings/clock/clk-ad9545.yaml:438:10: [warning] wrong indentation: expected 8 but found 9 (indentation)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/clk-ad9545.example.dt.yaml: ad9545@4A: 'clocks' is a dependency of 'assigned-clocks'
-	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/clock.yaml
-\ndoc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1491545
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
 
