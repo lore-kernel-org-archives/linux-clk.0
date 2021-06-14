@@ -2,725 +2,375 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7B0C49361
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 06:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07607C48BE6
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 08:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67FCF613BF
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 06:59:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D506D61019
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 08:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232483AbhFNHBB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jun 2021 03:01:01 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:33298 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232455AbhFNHBA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 03:01:00 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15E6uJx8007490;
-        Mon, 14 Jun 2021 02:58:57 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 394su5e9rh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Jun 2021 02:58:57 -0400
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 15E6wuXD060258
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jun 2021 02:58:56 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
- Mon, 14 Jun 2021 02:58:56 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
- Mon, 14 Jun 2021 02:58:55 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.858.5 via Frontend Transport;
- Mon, 14 Jun 2021 02:58:55 -0400
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 15E6vlpk028812;
-        Mon, 14 Jun 2021 02:57:50 -0400
-From:   <alexandru.tachici@analog.com>
-To:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <petre.minciunescu@analog.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>
-Subject: [PATCH v2 2/2] dt-bindings: clock: ad9545: Add documentation
-Date:   Mon, 14 Jun 2021 10:07:18 +0300
-Message-ID: <20210614070718.78041-3-alexandru.tachici@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210614070718.78041-1-alexandru.tachici@analog.com>
-References: <20210614070718.78041-1-alexandru.tachici@analog.com>
+        id S232579AbhFNIyx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jun 2021 04:54:53 -0400
+Received: from mail-am6eur05on2059.outbound.protection.outlook.com ([40.107.22.59]:20079
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232528AbhFNIyx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Jun 2021 04:54:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JNp3Z0GdGNKfPbYo2wpt2VAHjrXc53BonldJ/hG8M3T8e313Ob1q02b6uxhqPfEuS7Z8RGI3fC0rAt15JZyVMYxYfsEsKf/r7kyE/iTIi+uiF5FIJ4aesOHk3oDJYhiADEumB80vveOKVA7DcrFwp0rgZpeqSBWQvz04ymbvubGPdV5EXD6Rp6P5IqWCyZp3Nv36ia+i6Tolt+LNzK5CCbEPZZA5shMn19uSO17i9DP7V1pxYCU7EXIVPhs3OBWevlM2PrrTwUpx82GtwTbqCAl5u1D2omtbWiWDXFV/KFE2aJCLHVXv03vVV5G/bYsnaRQ6KoQ8xy3aGqSDPlQuCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcxTcNX1wfOIhJZXPD782gd8+7FIk+4FC+qQZrLl9zU=;
+ b=V+hWKb0J1UQwbp2jFhy64GysoFgIEqgi8P9POBOYwUfNrn8ktbelvy+GKJuSXfmaSh3g9B9Q+FzR4QNLtogLqvNBm+BBJxxC1LV3rp0ZYtCAo5qm9n/O9EFd0cBycHdlPiGJuE/2gSNa7fHe4mdCjIoSxGn9C2lNxBI9nzFVMtl0/reFcAMNFObW3DkJ5GvRShFTMB/NsQZgy/h1FH2dpHazPrHwtbW1OPUcvLVEfovKx9W0IAvNNOgeddyr3KwS1iw4ndh5v6d+onNfIupJHaQDpAMTaVto9KvYKlXJwgFIyCzd6Qw7NZxRxPbbQRS80Qr7WSIL6S795zCpXCs7lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcxTcNX1wfOIhJZXPD782gd8+7FIk+4FC+qQZrLl9zU=;
+ b=LLEBfETOaA0gNcIbUOqLWN4kdTXFheFb4+/rB1cIoQD4DvnxE35Xdqxul3wPx6K1V69P39haj0LOYT7BDpk0h5XRRuxUUMdZSG6VBrhB84NWfat2FNAlmErS7ik+llI8xwkduNbZpQFcALJBQiA7cb8w+cWGMt6ptz2YdOwTXSg=
+Authentication-Results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com (2603:10a6:800:57::8)
+ by VI1PR0401MB2557.eurprd04.prod.outlook.com (2603:10a6:800:56::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21; Mon, 14 Jun
+ 2021 08:52:48 +0000
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::49a5:9:d201:2382]) by VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::49a5:9:d201:2382%6]) with mapi id 15.20.4219.025; Mon, 14 Jun 2021
+ 08:52:47 +0000
+Date:   Mon, 14 Jun 2021 11:52:46 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sboyd@kernel.org, dongas86@gmail.com, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 01/10] clk: imx: scu: add more scu clocks
+Message-ID: <YMcY3uV7RIeGoJre@ryzen.lan>
+References: <20210604090943.3519350-1-aisheng.dong@nxp.com>
+ <20210604090943.3519350-2-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210604090943.3519350-2-aisheng.dong@nxp.com>
+X-Originating-IP: [188.27.182.130]
+X-ClientProxiedBy: VI1PR0401CA0016.eurprd04.prod.outlook.com
+ (2603:10a6:800:4a::26) To VI1PR0401MB2559.eurprd04.prod.outlook.com
+ (2603:10a6:800:57::8)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: m3vQzOUbC1GInERA1q6vjXJz_u7SUEiE
-X-Proofpoint-GUID: m3vQzOUbC1GInERA1q6vjXJz_u7SUEiE
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-14_01:2021-06-11,2021-06-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106140050
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ryzen.lan (188.27.182.130) by VI1PR0401CA0016.eurprd04.prod.outlook.com (2603:10a6:800:4a::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.20 via Frontend Transport; Mon, 14 Jun 2021 08:52:47 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7d7ac041-02ec-4772-37b7-08d92f11c898
+X-MS-TrafficTypeDiagnostic: VI1PR0401MB2557:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0401MB255763EFC43426EEB9CD7F48F6319@VI1PR0401MB2557.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:285;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2KW7oWrs3UXkwZ6FVbt+HG8OkEnW3wu0HeCaWcGbsXwn2meYs+XtbabSPWINntAbbzgaKjboYfj2KVln1nGBfJWLqz2X2MUuJYwpUPysVYRsuejsUmjhksyHVMbZNBlTDmC8eg1V5k4YEUJDjh/vdVBRVMXM9xunF5PXMPk+XOSy9r9yowVC7LnuJ1seSqgD5xGnO4d7I2JZ6USen0ZFL9lR9iv37ZngujCJwTGL7AOZ5Q5vyVRECFPCb78tA2aq0a9iCI94xwvtUySQek8ZUX/4PJ5DtWcdlRXxMufeUIeMOcYumRwDkkEaLYqV3+DwMYWZ6uDahm2zm9n+XprexPiddXsYWc4Qnae0MBa7TY/lXuHay1DhZAE1stdJnadKWeAY0PTcCC20EetZDIB3FTNXujfg3riI0AV4vHeMxlCRAfjF8TplI6fLbX/EapvEiCcXLQdoOM9xyJFYygTkmDEtyT5OEY24X3O9TMd0/NJHHZ+Ikw4F3qPTgysvRFU/lEYj4rNgGgn6XiD+N1pHYeQxQQxxuiDYmoesKg4IvZjqqYbEOB6cX4r2UPaOiMvJRIQhdP9I1J+7M/UXar2JxWohOHEVE9EsrhhUiQomd6U4ua8aILIZ/2g4/UZW8SEMd9J4fzeGMbj4SDXYGGp0CA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0401MB2559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(366004)(376002)(396003)(346002)(9686003)(186003)(66946007)(6862004)(2906002)(16526019)(8886007)(83380400001)(44832011)(8936002)(316002)(30864003)(86362001)(6636002)(26005)(66556008)(66476007)(55016002)(38350700002)(38100700002)(8676002)(6506007)(53546011)(5660300002)(52116002)(956004)(7696005)(36756003)(4326008)(478600001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ymFfMAe3yCqCKeozHtbWZiwLq30IwcWOlej2mDjC4dfbN56e7iW++p2O50gO?=
+ =?us-ascii?Q?8DVjCRmBB8ToKw+LKJSmxqJRIkeXXXb3ao31GHjGpzbybhW2hGz/a4cG8HG0?=
+ =?us-ascii?Q?YyCVi6Kl7PhoDIVr0OZNJWGUqsUoJ+58nV0YPEaRGBqfdLSVT33XEltwxW+S?=
+ =?us-ascii?Q?1iQH7Hx6lwzm/LMbiSXd4t2Y5qZ+rlL8MfWd0XK2NPajaxzQy6F9atz5P6Yh?=
+ =?us-ascii?Q?gWZSuQO2X1y1oaOgXejgJHm6rDozRFse+1ugjNnBDmc20wiZVGUG3cuW18GD?=
+ =?us-ascii?Q?RlHRddXBbSP6S99gvYaDT3c5w2ZGJv07Kzma5qDj2O48FD9OhC1xPRfgHb76?=
+ =?us-ascii?Q?RzwiyzkoInYlBCGJH2Yb66C+QBVUwMoRyXbbeNsZ0IU+90SO0FPCDPH2vKre?=
+ =?us-ascii?Q?ORKt1huQZy4nXMGbf8wyNohBQF5ujbrEJ/hxrn/0kEJW5e11IFjVhpzibG+Q?=
+ =?us-ascii?Q?zQP8xfd7PUWHlt4hUgrZsdyPTwtYzpd8XhHabmTtteIdC6tpOVtLFP5GowMG?=
+ =?us-ascii?Q?NgAR6UyDDvnBg8g4yzXLXk+Ibd3x8K95PGmLXbHR3IrzFMhoYOYvYwqhWKuQ?=
+ =?us-ascii?Q?gq2sU1z+1Gjh0zZBEIH5O0jNFzGT5K37g9GVlvV5KoTDI3wch1CwX3KTQRhW?=
+ =?us-ascii?Q?pNrovLclWMGGyStHjgabJ2MJtBSbsfaiLvC99ovq9UnBerRm0trk+f9rtlMS?=
+ =?us-ascii?Q?I5FEDO9gjGXW3JbErGyVJoM/keKcSlrgb54zMj8Lwm44s4ZMgtyCNNfQ1Nso?=
+ =?us-ascii?Q?glAmClNTlWXSP3ZKlQKtNnaf+a2CWqxj9e99UvmkftnkD5wIacvsuukB+L5l?=
+ =?us-ascii?Q?YqNRxQ9F3gqWxYyTrJBfWI1OSvVnzKzaOnrEXNEkNa2NpCWgD3cqGSZg3ZK6?=
+ =?us-ascii?Q?1R4YsfJz7J+Jhjz2LqmbPs+IY2SjL82cMPwBxYUX/VgB6LP0XsuP8mdcnc/P?=
+ =?us-ascii?Q?4XsUlonoj/N0Vg7rOAjHOGdvWrde9BuFrLv1WNzF6vh3Vv4dbqBl+ODXxVj0?=
+ =?us-ascii?Q?8DPB7+xRkbeNorB2Cevvq8aY+S1W/dHPHzhTMO4zJqQAig1KS0FTDC3eL4xb?=
+ =?us-ascii?Q?rAJbSMMeTrQNrSmXq/O0oeVGw8Fn3NtOrZWhvXMhQzB2VupK6X8MDRkDL86A?=
+ =?us-ascii?Q?wBSr3S6rpcJ3siwJdAzOcX041CTqoeC6BcJyJ9N33aVQMSuPxjPXf4Zz6sEW?=
+ =?us-ascii?Q?A136eFYbhHgFwo8bZnrytNSyKrKiN3cylpGDOzFEFC5nYm5wtoxrpOY1706M?=
+ =?us-ascii?Q?rx6HPC9MFPXAwcFoaEmsuOHx7urC8QSVWf4S0ONktUThx6XMnf/3jNYXdCsO?=
+ =?us-ascii?Q?tJJNfnjSxijzukHUujW0eemR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d7ac041-02ec-4772-37b7-08d92f11c898
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0401MB2559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2021 08:52:47.8093
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EvW+i7BM/4mMTYEgXVevxpZLk82EjR87Wbvqz/zZDRc3sy9P8RnY7K6GYVfxYarrkTG39pIl6QFPoQgIzhyVUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2557
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Alexandru Tachici <alexandru.tachici@analog.com>
+On 21-06-04 17:09:34, Dong Aisheng wrote:
+> Add more scu clocks used by i.MX8 platforms.
+> 
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Add dt bindings for ad9545.
+This looks OK to me.
 
-Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
----
- .../devicetree/bindings/clock/clk-ad9545.yaml | 556 ++++++++++++++++++
- include/dt-bindings/clock/ad9545.h            |  69 +++
- 2 files changed, 625 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/clk-ad9545.yaml
- create mode 100644 include/dt-bindings/clock/ad9545.h
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-ad9545.yaml b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
-new file mode 100644
-index 000000000000..50553a88ab44
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
-@@ -0,0 +1,556 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/clk-ad9545.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588
-+
-+maintainers:
-+  - Alexandru Tachici <alexandru.tachici@analog.com>
-+
-+description: |
-+  Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588,
-+  1 pps Synchronizer and Jitter Cleaner
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ADM1266.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad9545
-+
-+  "#clock-cells":
-+    const: 2
-+
-+  reg:
-+    description: |
-+      I2C address of the secondary device.
-+    minimum: 0
-+    maximum: 0xFF
-+
-+  avcc-supply:
-+    description: |
-+      Phandle to the Avcc power supply.
-+
-+  adi,freq-doubler:
-+    description: |
-+      The system clock PLL provides the user with the option of doubling the reference frequency.
-+    type: boolean
-+
-+  adi,ref-crystal:
-+    description: |
-+      At XOA,XOB there is a crystal connected that needs maintaining.
-+      Otherwise it is assumed that there is a TCXO or OCXO connected.
-+    type: boolean
-+
-+  adi,ref-frequency-hz:
-+    description: |
-+      Reference input frequency at XOA,XOB. This is used for the system clock.
-+
-+  clocks:
-+    items:
-+      - description: Ref A clock input
-+      - description: Ref AA clock input
-+      - description: Ref B clock input
-+      - description: Ref BB clock input
-+      - description: Ref M0 clock input
-+      - description: Ref M1 clock input
-+      - description: Ref M2 clock input
-+    maxItems: 4
-+
-+  assigned-clocks:
-+    description:
-+      Clocks are identified using two cells <&ad9545 clock_type clock_address>.
-+    minItems: 1
-+    maxItems: 14
-+
-+  assigned-clock-rates:
-+    minItems: 1
-+    maxItems: 14
-+
-+  assigned-clock-phases:
-+    minItems: 1
-+    maxItems: 14
-+
-+  clock-output-names:
-+    maxItems: 10
-+
-+  aux-dpll:
-+    description: |
-+      Auxiliary DPLL used for Closed-Loop method of system clock compensation.
-+    type: object
-+
-+    properties:
-+      adi,compensation-source:
-+        description: |
-+          System clock closed loop compensation source.
-+          Choose from Ref-A to Ref-BB [0-3] or aux TDCs [4-5].
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2, 3, 4, 5]
-+
-+      adi,aux-dpll-bw-mhz:
-+        description: |
-+          Auxiliary DPLL bandwidth.
-+        minimum: 100
-+        maximum: 2000000
-+
-+      adi,rate-change-limit:
-+        description: |
-+          Error compensation rate change limiting expressed in ppb/s. Disabled if property is
-+          missing.
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [715, 1430, 2860, 5720, 11440, 22880, 45760]
-+
-+    required:
-+      - adi,compensation-source
-+      - adi,aux-dpll-bw-mhz
-+
-+  aux-tdc-clks:
-+    description: |
-+      Child nodes represent Mx pin reference clock inputs.
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+         const: 1
-+
-+      '#size-cells':
-+         const: 0
-+
-+    patternProperties:
-+      "^aux-tdc-clk@[0-3]$":
-+
-+        description: |
-+          Represents a Mx pin reference clock input.
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: |
-+              Address of the Auxiliary TDC.
-+            maximum: 1
-+
-+          adi,pin-nr:
-+            description: |
-+              Pin number to be the source of this TDC.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 0
-+            maximum: 6
-+
-+        required:
-+          - reg
-+          - adi,pin-nr
-+
-+    additionalProperties: false
-+
-+  ref-input-clks:
-+    description: |
-+      Child nodes represent reference clock inputs.
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+         const: 1
-+
-+      '#size-cells':
-+         const: 0
-+
-+    patternProperties:
-+      "^ref-input-clk@[0-3]$":
-+        description: |
-+          Represents a reference clock input.
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: |
-+              The reference input number. It can have up to 4 input clocks numbered from 0 to 3.
-+              (mapped: [refa, refaa, refb, refbb] -> [0, 1, 2, 3])
-+            maxItems: 1
-+
-+          adi,single-ended-mode:
-+            description: |
-+              Single-ended configuration mode.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 3]
-+
-+          adi,differential-mode:
-+            description: |
-+              Differential configuration mode.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2]
-+
-+          adi,r-divider-ratio:
-+            description: |
-+              Each reference input has a dedicated divider.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 1073741824
-+
-+          adi,ref-dtol-pbb:
-+            description: |
-+              REFx offset limit. Constitutes a fractional portion of the corresponding nominal period.
-+              The 24-bit number represents fractional units of parts per billion (ppb) up to a
-+              maximum of approximately 17 million ppb (1.7%).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 0
-+            maximum: 16777215
-+            default: 100000
-+
-+          adi,ref-monitor-hysteresis-pbb:
-+            description: |
-+              Basis points of the offset limit representing per ten thousand of REFx offset limit.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 3125, 6250, 12500, 25000, 50000, 75000, 87500]
-+            default: 12500
-+
-+          adi,ref-validation-timer-ms:
-+            description: |
-+              Time required for a reference to remain in tolerance condition before being
-+              available to be used.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 1048574
-+            default: 10
-+
-+          adi,freq-lock-threshold-ps:
-+            description: |
-+              Phase lock detector threshold (in picoseconds).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 16777215
-+
-+          adi,phase-lock-threshold-ps:
-+            description: |
-+              Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 16777215
-+
-+          adi,phase-lock-fill-rate:
-+            description: |
-+              Parameter used by the DPLL Phase Lock Detector.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 255
-+            default: 10
-+
-+          adi,phase-lock-drain-rate:
-+            description: |
-+              Parameter used by the DPLL Phase Lock Detector.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 255
-+            default: 10
-+
-+          adi,freq-lock-fill-rate:
-+            description: |
-+              Parameter used by the DPLL Frequency Lock Detector.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 255
-+            default: 10
-+
-+          adi,freq-lock-drain-rate:
-+            description: |
-+              Parameter used by the DPLL Frequency Lock Detector.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 255
-+            default: 10
-+
-+        required:
-+          - reg
-+          - adi,r-divider-ratio
-+          - adi,ref-dtol-pbb
-+          - adi,ref-monitor-hysteresis-pbb
-+          - adi,ref-validation-timer-ms
-+          - adi,freq-lock-threshold-ps
-+          - adi,phase-lock-threshold-ps
-+
-+    additionalProperties: false
-+
-+  pll-clks:
-+    description: |
-+      Child nodes represent PLLs.
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+         const: 1
-+
-+      '#size-cells':
-+         const: 0
-+
-+    patternProperties:
-+      "^pll-clk@[0-1]$":
-+        description: |
-+          Represents a PLL.
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: |
-+              PLL number. AD9545 has two PLLs.
-+            maxItems: 1
-+
-+          '#address-cells':
-+             const: 1
-+
-+          '#size-cells':
-+             const: 0
-+
-+          adi,fast-acq-trigger-mode:
-+            description: |
-+              If this is not specified Fast Acquisition will be used every time. See reg 0x2106
-+              for constraints on Fast Acquisition trigger.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 0
-+            maximum: 15
-+            default: 0
-+
-+        patternProperties:
-+          "^profile@[0-5]$":
-+            description: |
-+              Represents a DPLL profile. Each DPLL can have up to 6 specified sources
-+              wih priorities assigned.
-+            type: object
-+
-+            properties:
-+              reg:
-+                description: |
-+                  Profile number. A DPLL can have up to 6 translation profiles.
-+                maxItems: 1
-+              adi,profile-priority:
-+                description: |
-+                  Profile selection priority. 0 is the highest, 31 is the lowest. For revertive
-+                  reference switching, ensure that priority difference is > 7.
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                minimum: 0
-+                maximum: 31
-+
-+              adi,pll-source:
-+                description: |
-+                  Each PLL can have 1 signal source. Choose from Ref-A to Ref-BB [0-3] or aux NCOs [4-5].
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                enum: [0, 1, 2, 3, 4, 5]
-+
-+              adi,pll-loop-bandwidth-uhz:
-+                description: |
-+                  PLL loop bandwidth in microhertz.
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                minimum: 1
-+                maximum: 1850000000
-+                default: 200000000
-+
-+              adi,fast-acq-excess-bw:
-+                description: |
-+                  Controls the DPLL loop bandwidth scaling factor while in fast acquisition mode.
-+                  0 means this feature is disabled.
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                enum: [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
-+                default: 0
-+
-+              adi,fast-acq-timeout-ms:
-+                description: |
-+                  Fast acquisition timeout controls the maximum amount of time that DPLL waits to
-+                  achieve phase lock before reducing the loop bandwidth by a factor of two.
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                enum: [1, 10, 50, 100, 500, 1000, 10000, 50000]
-+                default: 1
-+
-+              adi,fast-acq-lock-settle-ms:
-+                description: |
-+                  Controls how long DPLL must wait after achieving phase lock before reducing
-+                  the loop bandwidth by a factor of 2.
-+                $ref: /schemas/types.yaml#/definitions/uint32
-+                enum: [1, 10, 50, 100, 500, 1000, 10000, 50000]
-+                default: 1
-+
-+            required:
-+              - reg
-+              - adi,pll-source
-+              - adi,pll-loop-bandwidth-uhz
-+
-+        additionalProperties: false
-+
-+        required:
-+          - reg
-+
-+    additionalProperties: false
-+
-+  aux-ncos:
-+    description: |
-+      Child nodes represent auxiliary Numerical Controlled Oscilators.
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+         const: 1
-+
-+      '#size-cells':
-+         const: 0
-+
-+    patternProperties:
-+      "^aux-nco-clk@[0-1]$":
-+        description: |
-+          Represents an auxiliary Numerical Controlled Oscilator. Generates timestamps that
-+          can be sent to the DPLL0 or DPLL1.
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: |
-+              Auxiliary NCO address mapped: [NCO0, NCO1] -> [0, 1].
-+            maxItems: 1
-+
-+          adi,freq-lock-threshold-ps:
-+            description: |
-+              Phase lock detector threshold (in picoseconds).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 16777215
-+
-+          adi,phase-lock-threshold-ps:
-+            description: |
-+              Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 1
-+            maximum: 16777215
-+
-+        required:
-+          - reg
-+          - adi,freq-lock-threshold-ps
-+          - adi,phase-lock-threshold-ps
-+
-+    additionalProperties: false
-+
-+  output-clks:
-+    description: |
-+      Child nodes represent clock outputs.
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+         const: 1
-+
-+      '#size-cells':
-+         const: 0
-+
-+    patternProperties:
-+      "^output-clk@([0-9]|1[0-3])$":
-+        description: |
-+          Represents a clock output.
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: |
-+              The reference input number. It can have up to 10 output clocks mapped:
-+              (OUT0AP OUT0AN OUT0BP OUT0BN OUT0CP OUT0CN OUT1AP OUT1AN OUT1BP OUT1BN) ->
-+              (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-+            maxItems: 1
-+
-+          adi,current-source:
-+            description: |
-+              If specified output is set as current source.
-+            type: boolean
-+
-+          adi,current-source-microamp:
-+            description: |
-+              The magnitude of the driver current.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [7500, 12500, 15000]
-+
-+          adi,output-mode:
-+            description: |
-+              Output driver mode.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2]
-+
-+        required:
-+          - reg
-+          - adi,current-source-microamp
-+          - adi,output-mode
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - adi,ref-frequency-hz
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/ad9545.h>
-+
-+    i2c1 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ad9545_clock: ad9545@4A {
-+                compatible = "adi,ad9545";
-+                reg = <0x4A>;
-+
-+                adi,ref-crystal;
-+                adi,ref-frequency-hz = <52000000>;
-+
-+                #clock-cells = <2>;
-+                assigned-clocks = <&ad9545_clock AD9545_CLK_NCO AD9545_NCO0>,
-+                                  <&ad9545_clock AD9545_CLK_PLL AD9545_PLL1>,
-+                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1A>,
-+                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1B>;
-+                assigned-clock-rates = <10000>, <1875000000>, <156250000>, <156250000>;
-+                assigned-clock-phases = <0>, <0>, <0>, <180>;
-+
-+                aux-ncos {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        aux-nco-clk@AD9545_NCO0 {
-+                                reg = <AD9545_NCO0>;
-+                                adi,freq-lock-threshold-ps = <16000000>;
-+                                adi,phase-lock-threshold-ps = <16000000>;
-+                        };
-+                };
-+
-+                pll-clks {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        ad9545_apll1: pll-clk@AD9545_PLL1 {
-+                                reg = <AD9545_PLL1>;
-+
-+                                #address-cells = <1>;
-+                                #size-cells = <0>;
-+
-+                                profile@0 {
-+                                       reg = <0>;
-+                                       adi,pll-source = <4>;
-+                                       adi,profile-priority = <0>;
-+                                       adi,pll-loop-bandwidth-uhz = <200000000>;
-+                                };
-+                        };
-+                };
-+
-+                output-clks {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        output-clk@AD9545_Q1A {
-+                                reg = <AD9545_Q1A>;
-+                                adi,output-mode = <DRIVER_MODE_DUAL_DIV>;
-+                                adi,current-source-microamp = <15000>;
-+                        };
-+
-+                        output-clk@AD9545_Q1B {
-+                                reg = <AD9545_Q1B>;
-+                                adi,output-mode = <DRIVER_MODE_DUAL_DIV>;
-+                                adi,current-source-microamp = <15000>;
-+                        };
-+                };
-+        };
-+    };
-+...
-diff --git a/include/dt-bindings/clock/ad9545.h b/include/dt-bindings/clock/ad9545.h
-new file mode 100644
-index 000000000000..857d50e5715b
---- /dev/null
-+++ b/include/dt-bindings/clock/ad9545.h
-@@ -0,0 +1,69 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-+/*
-+ * AD9545 Network Clock Generator/Synchronizer
-+ *
-+ * Copyright 2020 Analog Devices Inc.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_AD9545_H_
-+#define _DT_BINDINGS_CLOCK_AD9545_H_
-+
-+/* Input Driver Mode
-+ * Use for adi,single-ended-mode:
-+ */
-+#define DRIVER_MODE_AC_COUPLED_IF	0
-+#define DRIVER_MODE_DC_COUPLED_1V2	1
-+#define DRIVER_MODE_DC_COUPLED_1V8	2
-+#define DRIVER_MODE_IN_PULL_UP		3
-+
-+/* Input Driver Mode
-+ * Use for adi,differential-mode:
-+ */
-+#define DRIVER_MODE_AC_COUPLED		0
-+#define DRIVER_MODE_DC_COUPLED		1
-+#define DRIVER_MODE_DC_COUPLED_LVDS	2
-+
-+/* Output Driver Mode
-+ * Use for adi,output-mode:
-+ */
-+#define DRIVER_MODE_SINGLE_DIV_DIF	0
-+#define DRIVER_MODE_SINGLE_DIV		1
-+#define DRIVER_MODE_DUAL_DIV		2
-+
-+/* Clock types */
-+#define AD9545_CLK_OUT			0
-+#define AD9545_CLK_PLL			1
-+#define AD9545_CLK_NCO			2
-+#define AD9545_CLK_AUX_TDC		3
-+
-+/* PLL addresses */
-+#define AD9545_PLL0			0
-+#define AD9545_PLL1			1
-+
-+/* Outputs addresses */
-+#define AD9545_Q0A			0
-+#define AD9545_Q0AA			1
-+#define AD9545_Q0B			2
-+#define AD9545_Q0BB			3
-+#define AD9545_Q0C			4
-+#define AD9545_Q0CC			5
-+#define AD9545_Q1A			6
-+#define AD9545_Q1AA			7
-+#define AD9545_Q1B			8
-+#define AD9545_Q1BB			9
-+
-+/* NCO addresses */
-+#define AD9545_NCO0			0
-+#define AD9545_NCO1			1
-+
-+/* TDC addresses */
-+#define AD9545_CLK_AUX_TDC0		0
-+#define AD9545_CLK_AUX_TDC1		1
-+
-+/* Ex:
-+ * Output Q0C clock: <&ad9545_clock AD9545_CLK_OUT AD9545_Q0C>;
-+ * PLL0 clock: <&ad9545_clock AD9545_CLK_PLL AD9545_PLL0>;
-+ * NCO1 clock: <&ad9545_clock AD9545_CLK_NCO AD9545_NCO1>;
-+ */
-+
-+#endif /* _DT_BINDINGS_CLOCK_AD9545_H_ */
--- 
-2.25.1
-
+> ---
+>  drivers/clk/imx/clk-imx8qxp.c | 152 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 150 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+> index f3cdd6449212..b1dd6ed685f9 100644
+> --- a/drivers/clk/imx/clk-imx8qxp.c
+> +++ b/drivers/clk/imx/clk-imx8qxp.c
+> @@ -25,6 +25,14 @@ static const char *dc0_sels[] = {
+>  	"dc0_bypass0_clk",
+>  };
+>  
+> +static const char * const dc1_sels[] = {
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"dc1_pll0_clk",
+> +	"dc1_pll1_clk",
+> +	"dc1_bypass0_clk",
+> +};
+> +
+>  static const char *enet0_rgmii_txc_sels[] = {
+>  	"enet0_ref_div",
+>  	"dummy",
+> @@ -35,6 +43,54 @@ static const char *enet1_rgmii_txc_sels[] = {
+>  	"dummy",
+>  };
+>  
+> +static const char * const hdmi_sels[] = {
+> +	"clk_dummy",
+> +	"hdmi_dig_pll_clk",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"hdmi_av_pll_clk",
+> +};
+> +
+> +static const char * const hdmi_rx_sels[] = {
+> +	"clk_dummy",
+> +	"hdmi_rx_dig_pll_clk",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"hdmi_rx_bypass_clk",
+> +};
+> +
+> +static const char * const lcd_pxl_sels[] = {
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"lcd_pxl_bypass_div_clk",
+> +};
+> +
+> +static const char * const mipi_sels[] = {
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"mipi_pll_div2_clk",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +};
+> +
+> +static const char * const lcd_sels[] = {
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"elcdif_pll",
+> +};
+> +
+> +static const char * const pi_pll0_sels[] = {
+> +	"clk_dummy",
+> +	"pi_dpll_clk",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +	"clk_dummy",
+> +};
+> +
+>  static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *ccm_node = pdev->dev.of_node;
+> @@ -48,6 +104,8 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  
+>  	/* ARM core */
+>  	imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK_CPU);
+> +	imx_clk_scu("a53_clk", IMX_SC_R_A53, IMX_SC_PM_CLK_CPU);
+> +	imx_clk_scu("a72_clk", IMX_SC_R_A72, IMX_SC_PM_CLK_CPU);
+>  
+>  	/* LSIO SS */
+>  	imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER);
+> @@ -66,25 +124,42 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  	imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_1, IMX_SC_PM_CLK_PER);
+>  
+> -	/* ADMA SS */
+> +	/* DMA SS */
+>  	imx_clk_scu("uart0_clk", IMX_SC_R_UART_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("uart1_clk", IMX_SC_R_UART_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("uart2_clk", IMX_SC_R_UART_2, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("uart3_clk", IMX_SC_R_UART_3, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("uart4_clk", IMX_SC_R_UART_4, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("sim0_clk",  IMX_SC_R_EMVSIM_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("can1_clk",  IMX_SC_R_CAN_1, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("can2_clk",  IMX_SC_R_CAN_2, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("i2c4_clk",  IMX_SC_R_I2C_4, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("adc1_clk",  IMX_SC_R_ADC_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_PWM_0, IMX_SC_PM_CLK_PER);
+> -	imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu2("lcd_clk", lcd_sels, ARRAY_SIZE(lcd_sels), IMX_SC_R_LCD_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu2("lcd_pxl_clk", lcd_pxl_sels, ARRAY_SIZE(lcd_pxl_sels), IMX_SC_R_LCD_0, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu("lcd_pxl_bypass_div_clk", IMX_SC_R_LCD_0, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_scu("elcdif_pll", IMX_SC_R_ELCDIF_PLL, IMX_SC_PM_CLK_PLL);
+> +
+> +	/* Audio SS */
+> +	imx_clk_scu("audio_pll0_clk", IMX_SC_R_AUDIO_PLL_0, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu("audio_pll1_clk", IMX_SC_R_AUDIO_PLL_1, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu("audio_pll_div_clk0_clk", IMX_SC_R_AUDIO_PLL_0, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu("audio_pll_div_clk1_clk", IMX_SC_R_AUDIO_PLL_1, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu("audio_rec_clk0_clk", IMX_SC_R_AUDIO_PLL_0, IMX_SC_PM_CLK_MISC1);
+> +	imx_clk_scu("audio_rec_clk1_clk", IMX_SC_R_AUDIO_PLL_1, IMX_SC_PM_CLK_MISC1);
+>  
+>  	/* Connectivity */
+>  	imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_0, IMX_SC_PM_CLK_PER);
+> @@ -94,11 +169,13 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  	imx_clk_divider_gpr_scu("enet0_ref_div", "enet0_root_clk", IMX_SC_R_ENET_0, IMX_SC_C_CLKDIV);
+>  	imx_clk_mux_gpr_scu("enet0_rgmii_txc_sel", enet0_rgmii_txc_sels, ARRAY_SIZE(enet0_rgmii_txc_sels), IMX_SC_R_ENET_0, IMX_SC_C_TXCLK);
+>  	imx_clk_scu("enet0_bypass_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_gate_gpr_scu("enet0_ref_50_clk", "clk_dummy", IMX_SC_R_ENET_0, IMX_SC_C_DISABLE_50, true);
+>  	imx_clk_scu("enet0_rgmii_rx_clk", IMX_SC_R_ENET_0, IMX_SC_PM_CLK_MISC0);
+>  	imx_clk_scu("enet1_root_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_divider_gpr_scu("enet1_ref_div", "enet1_root_clk", IMX_SC_R_ENET_1, IMX_SC_C_CLKDIV);
+>  	imx_clk_mux_gpr_scu("enet1_rgmii_txc_sel", enet1_rgmii_txc_sels, ARRAY_SIZE(enet1_rgmii_txc_sels), IMX_SC_R_ENET_1, IMX_SC_C_TXCLK);
+>  	imx_clk_scu("enet1_bypass_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_gate_gpr_scu("enet1_ref_50_clk", "clk_dummy", IMX_SC_R_ENET_1, IMX_SC_C_DISABLE_50, true);
+>  	imx_clk_scu("enet1_rgmii_rx_clk", IMX_SC_R_ENET_1, IMX_SC_PM_CLK_MISC0);
+>  	imx_clk_scu("gpmi_io_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_MST_BUS);
+>  	imx_clk_scu("gpmi_bch_clk", IMX_SC_R_NAND, IMX_SC_PM_CLK_PER);
+> @@ -114,30 +191,101 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  	imx_clk_scu("dc0_bypass0_clk", IMX_SC_R_DC_0_VIDEO0, IMX_SC_PM_CLK_BYPASS);
+>  	imx_clk_scu("dc0_bypass1_clk", IMX_SC_R_DC_0_VIDEO1, IMX_SC_PM_CLK_BYPASS);
+>  
+> +	imx_clk_scu2("dc1_disp0_clk", dc1_sels, ARRAY_SIZE(dc1_sels), IMX_SC_R_DC_1, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu2("dc1_disp1_clk", dc1_sels, ARRAY_SIZE(dc1_sels), IMX_SC_R_DC_1, IMX_SC_PM_CLK_MISC1);
+> +	imx_clk_scu("dc1_pll0_clk", IMX_SC_R_DC_1_PLL_0, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu("dc1_pll1_clk", IMX_SC_R_DC_1_PLL_1, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu("dc1_bypass0_clk", IMX_SC_R_DC_1_VIDEO0, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_scu("dc1_bypass1_clk", IMX_SC_R_DC_1_VIDEO1, IMX_SC_PM_CLK_BYPASS);
+> +
+>  	/* MIPI-LVDS SS */
+> +	imx_clk_scu("mipi0_bypass_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_scu("mipi0_pixel_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("mipi0_lvds_pixel_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi0_lvds_bypass_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_BYPASS);
+>  	imx_clk_scu("mipi0_lvds_phy_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
+> +	imx_clk_scu2("mipi0_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_MST_BUS);
+> +	imx_clk_scu2("mipi0_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_SLV_BUS);
+> +	imx_clk_scu2("mipi0_dsi_phy_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PHY);
+>  	imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_MIPI_0_I2C_1, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi0_pwm0_clk", IMX_SC_R_MIPI_0_PWM_0, IMX_SC_PM_CLK_PER);
+> +
+> +	imx_clk_scu("mipi1_bypass_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_scu("mipi1_pixel_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("mipi1_lvds_pixel_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi1_lvds_bypass_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_BYPASS);
+>  	imx_clk_scu("mipi1_lvds_phy_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
+> +
+> +	imx_clk_scu2("mipi1_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_MST_BUS);
+> +	imx_clk_scu2("mipi1_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_SLV_BUS);
+> +	imx_clk_scu2("mipi1_dsi_phy_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_PHY);
+>  	imx_clk_scu("mipi1_i2c0_clk", IMX_SC_R_MIPI_1_I2C_0, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi1_i2c1_clk", IMX_SC_R_MIPI_1_I2C_1, IMX_SC_PM_CLK_MISC2);
+>  	imx_clk_scu("mipi1_pwm0_clk", IMX_SC_R_MIPI_1_PWM_0, IMX_SC_PM_CLK_PER);
+>  
+> +	imx_clk_scu("lvds0_i2c0_clk", IMX_SC_R_LVDS_0_I2C_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("lvds0_i2c1_clk", IMX_SC_R_LVDS_0_I2C_1, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("lvds0_pwm0_clk", IMX_SC_R_LVDS_0_PWM_0, IMX_SC_PM_CLK_PER);
+> +
+> +	imx_clk_scu("lvds1_i2c0_clk", IMX_SC_R_LVDS_1_I2C_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("lvds1_i2c1_clk", IMX_SC_R_LVDS_1_I2C_1, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("lvds1_pwm0_clk", IMX_SC_R_LVDS_1_PWM_0, IMX_SC_PM_CLK_PER);
+> +
+>  	/* MIPI CSI SS */
+>  	imx_clk_scu("mipi_csi0_core_clk", IMX_SC_R_CSI_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_R_CSI_0, IMX_SC_PM_CLK_MISC);
+>  	imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC_R_CSI_0_I2C_0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC_R_CSI_0_PWM_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("mipi_csi1_core_clk", IMX_SC_R_CSI_1, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("mipi_csi1_esc_clk",  IMX_SC_R_CSI_1, IMX_SC_PM_CLK_MISC);
+> +	imx_clk_scu("mipi_csi1_i2c0_clk", IMX_SC_R_CSI_1_I2C_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("mipi_csi1_pwm0_clk", IMX_SC_R_CSI_1_PWM_0, IMX_SC_PM_CLK_PER);
+> +
+> +	/* Parallel Interface SS */
+> +	imx_clk_scu("pi_dpll_clk", IMX_SC_R_PI_0_PLL, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu2("pi_per_div_clk", pi_pll0_sels, ARRAY_SIZE(pi_pll0_sels), IMX_SC_R_PI_0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("pi_mclk_div_clk", IMX_SC_R_PI_0, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu("pi_i2c0_div_clk", IMX_SC_R_PI_0_I2C_0, IMX_SC_PM_CLK_PER);
+>  
+>  	/* GPU SS */
+>  	imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_PER);
+>  	imx_clk_scu("gpu_shader0_clk", IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_MISC);
+>  
+> +	imx_clk_scu("gpu_core1_clk",	 IMX_SC_R_GPU_1_PID0, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("gpu_shader1_clk", IMX_SC_R_GPU_1_PID0, IMX_SC_PM_CLK_MISC);
+> +
+> +	 /* CM40 SS */
+> +	imx_clk_scu("cm40_i2c_div", IMX_SC_R_M4_0_I2C, IMX_SC_PM_CLK_PER);
+> +	imx_clk_scu("cm40_lpuart_div", IMX_SC_R_M4_0_UART, IMX_SC_PM_CLK_PER);
+> +
+> +	 /* CM41 SS */
+> +	imx_clk_scu("cm41_i2c_div", IMX_SC_R_M4_1_I2C, IMX_SC_PM_CLK_PER);
+> +
+> +	/* HDMI TX SS */
+> +	imx_clk_scu("hdmi_dig_pll_clk",  IMX_SC_R_HDMI_PLL_0, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu("hdmi_av_pll_clk", IMX_SC_R_HDMI_PLL_1, IMX_SC_PM_CLK_PLL);
+> +	imx_clk_scu2("hdmi_pixel_mux_clk", hdmi_sels, ARRAY_SIZE(hdmi_sels), IMX_SC_R_HDMI, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu2("hdmi_pixel_link_clk", hdmi_sels, ARRAY_SIZE(hdmi_sels), IMX_SC_R_HDMI, IMX_SC_PM_CLK_MISC1);
+> +	imx_clk_scu("hdmi_ipg_clk", IMX_SC_R_HDMI, IMX_SC_PM_CLK_MISC4);
+> +	imx_clk_scu("hdmi_i2c0_clk", IMX_SC_R_HDMI_I2C_0, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu("hdmi_hdp_core_clk", IMX_SC_R_HDMI, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu2("hdmi_pxl_clk", hdmi_sels, ARRAY_SIZE(hdmi_sels), IMX_SC_R_HDMI, IMX_SC_PM_CLK_MISC3);
+> +	imx_clk_scu("hdmi_i2s_bypass_clk", IMX_SC_R_HDMI_I2S, IMX_SC_PM_CLK_BYPASS);
+> +	imx_clk_scu("hdmi_i2s_clk", IMX_SC_R_HDMI_I2S, IMX_SC_PM_CLK_MISC0);
+> +
+> +	/* HDMI RX SS */
+> +	imx_clk_scu("hdmi_rx_i2s_bypass_clk", IMX_SC_R_HDMI_RX_BYPASS, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu("hdmi_rx_spdif_bypass_clk", IMX_SC_R_HDMI_RX_BYPASS, IMX_SC_PM_CLK_MISC1);
+> +	imx_clk_scu("hdmi_rx_bypass_clk", IMX_SC_R_HDMI_RX_BYPASS, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu("hdmi_rx_i2c0_clk", IMX_SC_R_HDMI_RX_I2C_0, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu("hdmi_rx_pwm_clk", IMX_SC_R_HDMI_RX_PWM_0, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu("hdmi_rx_spdif_clk", IMX_SC_R_HDMI_RX, IMX_SC_PM_CLK_MISC0);
+> +	imx_clk_scu2("hdmi_rx_hd_ref_clk", hdmi_rx_sels, ARRAY_SIZE(hdmi_rx_sels), IMX_SC_R_HDMI_RX, IMX_SC_PM_CLK_MISC1);
+> +	imx_clk_scu2("hdmi_rx_hd_core_clk", hdmi_rx_sels, ARRAY_SIZE(hdmi_rx_sels), IMX_SC_R_HDMI_RX, IMX_SC_PM_CLK_MISC2);
+> +	imx_clk_scu2("hdmi_rx_pxl_clk", hdmi_rx_sels, ARRAY_SIZE(hdmi_rx_sels), IMX_SC_R_HDMI_RX, IMX_SC_PM_CLK_MISC3);
+> +	imx_clk_scu("hdmi_rx_i2s_clk", IMX_SC_R_HDMI_RX, IMX_SC_PM_CLK_MISC4);
+> +
+>  	ret = of_clk_add_hw_provider(ccm_node, imx_scu_of_clk_src_get, imx_scu_clks);
+>  	if (ret)
+>  		imx_clk_scu_unregister();
+> -- 
+> 2.25.1
+> 
