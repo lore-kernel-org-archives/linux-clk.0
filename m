@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C65C4743C
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 12:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AE1C48BE8
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 12:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8D16120E
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 12:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3D5461241
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jun 2021 12:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233529AbhFNM3H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jun 2021 08:29:07 -0400
-Received: from mail-vs1-f51.google.com ([209.85.217.51]:34759 "EHLO
-        mail-vs1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbhFNM3G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 08:29:06 -0400
-Received: by mail-vs1-f51.google.com with SMTP id q2so7679186vsr.1;
-        Mon, 14 Jun 2021 05:26:52 -0700 (PDT)
+        id S233025AbhFNMfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jun 2021 08:35:08 -0400
+Received: from mail-ua1-f52.google.com ([209.85.222.52]:34367 "EHLO
+        mail-ua1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232809AbhFNMfI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jun 2021 08:35:08 -0400
+Received: by mail-ua1-f52.google.com with SMTP id c17so5381382uao.1;
+        Mon, 14 Jun 2021 05:32:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=L711Ag5/juTcjNB1RgOqhXyWwY1X5qNPuCaA8YLk/r8=;
-        b=NrUWrxh8hk650QJWgyCAS/BJmxGxUPkLZkDqPh1jfT6wrIGaX5XWkT4Az1iKWTaRoK
-         oyXX2F+WxmAFRsTfpXhd4LpCxlKo8rS4Hxrc8g70cFlkY0bPSbjFrMNHHMZkbesmlaD5
-         MB8VybkRJZPMvCcBK71Ggvt7afPzxkA8G3kGLWmIgptgmN63NkfVp89i54FkLP9dg5kd
-         RbZV/d04sf6cTgteJ1C6cE1HEZQJW0srnfVmJ5kN64acq13IAEGCmOl/FwvWa75nozz4
-         pQwKbgA/8t61IHhsIgEv4rQGbNRlD/td0NaHSX19SLAVKe7ZhHmtih3z1slG8+tdswxK
-         VRuA==
-X-Gm-Message-State: AOAM530EBsI3eSTVPfWMyQwYIFxqRDBnBf/qpc7sLtJ1WSFs41mAW5wd
-        +vlLkrGQWyaYYf6Qw3oNU4zbi77dB96iRBKqfgLvfb4UIv44qw==
-X-Google-Smtp-Source: ABdhPJzJzMoR7QaIUWLeMNtZpbsPkPwFzSXE3b+XiGq9/GotFfq9AlOUR3wi0QAgWIicTFKnkDCP+HM79VqTbqvBkEs=
-X-Received: by 2002:a05:6102:2011:: with SMTP id p17mr16867962vsr.40.1623673611590;
- Mon, 14 Jun 2021 05:26:51 -0700 (PDT)
+        bh=CEFwGKLbEgGfMJcaaL7Ls1kPKbVf05uz7xjyJakpttw=;
+        b=G3EEkLVRaTYwX6IOjgDxiiNmo5eUBV12J/EpecFy1zYJrOpAz+bS3nP2YECW/nMHEV
+         JmpO9pPgXVinxP1kyqysZJGC2PVdx17GQlleepRwRODFFyxF6CGXKCWQxCXA+qPYsmqW
+         F2iubT50IHn7bttglVxwsgRHh/pqPNnUoIzNGO2a9iX9YyO7JwK8IrLZUgHf0qf+OKLm
+         a5ocF55OdDlbf9+VzO/RcWBevQW8t4s5SHFAMJcc4Le5Wc5oY0MgP+FByzbzcu+W1i8P
+         Y9J0nNkYwCJa7YTVZgEhjv0oQ3eMtmFRGlv7qWybI/OiTzWmrWuEbA4AUzL5e1A9kuur
+         wM+w==
+X-Gm-Message-State: AOAM530tdA7v1DNkyBcXwsT/6N2niDyL27FB5lY9XMq3dTGNz1lVGdVB
+        y8Z8NEmvvjq5uwc/w/3l4ZwG+Cu9uNx1WZEHuOA=
+X-Google-Smtp-Source: ABdhPJz8NHYZSrdHnQGG700V75mhrUJyxgoNq8eb1bPXuRPGJ3ZTMrbo+3HFqEbHtQGRH8i2pY5g5vrwNJq7+c78rCA=
+X-Received: by 2002:ab0:71d9:: with SMTP id n25mr11398181uao.2.1623673975719;
+ Mon, 14 Jun 2021 05:32:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210611134642.24029-1-biju.das.jz@bp.renesas.com> <20210611134642.24029-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210611134642.24029-3-biju.das.jz@bp.renesas.com>
+References: <20210611165624.30749-1-biju.das.jz@bp.renesas.com> <20210611165624.30749-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210611165624.30749-3-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 14 Jun 2021 14:26:40 +0200
-Message-ID: <CAMuHMdXpOGWLMXph9OGeZqZiy33O_y5z2XfAf0YzQgb4q_8+rA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] drivers: clk: renesas: r9a07g044-cpg: Add USB clocks
+Date:   Mon, 14 Jun 2021 14:32:44 +0200
+Message-ID: <CAMuHMdUJcpPKYyE=Z+exc=0BVE7FXqJ=W+mrBvhqKVy56e0QUA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] drivers: clk: renesas: r9a07g044-cpg: Add I2C Clocks
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -57,39 +57,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
-
-On Fri, Jun 11, 2021 at 3:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add clock entries for USB{0,1}.
+On Fri, Jun 11, 2021 at 6:56 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add I2C{0,1,2.3} clock entries.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> @@ -88,6 +88,12 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
->         DEF_MOD("dmac",         R9A07G044_CLK_DMAC,
->                                 R9A07G044_CLK_P1,
->                                 0x52c, (BIT(0) | BIT(1)), (BIT(0) | BIT(1))),
-> +       DEF_MOD("usb0",         R9A07G044_CLK_USB0,
-> +                               R9A07G044_CLK_P1,
-> +                               0x578, (BIT(0) | BIT(2) | BIT(3)), (BIT(0) | BIT(2) | BIT(3))),
-> +       DEF_MOD("usb1",         R9A07G044_CLK_USB1,
-> +                               R9A07G044_CLK_P1,
-> +                               0x578, (BIT(1) | BIT(3)), (BIT(1) | BIT(3))),
->         DEF_MOD("scif0",        R9A07G044_CLK_SCIF0,
->                                 R9A07G044_CLK_P0,
->                                 0x584, BIT(0), BIT(0)),
-
-While the above matches the datasheet, I see a problem with the
-implementation. As BIT(3) of the CPG_{CLKON,CLKMON,RST}_USB is shared by
-the two USB2.0 channels, disabling USB_PCLK or asserting USB_PRESETN
-will affect both channels.  So it looks like you need special handling
-to make sure that doesn't happen while the other channel is in use.
-
-Or am I missing something?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.15.
 
 Gr{oetje,eeting}s,
 
