@@ -2,120 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3328FC48BDF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 07:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159BDC48BE5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 08:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18D556140B
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 07:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD0BF61429
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 08:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbhFOHJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Jun 2021 03:09:29 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42326 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230284AbhFOHJW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Jun 2021 03:09:22 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 41A532029FA;
-        Tue, 15 Jun 2021 09:07:13 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 34FEB2029AD;
-        Tue, 15 Jun 2021 09:07:13 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9708A203B6;
-        Tue, 15 Jun 2021 09:07:12 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] clk: imx: Updates for v5.14
-Date:   Tue, 15 Jun 2021 10:06:59 +0300
-Message-Id: <1623740819-28040-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S230332AbhFOJBN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Jun 2021 05:01:13 -0400
+Received: from mail-vs1-f45.google.com ([209.85.217.45]:44007 "EHLO
+        mail-vs1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230455AbhFOJBM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Jun 2021 05:01:12 -0400
+Received: by mail-vs1-f45.google.com with SMTP id s22so9369589vsl.10;
+        Tue, 15 Jun 2021 01:59:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=izvYy7Sc0VI9xdiId3+4IwhNeyVRCCQq1Dzhvww+mfM=;
+        b=Hxia41UHfkB817Zq32Oy3Bg4ZIbKmcj6gjXzZNxTFH8L0RFAfUFl7POkxe/qGRxqjb
+         q86igcHb/YaZ7mTOuyP6MJe67VouhaATXNTCMLPq9Uhodbr2OGTGKiiFBfdd/sPuuIMo
+         0FkG4jWYndeZas+6xNLpOatfTHeEJM15fbwFLl5/juIAwdd/i7BeW3eR5g4uTypOG/P/
+         cddcGaYrPwTu68c++lVAwRkAAh/0k81vjXduKeX6nOA0saQQWC6GbbAmaAmygQxbSyyj
+         GgOZHMX+zAraUespGb0LX7xvZjiRgqhIbxztLTCW4oz3PyxO++Ul5yCkxKUgTnizw7lX
+         FLBA==
+X-Gm-Message-State: AOAM5309obUo41Haddnk3M6W1wwcddddBlCoWqmTP0H2/DkIGjszzWbh
+        XSZdTIFXv5b2DRQ7ccOJ+nOeonzJFE0MocRocCHuJ65J/TEcAg==
+X-Google-Smtp-Source: ABdhPJwF15eJQMRbtDbtjpIe0EX758jxacGhS7hqIfuudsn8sr7nFD/sOCFLnGCByomrfdgQ7oH8A0kmeMCwY8tM2EU=
+X-Received: by 2002:a67:efd6:: with SMTP id s22mr3860831vsp.3.1623747548208;
+ Tue, 15 Jun 2021 01:59:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210611134642.24029-1-biju.das.jz@bp.renesas.com>
+ <20210611134642.24029-3-biju.das.jz@bp.renesas.com> <CAMuHMdXpOGWLMXph9OGeZqZiy33O_y5z2XfAf0YzQgb4q_8+rA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXpOGWLMXph9OGeZqZiy33O_y5z2XfAf0YzQgb4q_8+rA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 15 Jun 2021 10:58:57 +0200
+Message-ID: <CAMuHMdV=AcCgwJqiEoUyK9cDnyT-arOVSNFS5Z1xxXQ7PeZzkg@mail.gmail.com>
+Subject: Re: [PATCH 2/6] drivers: clk: renesas: r9a07g044-cpg: Add USB clocks
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
+Hi Biju,
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+On Mon, Jun 14, 2021 at 2:26 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, Jun 11, 2021 at 3:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Add clock entries for USB{0,1}.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> > +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> > @@ -88,6 +88,12 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+> >         DEF_MOD("dmac",         R9A07G044_CLK_DMAC,
+> >                                 R9A07G044_CLK_P1,
+> >                                 0x52c, (BIT(0) | BIT(1)), (BIT(0) | BIT(1))),
+> > +       DEF_MOD("usb0",         R9A07G044_CLK_USB0,
+> > +                               R9A07G044_CLK_P1,
+> > +                               0x578, (BIT(0) | BIT(2) | BIT(3)), (BIT(0) | BIT(2) | BIT(3))),
+> > +       DEF_MOD("usb1",         R9A07G044_CLK_USB1,
+> > +                               R9A07G044_CLK_P1,
+> > +                               0x578, (BIT(1) | BIT(3)), (BIT(1) | BIT(3))),
+> >         DEF_MOD("scif0",        R9A07G044_CLK_SCIF0,
+> >                                 R9A07G044_CLK_P0,
+> >                                 0x584, BIT(0), BIT(0)),
+>
+> While the above matches the datasheet, I see a problem with the
+> implementation. As BIT(3) of the CPG_{CLKON,CLKMON,RST}_USB is shared by
+> the two USB2.0 channels, disabling USB_PCLK or asserting USB_PRESETN
+> will affect both channels.  So it looks like you need special handling
+> to make sure that doesn't happen while the other channel is in use.
+>
+> Or am I missing something?
 
-are available in the Git repository at:
+I'm getting the impression we do have to model the individual bits
+as separate clocks (and resets).  That would solve the problem with
+the shared USB_PCLK, as the clock framework will take care of keeping
+it enabled when at least one channel is in use.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-5.14
+Besides USB, SDHI has 4 clock bits, which we definitely don't want
+to control together, as the card detect clock must not be stopped
+while suspended.
+However, the exception to the rule is Ethernet: each channel has
+2 clocks, but only a single bit to control, so this needs a custom
+single-gate-for-dual-clock driver.
 
-for you to fetch changes up to c586f53ae159c6c1390f093a1ec94baef2df9f3a:
+Perhaps merging the clock binding definitions and initial driver for
+v5.14 was a bit premature...
+Anyway, we'll have 6 rcs after v5.14-rc1 to get it right ;-)
 
-  clk: imx8mq: remove SYS PLL 1/2 clock gates (2021-06-14 17:05:45 +0300)
+What do you think?
 
-----------------------------------------------------------------
-i.MX clock changes for 5.14:
+Gr{oetje,eeting}s,
 
-- Remove audio ipg clock from i.MX8MP
-- Fix naming typo of clock compatible string
-- Remove deprecated legacy clock binding for SCU clock driver
-- Use common clk-imx8qxp for both i.MX8QXP and i.MX8QM
-- Add multiple clocks to clk-imx8qxp driver (enet, hdmi, lcdif, audio,
-  parallel interface)
-- Add dedicated clock ops for paralel interface
-- Different fixes for clocks controlled by ATF
-- Fix different issues related to parallel interface clocks
-- Add A53/A72 frequency scaling support clk-scu driver
-- Add special case for DCSS clock on suspend for clk-scu driver
-- Add parent save/restore on suspend/resume to clk-scu driver
-- Skip runtime PM enablement for CPU clocks in clk-scu driver
-- Remove the sys1_pll/sys2_pll clock gates for i.MX8MQ and their
-  bindings
+                        Geert
 
-----------------------------------------------------------------
-Anson Huang (3):
-      clk: imx: scu: Add A53 frequency scaling support
-      clk: imx: scu: Add A72 frequency scaling support
-      clk: imx: scu: Only save DC SS clock using non-cached clock rate
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Dong Aisheng (12):
-      dt-bindings: arm: imx: scu: fix naming typo of clk compatible string
-      dt-bindings: arm: imx: scu: drop deprecated legacy clock binding
-      clk: imx: scu: remove legacy scu clock binding support
-      clk: imx: scu: add gpr clocks support
-      clk: imx8qxp: add clock valid checking mechnism
-      clk: imx8qm: add clock valid resource checking
-      clk: imx: scu: add enet rgmii gpr clocks
-      clk: imx: scu: add more scu clocks
-      clk: imx: scu: bypass cpu clock save and restore
-      clk: imx: scu: detach pd if can't power up
-      clk: imx: scu: bypass pi_pll enable status restore
-      clk: imx: scu: add parent save and restore
-
-Guoniu.zhou (1):
-      clk: imx: scu: add parallel port clock ops
-
-Jacky Bai (1):
-      clk: imx: Remove the audio ipg clock from imx8mp
-
-Lucas Stach (1):
-      clk: imx8mq: remove SYS PLL 1/2 clock gates
-
-Nitin Garg (1):
-      clk: imx: scu: Do not enable runtime PM for CPU clks
-
- .../devicetree/bindings/arm/freescale/fsl,scu.txt  |  10 +-
- drivers/clk/imx/Makefile                           |   3 +-
- drivers/clk/imx/clk-imx8mp.c                       |   1 -
- drivers/clk/imx/clk-imx8mq.c                       |  56 +--
- drivers/clk/imx/clk-imx8qm-rsrc.c                  | 116 +++++++
- drivers/clk/imx/clk-imx8qxp-rsrc.c                 |  89 +++++
- drivers/clk/imx/clk-imx8qxp.c                      | 377 ++++++++++++++-------
- drivers/clk/imx/clk-scu.c                          | 312 ++++++++++++++++-
- drivers/clk/imx/clk-scu.h                          |  56 ++-
- include/dt-bindings/clock/imx8-clock.h             | 128 -------
- include/dt-bindings/clock/imx8mq-clock.h           |  19 --
- 11 files changed, 814 insertions(+), 353 deletions(-)
- create mode 100644 drivers/clk/imx/clk-imx8qm-rsrc.c
- create mode 100644 drivers/clk/imx/clk-imx8qxp-rsrc.c
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
