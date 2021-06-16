@@ -2,94 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A47FC48BE6
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D0BC48BE5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 12:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDA96128B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F353D613C2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 12:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232164AbhFPL7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jun 2021 07:59:19 -0400
-Received: from mail-vs1-f52.google.com ([209.85.217.52]:47047 "EHLO
-        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232648AbhFPL7T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 07:59:19 -0400
-Received: by mail-vs1-f52.google.com with SMTP id z15so838715vsn.13;
-        Wed, 16 Jun 2021 04:57:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6dEULrRQ8uXvER/nUGrYSi+bBawcYQZSbgmeM/kVt4s=;
-        b=bZAAO4D8YcuXOqaC3TF6obBNegVEGFWRmMMD1dckMVAY5cmvsKeBYkPFYKkTU1/FfE
-         bAES0NJz8kXJqIHHfuvzsTxbIyJ7ywIuA0tERvup7sJIUcr1p01sE4jPne+rjDcJOorl
-         lJi2/YcCv5AvaUsAhniZ9SBEUsG9JWiOIx8ZhFuJSP3lsvlSo0zNvMBFNjAFOaQRD55A
-         lV8k6Z1ssnZFXMpsFY2l0p3YZAv3K+J1bRU4E99DueZk5eCe8nSR5hF4yPGGSElFu0so
-         w/vpP/+/GoQ5rVVKOyhO1Ns5u+v7WSeWarLed/p51yl+0RIE10KJcFHYC1cKxJyGYZh7
-         1QpQ==
-X-Gm-Message-State: AOAM533Ti+jw6A+5PNdBkeHB13cP2Fr5HzDfgMm8Bx7l0lK4UHa7SnsH
-        it+QydIqD4xe3G/zus5JZ/allzsU54ykNZDRCbUqD7pSCtYxAg==
-X-Google-Smtp-Source: ABdhPJzm0htqvNm/teKEG3kWMWwOLpT90lcsoLpNuw0zW6q3nRp03IxLxhRxDxKSkhFMio1uthXQ7JiqTpwk4smCcPA=
-X-Received: by 2002:a05:6102:2011:: with SMTP id p17mr10562353vsr.40.1623844632518;
- Wed, 16 Jun 2021 04:57:12 -0700 (PDT)
+        id S232883AbhFPM3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jun 2021 08:29:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232637AbhFPM3l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Jun 2021 08:29:41 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBA8561369;
+        Wed, 16 Jun 2021 12:27:07 +0000 (UTC)
+Date:   Wed, 16 Jun 2021 13:29:08 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+        alsa-devel@alsa-project.org, iommu@lists.linux-foundation.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
+Message-ID: <20210616132908.76a780b8@jic23-huawei>
+In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
+References: <20210615191543.1043414-1-robh@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1623749970-38020-1-git-send-email-yang.lee@linux.alibaba.com> <1623749970-38020-2-git-send-email-yang.lee@linux.alibaba.com>
-In-Reply-To: <1623749970-38020-2-git-send-email-yang.lee@linux.alibaba.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 16 Jun 2021 13:57:01 +0200
-Message-ID: <CAMuHMdW_5Nec7p-+msKyvt9Tubd8Ag2gj+qqc+SCG50sPK7EYw@mail.gmail.com>
-Subject: Re: [PATCH -next 2/2] clk: renesas: fix return value and unused assignment
-To:     yang.lee@linux.alibaba.com
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Yang,
+On Tue, 15 Jun 2021 13:15:43 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-On Tue, Jun 15, 2021 at 11:39 AM Yang Li <yang.lee@linux.alibaba.com> wrote:
-> Currently the function returns NULL on error, so exact error code is lost.
-> This patch changes return convention of the function to use ERR_PTR()
-> on error instead.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  drivers/clk/renesas/renesas-rzg2l-cpg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-> index 1fcea17..5bc7e87 100644
-> --- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-> @@ -183,7 +183,7 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
->         pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
->         if (!pll_clk) {
->                 clk = ERR_PTR(-ENOMEM);
-> -               return NULL;
-> +               return clk;
->         }
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooling
+> will fixup the final schema adding any unspecified minItems/maxItems.
+> 
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
+> 
 
-Why not simply "return ERR_PTR(-ENOMEM);"?
+...
 
-Gr{oetje,eeting}s,
+>  .../devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml   | 1 -
 
-                        Geert
+For this one, the fact it overrides maxItems elsewhere makes this a little
+bit odd.  I guess we can get used to it being implicit.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml     | 2 --
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+
