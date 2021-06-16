@@ -2,744 +2,364 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D73C49EB9
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 22:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC6DC48BE5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 00:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2B5A613C2
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jun 2021 22:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D1AB61246
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 00:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231143AbhFOWxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Jun 2021 18:53:01 -0400
-Received: from mail-il1-f182.google.com ([209.85.166.182]:40892 "EHLO
-        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbhFOWxA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Jun 2021 18:53:00 -0400
-Received: by mail-il1-f182.google.com with SMTP id b14so600760ilq.7;
-        Tue, 15 Jun 2021 15:50:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=opap8Pc211PDfiYK0lAjeotI8dphuxVUIi8AzzAvhVg=;
-        b=Pis6efOK04Fk3lN9Z3FshmMNP5yG79jD8KxotVzt2tvanvXIlijtl5+2+1en1t6JSP
-         Ss8FWEQZ41Ns+dbB4J3HSk4jZ3RZOnq/8Xn2IhqV76VJn4DWoCBfzMr6PuputIRT9ByV
-         DsedfVprRNu3o4bDHaf11pW0YgznAx0fOj7AHRSKdkXxu5UR3tdLeR95VjAPjM1GoF1J
-         cXJOohxAifS1iH5VnLA9nzCh0kDRdtvBRk9p3913FPUm3rZ44dhX+x5QEO7QOPNOQgpc
-         H3xMcqXVAOWII7kzt8u9EoMR9g5A775/nTJbRkqN6ujh/RTNhYJl+WWwjjIkglkOwlsr
-         5eUw==
-X-Gm-Message-State: AOAM530zbfH0hNlMqKGQttEqJuicVGlQu+fXKxFOOln6Dv1IZbUyuT5t
-        lMVLI5+4OQAEMttZiB89fZqOXl35zw==
-X-Google-Smtp-Source: ABdhPJw5T2orqmGqjguMKb3Ij75uI4pTV8gKU/COi92gDoYGKMVJLarE7tiYTs1W5FGt8oQJJG0Rew==
-X-Received: by 2002:a05:6e02:1a45:: with SMTP id u5mr1247054ilv.242.1623797453581;
-        Tue, 15 Jun 2021 15:50:53 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id e14sm226984ilc.47.2021.06.15.15.50.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 15:50:52 -0700 (PDT)
-Received: (nullmailer pid 1433414 invoked by uid 1000);
-        Tue, 15 Jun 2021 22:50:50 -0000
-Date:   Tue, 15 Jun 2021 16:50:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     alexandru.tachici@analog.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, petre.minciunescu@analog.com
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: ad9545: Add documentation
-Message-ID: <20210615225050.GA1417742@robh.at.kernel.org>
-References: <20210614070718.78041-1-alexandru.tachici@analog.com>
- <20210614070718.78041-3-alexandru.tachici@analog.com>
+        id S231143AbhFPAj4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Jun 2021 20:39:56 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:48909 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230265AbhFPAj4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Jun 2021 20:39:56 -0400
+X-UUID: a646cc1d7fcb4883877e66c97ae05315-20210616
+X-UUID: a646cc1d7fcb4883877e66c97ae05315-20210616
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1459602376; Wed, 16 Jun 2021 08:37:47 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 16 Jun 2021 08:37:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 16 Jun 2021 08:37:46 +0800
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Subject: [PATCH v10 01/19] dt-bindings: ARM: Mediatek: Add new document bindings of MT8192 clock
+Date:   Wed, 16 Jun 2021 08:36:25 +0800
+Message-ID: <20210616003643.28648-2-chun-jie.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20210616003643.28648-1-chun-jie.chen@mediatek.com>
+References: <20210616003643.28648-1-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210614070718.78041-3-alexandru.tachici@analog.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 10:07:18AM +0300, alexandru.tachici@analog.com wrote:
-> From: Alexandru Tachici <alexandru.tachici@analog.com>
-> 
-> Add dt bindings for ad9545.
+This patch adds the new binding documentation for system clock
+and functional clock on Mediatek MT8192.
 
-Kind of a lot of properties, not really sure what to do about that...
+Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+---
+ .../arm/mediatek/mediatek,mt8192-clock.yaml   | 216 ++++++++++++++++++
+ .../mediatek/mediatek,mt8192-sys-clock.yaml   |  66 ++++++
+ 2 files changed, 282 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml
 
-> 
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-> ---
->  .../devicetree/bindings/clock/clk-ad9545.yaml | 556 ++++++++++++++++++
->  include/dt-bindings/clock/ad9545.h            |  69 +++
->  2 files changed, 625 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/clk-ad9545.yaml
->  create mode 100644 include/dt-bindings/clock/ad9545.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/clk-ad9545.yaml b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
-> new file mode 100644
-> index 000000000000..50553a88ab44
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
-> @@ -0,0 +1,556 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/clk-ad9545.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588
-> +
-> +maintainers:
-> +  - Alexandru Tachici <alexandru.tachici@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588,
-> +  1 pps Synchronizer and Jitter Cleaner
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADM1266.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad9545
-> +
-> +  "#clock-cells":
-> +    const: 2
-> +
-> +  reg:
-> +    description: |
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+new file mode 100644
+index 000000000000..ce02c22c5d08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+@@ -0,0 +1,216 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8192-clock.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: MediaTek Functional Clock Controller for MT8192
++
++maintainers:
++  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
++
++description:
++  The Mediatek functional clock controller provides various clocks on MT8192.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - mediatek,mt8192-scp_adsp
++              - mediatek,mt8192-imp_iic_wrap_c
++              - mediatek,mt8192-audsys
++              - mediatek,mt8192-imp_iic_wrap_e
++              - mediatek,mt8192-imp_iic_wrap_s
++              - mediatek,mt8192-imp_iic_wrap_ws
++              - mediatek,mt8192-imp_iic_wrap_w
++              - mediatek,mt8192-imp_iic_wrap_n
++              - mediatek,mt8192-msdc_top
++              - mediatek,mt8192-msdc
++              - mediatek,mt8192-mfgcfg
++              - mediatek,mt8192-mmsys
++              - mediatek,mt8192-imgsys
++              - mediatek,mt8192-imgsys2
++              - mediatek,mt8192-vdecsys_soc
++              - mediatek,mt8192-vdecsys
++              - mediatek,mt8192-vencsys
++              - mediatek,mt8192-camsys
++              - mediatek,mt8192-camsys_rawa
++              - mediatek,mt8192-camsys_rawb
++              - mediatek,mt8192-camsys_rawc
++              - mediatek,mt8192-ipesys
++              - mediatek,mt8192-mdpsys
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    scp_adsp: clock-controller@10720000 {
++        compatible = "mediatek,mt8192-scp_adsp";
++        reg = <0x10720000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_c: clock-controller@11007000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_c";
++        reg = <0x11007000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    audsys: clock-controller@11210000 {
++        compatible = "mediatek,mt8192-audsys";
++        reg = <0x11210000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_e: clock-controller@11cb1000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_e";
++        reg = <0x11cb1000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_s: clock-controller@11d03000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_s";
++        reg = <0x11d03000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_ws: clock-controller@11d23000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_ws";
++        reg = <0x11d23000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_w: clock-controller@11e01000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_w";
++        reg = <0x11e01000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imp_iic_wrap_n: clock-controller@11f02000 {
++        compatible = "mediatek,mt8192-imp_iic_wrap_n";
++        reg = <0x11f02000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    msdc_top: clock-controller@11f10000 {
++        compatible = "mediatek,mt8192-msdc_top";
++        reg = <0x11f10000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    msdc: clock-controller@11f60000 {
++        compatible = "mediatek,mt8192-msdc";
++        reg = <0x11f60000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    mfgcfg: clock-controller@13fbf000 {
++        compatible = "mediatek,mt8192-mfgcfg";
++        reg = <0x13fbf000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    mmsys: clock-controller@14000000 {
++        compatible = "mediatek,mt8192-mmsys";
++        reg = <0x14000000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imgsys: clock-controller@15020000 {
++        compatible = "mediatek,mt8192-imgsys";
++        reg = <0x15020000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    imgsys2: clock-controller@15820000 {
++        compatible = "mediatek,mt8192-imgsys2";
++        reg = <0x15820000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    vdecsys_soc: clock-controller@1600f000 {
++        compatible = "mediatek,mt8192-vdecsys_soc";
++        reg = <0x1600f000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    vdecsys: clock-controller@1602f000 {
++        compatible = "mediatek,mt8192-vdecsys";
++        reg = <0x1602f000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    vencsys: clock-controller@17000000 {
++        compatible = "mediatek,mt8192-vencsys";
++        reg = <0x17000000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    camsys: clock-controller@1a000000 {
++        compatible = "mediatek,mt8192-camsys";
++        reg = <0x1a000000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    camsys_rawa: clock-controller@1a04f000 {
++        compatible = "mediatek,mt8192-camsys_rawa";
++        reg = <0x1a04f000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    camsys_rawb: clock-controller@1a06f000 {
++        compatible = "mediatek,mt8192-camsys_rawb";
++        reg = <0x1a06f000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    camsys_rawc: clock-controller@1a08f000 {
++        compatible = "mediatek,mt8192-camsys_rawc";
++        reg = <0x1a08f000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    ipesys: clock-controller@1b000000 {
++        compatible = "mediatek,mt8192-ipesys";
++        reg = <0x1b000000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    mdpsys: clock-controller@1f000000 {
++        compatible = "mediatek,mt8192-mdpsys";
++        reg = <0x1f000000 0x1000>;
++        #clock-cells = <1>;
++    };
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml
+new file mode 100644
+index 000000000000..ececce3a1507
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8192-sys-clock.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: MediaTek System Clock Controller for MT8192
++
++maintainers:
++  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
++
++description:
++  The Mediatek system clock controller provides various clocks and system configuration
++  like reset and bus protection on MT8192.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - mediatek,mt8192-topckgen
++              - mediatek,mt8192-infracfg
++              - mediatek,mt8192-pericfg
++              - mediatek,mt8192-apmixedsys
++          - const: syscon
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    topckgen: syscon@10000000 {
++        compatible = "mediatek,mt8192-topckgen", "syscon";
++        reg = <0x10000000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    infracfg: syscon@10001000 {
++        compatible = "mediatek,mt8192-infracfg", "syscon";
++        reg = <0x10001000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    pericfg: syscon@10003000 {
++        compatible = "mediatek,mt8192-pericfg", "syscon";
++        reg = <0x10003000 0x1000>;
++        #clock-cells = <1>;
++    };
++
++  - |
++    apmixedsys: syscon@1000c000 {
++        compatible = "mediatek,mt8192-apmixedsys", "syscon";
++        reg = <0x1000c000 0x1000>;
++        #clock-cells = <1>;
++    };
+-- 
+2.18.0
 
-Don't need '|' if there's no formatting or anything that has to be 
-escaped.
-
-Same applies elsewhere.
-
-> +      I2C address of the secondary device.
-> +    minimum: 0
-> +    maximum: 0xFF
-> +
-> +  avcc-supply:
-> +    description: |
-> +      Phandle to the Avcc power supply.
-> +
-> +  adi,freq-doubler:
-> +    description: |
-> +      The system clock PLL provides the user with the option of doubling the reference frequency.
-> +    type: boolean
-> +
-> +  adi,ref-crystal:
-> +    description: |
-> +      At XOA,XOB there is a crystal connected that needs maintaining.
-> +      Otherwise it is assumed that there is a TCXO or OCXO connected.
-> +    type: boolean
-> +
-> +  adi,ref-frequency-hz:
-> +    description: |
-> +      Reference input frequency at XOA,XOB. This is used for the system clock.
-> +
-> +  clocks:
-> +    items:
-> +      - description: Ref A clock input
-> +      - description: Ref AA clock input
-> +      - description: Ref B clock input
-> +      - description: Ref BB clock input
-> +      - description: Ref M0 clock input
-> +      - description: Ref M1 clock input
-> +      - description: Ref M2 clock input
-> +    maxItems: 4
-
-Looks like 7 is the max...
-
-> +
-> +  assigned-clocks:
-> +    description:
-> +      Clocks are identified using two cells <&ad9545 clock_type clock_address>.
-> +    minItems: 1
-> +    maxItems: 14
-> +
-> +  assigned-clock-rates:
-> +    minItems: 1
-> +    maxItems: 14
-> +
-> +  assigned-clock-phases:
-> +    minItems: 1
-> +    maxItems: 14
-> +
-> +  clock-output-names:
-> +    maxItems: 10
-> +
-> +  aux-dpll:
-> +    description: |
-> +      Auxiliary DPLL used for Closed-Loop method of system clock compensation.
-> +    type: object
-> +
-> +    properties:
-> +      adi,compensation-source:
-> +        description: |
-> +          System clock closed loop compensation source.
-> +          Choose from Ref-A to Ref-BB [0-3] or aux TDCs [4-5].
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1, 2, 3, 4, 5]
-> +
-> +      adi,aux-dpll-bw-mhz:
-> +        description: |
-> +          Auxiliary DPLL bandwidth.
-> +        minimum: 100
-> +        maximum: 2000000
-> +
-> +      adi,rate-change-limit:
-> +        description: |
-> +          Error compensation rate change limiting expressed in ppb/s. Disabled if property is
-> +          missing.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [715, 1430, 2860, 5720, 11440, 22880, 45760]
-> +
-> +    required:
-> +      - adi,compensation-source
-> +      - adi,aux-dpll-bw-mhz
-> +
-> +  aux-tdc-clks:
-> +    description: |
-> +      Child nodes represent Mx pin reference clock inputs.
-> +    type: object
-> +
-> +    properties:
-> +      '#address-cells':
-> +         const: 1
-> +
-> +      '#size-cells':
-> +         const: 0
-> +
-> +    patternProperties:
-> +      "^aux-tdc-clk@[0-3]$":
-> +
-> +        description: |
-> +          Represents a Mx pin reference clock input.
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: |
-> +              Address of the Auxiliary TDC.
-> +            maximum: 1
-
-0-3 as the unit-address says or only 1? 
-
-> +
-> +          adi,pin-nr:
-> +            description: |
-> +              Pin number to be the source of this TDC.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 0
-> +            maximum: 6
-> +
-> +        required:
-> +          - reg
-> +          - adi,pin-nr
-> +
-> +    additionalProperties: false
-> +
-> +  ref-input-clks:
-> +    description: |
-> +      Child nodes represent reference clock inputs.
-> +    type: object
-> +
-> +    properties:
-> +      '#address-cells':
-> +         const: 1
-> +
-> +      '#size-cells':
-> +         const: 0
-> +
-> +    patternProperties:
-> +      "^ref-input-clk@[0-3]$":
-> +        description: |
-> +          Represents a reference clock input.
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: |
-> +              The reference input number. It can have up to 4 input clocks numbered from 0 to 3.
-> +              (mapped: [refa, refaa, refb, refbb] -> [0, 1, 2, 3])
-> +            maxItems: 1
-> +
-> +          adi,single-ended-mode:
-> +            description: |
-> +              Single-ended configuration mode.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2, 3]
-> +
-> +          adi,differential-mode:
-> +            description: |
-> +              Differential configuration mode.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2]
-> +
-> +          adi,r-divider-ratio:
-> +            description: |
-> +              Each reference input has a dedicated divider.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 1073741824
-> +
-> +          adi,ref-dtol-pbb:
-> +            description: |
-> +              REFx offset limit. Constitutes a fractional portion of the corresponding nominal period.
-> +              The 24-bit number represents fractional units of parts per billion (ppb) up to a
-> +              maximum of approximately 17 million ppb (1.7%).
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 0
-> +            maximum: 16777215
-> +            default: 100000
-> +
-> +          adi,ref-monitor-hysteresis-pbb:
-> +            description: |
-> +              Basis points of the offset limit representing per ten thousand of REFx offset limit.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 3125, 6250, 12500, 25000, 50000, 75000, 87500]
-> +            default: 12500
-> +
-> +          adi,ref-validation-timer-ms:
-> +            description: |
-> +              Time required for a reference to remain in tolerance condition before being
-> +              available to be used.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 1048574
-> +            default: 10
-> +
-> +          adi,freq-lock-threshold-ps:
-> +            description: |
-> +              Phase lock detector threshold (in picoseconds).
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 16777215
-> +
-> +          adi,phase-lock-threshold-ps:
-> +            description: |
-> +              Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 16777215
-> +
-> +          adi,phase-lock-fill-rate:
-> +            description: |
-> +              Parameter used by the DPLL Phase Lock Detector.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 255
-> +            default: 10
-> +
-> +          adi,phase-lock-drain-rate:
-> +            description: |
-> +              Parameter used by the DPLL Phase Lock Detector.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 255
-> +            default: 10
-> +
-> +          adi,freq-lock-fill-rate:
-> +            description: |
-> +              Parameter used by the DPLL Frequency Lock Detector.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 255
-> +            default: 10
-> +
-> +          adi,freq-lock-drain-rate:
-> +            description: |
-> +              Parameter used by the DPLL Frequency Lock Detector.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 255
-> +            default: 10
-> +
-> +        required:
-> +          - reg
-> +          - adi,r-divider-ratio
-> +          - adi,ref-dtol-pbb
-> +          - adi,ref-monitor-hysteresis-pbb
-> +          - adi,ref-validation-timer-ms
-> +          - adi,freq-lock-threshold-ps
-> +          - adi,phase-lock-threshold-ps
-> +
-> +    additionalProperties: false
-> +
-> +  pll-clks:
-> +    description: |
-> +      Child nodes represent PLLs.
-> +    type: object
-> +
-> +    properties:
-> +      '#address-cells':
-> +         const: 1
-> +
-> +      '#size-cells':
-> +         const: 0
-> +
-> +    patternProperties:
-> +      "^pll-clk@[0-1]$":
-> +        description: |
-> +          Represents a PLL.
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: |
-> +              PLL number. AD9545 has two PLLs.
-> +            maxItems: 1
-> +
-> +          '#address-cells':
-> +             const: 1
-> +
-> +          '#size-cells':
-> +             const: 0
-> +
-> +          adi,fast-acq-trigger-mode:
-> +            description: |
-> +              If this is not specified Fast Acquisition will be used every time. See reg 0x2106
-> +              for constraints on Fast Acquisition trigger.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 0
-> +            maximum: 15
-> +            default: 0
-> +
-> +        patternProperties:
-> +          "^profile@[0-5]$":
-> +            description: |
-> +              Represents a DPLL profile. Each DPLL can have up to 6 specified sources
-> +              wih priorities assigned.
-> +            type: object
-> +
-> +            properties:
-> +              reg:
-> +                description: |
-> +                  Profile number. A DPLL can have up to 6 translation profiles.
-> +                maxItems: 1
-
-Blank line
-
-> +              adi,profile-priority:
-> +                description: |
-> +                  Profile selection priority. 0 is the highest, 31 is the lowest. For revertive
-> +                  reference switching, ensure that priority difference is > 7.
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                minimum: 0
-> +                maximum: 31
-> +
-> +              adi,pll-source:
-> +                description: |
-> +                  Each PLL can have 1 signal source. Choose from Ref-A to Ref-BB [0-3] or aux NCOs [4-5].
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                enum: [0, 1, 2, 3, 4, 5]
-> +
-> +              adi,pll-loop-bandwidth-uhz:
-> +                description: |
-> +                  PLL loop bandwidth in microhertz.
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                minimum: 1
-> +                maximum: 1850000000
-> +                default: 200000000
-> +
-> +              adi,fast-acq-excess-bw:
-> +                description: |
-> +                  Controls the DPLL loop bandwidth scaling factor while in fast acquisition mode.
-> +                  0 means this feature is disabled.
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                enum: [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
-> +                default: 0
-> +
-> +              adi,fast-acq-timeout-ms:
-> +                description: |
-> +                  Fast acquisition timeout controls the maximum amount of time that DPLL waits to
-> +                  achieve phase lock before reducing the loop bandwidth by a factor of two.
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                enum: [1, 10, 50, 100, 500, 1000, 10000, 50000]
-> +                default: 1
-> +
-> +              adi,fast-acq-lock-settle-ms:
-> +                description: |
-> +                  Controls how long DPLL must wait after achieving phase lock before reducing
-> +                  the loop bandwidth by a factor of 2.
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                enum: [1, 10, 50, 100, 500, 1000, 10000, 50000]
-> +                default: 1
-> +
-> +            required:
-> +              - reg
-> +              - adi,pll-source
-> +              - adi,pll-loop-bandwidth-uhz
-> +
-> +        additionalProperties: false
-> +
-> +        required:
-> +          - reg
-> +
-> +    additionalProperties: false
-> +
-> +  aux-ncos:
-> +    description: |
-> +      Child nodes represent auxiliary Numerical Controlled Oscilators.
-> +    type: object
-> +
-> +    properties:
-> +      '#address-cells':
-> +         const: 1
-> +
-> +      '#size-cells':
-> +         const: 0
-> +
-> +    patternProperties:
-> +      "^aux-nco-clk@[0-1]$":
-> +        description: |
-> +          Represents an auxiliary Numerical Controlled Oscilator. Generates timestamps that
-> +          can be sent to the DPLL0 or DPLL1.
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: |
-> +              Auxiliary NCO address mapped: [NCO0, NCO1] -> [0, 1].
-> +            maxItems: 1
-> +
-> +          adi,freq-lock-threshold-ps:
-> +            description: |
-> +              Phase lock detector threshold (in picoseconds).
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 16777215
-> +
-> +          adi,phase-lock-threshold-ps:
-> +            description: |
-> +              Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 1
-> +            maximum: 16777215
-> +
-> +        required:
-> +          - reg
-> +          - adi,freq-lock-threshold-ps
-> +          - adi,phase-lock-threshold-ps
-> +
-> +    additionalProperties: false
-> +
-> +  output-clks:
-> +    description: |
-> +      Child nodes represent clock outputs.
-> +    type: object
-> +
-> +    properties:
-> +      '#address-cells':
-> +         const: 1
-> +
-> +      '#size-cells':
-> +         const: 0
-> +
-> +    patternProperties:
-> +      "^output-clk@([0-9]|1[0-3])$":
-> +        description: |
-> +          Represents a clock output.
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: |
-> +              The reference input number. It can have up to 10 output clocks mapped:
-> +              (OUT0AP OUT0AN OUT0BP OUT0BN OUT0CP OUT0CN OUT1AP OUT1AN OUT1BP OUT1BN) ->
-> +              (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-
-Looks like constraints (maximum: 9).
-
-> +            maxItems: 1
-> +
-> +          adi,current-source:
-> +            description: |
-> +              If specified output is set as current source.
-> +            type: boolean
-> +
-> +          adi,current-source-microamp:
-> +            description: |
-> +              The magnitude of the driver current.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [7500, 12500, 15000]
-> +
-> +          adi,output-mode:
-> +            description: |
-> +              Output driver mode.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2]
-> +
-> +        required:
-> +          - reg
-> +          - adi,current-source-microamp
-> +          - adi,output-mode
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - adi,ref-frequency-hz
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/ad9545.h>
-> +
-> +    i2c1 {
-
-i2c {
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        ad9545_clock: ad9545@4A {
-
-clock-controller@4a
-
-> +                compatible = "adi,ad9545";
-> +                reg = <0x4A>;
-> +
-> +                adi,ref-crystal;
-> +                adi,ref-frequency-hz = <52000000>;
-> +
-> +                #clock-cells = <2>;
-> +                assigned-clocks = <&ad9545_clock AD9545_CLK_NCO AD9545_NCO0>,
-> +                                  <&ad9545_clock AD9545_CLK_PLL AD9545_PLL1>,
-> +                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1A>,
-> +                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1B>;
-> +                assigned-clock-rates = <10000>, <1875000000>, <156250000>, <156250000>;
-> +                assigned-clock-phases = <0>, <0>, <0>, <180>;
-> +
-> +                aux-ncos {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        aux-nco-clk@AD9545_NCO0 {
-
-Can't have defines in unit addresses. We generally don't have defines 
-for 'reg' values.
-
-> +                                reg = <AD9545_NCO0>;
-> +                                adi,freq-lock-threshold-ps = <16000000>;
-> +                                adi,phase-lock-threshold-ps = <16000000>;
-> +                        };
-> +                };
-> +
-> +                pll-clks {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        ad9545_apll1: pll-clk@AD9545_PLL1 {
-> +                                reg = <AD9545_PLL1>;
-> +
-> +                                #address-cells = <1>;
-> +                                #size-cells = <0>;
-> +
-> +                                profile@0 {
-> +                                       reg = <0>;
-> +                                       adi,pll-source = <4>;
-> +                                       adi,profile-priority = <0>;
-> +                                       adi,pll-loop-bandwidth-uhz = <200000000>;
-> +                                };
-> +                        };
-> +                };
-> +
-> +                output-clks {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        output-clk@AD9545_Q1A {
-> +                                reg = <AD9545_Q1A>;
-> +                                adi,output-mode = <DRIVER_MODE_DUAL_DIV>;
-> +                                adi,current-source-microamp = <15000>;
-> +                        };
-> +
-> +                        output-clk@AD9545_Q1B {
-> +                                reg = <AD9545_Q1B>;
-> +                                adi,output-mode = <DRIVER_MODE_DUAL_DIV>;
-> +                                adi,current-source-microamp = <15000>;
-> +                        };
-> +                };
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/ad9545.h b/include/dt-bindings/clock/ad9545.h
-> new file mode 100644
-> index 000000000000..857d50e5715b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/ad9545.h
-> @@ -0,0 +1,69 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-> +/*
-> + * AD9545 Network Clock Generator/Synchronizer
-> + *
-> + * Copyright 2020 Analog Devices Inc.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_AD9545_H_
-> +#define _DT_BINDINGS_CLOCK_AD9545_H_
-> +
-> +/* Input Driver Mode
-> + * Use for adi,single-ended-mode:
-> + */
-> +#define DRIVER_MODE_AC_COUPLED_IF	0
-> +#define DRIVER_MODE_DC_COUPLED_1V2	1
-> +#define DRIVER_MODE_DC_COUPLED_1V8	2
-> +#define DRIVER_MODE_IN_PULL_UP		3
-> +
-> +/* Input Driver Mode
-> + * Use for adi,differential-mode:
-> + */
-> +#define DRIVER_MODE_AC_COUPLED		0
-> +#define DRIVER_MODE_DC_COUPLED		1
-> +#define DRIVER_MODE_DC_COUPLED_LVDS	2
-> +
-> +/* Output Driver Mode
-> + * Use for adi,output-mode:
-> + */
-> +#define DRIVER_MODE_SINGLE_DIV_DIF	0
-> +#define DRIVER_MODE_SINGLE_DIV		1
-> +#define DRIVER_MODE_DUAL_DIV		2
-> +
-> +/* Clock types */
-> +#define AD9545_CLK_OUT			0
-> +#define AD9545_CLK_PLL			1
-> +#define AD9545_CLK_NCO			2
-> +#define AD9545_CLK_AUX_TDC		3
-> +
-> +/* PLL addresses */
-> +#define AD9545_PLL0			0
-> +#define AD9545_PLL1			1
-> +
-> +/* Outputs addresses */
-> +#define AD9545_Q0A			0
-> +#define AD9545_Q0AA			1
-> +#define AD9545_Q0B			2
-> +#define AD9545_Q0BB			3
-> +#define AD9545_Q0C			4
-> +#define AD9545_Q0CC			5
-> +#define AD9545_Q1A			6
-> +#define AD9545_Q1AA			7
-> +#define AD9545_Q1B			8
-> +#define AD9545_Q1BB			9
-> +
-> +/* NCO addresses */
-> +#define AD9545_NCO0			0
-> +#define AD9545_NCO1			1
-> +
-> +/* TDC addresses */
-> +#define AD9545_CLK_AUX_TDC0		0
-> +#define AD9545_CLK_AUX_TDC1		1
-> +
-> +/* Ex:
-> + * Output Q0C clock: <&ad9545_clock AD9545_CLK_OUT AD9545_Q0C>;
-> + * PLL0 clock: <&ad9545_clock AD9545_CLK_PLL AD9545_PLL0>;
-> + * NCO1 clock: <&ad9545_clock AD9545_CLK_NCO AD9545_NCO1>;
-> + */
-> +
-> +#endif /* _DT_BINDINGS_CLOCK_AD9545_H_ */
-> -- 
-> 2.25.1
