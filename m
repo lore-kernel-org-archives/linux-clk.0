@@ -2,50 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66437C48BE5
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A47FC48BE6
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 508C46128C
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DDA96128B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 11:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbhFPL4v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jun 2021 07:56:51 -0400
-Received: from mail-vs1-f46.google.com ([209.85.217.46]:45870 "EHLO
-        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232620AbhFPL4u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 07:56:50 -0400
-Received: by mail-vs1-f46.google.com with SMTP id y207so839470vsy.12;
-        Wed, 16 Jun 2021 04:54:43 -0700 (PDT)
+        id S232164AbhFPL7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jun 2021 07:59:19 -0400
+Received: from mail-vs1-f52.google.com ([209.85.217.52]:47047 "EHLO
+        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232648AbhFPL7T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 07:59:19 -0400
+Received: by mail-vs1-f52.google.com with SMTP id z15so838715vsn.13;
+        Wed, 16 Jun 2021 04:57:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wIMdD+DC2D0RdmuD95Uw5dpAwzapXJa70AOOqXem39c=;
-        b=ZHiaGs8iHAqnpO760slxdQO53fA88y9UNiTv85O8VfUvHWmLeBnScu7V6L0kVsQPLA
-         RsdsOQoyMpFbr2+2Ib7SAa7Ex4lRoR1ew8pzJy09gKk1LXThZScbsJh5yqMITYrd2fSJ
-         Jar/ZI2NE1q4bxbwv7gI1wN/pI+zxIhFsVahSLxRqvrCyPgjmZKJ+9wYxd4wBQwIvDBp
-         rxkJeJJM6juUnBzV2ojPwmwUlNjRfTbPnt7oVloiJ5qYqkGdGQx2/fy+m00RTVp9J7Yt
-         s9DBPqKd3Gdqbi0ycRE7gN39l2o9Zh7ILgd3/40HkNyqnUi+zuKDdGnFEiStkYkO/4hq
-         qLNQ==
-X-Gm-Message-State: AOAM531snReMos/ldKsh/YgiZh/azUXwWj6jHuPSln3uPy1/Lre0EjWa
-        uYP04evsGjFRn4hU7JrD4T6ES97iISzdG596qsM=
-X-Google-Smtp-Source: ABdhPJygjj/GQan14TLrrLCU+7ALlhFGG2bi4LaHeg93hOogHE6YIpuPFVMx39j4+/3QRMZBcGy3HJjIMmXnc5Ez6zc=
-X-Received: by 2002:a05:6102:c4c:: with SMTP id y12mr9908186vss.18.1623844482960;
- Wed, 16 Jun 2021 04:54:42 -0700 (PDT)
+        bh=6dEULrRQ8uXvER/nUGrYSi+bBawcYQZSbgmeM/kVt4s=;
+        b=bZAAO4D8YcuXOqaC3TF6obBNegVEGFWRmMMD1dckMVAY5cmvsKeBYkPFYKkTU1/FfE
+         bAES0NJz8kXJqIHHfuvzsTxbIyJ7ywIuA0tERvup7sJIUcr1p01sE4jPne+rjDcJOorl
+         lJi2/YcCv5AvaUsAhniZ9SBEUsG9JWiOIx8ZhFuJSP3lsvlSo0zNvMBFNjAFOaQRD55A
+         lV8k6Z1ssnZFXMpsFY2l0p3YZAv3K+J1bRU4E99DueZk5eCe8nSR5hF4yPGGSElFu0so
+         w/vpP/+/GoQ5rVVKOyhO1Ns5u+v7WSeWarLed/p51yl+0RIE10KJcFHYC1cKxJyGYZh7
+         1QpQ==
+X-Gm-Message-State: AOAM533Ti+jw6A+5PNdBkeHB13cP2Fr5HzDfgMm8Bx7l0lK4UHa7SnsH
+        it+QydIqD4xe3G/zus5JZ/allzsU54ykNZDRCbUqD7pSCtYxAg==
+X-Google-Smtp-Source: ABdhPJzm0htqvNm/teKEG3kWMWwOLpT90lcsoLpNuw0zW6q3nRp03IxLxhRxDxKSkhFMio1uthXQ7JiqTpwk4smCcPA=
+X-Received: by 2002:a05:6102:2011:: with SMTP id p17mr10562353vsr.40.1623844632518;
+ Wed, 16 Jun 2021 04:57:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <1623749970-38020-1-git-send-email-yang.lee@linux.alibaba.com>
-In-Reply-To: <1623749970-38020-1-git-send-email-yang.lee@linux.alibaba.com>
+References: <1623749970-38020-1-git-send-email-yang.lee@linux.alibaba.com> <1623749970-38020-2-git-send-email-yang.lee@linux.alibaba.com>
+In-Reply-To: <1623749970-38020-2-git-send-email-yang.lee@linux.alibaba.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 16 Jun 2021 13:54:31 +0200
-Message-ID: <CAMuHMdWghY8Ktx1o3tQxxcvrL2eoN1jD47kFPFtsU=whjqjwAA@mail.gmail.com>
-Subject: Re: [PATCH -next 1/2] clk: renesas: Remove unneeded semicolon
+Date:   Wed, 16 Jun 2021 13:57:01 +0200
+Message-ID: <CAMuHMdW_5Nec7p-+msKyvt9Tubd8Ag2gj+qqc+SCG50sPK7EYw@mail.gmail.com>
+Subject: Re: [PATCH -next 2/2] clk: renesas: fix return value and unused assignment
 To:     yang.lee@linux.alibaba.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -55,15 +56,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Yang,
+
 On Tue, Jun 15, 2021 at 11:39 AM Yang Li <yang.lee@linux.alibaba.com> wrote:
-> Eliminate the following coccicheck warning:
-> ./drivers/clk/renesas/renesas-rzg2l-cpg.c:299:2-3: Unneeded semicolon
+> Currently the function returns NULL on error, so exact error code is lost.
+> This patch changes return convention of the function to use ERR_PTR()
+> on error instead.
 >
 > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
 > Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/clk/renesas/renesas-rzg2l-cpg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+> index 1fcea17..5bc7e87 100644
+> --- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+> @@ -183,7 +183,7 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+>         pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
+>         if (!pll_clk) {
+>                 clk = ERR_PTR(-ENOMEM);
+> -               return NULL;
+> +               return clk;
+>         }
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.15.
+Why not simply "return ERR_PTR(-ENOMEM);"?
 
 Gr{oetje,eeting}s,
 
