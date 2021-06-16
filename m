@@ -2,126 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D79C48BE8
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 16:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E9FC48BE8
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 16:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D767861159
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 16:06:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94367610A0
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jun 2021 16:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbhFPQIc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jun 2021 12:08:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47310 "EHLO
+        id S229642AbhFPQKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jun 2021 12:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbhFPQIc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 12:08:32 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7694C061574;
-        Wed, 16 Jun 2021 09:06:24 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id s6so3390788edu.10;
-        Wed, 16 Jun 2021 09:06:24 -0700 (PDT)
+        with ESMTP id S234576AbhFPQKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 12:10:01 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3B2C061574
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jun 2021 09:07:55 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id b37so4542405ljr.13
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jun 2021 09:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=br/vs3IzlO0oycfaHGi4uCUaHE0ptyW4GY+sjqdpmsY=;
-        b=XzRjiiwm2rzlalnhvNtzn3//DNDoJ3YGvQ9/gb1mpiGR5XOjz4tTonLb+xzDPtdoNb
-         IdjqHiBLMXXWhYgsC81E0rGOBxjdWd0dbbDk9+xnmuAntQU17Wb7/q+NzZInbIBH9B60
-         Qx8nXAZJ6vliNoSzuMegyRfQnf++smUHghmHWYWLFRcFCU4vApSNIHGmYvrfJcGTuvOL
-         Sny9cPwC2YeSuPiNv9YOQ+WwMPU3OsxVxaG17V4nBdgovungQFb92W1UFVT5flr60Esq
-         7oE9eH6Nk+Z2SAD8FnuKfPZOj0ZS9n9/pegQc0vXTkAQlwcbBRm6KVjDqKAoMpgXEOvG
-         69bA==
+        d=linaro.org; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=UN+MCy79+aiReyg4GmhXPJbyl4AxyQ+BCC6wVSMU3qs=;
+        b=Xh67aMJn1kR5JF657nNTe4s9thtnLQHLX2MfVEslORURhsfZ1yBwTFI3FqmhNgPUB3
+         JN1MaODmmYAE8L98FSFRYGOWKER02v7vjZQC0qTuudjXgff/PXkLctkRclqygeS8Q7Rz
+         yQeMFgaXhDbEJu7iaC52+B1OpDj5w6suBbq8LjFoK5OMy9pNVBaNMJ3wzXB05IypkZpW
+         AeAY60BSUeUoINW657ynzPcEj0tVdrHvArY5kUiKwE1FFgYbEP8tr30BLLyutfPJN1VH
+         vrmruNLQEQyQeP++m/P7/OalSWRiGGfBZaxXwo6/DCGDmzBWH+Ajh+RHRGCTT42POUgS
+         dJ8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=br/vs3IzlO0oycfaHGi4uCUaHE0ptyW4GY+sjqdpmsY=;
-        b=npW5h2QeHG1sqBmE+lYWG2rFuH+cFuw9M1KbW1naMiZf/f+xyyCUjUZ9S5ucQFYpTu
-         BRKH/OTZMG0b/FtOKzLGXwE+Gc8uJbGkaBBh54BEulm7Itzb2ff6GVRHSKt9M8vJ8uEB
-         RGglwK1zxBl9IYQF0hWC/BWy0pMUSbigrszaOFfxa6C+QJpFm6sySLwFwYs3eSlHWw2H
-         KJM6DVmxEKiToM4AN+iLoS4INx9lNg7Z5zcAOQjjyv3gMkMcIPF/8t0IA9/lsI5/GXcy
-         BMMjyYDmbarn2RHtcVhWKcZ3zn4FMixeePNfCFGK4hsiNOMTgrxnXxk4ftzVnLcBCrkO
-         3QFg==
-X-Gm-Message-State: AOAM533qWprs6e0qCzEznQb6awJaFC85ivazcTr77xB4K2hHaTETFS3h
-        Y5Nv9ow8iySsvXWTc1kbF6k=
-X-Google-Smtp-Source: ABdhPJzvXXz4pkssjOn5h/XA8T7eViwo3GiNGLPT46/hYkoEF7/3J09Tq7haKl3ZfWBa6aW0i4ys7Q==
-X-Received: by 2002:aa7:ce96:: with SMTP id y22mr491217edv.210.1623859583257;
-        Wed, 16 Jun 2021 09:06:23 -0700 (PDT)
-Received: from BV030612LT ([188.24.178.25])
-        by smtp.gmail.com with ESMTPSA id g8sm2130561edw.89.2021.06.16.09.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 09:06:22 -0700 (PDT)
-Date:   Wed, 16 Jun 2021 19:06:19 +0300
-From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] Improve clock support for Actions S500 SoC
-Message-ID: <20210616160619.GA1992596@BV030612LT>
-References: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UN+MCy79+aiReyg4GmhXPJbyl4AxyQ+BCC6wVSMU3qs=;
+        b=SFXRw/PqZeU58Y2T2mzGHBKpL0eFJq4e4ErGTy/oZE3Lk5tiKkeb1U/6xqYjiQ5b+T
+         U7dxe6TG7wpfCWFcr0j64GRnvg+nEHhAr7V1GNGBAMsPVwY0fCpLaqSLqV4cKhbtc79z
+         7fmBQcjwh7c+KSYzV458Kvg/QO2KAZ7PFXtNNgvihfX7HtFM5qHmKJ7KXEW2lDcxJjYL
+         IwBuBn3Ey5sU8ooUqRs/j8gNoq8FoQGEggS65aO5LcXVIWXbhrxXThZlbnh5gX7eN0sw
+         S8qzOGN4lLbYj2VfzNXzsZVQN9DVAHkZpfUxTNdTkAMBSyW9oNghwtLV93siyddbMxYD
+         Mf7A==
+X-Gm-Message-State: AOAM531JOIRqK93YqPUTP38jsZDf4rAb4+Ekx0v3tMgkCw06r5HJheTE
+        /6gFJrm0OFQHTgd4xO3B+SKoDg==
+X-Google-Smtp-Source: ABdhPJzR34d+/RTML7o8n2wnjNOlwYw3iPMzGh7qB07Op+cC0dHOoqVD/2S+NbcLjfJHYKF8CnUy3A==
+X-Received: by 2002:a2e:858a:: with SMTP id b10mr465673lji.445.1623859673557;
+        Wed, 16 Jun 2021 09:07:53 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id x25sm286248lfc.305.2021.06.16.09.07.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jun 2021 09:07:53 -0700 (PDT)
+Subject: Re: [RFC v1 02/11] clk: qcom: rcg2: Add support for flags
+To:     Robert Foss <robert.foss@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, jonathan@marek.ca,
+        tdas@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@linaro.org>
+References: <20210616141107.291430-1-robert.foss@linaro.org>
+ <20210616141107.291430-3-robert.foss@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Message-ID: <b48198ff-a954-4941-32d6-65c992b345e7@linaro.org>
+Date:   Wed, 16 Jun 2021 19:07:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1623354574.git.cristian.ciocaltea@gmail.com>
+In-Reply-To: <20210616141107.291430-3-robert.foss@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 16/06/2021 17:10, Robert Foss wrote:
+> These changes are ported from the downstream driver, and are used on SM8350
+> for CAMCC, DISPCC, GCC, GPUCC & VIDEOCC.
+> 
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> ---
+>   drivers/clk/qcom/clk-rcg.h  | 4 ++++
+>   drivers/clk/qcom/clk-rcg2.c | 3 +++
+>   2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 99efcc7f8d88..a1f05281d950 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -149,6 +149,10 @@ struct clk_rcg2 {
+>   	const struct freq_tbl	*freq_tbl;
+>   	struct clk_regmap	clkr;
+>   	u8			cfg_off;
+> +	u8			flags;
+> +#define FORCE_ENABLE_RCG	BIT(0)
+> +#define HW_CLK_CTRL_MODE	BIT(1)
 
-Could you please pick up this patch series since there are some more
-patches ready for merging which depend on it?
+Downstream also has these flags for 8250, but the upstream driver ended 
+up not using them for the dispcc clocks. Could you please check that you 
+realy need HW_CLK_CTRL for dispcc clocks?
 
-Thanks,
-Cristi
+> +#define DFS_SUPPORT		BIT(2)
+>   };
+>   
+>   #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 42f13a2d1cc1..ed2c9b6659cc 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -295,6 +295,9 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>   	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+>   	if (rcg->mnd_width && f->n && (f->m != f->n))
+>   		cfg |= CFG_MODE_DUAL_EDGE;
+> +	if (rcg->flags & HW_CLK_CTRL_MODE)
+> +		cfg |= CFG_HW_CLK_CTRL_MASK;
+> +
+>   	return regmap_update_bits(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg),
+>   					mask, cfg);
+>   }
+> 
 
-On Thu, Jun 10, 2021 at 11:05:20PM +0300, Cristian Ciocaltea wrote:
-> While working on a driver to support the Actions Semi Owl Ethernet MAC,
-> I found and fixed some issues on the existing implementation of the S500
-> SoC clock subsystem and, additionally, I added two missing clocks.
-> 
-> Thanks,
-> Cristi
-> 
-> Changes in v3:
-> - Fixed swapped flags between "ahbprediv_clk" and "ahb_clk" in patch 4/6
-> - Added Reviewed-by tags from Mani
-> - Rebased patch series on v5.13-rc5
-> 
-> Changes in v2 (according to Mani's review):
-> - Re-added entry "{ 24, 1, 25 }" to sd_factor_table, according to the
->   datasheet (V1.8+), this is a valid divider
-> - Re-added OWL_GATE_HW to SENSOR[0-1], according to the datasheet they
->   are gated, even though the vendor implementation states the opposite
-> - Reverted the addition of the clock div table for H clock to support the
->   '1' divider (according to the datasheet), even though the vendor
->   implementation marks it as reserved
-> - Reordered "nic_clk_mux_p" after "ahbprediv_clk_mux_p" to follow the reg
->   field ordering
-> - Rebased patch series on v5.13-rc3
-> 
-> Cristian Ciocaltea (6):
->   clk: actions: Fix UART clock dividers on Owl S500 SoC
->   clk: actions: Fix SD clocks factor table on Owl S500 SoC
->   clk: actions: Fix bisp_factor_table based clocks on Owl S500 SoC
->   clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl S500 SoC
->   dt-bindings: clock: Add NIC and ETHERNET bindings for Actions S500 SoC
->   clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
-> 
->  drivers/clk/actions/owl-s500.c               | 92 +++++++++++++-------
->  include/dt-bindings/clock/actions,s500-cmu.h |  6 +-
->  2 files changed, 65 insertions(+), 33 deletions(-)
-> 
-> -- 
-> 2.32.0
-> 
+
+-- 
+With best wishes
+Dmitry
