@@ -2,191 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55430C49EA3
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 09:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA3EC2B9F4
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 10:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A458613C1
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 09:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA7961185
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 10:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhFQJRQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jun 2021 05:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231559AbhFQJRL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 05:17:11 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D80C061283
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 02:15:02 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id 68so2598189vsu.6
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 02:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NiiU6fiVLbE4syulfvGQUEnbQNZvmtFPXY1KRGZ4VKs=;
-        b=tspUddDmWP1nXGb8dYzDapkXukDhtaQZ8yVoZQOykE4MszNmnQ2Jc7pAu3v7qBcemT
-         UyLs98rU9nEy8e3wRIJkxsl8g3L8Eb/AvQODxlfCIA8Y+SqSVtbG2msAYvDIZFEizfbY
-         20UD8As6h7+oRqO/LBfp1JKzos5qS4bIZn22juJCAEEZOMhbhqM1f/S6KCbcFkkK35Tr
-         P7laFgsJQmqhNYip+ALRHKPPvbOtIHBYtRpZR/hgm9hpO06Ne5Y1MzvmGVRytTLSpocX
-         +CLKqhQk6OUYMP0R+b/JJQ4/QkH+6e5JGgp8Hm8OfSHuZ6CIo4hVwTpj+jWWd51a3cq+
-         7N8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NiiU6fiVLbE4syulfvGQUEnbQNZvmtFPXY1KRGZ4VKs=;
-        b=dbDbXyzBeKWqjwp8FB9DFuaw8jTLxFtV1CD4kJlt/PKzNmPMNu5FV2TkyyZ3D/2OPs
-         LpwgtEGcpN2GdfGov0rNECC2BYfjdtyjiaCDbLolZ0VaEY34RnUwdJW07Bb1U9Jq52Nx
-         xmE1gQ4beTwnlMBIeJJSpsLEoaf6KmEbAilN2BKcq3j9CbqkoT9V5U/Pwx5csHktM2ab
-         BT4Yhp4qjYab0TeznAFfdW+UH+Y+WRrzlen22WTk/KJ0kqvmt0PO4h3nnaxiP1TxLKJc
-         ofcEEoC9pVGU9bln36lYedp7cAI58G0PRgmDCTjhM19DEYbyNK8oA3Z3/Vfeo1WKFeXN
-         VuHg==
-X-Gm-Message-State: AOAM531T+aJC31WMMGEpDAEeBCDE7BVc4T+8MWDLC+6DI+aB/1LgJqTm
-        kEFtjVqF0DW8Zstxhh5ZV3SVnshpNr+20zm+06Ffyg==
-X-Google-Smtp-Source: ABdhPJyDDRUn2syWiuy8XigFtL3iDYKz59Ub/6ekAvgFfmAY9tRuxX/nulbHrrDC8J99+RHvCUQeMQ9XnjKDaURJSR4=
-X-Received: by 2002:a05:6102:2159:: with SMTP id h25mr3349328vsg.19.1623921301368;
- Thu, 17 Jun 2021 02:15:01 -0700 (PDT)
+        id S231627AbhFQKCq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 06:02:46 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:49823 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231549AbhFQKCp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 06:02:45 -0400
+X-Greylist: delayed 326 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Jun 2021 06:02:45 EDT
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id tokll2ktChqlttokol03Pw; Thu, 17 Jun 2021 11:56:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1623923767; bh=sn759aJtkKVdyZtPUsdKiIGaaDc782nBKlFC8+/0BCg=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=COe6YrzHeUfruS5mF7O4oQslwUzLyhlQ48NSXpUXKuWpc5WWJwCRHxoq9DgbLtqBn
+         iIvIj5tBmI1ZhUMvXVvtnVphBaaxwyC9eZKAhomuusn8mmVom75jZxRU5hGvUrU/hN
+         ueWTSZhO2lsYc+nlEP+axeqSRAZjLHyjHJuZTqtXZnGMzHUj0GE9zeAdAGJJbDmRLk
+         BQPhcck4qNOAQWE681IT65bYfgAlAVbgi+Y67DsJes6UbVecEfaBUWxvffu9s1yXWs
+         STOHQSfkHA1ejuX3M9pBSwc7FHSm1aEMyD/qJhKToY651lpTgkJjDbIHpbKjLrNjL5
+         5K/OuXM9TQXLg==
+Subject: Re: [PATCH 1/7] media: admin-guide: add stm32-dma2d description
+To:     dillon.minfei@gmail.com, mchehab@kernel.org,
+        mchehab+huawei@kernel.org, ezequiel@collabora.com,
+        gnurou@gmail.com, pihsun@chromium.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org
+Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1621508727-24486-1-git-send-email-dillon.minfei@gmail.com>
+ <1621508727-24486-2-git-send-email-dillon.minfei@gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <0f3145ce-3a01-3a77-2b65-85450bf9d920@xs4all.nl>
+Date:   Thu, 17 Jun 2021 11:56:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.10.0
 MIME-Version: 1.0
-References: <20210615191543.1043414-1-robh@kernel.org>
-In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 17 Jun 2021 11:14:25 +0200
-Message-ID: <CAPDyKFrY4UOO5CbZ8Bj7AH2+3Wo1PRpUv+Zs96tub=MzGuGrrQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-crypto@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-can@vger.kernel.org,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1621508727-24486-2-git-send-email-dillon.minfei@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfKZ/8vYZsMKfy5XT9cFmXy4HeO2qsC/V3WkPyz7B36DxM96di6zumwxUBougCC6EByhNoRgZqZ8REIb9kFts/cYflP9N6yEJJXSgL7+cnpyL0o70RpuJ
+ NoHPE0boo9ic0ONSg+8vPd0c+UI/0TkSZB7EahYHNH9p03txRyj4c8tgC9P+/FEJ5loZ+qGYIjnt/TMrYrnGvn7zjsHUtTmkHHxCN2MLCCSznfx1fAD/CD/M
+ Gy3SEAo24WKx17d2G9wSfcSLur40RnmHEcBmReyfXadul7z+jWHwz02hCehQ7eBAvpOtirPtJD4cyc4wHCGmEzI95fiP7NbIiQnb6zVSUFn9YJR9Z9pvKxge
+ BHWleMCeBTNvYY7g6wv3tqgZ5nofuTBR1i08sTSUtkQh24Vde8LV4XyNMj9ZD5+IcvBCvivDEkIUbxHgV2BfQpRYzWgXVFuwBNiPc2Ded5SIyrmmZio4txvx
+ JbUIA0aArZbGSl8rK89FqblDTjp6vXfdrKYQU91EbKeS14Gck7h3lVN6S+JodmVS+Nv2G5jajw+ZvMb2x8sqfWEwDc8aWZIDCNmLqemLJ2iHhBCIhVm5crNq
+ uzHTZRbQL5jBZBZmUHmYlpynCcr+XHX2Vyj0pFmoSztkuISwxFA/bpQBNb4c4GNnaklKgREv0+Hkw4PmJdPDNnlg/JBZ8AdEzf58n6TYWd6M+NrqksYWjNmj
+ cpwa8ArguC6hl8rUCark07d9vOL70D9pfk8uTjvxlO4znPMpn/vLn8Btyqw4WFe4gNqUdbrHZjosPhHFkNHMa1P2kTmXgWI0n5h7bV3kwbZr3ued4AXEY4oi
+ ZcgxX48TQAj073KjPqGmVFdzrgpjFICbMvfCvDxlTO90RP8tAGYckn8bisnm5w==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Jun 2021 at 21:15, Rob Herring <robh@kernel.org> wrote:
->
-> If a property has an 'items' list, then a 'minItems' or 'maxItems' with t=
-he
-> same size as the list is redundant and can be dropped. Note that is DT
-> schema specific behavior and not standard json-schema behavior. The tooli=
-ng
-> will fixup the final schema adding any unspecified minItems/maxItems.
->
-> This condition is partially checked with the meta-schema already, but
-> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
-> An improved meta-schema is pending.
->
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Wolfgang Grandegger <wg@grandegger.com>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Vivien Didelot <vivien.didelot@gmail.com>
-> Cc: Vladimir Oltean <olteanv@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@pengutronix.de>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On 20/05/2021 13:05, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
+> 
+> add stm32-dma2d description for dma2d driver
+> 
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> ---
+>  Documentation/admin-guide/media/platform-cardlist.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/admin-guide/media/platform-cardlist.rst b/Documentation/admin-guide/media/platform-cardlist.rst
+> index 261e7772eb3e..ac73c4166d1e 100644
+> --- a/Documentation/admin-guide/media/platform-cardlist.rst
+> +++ b/Documentation/admin-guide/media/platform-cardlist.rst
+> @@ -60,6 +60,7 @@ s5p-mfc            Samsung S5P MFC Video Codec
+>  sh_veu             SuperH VEU mem2mem video processing
+>  sh_vou             SuperH VOU video output
+>  stm32-dcmi         STM32 Digital Camera Memory Interface (DCMI)
+> +stm32-dma2d        STM32 Chrom-Art Accelerator Unit
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # for MMC
+I have to ask: it is really 'Chrom-Art' and not Chrome-Art or Choma-Art?
 
-[...]
+It's probably correct, but I have to check this :-)
 
-Kind regards
-Uffe
+Regards,
+
+	Hans
+
+>  sun4i-csi          Allwinner A10 CMOS Sensor Interface Support
+>  sun6i-csi          Allwinner V3s Camera Sensor Interface
+>  sun8i-di           Allwinner Deinterlace
+> 
+
