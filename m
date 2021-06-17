@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49593C49EA2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE92EC49361
 	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 19:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB5D6113C
+	by mail.kernel.org (Postfix) with ESMTP id 8958260FE8
 	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 19:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231489AbhFQT3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231503AbhFQT3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 17 Jun 2021 15:29:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbhFQT3t (ORCPT
+        with ESMTP id S231396AbhFQT3t (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 15:29:49 -0400
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82546C061574
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 12:27:35 -0700 (PDT)
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A97C061760
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 12:27:37 -0700 (PDT)
 Received: from localhost.localdomain (83.6.168.10.neoplus.adsl.tpnet.pl [83.6.168.10])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 8CE2F3F61B;
-        Thu, 17 Jun 2021 21:27:29 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id A02143F619;
+        Thu, 17 Jun 2021 21:27:34 +0200 (CEST)
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 To:     ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
@@ -40,36 +40,219 @@ Cc:     martin.botka@somainline.org,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: clock: Add support for MSM8992/4 MMCC
-Date:   Thu, 17 Jun 2021 21:27:23 +0200
-Message-Id: <20210617192725.126743-1-konrad.dybcio@somainline.org>
+Subject: [PATCH v2 3/3] clk: qcom: mmcc-msm8994: Add MSM8992 support
+Date:   Thu, 17 Jun 2021 21:27:25 +0200
+Message-Id: <20210617192725.126743-3-konrad.dybcio@somainline.org>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210617192725.126743-1-konrad.dybcio@somainline.org>
+References: <20210617192725.126743-1-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the multimedia clock controller found on MSM8992/4.
+MSM8992 features less clocks & GDSCS and has different
+freq tables for some of them.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/qcom/mmcc-msm8994.c | 126 ++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-index 8b0b1c56f354..68fdc3d4982a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-@@ -22,6 +22,8 @@ properties:
-       - qcom,mmcc-msm8660
-       - qcom,mmcc-msm8960
-       - qcom,mmcc-msm8974
-+      - qcom,mmcc-msm8992
-+      - qcom,mmcc-msm8994
-       - qcom,mmcc-msm8996
-       - qcom,mmcc-msm8998
-       - qcom,mmcc-sdm630
+diff --git a/drivers/clk/qcom/mmcc-msm8994.c b/drivers/clk/qcom/mmcc-msm8994.c
+index 7f65c0e61908..69f683e949d0 100644
+--- a/drivers/clk/qcom/mmcc-msm8994.c
++++ b/drivers/clk/qcom/mmcc-msm8994.c
+@@ -329,6 +329,14 @@ static const struct freq_tbl ftbl_axi_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_axi_clk_src_8992[] = {
++	F(75000000, P_GPLL0, 8, 0, 0),
++	F(150000000, P_GPLL0, 4, 0, 0),
++	F(300000000, P_GPLL0, 2, 0, 0),
++	F(404000000, P_MMPLL1, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 axi_clk_src = {
+ 	.cmd_rcgr = 0x5040,
+ 	.hid_width = 5,
+@@ -349,6 +357,12 @@ static const struct freq_tbl ftbl_csi0_1_2_3_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_csi0_1_2_3_clk_src_8992[] = {
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(266670000, P_MMPLL0, 3, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 csi0_clk_src = {
+ 	.cmd_rcgr = 0x3090,
+ 	.hid_width = 5,
+@@ -375,6 +389,16 @@ static const struct freq_tbl ftbl_vcodec0_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_vcodec0_clk_src_8992[] = {
++	F(66670000, P_GPLL0, 9, 0, 0),
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(133330000, P_GPLL0, 4.5, 0, 0),
++	F(200000000, P_MMPLL0, 4, 0, 0),
++	F(320000000, P_MMPLL0, 2.5, 0, 0),
++	F(510000000, P_MMPLL3, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 vcodec0_clk_src = {
+ 	.cmd_rcgr = 0x1000,
+ 	.mnd_width = 8,
+@@ -440,6 +464,16 @@ static const struct freq_tbl ftbl_vfe0_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_vfe0_1_clk_src_8992[] = {
++	F(80000000, P_GPLL0, 7.5, 0, 0),
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(200000000, P_GPLL0, 3, 0, 0),
++	F(320000000, P_MMPLL0, 2.5, 0, 0),
++	F(480000000, P_MMPLL4, 2, 0, 0),
++	F(600000000, P_GPLL0, 1, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 vfe0_clk_src = {
+ 	.cmd_rcgr = 0x3600,
+ 	.hid_width = 5,
+@@ -486,6 +520,15 @@ static const struct freq_tbl ftbl_cpp_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_cpp_clk_src_8992[] = {
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(200000000, P_GPLL0, 3, 0, 0),
++	F(320000000, P_MMPLL0, 2.5, 0, 0),
++	F(480000000, P_MMPLL4, 2, 0, 0),
++	F(640000000, P_MMPLL4, 1.5, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 cpp_clk_src = {
+ 	.cmd_rcgr = 0x3640,
+ 	.hid_width = 5,
+@@ -601,6 +644,17 @@ static const struct freq_tbl ftbl_mdp_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_mdp_clk_src_8992[] = {
++	F(85710000, P_GPLL0, 7, 0, 0),
++	F(171430000, P_GPLL0, 3.5, 0, 0),
++	F(200000000, P_GPLL0, 3, 0, 0),
++	F(240000000, P_GPLL0, 2.5, 0, 0),
++	F(266670000, P_MMPLL0, 3, 0, 0),
++	F(320000000, P_MMPLL0, 2.5, 0, 0),
++	F(400000000, P_MMPLL0, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 mdp_clk_src = {
+ 	.cmd_rcgr = 0x2040,
+ 	.hid_width = 5,
+@@ -654,6 +708,16 @@ static const struct freq_tbl ftbl_ocmemnoc_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_ocmemnoc_clk_src_8992[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(75000000, P_GPLL0, 8, 0, 0),
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(150000000, P_GPLL0, 4, 0, 0),
++	F(320000000, P_MMPLL0, 2.5, 0, 0),
++	F(400000000, P_MMPLL0, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 ocmemnoc_clk_src = {
+ 	.cmd_rcgr = 0x5090,
+ 	.hid_width = 5,
+@@ -767,6 +831,35 @@ static const struct freq_tbl ftbl_mclk0_1_2_3_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_mclk0_clk_src_8992[] = {
++	F(4800000, P_XO, 4, 0, 0),
++	F(6000000, P_MMPLL4, 10, 1, 16),
++	F(8000000, P_MMPLL4, 10, 1, 12),
++	F(9600000, P_XO, 2, 0, 0),
++	F(12000000, P_MMPLL4, 10, 1, 8),
++	F(16000000, P_MMPLL4, 10, 1, 6),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_MMPLL4, 10, 1, 4),
++	F(32000000, P_MMPLL4, 10, 1, 3),
++	F(48000000, P_MMPLL4, 10, 1, 2),
++	F(64000000, P_MMPLL4, 15, 0, 0),
++	{ }
++};
++
++static const struct freq_tbl ftbl_mclk1_2_3_clk_src_8992[] = {
++	F(4800000, P_XO, 4, 0, 0),
++	F(6000000, P_MMPLL4, 10, 1, 16),
++	F(8000000, P_MMPLL4, 10, 1, 12),
++	F(9600000, P_XO, 2, 0, 0),
++	F(16000000, P_MMPLL4, 10, 1, 6),
++	F(19200000, P_XO, 1, 0, 0),
++	F(24000000, P_MMPLL4, 10, 1, 4),
++	F(32000000, P_MMPLL4, 10, 1, 3),
++	F(48000000, P_MMPLL4, 10, 1, 2),
++	F(64000000, P_MMPLL4, 15, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 mclk0_clk_src = {
+ 	.cmd_rcgr = 0x3360,
+ 	.mnd_width = 8,
+@@ -2468,6 +2561,39 @@ static int mmcc_msm8994_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
+ 
++	if (of_device_is_compatible(pdev->dev.of_node, "qcom,mmcc-msm8992")) {
++		/* MSM8992 features less clocks and some have different freq tables */
++		mmcc_msm8994_desc.clks[CAMSS_JPEG_JPEG1_CLK] = 0;
++		mmcc_msm8994_desc.clks[CAMSS_JPEG_JPEG2_CLK] = 0;
++		mmcc_msm8994_desc.clks[FD_CORE_CLK_SRC] = 0;
++		mmcc_msm8994_desc.clks[FD_CORE_CLK] = 0;
++		mmcc_msm8994_desc.clks[FD_CORE_UAR_CLK] = 0;
++		mmcc_msm8994_desc.clks[FD_AXI_CLK] = 0;
++		mmcc_msm8994_desc.clks[FD_AHB_CLK] = 0;
++		mmcc_msm8994_desc.clks[JPEG1_CLK_SRC] = 0;
++		mmcc_msm8994_desc.clks[JPEG2_CLK_SRC] = 0;
++		mmcc_msm8994_desc.clks[VENUS0_CORE2_VCODEC_CLK] = 0;
++
++		mmcc_msm8994_desc.gdscs[FD_GDSC] = 0;
++		mmcc_msm8994_desc.gdscs[VENUS_CORE2_GDSC] = 0;
++
++		axi_clk_src.freq_tbl = ftbl_axi_clk_src_8992;
++		cpp_clk_src.freq_tbl = ftbl_cpp_clk_src_8992;
++		csi0_clk_src.freq_tbl = ftbl_csi0_1_2_3_clk_src_8992;
++		csi1_clk_src.freq_tbl = ftbl_csi0_1_2_3_clk_src_8992;
++		csi2_clk_src.freq_tbl = ftbl_csi0_1_2_3_clk_src_8992;
++		csi3_clk_src.freq_tbl = ftbl_csi0_1_2_3_clk_src_8992;
++		mclk0_clk_src.freq_tbl = ftbl_mclk0_clk_src_8992;
++		mclk1_clk_src.freq_tbl = ftbl_mclk1_2_3_clk_src_8992;
++		mclk2_clk_src.freq_tbl = ftbl_mclk1_2_3_clk_src_8992;
++		mclk3_clk_src.freq_tbl = ftbl_mclk1_2_3_clk_src_8992;
++		mdp_clk_src.freq_tbl = ftbl_mdp_clk_src_8992;
++		ocmemnoc_clk_src.freq_tbl = ftbl_ocmemnoc_clk_src_8992;
++		vcodec0_clk_src.freq_tbl = ftbl_vcodec0_clk_src_8992;
++		vfe0_clk_src.freq_tbl = ftbl_vfe0_1_clk_src_8992;
++		vfe1_clk_src.freq_tbl = ftbl_vfe0_1_clk_src_8992;
++	}
++
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8994_desc);
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
 -- 
 2.32.0
 
