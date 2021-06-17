@@ -2,68 +2,293 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53FEC49361
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 02:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38362C2B9F4
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79AEA613DD
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 02:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 118D4613CB
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbhFQCYT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jun 2021 22:24:19 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:59382 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230155AbhFQCYT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jun 2021 22:24:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UcfeMjX_1623896529;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0UcfeMjX_1623896529)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Jun 2021 10:22:10 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     geert+renesas@glider.be
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH -next v2] clk: renesas: fix return value and unused assignment
-Date:   Thu, 17 Jun 2021 10:22:03 +0800
-Message-Id: <1623896524-102058-1-git-send-email-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S230215AbhFQFUw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 01:20:52 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36754 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229805AbhFQFUv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 01:20:51 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H5GoP0023979;
+        Thu, 17 Jun 2021 07:18:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=nxYbjPb+TVCvmTzXtE9zd0VDHBgmhktLJy3GYQtHtp4=;
+ b=jtHx52OyWns2wOaFGKTtgEujGJvLj3NJw+8SGRyyjkZCbek9+eiFTsNkeUwHjhVXoc6x
+ a6qpKziU/+7jsAYbBaXqrbjCyE4aKAtla4ZjlOSBNlBqG9YV7DhGw3xmStIvDuXp7W62
+ Yof9hNgUzzeyC3GIqeY/kh9AA9TpNWJwscDcEVBbq8va6TiV2m3CNm2orCNmZCOqdiP7
+ ok4iAmGEazIXKuwjGjgmYknBzWW4SCD/N3zNBKGOWODTiDbJDQCjyx7wQuMsFZuilC/k
+ Krt+xAuz6Wrlbkx5CONuBJUe2c1LxMzWBoeNOu6OlunKIl1/UFdd6+5lDPEImeUUsST7 wA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 397p55arra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Jun 2021 07:18:24 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB0B6100034;
+        Thu, 17 Jun 2021 07:18:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B87EA211278;
+        Thu, 17 Jun 2021 07:18:23 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 07:18:23
+ +0200
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH v3 05/11] clk: stm32mp1: move RCC reset controller into RCC clock driver
+Date:   Thu, 17 Jun 2021 07:18:08 +0200
+Message-ID: <20210617051814.12018-6-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
+References: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-17_01:2021-06-15,2021-06-17 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently the function returns NULL on error, so exact error code is lost.
-This patch changes return convention of the function to use ERR_PTR()
-on error instead.
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+RCC clock and reset controller shared same memory mapping.
+As RCC clock driver is now a module, the best way to register clock
+and reset controller is to do it in same driver.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
+ drivers/clk/clk-stm32mp1.c | 157 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 144 insertions(+), 13 deletions(-)
 
-Change in v2:
---simply "return ERR_PTR(-ENOMEM);"
-
- drivers/clk/renesas/renesas-rzg2l-cpg.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-index 5009b9e..d46fffd 100644
---- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
-+++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-@@ -182,8 +182,7 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index e2e9331f1cba..6d3a36f81b2d 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -14,6 +14,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
  
- 	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
- 	if (!pll_clk) {
--		clk = ERR_PTR(-ENOMEM);
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
+@@ -2055,16 +2056,18 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
+ };
+ 
+-struct stm32_clock_match_data {
++struct stm32_rcc_match_data {
+ 	const struct clock_config *cfg;
+ 	unsigned int num;
+ 	unsigned int maxbinding;
++	u32 clear_offset;
+ };
+ 
+-static struct stm32_clock_match_data stm32mp1_data = {
++static struct stm32_rcc_match_data stm32mp1_data = {
+ 	.cfg		= stm32mp1_clock_cfg,
+ 	.num		= ARRAY_SIZE(stm32mp1_clock_cfg),
+ 	.maxbinding	= STM32MP1_LAST_CLK,
++	.clear_offset	= RCC_CLR,
+ };
+ 
+ static const struct of_device_id stm32mp1_match_data[] = {
+@@ -2100,23 +2103,122 @@ static int stm32_register_hw_clk(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int stm32_rcc_init(struct device *dev, void __iomem *base,
+-			  const struct of_device_id *match_data)
++#define STM32_RESET_ID_MASK GENMASK(15, 0)
++
++struct stm32_reset_data {
++	/* reset lock */
++	spinlock_t			lock;
++	struct reset_controller_dev	rcdev;
++	void __iomem			*membase;
++	u32				clear_offset;
++};
++
++static inline struct stm32_reset_data *
++to_stm32_reset_data(struct reset_controller_dev *rcdev)
+ {
+-	struct clk_hw_onecell_data *clk_data;
+-	struct clk_hw **hws;
+-	const struct of_device_id *match;
+-	const struct stm32_clock_match_data *data;
+-	int err, n, max_binding;
++	return container_of(rcdev, struct stm32_reset_data, rcdev);
++}
+ 
+-	match = of_match_node(match_data, dev_of_node(dev));
+-	if (!match) {
+-		dev_err(dev, "match data not found\n");
+-		return -ENODEV;
++static int stm32_reset_update(struct reset_controller_dev *rcdev,
++			      unsigned long id, bool assert)
++{
++	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
++	int reg_width = sizeof(u32);
++	int bank = id / (reg_width * BITS_PER_BYTE);
++	int offset = id % (reg_width * BITS_PER_BYTE);
++
++	if (data->clear_offset) {
++		void __iomem *addr;
++
++		addr = data->membase + (bank * reg_width);
++		if (!assert)
++			addr += data->clear_offset;
++
++		writel(BIT(offset), addr);
++
++	} else {
++		unsigned long flags;
++		u32 reg;
++
++		spin_lock_irqsave(&data->lock, flags);
++
++		reg = readl(data->membase + (bank * reg_width));
++
++		if (assert)
++			reg |= BIT(offset);
++		else
++			reg &= ~BIT(offset);
++
++		writel(reg, data->membase + (bank * reg_width));
++
++		spin_unlock_irqrestore(&data->lock, flags);
  	}
  
- 	parent_name = __clk_get_name(parent);
++	return 0;
++}
++
++static int stm32_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	return stm32_reset_update(rcdev, id, true);
++}
++
++static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return stm32_reset_update(rcdev, id, false);
++}
++
++static int stm32_reset_status(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
++	int reg_width = sizeof(u32);
++	int bank = id / (reg_width * BITS_PER_BYTE);
++	int offset = id % (reg_width * BITS_PER_BYTE);
++	u32 reg;
++
++	reg = readl(data->membase + (bank * reg_width));
++
++	return !!(reg & BIT(offset));
++}
++
++static const struct reset_control_ops stm32_reset_ops = {
++	.assert		= stm32_reset_assert,
++	.deassert	= stm32_reset_deassert,
++	.status		= stm32_reset_status,
++};
++
++static int stm32_rcc_reset_init(struct device *dev, void __iomem *base,
++				const struct of_device_id *match)
++{
++	const struct stm32_rcc_match_data *data = match->data;
++	struct stm32_reset_data *reset_data = NULL;
++
+ 	data = match->data;
+ 
++	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
++	if (!reset_data)
++		return -ENOMEM;
++
++	reset_data->membase = base;
++	reset_data->rcdev.owner = THIS_MODULE;
++	reset_data->rcdev.ops = &stm32_reset_ops;
++	reset_data->rcdev.of_node = dev_of_node(dev);
++	reset_data->rcdev.nr_resets = STM32_RESET_ID_MASK;
++	reset_data->clear_offset = data->clear_offset;
++
++	return reset_controller_register(&reset_data->rcdev);
++}
++
++static int stm32_rcc_clock_init(struct device *dev, void __iomem *base,
++				const struct of_device_id *match)
++{
++	const struct stm32_rcc_match_data *data = match->data;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **hws;
++	int err, n, max_binding;
++
+ 	max_binding =  data->maxbinding;
+ 
+ 	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, max_binding),
+@@ -2145,6 +2247,35 @@ static int stm32_rcc_init(struct device *dev, void __iomem *base,
+ 	return of_clk_add_hw_provider(dev_of_node(dev), of_clk_hw_onecell_get, clk_data);
+ }
+ 
++static int stm32_rcc_init(struct device *dev, void __iomem *base,
++			  const struct of_device_id *match_data)
++{
++	const struct of_device_id *match;
++	int err;
++
++	match = of_match_node(match_data, dev_of_node(dev));
++	if (!match) {
++		dev_err(dev, "match data not found\n");
++		return -ENODEV;
++	}
++
++	/* RCC Reset Configuration */
++	err = stm32_rcc_reset_init(dev, base, match);
++	if (err) {
++		pr_err("stm32mp1 reset failed to initialize\n");
++		return err;
++	}
++
++	/* RCC Clock Configuration */
++	err = stm32_rcc_clock_init(dev, base, match);
++	if (err) {
++		pr_err("stm32mp1 clock failed to initialize\n");
++		return err;
++	}
++
++	return 0;
++}
++
+ static int stm32mp1_rcc_init(struct device *dev)
+ {
+ 	void __iomem *base;
 -- 
-1.8.3.1
+2.17.1
 
