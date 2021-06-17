@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38362C2B9F4
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FD7C49EA3
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 118D4613CB
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5E1613DF
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbhFQFUw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jun 2021 01:20:52 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36754 "EHLO
+        id S230295AbhFQFUx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 01:20:53 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36748 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229805AbhFQFUv (ORCPT
+        by vger.kernel.org with ESMTP id S230001AbhFQFUv (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 01:20:51 -0400
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H5GoP0023979;
-        Thu, 17 Jun 2021 07:18:24 +0200
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H5Go4F023982;
+        Thu, 17 Jun 2021 07:18:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=nxYbjPb+TVCvmTzXtE9zd0VDHBgmhktLJy3GYQtHtp4=;
- b=jtHx52OyWns2wOaFGKTtgEujGJvLj3NJw+8SGRyyjkZCbek9+eiFTsNkeUwHjhVXoc6x
- a6qpKziU/+7jsAYbBaXqrbjCyE4aKAtla4ZjlOSBNlBqG9YV7DhGw3xmStIvDuXp7W62
- Yof9hNgUzzeyC3GIqeY/kh9AA9TpNWJwscDcEVBbq8va6TiV2m3CNm2orCNmZCOqdiP7
- ok4iAmGEazIXKuwjGjgmYknBzWW4SCD/N3zNBKGOWODTiDbJDQCjyx7wQuMsFZuilC/k
- Krt+xAuz6Wrlbkx5CONuBJUe2c1LxMzWBoeNOu6OlunKIl1/UFdd6+5lDPEImeUUsST7 wA== 
+ bh=MQFahwvfutC3FxBs/hqCSrvMqO46K/tUe+kmA3pJK74=;
+ b=vGb/6lrY4cdO1oxnH5MYhNVidJ+MA6ndbrHEp4ZuqG7PMqpXqmMInNQpiY96jMFID9ea
+ 2m16G92V90bTrgYUMElkoiyR+uF9wa+Q715ThDxuJntMbSl8y4bIZyBMTnLjxuIPuaOa
+ UXg9mb0T+W54JEmFYCXear7zb5WNRT23BF6ihGmr6up35+PAErG0RjkRNws6JNX8go2E
+ EfSM9w4iFfaoHIX8315if1frfJUC/aR2VqwURrTEljHuWvOkcJ/G70A829WMXhlr9whj
+ HCrrUQ745ZRnst28DoluFZRlJ6pr29RHPkXKykBHXSdZy0m1OZ/K19VJ+pfZAmUWFgx0 bA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 397p55arra-1
+        by mx07-00178001.pphosted.com with ESMTP id 397p55arr5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Jun 2021 07:18:24 +0200
+        Thu, 17 Jun 2021 07:18:22 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB0B6100034;
-        Thu, 17 Jun 2021 07:18:23 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A2DD9100038;
+        Thu, 17 Jun 2021 07:18:21 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B87EA211278;
-        Thu, 17 Jun 2021 07:18:23 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 07:18:23
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8AC0021127A;
+        Thu, 17 Jun 2021 07:18:21 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 07:18:21
  +0200
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -58,15 +58,15 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v3 05/11] clk: stm32mp1: move RCC reset controller into RCC clock driver
-Date:   Thu, 17 Jun 2021 07:18:08 +0200
-Message-ID: <20210617051814.12018-6-gabriel.fernandez@foss.st.com>
+Subject: [RESEND PATCH v3 02/11] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
+Date:   Thu, 17 Jun 2021 07:18:05 +0200
+Message-ID: <20210617051814.12018-3-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
 References: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
+X-Originating-IP: [10.75.127.47]
 X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
@@ -77,218 +77,104 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-RCC clock and reset controller shared same memory mapping.
-As RCC clock driver is now a module, the best way to register clock
-and reset controller is to do it in same driver.
+'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
+A divider is available only on the specific rtc input for ck_hse.
+This Merge will facilitate to have a more coherent clock tree
+in no trusted / trusted world.
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 157 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 144 insertions(+), 13 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 54 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index e2e9331f1cba..6d3a36f81b2d 100644
+index 35d5aee8f9b0..a7c244fd0b03 100644
 --- a/drivers/clk/clk-stm32mp1.c
 +++ b/drivers/clk/clk-stm32mp1.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-@@ -2055,16 +2056,18 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
+@@ -245,7 +245,7 @@ static const char * const dsi_src[] = {
  };
  
--struct stm32_clock_match_data {
-+struct stm32_rcc_match_data {
- 	const struct clock_config *cfg;
- 	unsigned int num;
- 	unsigned int maxbinding;
-+	u32 clear_offset;
+ static const char * const rtc_src[] = {
+-	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
++	"off", "ck_lse", "ck_lsi", "ck_hse"
  };
  
--static struct stm32_clock_match_data stm32mp1_data = {
-+static struct stm32_rcc_match_data stm32mp1_data = {
- 	.cfg		= stm32mp1_clock_cfg,
- 	.num		= ARRAY_SIZE(stm32mp1_clock_cfg),
- 	.maxbinding	= STM32MP1_LAST_CLK,
-+	.clear_offset	= RCC_CLR,
- };
- 
- static const struct of_device_id stm32mp1_match_data[] = {
-@@ -2100,23 +2103,122 @@ static int stm32_register_hw_clk(struct device *dev,
- 	return 0;
+ static const char * const mco1_src[] = {
+@@ -1031,6 +1031,47 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
+ 	return hw;
  }
  
--static int stm32_rcc_init(struct device *dev, void __iomem *base,
--			  const struct of_device_id *match_data)
-+#define STM32_RESET_ID_MASK GENMASK(15, 0)
++/* The divider of RTC clock concerns only ck_hse clock */
++#define HSE_RTC 3
 +
-+struct stm32_reset_data {
-+	/* reset lock */
-+	spinlock_t			lock;
-+	struct reset_controller_dev	rcdev;
-+	void __iomem			*membase;
-+	u32				clear_offset;
-+};
-+
-+static inline struct stm32_reset_data *
-+to_stm32_reset_data(struct reset_controller_dev *rcdev)
- {
--	struct clk_hw_onecell_data *clk_data;
--	struct clk_hw **hws;
--	const struct of_device_id *match;
--	const struct stm32_clock_match_data *data;
--	int err, n, max_binding;
-+	return container_of(rcdev, struct stm32_reset_data, rcdev);
-+}
- 
--	match = of_match_node(match_data, dev_of_node(dev));
--	if (!match) {
--		dev_err(dev, "match data not found\n");
--		return -ENODEV;
-+static int stm32_reset_update(struct reset_controller_dev *rcdev,
-+			      unsigned long id, bool assert)
++static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
++						 unsigned long parent_rate)
 +{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
++	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
++		return clk_divider_ops.recalc_rate(hw, parent_rate);
 +
-+	if (data->clear_offset) {
-+		void __iomem *addr;
++	return parent_rate;
++}
 +
-+		addr = data->membase + (bank * reg_width);
-+		if (!assert)
-+			addr += data->clear_offset;
++static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
++		return clk_divider_ops.set_rate(hw, rate, parent_rate);
 +
-+		writel(BIT(offset), addr);
++	return parent_rate;
++}
 +
++static int clk_divider_rtc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	unsigned long best_parent_rate = req->best_parent_rate;
++
++	if (req->best_parent_hw == clk_hw_get_parent_by_index(hw, HSE_RTC)) {
++		req->rate = clk_divider_ops.round_rate(hw, req->rate, &best_parent_rate);
++		req->best_parent_rate = best_parent_rate;
 +	} else {
-+		unsigned long flags;
-+		u32 reg;
++		req->rate = best_parent_rate;
++	}
 +
-+		spin_lock_irqsave(&data->lock, flags);
-+
-+		reg = readl(data->membase + (bank * reg_width));
-+
-+		if (assert)
-+			reg |= BIT(offset);
-+		else
-+			reg &= ~BIT(offset);
-+
-+		writel(reg, data->membase + (bank * reg_width));
-+
-+		spin_unlock_irqrestore(&data->lock, flags);
- 	}
- 
 +	return 0;
 +}
 +
-+static int stm32_reset_assert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, true);
-+}
-+
-+static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, false);
-+}
-+
-+static int stm32_reset_status(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
-+	u32 reg;
-+
-+	reg = readl(data->membase + (bank * reg_width));
-+
-+	return !!(reg & BIT(offset));
-+}
-+
-+static const struct reset_control_ops stm32_reset_ops = {
-+	.assert		= stm32_reset_assert,
-+	.deassert	= stm32_reset_deassert,
-+	.status		= stm32_reset_status,
++static const struct clk_ops rtc_div_clk_ops = {
++	.recalc_rate	= clk_divider_rtc_recalc_rate,
++	.set_rate	= clk_divider_rtc_set_rate,
++	.determine_rate = clk_divider_rtc_determine_rate
 +};
 +
-+static int stm32_rcc_reset_init(struct device *dev, void __iomem *base,
-+				const struct of_device_id *match)
-+{
-+	const struct stm32_rcc_match_data *data = match->data;
-+	struct stm32_reset_data *reset_data = NULL;
-+
- 	data = match->data;
+ struct stm32_pll_cfg {
+ 	u32 offset;
+ };
+@@ -1243,6 +1284,10 @@ _clk_stm32_register_composite(struct device *dev,
+ 	_STM32_DIV(_div_offset, _div_shift, _div_width,\
+ 		   _div_flags, _div_table, NULL)\
  
-+	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
-+	if (!reset_data)
-+		return -ENOMEM;
++#define _DIV_RTC(_div_offset, _div_shift, _div_width, _div_flags, _div_table)\
++	_STM32_DIV(_div_offset, _div_shift, _div_width,\
++		   _div_flags, _div_table, &rtc_div_clk_ops)
 +
-+	reset_data->membase = base;
-+	reset_data->rcdev.owner = THIS_MODULE;
-+	reset_data->rcdev.ops = &stm32_reset_ops;
-+	reset_data->rcdev.of_node = dev_of_node(dev);
-+	reset_data->rcdev.nr_resets = STM32_RESET_ID_MASK;
-+	reset_data->clear_offset = data->clear_offset;
-+
-+	return reset_controller_register(&reset_data->rcdev);
-+}
-+
-+static int stm32_rcc_clock_init(struct device *dev, void __iomem *base,
-+				const struct of_device_id *match)
-+{
-+	const struct stm32_rcc_match_data *data = match->data;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw **hws;
-+	int err, n, max_binding;
-+
- 	max_binding =  data->maxbinding;
+ #define _STM32_MUX(_offset, _shift, _width, _mux_flags, _mmux, _ops)\
+ 	.mux = &(struct stm32_mux_cfg) {\
+ 		&(struct mux_cfg) {\
+@@ -1965,13 +2010,10 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
  
- 	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, max_binding),
-@@ -2145,6 +2247,35 @@ static int stm32_rcc_init(struct device *dev, void __iomem *base,
- 	return of_clk_add_hw_provider(dev_of_node(dev), of_clk_hw_onecell_get, clk_data);
- }
+ 	/* RTC clock */
+-	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 6, 0),
+-
+-	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
+-		   CLK_SET_RATE_PARENT,
++	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE,
+ 		  _GATE(RCC_BDCR, 20, 0),
+ 		  _MUX(RCC_BDCR, 16, 2, 0),
+-		  _NO_DIV),
++		  _DIV_RTC(RCC_RTCDIVR, 0, 6, 0, NULL)),
  
-+static int stm32_rcc_init(struct device *dev, void __iomem *base,
-+			  const struct of_device_id *match_data)
-+{
-+	const struct of_device_id *match;
-+	int err;
-+
-+	match = of_match_node(match_data, dev_of_node(dev));
-+	if (!match) {
-+		dev_err(dev, "match data not found\n");
-+		return -ENODEV;
-+	}
-+
-+	/* RCC Reset Configuration */
-+	err = stm32_rcc_reset_init(dev, base, match);
-+	if (err) {
-+		pr_err("stm32mp1 reset failed to initialize\n");
-+		return err;
-+	}
-+
-+	/* RCC Clock Configuration */
-+	err = stm32_rcc_clock_init(dev, base, match);
-+	if (err) {
-+		pr_err("stm32mp1 clock failed to initialize\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32mp1_rcc_init(struct device *dev)
- {
- 	void __iomem *base;
+ 	/* MCO clocks */
+ 	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
 -- 
 2.17.1
 
