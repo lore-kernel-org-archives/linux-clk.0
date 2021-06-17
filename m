@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88942C49EBF
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FE6C49EBD
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB37613E9
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B656613CE
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 05:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbhFQFU5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jun 2021 01:20:57 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:11854 "EHLO
+        id S230438AbhFQFU4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 01:20:56 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:11840 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230205AbhFQFUv (ORCPT
+        by vger.kernel.org with ESMTP id S230144AbhFQFUv (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 01:20:51 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H5H5f6032289;
-        Thu, 17 Jun 2021 07:18:26 +0200
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H5H5q2032306;
+        Thu, 17 Jun 2021 07:18:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=4T6Qz2/JmceHcxFve+YnEKkureSv6YCau+hALUO8xJQ=;
- b=2ZwXSCSab6fzOy1D0dMtWdoTwg94jR7G34y1pu2FGo+LdoQCoZl5AWfC5ZA+S8Wk4C7U
- 3I61jGb27iRXZpwyTuIwlvQ+2iNW3lqnFUxhXiBKao23c7u7AHkD+QeBM4oCJLOcA7qk
- l5ofuyo7lNXaCUzcLTna5ja2XIrgUG+SZJG5tDmZMxxz6iz61wYyUyKKseM83l5TSKIf
- NSXHmd5sA8+B8YZ3gjbyFjl54+IL0z6IJnKHDsdS4goqN91Sg/mDEhbRS+dRkYGb8eC2
- kshM2jEKHYUFLUxmffq8EUlBny6/dZNcuqX3xV2BDfXZuelMfMlJZrhNHQ3IKvAvECK3 Vg== 
+ bh=oSV9GPSahpnkVgE4VVMpQ3gfnBTqH9WB8kcmpz1Wt2A=;
+ b=gEXtRQTWUDSU/uXu18Io/pI9O88bm2gUPjv50I1wc0kEEzJXpJ/Jvcg00Oa8Fj0/MkvL
+ odu271WC1LCHUB8pVVa1xa/w6MS7v/O8dQ72u0FeZ0OP9+xHUrRjqgBk3vlxdoG2N7LT
+ 2DFppeo6+1p8AmB3F2xV9ZUUEYM7CGHuIPzBskPxXK6GZgZYXEc69GeEIGsBNEXWQUNo
+ +y8ZTM5flwJA5gg6GHtpLXg+7AqDrJWW70f2QWfdOW0FO0uE0/BBIHHGpx1Nrnk7wg05
+ K7LVRcInq62VU7XtKOEQjvT13PnnwEyXJHoDvfK8ZT9dGLAQWptgKXBF4uYQBgfA6ct1 3g== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 397bxapeay-1
+        by mx07-00178001.pphosted.com with ESMTP id 397bxapeau-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Jun 2021 07:18:26 +0200
+        Thu, 17 Jun 2021 07:18:25 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E055D100038;
-        Thu, 17 Jun 2021 07:18:25 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 804AA10002A;
+        Thu, 17 Jun 2021 07:18:24 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CBC2F211278;
-        Thu, 17 Jun 2021 07:18:25 +0200 (CEST)
-Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 07:18:25
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 70782211278;
+        Thu, 17 Jun 2021 07:18:24 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun 2021 07:18:23
  +0200
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -58,16 +58,16 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v3 08/11] dt-bindings: reset: add IDs for SCMI reset domains on stm32mp15
-Date:   Thu, 17 Jun 2021 07:18:11 +0200
-Message-ID: <20210617051814.12018-9-gabriel.fernandez@foss.st.com>
+Subject: [RESEND PATCH v3 06/11] reset: stm32mp1: remove stm32mp1 reset
+Date:   Thu, 17 Jun 2021 07:18:09 +0200
+Message-ID: <20210617051814.12018-7-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
 References: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-06-17_01:2021-06-15,2021-06-17 signatures=0
@@ -77,46 +77,166 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-stm32mp15 TZ secure firmware provides SCMI reset domains for
-secure resources. This change defines the SCMI reset domain
-identifiers used by SCMI agents and servers.
+st32mp1 RCC reset driver was moved into stm32mp1 RCC clock driver.
 
-Stm32mp15 TZ secure firmware provides SCMI clocks for oscillators, some
-PLL output and few secure aware interfaces. This change defines the
-SCMI clock identifiers used by SCMI agents and servers.
-
-Server SCMI0 exposes reset controllers for resources under RCC[TZEN]
-configuration control.
-
-Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/reset/stm32mp1-resets.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/reset/Kconfig          |   6 --
+ drivers/reset/Makefile         |   1 -
+ drivers/reset/reset-stm32mp1.c | 115 ---------------------------------
+ 3 files changed, 122 deletions(-)
+ delete mode 100644 drivers/reset/reset-stm32mp1.c
 
-diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
-index f0c3aaef67a0..bc71924faa54 100644
---- a/include/dt-bindings/reset/stm32mp1-resets.h
-+++ b/include/dt-bindings/reset/stm32mp1-resets.h
-@@ -105,4 +105,17 @@
- #define GPIOJ_R		19785
- #define GPIOK_R		19786
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 3e7f55e44d84..29fb33c0e26d 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -199,12 +199,6 @@ config RESET_SIMPLE
+ 	   - ZTE's zx2967 family
+ 	   - SiFive FU740 SoCs
  
-+/* SCMI reset domain identifiers */
-+#define RST_SCMI0_SPI6		0
-+#define RST_SCMI0_I2C4		1
-+#define RST_SCMI0_I2C6		2
-+#define RST_SCMI0_USART1	3
-+#define RST_SCMI0_STGEN		4
-+#define RST_SCMI0_GPIOZ		5
-+#define RST_SCMI0_CRYP1		6
-+#define RST_SCMI0_HASH1		7
-+#define RST_SCMI0_RNG1		8
-+#define RST_SCMI0_MDMA		9
-+#define RST_SCMI0_MCU		10
-+
- #endif /* _DT_BINDINGS_STM32MP1_RESET_H_ */
+-config RESET_STM32MP157
+-	bool "STM32MP157 Reset Driver" if COMPILE_TEST
+-	default MACH_STM32MP157
+-	help
+-	  This enables the RCC reset controller driver for STM32 MPUs.
+-
+ config RESET_SOCFPGA
+ 	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOCFPGA)
+ 	default ARM && ARCH_INTEL_SOCFPGA
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index 65a118a91b27..ac3e612ad953 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -26,7 +26,6 @@ obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+ obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
+ obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+-obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
+deleted file mode 100644
+index b221a28041fa..000000000000
+--- a/drivers/reset/reset-stm32mp1.c
++++ /dev/null
+@@ -1,115 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+- */
+-
+-#include <linux/device.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include <linux/reset-controller.h>
+-
+-#define CLR_OFFSET 0x4
+-
+-struct stm32_reset_data {
+-	struct reset_controller_dev	rcdev;
+-	void __iomem			*membase;
+-};
+-
+-static inline struct stm32_reset_data *
+-to_stm32_reset_data(struct reset_controller_dev *rcdev)
+-{
+-	return container_of(rcdev, struct stm32_reset_data, rcdev);
+-}
+-
+-static int stm32_reset_update(struct reset_controller_dev *rcdev,
+-			      unsigned long id, bool assert)
+-{
+-	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
+-	int reg_width = sizeof(u32);
+-	int bank = id / (reg_width * BITS_PER_BYTE);
+-	int offset = id % (reg_width * BITS_PER_BYTE);
+-	void __iomem *addr;
+-
+-	addr = data->membase + (bank * reg_width);
+-	if (!assert)
+-		addr += CLR_OFFSET;
+-
+-	writel(BIT(offset), addr);
+-
+-	return 0;
+-}
+-
+-static int stm32_reset_assert(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
+-{
+-	return stm32_reset_update(rcdev, id, true);
+-}
+-
+-static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
+-				unsigned long id)
+-{
+-	return stm32_reset_update(rcdev, id, false);
+-}
+-
+-static int stm32_reset_status(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
+-{
+-	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
+-	int reg_width = sizeof(u32);
+-	int bank = id / (reg_width * BITS_PER_BYTE);
+-	int offset = id % (reg_width * BITS_PER_BYTE);
+-	u32 reg;
+-
+-	reg = readl(data->membase + (bank * reg_width));
+-
+-	return !!(reg & BIT(offset));
+-}
+-
+-static const struct reset_control_ops stm32_reset_ops = {
+-	.assert		= stm32_reset_assert,
+-	.deassert	= stm32_reset_deassert,
+-	.status		= stm32_reset_status,
+-};
+-
+-static const struct of_device_id stm32_reset_dt_ids[] = {
+-	{ .compatible = "st,stm32mp1-rcc"},
+-	{ /* sentinel */ },
+-};
+-
+-static int stm32_reset_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct stm32_reset_data *data;
+-	void __iomem *membase;
+-	struct resource *res;
+-
+-	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	membase = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(membase))
+-		return PTR_ERR(membase);
+-
+-	data->membase = membase;
+-	data->rcdev.owner = THIS_MODULE;
+-	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
+-	data->rcdev.ops = &stm32_reset_ops;
+-	data->rcdev.of_node = dev->of_node;
+-
+-	return devm_reset_controller_register(dev, &data->rcdev);
+-}
+-
+-static struct platform_driver stm32_reset_driver = {
+-	.probe	= stm32_reset_probe,
+-	.driver = {
+-		.name		= "stm32mp1-reset",
+-		.of_match_table	= stm32_reset_dt_ids,
+-	},
+-};
+-
+-builtin_platform_driver(stm32_reset_driver);
 -- 
 2.17.1
 
