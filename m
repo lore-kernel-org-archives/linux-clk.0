@@ -2,151 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10667C48BE5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91980C2B9F4
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1BC0613CB
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746EA613CE
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbhFQNjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jun 2021 09:39:25 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:9734 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229783AbhFQNjW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 09:39:22 -0400
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HDWfPY017410;
-        Thu, 17 Jun 2021 13:37:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=wOAZfmxwvAU17RcmxvnbgoNtCzxQoUAA1g23nXuQbdQ=;
- b=VW/XuZdjJ+wUbzv7t6lGP618PvyoiCvdzIY29KEfCsqBbAAcAv5yEO6MhV6aglDwjg34
- by0T3zK9GMU+4Wq43mjWRx6eykhbTKEKnAGVNmfQIyM+B1rZmdHMKRkDdXFzBUUW4cDY
- M1bK6UWSZBlSGTgdGtIRN6Ku5ZKgXx/rR/2byZmkryJmxdNmw2ltNzMnP/gMDbv9o83C
- 1GZ4vfDOUwAqCRIHGyKxc8gxCMOieu48BOgKY0bcroqJDBdjHLBLzRVT0Ws/jJCKLpaF
- Af1lr8prIttf7eNHxQy4WJWhw1Fgz5Mp/F/Sqs7wy9kgA2KV6jdhGnam1WDzEBBG5c5g Aw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 396tr0vjxj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:10 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HDVCAl148920;
-        Thu, 17 Jun 2021 13:37:10 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 396wavk69e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:10 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HDW7tG154125;
-        Thu, 17 Jun 2021 13:37:09 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 396wavk68t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:09 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15HDb8Fd002111;
-        Thu, 17 Jun 2021 13:37:08 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Jun 2021 06:37:07 -0700
-Date:   Thu, 17 Jun 2021 16:37:01 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [bug report] clk: renesas: Add CPG core wrapper for RZ/G2L SoC
-Message-ID: <YMtP/QHWljGcv3JX@mwanda>
+        id S232870AbhFQNkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 09:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232860AbhFQNkA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 09:40:00 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19BDC0613A2
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 06:37:48 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id e33so5019180pgm.3
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 06:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8YG5vMsHcsKskVBXOdCn/5yj+uSIqvs9d62rb4CfcBI=;
+        b=pAQrP36eVxCnDjZJVxSfZlsst+euC5ETQKztJTtQiBJe9y7pBMWSkiFCjOz31wersS
+         qrYfyryK0ZF8gOBA6xEyKq8ssrKJ57JlRdRNBdALA8GvpnYhIdskDmJjPOtbsn57sQEQ
+         MAqhrDNKLXIAh+9UJcBAoMSkddQu8eTG7hxpojJHHsuNKVWcNhXNh4O8MeyEhQQmiriH
+         F8dgfcngNCnHBkwtMxg30itxCAN6hSZDR9ZiKAYWj8pcGwLIb732Fijq1WertcIKYNp7
+         aLBJYJHuMAckljlO4LGMN1I+JFSiu5pzfY2TjvU2A5LbKPKGr94kswXqL7xVL4TNsFmF
+         BA0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8YG5vMsHcsKskVBXOdCn/5yj+uSIqvs9d62rb4CfcBI=;
+        b=jAvSN3BO2jTMgz69QxDNTue2xKHSjqzjNjMX/GP6mhpecTVkWPICOxPfKOChoIa187
+         run/C5f1pyGNF5bHXM5X+gawj380CqsUxSkpE7+q+nlxkRxB5W/D3NriVRNl7TLZTeWb
+         hwOfkk28PW2ThwL0qM8jNGCevhICYKVyFv+eVK7diTKevhICdbOXG/oYmOo1gGvgTNd0
+         8nVldBAeAogrSXeMeTH+nab0owVQjtjqAzdEfebHPXUgzqSgAo0g21a2VsTH7YVeQwDZ
+         ofgoICiojqPxzFuHA8SRkAGgw6kmNj2R/+gnMwRhjtxfo/BTEMvkoo4RkwtnReE7Fgbx
+         nGzQ==
+X-Gm-Message-State: AOAM532yl51diIPOigc+h49Bd4ZsxX293h1R7fg8QfBW+JOE2Fy6v1yB
+        OOFPZ3SPzFa9JN5FoqSx02cRlhcB5AdFqWLnL4vA7A==
+X-Google-Smtp-Source: ABdhPJxECzb3IPGjfMCeGl0qZ7eQVlp4fcsIfD2py++9U+ua348j/EMjO1vQQ/RlmIG0u4epWhC9GegcDa3f/NQsXSA=
+X-Received: by 2002:a63:5a08:: with SMTP id o8mr982718pgb.120.1623937068323;
+ Thu, 17 Jun 2021 06:37:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-GUID: hLdgYerU2VtM8Jy0dx6fLE1F5stWDmcK
-X-Proofpoint-ORIG-GUID: hLdgYerU2VtM8Jy0dx6fLE1F5stWDmcK
+References: <20210616141107.291430-1-robert.foss@linaro.org>
+ <20210616141107.291430-3-robert.foss@linaro.org> <b48198ff-a954-4941-32d6-65c992b345e7@linaro.org>
+In-Reply-To: <b48198ff-a954-4941-32d6-65c992b345e7@linaro.org>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Thu, 17 Jun 2021 15:37:37 +0200
+Message-ID: <CAG3jFyubcKP71_w83WWxTX9y3aTz+osTKxbq6Mo+hDTfxbf=WQ@mail.gmail.com>
+Subject: Re: [RFC v1 02/11] clk: qcom: rcg2: Add support for flags
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Taniya Das <tdas@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vinod.koul@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Lad Prabhakar,
+On Wed, 16 Jun 2021 at 18:07, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+> > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> > index 99efcc7f8d88..a1f05281d950 100644
+> > --- a/drivers/clk/qcom/clk-rcg.h
+> > +++ b/drivers/clk/qcom/clk-rcg.h
+> > @@ -149,6 +149,10 @@ struct clk_rcg2 {
+> >       const struct freq_tbl   *freq_tbl;
+> >       struct clk_regmap       clkr;
+> >       u8                      cfg_off;
+> > +     u8                      flags;
+> > +#define FORCE_ENABLE_RCG     BIT(0)
+> > +#define HW_CLK_CTRL_MODE     BIT(1)
+>
+> Downstream also has these flags for 8250, but the upstream driver ended
+> up not using them for the dispcc clocks. Could you please check that you
+> realy need HW_CLK_CTRL for dispcc clocks?
 
-The patch ef3c613ccd68: "clk: renesas: Add CPG core wrapper for
-RZ/G2L SoC" from Jun 9, 2021, leads to the following static checker
-warning:
+HW_CLK_CTRL being flagged in dispcc causes the CFG_HW_CLK_CTRL flag to
+be set in the RCG_CFG registers of dispcc.
 
-	drivers/clk/renesas/renesas-rzg2l-cpg.c:226 rzg2l_cpg_clk_src_twocell_get()
-	warn: array off by one? 'priv->clks[clkidx]'
+This flag simply marks the clock as having hardware control enabled or disabled.
 
-drivers/clk/renesas/renesas-rzg2l-cpg.c
-   209  static struct clk
-   210  *rzg2l_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
-   211                                 void *data)
-   212  {
-   213          unsigned int clkidx = clkspec->args[1];
-   214          struct rzg2l_cpg_priv *priv = data;
-   215          struct device *dev = priv->dev;
-   216          const char *type;
-   217          struct clk *clk;
-   218  
-   219          switch (clkspec->args[0]) {
-   220          case CPG_CORE:
-   221                  type = "core";
-   222                  if (clkidx > priv->last_dt_core_clk) {
+As for the question if it is really needed, I can't answer that since
+no documentation or downstream comments explain the exact behaviour.
+As far as I know the only way to figure out if it is required is
+disabling the flag and checking for bugs. I did find this[1] patch,
+which enabled HW_CLK_CTRL_MODE.
 
-The ->last_dt_core_clk value comes from the device tree and I hate that
-we have to trust it.  I haven't looked at the device tree and I only
-look at the code but based on the name "last_", I assume that
-in the device tree data this is set to either:
+Should I err on the side of the downstream implementation, or try to
+create a minimum functional driver based on the downstream driver?
 
-	last_dt_core_clk = priv->num_core_clks + priv->num_mod_clks - 1;
-
-Or maybe it's set so that:
-
-	last_dt_core_clk = priv->num_core_clks - 1;
-
-So I think that it is not off by one (based on the naming scheme).  But
-I would prefer that this code just used:
-
-	if (clkidx >= priv->num_core_clks)
-
-Or:
-	if (clkidx >= priv->num_core_clks + priv->num_mod_clks)
-
-   223                          dev_err(dev, "Invalid %s clock index %u\n", type, clkidx);
-   224                          return ERR_PTR(-EINVAL);
-   225                  }
-   226                  clk = priv->clks[clkidx];
-   227                  break;
-   228  
-   229          case CPG_MOD:
-   230                  type = "module";
-   231                  if (clkidx > priv->num_mod_clks) {
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Smatch did not catch it, but this condition is definitely off by one. ;)
-
-   232                          dev_err(dev, "Invalid %s clock index %u\n", type,
-   233                                  clkidx);
-   234                          return ERR_PTR(-EINVAL);
-   235                  }
-   236                  clk = priv->clks[priv->num_core_clks + clkidx];
-   237                  break;
-   238  
-   239          default:
-   240                  dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args[0]);
-   241                  return ERR_PTR(-EINVAL);
-   242          }
-   243  
-   244          if (IS_ERR(clk))
-   245                  dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-   246                          PTR_ERR(clk));
-   247          else
-   248                  dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-   249                          clkspec->args[0], clkspec->args[1], clk,
-   250                          clk_get_rate(clk));
-   251          return clk;
-   252  }
-
-regards,
-dan carpenter
+[1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1514877987-8082-2-git-send-email-anischal@codeaurora.org/
