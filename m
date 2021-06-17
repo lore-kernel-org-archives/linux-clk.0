@@ -2,76 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31A2C2B9F4
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10667C48BE5
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD59D613D6
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1BC0613CB
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jun 2021 13:37:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232267AbhFQNMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jun 2021 09:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbhFQNMU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 09:12:20 -0400
-Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 59827C06175F;
-        Thu, 17 Jun 2021 06:10:12 -0700 (PDT)
-Received: from [192.168.178.130] (p57bc9ba2.dip0.t-ipconnect.de [87.188.155.162])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 082F84C00EA;
-        Thu, 17 Jun 2021 13:10:07 +0000 (UTC)
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: cs2000-cp: Document
- aux-output-source
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20210519201551.690654-1-daniel@zonque.org>
- <20210519201551.690654-3-daniel@zonque.org>
- <CAMuHMdUmEWNCj6J43jwxE67K=ksRy53Eb9B82HjDfC++-YLw9g@mail.gmail.com>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <ceb82b22-6657-0003-561c-cf4d72b9d5d7@zonque.org>
-Date:   Thu, 17 Jun 2021 15:10:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S232317AbhFQNjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jun 2021 09:39:25 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:9734 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229783AbhFQNjW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jun 2021 09:39:22 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HDWfPY017410;
+        Thu, 17 Jun 2021 13:37:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=wOAZfmxwvAU17RcmxvnbgoNtCzxQoUAA1g23nXuQbdQ=;
+ b=VW/XuZdjJ+wUbzv7t6lGP618PvyoiCvdzIY29KEfCsqBbAAcAv5yEO6MhV6aglDwjg34
+ by0T3zK9GMU+4Wq43mjWRx6eykhbTKEKnAGVNmfQIyM+B1rZmdHMKRkDdXFzBUUW4cDY
+ M1bK6UWSZBlSGTgdGtIRN6Ku5ZKgXx/rR/2byZmkryJmxdNmw2ltNzMnP/gMDbv9o83C
+ 1GZ4vfDOUwAqCRIHGyKxc8gxCMOieu48BOgKY0bcroqJDBdjHLBLzRVT0Ws/jJCKLpaF
+ Af1lr8prIttf7eNHxQy4WJWhw1Fgz5Mp/F/Sqs7wy9kgA2KV6jdhGnam1WDzEBBG5c5g Aw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 396tr0vjxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jun 2021 13:37:10 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HDVCAl148920;
+        Thu, 17 Jun 2021 13:37:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 396wavk69e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jun 2021 13:37:10 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HDW7tG154125;
+        Thu, 17 Jun 2021 13:37:09 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 396wavk68t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jun 2021 13:37:09 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15HDb8Fd002111;
+        Thu, 17 Jun 2021 13:37:08 GMT
+Received: from mwanda (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Jun 2021 06:37:07 -0700
+Date:   Thu, 17 Jun 2021 16:37:01 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [bug report] clk: renesas: Add CPG core wrapper for RZ/G2L SoC
+Message-ID: <YMtP/QHWljGcv3JX@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUmEWNCj6J43jwxE67K=ksRy53Eb9B82HjDfC++-YLw9g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-GUID: hLdgYerU2VtM8Jy0dx6fLE1F5stWDmcK
+X-Proofpoint-ORIG-GUID: hLdgYerU2VtM8Jy0dx6fLE1F5stWDmcK
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Hello Lad Prabhakar,
 
-Thanks for looking into this patch!
+The patch ef3c613ccd68: "clk: renesas: Add CPG core wrapper for
+RZ/G2L SoC" from Jun 9, 2021, leads to the following static checker
+warning:
 
-On 6/11/21 2:18 PM, Geert Uytterhoeven wrote:
->> +  cirrus,aux-output-source:
->> +    description:
->> +      Specfies the function of the auxililary clock output pin
-> 
-> Specifies ... auxiliary
-> 
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum:
->> +      - 0 # CS2000CP_AUX_OUTPUT_REF_CLK:  ref_clk input
->> +      - 1 # CS2000CP_AUX_OUTPUT_CLK_IN:   clk_in input
->> +      - 2 # CS2000CP_AUX_OUTPUT_CLK_OUT:  clk_out output
->> +      - 3 # CS2000CP_AUX_OUTPUT_PLL_LOCK: pll lock status
-> 
-> Should the default be documented? "default: 0"?
+	drivers/clk/renesas/renesas-rzg2l-cpg.c:226 rzg2l_cpg_clk_src_twocell_get()
+	warn: array off by one? 'priv->clks[clkidx]'
 
-Both addressed. I will send a new series soon that supersedes this one
-and carries some more changes.
+drivers/clk/renesas/renesas-rzg2l-cpg.c
+   209  static struct clk
+   210  *rzg2l_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+   211                                 void *data)
+   212  {
+   213          unsigned int clkidx = clkspec->args[1];
+   214          struct rzg2l_cpg_priv *priv = data;
+   215          struct device *dev = priv->dev;
+   216          const char *type;
+   217          struct clk *clk;
+   218  
+   219          switch (clkspec->args[0]) {
+   220          case CPG_CORE:
+   221                  type = "core";
+   222                  if (clkidx > priv->last_dt_core_clk) {
 
+The ->last_dt_core_clk value comes from the device tree and I hate that
+we have to trust it.  I haven't looked at the device tree and I only
+look at the code but based on the name "last_", I assume that
+in the device tree data this is set to either:
 
-Daniel
+	last_dt_core_clk = priv->num_core_clks + priv->num_mod_clks - 1;
+
+Or maybe it's set so that:
+
+	last_dt_core_clk = priv->num_core_clks - 1;
+
+So I think that it is not off by one (based on the naming scheme).  But
+I would prefer that this code just used:
+
+	if (clkidx >= priv->num_core_clks)
+
+Or:
+	if (clkidx >= priv->num_core_clks + priv->num_mod_clks)
+
+   223                          dev_err(dev, "Invalid %s clock index %u\n", type, clkidx);
+   224                          return ERR_PTR(-EINVAL);
+   225                  }
+   226                  clk = priv->clks[clkidx];
+   227                  break;
+   228  
+   229          case CPG_MOD:
+   230                  type = "module";
+   231                  if (clkidx > priv->num_mod_clks) {
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Smatch did not catch it, but this condition is definitely off by one. ;)
+
+   232                          dev_err(dev, "Invalid %s clock index %u\n", type,
+   233                                  clkidx);
+   234                          return ERR_PTR(-EINVAL);
+   235                  }
+   236                  clk = priv->clks[priv->num_core_clks + clkidx];
+   237                  break;
+   238  
+   239          default:
+   240                  dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args[0]);
+   241                  return ERR_PTR(-EINVAL);
+   242          }
+   243  
+   244          if (IS_ERR(clk))
+   245                  dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
+   246                          PTR_ERR(clk));
+   247          else
+   248                  dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
+   249                          clkspec->args[0], clkspec->args[1], clk,
+   250                          clk_get_rate(clk));
+   251          return clk;
+   252  }
+
+regards,
+dan carpenter
