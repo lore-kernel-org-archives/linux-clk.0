@@ -2,156 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE5CC48BE8
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 14:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC366C49361
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 15:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70B7F61222
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 14:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B915161248
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 15:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234518AbhFROdM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jun 2021 10:33:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45796 "EHLO
+        id S235601AbhFRPru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jun 2021 11:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234499AbhFROdM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 10:33:12 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF302C061574
-        for <linux-clk@vger.kernel.org>; Fri, 18 Jun 2021 07:31:01 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id a11so11012695wrt.13
-        for <linux-clk@vger.kernel.org>; Fri, 18 Jun 2021 07:31:01 -0700 (PDT)
+        with ESMTP id S230334AbhFRPrt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 11:47:49 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BDDC06175F
+        for <linux-clk@vger.kernel.org>; Fri, 18 Jun 2021 08:45:39 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id q20so17440622lfo.2
+        for <linux-clk@vger.kernel.org>; Fri, 18 Jun 2021 08:45:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=YSr1xCzITLF/CWHeqxDLjzvl354aJ3tXZwCogE8rb8c=;
-        b=Jgi1NBFwn0O29BGpktjuEhMh7FpWKz1Q4Sy067SvtCk0yg7PmyHMl5/4VuN8azjOhX
-         1Bykr3U62EdMum+0t1GEO72SZ7zqhTGWgTHbplhglmDwm4E9UhGfqfuyMVfgEQdJ9uCb
-         M7DWIL+SCoFnw8xPYyBzp3dbqpSjKAWMNbI3MtZ4rGgnWpTE6Znr6cuVPwXdk9tFoi0q
-         v2Yq0VK40fae8TqVeN7V1dx8YHyI7dAV0JP138Xxr1chO+XjcHBkK1oEUiAhtr+yHIGo
-         zXQeywxUJ6W31/CCW59z7k5Y3ZDlAXp7uIcj6+mD1cVnFjPcy8LSABNDTROB9xv/hq0F
-         1rMg==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=hI/AIoMYcsbWwQZzlxldm/7Wor5CVzpcwkOGpLBOXqU=;
+        b=YY/DCc4m6+1gq+Hqf9irgXlg5qtJ8Yf8SsiZOCB0mj/I+L4qUUSf2tmy3TdV2bljtI
+         02tfXLX+so0O5yT7sF94FBSDl3tu/Elkc+wqCZS86z+XFFoQKenuNMO/NH8c0Klrtbly
+         18tZQQAeBF3MPA1HSYcWaU1HGfgMOgLphs2ISwYjt+yVawhDIA7mlt2X8hN7gr/XPpyN
+         VZaNf41A16fEFiQLVEKY4wn67w0nNzS3do5F+BJTcSa7VXLMTj0Omsl5YJSYiXhggBs1
+         xlBn7eycWIes/A+FLXkJNaV9MQ7V1v58Z2MKah70cqJaT3hGCCsSGLH5e9Q38Chrq/0P
+         lKcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=YSr1xCzITLF/CWHeqxDLjzvl354aJ3tXZwCogE8rb8c=;
-        b=FbgqH+lb5susdQPiNRt5WKN+5QkU3zOKjgK6Uhw30l7RF+/VLkLe9yuMesA3rVRnj0
-         lvyXVqgEkuZJH69zmWDRnBCXSgG7wJmmNAU5JdYx4J5Kr5nuWTqektPg/FKPbBMy+2IK
-         TVuog7FJeaDeiNgyaY14lv3zTt5QO2LtnrtAj1MfdeVQt46INj1sStu0kePs0YkCVkGg
-         FFB0JwAFhmac/2qS5oVjgLAMhXZ0ZteeR7AP/UdH/sUxE0IRIlltHJfSIQnGVH6cXHfM
-         txfflX8kyopQlrNUQui1kJ3Y53MLp1t1ewHTCjuGVCg5juG+D3jsnnQ1fg91807MqKGu
-         04HA==
-X-Gm-Message-State: AOAM533EJlBg1OAoqrK2QfalG/IGhGUIvLxmSx9Sl9BmD/PJOaE/jyx4
-        wd5yRs3gmWM+YbzOsUWfBFBU9w==
-X-Google-Smtp-Source: ABdhPJx7b+KubVPotYb5zFb9dnK6xuStWlWjPKSZltgOK+Gz/00RhyjwEQp2L4Cr0tMdkIP713jz1g==
-X-Received: by 2002:a5d:440a:: with SMTP id z10mr2019653wrq.269.1624026660412;
-        Fri, 18 Jun 2021 07:31:00 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id v18sm9157091wrb.10.2021.06.18.07.30.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=hI/AIoMYcsbWwQZzlxldm/7Wor5CVzpcwkOGpLBOXqU=;
+        b=IPR39Z1wRvnxAbOfoq/itjpnYB6ymS90lypul6AFmVlBgi3J8dS0DSt4Vs5SuKpiwH
+         GyTIGD1lz4kvOrjwDQdrMQhBiQCfeCVm/2xPJXxqa4xZij3HVJxGG8FrRshIMyYKQMt9
+         tBOaFSGfz4EtH//V31AV4azbnsWlijcGC3tH0D6KhmqbJE/Ym2vHUaiA8g05Mp+OIP8K
+         baT2dd/O+a4ILbtKrmJqhmbzLvicMoFaefsEB6kYYDuTJi9LI+HTn6xd9/uaoXTR6uiu
+         04LHnVTpFBpZJQS0tncGTxUjAOqZRz06dn3hVL9Gi3mEXq8gaprj9MjBmHDKOyiCq0VB
+         9L/g==
+X-Gm-Message-State: AOAM533q/XpM+580r1J5+Qlr0Kshir1mDtaPyde1sJVA9jMbrJfEeZK6
+        51XemQS0YlHZ68d+CQLPTXmQkg==
+X-Google-Smtp-Source: ABdhPJwympTU/v9gIC9U5a9SwnuXEXhipI4asCeO727dmg/hkmtIwUjyi0O1M47iXn3dNMACuQaUNg==
+X-Received: by 2002:ac2:4c0e:: with SMTP id t14mr3655362lfq.555.1624031137578;
+        Fri, 18 Jun 2021 08:45:37 -0700 (PDT)
+Received: from localhost (h-46-59-88-219.A463.priv.bahnhof.se. [46.59.88.219])
+        by smtp.gmail.com with ESMTPSA id q17sm1093857ljp.3.2021.06.18.08.45.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 07:31:00 -0700 (PDT)
-References: <20210528113403.5374-1-peng.fan@oss.nxp.com>
- <162262192433.4130789.1017942859005253343@swboyd.mtv.corp.google.com>
- <a5833012-3e86-5be0-71f2-de4d9b32a152@pengutronix.de>
- <1j1r9kobln.fsf@starbuckisacylon.baylibre.com>
-User-agent: mu4e 1.4.15; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        Fri, 18 Jun 2021 08:45:36 -0700 (PDT)
+Date:   Fri, 18 Jun 2021 17:45:35 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, mturquette@baylibre.com
-Cc:     Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] clk: support regmap
-In-reply-to: <1j1r9kobln.fsf@starbuckisacylon.baylibre.com>
-Message-ID: <1jzgvnfdng.fsf@starbuckisacylon.baylibre.com>
-Date:   Fri, 18 Jun 2021 16:30:59 +0200
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rzg2: Rename i2c-dvfs to iic-pmic
+Message-ID: <YMy/n4Vo5B/viefi@oden.dyn.berto.se>
+References: <3e549b41989ff2797b998a1c749c9f607845f44a.1624016693.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3e549b41989ff2797b998a1c749c9f607845f44a.1624016693.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Geert,
 
-On Wed 02 Jun 2021 at 11:32, Jerome Brunet <jbrunet@baylibre.com> wrote:
+Thanks for your work.
 
-> On Wed 02 Jun 2021 at 10:21, Marc Kleine-Budde <mkl@pengutronix.de> wrote:
->
->> On 6/2/21 10:18 AM, Stephen Boyd wrote:
->>> Quoting Peng Fan (OSS) (2021-05-28 04:34:00)
->>>> From: Peng Fan <peng.fan@nxp.com>
->>>>
->>>> To i.MX8ULP, a PCC register provides clk(mux, gate, divider) and peripheral
->>>> reset functionality, so we need make sure the access to the PCC register
->>>> be protected to avoid concurrent access from clk and reset subsystem.
->>>>
->>>> So let's use regmap here.
->>>>
->>>> The i.MX specific code will be posted if this patchset is ok for you.
->>> 
->>> We have a couple regmap clk drivers in the tree. Either combine the
->>> different regmap clk drivers or duplicate it into the imx directory. I'd
->>> prefer we combine them but last time I couldn't agree on the approach
->>> when Jerome wanted to do it. Maybe now is the time to combine them all
->>> into one common piece of code.
->>
->> IMHO for the basic drivers, such as gate, divider, mux, mux-div, etc... it makes
->> no sense to have them in an arch specific subdir, like meson.
->
-> Indeed, those basic types were not meant to remain platform
-> specific. Some framework (ASoC for ex) make heavy use of regmap and
-> could welcome regmap based basic clock types.
->
-> At the time, Stephen (qcom) and I (meson) had slightly different
-> approaches. Before having those types spread through the kernel, I think
-> testing things out was a good thing ... this is why these are platform
-> specific ATM.
->
-> It's been 3 years now ... and it has not been a total disaster :)
->
-> In the end things are not so different. Let's compare:
-> a. Both have a generic "clk_regmap" type common to all regmap based
->   types. This is very useful to easily fix the regmap pointer in static
->   clocks (which are heavily used by both platform)
->
-> b. Meson uses a generic pointer to store the type specific info.
->   Qcom embeds the generic clk_regmap into the specific type one.
->   => In the end, I don't see any advantage to the meson
->   approach. Switching to the qcom method would be quite a big bang
->   for meson but it is doable (nothing difficult, just a huge line count)
->   
-> c. Qcom basic regmap type deviates a bit from the regular basic ones
->   when it comes to the actual data. The qcom "clk_regmap" also provides
->   the gate, mux have the qcom "parent_map". In meson, I tried to keep as
->   close as possible to regular basic types ... at least what they were 3
->   years ago. Only the register poking part should be different actually.
->   => I'd be in favor of keeping close to meson here.
->
-> A possible plan could be:
-> 1. Rework meson as explained in [b] above.
-> 2. reword types in qcom where necessary to avoid name clashes (add
->    "_qcom" extension for ex)
-> 3. Move the clk_regmap implementation out of meson to drivers/clk
-> 4. Things are yours to play with ...
->
-> I can take care of 1. and 3. I would welcome help for 2. especially since
-> I won't be able to test it.
->
+On 2021-06-18 13:46:21 +0200, Geert Uytterhoeven wrote:
+> As RZ/G2 SoCs do not support DVFS, the "iic-dvfs" module was renamed to
+> "iic-pmic" in the RZ/G Series, 2nd Generation User’s Manual: Hardware
+> Rev. 1.00.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Stephen,
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-What do you think of the proposition above ?
-There rework is going to take some time to do. I'll start only if this
-OK with you.
+> ---
+> To be queued in renesas-clk for v5.15.
+> 
+>  drivers/clk/renesas/r8a774a1-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a774b1-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a774e1-cpg-mssr.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+> index 4a43ebec7d5e297e..39b185d8e95745f4 100644
+> --- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+> @@ -210,7 +210,7 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
+>  	DEF_MOD("rpc-if",		 917,	R8A774A1_CLK_RPCD2),
+>  	DEF_MOD("i2c6",			 918,	R8A774A1_CLK_S0D6),
+>  	DEF_MOD("i2c5",			 919,	R8A774A1_CLK_S0D6),
+> -	DEF_MOD("i2c-dvfs",		 926,	R8A774A1_CLK_CP),
+> +	DEF_MOD("iic-pmic",		 926,	R8A774A1_CLK_CP),
+>  	DEF_MOD("i2c4",			 927,	R8A774A1_CLK_S0D6),
+>  	DEF_MOD("i2c3",			 928,	R8A774A1_CLK_S0D6),
+>  	DEF_MOD("i2c2",			 929,	R8A774A1_CLK_S3D2),
+> diff --git a/drivers/clk/renesas/r8a774b1-cpg-mssr.c b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+> index 6f04c40fe237a255..af602d83c8ceeb91 100644
+> --- a/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+> @@ -206,7 +206,7 @@ static const struct mssr_mod_clk r8a774b1_mod_clks[] __initconst = {
+>  	DEF_MOD("rpc-if",		 917,	R8A774B1_CLK_RPCD2),
+>  	DEF_MOD("i2c6",			 918,	R8A774B1_CLK_S0D6),
+>  	DEF_MOD("i2c5",			 919,	R8A774B1_CLK_S0D6),
+> -	DEF_MOD("i2c-dvfs",		 926,	R8A774B1_CLK_CP),
+> +	DEF_MOD("iic-pmic",		 926,	R8A774B1_CLK_CP),
+>  	DEF_MOD("i2c4",			 927,	R8A774B1_CLK_S0D6),
+>  	DEF_MOD("i2c3",			 928,	R8A774B1_CLK_S0D6),
+>  	DEF_MOD("i2c2",			 929,	R8A774B1_CLK_S3D2),
+> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> index ed3a2cf0e0bb26d2..5b938eb2df255afb 100644
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> @@ -210,7 +210,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+>  	DEF_MOD("rpc-if",		 917,	R8A774C0_CLK_RPCD2),
+>  	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
+>  	DEF_MOD("i2c5",			 919,	R8A774C0_CLK_S3D2),
+> -	DEF_MOD("i2c-dvfs",		 926,	R8A774C0_CLK_CP),
+> +	DEF_MOD("iic-pmic",		 926,	R8A774C0_CLK_CP),
+>  	DEF_MOD("i2c4",			 927,	R8A774C0_CLK_S3D2),
+>  	DEF_MOD("i2c3",			 928,	R8A774C0_CLK_S3D2),
+>  	DEF_MOD("i2c2",			 929,	R8A774C0_CLK_S3D2),
+> diff --git a/drivers/clk/renesas/r8a774e1-cpg-mssr.c b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
+> index b96c486abb448003..40c71466df37bd96 100644
+> --- a/drivers/clk/renesas/r8a774e1-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
+> @@ -219,7 +219,7 @@ static const struct mssr_mod_clk r8a774e1_mod_clks[] __initconst = {
+>  	DEF_MOD("i2c6",			 918,	R8A774E1_CLK_S0D6),
+>  	DEF_MOD("i2c5",			 919,	R8A774E1_CLK_S0D6),
+>  	DEF_MOD("adg",			 922,	R8A774E1_CLK_S0D1),
+> -	DEF_MOD("i2c-dvfs",		 926,	R8A774E1_CLK_CP),
+> +	DEF_MOD("iic-pmic",		 926,	R8A774E1_CLK_CP),
+>  	DEF_MOD("i2c4",			 927,	R8A774E1_CLK_S0D6),
+>  	DEF_MOD("i2c3",			 928,	R8A774E1_CLK_S0D6),
+>  	DEF_MOD("i2c2",			 929,	R8A774E1_CLK_S3D2),
+> -- 
+> 2.25.1
+> 
 
-Cheers
-Jerome
-
->>
->> regards,
->> Marc
-
+-- 
+Regards,
+Niklas Söderlund
