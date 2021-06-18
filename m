@@ -2,120 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5AEC48BDF
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 11:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518E6C49361
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 13:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 910B7613D5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 11:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BC2D613EB
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 13:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234202AbhFRLsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jun 2021 07:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234182AbhFRLsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 07:48:37 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC7FDC061574
-        for <linux-clk@vger.kernel.org>; Fri, 18 Jun 2021 04:46:27 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:104a:f93d:b771:fc40])
-        by baptiste.telenet-ops.be with bizsmtp
-        id JbmQ2500i47PYg101bmQ7t; Fri, 18 Jun 2021 13:46:25 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1luCx6-000yzX-Cy; Fri, 18 Jun 2021 13:46:24 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1luCx5-007L69-NF; Fri, 18 Jun 2021 13:46:23 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S232740AbhFRN13 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jun 2021 09:27:29 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:8084 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232546AbhFRN12 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 09:27:28 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IDDV7W029190;
+        Fri, 18 Jun 2021 15:25:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=TGRIuYa1RneAyuabvPhXlPbKaYa/GapaD9l0+sSWxuw=;
+ b=dYE9THOnJzJSBCZl456P8kNA/msyy19+tGQb5Vx6BD38esDf/EU4cnqS7tsS6PhHm/CA
+ tWTYLmsUyq58RsUrUbDSsVekrCj4lN3+BEED0Hd8z1W8lTsHS0rh8ItWTz1KI1lsjhue
+ yzPC/OGmaNq6/Ye0Lrb2vveUo/H7/2X6tuvgJpGb0FY/Vy+WhXUlFtIMShGDNmoHYMLn
+ 5/LQN6xCeSTh47SvBfT3sTjgwlRDJiYFBrXikeLb2NZz3B75r92EzmmIz1Qh/xEdQJ2E
+ TA58zqL77NJyFzTMkU5IZ9peZnUbaaQY6zl8MeYN5/yxwvvdFLfJ/vBeCec/T4SGTeGP RA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 398qqg9nvu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Jun 2021 15:25:01 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8259E10002A;
+        Fri, 18 Jun 2021 15:25:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 60ED122B9C0;
+        Fri, 18 Jun 2021 15:25:00 +0200 (CEST)
+Received: from lmecxl0572.lme.st.com (10.75.127.45) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 15:24:59 +0200
+Subject: Re: [RESEND PATCH v3 11/11] clk: stm32mp1: new compatible for secure
+ RCC support
+To:     Marek Vasut <marex@denx.de>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rzg2: Rename i2c-dvfs to iic-pmic
-Date:   Fri, 18 Jun 2021 13:46:21 +0200
-Message-Id: <3e549b41989ff2797b998a1c749c9f607845f44a.1624016693.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@foss.st.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210617051814.12018-1-gabriel.fernandez@foss.st.com>
+ <20210617051814.12018-12-gabriel.fernandez@foss.st.com>
+ <14a81ad2-d646-30ca-46f0-d2078b09c4f2@denx.de>
+From:   "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>
+Message-ID: <e7952251-b3bb-5042-65bd-7ab7ef37ac93@foss.st.com>
+Date:   Fri, 18 Jun 2021 15:24:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <14a81ad2-d646-30ca-46f0-d2078b09c4f2@denx.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-18_07:2021-06-18,2021-06-18 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As RZ/G2 SoCs do not support DVFS, the "iic-dvfs" module was renamed to
-"iic-pmic" in the RZ/G Series, 2nd Generation User’s Manual: Hardware
-Rev. 1.00.
+Yes we could have considered it as a feature but we think it's better to 
+manage it as a layer of our driver via a compatible.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v5.15.
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a774b1-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a774c0-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a774e1-cpg-mssr.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index 4a43ebec7d5e297e..39b185d8e95745f4 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -210,7 +210,7 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
- 	DEF_MOD("rpc-if",		 917,	R8A774A1_CLK_RPCD2),
- 	DEF_MOD("i2c6",			 918,	R8A774A1_CLK_S0D6),
- 	DEF_MOD("i2c5",			 919,	R8A774A1_CLK_S0D6),
--	DEF_MOD("i2c-dvfs",		 926,	R8A774A1_CLK_CP),
-+	DEF_MOD("iic-pmic",		 926,	R8A774A1_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A774A1_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A774A1_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A774A1_CLK_S3D2),
-diff --git a/drivers/clk/renesas/r8a774b1-cpg-mssr.c b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-index 6f04c40fe237a255..af602d83c8ceeb91 100644
---- a/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-@@ -206,7 +206,7 @@ static const struct mssr_mod_clk r8a774b1_mod_clks[] __initconst = {
- 	DEF_MOD("rpc-if",		 917,	R8A774B1_CLK_RPCD2),
- 	DEF_MOD("i2c6",			 918,	R8A774B1_CLK_S0D6),
- 	DEF_MOD("i2c5",			 919,	R8A774B1_CLK_S0D6),
--	DEF_MOD("i2c-dvfs",		 926,	R8A774B1_CLK_CP),
-+	DEF_MOD("iic-pmic",		 926,	R8A774B1_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A774B1_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A774B1_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A774B1_CLK_S3D2),
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index ed3a2cf0e0bb26d2..5b938eb2df255afb 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -210,7 +210,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("rpc-if",		 917,	R8A774C0_CLK_RPCD2),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c5",			 919,	R8A774C0_CLK_S3D2),
--	DEF_MOD("i2c-dvfs",		 926,	R8A774C0_CLK_CP),
-+	DEF_MOD("iic-pmic",		 926,	R8A774C0_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c3",			 928,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c2",			 929,	R8A774C0_CLK_S3D2),
-diff --git a/drivers/clk/renesas/r8a774e1-cpg-mssr.c b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
-index b96c486abb448003..40c71466df37bd96 100644
---- a/drivers/clk/renesas/r8a774e1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
-@@ -219,7 +219,7 @@ static const struct mssr_mod_clk r8a774e1_mod_clks[] __initconst = {
- 	DEF_MOD("i2c6",			 918,	R8A774E1_CLK_S0D6),
- 	DEF_MOD("i2c5",			 919,	R8A774E1_CLK_S0D6),
- 	DEF_MOD("adg",			 922,	R8A774E1_CLK_S0D1),
--	DEF_MOD("i2c-dvfs",		 926,	R8A774E1_CLK_CP),
-+	DEF_MOD("iic-pmic",		 926,	R8A774E1_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A774E1_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A774E1_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A774E1_CLK_S3D2),
--- 
-2.25.1
-
+On 6/17/21 8:46 AM, Marek Vasut wrote:
+> On 6/17/21 7:18 AM, gabriel.fernandez@foss.st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>
+>> Platform STM32MP1 can be used in configuration where some clock
+>> resources cannot be accessed by Linux kernel when executing in non-secure
+>> state of the CPU(s).
+>> In such configuration, the RCC clock driver must not register clocks
+>> it cannot access.
+>> They are expected to be registered from another clock driver such
+>> as the SCMI clock driver.
+>> This change uses specific compatible string "st,stm32mp1-rcc-secure"
+>> to specify RCC clock driver configuration where RCC is secure.
+> 
+> Should this really be a new compatible string or rather a DT property ? 
+> I think the later, since this is the same clock IP, only operating in 
+> different "mode" , no ?
