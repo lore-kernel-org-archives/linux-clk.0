@@ -2,202 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBF6C49361
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 06:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFD2C48BE8
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 08:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 230C961004
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 06:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79FB960C3E
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jun 2021 08:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbhFRGet (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jun 2021 02:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50752 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231282AbhFRGet (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 02:34:49 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CAEAC06175F
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 23:32:38 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id x24so14692459lfr.10
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jun 2021 23:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FcqiM6OKoI9kz5wi4xxOdBHKAWW28rWhb54WENTCYlg=;
-        b=as0jcEU2Kw4vkeFE9aQYOArqSa433Qcii85hTVwoWOm1lj5H2Q/pzP+059YsRJhLdC
-         eTERXFkcC+sRTzDUKybkwsVujdqr+hY3rO8f4j0L2lPXNbNldXWJ0Xa2hkgr+/X/6xF7
-         DmxiDcEMOvsQdahRV0GMXc8McRfczsfsUqGbc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FcqiM6OKoI9kz5wi4xxOdBHKAWW28rWhb54WENTCYlg=;
-        b=kcNbFWXm1CQor4RBLINLRb+3cMkne+giISpmk8P2SUJ1wVRxURAe+rF0zYS193kuBp
-         Mdtfhsd9KWN1e4mcdlybf6gUP2Y6AHsCF405L2SNHad38IfFS1jXV+h0UM4XnuCngvCi
-         ce1sPeXuZIf/vvoOUJ5CK1QG08tv3IXjBnPZ+ohrf+XIyW+ZCbo77Mpz1kklZQttoYPv
-         GMZ8kNjy9gI/bTKhfJmpohY73pB9g0mds6GKmAaF72XXlQUlzcx2/xHfA0TwWSbHIJmK
-         HJjNmuGH5gRrSLgRus4DoOTzwzi7qanSh6VNeyXWy4zqktX4fcWwkrdOJrnW0wazvepf
-         S0Sg==
-X-Gm-Message-State: AOAM532jRD87uYTO+wXO3YIBOHrpV9PcoMk+4tCam2R2rh0MgI4vSDSY
-        a/MGuM1J8syQcX54UuzU3tGRZnewpO8Bp60RlAMzQg==
-X-Google-Smtp-Source: ABdhPJz9n25XQXeae5FgmLVYRSWumiYzvEvvgvJUqRLfLsqolm6mHnftZfZe24scZrNt+nSJwTtlDhigDROdPGjiHR4=
-X-Received: by 2002:a19:f809:: with SMTP id a9mr1983941lff.342.1623997956967;
- Thu, 17 Jun 2021 23:32:36 -0700 (PDT)
+        id S233816AbhFRIex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jun 2021 04:34:53 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10130 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233809AbhFRIew (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jun 2021 04:34:52 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15I8Cjxt029418;
+        Fri, 18 Jun 2021 10:32:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=tobkvdP0XEB3rizTcrRI77boeUhPqCNPjzbxlCZFFxA=;
+ b=X5X8I/QkX33NRBreeXhB2ivJwbQuY5nuHgNW56Uf80eHr1kpxFzJX/wxy30SZc3yHrRO
+ gxoRyWbYCAvnGgSb8aL8RUYEo+Lnc2jiUKv9J3aqrgQvmbAepjonsNVPl4jb5fZwrxQS
+ WRaNuhHVAs8RVOMDVNmyvf3h5FnSW9OUwOn94pr5kQC/EUAJ0ZiFwOfJLOLLnrCAYFUs
+ BZIaGP163AH9zXouCLD1bZlXEQSjs+vGTyV3+iVAhFNuSFJte2f9xJJLgimn2EW1nPti
+ xLNiTJugAuzBGR39U+LRrbT90wL6HdH/11sqQflFkResdNC8fu2/znIYJiJtvorF2b9Q Kw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3984bm6b7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Jun 2021 10:32:39 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 668DE10002A;
+        Fri, 18 Jun 2021 10:32:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F05B921B501;
+        Fri, 18 Jun 2021 10:32:37 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 10:32:35 +0200
+Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
+To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <dmaengine@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <iommu@lists.linux-foundation.org>, <linux-media@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-can@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20210615191543.1043414-1-robh@kernel.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <e61633b9-48d1-81bf-9ab2-59a7b64987f3@foss.st.com>
+Date:   Fri, 18 Jun 2021 10:32:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <20210524122053.17155-1-chun-jie.chen@mediatek.com>
- <20210524122053.17155-2-chun-jie.chen@mediatek.com> <20210602171201.GA3566462@robh.at.kernel.org>
- <66e017401ab93aa02c5d2bbf11be9589b36649ac.camel@mediatek.com>
- <1f59ed31-4a0e-9719-bf84-1fe4cdd6c57d@gmail.com> <162334689784.9598.2709970788186333494@swboyd.mtv.corp.google.com>
- <de082c64-ace3-30b5-7404-1f4b607a83e1@gmail.com> <c8e8535cef67adeaefcfe943bbd8287806921e03.camel@mediatek.com>
-In-Reply-To: <c8e8535cef67adeaefcfe943bbd8287806921e03.camel@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 18 Jun 2021 14:32:25 +0800
-Message-ID: <CAGXv+5HcV6jbyDdZGzRX-2NHMztSONBKxmLxLQX6k+aQrwJ1ww@mail.gmail.com>
-Subject: Re: [PATCH v9 01/22] dt-bindings: ARM: Mediatek: Add new document
- bindings of imp i2c wrapper controller
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-17_17:2021-06-15,2021-06-17 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 2:34 AM Chun-Jie Chen
-<chun-jie.chen@mediatek.com> wrote:
->
-> On Fri, 2021-06-11 at 11:56 +0200, Matthias Brugger wrote:
-> >
-> > On 10/06/2021 19:41, Stephen Boyd wrote:
-> > > Quoting Matthias Brugger (2021-06-08 07:45:49)
-> > > >
-> > > >
-> > > > On 07/06/2021 07:20, Chun-Jie Chen wrote:
-> > > > > On Wed, 2021-06-02 at 12:12 -0500, Rob Herring wrote:
-> > > > > > > +
-> > > > > > > +description:
-> > > > > > > +  The Mediatek imp i2c wrapper controller provides
-> > > > > > > functional
-> > > > > > > configurations and clocks to the system.
-> > > > > > > +
-> > > > > > > +properties:
-> > > > > > > +  compatible:
-> > > > > > > +    items:
-> > > > > > > +      - enum:
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_c
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_e
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_s
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_ws
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_w
-> > > > > > > +          - mediatek,mt8192-imp_iic_wrap_n
-> > > > > >
-> > > > > > Looks to me like these are all the same h/w, but just have
-> > > > > > differing
-> > > > > > sets of clocks. That's not really a reason to have different
-> > > > > > compatibles.
-> > > > > >
-> > > > > > If you need to know what clocks are present, you can walk the
-> > > > > > DT for
-> > > > > > all 'clocks' properties matching this clock controller
-> > > > > > instance. Or
-> > > > > > use
-> > > > > > 'clock-indices' to define which ones are present.
-> > >
-> > > Is the idea to use clock-indices and then list all the clock ids in
-> > > there and match them up at driver probe time to register the clocks
-> > > provided by the IO region? Feels like we'll do a lot of parsing at
-> > > each
-> > > boot to match up structures and register clks with the clk
-> > > framework.
-> > >
-> > > If it's like other SoCs then the clk id maps to a hard macro for a
-> > > type
-> > > of clk, and those hard macros have been glued together with other
-> > > clks
-> > > and then partitioned into different IO regions to make up a clock
-> > > controller. Or maybe in this case, those clk hard macros have been
-> > > scattered into each IP block like SPI, i2c, uart, etc. so that the
-> > > clock
-> > > controller doesn't really exist and merely the gates and rate
-> > > control
-> > > (mux/divider) for the clk that's clocking some particular IP block
-> > > all
-> > > live inside the IP wrapper. If it's this case then I hope there are
-> > > a
-> > > bunch of PLLs that are fixed rate so that the i2c clk doesn't have
-> > > to go
-> > > outside the wrapper to change frequency (of which there should be
-> > > two
-> > > "standard" frequencies anyway).
-> > >
-> > > > > >
-> > > > > > Rob
-> > > > >
-> > > > > Some module is divided to sub-modules which are designed in
-> > > > > different
-> > > > > h/w blocks for different usage, and if we want to use the same
-> > > > > compatible to present these h/w blocks, we need to move the
-> > > > > clock data
-> > > > > provided by these h/w blocks to dts, but we usually use
-> > > > > different
-> > > > > compatible to get the h/w blocks data in
-> > > > > Mediatek's clock driver, so do you suggest to register clock
-> > > > > provided
-> > > > > by different h/w blocks using same compatible?
-> > > > >
-> > > >
-> > > > The mapping of them is as following:
-> > > > imp_iic_wrap_c:  11007000
-> > > > imp_iic_wrap_e:  11cb1000
-> > > > imp_iic_wrap_s:  11d03000
-> > > > imp_iic_wrap_ws: 11d23000
-> > > > imp_iic_wrap_w:  11e01000
-> > > > imp_iic_wrap_n:  11f02000
-> > > >
-> > >
-> > > Sure. What is their purpose though? Are they simply a bunch of
-> > > different
-> > > i2c clks?
-> > >
-> >
-> > That would be need to be answered by MediaTek as I don't have access
-> > to any
-> > documentation.
-> >
-> > Regards,
-> > Matthias
->
-> We describe which clock controllers are exist in dts and
-> get the clock data provided by clock controller in driver data
-> by matching device compatible.
->
-> The clock data contains several clocks which includes the clock index,
-> parent clock source and the details of reg control inside the IP block
-> of clock controller.
->
-> In MT8192 platform, some IP block is divide to several sub-blocks and
-> each sub-block provides clock control by itself.
+Hello ROb,
 
-Some more information:
+On 6/15/21 9:15 PM, Rob Herring wrote:
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooling
+> will fixup the final schema adding any unspecified minItems/maxItems.
+> 
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
+> 
+[...]
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml     | 2 --
+[...]
+>  .../devicetree/bindings/mailbox/st,stm32-ipcc.yaml          | 2 --
+[...]
+>  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml      | 2 --
+[...]
+>  Documentation/devicetree/bindings/sound/st,stm32-sai.yaml   | 3 ---
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-Based on what I read in the datasheets, I'm guessing that MediaTek groups
-the I2C controllers into several groups and places them in different parts
-of the die. The suffix of imp_iic_wrap_XXX is likely pointing to the
-placement of the group. And the imp_iic_wrap_XXX is what the name suggests
-a wrapper around the group of I2C controllers. The wrapper contains clock
-and reset controls, as well as other things that I can't make out.
-
-
-ChenYu
+Thanks,
+Arnaud
