@@ -2,95 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D46C4743C
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 11:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A020DC4743C
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 13:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28529611CE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 11:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FCA061164
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 13:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbhFUL6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jun 2021 07:58:49 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59642 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbhFUL6t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jun 2021 07:58:49 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15LBuVaV112034;
-        Mon, 21 Jun 2021 06:56:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1624276591;
-        bh=/pcWz2xFQVtib2M9MYWzic93GeQSFEeEukJVrx91L3U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FHbIEcmlSxEG1MWwf+BQCc91gXmpbBrEg9kyxSdXx/7NgtADuOo2IMAGW+/F71N3Z
-         DO29+74BLnxF1S3cm5sBUPclD16r9He099sQlLTl7sRcTRctJf6xHeRnr39cJK+EtL
-         vPQU5llgXJcXfvw9mE++LPIW8AZNDbxmJBhH2mLU=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15LBuV2u058299
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jun 2021 06:56:31 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 21
- Jun 2021 06:56:31 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Mon, 21 Jun 2021 06:56:31 -0500
-Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15LBuNJT026137;
-        Mon, 21 Jun 2021 06:56:26 -0500
-Subject: Re: [PATCH v2 0/2] clk: keystone: Add support for AM64 specific
- ehrpwm-tbclk
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Device Tree Mailing List <devicetree@vger.kernel.org>,
-        <ssantosh@kernel.org>, Vignesh R <vigneshr@ti.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Tero Kristo <kristo@kernel.org>, Nishanth Menon <nm@ti.com>
-References: <20210528045743.16537-1-lokeshvutla@ti.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <49e19ea4-8cd1-60c4-9391-2d3c36746f3a@ti.com>
-Date:   Mon, 21 Jun 2021 17:26:23 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230170AbhFUNQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jun 2021 09:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229707AbhFUNQI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jun 2021 09:16:08 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCC3C061574
+        for <linux-clk@vger.kernel.org>; Mon, 21 Jun 2021 06:13:53 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id e22so16059546wrc.1
+        for <linux-clk@vger.kernel.org>; Mon, 21 Jun 2021 06:13:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2j5aqshvMmv3SFWLZl++fZj3Ut8b4ASWXCLeBWk+mKA=;
+        b=UT4A6/tyLrxmzFAtlnMFgnjpyeuVjy8i3JweZRE6JO0MkNe02kYE6YnkxEZXhYGMZ5
+         ZY+pplPGwLhnW7waLUJQ85CramDYgsSUEE6K9mdDWkc3q087EvJRuFSjbALch+GTZMCK
+         SsLoqSOGLvMQ2MkkFHtWTQuFKZP7/X0jwbQSvWcj6yBWf2ZD6HWrKhbKZ1XbF71NVI4A
+         szhoIqKRo5qUGZHZSfUzJqH/U1SQfqvEpSob8xfHEYapMXHk+1vJLvPXDgaNQGWwh1cb
+         lm4rw4kJv1l/365B/h6+rexzYQQ3gOjP0HhBnsI28i9h3gonHwQ5qhwWTF2VrlhXaJr1
+         pNFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=2j5aqshvMmv3SFWLZl++fZj3Ut8b4ASWXCLeBWk+mKA=;
+        b=lI1+vU/3MSuMW+PcJ/ucH2GwcqJJJsa9MaL83jVIjS5opp7ZPc9ZB4XS7hq4jAHHxe
+         fYzjMANcFpGfxS/8Xo5b39rxPf1wECh04o5JoRImUTwHiC3LP87emEQFpOHy5zoIrWUO
+         vcXShgPvmNvEkMKONPZc6LLAABqP57q7h7gSznYV2MTTrW/Dxb3ufdrA7j4UiWdo93+v
+         1oJNddfJl3/2ZJXQuvdtC2PGeR1hQ5ET5zLrWBPYiX5+tdEUNPnLqQdFhlYsY/1BkWjY
+         3sJS9R3a1j/L9KwumYFTPxJSL8i84CCCAJ2aIzdzeQVUfW86iQ13UoC3nyNMzr3sVGJA
+         C2TA==
+X-Gm-Message-State: AOAM5308bIhPUKdvlC2cCIAyFEVap/6Ge3zbki+WuLP2nrtvjT27qLMO
+        jzjMkrqlsRcajCi4KptFHBc0aQ==
+X-Google-Smtp-Source: ABdhPJxHYIboQGK0uRn5qPAdEup5HvcA17rhoedHpQq/bhwfl8l3cnFtHaT+ODFqG07ayJQaZD3qQw==
+X-Received: by 2002:a5d:6daf:: with SMTP id u15mr28295933wrs.400.1624281231767;
+        Mon, 21 Jun 2021 06:13:51 -0700 (PDT)
+Received: from localhost ([2a02:768:2307:40d6::648])
+        by smtp.gmail.com with ESMTPSA id y7sm13147550wma.22.2021.06.21.06.13.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jun 2021 06:13:51 -0700 (PDT)
+Sender: Michal Simek <monstr@monstr.eu>
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2] clk: zynqmp: fix compile testing without ZYNQMP_FIRMWARE
+Date:   Mon, 21 Jun 2021 15:13:47 +0200
+Message-Id: <fdee3a286defb103aa07b5493b805d1987885165.1624281224.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210528045743.16537-1-lokeshvutla@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 28/05/21 10:27 am, Lokesh Vutla wrote:
-> This series adds support for AM64 specific ehrpwm Time-base submodule
-> clock.
+When the firmware code is disabled, the incomplete error handling
+in the clk driver causes compile-time warnings:
 
-Gentle ping on this series. If there are no objections, can we merge this series.
+drivers/clk/zynqmp/pll.c: In function 'zynqmp_pll_recalc_rate':
+drivers/clk/zynqmp/pll.c:147:29: error: 'fbdiv' is used uninitialized [-Werror=uninitialized]
+  147 |         rate =  parent_rate * fbdiv;
+      |                 ~~~~~~~~~~~~^~~~~~~
+In function 'zynqmp_pll_get_mode',
+    inlined from 'zynqmp_pll_recalc_rate' at drivers/clk/zynqmp/pll.c:148:6:
+drivers/clk/zynqmp/pll.c:61:27: error: 'ret_payload' is used uninitialized [-Werror=uninitialized]
+   61 |         return ret_payload[1];
+      |                ~~~~~~~~~~~^~~
+drivers/clk/zynqmp/pll.c: In function 'zynqmp_pll_recalc_rate':
+drivers/clk/zynqmp/pll.c:53:13: note: 'ret_payload' declared here
+   53 |         u32 ret_payload[PAYLOAD_ARG_CNT];
+      |             ^~~~~~~~~~~
+drivers/clk/zynqmp/clk-mux-zynqmp.c: In function 'zynqmp_clk_mux_get_parent':
+drivers/clk/zynqmp/clk-mux-zynqmp.c:57:16: error: 'val' is used uninitialized [-Werror=uninitialized]
+   57 |         return val;
+      |                ^~~
 
-Thanks and regards,
-Lokesh
+As it was apparently intentional to support this for compile testing
+purposes, change the code to have just enough error handling for the
+compiler to not notice the remaining bugs.
 
-> 
-> Changes since v1:
-> - Fixed register offsets and bits for clocks.
-> - Update the compatible to ti,am64-epwm-tbclk, as high resolution is not
->   supported in AM64.
-> 
-> Lokesh Vutla (2):
->   dt-bindings: clock: ehrpwm: Add support for AM64 specific compatible
->   clk: keystone: syscon-clk: Add support for AM64 specific ehrpwm-tbclk
-> 
->  .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml   |  4 +++-
->  drivers/clk/keystone/syscon-clk.c               | 17 +++++++++++++++++
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
+Fixes: 21f237534661 ("clk: zynqmp: Drop dependency on ARCH_ZYNQMP")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
+
+Changes in v2:
+Based on discussion here
+Link: https://lore.kernel.org/r/20210421134844.3297838-1-arnd@kernel.org
+I have updated error return value which I got from clock core based on
+error cases.
+
+zynqmp_clk_mux_get_parent() should return num_parents() as error defined in
+clk_core_get_parent_by_index() where num_parents is incorrect index.
+
+Extend zynqmp_pll_get_mode() with PLL_MODE_ERROR to handle error case.
+
+zynqmp_pll_recalc_rate() returns 0 because __clk_core_init() consider 0 as
+default rate. But maybe -1ul which was used by Arnd is also good option.
+
+---
+ drivers/clk/zynqmp/clk-mux-zynqmp.c | 10 ++++++++--
+ drivers/clk/zynqmp/pll.c            | 15 ++++++++++-----
+ 2 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 06194149be83..d576c900dee0 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -38,7 +38,7 @@ struct zynqmp_clk_mux {
+  * zynqmp_clk_mux_get_parent() - Get parent of clock
+  * @hw:		handle between common and hardware-specific interfaces
+  *
+- * Return: Parent index
++ * Return: Parent index on success or number of parents in case of error
+  */
+ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ {
+@@ -50,9 +50,15 @@ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getparent(clk_id, &val);
+ 
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() getparent failed for clock: %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		/*
++		 * clk_core_get_parent_by_index() takes num_parents as incorrect
++		 * index which is exactly what I want to return here
++		 */
++		return clk_hw_get_num_parents(hw);
++	}
+ 
+ 	return val;
+ }
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index abe6afbf3407..3fe4d21227d0 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -31,8 +31,9 @@ struct zynqmp_pll {
+ #define PS_PLL_VCO_MAX 3000000000UL
+ 
+ enum pll_mode {
+-	PLL_MODE_INT,
+-	PLL_MODE_FRAC,
++	PLL_MODE_INT = 0,
++	PLL_MODE_FRAC = 1,
++	PLL_MODE_ERROR = 2,
+ };
+ 
+ #define FRAC_OFFSET 0x8
+@@ -54,9 +55,11 @@ static inline enum pll_mode zynqmp_pll_get_mode(struct clk_hw *hw)
+ 	int ret;
+ 
+ 	ret = zynqmp_pm_get_pll_frac_mode(clk_id, ret_payload);
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() PLL get frac mode failed for %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		return PLL_MODE_ERROR;
++	}
+ 
+ 	return ret_payload[1];
+ }
+@@ -126,7 +129,7 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+  * @hw:			Handle between common and hardware-specific interfaces
+  * @parent_rate:	Clock frequency of parent clock
+  *
+- * Return: Current clock frequency
++ * Return: Current clock frequency or 0 in case of error
+  */
+ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+@@ -140,9 +143,11 @@ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 	int ret;
+ 
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &fbdiv);
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		return 0ul;
++	}
+ 
+ 	rate =  parent_rate * fbdiv;
+ 	if (zynqmp_pll_get_mode(hw) == PLL_MODE_FRAC) {
+-- 
+2.32.0
+
