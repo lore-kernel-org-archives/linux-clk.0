@@ -2,79 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C936C48BDF
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Jun 2021 22:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D5AC48BE5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 06:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D341F611AC
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Jun 2021 22:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC12C61040
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 06:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbhFTWeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Jun 2021 18:34:08 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:56598 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229904AbhFTWeI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 20 Jun 2021 18:34:08 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lv5yq-0005VB-Mv; Mon, 21 Jun 2021 00:31:52 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 5.14
-Date:   Mon, 21 Jun 2021 00:31:52 +0200
-Message-ID: <4340280.LvFx2qVVIh@phil>
+        id S229597AbhFUGkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jun 2021 02:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229583AbhFUGkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jun 2021 02:40:12 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7553C061756
+        for <linux-clk@vger.kernel.org>; Sun, 20 Jun 2021 23:37:58 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id p13so12908905pfw.0
+        for <linux-clk@vger.kernel.org>; Sun, 20 Jun 2021 23:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SdHCWHmqfliDzlV9ZOK2KuWxyewxQ9Y5zNRLDj7+lE4=;
+        b=MeQZQmVrHod7mNQDewlaXFTyiYmIsl033nKWBNc0WtwaZFVcBU9zVZOqZy8u9gHJKu
+         l4K6zCqO0gxwys0LnVTGQTk4X0lxbUyMsKGiLDJ6qblZ7gt30oDurcJhRNv0Rsz8Z5G3
+         doIb4NefOV48/SIyjGjbH/N9WAbHXSI7S3SNMYjX2jslF5ICOANAS/59Z/WPEpCc9KSp
+         g8Kzf4USuVCkFBC2rHLID0Yr086ZKIH+vA/FQWsXh2klih/RtqedhBXFlnSrquFQA5OC
+         izBZxCRArORroI3pYl+qAmcVgEEkdpcn1e1bRvl8W9No73xF02NiOSfV5XaAKKfXVC12
+         SpaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SdHCWHmqfliDzlV9ZOK2KuWxyewxQ9Y5zNRLDj7+lE4=;
+        b=ASkTT/BevPjEH+CawEQxg9UngCY6p4jp9qSk3CBJoO/O/zPXCLDdajtCGf3M2SQYTh
+         /6YnOj9lYxDJugcj8l8UJ8BT3DN9i3QZv7Qav97sUr6ScN/btVEFo/OdgSD3Ic+K2Kk9
+         aedZTCO1F8ew53u7brX/7+WJ/akQBu16xOmFOXs47zCyWWQC871d+JW/JCj3+gOx1kxg
+         VBwIvyCH91yDHBCuqHrA766V7GQcqCiGDpgD8yGN8pJun0LVi0mplmLtDy9CazMf3o/n
+         DvscEcFJH4lBk/DZBgNnsDy5iQA/0vCVUuu59MC2hw0WlHFF+tJTxIjhXloFU8LcuP+Q
+         poUg==
+X-Gm-Message-State: AOAM532jBT034G3oqhhh/6g44bUt8K17ZPLI8sBKJ/EEqSn9rKzy5Xkt
+        GW7PGQvtXDKe8w6b3QmIed8beA==
+X-Google-Smtp-Source: ABdhPJwMLC4F9jwSAm8Hcb7YBqwOeprhCOojsTRC0R49gO+EaApiBs8Mqs2fYaKHuS709r4a9V6vFQ==
+X-Received: by 2002:a62:7b0b:0:b029:301:40a6:9e64 with SMTP id w11-20020a627b0b0000b029030140a69e64mr11326692pfc.33.1624257478203;
+        Sun, 20 Jun 2021 23:37:58 -0700 (PDT)
+Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id v6sm16343060pgk.33.2021.06.20.23.37.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Jun 2021 23:37:57 -0700 (PDT)
+Date:   Mon, 21 Jun 2021 14:37:52 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add MSM8939 APCS/A53PLL clock support
+Message-ID: <20210621063751.GB8666@dragon>
+References: <20210504052844.21096-1-shawn.guo@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210504052844.21096-1-shawn.guo@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+On Tue, May 04, 2021 at 01:28:39PM +0800, Shawn Guo wrote:
+> This series adds MSM8939 APCS/A53PLL clock support.  Most outstanding
+> thing about MSM8939 is that it integrates 3 APCS instances, for Cluster0
+> (little cores), Cluster1 (big cores) and CCI (Cache Coherent Interconnect)
+> respectively.
+> 
+> Note: the first one is a small improvement which is not specific to
+> MSM8939 support.
+> 
+> 
+> Shawn Guo (5):
+>   clk: qcom: apcs-msm8916: Flag a53mux instead of a53pll as critical
+>   dt-bindings: clock: update qcom,a53pll bindings for MSM8939 support
+>   clk: qcom: apcs-msm8916: Retrieve clock name from DT
+>   clk: qcom: a53-pll: Pass freq_tbl via match data
+>   clk: qcom: a53-pll: Add MSM8939 a53pll clocks
+> 
+>  .../bindings/clock/qcom,a53pll.yaml           | 34 +++++++++++
+>  drivers/clk/qcom/a53-pll.c                    | 59 +++++++++++++++++--
+>  drivers/clk/qcom/apcs-msm8916.c               |  7 ++-
+>  3 files changed, 93 insertions(+), 7 deletions(-)
 
-please find below Rockchip clock changes for 5.14
+Hi Stephen,
 
-Please pull, thanks
-Heiko
+Did you get a chance to look at the series?
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
-
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.14-rockchip-clk1
-
-for you to fetch changes up to 2adafc0512625bbd090dc37a353ddda15d525e9d:
-
-  clk: rockchip: export ACLK_VCODEC for RK3036 (2021-05-28 17:53:19 +0200)
-
-----------------------------------------------------------------
-Reduce memory footprint of PLL rate tables, a fix for the newly
-added rk3568 clk driver and an exported clock for the
-newly added video decoder.
-
-----------------------------------------------------------------
-Alex Bee (1):
-      clk: rockchip: export ACLK_VCODEC for RK3036
-
-Elaine Zhang (1):
-      clk: rockchip: Optimize PLL table memory usage
-
-Peter Geis (1):
-      clk: rockchip: fix rk3568 cpll clk gate bits
-
- drivers/clk/rockchip/clk-rk3036.c |  2 +-
- drivers/clk/rockchip/clk-rk3568.c | 10 +++++-----
- drivers/clk/rockchip/clk.h        | 29 ++++++++++++++++++-----------
- 3 files changed, 24 insertions(+), 17 deletions(-)
-
-
-
+Shawn
