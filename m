@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A89C48BE5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 23:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C97C4743C
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 23:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1E056124B
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 23:39:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BC3860FE7
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jun 2021 23:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231755AbhFUXlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jun 2021 19:41:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38600 "EHLO mail.kernel.org"
+        id S231569AbhFUXow (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jun 2021 19:44:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231268AbhFUXlV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Jun 2021 19:41:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C20AF60FE7;
-        Mon, 21 Jun 2021 23:39:06 +0000 (UTC)
+        id S231486AbhFUXov (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 Jun 2021 19:44:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DE5D7611BD;
+        Mon, 21 Jun 2021 23:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624318746;
-        bh=zNyYHhxGOJx5d/wsCld5lYfjFtG4ODEEPzj4WizHqms=;
+        s=k20201202; t=1624318957;
+        bh=LbtiJo7X6u8ObVFmZtZLMgw6UKzAz6klxd8rt//+jjg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RN85PB+fn+Y/D2UjjwjBBGXkona1J+JNuHQVZX9ayB5qcNwB8M8tUsgMqWGUrQOzV
-         HX+luVIBT3vu1zp5HY2Q0Di/VDEnoG3Ef9U3PTPnRkcPCylxE68cI4VcXUq3CA1rGu
-         hSaZdknXbNwwbeh4OW9z1Q47iNtZe2r48PN1a0dYhymt4Ieudh4aLPRwin445ZgqNX
-         9E10R7t8rXKyjGL1B1VOcyrP9bntoqoxyLeAynK3ZFFfiy5QPKQmwcq0JxQgUgdO1b
-         TTcaY0zQrCFUKGAiZiwwJlXQhUq1NhZw1VKrOAD99v3FM/SecjkPLgC4YZ8fs5CuIs
-         PvamzsduJi22A==
+        b=qAyndvQe4lRDEaFpAZafZxLGLDRzxUnWTClbnDQnog1MQXJNBlZR3KiEdDEBmIJCE
+         4i7f3o9cRBRuHhETTQbm6+n53L3978fUZ7ncb+HBJkWz+F4CXFuK1cR8JoMTdk85I1
+         j1XpzSqmtsYAjPSNqT+O6zm9YtTEv+FnBFkytw1LD2L3CRimGnoAyB6amSEr/JwJRj
+         YeommXN+aGrDLB/jw3gVH+fH38Db1OgUJSGTDSkAN+r8LB/nHIUKPR0PzyMeFRXKZb
+         Fe3b8YaDahlsRAPVcIGlMJehfJegXa65Dsi7naIXBosxcWucXbttiZkuVsoYQ3dGOd
+         2yAg7i2InitJQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210611163124.3566027-1-thierry.reding@gmail.com>
-References: <20210611163124.3566027-1-thierry.reding@gmail.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v5.14-rc1
+In-Reply-To: <1623740819-28040-1-git-send-email-abel.vesa@nxp.com>
+References: <1623740819-28040-1-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [GIT PULL] clk: imx: Updates for v5.14
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Mon, 21 Jun 2021 16:39:05 -0700
-Message-ID: <162431874543.3552334.2396645089646938680@swboyd.mtv.corp.google.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+To:     Abel Vesa <abel.vesa@nxp.com>
+Date:   Mon, 21 Jun 2021 16:42:35 -0700
+Message-ID: <162431895570.3552334.196688138042205414@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2021-06-11 09:31:24)
-> Hi Mike, Stephen,
->=20
+Quoting Abel Vesa (2021-06-15 00:06:59)
 > The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627=
 b5:
 >=20
@@ -58,16 +57,12 @@ b5:
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
-5.14-clk
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-5.14
 >=20
-> for you to fetch changes up to f13570e7e830ca4fbf4869015af8492b8918445e:
+> for you to fetch changes up to c586f53ae159c6c1390f093a1ec94baef2df9f3a:
 >=20
->   clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing() (2021=
--06-02 11:08:00 +0200)
->=20
-> Thanks,
-> Thierry
+>   clk: imx8mq: remove SYS PLL 1/2 clock gates (2021-06-14 17:05:45 +0300)
 >=20
 > ----------------------------------------------------------------
 
