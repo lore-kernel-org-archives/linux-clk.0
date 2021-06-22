@@ -2,64 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E523AC2B9F4
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 21:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67C9C48BE5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 23:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C53096128E
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 21:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C2E6611CE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 23:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbhFVVVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jun 2021 17:21:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229625AbhFVVVI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Jun 2021 17:21:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 892526100B;
-        Tue, 22 Jun 2021 21:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624396732;
-        bh=fFEjKRcRcGszK9lr5dIK3HHaQ6Ctdsp7ASaoihkoHBQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mHPFYLxCo1slmDPpzKzcF0VaagL9+cQRGmejoF8WkHqOrbKR//93MUa35MiKKES/H
-         kbDTpq2Io6Y7mMbVLfws90DOTvEydHETuT6+Old9WAxKZUk8e8oRsPWHUMpFmbLF/6
-         ukVJ9PWPGjFJ5e9qh6VMoMSSQyRy5avYMydSEhE1LwFSb94bfkB7bF3cvuOX097Mpj
-         MWA9H9QUBVgJEeNfUfhWlD2KFW2Y0h3elA/qkCxRlVig59pzXavq6iRS/PjsgdXuDg
-         cQGTu2L2cG7Fm/u424t4DrGR//ke9KllW5gjzrNzo/zoXquimDEhp/5fVFfnAkgv4X
-         u6XoE0m8bQWQg==
-Content-Type: text/plain; charset="utf-8"
+        id S229794AbhFVX3e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jun 2021 19:29:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55222 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229758AbhFVX3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jun 2021 19:29:34 -0400
+Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 03D1DB63;
+        Wed, 23 Jun 2021 01:27:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1624404436;
+        bh=vmMteKdK6L5Fks8gdq3K11RhP5QnV61a9RUgLCjXK8U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Amvu9pEjs5J851syKQYjuhKlAtQFc9PzCVt4y+tJ4UhXAgkS1kRlq7O49KzKwLRHZ
+         uttEM0Kh6cYn8z10fXFmfV9IbQQ+jJM2ojxGBpv0lJd3csTHycDxY+TJd4zWgPxTpF
+         3yYpx+6AHvSVBKmxEhmZavXGyC89DtIOFw+iB/ps=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@glider.be>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] clk: renesas: r8a779a0: Add the DU clock
+Date:   Wed, 23 Jun 2021 00:27:10 +0100
+Message-Id: <20210622232711.3219697-2-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210622232711.3219697-1-kieran.bingham@ideasonboard.com>
+References: <20210622232711.3219697-1-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210528045743.16537-3-lokeshvutla@ti.com>
-References: <20210528045743.16537-1-lokeshvutla@ti.com> <20210528045743.16537-3-lokeshvutla@ti.com>
-Subject: Re: [PATCH v2 2/2] clk: keystone: syscon-clk: Add support for AM64 specific epwm-tbclk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Device Tree Mailing List <devicetree@vger.kernel.org>,
-        ssantosh@kernel.org, Vignesh R <vigneshr@ti.com>,
-        linux-clk@vger.kernel.org,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Tero Kristo <kristo@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, mturquette@baylibre.com
-Date:   Tue, 22 Jun 2021 14:18:51 -0700
-Message-ID: <162439673148.1026800.11837112097844717167@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lokesh Vutla (2021-05-27 21:57:43)
-> AM64 has 9 instances of EPWM modules. And each instance has a clk to
-> Timer-Base sub-module that can be controlled by Control module. Update
-> the driver with all the 9 instance of clocks associated to
-> ti,am64-epwm-tbclk.
->=20
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> ---
+The DU clock is added to the S3D1 clock parent. The Renesas BSP lists
+S2D1 as the clock parent, however there is no S2 clock on this platform.
 
-Applied to clk-next
+S3D1 is chosen as a best effort guess and demonstrates functionality but
+is not guaranteed to be correct.
+
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index acaf5a93f1d3..a1bd158defb5 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -167,6 +167,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+ 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi43",	402,	R8A779A0_CLK_CSI0),
++	DEF_MOD("du",		411,	R8A779A0_CLK_S3D1),
+ 	DEF_MOD("fcpvd0",	508,	R8A779A0_CLK_S3D1),
+ 	DEF_MOD("fcpvd1",	509,	R8A779A0_CLK_S3D1),
+ 	DEF_MOD("hscif0",	514,	R8A779A0_CLK_S1D2),
+-- 
+2.30.2
+
