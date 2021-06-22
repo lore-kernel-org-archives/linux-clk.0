@@ -2,176 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E0DC48BDF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 08:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B35C2B9F4
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 10:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7601E61360
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 08:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07AF3613C0
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 10:15:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbhFVIT7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jun 2021 04:19:59 -0400
-Received: from mail-vs1-f54.google.com ([209.85.217.54]:46782 "EHLO
-        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbhFVIT7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jun 2021 04:19:59 -0400
-Received: by mail-vs1-f54.google.com with SMTP id z15so10758892vsn.13;
-        Tue, 22 Jun 2021 01:17:41 -0700 (PDT)
+        id S229682AbhFVKRn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jun 2021 06:17:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229677AbhFVKRm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jun 2021 06:17:42 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D79C061756
+        for <linux-clk@vger.kernel.org>; Tue, 22 Jun 2021 03:15:17 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id f2so22925120wri.11
+        for <linux-clk@vger.kernel.org>; Tue, 22 Jun 2021 03:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zYV7hqqp2NUmMYcdGW3YHE3qT5LHwub4HNP+0eHal0A=;
+        b=zKhd0Pwpfpit6QP/op/rRTOyEXkXh2gcDJ7Xmn0KHeDskCe+FNDHUIQA2D9japVVRf
+         1ygggadDXv/i6flr2li5qwx3TllsVkFylc6kwdcMGpkkFN8ZZ+knfYLqygM02lqqPDET
+         /H6YOT1hLtC6vBdhRrA9RIv4ucCQpxYxcJTfpgoIKAJ39tT7oc0u/TDtOWp8Se+vb7Gu
+         DFaSeKncT8ZMzh0kgnKpbet8g06wWCZxT0yWYob2UMNk1bk39BzJWtrJjPVAvGZwtNSC
+         NZlbQ6OcySq/tObHJQtkl+pYePgRXlwSFwFWFOo/+QP3GqoOYI0VoszBWxHN1Ysmx8GE
+         eOWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s0hVMlLFV5eIwzuXXBEJWEV7FxMfuDBGtQwv1PuAfDc=;
-        b=Yc8JShUBMH1dnjUYyQ4i3CS2+y2GF6q1YtRwv/bRUTq4JGwOzFH8jz0/QYnr8ZuDpr
-         HcEesiBUGFsp/umSzAQ1ucxKn54tANWqVfYyhNDVX62VWxoC03W6vKFzSWDS1INIUujo
-         EfpD0ZvANCW00iJ41ZnsyYqUYQ7WKnBJFLN0taGCgErNoNfbEbrJRexR6AwIwIKT2Knb
-         /0emor8cfQJbNOnIXhfpVS1iQMsX9FEwTZTkt2w2NsDGz2POO5RqhJxIgP7TG7ACSbj/
-         GkkcJgg3HdSB+eNLe7DKVV3GNyEiHob+PVe9RVIKAdqt1PMr45YhOFebl4O9XRmtiOlY
-         SQDQ==
-X-Gm-Message-State: AOAM530BLNzCLpsQ3ZsdxG/iSlElsnvEgk5f19JQOeLC0TziQs7pI7vp
-        kFMx7YZsKONrP5YDTSXRni3TndxcwI12ri99DDk=
-X-Google-Smtp-Source: ABdhPJz3clw2O8tsVFk5F4OGcaBfo9Z8eHqvoF8LwYXAPGollSTCOREHx1S0f08A9nsiznMjaM5G5srL4UVXlJSotsU=
-X-Received: by 2002:a05:6102:2011:: with SMTP id p17mr21421376vsr.40.1624349860512;
- Tue, 22 Jun 2021 01:17:40 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=zYV7hqqp2NUmMYcdGW3YHE3qT5LHwub4HNP+0eHal0A=;
+        b=sneXzO+IoQKcrfX6Tu7Z8gVrCYFaQAmBBRKNlPdzHw7UcZYVv+WVZJ6t2UqKNDmjiC
+         h5d+bsyO8TOKLfl6XkKvMTVWswlf0oIZZuDEMSd3pcpNZ3ewA1VGEC/7G8ssp8stVvd1
+         e9cec5KncHO/IsezV2jg3wVCs+3tvHa6iRM6N8mZ2jhLzAAOQph94thaBe6cQVm7HiIk
+         nqxBtVwi6MeceEzAsRSV8oL6F/Sjh7QAFhNV/iNUC4IYWQ+xTS8PDwtwQLcu06NdWP8p
+         b0PJrv8D3qaDVLIk4qOj/DpQisCsHJcxX9pTgcrhp6LUR1xM/yDSx0GOJ/Av+S9ry6Z0
+         eakg==
+X-Gm-Message-State: AOAM5325cmZnJXUVaRMe5sNxDaCzcOPKDiopcNBFgIzpYfbXvquPkuZo
+        DUEj35mcU2sPs20JboB8vLVzpQ1vdAw1hYa+
+X-Google-Smtp-Source: ABdhPJxt8obSRXvVypphkRGgMVXcrgAsDsUhRgYgzVfdvQnodGoMOhJQHlzTPJd8yocqaKzzoGWIdA==
+X-Received: by 2002:adf:eed2:: with SMTP id a18mr3865604wrp.268.1624356915906;
+        Tue, 22 Jun 2021 03:15:15 -0700 (PDT)
+Received: from localhost ([2a02:768:2307:40d6::f9e])
+        by smtp.gmail.com with ESMTPSA id o203sm1999307wmo.36.2021.06.22.03.15.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jun 2021 03:15:15 -0700 (PDT)
+Sender: Michal Simek <monstr@monstr.eu>
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com,
+        quanyang.wang@windriver.com
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3] clk: zynqmp: fix compile testing without ZYNQMP_FIRMWARE
+Date:   Tue, 22 Jun 2021 12:15:11 +0200
+Message-Id: <f1c4e8c903fe2d5df5413421920a56890a46387a.1624356908.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20210615191543.1043414-1-robh@kernel.org>
-In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jun 2021 10:17:28 +0200
-Message-ID: <CAMuHMdUGXu8yj3JWKwM8mt7axkrzGMiowC1t0PHrbpxRCBME3w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-can@vger.kernel.org,
-        linux-pci <linux-pci@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-rtc@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+When the firmware code is disabled, the incomplete error handling
+in the clk driver causes compile-time warnings:
 
-On Tue, Jun 15, 2021 at 9:16 PM Rob Herring <robh@kernel.org> wrote:
-> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
-> same size as the list is redundant and can be dropped. Note that is DT
-> schema specific behavior and not standard json-schema behavior. The tooling
-> will fixup the final schema adding any unspecified minItems/maxItems.
->
-> This condition is partially checked with the meta-schema already, but
-> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
-> An improved meta-schema is pending.
+drivers/clk/zynqmp/pll.c: In function 'zynqmp_pll_recalc_rate':
+drivers/clk/zynqmp/pll.c:147:29: error: 'fbdiv' is used uninitialized [-Werror=uninitialized]
+  147 |         rate =  parent_rate * fbdiv;
+      |                 ~~~~~~~~~~~~^~~~~~~
+In function 'zynqmp_pll_get_mode',
+    inlined from 'zynqmp_pll_recalc_rate' at drivers/clk/zynqmp/pll.c:148:6:
+drivers/clk/zynqmp/pll.c:61:27: error: 'ret_payload' is used uninitialized [-Werror=uninitialized]
+   61 |         return ret_payload[1];
+      |                ~~~~~~~~~~~^~~
+drivers/clk/zynqmp/pll.c: In function 'zynqmp_pll_recalc_rate':
+drivers/clk/zynqmp/pll.c:53:13: note: 'ret_payload' declared here
+   53 |         u32 ret_payload[PAYLOAD_ARG_CNT];
+      |             ^~~~~~~~~~~
+drivers/clk/zynqmp/clk-mux-zynqmp.c: In function 'zynqmp_clk_mux_get_parent':
+drivers/clk/zynqmp/clk-mux-zynqmp.c:57:16: error: 'val' is used uninitialized [-Werror=uninitialized]
+   57 |         return val;
+      |                ^~~
 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+As it was apparently intentional to support this for compile testing
+purposes, change the code to have just enough error handling for the
+compiler to not notice the remaining bugs.
 
-> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> @@ -46,7 +46,6 @@ properties:
->
->    clocks:
->      minItems: 3
-> -    maxItems: 5
->      items:
->        - description: GMAC main clock
->        - description: MAC TX clock
+Fixes: 21f237534661 ("clk: zynqmp: Drop dependency on ARCH_ZYNQMP")
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-While resolving the conflict with commit fea99822914039c6
-("dt-bindings: net: document ptp_ref clk in dwmac") in soc/for-next,
-I noticed the following construct for clock-names:
+Changes in v3:
+- Also check PLL_MODE_ERROR return in zynqmp_pll_recalc_rate() - reported
+  by Quanyang
+- Change Arnd's authorhip based on our discussing at
+https://lore.kernel.org/r/CAK8P3a1twOhC8DFxpLxpk8bcy0+JfGZUSE9bX4tdMetVLGTcSQ@mail.gmail.com
 
-  clock-names:
-    minItems: 3
-    maxItems: 6
-    contains:
-      enum:
-        - stmmaceth
-        - mac-clk-tx
-        - mac-clk-rx
-        - ethstp
-        - eth-ck
-        - ptp_ref
+Changes in v2:
+Based on discussion here
+Link: https://lore.kernel.org/r/20210421134844.3297838-1-arnd@kernel.org
+I have updated error return value which I got from clock core based on
+error cases.
 
-Should this use items instead of enum, and drop maxItems, or is this
-a valid construct to support specifying the clocks in random order?
-If the latter, it does mean that the order of clock-names may not
-match the order of the clock descriptions.
+zynqmp_clk_mux_get_parent() should return num_parents() as error defined in
+clk_core_get_parent_by_index() where num_parents is incorrect index.
 
-Gr{oetje,eeting}s,
+Extend zynqmp_pll_get_mode() with PLL_MODE_ERROR to handle error case.
 
-                        Geert
+zynqmp_pll_recalc_rate() returns 0 because __clk_core_init() consider 0 as
+default rate. But maybe -1ul which was used by Arnd is also good option.
 
+---
+ drivers/clk/zynqmp/clk-mux-zynqmp.c | 10 ++++++++--
+ drivers/clk/zynqmp/pll.c            | 22 ++++++++++++++++------
+ 2 files changed, 24 insertions(+), 8 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 06194149be83..d576c900dee0 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -38,7 +38,7 @@ struct zynqmp_clk_mux {
+  * zynqmp_clk_mux_get_parent() - Get parent of clock
+  * @hw:		handle between common and hardware-specific interfaces
+  *
+- * Return: Parent index
++ * Return: Parent index on success or number of parents in case of error
+  */
+ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ {
+@@ -50,9 +50,15 @@ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getparent(clk_id, &val);
+ 
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() getparent failed for clock: %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		/*
++		 * clk_core_get_parent_by_index() takes num_parents as incorrect
++		 * index which is exactly what I want to return here
++		 */
++		return clk_hw_get_num_parents(hw);
++	}
+ 
+ 	return val;
+ }
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index abe6afbf3407..e025581f0d54 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -31,8 +31,9 @@ struct zynqmp_pll {
+ #define PS_PLL_VCO_MAX 3000000000UL
+ 
+ enum pll_mode {
+-	PLL_MODE_INT,
+-	PLL_MODE_FRAC,
++	PLL_MODE_INT = 0,
++	PLL_MODE_FRAC = 1,
++	PLL_MODE_ERROR = 2,
+ };
+ 
+ #define FRAC_OFFSET 0x8
+@@ -54,9 +55,11 @@ static inline enum pll_mode zynqmp_pll_get_mode(struct clk_hw *hw)
+ 	int ret;
+ 
+ 	ret = zynqmp_pm_get_pll_frac_mode(clk_id, ret_payload);
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() PLL get frac mode failed for %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		return PLL_MODE_ERROR;
++	}
+ 
+ 	return ret_payload[1];
+ }
+@@ -126,7 +129,7 @@ static long zynqmp_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+  * @hw:			Handle between common and hardware-specific interfaces
+  * @parent_rate:	Clock frequency of parent clock
+  *
+- * Return: Current clock frequency
++ * Return: Current clock frequency or 0 in case of error
+  */
+ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+@@ -138,14 +141,21 @@ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 	unsigned long rate, frac;
+ 	u32 ret_payload[PAYLOAD_ARG_CNT];
+ 	int ret;
++	enum pll_mode mode;
+ 
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &fbdiv);
+-	if (ret)
++	if (ret) {
+ 		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+ 			     __func__, clk_name, ret);
++		return 0ul;
++	}
++
++	mode = zynqmp_pll_get_mode(hw);
++	if (mode == PLL_MODE_ERROR)
++		return 0ul;
+ 
+ 	rate =  parent_rate * fbdiv;
+-	if (zynqmp_pll_get_mode(hw) == PLL_MODE_FRAC) {
++	if (mode == PLL_MODE_FRAC) {
+ 		zynqmp_pm_get_pll_frac_data(clk_id, ret_payload);
+ 		data = ret_payload[1];
+ 		frac = (parent_rate * data) / FRAC_DIV;
+-- 
+2.32.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
