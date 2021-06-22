@@ -7,53 +7,59 @@ X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27530C2B9F4
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 19:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1D5C2B9F4
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 20:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07A7A6100B
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 19:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371DC61352
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jun 2021 20:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhFVUB7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jun 2021 16:01:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39348 "EHLO mail.kernel.org"
+        id S232464AbhFVUFb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jun 2021 16:05:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232418AbhFVUB7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Jun 2021 16:01:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D545C611CE;
-        Tue, 22 Jun 2021 19:59:42 +0000 (UTC)
+        id S231888AbhFVUFb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Jun 2021 16:05:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 74EB1610C7;
+        Tue, 22 Jun 2021 20:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624391983;
-        bh=iJZU1mLgSvHpTDnNqWBtFOnV6/1UXxJ2KdDlFoEyjHQ=;
+        s=k20201202; t=1624392195;
+        bh=go77Z5qcOi92oqSCP0X3Wkf0SGvUNQ54cyTYeQXyxD4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gRY5mODRMM8hC+ju12tpU5/hm55jqVsWj5RGVumOVSln5qXifFn9a2C69k0ZCRVdA
-         LZ4JqR18GKvgbb4MoHCWGCVD5WvruVwyRoiSfj6t32VchaL54+C5kfqGUsAcrZZao6
-         PDfOKdn8Wm5BCq1EZeIHluZ3sB6guD2TQRIWwrguusLOaA4ofVyDmULXUs4H0+0R8L
-         C2Q1aI37arELLYy6kNs3Lxso/W3XPbSSAxZ9KvdTzJw6d31jxl6dLLAR97ZLrafqzn
-         CXKoP/E3FOR2Q/Wlum5Vdn0lD9OmC1Uv2kSfIiAN7n3gmgrJJqpQVD0jsgsP0+NKe3
-         3KGJ9JRFwfVBQ==
+        b=a//JT9yhimRsFDeR2r2+xrMutFRxeGqB+0BaQxwRUrUqqLORNYvhri2w69ZwBaQQw
+         XKBQTpBVtytBr7uyN0NwOIEuaz6SE9IWgx+7EKgkkCdpb1uhhHCksmKYorBKu9LMYC
+         Ljx0lRfGjo4AbgbBDeWwABthKr8IZCaUpAT4PTSq860FN+tXPiaivaDsuA+WmF1C3H
+         LqwH+RUQ9J94/eJWJWW6PX3jFYQnC6yNJjz7v0rgOSP5GuGRIir/ZKYdynk5ORrDfv
+         RtGWcVdFwkeU+jaPLzht0JGqCGSh+iMicoRN1p+N8/jSx8/wjzTyqR76o8tn5qyxyr
+         gQKJvaOcowDrg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4340280.LvFx2qVVIh@phil>
-References: <4340280.LvFx2qVVIh@phil>
-Subject: Re: [GIT PULL] Rockchip clock changes for 5.14
+In-Reply-To: <1j4ke6215o.fsf@starbuckisacylon.baylibre.com>
+References: <1j4ke6215o.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL] clk: meson: amlogic updates for v5.14
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date:   Tue, 22 Jun 2021 12:59:41 -0700
-Message-ID: <162439198156.3552334.16445859558117444993@swboyd.mtv.corp.google.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Date:   Tue, 22 Jun 2021 13:03:14 -0700
+Message-ID: <162439219417.3552334.8471238257904070782@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2021-06-20 15:31:52)
-> Hi Mike, Stephen,
+Quoting Jerome Brunet (2021-06-09 14:12:03)
 >=20
-> please find below Rockchip clock changes for 5.14
+> Hi Stephen,
 >=20
-> Please pull, thanks
-> Heiko
+> Here are the updates of the amlogic clocks for v5.14. Nothing out the
+> ordinary. Please pull.
+>=20
+> Thx.
+> Cheers
+>=20
+> Jerome
 >=20
 > The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627=
 b5:
@@ -62,12 +68,12 @@ b5:
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v5.14-rockchip-clk1
+>   git://github.com/BayLibre/clk-meson.git clk-meson-v5.14-1
 >=20
-> for you to fetch changes up to 2adafc0512625bbd090dc37a353ddda15d525e9d:
+> for you to fetch changes up to 8271813e404cd0620f99fbccffd2746f85a17259:
 >=20
->   clk: rockchip: export ACLK_VCODEC for RK3036 (2021-05-28 17:53:19 +0200)
+>   clk: meson: g12a: Add missing NNA source clocks for g12b (2021-06-09 21=
+:39:50 +0200)
 >=20
 > ----------------------------------------------------------------
 
