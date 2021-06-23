@@ -2,89 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF11EC49EA4
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DE3C48BC2
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 12:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95A6160FEE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 199D861002
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 12:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbhFWMAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Jun 2021 08:00:23 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:30206 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230235AbhFWMAW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Jun 2021 08:00:22 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1624449484; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=AHMt0GzCvHn4hyYD7cdhM7SJoQ7X95tIMSwPoZD5d7s=; b=jbyG9iTmfMSVGq+8tleX9/L0E9OijYr2f9vBrDtk+EUw3Ozs9SF6A71XF8c51l9D9cdD9sFK
- +kyrCn2eYoW/CE1sJ8pZ+PEqCE8GxL3wJiqXmZomJjy/sq46Ug7Q5GyIUZI2/7kzCkReACqn
- uANeSiEeGxDIexuQ03WM9W81QGc=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 60d321cadc4628fe7eb49d99 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 23 Jun 2021 11:58:02
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 11E66C4338A; Wed, 23 Jun 2021 11:58:02 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00A2DC433D3;
-        Wed, 23 Jun 2021 11:57:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00A2DC433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2] clk: qcom: gcc: Add support for a new frequency for SC7280
-Date:   Wed, 23 Jun 2021 17:27:51 +0530
-Message-Id: <1624449471-9984-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S230283AbhFWMUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Jun 2021 08:20:32 -0400
+Received: from mail-vk1-f169.google.com ([209.85.221.169]:43554 "EHLO
+        mail-vk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230019AbhFWMUc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Jun 2021 08:20:32 -0400
+Received: by mail-vk1-f169.google.com with SMTP id k16so452180vke.10;
+        Wed, 23 Jun 2021 05:18:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wXULYjUZF6p9ZIURHFCn4NITYUcSU904Yw5wnHedq3U=;
+        b=WzGrlzq2cZ51T0ZvBA81AlSt99rhIXBHXYY+GmgsILNNGR8idusAMB3hMYfaL6tHAC
+         FCQDjZ9NzkXifycN9AWaXo1OeDS37QeVr4JYe/zFePnM6PL7N0gP2OoyVAgcNPEfRRhE
+         cSFRKnPwnBoFS7gkAJY2KEgrjUlAcrVfP2vu9FuBW4354nXVAluOufnIdfVZxfKcRYA8
+         UDPPhOR4qUAn5h7cf+e9bmhcgUNqe3NKfMUPlDQ0GZAt3aHFsxsMNtwGFaO6s5aSZ7KE
+         5WIpV+PbwlZydXRbdFA8ZLDS+vQ1wzKjjUivdYJdSDGyKP3fj9MMCJnQElG+v9LGtZvg
+         TFNA==
+X-Gm-Message-State: AOAM533Sza/igfIToL2UeISpMQKGCN5CKyQ3lpWGfSu2VJNqLDbH1qDB
+        TMdJJP85pTnTWsLVTK+PA68SORUJzlL6UwKTZtq9JvL1qzM=
+X-Google-Smtp-Source: ABdhPJxRg3bxOvg9QQ/x0Q+bhG+Fby0rbQQW04F53GilS6+5ZTPbnbnOhueI4IrAGn5okTNGZbKvkDQdGIRe+QBu8mk=
+X-Received: by 2002:a1f:9505:: with SMTP id x5mr23372914vkd.6.1624450694541;
+ Wed, 23 Jun 2021 05:18:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210622232711.3219697-1-kieran.bingham@ideasonboard.com> <20210622232711.3219697-2-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20210622232711.3219697-2-kieran.bingham@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Jun 2021 14:18:03 +0200
+Message-ID: <CAMuHMdVVN2zO-VFRUGpLrL5a685oxyMZEumrWaZsD6ZbDQawUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: r8a779a0: Add the DU clock
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a requirement to support 52MHz for qup clocks for bluetooth
-usecase, thus update the frequency table to support the frequency.
+Hi Kieran,
 
-Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
-[v2]
- * Update commit message and subject "Add"/"bluetooth".
+On Wed, Jun 23, 2021 at 1:27 AM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+> The DU clock is added to the S3D1 clock parent. The Renesas BSP lists
+> S2D1 as the clock parent, however there is no S2 clock on this platform.
+>
+> S3D1 is chosen as a best effort guess and demonstrates functionality but
+> is not guaranteed to be correct.
 
- drivers/clk/qcom/gcc-sc7280.c | 1 +
- 1 file changed, 1 insertion(+)
+Makes sense.
 
-diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-index ef734db..6cefcdc 100644
---- a/drivers/clk/qcom/gcc-sc7280.c
-+++ b/drivers/clk/qcom/gcc-sc7280.c
-@@ -716,6 +716,7 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s2_clk_src[] = {
- 	F(29491200, P_GCC_GPLL0_OUT_EVEN, 1, 1536, 15625),
- 	F(32000000, P_GCC_GPLL0_OUT_EVEN, 1, 8, 75),
- 	F(48000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 25),
-+	F(52174000, P_GCC_GPLL0_OUT_MAIN, 1, 2, 23),
- 	F(64000000, P_GCC_GPLL0_OUT_EVEN, 1, 16, 75),
- 	F(75000000, P_GCC_GPLL0_OUT_EVEN, 4, 0, 0),
- 	F(80000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 15),
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.15.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
