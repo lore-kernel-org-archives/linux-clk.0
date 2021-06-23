@@ -2,167 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF8AC48BC2
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF11EC49EA4
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0662610F7
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A6160FEE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jun 2021 11:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbhFWLuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Jun 2021 07:50:03 -0400
-Received: from mail-eopbgr1410108.outbound.protection.outlook.com ([40.107.141.108]:26496
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230019AbhFWLuC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 23 Jun 2021 07:50:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A2ILzWLQxE90ORc01vC7Zca/vRTftB5+jutIhJZTE0+Kux31zvQ6Qr/WhbOCN5TOGh4SD642dgJB2iBIai3uSN+n7BPCHVxazwpiZp8p3gQNX0aXaJCeRpf2gmrPxDbGgKksUAqVczjZ+NS5T42n0m8OZqQW7bNxH4p7wovKdGrbj3fogZ3QIf+WKMQ/Fdbysa3x/5eaJnikY2o8FTif43KobZeFoZjIT+PWKFsiKRGY3Elok3ScWFXuF1yrejBrAQObQzBOmQLwZkeV4YJxNsg8TWYcLWs1peNhG+1IL0Cxgfh5ojns0txlAuHNLXtIxfK21AX8SG2+louf+y1bVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZPrEAwZPg9z+czQnl0nBw9oFL/rQTNaJNmrdyuJiADw=;
- b=Tcak6AXoTZaGWzJGE21kRn3tBzPizfg9MJdccviJ7fPZ7pg580XyW8NQ18mFioMqjGV1S6bIQca1fSqqq6tvvkaOdOjgh0UecqNiBfeYj5JWuApJrfP4fhkzPUPmfZqBBQeI05CtWZox56g3zeO1nWiaMrw46Ow3vCxVtUi1ZRCVFZ4qPMA96DQW5uaQst/ykt2xS0y38OByT4ZhregPU3IPp9wWNAzy0FXxiINnJHZ5YkcR6/U6Gw+fpf+21tLZH64cJ6bmiSFHvbaM1pr7YW1HzKQwjN6fjxkpNwcBjBkJ4B3/nYP8CW0qkDyCQF5KaZdrvmSkPT94Vs8WxkgImg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZPrEAwZPg9z+czQnl0nBw9oFL/rQTNaJNmrdyuJiADw=;
- b=llvk1FzgZMTbdfAhebNU6g4ytdHbeBMCW+XBGVXZsnZo/IeQb1MOtqV6giBdz9Sb0Hpp6dLEPzHeSSuDXICEmxD7+pga+L6YZfzTiHfpviuLKNVW6sbKf693P4DZYYcDknOhEh4f5A+SsKaHzqaTn+Q9xZPbagrv8lbrn84Da94=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OSBPR01MB3575.jpnprd01.prod.outlook.com (2603:1096:604:43::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.21; Wed, 23 Jun
- 2021 11:47:41 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::b834:5e50:2ce8:9ae0]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::b834:5e50:2ce8:9ae0%3]) with mapi id 15.20.4242.024; Wed, 23 Jun 2021
- 11:47:41 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 3/7] drivers: clk: renesas: r9a07g044-cpg: Update
- {GIC,IA55,SCIF} clock entries
-Thread-Topic: [PATCH 3/7] drivers: clk: renesas: r9a07g044-cpg: Update
- {GIC,IA55,SCIF} clock entries
-Thread-Index: AQHXZCiB0Hvwq+6JGUuL+gSePnDkuKsgKd+AgAFTX5A=
-Date:   Wed, 23 Jun 2021 11:47:40 +0000
-Message-ID: <OS0PR01MB5922CF5BAA17C1AF116EE09286089@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20210618095823.19885-1-biju.das.jz@bp.renesas.com>
- <20210618095823.19885-4-biju.das.jz@bp.renesas.com>
- <CAMuHMdV77ORDvcQmMUg8FpmyotdiORDSN_J19hqctzZz9g6gUw@mail.gmail.com>
-In-Reply-To: <CAMuHMdV77ORDvcQmMUg8FpmyotdiORDSN_J19hqctzZz9g6gUw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linux-m68k.org; dkim=none (message not signed)
- header.d=none;linux-m68k.org; dmarc=none action=none
- header.from=bp.renesas.com;
-x-originating-ip: [86.139.26.177]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b84d99b4-5ffd-40d3-eb2f-08d9363cb4e9
-x-ms-traffictypediagnostic: OSBPR01MB3575:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <OSBPR01MB35758E712E50B7ABEF34AFB286089@OSBPR01MB3575.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XDCIsqVP/JQadB/bWONeIF06Vt2a2L3UM2Mlq4tZPzRkdQnw0a7DCHkgS45ORAFVOcL+Nfn/Ly42fgLj/6Ucl+r3j4NIxDSXx0GrujGqwMvg5CEhyrXz6fSSZo8wuJqWcNZKa/sX+eRHg50sS5SfjvESuxr3PZqlp72ktp1fFeCufVUazsbYhlpeb0cgUAfg64+67Q/JIDALYtf+foGJg1/b62tn2JlSZVsgLdF+d/w/1JmOUbB8jKSokk983FSciaRQKzzuSmL7uxS7RMLA2gucJO58CjzHB/syL5gsoexXTjVMa/sMQCQyy/tR3WyG5AgkrDNYkvS66/W3w8ZMqu5GZcHnjbg3Jmuxoh73C9MgrerVknwIRqlZlo+4WsTVqZdBpzpSkjyUrP+JviLR0DJmsNqCZs5gZfxE70zNZV5zDFw9ZgEQrKInCljXVBCf6IdIsKhbVogdyHWgPcEUpKEtky6NelJ622c6mlxpSguNMpP0VQgwZ7OKiT27TaLi5jOh2YFlyReJZbt4ihesFuVSVR8M4Dh74O+lOqasDcsilteY/OvOoq7iHXj/3E4MuQnsdhi8SiWAEt3Jww2fhAgiqO+eSMbYSDwoRdLm2BY=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(346002)(396003)(136003)(376002)(107886003)(54906003)(6916009)(478600001)(316002)(6506007)(71200400001)(4326008)(33656002)(53546011)(7696005)(83380400001)(26005)(5660300002)(9686003)(186003)(86362001)(122000001)(66476007)(55016002)(8676002)(66556008)(8936002)(2906002)(15650500001)(66446008)(76116006)(52536014)(66946007)(64756008)(38100700002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aXUveERCWndmNjhVV0lWckZySTRwaGFkditlejZDM00xS1JlZ1NKSnVwSFZ4?=
- =?utf-8?B?alNPNkFGazlnb3pQekJKYlhBMzQwbGpoRC94Y0JTNVo2amdoTWVCR2JleC9z?=
- =?utf-8?B?Mm9iNzUwcXlZVExkZWQzdDB4QllOeStocFpHd1FsK1UzREl4QkxvZys4QWRK?=
- =?utf-8?B?YnkweTQxU0ZaclQrQzR3b0E0WGlpYTlLRkpKTllyekh5a1Q0RkVwYU56VU5r?=
- =?utf-8?B?Z1Y3ajlUMmovTi90Q1RJbHJxcGdCd3B5QnUwTUIxQzdEQUd0Wi9BcTdmd1lB?=
- =?utf-8?B?Ujc4MWcybXRyb1JwbHpwQWdTdk1YakpaRkRFdGduVUR4c0Fld0lZUlB3V0Uv?=
- =?utf-8?B?bStHam5oVERZWUU0N1NNY0Z6Vmo5b2JzalFEYlpJUVlZNjZlTm90dTZVakZk?=
- =?utf-8?B?TjdHU0FxTlIyNnAwTGpLeURMdDVNeGlBdXp5WkxtZVJxREFLSjJDNit6cDhT?=
- =?utf-8?B?aXJiMDV5N3pkRk5NV3B0cHVGRE9iS1BFNVptYWsrLzY2QUVyQWxwSEZwRW9j?=
- =?utf-8?B?VlVqMlZSM0hiRk41enR4Sjl0bDQwWEsxMkV3WW5FNVhQQmdOK2FjbE9jeGNV?=
- =?utf-8?B?SFNBRUpYS0FTajlNM3F3ZTlFREVoV0MrSzNobVo0Z2YyVWtXSWFpMUwzM3pM?=
- =?utf-8?B?eXA3bGo1WEFjZjZnSjM4cndva3gzSjlGTTFPWWRxRStqdUpSdzFjQWhFZlg0?=
- =?utf-8?B?U1NwcTlxbW0yKzRDRDRzdjRFbU5SS2VTTjhXOTRsRXdhUXg3QmlxTGYvb09l?=
- =?utf-8?B?cDZ5cU1qNzdrV3p6SzFOaCtwcVRPZlhTZFFrZmtoUWN4VElsRmJML2N6eksz?=
- =?utf-8?B?MWRhZEpvUDMvcW11bHpmU0FLak1scFFrOTlwejNUWXorY3ZJczlrVHd1VlBD?=
- =?utf-8?B?SXlHQ1Q0QWh5SWJZQ3IvZGdnTk5peVhmRHlpWU9qNktGSkZNWlo3TVBrVENz?=
- =?utf-8?B?RytlRXlqSVdPYWdneXJNUUhMam1LQ3JWaEMyMnNBMGs1QUZ3QlF4UzJzaHU1?=
- =?utf-8?B?a3ZwbkhiRlJabE9NNXRmN1NHRWE0am4wTGFwZnZmRUFkNjVKZTRYNDhuU1V1?=
- =?utf-8?B?NmwxRmxLeDVvSndMN2s2NnNxZ21WM0VxNXRtK1pZK25OSWZEUGZVUmNHb2FD?=
- =?utf-8?B?SFZpYTN1cmh1MW5YMGdYdURBSFp5WW11aWh2M3NCZkRKMEUwNTlvbnVTelVS?=
- =?utf-8?B?TkhQSWdzUjhNd3R4bVJWaWxyaE9sQ0FhMW1OK2VEYmRJS3JXc1Y5MlRzclVR?=
- =?utf-8?B?VUZiNkl1N2Y1WVdHZkgzQlJIK2tMRFRNeHRPL0NiUWV1QjVSNHo4S1FhQ2RY?=
- =?utf-8?B?enhGTFhScEY0b1IzRE9xcFJ5T2RQS3Uyc3czNDRLR3ZaMDNZT3p2bTVVV0JO?=
- =?utf-8?B?dXdjV3UySk12QmhCMmJEa0pjcFJoWDJ3QllTNmwxbEJyRlU2OFgwbTFaY0F1?=
- =?utf-8?B?bW1OdXVYTU9CTExaWFZxR3pCTFREd2FSckEyVTNCcUpwOXpNdzRkVzFoVkMr?=
- =?utf-8?B?SG1aUEx6VFRybGhsSklaV1dMOGp4QkN3RENaUU5ia0dyQndPazZEU3VpVEx6?=
- =?utf-8?B?c21IRXVXenZzdTNaaXZoMi9pdU9DYkhoVVNTU1Q2YytGeUlQVzJnWjBKb050?=
- =?utf-8?B?T2N3NXZicnVGVG9CbjJsZ1k4eCtFdzlRVmhOc1ZGdE5zOEdyWktHczVhTEV3?=
- =?utf-8?B?M2xRaW1rZzB5TlBSZmZQOGsybHhKbVRlR1oxamxQVEM1ekhERVN5MnpsRk1B?=
- =?utf-8?Q?j448yLMXAS8Ta/x7tGXu4i9fWInFqI9JZJ4k8nJ?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b84d99b4-5ffd-40d3-eb2f-08d9363cb4e9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2021 11:47:40.9886
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GOPatezTWQxGdp4Qj08obWqahZHzFRykOU+qdODsDwbx1A/cNW7GSnpyB7UUX9pHdiIOhYSsMBqGJ92mWtOWvSg5wH+kubYjWakpZqf4/Qs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3575
+        id S230205AbhFWMAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Jun 2021 08:00:23 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:30206 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230235AbhFWMAW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Jun 2021 08:00:22 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1624449484; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=AHMt0GzCvHn4hyYD7cdhM7SJoQ7X95tIMSwPoZD5d7s=; b=jbyG9iTmfMSVGq+8tleX9/L0E9OijYr2f9vBrDtk+EUw3Ozs9SF6A71XF8c51l9D9cdD9sFK
+ +kyrCn2eYoW/CE1sJ8pZ+PEqCE8GxL3wJiqXmZomJjy/sq46Ug7Q5GyIUZI2/7kzCkReACqn
+ uANeSiEeGxDIexuQ03WM9W81QGc=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 60d321cadc4628fe7eb49d99 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 23 Jun 2021 11:58:02
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 11E66C4338A; Wed, 23 Jun 2021 11:58:02 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00A2DC433D3;
+        Wed, 23 Jun 2021 11:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00A2DC433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2] clk: qcom: gcc: Add support for a new frequency for SC7280
+Date:   Wed, 23 Jun 2021 17:27:51 +0530
+Message-Id: <1624449471-9984-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrDQoNCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCAzLzddIGRyaXZlcnM6IGNsazogcmVuZXNhczogcjlhMDdnMDQ0LWNwZzogVXBkYXRlDQo+
-IHtHSUMsSUE1NSxTQ0lGfSBjbG9jayBlbnRyaWVzDQo+IA0KPiBIaSBCaWp1LA0KPiANCj4gT24g
-RnJpLCBKdW4gMTgsIDIwMjEgYXQgMTE6NTggQU0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJl
-bmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiBVcGRhdGUge0dJQyxJQTU1LFNDSUZ9IGNsb2NrIGVu
-dHJpZXMgdG8gQ1BHIGRyaXZlciB0byBtYXRjaCB3aXRoDQo+ID4gUlovRzJMIGNsb2NrIGxpc3Qg
-aGFyZHdhcmUgbWFudWFsKFJldjAuMikuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERh
-cyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IExhZCBQcmFi
-aGFrYXIgPHByYWJoYWthci5tYWhhZGV2LWxhZC5yakBicC5yZW5lc2FzLmNvbT4NCj4gDQo+IFRo
-YW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvcmVuZXNhcy9y
-OWEwN2cwNDQtY3BnLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA3ZzA0NC1j
-cGcuYw0KPiA+IEBAIC0zMiw2ICszMiw3IEBAIGVudW0gY2xrX2lkcyB7DQo+ID4gICAgICAgICBD
-TEtfUExMM19ESVYyLA0KPiA+ICAgICAgICAgQ0xLX1BMTDNfRElWNCwNCj4gPiAgICAgICAgIENM
-S19QTEwzX0RJVjgsDQo+ID4gKyAgICAgICBDTEtfUExMM19ESVYxNiwNCj4gPiAgICAgICAgIENM
-S19QTEw0LA0KPiA+ICAgICAgICAgQ0xLX1BMTDUsDQo+ID4gICAgICAgICBDTEtfUExMNV9ESVYy
-LA0KPiA+IEBAIC00Miw2ICs0MywxNCBAQCBlbnVtIGNsa19pZHMgew0KPiA+ICB9Ow0KPiA+DQo+
-ID4gIC8qIERpdmlkZXIgdGFibGVzICovDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX2Rp
-dl90YWJsZSBkdGFibGVfM2FbXSA9IHsNCj4gPiArICAgICAgIHswLCAxfSwNCj4gPiArICAgICAg
-IHsxLCAyfSwNCj4gPiArICAgICAgIHsyLCA0fSwNCj4gPiArICAgICAgIHszLCA4fSwNCj4gPiAr
-ICAgICAgIHs0LCAzMn0sDQo+ID4gK307DQo+IA0KPiBEaXZpZGVyIHRhYmxlcyBoYXZlIHRvIGVu
-ZCB3aXRoIGEgc2VudGluZWwgZW50cnkgdGhhdCBoYXMgLmRpdiA9IDAuDQo+IEFjdHVhbGx5IHRo
-ZSBzYW1lIGJ1ZyBpcyBwcmVzZW50IGZvciBkdGFibGVfM2JbXSwgb29wcy4NCj4gQm90aCB0YWJs
-ZXMgYXJlIGlkZW50aWNhbCwgcGVyaGFwcyB0aGV5IGNhbiBiZSBzaGFyZWQ/DQoNCk9LLiBUaGUg
-c2FtZSB0YWJsZSBlbnRyaWVzIHVzZWQgYnkgNCBkaXZpZGVycy4gU28gd2lsbCBjaGFuZ2UgaXQg
-dG8NCmR0YWJsZV9jb21tb24gYW5kIGFsc28gd2lsbCBhZGQgYSBzZW50aW5lbCBlbnRyeSB0aGF0
-IGhhcyAuZGl2ID0gMC4NCg0KUmVnYXJkcywNCkJpanUNCg0KPiANCj4gPiArDQo+ID4gIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgY2xrX2Rpdl90YWJsZSBkdGFibGVfM2JbXSA9IHsNCj4gPiAgICAgICAg
-IHswLCAxfSwNCj4gPiAgICAgICAgIHsxLCAyfSwNCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0K
-PiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5
-dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRA
-bGludXgtDQo+IG02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGgg
-dGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4NCj4gQnV0IHdoZW4gSSdt
-IHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRo
-aW5nDQo+IGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBM
-aW51cyBUb3J2YWxkcw0K
+There is a requirement to support 52MHz for qup clocks for bluetooth
+usecase, thus update the frequency table to support the frequency.
+
+Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+[v2]
+ * Update commit message and subject "Add"/"bluetooth".
+
+ drivers/clk/qcom/gcc-sc7280.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index ef734db..6cefcdc 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -716,6 +716,7 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s2_clk_src[] = {
+ 	F(29491200, P_GCC_GPLL0_OUT_EVEN, 1, 1536, 15625),
+ 	F(32000000, P_GCC_GPLL0_OUT_EVEN, 1, 8, 75),
+ 	F(48000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 25),
++	F(52174000, P_GCC_GPLL0_OUT_MAIN, 1, 2, 23),
+ 	F(64000000, P_GCC_GPLL0_OUT_EVEN, 1, 16, 75),
+ 	F(75000000, P_GCC_GPLL0_OUT_EVEN, 4, 0, 0),
+ 	F(80000000, P_GCC_GPLL0_OUT_EVEN, 1, 4, 15),
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
