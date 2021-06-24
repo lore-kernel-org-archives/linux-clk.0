@@ -5,24 +5,24 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17B3C49EAB
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624FFC49EBB
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C52E7613E3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523E261410
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232227AbhFXPJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jun 2021 11:09:06 -0400
-Received: from out28-170.mail.aliyun.com ([115.124.28.170]:50849 "EHLO
-        out28-170.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232029AbhFXPJE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 11:09:04 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.3756574|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0213955-0.00269967-0.975905;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047204;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KXPsfY8_1624547190;
+        id S231932AbhFXPJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jun 2021 11:09:10 -0400
+Received: from out28-99.mail.aliyun.com ([115.124.28.99]:57717 "EHLO
+        out28-99.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232196AbhFXPJH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 11:09:07 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07750118|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.133883-0.00167999-0.864438;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047188;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KXPsfY8_1624547190;
 Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KXPsfY8_1624547190)
           by smtp.aliyun-inc.com(10.147.40.200);
-          Thu, 24 Jun 2021 23:06:41 +0800
+          Thu, 24 Jun 2021 23:06:44 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
@@ -32,9 +32,9 @@ Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
         dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
         rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
         jun.jiang@ingenic.com, sernia.zhou@foxmail.com
-Subject: [PATCH v3 2/4] dt-bindings: clock: Add documentation for MAC PHY control bindings.
-Date:   Thu, 24 Jun 2021 23:06:27 +0800
-Message-Id: <1624547189-61079-3-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v3 4/4] MIPS: CI20: Add second percpu timer for SMP.
+Date:   Thu, 24 Jun 2021 23:06:29 +0800
+Message-Id: <1624547189-61079-5-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
@@ -45,32 +45,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the CGU binding documentation, add mac-phy-ctrl as a
-pattern property.
+1.Add a new TCU channel as the percpu timer of core1, this is to
+  prepare for the subsequent SMP support. The newly added channel
+  will not adversely affect the current single-core state.
+2.Adjust the position of TCU node to make it consistent with the
+  order in jz4780.dtsi file.
 
 Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 ---
 
 Notes:
-    v3:
+    v2:
     New patch.
+    
+    v2->v3:
+    No change.
 
- Documentation/devicetree/bindings/clock/ingenic,cgu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/boot/dts/ingenic/ci20.dts | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-index c65b945..ee9b5fb 100644
---- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-+++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-@@ -93,6 +93,8 @@ required:
- patternProperties:
-   "^usb-phy@[a-f0-9]+$":
-     allOf: [ $ref: "../phy/ingenic,phy-usb.yaml#" ]
-+  "^mac-phy-ctrl@[a-f0-9]+$":
-+    allOf: [ $ref: "../net/ingenic,mac.yaml#" ]
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index 8877c62..70005cc 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -118,6 +118,17 @@
+ 	assigned-clock-rates = <48000000>;
+ };
  
- additionalProperties: false
++&tcu {
++	/*
++	 * 750 kHz for the system timers and 3 MHz for the clocksources,
++	 * use channel #0 and #1 for the per cpu system timers, and use
++	 * channel #2 for the clocksource.
++	 */
++	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
++					  <&tcu TCU_CLK_TIMER2>, <&tcu TCU_CLK_OST>;
++	assigned-clock-rates = <750000>, <750000>, <3000000>, <3000000>;
++};
++
+ &mmc0 {
+ 	status = "okay";
  
+@@ -522,13 +533,3 @@
+ 		bias-disable;
+ 	};
+ };
+-
+-&tcu {
+-	/*
+-	 * 750 kHz for the system timer and 3 MHz for the clocksource,
+-	 * use channel #0 for the system timer, #1 for the clocksource.
+-	 */
+-	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
+-					  <&tcu TCU_CLK_OST>;
+-	assigned-clock-rates = <750000>, <3000000>, <3000000>;
+-};
 -- 
 2.7.4
 
