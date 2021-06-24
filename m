@@ -2,100 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43E5C49EA6
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D7DC49EAB
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAA4613F9
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67F03613DA
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbhFXNFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jun 2021 09:05:32 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:60885 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231269AbhFXNFa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 09:05:30 -0400
-X-IronPort-AV: E=Sophos;i="5.83,296,1616425200"; 
-   d="scan'208";a="85302242"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Jun 2021 22:03:10 +0900
-Received: from localhost.localdomain (unknown [10.226.92.59])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 728EB49705BB;
-        Thu, 24 Jun 2021 22:03:08 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 10/11] drivers: clk: renesas: r9a07g044-cpg: Add DMAC clocks/resets
-Date:   Thu, 24 Jun 2021 14:02:38 +0100
-Message-Id: <20210624130240.17468-11-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210624130240.17468-1-biju.das.jz@bp.renesas.com>
-References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com>
+        id S230249AbhFXPJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jun 2021 11:09:01 -0400
+Received: from out28-74.mail.aliyun.com ([115.124.28.74]:35072 "EHLO
+        out28-74.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230170AbhFXPJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 11:09:01 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.20793|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0168031-0.000523645-0.982673;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047201;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KXPsfY8_1624547190;
+Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KXPsfY8_1624547190)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Thu, 24 Jun 2021 23:06:39 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        sboyd@kernel.org, paul@crapouillou.net, robh+dt@kernel.org
+Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
+        jun.jiang@ingenic.com, sernia.zhou@foxmail.com
+Subject: [PATCH v3 0/4] Misc Ingenic patches.
+Date:   Thu, 24 Jun 2021 23:06:25 +0800
+Message-Id: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DMAC clock and reset entries in CPG driver.
+Some misc patches that don't really have any relation
+between themselves.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
- * Updated reset entries
----
- drivers/clk/renesas/r9a07g044-cpg.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+周琰杰 (Zhou Yanjie) (4):
+  MIPS: X1830: Respect cell count of common properties.
+  dt-bindings: clock: Add documentation for MAC PHY control bindings.
+  MIPS: Ingenic: Add MAC syscon nodes for Ingenic SoCs.
+  MIPS: CI20: Add second percpu timer for SMP.
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index f363efd9e841..4a433a859d0a 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -37,6 +37,7 @@ enum clk_ids {
- 	CLK_PLL5,
- 	CLK_PLL5_DIV2,
- 	CLK_PLL6,
-+	CLK_P1_DIV2,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -79,6 +80,7 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV20, 1, 1),
- 	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
- 		DIVPL3B, dtable_common_1_32, CLK_DIVIDER_HIWORD_MASK),
-+	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
- 	DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2,
- 		DIVPL3A, dtable_common_1_32, CLK_DIVIDER_HIWORD_MASK),
- };
-@@ -90,6 +92,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x518, 0),
- 	DEF_MOD("ia55_clk",	R9A07G044_IA55_CLK, R9A07G044_CLK_P1,
- 				0x518, 1),
-+	DEF_MOD("dmac_aclk",	R9A07G044_DMAC_ACLK, R9A07G044_CLK_P1,
-+				0x52c, 0),
-+	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
-+				0x52c, 1),
- 	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
- 				0x580, 0),
- 	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
-@@ -116,6 +122,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
- 	DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
- 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
-+	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
-+	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
- 	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
- 	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
+ .../devicetree/bindings/clock/ingenic,cgu.yaml      |  2 ++
+ arch/mips/boot/dts/ingenic/ci20.dts                 | 21 +++++++++++----------
+ arch/mips/boot/dts/ingenic/x1000.dtsi               |  7 +++++++
+ arch/mips/boot/dts/ingenic/x1830.dtsi               | 16 +++++++++++-----
+ 4 files changed, 31 insertions(+), 15 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
