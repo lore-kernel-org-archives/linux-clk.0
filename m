@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A79C48BDF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5963AC49EA6
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB346613F3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44AB4613F3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 13:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbhFXNFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jun 2021 09:05:15 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:31250 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229505AbhFXNFO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 09:05:14 -0400
+        id S230110AbhFXNFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jun 2021 09:05:20 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:37795 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229573AbhFXNFT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 09:05:19 -0400
 X-IronPort-AV: E=Sophos;i="5.83,296,1616425200"; 
-   d="scan'208";a="85412613"
+   d="scan'208";a="85302210"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Jun 2021 22:02:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 Jun 2021 22:03:00 +0900
 Received: from localhost.localdomain (unknown [10.226.92.59])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3E28D49705BA;
-        Thu, 24 Jun 2021 22:02:53 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 55C6049705BA;
+        Thu, 24 Jun 2021 22:02:58 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -35,9 +35,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 04/11] drivers: clk: renesas: r9a07g044-cpg: Add P2 Clock support
-Date:   Thu, 24 Jun 2021 14:02:32 +0100
-Message-Id: <20210624130240.17468-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 06/11] drivers: clk: renesas: renesas-rzg2l-cpg: Separate reset from module clocks
+Date:   Thu, 24 Jun 2021 14:02:34 +0100
+Message-Id: <20210624130240.17468-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210624130240.17468-1-biju.das.jz@bp.renesas.com>
 References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com>
@@ -45,59 +45,73 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for P2 clock which is sourced from pll3_div2_4_2.
+RZ/G2L SoC's have different definitions for clock and reset.
+Separate reset from module clocks in order to handle it efficiently.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-v1->v2:
-  * Changed the divider name.
+v2:
+ * New patch
 ---
- drivers/clk/renesas/r9a07g044-cpg.c     | 4 ++++
- drivers/clk/renesas/renesas-rzg2l-cpg.h | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/clk/renesas/renesas-rzg2l-cpg.c |  1 +
+ drivers/clk/renesas/renesas-rzg2l-cpg.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index caf3412d7b23..d03f7ae6177e 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -31,6 +31,7 @@ enum clk_ids {
- 	CLK_PLL3,
- 	CLK_PLL3_DIV2,
- 	CLK_PLL3_DIV2_4,
-+	CLK_PLL3_DIV2_4_2,
- 	CLK_PLL3_DIV4,
- 	CLK_PLL4,
- 	CLK_PLL5,
-@@ -68,6 +69,7 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+index 892392b9e0b2..c969c31d4197 100644
+--- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
++++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+@@ -78,6 +78,7 @@ struct rzg2l_cpg_priv {
+ 	struct clk **clks;
+ 	unsigned int num_core_clks;
+ 	unsigned int num_mod_clks;
++	unsigned int num_resets;
+ 	unsigned int last_dt_core_clk;
  
- 	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
- 	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
-+	DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
- 	DEF_FIXED(".pll3_div4", CLK_PLL3_DIV4, CLK_PLL3, 1, 4),
- 
- 	/* Core output clk */
-@@ -77,6 +79,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV20, 1, 1),
- 	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
- 		DIVPL3B, dtable_common_1_32, CLK_DIVIDER_HIWORD_MASK),
-+	DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2,
-+		DIVPL3A, dtable_common_1_32, CLK_DIVIDER_HIWORD_MASK),
- };
- 
- static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 	struct raw_notifier_head notifiers;
 diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.h b/drivers/clk/renesas/renesas-rzg2l-cpg.h
-index 3948bdd8afc9..a6a3bade1985 100644
+index a6a3bade1985..10beb1913363 100644
 --- a/drivers/clk/renesas/renesas-rzg2l-cpg.h
 +++ b/drivers/clk/renesas/renesas-rzg2l-cpg.h
-@@ -21,6 +21,7 @@
- #define DDIV_PACK(offset, bitpos, size) \
- 		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
- #define DIVPL2A		DDIV_PACK(CPG_PL2_DDIV, 0, 3)
-+#define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
- #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
+@@ -99,6 +99,26 @@ struct rzg2l_mod_clk {
+ 		.reset = (_reset) \
+ 	}
  
++/**
++ * struct rzg2l_reset - Reset definitions
++ *
++ * @id: reset index in array containing all resets
++ * @off: register offset
++ * @reset: reset bits
++ */
++struct rzg2l_reset {
++	unsigned int id;
++	u16 off;
++	u8 reset;
++};
++
++#define DEF_RST(_id, _off, _reset)	\
++	[_id] = { \
++		.id = _id, \
++		.off = (_off), \
++		.reset = (_reset) \
++	}
++
  /**
+  * struct rzg2l_cpg_info - SoC-specific CPG Description
+  *
+@@ -127,6 +147,10 @@ struct rzg2l_cpg_info {
+ 	unsigned int num_mod_clks;
+ 	unsigned int num_hw_mod_clks;
+ 
++	/* Resets */
++	const struct rzg2l_reset *resets;
++	unsigned int num_resets;
++
+ 	/* Critical Module Clocks that should not be disabled */
+ 	const unsigned int *crit_mod_clks;
+ 	unsigned int num_crit_mod_clks;
 -- 
 2.17.1
 
