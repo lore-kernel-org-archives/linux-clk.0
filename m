@@ -6,120 +6,449 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D60C49EA5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 21:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88212C49EA7
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 21:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB0C6124C
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 21:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C23B613C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 21:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232768AbhFXVVI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jun 2021 17:21:08 -0400
-Received: from mail-io1-f53.google.com ([209.85.166.53]:35489 "EHLO
-        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbhFXVVI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 17:21:08 -0400
-Received: by mail-io1-f53.google.com with SMTP id d9so10058021ioo.2;
-        Thu, 24 Jun 2021 14:18:47 -0700 (PDT)
+        id S232029AbhFXVY0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jun 2021 17:24:26 -0400
+Received: from mail-io1-f51.google.com ([209.85.166.51]:34632 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232702AbhFXVYZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 17:24:25 -0400
+Received: by mail-io1-f51.google.com with SMTP id g22so10118014iom.1;
+        Thu, 24 Jun 2021 14:22:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=nZlEZYSKc3oO2sTQkZ0lk3b/QG+ychRfrA05xmk4U1A=;
-        b=S9mO+Ie4ZueK+eIZmi9PHmzIHxq8FqgXyj5SRnnDbNCSfvF++yv3vvw9P9rvAFpBcZ
-         4Oqld4Cgdt/D3eYWdP3DGl3IC8e6qCKd/2LBjKQrkXtwgZSw859HVA3wrMUMkmcSXAO5
-         v2DuC27CMGInCkTb6YEHootw6tk16jizGUjXfqzV9yntHOXshwULrMgpLNzPvCuhBMnZ
-         m30KpeupPGYUyW033UIsg92qcmSsIANWVNkXqu2SGWSSn0FZsxeSVFNxXs1yj4vMGTqw
-         p+F0C2bjulLVd0Q93ji6OV0BV7dvYSi/USdhQkAZup33uiL3uI1gqlo7yUGZxx1zvC/t
-         G7+g==
-X-Gm-Message-State: AOAM532d52MBNnztglv7XsDTbuT2JLKJ1N9//AGINaNvVH5cP71OShqO
-        VJGivUjrOPun3JHFqdyAFg==
-X-Google-Smtp-Source: ABdhPJzWuI2kqqnHoUDw9mpmjIrbsr+DLFmdTJdQ/gieXMaJDSNkZftGMwMsNtLpUiOyjbx4P1WTTg==
-X-Received: by 2002:a05:6602:2014:: with SMTP id y20mr5816080iod.166.1624569527549;
-        Thu, 24 Jun 2021 14:18:47 -0700 (PDT)
+        bh=IjYln7/CWaQLlpNjEcHcKJVMwo4CKVakMcfjJuaqkT8=;
+        b=X0UA/iAOOdRALyNUe2lDcLAMXJn550DtI8vMhGquwiaehI+5w7IHGizwh0UG8yjEvf
+         OS53ponMhY3UsXQiRWuvb/tI+2SZ7m1zU2uoQtXsXW+g6KwU+ZwUHnOLQEk7IvTphDLT
+         AWftiC7hV14viIgvGbRbGp3l3bj25MMeDG4Hfa2SB7KGvgp+WAQIVkPDjfqRD1x3DvCn
+         OskyMEnhM4sN8izzzrSBELFJltdyC1ZF1AEKcVfhAvPjE3DzVrPB4q7Z/JLOBtoT0UD/
+         W9Ifr+nYIDKViv/TPrqN1I0g4OkEY2Q9kULq5R+mSvr774IFXdXkt3UInYXLwNMfP+qu
+         im1A==
+X-Gm-Message-State: AOAM531d0MHpbCpR4i1Ch6gp9xjXzFt4klIDCDnJv1ymFDXJqcgQOw+G
+        5LCSyGfj1j7IAW+9v4Yngg==
+X-Google-Smtp-Source: ABdhPJxY7LVDeDJUcuupR3ORKvKxfaqDvWjHt+12T65JRLfVwAsqXRCuBS/7Kqc+3sQFOLfMwHy8uQ==
+X-Received: by 2002:a5e:8a41:: with SMTP id o1mr5642355iom.92.1624569725445;
+        Thu, 24 Jun 2021 14:22:05 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id w7sm2572890ilu.74.2021.06.24.14.18.45
+        by smtp.gmail.com with ESMTPSA id z12sm2028180iop.46.2021.06.24.14.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 14:18:46 -0700 (PDT)
-Received: (nullmailer pid 2003352 invoked by uid 1000);
-        Thu, 24 Jun 2021 21:18:44 -0000
-Date:   Thu, 24 Jun 2021 15:18:44 -0600
+        Thu, 24 Jun 2021 14:22:04 -0700 (PDT)
+Received: (nullmailer pid 2007687 invoked by uid 1000);
+        Thu, 24 Jun 2021 21:21:58 -0000
+Date:   Thu, 24 Jun 2021 15:21:58 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Robert Foss <robert.foss@linaro.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, jonathan@marek.ca,
-        tdas@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@linaro.org>
-Subject: Re: [RFC v1 05/11] dt-bindings: clock: Add QCOM SM8350 display clock
- bindings
-Message-ID: <20210624211844.GA1997615@robh.at.kernel.org>
-References: <20210616141107.291430-1-robert.foss@linaro.org>
- <20210616141107.291430-6-robert.foss@linaro.org>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 01/22] dt-bindings: ARM: Mediatek: Add new document
+ bindings of MT8195 clock
+Message-ID: <20210624212158.GA2005899@robh.at.kernel.org>
+References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
+ <20210616224743.5109-2-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210616141107.291430-6-robert.foss@linaro.org>
+In-Reply-To: <20210616224743.5109-2-chun-jie.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 04:11:01PM +0200, Robert Foss wrote:
-> Add device tree bindings for display clock controller for
-> Qualcomm Technology Inc's SM8350 SoC.
+On Thu, Jun 17, 2021 at 06:47:22AM +0800, Chun-Jie Chen wrote:
+> This patch adds the new binding documentation for system clock
+> and functional clock on Mediatek MT8195.
 > 
-> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > ---
->  .../bindings/clock/qcom,dispcc-sm8x50.yaml    |  6 +-
->  .../dt-bindings/clock/qcom,dispcc-sm8350.h    | 77 +++++++++++++++++++
->  2 files changed, 81 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+>  .../arm/mediatek/mediatek,mt8195-clock.yaml   | 287 ++++++++++++++++++
+>  .../mediatek/mediatek,mt8195-sys-clock.yaml   |  66 ++++
+>  2 files changed, 353 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> index 0cdf53f41f84..c10eefd024f6 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> @@ -4,24 +4,26 @@
->  $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-> +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
->  
->  maintainers:
->    - Jonathan Marek <jonathan@marek.ca>
->  
->  description: |
->    Qualcomm display clock control module which supports the clocks, resets and
-> -  power domains on SM8150 and SM8250.
-> +  power domains on SM8150, SM8250 and SM8350.
->  
->    See also:
->      dt-bindings/clock/qcom,dispcc-sm8150.h
->      dt-bindings/clock/qcom,dispcc-sm8250.h
-> +    dt-bindings/clock/qcom,dispcc-sm8350.h
->  
->  properties:
->    compatible:
->      enum:
->        - qcom,sm8150-dispcc
->        - qcom,sm8250-dispcc
-> +      - qcom,sm8350-dispcc
->  
->    clocks:
->      items:
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
 > new file mode 100644
-> index 000000000000..361ef27de585
+> index 000000000000..21554b3515cf
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-> @@ -0,0 +1,77 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> @@ -0,0 +1,287 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8195-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek Functional Clock Controller for MT8195
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The Mediatek functional clock controller provides various clocks on MT8195.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
 
-I'm tired of saying this for QCom bindings given it's been QCom I've 
-gotten complaints on DT licensing, but dual license please. Spread the 
-word.
+Drop 'oneOf' and 'items'.
 
-I'm sure if someone audited licenses of headers and dts files they'd 
-find a mess.
+> +              - mediatek,mt8195-nnasys
+> +              - mediatek,mt8195-scp_adsp
+> +              - mediatek,mt8195-audsys
+> +              - mediatek,mt8195-audsys_src
+> +              - mediatek,mt8195-imp_iic_wrap_s
+> +              - mediatek,mt8195-imp_iic_wrap_w
+> +              - mediatek,mt8195-mfgcfg
+> +              - mediatek,mt8195-vppsys0
+> +              - mediatek,mt8195-wpesys
+> +              - mediatek,mt8195-wpesys_vpp0
+> +              - mediatek,mt8195-wpesys_vpp1
+> +              - mediatek,mt8195-vppsys1
+> +              - mediatek,mt8195-imgsys
+> +              - mediatek,mt8195-imgsys1_dip_top
+> +              - mediatek,mt8195-imgsys1_dip_nr
+> +              - mediatek,mt8195-imgsys1_wpe
+> +              - mediatek,mt8195-ipesys
+> +              - mediatek,mt8195-camsys
+> +              - mediatek,mt8195-camsys_rawa
+> +              - mediatek,mt8195-camsys_yuva
+> +              - mediatek,mt8195-camsys_rawb
+> +              - mediatek,mt8195-camsys_yuvb
+> +              - mediatek,mt8195-camsys_mraw
+> +              - mediatek,mt8195-ccusys
+> +              - mediatek,mt8195-vdecsys_soc
+> +              - mediatek,mt8195-vdecsys
+> +              - mediatek,mt8195-vdecsys_core1
+> +              - mediatek,mt8195-apusys_pll
+> +              - mediatek,mt8195-vencsys
+> +              - mediatek,mt8195-vencsys_core1
+> +              - mediatek,mt8195-vdosys0
+> +              - mediatek,mt8195-vdosys1
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    nnasys: clock-controller@10211000 {
+> +        compatible = "mediatek,mt8195-nnasys";
+> +        reg = <0x10211000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    scp_adsp: clock-controller@10720000 {
+> +        compatible = "mediatek,mt8195-scp_adsp";
+> +        reg = <0x10720000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    audsys: clock-controller@10890000 {
+> +        compatible = "mediatek,mt8195-audsys";
+> +        reg = <0x10890000 0x10000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    audsys_src: clock-controller@108a0000 {
+> +        compatible = "mediatek,mt8195-audsys_src";
+> +        reg = <0x108a0000 0x2000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_s: clock-controller@11d03000 {
+> +        compatible = "mediatek,mt8195-imp_iic_wrap_s";
+> +        reg = <0x11d03000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_w: clock-controller@11e05000 {
+> +        compatible = "mediatek,mt8195-imp_iic_wrap_w";
+> +        reg = <0x11e05000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    mfgcfg: clock-controller@13fbf000 {
+> +        compatible = "mediatek,mt8195-mfgcfg";
+> +        reg = <0x13fbf000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vppsys0: clock-controller@14000000 {
+> +        compatible = "mediatek,mt8195-vppsys0";
+> +        reg = <0x14000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    wpesys: clock-controller@14e00000 {
+> +        compatible = "mediatek,mt8195-wpesys";
+> +        reg = <0x14e00000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    wpesys_vpp0: clock-controller@14e02000 {
+> +        compatible = "mediatek,mt8195-wpesys_vpp0";
+> +        reg = <0x14e02000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    wpesys_vpp1: clock-controller@14e03000 {
+> +        compatible = "mediatek,mt8195-wpesys_vpp1";
+> +        reg = <0x14e03000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vppsys1: clock-controller@14f00000 {
+> +        compatible = "mediatek,mt8195-vppsys1";
+> +        reg = <0x14f00000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imgsys: clock-controller@15000000 {
+> +        compatible = "mediatek,mt8195-imgsys";
+> +        reg = <0x15000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imgsys1_dip_top: clock-controller@15110000 {
+> +        compatible = "mediatek,mt8195-imgsys1_dip_top";
+> +        reg = <0x15110000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imgsys1_dip_nr: clock-controller@15130000 {
+> +        compatible = "mediatek,mt8195-imgsys1_dip_nr";
+> +        reg = <0x15130000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imgsys1_wpe: clock-controller@15220000 {
+> +        compatible = "mediatek,mt8195-imgsys1_wpe";
+> +        reg = <0x15220000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    ipesys: clock-controller@15330000 {
+> +        compatible = "mediatek,mt8195-ipesys";
+> +        reg = <0x15330000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys: clock-controller@16000000 {
+> +        compatible = "mediatek,mt8195-camsys";
+> +        reg = <0x16000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys_rawa: clock-controller@1604f000 {
+> +        compatible = "mediatek,mt8195-camsys_rawa";
+> +        reg = <0x1604f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys_yuva: clock-controller@1606f000 {
+> +        compatible = "mediatek,mt8195-camsys_yuva";
+> +        reg = <0x1606f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys_rawb: clock-controller@1608f000 {
+> +        compatible = "mediatek,mt8195-camsys_rawb";
+> +        reg = <0x1608f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys_yuvb: clock-controller@160af000 {
+> +        compatible = "mediatek,mt8195-camsys_yuvb";
+> +        reg = <0x160af000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    camsys_mraw: clock-controller@16140000 {
+> +        compatible = "mediatek,mt8195-camsys_mraw";
+> +        reg = <0x16140000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    ccusys: clock-controller@17200000 {
+> +        compatible = "mediatek,mt8195-ccusys";
+> +        reg = <0x17200000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vdecsys_soc: clock-controller@1800f000 {
+> +        compatible = "mediatek,mt8195-vdecsys_soc";
+> +        reg = <0x1800f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vdecsys: clock-controller@1802f000 {
+> +        compatible = "mediatek,mt8195-vdecsys";
+> +        reg = <0x1802f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vdecsys_core1: clock-controller@1803f000 {
+> +        compatible = "mediatek,mt8195-vdecsys_core1";
+> +        reg = <0x1803f000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    apusys_pll: clock-controller@190f3000 {
+> +        compatible = "mediatek,mt8195-apusys_pll";
+> +        reg = <0x190f3000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vencsys: clock-controller@1a000000 {
+> +        compatible = "mediatek,mt8195-vencsys";
+> +        reg = <0x1a000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vencsys_core1: clock-controller@1b000000 {
+> +        compatible = "mediatek,mt8195-vencsys_core1";
+> +        reg = <0x1b000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vdosys0: clock-controller@1c01a000 {
+> +        compatible = "mediatek,mt8195-vdosys0";
+> +        reg = <0x1c01a000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    vdosys1: clock-controller@1c100000 {
+> +        compatible = "mediatek,mt8195-vdosys1";
+> +        reg = <0x1c100000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..ea379452ba91
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8195-sys-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek System Clock Controller for MT8195
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The Mediatek system clock controller provides various clocks and system configuration
+> +  like reset and bus protection on MT8195.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
 
-Rob
+Drop oneOf.
+
+> +      - items:
+> +          - enum:
+> +              - mediatek,mt8195-topckgen
+> +              - mediatek,mt8195-infracfg_ao
+> +              - mediatek,mt8195-apmixedsys
+> +              - mediatek,mt8195-pericfg_ao
+> +          - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    topckgen: syscon@10000000 {
+> +        compatible = "mediatek,mt8195-topckgen", "syscon";
+> +        reg = <0x10000000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    infracfg_ao: syscon@10001000 {
+> +        compatible = "mediatek,mt8195-infracfg_ao", "syscon";
+> +        reg = <0x10001000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    apmixedsys: syscon@1000c000 {
+> +        compatible = "mediatek,mt8195-apmixedsys", "syscon";
+> +        reg = <0x1000c000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    pericfg_ao: syscon@11003000 {
+> +        compatible = "mediatek,mt8195-pericfg_ao", "syscon";
+> +        reg = <0x11003000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> -- 
+> 2.18.0
+> 
+> 
