@@ -2,116 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5822C49EC7
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF2EC49EA5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C391E613C1
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBCC8613DC
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jun 2021 15:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232313AbhFXPJL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jun 2021 11:09:11 -0400
-Received: from out28-145.mail.aliyun.com ([115.124.28.145]:35471 "EHLO
-        out28-145.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232109AbhFXPJF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jun 2021 11:09:05 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1436513|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0113689-0.000133307-0.988498;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047209;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KXPsfY8_1624547190;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KXPsfY8_1624547190)
-          by smtp.aliyun-inc.com(10.147.40.200);
-          Thu, 24 Jun 2021 23:06:42 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        sboyd@kernel.org, paul@crapouillou.net, robh+dt@kernel.org
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
-        jun.jiang@ingenic.com, sernia.zhou@foxmail.com
-Subject: [PATCH v3 3/4] MIPS: Ingenic: Add MAC syscon nodes for Ingenic SoCs.
-Date:   Thu, 24 Jun 2021 23:06:28 +0800
-Message-Id: <1624547189-61079-4-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
+        id S230267AbhFXPsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jun 2021 11:48:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230008AbhFXPsL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jun 2021 11:48:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC6DB613CE;
+        Thu, 24 Jun 2021 15:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624549552;
+        bh=RrCmE3/Sa5h2TcH5LkIE1d5SFIhyeBiWXrCbsGgl5DM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WzGrDovytRbaYmonTAz6FxdZ6REQkmMeEP4j6aQlMlapxO2T1APmEJzBeWOTilIwN
+         rs71Lv4FeytoBeIbY3aVrpecz71KpjlCHH+KJKVYZJtIAU/dVP1eQMAQY7870NGBRr
+         RPV6InVbuCAvwAkdUVD9bOKptT0bkB2RP+qZKtkdHpkR+rfctHHuymiWhf8963Y3ZR
+         FN/qOgzSdzlBotaGdTkh9ZRrSjtgpQlkpdd4zOW5/TzHyLcjozO67YctamF3XOrHVK
+         arIiSWIMAl2YciY/5QsG4zUF1NfGkRFntqkF7Ddp8iN7oGOH5UpAO1sKUeUScehDbO
+         HZHG1tSKN7lgg==
+Subject: Re: [PATCHv3 1/4] clk: agilex/stratix10: remove noc_clk
+To:     linux-clk@vger.kernel.org
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, stable@vger.kernel.org
+References: <20210611025201.118799-1-dinguyen@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <5932304d-53fe-ae64-b4e7-246216b5d6f6@kernel.org>
+Date:   Thu, 24 Jun 2021 10:45:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210611025201.118799-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MAC syscon nodes for X1000 SoC and X1830 SoC from Ingenic.
+ping?
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Acked-by: Paul Cercueil <paul@crapouillou.net>
----
-
-Notes:
-    v1->v2:
-    No change.
-    
-    v2->v3:
-    No change.
-
- arch/mips/boot/dts/ingenic/x1000.dtsi | 7 +++++++
- arch/mips/boot/dts/ingenic/x1830.dtsi | 7 +++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
-index aac9ded..dec7909 100644
---- a/arch/mips/boot/dts/ingenic/x1000.dtsi
-+++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
-@@ -80,6 +80,11 @@
- 
- 			status = "disabled";
- 		};
-+
-+		mac_phy_ctrl: mac-phy-ctrl@e8 {
-+			compatible = "syscon";
-+			reg = <0xe8 0x4>;
-+		};
- 	};
- 
- 	ost: timer@12000000 {
-@@ -347,6 +352,8 @@
- 		clocks = <&cgu X1000_CLK_MAC>;
- 		clock-names = "stmmaceth";
- 
-+		mode-reg = <&mac_phy_ctrl>;
-+
- 		status = "disabled";
- 
- 		mdio: mdio {
-diff --git a/arch/mips/boot/dts/ingenic/x1830.dtsi b/arch/mips/boot/dts/ingenic/x1830.dtsi
-index 59ca3a8..215257f 100644
---- a/arch/mips/boot/dts/ingenic/x1830.dtsi
-+++ b/arch/mips/boot/dts/ingenic/x1830.dtsi
-@@ -73,6 +73,11 @@
- 
- 			status = "disabled";
- 		};
-+
-+		mac_phy_ctrl: mac-phy-ctrl@e8 {
-+			compatible = "syscon";
-+			reg = <0xe8 0x4>;
-+		};
- 	};
- 
- 	ost: timer@12000000 {
-@@ -336,6 +341,8 @@
- 		clocks = <&cgu X1830_CLK_MAC>;
- 		clock-names = "stmmaceth";
- 
-+		mode-reg = <&mac_phy_ctrl>;
-+
- 		status = "disabled";
- 
- 		mdio: mdio {
--- 
-2.7.4
-
+On 6/10/21 9:51 PM, Dinh Nguyen wrote:
+> Early documentation had a noc_clk, but in reality, it's just the
+> noc_free_clk. Remove the noc_clk clock and just use the noc_free_clk.
+> 
+> Fixes: 80c6b7a0894f ("clk: socfpga: agilex: add clock driver for the Agilex platform")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v3: no change
+> v2: add linux-stable to cc
+> ---
+>   drivers/clk/socfpga/clk-agilex.c | 32 +++++++++++++++-----------------
+>   drivers/clk/socfpga/clk-s10.c    | 32 +++++++++++++++-----------------
+>   2 files changed, 30 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+> index 92a6d740a799..5b8131542218 100644
+> --- a/drivers/clk/socfpga/clk-agilex.c
+> +++ b/drivers/clk/socfpga/clk-agilex.c
+> @@ -222,11 +222,9 @@ static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
+>   	{ AGILEX_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
+>   	   0, 0x3C, 0, 0, 0},
+>   	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
+> -	  0, 0x40, 0, 0, 1},
+> -	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
+> -	  0, 4, 0, 0},
+> -	{ AGILEX_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
+> -	  0, 0, 0, 0x30, 1},
+> +	  0, 0x40, 0, 0, 0},
+> +	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
+> +	  0, 4, 0x30, 1},
+>   	{ AGILEX_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
+>   	  0, 0xD4, 0, 0x88, 0},
+>   	{ AGILEX_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+> @@ -252,24 +250,24 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
+>   	  0, 0, 0, 0, 0, 0, 4},
+>   	{ AGILEX_MPU_CCU_CLK, "mpu_ccu_clk", "mpu_clk", NULL, 1, 0, 0x24,
+>   	  0, 0, 0, 0, 0, 0, 2},
+> -	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x24,
+> -	  1, 0x44, 0, 2, 0, 0, 0},
+> -	{ AGILEX_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x24,
+> -	  2, 0x44, 8, 2, 0, 0, 0},
+> +	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+> +	  1, 0x44, 0, 2, 0x30, 1, 0},
+> +	{ AGILEX_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+> +	  2, 0x44, 8, 2, 0x30, 1, 0},
+>   	/*
+>   	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
+>   	 * being the SP timers, thus cannot get gated.
+>   	 */
+> -	{ AGILEX_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x24,
+> -	  3, 0x44, 16, 2, 0, 0, 0},
+> -	{ AGILEX_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x24,
+> -	  4, 0x44, 24, 2, 0, 0, 0},
+> -	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x24,
+> -	  4, 0x44, 26, 2, 0, 0, 0},
+> +	{ AGILEX_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x24,
+> +	  3, 0x44, 16, 2, 0x30, 1, 0},
+> +	{ AGILEX_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+> +	  4, 0x44, 24, 2, 0x30, 1, 0},
+> +	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+> +	  4, 0x44, 26, 2, 0x30, 1, 0},
+>   	{ AGILEX_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x24,
+>   	  4, 0x44, 28, 1, 0, 0, 0},
+> -	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x24,
+> -	  5, 0, 0, 0, 0, 0, 0},
+> +	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+> +	  5, 0, 0, 0, 0x30, 1, 0},
+>   	{ AGILEX_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x24,
+>   	  6, 0, 0, 0, 0, 0, 0},
+>   	{ AGILEX_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
+> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+> index f0bd77138ecb..0199cffe4d77 100644
+> --- a/drivers/clk/socfpga/clk-s10.c
+> +++ b/drivers/clk/socfpga/clk-s10.c
+> @@ -167,7 +167,7 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+>   	{ STRATIX10_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
+>   	   0, 0x48, 0, 0, 0},
+>   	{ STRATIX10_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
+> -	  0, 0x4C, 0, 0, 0},
+> +	  0, 0x4C, 0, 0x3C, 1},
+>   	{ STRATIX10_MAIN_EMACA_CLK, "main_emaca_clk", "main_noc_base_clk", NULL, 1, 0,
+>   	  0x50, 0, 0, 0},
+>   	{ STRATIX10_MAIN_EMACB_CLK, "main_emacb_clk", "main_noc_base_clk", NULL, 1, 0,
+> @@ -200,10 +200,8 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+>   	  0, 0xD4, 0, 0, 0},
+>   	{ STRATIX10_PERI_PSI_REF_CLK, "peri_psi_ref_clk", "peri_noc_base_clk", NULL, 1, 0,
+>   	  0xD8, 0, 0, 0},
+> -	{ STRATIX10_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
+> -	  0, 4, 0, 0},
+> -	{ STRATIX10_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
+> -	  0, 0, 0, 0x3C, 1},
+> +	{ STRATIX10_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
+> +	  0, 4, 0x3C, 1},
+>   	{ STRATIX10_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
+>   	  0, 0, 2, 0xB0, 0},
+>   	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+> @@ -227,20 +225,20 @@ static const struct stratix10_gate_clock s10_gate_clks[] = {
+>   	  0, 0, 0, 0, 0, 0, 4},
+>   	{ STRATIX10_MPU_L2RAM_CLK, "mpu_l2ram_clk", "mpu_clk", NULL, 1, 0, 0x30,
+>   	  0, 0, 0, 0, 0, 0, 2},
+> -	{ STRATIX10_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x30,
+> -	  1, 0x70, 0, 2, 0, 0, 0},
+> -	{ STRATIX10_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x30,
+> -	  2, 0x70, 8, 2, 0, 0, 0},
+> -	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x30,
+> -	  3, 0x70, 16, 2, 0, 0, 0},
+> -	{ STRATIX10_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x30,
+> -	  4, 0x70, 24, 2, 0, 0, 0},
+> -	{ STRATIX10_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x30,
+> -	  4, 0x70, 26, 2, 0, 0, 0},
+> +	{ STRATIX10_L4_MAIN_CLK, "l4_main_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
+> +	  1, 0x70, 0, 2, 0x3C, 1, 0},
+> +	{ STRATIX10_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
+> +	  2, 0x70, 8, 2, 0x3C, 1, 0},
+> +	{ STRATIX10_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), CLK_IS_CRITICAL, 0x30,
+> +	  3, 0x70, 16, 2, 0x3C, 1, 0},
+> +	{ STRATIX10_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
+> +	  4, 0x70, 24, 2, 0x3C, 1, 0},
+> +	{ STRATIX10_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
+> +	  4, 0x70, 26, 2, 0x3C, 1, 0},
+>   	{ STRATIX10_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x30,
+>   	  4, 0x70, 28, 1, 0, 0, 0},
+> -	{ STRATIX10_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x30,
+> -	  5, 0, 0, 0, 0, 0, 0},
+> +	{ STRATIX10_CS_TIMER_CLK, "cs_timer_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x30,
+> +	  5, 0, 0, 0, 0x3C, 1, 0},
+>   	{ STRATIX10_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x30,
+>   	  6, 0, 0, 0, 0, 0, 0},
+>   	{ STRATIX10_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0xA4,
+> 
