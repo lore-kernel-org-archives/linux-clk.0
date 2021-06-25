@@ -2,170 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295A8C2B9F4
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0646CC49EA7
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D02861946
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBA1561952
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbhFYOMJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 10:12:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229700AbhFYOMH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Jun 2021 10:12:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2FBC761939;
-        Fri, 25 Jun 2021 14:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624630186;
-        bh=krA21i06ozFHCVF0ajrxOO3f2UbyiBHTfdoRHSdbhKo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sv4o+GWvusop1RLvOROZ/g/MKadgpC/8S6XgOIEi85bLmbpf+aLnlYDTKj6omG76S
-         AocupaamFhnxtI37BaaXJRZrNBNzY3sHimAzRZ6Tx0fnU0e7IsQNapqM11A/s3PdB8
-         PvZ2fBo+rCvHJt9CHWO94N6Q0INOhOClYYQ+JMg1Fd923J0cMe4Yvu32KZJeGSZbqM
-         xOH0facSjkDTA8OAUhnqaT4uVbowSULMd/JnDpHtztXruZc8+4JYkp2cQrlRZiR5u1
-         9F5sMiNlDZKRHEi0OlXFxtjRqw+tPq+fOH1EE4uRgjNTM+9SuZryDEYzjHra8RiSAP
-         BEMk4wl3lK3nA==
-Received: by pali.im (Postfix)
-        id 956E560E; Fri, 25 Jun 2021 16:09:43 +0200 (CEST)
-Date:   Fri, 25 Jun 2021 16:09:43 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     kernel test robot <lkp@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kbuild-all@lists.01.org, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 07/10] serial: mvebu-uart: implement UART clock driver
- for configuring UART base clock
-Message-ID: <20210625140943.hjvhklwg4s5z7ahi@pali>
-References: <20210624224909.6350-8-pali@kernel.org>
- <202106251653.IbU5dy4V-lkp@intel.com>
- <20210625093131.aicap7ah5odokjvf@pali>
- <CAMuHMdWLu6gUk-Xc5YqBr-01AVGC_8RfdB+Nf3BmcA_wqk8TZQ@mail.gmail.com>
- <20210625112921.loyw6nmj6ld67lso@pali>
- <CAMuHMdUjCzEHHUO4mXrWLZUu-p1uFJqRZL5m7k0EwFCpq0GX=A@mail.gmail.com>
- <20210625132211.grax2ys445w3qahw@pali>
- <CAMuHMdUqhMGPdBcyWSZeZRiyDcnT2PRU1_md-jVcbZy-2=55yw@mail.gmail.com>
+        id S230088AbhFYOa2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 10:30:28 -0400
+Received: from mail-ua1-f42.google.com ([209.85.222.42]:42770 "EHLO
+        mail-ua1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229831AbhFYOa2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 10:30:28 -0400
+Received: by mail-ua1-f42.google.com with SMTP id e20so3618063ual.9;
+        Fri, 25 Jun 2021 07:28:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zWDSZ55vDIqTTzTYQvZl2Wg+gW1Pu4/t/3XgViOSN7M=;
+        b=QTG4YRNkdR9DF2EuxXO5w2ADzxNqWK0iEbG0Tol3yjT2+3msc8t2tlGqUhLNu9N5Nh
+         QU8WJYOADjqE6o9vhZnUGvU5B5MLu4F+xsryrJR1AodiP2cce/ZnujIY6jG5iwRsobpx
+         59R+vtij2JrS01ntvZWCP214IW+pl22OrU10CD4eOytUIby+hbQI19VbBtWn3wsYaXfR
+         ny8u3pj5y8jASCPEzOPS1hrkXfJ+MyZ0TGVNUbyisxHSYoWleO9mpn9Ouvb3UOm9p4Lq
+         qg71USJvLsb9J9MklVyVYdK+8Q1+jFqnHXampsyX63HVqDqDKNL2IiMwccLJyLCI2leo
+         e2Ug==
+X-Gm-Message-State: AOAM532y0/yKTlk1ssaDeHUpNlPEQiON0cW4BUd/8PkjvfT0Z8UZRA9c
+        dsEArxvpds5z6n8jZBJvdcFJUVNwFHOOSFGOuyg=
+X-Google-Smtp-Source: ABdhPJz71C4Gf21TKCwFJzrKsmXCtx/A7wFlTKIzgKK3PknLZxJa7I7wWygRVF83TLoDwztym+MdYDvjBrcTvM6qU/4=
+X-Received: by 2002:ab0:3734:: with SMTP id s20mr11988608uag.106.1624631287526;
+ Fri, 25 Jun 2021 07:28:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUqhMGPdBcyWSZeZRiyDcnT2PRU1_md-jVcbZy-2=55yw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com> <20210624130240.17468-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210624130240.17468-3-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 25 Jun 2021 16:27:56 +0200
+Message-ID: <CAMuHMdVhyBVzF864m6n78U2nr+ZREj36B=T3wdtXDmTHRXcDjw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/11] drivers: clk: renesas: r9a07g044-cpg: Rename
+ divider table
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Friday 25 June 2021 15:35:28 Geert Uytterhoeven wrote:
-> Hi Pali,
-> 
-> On Fri, Jun 25, 2021 at 3:22 PM Pali Rohár <pali@kernel.org> wrote:
-> > On Friday 25 June 2021 14:44:36 Geert Uytterhoeven wrote:
-> > > On Fri, Jun 25, 2021 at 1:29 PM Pali Rohár <pali@kernel.org> wrote:
-> > > > On Friday 25 June 2021 13:05:32 Geert Uytterhoeven wrote:
-> > > > > On Fri, Jun 25, 2021 at 11:31 AM Pali Rohár <pali@kernel.org> wrote:
-> > > > > > On Friday 25 June 2021 16:15:38 kernel test robot wrote:
-> > > > > > > I love your patch! Yet something to improve:
-> > > > > > >
-> > > > > > > [auto build test ERROR on robh/for-next]
-> > > > > > > [also build test ERROR on tty/tty-testing clk/clk-next linus/master v5.13-rc7 next-20210624]
-> > > > > > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > > > > > And when submitting patch, we suggest to use '--base' as documented in
-> > > > > > > https://git-scm.com/docs/git-format-patch]
-> > > > > > >
-> > > > > > > url:    https://github.com/0day-ci/linux/commits/Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
-> > > > > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> > > > > > > config: m68k-allmodconfig (attached as .config)
-> > > > > > > compiler: m68k-linux-gcc (GCC) 9.3.0
-> > > > > > > reproduce (this is a W=1 build):
-> > > > > > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > > > > > >         chmod +x ~/bin/make.cross
-> > > > > > >         # https://github.com/0day-ci/linux/commit/747483a6b8f2de98afe461dbf91227404a8e2e81
-> > > > > > >         git remote add linux-review https://github.com/0day-ci/linux
-> > > > > > >         git fetch --no-tags linux-review Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
-> > > > > > >         git checkout 747483a6b8f2de98afe461dbf91227404a8e2e81
-> > > > > > >         # save the attached .config to linux build tree
-> > > > > > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=m68k
-> > > > > > >
-> > > > > > > If you fix the issue, kindly add following tag as appropriate
-> > > > > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > >
-> > > > > > > All errors (new ones prefixed by >>):
-> > > > > > >
-> > > > > > >    m68k-linux-ld: drivers/tty/serial/mvebu-uart.o: in function `mvebu_uart_clock_prepare':
-> > > > > > >    mvebu-uart.c:(.text+0x6d0): undefined reference to `__udivdi3'
-> > > > > > > >> m68k-linux-ld: mvebu-uart.c:(.text+0x78c): undefined reference to `__udivdi3'
-> > > > > >
-> > > > > > Hello! Could you help me how to fix this issue? I'm using macro
-> > > > > > DIV_ROUND_CLOSEST() with two u64 values in that function. And I really
-> > > > > > do not know details about m68k arch and I never touched this arch.
-> > > > > >
-> > > > > > There is missing number of line which caused this error. So if it is
-> > > > > > possible I have suggestion for bot to compile kernel with -g flag. In
-> > > > > > this case linker show exact line number (and not only hex address) which
-> > > > > > caused that linker error. Also in future it could help identify source
-> > > > > > of errors...
-> > > > >
-> > > > > This error means your driver uses a 64-bit division without using the
-> > > > > proper methods from include/linux/math64.h.
-> > > >
-> > > > Ok. So whenever I need 64-bit division should I always use macros from
-> > > > this header file and also in case my driver is only for 64-bit platform?
-> > >
-> > > Exactly. As SERIAL_MVEBU_UART depends on ARCH_MVEBU || COMPILE_TEST,
-> > > it can be test-compiled on other architectures.
-> > >
-> > > > I see that in this header file is DIV64_U64_ROUND_CLOSEST() macro which
-> > > > seems to be 64-bit forced variant of DIV_ROUND_CLOSEST() which I'm
-> > > > using.
-> > >
-> > > Indeed.
-> > >
-> > > Please also consider if you really need to do a 64-bit division, and if a
-> > > simpler and faster 64-by-32 division would be sufficient.
-> >
-> > Good catch! I have checked this and numerator in the worst case does not
-> > fit into 32 bits (so u64 is needed) but denominator in the worst case
-> > fits into unsigned 32 bit integer.
-> 
-> Note that in some cases, the numerator is (unsigned) long, hence sometimes
-> 32-bit, sometimes 64-bit, and there are separate helpers for that.
-> 
-> > So what is the preferred way to do u64/u32 division with rounding to the
-> > closest number which would work on all platforms?
-> >
-> > In the end I need to clamp this result into range 1..1023.
-> 
-> Without rounding, it is div_u64().
-> With rounding, that would be DIV_U64_ROUND_CLOSEST(), which doesn't
-> exist yet. So you have to add it first, cfr. DIV_S64_ROUND_CLOSEST().
+Hi Biju,
 
-Perfect, thank you very much for help.
+Thanks for your patch!
 
-I will send a new patch series version with introduction of
-DIV_U64_ROUND_CLOSEST() macro in separate commit and then its usage in
-this patch.
+On Thu, Jun 24, 2021 at 3:02 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> As per RZ/G2L HW Manual (Rev.0.50), CPG_PL3A_DDIV,CPG_PL3B_DDIV
+> and CPG_PL2_DDIV(for P0) shares same divider table entries. Rename
+> clk_div_table dtable_3b to clk_div_table dtable_1_32 so that it
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+This does not match the actual variable name.
+I do like the shorter name, though ;-)
+
+> can be reused.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Apart from that:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -42,12 +42,13 @@ enum clk_ids {
+>  };
+>
+>  /* Divider tables */
+> -static const struct clk_div_table dtable_3b[] = {
+> +static const struct clk_div_table dtable_common_1_32[] = {
+>         {0, 1},
+>         {1, 2},
+>         {2, 4},
+>         {3, 8},
+>         {4, 32},
+> +       {0, 0},
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
