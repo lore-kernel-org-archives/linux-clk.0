@@ -2,186 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96902C48BC2
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 16:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ABDC2B9F4
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE336196C
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 16:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6398761454
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbhFYQfR convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 12:35:17 -0400
-Received: from out28-171.mail.aliyun.com ([115.124.28.171]:33674 "EHLO
-        out28-171.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbhFYQfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 12:35:17 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436534|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.252999-0.00360188-0.743399;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047212;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KY.h8bx_1624638772;
-Received: from zhouyanjie-virtual-machine(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KY.h8bx_1624638772)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Sat, 26 Jun 2021 00:32:53 +0800
-Date:   Sat, 26 Jun 2021 00:32:51 +0800
-From:   =?UTF-8?B?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, linux-mips@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        sihui.liu@ingenic.com, jun.jiang@ingenic.com,
-        sernia.zhou@foxmail.com
-Subject: Re: [PATCH v3 4/4] MIPS: CI20: Add second percpu timer for SMP.
-Message-ID: <20210626003251.02312e1e@zhouyanjie-virtual-machine>
-In-Reply-To: <67L9VQ.H1SRDC272GKW@crapouillou.net>
-References: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
-        <1624547189-61079-5-git-send-email-zhouyanjie@wanyeetech.com>
-        <5C99VQ.EJKI9MPO7XXO1@crapouillou.net>
-        <20210625231942.32945490@zhouyanjie-virtual-machine>
-        <67L9VQ.H1SRDC272GKW@crapouillou.net>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S229759AbhFYRRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 13:17:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229630AbhFYRRU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 13:17:20 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CF6C061574
+        for <linux-clk@vger.kernel.org>; Fri, 25 Jun 2021 10:14:59 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lwpPZ-0002EO-Ed; Fri, 25 Jun 2021 19:14:37 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lwpPW-0005JJ-9a; Fri, 25 Jun 2021 19:14:34 +0200
+Date:   Fri, 25 Jun 2021 19:14:34 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
+ clocks enabled clocks
+Message-ID: <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+ <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yt4c5ea6o5vvs7cu"
+Content-Disposition: inline
+In-Reply-To: <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
 
-于 Fri, 25 Jun 2021 16:47:30 +0100
-Paul Cercueil <paul@crapouillou.net> 写道:
+--yt4c5ea6o5vvs7cu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Zhou,
-> 
-> Le ven., juin 25 2021 at 23:19:42 +0800, 周琰杰 
-> <zhouyanjie@wanyeetech.com> a écrit :
-> > Hi Paul,
-> > 
-> > 于 Fri, 25 Jun 2021 12:31:17 +0100
-> > Paul Cercueil <paul@crapouillou.net> 写道:
-> >   
-> >>  Hi Zhou,
-> >> 
-> >>  Le jeu., juin 24 2021 at 23:06:29 +0800, 周琰杰 (Zhou Yanjie)
-> >>  <zhouyanjie@wanyeetech.com> a écrit :  
-> >>  > 1.Add a new TCU channel as the percpu timer of core1, this is to
-> >>  >   prepare for the subsequent SMP support. The newly added
-> >>  > channel will not adversely affect the current single-core state.
-> >>  > 2.Adjust the position of TCU node to make it consistent with the
-> >>  >   order in jz4780.dtsi file.  
-> >> 
-> >>  That's a bit superfluous, the order matters when adding new nodes,
-> >>  but once they are added, moving them around only cause annoyance.
-> >>   
-> >>  >
-> >>  > Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> >>  > ---
-> >>  >
-> >>  > Notes:
-> >>  >     v2:
-> >>  >     New patch.
-> >>  >
-> >>  >     v2->v3:
-> >>  >     No change.
-> >>  >
-> >>  >  arch/mips/boot/dts/ingenic/ci20.dts | 21 +++++++++++----------
-> >>  >  1 file changed, 11 insertions(+), 10 deletions(-)
-> >>  >
-> >>  > diff --git a/arch/mips/boot/dts/ingenic/ci20.dts
-> >>  > b/arch/mips/boot/dts/ingenic/ci20.dts
-> >>  > index 8877c62..70005cc 100644
-> >>  > --- a/arch/mips/boot/dts/ingenic/ci20.dts
-> >>  > +++ b/arch/mips/boot/dts/ingenic/ci20.dts
-> >>  > @@ -118,6 +118,17 @@
-> >>  >  	assigned-clock-rates = <48000000>;
-> >>  >  };
-> >>  >
-> >>  > +&tcu {
-> >>  > +	/*
-> >>  > +	 * 750 kHz for the system timers and 3 MHz for the
-> >>  > clocksources,
-> >>  > +	 * use channel #0 and #1 for the per cpu system timers,
-> >>  > and use
-> >>  > +	 * channel #2 for the clocksource.
-> >>  > +	 */
-> >>  > +	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu  
-> >>  > TCU_CLK_TIMER1>,  
-> >>  > +					  <&tcu
-> >>  > TCU_CLK_TIMER2>, <&tcu TCU_CLK_OST>;
-> >>  > +	assigned-clock-rates = <750000>, <750000>, <3000000>,
-> >>  > <3000000>;  
-> >> 
-> >>  Ideally you'd set TIMER1 to 3 MHz and TIMER2 to 750 kHz,
-> >> otherwise it
-> >>  kind of breaks support for older kernels (they would still boot,
-> >> but with a very slow clocksource). So in the new DTS you could use
-> >> the timer0 clock for CPU #0, timer1 for the clocksource, and
-> >> timer2+ for cpus > 0.  
-> > 
-> > I checked the ingenic-timer driver, and it seems that the last TCU
-> > channel is always used as the clocksource in the driver, so it seems
-> > that we can only use timer2 as the clocksource in smp mode. Maybe we
-> > should add a note for smp is closed in the comment. And I found
-> > that I missed a problem, Nikolaus Schaller once reported that
-> > because the frequency of the tcu timer (only 16bit) used to provide
-> > the clocksource
-> > is too high, there will be a chance that the system will get stuck
-> > before the clocksource is switched to ost. And reducing the 
-> > clocksource
-> > to 750kz can prevent it from happening. I will add this part to v4.
-> > When this part is added, both clockevent and clocksource will be
-> > 750kHz, but the 750kHz clocksource is only temporary, because it
-> > will then switch to the clocksource provided by ost, and ost works
-> > at 3MHz.  
-> 
-> Ok, then first change the clocksource to 750 kHz, then update it with 
-> timer2.
+Hello Stephen,
 
-Sure, I will do it in v4.
+On Wed, Jun 09, 2021 at 10:21:23PM +0200, Uwe Kleine-K=F6nig wrote:
+> given that I don't succeed in getting any feedback for my patch set, I'm
+> trying with a pull request today. It would be really great if this pull
+> request made it finally in for the next merge window.
 
-Thanks and best regards!
+It seems sending a pull request didn't help either :-\
 
-> 
-> Cheers,
-> -Paul
-> 
-> > 
-> > Thanks and best regards!
-> >   
-> >> 
-> >>  Cheers,
-> >>  -Paul
-> >>   
-> >>  > +};
-> >>  > +
-> >>  >  &mmc0 {
-> >>  >  	status = "okay";
-> >>  >
-> >>  > @@ -522,13 +533,3 @@
-> >>  >  		bias-disable;
-> >>  >  	};
-> >>  >  };
-> >>  > -
-> >>  > -&tcu {
-> >>  > -	/*
-> >>  > -	 * 750 kHz for the system timer and 3 MHz for the
-> >>  > clocksource,
-> >>  > -	 * use channel #0 for the system timer, #1 for the
-> >>  > clocksource.
-> >>  > -	 */
-> >>  > -	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu  
-> >>  > TCU_CLK_TIMER1>,  
-> >>  > -					  <&tcu TCU_CLK_OST>;
-> >>  > -	assigned-clock-rates = <750000>, <3000000>, <3000000>;
-> >>  > -};
-> >>  > --
-> >>  > 2.7.4
-> >>  >  
-> >>   
-> >   
-> 
+I'm waiting since October for feedback, several people expressed to like
+this series and I want to make use of it to simplify a few drivers. I'm
+quite annoyed that your missing feedback blocks me from further
+improving stuff.
 
+> The changes are not as bad or complex as the diffstat suggests. The
+> first patch contains all the complexity and only has
+>  1 file changed, 50 insertions(+), 17 deletions(-)
+> . The second patch makes use of this and just adds kernel-doc, four
+> functions that are one-line wrappers around the newly introduced
+> __devm_clk_get() function in the first patch and dummy implementations
+> for the !CONFIG_HAVE_CLK case.
+>=20
+> The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627=
+b5:
+>=20
+>   Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.pengutronix.de/git/ukl/linux tags/devm-clk-get-enabled
+>=20
+> for you to fetch changes up to fec74d434d6f6016b6b2d5ab13aa28a0c657f5fb:
+>=20
+>   clk: Provide new devm_clk_helpers for prepared and enabled clocks (2021=
+-05-11 14:20:13 +0200)
+>=20
+> ----------------------------------------------------------------
+> New variants of devm_clk_get() for prepared and enabled clocks
+>=20
+> These two patches create a set of new devm helpers that return clocks
+> already prepared or prepared-and-enabled. The automatic cleanup cares
+> for unpreparing and disabling+unpreparing respectively.
+>=20
+> This allows to simplify various drivers as was demonstrated with
+> additional patches sent with the various revisions of this patch set.
+> See
+> https://lore.kernel.org/r/20210510174142.986250-1-u.kleine-koenig@pengutr=
+onix.de
+> for the last submission round. This pull request doesn't contain these
+> patches though.
+>=20
+> ----------------------------------------------------------------
+> Uwe Kleine-K=F6nig (2):
+>       clk: generalize devm_clk_get() a bit
+>       clk: Provide new devm_clk_helpers for prepared and enabled clocks
+>=20
+>  drivers/clk/clk-devres.c | 96 ++++++++++++++++++++++++++++++++++++++++--=
+------
+>  include/linux/clk.h      | 90 ++++++++++++++++++++++++++++++++++++++++++=
+++-
+>  2 files changed, 169 insertions(+), 17 deletions(-)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--yt4c5ea6o5vvs7cu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDWDvYACgkQwfwUeK3K
+7AlVZgf+IaVy0jXvnrb1R7iOX2vSxmgWoXuGFE87xgMQhGK4KsqAx+hbgk8lGxx9
+RgQSXmBFj6mxdQVbzCIRiYtN73AeUixQvZwc3pIPMRfYFDrrx+N5XvUkTWyvp3kj
+PKTkVEeVYXFZi48twlb9N/wqs8DIdDGNSR1Me1w6FIcASw2c9NfzF9+XJ/Eosi8F
+hDqlDlbcyXThL2rAvmckHnSKjY+8VUDGgPrQwipWqjM5GJeD0SH/zW5Dv42pUsop
+lduvdTFCazmNoDIuSwf/bHJs+RcWsVpHUMgghIAY2xCYvxf9Livj22/iHBdR80Zl
+O9XSiJAcEiz5iXzqI8k/9/JzM1CEXw==
+=UnMp
+-----END PGP SIGNATURE-----
+
+--yt4c5ea6o5vvs7cu--
