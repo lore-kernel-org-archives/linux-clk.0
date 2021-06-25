@@ -2,160 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D34C48BC2
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 13:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE48BC48BC2
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 13:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F462616E8
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 13:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C60C161956
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 13:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbhFYNiB convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 09:38:01 -0400
-Received: from mail-vs1-f46.google.com ([209.85.217.46]:46823 "EHLO
-        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbhFYNiB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 09:38:01 -0400
-Received: by mail-vs1-f46.google.com with SMTP id g28so2814676vsr.13
-        for <linux-clk@vger.kernel.org>; Fri, 25 Jun 2021 06:35:40 -0700 (PDT)
+        id S231501AbhFYNx6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 09:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229653AbhFYNx5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 09:53:57 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54BBC061574
+        for <linux-clk@vger.kernel.org>; Fri, 25 Jun 2021 06:51:36 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id h23so5494705pjv.2
+        for <linux-clk@vger.kernel.org>; Fri, 25 Jun 2021 06:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gOFfzzfB3icWGJyf7fd7qOAkUBx8OfOCfNvo7lnaGYw=;
+        b=YM80se/wfZcmjIUdSKV47UrLjX0M4qEqOF+kSIH9NkEhkj0yQiBb7w4qYWVko38Po0
+         +UcQV6+bQAwiG0LlFHrtwIR6WQ8ib+jtJw3sE2sCTWGz5LI71qoT1WOs1UoblBmHoSvd
+         nEtaUVmFlrU9gZGzrJIt6+TPwwXmub1PBArekQu22fZbwy+/GLqObMyYgtdx9t7n4ElA
+         UMIw+NQu/OK6eZWTIbF7HQsBks+i7bl4iLg7NWfGjahETY4p8bNUFa2ZIKGy+UUFKPNu
+         3fzQHaMHzYAnYEkhhUxWvrLbtZNnQbPWSRUiBzWbeEZK4YhcuDY6XGoYVaRjd6KcJ1ks
+         c7Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Hc4ym4T4RXnockMEigZR5ws/Hz8DLXsWV1lUYmk+x9A=;
-        b=ghS7M+bCFIOpCfXDakZFX1wpZj2POkay7sBz8y2DIUDgpe7dlWgVQx+afC/sbLObiQ
-         G/Oh1f266ri5zveoBiHJISJzM1pcirLZBUpCzvVnhQZjTrOt1fzyckoR8yaxVyOBOGs1
-         VEpAMqMFO/cvm/D45KO65IzmkS+wZPT81pnbnA2mv2j1QqK8oFFhgRns3tGkBG2wINYF
-         MvSelZX99fvf4eNEYnJu3kYZ5IU7a/mDxzsPEVO+M7d00I/L4N6pNEZbQXphhp6CPrY4
-         RnMaMDYAPWk7EUwGN8bXRzR4JgeTiHQMRpQLoEfX6uzO7zQjabnkPlX/CsWtyhnUD+0V
-         aKrg==
-X-Gm-Message-State: AOAM531mUjbXgvuUgIXBXtTAGXQ/XVweG22AC0CvjZNfbhRLLBGyS2I2
-        mob5Z+IG5o7sT9I5KL6xCRjFFMqNfmP6lbNY/9Y=
-X-Google-Smtp-Source: ABdhPJw1XoUirQpgjtt4VOjjIzFfsxT70BSNr8RGVHJNn3xp8WXPwsjA65ddoX1bXFF15xrdwGZ66gXOuaEd9xv7t5U=
-X-Received: by 2002:a67:ba0c:: with SMTP id l12mr8744177vsn.40.1624628140177;
- Fri, 25 Jun 2021 06:35:40 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=gOFfzzfB3icWGJyf7fd7qOAkUBx8OfOCfNvo7lnaGYw=;
+        b=dxtZXnblZMSyrUJ9S8/iZIPoFcVN6UheqaEz1pqimdt98qH2hKry1Upo5pFsQbjC6z
+         48fpG0zwJVGGYXpOqeGWefHubgBV8WpYFhAVMnmVd3RwiHfORBZi1nNPv8Ks3i+DOWg4
+         fHZqe85+tK6Aop5Cg4CRWnJk2gcc2F3I32pKKc5XNAUEIP8/rqX1n/nzJHz04tYxsJ6b
+         EsD9Dn1/Ho13GMSl5RF6omxQBn0Z1KD6e+QTw7PcKI8LJwOS4DxIQzwibFZf2zbRxsZz
+         OcgfUsoZq6cdf8QTfr+ZW6N5CPT61XDX2OrZ6UrJAhMxiSdmH0gbilK3lOfZhhrZfKCn
+         RLbw==
+X-Gm-Message-State: AOAM532ljdjgYuzkKsjcrdluI4qYRX3S/LKoJ68cPSjEWgcoVV4qUIuw
+        u5nLqLtJexDVu9+imcKBhtgzi/K6AhNSOHGCSWpBvg==
+X-Google-Smtp-Source: ABdhPJxQYINbrnkbID4F3k8iJOHCoCXHacOfFXlPSJpossaqYKp4Q8nwrksZOualbPoua2Grp4gvm+09tDaR1QbMJAU=
+X-Received: by 2002:a17:90a:c394:: with SMTP id h20mr20745388pjt.222.1624629096164;
+ Fri, 25 Jun 2021 06:51:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210624224909.6350-8-pali@kernel.org> <202106251653.IbU5dy4V-lkp@intel.com>
- <20210625093131.aicap7ah5odokjvf@pali> <CAMuHMdWLu6gUk-Xc5YqBr-01AVGC_8RfdB+Nf3BmcA_wqk8TZQ@mail.gmail.com>
- <20210625112921.loyw6nmj6ld67lso@pali> <CAMuHMdUjCzEHHUO4mXrWLZUu-p1uFJqRZL5m7k0EwFCpq0GX=A@mail.gmail.com>
- <20210625132211.grax2ys445w3qahw@pali>
-In-Reply-To: <20210625132211.grax2ys445w3qahw@pali>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 25 Jun 2021 15:35:28 +0200
-Message-ID: <CAMuHMdUqhMGPdBcyWSZeZRiyDcnT2PRU1_md-jVcbZy-2=55yw@mail.gmail.com>
-Subject: Re: [PATCH 07/10] serial: mvebu-uart: implement UART clock driver for
- configuring UART base clock
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc:     kernel test robot <lkp@intel.com>,
+References: <20210616141107.291430-1-robert.foss@linaro.org>
+ <20210616141107.291430-6-robert.foss@linaro.org> <20210624211844.GA1997615@robh.at.kernel.org>
+In-Reply-To: <20210624211844.GA1997615@robh.at.kernel.org>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Fri, 25 Jun 2021 15:51:24 +0200
+Message-ID: <CAG3jFyv3aMt-P+vCExhncBR4n1xYKARhAoO_m+9xsqhp2nwarg@mail.gmail.com>
+Subject: Re: [RFC v1 05/11] dt-bindings: clock: Add QCOM SM8350 display clock bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kbuild-all@lists.01.org, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Jonathan Marek <jonathan@marek.ca>,
+        Taniya Das <tdas@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vinod.koul@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Pali,
-
-On Fri, Jun 25, 2021 at 3:22 PM Pali Rohár <pali@kernel.org> wrote:
-> On Friday 25 June 2021 14:44:36 Geert Uytterhoeven wrote:
-> > On Fri, Jun 25, 2021 at 1:29 PM Pali Rohár <pali@kernel.org> wrote:
-> > > On Friday 25 June 2021 13:05:32 Geert Uytterhoeven wrote:
-> > > > On Fri, Jun 25, 2021 at 11:31 AM Pali Rohár <pali@kernel.org> wrote:
-> > > > > On Friday 25 June 2021 16:15:38 kernel test robot wrote:
-> > > > > > I love your patch! Yet something to improve:
-> > > > > >
-> > > > > > [auto build test ERROR on robh/for-next]
-> > > > > > [also build test ERROR on tty/tty-testing clk/clk-next linus/master v5.13-rc7 next-20210624]
-> > > > > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > > > > And when submitting patch, we suggest to use '--base' as documented in
-> > > > > > https://git-scm.com/docs/git-format-patch]
-> > > > > >
-> > > > > > url:    https://github.com/0day-ci/linux/commits/Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
-> > > > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> > > > > > config: m68k-allmodconfig (attached as .config)
-> > > > > > compiler: m68k-linux-gcc (GCC) 9.3.0
-> > > > > > reproduce (this is a W=1 build):
-> > > > > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > > > > >         chmod +x ~/bin/make.cross
-> > > > > >         # https://github.com/0day-ci/linux/commit/747483a6b8f2de98afe461dbf91227404a8e2e81
-> > > > > >         git remote add linux-review https://github.com/0day-ci/linux
-> > > > > >         git fetch --no-tags linux-review Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
-> > > > > >         git checkout 747483a6b8f2de98afe461dbf91227404a8e2e81
-> > > > > >         # save the attached .config to linux build tree
-> > > > > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=m68k
-> > > > > >
-> > > > > > If you fix the issue, kindly add following tag as appropriate
-> > > > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > > >
-> > > > > > All errors (new ones prefixed by >>):
-> > > > > >
-> > > > > >    m68k-linux-ld: drivers/tty/serial/mvebu-uart.o: in function `mvebu_uart_clock_prepare':
-> > > > > >    mvebu-uart.c:(.text+0x6d0): undefined reference to `__udivdi3'
-> > > > > > >> m68k-linux-ld: mvebu-uart.c:(.text+0x78c): undefined reference to `__udivdi3'
-> > > > >
-> > > > > Hello! Could you help me how to fix this issue? I'm using macro
-> > > > > DIV_ROUND_CLOSEST() with two u64 values in that function. And I really
-> > > > > do not know details about m68k arch and I never touched this arch.
-> > > > >
-> > > > > There is missing number of line which caused this error. So if it is
-> > > > > possible I have suggestion for bot to compile kernel with -g flag. In
-> > > > > this case linker show exact line number (and not only hex address) which
-> > > > > caused that linker error. Also in future it could help identify source
-> > > > > of errors...
-> > > >
-> > > > This error means your driver uses a 64-bit division without using the
-> > > > proper methods from include/linux/math64.h.
-> > >
-> > > Ok. So whenever I need 64-bit division should I always use macros from
-> > > this header file and also in case my driver is only for 64-bit platform?
-> >
-> > Exactly. As SERIAL_MVEBU_UART depends on ARCH_MVEBU || COMPILE_TEST,
-> > it can be test-compiled on other architectures.
-> >
-> > > I see that in this header file is DIV64_U64_ROUND_CLOSEST() macro which
-> > > seems to be 64-bit forced variant of DIV_ROUND_CLOSEST() which I'm
-> > > using.
-> >
-> > Indeed.
-> >
-> > Please also consider if you really need to do a 64-bit division, and if a
-> > simpler and faster 64-by-32 division would be sufficient.
+On Thu, 24 Jun 2021 at 23:18, Rob Herring <robh@kernel.org> wrote:
 >
-> Good catch! I have checked this and numerator in the worst case does not
-> fit into 32 bits (so u64 is needed) but denominator in the worst case
-> fits into unsigned 32 bit integer.
-
-Note that in some cases, the numerator is (unsigned) long, hence sometimes
-32-bit, sometimes 64-bit, and there are separate helpers for that.
-
-> So what is the preferred way to do u64/u32 division with rounding to the
-> closest number which would work on all platforms?
+> On Wed, Jun 16, 2021 at 04:11:01PM +0200, Robert Foss wrote:
+> > Add device tree bindings for display clock controller for
+> > Qualcomm Technology Inc's SM8350 SoC.
+> >
+> > Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> > ---
+> >  .../bindings/clock/qcom,dispcc-sm8x50.yaml    |  6 +-
+> >  .../dt-bindings/clock/qcom,dispcc-sm8350.h    | 77 +++++++++++++++++++
+> >  2 files changed, 81 insertions(+), 2 deletions(-)
+> >  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > index 0cdf53f41f84..c10eefd024f6 100644
+> > --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > @@ -4,24 +4,26 @@
+> >  $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >
+> > -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
+> > +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
+> >
+> >  maintainers:
+> >    - Jonathan Marek <jonathan@marek.ca>
+> >
+> >  description: |
+> >    Qualcomm display clock control module which supports the clocks, resets and
+> > -  power domains on SM8150 and SM8250.
+> > +  power domains on SM8150, SM8250 and SM8350.
+> >
+> >    See also:
+> >      dt-bindings/clock/qcom,dispcc-sm8150.h
+> >      dt-bindings/clock/qcom,dispcc-sm8250.h
+> > +    dt-bindings/clock/qcom,dispcc-sm8350.h
+> >
+> >  properties:
+> >    compatible:
+> >      enum:
+> >        - qcom,sm8150-dispcc
+> >        - qcom,sm8250-dispcc
+> > +      - qcom,sm8350-dispcc
+> >
+> >    clocks:
+> >      items:
+> > diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> > new file mode 100644
+> > index 000000000000..361ef27de585
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> > @@ -0,0 +1,77 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
 >
-> In the end I need to clamp this result into range 1..1023.
+> I'm tired of saying this for QCom bindings given it's been QCom I've
+> gotten complaints on DT licensing, but dual license please. Spread the
+> word.
+>
+> I'm sure if someone audited licenses of headers and dts files they'd
+> find a mess.
 
-Without rounding, it is div_u64().
-With rounding, that would be DIV_U64_ROUND_CLOSEST(), which doesn't
-exist yet. So you have to add it first, cfr. DIV_S64_ROUND_CLOSEST().
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for pointing this out. I'll keep an eye out and change it to
+(GPL-2.0-only OR BSD-2-Clause).
