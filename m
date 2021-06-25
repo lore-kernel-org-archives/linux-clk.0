@@ -4,45 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54298C49EA7
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375BBC2B9F4
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE7261954
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C3AC61969
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 14:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbhFYOew (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 10:34:52 -0400
-Received: from mail-ua1-f48.google.com ([209.85.222.48]:34650 "EHLO
-        mail-ua1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbhFYOet (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 10:34:49 -0400
-Received: by mail-ua1-f48.google.com with SMTP id c47so2927174uad.1;
-        Fri, 25 Jun 2021 07:32:28 -0700 (PDT)
+        id S231723AbhFYOfi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 10:35:38 -0400
+Received: from mail-vs1-f46.google.com ([209.85.217.46]:37764 "EHLO
+        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231521AbhFYOfi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 10:35:38 -0400
+Received: by mail-vs1-f46.google.com with SMTP id x12so5546513vsp.4;
+        Fri, 25 Jun 2021 07:33:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Dsz49e/2NwfOTqNhnIgPmeusYc1ZyQHSh1En7e1zHbo=;
-        b=mAT+Si/1+fRYTcloWHEB0EyKPa+fdPbyINNp4bFuv4c/pOS5jghaWS+SpGcRyAN1Iu
-         dmHNsOJqAjWl+55lxE7Pt5X+NNK0jYJqGu35ggTY7oi3M/dCzEDwq4wrQY11JeM0QmNF
-         eu0aS5ODFSp5rOf74qodmS/56Hb3T7dlpSvDKLSSGLaD2qF5SGqX3BQ5Syn7NN7Or6pX
-         nEvmUQHZfVr+QlprU3ExUlF+kNqHFaB0nd5yfq9LzXBmagmHUEGju/5KxpRXcqv+OX5M
-         cicNQInyxCmoQnC7+C+yDasEZVyIN/Z2tZ0/VfjBcR5em2lENcxjTVEIwikTkrLNYDHg
-         IdgA==
-X-Gm-Message-State: AOAM532AUqRm1h9hCm/GL5mcprvnrnPIBHd1dCfIKY1aeunUcCprtHys
-        Fo0RnVpDhGiNeWi9hKVOEe5iayJ8sJT7BqUIvvw=
-X-Google-Smtp-Source: ABdhPJzZYt+YPio3lZKuN5vTWW7DVTXYcPipcHUEaQfGq9Fs7APpxX4DDz1r6/Fn8DTnGdhYeCeAx0mTmF+vIv89MdI=
-X-Received: by 2002:ab0:484b:: with SMTP id c11mr11833856uad.100.1624631548452;
- Fri, 25 Jun 2021 07:32:28 -0700 (PDT)
+        bh=iiDp8cJzuqGXEB1Ji9UdeXFMz7K8bhTo6qSIlkHmNF8=;
+        b=GvCfVDASMNVStoV6r9aqq5R2h/J87L7glBK81HB2XV6csPVp5yBmmVU5LuJ3dZuwx/
+         Sbua5tNuT8uRFNTK3KzjpbIYLNHOg/aG/M8l9BCU0nRrnyObgIvsp2zoOOTuBevDw64h
+         1WJwzRha2oWfSaiIWAKGfC3G86rd1l5fsYRqAUiFIRH7mbIa9/LtmgGeierDOBbWZRML
+         WWJoThqUf82Sqbf3kk4raH/XJZDlWcvDaXGRjXWME3mRqwDttGaczahaz5Fqc2ExCj3N
+         NBFuaL2Gvsb+XzCL+uILNooaASiMmPSExbA1tufO5g93X/ANpwDCYGsQ0DkQ0flrASAt
+         Dnbg==
+X-Gm-Message-State: AOAM532d7czR+Ukug49jReS5QGDdEUGp7LF8fiL8RXgYfMu+dYDcrqQO
+        t617nawhk6kNkCjk5zv6+imEipYqX9jHKwDkD2UYSsAsReg=
+X-Google-Smtp-Source: ABdhPJzkcJCoxq7E/dLmPJ7twVgd73NXJM5L2VffOvTASzo+PpQeEK5Usrs5iNAZpYzB3ZMMBmAPCyCeNRq3x2qu2MY=
+X-Received: by 2002:a67:3c2:: with SMTP id 185mr8841468vsd.42.1624631597068;
+ Fri, 25 Jun 2021 07:33:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com> <20210624130240.17468-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210624130240.17468-4-biju.das.jz@bp.renesas.com>
+References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com> <20210624130240.17468-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210624130240.17468-5-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 25 Jun 2021 16:32:17 +0200
-Message-ID: <CAMuHMdUrd2yN-vGpk9b7X=AqFrHAsQzCGVar87KR61=KhhXdUg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] drivers: clk: renesas: r9a07g044-cpg: Fix P1 Clock
+Date:   Fri, 25 Jun 2021 16:33:05 +0200
+Message-ID: <CAMuHMdUsafVJYkPootZePnAE1kc+PangJj-t6yNZM1OvmaZNSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/11] drivers: clk: renesas: r9a07g044-cpg: Add P2
+ Clock support
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -57,8 +58,7 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Jun 24, 2021 at 3:02 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> As per RZ/G2L HW Manual(Rev.0.50) P1 is sourced from pll3_div2_4.
-> So fix the clock definitions for P1.
+> Add support for P2 clock which is sourced from pll3_div2_4_2.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -69,8 +69,7 @@ Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
