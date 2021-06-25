@@ -2,84 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B195FC2B9F4
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 23:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B30A1C2B9F4
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 23:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE7961949
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 23:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890F961954
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 23:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbhFYXP1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 19:15:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43222 "EHLO mail.kernel.org"
+        id S229850AbhFYXYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 19:24:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229816AbhFYXP0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Jun 2021 19:15:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8ADF161454;
-        Fri, 25 Jun 2021 23:13:05 +0000 (UTC)
+        id S229831AbhFYXYH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Jun 2021 19:24:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F21906194B;
+        Fri, 25 Jun 2021 23:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624662785;
-        bh=za446qtMjFrRKoRwUyfgV+7tEPSUfKpj2TmBNzZpQko=;
+        s=k20201202; t=1624663306;
+        bh=E8jAfVUJB6TzVURJo+kpSr0AUCgn6UTEIehIezltKdU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=a5yjzZTTsErrkX8mC8kfeNe6K5U0WOBARtzBS8JiyFpt9ZmvKchREJJI3jog6O+jZ
-         XWXVJlNzGDv+unKTKXgwMNPXT3wVLMNgk4VMZqbu1O2LH4vmn9cG3ZJztsYF1pbHNn
-         KnUo5z6pGAjVSdixZDgpx73siNxNEpRnBcCub70ggBFaFyuSkVnKZet5xSeIJFQBy3
-         Mck831w7N2sy6YdM0xxsV2gb0ZSxQYZcv8SYXt9Uu6r8YwxoIP89RjecI94pJ8/7LK
-         UBpg05X5TktOo39NB6L1al+rq7FH0QJT6DILm45Akf3kHRMmJNud3vJFTI3rgNZXoS
-         hbraATPOd4Ajw==
+        b=p8Xjhy+4yQgeG5YlTRv92TZvPhnNOzHG2MJCQuVZRpNwQ+DDA/Q0y6wDeuJxoEQ8n
+         cxW/x8FrAO+mY7p6UPi+7MJPLrp/g7DIPIGovOSvdC/FL1vSEj67QrmU8mNC+HHLYL
+         iU5Vdx0yn2Cvbh1yZzXJYB5Gt4dvz0vK+F/rGlJ+31OQ43Aq+yBLbDYegJzPS2U+xS
+         Iv2Stau90rBjDJm3DUkHTjhNhJfQHUpBtNlrsbAfOs7QCSV1lhU7pR0a+8zA38OYYx
+         L/t15ESoWoQgppBiEEEQ5R1QnUc2YSJmoGgXJFUhSNdGHSZcRj44bWm8iBxMfClcID
+         Srp4xigOXk3Gg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1620122886-13349-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1620122886-13349-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH] clk: zynqmp: Check the return type
+In-Reply-To: <20210624121633.22179-2-rajan.vaja@xilinx.com>
+References: <20210624121633.22179-1-rajan.vaja@xilinx.com> <20210624121633.22179-2-rajan.vaja@xilinx.com>
+Subject: Re: [PATCH v5 1/4] clk: zynqmp: Use firmware specific common clock flags
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, michal.simek@xilinx.com,
-        shubhrajyoti.datta@gmail.com, git@xilix.com,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org
-Date:   Fri, 25 Jun 2021 16:13:04 -0700
-Message-ID: <162466278425.3259633.17117251914154899652@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>, kristo@kernel.org,
+        lee.jones@linaro.org, michal.simek@xilinx.com,
+        mturquette@baylibre.com, quanyang.wang@windriver.com
+Date:   Fri, 25 Jun 2021 16:21:43 -0700
+Message-ID: <162466330370.3259633.11293469583164120084@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2021-05-04 03:08:06)
-> Currently the return value of of_clk_add_hw_provider is ignored.
-> lets check and return value.
->=20
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
->  drivers/clk/zynqmp/clkc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
+Quoting Rajan Vaja (2021-06-24 05:16:30)
 > diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-> index db8d0d7..5f674c5 100644
+> index db8d0d7161ce..af06a195ec46 100644
 > --- a/drivers/clk/zynqmp/clkc.c
 > +++ b/drivers/clk/zynqmp/clkc.c
-> @@ -739,9 +739,7 @@ static int zynqmp_clk_setup(struct device_node *np)
->         zynqmp_register_clocks(np);
-> =20
->         zynqmp_data->num =3D clock_max_idx;
-> -       of_clk_add_hw_provider(np, of_clk_hw_onecell_get, zynqmp_data);
-> -
-> -       return 0;
-> +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, zynqmp_d=
-ata);
-
-Please free allocations on error. Also it would be useful to inline this
-whole function into the probe function and then use devm. With all that
-done this patch will become superb! I'm looking forward to it.
-
+> @@ -271,6 +271,34 @@ static int zynqmp_pm_clock_get_topology(u32 clock_id=
+, u32 index,
+>         return ret;
 >  }
 > =20
->  static int zynqmp_clock_probe(struct platform_device *pdev)
-> --=20
-> 2.1.1
->
+> +unsigned long zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag)
+> +{
+> +       unsigned long ccf_flag =3D 0;
+> +
+> +       if (zynqmp_flag & ZYNQMP_CLK_SET_RATE_GATE)
+> +               ccf_flag |=3D CLK_SET_RATE_GATE;
+> +       if (zynqmp_flag & ZYNQMP_CLK_SET_PARENT_GATE)
+> +               ccf_flag |=3D CLK_SET_PARENT_GATE;
+> +       if (zynqmp_flag & ZYNQMP_CLK_SET_RATE_PARENT)
+> +               ccf_flag |=3D CLK_SET_RATE_PARENT;
+> +       if (zynqmp_flag & ZYNQMP_CLK_IGNORE_UNUSED)
+> +               ccf_flag |=3D CLK_IGNORE_UNUSED;
+> +       if (zynqmp_flag & ZYNQMP_CLK_GET_RATE_NOCACHE)
+> +               ccf_flag |=3D CLK_GET_RATE_NOCACHE;
+
+Does the firmware really use all these flags? Ideally we get rid of the
+above two.
+
+> +       if (zynqmp_flag & ZYNQMP_CLK_SET_RATE_NO_REPARENT)
+> +               ccf_flag |=3D CLK_SET_RATE_NO_REPARENT;
+> +       if (zynqmp_flag & ZYNQMP_CLK_GET_ACCURACY_NOCACHE)
+> +               ccf_flag |=3D CLK_GET_ACCURACY_NOCACHE;
+> +       if (zynqmp_flag & ZYNQMP_CLK_RECALC_NEW_RATES)
+> +               ccf_flag |=3D CLK_RECALC_NEW_RATES;
+
+And this one.
+
+> +       if (zynqmp_flag & ZYNQMP_CLK_SET_RATE_UNGATE)
+> +               ccf_flag |=3D CLK_SET_RATE_UNGATE;
+> +       if (zynqmp_flag & ZYNQMP_CLK_IS_CRITICAL)
+> +               ccf_flag |=3D CLK_IS_CRITICAL;
+
+And this one.
+
+I worry that supporting all these flags will mean we can never get rid
+of them. And we currently don't support setting critical via DT, which
+is essentially another firmware interface like this one.
+
+> +
+> +       return ccf_flag;
+> +}
+> +
+>  /**
+>   * zynqmp_clk_register_fixed_factor() - Register fixed factor with the
+>   *                                     clock framework
