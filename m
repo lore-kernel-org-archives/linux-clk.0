@@ -2,160 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ABDC2B9F4
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BC5C2B9F4
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6398761454
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5F6360E0B
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 17:39:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbhFYRRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 13:17:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbhFYRRU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 13:17:20 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CF6C061574
-        for <linux-clk@vger.kernel.org>; Fri, 25 Jun 2021 10:14:59 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lwpPZ-0002EO-Ed; Fri, 25 Jun 2021 19:14:37 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lwpPW-0005JJ-9a; Fri, 25 Jun 2021 19:14:34 +0200
-Date:   Fri, 25 Jun 2021 19:14:34 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
- clocks enabled clocks
-Message-ID: <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
-References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
- <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
+        id S229586AbhFYRlo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 13:41:44 -0400
+Received: from mail-ua1-f46.google.com ([209.85.222.46]:43832 "EHLO
+        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229531AbhFYRln (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 13:41:43 -0400
+Received: by mail-ua1-f46.google.com with SMTP id f1so3841713uaj.10;
+        Fri, 25 Jun 2021 10:39:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hMsdHKSeztMKrPHZ8nbG2VqyYL9zlmEgt8jO+8+YC2U=;
+        b=nUT56JRIdUCvJchDRgYdezS6g2Mz2vgennpByZqYJ7owEBc+9VM2PnXG79nAkTBfQ2
+         p0T1RnMP1ccbTykEwe1EPLyc0/XOdu507SZtCQID7JXToNkGi3+HWj50SL7Ozbo/pD0S
+         CFtgxpWFr8hVEJVxd2c0ZiGgrmw3NhvEo1QRbt0sZL6R4PPtyvcCf5+UNxlcUGYB9MJs
+         WMD8BrK9Z9poKuObRd4od38nxpQOML7y0efn44yAdiire3uG3Ug2wL2g+zvKIKM43cJY
+         4E+FtBRyTMj1dFW+YnCqCFuFmfjipkyhLRhVKStVHmwcl6qIBvF36nTqaCfhzHCfzHGJ
+         R00Q==
+X-Gm-Message-State: AOAM531AvKHpb6yfsgknp72vai1RZUnaCddcNiMMCLsKddNnVfl4XEly
+        1LfprtrRU+ckKRPhjFPaLaGodobHvboAc6C5ZOY=
+X-Google-Smtp-Source: ABdhPJxRW0SpvuDwLgk+xlyHuwdQP6YsYhgHSWcPS2hlfsTa42T+RD8pDpSwzmpkvZj5EGbrv9yxCxRv6cquJ3wmzXs=
+X-Received: by 2002:ab0:3734:: with SMTP id s20mr13225318uag.106.1624642761311;
+ Fri, 25 Jun 2021 10:39:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yt4c5ea6o5vvs7cu"
-Content-Disposition: inline
-In-Reply-To: <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20210624224909.6350-1-pali@kernel.org> <20210625143617.12826-1-pali@kernel.org>
+ <20210625143617.12826-8-pali@kernel.org> <CAMuHMdUCEHtqNk-nGJhPK_=NrgSoRhmC99J9pdGqQxcWpoFqGg@mail.gmail.com>
+ <20210625153803.u6uesckcqyvvo7dl@pali> <20210625155008.GB16901@1wt.eu>
+In-Reply-To: <20210625155008.GB16901@1wt.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 25 Jun 2021 19:39:10 +0200
+Message-ID: <CAMuHMdWfE7UKkp6=MdAVgHywFjDK3SN4m9+d_6AmJTB=qBEqFw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] math64: New DIV_U64_ROUND_CLOSEST helper
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Willy,
 
---yt4c5ea6o5vvs7cu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 25, 2021 at 5:50 PM Willy Tarreau <w@1wt.eu> wrote:
+> On Fri, Jun 25, 2021 at 05:38:03PM +0200, Pali Rohár wrote:
+> > On Friday 25 June 2021 17:22:31 Geert Uytterhoeven wrote:
+> > > > +/*
+> > > > + * DIV_U64_ROUND_CLOSEST - unsigned 64bit divide with 32bit divisor rounded to nearest integer
+> > > > + * @dividend: unsigned 64bit dividend
+> > > > + * @divisor: unsigned 32bit divisor
+> > > > + *
+> > > > + * Divide unsigned 64bit dividend by unsigned 32bit divisor
+> > > > + * and round to closest integer.
+> > > > + *
+> > > > + * Return: dividend / divisor rounded to nearest integer
+> > > > + */
+> > > > +#define DIV_U64_ROUND_CLOSEST(dividend, divisor)       \
+> > > > +       ({ u32 _tmp = (divisor); div_u64((u64)(dividend) + _tmp / 2, _tmp); })
+> > >
+> > > Given "dividend" should already be an unsigned 64-bit value, I don't
+> > > think the cast to "u64" is needed. Similar macros in this file also
+> > > don't have the cast.
+> >
+> > It is just to ensure that plus operation between dividend and _tmp is
+> > evaluated in 64-bit context to prevent overflow. Just a case when user
+> > calls this macro with 32-bit dividend param. As it is a macro (and not
+> > inline function) type is not automatically enforced.
+>
+> I agree, a large u32 argument added to _tmp/2 could overflow and remain
+> 32 bits, yielding an incorrect result. The cast is mandatory here (and
+> will either emit no code, or be useful).
 
-Hello Stephen,
+Fair enough.
+So we want to add a cast to DIV64_U64_ROUND_CLOSEST() above, too?
 
-On Wed, Jun 09, 2021 at 10:21:23PM +0200, Uwe Kleine-K=F6nig wrote:
-> given that I don't succeed in getting any feedback for my patch set, I'm
-> trying with a pull request today. It would be really great if this pull
-> request made it finally in for the next merge window.
+> The only trap I'm seeing is if a negative signed int is passed in dividend,
+> it will be sign-extended and will give a large u64 value. A preliminary
+> u32 cast could avoid this but would break valid u64 arguments, and I'd
+> claim we never know what the user wants if this happens in the first place.
 
-It seems sending a pull request didn't help either :-\
+Yep.
 
-I'm waiting since October for feedback, several people expressed to like
-this series and I want to make use of it to simplify a few drivers. I'm
-quite annoyed that your missing feedback blocks me from further
-improving stuff.
+Gr{oetje,eeting}s,
 
-> The changes are not as bad or complex as the diffstat suggests. The
-> first patch contains all the complexity and only has
->  1 file changed, 50 insertions(+), 17 deletions(-)
-> . The second patch makes use of this and just adds kernel-doc, four
-> functions that are one-line wrappers around the newly introduced
-> __devm_clk_get() function in the first patch and dummy implementations
-> for the !CONFIG_HAVE_CLK case.
->=20
-> The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627=
-b5:
->=20
->   Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.pengutronix.de/git/ukl/linux tags/devm-clk-get-enabled
->=20
-> for you to fetch changes up to fec74d434d6f6016b6b2d5ab13aa28a0c657f5fb:
->=20
->   clk: Provide new devm_clk_helpers for prepared and enabled clocks (2021=
--05-11 14:20:13 +0200)
->=20
-> ----------------------------------------------------------------
-> New variants of devm_clk_get() for prepared and enabled clocks
->=20
-> These two patches create a set of new devm helpers that return clocks
-> already prepared or prepared-and-enabled. The automatic cleanup cares
-> for unpreparing and disabling+unpreparing respectively.
->=20
-> This allows to simplify various drivers as was demonstrated with
-> additional patches sent with the various revisions of this patch set.
-> See
-> https://lore.kernel.org/r/20210510174142.986250-1-u.kleine-koenig@pengutr=
-onix.de
-> for the last submission round. This pull request doesn't contain these
-> patches though.
->=20
-> ----------------------------------------------------------------
-> Uwe Kleine-K=F6nig (2):
->       clk: generalize devm_clk_get() a bit
->       clk: Provide new devm_clk_helpers for prepared and enabled clocks
->=20
->  drivers/clk/clk-devres.c | 96 ++++++++++++++++++++++++++++++++++++++++--=
-------
->  include/linux/clk.h      | 90 ++++++++++++++++++++++++++++++++++++++++++=
-++-
->  2 files changed, 169 insertions(+), 17 deletions(-)
+                        Geert
 
-Best regards
-Uwe
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---yt4c5ea6o5vvs7cu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDWDvYACgkQwfwUeK3K
-7AlVZgf+IaVy0jXvnrb1R7iOX2vSxmgWoXuGFE87xgMQhGK4KsqAx+hbgk8lGxx9
-RgQSXmBFj6mxdQVbzCIRiYtN73AeUixQvZwc3pIPMRfYFDrrx+N5XvUkTWyvp3kj
-PKTkVEeVYXFZi48twlb9N/wqs8DIdDGNSR1Me1w6FIcASw2c9NfzF9+XJ/Eosi8F
-hDqlDlbcyXThL2rAvmckHnSKjY+8VUDGgPrQwipWqjM5GJeD0SH/zW5Dv42pUsop
-lduvdTFCazmNoDIuSwf/bHJs+RcWsVpHUMgghIAY2xCYvxf9Livj22/iHBdR80Zl
-O9XSiJAcEiz5iXzqI8k/9/JzM1CEXw==
-=UnMp
------END PGP SIGNATURE-----
-
---yt4c5ea6o5vvs7cu--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
