@@ -6,54 +6,63 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D6BC2B9F4
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 22:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CBCC2B9F4
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 22:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB4CF61942
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 22:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CE3661942
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 22:43:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhFYWoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 18:44:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33834 "EHLO mail.kernel.org"
+        id S229900AbhFYWpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 18:45:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229776AbhFYWox (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Jun 2021 18:44:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7DA0B6194D;
-        Fri, 25 Jun 2021 22:42:32 +0000 (UTC)
+        id S229831AbhFYWpt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Jun 2021 18:45:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 21369616EA;
+        Fri, 25 Jun 2021 22:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624660952;
-        bh=jBNRh5nIgcoO3D4kMdljIbRW/JHNlunnR/cmpWsnrMQ=;
+        s=k20201202; t=1624661008;
+        bh=/de/3Jjvke3M30kHHXuxaAjdDkct112Tu0T3BG3Ty4s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=E5EnB9hc2b/zIxr2kRJJKylm6zScSIx0NDwrlavMCz3Fq5WMci3Bvn1bsm72YvJo4
-         wNcC8AXi/uTaUssq/7d6JBhIkjcuupVrehD5eWPvRMCdYZ6e0Ieh65DWDxH9u+ZDcP
-         tmO7apBR6WjPJzkZiiZScUXMbj6hs0ToYjlnH8xbIr8KSlscHmDhrQtQ0vTs0amz4g
-         SmvyVn63Y1BDwneGXtKjdJRooNupwzbFPKQ7l5deskf/Xn1OAmblDH5957IeV8xseL
-         aa/UEzTilBxYVfLk9rLetIYdbrik4TGLL0LRAdysYdNgqqs9dBtMWW345v2DSvC1xr
-         Ek+JI90Q9jAPQ==
+        b=P+wOXjTYOb5FAP0ybMaMwxYGGIz7ZCFJ2vo2osPxrZpbNkjucjK5PVs+u0P5U9kwl
+         +tSs7fjE32oN7bsVmEni22ECY7JIzw2oD7GJchW4M5WyJ3/mkTfsP7VackMQSoe2Oy
+         DXgNZPZMYUDri97DM38+hOa0VBNeuXO60Cot1u02ZUroMo7UMRA4P7f5LYSC1gqoH/
+         dPWtzvC0WHMLc+9ELOL0zOnmvFD8M7qD7AGabEvTWpzCG0kT9BISSP5c/g6s/Tfwkt
+         DVBhe21Pp6lEaJUh8pKmZnCdLdzusKcckf8wy8vpvjmbfyUb4L6POayU2aD1Ud+QT/
+         H6huH2GPLjRZw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <14cb3b4da446f26a4780e0bd1b58788eb6085d05.1623414619.git.geert+renesas@glider.be>
-References: <14cb3b4da446f26a4780e0bd1b58788eb6085d05.1623414619.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] dt-bindings: clock: gpio-mux-clock: Convert to json-schema
+In-Reply-To: <46310530171886c6ccf4046518e07510274a506c.1623308843.git.geert+renesas@glider.be>
+References: <46310530171886c6ccf4046518e07510274a506c.1623308843.git.geert+renesas@glider.be>
+Subject: Re: [PATCH v6] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Sergej Sawazki <ce3a@gmx.de>
-Date:   Fri, 25 Jun 2021 15:42:31 -0700
-Message-ID: <162466095121.3259633.9785508230496915344@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 25 Jun 2021 15:43:26 -0700
+Message-ID: <162466100691.3259633.2764263798185965745@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-06-11 05:30:47)
-> Convert the simple GPIO clock multiplexer Device Tree binding
-> documentation to json-schema.
+Quoting Geert Uytterhoeven (2021-06-10 00:09:40)
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
 >=20
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
