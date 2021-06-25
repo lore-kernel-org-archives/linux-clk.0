@@ -2,117 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 076F0C49EA7
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 08:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D161C48BC2
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 09:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E270F61427
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 08:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8800961429
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 09:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231235AbhFYIny (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:43:54 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:34624 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbhFYInu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 04:43:50 -0400
-Received: from localhost (unknown [192.168.167.16])
-        by lucky1.263xmail.com (Postfix) with ESMTP id A8BDCFB012;
-        Fri, 25 Jun 2021 16:41:28 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P12363T139709942576896S1624610487434219_;
-        Fri, 25 Jun 2021 16:41:29 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <b971f916b4950e33201b82d57e8aa80f>
-X-RL-SENDER: jon.lin@rock-chips.com
-X-SENDER: jon.lin@rock-chips.com
-X-LOGIN-NAME: jon.lin@rock-chips.com
-X-FST-TO: linux-spi@vger.kernel.org
-X-RCPT-COUNT: 20
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-From:   Jon Lin <jon.lin@rock-chips.com>
-To:     linux-spi@vger.kernel.org
-Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: [RFC PATCH v9 10/10] arm64: dts: rockchip: Enable SFC for Odroid Go Advance
-Date:   Fri, 25 Jun 2021 16:41:25 +0800
-Message-Id: <20210625084125.13685-1-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210625084036.13464-1-jon.lin@rock-chips.com>
-References: <20210625084036.13464-1-jon.lin@rock-chips.com>
+        id S231194AbhFYJd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 05:33:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231153AbhFYJdy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Jun 2021 05:33:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C8A561409;
+        Fri, 25 Jun 2021 09:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624613494;
+        bh=5UbQZR17tJp53BrGZ4NHl6B3UZeI092/ppxOont8+ew=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CTRhkMuysRnuWtv196Qeo/uQ+7drKzqnsmBZevX3JK3mD3Fec2TLP7dV5VMz6TEoD
+         9YqxdZvADT35rRvNIWDIq2Y8ujk1EBvwT3ZfrWpzqzbnX4DFExO1CdJ/edEX7Z3ZJr
+         IQZqgyrNQyA0O7525vBxvZjIGdUkCZPC9NBLksmXOSn6vsR0rlhfAyeTEmgF6p/QDI
+         syMTcuDoovlvWw8CGPVZ1IT+8O4Dk512heNeYmO4IwISMbQ9kxkGsEqpTaMS3kcK6r
+         CqMR48SyJUtaZxlY6/qcUph99uKjFas83Aavhjch5FreCKACbt3gJsRwJ1iR5eORlV
+         dCpFnlQ2DqnPQ==
+Received: by pali.im (Postfix)
+        id F24DB60E; Fri, 25 Jun 2021 11:31:31 +0200 (CEST)
+Date:   Fri, 25 Jun 2021 11:31:31 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kbuild-all@lists.01.org, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 07/10] serial: mvebu-uart: implement UART clock driver
+ for configuring UART base clock
+Message-ID: <20210625093131.aicap7ah5odokjvf@pali>
+References: <20210624224909.6350-8-pali@kernel.org>
+ <202106251653.IbU5dy4V-lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202106251653.IbU5dy4V-lkp@intel.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chris Morgan <macromorgan@hotmail.com>
+On Friday 25 June 2021 16:15:38 kernel test robot wrote:
+> Hi "Pali,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on robh/for-next]
+> [also build test ERROR on tty/tty-testing clk/clk-next linus/master v5.13-rc7 next-20210624]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+> config: m68k-allmodconfig (attached as .config)
+> compiler: m68k-linux-gcc (GCC) 9.3.0
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # https://github.com/0day-ci/linux/commit/747483a6b8f2de98afe461dbf91227404a8e2e81
+>         git remote add linux-review https://github.com/0day-ci/linux
+>         git fetch --no-tags linux-review Pali-Roh-r/serial-mvebu-uart-Fixes-and-new-support-for-higher-baudrates/20210625-065146
+>         git checkout 747483a6b8f2de98afe461dbf91227404a8e2e81
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=m68k 
+> 
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    m68k-linux-ld: drivers/tty/serial/mvebu-uart.o: in function `mvebu_uart_clock_prepare':
+>    mvebu-uart.c:(.text+0x6d0): undefined reference to `__udivdi3'
+> >> m68k-linux-ld: mvebu-uart.c:(.text+0x78c): undefined reference to `__udivdi3'
 
-This enables the Rockchip Serial Flash Controller for the Odroid Go
-Advance. Note that while the attached SPI NOR flash and the controller
-both support quad read mode, only 2 of the required 4 pins are present.
-The rx and tx bus width is set to 2 for this reason.
+Hello! Could you help me how to fix this issue? I'm using macro
+DIV_ROUND_CLOSEST() with two u64 values in that function. And I really
+do not know details about m68k arch and I never touched this arch.
 
-Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
----
+There is missing number of line which caused this error. So if it is
+possible I have suggestion for bot to compile kernel with -g flag. In
+this case linker show exact line number (and not only hex address) which
+caused that linker error. Also in future it could help identify source
+of errors...
 
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-Changes in v1: None
+Anyway, driver is for Marvell Armada 3720 SoC which is arm64 so I did
+not think that somebody even try to compile it for m68k.
 
- .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-index 49c97f76df77..f78e11dd8447 100644
---- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-@@ -484,6 +484,22 @@
- 	status = "okay";
- };
- 
-+&sfc {
-+	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
-+	pinctrl-names = "default";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <108000000>;
-+		spi-rx-bus-width = <2>;
-+		spi-tx-bus-width = <2>;
-+	};
-+};
-+
- &tsadc {
- 	status = "okay";
- };
--- 
-2.17.1
-
+> 
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
 
