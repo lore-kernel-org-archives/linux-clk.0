@@ -2,78 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC68EC49EA7
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 15:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F268C48BC2
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 15:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8734C616E8
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 15:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710966193D
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jun 2021 15:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbhFYPPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jun 2021 11:15:05 -0400
-Received: from mail-ua1-f49.google.com ([209.85.222.49]:43620 "EHLO
-        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbhFYPPF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 11:15:05 -0400
-Received: by mail-ua1-f49.google.com with SMTP id f1so3670966uaj.10;
-        Fri, 25 Jun 2021 08:12:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jb52y/jRuefHz0+oSTJ2Jwp8OVTxytJKD9D+gi1Z+6c=;
-        b=srQsqUTyzSMlZfSiTqEsMSq/UuAfVyxHeJ6ts5r++snCe5x6yJLlE0cXi1q93viTWY
-         WeVwTyNwScF13+BWlvYpUZ9onZdn7wOItwliSyszey7WSNKKrauMpQEwliaFN8VFewWP
-         jVVxpjrPe3kRrvmbbrwmkPkzlUMVC85LreT4v/skMC3s6xY1zs56Bw5KnuRE+flMRUAd
-         +rS6nOq9pGZ+3uMojjv7CyyX+M/+0qgX3pRvbHypTzc5XXVkj0KNu3TctO47w/LH9Kfe
-         S+LU324FTFNz8QAr8Dc1GjnNCNTLxwZtIkl+glOQxZAcNQRQZ9R9ZWseMAyUMRGNr7fK
-         6Esg==
-X-Gm-Message-State: AOAM533rTB8qZjjZ9BKpa1SUVPUhwN35nSIOtBKdIBgTyQAY35zP19Oe
-        Zu2togusvjsehog3ZRA44kz638W7av6lseLZsnqveJPxH80=
-X-Google-Smtp-Source: ABdhPJykYdGUl3uiWzo/tA7jcUhLrKv0LFcWJPQ9Eo3ErWGL1Hs1iZCZoAFfJTWIzjzclLX4J02xqqGXDuR4p6mHrUE=
-X-Received: by 2002:ab0:1e4c:: with SMTP id n12mr11907922uak.58.1624633963114;
- Fri, 25 Jun 2021 08:12:43 -0700 (PDT)
+        id S229445AbhFYPWI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jun 2021 11:22:08 -0400
+Received: from out28-219.mail.aliyun.com ([115.124.28.219]:56018 "EHLO
+        out28-219.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229630AbhFYPWH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jun 2021 11:22:07 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437938|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.153526-0.00393891-0.842535;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047198;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KY-7FRG_1624634383;
+Received: from zhouyanjie-virtual-machine(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KY-7FRG_1624634383)
+          by smtp.aliyun-inc.com(10.147.40.44);
+          Fri, 25 Jun 2021 23:19:43 +0800
+Date:   Fri, 25 Jun 2021 23:19:42 +0800
+From:   =?UTF-8?B?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, linux-mips@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dongsheng.qiu@ingenic.com,
+        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
+        sihui.liu@ingenic.com, jun.jiang@ingenic.com,
+        sernia.zhou@foxmail.com
+Subject: Re: [PATCH v3 4/4] MIPS: CI20: Add second percpu timer for SMP.
+Message-ID: <20210625231942.32945490@zhouyanjie-virtual-machine>
+In-Reply-To: <5C99VQ.EJKI9MPO7XXO1@crapouillou.net>
+References: <1624547189-61079-1-git-send-email-zhouyanjie@wanyeetech.com>
+        <1624547189-61079-5-git-send-email-zhouyanjie@wanyeetech.com>
+        <5C99VQ.EJKI9MPO7XXO1@crapouillou.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20210624130240.17468-1-biju.das.jz@bp.renesas.com> <20210624130240.17468-11-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210624130240.17468-11-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 25 Jun 2021 17:12:31 +0200
-Message-ID: <CAMuHMdUnvPbMoU-ECuFksO0MJC0atJtunmr-dF+XBx9HAu1k0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] drivers: clk: renesas: r9a07g044-cpg: Add DMAC clocks/resets
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 3:03 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add DMAC clock and reset entries in CPG driver.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
->  * Updated reset entries
+Hi Paul,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+于 Fri, 25 Jun 2021 12:31:17 +0100
+Paul Cercueil <paul@crapouillou.net> 写道:
 
-Gr{oetje,eeting}s,
+> Hi Zhou,
+> 
+> Le jeu., juin 24 2021 at 23:06:29 +0800, 周琰杰 (Zhou Yanjie) 
+> <zhouyanjie@wanyeetech.com> a écrit :
+> > 1.Add a new TCU channel as the percpu timer of core1, this is to
+> >   prepare for the subsequent SMP support. The newly added channel
+> >   will not adversely affect the current single-core state.
+> > 2.Adjust the position of TCU node to make it consistent with the
+> >   order in jz4780.dtsi file.  
+> 
+> That's a bit superfluous, the order matters when adding new nodes,
+> but once they are added, moving them around only cause annoyance.
+> 
+> > 
+> > Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> > ---
+> > 
+> > Notes:
+> >     v2:
+> >     New patch.
+> > 
+> >     v2->v3:
+> >     No change.
+> > 
+> >  arch/mips/boot/dts/ingenic/ci20.dts | 21 +++++++++++----------
+> >  1 file changed, 11 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/arch/mips/boot/dts/ingenic/ci20.dts 
+> > b/arch/mips/boot/dts/ingenic/ci20.dts
+> > index 8877c62..70005cc 100644
+> > --- a/arch/mips/boot/dts/ingenic/ci20.dts
+> > +++ b/arch/mips/boot/dts/ingenic/ci20.dts
+> > @@ -118,6 +118,17 @@
+> >  	assigned-clock-rates = <48000000>;
+> >  };
+> > 
+> > +&tcu {
+> > +	/*
+> > +	 * 750 kHz for the system timers and 3 MHz for the
+> > clocksources,
+> > +	 * use channel #0 and #1 for the per cpu system timers,
+> > and use
+> > +	 * channel #2 for the clocksource.
+> > +	 */
+> > +	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu
+> > TCU_CLK_TIMER1>,
+> > +					  <&tcu TCU_CLK_TIMER2>,
+> > <&tcu TCU_CLK_OST>;
+> > +	assigned-clock-rates = <750000>, <750000>, <3000000>,
+> > <3000000>;  
+> 
+> Ideally you'd set TIMER1 to 3 MHz and TIMER2 to 750 kHz, otherwise it 
+> kind of breaks support for older kernels (they would still boot, but 
+> with a very slow clocksource). So in the new DTS you could use the 
+> timer0 clock for CPU #0, timer1 for the clocksource, and timer2+ for 
+> cpus > 0.
 
-                        Geert
+I checked the ingenic-timer driver, and it seems that the last TCU
+channel is always used as the clocksource in the driver, so it seems
+that we can only use timer2 as the clocksource in smp mode. Maybe we
+should add a note for smp is closed in the comment. And I found that I
+missed a problem, Nikolaus Schaller once reported that because the
+frequency of the tcu timer (only 16bit) used to provide the clocksource
+is too high, there will be a chance that the system will get stuck
+before the clocksource is switched to ost. And reducing the clocksource
+to 750kz can prevent it from happening. I will add this part to v4.
+When this part is added, both clockevent and clocksource will be
+750kHz, but the 750kHz clocksource is only temporary, because it will
+then switch to the clocksource provided by ost, and ost works at 3MHz.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks and best regards!
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Cheers,
+> -Paul
+> 
+> > +};
+> > +
+> >  &mmc0 {
+> >  	status = "okay";
+> > 
+> > @@ -522,13 +533,3 @@
+> >  		bias-disable;
+> >  	};
+> >  };
+> > -
+> > -&tcu {
+> > -	/*
+> > -	 * 750 kHz for the system timer and 3 MHz for the
+> > clocksource,
+> > -	 * use channel #0 for the system timer, #1 for the
+> > clocksource.
+> > -	 */
+> > -	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu
+> > TCU_CLK_TIMER1>,
+> > -					  <&tcu TCU_CLK_OST>;
+> > -	assigned-clock-rates = <750000>, <3000000>, <3000000>;
+> > -};
+> > --
+> > 2.7.4
+> >   
+> 
+
