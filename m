@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CE2C49EA6
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE56C49EAB
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A191561942
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 175B261607
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbhFZGVP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jun 2021 02:21:15 -0400
-Received: from out28-220.mail.aliyun.com ([115.124.28.220]:51869 "EHLO
-        out28-220.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbhFZGVO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 02:21:14 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.3751867|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0185906-0.00257291-0.978837;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047213;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KYGAXY7_1624688322;
+        id S230006AbhFZGVS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Jun 2021 02:21:18 -0400
+Received: from out28-77.mail.aliyun.com ([115.124.28.77]:59176 "EHLO
+        out28-77.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229975AbhFZGVR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 02:21:17 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1080104|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.142968-0.0102375-0.846795;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047211;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KYGAXY7_1624688322;
 Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KYGAXY7_1624688322)
           by smtp.aliyun-inc.com(10.147.41.143);
-          Sat, 26 Jun 2021 14:18:49 +0800
+          Sat, 26 Jun 2021 14:18:51 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
@@ -32,9 +32,9 @@ Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
         dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
         rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
         jun.jiang@ingenic.com, sernia.zhou@foxmail.com
-Subject: [PATCH v4 2/5] dt-bindings: clock: Add documentation for MAC PHY control bindings.
-Date:   Sat, 26 Jun 2021 14:18:38 +0800
-Message-Id: <1624688321-69131-3-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v4 4/5] MIPS: CI20: Reduce clocksource to 750 kHz.
+Date:   Sat, 26 Jun 2021 14:18:40 +0800
+Message-Id: <1624688321-69131-5-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
@@ -45,36 +45,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the CGU binding documentation, add mac-phy-ctrl as a
-pattern property.
+The original clock (3 MHz) is too fast for the clocksource,
+there will be a chance that the system may get stuck.
 
+Reported-by: Nikolaus Schaller <hns@goldelico.com>
+Tested-by: Nikolaus Schaller <hns@goldelico.com> # on CI20
 Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Acked-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Notes:
-    v3:
+    v4:
     New patch.
-    
-    v3->v4:
-    No change.
 
- Documentation/devicetree/bindings/clock/ingenic,cgu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/boot/dts/ingenic/ci20.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-index c65b945..ee9b5fb 100644
---- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-+++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-@@ -93,6 +93,8 @@ required:
- patternProperties:
-   "^usb-phy@[a-f0-9]+$":
-     allOf: [ $ref: "../phy/ingenic,phy-usb.yaml#" ]
-+  "^mac-phy-ctrl@[a-f0-9]+$":
-+    allOf: [ $ref: "../net/ingenic,mac.yaml#" ]
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index 8877c62..3a4eaf1 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -525,10 +525,10 @@
  
- additionalProperties: false
- 
+ &tcu {
+ 	/*
+-	 * 750 kHz for the system timer and 3 MHz for the clocksource,
++	 * 750 kHz for the system timer and clocksource,
+ 	 * use channel #0 for the system timer, #1 for the clocksource.
+ 	 */
+ 	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
+ 					  <&tcu TCU_CLK_OST>;
+-	assigned-clock-rates = <750000>, <3000000>, <3000000>;
++	assigned-clock-rates = <750000>, <750000>, <3000000>;
+ };
 -- 
 2.7.4
 
