@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EFBC49EAB
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975B6C49EA7
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C163461923
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7952F61920
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbhFZIQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jun 2021 04:16:15 -0400
+        id S229744AbhFZIQS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Jun 2021 04:16:18 -0400
 Received: from relmlor2.renesas.com ([210.160.252.172]:46969 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229518AbhFZIQO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 04:16:14 -0400
+        by vger.kernel.org with ESMTP id S229518AbhFZIQR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 04:16:17 -0400
 X-IronPort-AV: E=Sophos;i="5.83,301,1616425200"; 
-   d="scan'208";a="85483255"
+   d="scan'208";a="85483258"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2021 17:13:52 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2021 17:13:54 +0900
 Received: from localhost.localdomain (unknown [10.226.92.16])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E697D4008552;
-        Sat, 26 Jun 2021 17:13:49 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8735840037CD;
+        Sat, 26 Jun 2021 17:13:52 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -35,9 +35,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 01/10] drivers: clk: renesas: renesas-rzg2l-cpg: Add multi clock PM support
-Date:   Sat, 26 Jun 2021 09:13:35 +0100
-Message-Id: <20210626081344.5783-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 02/10] drivers: clk: renesas: r9a07g044-cpg: Rename divider table
+Date:   Sat, 26 Jun 2021 09:13:36 +0100
+Message-Id: <20210626081344.5783-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210626081344.5783-1-biju.das.jz@bp.renesas.com>
 References: <20210626081344.5783-1-biju.das.jz@bp.renesas.com>
@@ -45,98 +45,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add multi clock PM support for cpg driver.
+As per RZ/G2L HW Manual (Rev.0.50), CPG_PL3A_DDIV,CPG_PL3B_DDIV
+and CPG_PL2_DDIV(for P0) shares same divider table entries. Rename
+clk_div_table dtable_3b to clk_div_table dtable_1_32 so that it
+can be reused.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v3->v4
- * No change.
+ * No change
 v2->v3
- * No change.
-v1->v2:
- * Added Geert's Rb tag.
+ * Channged the divider table name to dtable_1_32.
+ * Added Geert's Rb tag
+v2:
+  * New patch
 ---
- drivers/clk/renesas/renesas-rzg2l-cpg.c | 51 ++++++++++++++-----------
- 1 file changed, 29 insertions(+), 22 deletions(-)
+ drivers/clk/renesas/r9a07g044-cpg.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-index 1452881b4123..892392b9e0b2 100644
---- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
-+++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
-@@ -586,42 +586,49 @@ static int rzg2l_cpg_attach_dev(struct generic_pm_domain *unused, struct device
- {
- 	struct device_node *np = dev->of_node;
- 	struct of_phandle_args clkspec;
-+	bool once = true;
- 	struct clk *clk;
- 	int error;
- 	int i = 0;
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 50b5269586a4..d5803fb1242e 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -42,12 +42,13 @@ enum clk_ids {
+ };
  
- 	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
- 					   &clkspec)) {
--		if (rzg2l_cpg_is_pm_clk(&clkspec))
--			goto found;
--
--		of_node_put(clkspec.np);
-+		if (rzg2l_cpg_is_pm_clk(&clkspec)) {
-+			if (once) {
-+				once = false;
-+				error = pm_clk_create(dev);
-+				if (error) {
-+					of_node_put(clkspec.np);
-+					goto err;
-+				}
-+			}
-+			clk = of_clk_get_from_provider(&clkspec);
-+			of_node_put(clkspec.np);
-+			if (IS_ERR(clk)) {
-+				error = PTR_ERR(clk);
-+				goto fail_destroy;
-+			}
-+
-+			error = pm_clk_add_clk(dev, clk);
-+			if (error) {
-+				dev_err(dev, "pm_clk_add_clk failed %d\n",
-+					error);
-+				goto fail_put;
-+			}
-+		} else {
-+			of_node_put(clkspec.np);
-+		}
- 		i++;
- 	}
+ /* Divider tables */
+-static const struct clk_div_table dtable_3b[] = {
++static const struct clk_div_table dtable_1_32[] = {
+ 	{0, 1},
+ 	{1, 2},
+ 	{2, 4},
+ 	{3, 8},
+ 	{4, 32},
++	{0, 0},
+ };
  
- 	return 0;
+ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+@@ -72,10 +73,10 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+ 	/* Core output clk */
+ 	DEF_FIXED("I", R9A07G044_CLK_I, CLK_PLL1, 1, 1),
+ 	DEF_DIV("P0", R9A07G044_CLK_P0, CLK_PLL2_DIV16, DIVPL2A,
+-		dtable_3b, CLK_DIVIDER_HIWORD_MASK),
++		dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+ 	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV20, 1, 1),
+ 	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV8,
+-		DIVPL3B, dtable_3b, CLK_DIVIDER_HIWORD_MASK),
++		DIVPL3B, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+ };
  
--found:
--	clk = of_clk_get_from_provider(&clkspec);
--	of_node_put(clkspec.np);
--
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	error = pm_clk_create(dev);
--	if (error)
--		goto fail_put;
--
--	error = pm_clk_add_clk(dev, clk);
--	if (error)
--		goto fail_destroy;
--
--	return 0;
-+fail_put:
-+	clk_put(clk);
- 
- fail_destroy:
- 	pm_clk_destroy(dev);
--fail_put:
--	clk_put(clk);
-+err:
- 	return error;
- }
- 
+ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
 -- 
 2.17.1
 
