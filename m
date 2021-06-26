@@ -2,111 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CA7C49EBC
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B682CC49EA6
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B597261607
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 06:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 946D061923
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbhFZGVV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jun 2021 02:21:21 -0400
-Received: from out28-97.mail.aliyun.com ([115.124.28.97]:45760 "EHLO
-        out28-97.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229987AbhFZGVS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 02:21:18 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07512549|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.191992-0.0014541-0.806554;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047188;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KYGAXY7_1624688322;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KYGAXY7_1624688322)
-          by smtp.aliyun-inc.com(10.147.41.143);
-          Sat, 26 Jun 2021 14:18:53 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        sboyd@kernel.org, paul@crapouillou.net, robh+dt@kernel.org
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
-        jun.jiang@ingenic.com, sernia.zhou@foxmail.com
-Subject: [PATCH v4 5/5] MIPS: CI20: Add second percpu timer for SMP.
-Date:   Sat, 26 Jun 2021 14:18:41 +0800
-Message-Id: <1624688321-69131-6-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S229630AbhFZIQN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Jun 2021 04:16:13 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:46969 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229518AbhFZIQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 04:16:12 -0400
+X-IronPort-AV: E=Sophos;i="5.83,301,1616425200"; 
+   d="scan'208";a="85483250"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2021 17:13:49 +0900
+Received: from localhost.localdomain (unknown [10.226.92.16])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 21F1440037CD;
+        Sat, 26 Jun 2021 17:13:46 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 00/10] Update clock definitions
+Date:   Sat, 26 Jun 2021 09:13:34 +0100
+Message-Id: <20210626081344.5783-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-1.Add a new TCU channel as the percpu timer of core1, this is to
-  prepare for the subsequent SMP support. The newly added channel
-  will not adversely affect the current single-core state.
-2.Adjust the position of TCU node to make it consistent with the
-  order in jz4780.dtsi file.
+This patch series aims to update clock and reset definitions as per
+RZ/G2L_clock_list_r02_02.xlsx and RZ/G2L HW(Rev.0.50) manual.
 
-Tested-by: Nikolaus Schaller <hns@goldelico.com> # on CI20
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
+As per this, we need to separate resets from module clocks in order to
+handle it efficiently.
 
-Notes:
-    v2:
-    New patch.
-    
-    v2->v3:
-    No change.
-    
-    v3->v4:
-    Improve TCU related notes.
+Added support for multi clock PM support and updated clock driver enties.
 
- arch/mips/boot/dts/ingenic/ci20.dts | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+This patch series is tested with USB Host, USB Device, I2C, DMAC and SSI.
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 3a4eaf1..61c153b 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -118,6 +118,20 @@
- 	assigned-clock-rates = <48000000>;
- };
- 
-+&tcu {
-+	/*
-+	 * 750 kHz for the system timers and clocksource,
-+	 * use channel #0 and #1 for the per cpu system timers,
-+	 * and use channel #2 for the clocksource.
-+	 *
-+	 * 3000 kHz for the OST timer to provide a higher
-+	 * precision clocksource.
-+	 */
-+	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
-+					  <&tcu TCU_CLK_TIMER2>, <&tcu TCU_CLK_OST>;
-+	assigned-clock-rates = <750000>, <750000>, <750000>, <3000000>;
-+};
-+
- &mmc0 {
- 	status = "okay";
- 
-@@ -522,13 +536,3 @@
- 		bias-disable;
- 	};
- };
--
--&tcu {
--	/*
--	 * 750 kHz for the system timer and clocksource,
--	 * use channel #0 for the system timer, #1 for the clocksource.
--	 */
--	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
--					  <&tcu TCU_CLK_OST>;
--	assigned-clock-rates = <750000>, <750000>, <3000000>;
--};
+This patch series is based on [1] and [2]
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=renesas-clk-for-v5.15
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git/
+
+v3->v4:
+ * Fixed the code comment onoff to bit.
+v2->v3
+ * Improved clk/reset code as per Geert's suggestion.
+ * Added Geert's Rb tag
+
+v1->v2
+ * Updated reset entries
+ * Added Geert's Rb tag for multi clock PM support.
+
+v1:
+ * https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=503135
+
+
+Biju Das (10):
+  drivers: clk: renesas: renesas-rzg2l-cpg: Add multi clock PM support
+  drivers: clk: renesas: r9a07g044-cpg: Rename divider table
+  drivers: clk: renesas: r9a07g044-cpg: Fix P1 Clock
+  drivers: clk: renesas: r9a07g044-cpg: Add P2 Clock support
+  dt-bindings: clk: r9a07g044-cpg: Update clock/reset definitions
+  drivers: clk: renesas: r9a07g044-cpg: Update {GIC,IA55,SCIF}
+    clock/reset entries
+  arm64: dts: renesas: r9a07g044: Update SCIF0 clock/reset
+  drivers: clk: renesas: r9a07g044-cpg: Add I2C clocks/resets
+  drivers: clk: renesas: r9a07g044-cpg: Add DMAC clocks/resets
+  arm64: dts: renesas: r9a07g044: Add I2C nodes
+
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi |  84 +++++++-
+ drivers/clk/renesas/r9a07g044-cpg.c        |  99 ++++++---
+ drivers/clk/renesas/renesas-rzg2l-cpg.c    | 110 +++++-----
+ drivers/clk/renesas/renesas-rzg2l-cpg.h    |  37 +++-
+ include/dt-bindings/clock/r9a07g044-cpg.h  | 236 ++++++++++++++++-----
+ 5 files changed, 419 insertions(+), 147 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
