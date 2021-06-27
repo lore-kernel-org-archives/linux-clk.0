@@ -2,121 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDACC49EAF
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 05:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4829C49EAB
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 18:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4807061C49
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 05:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB06E61864
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 18:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbhF0FU2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 01:20:28 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:34083 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229472AbhF0FU2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 01:20:28 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A133D58079F;
-        Sun, 27 Jun 2021 01:18:04 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 27 Jun 2021 01:18:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=G
-        wO9YFcvq0p05jwynGkzc5BMfPPFWUI5rALwMlauuEw=; b=Yw7RWUYJ3xyfUlXsN
-        1LD6kZWfY09nctzLxkZ+FL9DfnpOfquMcw8pfphWog+v3MqssQw8panEhZa+Vxi7
-        AUr1VLfoYJThEKCya1a7n0daxYRQPQR73lMqv00LSHh07t/xfrXImA5Hjuo27HvX
-        qpqQOv3WiSU62mnH8trLtrvQ2ri/9xb7ZBTUnQqQzyG7irU1tvQIQh1f19ePi+iG
-        /lp11NhTnC9wca5C3wuZ58tre/xCREcd7p6NhXoAjnBRbTnuEF4LX9fb7gSio+XT
-        2BQhPJ30T03b/LRpKaQLTSkRH8b453A0b9M+l3l7ShTElafFo5ixOWL8EXHexhKx
-        432SA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=GwO9YFcvq0p05jwynGkzc5BMfPPFWUI5rALwMlauu
-        Ew=; b=YLbIOUbXLZc8AqFxAto8j2nVl2G2XqPzrYdxSxjejwDkfP5i1xpEBhkpq
-        pF/2RlVS6Mf5GvSdAfU5MSnfai+iYRGtXSNT3hISzkDNbrPQaxHQ5236aC6kpyT6
-        /uxNziQMhUC2H2lru/k3Z/4BOIsK0iFmvOIDntfej5kocRJm9afLvvze0XRWoxtq
-        /eq4jerAC4AfkHhYQrJan7IRemJC90h0D0Y/6IkxLy58lfLwcwx81wcNT4pMuSCs
-        EK4zqH5KRQRXd/YAKX4/rVkteaWiG5A8PEegB8lrAW7hv63QKVppdCbKxSdKaGma
-        KMOzmFqMJ7KLi4PBpPJxGmOu1DAOA==
-X-ME-Sender: <xms:CwrYYDMOT2sTktKm0aC02IhcXzXeN3Iy9ssRWkmTPRFXLVskaouyVA>
-    <xme:CwrYYN_5ZFAgGOWh39fTTi-P94zdLACrqxI7BAFEp68HsGoXU_QR2P7KeZLj9nmiI
-    yGbX7E2mJ4kB_hwyzQ>
-X-ME-Received: <xmr:CwrYYCQWcaabpvPHMnqg5Jv8bn4gmfm_REPH9u5nYjDgCZy5beAtcn56qTvUdDlDnaEOLA_EQhHwzdIVIrCT3w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeehuddgjeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtke
-    ertddtfeftnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghn
-    ghesfhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepfeeludeitddvkeffge
-    fgueekjeegfeefteelgffhkeffueetieejgeehhfeuffdvnecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhi
-    hgohgrthdrtghomh
-X-ME-Proxy: <xmx:CwrYYHsxHl7xZJ4Ynn3UMgxpmKQ2bSFGC2E2-8KzSQmGot9T8ZT8Og>
-    <xmx:CwrYYLdX97Zxjxt_Dw7abTEpnrpI9wnPDebZh83jdhfr8rUgalReYQ>
-    <xmx:CwrYYD1fuS8X7tTSjfrUqmIgNFpI5GRh2paFbQOZh0Lca8DdSJVYLg>
-    <xmx:DArYYP6m3sr-N0PUK88ENcRstBYAnVcmV8fnnJVS1eqLdx_EfHBxrg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 27 Jun 2021 01:17:59 -0400 (EDT)
-Subject: Re: [PATCH 9/9] MIPS: Make a alias for pistachio_defconfig
-To:     linux-mips@vger.kernel.org
-Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
-        vkoul@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-References: <20210627045631.2882-1-jiaxun.yang@flygoat.com>
- <20210627045631.2882-10-jiaxun.yang@flygoat.com>
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Message-ID: <1db3e2dd-5874-e1b2-d9b1-da08844edaeb@flygoat.com>
-Date:   Sun, 27 Jun 2021 13:17:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231335AbhF0S6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 14:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60928 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231288AbhF0S6J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 14:58:09 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7777AC061574;
+        Sun, 27 Jun 2021 11:55:44 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id a5-20020a7bc1c50000b02901e3bbe0939bso9518943wmj.0;
+        Sun, 27 Jun 2021 11:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gAa5Undjg/T4By4J3ChgR8S1R2CwQn5rJM130hj+4IU=;
+        b=XemtwnJbPpP0NOMZzTrA3shACUa65X54mPuEkDUh8iaDyMRSFHyhbxXSjrMDcxiIv+
+         o1cAJngN7q5x2XRCk5vOHaCzR6ak2Sc/q8rIIpndyoTOy936Cm5a8rvZSZChrHHv2rlk
+         3CIKhnSYQFCQAOBKqcObHIUJ+am/EaF17wwMhaJm61TMo2tQeudJEw61VBEIR8wVlAo2
+         b/7/tKwdDv/5e01//eUV2Iigkd8nlXrYdSzkxWkJljRsEGxlE8uuUOZQ73KoCNvTmpKo
+         rDup3Jp9ZQzbuZjxdGRRUZ1oSkUEr6HM3jI7D31y5YY2Qgway4Q+pnBBBz5g7wn0z4VB
+         LR0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gAa5Undjg/T4By4J3ChgR8S1R2CwQn5rJM130hj+4IU=;
+        b=tm3f943Mi2WPYqfq6rbXmJNMeSD9I5QgpOrk19VKyk8oCSOmQqIyX5dw7VpXgKKgyf
+         SOYd5Gj4zSkU6nRpWy4LMnp6pnB9cGrHYzBo6uZouB7tyXY5P8NSgFwEwaOz7ifqntGJ
+         yqG+yVgPqpuqJgj8DfnZl4mDIxDs5GfxnN85Tds6/f9ty2APMEDloy2Ylm9o6aS1vlLA
+         9yfKUcI8fYvISLcjRQWaWegMOsFXNzqAV4HjuDzZATLqdIwy6bJSjfBwZvXxZ5aBoroU
+         tGAGCXGSqEoe62Ul1lct4dEw1yYPMH/HbMAaoecODKHia/bVz+nhd5P0j0RLnP/4Re4z
+         Pkeg==
+X-Gm-Message-State: AOAM530xlUyVeytEZ7xLV6M2e7FeRmo+dmynOJKYgGTqtBW8K0N20d12
+        +AN+d91UHyRlLN2oLn2M6qw=
+X-Google-Smtp-Source: ABdhPJwCOasxxJ/1Eing5sMd4n9+hul0QWT3erZJKRhPWVyx8HuMQDZzLJVf0bEVIe8l8TyC5952uw==
+X-Received: by 2002:a7b:cb55:: with SMTP id v21mr21489340wmj.19.1624820143108;
+        Sun, 27 Jun 2021 11:55:43 -0700 (PDT)
+Received: from localhost (178-169-161-196.razgrad.ddns.bulsat.com. [178.169.161.196])
+        by smtp.gmail.com with ESMTPSA id r6sm5931826wmq.37.2021.06.27.11.55.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Jun 2021 11:55:42 -0700 (PDT)
+From:   Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Subject: [PATCH v2 0/2] Add GCC for SM4250/6115
+Date:   Sun, 27 Jun 2021 21:55:36 +0300
+Message-Id: <20210627185538.690277-1-iskren.chernev@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210627045631.2882-10-jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch adds support for the Global Clock Controller on QCom SM4250 and
+SM6115, codename bengal. The code is taken from OnePlus repo [1]. The two
+platforms are identical so there is only one compat string.
 
-ÔÚ 2021/6/27 ÏÂÎç12:56, Jiaxun Yang Ð´µÀ:
-> For those who miss the old defconfig, make a alias to generic
-> kernel.
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->   arch/mips/Makefile | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-> index 258234c35a09..9713f8d2fc99 100644
-> --- a/arch/mips/Makefile
-> +++ b/arch/mips/Makefile
-> @@ -563,6 +563,9 @@ sead3micro_defconfig-y		:= micro32r2el_defconfig BOARDS=sead-3
->   legacy_defconfigs		+= xilfpga_defconfig
->   xilfpga_defconfig-y		:= 32r2el_defconfig BOARDS=xilfpga
->   
-> +legacy_defconfigs		+= pistachio_defconfig
-> +xilfpga_defconfig-y		:= 32r2el_defconfig BOARDS=marduk
+[1]: https://github.com/OnePlusOSS/android_kernel_oneplus_sm4250
 
-oops... Typo...
+v1: https://lkml.org/lkml/2021/6/22/1131
 
-Will fix in next reversion.
+Changes from v1:
+- remove sm4250 compat, there will be a single sm6115.dtsi for both platforms
 
-Thanks.
+Iskren Chernev (2):
+  dt-bindings: clk: qcom: gcc-sm6115: Document SM6115 GCC
+  clk: qcom: Add Global Clock controller (GCC) driver for SM6115
+
+ .../bindings/clock/qcom,gcc-sm6115.yaml       |   72 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-sm6115.c                 | 3623 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm6115.h   |  201 +
+ 5 files changed, 3904 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
 
 
-- Jiaxun
+base-commit: e71e3a48a7e89fa71fb70bf4602367528864d2ff
+--
+2.32.0
 
-> +
->   .PHONY: $(legacy_defconfigs)
->   $(legacy_defconfigs):
->   	$(Q)$(MAKE) -f $(srctree)/Makefile $($@-y)
