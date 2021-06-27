@@ -2,137 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65D3C49EA6
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 18:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903F9C48BC2
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 22:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6F2261C2A
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 18:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6613961C17
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 22:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbhF0TCJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 15:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33728 "EHLO
+        id S231742AbhF0Wmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 18:42:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbhF0TCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 15:02:07 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23C93C061574;
-        Sun, 27 Jun 2021 11:59:42 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id u8so4618176wrq.8;
-        Sun, 27 Jun 2021 11:59:42 -0700 (PDT)
+        with ESMTP id S231737AbhF0Wmp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 18:42:45 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D2F0C061574;
+        Sun, 27 Jun 2021 15:40:19 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id h2so22699224edt.3;
+        Sun, 27 Jun 2021 15:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KnnXMNSnCQFUApM8UzwSAzj60/BQdxg5lHcpdV/aFz8=;
-        b=kEg1z5gWa7pXTahuHHV5bjVvQly6SlLrWW2gyrB9+umJZPXleboR5PF8F49kn2p6qz
-         PnWhrtUrMkms15RNOsrZOM3Yit5gsbqaOy7vE8L7DUGc2oQUTwFj856opxe7XtL+0grG
-         pjS+9FUcJeV2Iurhz4xPSg9G2oQLeyxRo5hMnh0fIw5Cu4jJ7XHBDJIe+WBR3MkLiofd
-         JnqZIGOKsDV4nD0qXGGzEer2vXZuJIoQ/4gFyYfwsUSG1J0eaNAJSi4uBxHcT2CAzEDj
-         VW6gNA/2OIAamtm1RzQC0TeDT6ubCUMK7fDhEu4HhPVjHLlw6RQ4a2NbRdv5woD7YhWI
-         M8ZA==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=slZufKqFz802FONUtf3n7bSuBW3tmbUsPHVs2VZ3Gpo=;
+        b=SazL/ovzGjBiHJSJupDWYJeQNxRVlPb5+n/A+KqsCEeC5RJETZVjm/4mgLrooh9Lis
+         8K8Bj+EQ+YWkSwlZRGAYlEPLSfjgfQvCujONP/rFvbRb6skQc5pNX20RXLQLd09kinKc
+         FVNjy69epxNbFTa7fmIdnEsRe/b+tnzHilil8qeSGBsTCshAZvc+nbCcxzvLKDQtyjSS
+         xmkEIUHgSUh3+QSCoJyV3GONRvWIsDjNFqoMlqGcjSsl2TJFH4Udej3WFde02aC2ZfFX
+         /Bo8yh1ofynHaIhLRYQ4WQlKDYTctK9epnsYJYUY0ye89Mfn+MGMTKpexXGmYf6dRSsN
+         punA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KnnXMNSnCQFUApM8UzwSAzj60/BQdxg5lHcpdV/aFz8=;
-        b=m4qAJEvCdp2xZRZEDVwtcHAzJTnv9hk4kWkXu9c8EV1wffNxZzPWbPq1pkcU3hO8b/
-         8QcePSHzy67oyopMLTeUQi7qp9OcR5sDMBMaKhNPrN+AyRonqcyxe6FMrmaVamtKRmZo
-         MwM+xAUjjZSZbtnMMwz5axDD7AVkaWRJkmFR8JzFWJZkHbBPvoNbJZ33+TKGT3RwcYWF
-         LZZ0eea1Ph7aPo3VLZxLLC8eWsO8NByUgC5JLeG5sym4RJTwt9Sa1jJxTfukGS+WBJ4A
-         QJBuqwKq37oL/5/49hrSEq1Nv9d3E9tN6P8v4v3FHpERR0EQwWXWMaGbQ0N83n2ciQMy
-         ljMg==
-X-Gm-Message-State: AOAM530QH7FCOOunj6qJPFwRCjMec8fUcZ0/PFPHdcNvgB0+qpCGEHsW
-        IebDSaO0jns081Kq8Ez80us=
-X-Google-Smtp-Source: ABdhPJwnCX+kkMYiigu3NyEa2TjiBgYjLk+R4TNWEa1tjyLI+2QJezS549G5rHAMl9xz4lLgnp2iaA==
-X-Received: by 2002:a05:6000:10c8:: with SMTP id b8mr22416445wrx.383.1624820380781;
-        Sun, 27 Jun 2021 11:59:40 -0700 (PDT)
-Received: from localhost (178-169-161-196.razgrad.ddns.bulsat.com. [178.169.161.196])
-        by smtp.gmail.com with ESMTPSA id t9sm4629168wrq.92.2021.06.27.11.59.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Jun 2021 11:59:40 -0700 (PDT)
-From:   Iskren Chernev <iskren.chernev@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Iskren Chernev <iskren.chernev@gmail.com>
-Subject: [PATCH v2 5/5] drivers: soc: qcom: rpmpd: Add SM6115 RPM Power Domains
-Date:   Sun, 27 Jun 2021 21:59:27 +0300
-Message-Id: <20210627185927.695411-6-iskren.chernev@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=slZufKqFz802FONUtf3n7bSuBW3tmbUsPHVs2VZ3Gpo=;
+        b=Nkp4Qa9aGYf0EtavM+r3d5csuHI/hjkw71up1esdNMCsI58GZd3oBIP10+3uviyaXI
+         jIfdStCi951OYX+HWoqM1y8Q1NG+HvuGpako9oD4IOfQ0W7SCLWWkzckWTBrSx0u9uGz
+         NyrLQaFUqK5wzfYeHs0ZM9baJq1xbvEvkAr1unqOcgJcOJoxVUNHsuDVxHLflqPZX9hm
+         cArJmsMppA5/m2z5vCn6rtmHRwyLnodpw8HPX4uAxV/fvW2FGwsOqHEd4qL4nrEhTO3x
+         JyYExwHty5F2pRg0zIx1VajyAnJKOsUmPE9xDj5pUPDpb3/IjXrztVjCOCXhjKBiPCKN
+         Facg==
+X-Gm-Message-State: AOAM533oowyodO4/5gFJmwxBxFJyjim5YsbD4n6QglLu+iskICNvlPCj
+        a9706uTXCm5MZtrdJnMGgs8=
+X-Google-Smtp-Source: ABdhPJzt1v9sSB4xUUvLiesCnMrJogU+eJY3qTDriqZKqVfH0fvh3LB3+vQc4Emf2P62YNJ38JVMWA==
+X-Received: by 2002:aa7:d554:: with SMTP id u20mr4057983edr.50.1624833617828;
+        Sun, 27 Jun 2021 15:40:17 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a01-0c23-bd64-8b00-f22f-74ff-fe21-0725.c23.pool.telefonica.de. [2a01:c23:bd64:8b00:f22f:74ff:fe21:725])
+        by smtp.googlemail.com with ESMTPSA id jz27sm6048861ejc.33.2021.06.27.15.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jun 2021 15:40:17 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/3] clk: meson: rounding for fast clocks on 32-bit SoCs
+Date:   Mon, 28 Jun 2021 00:39:56 +0200
+Message-Id: <20210627223959.188139-1-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210627185927.695411-1-iskren.chernev@gmail.com>
-References: <20210627185927.695411-1-iskren.chernev@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SM4250/6115 have 4 rpm power domains, ported from downstream DT.
+On the 32-bit Amlogic Meson8/8b/8m2 SoCs we run into a problem with the
+fast HDMI PLL and it's OD (post-dividers). This clock tree can run at
+up to approx. 3GHz.
+This however causes a problem, because these rates require BIT(31) to
+be usable. Unfortunately this is not the case with clk_ops.round_rate
+on 32-bit systems. BIT(31) is reserved for the sign (+ or -).
 
-Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
----
- drivers/soc/qcom/rpmpd.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+clk_ops.determine_rate does not suffer from this limitation. It uses
+an int to signal any errors and can then take all available 32 bits for
+the clock rate.
 
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 0b532a892d60..dbf494e92574 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -346,6 +346,33 @@ static const struct rpmpd_desc sdm660_desc = {
- 	.max_state = RPM_SMD_LEVEL_TURBO,
- };
- 
-+/* sm4250/6115 RPM Power domains */
-+DEFINE_RPMPD_PAIR(sm6115, vddcx, vddcx_ao, RWCX, LEVEL, 0);
-+DEFINE_RPMPD_VFL(sm6115, vddcx_vfl, RWCX, 0);
-+
-+DEFINE_RPMPD_PAIR(sm6115, vddmx, vddmx_ao, RWMX, LEVEL, 0);
-+DEFINE_RPMPD_VFL(sm6115, vddmx_vfl, RWMX, 0);
-+
-+DEFINE_RPMPD_LEVEL(sm6115, vdd_lpi_cx, RWLC, 0);
-+DEFINE_RPMPD_LEVEL(sm6115, vdd_lpi_mx, RWLM, 0);
-+
-+static struct rpmpd *sm6115_rpmpds[] = {
-+	[SM6115_VDDCX] =		&sm6115_vddcx,
-+	[SM6115_VDDCX_AO] =		&sm6115_vddcx_ao,
-+	[SM6115_VDDCX_VFL] =		&sm6115_vddcx_vfl,
-+	[SM6115_VDDMX] =		&sm6115_vddmx,
-+	[SM6115_VDDMX_AO] =		&sm6115_vddmx_ao,
-+	[SM6115_VDDMX_VFL] =		&sm6115_vddmx_vfl,
-+	[SM6115_VDD_LPI_CX] =		&sm6115_vdd_lpi_cx,
-+	[SM6115_VDD_LPI_MX] =		&sm6115_vdd_lpi_mx,
-+};
-+
-+static const struct rpmpd_desc sm6115_desc = {
-+	.rpmpds = sm6115_rpmpds,
-+	.num_pds = ARRAY_SIZE(sm6115_rpmpds),
-+	.max_state = RPM_SMD_LEVEL_TURBO_NO_CPR,
-+};
-+
- static const struct of_device_id rpmpd_match_table[] = {
- 	{ .compatible = "qcom,mdm9607-rpmpd", .data = &mdm9607_desc },
- 	{ .compatible = "qcom,msm8916-rpmpd", .data = &msm8916_desc },
-@@ -356,6 +383,7 @@ static const struct of_device_id rpmpd_match_table[] = {
- 	{ .compatible = "qcom,msm8998-rpmpd", .data = &msm8998_desc },
- 	{ .compatible = "qcom,qcs404-rpmpd", .data = &qcs404_desc },
- 	{ .compatible = "qcom,sdm660-rpmpd", .data = &sdm660_desc },
-+	{ .compatible = "qcom,sm6115-rpmpd", .data = &sm6115_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpmpd_match_table);
+Changes since v1 from [0]:
+- reworked the first patch so the the existing
+  divider_{ro_}round_rate_parent implementations are using the new
+  divider_{ro_}determine_rate implementations to avoid code duplication
+  (thanks Jerome for the suggestion)
+- added a patch to switch the default clk_divider_{ro_}ops to use
+  .determine_rate instead of .round_rate as suggested by Jerome
+  (thanks)
+- dropped a patch for the Meson PLL ops as these are independent from
+  the divider patches and Jerome has applied that one directly (thanks)
+- added Jerome's Reviewed-by to the meson clk-regmap patch (thanks!)
+- dropped the RFC prefix
+
+Changes since v2 from [1]:
+- Added Jerome's Reviewed-by to patches 1 and 2 (thank you!)
+- fixed typo in the cover letter (availble -> available)
+
+
+[0] https://patchwork.kernel.org/project/linux-clk/cover/20210517203724.1006254-1-martin.blumenstingl@googlemail.com/
+[1] https://patchwork.kernel.org/project/linux-clk/cover/20210524103733.554878-1-martin.blumenstingl@googlemail.com/
+
+
+Martin Blumenstingl (3):
+  clk: divider: Add re-usable determine_rate implementations
+  clk: divider: Switch from .round_rate to .determine_rate by default
+  clk: meson: regmap: switch to determine_rate for the dividers
+
+ drivers/clk/clk-divider.c      | 93 +++++++++++++++++++++++++---------
+ drivers/clk/meson/clk-regmap.c | 19 ++++---
+ include/linux/clk-provider.h   |  6 +++
+ 3 files changed, 85 insertions(+), 33 deletions(-)
+
 -- 
 2.32.0
 
