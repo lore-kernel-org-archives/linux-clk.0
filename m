@@ -2,105 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F25C49EA6
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819AEC48BC2
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 04:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDE7E6192F
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jun 2021 08:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56EDA619F1
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 04:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbhFZIQe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jun 2021 04:16:34 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:46969 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229635AbhFZIQe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jun 2021 04:16:34 -0400
-X-IronPort-AV: E=Sophos;i="5.83,301,1616425200"; 
-   d="scan'208";a="85483292"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2021 17:14:12 +0900
-Received: from localhost.localdomain (unknown [10.226.92.16])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3C08C400389B;
-        Sat, 26 Jun 2021 17:14:10 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 09/10] drivers: clk: renesas: r9a07g044-cpg: Add DMAC clocks/resets
-Date:   Sat, 26 Jun 2021 09:13:43 +0100
-Message-Id: <20210626081344.5783-10-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210626081344.5783-1-biju.das.jz@bp.renesas.com>
-References: <20210626081344.5783-1-biju.das.jz@bp.renesas.com>
+        id S229534AbhF0E7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 00:59:13 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:40977 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229519AbhF0E7N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 00:59:13 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 633CB5807B0;
+        Sun, 27 Jun 2021 00:56:49 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sun, 27 Jun 2021 00:56:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm2; bh=OEzigg4+BoMPxsyoPsKvBQuXau
+        nF/DeXQiUJoqVNnGg=; b=ZzhTi7PWoalGaRkNmj4TNmwp+GyvJC1wVlMyZvGZbS
+        3FQHepYOSaREV6SWKRbqJjb+du7LOnvtCQ8NbRH3AvbnJ9XE+V40fPoj29f/F1xU
+        u3F/CRdCDLqhxBecGgZadXMk2AnZE979jOkOWXyPS4UasCYYBwVqPuRcE1WCLXi/
+        GIf67jWx8iyURz3NNX4i5AJ0Ugw5iuk1pYZneR+po9NRtM2n/jOifDba6+hn3N5R
+        I7yHz3YS37l3AbH4IBBUj/kp0e667QHHPTppVyyPnChSE5UZnoUZh2HZ7xTPolyK
+        t2gKaf4DVmELtBonu3NFhPzzloh4IA2sA0kxECsMS54w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=OEzigg4+BoMPxsyoP
+        sKvBQuXaunF/DeXQiUJoqVNnGg=; b=aiI2vGZl0DEOtYORnQ7gnZwWOIXdbacN0
+        MvjTFf2MYWr2SQ5iPtRUeGyjvGugvb7X5KPumHgT2GVcQMr4ev8wr3gX0umD15uh
+        bU2JP0ErmQua1dx/0fIUAPwWaiMLfOfwBDz+YSQhGiTXGBjs2BJyyCwZKNZUnsf+
+        u3qfEWdC5TuoFm3KQcfZHrOSGXVLpiPWvXyO/YvUSrEgtcmessV/unESf0pZkscx
+        Wx/TfNBmhhwb4gcHvyQfbub6fL+j/4qXmtsRfcXVcXQIDgUcews+GV08ajhdznih
+        GiHzrOEmS+3cRWBgRw/r0da68e9fM/fh4Z9XawGLVVnqCCuiSAAgQ==
+X-ME-Sender: <xms:EAXYYDAXl0bL-S3T0-tqW-TL5TEHRyAZDFVgS-zsxQUu9dDNH8-z_w>
+    <xme:EAXYYJgbYBU3eC_Y9svrHJLwUs8RVEuNCG-iZhn5cequ6WuigHPxVBENsgB7-vGb9
+    ZqY0Qrkdqb1OPzEM5E>
+X-ME-Received: <xmr:EAXYYOmnNqqoOpdJMFleiPLPEP0Org9Ynp7x8Y0dMQTLotn4I62b4t4qDwGM8E9hbQrj3a89GqA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeehuddgjeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
+    dttdenucfhrhhomheplfhirgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehf
+    lhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpefhjedtkedtueehtdeifeetke
+    evffetjeetfeegkeevgefftedvudfgleeihfdtudenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorg
+    htrdgtohhm
+X-ME-Proxy: <xmx:EAXYYFxA0LFQvwZP1rNzZeZ0gQBHm2W35kqSXn-UygMFqFGQJ8zRkw>
+    <xmx:EAXYYITTkShcHWtc_grNQEIkS8t-Mojh0uSopXsp29t9_UtuLy6M_Q>
+    <xmx:EAXYYIZDtkA2YTKCYXg0e336aUm20qYA7hx-vKqVstigWo3Kjd76qA>
+    <xmx:EQXYYNJO5Fj3kYT1hU07ISgqcWtMwIVLVidaufjjzE5E7KLnC_mJEw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 27 Jun 2021 00:56:41 -0400 (EDT)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 0/9] MIPS: Migrate pistachio to generic kernel
+Date:   Sun, 27 Jun 2021 12:56:22 +0800
+Message-Id: <20210627045631.2882-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DMAC clock and reset entries in CPG driver.
+I'm lucky enough to get a Creator CI40 board from dusts.
+This patchset move it to gerneic kernel to reduce maintenance burden.
+It have been tested with SD Card boot.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->v4:
- * No change
-v2->v3:
- * Added Geert's Rb tag.
-v1->v2:
- * Updated reset entries
----
- drivers/clk/renesas/r9a07g044-cpg.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Jiaxun Yang (9):
+  MIPS: generic: Allow generating FIT image for Marduk board
+  MIPS: DTS: Pistachio add missing cpc and cdmm
+  clk: pistachio: Make it selectable for generic MIPS kernel
+  clocksource/drivers/pistachio: Make it seletable for MIPS
+  phy: pistachio-usb: Depend on MIPS || COMPILE_TEST
+  pinctrl: pistachio: Make it as a option
+  MIPS: config: generic: Add config for Marduk board
+  MIPS: Retire MACH_PISTACHIO
+  MIPS: Make a alias for pistachio_defconfig
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index b39a36b317fd..5d81e59f5cfe 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -37,6 +37,7 @@ enum clk_ids {
- 	CLK_PLL5,
- 	CLK_PLL5_DIV2,
- 	CLK_PLL6,
-+	CLK_P1_DIV2,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -79,6 +80,7 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV20, 1, 1),
- 	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
- 		DIVPL3B, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
-+	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
- 	DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2,
- 		DIVPL3A, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
- };
-@@ -90,6 +92,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x518, 0),
- 	DEF_MOD("ia55_clk",	R9A07G044_IA55_CLK, R9A07G044_CLK_P1,
- 				0x518, 1),
-+	DEF_MOD("dmac_aclk",	R9A07G044_DMAC_ACLK, R9A07G044_CLK_P1,
-+				0x52c, 0),
-+	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
-+				0x52c, 1),
- 	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
- 				0x580, 0),
- 	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
-@@ -116,6 +122,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
- 	DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
- 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
-+	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
-+	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
- 	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
- 	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
+ arch/mips/Kbuild.platforms                    |   1 -
+ arch/mips/Kconfig                             |  29 --
+ arch/mips/Makefile                            |   3 +
+ arch/mips/boot/dts/Makefile                   |   2 +-
+ arch/mips/boot/dts/img/Makefile               |   3 +-
+ arch/mips/boot/dts/img/pistachio.dtsi         |  10 +
+ arch/mips/configs/generic/board-marduk.config |  53 +++
+ arch/mips/configs/pistachio_defconfig         | 316 ------------------
+ arch/mips/generic/Kconfig                     |   6 +
+ arch/mips/generic/Platform                    |   1 +
+ arch/mips/generic/board-marduk.its.S          |  22 ++
+ arch/mips/pistachio/Kconfig                   |  14 -
+ arch/mips/pistachio/Makefile                  |   2 -
+ arch/mips/pistachio/Platform                  |   6 -
+ arch/mips/pistachio/init.c                    | 125 -------
+ arch/mips/pistachio/irq.c                     |  24 --
+ arch/mips/pistachio/time.c                    |  55 ---
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/pistachio/Kconfig                 |   8 +
+ drivers/clocksource/Kconfig                   |   3 +-
+ drivers/phy/Kconfig                           |   2 +-
+ drivers/pinctrl/Kconfig                       |   5 +-
+ 23 files changed, 114 insertions(+), 579 deletions(-)
+ create mode 100644 arch/mips/configs/generic/board-marduk.config
+ delete mode 100644 arch/mips/configs/pistachio_defconfig
+ create mode 100644 arch/mips/generic/board-marduk.its.S
+ delete mode 100644 arch/mips/pistachio/Kconfig
+ delete mode 100644 arch/mips/pistachio/Makefile
+ delete mode 100644 arch/mips/pistachio/Platform
+ delete mode 100644 arch/mips/pistachio/init.c
+ delete mode 100644 arch/mips/pistachio/irq.c
+ delete mode 100644 arch/mips/pistachio/time.c
+ create mode 100644 drivers/clk/pistachio/Kconfig
+
 -- 
-2.17.1
+2.32.0
 
