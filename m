@@ -2,151 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FFCC49EAB
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 22:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E56BC49EB9
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 23:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCB1261C32
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 22:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC91261C51
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Jun 2021 23:38:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231881AbhF0Wms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 18:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231818AbhF0Wmr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 18:42:47 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91FC2C061574;
-        Sun, 27 Jun 2021 15:40:21 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id t3so22637733edc.7;
-        Sun, 27 Jun 2021 15:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1RGvFAm9Ts+UzLEA4XCpJmqflkt+KrOpeV6KcGxPufo=;
-        b=lx2WKNqvydIxgPqbA9zQ9ngA2x1DrB09LYObbLZfVaFLrAo7/hK0BuEwpdUQXFwwAc
-         eWtg17oO5QFwAAnoP5Aa/zmODTUvlZLnWrv778ysdLrO7G9eUgsE4SM727kwmnUbrILb
-         Nv3PhnBLvgygh2rAOFCI+oJ01xV/pDTBYlq6QKBS67G6/jsGPjWiBvDhCp5MORh17mGf
-         AbnY8YXD8PVw50EO9EuefIT45qeIzdcJOnvzDU9j3NNtSSyV/R2BlUgUyQPMXbjwD6II
-         8KtTlAJm3+5UPu4Dmf/nrqgf6LVWEuVW1hYa0gzi44319BkFbM9lM/STIH2tkfnNIeaH
-         VfXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1RGvFAm9Ts+UzLEA4XCpJmqflkt+KrOpeV6KcGxPufo=;
-        b=MnUZ6lW1fjxfC0fE+So0SdP0hpsEsCn8kMrzGWUzX24b190UxAccyRFrzBpfvrI2bu
-         s3rn8FhIcoX9Kky3sa+tkELnqB+9H+MNVrdbB1y/a6ln0jRpZdwOHxxi9RPfXqk0LxXF
-         1iwkuE3IZMHNvKulk9e++QdR1iee2+5rLi7mRF6vr5cCkr73LhWVojAauQhChkxM4Suq
-         remqCqiBj2Z1vAhn/pYD5h12Lyn4kOZlqRlXm1B3Bk0uYdyz8IGJjzSXQ7mwdn7cNA0R
-         KbegTaYUFuW4EQVkKXLQEJrvtbCZuz0m7EhXbKWDycVYpkVyXz4sExILwa9KngVnMPOf
-         +7gw==
-X-Gm-Message-State: AOAM531OpamddxY/NCD9c7AEByNoW2BlEdsqsSBjjkiuK4lT8BofxClO
-        nHEfn20QB2ZZJgAgTswhoxg=
-X-Google-Smtp-Source: ABdhPJwtBJNk1GE9pddy37EiixHhFNKzp8fbC0MRAbqMv+j7mhB9VGsAF3sYuSOdKXVboJ25Up0Vpg==
-X-Received: by 2002:aa7:c845:: with SMTP id g5mr29233940edt.306.1624833620156;
-        Sun, 27 Jun 2021 15:40:20 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a01-0c23-bd64-8b00-f22f-74ff-fe21-0725.c23.pool.telefonica.de. [2a01:c23:bd64:8b00:f22f:74ff:fe21:725])
-        by smtp.googlemail.com with ESMTPSA id jz27sm6048861ejc.33.2021.06.27.15.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jun 2021 15:40:19 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 3/3] clk: meson: regmap: switch to determine_rate for the dividers
-Date:   Mon, 28 Jun 2021 00:39:59 +0200
-Message-Id: <20210627223959.188139-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210627223959.188139-1-martin.blumenstingl@googlemail.com>
-References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com>
+        id S231704AbhF0XlP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 19:41:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231491AbhF0XlP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 19:41:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 92AAE6161E;
+        Sun, 27 Jun 2021 23:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624837130;
+        bh=lenqMCekltDX+AqjNhd4JqLUZdEG+Ux+jyQjI5v5huI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=jaZVw/TjdAeOh/2jAk4WhKHFhMjAGvUf86jBRnDRkR/jEDNzTsK77UOyarfX89h4V
+         X9DqNoC0n5e35VsFbj8h3BKLdtB93RQSzqOC3Iu+hYohijhD9K9YduwCS0hn/QEIKM
+         6qh876xSLr4e5mPDIM9UfvSzm77vfH+nwcgQEICFGQ2S8vKcqq4ZWmx+feItoTkdNQ
+         XiUNPCQzH/GxiXqJGJB8gOIovctHeWIWy6DOw22pDm/aYvYt2wOydWsgc3brAXU4vr
+         iPJOMG5SVhiW8idUi6G0sfbaLOlbwPv/O5iOwNA4gce9I5Ju19Q14+jRRb+3Q+15KG
+         gTBbmljy7GgoA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210627045631.2882-4-jiaxun.yang@flygoat.com>
+References: <20210627045631.2882-1-jiaxun.yang@flygoat.com> <20210627045631.2882-4-jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH 3/9] clk: pistachio: Make it selectable for generic MIPS kernel
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org
+Date:   Sun, 27 Jun 2021 16:38:49 -0700
+Message-ID: <162483712923.3259633.15640278024587375157@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This increases the maxmium supported frequency on 32-bit systems from
-2^31 (signed long as used by clk_ops.round_rate, maximum value:
-approx. 2.14GHz) to 2^32 (unsigned long as used by
-clk_ops.determine_rate, maximum value: approx. 4.29GHz).
-On Meson8/8b/8m2 the HDMI PLL and it's OD (post-dividers) are
-capable of running at up to 2.97GHz. So switch the divider
-implementation in clk-regmap to clk_ops.determine_rate to support these
-higher frequencies on 32-bit systems.
+Quoting Jiaxun Yang (2021-06-26 21:56:25)
+> diff --git a/drivers/clk/pistachio/Kconfig b/drivers/clk/pistachio/Kconfig
+> new file mode 100644
+> index 000000000000..efb7a7f45259
+> --- /dev/null
+> +++ b/drivers/clk/pistachio/Kconfig
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +config COMMON_CLK_PISTACHIO
+> +       bool "Support for IMG Pistachio SoC clock controllers"
+> +       depends on MIPS
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/clk-regmap.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Is anything MIPS specific? Or can this be=20
 
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index dcd1757cc5df..8ad8977cf1c2 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -75,8 +75,8 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
- 				   div->width);
- }
- 
--static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *prate)
-+static int clk_regmap_div_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-@@ -87,18 +87,17 @@ static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (div->flags & CLK_DIVIDER_READ_ONLY) {
- 		ret = regmap_read(clk->map, div->offset, &val);
- 		if (ret)
--			/* Gives a hint that something is wrong */
--			return 0;
-+			return ret;
- 
- 		val >>= div->shift;
- 		val &= clk_div_mask(div->width);
- 
--		return divider_ro_round_rate(hw, rate, prate, div->table,
--					     div->width, div->flags, val);
-+		return divider_ro_determine_rate(hw, req, div->table,
-+						 div->width, div->flags, val);
- 	}
- 
--	return divider_round_rate(hw, rate, prate, div->table, div->width,
--				  div->flags);
-+	return divider_determine_rate(hw, req, div->table, div->width,
-+				      div->flags);
- }
- 
- static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -123,14 +122,14 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- const struct clk_ops clk_regmap_divider_ops = {
- 	.recalc_rate = clk_regmap_div_recalc_rate,
--	.round_rate = clk_regmap_div_round_rate,
-+	.determine_rate = clk_regmap_div_determine_rate,
- 	.set_rate = clk_regmap_div_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
- 
- const struct clk_ops clk_regmap_divider_ro_ops = {
- 	.recalc_rate = clk_regmap_div_recalc_rate,
--	.round_rate = clk_regmap_div_round_rate,
-+	.determine_rate = clk_regmap_div_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
- 
--- 
-2.32.0
+	depends on MIPS || COMPILE_TEST
 
+
+> +       help
+> +         Support for the IMG Pistachio SoC clock controller.
+> +         Say Y if you want to include clock support.
+> \ No newline at end of file
+> --=20
+> 2.32.0
+>
