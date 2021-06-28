@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F133C11F6F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 18:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED75FC11F6B
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 18:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 528EC61C7B
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 18:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6FF661C89
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 18:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234680AbhF1SXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jun 2021 14:23:32 -0400
-Received: from out28-99.mail.aliyun.com ([115.124.28.99]:43652 "EHLO
-        out28-99.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234627AbhF1SX2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jun 2021 14:23:28 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2811473|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00620392-0.000189541-0.993607;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047190;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.KZOO9TY_1624904444;
+        id S234166AbhF1SXb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jun 2021 14:23:31 -0400
+Received: from out28-170.mail.aliyun.com ([115.124.28.170]:45601 "EHLO
+        out28-170.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233739AbhF1SXX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jun 2021 14:23:23 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437116|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0041116-0.000363272-0.995525;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.KZOO9TY_1624904444;
 Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KZOO9TY_1624904444)
           by smtp.aliyun-inc.com(10.147.42.253);
-          Tue, 29 Jun 2021 02:20:59 +0800
+          Tue, 29 Jun 2021 02:20:55 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
@@ -32,9 +32,9 @@ Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
         aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
         sihui.liu@ingenic.com, jun.jiang@ingenic.com,
         sernia.zhou@foxmail.com
-Subject: [PATCH v5 08/11] dt-bindings: clock: Add JZ4775 clock bindings.
-Date:   Tue, 29 Jun 2021 02:20:41 +0800
-Message-Id: <1624904444-2618-9-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v5 05/11] clk: Ingenic: Add missing clocks for Ingenic SoCs.
+Date:   Tue, 29 Jun 2021 02:20:38 +0800
+Message-Id: <1624904444-2618-6-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1624904444-2618-1-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1624904444-2618-1-git-send-email-zhouyanjie@wanyeetech.com>
@@ -45,84 +45,281 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the clock bindings for the JZ4775 SoC from Ingenic.
+Add CIM, AIC, DMIC, I2S clocks for the X1000 SoC and the
+X1830 SoC from Ingenic.
 
 Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 ---
 
 Notes:
-    v5:
-    New patch.
+    v1->v2:
+    Add I2S clock for X1000.
+    
+    v2->v3:
+    Correct the comment in x1000-cgu.c, change it from
+    "Custom (SoC-specific) OTG PHY" to "Custom (SoC-specific)",
+    since there is more than just the "OTG PHY" clock.
+    
+    v3->v4:
+    No change.
+    
+    v4->v5:
+    1.Change X1000's I2S clock to CGU_CLK_PLL as Paul Cercueil's suggestion
+    2.Add I2S clock for X1830.
 
- include/dt-bindings/clock/jz4775-cgu.h | 59 ++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 include/dt-bindings/clock/jz4775-cgu.h
+ drivers/clk/ingenic/x1000-cgu.c | 88 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ingenic/x1830-cgu.c | 90 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 178 insertions(+)
 
-diff --git a/include/dt-bindings/clock/jz4775-cgu.h b/include/dt-bindings/clock/jz4775-cgu.h
-new file mode 100644
-index 00000000..8c2af69
---- /dev/null
-+++ b/include/dt-bindings/clock/jz4775-cgu.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,jz4775-cgu DT binding.
-+ *
-+ * They are roughly ordered as:
-+ *   - external clocks
-+ *   - PLLs
-+ *   - muxes/dividers in the order they appear in the jz4775 programmers manual
-+ *   - gates in order of their bit in the CLKGR* registers
-+ */
+diff --git a/drivers/clk/ingenic/x1000-cgu.c b/drivers/clk/ingenic/x1000-cgu.c
+index 53e5fe0..59b16a6 100644
+--- a/drivers/clk/ingenic/x1000-cgu.c
++++ b/drivers/clk/ingenic/x1000-cgu.c
+@@ -60,6 +60,54 @@
+ 
+ static struct ingenic_cgu *cgu;
+ 
++static void x1000_i2s_calc_m_n(const struct ingenic_cgu_pll_info *pll_info,
++		       unsigned long rate, unsigned long parent_rate,
++		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
++{
++	unsigned int delta, m, n;
++	u64 curr_delta, curr_m, curr_n;
 +
-+#ifndef __DT_BINDINGS_CLOCK_JZ4775_CGU_H__
-+#define __DT_BINDINGS_CLOCK_JZ4775_CGU_H__
++	if ((parent_rate % rate == 0) && ((parent_rate / rate) > 1)) {
++		m = 1;
++		n = parent_rate / rate;
++		goto out;
++	}
 +
-+#define JZ4775_CLK_EXCLK		0
-+#define JZ4775_CLK_RTCLK		1
-+#define JZ4775_CLK_APLL			2
-+#define JZ4775_CLK_MPLL			3
-+#define JZ4775_CLK_OTGPHY		4
-+#define JZ4775_CLK_SCLKA		5
-+#define JZ4775_CLK_UHC			6
-+#define JZ4775_CLK_UHCPHY		7
-+#define JZ4775_CLK_CPUMUX		8
-+#define JZ4775_CLK_CPU			9
-+#define JZ4775_CLK_L2CACHE		10
-+#define JZ4775_CLK_AHB0			11
-+#define JZ4775_CLK_AHB2PMUX		12
-+#define JZ4775_CLK_AHB2			13
-+#define JZ4775_CLK_PCLK			14
-+#define JZ4775_CLK_DDR			15
-+#define JZ4775_CLK_VPU			16
-+#define JZ4775_CLK_OTG			17
-+#define JZ4775_CLK_EXCLK_DIV2	18
-+#define JZ4775_CLK_I2S			19
-+#define JZ4775_CLK_LCD			20
-+#define JZ4775_CLK_MSCMUX		21
-+#define JZ4775_CLK_MSC0			22
-+#define JZ4775_CLK_MSC1			23
-+#define JZ4775_CLK_MSC2			24
-+#define JZ4775_CLK_SSI			25
-+#define JZ4775_CLK_CIM0			26
-+#define JZ4775_CLK_CIM1			27
-+#define JZ4775_CLK_PCM			28
-+#define JZ4775_CLK_BCH			29
-+#define JZ4775_CLK_EXCLK_DIV512	30
-+#define JZ4775_CLK_RTC			31
-+#define JZ4775_CLK_NEMC			32
-+#define JZ4775_CLK_I2C0			33
-+#define JZ4775_CLK_I2C1			34
-+#define JZ4775_CLK_I2C2			35
-+#define JZ4775_CLK_SADC			36
-+#define JZ4775_CLK_UART0		37
-+#define JZ4775_CLK_UART1		38
-+#define JZ4775_CLK_UART2		39
-+#define JZ4775_CLK_UART3		40
-+#define JZ4775_CLK_PDMA			41
-+#define JZ4775_CLK_MAC			42
++	delta = rate;
 +
-+#endif /* __DT_BINDINGS_CLOCK_JZ4775_CGU_H__ */
++	/*
++	 * The length of M is 9 bits, its value must be between 1 and 511.
++	 * The length of N is 13 bits, its value must be between 2 and 8191,
++	 * and must not be less than 2 times of the value of M.
++	 */
++	for (curr_m = 511; curr_m >= 1; curr_m--) {
++		curr_n = parent_rate * curr_m;
++		curr_delta = do_div(curr_n, rate);
++
++		if (curr_n < 2 * curr_m || curr_n > 8191)
++			continue;
++
++		if (curr_delta == 0)
++			break;
++
++		if (curr_delta < delta) {
++			m = curr_m;
++			n = curr_n;
++			delta = curr_delta;
++		}
++	}
++
++out:
++	*pm = m;
++	*pn = n;
++
++	/*
++	 * The I2S PLL does not have OD bits, so set the *pod to 1 to ensure
++	 * that the ingenic_pll_calc() in cgu.c can run properly.
++	 */
++	*pod = 1;
++}
++
+ static unsigned long x1000_otg_phy_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+@@ -227,6 +275,27 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		},
+ 	},
+ 
++	[X1000_CLK_I2S] = {
++		"i2s", CGU_CLK_PLL,
++		.parents = { X1000_CLK_EXCLK, X1000_CLK_SCLKA, -1, X1000_CLK_MPLL },
++		.pll = {
++			.reg = CGU_REG_I2SCDR,
++			.rate_multiplier = 1,
++			.mux_shift = 30,
++			.mux_bits = 2,
++			.m_shift = 13,
++			.m_bits = 9,
++			.m_offset = 0,
++			.n_shift = 0,
++			.n_bits = 13,
++			.n_offset = 0,
++			.bypass_bit = -1,
++			.enable_bit = 29,
++			.stable_bit = -1,
++			.calc_m_n_od = x1000_i2s_calc_m_n,
++		},
++	},
++
+ 	/* Custom (SoC-specific) OTG PHY */
+ 
+ 	[X1000_CLK_OTGPHY] = {
+@@ -359,6 +428,13 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.mux = { CGU_REG_SSICDR, 30, 1 },
+ 	},
+ 
++	[X1000_CLK_CIM] = {
++		"cim", CGU_CLK_MUX | CGU_CLK_DIV,
++		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
++		.mux = { CGU_REG_CIMCDR, 31, 1 },
++		.div = { CGU_REG_CIMCDR, 0, 1, 8, 29, 28, 27 },
++	},
++
+ 	[X1000_CLK_EXCLK_DIV512] = {
+ 		"exclk_div512", CGU_CLK_FIXDIV,
+ 		.parents = { X1000_CLK_EXCLK },
+@@ -410,6 +486,12 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.gate = { CGU_REG_CLKGR, 9 },
+ 	},
+ 
++	[X1000_CLK_AIC] = {
++		"aic", CGU_CLK_GATE,
++		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 11 },
++	},
++
+ 	[X1000_CLK_UART0] = {
+ 		"uart0", CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
+@@ -428,6 +510,12 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.gate = { CGU_REG_CLKGR, 16 },
+ 	},
+ 
++	[X1000_CLK_DMIC] = {
++		"dmic", CGU_CLK_GATE,
++		.parents = { X1000_CLK_PCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 17 },
++	},
++
+ 	[X1000_CLK_TCU] = {
+ 		"tcu", CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
+diff --git a/drivers/clk/ingenic/x1830-cgu.c b/drivers/clk/ingenic/x1830-cgu.c
+index 59342bc..cfb0314 100644
+--- a/drivers/clk/ingenic/x1830-cgu.c
++++ b/drivers/clk/ingenic/x1830-cgu.c
+@@ -54,6 +54,54 @@
+ 
+ static struct ingenic_cgu *cgu;
+ 
++static void x1830_i2s_calc_m_n(const struct ingenic_cgu_pll_info *pll_info,
++		       unsigned long rate, unsigned long parent_rate,
++		       unsigned int *pm, unsigned int *pn, unsigned int *pod)
++{
++	unsigned int delta, m, n;
++	u64 curr_delta, curr_m, curr_n;
++
++	if ((parent_rate % rate == 0) && ((parent_rate / rate) > 1)) {
++		m = 1;
++		n = parent_rate / rate;
++		goto out;
++	}
++
++	delta = rate;
++
++	/*
++	 * The length of M is 9 bits, its value must be between 1 and 511.
++	 * The length of N is 20 bits, its value must be between 2 and 1048575,
++	 * and must not be less than 2 times of the value of M.
++	 */
++	for (curr_m = 511; curr_m >= 1; curr_m--) {
++		curr_n = parent_rate * curr_m;
++		curr_delta = do_div(curr_n, rate);
++
++		if (curr_n < 2 * curr_m || curr_n > 1048575)
++			continue;
++
++		if (curr_delta == 0)
++			break;
++
++		if (curr_delta < delta) {
++			m = curr_m;
++			n = curr_n;
++			delta = curr_delta;
++		}
++	}
++
++out:
++	*pm = m;
++	*pn = n;
++
++	/*
++	 * The I2S PLL does not have OD bits, so set the *pod to 1 to ensure
++	 * that the ingenic_pll_calc() in cgu.c can run properly.
++	 */
++	*pod = 1;
++}
++
+ static int x1830_usb_phy_enable(struct clk_hw *hw)
+ {
+ 	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
+@@ -201,6 +249,28 @@ static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
+ 		},
+ 	},
+ 
++	[X1830_CLK_I2S] = {
++		"i2s", CGU_CLK_PLL,
++		.parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
++					 X1830_CLK_VPLL, X1830_CLK_EPLL },
++		.pll = {
++			.reg = CGU_REG_I2SCDR,
++			.rate_multiplier = 1,
++			.mux_shift = 30,
++			.mux_bits = 2,
++			.m_shift = 20,
++			.m_bits = 9,
++			.m_offset = 0,
++			.n_shift = 0,
++			.n_bits = 20,
++			.n_offset = 0,
++			.bypass_bit = -1,
++			.enable_bit = 29,
++			.stable_bit = -1,
++			.calc_m_n_od = x1830_i2s_calc_m_n,
++		},
++	},
++
+ 	/* Custom (SoC-specific) OTG PHY */
+ 
+ 	[X1830_CLK_OTGPHY] = {
+@@ -328,6 +398,14 @@ static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
+ 		.mux = { CGU_REG_SSICDR, 29, 1 },
+ 	},
+ 
++	[X1830_CLK_CIM] = {
++		"cim", CGU_CLK_MUX | CGU_CLK_DIV,
++		.parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
++					 X1830_CLK_VPLL, X1830_CLK_EPLL },
++		.mux = { CGU_REG_CIMCDR, 30, 2 },
++		.div = { CGU_REG_CIMCDR, 0, 1, 8, 29, 28, 27 },
++	},
++
+ 	[X1830_CLK_EXCLK_DIV512] = {
+ 		"exclk_div512", CGU_CLK_FIXDIV,
+ 		.parents = { X1830_CLK_EXCLK },
+@@ -385,6 +463,18 @@ static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
+ 		.gate = { CGU_REG_CLKGR0, 9 },
+ 	},
+ 
++	[X1830_CLK_AIC] = {
++		"aic", CGU_CLK_GATE,
++		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR0, 11 },
++	},
++
++	[X1830_CLK_DMIC] = {
++		"dmic", CGU_CLK_GATE,
++		.parents = { X1830_CLK_PCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR0, 12 },
++	},
++
+ 	[X1830_CLK_UART0] = {
+ 		"uart0", CGU_CLK_GATE,
+ 		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
 -- 
 2.7.4
 
