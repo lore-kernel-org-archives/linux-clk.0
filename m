@@ -7,56 +7,54 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E69BC48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27375C48BC2
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63B0F61C31
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05D4061C2F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbhF1DEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 23:04:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        id S232065AbhF1DE6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 23:04:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232024AbhF1DEx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 23:04:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5C55161C2A;
-        Mon, 28 Jun 2021 03:02:28 +0000 (UTC)
+        id S232024AbhF1DE6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 23:04:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BE2D361C2A;
+        Mon, 28 Jun 2021 03:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624849348;
-        bh=EkAiXzeW+4dFW8D0Ni+CY38WnLjnmxb9TuHgFo20sLY=;
+        s=k20201202; t=1624849353;
+        bh=mmF0naHe+YSuxHB55a8Wfhc5PaQmsVsOBnuwplZ3Fsc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ouJog4cp/HN8TDAjGmzjMOYnJxk7QrTr/FE4rWqkr6a3tIqbugTPTSAbieuIQILRD
-         9W1C2xhC6crhr97QKPRMt3lDwLsR37zd5w3y9BjobHlUIA0m1QFSpV8+DsHsILGq8V
-         /X9HIlbIEMVHb+jabQnUS40Wu+wqK3NX7f+BJdrIO6QCXnQI5bfU3QfJvPFHh+0Hk3
-         PoFKpDhU7KGg7DI9CtOZtiQmTm8KGDyxCqdO7nCoVtEA10qXi6p19qwQ7+UkQL2L1Q
-         XEA0g5gJN92uJ7ETgzsyxgkqP5bcT3ualFw+jpUt688Cve0DuJMWBe4t/Kz7Af7wcJ
-         nMyC5oBKuYVdA==
+        b=ohJy8C+TYtF0GVt4OnuDHN0cHp2S8N1XPugax+aCmvKFaVCr1ykUKUnKSBgpG9bEd
+         i6Omax7BGHhjzymYA3xmKdbzX7v3fO4ojRGgAyvw0q7fz9S5i2bIZpqtjWRrUh4KRO
+         ZCNw5EBOuotPL8zeLNsm2ydkNkdrMUm2SSD/U+SOP7IaXDxCB1N4WVMILUsaa2xSZZ
+         VBV7GqGYn76Z7/8TkRpGevblWN1CpnZSD7CtXOxyGcUAOga2CfyjW6yp/J5wvOAFgJ
+         VFUTBlboZbAkZnOR9jfU5x3W3kAx3MCB7nxFFrtv3F10HZYiK9mg87KxW3d6pMXcRB
+         Mv+B7xMky2jIA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210325192643.2190069-3-robert.hancock@calian.com>
-References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-3-robert.hancock@calian.com>
-Subject: Re: [PATCH v3 2/9] clk: si5341: Wait for DEVICE_READY on startup
+In-Reply-To: <20210325192643.2190069-4-robert.hancock@calian.com>
+References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-4-robert.hancock@calian.com>
+Subject: Re: [PATCH v3 3/9] clk: si5341: Avoid divide errors due to bogus register contents
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     mike.looijmans@topic.nl, robh+dt@kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Robert Hancock <robert.hancock@calian.com>
 To:     Robert Hancock <robert.hancock@calian.com>, mturquette@baylibre.com
-Date:   Sun, 27 Jun 2021 20:02:27 -0700
-Message-ID: <162484934724.2516444.644192914368553549@swboyd.mtv.corp.google.com>
+Date:   Sun, 27 Jun 2021 20:02:32 -0700
+Message-ID: <162484935268.2516444.4701585275304414826@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Robert Hancock (2021-03-25 12:26:36)
-> The Si5341 datasheet warns that before accessing any other registers,
-> including the PAGE register, we need to wait for the DEVICE_READY register
-> to indicate the device is ready, or the process of the device loading its
-> state from NVM can be corrupted. Wait for DEVICE_READY on startup before
-> continuing initialization. This is done using a raw I2C register read
-> prior to setting up regmap to avoid any potential unwanted automatic PAGE
-> register accesses from regmap at this stage.
+Quoting Robert Hancock (2021-03-25 12:26:37)
+> If the Si5341 is being initially programmed and has no stored NVM
+> configuration, some of the register contents may contain unexpected
+> values, such as zeros, which could cause divide by zero errors during
+> driver initialization. Trap errors caused by zero registers or zero clock
+> rates which could result in divide errors later in the code.
 >=20
 > Fixes: 3044a860fd ("clk: Add Si5341/Si5340 driver")
 > Signed-off-by: Robert Hancock <robert.hancock@calian.com>
