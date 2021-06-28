@@ -2,95 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F04C48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 00:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF51C48BC2
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 00:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B799A61C35
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 00:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D82961C35
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 00:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231707AbhF1AbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 20:31:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231689AbhF1AbA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 20:31:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E950561C35;
-        Mon, 28 Jun 2021 00:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624840116;
-        bh=WaSz+8DMaDc+JD17Y6WPciY50zdTWdGuyQ1bKDSGu3A=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=H+ugFLefkMO7zmizUOp07azzNrTXrh7f+cRvnkbe/0ZPpPjr3/8EwG0THxYpS9RDm
-         E78HNgJ/djK+cVzW4/RCgJJCXIYPxT5/YaTV8wi7HhbQ1t2nEtyi2IOVk427bIkfOV
-         UwOnrlDMvGSgXvb1dseNiWUW6jvd1hivJJYBE7TXtcl2WDzTTcLgVZtz0kWJG/64HV
-         CDCeuvqOyApEGDUgxuCVt/q1KZRw5BAxU+No2X35gGJaoXenUWcNtJ7c3GSwbnEgDj
-         SgVeUcEx5hsmzzX76KDA8zlTjAVRAL6d6dUcd6iA5qqpkqJE9c6tOyZRx6a+aM62QA
-         Jc+liut0Sa2rQ==
-Content-Type: text/plain; charset="utf-8"
+        id S231700AbhF1Abu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 20:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231689AbhF1Abu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jun 2021 20:31:50 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD06C061574;
+        Sun, 27 Jun 2021 17:29:24 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id q4so14299037ljp.13;
+        Sun, 27 Jun 2021 17:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=n7M28hFUwo0t3z3ukhVUpDX7Pqm41FdcERBzHJotZrA=;
+        b=Vttc8PSDitkrqIejHH/KizML5yuFrK0gpCQ1idLH//0yA5+x/vWBFuF2I8j7GL1dds
+         QPaXNmd72xs11JmBa7lleshBRWPP4XqBXrU+ngmWNCa0QTLXXoftp+1cyj11HnVQHJkX
+         90Xjz6fmxkiZoaf8XdYXbCE+mJzD6bOl/uRHTsR5ol3qxS4VzGMVMxraoeDi1NfPx0gj
+         KRpddqrbGes4BaKCLISP1tUjBwNQ56VWSvl1bJdKF7QNi0tew5Qd9GBLaCdQX1bL9/WA
+         ydb9ngQrzeS8/8oXBkIN1bzTPogUt2qqRZWErQUk4ByTtPkoRk+gFoSVc+zxwlhD225Q
+         lg1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n7M28hFUwo0t3z3ukhVUpDX7Pqm41FdcERBzHJotZrA=;
+        b=HdHMCj1IL/gdiG/5NPeNdO3ryW1KSFZ2f6t0eL137N/BmoWE7iuB1j/o0yK69nYEJJ
+         Z6lK7DH4yijwbnnchXDmaigQM6vfxyQaK1ub51DkA/HuovG9RPRVdqaNgtbL9LXmW4U2
+         VGlU3b3ril9NktUFQcE4UFt8D2EDB4HBBPgXZNDI4qak8CvOZ54SyaxQkQ96oiGZwjxY
+         /BhDNuzq5XmWYT0CakkStCl5Uv/eSMLh1B8W6Ux3kz2T8J8NjqhvwsHQ1XU4PTEpgosO
+         9Bnl/CIcv6M3w6ZYlIw8jwCNDg7FugZrl62/Kv1a8cz0VnnhZfDsRm2gClzdim7aDcvs
+         8CQg==
+X-Gm-Message-State: AOAM533KWYymQyhVM6MCeVq9I0twA8L/iGTJc9gIbZC0DZS+x0ZLfU/5
+        cxQiXqL+A9FRLXDodbkEHJTr9bvBn3w=
+X-Google-Smtp-Source: ABdhPJyiM9tJi0jMtVF8k4COnwVGN8OxiZvDLTPWRkZxz8Z4165bsS52E5y7fFI5m+LKXb361VLQ3w==
+X-Received: by 2002:a2e:b8ca:: with SMTP id s10mr8671391ljp.449.1624840161847;
+        Sun, 27 Jun 2021 17:29:21 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
+        by smtp.googlemail.com with ESMTPSA id z25sm1162708lfu.22.2021.06.27.17.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Jun 2021 17:29:21 -0700 (PDT)
+Subject: Re: [PATCH 1/1] clk: tegra: tegra124-emc: Fix possible memory leak
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20210617082759.1008-1-thunder.leizhen@huawei.com>
+ <162466387362.3259633.2364843071785127818@swboyd.mtv.corp.google.com>
+ <a6f88419-2cb9-0717-7737-e4666cdcc211@huawei.com>
+ <162483744494.3259633.12565750309559171999@swboyd.mtv.corp.google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5eb50fd9-1de9-cc61-6443-d84999e22803@gmail.com>
+Date:   Mon, 28 Jun 2021 03:29:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210504052844.21096-4-shawn.guo@linaro.org>
-References: <20210504052844.21096-1-shawn.guo@linaro.org> <20210504052844.21096-4-shawn.guo@linaro.org>
-Subject: Re: [PATCH 3/5] clk: qcom: apcs-msm8916: Retrieve clock name from DT
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Shawn Guo <shawn.guo@linaro.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Date:   Sun, 27 Jun 2021 17:28:34 -0700
-Message-ID: <162484011476.3259633.10138087900669024498@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <162483744494.3259633.12565750309559171999@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shawn Guo (2021-05-03 22:28:42)
-> Unlike MSM8916 which has only one APCS clock, MSM8939 gets three for
-> Cluster0 (little cores), Cluster1 (big cores) and CCI (Cache Coherent
-> Interconnect).  Instead of hard coding APCS (and A53PLL) clock name,
-> retrieve the name from DT, so that multiple APCS clocks can be
-> registered.
->=20
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  drivers/clk/qcom/a53-pll.c      | 5 ++++-
->  drivers/clk/qcom/apcs-msm8916.c | 5 ++++-
->  2 files changed, 8 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-> index 8614b0b0e82c..964f5ab7d02f 100644
-> --- a/drivers/clk/qcom/a53-pll.c
-> +++ b/drivers/clk/qcom/a53-pll.c
-> @@ -42,6 +42,7 @@ static int qcom_a53pll_probe(struct platform_device *pd=
-ev)
->         struct clk_pll *pll;
->         void __iomem *base;
->         struct clk_init_data init =3D { };
-> +       const char *clk_name =3D NULL;
->         int ret;
-> =20
->         pll =3D devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-> @@ -66,7 +67,9 @@ static int qcom_a53pll_probe(struct platform_device *pd=
-ev)
->         pll->status_bit =3D 16;
->         pll->freq_tbl =3D a53pll_freq;
-> =20
-> -       init.name =3D "a53pll";
-> +       of_property_read_string(pdev->dev.of_node, "clock-output-names",
-> +                               &clk_name);
+28.06.2021 02:44, Stephen Boyd пишет:
+> Quoting Leizhen (ThunderTown) (2021-06-25 18:32:46)
+>>
+>>
+>> On 2021/6/26 7:31, Stephen Boyd wrote:
+>>> Quoting Zhen Lei (2021-06-17 01:27:59)
+>>>> When krealloc() fails to expand the memory and returns NULL, the original
+>>>> memory is not released. In this case, the original "timings" scale should
+>>>> be maintained.
+>>>>
+>>>> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
 
-Please no? Is there any use for this? Why not just generate the name as
-a53pll@<MMIO ADDRESS>?
+The memory is still not released on error and this is not the only one
+place in that code which doesn't release memory on error.
 
-> +       init.name =3D clk_name ? clk_name : "a53pll";
->         init.parent_names =3D (const char *[]){ "xo" };
->         init.num_parents =3D 1;
->         init.ops =3D &clk_pll_sr2_ops;
+All this code is executed only once during early kernel boot, perhaps
+not really worthwhile fixing it or at least this should be done properly.
+
+>>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>>> ---
+>>>
+>>> Looks correct, but when does krealloc() return NULL? My read of the
+>>> kerneldoc is that it would return the original memory if the new
+>>> allocation "failed".
+>>
+>> That must be the wrong description in the document. For example, the original
+> 
+> Can you fix the kernel doc then?
+> 
+
+The doc is clearly saying that it returns NULL, am I missing something?
+
+* Return: pointer to the allocated memory or %NULL in case of error
