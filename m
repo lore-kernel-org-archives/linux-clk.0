@@ -2,76 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0A4C49EA7
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 04:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94E4C49EA7
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 05:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E86AF61C2F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 04:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5E161C51
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 05:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232035AbhF1Et3 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jun 2021 00:49:29 -0400
-Received: from out28-121.mail.aliyun.com ([115.124.28.121]:42793 "EHLO
-        out28-121.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhF1Et2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jun 2021 00:49:28 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1227538|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_news_journal|0.00527116-0.00049097-0.994238;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047208;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KZ3-RCe_1624855620;
-Received: from zhouyanjie-virtual-machine(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KZ3-RCe_1624855620)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Mon, 28 Jun 2021 12:47:01 +0800
-Date:   Mon, 28 Jun 2021 12:46:57 +0800
-From:   =?UTF-8?B?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, paul@crapouillou.net, robh+dt@kernel.org,
-        tsbogend@alpha.franken.de, linux-mips@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        sihui.liu@ingenic.com, jun.jiang@ingenic.com,
-        sernia.zhou@foxmail.com
-Subject: Re: [PATCH v4 2/5] dt-bindings: clock: Add documentation for MAC
- PHY control bindings.
-Message-ID: <20210628124657.4a586b03@zhouyanjie-virtual-machine>
-In-Reply-To: <162484872210.2516444.13185593951785977784@swboyd.mtv.corp.google.com>
-References: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
-        <1624688321-69131-3-git-send-email-zhouyanjie@wanyeetech.com>
-        <162484872210.2516444.13185593951785977784@swboyd.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S232129AbhF1Foq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jun 2021 01:44:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232132AbhF1Foq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jun 2021 01:44:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B02A61C17;
+        Mon, 28 Jun 2021 05:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624858941;
+        bh=8kPsxiKplIOG09PMS3o+imfXElGS2OAMUTIFSFHl+bQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JZfEtWKPjkYgMZ782UBxpDRZlxYzzttgNA0UB/9kRluRXTKWkRiNKM7uiNxJ1plVT
+         oTwVczFMi3LCRB4obGsID7LVHRh91dG+nSoSeUnrh8CNirqP2fUykRUYx7AE4rioze
+         OKpTKrbWRoIfM/7I0NJNQFHy9vrUUB800k9n5rcKbxSeBr3PDUXHLp3hL8eU9bmGqf
+         SsfX+HY4712dlylqiRFLd9RQKF4Tq8NS82lhNjcTbtdyriAPYQZiOVi3Hib5h/HF51
+         e0khV/aOYhN+AU8KDHwLyYXB3LSBJadLvI66z30jls4wd9KAlv7/NLRnYuOHhpJSoz
+         xde4A/PoZGHCg==
+Date:   Mon, 28 Jun 2021 11:12:17 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, dmitry.baryshkov@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gdsc: Ensure regulator init state matches
+ GDSC state
+Message-ID: <YNlhOelUfJwfbHCd@matsya>
+References: <20210625225414.1318338-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210625225414.1318338-1-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-于 Sun, 27 Jun 2021 19:52:02 -0700
-Stephen Boyd <sboyd@kernel.org> 写道:
-
-> Quoting 周琰杰 (Zhou Yanjie) (2021-06-25 23:18:38)
-> > Update the CGU binding documentation, add mac-phy-ctrl as a
-> > pattern property.
-> > 
-> > Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> > Acked-by: Paul Cercueil <paul@crapouillou.net>
-> > ---  
+On 25-06-21, 15:54, Bjorn Andersson wrote:
+> As GDSCs are registered and found to be already enabled
+> gdsc_toggle_logic() will be invoked for votable GDSCs and ensure that
+> the vote is matching the hardware state. Part of this the related
+> regulator will be enabled.
 > 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> But for non-votable GDSCs the regulator and GDSC status will be out of
+> sync and as the GDSC is later disabled regulator_disable() will face an
+> unbalanced enable-count, or something might turn off the supply under
+> the feet of the GDSC.
 > 
+> So ensure that the regulator is enabled even for non-votable GDSCs.
 
-Thanks!
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-> Would also be good to add it to the example.
-
-Unfortunately, mac-phy-ctrl only appeared after JZ4775 (include JZ4775),
-but now the CGU driver of JZ4775 has not been merged into the mainline.
-My plan is to wait for the CGU driver of JZ4775 to be merged into the
-mainline and then add a new example based on JZ4775 :)
-
-Thanks and best regards!
+-- 
+~Vinod
