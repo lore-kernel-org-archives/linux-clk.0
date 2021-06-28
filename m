@@ -7,54 +7,60 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDD7C48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CDEC48BC2
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4580B61C2F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714A861C2F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231753AbhF1C7P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 22:59:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        id S232033AbhF1DEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 23:04:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231678AbhF1C7P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 22:59:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3442861C29;
-        Mon, 28 Jun 2021 02:56:50 +0000 (UTC)
+        id S231753AbhF1DEo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 23:04:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7129161988;
+        Mon, 28 Jun 2021 03:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624849010;
-        bh=JBdyWUe8fIp4N8uV6oiSpRPqgIGp9L3w0kNa6OeYPj8=;
+        s=k20201202; t=1624849339;
+        bh=cnsKi5eaK29RrwH3IZdPHerd5IolaP2txgKPxl/j1Lc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GyM7vzGuxsuZfe1r/YCiP72PJHe7nenx6wd1d2PyEQXBOgv/4wznl5FirkDIC7fjj
-         Ca5tburTvEZ+sGqKmLHXXzlfMRyZsE5WemYqudfVS3xRE+DgqA4tbkyu2gvQjamF0j
-         OajiykP+z493861a1/BTpEMm8f/J2CA7vcRmYaWRWS0ukxg+LYYU2HQ7A+IfalTIN1
-         4j6bwHiJQcCkRf4vDraXxMoEvjuqZZSh00sNmBiCuhu4nRx8Tvv0Q1/uJc9LMeozzs
-         TYFgat9Ysd4kmIZ5jvmQ8yLnM8+1RPBisRitYPKTLdKHupCgjLC63IssJY7M/Is7hP
-         xoCb7KwYS4kHA==
+        b=HxOvkEDWXJ4A+Ss90MZI7dAPElS2v+OhZ4zpB+VbNnn04LcZN9lYXzetoHAlw8VXM
+         B041vdszLpNtiU9X6BJ4v2mFxgWIwGL0K6h3U+/9RmcxjMGyCscuQNko0zVTYtGTnl
+         lm3nOejWJzTw2taiIQrn+BST8WwGv8rvE48tOEHA/XwKyzGhM6h7G785zJ6CQBjm4r
+         hAqpDijisNVKe37zMony+qAjJn9k0SNryziM4UiE9GffbKxhG1Ifwzg4/TcTdZamQe
+         Y3NxLGkJMr4Sp+9jKSu1ABlSfdK6iuYh18D6kwYISI1RmTxVoX0tTxdokgfP3WII8t
+         Gh7EXqQRCWuRg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210616034826.37276-1-yujiahua1@huawei.com>
-References: <20210616034826.37276-1-yujiahua1@huawei.com>
-Subject: Re: [PATCH -next] drivers: ti: remove redundant error message in adpll.c
+In-Reply-To: <20210325192643.2190069-2-robert.hancock@calian.com>
+References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-2-robert.hancock@calian.com>
+Subject: Re: [PATCH v3 1/9] dt-bindings: clock: clk-si5341: Add new attributes
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yu Jiahua <yujiahua1@huawei.com>
-To:     Yu Jiahua <yujiahua1@huawei.com>, kristo@kernel.org,
-        mturquette@baylibre.com
-Date:   Sun, 27 Jun 2021 19:56:48 -0700
-Message-ID: <162484900892.2516444.13735398844442302580@swboyd.mtv.corp.google.com>
+Cc:     mike.looijmans@topic.nl, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Robert Hancock <robert.hancock@calian.com>
+To:     Robert Hancock <robert.hancock@calian.com>, mturquette@baylibre.com
+Date:   Sun, 27 Jun 2021 20:02:18 -0700
+Message-ID: <162484933814.2516444.5607074946847777797@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yu Jiahua (2021-06-15 20:48:26)
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
+Quoting Robert Hancock (2021-03-25 12:26:35)
+> Add new silabs,xaxb-ext-clk and silabs,iovdd-33 properties.
 >=20
-> Signed-off-by: Yu Jiahua <yujiahua1@huawei.com>
+> Changed vdd-supply on top-level node to optional since it is not actually
+> used by the driver.
+>=20
+> Removed vdd-supply from output sub-nodes, as it was not supported by the
+> driver and it is not easily possible to support this in that location with
+> the kernel regulator infrastructure. Changed to have vddoX-supply
+> attributes for each output on the top-level device node.
+>=20
+> Signed-off-by: Robert Hancock <robert.hancock@calian.com>
 > ---
 
 Applied to clk-next
