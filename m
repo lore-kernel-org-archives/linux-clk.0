@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA3FC48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1B8C49EAB
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D08161C2F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D826661C31
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbhF1DFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 23:05:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60618 "EHLO mail.kernel.org"
+        id S232069AbhF1DF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 23:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231972AbhF1DFU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 23:05:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 643C661988;
-        Mon, 28 Jun 2021 03:02:55 +0000 (UTC)
+        id S231972AbhF1DFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 23:05:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F257E61988;
+        Mon, 28 Jun 2021 03:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624849375;
-        bh=SGeJe0YhXE2Pg1cOJgyUtSoOGBewETfefyC3bGv9VTw=;
+        s=k20201202; t=1624849381;
+        bh=jl2Jzg4pPBCbo9r7BWs4O3I1IiWZSlLg4lJYRXJK1V8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fHDyNqmfMSqd9UW3uOiw7ubHqQFblsNCWVpWDSb7DVEnLM5XYiobtJOI5BPwVp20d
-         PVkEVHCYZlTUgTfkmUfC55/3UD3/ep3J0zQsxbP0bedfQ7KR9rhK/X4PNF5S3CavlB
-         dAqcorox1VuksVJNe2CF0imYV+U3qNyXfVJUjQT/Qsb5uz6PnWloYJFFoQ6xHxMW3/
-         5nq2q/1+op7mAMJettgkZe5AG8/MERmPX9JHcNMWl2RqQXH99iQbV7c+guFz+XBynC
-         2EIEoX/ZEukHKWEZom7PxFaZIqUxkZOxXGRKOdQDjBeQ9n88mjV6jVmerlrHngJwAk
-         Mrk/wDXUx5ZiA==
+        b=iYJnem+A3kPwmFE3otjFRZxfkhP8Br/K20Fj5Umkfrk/6ixIxk2T5ie1AlOl9H7TF
+         bZaoiDX0hMkkXFelYwJotvsiH1iMzq3ydGUI0bHZLZlbty3rzda50L7EmHE92U39Ca
+         Qmpe/YGpRR8jD65wS9vkJX0RJ/6WKqpug0SxJJPkoox1Qotmqu97/xi+FKazDDmIpW
+         KjCLoj9ptQ//T3H743oLuEvQSFL9YxlW9LOuU48ehVcyz9ltH1eS8p+8w1Zl2ErTRV
+         +GU1oF09YlP4mbd0EzgtGGkQtHytfXr8JjeaWMPNgfVex0tp3dUG+VK+3J6sSjkOmh
+         iqp7/oZ2QW4ow==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210325192643.2190069-8-robert.hancock@calian.com>
-References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-8-robert.hancock@calian.com>
-Subject: Re: [PATCH v3 7/9] clk: si5341: Add silabs,xaxb-ext-clk property
+In-Reply-To: <20210325192643.2190069-9-robert.hancock@calian.com>
+References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-9-robert.hancock@calian.com>
+Subject: Re: [PATCH v3 8/9] clk: si5341: Add silabs,iovdd-33 property
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     mike.looijmans@topic.nl, robh+dt@kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Robert Hancock <robert.hancock@calian.com>
 To:     Robert Hancock <robert.hancock@calian.com>, mturquette@baylibre.com
-Date:   Sun, 27 Jun 2021 20:02:54 -0700
-Message-ID: <162484937422.2516444.983627342157163703@swboyd.mtv.corp.google.com>
+Date:   Sun, 27 Jun 2021 20:02:59 -0700
+Message-ID: <162484937982.2516444.7958494723652405474@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Robert Hancock (2021-03-25 12:26:41)
-> Add a property to allow specifying that the device XA/XB pins are used for
-> an external clock input rather than for a clock crystal.
+Quoting Robert Hancock (2021-03-25 12:26:42)
+> Add a property to allow specifying that the external I2C IO pins are using
+> 3.3V voltage thresholds rather than 1.8V.
 >=20
 > Signed-off-by: Robert Hancock <robert.hancock@calian.com>
 > ---
