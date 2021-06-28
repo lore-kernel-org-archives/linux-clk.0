@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8913EC48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FC2C49EAB
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70AFA61C2F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3062D61C2F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 03:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbhF1DFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 23:05:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60700 "EHLO mail.kernel.org"
+        id S232062AbhF1DIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 23:08:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231972AbhF1DFd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 23:05:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A52B861C2A;
-        Mon, 28 Jun 2021 03:03:08 +0000 (UTC)
+        id S232048AbhF1DIW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 23:08:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CB9C61984;
+        Mon, 28 Jun 2021 03:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624849388;
-        bh=vlJ8rFgj2K0F4FN/H+kFMlM636SGMGFex+axzKuap7Q=;
+        s=k20201202; t=1624849557;
+        bh=xCB44V1uyYWZwT6bHfs4PvePM7eeMvq6bga7ptvGQIA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FzeHOm5LlLdgjOsr0Ho6Zwe3o4sFNtgUhuvQilFVqxuTOm7CjYHscJoNad9jtS+4H
-         a7ZknD9ltU7NKvMLU5y8BOlaOqkzHtdt/t79wf5Kg+Kxo9TTJJSv7fbCFho6a8l6t2
-         04Cjp2LQDfyJj13z5EH9y+sI1GiX+1MZBXD1M1V/F2p55VgqLnlqF17YUS2Q+7COg9
-         64cyARAl4DPShSYYz/AsisYDF9DUfJxMzqxOTGdUhLDk0p6kwY3chZwKmZNxUuy2dx
-         OdW1641hg9Jf0dwjJLpstIW07QJv5kth3pUfVlqLlRxEq7R4L+liogmQIWFlbPW2qp
-         R3ItXYAOxlPzg==
+        b=McZAe9/ANghqpPvD/ssRFNcgm/Dli9BswAtpuDzbeHmMPtzymVMT+NtgMNhvBsI18
+         fk+nvOhExr/n244aarci2vhIp1+anCuES+JP/mxSLVIMkNG2O61IjwdGA7Hrnu1vuQ
+         7e/dm4/0lb833+POTpsxF5eU/M9GZuVD+PYO7hxdEMvfoPgEwDIorY2QKqTZO0wIOg
+         HnGH/tPrCtZmVJAtD/MlS3Dm0t1VtRfdxYelWPiUphgh47btI5MyechdVKgG+RK0Ef
+         a16CLhT53Eo8RyYfB3ny9JvDoHpXio8yaYdHf42nem4nuVeN0gZTHsWuq6h2BMZLwp
+         yg5+8dEAfxhrg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210325192643.2190069-10-robert.hancock@calian.com>
-References: <20210325192643.2190069-1-robert.hancock@calian.com> <20210325192643.2190069-10-robert.hancock@calian.com>
-Subject: Re: [PATCH v3 9/9] clk: si5341: Add sysfs properties to allow checking/resetting device faults
+In-Reply-To: <1616498973-47067-2-git-send-email-gengdongjiu1@gmail.com>
+References: <1616498973-47067-1-git-send-email-gengdongjiu1@gmail.com> <1616498973-47067-2-git-send-email-gengdongjiu1@gmail.com>
+Subject: Re: [PATCH v8 1/2] dt-bindings: Document the hi3559a clock bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mike.looijmans@topic.nl, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Robert Hancock <robert.hancock@calian.com>
-To:     Robert Hancock <robert.hancock@calian.com>, mturquette@baylibre.com
-Date:   Sun, 27 Jun 2021 20:03:06 -0700
-Message-ID: <162484938670.2516444.3250234704965665415@swboyd.mtv.corp.google.com>
+Cc:     Dongjiu Geng <gengdongjiu@huawei.com>
+To:     devicetree@vger.kernel.org, gengdongjiu1@gmail.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Date:   Sun, 27 Jun 2021 20:05:56 -0700
+Message-ID: <162484955636.2516444.15491190590642281998@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Robert Hancock (2021-03-25 12:26:43)
-> Add sysfs property files to allow viewing the current and latched states =
-of
-> the input present and PLL lock bits, and allow resetting the latched fault
-> state. This allows manual checks or automated userspace polling for faults
-> occurring after initialization.
+Quoting Dongjiu Geng (2021-03-23 04:29:32)
+> From: Dongjiu Geng <gengdongjiu@huawei.com>
 >=20
-> Signed-off-by: Robert Hancock <robert.hancock@calian.com>
+> Add DT bindings documentation for hi3559a SoC clock.
+>=20
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
 
 Applied to clk-next
