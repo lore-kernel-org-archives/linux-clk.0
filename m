@@ -7,61 +7,103 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388A5C48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 01:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38387C49EA6
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 01:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2242061A1D
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 01:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C65361C17
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 01:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232013AbhF1Btw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 21:49:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44124 "EHLO mail.kernel.org"
+        id S231987AbhF1BzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 21:55:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231941AbhF1Btw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 21:49:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AF5006197F;
-        Mon, 28 Jun 2021 01:47:27 +0000 (UTC)
+        id S231678AbhF1BzW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 21:55:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7991061A36;
+        Mon, 28 Jun 2021 01:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624844847;
-        bh=QSprWaRkacNp/fztWSjF++zzYSBMzCCl1pa80LuXLbc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=blhIR+8L4WJJetoWjnDud462xpPvq9vCQ2/4XNfltu1xPFFKinq/sL3lD7DWKqaNs
-         ODwgEKUlUkkjcEAU0GPDrT9Ohd03ibBlgg5lPJ0BcU1Ix+o9gMW2YUMWsLX2+AM+TP
-         S1iA29thgErpSU6EtQfXiDYr4smxSfuUjCy4Y/9a0pBBepDb6OnLj1G+Qp4C7GZhJK
-         c0aOzyVKv1V5q35wKBelpvTmMM5TMaKpkz79K42arHyKHBxampkWFu7vO4ZAuueKkU
-         M3lcsK6L8PMOat65ae+OmzmBtmyItS1Cgb3lpyeCCPLoYsNi1QwKP5Em3wfW81yYPs
-         vANPbCBE2iP+g==
+        s=k20201202; t=1624845177;
+        bh=YpYR08RUmtU3O4t9HgUXI0T0FWV5Il28adXJQeOZYOo=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=dTdeiFBfjtn0ZmPPtAeczAHJIaVRHrN1cmnrVZSSwQM/64zCH8F9enDftxzWOjJL0
+         B1x39j+sg0ehQ/8P32IRvFKw91lQ55HC3587ufZFleGcN4CrFIJyGFLkLjwfuTeZgs
+         C47mUd/Dm8rr0FJ5nAYkvpQLZK6VD9w+simUAIgJuK4T76JssVDqxnTYOsCvudEG9q
+         jtG1dQfv4BQ0SjKBrpAv+NuQI0CiVzP4qmZ7KjS1yk/o7QJw2moU2juqof/l9kbNz0
+         1wa2qhExOoGwcSVL9LDLWl0PAKkFkI0oNb7pPpkQNiDovdQ05ly1LWMLzNcG62whWU
+         yS7ebNlxs9tIw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d62e4f1f85c5cef05be14d9e8143e88bbddd2e0f.1623354574.git.cristian.ciocaltea@gmail.com>
-References: <cover.1623354574.git.cristian.ciocaltea@gmail.com> <d62e4f1f85c5cef05be14d9e8143e88bbddd2e0f.1623354574.git.cristian.ciocaltea@gmail.com>
-Subject: Re: [PATCH v3 6/6] clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
+In-Reply-To: <5eb50fd9-1de9-cc61-6443-d84999e22803@gmail.com>
+References: <20210617082759.1008-1-thunder.leizhen@huawei.com> <162466387362.3259633.2364843071785127818@swboyd.mtv.corp.google.com> <a6f88419-2cb9-0717-7737-e4666cdcc211@huawei.com> <162483744494.3259633.12565750309559171999@swboyd.mtv.corp.google.com> <5eb50fd9-1de9-cc61-6443-d84999e22803@gmail.com>
+Subject: Re: [PATCH 1/1] clk: tegra: tegra124-emc: Fix possible memory leak
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>,
-        Cristian Ciocaltea <cristian.ciocaltea@gmail.com>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Leizhen (ThunderTown) <thunder.leizhen@huawei.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 27 Jun 2021 18:47:26 -0700
-Message-ID: <162484484656.3259633.15967015792311053054@swboyd.mtv.corp.google.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Date:   Sun, 27 Jun 2021 18:52:56 -0700
+Message-ID: <162484517623.3259633.1405371294577745182@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cristian Ciocaltea (2021-06-10 13:05:26)
-> Add support for the missing NIC and ETHERNET clocks in the Actions Semi
-> Owl S500 SoC clock driver.
+Quoting Dmitry Osipenko (2021-06-27 17:29:20)
+> 28.06.2021 02:44, Stephen Boyd =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Quoting Leizhen (ThunderTown) (2021-06-25 18:32:46)
+> >>
+> >>
+> >> On 2021/6/26 7:31, Stephen Boyd wrote:
+> >>> Quoting Zhen Lei (2021-06-17 01:27:59)
+> >>>> When krealloc() fails to expand the memory and returns NULL, the ori=
+ginal
+> >>>> memory is not released. In this case, the original "timings" scale s=
+hould
+> >>>> be maintained.
+> >>>>
+> >>>> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
 >=20
-> Additionally, change APB clock parent from AHB to the newly added NIC.
+> The memory is still not released on error and this is not the only one
+> place in that code which doesn't release memory on error.
 >=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+> All this code is executed only once during early kernel boot, perhaps
+> not really worthwhile fixing it or at least this should be done properly.
+>=20
+> >>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> >>>> ---
+> >>>
+> >>> Looks correct, but when does krealloc() return NULL? My read of the
+> >>> kerneldoc is that it would return the original memory if the new
+> >>> allocation "failed".
+> >>
+> >> That must be the wrong description in the document. For example, the o=
+riginal
+> >=20
+> > Can you fix the kernel doc then?
+> >=20
+>=20
+> The doc is clearly saying that it returns NULL, am I missing something?
+>=20
+> * Return: pointer to the allocated memory or %NULL in case of error
 
-Applied to clk-next
+See the paragraph
+
+ * The contents of the object pointed to are preserved up to the
+ * lesser of the new and old sizes (__GFP_ZERO flag is effectively ignored)=
+.=20
+
+which confused me into thinking the memory that is being reallocated is
+guaranteed to be preserved so it would be returned if the larger size
+failed. I suppose there's nothing to fix in the kernel-doc, just my
+understanding of that paragraph. Maybe it should say
+
+	The __GFP_ZERO flag is effectively ignored as the contents of
+	the objected pointed to @p are preserved up to the lesser of the
+	@new_size and old size.
