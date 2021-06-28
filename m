@@ -2,106 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D2CC48BC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DE1C49EA6
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF1061438
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2585161A1D
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jun 2021 02:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231815AbhF1CmI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jun 2021 22:42:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53994 "EHLO mail.kernel.org"
+        id S231941AbhF1Cv5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Jun 2021 22:51:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231678AbhF1CmI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Jun 2021 22:42:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3EFB4619C4;
-        Mon, 28 Jun 2021 02:39:43 +0000 (UTC)
+        id S231678AbhF1Cv4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Jun 2021 22:51:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 29A7961607;
+        Mon, 28 Jun 2021 02:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624847983;
-        bh=SoCGeNG9HsDyxEtp2GU2WZmjAAPuhOGmCHPhhj60muU=;
+        s=k20201202; t=1624848571;
+        bh=5nsNOrZsTVxacPUS/6i3DBZ64RYQ0EV6foVs8Zqp76Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JKIEBR2oQ9Uw+5+bfI1dRTWaB6ZUaiPcjiM+R1JnW5iWgLzXii3r0qdYEMoGCKVbQ
-         Z6zHPO1HRGvE9t8h6WAiAxvfs1llnO5STQhj5wxIZ3gsE/FuRE3yhl7aPg9cJ0zaWA
-         K4lm5rKgALzdaW0zO0iy/7swammUSOK5H5dhEJ/plzMkxVUVyrA55j5sNgdhzE5bnu
-         Vf9N+zBOhkTEd3ilJyQYF5iYuR2zWtTmUFwnnF+brjWadYyLQ90lj5mj6d4bsX6CDJ
-         buDcY2PbucRx0Y09LG1Donz/cBC1tozXuN4se0s8lTRHsQFhwpwiTvgLyee248n5qU
-         DAd0bUCLz+yWw==
+        b=bxysx5xprks0umN++gZ33HOKkmWiLpBpwsAc0gYW3rco0o1JiEi+5PpRvMkqgT7fu
+         m+V/azKR60ahzf4l6CExKnFzNyU9QPLCWM6BDmlZd+c2TTghWJXFd6qTfjtOdxTUn2
+         f+aB7zBKRMbFz6RMh+NiAQBsdMjTaf21yeuO81JW7m28xAGkJb9TXgFf0JIiz42iC+
+         M4VFlOcDREhg47zg6/ui0keOBGk4vpFHL+rYK+nRUDvIkwf4k+swTyl7d7wcmAPeYW
+         p9DA40KyrJMcPViLQtEy+IgjFV8BNwt6L2lPKB6qwGIN7zWiOwQyRb0TAUOWJO4amI
+         ll1cUK3gHlwJg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <56f3b0bd-5dd7-80d4-041a-0fd2daf4b1f2@marek.ca>
-References: <20210519001802.1863-1-jonathan@marek.ca> <20210519001802.1863-2-jonathan@marek.ca> <162266925581.4130789.10178141366818328902@swboyd.mtv.corp.google.com> <56f3b0bd-5dd7-80d4-041a-0fd2daf4b1f2@marek.ca>
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: add QCOM SM8350 display clock bindings
+In-Reply-To: <20210530164923.18134-2-paul@crapouillou.net>
+References: <20210530164923.18134-1-paul@crapouillou.net> <20210530164923.18134-2-paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: ingenic: Add ingenic,jz4760{,b}-cgu compatibles
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Date:   Sun, 27 Jun 2021 19:39:41 -0700
-Message-ID: <162484798199.3259633.9009940760433821881@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        list@opendingux.net,
+        =?utf-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>
+Date:   Sun, 27 Jun 2021 19:49:28 -0700
+Message-ID: <162484856881.2516444.839345627395127167@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Marek (2021-06-04 10:25:41)
-> On 6/2/21 5:27 PM, Stephen Boyd wrote:
-> > Quoting Jonathan Marek (2021-05-18 17:18:02)
-> >> Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
-> >> bindings. Update the documentation with the new compatible.
-> >>
-> >> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >>   .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++=
---
-> >>   include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
-> >=20
-> >>   2 files changed, 5 insertions(+), 2 deletions(-)
-> >>   create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
-> >=20
-> > Why the symlink? Can we have the dt authors use the existing header file
-> > instead?
-> >=20
+Quoting Paul Cercueil (2021-05-30 09:49:18)
+> Add ingenic,jz4760-cgu and ingenic,jz4760b-cgu compatible strings for
+> the JZ4760 and JZ4760B SoCs respectively.
 >=20
-> It would be strange to include bindings with the name of a different=20
-> SoC. I guess it is a matter a preference, is there any good reason to=20
-> *not* do it like this?
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
- $ find include/dt-bindings -type l
- include/dt-bindings/input/linux-event-codes.h
- include/dt-bindings/clock/qcom,dispcc-sm8150.h
-
-It seems to not be common at all.
-
->=20
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x5=
-0.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> >> index 0cdf53f41f84..8f414642445e 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> >> @@ -4,24 +4,26 @@
-> >>   $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
-> >>   $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>  =20
-> >> -title: Qualcomm Display Clock & Reset Controller Binding for SM8150/S=
-M8250
-> >> +title: Qualcomm Display Clock & Reset Controller Binding for SM8150/S=
-M8250/SM8350
-> >=20
-> > Maybe just "Binding for SM8x50 SoCs"
-> >=20
->=20
-> Its likely these bindings won't be compatible with future "SM8x50" SoCs, =
-
-> listing supported SoCs explicitly will avoid confusion in the future.
-
-The yaml file has sm8x50 in the name. What's the plan there?
+Applied to clk-next
