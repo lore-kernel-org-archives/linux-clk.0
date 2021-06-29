@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AA9C11F66
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 06:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6ECDC11F66
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 06:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0FB61DCB
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 06:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EFB61DCC
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 06:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbhF2GNH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 02:13:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
+        id S231952AbhF2GNM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 02:13:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231881AbhF2GNG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jun 2021 02:13:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E10E61DA0;
-        Tue, 29 Jun 2021 06:10:40 +0000 (UTC)
+        id S231881AbhF2GNM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jun 2021 02:13:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A249761DC5;
+        Tue, 29 Jun 2021 06:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624947040;
-        bh=FiOojVeqhT2aDVxTyPd3pIlaGs0BHh1/Vd1BDITgIE8=;
+        s=k20201202; t=1624947045;
+        bh=4vWroYLOAfeFgToGVKsNjogg9cgdVR+LSZ4k73m4X7U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZDG2B/XKmek7tPy3Bg2G4OSE1E3Ah+sFRDWiv0nWOwhhvKfeLolLfQl9L96bptTcE
-         zfgsScAtjW40068qfzuuD6Bf9CU1ZZYTXHTLk10Wa53Uuz1J1Mzc1wimdfd4Xdy7tK
-         EeW2bxNdHW74KF9CbaNpelseqAgoEl0z568R7snj8uSih5GKoCxYkaVf4bGvIN0HTq
-         RF/ujDrKi6MRbmpAlcqJ7kAQdsyIyu9O1xgfOlsYH2DHLIjCyv77RA03hmOLsFtCz+
-         xtMQ86zVnv7pAw8Ay1OXFDEKPXkeCORN2ZM0eOY7a1KB4ypyL1JVuZApag90p/eOze
-         dy276L+fjOaFQ==
+        b=AdJdRjJi1xUvUV4fWmE59NrX+dtkpd+RfDTDcPmTscunbumLrvvoHlokJizP4Z6JL
+         YU+2VgUqe7R/yHu+YvZS0VsNUGfDnUth7kiqulIcMwjBK0uw/EcqFjXHYBktxFCEVO
+         SIYmLu035TMBINxl+IGPJBtkSWvs826ow37p9Ucrp1CDn3NL0EHXa+FXFSRyffgb/Z
+         lBb0zVOAacN2OYhU+C6oXCn3zAUR8/Z+cMo6JYSqrxD0Jks+9cD/UkNAsfz1LdBWu1
+         UYHtPSH4FzSFII/ul/brXtwnsbHD9ul5honIR6Hno5riptHH8ZkMnxPt/ukO2NafX+
+         nyYXizEYQseUA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210628070122.26217-3-rajan.vaja@xilinx.com>
-References: <20210628070122.26217-1-rajan.vaja@xilinx.com> <20210628070122.26217-3-rajan.vaja@xilinx.com>
-Subject: Re: [PATCH v6 2/4] clk: zynqmp: Use firmware specific divider clock flags
+In-Reply-To: <20210628070122.26217-4-rajan.vaja@xilinx.com>
+References: <20210628070122.26217-1-rajan.vaja@xilinx.com> <20210628070122.26217-4-rajan.vaja@xilinx.com>
+Subject: Re: [PATCH v6 3/4] clk: zynqmp: Use firmware specific mux clock flags
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>
 To:     Rajan Vaja <rajan.vaja@xilinx.com>, kristo@kernel.org,
         lee.jones@linaro.org, michal.simek@xilinx.com,
         mturquette@baylibre.com, quanyang.wang@windriver.com
-Date:   Mon, 28 Jun 2021 23:10:38 -0700
-Message-ID: <162494703864.2516444.2673279664223350505@swboyd.mtv.corp.google.com>
+Date:   Mon, 28 Jun 2021 23:10:44 -0700
+Message-ID: <162494704445.2516444.3705660787035671682@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rajan Vaja (2021-06-28 00:01:20)
-> Use ZynqMP specific divider clock flags instead of using CCF flags.
+Quoting Rajan Vaja (2021-06-28 00:01:21)
+> Use ZynqMP specific mux clock flags instead of using CCF flags.
 >=20
 > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 > ---
