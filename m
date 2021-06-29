@@ -2,62 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA44C11F67
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9572AC11F69
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0613E61350
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DD561107
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbhF2UcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 16:32:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234073AbhF2UcW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jun 2021 16:32:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EF9E6112D;
-        Tue, 29 Jun 2021 20:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624998594;
-        bh=D1rp/lGnkLgAHhHFva4aywCJx1yghtTcJ6Lp6xqWW5M=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KSbDla3TMNAgxfWkXUEbn/ZQ1zKf7vLdeZBMdzmZ3rQxYeWWP09j57E2Omx6utCsb
-         Ht5r0QVHY1sq55byXpwJPupguba06hBecLAEDHlq2r3T7Cp6EgX2D5Bc29ObD51kvN
-         wrF3ESZy1RWvfO6rf4SLsgaIif4Bu/viSVE9yIgV0YKPCdHWoBj4z5Dp1nmXdZQZOt
-         4mooRQT/klm+QNORYaRpGJLmBHgf+jJEhEsnNyy0M7PjYHL2LyQuChMbCnCU8AWWUL
-         x0RozhKLP7QSGUe+qq3g9b12gN/PThVrLZUf5qTJz3bpXYW8cI/fW0ljqyKVELUjzq
-         74SYeRYnL39kA==
-Content-Type: text/plain; charset="utf-8"
+        id S235365AbhF2Ulv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 16:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234874AbhF2Ulv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 16:41:51 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C83CC061767
+        for <linux-clk@vger.kernel.org>; Tue, 29 Jun 2021 13:39:23 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id d25so32807429lji.7
+        for <linux-clk@vger.kernel.org>; Tue, 29 Jun 2021 13:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hGGdhrQRxRIwpexQ026nf1QwSjPosmBJCMufHDMbnLc=;
+        b=ZHes7vTF6ekSlCjtih4vBw3PMWUUnp5NLHqOUsSxFK/fKLA/GQCgT8SRgufgTC/sSn
+         pNF9hu/hYIbDZH4Pu+lNgGmp0frywk9rtmmD1UDri+A0W1bOGhLWn6/deAbzOikj3Z76
+         zzGfykPrcLYqtdYbk79HJarMA5emMrCH63C6rGYY2uxILrQk0ZqnzkXG5t+Mud+pEnIV
+         hyd8t8tMPmbVkq7ej/thFDUM1gTer0YbIssINjQtu2oqRSbDlc1I4eIZpuu72TXGqU82
+         BTzGraItHp0s3/FNZb6zjcXAVdfFmnKUYSLeHp/mfo9pB3qLLmx9RvlH92q3jVdj9mc6
+         7M2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hGGdhrQRxRIwpexQ026nf1QwSjPosmBJCMufHDMbnLc=;
+        b=XeWpPdyx09TRTZ71v5+YzpqsI74yuEGk/zAsk21vu25wjwHTgZ+HqmlMcdz3kA4W/Y
+         mSW7WdXDpedpTREBhzq0S1FJ2QM0lGUVL0SFbroRrAveqAfZKIiIrurZ7joun1filv8g
+         xbklfxN89KOnrsLcYSd1JSVQreJxtiHQ45ZQSqBMqGcRnZ2hqV0n1TUDODzYHCrowcaE
+         1CcicfAqs4Q+5fAPxCXwT/1y0kePapH3sqngNbHXKh1dOf3xsIluyoYRIEb/RmZX19xx
+         2xO41n1jQrJmPS7xAmWgiC7wGbB1q/i/hIZ/3+Oae/lwxUFoon065iH4ZN/ipbidRSML
+         bygg==
+X-Gm-Message-State: AOAM530xCZjbqDsULxxVyXK6D20/NwgADIod8V2BuOT/wpR4ZZPiZwP/
+        2+lWQ+A0MKbBD2j06j55Fp9cpg==
+X-Google-Smtp-Source: ABdhPJzROw9SP++u6Y10jdS/n6Cw2Qd6JTOh5rY7Mnsvp6UoXX48ZlDS4FLp1ChapTVgvLJsky8v2A==
+X-Received: by 2002:a2e:894e:: with SMTP id b14mr5392588ljk.112.1624999161861;
+        Tue, 29 Jun 2021 13:39:21 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id bp34sm1716902lfb.125.2021.06.29.13.39.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jun 2021 13:39:21 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] clk: qcom: fix domains cleanup in gdsc_unregister
+Date:   Tue, 29 Jun 2021 23:39:19 +0300
+Message-Id: <20210629203919.2956918-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210629203919.2956918-1-dmitry.baryshkov@linaro.org>
+References: <20210629203919.2956918-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210629154740.3091884-1-sean.anderson@seco.com>
-References: <20210629154740.3091884-1-sean.anderson@seco.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clk: vc5: Add properties for configuring the SD/OE pin
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Sean Anderson <sean.anderson@seco.com>,
-        linux-clk@vger.kernel.org
-Date:   Tue, 29 Jun 2021 13:29:53 -0700
-Message-ID: <162499859339.3331010.531653044301227066@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sean Anderson (2021-06-29 08:47:39)
-> These properties allow configuring the SD/OE pin as described in the
-> datasheet.
->=20
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+Properly remove registered genpds. Also remove the provider before
+breaking parent/child links, so that the system is consistent at remove
+time.
 
-I dropped v2 from clk-next and this will be punted to the next release.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/gdsc.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 241186d9d08c..4b211dd1764d 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -475,6 +475,9 @@ void gdsc_unregister(struct gdsc_desc *desc)
+ 	struct gdsc **scs = desc->scs;
+ 	size_t num = desc->num;
+ 
++	/* Remove provider first */
++	of_genpd_del_provider(dev->of_node);
++
+ 	/* Remove subdomains */
+ 	for (i = 0; i < num; i++) {
+ 		if (!scs[i])
+@@ -482,7 +485,13 @@ void gdsc_unregister(struct gdsc_desc *desc)
+ 		if (scs[i]->parent)
+ 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
+ 	}
+-	of_genpd_del_provider(dev->of_node);
++
++	/* Remove domains themselves */
++	for (i = 0; i < num; i++) {
++		if (!scs[i])
++			continue;
++		pm_genpd_remove(&scs[i]->pd);
++	}
+ }
+ 
+ /*
+-- 
+2.30.2
+
