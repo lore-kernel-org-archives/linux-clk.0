@@ -2,58 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E3AC11F67
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 10:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA56C11F66
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 10:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B33BB61DC1
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 10:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523AB61DB3
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 10:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232917AbhF2KaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 06:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232881AbhF2KaU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 06:30:20 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1131C061574;
-        Tue, 29 Jun 2021 03:27:52 -0700 (PDT)
-Received: from [192.168.1.142] (bband-dyn27.178-40-203.t-com.sk [178.40.203.27])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id E7DD11F949;
-        Tue, 29 Jun 2021 12:27:49 +0200 (CEST)
-Date:   Tue, 29 Jun 2021 12:27:43 +0200
-From:   Martin Botka <martin.botka@somainline.org>
-Subject: Re: [RESEND PATCH v2 0/3] RPMCC for SM6125
-To:     martin.botka1@gmail.com
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        paul.bouchara@somainline.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <72LGVQ.D5B86EMT47072@somainline.org>
-In-Reply-To: <20210629102624.194378-1-martin.botka@somainline.org>
-References: <20210629102624.194378-1-martin.botka@somainline.org>
-X-Mailer: geary/40.0
+        id S233026AbhF2KcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 06:32:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34477 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232772AbhF2KcY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 06:32:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lyB08-0000Lx-BV; Tue, 29 Jun 2021 10:29:56 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: lmk04832: Fix spelling mistakes in dev_err messages and comments
+Date:   Tue, 29 Jun 2021 11:29:56 +0100
+Message-Id: <20210629102956.17901-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry for sending it second time. Forgot to add To: as was previously 
-asked
+There are handful of spelling mistakes in two dev_err error messages
+and comments. Fix them.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-lmk04832.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index 0cd76e626c3d..274c1004e938 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -519,7 +519,7 @@ static long lmk04832_vco_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	vco_rate = lmk04832_calc_pll2_params(*prate, rate, &n, &p, &r);
+ 	if (vco_rate < 0) {
+-		dev_err(lmk->dev, "PLL2 parmeters out of range\n");
++		dev_err(lmk->dev, "PLL2 parameters out of range\n");
+ 		return vco_rate;
+ 	}
+ 
+@@ -550,7 +550,7 @@ static int lmk04832_vco_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	vco_rate = lmk04832_calc_pll2_params(prate, rate, &n, &p, &r);
+ 	if (vco_rate < 0) {
+-		dev_err(lmk->dev, "failed to determine PLL2 parmeters\n");
++		dev_err(lmk->dev, "failed to determine PLL2 parameters\n");
+ 		return vco_rate;
+ 	}
+ 
+@@ -573,7 +573,7 @@ static int lmk04832_vco_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	/*
+ 	 * PLL2_N registers must be programmed after other PLL2 dividers are
+-	 * programed to ensure proper VCO frequency calibration
++	 * programmed to ensure proper VCO frequency calibration
+ 	 */
+ 	ret = regmap_write(lmk->regmap, LMK04832_REG_PLL2_N_0,
+ 			   FIELD_GET(0x030000, n));
+@@ -1120,7 +1120,7 @@ static int lmk04832_dclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Enable Duty Cycle Corretion */
++	/* Enable Duty Cycle Correction */
+ 	if (dclk_div == 1) {
+ 		ret = regmap_update_bits(lmk->regmap,
+ 					 LMK04832_REG_CLKOUT_CTRL3(dclk->id),
+-- 
+2.31.1
 
