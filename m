@@ -2,115 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D8AC11F6A
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA44C11F67
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9042F61DC2
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0613E61350
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 20:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbhF2U0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 16:26:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44868 "EHLO mail.kernel.org"
+        id S234149AbhF2UcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 16:32:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233801AbhF2U0X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jun 2021 16:26:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6EE6D61DBC;
-        Tue, 29 Jun 2021 20:23:55 +0000 (UTC)
+        id S234073AbhF2UcW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jun 2021 16:32:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EF9E6112D;
+        Tue, 29 Jun 2021 20:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624998235;
-        bh=Fp778EdGKIF8waB2bigO8b15iU3CCDL78TCCaYo7Y/8=;
+        s=k20201202; t=1624998594;
+        bh=D1rp/lGnkLgAHhHFva4aywCJx1yghtTcJ6Lp6xqWW5M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YTn5BNXvAbV8M6pXUYQ1gcbuBMFBo1mQDtRDRDxof8Z9qtdvndgylaG5FuysP4i3r
-         CssnKPOkTRMYxK1t60ee4dyLugmwBtZzJhDTa/VuzKetOaxmA2hufla7rgfcvmowpI
-         KA8u3SR4/yLPvVQhThcaTnP/Iu5zXFyEUM4WYWTE97Xb/v5BAr1n0DvtaiEyD21K2f
-         QmCv/udHlBM4pgDTG7htUTJMz/ZdmOUQ7CwxvUxQc+YPrcG7ksJnunSkd8YnrVB7yT
-         CoZ7UpxBEq7wx416WRXJBcNzzAXNbAw0l82CbyjMgxU0je3weuIJAZLyaezkm3WoKl
-         Ppe01bhabQ71Q==
+        b=KSbDla3TMNAgxfWkXUEbn/ZQ1zKf7vLdeZBMdzmZ3rQxYeWWP09j57E2Omx6utCsb
+         Ht5r0QVHY1sq55byXpwJPupguba06hBecLAEDHlq2r3T7Cp6EgX2D5Bc29ObD51kvN
+         wrF3ESZy1RWvfO6rf4SLsgaIif4Bu/viSVE9yIgV0YKPCdHWoBj4z5Dp1nmXdZQZOt
+         4mooRQT/klm+QNORYaRpGJLmBHgf+jJEhEsnNyy0M7PjYHL2LyQuChMbCnCU8AWWUL
+         x0RozhKLP7QSGUe+qq3g9b12gN/PThVrLZUf5qTJz3bpXYW8cI/fW0ljqyKVELUjzq
+         74SYeRYnL39kA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YNtC6YSt1r+hbhPV@yoga>
-References: <20210504052844.21096-1-shawn.guo@linaro.org> <20210504052844.21096-4-shawn.guo@linaro.org> <162484011476.3259633.10138087900669024498@swboyd.mtv.corp.google.com> <20210629133658.GB32336@dragon> <YNtC6YSt1r+hbhPV@yoga>
-Subject: Re: [PATCH 3/5] clk: qcom: apcs-msm8916: Retrieve clock name from DT
+In-Reply-To: <20210629154740.3091884-1-sean.anderson@seco.com>
+References: <20210629154740.3091884-1-sean.anderson@seco.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clk: vc5: Add properties for configuring the SD/OE pin
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawn.guo@linaro.org>
-Date:   Tue, 29 Jun 2021 13:23:54 -0700
-Message-ID: <162499823407.3331010.7870226601450224516@swboyd.mtv.corp.google.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Sean Anderson <sean.anderson@seco.com>,
+        linux-clk@vger.kernel.org
+Date:   Tue, 29 Jun 2021 13:29:53 -0700
+Message-ID: <162499859339.3331010.531653044301227066@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2021-06-29 08:57:29)
-> On Tue 29 Jun 08:36 CDT 2021, Shawn Guo wrote:
+Quoting Sean Anderson (2021-06-29 08:47:39)
+> These properties allow configuring the SD/OE pin as described in the
+> datasheet.
 >=20
-> > On Sun, Jun 27, 2021 at 05:28:34PM -0700, Stephen Boyd wrote:
-> > > Quoting Shawn Guo (2021-05-03 22:28:42)
-> > > > Unlike MSM8916 which has only one APCS clock, MSM8939 gets three for
-> > > > Cluster0 (little cores), Cluster1 (big cores) and CCI (Cache Cohere=
-nt
-> > > > Interconnect).  Instead of hard coding APCS (and A53PLL) clock name,
-> > > > retrieve the name from DT, so that multiple APCS clocks can be
-> > > > registered.
-> > > >=20
-> > > > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > > > ---
-> > > >  drivers/clk/qcom/a53-pll.c      | 5 ++++-
-> > > >  drivers/clk/qcom/apcs-msm8916.c | 5 ++++-
-> > > >  2 files changed, 8 insertions(+), 2 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-> > > > index 8614b0b0e82c..964f5ab7d02f 100644
-> > > > --- a/drivers/clk/qcom/a53-pll.c
-> > > > +++ b/drivers/clk/qcom/a53-pll.c
-> > > > @@ -42,6 +42,7 @@ static int qcom_a53pll_probe(struct platform_devi=
-ce *pdev)
-> > > >         struct clk_pll *pll;
-> > > >         void __iomem *base;
-> > > >         struct clk_init_data init =3D { };
-> > > > +       const char *clk_name =3D NULL;
-> > > >         int ret;
-> > > > =20
-> > > >         pll =3D devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-> > > > @@ -66,7 +67,9 @@ static int qcom_a53pll_probe(struct platform_devi=
-ce *pdev)
-> > > >         pll->status_bit =3D 16;
-> > > >         pll->freq_tbl =3D a53pll_freq;
-> > > > =20
-> > > > -       init.name =3D "a53pll";
-> > > > +       of_property_read_string(pdev->dev.of_node, "clock-output-na=
-mes",
-> > > > +                               &clk_name);
-> > >=20
-> > > Please no? Is there any use for this? Why not just generate the name =
-as
-> > > a53pll@<MMIO ADDRESS>?
-> >=20
-> > There is no other use for this than getting different names.  I will do
-> > what you suggest here.  Thanks!
-> >=20
->=20
-> I have exactly the same problem with my two DP PHYs (in
-> phy_dp_clks_register()), so I'm in favor of us setting some sort of
-> standard for this (not for anyone to rely on, but to avoid everyone
-> coming up with their own scheme).
->=20
-> But unfortunately I don't have easy access to the phy block's base
-> address in phy_dp_clks_register().
+> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-It really doesn't matter what name you use as it's basically only for
-debugging. The problem is uniqueness. I've wondered if leaving the name
-as NULL and then passing in a dev would be sufficient to generate a clk
-name at runtime. Basically dev_name() plus an incrementing global
-numberspace would probably work fine. Debugging would be annoying in
-that case, but maybe it wouldn't matter.
+I dropped v2 from clk-next and this will be punted to the next release.
