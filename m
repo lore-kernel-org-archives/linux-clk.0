@@ -2,125 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,PDS_BAD_THREAD_QP_64,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A0AC11F68
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 13:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B11C11F67
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 15:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB1D61DC2
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 13:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626AC61D9A
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 15:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbhF2Njh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 09:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233645AbhF2Nje (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 09:39:34 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94683C061767
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jun 2021 06:37:06 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id c5so17197948pfv.8
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jun 2021 06:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=28cl+bnywA6mqVAuFBWS4+DC1xuc9Ad1sU1g3enyY68=;
-        b=tl9PRIOlLaANqKjBqj1YyHJxzRrO+cwrBt+A0Hs89S5FdinhSuCCFpirzfGtEypVD/
-         X+4BF6To63r3yCHh20IBNtz/IEWoRwwpFn6v0akYlhLRy9jSeoHZOuRxMdyF31zvcf44
-         c/ln02ptAqH1W5oR/aXqrJTzv706amVkWEPakHjEfn3Lv42yerEEi35z51kv1MVHI7Eu
-         tx3bQ1UtvRhGXMt1vEYpIlIVCXnO8bfG8mmkVflfzMtdiXcVSOKs7diV7k/B7+9JN51L
-         YOSxFgt4IIF0nwS87kY1TYCz/OPuzqAdhBG/NtqbPjN6TlWEpEPQEkxGbqc7qw2zUfri
-         c7Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=28cl+bnywA6mqVAuFBWS4+DC1xuc9Ad1sU1g3enyY68=;
-        b=MVjCkRkOEhwb5nboFSgnoni7ClU0S3FWoEtjuABAFtEZaV24+1LdUYaPRmdiwwJU0a
-         uEHgSPsvXLES2Gg/3jiclMem82L8aLa9qtyIy40y/upNzs/JjpwNoUPv/zTFapORYnbR
-         WbuypKz2Dj/DEkwZ8PzC1/tmsHH5EG5h4U03XZFSZE4AKeHh9f3udzy8stU26Fnnn3gS
-         zkcmadL0pEqMnXqdh5BSgN5alyGO+e/RGUkvDpEu7LYS3CK0MJftY4fi+0+39YMZwQNF
-         Dy0nRkObw7Y0IdlRc6ueHMcVgET1otoZJaiqNtjPJwnDOCRnlaXKc8xCJt7Szhkw9RnG
-         09MQ==
-X-Gm-Message-State: AOAM531RTGvTRzrjjb261rXCE5SUb75LsNNck5wY15yC12Ho9+rBiu3v
-        vrfr84UUVpjF+uU6cEIoHHFnsA==
-X-Google-Smtp-Source: ABdhPJwIBnAsS1nw+GVh0TDVAwqpGC1ylXLRdSOya/DS07KIGiWDdVqLV6Kimp10EWjeGl4hNnRAmA==
-X-Received: by 2002:a62:d14b:0:b029:300:5e03:8e14 with SMTP id t11-20020a62d14b0000b02903005e038e14mr30288700pfl.21.1624973826085;
-        Tue, 29 Jun 2021 06:37:06 -0700 (PDT)
-Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id w20sm20759021pff.90.2021.06.29.06.37.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jun 2021 06:37:05 -0700 (PDT)
-Date:   Tue, 29 Jun 2021 21:36:59 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: qcom: apcs-msm8916: Retrieve clock name from DT
-Message-ID: <20210629133658.GB32336@dragon>
-References: <20210504052844.21096-1-shawn.guo@linaro.org>
- <20210504052844.21096-4-shawn.guo@linaro.org>
- <162484011476.3259633.10138087900669024498@swboyd.mtv.corp.google.com>
+        id S234539AbhF2PDr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 11:03:47 -0400
+Received: from mail-eopbgr660137.outbound.protection.outlook.com ([40.107.66.137]:53412
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233791AbhF2PDr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jun 2021 11:03:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oRf46zmdT+AnhqKyXktoXq3WiS5CXycUCGZZHjMkbixHIFJ5PVJ7F7QTJRrd6eJUr1qwuQLgWumLFH/0Zm3oH80K6qpPO4wU0jaLAPPtR0z1F3BRpaUHsNm586eGk74SbgncCMGzPGcaa0wg5QWuPdvoNgIZfpNoUSdy+2HPW+aOahFgdl6fFaXWn8lKqZePGnlK/5B2/e/In/AePpONwUpFaexkCXa2yxWoP1Z0XvZEIRDb32MOc42/2kr0d51VIfMD+LmKMC31sf94QLZ0U4vUIbzTgehEsfIsnLlfbf3k/WyWTPfpUbF5bQHw47Esg62GxeUlB2twf7EEE6p1SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g2Q78n5JJXg7AMiQe7rdG466aUqM1ipadO69+a2s1iM=;
+ b=ae1yFLv9XPEyCEgsmYC1zAwejb9YkYSvVFY/9B4KC0pS6daiSZgsRBRQBmbVs9wSkCphN7+1CfUnp3dw5zuke1ee6MCedJ/EQg2WyF2yhAb0rInvkBp9mrW8Vbp3LSZGDcCixwi6gdSx8XSK0/bk3OaYn0B5PuM3M6iNQmCfsQot1C/M2u9Ta36awbmJrdfoHhIBJF+52UiSn2rDdvDP2GmMnPMWYvRxIZrNEndZXFf5GT9DgDsOrdDf8rOxxylTSnC4FzY+7w/KkOOHmTQKjM89tXLrMZrZeSRn9vWV6qb4fXfiqVaSrVsKVTLPv5p7iaOtXZdp2Fvv1PIX6HeKBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xiphos.com; dmarc=pass action=none header.from=xiphos.com;
+ dkim=pass header.d=xiphos.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xiphos.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g2Q78n5JJXg7AMiQe7rdG466aUqM1ipadO69+a2s1iM=;
+ b=nJOlJO7CEMtqKfV2xKd2tqcJ6Gx5Valjr14aAEX2ByrwEkdhDUkrJ4mnTdCicONp44nVEPhorTuWMpHsH4nJY17cTPwMz1H3yuwzMObD0in0fd7zh+9OBm2Wv3WmBLIPzH/jIMqH1LtNuBBGaEkkNynOoHObVaBK909DctrU6E0=
+Received: from YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c00:d::20)
+ by YQXPR01MB4873.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:25::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Tue, 29 Jun
+ 2021 15:01:18 +0000
+Received: from YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::74e7:26e3:2b35:6c2d]) by YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::74e7:26e3:2b35:6c2d%5]) with mapi id 15.20.4264.026; Tue, 29 Jun 2021
+ 15:01:18 +0000
+From:   Liam Beguin <lvb@xiphos.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        kernel test robot <lkp@intel.com>,
+        "liambeguin@gmail.com" <liambeguin@gmail.com>
+Subject: RE: [PATCH 1/2] clk: lmk04832: Depend on SPI
+Thread-Topic: [PATCH 1/2] clk: lmk04832: Depend on SPI
+Thread-Index: AQHXbK0Z5VBEWEekVkSaq8zJ0a0yiKsrFTJQ
+Date:   Tue, 29 Jun 2021 15:01:17 +0000
+Message-ID: <YQBPR0101MB1811EF89914E845264FA4DE8D8029@YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM>
+References: <20210629060751.3119453-1-sboyd@kernel.org>
+In-Reply-To: <20210629060751.3119453-1-sboyd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=xiphos.com;
+x-originating-ip: [198.48.202.89]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 231ab118-3c98-4b9a-ae19-08d93b0ebfad
+x-ms-traffictypediagnostic: YQXPR01MB4873:
+x-microsoft-antispam-prvs: <YQXPR01MB48731D3FFBA95022C3381694D8029@YQXPR01MB4873.CANPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:1303;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aTqB2tCQO+lZppiB+DYKj3JwKGVIWcJkZV7p0Piwdd5yQVrf71Co8voaHOnmlr/3sR7Uu41FenMNQergYYqGH7cytkx9lRVZdfq1C5eAomjd7+daynQ8R6rA6pGPXSTyq9y5bOubhmuFEH1k6t9tXTFIu84cs8nyjKl1nPeGi/4QwZNt82I4vKhZkFCybYVHxG2m25kznuJBnsCc85woDZDOf1570bshyU1nevxym3mPEvLl3kwpZrdgWDg0GzExO7HSDYpA8FWwxspWzTi7oN8W8P4Exynud4XzSjAuSA32Ps1bwNh4YmIMhE5wELqgqECI/ckq5j7mMXjWEEHTS15aG+RUYAvaHlWJyd62D8qtk4W+w0GF2Yx7Ckc34k4l05v/pbX6lgduGIViCM0ps0lndwkDInc6YUFMC60xdCaQg7tJa1A7whEKwvN+GaP428ZV4rG0MKlfXon0394145jy6zNs9DK7y6sJgMh600P5FxheOFGmuIElVLofFYZZuR3HxNuJa4SEewk9rnm1tKATIH/dytLdAK7ADAQoUbvFpL6kdeltBGmIr1rcLP+wUAJHbnJMbLj6wKtFMR/Xz/LQVRA7JHDIdlhCtCnmaOgiSORKhBUiJ9PcMb4CrBWFNbKMqaeU9gDWp7r5vn8VWBGVYICiBGbwLywpdpZSA82KZ7jfN2LHqqzWKmu8YDyabF5kGhytfuw/c18NdJ4MAF1OK9KnCQV5pPVrychpQsG9uK8kQ32vPbfk+ASlEnKZUcuHdhLhWPQJpmP5nNPbKw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(136003)(376002)(366004)(396003)(346002)(39830400003)(122000001)(66946007)(64756008)(66446008)(38100700002)(71200400001)(2906002)(86362001)(83380400001)(66476007)(52536014)(66556008)(5660300002)(76116006)(6506007)(53546011)(54906003)(4326008)(33656002)(7696005)(316002)(8676002)(966005)(8936002)(478600001)(26005)(9686003)(55016002)(186003)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Cuqr74rVtIWj6pM7piWwEuzCCGiJHSzlYFjbHIrwSTNNEn2XOan8QOpg2uHs?=
+ =?us-ascii?Q?qWDy7p+SaphtR4zNxFJweSWOvZqBX02F8AvUraaY4dlMdqIMBsU/UpCiLgEr?=
+ =?us-ascii?Q?vjxt128k7Cj236aBSxsECrAGQE9uPXxnLuo8Khm025GR9cXbghWasdRx8lRo?=
+ =?us-ascii?Q?WfnWy2VX4mCVVVuDMUTaIXOMyCtBOyAa2kG/C8lV9YWrqwLwQUKZHF/qcNgn?=
+ =?us-ascii?Q?KlLtiKkh5UEXKAZBRX9wKrSs0fWQvaAgosbJgK/cqZjdN0rm45ugTnqJemHs?=
+ =?us-ascii?Q?kd6XTGOH7XqreCSdgHBmd52uWdQ4YqO1o6QJwMB7VuGs5jaWKw6Px0c2mn7T?=
+ =?us-ascii?Q?wXKjfgBa5X/EAzZEO6vffED8YtNayjFhPl1+kMCbvZG04Q0GqF1+GSYCV8+j?=
+ =?us-ascii?Q?s2uTiBceH1d+3OXtnzm4svYI+9ChHPvB2ngLL90K2ILn3KJeUvW6rPAb4jK3?=
+ =?us-ascii?Q?d9fZOf8pWq7Df0ndOnz1MXq2eIZHvlV/hOwQd13MkQVyhNiH9Povw0b3s8Dg?=
+ =?us-ascii?Q?E8RXG/pUxCkCbMNRw2TqcISTKpN71EQ1DWwRNjGwEhepUj6IrTyOjK7AYxXV?=
+ =?us-ascii?Q?WjGyh5HwkSZ+A1UKdat4lMU/6kQI+uiHbh9/IxyoypNvpeXDpKsG/7sah1CZ?=
+ =?us-ascii?Q?AoB1QYQ+8toMLm54SPVG05nPpkDF8D2hTWFq0P48JO4H3xUKqxH8JBgCnZb+?=
+ =?us-ascii?Q?Y4fbTfhMVFmEVBUfQi4/pqNKEysIfSfyV/9Gr0ANAAoLri9sVVdebhSKgTIM?=
+ =?us-ascii?Q?PU77zdmnO1EwHS9KVkRcM8fyIlEHFwXoqb1SIAHZYdDkXAzbIk3vE8+w79nl?=
+ =?us-ascii?Q?Nhj1Qi+x0E2ywr9HamzJaiSPhHtQ0eYbAmXDaTT+zHl9B/4xBUzcRNMQ3XFZ?=
+ =?us-ascii?Q?G2+5MykCQb/EjC2tSXLofub1gjfLJvBEwl/oy7oJa4nC45owbX+LmY1YmEsS?=
+ =?us-ascii?Q?400wdEDBSSd3iRrVEzFzCXD6Ou4VCxTYezjfAW64GzKhEtRfNPLVhqAWU4bb?=
+ =?us-ascii?Q?xFIuaYYCbBtDH812ESQ4vX8AMsqTNq0r16rXlfoc15TqGjqTykQDsiPDJneS?=
+ =?us-ascii?Q?iiGuDSR94AXIdJa5nOzSGPn73ABia6f4bbJUxZ3z5JI5ed9a98eDC/Y5zjyK?=
+ =?us-ascii?Q?XmJ3S0d23D/8MDH0Vgv94KsHVjABWg7c7dclEXMFzjCQNB3XF4ecit/uZh9d?=
+ =?us-ascii?Q?IGhYMHWJoMvs0Nkz8nAjvu01YGS7rUKFWgTcy5q805AcuqJaM3ZVhDR35IjQ?=
+ =?us-ascii?Q?XJPPZhH0bN5RcTH06xWZ+QiKT/hD6/OsOTJz+gfYOR4m9LxMiMJYI8LnXEHu?=
+ =?us-ascii?Q?/ewFWMkUSakeW0h+tYmK0v6B?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162484011476.3259633.10138087900669024498@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: xiphos.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 231ab118-3c98-4b9a-ae19-08d93b0ebfad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2021 15:01:17.9874
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 11c32550-fdb1-48d9-8a3d-133e5b75b54f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jtU73g7xPv+g55OBaHsf2kuvbCJj9vXgyvsY57QneghRiqsE6eWk6e8zkG+enwNx
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB4873
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jun 27, 2021 at 05:28:34PM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2021-05-03 22:28:42)
-> > Unlike MSM8916 which has only one APCS clock, MSM8939 gets three for
-> > Cluster0 (little cores), Cluster1 (big cores) and CCI (Cache Coherent
-> > Interconnect).  Instead of hard coding APCS (and A53PLL) clock name,
-> > retrieve the name from DT, so that multiple APCS clocks can be
-> > registered.
-> > 
-> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > ---
-> >  drivers/clk/qcom/a53-pll.c      | 5 ++++-
-> >  drivers/clk/qcom/apcs-msm8916.c | 5 ++++-
-> >  2 files changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-> > index 8614b0b0e82c..964f5ab7d02f 100644
-> > --- a/drivers/clk/qcom/a53-pll.c
-> > +++ b/drivers/clk/qcom/a53-pll.c
-> > @@ -42,6 +42,7 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
-> >         struct clk_pll *pll;
-> >         void __iomem *base;
-> >         struct clk_init_data init = { };
-> > +       const char *clk_name = NULL;
-> >         int ret;
-> >  
-> >         pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-> > @@ -66,7 +67,9 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
-> >         pll->status_bit = 16;
-> >         pll->freq_tbl = a53pll_freq;
-> >  
-> > -       init.name = "a53pll";
-> > +       of_property_read_string(pdev->dev.of_node, "clock-output-names",
-> > +                               &clk_name);
-> 
-> Please no? Is there any use for this? Why not just generate the name as
-> a53pll@<MMIO ADDRESS>?
 
-There is no other use for this than getting different names.  I will do
-what you suggest here.  Thanks!
 
-Shawn
+> -----Original Message-----
+> From: Stephen Boyd <sboyd@kernel.org>
+> Sent: June 29, 2021 2:08 AM
+> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>
+> Cc: linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; kernel test
+> robot <lkp@intel.com>; Liam Beguin <lvb@xiphos.com>
+> Subject: [PATCH 1/2] clk: lmk04832: Depend on SPI
+>=20
+> This driver depends on SPI. Otherwise compilation fails
+>=20
+>   clk-lmk04832.c:(.text+0x1668): undefined reference to `spi_get_device_i=
+d'
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Cc: Liam Beguin <lvb@xiphos.com>
+> Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-> 
-> > +       init.name = clk_name ? clk_name : "a53pll";
-> >         init.parent_names = (const char *[]){ "xo" };
-> >         init.num_parents = 1;
-> >         init.ops = &clk_pll_sr2_ops;
+Reviewed-by: Liam Beguin <lvb@xiphos.com>
+
+> ---
+>  drivers/clk/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index ccf77849bdbd..d49cf3ae52aa 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -57,6 +57,7 @@ config CLK_HSDK
+>=20
+>  config LMK04832
+>  	tristate "Ti LMK04832 JESD204B Compliant Clock Jitter Cleaner"
+> +	depends on SPI
+>  	select REGMAP_SPI
+>  	help
+>  	  Say yes here to build support for Texas Instruments' LMK04832
+> Ultra
+> --
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
