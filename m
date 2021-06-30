@@ -7,97 +7,98 @@ X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDBEC11F69
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 16:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6226C11F65
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 16:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3457261483
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 16:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 877E961409
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 16:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235933AbhF3QDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 12:03:01 -0400
-Received: from mail-eopbgr660120.outbound.protection.outlook.com ([40.107.66.120]:49501
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        id S236054AbhF3QFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 12:05:35 -0400
+Received: from mail-eopbgr670132.outbound.protection.outlook.com ([40.107.67.132]:8928
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235862AbhF3QDA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jun 2021 12:03:00 -0400
+        id S235822AbhF3QFe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jun 2021 12:05:34 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X24EavcIYWQJW9tKc9g5eVDJ7jhwWqzgYOLyuDjgIKcKJ1UnoJ1sxUVxoZnYSsH+loRYW35mKuOA/3fJV6dZRiU9RJFz5UDSMBIEQZTIuOJ1uIH79yvNj0umd+zeP8f68fiCV063knHUCCHKn7tAjjYzJjnTq7MO+UpVK9Ed3PnXZH5Us4TqVWYcnI6I9e3xpVLvkCoPFLIhOveEyxwkR1gpFlDf3hSo5yVq4KIYfXQBR+rODR0rpcWhlFQN15KLTJbk3aKmhm8xCVjb7b3SCk1phDnN2dTnxQ8wQuxWhRDgAaO2fgH0VmAX/IOIGfeJwwhbDRtKz1+KnAMBHu1W3w==
+ b=oS9YRLzLx8tsQ73ajcyc0DbDDbaZ6X2aj8u7isjxi9ijj6S6FtY8CTrO1bRqSXziYvEsBTr3sNYkFq0sL6j95ZZhCekm1QYdUqrjUO3qkdSw++3WOtxK+RRKbn7dPuQdTe7k78t+OEfRJvDf23K1QGKEDXyb00nGxb12qt5F4Nw1w39VaTqfSd/W8iq/In1y/qkjtuNg4OAjtEMvTqtVpEfZeW0tyM4ksG2BTgJi+1T6j0rBS4NsFY2VmXR+kY0TYcoKJ+fKWr4BOM77QvhrhKDCdPkEh2ZGkaYHQ3EG9F9c+W9uq2JfhJWJqJLrYxOuxVzkWO1Sw+I2WFroAoBWkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OohReHPGazhP98s9Zh14BtB7iW6MtsXo5eBbgt23ILI=;
- b=lXpfCaGt3MYCqZONedLoLCvUfBzJAuRu0pr6ei5RwusgtaSK8JZrGze4/BB2h9UuYgCFg0/INAiVQTH7l84O2Gkys/YqROX+mPku5joM7NlGz+bcPrl+j3Nkrm+ChKKORJRt98Dujq9leW9cUtmNOaqO2N5CHxJ5mXIrFzl0pdZGciqF0sRFIIoxPVhq0cuPtn4R9UeBvmeimiccyiH/MU++zy21pOyHzCd2Exb1A6YrCUVCYBrGmR2z8+tCYm8QrYwP14aF1NFkFoCJ7OM2BEko4Fygadsr9UgfcAaR+VcIqIVqc+qcLzixRqOQTahdz13fsNEsegB+SwRUdJPdUA==
+ bh=Tid2M+HoBue2PXAmwcldf1YDuPrKRsEdw5UScPX1dAM=;
+ b=dfWzdoDBp6dJZ7cgEEcDKWLqmq71EKqO7ChJPIEFjMAObg7rUxewLrw8NHCLzynpG7oqaPAE9OSp29us1k+3EoBboNuq90ZEdYDo0pOStLicvlh11+4cKQ0ZZhuVWObmSEwpzlg+IE9YjZtLc0WtwxMi64rQ4YkmWX5Qgx1FUimega5TuaNkJUh1Tgv5P5XAo4lAyRqNAcN01ndEBzetxqLFPZgOTqri/g91NLp1huZ9WP/JaBVL8vxBiTzqQ9hdi0cnwlrgEYNEi3eS/MitOJXiqIbqjDvU2bwM9eXfj5ohDkJsR/K998dDqVvSwMiyfFR/HIHs4BAcJxsz+QId1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=xiphos.com; dmarc=pass action=none header.from=xiphos.com;
  dkim=pass header.d=xiphos.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xiphos.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OohReHPGazhP98s9Zh14BtB7iW6MtsXo5eBbgt23ILI=;
- b=SChLP9/4Wbyye5GcE/vQZTyDaEJIZ8IauWjPtXc4gXwhF/wX/4t+UUPMQk9Qzg+WyvJ16h3pomaw9wzCYpWe4lHsvlxOfk0XuY5S4WlKzrE9hzR8IRHD49h7eD2+fUzOKZ7/YBBa0ujSYMJgKss9qEwoB+ph1savPhpmeyr8R9k=
+ bh=Tid2M+HoBue2PXAmwcldf1YDuPrKRsEdw5UScPX1dAM=;
+ b=Kml5GfPXYPMd4PV2JNRRBJSC22VNV8nWPDldWVTxW2G22cM/jyJZhE5vwtHD1K0C4M/hlZfE/Jy8/6fXGm1DzhY0s4GW2I0deVMc00Jq/3Q1I9JobFLfHEsdCz6PTi4uHgrp6G96TAU/TmTW3hqYXb9/T0fgviW/xAe/LlSg1xE=
 Received: from YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c00:d::20)
- by YQXPR0101MB1735.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c00:26::22) with
+ by YQXPR01MB4691.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:1e::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.21; Wed, 30 Jun
- 2021 16:00:29 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.20; Wed, 30 Jun
+ 2021 16:03:03 +0000
 Received: from YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::74e7:26e3:2b35:6c2d]) by YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::74e7:26e3:2b35:6c2d%5]) with mapi id 15.20.4264.027; Wed, 30 Jun 2021
- 16:00:29 +0000
+ 16:03:02 +0000
 From:   Liam Beguin <lvb@xiphos.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] clk: lmk04832: fix checks for allocation failure
-Thread-Topic: [PATCH] clk: lmk04832: fix checks for allocation failure
-Thread-Index: AQHXbbciuIFon9n1bkCpXlwcqRycHKsstdiw
-Date:   Wed, 30 Jun 2021 16:00:28 +0000
-Message-ID: <YQBPR0101MB18115B033E3F961CDF45C199D8019@YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM>
-References: <YNx2dyvB6MkVlsrl@mwanda>
-In-Reply-To: <YNx2dyvB6MkVlsrl@mwanda>
+To:     Wang Hai <wanghai38@huawei.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH -next] clk: lmk04832: fix return value check in
+ lmk04832_probe()
+Thread-Topic: [PATCH -next] clk: lmk04832: fix return value check in
+ lmk04832_probe()
+Thread-Index: AQHXbVRCiolFjIE7Iki/bk8doP3i9asst/Vg
+Date:   Wed, 30 Jun 2021 16:03:02 +0000
+Message-ID: <YQBPR0101MB1811C2E16F1D6F2E9D474CAAD8019@YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM>
+References: <20210630020322.2555946-1-wanghai38@huawei.com>
+In-Reply-To: <20210630020322.2555946-1-wanghai38@huawei.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=none action=none header.from=xiphos.com;
+authentication-results: huawei.com; dkim=none (message not signed)
+ header.d=none;huawei.com; dmarc=none action=none header.from=xiphos.com;
 x-originating-ip: [198.48.202.89]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 92d2ab6e-f971-4937-6315-08d93be02eb6
-x-ms-traffictypediagnostic: YQXPR0101MB1735:
-x-microsoft-antispam-prvs: <YQXPR0101MB17354A790D4CDD849786DE08D8019@YQXPR0101MB1735.CANPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-ms-office365-filtering-correlation-id: a6ca5726-8c3f-454d-2bc6-08d93be08a5d
+x-ms-traffictypediagnostic: YQXPR01MB4691:
+x-microsoft-antispam-prvs: <YQXPR01MB46912EE17AD6D1EAB54C8E01D8019@YQXPR01MB4691.CANPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:2276;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2RsRZHLvHHRq+ap2+aFqKcEUIVbZkIPJ8XIKs0AqfQD4OUpf3ks7t58HUStceq8p1Rr6v6Y9v9YeabS5o41KFpC2zejSc6olNoCRleHHMhvisBkT9l+Sk57TnhUXEVqqaum8aBNHGWAucYkGa4fg96CycUSAW/TnBxfqiV3xkJKKuut067SGosL7eK9gRsWZyxgYIQY1VWKsZ3doDHlHtm34b5WHUzb0NqFNJma0fNjRAlFf3CVwc2QqSi6mhclpSAzRk7EZmNn/4JpsO8qbBU5U/jFU9ohTAUMyIQp4mdWh0AkJLRzwCEcA4rfea5w7QaowKSior1OGUszl2k7MEggY86ShQDdYQhCkwxfqOlFSOfYWm2doGfqArKdAgiOJ5O/Y71OuHnW5x02gcYEb3bNfoHmjDMICjhQrjENqbXoBcyFDMIQIL/a0Le7JqAXYEbfkZ2L3ePDYn+UmEWUx+Ok7ecXYEBsWc4QmdkxaiTzBtDjXxTKiV7LPA9zmjkHHSnNWaFbLlv3H1u6n4E3hYHcrxE/j0L4oMUyqeYltcfqaQIM6QCfRWyFEdYDSKKDYlydKlcBP3woZOxkmxPkdtqEvJrd9t2d+ow++JpTTPtDXjti/FaMWVnMXPl3kK10JAUoI5IxStl1ohfqTuN8lnEwJjLMbuL+xVRi3UdtK/oZyyofSk80qK1nue4CAfu/BGrBntKJ4xnmc8CIZi+ad7Dwlpqzl9O7GA3rFmiBCFZVvKn1OkbhxLPoMKh1WgUWyv9F+7mRXDbM7UcKismlpkA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(346002)(39830400003)(396003)(366004)(136003)(376002)(4326008)(2906002)(7696005)(186003)(52536014)(9686003)(66946007)(66446008)(64756008)(66476007)(66556008)(55016002)(8676002)(5660300002)(122000001)(38100700002)(478600001)(71200400001)(83380400001)(966005)(76116006)(6506007)(33656002)(8936002)(53546011)(26005)(316002)(110136005)(54906003)(86362001);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: lSKQzlbc6greIlru60dTG7Xsf1ThFzk7YrtEuu46MR9y0EkBnNvKQ2iJqms1UwNqB8AoEfhm8lUEiAJltWDii48DhzEjv2G5PdHjujPotIgbQVQptIYPT3di3ms/63fenzVpipWZIS87upaogaTr7elLDeicCSNgFCONkvEsTmTAEf0/iFs+/EvR/hRa4/e+ptQjADaZQX36hUS/zYPMkbTmHz/RiA0x744FxTX/mYIUZdFCVaB4FG+y/C/XQrv3xrvh8esbK5byIYjtHFNlhWldKHuDERtD0lyPspMEPIpG9enYU6J+4VV8lBe5jg1xcLbNaheTg1skB96PaHaBHDCvwPL0yCJrpz7+6n0seSykxzavvm24uKHULyVj64N2HIgYk/Xrtb8Rj8Uy8ek7rbxXl12vf2EI5YrxHHZh3cEWw1h3SKVSxIuyjis+J56SAJQ3VHUlDVFZkbok6J860HMdjHLXm51Pxp1JXl2B1CoLs7mCMd77ZURd0qC8MHhcJJ/XvEMDt05Zv6dEGU+7UXaUS3fO+gpYntJiANAeTONv6W5ewxoPeIB+neYZC392vvp1faN6kxbm4mf7UHPTqzSdyPccDnGj+d/t/B3lZPbJ9PjC07q1iX+BDzQ6nnp7dqN7+qdTSuXpAiwECaVluA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(376002)(366004)(346002)(39830400003)(136003)(396003)(64756008)(38100700002)(478600001)(316002)(66946007)(54906003)(33656002)(66446008)(66476007)(7696005)(83380400001)(66556008)(110136005)(122000001)(6506007)(53546011)(8936002)(52536014)(5660300002)(55016002)(4326008)(9686003)(2906002)(76116006)(86362001)(26005)(186003)(71200400001)(8676002);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?nO3t3CjMywo3oCKuerYY3Ovs01baw/HM2uu81CGBiACUKhcBdIfM5S4FCkYK?=
- =?us-ascii?Q?KuE0kDgHciDF+3HzFsh7ZFT7QbzfiImtiF97/2sKXvcyPDunwmj0LmLNi/J7?=
- =?us-ascii?Q?UvDQ9UJp+4jNgr3m8Emv73fdw9gHJDcr/8A3ISkvUf9yM0c3FBhOokm2Yfkc?=
- =?us-ascii?Q?3W9xftydcsvuhFfxmBrg2lhUB0OArY3wzudgPTwKNptAmqFWBg3zbI611Eb8?=
- =?us-ascii?Q?ErWLDpyPOseZN7kjWKVn/1Ih4n97nUrq4+xHrlgkc9MmFa6cAw5bYsefHDHt?=
- =?us-ascii?Q?6vrTji5JihWSK7hXZcywt5d9rdyLUI8wSn/3uPcqA8IDDxLuV+cdZ8IGRZgr?=
- =?us-ascii?Q?BzcjGb+Sejz5PbT5e39zUdULctHj2aMi4or7u2qWmbEg60rN5/zl2Y0Laams?=
- =?us-ascii?Q?fdtlruvAnbzgcvt7R07xzK5ty6VkhJ9HvFSh4I8PsQz81RnphdMDHgXSaZpi?=
- =?us-ascii?Q?YP7qLlnjfHnYv5vGMrU7Tty8WMtS8igkMLt/bVOlvv2/9ChkoIrPnG1hsv2U?=
- =?us-ascii?Q?UVcNJizHTLMlCiQ8Wv/lpmpjTzTZjE9HzSfF9em4R3g45mrv2EOxnpK9FigE?=
- =?us-ascii?Q?7o1lTCCD0FsMT/Z+5JRgqxRwKxLgof+1XCvUXcA6ltUa3JmfJxpghnwWB0Fx?=
- =?us-ascii?Q?LLeH9q+RO3KtB3o3hmvOd+MQNa5CWXbGxo24DsEWU5RE/Yge+WC8kkwSh67u?=
- =?us-ascii?Q?n3X4hxU0CzXBvkD5euUE+mAhWzK2akCFRonp0i7aTG6m31VIxPvmP96awEU3?=
- =?us-ascii?Q?NvWwhuPFpOEjndbMrfrrxzqRCiRxpYS4aOGy526g84lLh5R9i1c2WpLvXrAU?=
- =?us-ascii?Q?m50z/V8V4sqxV97l9H3zHhZocHrs6B96nMbLUZ0NyWFzv+0zhPh5kByYzj1L?=
- =?us-ascii?Q?dNW5BPaCE6VZUFSxbi50cmsszuVbH8IEx4/ZEH/08PEiaMCpelk9UvOLQfUe?=
- =?us-ascii?Q?avNiJLbHpjVT+p7sWGCkGsTcFnXNSkSqYfcbggNyojNwB4K8Mw6FQhPucjne?=
- =?us-ascii?Q?78c8jotqJaQXVhbHrslNKymNK90+kMmo5dKRVCBQwyAtLQW8BaTiabnBB2Go?=
- =?us-ascii?Q?3ewkDhpVMgTMvIGzqIhv/GlND+1FTua44fWUXi77VQVl8mgNZSGXse+9dVEa?=
- =?us-ascii?Q?nUNFW1y31I5uwaN3Dy7doPeiQwzjRgy4eT07PF2Sp46oo0bFp7RQUHTBDOBW?=
- =?us-ascii?Q?f11VgxV6sL48rQLL3AVxVEeuv8IBh1AjkaGaN20lnwwBPmp6Gspici4isWPX?=
- =?us-ascii?Q?FLV3qFCo3/xOV1E5ANA+sA8M5UHUpmeWTqhonsNtEmDtNU0hmkpO+NiX3hBV?=
- =?us-ascii?Q?JJs=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?YqDpO/yYFziMOkrt8qfV032nCy2+UCgEbcYFP5Wssk5CVx3xxaihwbZfhOr5?=
+ =?us-ascii?Q?gfxt/bYt9SjdNdurlganYLY6JV9D+bVGna+erO30nvmbh3wvc2iB9cPn0Bh2?=
+ =?us-ascii?Q?pFBsa0Zq9GXG9pwyX3FkAwG6kRLlt1dwXwUU0YmttJe5PWagj8ZjeqBKsbIW?=
+ =?us-ascii?Q?K3WBQDDFsAMOWPh+DLaHs/pPwGSYP709bc5x+9lPYRZiyp2b+7T4pJz/FCoU?=
+ =?us-ascii?Q?OrzKyZCn5ZarfS6/cgcS5nq5zzEjOIcSH0hChgtXjrZkKAbwlmdboH0D/Aud?=
+ =?us-ascii?Q?QwG1vPeSE/sPIJ6kyRBEgB3Ua20JmwfkHfVOZHtWGDARvl50AFWZEflvG1/A?=
+ =?us-ascii?Q?545wsYd0kDIg2Tn8gNEaA5pSZPWpsRe3gUdm5N3DPfTQtH/yjJIXQPKlBpUw?=
+ =?us-ascii?Q?+tqVr6bUv6XMtm9NIufsi7iiEFDdncNHo6j3EKh6EDLmZFi7MyiCtLke69u1?=
+ =?us-ascii?Q?jcPb8plmLeIiiZzVHP+vpU3fKiZQpBqoPwg+ECbLcmb/KhsNh2hiPYtsV/uc?=
+ =?us-ascii?Q?rW4Ri1p0jCR/BjrtM/fQqvtL1n+pSGmrBC9pkFzCSvuFtyKkeHoauqFilNyZ?=
+ =?us-ascii?Q?GQ3HpCOydEOjIdZbVKvGIactU1PNmy2jAwVUfVVQO+hF7O+VqEmiO+NFjrUK?=
+ =?us-ascii?Q?GvyCMfC/+AYtqUxj9F3z17jB2cZzYYksR9zaNQtwPBglmO7t4FEq+nK9GNi1?=
+ =?us-ascii?Q?3m3t3vmodsnchKZvZVxEm5hizd46f0MPXzpexd5ZC8ueFL/KmqsH3xulgO92?=
+ =?us-ascii?Q?lz7er2yIvyrKUm92UJrA8xFX0umj3SvLbecjTqgKPjQNhTFX+zK5Ooym5zf9?=
+ =?us-ascii?Q?QRsUglpRRKdGhGUihIw+wB6VrEUVquC2hkXnlXDCBxfX2go/kE9pKoNT8ujf?=
+ =?us-ascii?Q?om0g0jpbalfpw08CGYXHKrBYt6suUuG7DI6L3IRDVF+weDmz6gsH+AAT9FCa?=
+ =?us-ascii?Q?nTvd2szlOnxebW0zaB27n7B4LSQ0h1FcFudTr6Wq0ZEylVw3j1J2iI/lk+QI?=
+ =?us-ascii?Q?H6L6cZxcSzG6KOs7mshRx5JVQXx0c+bhFm5BBtS5d820QP9gln0YwiI2OhNq?=
+ =?us-ascii?Q?yM/A7++Al/dJ/z/XhmsfKnEBxCkFmqPslZqUk0Z5oknpREHINTYqbvG/uiKf?=
+ =?us-ascii?Q?HQCkMPqeaJczYARHyvVf+Rz+uto2QR8AliN2EvoJnvieZYK9phf7CyKlSoOY?=
+ =?us-ascii?Q?2V47WfTLYLz3u2Jc7GPKZ5xi4U9lpNKjxbOlZ0zOijzHzDj7WeNITHVf92Q6?=
+ =?us-ascii?Q?NV5KQbE/42uQ3ZV9PnvCNpceGHy9YfvnlE7Ae3wlpVgtvMOnXHoz2lQSzrNu?=
+ =?us-ascii?Q?61fswl5NADyxymERK87bzTWb?=
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -105,48 +106,45 @@ MIME-Version: 1.0
 X-OriginatorOrg: xiphos.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB1811.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92d2ab6e-f971-4937-6315-08d93be02eb6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2021 16:00:29.1180
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6ca5726-8c3f-454d-2bc6-08d93be08a5d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2021 16:03:02.8692
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 11c32550-fdb1-48d9-8a3d-133e5b75b54f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6yz/bJN/uUNPqRH6V2QwUsW0+W7PNXPhOGa+uPv5V0I++V2bxTmDqJuLrRS0m2E4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR0101MB1735
+X-MS-Exchange-CrossTenant-userprincipalname: LS5J5n87VP2zQJ9Ow9kCbw+HN6b+g/pQAv4mCqpzcsbR5R8QPxNWOjBlEEw85ja6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB4691
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dan,
+
 
 > -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: June 30, 2021 9:50 AM
-> To: Michael Turquette <mturquette@baylibre.com>; Liam Beguin
+> From: Wang Hai <wanghai38@huawei.com>
+> Sent: June 29, 2021 10:03 PM
+> To: mturquette@baylibre.com; sboyd@kernel.org; Liam Beguin
 > <lvb@xiphos.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>; linux-clk@vger.kernel.org; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] clk: lmk04832: fix checks for allocation failure
+> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH -next] clk: lmk04832: fix return value check in
+> lmk04832_probe()
 >=20
-> The devm_kcalloc() function returns NULL on error, it never returns
-> error pointers so these conditions need to be fixed.
+> In case of error, the function devm_kzalloc() and devm_kcalloc() return
+> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
 >=20
 > Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
 
-A similar patch was posted earlier yesterday. See [1]=20
-
-[1] https://patchwork.kernel.org/project/linux-clk/patch/20210630020322.255=
-5946-1-wanghai38@huawei.com/
-
-Liam
+Reviewed-by: Liam Beguin <lvb@xiphos.com>
 
 > ---
 >  drivers/clk/clk-lmk04832.c | 12 ++++++------
 >  1 file changed, 6 insertions(+), 6 deletions(-)
 >=20
 > diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-> index 0cd76e626c3d..66ad5cbe7029 100644
+> index 0cd76e626c3..66ad5cbe702 100644
 > --- a/drivers/clk/clk-lmk04832.c
 > +++ b/drivers/clk/clk-lmk04832.c
 > @@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device
@@ -183,5 +181,5 @@ Liam
 >  	}
 >=20
 > --
-> 2.30.2
+> 2.17.1
 
