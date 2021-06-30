@@ -2,138 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F17C11F69
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 17:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1A9C11F65
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 17:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B89B661474
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 17:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CAEB61474
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 17:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbhF3RPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 13:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35368 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbhF3RPy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 13:15:54 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8907C0617AD
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 10:13:24 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id n99-20020a9d206c0000b029045d4f996e62so3474113ota.4
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 10:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jvZWepwL1G14uE4LBC+UAM7L1L1Q+rV5kcOeGj8qP9U=;
-        b=upmXr5DFLsVrOoR6J9W793kI99xmrLiW7jjYHtTF+6bjNzOUGTCL31xU7TWNTg1NQ4
-         oAU4L51KjXYdwSYTK92OaQBUvY8ZKqXvcXkqg0BhwiW2gBsylMoJpCWVN0dZ2qzFKgsW
-         O5o5yao5VNyVASENvu8OUHk4QZnLoF+RjS0OdT5DFbzgEEtQi+yYbS0kGng93VrYMLDG
-         IuHRG7ie78kgf7PIV4W+pIpUXEfjDH3qI5F0R+rCZ9o519dJKnhjpriHH5h666uCDjF8
-         mdjccHeIWBb9WspcEW2/00CHFlXL+0oiPO0wFnIkXYFQPf0lfZSkAiJ6VakG/+3eeeZz
-         sLNw==
+        id S229963AbhF3R3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 13:29:19 -0400
+Received: from mail-vs1-f47.google.com ([209.85.217.47]:35360 "EHLO
+        mail-vs1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229573AbhF3R3T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 13:29:19 -0400
+Received: by mail-vs1-f47.google.com with SMTP id x141so2162469vsx.2;
+        Wed, 30 Jun 2021 10:26:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jvZWepwL1G14uE4LBC+UAM7L1L1Q+rV5kcOeGj8qP9U=;
-        b=Xp7dIpGyrb8rj5+6H2eos2rBdtWyb7KCHkleG1uiynBtcu2Ijn/nW20VNq2npcL3Lq
-         RKstyEe2tZkj95e1a31RsWLCreKtGiBHXE2lnFsRGMpy3ueCcK3y7ZGVfIPyH7tgTex0
-         W6OdjTXhUHPvML/zG4TO+Zvpnee+HqbXccYnlzNQm/grm/bJ0vFwwBxenZc2ofShykdz
-         wHe1dWxehsfzn2k6g+18cc0FeICHqHsCDp8gqgjD42LjE5Hd89rmGeEcpVJt71bUaG3s
-         GThcyqY8doc8xPH2FlpxCoyTmazZyIWDT5iHNIMDJoLHiCwJc0viJ2hpih+xiqiOuxJS
-         O4BQ==
-X-Gm-Message-State: AOAM533+YUIR7LtIHOUMeLKf79u3jL3JIwoOchB9mDQSKmYKmEJk5yqN
-        qHNdemBxWzSES4gpWA292y9JXg==
-X-Google-Smtp-Source: ABdhPJwAqdr+f/kdCkP44QvzdmkAYMv7aNdhdMYKEA4dUfvT7EvSlnO1GNaDFy2XRcGdmjUK/b+UbA==
-X-Received: by 2002:a9d:57ca:: with SMTP id q10mr9694037oti.224.1625073204149;
-        Wed, 30 Jun 2021 10:13:24 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id b11sm1204779otl.55.2021.06.30.10.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 10:13:23 -0700 (PDT)
-Date:   Wed, 30 Jun 2021 12:13:21 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] clk: qcom: videocc-sm8250: stop using mmcx regulator
-Message-ID: <YNymMeXHMQspwlzR@yoga>
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
- <20210630133149.3204290-7-dmitry.baryshkov@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M1cCBRypI1mmkFDcRxzMzhSsB1YMOSDyt5G6Iq5VbjQ=;
+        b=tOakKMJ+Pka3MJkIPk3i1rNgNouGtd7e+NVnMJlYGqw/6iJnGdOUWM5CuAr7FHdozC
+         65khFjgWmX9HXC2441Vn98QJ7zVHxBWH156RJxsPKwtxQk6pzFyQdjCBuLZtrdTlFFYH
+         BNU0clMLN5yKUd3UkqQ+mhC806jjECpvfwMgkbH7s2aZpuxdI0CRGuEO9WEUHaCgmUZo
+         ma/Q77fZPvr3et88dZbxDRJ6ei0puJD1yMTbyAd5DiAF0ohZHaIqB8KaNLBXAsG7ouF1
+         bi75vH8Vctt4gpelArIThXo6SkkZqGOdVR4ozcTYY8m/z08Mk7F5KB+q/HVUEAjYvboA
+         +9yg==
+X-Gm-Message-State: AOAM533s1vR1g+fkGOEWwxhlZlzXWMmaF/uLMtytPZNMavY0swEgG1bH
+        2hlLM3VY92hx4sI5cRoJKpqPsu6pZAHLrYEzUG4=
+X-Google-Smtp-Source: ABdhPJyO/7Hv/uqbkT5lDAiumosw2G4sYTWyajEZ5JvFt9CW0sAOHu6sC9GxNjZOhlHdt9K7O16m1WSlzW3SPgOZtRw=
+X-Received: by 2002:a67:3c2:: with SMTP id 185mr31358417vsd.42.1625074009720;
+ Wed, 30 Jun 2021 10:26:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210630133149.3204290-7-dmitry.baryshkov@linaro.org>
+References: <20210528134308.649769-1-daire.mcnamara@microchip.com> <20210528134308.649769-2-daire.mcnamara@microchip.com>
+In-Reply-To: <20210528134308.649769-2-daire.mcnamara@microchip.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 30 Jun 2021 19:26:38 +0200
+Message-ID: <CAMuHMdV=p_HD4VYa3jz8-zfvih-ZR=Kg_8Ye9YDc6o=Z+uyG8A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: microchip: Add Microchip
+ PolarFire host binding
+To:     daire.mcnamara@microchip.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+        cyril.jean@microchip.com, padmarao.begari@microchip.com,
+        lewis.hanly@microchip.com, conor.dooley@microchip.com,
+        david.abdurachmanov@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 30 Jun 08:31 CDT 2021, Dmitry Baryshkov wrote:
+Hi Daire,
 
-> Now as the common qcom clock controller code has been taught about power
-> domains, stop mentioning mmcx supply as a way to power up the clock
-> controller's gdscs.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Fri, May 28, 2021 at 4:19 PM <daire.mcnamara@microchip.com> wrote:
+> From: Daire McNamara <daire.mcnamara@microchip.com>
+>
+> Add device tree bindings for the Microchip PolarFire system
+> clock controller
+>
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Thanks for your patch!
 
-Regards,
-Bjorn
 
-> ---
->  drivers/clk/qcom/videocc-sm8250.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
-> index 7b435a1c2c4b..eedef85d90e5 100644
-> --- a/drivers/clk/qcom/videocc-sm8250.c
-> +++ b/drivers/clk/qcom/videocc-sm8250.c
-> @@ -276,7 +276,6 @@ static struct gdsc mvs0c_gdsc = {
->  	},
->  	.flags = 0,
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.supply = "mmcx",
->  };
->  
->  static struct gdsc mvs1c_gdsc = {
-> @@ -286,7 +285,6 @@ static struct gdsc mvs1c_gdsc = {
->  	},
->  	.flags = 0,
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.supply = "mmcx",
->  };
->  
->  static struct gdsc mvs0_gdsc = {
-> @@ -296,7 +294,6 @@ static struct gdsc mvs0_gdsc = {
->  	},
->  	.flags = HW_CTRL,
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.supply = "mmcx",
->  };
->  
->  static struct gdsc mvs1_gdsc = {
-> @@ -306,7 +303,6 @@ static struct gdsc mvs1_gdsc = {
->  	},
->  	.flags = HW_CTRL,
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.supply = "mmcx",
->  };
->  
->  static struct clk_regmap *video_cc_sm8250_clocks[] = {
-> -- 
-> 2.30.2
-> 
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/microchip,mpfs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip PolarFire Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Daire McNamara <daire.mcnamara@microchip.com>
+> +
+> +description: |
+> +  Microchip PolarFire clock control (CLKCFG) is an integrated clock controller,
+> +  which gates and enables all peripheral clocks.
+> +
+> +  This device tree binding describes 33 gate clocks.  Clocks are referenced by
+> +  user nodes by the CLKCFG node phandle and the clock index in the group, from
+> +  0 to 32.
+> +
+> +properties:
+> +  compatible:
+> +    const: microchip,mpfs-clkcfg
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description: |
+> +      The clock consumer should specify the desired clock by having the clock
+> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/microchip,mpfs-clock.h
+> +      for the full list of PolarFire clock IDs.
+> +
+> +  clock-output-names:
+> +    maxItems: 33
+
+Do you need clock-output-names?
+From a quick glance, the driver doesn't seem to need it.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +  - clock-output-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock Config node:
+> +  - |
+> +    #include <dt-bindings/clock/microchip,mpfs-clock.h>
+> +    soc {
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            clkcfg: clock-controller@20002000 {
+> +                compatible = "microchip,mpfs-clkcfg";
+> +                reg = <0x0 0x20002000 0x0 0x1000>;
+> +                clocks = <&ref>;
+> +                #clock-cells = <1>;
+> +                clock-output-names = "cpu", "axi", "ahb", "envm", "mac0", "mac1", "mmc", "timer",
+> +                                     "mmuart0", "mmuart1", "mmuart2", "mmuart3", "mmuart4",
+> +                                     "spi0", "spi1", "i2c0", "i2c1", "can0", "can1", "usb", "rsvd",
+> +                                     "rtc", "qspi", "gpio0", "gpio1", "gpio2", "ddrc",
+> +                                     "fic0", "fic1", "fic2", "fic3", "athena", "cfm";
+> +        };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
