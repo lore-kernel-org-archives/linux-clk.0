@@ -4,58 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DF9C11F66
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DDCC11F66
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0918B61480
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:19:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C251661477
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232904AbhF3SWB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 14:22:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35350 "EHLO mail.kernel.org"
+        id S232904AbhF3S0Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 14:26:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229991AbhF3SWB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jun 2021 14:22:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 98665613F5;
-        Wed, 30 Jun 2021 18:19:31 +0000 (UTC)
+        id S232358AbhF3S0Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jun 2021 14:26:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A3B1261474;
+        Wed, 30 Jun 2021 18:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625077171;
-        bh=gM2G56OHPtb+lnaJGuybdz9Nn9bAhMTZ6gHWsBNL9fo=;
+        s=k20201202; t=1625077435;
+        bh=4obaIe35ZSS+oHdciFheQSkU3RY3pDJCdjmKqHmoW0c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Q3aV1GQQzpvv3Yq5jNEXAe2hqH/C5+LmM/+B7BDkU7639TbdsV0BcTVEuaSVFerws
-         S1riqp7AUrdOPOiXQdRpxTM8BuRQPVj//D7J7g7njrpsUPGlzqDeuRXJDSaxFBqmbA
-         rStXyG0OotfhdEzUdJoAKel+Gb/R8QYw3BaOhmv4Ftjr1mL9AGmfdGpPfDW/7nKJ5s
-         ax0kM8adT+RogYSupBPXmbztDBWxJWMoh+iCfWZyt4Ch2bRR5KCSKPFKxILvD+LaNJ
-         vPmn4qvnA9vB714SGFB9jkXo4z8NhxlOMjMu5cNpjEKWkoWUFP+/lDKUSCl17zKAjj
-         Zmz7hlW+cgo/g==
+        b=kPE8MHv6jyippasun8dBIOGhwO92UFHZtzoyINDLwN1vbW9pbA3NriPQbReU5u14O
+         t0p9QUBbcOB8D2fIeLl2K/WklzVc4WUHkHVVxVEsCJN91IrwJfgwO8x8BUkvgGuTUU
+         HkJ7snfL0VYFZ0Wbb6VtjCCmnNqW3RvDAUm2vpStdpr+PiJq0TwvYX5GkY42czNcoC
+         1oia++zl10MZ9Gs5OAAmgfoTU2qacWXrBPUgUIKdmGuXZNUMkmAHpv/q0A29bAi/pd
+         DDxxKqLRmSNSTc+ylRTzhRDF3ENccbgr8xkCDdtLDy+FkAWnU5Rnvlzc3DpRsD61Eu
+         d1U4emwqkCVCw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210629102956.17901-1-colin.king@canonical.com>
-References: <20210629102956.17901-1-colin.king@canonical.com>
-Subject: Re: [PATCH][next] clk: lmk04832: Fix spelling mistakes in dev_err messages and comments
+In-Reply-To: <20210630134702.7346-5-jon.lin@rock-chips.com>
+References: <20210630134702.7346-1-jon.lin@rock-chips.com> <20210630134702.7346-5-jon.lin@rock-chips.com>
+Subject: Re: [PATCH v10 04/10] clk: rockchip: rk3036: fix up the sclk_sfc parent error
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Wed, 30 Jun 2021 11:19:30 -0700
-Message-ID: <162507717033.3331010.14528343099609777307@swboyd.mtv.corp.google.com>
+Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        Elaine Zhang <zhangqing@rock-chips.com>
+To:     Jon Lin <jon.lin@rock-chips.com>, linux-spi@vger.kernel.org
+Date:   Wed, 30 Jun 2021 11:23:54 -0700
+Message-ID: <162507743443.3331010.11705732490811171559@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Colin King (2021-06-29 03:29:56)
-> From: Colin Ian King <colin.king@canonical.com>
+Quoting Jon Lin (2021-06-30 06:46:56)
+> Choose the correct pll
 >=20
-> There are handful of spelling mistakes in two dev_err error messages
-> and comments. Fix them.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
 > ---
 
-Applied to clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
