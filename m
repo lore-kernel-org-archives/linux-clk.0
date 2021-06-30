@@ -2,119 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698D0C11F69
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1D1C11F65
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F83261625
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9F061446
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236358AbhF3Nyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:54:40 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:59022 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236109AbhF3Nwv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:52:51 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDfXDh020892;
-        Wed, 30 Jun 2021 13:50:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=gxvmoy9Dm0QHZAcllLD8c4qXIakvoZbI9zBILnD+bQ8=;
- b=dnZqc6Id2cZlUwwfSn8igWkZqYpITmLpvZWecXdIueSN+yvdN5z/Jf29+Bx/LIhvz3VM
- 13hHTJvn7+O1K48sLkYzTnm26BByhLl21fRwF7OAFt2KnWqvLSlPUNfF1e0cByAQjEWz
- N40lZW03bOdyUQgvnsy5OlxzuL9/mylThedWF4KVE79r6saMBkwPqpIgF1Tu24lIHSJl
- xqWAoPyGqwsxs6n2IogRcQs5gHik7wX+2vlKGsPurdngHM+BZfAAsiprcebDI0qZUniM
- 8m8ZdFCbDpr1ze9IncrPY97NiG8+Xiy0M/tQuM6jINLrLbsD7b49TBh498r8Q/ehFBo/ rw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39gha4924c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:15 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDo4K8008838;
-        Wed, 30 Jun 2021 13:50:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 39ee0x9ygt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:13 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDo7Pk009175;
-        Wed, 30 Jun 2021 13:50:07 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 39ee0x9y42-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:06 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDnph9006288;
-        Wed, 30 Jun 2021 13:49:52 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jun 2021 06:49:51 -0700
-Date:   Wed, 30 Jun 2021 16:49:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Liam Beguin <lvb@xiphos.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: lmk04832: fix checks for allocation failure
-Message-ID: <YNx2dyvB6MkVlsrl@mwanda>
+        id S235835AbhF3OBr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 10:01:47 -0400
+Received: from regular1.263xmail.com ([211.150.70.201]:35158 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235506AbhF3OAz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 10:00:55 -0400
+Received: from localhost (unknown [192.168.167.225])
+        by regular1.263xmail.com (Postfix) with ESMTP id E996AE2D;
+        Wed, 30 Jun 2021 21:58:06 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.12.73] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P31200T139970222221056S1625061484141554_;
+        Wed, 30 Jun 2021 21:58:05 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <355a8d1c07372b95a3f7e6af800a3092>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: linux-clk@vger.kernel.org
+X-RCPT-COUNT: 18
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+Subject: Re: [PATCH v10 00/10] Add Rockchip SFC(serial flash controller)
+ support
+To:     linux-spi@vger.kernel.org
+Cc:     broonie@kernel.org, robh+dt@kernel.org, heiko@sntech.de,
+        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
+        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-mtd@lists.infradead.org, p.yadav@ti.com,
+        macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210630134702.7346-1-jon.lin@rock-chips.com>
+From:   Jon Lin <jon.lin@rock-chips.com>
+Message-ID: <7aff22d7-f644-1494-9c60-ae8a25d01d50@rock-chips.com>
+Date:   Wed, 30 Jun 2021 21:58:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
-X-Proofpoint-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
+In-Reply-To: <20210630134702.7346-1-jon.lin@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The devm_kcalloc() function returns NULL on error, it never returns
-error pointers so these conditions need to be fixed.
 
-Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/clk/clk-lmk04832.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+At the first, I sincerely apologize for frequent submission.
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index 0cd76e626c3d..66ad5cbe7029 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
- 
- 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
- 				 sizeof(struct lmk_dclk), GFP_KERNEL);
--	if (IS_ERR(lmk->dclk)) {
--		ret = PTR_ERR(lmk->dclk);
-+	if (!lmk->dclk) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
- 				   sizeof(*lmk->clkout), GFP_KERNEL);
--	if (IS_ERR(lmk->clkout)) {
--		ret = PTR_ERR(lmk->clkout);
-+	if (!lmk->clkout) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
- 							   info->num_channels),
- 				     GFP_KERNEL);
--	if (IS_ERR(lmk->clk_data)) {
--		ret = PTR_ERR(lmk->clk_data);
-+	if (!lmk->clk_data) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
--- 
-2.30.2
+The frequent submission is mainly due to:
+1. I'm too anxious to incorporate my personal code into Chris's code
+2. Unfamiliar with upstream and not careful enough
+
+I will sum up more experience and make more exchanges with my colleagues.
+
+
+On 6/30/21 9:46 PM, Jon Lin wrote:
+> Changes in v10:
+> - Fix dma transfer logic
+>
+> Changes in v9:
+> - Separate DMA IRQ setting and wait_completion from DMA fifo transfer
+>    function to make dma_status_poll be possible(Which I will implement
+>    in u-boot)
+> - Add SFC Kconfig detail comment
+> - Separate FDT binding docs and includes from rk3036 sfc_hclk patch
+> - Separate FDT binding docs and includes from rk3036 sfc_hclk patch
+>
+> Changes in v8:
+> - Fix indent 4 to 2 in yaml
+>
+> Changes in v7:
+> - Fix up the sclk_sfc parent error in rk3036
+> - Unify to "rockchip,sfc" compatible id because all the feature update
+>    will have a new IP version, so the driver is used for the SFC IP in
+>    all SoCs
+> - Change to use node "sfc" to name the SFC pinctrl group
+> - Add subnode reg property check
+> - Add rockchip_sfc_adjust_op_size to workaround in CMD + DUMMY case
+> - Limit max_iosize to 32KB
+>
+> Changes in v6:
+> - Add support in device trees for rv1126(Declared in series 5 but not
+>    submitted)
+> - Change to use "clk_sfc" "hclk_sfc" as clock lable, since it does not
+>    affect interpretation and has been widely used
+> - Support sfc tx_dual, tx_quad(Declared in series 5 but not submitted)
+> - Simplify the code, such as remove "rockchip_sfc_register_all"(Declared
+>    in series 5 but not submitted)
+> - Support SFC ver4 ver5(Declared in series 5 but not submitted)
+> - Add author Chris Morgan and Jon Lin to spi-rockchip-sfc.c
+> - Change to use devm_spi_alloc_master and spi_unregister_master
+>
+> Changes in v5:
+> - Add support in device trees for rv1126
+> - Support sfc tx_dual, tx_quad
+> - Simplify the code, such as remove "rockchip_sfc_register_all"
+> - Support SFC ver4 ver5
+>
+> Changes in v4:
+> - Changing patch back to an "RFC". An engineer from Rockchip
+>    reached out to me to let me know they are working on this patch for
+>    upstream, I am submitting this v4 for the community to see however
+>    I expect Jon Lin (jon.lin@rock-chips.com) will submit new patches
+>    soon and these are the ones we should pursue for mainlining. Jon's
+>    patch series should include support for more hardware than this
+>    series.
+> - Clean up documentation more and ensure it is correct per
+>    make dt_binding_check.
+> - Add support in device trees for rk3036, rk3308, and rv1108.
+> - Add ahb clock (hclk_sfc) support for rk3036.
+> - Change rockchip_sfc_wait_fifo_ready() to use a switch statement.
+> - Change IRQ code to only mark IRQ as handled if it handles the
+>    specific IRQ (DMA transfer finish) it is supposed to handle.
+>
+> Changes in v3:
+> - Changed the name of the clocks to sfc/ahb (from clk-sfc/clk-hsfc).
+> - Changed the compatible string from rockchip,sfc to
+>    rockchip,rk3036-sfc. A quick glance at the datasheets suggests this
+>    driver should work for the PX30, RK180x, RK3036, RK312x, RK3308 and
+>    RV1108 SoCs, and possibly more. However, I am currently only able
+>    to test this on a PX30 (an RK3326). The technical reference manuals
+>    appear to list the same registers for each device.
+> - Corrected devicetree documentation for formatting and to note these
+>    changes.
+> - Replaced the maintainer with Heiko Stuebner and myself, as we will
+>    take ownership of this going forward.
+> - Noted that the device (per the reference manual) supports 4 CS, but
+>    I am only able to test a single CS (CS 0).
+> - Reordered patches to comply with upstream rules.
+>
+> Changes in v2:
+> - Reimplemented driver using spi-mem subsystem.
+> - Removed power management code as I couldn't get it working properly.
+> - Added device tree bindings for Odroid Go Advance.
+>
+> Changes in v1:
+> hanges made in this new series versus the v8 of the old series:
+> - Added function to read spi-rx-bus-width from device tree, in the
+>    event that the SPI chip supports 4x mode but only has 2 pins
+>    wired (such as the Odroid Go Advance).
+> - Changed device tree documentation from txt to yaml format.
+> - Made "reset" message a dev_dbg from a dev_info.
+> - Changed read and write fifo functions to remove redundant checks.
+> - Changed the write and read from relaxed to non-relaxed when
+>    starting the DMA transfer or reading the DMA IRQ.
+> - Changed from dma_coerce_mask_and_coherent to just
+>    dma_set_mask_and_coherent.
+> - Changed name of get_if_type to rockchip_sfc_get_if_type.
+>
+> Chris Morgan (8):
+>    dt-bindings: rockchip-sfc: Bindings for Rockchip serial flash
+>      controller
+>    spi: rockchip-sfc: add rockchip serial flash controller
+>    arm64: dts: rockchip: Add SFC to PX30
+>    clk: rockchip:  add dt-binding for hclk_sfc on rk3036
+>    arm: dts: rockchip: Add SFC to RK3036
+>    arm: dts: rockchip: Add SFC to RV1108
+>    arm64: dts: rockchip: Add SFC to RK3308
+>    arm64: dts: rockchip: Enable SFC for Odroid Go Advance
+>
+> Jon Lin (2):
+>    clk: rockchip: rk3036: fix up the sclk_sfc parent error
+>    clk: rockchip: Add support for hclk_sfc on rk3036
+>
+>   .../devicetree/bindings/spi/rockchip-sfc.yaml |  88 +++
+>   arch/arm/boot/dts/rk3036.dtsi                 |  42 ++
+>   arch/arm/boot/dts/rv1108.dtsi                 |  37 +
+>   arch/arm64/boot/dts/rockchip/px30.dtsi        |  38 +
+>   arch/arm64/boot/dts/rockchip/rk3308.dtsi      |  37 +
+>   .../boot/dts/rockchip/rk3326-odroid-go2.dts   |  16 +
+>   drivers/clk/rockchip/clk-rk3036.c             |   5 +-
+>   drivers/spi/Kconfig                           |  12 +
+>   drivers/spi/Makefile                          |   1 +
+>   drivers/spi/spi-rockchip-sfc.c                | 681 ++++++++++++++++++
+>   include/dt-bindings/clock/rk3036-cru.h        |   1 +
+>   11 files changed, 956 insertions(+), 2 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+>   create mode 100644 drivers/spi/spi-rockchip-sfc.c
+>
+
 
