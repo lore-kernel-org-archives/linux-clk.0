@@ -7,36 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82981C11F67
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 01:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C00DC11F67
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 02:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57F4561D23
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 01:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E313F613BA
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 02:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbhF3CB4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 22:01:56 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:9321 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231770AbhF3CB4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 22:01:56 -0400
-Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4GF4DJ6Rc0z73kS;
-        Wed, 30 Jun 2021 09:55:12 +0800 (CST)
+        id S232042AbhF3CGy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 22:06:54 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:5944 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231765AbhF3CGy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 22:06:54 -0400
+Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GF4M24zzVz749f;
+        Wed, 30 Jun 2021 10:01:02 +0800 (CST)
 Received: from huawei.com (10.175.104.82) by dggeme766-chm.china.huawei.com
  (10.3.19.112) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 30
- Jun 2021 09:59:24 +0800
+ Jun 2021 10:04:22 +0800
 From:   Wang Hai <wanghai38@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <gabriel.fernandez@foss.st.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] clk: stm32mp1: fix missing spin_lock_init()
-Date:   Wed, 30 Jun 2021 09:58:23 +0800
-Message-ID: <20210630015824.2555840-1-wanghai38@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <lvb@xiphos.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] clk: lmk04832: fix return value check in lmk04832_probe()
+Date:   Wed, 30 Jun 2021 10:03:22 +0800
+Message-ID: <20210630020322.2555946-1-wanghai38@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -49,28 +44,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver allocates the spinlock but not initialize it.
-Use spin_lock_init() on it to initialize it correctly.
+In case of error, the function devm_kzalloc() and devm_kcalloc() return
+NULL pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-Fixes: c392df194a2d ("clk: stm32mp1: move RCC reset controller into RCC clock driver")
+Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wang Hai <wanghai38@huawei.com>
 ---
- drivers/clk/clk-stm32mp1.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-lmk04832.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 6adc625e79c..256575bd29b 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -2263,6 +2263,7 @@ static int stm32_rcc_reset_init(struct device *dev, void __iomem *base,
- 	if (!reset_data)
- 		return -ENOMEM;
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index 0cd76e626c3..66ad5cbe702 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
  
-+	spin_lock_init(&reset_data->lock);
- 	reset_data->membase = base;
- 	reset_data->rcdev.owner = THIS_MODULE;
- 	reset_data->rcdev.ops = &stm32_reset_ops;
+ 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
+ 				 sizeof(struct lmk_dclk), GFP_KERNEL);
+-	if (IS_ERR(lmk->dclk)) {
+-		ret = PTR_ERR(lmk->dclk);
++	if (!lmk->dclk) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
+ 				   sizeof(*lmk->clkout), GFP_KERNEL);
+-	if (IS_ERR(lmk->clkout)) {
+-		ret = PTR_ERR(lmk->clkout);
++	if (!lmk->clkout) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
+ 							   info->num_channels),
+ 				     GFP_KERNEL);
+-	if (IS_ERR(lmk->clk_data)) {
+-		ret = PTR_ERR(lmk->clk_data);
++	if (!lmk->clk_data) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
 -- 
 2.17.1
 
