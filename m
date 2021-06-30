@@ -5,90 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C00DC11F67
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 02:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215CCC11F6E
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 07:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E313F613BA
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 02:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0731861D01
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 07:31:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232042AbhF3CGy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 22:06:54 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:5944 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231765AbhF3CGy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 22:06:54 -0400
-Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GF4M24zzVz749f;
-        Wed, 30 Jun 2021 10:01:02 +0800 (CST)
-Received: from huawei.com (10.175.104.82) by dggeme766-chm.china.huawei.com
- (10.3.19.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 30
- Jun 2021 10:04:22 +0800
-From:   Wang Hai <wanghai38@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <lvb@xiphos.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] clk: lmk04832: fix return value check in lmk04832_probe()
-Date:   Wed, 30 Jun 2021 10:03:22 +0800
-Message-ID: <20210630020322.2555946-1-wanghai38@huawei.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.82]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeme766-chm.china.huawei.com (10.3.19.112)
-X-CFilter-Loop: Reflected
+        id S233026AbhF3Hd1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 03:33:27 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:28915 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232785AbhF3Hd0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 03:33:26 -0400
+X-IronPort-AV: E=Sophos;i="5.83,311,1616425200"; 
+   d="scan'208";a="85976002"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jun 2021 16:30:50 +0900
+Received: from localhost.localdomain (unknown [10.226.93.82])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0C41741DBA50;
+        Wed, 30 Jun 2021 16:30:47 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 04/11] drivers: clk: renesas: r9a07g044-cpg: Add USB clocks/resets
+Date:   Wed, 30 Jun 2021 08:30:06 +0100
+Message-Id: <20210630073013.22415-5-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210630073013.22415-1-biju.das.jz@bp.renesas.com>
+References: <20210630073013.22415-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In case of error, the function devm_kzalloc() and devm_kcalloc() return
-NULL pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+Add clock/reset entries for USB PHY control, USB2.0 host and device.
 
-Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wang Hai <wanghai38@huawei.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/clk-lmk04832.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v2->V3:
+ * Added reset entries.
+v1->v2:
+ * Reworked on clock/reset definitions
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index 0cd76e626c3..66ad5cbe702 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
- 
- 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
- 				 sizeof(struct lmk_dclk), GFP_KERNEL);
--	if (IS_ERR(lmk->dclk)) {
--		ret = PTR_ERR(lmk->dclk);
-+	if (!lmk->dclk) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
- 				   sizeof(*lmk->clkout), GFP_KERNEL);
--	if (IS_ERR(lmk->clkout)) {
--		ret = PTR_ERR(lmk->clkout);
-+	if (!lmk->clkout) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
- 							   info->num_channels),
- 				     GFP_KERNEL);
--	if (IS_ERR(lmk->clk_data)) {
--		ret = PTR_ERR(lmk->clk_data);
-+	if (!lmk->clk_data) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 5d81e59f5cfe..d8d72fe4c513 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -96,6 +96,14 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 				0x52c, 0),
+ 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+ 				0x52c, 1),
++	DEF_MOD("usb0_host",	R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
++				0x578, 0),
++	DEF_MOD("usb1_host",	R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
++				0x578, 1),
++	DEF_MOD("usb0_device",	R9A07G044_USB_U2P_EXR_CPUCLK, R9A07G044_CLK_P1,
++				0x578, 2),
++	DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
++				0x578, 3),
+ 	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
+ 				0x580, 0),
+ 	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
+@@ -124,6 +132,10 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
+ 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
+ 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
++	DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
++	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
++	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
++	DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
+ 	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
+ 	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
+ 	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
 -- 
 2.17.1
 
