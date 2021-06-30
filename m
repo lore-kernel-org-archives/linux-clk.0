@@ -2,130 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32957C11F7B
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B417C11F6B
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA5761622
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D91EE6145A
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235211AbhF3Nec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234834AbhF3Ne2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:34:28 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0CCC0613A3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:59 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id t17so5232038lfq.0
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OW6r9Ztak14Z94NLN85hpavnPWferFff+9qy6SUKk4g=;
-        b=iGjCMoZAsR3C08FVW2wUexAl3OiXXIgXxPdEXN/UjAHi6UBv5v28IkhVcZLQvTJw5D
-         Fw0uztQxzd6y1BNGAt9RSWW14ScCvDunMGu13h/xX/FfPr10d2MFGF4DJmrkIGYLYmQE
-         NK+Ww1lTgcApSSzEzDlWWFFDgaK5VzXulSCFGNRaOWlsJDtMFVHtoA0XnBFQnTu6o6JQ
-         UwyI+wFN7URtfpdwRFc79mLjqZV8UWH1U5r6RBHdVsVr0Pm4yCdcDvvoLxR4XGaI04iA
-         eiMo/krjTz+HFd1XLDzhPvKytiQcLlxze8UK1cVOyuPx1MfGEk4dBY4Mtcx5lNAYpzSA
-         lz/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OW6r9Ztak14Z94NLN85hpavnPWferFff+9qy6SUKk4g=;
-        b=oWZ9tXeBPiOJ6K4QNr4x9C+OUZOT4ZlqkDynx4mAuAncTYUxIEifJOWT+DcA422OwL
-         FaukIvpuiWS6AL6V6ecQZaf9JoXbm5+/kYJpRytu+dVV/56zKzVshWUjERqvK1vE39CR
-         t6iQXfeavEuQpeaInQVTS2EMrGW/Xd7L0iIw6WH17LNGe3iX4j9hQIxnG65wOcMr4xaD
-         B9hEjmMlo7u0aYvBpoeXPrvee/OrpjYZVQuLtlwK+9TkSX5K35G5iugc4LV9Z9S7180x
-         JnucAb7R5Emohh4TlcXKJbAXP4/BQPUwrD9KdMAKNzkXzmjEu8Q5Ak/hGbPPZqzVcOLC
-         W9bA==
-X-Gm-Message-State: AOAM530iBNDdlTdQrxR2jl1JxgHSbffofDXiF3UR/SLTped7ZjR8Hurj
-        fChI5ZWjyB8uDBJfpAIbHHnsPw==
-X-Google-Smtp-Source: ABdhPJxW/WD7GUsdSYVEZlbk6fXSYFsdVdHuSWzbaLh7Nn+zKQdBdygp9o4CIo9p/woMGw9+TgfEDQ==
-X-Received: by 2002:a05:6512:7a:: with SMTP id i26mr26839723lfo.2.1625059917527;
-        Wed, 30 Jun 2021 06:31:57 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id x20sm1578098lfd.128.2021.06.30.06.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 06:31:57 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] clk: qcom: videocc-sm8250: stop using mmcx regulator
-Date:   Wed, 30 Jun 2021 16:31:49 +0300
-Message-Id: <20210630133149.3204290-7-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S234982AbhF3Ntn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 09:49:43 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:47882 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234914AbhF3Ntn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:49:43 -0400
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id CC429D5799;
+        Wed, 30 Jun 2021 21:47:11 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P12363T139710748759808S1625060824073628_;
+        Wed, 30 Jun 2021 21:47:12 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <71aa68d68c576799c21aa9825c0083b5>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: linux-spi@vger.kernel.org
+X-RCPT-COUNT: 20
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Jon Lin <jon.lin@rock-chips.com>
+To:     linux-spi@vger.kernel.org
+Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Subject: [PATCH v10 03/10] arm64: dts: rockchip: Add SFC to PX30
+Date:   Wed, 30 Jun 2021 21:46:55 +0800
+Message-Id: <20210630134702.7346-4-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210630134702.7346-1-jon.lin@rock-chips.com>
+References: <20210630134702.7346-1-jon.lin@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now as the common qcom clock controller code has been taught about power
-domains, stop mentioning mmcx supply as a way to power up the clock
-controller's gdscs.
+From: Chris Morgan <macromorgan@hotmail.com>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Add a devicetree entry for the Rockchip SFC for the PX30 SOC.
+
+Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
 ---
- drivers/clk/qcom/videocc-sm8250.c | 4 ----
- 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
-index 7b435a1c2c4b..eedef85d90e5 100644
---- a/drivers/clk/qcom/videocc-sm8250.c
-+++ b/drivers/clk/qcom/videocc-sm8250.c
-@@ -276,7 +276,6 @@ static struct gdsc mvs0c_gdsc = {
- 	},
- 	.flags = 0,
- 	.pwrsts = PWRSTS_OFF_ON,
--	.supply = "mmcx",
- };
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+Changes in v1: None
+
+ arch/arm64/boot/dts/rockchip/px30.dtsi | 38 ++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index 09baa8a167ce..d854f2577067 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -966,6 +966,18 @@
+ 		status = "disabled";
+ 	};
  
- static struct gdsc mvs1c_gdsc = {
-@@ -286,7 +285,6 @@ static struct gdsc mvs1c_gdsc = {
- 	},
- 	.flags = 0,
- 	.pwrsts = PWRSTS_OFF_ON,
--	.supply = "mmcx",
- };
++	sfc: spi@ff3a0000 {
++		compatible = "rockchip,sfc";
++		reg = <0x0 0xff3a0000 0x0 0x4000>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
++		clock-names = "clk_sfc", "hclk_sfc";
++		pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus4>;
++		pinctrl-names = "default";
++		power-domains = <&power PX30_PD_MMC_NAND>;
++		status = "disabled";
++	};
++
+ 	nfc: nand-controller@ff3b0000 {
+ 		compatible = "rockchip,px30-nfc";
+ 		reg = <0x0 0xff3b0000 0x0 0x4000>;
+@@ -1967,6 +1979,32 @@
+ 			};
+ 		};
  
- static struct gdsc mvs0_gdsc = {
-@@ -296,7 +294,6 @@ static struct gdsc mvs0_gdsc = {
- 	},
- 	.flags = HW_CTRL,
- 	.pwrsts = PWRSTS_OFF_ON,
--	.supply = "mmcx",
- };
- 
- static struct gdsc mvs1_gdsc = {
-@@ -306,7 +303,6 @@ static struct gdsc mvs1_gdsc = {
- 	},
- 	.flags = HW_CTRL,
- 	.pwrsts = PWRSTS_OFF_ON,
--	.supply = "mmcx",
- };
- 
- static struct clk_regmap *video_cc_sm8250_clocks[] = {
++		sfc {
++			sfc_bus4: sfc-bus4 {
++				rockchip,pins =
++					<1 RK_PA0 3 &pcfg_pull_none>,
++					<1 RK_PA1 3 &pcfg_pull_none>,
++					<1 RK_PA2 3 &pcfg_pull_none>,
++					<1 RK_PA3 3 &pcfg_pull_none>;
++			};
++
++			sfc_bus2: sfc-bus2 {
++				rockchip,pins =
++					<1 RK_PA0 3 &pcfg_pull_none>,
++					<1 RK_PA1 3 &pcfg_pull_none>;
++			};
++
++			sfc_cs0: sfc-cs0 {
++				rockchip,pins =
++					<1 RK_PA4 3 &pcfg_pull_none>;
++			};
++
++			sfc_clk: sfc-clk {
++				rockchip,pins =
++					<1 RK_PB1 3 &pcfg_pull_none>;
++			};
++		};
++
+ 		lcdc {
+ 			lcdc_rgb_dclk_pin: lcdc-rgb-dclk-pin {
+ 				rockchip,pins =
 -- 
-2.30.2
+2.17.1
+
+
 
