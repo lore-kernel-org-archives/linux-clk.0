@@ -2,98 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F12C11F67
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 22:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82981C11F67
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 01:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B97E61CC7
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jun 2021 22:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F4561D23
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 01:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233487AbhF2WhG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jun 2021 18:37:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233056AbhF2WhG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jun 2021 18:37:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B77C61D2E;
-        Tue, 29 Jun 2021 22:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625006078;
-        bh=HshZ+39IdwahaJkmfBB0YzLsh2aQB532mmuwkEx2MHI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Kjj2heGt3fCxpkjXvGXejuGqWZhZBL2PIfu/WVkHR9hd/5ySioHesiJpS5turkoRr
-         /UKFm7rm/Yc3Q5EsLLQw5/VQ8DgNJHNHwkmzPZALGzhUgRyDHGOpqDtsLEGLo88iTs
-         GZpBeduZNazQZOADfOiuknW9aAqIupP1hoOgFK/w400Qn29DVRzDT+eEOgDlfad3ha
-         4c9OdGLk2dYWlYBX2/FRoUptnWRz/8pX8SDaqVAiHmhDkYaajLCk9oQ73/L8lTvrMj
-         0FO3CeSEjf80RE21Xrl1qIlGRckuUK8BTcnUbAgBuDrjPdG/og5B/kkGbBy3C+jmFa
-         2gr/rae+XqFEg==
-Content-Type: text/plain; charset="utf-8"
+        id S231856AbhF3CB4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jun 2021 22:01:56 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:9321 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231770AbhF3CB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jun 2021 22:01:56 -0400
+Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4GF4DJ6Rc0z73kS;
+        Wed, 30 Jun 2021 09:55:12 +0800 (CST)
+Received: from huawei.com (10.175.104.82) by dggeme766-chm.china.huawei.com
+ (10.3.19.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 30
+ Jun 2021 09:59:24 +0800
+From:   Wang Hai <wanghai38@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <gabriel.fernandez@foss.st.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] clk: stm32mp1: fix missing spin_lock_init()
+Date:   Wed, 30 Jun 2021 09:58:23 +0800
+Message-ID: <20210630015824.2555840-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210629203919.2956918-2-dmitry.baryshkov@linaro.org>
-References: <20210629203919.2956918-1-dmitry.baryshkov@linaro.org> <20210629203919.2956918-2-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: fix domains cleanup in gdsc_unregister
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 29 Jun 2021 15:34:37 -0700
-Message-ID: <162500607734.3331010.12498813187207407633@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeme766-chm.china.huawei.com (10.3.19.112)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-06-29 13:39:19)
-> Properly remove registered genpds. Also remove the provider before
-> breaking parent/child links, so that the system is consistent at remove
-> time.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 241186d9d08c..4b211dd1764d 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -475,6 +475,9 @@ void gdsc_unregister(struct gdsc_desc *desc)
->         struct gdsc **scs =3D desc->scs;
->         size_t num =3D desc->num;
-> =20
-> +       /* Remove provider first */
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-but why? A better comment would be
+Fixes: c392df194a2d ("clk: stm32mp1: move RCC reset controller into RCC clock driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/clk/clk-stm32mp1.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	/*
-	 * Remove provider first so that we can remove the genpds
-	 * without worrying about consumers getting them during the
-	 * removal process.
-	 */
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 6adc625e79c..256575bd29b 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -2263,6 +2263,7 @@ static int stm32_rcc_reset_init(struct device *dev, void __iomem *base,
+ 	if (!reset_data)
+ 		return -ENOMEM;
+ 
++	spin_lock_init(&reset_data->lock);
+ 	reset_data->membase = base;
+ 	reset_data->rcdev.owner = THIS_MODULE;
+ 	reset_data->rcdev.ops = &stm32_reset_ops;
+-- 
+2.17.1
 
-> +       of_genpd_del_provider(dev->of_node);
-> +
->         /* Remove subdomains */
->         for (i =3D 0; i < num; i++) {
->                 if (!scs[i])
-> @@ -482,7 +485,13 @@ void gdsc_unregister(struct gdsc_desc *desc)
->                 if (scs[i]->parent)
->                         pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]=
-->pd);
->         }
-> -       of_genpd_del_provider(dev->of_node);
-> +
-> +       /* Remove domains themselves */
-> +       for (i =3D 0; i < num; i++) {
-> +               if (!scs[i])
-> +                       continue;
-> +               pm_genpd_remove(&scs[i]->pd);
-> +       }
->  }
