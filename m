@@ -2,118 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D620C11F69
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698D0C11F69
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78184614A7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:49:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F83261625
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235845AbhF3NwJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:52:09 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:46106 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235942AbhF3Nut (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:50:49 -0400
-Received: from localhost (unknown [192.168.167.235])
-        by lucky1.263xmail.com (Postfix) with ESMTP id BB0C1C16CA;
-        Wed, 30 Jun 2021 21:48:17 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P5175T139827884320512S1625060896405688_;
-        Wed, 30 Jun 2021 21:48:18 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <d80fb7853f0d3e5eec241dab975cdec2>
-X-RL-SENDER: jon.lin@rock-chips.com
-X-SENDER: jon.lin@rock-chips.com
-X-LOGIN-NAME: jon.lin@rock-chips.com
-X-FST-TO: linux-spi@vger.kernel.org
-X-RCPT-COUNT: 20
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-From:   Jon Lin <jon.lin@rock-chips.com>
-To:     linux-spi@vger.kernel.org
-Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH v10 10/10] arm64: dts: rockchip: Enable SFC for Odroid Go Advance
-Date:   Wed, 30 Jun 2021 21:48:14 +0800
-Message-Id: <20210630134814.7748-1-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210630134745.7561-1-jon.lin@rock-chips.com>
-References: <20210630134745.7561-1-jon.lin@rock-chips.com>
+        id S236358AbhF3Nyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 09:54:40 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:59022 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236109AbhF3Nwv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:52:51 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDfXDh020892;
+        Wed, 30 Jun 2021 13:50:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=gxvmoy9Dm0QHZAcllLD8c4qXIakvoZbI9zBILnD+bQ8=;
+ b=dnZqc6Id2cZlUwwfSn8igWkZqYpITmLpvZWecXdIueSN+yvdN5z/Jf29+Bx/LIhvz3VM
+ 13hHTJvn7+O1K48sLkYzTnm26BByhLl21fRwF7OAFt2KnWqvLSlPUNfF1e0cByAQjEWz
+ N40lZW03bOdyUQgvnsy5OlxzuL9/mylThedWF4KVE79r6saMBkwPqpIgF1Tu24lIHSJl
+ xqWAoPyGqwsxs6n2IogRcQs5gHik7wX+2vlKGsPurdngHM+BZfAAsiprcebDI0qZUniM
+ 8m8ZdFCbDpr1ze9IncrPY97NiG8+Xiy0M/tQuM6jINLrLbsD7b49TBh498r8Q/ehFBo/ rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39gha4924c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:50:15 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDo4K8008838;
+        Wed, 30 Jun 2021 13:50:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 39ee0x9ygt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:50:13 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDo7Pk009175;
+        Wed, 30 Jun 2021 13:50:07 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 39ee0x9y42-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:50:06 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDnph9006288;
+        Wed, 30 Jun 2021 13:49:52 GMT
+Received: from mwanda (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jun 2021 06:49:51 -0700
+Date:   Wed, 30 Jun 2021 16:49:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Liam Beguin <lvb@xiphos.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: lmk04832: fix checks for allocation failure
+Message-ID: <YNx2dyvB6MkVlsrl@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
+X-Proofpoint-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chris Morgan <macromorgan@hotmail.com>
+The devm_kcalloc() function returns NULL on error, it never returns
+error pointers so these conditions need to be fixed.
 
-This enables the Rockchip Serial Flash Controller for the Odroid Go
-Advance. Note that while the attached SPI NOR flash and the controller
-both support quad read mode, only 2 of the required 4 pins are present.
-The rx and tx bus width is set to 2 for this reason.
-
-Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
+ drivers/clk/clk-lmk04832.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Changes in v10: None
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-Changes in v1: None
-
- .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-index 49c97f76df77..f78e11dd8447 100644
---- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
-@@ -484,6 +484,22 @@
- 	status = "okay";
- };
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index 0cd76e626c3d..66ad5cbe7029 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
  
-+&sfc {
-+	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
-+	pinctrl-names = "default";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <108000000>;
-+		spi-rx-bus-width = <2>;
-+		spi-tx-bus-width = <2>;
-+	};
-+};
-+
- &tsadc {
- 	status = "okay";
- };
+ 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
+ 				 sizeof(struct lmk_dclk), GFP_KERNEL);
+-	if (IS_ERR(lmk->dclk)) {
+-		ret = PTR_ERR(lmk->dclk);
++	if (!lmk->dclk) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
+ 				   sizeof(*lmk->clkout), GFP_KERNEL);
+-	if (IS_ERR(lmk->clkout)) {
+-		ret = PTR_ERR(lmk->clkout);
++	if (!lmk->clkout) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
+ 							   info->num_channels),
+ 				     GFP_KERNEL);
+-	if (IS_ERR(lmk->clk_data)) {
+-		ret = PTR_ERR(lmk->clk_data);
++	if (!lmk->clk_data) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
 -- 
-2.17.1
-
-
+2.30.2
 
