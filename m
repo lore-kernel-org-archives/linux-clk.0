@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9080C11F73
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7EBC11F79
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92CD3616E9
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 470CE613EB
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235225AbhF3Ne3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:34:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41970 "EHLO
+        id S235141AbhF3Neb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 09:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235108AbhF3Ne0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:34:26 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F526C061766
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:57 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id t17so5231797lfq.0
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:57 -0700 (PDT)
+        with ESMTP id S235177AbhF3Ne1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 09:34:27 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F80FC061280
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:55 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id x20so3325039ljc.5
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 06:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3exyYm4G9uHzjfpwtNXEP0h5KI9rcHvoMctYz/watFE=;
-        b=L0bxnSWjx3k3iWHrn61sHM9Ao+xJnFBhzKxTxMs4oPEPpU6an9QRCp05t7CY4Rk22g
-         MERWCsq7FVxJ+JT7p5zFtOONn6DWoEQqmfvFtWAK1qwLV4Z1PRlTha2ru7BxI8Id+TnO
-         SE+npLMoLOqk2ygjbaIt/2wW3JYldgRsciyVQIib8RjGOpzC57J6B0dqi2Dvq6EpApqd
-         p3KtRHL4yE9cuUdtKHRSMDXHAc1Z4MsP176pFCLPp7Ol0g/PPW0W5MbNdAy1tNy8IjJF
-         KHRTmhSY2oDbJhxr5rTvqYajttVapZW3yBgDbE6SSg5phUUABg3tokRffSUBmWZ7sSbL
-         78Mw==
+        bh=K1GDsnRGky4n2WSFWX6nkRzIkPArqTdunnzWeNZQG3A=;
+        b=bQGflZQkDcyr6mgCmHJ8pSZ2SwAFyb1Km0sWhPOjKc504hvSRWVVkagL9gZmkLq1nX
+         DQillDABvOW4fTXlK5gp401kBjkFzoNEXLiMO1I6uC3ZBK+R1xiqelD0XosOUBvf/V4D
+         k3qYfcYZdWcIkfMfuSOwfJcNTEEw9TAsn3ur7XtbtFTuDhDbf7udKBQJNFUq5XmWp9f1
+         dPi+YBWNSJn95IQy5ExcIZ8OTkGIn8sfVX7bvPKxHzWmClpW3oTmwwosj4+5E5mjCwCb
+         BF6tw025SP2sr8XqQKehZej75PkxgPK1gkk19W/24ax7JiSUr+RyCYJ8v4qRLJ9qSEAO
+         3K0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3exyYm4G9uHzjfpwtNXEP0h5KI9rcHvoMctYz/watFE=;
-        b=j/9GD2DnFUWfOaI9wzsHyaSRw2Ac7V/RHsAE3x4wLDq74CIrds+bPAficT4Ssf9N2W
-         mE4hsf6g88Lye9U1gaD+J/IT0tGzYs5D8k9aAQPtv+woeNvaLnmKGmAlCWkoGDuNZGKE
-         FNXz0UwoCZwNY5NOstHo8yuIJDEdj0IokqitSrrSkfhlfP9f3cUFpDKRzBs7ifha3/UL
-         vShv7f87rch3AUUVWtPUlKBrhSAhPMNLqgUvI3sOPZWyB5FDA6NHCN8om17+oRQntcRx
-         MFUrB9M4CY5OLlm9np/IHLa95OxHABUrpIT4OuJktfJ6Gc68DAXqudF13E+sm1oFQv4w
-         6DzQ==
-X-Gm-Message-State: AOAM532p7//ALRkKJkgoGlcTEKWRJQj6NkaMzXEIz3pntPz6+knU2uWD
-        kgyRhxKrxu+hvB2AVOfnxT19Zw==
-X-Google-Smtp-Source: ABdhPJwT2Y5p4mxOgC2/R7wN5wg2/5kjrxBtYFprHmU5KJtLYKUMICRVS0/0fA5/tHHA4UNRZXSVqw==
-X-Received: by 2002:a05:6512:118b:: with SMTP id g11mr2512957lfr.507.1625059915723;
-        Wed, 30 Jun 2021 06:31:55 -0700 (PDT)
+        bh=K1GDsnRGky4n2WSFWX6nkRzIkPArqTdunnzWeNZQG3A=;
+        b=WVnUcxOaO155Jyt562ERjTM0jIchIQHCHAH8VWfVYtK2dGM2gIbbVFlnP8UxSPVZma
+         1tRAk29wvUvW1VtsOzVhYcyLBKIzV/XThZ7goa7n9CKwlvAvy/+jzFCqL2GzXdZ9Hic1
+         Dd/dTcyrIOf5VYh6On4E5Rl9yU3nX/c2LVlZWHtjWjtOpH3jNSBvTYmavh8QYlobVPRo
+         V8Jn4QAxQy+Q7oW7b4niNEB4DLj7GoKMy8+SoVtFXRD5MZPjCJhlsJJz4k2t/50FrgrR
+         BFyTmv0Y3RFFprwLnUXfK+INeScThEkRiceeLOcLXpra7ovczotpIAHLctmfsNS3NXAb
+         7ulA==
+X-Gm-Message-State: AOAM532w11wd4Rsqa5o3UBq3pnrQS1PnJBd9VCx3TwffO7EoluCEUHd6
+        wFrvDd1VEr8PAjZAyxEXla35Og==
+X-Google-Smtp-Source: ABdhPJzKXMQbhp8sBCe4Vzvvt530pA5S7BmDq0hsbBP5ydHyLGBnQQVNBDa+J2rnViG9oc6PUfgvdA==
+X-Received: by 2002:a2e:50b:: with SMTP id 11mr8090463ljf.220.1625059913891;
+        Wed, 30 Jun 2021 06:31:53 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id x20sm1578098lfd.128.2021.06.30.06.31.54
+        by smtp.gmail.com with ESMTPSA id x20sm1578098lfd.128.2021.06.30.06.31.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 06:31:55 -0700 (PDT)
+        Wed, 30 Jun 2021 06:31:52 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] arm64: dts: qcom: sm8250: remove mmcx regulator
-Date:   Wed, 30 Jun 2021 16:31:47 +0300
-Message-Id: <20210630133149.3204290-5-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 2/6] dt-bindings: clock: qcom,videocc: add mmcx power domain
+Date:   Wed, 30 Jun 2021 16:31:45 +0300
+Message-Id: <20210630133149.3204290-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
 References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
@@ -81,52 +81,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch dispcc and videocc into using MMCX domain directly. Drop the now
-unused mmcx regulator.
+On sm8250 videocc requires MMCX power domain to be powered up before
+clock controller's registers become available. For now sm8250 was using
+external regulator driven by the power domain to describe this
+relationship. Switch into specifying power-domain and required opp-state
+directly.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8250.dtsi | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ .../bindings/clock/qcom,videocc.yaml          | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index 4c0de12aaba6..1c8478d1247d 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -271,13 +271,6 @@ memory@80000000 {
- 		reg = <0x0 0x80000000 0x0 0x0>;
- 	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+index 567202942b88..22421173e1ca 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+@@ -47,6 +47,16 @@ properties:
+   reg:
+     maxItems: 1
  
--	mmcx_reg: mmcx-reg {
--		compatible = "regulator-fixed-domain";
--		power-domains = <&rpmhpd SM8250_MMCX>;
--		required-opps = <&rpmhpd_opp_low_svs>;
--		regulator-name = "MMCX";
--	};
--
- 	pmu {
- 		compatible = "arm,armv8-pmuv3";
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-@@ -2362,7 +2355,8 @@ videocc: clock-controller@abf0000 {
- 			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
- 				 <&rpmhcc RPMH_CXO_CLK>,
- 				 <&rpmhcc RPMH_CXO_CLK_A>;
--			mmcx-supply = <&mmcx_reg>;
-+			power-domains = <&rpmhpd SM8250_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
- 			clock-names = "iface", "bi_tcxo", "bi_tcxo_ao";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -2627,7 +2621,8 @@ opp-358000000 {
- 		dispcc: clock-controller@af00000 {
- 			compatible = "qcom,sm8250-dispcc";
- 			reg = <0 0x0af00000 0 0x10000>;
--			mmcx-supply = <&mmcx_reg>;
-+			power-domains = <&rpmhpd SM8250_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
- 			clocks = <&rpmhcc RPMH_CXO_CLK>,
- 				 <&dsi0_phy 0>,
- 				 <&dsi0_phy 1>,
++  power-domains:
++    description:
++      A phandle and PM domain specifier for the MMCX power domain.
++    maxItems: 1
++
++  required-opps:
++    description:
++      Performance state to use for MMCX to enable register access.
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+@@ -56,6 +66,15 @@ required:
+   - '#reset-cells'
+   - '#power-domain-cells'
+ 
++# Either both properties are present or both are absent
++dependencies:
++  power-domains:
++    required:
++      - required-opps
++  required-opps:
++    required:
++      - power-domains
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.30.2
 
