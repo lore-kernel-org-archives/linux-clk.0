@@ -7,60 +7,55 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BB5C11F65
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E16C11F65
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14ECC613F5
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FA261403
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jun 2021 18:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233336AbhF3S0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 14:26:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36698 "EHLO mail.kernel.org"
+        id S232904AbhF3ShN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 14:37:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233309AbhF3S0k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jun 2021 14:26:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3AF6A61468;
-        Wed, 30 Jun 2021 18:24:10 +0000 (UTC)
+        id S232851AbhF3ShN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jun 2021 14:37:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 29741613C3;
+        Wed, 30 Jun 2021 18:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625077450;
-        bh=kQWxalafhDaa1dOH4MeAdwMUlRDKpy97WdejoxexQ88=;
+        s=k20201202; t=1625078084;
+        bh=slt3L0xwhcyU5y4oLHCcLk6UVpJzC9C2af4jqOAR6Xk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OykUUttLfg5lTxarPE//W+sguxd6nQ6a4QabIOR36ZWFnWt05y/h4guB7kPkpS3V2
-         BVCJr4g9n/rU3bTPmAZKSAD6tTR8JzWk+pLTfaao8F5qb0MRTtKUpUoqziXqMVfWx7
-         JngPBKB6YtoDGoxp+Yxn9TBOzjZXKWC5wJL3PkkCoE1eO8VBh9Y/9NS/ZP8zaqSpTr
-         a1wAoddS7KsGKKaO1sBqz0AMICmDMXORqntObaeoZmWSrU8WPxTBRVUdbW6gKqRz4q
-         ZPKlJPXaHUxmIs4w2IBTC+K3WyyBgtHnJtncjStHjtgxCAk7L3tQr1yHyuEXCZv1ZQ
-         bqPVREV4bLkOA==
+        b=rDWkppbUSHim1zeiO6a3QUunPJOR4kWb2Yt/3g2PtqrrtLZLgwFVxE45WO+qA+Aph
+         vJC+ke1sG5cGXlGiHVWbCzJW4TXJOEVGrQuhNtqvcWLFfB/vixNDjlaIRzChU1orAI
+         LXB9FjwQhnpdQXUbfncgkYeEhsQNkn19EsbrBqF6ifEs+8XlsIPHBRlMCy/mD1Spv5
+         QyXGwMSJXmNG6ciWvrkuLZYYi9FsrbUFDfAvvVluDJZUTmnNf8d2ogh1+KY2J2kmsa
+         D2A8CzUID5qoNLfMyywWHfPYRSSvKYYzL4GPBL269D5fZkReTCL9jqccAZTz4hyJ2j
+         2qK13n9AyyglQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210630134745.7561-2-jon.lin@rock-chips.com>
-References: <20210630134702.7346-1-jon.lin@rock-chips.com> <20210630134745.7561-1-jon.lin@rock-chips.com> <20210630134745.7561-2-jon.lin@rock-chips.com>
-Subject: Re: [PATCH v10 06/10] clk: rockchip: Add support for hclk_sfc on rk3036
+In-Reply-To: <20210622064502.14841-1-damien.lemoal@wdc.com>
+References: <20210622064502.14841-1-damien.lemoal@wdc.com>
+Subject: Re: [PATCH] clk: k210: Fix k210_clk_set_parent()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
-        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
-        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        Chris Morgan <macromorgan@hotmail.com>
-To:     Jon Lin <jon.lin@rock-chips.com>, linux-spi@vger.kernel.org
-Date:   Wed, 30 Jun 2021 11:24:09 -0700
-Message-ID: <162507744904.3331010.2867883126485374831@swboyd.mtv.corp.google.com>
+Cc:     stable@vger.kernel.org
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Date:   Wed, 30 Jun 2021 11:34:42 -0700
+Message-ID: <162507808293.3331010.16073778280977688458@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jon Lin (2021-06-30 06:47:41)
-> Add support for the bus clock for the serial flash controller on the
-> rk3036. Taken from the Rockchip BSP kernel but not tested on real
-> hardware (as I lack a 3036 based SoC to test).
+Quoting Damien Le Moal (2021-06-21 23:45:02)
+> In k210_clk_set_parent(), add missing writel() call to update the mux
+> register of a clock to change its parent. This also fixes a compilation
+> warning with clang when compiling with W=3D1.
 >=20
-> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+> Fixes: c6ca7616f7d5 ("clk: Add RISC-V Canaan Kendryte K210 clock driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
