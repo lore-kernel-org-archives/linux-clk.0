@@ -2,79 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2980C11F64
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F84C11F69
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 741C561414
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BF5E61416
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbhGAQKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jul 2021 12:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229744AbhGAQKD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Jul 2021 12:10:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A52346141C;
-        Thu,  1 Jul 2021 16:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625155652;
-        bh=GO2gkofuHyA0dpUUtLSHYIYsS4kckkjB+NImkgZ6mHE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=n0l/v46hp4Iho/x+ZskCl+dlt2jOAly278mTYZ+Avxi2mvDH4fZcKyVnvgWGmwUxE
-         kc0ycsHxGVJuUgvYVRP0fKRX9LbpTufqLIDhWKRXin6DvxV+Rm81TNUyN0SnD9a+rm
-         maJ2ovTwGrou9F73d79/WustH9LA1vDvvlVArb31/lApyzcRdGkSYk7k2pBxksioIs
-         QeCbHQ7lLKTTu9myPJCbB4rm7jkKTjuku27ViT75jAJYENWNFB1X/bzoc/dzrCOd/N
-         brf1Gp4HuNQ8w5egJYXNK6NEXw6z0bv4zOvJADVftXUiZWUH6VUbS0uRabXVji6NL8
-         jWYT9oL9MLM1Q==
-Received: by mail-ej1-f46.google.com with SMTP id v20so11242712eji.10;
-        Thu, 01 Jul 2021 09:07:32 -0700 (PDT)
-X-Gm-Message-State: AOAM532ZSrGWvspt7OQgNzHL1z08lXUVrW4rJEX3HhLuGTrztl7MlHM2
-        5S8xY/IU1PMDECm6MV/cx/QcBfHe6bgOpqy+dw==
-X-Google-Smtp-Source: ABdhPJzOylyVnY2lCU5AQmYuo0z2lxjEOUFSvFta6YmbnwycNAscr4yIw8XRlrHvRaImRfYJ4cUcOZvYOZsMR6J5ZqY=
-X-Received: by 2002:a17:906:9419:: with SMTP id q25mr588619ejx.341.1625155651213;
- Thu, 01 Jul 2021 09:07:31 -0700 (PDT)
+        id S231998AbhGAQUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jul 2021 12:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230372AbhGAQUC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 12:20:02 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30673C0613DB
+        for <linux-clk@vger.kernel.org>; Thu,  1 Jul 2021 09:17:31 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id x37so2633495uac.13
+        for <linux-clk@vger.kernel.org>; Thu, 01 Jul 2021 09:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kSutTWtKn3LC21+SCDRY5AQt3qGlpQzYvBUsBO0I13s=;
+        b=Cz/Z4KysJpHmOr6ibCjk08qQ/efufrjBBkmz4eh0ueWMETfIZA/IBv7vVXKq68RJve
+         IOygIBObuwk7hTTlRQrkJpz/1y/2VO47FbT+g9p26kcpMLZ7RFQMn+HSG8XIM2EUlQuq
+         +2U3N1PTxEkq5dfYkUgvjBFi8AV6vHNuU6XtH5D1hIP2tTqdQNfiNSkMCDqQ7ruLglIw
+         Yv9P9pn5uI3+7isevo3uyqQxHorzARSjIDcbhjFeoYkPycaIXa92T8PM0/YFQItvYiMF
+         0Pl2KZQP5fgvGFxFL9ecM3129Kb2zNq1TvXJik7G03SepUiy5fZ91m+6NQ6daJFewKzz
+         fBDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kSutTWtKn3LC21+SCDRY5AQt3qGlpQzYvBUsBO0I13s=;
+        b=WLPFibhqeDonwaLPQSQuqgcxuUUEiS12L+iLTMjgKHufJakLXfWG82fSEHcCi2kWaz
+         WEGfCywYTzkGbqv6P3W3gGNWxV9baKKtU9JDSvHVqH4TMtFDZ2oPfVr+1Ph2fF2JGdAF
+         7lhbkip/XOdcsQFYsMFIeFv+8fcim1NCRTBqFLnvB/tsCa1xBR6cwlNcbY12Ph0r4Ud3
+         2hgLuoy+bkg7ZEpGgJUZ/yeJC2/UvH8uG4rHrc3QzEz3r1JBuyj0/gV5F+qe+9XrUZh4
+         UL+Ph17RiMsWUfPcZZdXuPldJqkiz+zRBG4R/Yd8SYy5qxeGclLOOdC8QawpdWzby0Tv
+         ulOw==
+X-Gm-Message-State: AOAM533a1utkWXbQYALyiIV7qrBZiO09kTmB4opJ+YhL4bmHEETD8+Bm
+        FPEq5n52idLP9cSMU/cX3xLGyEBCI+DiboNnhCRVxQ==
+X-Google-Smtp-Source: ABdhPJyTRNUhFUu4nIiksCC4rq4CAg/HgWOpjZqRE3xtf2lCc4YLyyWXsz+vp/A0H8R9TwWUqwxE/SaVoY6h/wvKXWk=
+X-Received: by 2002:ab0:484b:: with SMTP id c11mr1059123uad.100.1625156250168;
+ Thu, 01 Jul 2021 09:17:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210617190912.262809-1-daniel@zonque.org> <20210617190912.262809-4-daniel@zonque.org>
- <20210624213317.GA2020700@robh.at.kernel.org> <963c50c4-6adc-e437-dd12-08e75c2dbc84@zonque.org>
-In-Reply-To: <963c50c4-6adc-e437-dd12-08e75c2dbc84@zonque.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 1 Jul 2021 10:07:18 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJagK4a57enCvLeyCNujxTphYsh=Mc+=A5Zz=5z37_FSA@mail.gmail.com>
-Message-ID: <CAL_JsqJagK4a57enCvLeyCNujxTphYsh=Mc+=A5Zz=5z37_FSA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] dt-bindings: clock: cs2000-cp: make clk_in optional
-To:     Daniel Mack <daniel@zonque.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org> <20210630133149.3204290-2-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20210630133149.3204290-2-dmitry.baryshkov@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 1 Jul 2021 18:16:53 +0200
+Message-ID: <CAPDyKFpXD3rCmp53LFFYky_xQv9ucofvTezG5qWyDZt427chNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx
+ power domain
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 28, 2021 at 10:03 AM Daniel Mack <daniel@zonque.org> wrote:
+On Wed, 30 Jun 2021 at 15:31, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 >
-> On 6/24/21 11:33 PM, Rob Herring wrote:
-> > On Thu, Jun 17, 2021 at 09:09:06PM +0200, Daniel Mack wrote:
-> >> CLK_IN is only used in dynamic mode and is hence optional.
-> >>
-> >> Re-order the clocks so REF_CLK is specified first.
-> >
-> > It's not a compatible change. You can't do that unless you can explain
-> > why it doesn't matter.
+> On sm8250 dispcc requires MMCX power domain to be powered up before
+> clock controller's registers become available. For now sm8250 was using
+> external regulator driven by the power domain to describe this
+> relationship. Switch into specifying power-domain and required opp-state
+> directly.
 >
-> Hmm okay. And that rule also applies even if I patch all mainline users?
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/clock/qcom,dispcc-sm8x50.yaml    | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> index 0cdf53f41f84..48d86fb34fa7 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> @@ -55,6 +55,16 @@ properties:
+>    reg:
+>      maxItems: 1
+>
+> +  power-domains:
+> +    description:
+> +      A phandle and PM domain specifier for the MMCX power domain.
+> +    maxItems: 1
+> +
 
-Explaining why you are doing something and the implications of the
-change, yes that's required for every commit. Whether you can make
-incompatible changes, that's up to platform maintainers. I only ask
-that doing that is documented clearly.
+Should you perhaps state that this is a parent domain? Or it isn't?
 
-Do you know that every user of affected h/w is okay with you requiring
-them update their dtb?
+Related to this and because this is a power domain provider, you
+should probably reference the common power-domain bindings somewhere
+here. Along the lines of this:
 
-Rob
+- $ref: power-domain.yaml#
+
+As an example, you could have a look at
+Documentation/devicetree/bindings/power/pd-samsung.yaml.
+
+> +  required-opps:
+> +    description:
+> +      Performance state to use for MMCX to enable register access.
+> +    maxItems: 1
+
+According to the previous discussions, I was under the assumption that
+this property belongs to a consumer node rather than in the provider
+node, no?
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -64,6 +74,15 @@ required:
+>    - '#reset-cells'
+>    - '#power-domain-cells'
+>
+> +# Either both properties are present or both are absent
+> +dependencies:
+> +  power-domains:
+> +    required:
+> +      - required-opps
+> +  required-opps:
+> +    required:
+> +      - power-domains
+> +
+>  additionalProperties: false
+>
+>  examples:
+> --
+> 2.30.2
+>
+
+Kind regards
+Uffe
