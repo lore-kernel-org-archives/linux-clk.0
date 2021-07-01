@@ -2,151 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18259C11F67
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C657C11F64
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 17:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2FB661402
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 16:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8D961407
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 17:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233038AbhGARBd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jul 2021 13:01:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38762 "EHLO
+        id S232913AbhGARdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jul 2021 13:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232954AbhGARBc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 13:01:32 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D28C061765
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jul 2021 09:59:01 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id x15so2708133vsc.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jul 2021 09:59:01 -0700 (PDT)
+        with ESMTP id S232593AbhGARda (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 13:33:30 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6993C061762;
+        Thu,  1 Jul 2021 10:30:58 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id u5-20020a7bc0450000b02901480e40338bso5396476wmc.1;
+        Thu, 01 Jul 2021 10:30:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Immfemhnpfwa8Nxg8YlJJPBmhUahLWtVsprTcnwHwPk=;
-        b=fosP1pivS/V7/7q1YVbmKOVzAiaVlm7zVcVZXe75oDTpnLQk/JKjyghVLBOJVFuoV3
-         HE3hPij/Y20fQDt6VeHfZvDLHTpLW3jPrwm4wyS7idrW9V4tmk++PdK8IjtEnRKXzvdZ
-         ZlagxBpjFbDf5GySfn9hAqblBML6XGQXPxbC+gb4Z8Nrj1ae4rS+814Zk81lR2ppJFSk
-         pRVxoVpBm2X4pnBqPLo/l8fEIxVRUJCBwumltoa5T/urpYAgqTCLy6ayZxz8lNEKiKSl
-         d9LHZd4OC61Dj9vw3HPRsXC7mlQJi7ZD5aakDa9hqqemjxNnjj3tKs7gVaMPkHOkCkax
-         zGiw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wB59Tcol7WFyeIqJfVL0G5i3exPR6uZKms17tlCBAcA=;
+        b=Y8ARRoqc+A3kGi68cV34ZqpfYcUNQk7PR0cfnBlk9Lcy+jS9GLKKIaDT7LnqR/4ZfU
+         lwW5OFcVy3apvlrcNpRuQlclhWKkBfiXPOVsVU6zs5R1lQg+pY5NfjCJCCw+qkhWXdFg
+         rW5B/pXvj7RKYopYjO2IqgNVUK2J/RMfhxt6T0O4mNfmLMnWnUXclbMK4Sa1zXyooqlI
+         2KA4NIfDYFtih3LTEiBF03jeOBMny4UpdGyswCqm3Dg33cIXDLZLcm9YjRa09h6BXx00
+         zP2eQmh9gpMCXo8f9GNMR2gkSTZux1HfhOlN7ZV8huXyRgTx8aKg3jdAmNuuvhckdxqn
+         26rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Immfemhnpfwa8Nxg8YlJJPBmhUahLWtVsprTcnwHwPk=;
-        b=lIMUTSK1S4Id9n7ZUG3gSuhKoNQdH3w1i/tkL9+Qs98NFnGgiWf38hhKeTPX1YJqgN
-         SxWKKl8wx+G5140b2ProJQFnCayhjiS97eDefuyrtzM1yBSu3VlAMuyFe2Xo3qI41KMd
-         3dp/RccSR89NcF358+IExciwRT8/iUH/Uhtzw3oMu1Ya9wOHjI7phJuRIaMyMErGD5mF
-         vo04O6/PB3qkpkYYGyKncSKCGjdysBpt0/kK9nW+xQjvP6wo6EkHmL04hfa6Xyebj6B9
-         EodOqWjCK3XqpDf+unIStEGzv4U4q1sE8OS5z+yJec+5nV59WoTuqJTZowxlzjLAhYGK
-         MaxA==
-X-Gm-Message-State: AOAM533x23eLD75K4WiiZEqyYiv/SeZQiqaFaP1H8gDSWKhT0QQijhrU
-        sG5/imGXVDRykpZPnkU9fH3xZ6W5HDput6j4pwTglQ==
-X-Google-Smtp-Source: ABdhPJwb80n64AujBuKAB/6m8FZX3ULekcDZrX7rK4uDzligl8QBq8854MayUQyqde2ZRzptR9AszDxPsDj/QYmH4XI=
-X-Received: by 2002:a05:6102:502:: with SMTP id l2mr1354578vsa.19.1625158740105;
- Thu, 01 Jul 2021 09:59:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
- <20210630133149.3204290-2-dmitry.baryshkov@linaro.org> <CAPDyKFpXD3rCmp53LFFYky_xQv9ucofvTezG5qWyDZt427chNQ@mail.gmail.com>
- <CAA8EJpob=TpXiJozac-5sKJzE71ddWRFDj7D2-F=W=a2mgKvxA@mail.gmail.com>
-In-Reply-To: <CAA8EJpob=TpXiJozac-5sKJzE71ddWRFDj7D2-F=W=a2mgKvxA@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 1 Jul 2021 18:58:22 +0200
-Message-ID: <CAPDyKFq-vwMchLFb3JvK7B9ZQ9=z-TXzGHUij6CocTR+VmAOqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx
- power domain
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wB59Tcol7WFyeIqJfVL0G5i3exPR6uZKms17tlCBAcA=;
+        b=HViwnbfopQgr/1Q9iuHAa2yKlWYV7RDMOD5d8YVplZVRc72S7AvsyikrbJ40TAQp85
+         Z6ahM3hpn6vU6WIlSmkVRzReDAknWHhf0YMFgh9lSwBobisz6DQZsknVWsXup14yQE86
+         4Ir2hcxL97tEKsfYAuqGleFNvcaRDzYIHf11afaTGHf2M9eDwbc9gjcmC+D9EDAFTAXT
+         eMbpd/S77vVFvy3g5P1cC5Ua8+oHmcEx1IaJ1EfsXFUpDtrdtLz8eu4Q8V7AA4R02y67
+         6wRLr6zoFZ+87B9aNYmSCXlrlGduMM+5DLRRAG+j1I0FKuoL1KQorUS6XvasWn1yjmXk
+         QB/w==
+X-Gm-Message-State: AOAM533nGPWWrPtLQTHa+zeP9ctS3Yobe3oWnkJ4lLEaJT+AjKDRuDzx
+        tnlAkLTeYugcrUK6bqeQeOk=
+X-Google-Smtp-Source: ABdhPJxq0hqSO0GgKP+IeHAM+Sv/K9Ww1tFO+oYT06t29roLupBgPd6bCKR7iRCdUtEV8d+GtGdsgg==
+X-Received: by 2002:a1c:8097:: with SMTP id b145mr11874162wmd.54.1625160657555;
+        Thu, 01 Jul 2021 10:30:57 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.127.100])
+        by smtp.gmail.com with ESMTPSA id y7sm10089139wma.22.2021.07.01.10.30.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jul 2021 10:30:57 -0700 (PDT)
+Subject: Re: [v11 01/19] dt-bindings: ARM: Mediatek: Add new document bindings
+ of MT8192 clock
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
         DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20210630132804.20436-1-chun-jie.chen@mediatek.com>
+ <20210630132804.20436-2-chun-jie.chen@mediatek.com>
+ <CAAOTY_8SgZ5SN9Q0nfL_jQVTbB7ZDqgoGFRkKe8+QJwUi55Hew@mail.gmail.com>
+ <da0db357ac7e41ca6ec2007eccccbb465049cd01.camel@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <775b61ab-8a23-ab78-f7a8-11d09d7ded3f@gmail.com>
+Date:   Thu, 1 Jul 2021 19:30:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
+MIME-Version: 1.0
+In-Reply-To: <da0db357ac7e41ca6ec2007eccccbb465049cd01.camel@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Jul 2021 at 18:39, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Thu, 1 Jul 2021 at 19:17, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Wed, 30 Jun 2021 at 15:31, Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > On sm8250 dispcc requires MMCX power domain to be powered up before
-> > > clock controller's registers become available. For now sm8250 was using
-> > > external regulator driven by the power domain to describe this
-> > > relationship. Switch into specifying power-domain and required opp-state
-> > > directly.
-> > >
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  .../bindings/clock/qcom,dispcc-sm8x50.yaml    | 19 +++++++++++++++++++
-> > >  1 file changed, 19 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > index 0cdf53f41f84..48d86fb34fa7 100644
-> > > --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > @@ -55,6 +55,16 @@ properties:
-> > >    reg:
-> > >      maxItems: 1
-> > >
-> > > +  power-domains:
-> > > +    description:
-> > > +      A phandle and PM domain specifier for the MMCX power domain.
-> > > +    maxItems: 1
-> > > +
-> >
-> > Should you perhaps state that this is a parent domain? Or it isn't?
-> >
-> > Related to this and because this is a power domain provider, you
-> > should probably reference the common power-domain bindings somewhere
-> > here. Along the lines of this:
-> >
-> > - $ref: power-domain.yaml#
-> >
-> > As an example, you could have a look at
-> > Documentation/devicetree/bindings/power/pd-samsung.yaml.
->
-> I'll take a look.
->
-> >
-> > > +  required-opps:
-> > > +    description:
-> > > +      Performance state to use for MMCX to enable register access.
-> > > +    maxItems: 1
-> >
-> > According to the previous discussions, I was under the assumption that
-> > this property belongs to a consumer node rather than in the provider
-> > node, no?
->
-> It is both a consumer and a provider. It consumes SM8250_MMCX from
-> rpmhpd and provides MMSC_GDSC.
 
-That sounds a bit weird to me.
 
-In my view and per the common power domain bindings (as pointed to
-above): If a power domain provider is a consumer of another power
-domain, that per definition means that there is a parent domain
-specified.
+On 01/07/2021 04:13, Chun-Jie Chen wrote:
+> On Wed, 2021-06-30 at 22:30 +0800, Chun-Kuang Hu wrote:
+>> Hi, Chun-Jie:
+>>
+>> Chun-Jie Chen <chun-jie.chen@mediatek.com> 於 2021年6月30日 週三 下午9:30寫道：
+>>>
+>>> This patch adds the new binding documentation for system clock
+>>> and functional clock on Mediatek MT8192.
+>>>
+>>> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> ---
+>>
+>> [snip]
+>>
+>>> +
+>>> +  - |
+>>> +    mmsys: clock-controller@14000000 {
+>>
+>> mmsys is a system controller rather than clock controller, isn't it?
+>>
+>> Regards,
+>> Chun-Kuang.
+>>
+>>> +        compatible = "mediatek,mt8192-mmsys";
+>>> +        reg = <0x14000000 0x1000>;
+>>> +        #clock-cells = <1>;
+>>> +    };
+>>> +
+> 
+> Thanks for you reminder, I will move mmsys to system clock controller.
+> 
 
-[...]
+The mmsys should be documented in mediatek,mmsys.txt
 
-Kind regards
-Uffe
+Regards,
+Matthias
