@@ -2,73 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A965C11F66
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 00:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85F2C11F66
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 02:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8202361107
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 00:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3AE261476
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 02:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238240AbhGAAoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 20:44:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238231AbhGAAoI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jun 2021 20:44:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A07D5613B1;
-        Thu,  1 Jul 2021 00:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625100098;
-        bh=WQkr6OUYRHxbloIuVUTX0/i/swSOxzEFMQEcpVDMaH0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vJHxXm/oDugsMh0rYx4KYsgyD2tevmzOAGSTrqXs7qdBOR2kqinWYjKKmGNVAYpzK
-         FKWoG/k5FNqs9NFXoZrik9cXAM8vT+ZdBHLceAOm1crufW7c5mlxtbG5VTjMSTb3FK
-         72kACoaVl91BXyl928gUXDnWhA7mDZaBgCKNnFwpeHxWIjp7HeXrLn/Nmn6q8JIPEr
-         wAbQwxdBa7ch69cLMZ2e8DbChHhPh+JL6Dox718Gb8eRnzdaJE32dZ4GNKuRJ//B3B
-         Ku6I6xANrjot6jClJ154y+mQ5rm7V/GCGuk04tgkJSEryTXFq0LeVjKevgdlPZ1QqD
-         rjfxkaiQqUa/g==
-Content-Type: text/plain; charset="utf-8"
+        id S236453AbhGACQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jun 2021 22:16:12 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:60361 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234257AbhGACQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 22:16:12 -0400
+X-UUID: 47e6d98a0df343a8adeac2f95f895f98-20210701
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=AcP3gEPnP4tM/McdpWeWTQWUaen+Pk00C+pKqpN58ew=;
+        b=WPjcmcCy3Z+FlUS3crGm4RaOeqb0/DKyr4SUzxhFSVY7EkVAhXcOEs1+r4KHxmpOmY+/UzHHIVH1oCPLdULSFHiE+WRkbg8VseJmHVqJZjwA9FOjO9BVDrslb0Pho5NzAVAqrFI/RcripT7IEVC4aF4ZMhMtgm0Gvwf7LyH2e1g=;
+X-UUID: 47e6d98a0df343a8adeac2f95f895f98-20210701
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1710508295; Thu, 01 Jul 2021 10:13:41 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 1 Jul 2021 10:13:39 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 1 Jul 2021 10:13:39 +0800
+Message-ID: <da0db357ac7e41ca6ec2007eccccbb465049cd01.camel@mediatek.com>
+Subject: Re: [v11 01/19] dt-bindings: ARM: Mediatek: Add new document
+ bindings of MT8192 clock
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chun-Kuang Hu <chunkuang.hu@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Thu, 1 Jul 2021 10:13:39 +0800
+In-Reply-To: <CAAOTY_8SgZ5SN9Q0nfL_jQVTbB7ZDqgoGFRkKe8+QJwUi55Hew@mail.gmail.com>
+References: <20210630132804.20436-1-chun-jie.chen@mediatek.com>
+         <20210630132804.20436-2-chun-jie.chen@mediatek.com>
+         <CAAOTY_8SgZ5SN9Q0nfL_jQVTbB7ZDqgoGFRkKe8+QJwUi55Hew@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210630225952.3337630-1-dmitry.baryshkov@linaro.org>
-References: <20210630225952.3337630-1-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2 0/2] clk: qcom: fix error path and cleanup in gdsc support
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 30 Jun 2021 17:41:36 -0700
-Message-ID: <162510009624.3570193.9612972387190530602@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-06-30 15:59:50)
-> Fix error path in gdsc_register() and cleanup code in gdsc_unregister()
-> to properly unwind all genpd registration calls. Both patches bear two
-> fixes tags, since part of the issue was present in the very first commit
-> adding support for GDSCs, part of the issue was added when adding
-> hiearchical power domains support to GDSC code.
+T24gV2VkLCAyMDIxLTA2LTMwIGF0IDIyOjMwICswODAwLCBDaHVuLUt1YW5nIEh1IHdyb3RlOg0K
+PiBIaSwgQ2h1bi1KaWU6DQo+IA0KPiBDaHVuLUppZSBDaGVuIDxjaHVuLWppZS5jaGVuQG1lZGlh
+dGVrLmNvbT4g5pa8IDIwMjHlubQ25pyIMzDml6Ug6YCx5LiJIOS4i+WNiDk6MzDlr6vpgZPvvJoN
+Cj4gPiANCj4gPiBUaGlzIHBhdGNoIGFkZHMgdGhlIG5ldyBiaW5kaW5nIGRvY3VtZW50YXRpb24g
+Zm9yIHN5c3RlbSBjbG9jaw0KPiA+IGFuZCBmdW5jdGlvbmFsIGNsb2NrIG9uIE1lZGlhdGVrIE1U
+ODE5Mi4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVuLUppZSBDaGVuIDxjaHVuLWppZS5j
+aGVuQG1lZGlhdGVrLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2Vy
+bmVsLm9yZz4NCj4gPiAtLS0NCj4gDQo+IFtzbmlwXQ0KPiANCj4gPiArDQo+ID4gKyAgLSB8DQo+
+ID4gKyAgICBtbXN5czogY2xvY2stY29udHJvbGxlckAxNDAwMDAwMCB7DQo+IA0KPiBtbXN5cyBp
+cyBhIHN5c3RlbSBjb250cm9sbGVyIHJhdGhlciB0aGFuIGNsb2NrIGNvbnRyb2xsZXIsIGlzbid0
+IGl0Pw0KPiANCj4gUmVnYXJkcywNCj4gQ2h1bi1LdWFuZy4NCj4gDQo+ID4gKyAgICAgICAgY29t
+cGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxOTItbW1zeXMiOw0KPiA+ICsgICAgICAgIHJlZyA9IDww
+eDE0MDAwMDAwIDB4MTAwMD47DQo+ID4gKyAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiA+
+ICsgICAgfTsNCj4gPiArDQoNClRoYW5rcyBmb3IgeW91IHJlbWluZGVyLCBJIHdpbGwgbW92ZSBt
+bXN5cyB0byBzeXN0ZW0gY2xvY2sgY29udHJvbGxlci4NCg0KQmVzdCBSZWdhcmRzLA0KQ2h1bi1K
+aWUNCg==
 
-Should also include the author of the patch that is being Fixed as an
-FYI.
-
->=20
-> ----------------------------------------------------------------
-> Dmitry Baryshkov (2):
->       clk: qcom: fix error_path in gdsc_register
->       clk: qcom: fix domains cleanup in gdsc_unregister
->=20
->  drivers/clk/qcom/gdsc.c | 48 ++++++++++++++++++++++++++++++++++++++++++-=
------
->  1 file changed, 42 insertions(+), 6 deletions(-)
->=20
->
