@@ -2,245 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8718AC11F69
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 20:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1E9C11F64
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 20:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6872C61413
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 20:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA41B613F1
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 20:25:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234005AbhGAUPM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jul 2021 16:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
+        id S234381AbhGAU2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jul 2021 16:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233977AbhGAUPM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 16:15:12 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F57C0613DB
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jul 2021 13:12:40 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id v10so5041040qto.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jul 2021 13:12:40 -0700 (PDT)
+        with ESMTP id S234376AbhGAU2O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 16:28:14 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953FBC061762;
+        Thu,  1 Jul 2021 13:25:43 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id t24-20020a9d7f980000b029046f4a1a5ec4so7862387otp.1;
+        Thu, 01 Jul 2021 13:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IRBdJfZtqdTD8dfu42iDMw+1kiTU/iXVIZE4bw9+r8w=;
-        b=Uxtj/3SQ170QVlNu/SMKZ8EZu0BrxZFF1GQy9XJVD54dMG1+175ytv2DGm3HaKK/sO
-         HcSy0A+klkKcUI+A4u5m5MrKcIOUYO3iBR0ZKKvLhYEWlck6OyygIYPLV57njq4/Y+aF
-         0IN+OO7O5GdjNq7NMjN2pZp8fPOrKcGgEu1Bu7C+EB2RfPJjZUfWkJZh4iDXX/F/8Qm8
-         L6CM/fsyQp4XlqgthNWX2o5SJqMk0mmTbiVLSkwPY9BsPMNRq50FrT6ecxA9XV7ttfsk
-         9QJ9ZSoVpn2gBSd5UCZxWFkhnH+M8qssL177gkTWppJEdJCe1bK8GIO7x3wx0JV/tbgN
-         L/Wg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HKqWSYAw82wkbQb4Q9rpOf6Rzfc8rpUQdtixYTB6Xug=;
+        b=K6Wop/WYm3LBArGs2St5nHMQ6E/PjbobEcxSA5D+GHCcQuVq5Do1OwPJKzz9JvfarD
+         rSpANKv+DJk5rGRpTWVPNOa5ecr/2f7h+N32TlAXgYXBTFzJxVxLpalpEPuiPL+2WcoZ
+         fvsAMDEQHCl/RMF7bDSQ5EbuieQiXB7I/a02KdGfJRuDF7mAEIYFpbuifQUkWYlIO3nF
+         YkbtMk6s7DrY79xfEKz3DdOdlnbejiHyvt/W2AtzwYoolQ9nGt+nFSv+7uvMOpbZxVTG
+         G7/Fz4sTqGEYOeb6Q4/zpQQS8lNXEdC+ReukjRBWgrgLdZFyPgaRAeg71tUiGnikJF7o
+         7ZwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IRBdJfZtqdTD8dfu42iDMw+1kiTU/iXVIZE4bw9+r8w=;
-        b=M4/xQ1r/b9XggovJjwC2GCkoD5QPlM1zajUrNQVDMV8Dx+RPBSgZ/CxtQag6N8btJ1
-         +msMu4gl+ymrIR6PTmmikSMQ5+SkHGnEXYYCgLZPd+2SuL0BoLgiav0gZxDaVxO+GBH2
-         6Tju/QOBXz+LSx6sZxM1lL9SPtvlwBLHADnjo3GvWDOzM2rz5eBx0U+jzvfVVZpyqXFc
-         WUulcjrwGt6VwksmZmg8EdQniKKottmMqosc0AR4XH6840eHAR0bObkpcRrS7QltHwrR
-         OC8zj6hEVWhTZ6HdabqzJKYpueh5tlLQUsOvsBt8HtHn3l3keqhrWOqrBuOT80BK19mv
-         0Mlg==
-X-Gm-Message-State: AOAM530grobc7r/3ABkDDqD2unNDnIYTLPddFwjOczUCk0vGBhjJMVaO
-        QA2GDXCjMgvq2mc/PA/Np8a+aTbxlAfU7oexgCEgXw==
-X-Google-Smtp-Source: ABdhPJw49As8AbIVoei6s0cq92oq3hCWuzSx1MGQeISmA95gFm4I7FY2spyQhoXdh7nHoImLTroCnRgnsNZf+X5rcIk=
-X-Received: by 2002:ac8:688:: with SMTP id f8mr1674302qth.135.1625170359373;
- Thu, 01 Jul 2021 13:12:39 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=HKqWSYAw82wkbQb4Q9rpOf6Rzfc8rpUQdtixYTB6Xug=;
+        b=XfLh/s7bYGd+qqYRb6Rcu3IhN2t0gQEb/f+ZNWQoOlyi497VYD1PHA00iQ8MjVp7xU
+         sNKHbkfylPUflU6tssqghqkxSuZeUXb6fSlgIJkf5H95xasXqRRQgd1dvpwVPoLAzNdt
+         aGO6UKcAx3/QBeVYsh95yYBDH+Vew16DZDF0vHodmWdVtkqDNPtDcCARamRpDaAK80ca
+         nW+4wJOv9C4RiEVcAnkHiyCRejzkdWIPM8v9W09yenS2wF19bxVljf5PtygEJwoWwxdJ
+         kDjfE1qOdDtA1ikFG8rjm2//ryMsd5uphPlMyRmLpd9s+D6IPF0LqhrU5Ni4r/qym3N5
+         qOEQ==
+X-Gm-Message-State: AOAM533IQ5e4x08sMARht0zT2M9lwkFconx0BFDmPB09InvWmpFxyuo7
+        5obD4RIG3PfgzJi904/T8GpQuk40LsQ=
+X-Google-Smtp-Source: ABdhPJxbB5Kww3hYnu7vJrtKW5rPQ5KozsuVH/SGKSsrpAlj+tPI1lYQs2ly5JQ3p0izlW1T70B9GA==
+X-Received: by 2002:a05:6830:241d:: with SMTP id j29mr1477463ots.371.1625171142913;
+        Thu, 01 Jul 2021 13:25:42 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id y5sm159294otq.5.2021.07.01.13.25.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jul 2021 13:25:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Thu, 1 Jul 2021 13:25:40 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, narmstrong@baylibre.com,
+        jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] clk: divider: Switch from .round_rate to
+ .determine_rate by default
+Message-ID: <20210701202540.GA1085600@roeck-us.net>
+References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com>
+ <20210627223959.188139-3-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
- <20210630133149.3204290-4-dmitry.baryshkov@linaro.org> <YNyHDAHk6ad/XCGl@yoga>
- <CAA8EJpqf6VyaS7KyhujFgST+S=fua4S-uXia0g7Qh7ogYgWYbw@mail.gmail.com>
- <YNylqGEi7Q3tFCgy@yoga> <CAA8EJppHQ-XhZWbsPX39wie48JXWvsNerWB9=Q0yxxs7987xxA@mail.gmail.com>
- <YN1DIwR66JKoFhEZ@yoga>
-In-Reply-To: <YN1DIwR66JKoFhEZ@yoga>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 1 Jul 2021 23:12:27 +0300
-Message-ID: <CAA8EJpr6qrVJY7DdcNagrpaTFW2FMxE-GE8nHyxmiFHCY0A+jA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: qcom: gdsc: enable optional power domain support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210627223959.188139-3-martin.blumenstingl@googlemail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Jul 2021 at 07:23, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
->
-> On Wed 30 Jun 15:29 CDT 2021, Dmitry Baryshkov wrote:
->
-> > On Wed, 30 Jun 2021 at 20:11, Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> > >
-> > > On Wed 30 Jun 10:47 CDT 2021, Dmitry Baryshkov wrote:
-> > >
-> > > > Hi,
-> > > >
-> > > > On Wed, 30 Jun 2021 at 18:00, Bjorn Andersson
-> > > > <bjorn.andersson@linaro.org> wrote:
-> > > > >
-> > > > > On Wed 30 Jun 08:31 CDT 2021, Dmitry Baryshkov wrote:
-> > > > >
-> > > > > > On sm8250 dispcc and videocc registers are powered up by the MMCX power
-> > > > > > domain. Currently we used a regulator to enable this domain on demand,
-> > > > > > however this has some consequences, as genpd code is not reentrant.
-> > > > > >
-> > > > > > Teach Qualcomm clock controller code about setting up power domains and
-> > > > > > using them for gdsc control.
-> > > > > >
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > >
-> > > > > There's a proposal to add a generic binding for statically assigning a
-> > > > > performance states here:
-> > > > >
-> > > > > https://lore.kernel.org/linux-arm-msm/1622095949-2014-1-git-send-email-rnayak@codeaurora.org/
-> >
-> > I checked this thread. It looks like Rajendra will also switch to the
-> > "required-opps" property. So if that series goes in first, we can drop
-> > the call to set_performance_state. If this one goes in first, we can
-> > drop the set_performance_state call after getting Rajendra's work in.
-> >
-> > > > >
-> > > > >
-> > > > > But that said, do you really need this?
-> > > > >
-> > > > > The requirement for driving MMCX to LOW_SVS on SM8250 (and NOM on
-> > > > > SM8150/SC8180x) seems to only come from the fact that you push MDP_CLK
-> > > > > to 460MHz in &mdss.
-> > > > >
-> > > > > But then in &mdss_mdp you do the same using an opp-table based on the
-> > > > > actual MDP_CLK, which per its power-domains will scale MMCX accordingly.
-> > > >
-> > > > MDSS and DSI would bump up MMCX performance state requirements on
-> > > > their own, depending on the frequency being selected.
-> > > >
-> > >
-> > > Right, but as I copied things from the sm8250.dtsi to come up with
-> > > sm8150/sc8180x.dtsi I concluded that as soon as the assigned-clockrate
-> > > in &mdss kicks in I need the performance state to be at NOM.
-> > >
-> > > So keeping the assigned-clockrate in &mdss means that MMCX will never go
-> > > below NOM.
-> >
-> > No, because once MDP is fully running, it will lower the clock frequency:
-> >
-> > # grep mdp_clk /sys/kernel/debug/clk/clk_summary
-> >           disp_cc_mdss_mdp_clk_src       1        1        0
-> > 150000000          0     0  50000         ?
-> >              disp_cc_mdss_mdp_clk       2        2        0
-> > 150000000          0     0  50000         Y
-> >
->
-> But won't that just lower the performance state requested by the
-> &mdss_mdp, while the &mdss still votes for NOM - with the outcome being
-> that we maintain NOM even if the clock goes down?
+On Mon, Jun 28, 2021 at 12:39:58AM +0200, Martin Blumenstingl wrote:
+> .determine_rate is meant to replace .round_rate. The former comes with a
+> benefit which is especially relevant on 32-bit systems: since
+> .determine_rate uses an "unsigned long" (compared to a "signed long"
+> which is used by .round_rate) the maximum value on 32-bit systems
+> increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
+> Switch to a .determine_rate implementation by default so 32-bit systems
+> can benefit from the increased maximum value as well as so we have one
+> fewer user of .round_rate.
+> 
+> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-&mdss doesn't vote on performance state. At least it does not on
-msm/msm-next which I have at hand right now.
-&mdss toggles mdss_gdsc, but does not assign any performance state.
+In next-20210701:
 
-On the other hand &mdss_mdp and &dsi0 clearly vote on mmcx's performance state.
+    0.000000] 8<--- cut here ---
+[    0.000000] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[    0.000000] pgd = (ptrval)
+[    0.000000] [00000000] *pgd=00000000
+[    0.000000] Internal error: Oops: 80000005 [#1] SMP ARM
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.13.0-next-20210701 #1
+[    0.000000] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+[    0.000000] PC is at 0x0
+[    0.000000] LR is at clk_core_determine_round_nolock+0xb4/0xe0
+[    0.000000] pc : [<00000000>]    lr : [<c07be330>]    psr: a00000d3
+[    0.000000] sp : c1701e48  ip : 00000000  fp : c1f6b340
+[    0.000000] r10: c1f6b33c  r9 : d082007c  r8 : c1709a18
+[    0.000000] r7 : 05e69ec0  r6 : 00000000  r5 : c1701e58  r4 : c2090480
+[    0.000000] r3 : 00000000  r2 : c1701e64  r1 : 05e69ec0  r0 : c208fe80
+[    0.000000] Flags: NzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+[    0.000000] Control: 10c5387d  Table: 8000406a  DAC: 00000051
+[    0.000000] Register r0 information: slab kmalloc-64 start c208fe80 pointer offset 0 size 64
+[    0.000000] Register r1 information: non-paged memory
+[    0.000000] Register r2 information: non-slab/vmalloc memory
+[    0.000000] Register r3 information: NULL pointer
+[    0.000000] Register r4 information: slab kmalloc-192 start c2090480 pointer offset 0 size 192
+[    0.000000] Register r5 information: non-slab/vmalloc memory
+[    0.000000] Register r6 information: NULL pointer
+[    0.000000] Register r7 information: non-paged memory
+[    0.000000] Register r8 information: non-slab/vmalloc memory
+[    0.000000] Register r9 information: 0-page vmalloc region starting at 0xd0820000 allocated at of_iomap+0x4c/0x68
+[    0.000000] Register r10 information: non-slab/vmalloc memory
+[    0.000000] Register r11 information: non-slab/vmalloc memory
+[    0.000000] Register r12 information: NULL pointer
+[    0.000000] Process swapper/0 (pid: 0, stack limit = 0x(ptrval))
+[    0.000000] Stack: (0xc1701e48 to 0xc1702000)
+[    0.000000] 1e40:                   c2090480 c1700000 00000000 c07c5480 05e69ec0 00000000
+[    0.000000] 1e60: ffffffff 179a7b00 c208d500 e6ff0344 c208ff00 05e69ec0 d0820080 00000000
+[    0.000000] 1e80: 0000001c c07c55c0 c1f6b324 c2012c04 d0820080 c163c310 c1f6b340 00000000
+[    0.000000] 1ea0: 00000804 d0820074 0000001c 00000000 c186052c c109a5b0 c186052c c0caf26c
+[    0.000000] 1ec0: cbdc67ac d0820000 c2012c04 d0820060 d0820048 d0820028 cbdcc0cc d0820018
+[    0.000000] 1ee0: d0820020 d0820038 d0820030 c2012c04 c1701f1c 00000000 c2005e80 c1701f1c
+[    0.000000] 1f00: 00000004 c2005e88 cbdcc0cc cbdcc138 00000001 c162a4e4 c1700000 c1700000
+[    0.000000] 1f20: 00000000 c2005e88 c2005e88 cbdc5884 00000000 c1701fc8 c17093cc c0838f44
+[    0.000000] 1f40: c1600dd0 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    0.000000] 1f60: 00000000 00000000 00000000 00000000 00000000 e6ff0344 00000000 c1902000
+[    0.000000] 1f80: c1663a80 00000012 c1700000 c1709380 00000000 c170caa8 c14cb424 c1604d34
+[    0.000000] 1fa0: c1902000 c1600e0c ffffffff ffffffff 00000000 c1600588 00000000 c1700000
+[    0.000000] 1fc0: 00000000 c1663a80 e6fa0e44 00000000 00000000 c1600330 00000051 10c0387d
+[    0.000000] 1fe0: ffffffff 8833b000 410fc075 10c5387d 00000000 00000000 00000000 00000000
+[    0.000000] [<c07be330>] (clk_core_determine_round_nolock) from [<c07c5480>] (clk_core_set_rate_nolock+0x184/0x294)
+[    0.000000] [<c07c5480>] (clk_core_set_rate_nolock) from [<c07c55c0>] (clk_set_rate+0x30/0x64)
+[    0.000000] [<c07c55c0>] (clk_set_rate) from [<c163c310>] (imx6ul_clocks_init+0x2798/0x2a44)
+[    0.000000] [<c163c310>] (imx6ul_clocks_init) from [<c162a4e4>] (of_clk_init+0x180/0x26c)
+[    0.000000] [<c162a4e4>] (of_clk_init) from [<c1604d34>] (time_init+0x20/0x30)
+[    0.000000] [<c1604d34>] (time_init) from [<c1600e0c>] (start_kernel+0x4c8/0x6cc)
+[    0.000000] [<c1600e0c>] (start_kernel) from [<00000000>] (0x0)
+[    0.000000] Code: bad PC value
+[    0.000000] ---[ end trace 7009a0f298fd39e9 ]---
+[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
 
->
-> > >
-> > > > > So wouldn't it be sufficient to ensure that MDSS_GDSC is parented by
-> > > > > MMCX and then use opp-tables associated with the devices that scales the
-> > > > > clock and thereby actually carries the "required-opps".
-> > > >
-> > > > Actually no. I set the performance state in the qcom_cc_map, so that
-> > > > further register access is possible. Initially I was doing this in the
-> > > > qcom_cc_really_probe() and it was already too late.
-> > > > Just to remind: this patchset is not about MDSS_GDSC being parented by
-> > > > MMCX, it is about dispcc/videocc registers being gated with MMCX.
-> > > >
-> > >
-> > > So you're saying that just enabling MMCX isn't enough to touch the
-> > > dispcc/videocc registers? If that's the case it seems like MMCX's
-> > > definition of "on" needs to be adjusted - because just specifying MMCX
-> > > as the power-domain for dispcc/videocc and enabling pm_runtime should
-> > > ensure that MMCX is enabled when the clock registers are accessed (I
-> > > don't see anything like that for the GDSC part though).
-> >
-> > No, it is not enough. If I comment out the set_performance_state call,
-> > the board reboots.
-> >
-> > However I can set the opps as low as RET and register access will work.
-> > I'll run more experiments and if everything works as expected, I can
-> > use retention or min_svs level in the next iteration.
-> > Just note that downstream specifies low_svs as minimum voltage level
-> > for MMCX regulator.
-> >
->
-> It doesn't make sense to me that a lone power_on on the power-domain
-> wouldn't give us enough juice to poke the registers.
->
-> But digging into the rpmhpd implementation answers the question, simply
-> invoking rpmhpd_power_on() is a nop, unless
-> rpmhpd_set_performance_state() has previously been called, because
-> pd->corner is 0. So this explains why enable isn't sufficient.
->
-> Compare this with the rpmpd implementation that will send an
-> enable request to the RPM in this case.
+Bisct points to this patch as culprit. Reverting it fixes the problem.
 
-Do you think that we should change that to:
-
-rpmhpd_aggregate_corner(pd, max(pd->corner, 1)) ?
-
-Or
-
-rpmhpd_aggregate_corner(pd, max(pd->corner, pd->levels[1])) ?
-
->
-> > > I thought our problem you had was that you need to set a
-> > > performance_state in order to clock up some of the clocks - e.g.
-> > > MDP_CLK.
-> >
-> > No, even register access needs proper perf state.
-> >
->
-> Per above finding you're right, enabling a rpmhpd power-domain doesn't
-> do anything. And I don't find this intuitive or even in line with the
-> expectations of the api...
->
->
->
-> A quick test booting rb3 and rb5 seems to indicate that it's possible to
-> initialize pd->corner to 1 (to ensure that enable at least gives us the
-> lowest level).
->
-> set_performance_state(0) will however then result in voting for "off",
-> rather than the lowest enabled level.
-
-Well, set_performance_state(0) means that "the device wouldn't
-participate anymore to find the target performance state of the
-genpd". Strictly speaking it does not specify whether it is ok to turn
-it off or not. (like the regulator with the voltage set to 0V).
-But I'd also like to hear a comment from Stephen here.
-
-
-> Rajendra, Stephen, is this really how rpmhpd is supposed to work?!
-
-
-
--- 
-With best wishes
-Dmitry
+Guenter
