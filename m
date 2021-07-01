@@ -2,82 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85F2C11F66
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 02:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6815EC11F69
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 04:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3AE261476
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 02:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A71E61456
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jul 2021 04:02:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236453AbhGACQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jun 2021 22:16:12 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:60361 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234257AbhGACQM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jun 2021 22:16:12 -0400
-X-UUID: 47e6d98a0df343a8adeac2f95f895f98-20210701
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=AcP3gEPnP4tM/McdpWeWTQWUaen+Pk00C+pKqpN58ew=;
-        b=WPjcmcCy3Z+FlUS3crGm4RaOeqb0/DKyr4SUzxhFSVY7EkVAhXcOEs1+r4KHxmpOmY+/UzHHIVH1oCPLdULSFHiE+WRkbg8VseJmHVqJZjwA9FOjO9BVDrslb0Pho5NzAVAqrFI/RcripT7IEVC4aF4ZMhMtgm0Gvwf7LyH2e1g=;
-X-UUID: 47e6d98a0df343a8adeac2f95f895f98-20210701
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1710508295; Thu, 01 Jul 2021 10:13:41 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 1 Jul 2021 10:13:39 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 1 Jul 2021 10:13:39 +0800
-Message-ID: <da0db357ac7e41ca6ec2007eccccbb465049cd01.camel@mediatek.com>
-Subject: Re: [v11 01/19] dt-bindings: ARM: Mediatek: Add new document
- bindings of MT8192 clock
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Chun-Kuang Hu <chunkuang.hu@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S230293AbhGAEFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jul 2021 00:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230255AbhGAEFB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jul 2021 00:05:01 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622A7C0617AD
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 21:02:30 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id a11so9205701lfg.11
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jun 2021 21:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7hi2FrhIaizwpDJPwnSinv9W2oMvoHm0CGYALUuuXDs=;
+        b=kWWeltzlSYGGc5QRSaAkNEu3wbwvMTyMjx7Hi1Du8rAm3U1ZDS7a2a2e9GB/JtvpeI
+         3iWP3ESanAX0jItDlj8NFWAfWGDMbaPHtU+xbFrBLaplzEIJyb0VhMk8diCaNxGaxuzy
+         R8XGe8kox80GEpIggg2eFJJwK/ZKq3i11ixHY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7hi2FrhIaizwpDJPwnSinv9W2oMvoHm0CGYALUuuXDs=;
+        b=AxupEoqwS+inOxyfQ2b+TsPm296ZhSalJNtrf39FYbZtyk+PjRMlckBuK67L19fp7B
+         DvRRwBhg38c09TCdUp/wS7r+pJmtBma0Qczjj92QOXd2qxx4S9Dnvt8NtUAHlqHKxN19
+         sfUqdD54bGNSffzPNTxzsdEAT9XNcITO0y/7vo3nNa7MAa3WVYe4isn9O7fvF5tYPiMO
+         o01SwMKNIOpF7CkbAUM3fbq/D2t8TxBpSkZVgk4fLR2Zg9ofQD98B1tjkPyyze95pwxo
+         zsocW6ZLmiQUwqiuaNgTHIGmDc2LTci3ZAwBsPS3oeidzH9LMYX0gFTd+vbd+PmylNGv
+         Xy5Q==
+X-Gm-Message-State: AOAM530LEl3mtw7gv/ZAhH6gU75ZFHxfyC7/kEaByWKSb5DSTZL2uAFX
+        bWlR1jX9zD5LSAJiihahFZqK4vvkMZZWJ1ehOCjLGA==
+X-Google-Smtp-Source: ABdhPJw/v6AwK/W5MblRaHBzvNcBF8/BLoJuYBeXADDntlPIgf2Bpc9gBKz0UhSMGyatSQ8BxnhizhHgp4pWwKlsVxw=
+X-Received: by 2002:a05:6512:63:: with SMTP id i3mr29997663lfo.587.1625112148504;
+ Wed, 30 Jun 2021 21:02:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
+ <20210616224743.5109-4-chun-jie.chen@mediatek.com> <CAGXv+5F2zTcqnjH2ud38vUD149KJtgxhPQME2Mk6-vGtQv+2YQ@mail.gmail.com>
+ <ff6179e8-06f9-fbba-c704-a74381c2149a@gmail.com> <CAGXv+5FXuMnhsnytLYKKA9YE97bps7KnkDNADvv8f_wdTqnrfg@mail.gmail.com>
+ <be824462-4c2f-3bde-0a3d-c5470a5b0fbb@gmail.com>
+In-Reply-To: <be824462-4c2f-3bde-0a3d-c5470a5b0fbb@gmail.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 1 Jul 2021 12:02:17 +0800
+Message-ID: <CAGXv+5FSq-cCRR-wB_kp2s+59273r0nrhtkH9006ezN-sUtNzQ@mail.gmail.com>
+Subject: Re: [PATCH 03/22] clk: mediatek: Fix corner case of tuner_en_reg
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Thu, 1 Jul 2021 10:13:39 +0800
-In-Reply-To: <CAAOTY_8SgZ5SN9Q0nfL_jQVTbB7ZDqgoGFRkKe8+QJwUi55Hew@mail.gmail.com>
-References: <20210630132804.20436-1-chun-jie.chen@mediatek.com>
-         <20210630132804.20436-2-chun-jie.chen@mediatek.com>
-         <CAAOTY_8SgZ5SN9Q0nfL_jQVTbB7ZDqgoGFRkKe8+QJwUi55Hew@mail.gmail.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gV2VkLCAyMDIxLTA2LTMwIGF0IDIyOjMwICswODAwLCBDaHVuLUt1YW5nIEh1IHdyb3RlOg0K
-PiBIaSwgQ2h1bi1KaWU6DQo+IA0KPiBDaHVuLUppZSBDaGVuIDxjaHVuLWppZS5jaGVuQG1lZGlh
-dGVrLmNvbT4g5pa8IDIwMjHlubQ25pyIMzDml6Ug6YCx5LiJIOS4i+WNiDk6MzDlr6vpgZPvvJoN
-Cj4gPiANCj4gPiBUaGlzIHBhdGNoIGFkZHMgdGhlIG5ldyBiaW5kaW5nIGRvY3VtZW50YXRpb24g
-Zm9yIHN5c3RlbSBjbG9jaw0KPiA+IGFuZCBmdW5jdGlvbmFsIGNsb2NrIG9uIE1lZGlhdGVrIE1U
-ODE5Mi4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVuLUppZSBDaGVuIDxjaHVuLWppZS5j
-aGVuQG1lZGlhdGVrLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2Vy
-bmVsLm9yZz4NCj4gPiAtLS0NCj4gDQo+IFtzbmlwXQ0KPiANCj4gPiArDQo+ID4gKyAgLSB8DQo+
-ID4gKyAgICBtbXN5czogY2xvY2stY29udHJvbGxlckAxNDAwMDAwMCB7DQo+IA0KPiBtbXN5cyBp
-cyBhIHN5c3RlbSBjb250cm9sbGVyIHJhdGhlciB0aGFuIGNsb2NrIGNvbnRyb2xsZXIsIGlzbid0
-IGl0Pw0KPiANCj4gUmVnYXJkcywNCj4gQ2h1bi1LdWFuZy4NCj4gDQo+ID4gKyAgICAgICAgY29t
-cGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxOTItbW1zeXMiOw0KPiA+ICsgICAgICAgIHJlZyA9IDww
-eDE0MDAwMDAwIDB4MTAwMD47DQo+ID4gKyAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiA+
-ICsgICAgfTsNCj4gPiArDQoNClRoYW5rcyBmb3IgeW91IHJlbWluZGVyLCBJIHdpbGwgbW92ZSBt
-bXN5cyB0byBzeXN0ZW0gY2xvY2sgY29udHJvbGxlci4NCg0KQmVzdCBSZWdhcmRzLA0KQ2h1bi1K
-aWUNCg==
+"On Wed, Jun 30, 2021 at 7:43 PM Matthias Brugger
+<matthias.bgg@gmail.com> wrote:
+> On 30/06/2021 13:09, Chen-Yu Tsai wrote:
+> > On Wed, Jun 30, 2021 at 6:53 PM Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> >> On 30/06/2021 09:31, Chen-Yu Tsai wrote:
+> >>> On Thu, Jun 17, 2021 at 7:01 AM Chun-Jie Chen
+> >>> <chun-jie.chen@mediatek.com> wrote:
+> >>>>
+> >>>> On MT8195, tuner_en_reg is moved to register offest 0x0.
+> >>>> If we only judge by tuner_en_reg, it may lead to wrong address.
+> >>>> Add tuner_en_bit to the check condition. And it has been confirmed,
+> >>>> on all the MediaTek SoCs, bit0 of offset 0x0 is always occupied by
+> >>>> clock square control.
+> >>>>
+> >>>> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> >>>
+> >>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> >>>
+> >>> Though you might want to consider converting these types of checks into feature
+> >>> flags.
+> >>>
+> >>
+> >> Yes I think adding a feature flag is the way to go. Luckily there are only a few
+> >> SoCs that will need updates at the same time.
+> >
+> > I also see that the different clock modules are tied together using only clock
+> > names written in the drivers, instead of clock references in the device tree.
+> >
+>
+> Not sure I understand what you mean. Do you refer to something like [1]? That's
+> because the clock is probed by the DRM driver, as they share the same compatible
+> and IP block.
 
+In the example driver you mentioned, most of the registered clocks have the same
+parent clock, "mm_sel". This clock is from another hardware block,
+"topckgen" [1].
+
+The two are linked together by looking up the clock name. The link should be
+explicitly described in the device tree, instead of implicitly by some name
+found in two drivers. The consuming driver can fetch the clock name via
+of_clk_get_parent_name(), or be migrated to use `struct clk_parent_data`,
+which allows specifying local (to the DT node) clock names or clk indices
+as parent clk references.
+
+What's more confusing is that the mmsys node actually has "assigned-clocks"
+properties [2] referencing the "mm_sel" clock, but not "clock" properties
+referencing the same clock. On the surface this looks like the hardware
+is trying to configure clocks that it doesn't use.
+
+Also, Maxime Ripard made the argument before that "assigned-clock-rates"
+doesn't give any real guarantees that the clock rate won't change. A
+better method is to request and "lock" the clock rate in the consuming
+driver.
+
+So overall I think there are many improvements that can be made to the
+Mediatek clk drivers. They aren't real blockers to new drivers though,
+and I think each would take some effort and coordination across all
+the SoCs.
+
+
+Regards
+ChenYu
+
+[1] https://elixir.bootlin.com/linux/latest/source/drivers/clk/mediatek/clk-mt8173.c#L545
+[2] https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/mediatek/mt8173.dtsi#L996
+
+
+> Regards,
+> Matthias
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/mediatek/clk-mt8173-mm.c?h=v5.13#n139
+>
+> > Unfortunately reworking this would likely require a lot more work. I previously
+> > did a bit of internal reworking for the sunxi drivers. While not the same, I
+> > think the plumbing required is comparable.
+> >
+> > ChenYu
+> >
