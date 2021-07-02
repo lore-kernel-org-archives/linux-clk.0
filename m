@@ -2,99 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1D5C11F69
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 13:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424BCC11F6B
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 13:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B651961420
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 13:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B48D6142C
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 13:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232525AbhGBNbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 09:31:11 -0400
-Received: from mail-io1-f45.google.com ([209.85.166.45]:45640 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbhGBNbL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 09:31:11 -0400
-Received: by mail-io1-f45.google.com with SMTP id g3so9671982iok.12;
-        Fri, 02 Jul 2021 06:28:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=6VAjp+1g1/6JxjvtnTpo35j86mJBNoZO/+9hIOMNiL8=;
-        b=Ovf2Murioq8ywPycdwkNGzkOETxRepQk2GGoOIQZNS7lXhuMKYUUvzkI/M/Awoy0Ws
-         rYlEFnste69TmDcEpazJAGxyvRiHhSTaObimML4S+Fa7WxwN94YkPGD8c8MTRWmSs4O/
-         /1z02XhZfANMS8B3EfUgVy84Wn3/GV6YUYpZLQVP0StHbmZWJzdcQRhfRhHvpUpcFlZ9
-         ouYCHofP3Y3pj+Y8HMuR8N4ZaGJldK0dezijyaI97YuPcsQCQ9ri97GbAh1X/86O11by
-         IszN17j4tAX2z3KTg2sEyftNqZuxo3yZw/5SxgAl2TtQhxZejRY8cVDh9RXtY6TEYan5
-         IC+A==
-X-Gm-Message-State: AOAM533WYCM1/cxj9FWCjLCsgKIOt0TfmOGDgLOstkJXu8hnC7pFqI0l
-        keBW+Xpt90WTCCQ5PWMnfQ==
-X-Google-Smtp-Source: ABdhPJzT6n33b3xKbEvJpC4uROSwAAAPdrO/QZIfQETl3OkC0z4NKXvm3j5l1qv2BaaKbjvD4xtxgA==
-X-Received: by 2002:a05:6638:4199:: with SMTP id az25mr4238547jab.45.1625232518931;
-        Fri, 02 Jul 2021 06:28:38 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id a12sm1820482ilt.3.2021.07.02.06.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jul 2021 06:28:38 -0700 (PDT)
-Received: (nullmailer pid 274908 invoked by uid 1000);
-        Fri, 02 Jul 2021 13:28:35 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Alex Helms <alexander.helms.jy@renesas.com>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        david.cater.jc@renesas.com, geert+renesas@glider.be,
-        devicetree@vger.kernel.org, michal.simek@xilinx.com
-In-Reply-To: <20210701232258.19146-2-alexander.helms.jy@renesas.com>
-References: <202107020640.YyVoU69S-lkp@intel.com> <20210701232258.19146-1-alexander.helms.jy@renesas.com> <20210701232258.19146-2-alexander.helms.jy@renesas.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Add binding for Renesas 8T49N241
-Date:   Fri, 02 Jul 2021 07:28:35 -0600
-Message-Id: <1625232515.402706.274905.nullmailer@robh.at.kernel.org>
+        id S232840AbhGBNwy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jul 2021 09:52:54 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:53181 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232563AbhGBNwy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 09:52:54 -0400
+X-IronPort-AV: E=Sophos;i="5.83,317,1616425200"; 
+   d="scan'208";a="86361989"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 02 Jul 2021 22:50:22 +0900
+Received: from localhost.localdomain (unknown [10.226.92.6])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 052C24006189;
+        Fri,  2 Jul 2021 22:50:19 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/9] drivers: clk: renesas: r9a07g044-cpg: Add SSIF-2 clock and reset entries
+Date:   Fri,  2 Jul 2021 14:50:03 +0100
+Message-Id: <20210702135010.5937-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210702135010.5937-1-biju.das.jz@bp.renesas.com>
+References: <20210702135010.5937-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 01 Jul 2021 16:22:57 -0700, Alex Helms wrote:
-> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
-> The 8T49N241 accepts up to two differential or single-ended input clocks
-> and a fundamental-mode crystal input. The internal PLL can lock to either
-> of the input reference clocks or to the crystal to behave as a frequency
-> synthesizer.
-> 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,8t49n241.yaml      | 183 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 189 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
-> 
+Add SSIF-2 clock and reset entries in CPG driver.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/renesas,8t49n241.yaml#
-Documentation/devicetree/bindings/clock/renesas,8t49n241.example.dt.yaml:0:0: /example-0/i2c@0/clock-generator@6c: failed to match any schema with compatible: ['renesas,8t49n241']
-Documentation/devicetree/bindings/clock/renesas,8t49n241.example.dt.yaml:0:0: /example-1/i2c@0/clock-generator@6c: failed to match any schema with compatible: ['renesas,8t49n241']
-\ndoc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1499761
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 7af4b39a0953..ed5f5c11ac12 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -96,6 +96,22 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 				0x52c, 0),
+ 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+ 				0x52c, 1),
++	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
++				0x570, 0),
++	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
++				0x570, 1),
++	DEF_MOD("ssi1_pclk",	R9A07G044_SSI1_PCLK2, R9A07G044_CLK_P0,
++				0x570, 2),
++	DEF_MOD("ssi1_sfr",	R9A07G044_SSI1_PCLK_SFR, R9A07G044_CLK_P0,
++				0x570, 3),
++	DEF_MOD("ssi2_pclk",	R9A07G044_SSI2_PCLK2, R9A07G044_CLK_P0,
++				0x570, 4),
++	DEF_MOD("ssi2_sfr",	R9A07G044_SSI2_PCLK_SFR, R9A07G044_CLK_P0,
++				0x570, 5),
++	DEF_MOD("ssi3_pclk",	R9A07G044_SSI3_PCLK2, R9A07G044_CLK_P0,
++				0x570, 6),
++	DEF_MOD("ssi3_sfr",	R9A07G044_SSI3_PCLK_SFR, R9A07G044_CLK_P0,
++				0x570, 7),
+ 	DEF_MOD("usb0_host",	R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
+ 				0x578, 0),
+ 	DEF_MOD("usb1_host",	R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
+@@ -132,6 +148,10 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
+ 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
+ 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
++	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
++	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
++	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
++	DEF_RST(R9A07G044_SSI3_RST_M2_REG, 0x870, 3),
+ 	DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
+ 	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
+ 	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
+-- 
+2.17.1
 
