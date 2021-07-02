@@ -2,141 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4D0C11F6A
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD4BC11F68
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 12:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA6061427
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A436142C
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 12:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbhGBMIb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 08:08:31 -0400
-Received: from out28-74.mail.aliyun.com ([115.124.28.74]:52946 "EHLO
-        out28-74.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbhGBMHV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 08:07:21 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438208|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.257215-0.00260397-0.740181;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047207;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.KbD.WuZ_1625227484;
-Received: from 192.168.88.128(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.KbD.WuZ_1625227484)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Fri, 02 Jul 2021 20:04:45 +0800
-Subject: Re: [PATCH v4 5/5] MIPS: CI20: Add second percpu timer for SMP.
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, linux-mips@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        sihui.liu@ingenic.com, jun.jiang@ingenic.com,
-        sernia.zhou@foxmail.com
-References: <1624688321-69131-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1624688321-69131-6-git-send-email-zhouyanjie@wanyeetech.com>
- <84LIVQ.EPXA43L4WLUK@crapouillou.net>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <3b6ffdde-2dcc-4883-f66b-9ca46db636e2@wanyeetech.com>
-Date:   Fri, 2 Jul 2021 20:04:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S232594AbhGBMgp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jul 2021 08:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232643AbhGBMgo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 08:36:44 -0400
+Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 26515C061762;
+        Fri,  2 Jul 2021 05:34:12 -0700 (PDT)
+Received: from [192.168.178.106] (p57bc995e.dip0.t-ipconnect.de [87.188.153.94])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 9C8664C5159;
+        Fri,  2 Jul 2021 12:34:09 +0000 (UTC)
+Subject: Re: [PATCH v3 3/9] dt-bindings: clock: cs2000-cp: make clk_in
+ optional
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20210617190912.262809-1-daniel@zonque.org>
+ <20210617190912.262809-4-daniel@zonque.org>
+ <20210624213317.GA2020700@robh.at.kernel.org>
+ <963c50c4-6adc-e437-dd12-08e75c2dbc84@zonque.org>
+ <CAL_JsqJagK4a57enCvLeyCNujxTphYsh=Mc+=A5Zz=5z37_FSA@mail.gmail.com>
+From:   Daniel Mack <daniel@zonque.org>
+Message-ID: <643cf315-84f0-587a-e0d0-107d2fa3b1b3@zonque.org>
+Date:   Fri, 2 Jul 2021 14:34:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <84LIVQ.EPXA43L4WLUK@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJagK4a57enCvLeyCNujxTphYsh=Mc+=A5Zz=5z37_FSA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 2021/6/30 下午8:24, Paul Cercueil wrote:
-> Hi Zhou,
->
-> Le sam., juin 26 2021 at 14:18:41 +0800, 周琰杰 (Zhou Yanjie) 
-> <zhouyanjie@wanyeetech.com> a écrit :
->> 1.Add a new TCU channel as the percpu timer of core1, this is to
->>   prepare for the subsequent SMP support. The newly added channel
->>   will not adversely affect the current single-core state.
->> 2.Adjust the position of TCU node to make it consistent with the
->>   order in jz4780.dtsi file.
+On 7/1/21 6:07 PM, Rob Herring wrote:
+> On Mon, Jun 28, 2021 at 10:03 AM Daniel Mack <daniel@zonque.org> wrote:
 >>
->> Tested-by: Nikolaus Schaller <hns@goldelico.com> # on CI20
->> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->
-> Again, you should avoid moving nodes like that.
+>> On 6/24/21 11:33 PM, Rob Herring wrote:
+>>> On Thu, Jun 17, 2021 at 09:09:06PM +0200, Daniel Mack wrote:
+>>>> CLK_IN is only used in dynamic mode and is hence optional.
+>>>>
+>>>> Re-order the clocks so REF_CLK is specified first.
+>>>
+>>> It's not a compatible change. You can't do that unless you can explain
+>>> why it doesn't matter.
+>>
+>> Hmm okay. And that rule also applies even if I patch all mainline users?
+> 
+> Explaining why you are doing something and the implications of the
+> change, yes that's required for every commit. Whether you can make
+> incompatible changes, that's up to platform maintainers. I only ask
+> that doing that is documented clearly.
+> 
+> Do you know that every user of affected h/w is okay with you requiring
+> them update their dtb?
 
-
-Oops, sorry, forgot to fix it, I will be more careful next time.
-
-
->
-> Not sure it's worth asking for a v5, so:
-> Acked-by: Paul Cercueil <paul@crapouillou.net>
->
-
-Thanks!
+Alright, I'll rework that to use a new property then for mode selection.
+and repost.
 
 
-> Cheers,
-> -Paul
->
->> ---
->>
->> Notes:
->>     v2:
->>     New patch.
->>
->>     v2->v3:
->>     No change.
->>
->>     v3->v4:
->>     Improve TCU related notes.
->>
->>  arch/mips/boot/dts/ingenic/ci20.dts | 24 ++++++++++++++----------
->>  1 file changed, 14 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/mips/boot/dts/ingenic/ci20.dts 
->> b/arch/mips/boot/dts/ingenic/ci20.dts
->> index 3a4eaf1..61c153b 100644
->> --- a/arch/mips/boot/dts/ingenic/ci20.dts
->> +++ b/arch/mips/boot/dts/ingenic/ci20.dts
->> @@ -118,6 +118,20 @@
->>      assigned-clock-rates = <48000000>;
->>  };
->>
->> +&tcu {
->> +    /*
->> +     * 750 kHz for the system timers and clocksource,
->> +     * use channel #0 and #1 for the per cpu system timers,
->> +     * and use channel #2 for the clocksource.
->> +     *
->> +     * 3000 kHz for the OST timer to provide a higher
->> +     * precision clocksource.
->> +     */
->> +    assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
->> +                      <&tcu TCU_CLK_TIMER2>, <&tcu TCU_CLK_OST>;
->> +    assigned-clock-rates = <750000>, <750000>, <750000>, <3000000>;
->> +};
->> +
->>  &mmc0 {
->>      status = "okay";
->>
->> @@ -522,13 +536,3 @@
->>          bias-disable;
->>      };
->>  };
->> -
->> -&tcu {
->> -    /*
->> -     * 750 kHz for the system timer and clocksource,
->> -     * use channel #0 for the system timer, #1 for the clocksource.
->> -     */
->> -    assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
->> -                      <&tcu TCU_CLK_OST>;
->> -    assigned-clock-rates = <750000>, <750000>, <3000000>;
->> -};
->> -- 
->> 2.7.4
->>
->
+Thanks,
+Daniel
