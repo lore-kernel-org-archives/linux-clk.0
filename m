@@ -2,80 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC3DC07E95
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97821C07E95
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDBB6141C
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:53:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E91613F5
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbhGBUzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 16:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
+        id S230447AbhGBVBo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jul 2021 17:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230274AbhGBUzd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jul 2021 16:55:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8AF9D613E8;
-        Fri,  2 Jul 2021 20:53:00 +0000 (UTC)
+        id S230377AbhGBVBo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jul 2021 17:01:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7F4F1613EB;
+        Fri,  2 Jul 2021 20:59:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625259180;
-        bh=PmOqPkABTz0RGEK4HIf1Ym6gYzjtW5ypA2aziXgk48I=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=kcLD3i7qh/YjQW2E4JIcC/7cgdK9K+iUbSc5cwsWwWETBEk8njRL5hUKRyWS9z+En
-         jtKkxbw9OfqNVYXxZxtfaEdm8Leb9zSg8iFYOkDmuX28PciJLh5C0Fx+zNB2K5YR7n
-         yoxanA5rPlTgmGNaH4LEqqdMVukLeK8lkzTUR89ppRJGNt37XwHNcdzeeLY3twrMRu
-         9IUgWKbJltujMPKQb8lrJ0r09cpcoJMA4ggIBJTZtLjKEwLZsywHUTjG7+RJgAahVT
-         rj+HYwsicnRsP8OEFVjRcWM0TMLFmXGJK3tcm10JE0SzFMiYYxxRCmXuyY2eWFXgkK
-         2HH8kDLER68lQ==
+        s=k20201202; t=1625259551;
+        bh=Ls60RX1571idIce45U8CLpSNiuxtIk6tUPerE3Q41Eo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FfUTkZL9BWNlcdfcEF60jjkt0s6tNk4MtpFj1RIiL2uFJ2Vqu1klVyqGcSYYMqYtf
+         ONTmjqa8a38F/ExsbJuHgdCXaAbUu6WmfudZAHDu4gs4XWyoesOqmaKzXfjItu/2/4
+         f3+X13KwtGS9MLqPfqPuIyikVBr+6RVYZQNLkhlRHTF/Gb5WTMhZUtkXC/OzVSEVVM
+         FODHOtz1uFht9goJuP8negMV3VW/h387QRtYBlcA85oN+1MOHysk86CVmkhSNIDJK3
+         /lAHMwDQDUg9EVDsSRZqJ5Tj/35NQqmGjZdWojO8k3BYoug65d/nxjOhVmh8fwQQ3M
+         sxwOXeJUuM7Lg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0000000000002de98c05c61dba72@google.com>
-References: <0000000000002de98c05c61dba72@google.com>
-Subject: Re: [syzbot] upstream build error (16)
+In-Reply-To: <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com>
+References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com> <20210627223959.188139-3-martin.blumenstingl@googlemail.com> <20210701202540.GA1085600@roeck-us.net> <CAFBinCC2KB-_pOenpWPknCuHV+CCjhP5hqukSkwD3qwRe6OtQw@mail.gmail.com> <162518776607.3570193.14348711594242395887@swboyd.mtv.corp.google.com> <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: divider: Switch from .round_rate to .determine_rate by default
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     gengdongjiu@huawei.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        syzbot <syzbot+567c9f52d94ad483cac5@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-Date:   Fri, 02 Jul 2021 13:52:59 -0700
-Message-ID: <162525917933.3570193.3861451207856095054@swboyd.mtv.corp.google.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
+        khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 02 Jul 2021 13:59:10 -0700
+Message-ID: <162525955027.3570193.16463056788252699243@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting syzbot (2021-07-01 23:04:23)
-> Hello,
+Quoting Martin Blumenstingl (2021-07-02 02:19:37)
+> Hi Stephen,
 >=20
-> syzbot found the following issue on:
+> On Fri, Jul 2, 2021 at 3:02 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> [...]
+> > My guess is that we have drivers copying the clk_ops from the
+> > divider_ops structure and so they are copying over round_rate but not
+> > determine_rate.
+> I just learned something new - thanks for investigating this as well!
 >=20
-> HEAD commit:    3dbdb38e Merge branch 'for-5.14' of git://git.kernel.org/=
-p..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11c93764300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcaee64f929f74=
-d56
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D567c9f52d94ad48=
-3cac5
-> userspace arch: arm
+> $ git grep "clk_divider_ops\.round_rate" drivers/
+> drivers/clk/bcm/clk-bcm2835.c:  return clk_divider_ops.round_rate(hw,
+> rate, parent_rate);
+> drivers/clk/clk-stm32f4.c:      return clk_divider_ops.round_rate(hw,
+> rate, prate);
+> drivers/clk/clk-stm32h7.c:      return clk_divider_ops.round_rate(hw,
+> rate, prate);
+> drivers/clk/clk-stm32mp1.c:             req->rate =3D
+> clk_divider_ops.round_rate(hw, req->rate, &best_parent_rate);
+> drivers/clk/imx/clk-divider-gate.c:     return
+> clk_divider_ops.round_rate(hw, rate, prate);
+> $ git grep "clk_divider_ro_ops\.round_rate" drivers/
+> $
 >=20
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+567c9f52d94ad483cac5@syzkaller.appspotmail.com
+> Changing these over to use clk_divider_ops.determine_rate doesn't seem to=
+o hard.
+> The part that I am not sure about is how to organize the patches.
+> 1) amend the changes to all relevant drivers (from above) to this patch
+> 2) multiple patches:
+> - adding .determine_rate to the default divider ops (but not removing
+> .round_rate)
+> - a single patch for each relevant driver (from above)
+> - removing .round_rate from the default divider ops
 >=20
-> drivers/clk/hisilicon/clk-hi3559a.c:818: undefined reference to `hisi_res=
-et_exit'
-> drivers/clk/hisilicon/clk-hi3559a.c:800: undefined reference to `hisi_res=
-et_init'
-> arm-linux-gnueabi-ld: drivers/clk/hisilicon/clk-hi3559a.c:806: undefined =
-reference to `hisi_reset_exit'
+> Another approach is to first create clk_divider_determine_rate() (as
+> done here) and export it.
+> Then I could have one individual patch for each relevant driver (from
+> above) to use:
+>   .determine_rate =3D clk_divider_determine_rate,
+> Then finally I could remove clk_divider_round_rate() and switch over
+> the default divider ops to .determine_rate as well.
+>=20
+> Which way do you prefer?
 >=20
 
-I think we fixed it. It's staged to merge in the next couple days.
+I'd prefer we leave round_rate assigned in clk_divider_ops and
+clk_divider_ro_ops but then also assign the determine_rate function. We
+have some duplication but that's OK. Then make individual patches to
+migrate each driver over to the new clk op.
 
-#syz fix: clk: hisilicon: hi3559a: Drop __init markings everywhere
+We could stack a final patch on top to remove the round_rate function
+from clk divider.  Unfortunately, if some driver wants to use round_rate
+then it will fail in interesting ways. Probably best to live with it
+until we decide to drop round_rate entirely. Patches to convert all the
+round_rate code over to determine_rate would be welcome in the meantime.
