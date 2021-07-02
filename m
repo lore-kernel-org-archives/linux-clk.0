@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581EDC07E96
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 22:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 100E9C07E9A
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 22:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3F6613ED
+	by mail.kernel.org (Postfix) with ESMTP id EE5F061424
 	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 22:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbhGBWyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231434AbhGBWyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 2 Jul 2021 18:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40240 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbhGBWyg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 18:54:36 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF34C0613DB;
-        Fri,  2 Jul 2021 15:52:03 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id bg14so18604336ejb.9;
-        Fri, 02 Jul 2021 15:52:03 -0700 (PDT)
+        with ESMTP id S231196AbhGBWyj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 18:54:39 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7A5C0613DE;
+        Fri,  2 Jul 2021 15:52:04 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id i5so15299541eds.1;
+        Fri, 02 Jul 2021 15:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CUXIdV7IyIYLsaimkDpH07CvQJHcqNP5b8K6Nj4IrE4=;
-        b=FCo1WJAAgMsJncjryBYDadhLVfBG08rP33YJnoPHG90FhHsz357vFHnIzBo1nLcjNR
-         lH0eZWtHZtimnegirn9Y0rXLi4kQ4+xX+KulK73EWQ3DBEz6rl0SvUfd/V/Rh1lQSN1F
-         Zb1MhTGoDljyVuvLlqIGvIm6af09vb1ongwRsIfrxnANCuMYJl/QupK1i36K+JgERmzf
-         cl/JJUQ7WblSFFRaxZr0hYpoMIYyTzDQ/ozQGqO3W375dYqJxbsbVIaURxsPvNHjBplK
-         WtGTwcVRwErEGHG2B2GL08fqqlW+IOBQd4lJIa3sk107tUmbgopKw+mC/oyf0OVmlXq5
-         pqyA==
+        bh=741oOKm9Y/CN6pZlsJDyA+wQ24ovzGnQR0XtQiJk4V0=;
+        b=cvI1oGQdong/J6jo2Uvf7v7DwJpDQsEHB76D+A5tSKdsRTiJif1apV6Sc6OKruoHcU
+         O1/6bF7h9IxRqm62vZco6/cmJpD/7zNoo+570lV7tmFWpN3KK59H61v7GPJ1NwYmNRxc
+         B4DyHUGOv33SNJn9E9Uaw9b1cpVyfMNcIfm7b5VpM0i0hH3DWHNzgWtPJyXHd93SUuKY
+         zACpIEWgQHAPFuJEHII5AefZ3zJcEFSKYpRj095dYUNZ25Zx0pSIJf7k7/WW+t5JB0Nv
+         NvUCL5BLafsHKspqJ+DSaHkHCDQA5p9qfT7K7IPiGwsdudWC3ueuvUWGQMiFtV8raqAy
+         LUlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CUXIdV7IyIYLsaimkDpH07CvQJHcqNP5b8K6Nj4IrE4=;
-        b=f8us1ZWvu5GfkA9o46RKDDQtec5GQCYHqx0Qy2WHDRnRmr9jM1uO1eiZ587eVm949m
-         nD8d6JacbjqsJ5ttVVrCQN7voIInH2Kgs7hGXBCQnFEXOWFbGcK/9NvuVVptsHvdH8Ak
-         si2q5tFlk2HGFjmg+mgAgqCGqDv719agofrEoqD4xS+bKqWGP/xRPBA7vmE0mAlPPrw/
-         L9z9CnfVpqhDfJ66Cfr1vRyKj5mENUdHg4sjmM8U39O2UsjiIwAOUo45Ax+4aVhgQBJR
-         6HJYApmqGPrahu60qnJmj+2iPbdtWJCwV1Sml6UTwOIpPSaXZ+0XpHkorGdfNjh8XQx8
-         HYBA==
-X-Gm-Message-State: AOAM530P8SYKK5PIjlszj9LRbIn9hJ1W7+PmXVFh2/G/1ecVL/pkmI3K
-        lapGxYEnxMDi+OppsdJsDT4YZRFxOA4=
-X-Google-Smtp-Source: ABdhPJzx45XAEdaPMlRXfsxl9nOpf+kJ9KYEYm3S8JI9izdhcVTWhCQMQwzh//FMvriJE+pnPJYJZw==
-X-Received: by 2002:a17:906:4fc7:: with SMTP id i7mr2113939ejw.46.1625266321918;
-        Fri, 02 Jul 2021 15:52:01 -0700 (PDT)
+        bh=741oOKm9Y/CN6pZlsJDyA+wQ24ovzGnQR0XtQiJk4V0=;
+        b=j+Rg0wYXTJHzUNiiitCUg9pvyciClgepxJKpPDPFeXffsl+1WwnM5MPT0zIDuMxiQh
+         7uJdXrMCW2/EnQkCIq31Va6TUfbEg3x2e6CPZkF3DEiZkINc7GCyKHEfbAUV9YhzWfqB
+         4uYuUN6rFFANORu1RQSmXk/oHDEKXk6dPsVUg2rBY+l39mFYvCM3/P09UvtCTKE69r47
+         5sRnagVCQiytiNG6ymMVAZrtXIaEWsvloSeIZNkvqDPwsg5E8DokXfbECJiS9YHsKdz+
+         ZpJctV26tCeEtysParQXJxwG9R4Nw/3eq569TQJDaSE9/6GrYcxpNFQQLy84kFfOP6Sv
+         Nc8A==
+X-Gm-Message-State: AOAM5318fG79fTeGJ3kMlcaTjmS+qv8E1gs8hRFF4s6NxesiJeZoWMKX
+        9WNyePGq2oV0BmRPuahpCilJiHQnEfM=
+X-Google-Smtp-Source: ABdhPJyw33dANIX/Wgn1Qh4aloRjh0gEEBdoN1t3F9c93El0LTh594GXs/thf0NjLPIuBtUz7hwutA==
+X-Received: by 2002:a05:6402:214:: with SMTP id t20mr2212183edv.20.1625266323359;
+        Fri, 02 Jul 2021 15:52:03 -0700 (PDT)
 Received: from localhost.localdomain (dynamic-095-117-063-046.95.117.pool.telefonica.de. [95.117.63.46])
-        by smtp.googlemail.com with ESMTPSA id r17sm1866964edt.33.2021.07.02.15.52.01
+        by smtp.googlemail.com with ESMTPSA id r17sm1866964edt.33.2021.07.02.15.52.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jul 2021 15:52:01 -0700 (PDT)
+        Fri, 02 Jul 2021 15:52:03 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-clk@vger.kernel.org, sboyd@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v1 4/6] clk: stm32f4: Switch to clk_divider.determine_rate
-Date:   Sat,  3 Jul 2021 00:51:43 +0200
-Message-Id: <20210702225145.2643303-5-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v1 6/6] clk: stm32mp1: Switch to clk_divider.determine_rate
+Date:   Sat,  3 Jul 2021 00:51:45 +0200
+Message-Id: <20210702225145.2643303-7-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
 References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
@@ -84,36 +84,31 @@ Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
 Cc: linux-stm32@st-md-mailman.stormreply.com
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/clk-stm32f4.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 18117ce5ff85..22267fb3e92e 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -709,10 +709,10 @@ static unsigned long stm32f4_pll_div_recalc_rate(struct clk_hw *hw,
- 	return clk_divider_ops.recalc_rate(hw, parent_rate);
- }
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 256575bd29b9..4bd1fe7d8af4 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1076,14 +1076,10 @@ static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rate,
  
--static long stm32f4_pll_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *prate)
-+static int stm32f4_pll_div_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
+ static int clk_divider_rtc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
  {
--	return clk_divider_ops.round_rate(hw, rate, prate);
-+	return clk_divider_ops.determine_rate(hw, req);
+-	unsigned long best_parent_rate = req->best_parent_rate;
++	if (req->best_parent_hw == clk_hw_get_parent_by_index(hw, HSE_RTC))
++		return clk_divider_ops.determine_rate(hw, req);
+ 
+-	if (req->best_parent_hw == clk_hw_get_parent_by_index(hw, HSE_RTC)) {
+-		req->rate = clk_divider_ops.round_rate(hw, req->rate, &best_parent_rate);
+-		req->best_parent_rate = best_parent_rate;
+-	} else {
+-		req->rate = best_parent_rate;
+-	}
++	req->rate = req->best_parent_rate;
+ 
+ 	return 0;
  }
- 
- static int stm32f4_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -738,7 +738,7 @@ static int stm32f4_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops stm32f4_pll_div_ops = {
- 	.recalc_rate = stm32f4_pll_div_recalc_rate,
--	.round_rate = stm32f4_pll_div_round_rate,
-+	.determine_rate = stm32f4_pll_div_determine_rate,
- 	.set_rate = stm32f4_pll_div_set_rate,
- };
- 
 -- 
 2.32.0
 
