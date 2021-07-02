@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97821C07E95
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0E7C07E95
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 21:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62E91613F5
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 20:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 169CF613F7
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 21:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbhGBVBo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 17:01:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47282 "EHLO mail.kernel.org"
+        id S231179AbhGBVD1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jul 2021 17:03:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230377AbhGBVBo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jul 2021 17:01:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7F4F1613EB;
-        Fri,  2 Jul 2021 20:59:11 +0000 (UTC)
+        id S230274AbhGBVD0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jul 2021 17:03:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E68C61167;
+        Fri,  2 Jul 2021 21:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625259551;
-        bh=Ls60RX1571idIce45U8CLpSNiuxtIk6tUPerE3Q41Eo=;
+        s=k20201202; t=1625259654;
+        bh=WOZ1VopfRwrnnRB8pJr+CmLYqpYymi8au37V22c6ILU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FfUTkZL9BWNlcdfcEF60jjkt0s6tNk4MtpFj1RIiL2uFJ2Vqu1klVyqGcSYYMqYtf
-         ONTmjqa8a38F/ExsbJuHgdCXaAbUu6WmfudZAHDu4gs4XWyoesOqmaKzXfjItu/2/4
-         f3+X13KwtGS9MLqPfqPuIyikVBr+6RVYZQNLkhlRHTF/Gb5WTMhZUtkXC/OzVSEVVM
-         FODHOtz1uFht9goJuP8negMV3VW/h387QRtYBlcA85oN+1MOHysk86CVmkhSNIDJK3
-         /lAHMwDQDUg9EVDsSRZqJ5Tj/35NQqmGjZdWojO8k3BYoug65d/nxjOhVmh8fwQQ3M
-         sxwOXeJUuM7Lg==
+        b=cZUPmVEuu0gWRMENpm98DvfRaC+h2GHX4YbmTv9UeHJcNwcYDlx6UJLolKVzBB7iK
+         00qmT3BIYsgZzZ1T0Cv58FakY+fVxiUzKQFOj679u+AYj6fGVuUOQyAp5DKglSBUIj
+         RR10lJKV/cwQEkRA3T6aIJjUfK/n2tHAr43olZkcKymvLTamFByWz2WxK7+R3FR9ur
+         ChcOy+jhcH37K/twV5a94rG7c0A8I9uazPp3cfivmn3JJMVRIA0p1BpNI9iMi5zIof
+         hageaNPakNSd286Y5JCNvpOUY19PMfrUqFuDselKK6fO+j/nfttz/mO8dO8N7o1/PG
+         cK6IbvZRSlqCQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com>
-References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com> <20210627223959.188139-3-martin.blumenstingl@googlemail.com> <20210701202540.GA1085600@roeck-us.net> <CAFBinCC2KB-_pOenpWPknCuHV+CCjhP5hqukSkwD3qwRe6OtQw@mail.gmail.com> <162518776607.3570193.14348711594242395887@swboyd.mtv.corp.google.com> <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com>
+In-Reply-To: <e21c34a3-2586-057d-013b-6c8ec094d1a8@samsung.com>
+References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com> <20210627223959.188139-3-martin.blumenstingl@googlemail.com> <20210701202540.GA1085600@roeck-us.net> <CAFBinCC2KB-_pOenpWPknCuHV+CCjhP5hqukSkwD3qwRe6OtQw@mail.gmail.com> <162518776607.3570193.14348711594242395887@swboyd.mtv.corp.google.com> <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com> <CGME20210702124612eucas1p1762911deb37e4fb03adc9239bb715135@eucas1p1.samsung.com> <e21c34a3-2586-057d-013b-6c8ec094d1a8@samsung.com>
 Subject: Re: [PATCH v3 2/3] clk: divider: Switch from .round_rate to .determine_rate by default
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Guenter Roeck <linux@roeck-us.net>, mturquette@baylibre.com,
@@ -43,66 +43,37 @@ Cc:     Guenter Roeck <linux@roeck-us.net>, mturquette@baylibre.com,
         khilman@baylibre.com, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 02 Jul 2021 13:59:10 -0700
-Message-ID: <162525955027.3570193.16463056788252699243@swboyd.mtv.corp.google.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 02 Jul 2021 14:00:53 -0700
+Message-ID: <162525965307.3570193.9588997729905273358@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2021-07-02 02:19:37)
-> Hi Stephen,
+Quoting Marek Szyprowski (2021-07-02 05:46:11)
+> Hi
 >=20
-> On Fri, Jul 2, 2021 at 3:02 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> [...]
-> > My guess is that we have drivers copying the clk_ops from the
-> > divider_ops structure and so they are copying over round_rate but not
-> > determine_rate.
-> I just learned something new - thanks for investigating this as well!
+> On 02.07.2021 11:19, Martin Blumenstingl wrote:
+> > Hi Stephen,
+> >
+> > On Fri, Jul 2, 2021 at 3:02 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > [...]
+> >> My guess is that we have drivers copying the clk_ops from the
+> >> divider_ops structure and so they are copying over round_rate but not
+> >> determine_rate.
+> > I just learned something new - thanks for investigating this as well!
+> >
+> > $ git grep "clk_divider_ops\.round_rate" drivers/
+> > drivers/clk/bcm/clk-bcm2835.c:  return clk_divider_ops.round_rate(hw,
+> > rate, parent_rate);
 >=20
-> $ git grep "clk_divider_ops\.round_rate" drivers/
-> drivers/clk/bcm/clk-bcm2835.c:  return clk_divider_ops.round_rate(hw,
-> rate, parent_rate);
-> drivers/clk/clk-stm32f4.c:      return clk_divider_ops.round_rate(hw,
-> rate, prate);
-> drivers/clk/clk-stm32h7.c:      return clk_divider_ops.round_rate(hw,
-> rate, prate);
-> drivers/clk/clk-stm32mp1.c:             req->rate =3D
-> clk_divider_ops.round_rate(hw, req->rate, &best_parent_rate);
-> drivers/clk/imx/clk-divider-gate.c:     return
-> clk_divider_ops.round_rate(hw, rate, prate);
-> $ git grep "clk_divider_ro_ops\.round_rate" drivers/
-> $
->=20
-> Changing these over to use clk_divider_ops.determine_rate doesn't seem to=
-o hard.
-> The part that I am not sure about is how to organize the patches.
-> 1) amend the changes to all relevant drivers (from above) to this patch
-> 2) multiple patches:
-> - adding .determine_rate to the default divider ops (but not removing
-> .round_rate)
-> - a single patch for each relevant driver (from above)
-> - removing .round_rate from the default divider ops
->=20
-> Another approach is to first create clk_divider_determine_rate() (as
-> done here) and export it.
-> Then I could have one individual patch for each relevant driver (from
-> above) to use:
->   .determine_rate =3D clk_divider_determine_rate,
-> Then finally I could remove clk_divider_round_rate() and switch over
-> the default divider ops to .determine_rate as well.
->=20
-> Which way do you prefer?
+> I confirm that this issue appears also on Raspberry Pi 3b+ board. I was=20
+> about to write a bug report, but you were faster. The funny thing is=20
+> that is so nondeterministic, that automated bisecting failed to catch it.
 >=20
 
-I'd prefer we leave round_rate assigned in clk_divider_ops and
-clk_divider_ro_ops but then also assign the determine_rate function. We
-have some duplication but that's OK. Then make individual patches to
-migrate each driver over to the new clk op.
-
-We could stack a final patch on top to remove the round_rate function
-from clk divider.  Unfortunately, if some driver wants to use round_rate
-then it will fail in interesting ways. Probably best to live with it
-until we decide to drop round_rate entirely. Patches to convert all the
-round_rate code over to determine_rate would be welcome in the meantime.
+I'd think it was deterministic. The function pointer is NULL after this
+patch so it should always try to set the PC to 0 and fail to execute.
+Unless that is somehow executable?
