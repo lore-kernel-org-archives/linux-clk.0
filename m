@@ -2,130 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-24.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003F5C11F67
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 01:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DEEC11F67
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 01:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D55F061413
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 01:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E3F6141A
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 01:11:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230427AbhGBBGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jul 2021 21:06:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
+        id S234515AbhGBBNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jul 2021 21:13:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230369AbhGBBGv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Jul 2021 21:06:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EC320613DA;
-        Fri,  2 Jul 2021 01:04:19 +0000 (UTC)
+        id S230404AbhGBBNa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Jul 2021 21:13:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 770E861410;
+        Fri,  2 Jul 2021 01:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625187860;
-        bh=6lTjGlBo1chEWk8zH/z2MaOn2rpR7j/WephiT1Q6uDE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IP+Y2SZXVQQb5iXv1/hQ7YV6dfKIcp5Ti5vkvU+HiW7ojIKVho+h2BN0WKEDeruDu
-         /TZP3qDxT8uOpuhgT1ojJ7+GjalDMrFj4y2cMKgUY1kZ2qMmqw6iZnV2W56h5Zn9BS
-         c+VAndazUNxxr4jFisx0dOOLi/ONSdyTrU9/OONI2NEwLu0C65voJUelDnKFVd5QlH
-         6vZjqaBWXVrIq+3xstRPlP0hkCrAxiAz/PlIQVe5eG3kFQXtNw8gmF5JkPhlwsp/HM
-         zmV2uVqtseKHDIMRjHxfxBgvwot4lx5tLaz5uD9THlQ+4Mekw1D5BRIA5ChFScRGfv
-         749U3EfjsiCYQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210627223959.188139-3-martin.blumenstingl@googlemail.com>
-References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com> <20210627223959.188139-3-martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 2/3] clk: divider: Switch from .round_rate to .determine_rate by default
+        s=k20201202; t=1625188259;
+        bh=VT8bYjp/GuyWhw9fGjfNZxY3I6cLgA34n5FSfysMQF4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mYoZ0n5WGbPM0kWEPdeGqSF6alrD6L0gD58V0IUPgTfjdOMZU479kqraLDEIqaBgI
+         I/BxKQNjuKYD56qcQ2frJw3GdHeh58+MyHkqAKWjHj8QH0iQddPOuoR3x7zFsHRUqr
+         gN98MmiiAEkFZDnVtbFmpXfBFFO5Olad2JmcrohgFlrlUng8NtOXPHdvVecUdbP7SQ
+         f3Td2xzx9XPgvlZ/KNuDE1Wcrii5yJAMjBP4pkrUW97dp9JC7KHhUVFa76TCyf5IF2
+         uMyj3txUoM08DgAHY91NnPThKK6U6Bgkhnh9M1ykw+aqIQh0Zx5+0ctUOcib2S6rQO
+         RckPGnHu8KYAQ==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com
-Date:   Thu, 01 Jul 2021 18:04:18 -0700
-Message-ID: <162518785878.3570193.8070459883237401552@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Subject: [PATCH] Revert "clk: divider: Switch from .round_rate to .determine_rate by default"
+Date:   Thu,  1 Jul 2021 18:10:58 -0700
+Message-Id: <20210702011058.77284-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.32.0.93.g670b81a890-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2021-06-27 15:39:58)
-> .determine_rate is meant to replace .round_rate. The former comes with a
-> benefit which is especially relevant on 32-bit systems: since
-> .determine_rate uses an "unsigned long" (compared to a "signed long"
-> which is used by .round_rate) the maximum value on 32-bit systems
-> increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
-> Switch to a .determine_rate implementation by default so 32-bit systems
-> can benefit from the increased maximum value as well as so we have one
-> fewer user of .round_rate.
->=20
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/clk-divider.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index 87ba4966b0e8..9e05e81116af 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -425,8 +425,8 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, =
-struct clk_hw *parent,
->  }
->  EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
-> =20
-> -static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                               unsigned long *prate)
-> +static int clk_divider_determine_rate(struct clk_hw *hw,
-> +                                     struct clk_rate_request *req)
->  {
->         struct clk_divider *divider =3D to_clk_divider(hw);
-> =20
-> @@ -437,13 +437,13 @@ static long clk_divider_round_rate(struct clk_hw *h=
-w, unsigned long rate,
->                 val =3D clk_div_readl(divider) >> divider->shift;
->                 val &=3D clk_div_mask(divider->width);
-> =20
-> -               return divider_ro_round_rate(hw, rate, prate, divider->ta=
-ble,
-> -                                            divider->width, divider->fla=
-gs,
-> -                                            val);
-> +               return divider_ro_determine_rate(hw, req, divider->table,
-> +                                                divider->width,
-> +                                                divider->flags, val);
->         }
-> =20
-> -       return divider_round_rate(hw, rate, prate, divider->table,
-> -                                 divider->width, divider->flags);
-> +       return divider_determine_rate(hw, req, divider->table, divider->w=
-idth,
-> +                                     divider->flags);
->  }
-> =20
->  int divider_get_val(unsigned long rate, unsigned long parent_rate,
-> @@ -500,14 +500,14 @@ static int clk_divider_set_rate(struct clk_hw *hw, =
-unsigned long rate,
-> =20
->  const struct clk_ops clk_divider_ops =3D {
->         .recalc_rate =3D clk_divider_recalc_rate,
-> -       .round_rate =3D clk_divider_round_rate,
-> +       .determine_rate =3D clk_divider_determine_rate,
+This reverts commit db400ac1444b756030249ed4a35e53a68e557b59. We have
+drivers that are still using the .round_rate ops from here. We could
+implement both determine_rate and round_rate for these divider ops, but
+for now let's just kick out the commit that tried to change it and
+convert various drivers properly.
 
-Guess was right.
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: db400ac1444b ("clk: divider: Switch from .round_rate to .determine_rate by default")
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-divider.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
- $ git grep clk_divider_ops -- drivers/clk/imx/
- drivers/clk/imx/clk-divider-gate.c:     return clk_divider_ops.round_rate(=
-hw, rate, prate);
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 9e05e81116af..87ba4966b0e8 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -425,8 +425,8 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+ }
+ EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
+ 
+-static int clk_divider_determine_rate(struct clk_hw *hw,
+-				      struct clk_rate_request *req)
++static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *prate)
+ {
+ 	struct clk_divider *divider = to_clk_divider(hw);
+ 
+@@ -437,13 +437,13 @@ static int clk_divider_determine_rate(struct clk_hw *hw,
+ 		val = clk_div_readl(divider) >> divider->shift;
+ 		val &= clk_div_mask(divider->width);
+ 
+-		return divider_ro_determine_rate(hw, req, divider->table,
+-						 divider->width,
+-						 divider->flags, val);
++		return divider_ro_round_rate(hw, rate, prate, divider->table,
++					     divider->width, divider->flags,
++					     val);
+ 	}
+ 
+-	return divider_determine_rate(hw, req, divider->table, divider->width,
+-				      divider->flags);
++	return divider_round_rate(hw, rate, prate, divider->table,
++				  divider->width, divider->flags);
+ }
+ 
+ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+@@ -500,14 +500,14 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ const struct clk_ops clk_divider_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+-	.determine_rate = clk_divider_determine_rate,
++	.round_rate = clk_divider_round_rate,
+ 	.set_rate = clk_divider_set_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ops);
+ 
+ const struct clk_ops clk_divider_ro_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+-	.determine_rate = clk_divider_determine_rate,
++	.round_rate = clk_divider_round_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+ 
 
->         .set_rate =3D clk_divider_set_rate,
->  };
->  EXPORT_SYMBOL_GPL(clk_divider_ops);
-> =20
->  const struct clk_ops clk_divider_ro_ops =3D {
->         .recalc_rate =3D clk_divider_recalc_rate,
-> -       .round_rate =3D clk_divider_round_rate,
-> +       .determine_rate =3D clk_divider_determine_rate,
+base-commit: 498cc50b3fa99b545532dc433d53d3c0b889cc98
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
