@@ -2,331 +2,470 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BTC_ID,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A36C07E96
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 03:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BBEC07E97
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 10:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E1661421
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 03:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FDFC61477
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 10:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230243AbhGCDWo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 23:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbhGCDWo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 23:22:44 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7B5C061762
-        for <linux-clk@vger.kernel.org>; Fri,  2 Jul 2021 20:20:11 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id 7-20020a9d0d070000b0290439abcef697so12168891oti.2
-        for <linux-clk@vger.kernel.org>; Fri, 02 Jul 2021 20:20:11 -0700 (PDT)
+        id S230096AbhGCKSW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Jul 2021 06:18:22 -0400
+Received: from mail-eopbgr1400098.outbound.protection.outlook.com ([40.107.140.98]:48645
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229993AbhGCKSV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Jul 2021 06:18:21 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ee+11FF1sngYcOmWiLYX6V4eiOm4r1sv303d55OSGUmonPOBszf7f17nedSrGOXSKY1dVo8ZezukDHzWpdVr2OXc1hjpwlmBGhV0nnsE7Ze9biTK9qRdfUcd+dMutnkebm6ar4Iiiek29NQy7Sa1Cb/jD1EtP7Asiyx6Vr2xcEwthhWP0Zxx05yoZg9wgL/fRFBDDXFR/ASgOuvbqVdRAcj7uZ3D+xJ1lpyTzLhz7Mp3ngQutgMQCAR6kPCD7JgpuLzpXc+8glfh7cJjxJ4PiMeL3FsoBrE8riirrrNcrAnU6UQu4UI9QzUvifacz7MB4AAjT0WVXBYK8uAZvoVkGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qe8bjP2cALr7YBmv523UEsyGDsGWufAyyGgG0lVUuVM=;
+ b=WdCyi4aMpW9QaMcfF8j7a1TCUJ/qD2eMqzl/M5ef4mr1gAeX/YtclYgUFb7EcaZsLgKcDzweujrxjTnSOwCtlEUyEPsCBHnOAVLeg/9q8iX7qLbw1gp+/f2bth43p4b5nAV+LpPjfTiPd5dri1yIPFmKRk9utz9EeAMaD6Lcd0ZS6kd46Ad5UzAzaVi/57AowOck1l3n7x+lz75T5JHXPxyADF3jCkmBdHN38m/GSPbivNQEeG9UEtb4fxE/0xNLP6lNYdOXxLbBbP1MIlsSGaDj0SHm+LElXHtgh6QN1X9XHYrANqch0KLJOaQmOUBSg/C6E1A2Tu22ZGKM0+WMWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tV2LkopDM2u372bsQhKMDYDzKmpYBmHyPi964WS1CIg=;
-        b=A4gylom3TnLo38/TdQlrTHnuK/mkmVF17oI9sAHIM+DBwvUwcKKVOEr/YdQ10MxVcz
-         t7zhf4GsMmD8EvBTEAkp5BXf20JX4a0FgOy1h8DM1NOGoNQylm0NBOwFJ8EzzAyvfLX1
-         9MVsnPVdxOjgjjecfYMGdrUPUjOnk8wikJT1eUU7gdf3vwjN2HJ7q+PHZENYjYL8/8/u
-         zP9vuFvuwdK9u/F1jj+es29PwFIUn3VN3t4DNjKl1z1/XMexONDcXvOxmsnQQnk92VB9
-         JBqe2g/h9xvqCIti7ctRAoBVnvl1J+vDc8hucfSweuy3sJ3xBXYkrlEZr7/0pi91MYyD
-         5GFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tV2LkopDM2u372bsQhKMDYDzKmpYBmHyPi964WS1CIg=;
-        b=ErfgjJzPyh5rvfP7aPCAqfXID+pgFaLW0/83FzDsqnCFp/f/jMeiDGwxIhNQvnAdlw
-         fU1Jd5zDJdPZIOKCCV5t39xmXNw7vTS4z7CnsmcLjqTtH5crWHmyKef6bsnGSwFYMcBC
-         RWbt1vUfPv/4KUu4iinxKnLrm6ZujvaHqMa+cUzY9SLuPAJZSpTbf013yb+jtG8lefaX
-         T7jMM1PSMDND1OyHvr1GHkJ3HN2oEro550sFWJ9Tzt3obX0Wk9gOTI9Qz5lDZYONX3GQ
-         bVCmG+jqPcnqoioHxZ7ot/yhc8o/Vwd4cnJqgNw7C8TLQ1Gcm4URrGGS9RTavG9+rhK+
-         MT/A==
-X-Gm-Message-State: AOAM531cUdwpCZkK86SV3O3ydHK4UIAe2zSpKZB0GH43C7FjyG/S83le
-        OK6qt7/JvhLmcoxvR/y8LAGnTw==
-X-Google-Smtp-Source: ABdhPJweId/VyqbBDCAPTarD2Fif+9PxI9+7lefXm8EB0Jb0dO4f58RpfAds7ESK+AK8SZQkzkhkew==
-X-Received: by 2002:a05:6830:1b6b:: with SMTP id d11mr1933556ote.86.1625282410673;
-        Fri, 02 Jul 2021 20:20:10 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id z22sm1009675otk.16.2021.07.02.20.20.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jul 2021 20:20:09 -0700 (PDT)
-Date:   Fri, 2 Jul 2021 22:20:07 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] clk: qcom: gdsc: enable optional power domain support
-Message-ID: <YN/XZ9g2q8AH39EE@yoga>
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
- <20210630133149.3204290-4-dmitry.baryshkov@linaro.org>
- <YNyHDAHk6ad/XCGl@yoga>
- <CAA8EJpqf6VyaS7KyhujFgST+S=fua4S-uXia0g7Qh7ogYgWYbw@mail.gmail.com>
- <YNylqGEi7Q3tFCgy@yoga>
- <CAA8EJppHQ-XhZWbsPX39wie48JXWvsNerWB9=Q0yxxs7987xxA@mail.gmail.com>
- <YN1DIwR66JKoFhEZ@yoga>
- <CAA8EJpr6qrVJY7DdcNagrpaTFW2FMxE-GE8nHyxmiFHCY0A+jA@mail.gmail.com>
- <YN4sRDqPpZMiNd1T@yoga>
- <ea5d9cea-a501-b8d7-e0b7-79110b84c4e6@codeaurora.org>
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qe8bjP2cALr7YBmv523UEsyGDsGWufAyyGgG0lVUuVM=;
+ b=GVOKao9tUHQvZbM4KNcOBq4NqrqtBmSWpLPSvvMz9h8J/KbF78LHzbduh7TNKR08bmVhj9QVXdvntwiHMmoR3kyJgsnEsOqK+NJATjdDMOSMxd2IRRD5et9HOU01HF4s9LorG9CWCEDZl2RCUrMj981M7lWsExF4Oro4lfkVvuM=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (20.183.20.197) by
+ OSAPR01MB3570.jpnprd01.prod.outlook.com (20.178.101.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4287.22; Sat, 3 Jul 2021 10:15:44 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe%8]) with mapi id 15.20.4287.031; Sat, 3 Jul 2021
+ 10:15:43 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Alexander Helms <alexander.helms.jy@renesas.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        David Cater <david.cater.jc@renesas.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>
+Subject: RE: [PATCH v2 1/2] dt-bindings: Add binding for Renesas 8T49N241
+Thread-Topic: [PATCH v2 1/2] dt-bindings: Add binding for Renesas 8T49N241
+Thread-Index: AQHXbtAXZfPZ6grop0um3CZz1s2UNqsvO/eggAD/HACAAMw34A==
+Date:   Sat, 3 Jul 2021 10:15:43 +0000
+Message-ID: <OS0PR01MB5922EBC035DE87B794490F69861E9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <202107020640.YyVoU69S-lkp@intel.com>
+ <20210701232258.19146-1-alexander.helms.jy@renesas.com>
+ <20210701232258.19146-2-alexander.helms.jy@renesas.com>
+ <OS0PR01MB592240DACD7D18609EA70AE0861F9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <20210702215102.GA20007@renesas.com>
+In-Reply-To: <20210702215102.GA20007@renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: renesas.com; dkim=none (message not signed)
+ header.d=none;renesas.com; dmarc=none action=none header.from=bp.renesas.com;
+x-originating-ip: [86.139.31.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 639e4968-916d-4f8d-065d-08d93e0b8482
+x-ms-traffictypediagnostic: OSAPR01MB3570:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSAPR01MB3570F5F464AB7CF96707E367861E9@OSAPR01MB3570.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ICkYwHpFujsH66TPVnpjOku4jJs6sptRA9Cr5Ooquz6zTASsgfvpeK10rTGE5AP5L9qo7qNo/DAJgVuFLqspnF9yrv9+s03aAn8JD7KwRg5l4a5JNsZgnUCQsCdLFIszpVDNiQauluxGr017v7Xzv1EYyHexBZfkRhMptuniAWRTxuV+mbCiMDsMDBTH6RUqcpwqYgrXWxMCN7qqXacfCIASfMYsDfE4UFGOT4YEiUUC5vcKw+i+3NkDH/BY4BsxhjqpdXmc8LQMre6Rb39WQ8C7YfuQYL42e1J/vx/PmKHhOa0uQsuDnMqZzmVbQjkwDq4t4mrWZUwc4TAD8uIfNcYzkkdijnCgzd2BpBnnk+ItZoUDzGGy+frKjdxHlv2LzmPtiAE2gmlpiETNKem+ByJz8yWfVL8kfEc9slJY01swZn1tZBU2O4WlWvchLkUIgUf0fTcamp0kqUV/xlF4d6RhHNCDDzgr9qeLZeme9J3F9U/AZGhFpuemN+KiqgdwXcWKJnFCmC2XeLv3oE+Cb18zSx/nOuRN7ImkGg0Uy0HzAX/KnI4sO8WTuVsM52sOecgc7gvJsDZz61LYELalGMUG0eEEm1MG244SW6pvAUazxLH5B3ogjfI+pKX10PlaoF0eCCDHH4+5pjzNAZEMPj/xRKVa6QuSfgSMdI7WTuhVDzFFkgvSA+mOmOokENiXkAC55a0rKTsj/t8v+Br0kpNBBmFe5AfJt1VHiY2ijQ/6bKrd1xLGiLQN/9mm/lG741nV+zoMazoE5NYL4y9i+PcygAkGOfjJtBFP1tyV0QQ=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(39850400004)(346002)(376002)(396003)(71200400001)(186003)(122000001)(86362001)(26005)(6862004)(45080400002)(478600001)(38100700002)(8676002)(52536014)(4326008)(55016002)(83380400001)(30864003)(9686003)(2906002)(53546011)(64756008)(66476007)(66946007)(6506007)(54906003)(5660300002)(316002)(66446008)(66556008)(8936002)(76116006)(33656002)(7696005)(505234006);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?iGxCD13bOw1BtCVWfGIi20K9OvrJa+2LGneudrSJVxneAsqUsCd36j+ElBO9?=
+ =?us-ascii?Q?z4S1pnM4CsmvIhHgXgajWsf063sVpn9f7LJM5TC/nyej05M0HBF0MZELlcdA?=
+ =?us-ascii?Q?N2GhQWTrEz76//A6j/l6IOdP89Yyqz2uXaWEDGB2h94de+RMVCQTBjOpmrYp?=
+ =?us-ascii?Q?wHAppLlGLyBkHcLy/yF/WT+SWUa9zndB7r5v7WMmUfEtWY+mcjALIi6/2/7H?=
+ =?us-ascii?Q?DAzssQ4I6doL80/ARUzErJOzI9/s2v6pc/I14YoNr+77Bu6NemJqLIGTsP5D?=
+ =?us-ascii?Q?fola975YQERzKiey1y38tBSIO+DqoKWOTrPNGxk5Zs3z46QNCkHE4tMk7Sd0?=
+ =?us-ascii?Q?9OKJfy0L9EvyCazdCReMbwIzbOJ6JXqJz3kfGWbfF8L1ViXINbF9xfWcgo3u?=
+ =?us-ascii?Q?elknbm9R9X4pYgpruWsIIB+z8ZXEO6KJsnzLwnRcl6ePXDxNUlVLdX6r3ZA9?=
+ =?us-ascii?Q?C0fxc1HOXIpYw5pYL+M2MNSIhywTLTFbWw2Tgfee7vwW4JEy5rFtKv9PfAxd?=
+ =?us-ascii?Q?NJNvo1BGcHHJjxK3MF9XRUp4hqvPelvVF1RdwU65SWTN4uvw6IJeS1RGtJWW?=
+ =?us-ascii?Q?A40o4+0mXAENNj8yXpBFvQ3ewx08XwgYVNRdwjs4dgr+Euq1nnHV9UiHUiAC?=
+ =?us-ascii?Q?9ZsC8n2w06yWr3ZOqdXhAFauBfx4czl/Me1L8XNmImH1OKdCXJX8bBmdLRMl?=
+ =?us-ascii?Q?D8epR5gNN71O5C78vQzGPobILQLXWqA52Q6i5+aI5ooCquQQTO7W9R94S1Mn?=
+ =?us-ascii?Q?CrK1xbYH8nsAmHm03goQ3CWeDGTURwl7GqOIOvUC3lixQDUKpwQe0p6E8rKe?=
+ =?us-ascii?Q?GXYMzY7oJ6Ynsr0UQ4uLrV9u5adJhvDV/xYQ0ZROqe2JwqCZ7+pG9JHV/8DV?=
+ =?us-ascii?Q?IH5vIld5niHv0pCGbY4op8kofKFzW6qI1Kz9QOcvepbvGckDVaJOipZgXfhf?=
+ =?us-ascii?Q?kXYAN+DezYBXPXAiBMoUmHq4Un4NSkHEVESshq2KyB4EEBOnw9PHyfoEUVJs?=
+ =?us-ascii?Q?NECYAOzGqM0szoZwU38fJrFeU4uJWeLkanS1xdVpFE9qLQvzgRPqkQ/hp67w?=
+ =?us-ascii?Q?CS46d2rKfDHHpS+tee6hcj1CBf+vbWl80pyaSIl0G9Zi6ftBsc2GT6q/snyu?=
+ =?us-ascii?Q?0CpHMBjANDMPP7LhgFO+g4D9iDQVCs7T7y+wyVRSAt7rRmCuahoL4pcYS+Fz?=
+ =?us-ascii?Q?TG5gmx/BIO3AV6VFY5H6ZylTzjt8Z+XKUMY6o8hMdirvJKdWKeZ+YLf0onAf?=
+ =?us-ascii?Q?SWDvvxFk4B8nWqe1AtFW4oHDvjvNhrNOYS/CXyu0xoAaIGMS9spU98+7dRCD?=
+ =?us-ascii?Q?3tk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea5d9cea-a501-b8d7-e0b7-79110b84c4e6@codeaurora.org>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 639e4968-916d-4f8d-065d-08d93e0b8482
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2021 10:15:43.1780
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dObpUt9C9lk9sxWZiWErl2NI9UzFsYXpJULhkY0w94N5Vac2ppybs6D5AhJN3f2JF62/JDxiW4bQM/AK6RR0kYqF/YDBlT/pU5GJCYtJQ7U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3570
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 02 Jul 02:35 CDT 2021, Rajendra Nayak wrote:
+Hi Alexander,
 
-> 
-> 
-> On 7/2/2021 2:27 AM, Bjorn Andersson wrote:
-> > On Thu 01 Jul 15:12 CDT 2021, Dmitry Baryshkov wrote:
-> > 
-> > > On Thu, 1 Jul 2021 at 07:23, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> > > > 
-> > > > On Wed 30 Jun 15:29 CDT 2021, Dmitry Baryshkov wrote:
-> > > > 
-> > > > > On Wed, 30 Jun 2021 at 20:11, Bjorn Andersson
-> > > > > <bjorn.andersson@linaro.org> wrote:
-> > > > > > 
-> > > > > > On Wed 30 Jun 10:47 CDT 2021, Dmitry Baryshkov wrote:
-> > > > > > 
-> > > > > > > Hi,
-> > > > > > > 
-> > > > > > > On Wed, 30 Jun 2021 at 18:00, Bjorn Andersson
-> > > > > > > <bjorn.andersson@linaro.org> wrote:
-> > > > > > > > 
-> > > > > > > > On Wed 30 Jun 08:31 CDT 2021, Dmitry Baryshkov wrote:
-> > > > > > > > 
-> > > > > > > > > On sm8250 dispcc and videocc registers are powered up by the MMCX power
-> > > > > > > > > domain. Currently we used a regulator to enable this domain on demand,
-> > > > > > > > > however this has some consequences, as genpd code is not reentrant.
-> > > > > > > > > 
-> > > > > > > > > Teach Qualcomm clock controller code about setting up power domains and
-> > > > > > > > > using them for gdsc control.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > > > 
-> > > > > > > > There's a proposal to add a generic binding for statically assigning a
-> > > > > > > > performance states here:
-> > > > > > > > 
-> > > > > > > > https://lore.kernel.org/linux-arm-msm/1622095949-2014-1-git-send-email-rnayak@codeaurora.org/
-> > > > > 
-> > > > > I checked this thread. It looks like Rajendra will also switch to the
-> > > > > "required-opps" property. So if that series goes in first, we can drop
-> > > > > the call to set_performance_state. If this one goes in first, we can
-> > > > > drop the set_performance_state call after getting Rajendra's work in.
-> > > > > 
-> > > > > > > > 
-> > > > > > > > 
-> > > > > > > > But that said, do you really need this?
-> > > > > > > > 
-> > > > > > > > The requirement for driving MMCX to LOW_SVS on SM8250 (and NOM on
-> > > > > > > > SM8150/SC8180x) seems to only come from the fact that you push MDP_CLK
-> > > > > > > > to 460MHz in &mdss.
-> > > > > > > > 
-> > > > > > > > But then in &mdss_mdp you do the same using an opp-table based on the
-> > > > > > > > actual MDP_CLK, which per its power-domains will scale MMCX accordingly.
-> > > > > > > 
-> > > > > > > MDSS and DSI would bump up MMCX performance state requirements on
-> > > > > > > their own, depending on the frequency being selected.
-> > > > > > > 
-> > > > > > 
-> > > > > > Right, but as I copied things from the sm8250.dtsi to come up with
-> > > > > > sm8150/sc8180x.dtsi I concluded that as soon as the assigned-clockrate
-> > > > > > in &mdss kicks in I need the performance state to be at NOM.
-> > > > > > 
-> > > > > > So keeping the assigned-clockrate in &mdss means that MMCX will never go
-> > > > > > below NOM.
-> > > > > 
-> > > > > No, because once MDP is fully running, it will lower the clock frequency:
-> > > > > 
-> > > > > # grep mdp_clk /sys/kernel/debug/clk/clk_summary
-> > > > >            disp_cc_mdss_mdp_clk_src       1        1        0
-> > > > > 150000000          0     0  50000         ?
-> > > > >               disp_cc_mdss_mdp_clk       2        2        0
-> > > > > 150000000          0     0  50000         Y
-> > > > > 
-> > > > 
-> > > > But won't that just lower the performance state requested by the
-> > > > &mdss_mdp, while the &mdss still votes for NOM - with the outcome being
-> > > > that we maintain NOM even if the clock goes down?
-> > > 
-> > > &mdss doesn't vote on performance state. At least it does not on
-> > > msm/msm-next which I have at hand right now.
-> > > &mdss toggles mdss_gdsc, but does not assign any performance state.
-> > > 
-> > 
-> > Right, but per the upstream implementation, enabling MDSS_GDSC could in
-> > itself fail, because unless something else has driven up the performance
-> > state the enable that trickles up won't actually turn on the supply.
-> > 
-> > > On the other hand &mdss_mdp and &dsi0 clearly vote on mmcx's performance state.
-> > > 
-> > 
-> > Right, but it does so as part of its clock scaling, so this makes
-> > perfect sense to me.
-> > 
-> > > > 
-> > > > > > 
-> > > > > > > > So wouldn't it be sufficient to ensure that MDSS_GDSC is parented by
-> > > > > > > > MMCX and then use opp-tables associated with the devices that scales the
-> > > > > > > > clock and thereby actually carries the "required-opps".
-> > > > > > > 
-> > > > > > > Actually no. I set the performance state in the qcom_cc_map, so that
-> > > > > > > further register access is possible. Initially I was doing this in the
-> > > > > > > qcom_cc_really_probe() and it was already too late.
-> > > > > > > Just to remind: this patchset is not about MDSS_GDSC being parented by
-> > > > > > > MMCX, it is about dispcc/videocc registers being gated with MMCX.
-> > > > > > > 
-> > > > > > 
-> > > > > > So you're saying that just enabling MMCX isn't enough to touch the
-> > > > > > dispcc/videocc registers? If that's the case it seems like MMCX's
-> > > > > > definition of "on" needs to be adjusted - because just specifying MMCX
-> > > > > > as the power-domain for dispcc/videocc and enabling pm_runtime should
-> > > > > > ensure that MMCX is enabled when the clock registers are accessed (I
-> > > > > > don't see anything like that for the GDSC part though).
-> > > > > 
-> > > > > No, it is not enough. If I comment out the set_performance_state call,
-> > > > > the board reboots.
-> > > > > 
-> > > > > However I can set the opps as low as RET and register access will work.
-> > > > > I'll run more experiments and if everything works as expected, I can
-> > > > > use retention or min_svs level in the next iteration.
-> > > > > Just note that downstream specifies low_svs as minimum voltage level
-> > > > > for MMCX regulator.
-> > > > > 
-> > > > 
-> > > > It doesn't make sense to me that a lone power_on on the power-domain
-> > > > wouldn't give us enough juice to poke the registers.
-> > > > 
-> > > > But digging into the rpmhpd implementation answers the question, simply
-> > > > invoking rpmhpd_power_on() is a nop, unless
-> > > > rpmhpd_set_performance_state() has previously been called, because
-> > > > pd->corner is 0. So this explains why enable isn't sufficient.
-> > > > 
-> > > > Compare this with the rpmpd implementation that will send an
-> > > > enable request to the RPM in this case.
-> 
-> Right, in case of RPMh, there was no separate 'enable' request which
-> could be sent, there was just a 'corner' request.
-> 
-> I don't completely recall, but the reason to not send a 'default corner'
-> on enable was perhaps to keep the enable and set_performance orthogonal.
-> 
-> However, given we then decided to send the lowest possible corner
-> in disable, it perhaps makes sense to send a 'lowest non-zero corner' on enable
-> as well.
-> 
+> Subject: Re: [PATCH v2 1/2] dt-bindings: Add binding for Renesas 8T49N241
+>=20
+> Hi Biju,
+>=20
+> Please see my comments below. Also, I'm new to the LKML process and
+> learning, please forgive any errors.
+>=20
+> The 07/01/2021 23:52, Biju Das wrote:
+> > Hi Alex,
+> >
+> > Thanks for the patch.
+> >
+> > > -----Original Message-----
+> > > From: Alex Helms <alexander.helms.jy@renesas.com>
+> > > Sent: 02 July 2021 00:23
+> > > To: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > > clk@vger.kernel.org; linux-renesas-soc@vger.kernel.org
+> > > Cc: robh+dt@kernel.org; sboyd@kernel.org; mturquette@baylibre.com;
+> > > geert+renesas@glider.be; Alexander Helms
+> > > geert+<alexander.helms.jy@renesas.com>;
+> > > David Cater <david.cater.jc@renesas.com>; michal.simek@xilinx.com
+> > > Subject: [PATCH v2 1/2] dt-bindings: Add binding for Renesas
+> > > 8T49N241
+> > >
+> > > Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
+> > > The 8T49N241 accepts up to two differential or single-ended input
+> > > clocks and a fundamental-mode crystal input. The internal PLL can
+> > > lock to either of the input reference clocks or to the crystal to
+> > > behave as a frequency synthesizer.
+> > >
+> > > Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> > > ---
+> > >  .../bindings/clock/renesas,8t49n241.yaml      | 183
+> ++++++++++++++++++
+> > >  MAINTAINERS                                   |   6 +
+> > >  2 files changed, 189 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> > > b/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> > > new file mode 100644
+> > > index 000000000..d817ec46d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> > > @@ -0,0 +1,183 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id:
+> > > +https://jpn01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fd=
+e
+> > > +vice
+> > > +tree.org%2Fschemas%2Fclock%2Frenesas%2C8t49n24x.yaml%23&amp;data=3D0=
+4
+> > > +%7C0
+> > > +1%7Cbiju.das.jz%40bp.renesas.com%7Ce51e24d06083403a3d0e08d93ce73933
+> > > +%7C5
+> > > +3d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C637607786063741484%7CUnkn
+> > > +own%
+> > > +7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiL
+> > > +CJXV
+> > > +CI6Mn0%3D%7C1000&amp;sdata=3DBIKHeHpyG3vloEEO02HzM6TtWqQtDlSGRMifOQV=
+p
+> > > +rPI%
+> > > +3D&amp;reserved=3D0
+> > > +$schema:
+> > > +https://jpn01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fd=
+e
+> > > +vice
+> > > +tree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=3D04%7C01%7Cbiju.das=
+.
+> > > +jz%4
+> > > +0bp.renesas.com%7Ce51e24d06083403a3d0e08d93ce73933%7C53d82571da1947
+> > > +e49c
+> > > +b4625a166a4a2a%7C0%7C0%7C637607786063751443%7CUnknown%7CTWFpbGZsb3d
+> > > +8eyJ
+> > > +WIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1
+> > > +000&
+> > > +amp;sdata=3D3XhlKhlwT3hr0KVjynaiMlqMC94tq3sEYgNH6LMf9Kc%3D&amp;reser=
+v
+> > > +ed=3D0
+> > > +
+> > > +title: Binding for Renesas 8T49N241 Universal Frequency Translator
+> > > +
+> > > +description: |
+> > > +  The 8T49N241 has one fractional-feedback PLL that can be used as
+> > > +a
+> > > +  jitter attenuator and frequency translator. It is equipped with
+> > > +one
+> > > +  integer and three fractional output dividers, allowing the
+> > > +generation
+> > > +  of up to four different output frequencies, ranging from 8kHz to
+> 1GHz.
+> > > +  These frequencies are completely independent of each other, the
+> > > +input
+> > > +  reference frequencies and the crystal reference frequency. The
+> > > +device
+> > > +  places virtually no constraints on input to output frequency
+> > > +conversion,
+> > > +  supporting all FEC rates, including the new revision of ITU-T
+> > > +  Recommendation G.709 (2009), most with 0ppm conversion error.
+> > > +  The outputs may select among LVPECL, LVDS, HCSL or LVCMOS output
+> > > levels.
+> > > +
+> > > +  The driver can read a full register map from the DT, and will use
+> > > + that  register map to initialize the attached part (via I2C) when
+> > > + the system  boots. Any configuration not supported by the common
+> > > + clock framework  must be done via the full register map, including
+> > > + optimized
+> > > settings.
+> > > +
+> > > +  The 8T49N241 accepts up to two differential or single-ended input
+> > > + clocks  and a fundamental-mode crystal input. The internal PLL can
+> > > + lock to either  of the input reference clocks or just to the
+> > > + crystal to behave as a  frequency synthesizer. The PLL can use the
+> > > + second input for redundant  backup of the primary input reference,
+> > > + but in this case, both input clock  references must be related in
+> frequency.
+> > > +
+> > > +  All outputs are currently assumed to be LVDS, unless overridden
+> > > + in the  full register map in the DT.
+> > > +
+> > > +maintainers:
+> > > +  - Alex Helms <alexander.helms.jy@renesas.com>
+> > > +  - David Cater <david.cater.jc@renesas.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - 8t49n241
+> > > +
+> > > +  reg:
+> > > +    description: I2C device address
+> > > +    enum: [ 0x7c, 0x6c, 0x7d, 0x6d, 0x7e, 0x6e, 0x7f, 0x6f ]
+> > > +
+> > > +  '#clock-cells':
+> > > +    const: 1
+> > > +
+> > > +  clock-names:
+> > > +    description: Name of the input clock
+> > > +    minItems: 1
+> > > +    maxItems: 3
+> > > +    items:
+> > > +      enum: [ input-xtal, input-clk0, input-clk1 ]
+> > > +
+> > > +  clocks:
+> > > +    minItems: 1
+> > > +    maxItems: 3
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - '#clock-cells'
+> > > +  - clocks
+> > > +  - clock-names
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    /* 25MHz reference clock */
+> > > +    input_clk0: input_clk0 {
+> > > +      compatible =3D "fixed-clock";
+> > > +      #clock-cells =3D <0>;
+> > > +      clock-frequency =3D <25000000>;
+> > > +    };
+> > > +
+> > > +    i2c@0 {
+> > > +        reg =3D <0x0 0x100>;
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +
+> > > +        renesas8t49n241_1: clock-generator@6c {
+> > > +            compatible =3D "renesas,8t49n241";
+> > > +            reg =3D <0x6c>;
+> > > +            #clock-cells =3D <1>;
+> > > +
+> > > +            clocks =3D <&input_clk0>;
+> > > +            clock-names =3D "input-clk0";
+> > > +        };
+> > > +    };
+> > > +
+> > > +    /* Consumer referencing the 8T49N241 Q1 */
+> > > +    consumer {
+> > > +        /* ... */
+> > > +        clocks =3D <&renesas8t49n241_1 1>;
+> > > +        /* ... */
+> > > +    };
+> > > +  - |
+> > > +    /* 40MHz crystal */
+> > > +    input_xtal: input_xtal {
+> > > +      compatible =3D "fixed-clock";
+> > > +      #clock-cells =3D <0>;
+> > > +      clock-frequency =3D <40000000>;
+> > > +    };
+> > > +
+> > > +    i2c@0 {
+> > > +        reg =3D <0x0 0x100>;
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +
+> > > +        renesas8t49n241_2: clock-generator@6c {
+> > > +            compatible =3D "renesas,8t49n241";
+> > > +            reg =3D <0x6c>;
+> > > +            #clock-cells =3D <1>;
+> > > +
+> > > +            clocks =3D <&input_xtal>;
+> > > +            clock-names =3D "input-xtal";
+> > > +
+> > > +            settings=3D[
+> >
+> > optional or required property?
+> >
+>=20
+> My mistake, `settings` is optional and should be in the schema.
+> I'll fix this in the next patch version.
+>=20
+> > > +                09 50 00 60 67 C5 6C FF 03 00 30 00 00 01 00 00
+> > > +                01 07 00 00 07 00 00 77 6D 06 00 00 00 00 00 FF
+> > > +                FF FF FF 00 3F 00 2A 00 16 33 33 00 01 00 00 D0
+> > > +                00 00 00 00 00 00 00 00 00 04 00 00 00 02 00 00
+> > > +                00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 D7 0A 2B 20 00 00 00 0B
+> > > +                00 00 00 00 00 00 00 00 00 00 27 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                C3 00 08 01 00 00 00 00 00 00 00 00 00 30 00 00
+> > > +                00 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > +                00 00 00 00 85 00 00 9C 01 D4 02 71 07 00 00 00
+> > > +                00 83 00 10 02 08 8C
+> > > +            ];
+> > > +        };
+> > > +    };
+> > > +
+> >
+> > One question,
+> > Full regmap or just overriding few registers which is better, assuming
+> the device has default values programmed in OTP.
+> > Again that needs {offset, value}???
+>=20
+> `settings` must be the full regmap. The next patch version will have that
+> clarified in the schema description.
+> The intent here is the external configuration software produces optimized
+> settings and the results are the full regmap.
 
-I was slightly worries that the change would dump cx and mx from
-whatever level the bootloader put it at down to LOW_SVS during boot.
+May be it is ok for this device.
 
-But both rb3 and rb5 boots fine with this change, so I posted it here:
-https://lore.kernel.org/linux-arm-msm/20210703025449.2687201-1-bjorn.andersson@linaro.org/
+I am also working on a similar solution with versa3 clock device. Most of t=
+he values
+are pre-programmed. But to achieve a specific use case, I need a different =
+configuration.
 
-> > > 
-> > > Do you think that we should change that to:
-> > > 
-> > > rpmhpd_aggregate_corner(pd, max(pd->corner, 1)) ?
-> > > 
-> > > Or
-> > > 
-> > > rpmhpd_aggregate_corner(pd, max(pd->corner, pd->levels[1])) ?
-> > > 
-> > 
-> > In rpmhpd_power_on() and rpmhpd_set_performance_state() we pass the
-> > index of the entry in pd->levels[] that we want, but in
-> > rpmhpd_power_off() we pass the value of pd->levels[0].
-> > 
-> > So I would suggest dropping the if (pd->corner) and doing:
-> > 
-> >    rpmhpd_aggregate_corner(pd, max(pd->corner, 1));
-> 
-> So the index value represents the hlvl (0-15) that eventually gets sent to
-> rpmh, the pd->levels are the sparse vlvl values that come from the command
-> DB mappings.
-> 
-> What seems sane is to sent the lowest non-zero vlvl. That in most cases
-> would be at index 1, but for some which do not support complete off,
-> it could be at index 0.
-> 
+The external configuration software produced a full regmap. But comparing w=
+ith original pre-programmed values,
+It is hardly 7 register changes. Also I need to define clock flags property=
+ in DT. So user can decide whether
+the output clock from clock device can=20
 
-I took this into consideration in above patch, keeping track of the
-first non-zero corner and using this when the domain is enabled.
-
-Unfortunately, if the first entry would be say LOW_SVS power_off would
-request corner (hlvl) 64. So I fixed that in patch 1/2 in above series.
+1) change rate
+2) read only
+3) just change the parent but don't change any other configuration.
 
 Regards,
-Bjorn
+Biju
 
-> > 
-> > And it seems both rb3 and rb5 still boots with this change (but I need
-> > to do some more testing to know for sure).
-> > 
-> > > > 
-> > > > > > I thought our problem you had was that you need to set a
-> > > > > > performance_state in order to clock up some of the clocks - e.g.
-> > > > > > MDP_CLK.
-> > > > > 
-> > > > > No, even register access needs proper perf state.
-> > > > > 
-> > > > 
-> > > > Per above finding you're right, enabling a rpmhpd power-domain doesn't
-> > > > do anything. And I don't find this intuitive or even in line with the
-> > > > expectations of the api...
-> > > > 
-> > > > 
-> > > > 
-> > > > A quick test booting rb3 and rb5 seems to indicate that it's possible to
-> > > > initialize pd->corner to 1 (to ensure that enable at least gives us the
-> > > > lowest level).
-> > > > 
-> > > > set_performance_state(0) will however then result in voting for "off",
-> > > > rather than the lowest enabled level.
-> > > 
-> > > Well, set_performance_state(0) means that "the device wouldn't
-> > > participate anymore to find the target performance state of the
-> > > genpd".
-> > 
-> > I agree.
-> > 
-> > > Strictly speaking it does not specify whether it is ok to turn
-> > > it off or not. (like the regulator with the voltage set to 0V).
-> > > But I'd also like to hear a comment from Stephen here.
-> > > 
-> > 
-> > Looking at other power-domains (e.g. gdsc and rpmpd) enabling the
-> > power-domain means it is no longer off and if you need some specific
-> > performance state you have to vote for that.
-> > 
-> > So I'm also interested in hearing if there's any reasoning behind how
-> > this was written.
-> > 
+
+> >
 > > Regards,
-> > Bjorn
-> > 
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
+> > Biju
+> >
+> >
+> > > +    /* Consumer referencing the 8T49N241 Q1 */
+> > > +    consumer {
+> > > +        /* ... */
+> > > +        clocks =3D <&renesas8t49n241_2 1>;
+> > > +        /* ... */
+> > > +    };
+> > > diff --git a/MAINTAINERS b/MAINTAINERS index 0cce91cd5..882d79ead
+> > > 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -15575,6 +15575,12 @@ F:	include/linux/rpmsg/
+> > >  F:	include/uapi/linux/rpmsg.h
+> > >  F:	samples/rpmsg/
+> > >
+> > > +RENESAS 8T49N24X DRIVER
+> > > +M:	Alex Helms <alexander.helms.jy@renesas.com>
+> > > +M:	David Cater <david.cater.jc@renesas.com>
+> > > +S:	Odd Fixes
+> > > +F:	Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> > > +
+> > >  RENESAS CLOCK DRIVERS
+> > >  M:	Geert Uytterhoeven <geert+renesas@glider.be>
+> > >  L:	linux-renesas-soc@vger.kernel.org
+> > > --
+> > > 2.30.2
+> >
+>=20
+> Regards,
+>=20
+> Alex
+>=20
+> --
