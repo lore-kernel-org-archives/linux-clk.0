@@ -2,102 +2,331 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F7AC07E95
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 22:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A36C07E96
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 03:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72A8661416
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jul 2021 22:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14E1661421
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jul 2021 03:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbhGBXAn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jul 2021 19:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41598 "EHLO
+        id S230243AbhGCDWo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jul 2021 23:22:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbhGBXAn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 19:00:43 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989EEC061762;
-        Fri,  2 Jul 2021 15:58:09 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id l24so15237006edr.11;
-        Fri, 02 Jul 2021 15:58:09 -0700 (PDT)
+        with ESMTP id S230051AbhGCDWo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jul 2021 23:22:44 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7B5C061762
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jul 2021 20:20:11 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id 7-20020a9d0d070000b0290439abcef697so12168891oti.2
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jul 2021 20:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vD/TqU6XibWuKwYjrV7s56wP7tIAz61+brCWfIO8Z2U=;
-        b=XjBvD2TBKWWknE0OCd9OoUjARi5xxbwhs4C6y7LA5KBJ+XVEf4PLQHxLA9h3l0hKlB
-         qJ+kn3S9k27KrLK9izjUJqMpTPnzS4H9klZ9IvuLfOEhj0O4WFrh90+zqHa7p8igLkQ6
-         x43wE7EcFN4vWBTR2Xfnb4heyvbkGgRGN1K7fwf+ZofT7ao2WtI5QK/Qc9wrD14MI4yt
-         CQD6QApV+vLOTnAG4bP4StCgTWHf3cu/XwrpBpntVbLZD9h4Aw16gIAu8Ns3IpPyRz3z
-         IE4YoTYFQ9ZGJl/sVlWs/Bxt1F+t7LdcQbPvpyVkt99X91IKAr5E7hs21Smu4ZiMHl2+
-         zxIg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tV2LkopDM2u372bsQhKMDYDzKmpYBmHyPi964WS1CIg=;
+        b=A4gylom3TnLo38/TdQlrTHnuK/mkmVF17oI9sAHIM+DBwvUwcKKVOEr/YdQ10MxVcz
+         t7zhf4GsMmD8EvBTEAkp5BXf20JX4a0FgOy1h8DM1NOGoNQylm0NBOwFJ8EzzAyvfLX1
+         9MVsnPVdxOjgjjecfYMGdrUPUjOnk8wikJT1eUU7gdf3vwjN2HJ7q+PHZENYjYL8/8/u
+         zP9vuFvuwdK9u/F1jj+es29PwFIUn3VN3t4DNjKl1z1/XMexONDcXvOxmsnQQnk92VB9
+         JBqe2g/h9xvqCIti7ctRAoBVnvl1J+vDc8hucfSweuy3sJ3xBXYkrlEZr7/0pi91MYyD
+         5GFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vD/TqU6XibWuKwYjrV7s56wP7tIAz61+brCWfIO8Z2U=;
-        b=MVVHzAJMr1i0jPL+sLmO56ZxkVJwuyei/r1NzP4hrRjQHxtAl80lzbUWztq5C4MLzv
-         w2ozkC3Afn0xg7rRYeeGGb/+xnsxgCXhP71Lx3HbvA+cyRSukWYQ6sdN8hfMqd7qbZKN
-         3xq8FzVbZEfS61dlHAr8UWrZz4FaQYDS4T+u6QSt+Wfx6M8Dgje53B5e6uP96vlbkAzJ
-         lBdGurVbTXtqkS9r4SMQkvLRxyuxSYsnLrS1uayrAtqnILo8y68GeUxr0Z17T3sPQWAh
-         iS7Atr2LiUord6utk4oym1e/GgEf9dHO2YAtIF8a2FhAgKpkHAm9C3PdZS3TNEcC71IV
-         iyRg==
-X-Gm-Message-State: AOAM533fOoRcI/xLj7YXTzb7Y7ENdZOqMGYp4j39IXhEVY8Nx25e6Gtx
-        RCMXvAIfB1DAo6wCp/oRQG5zP13dzV4dRaaOFEQ=
-X-Google-Smtp-Source: ABdhPJxXJfuDOqau0i9bIe7paYpcmNa20KnLmKDh8yc2DV1RzGhDNRIB8IZvZkTatJvfWGjnqztGHlGhSGbu/YbPKos=
-X-Received: by 2002:aa7:d74b:: with SMTP id a11mr2191239eds.40.1625266688199;
- Fri, 02 Jul 2021 15:58:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tV2LkopDM2u372bsQhKMDYDzKmpYBmHyPi964WS1CIg=;
+        b=ErfgjJzPyh5rvfP7aPCAqfXID+pgFaLW0/83FzDsqnCFp/f/jMeiDGwxIhNQvnAdlw
+         fU1Jd5zDJdPZIOKCCV5t39xmXNw7vTS4z7CnsmcLjqTtH5crWHmyKef6bsnGSwFYMcBC
+         RWbt1vUfPv/4KUu4iinxKnLrm6ZujvaHqMa+cUzY9SLuPAJZSpTbf013yb+jtG8lefaX
+         T7jMM1PSMDND1OyHvr1GHkJ3HN2oEro550sFWJ9Tzt3obX0Wk9gOTI9Qz5lDZYONX3GQ
+         bVCmG+jqPcnqoioHxZ7ot/yhc8o/Vwd4cnJqgNw7C8TLQ1Gcm4URrGGS9RTavG9+rhK+
+         MT/A==
+X-Gm-Message-State: AOAM531cUdwpCZkK86SV3O3ydHK4UIAe2zSpKZB0GH43C7FjyG/S83le
+        OK6qt7/JvhLmcoxvR/y8LAGnTw==
+X-Google-Smtp-Source: ABdhPJweId/VyqbBDCAPTarD2Fif+9PxI9+7lefXm8EB0Jb0dO4f58RpfAds7ESK+AK8SZQkzkhkew==
+X-Received: by 2002:a05:6830:1b6b:: with SMTP id d11mr1933556ote.86.1625282410673;
+        Fri, 02 Jul 2021 20:20:10 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id z22sm1009675otk.16.2021.07.02.20.20.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Jul 2021 20:20:09 -0700 (PDT)
+Date:   Fri, 2 Jul 2021 22:20:07 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Taniya Das <tdas@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] clk: qcom: gdsc: enable optional power domain support
+Message-ID: <YN/XZ9g2q8AH39EE@yoga>
+References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
+ <20210630133149.3204290-4-dmitry.baryshkov@linaro.org>
+ <YNyHDAHk6ad/XCGl@yoga>
+ <CAA8EJpqf6VyaS7KyhujFgST+S=fua4S-uXia0g7Qh7ogYgWYbw@mail.gmail.com>
+ <YNylqGEi7Q3tFCgy@yoga>
+ <CAA8EJppHQ-XhZWbsPX39wie48JXWvsNerWB9=Q0yxxs7987xxA@mail.gmail.com>
+ <YN1DIwR66JKoFhEZ@yoga>
+ <CAA8EJpr6qrVJY7DdcNagrpaTFW2FMxE-GE8nHyxmiFHCY0A+jA@mail.gmail.com>
+ <YN4sRDqPpZMiNd1T@yoga>
+ <ea5d9cea-a501-b8d7-e0b7-79110b84c4e6@codeaurora.org>
 MIME-Version: 1.0
-References: <20210627223959.188139-1-martin.blumenstingl@googlemail.com>
- <20210627223959.188139-3-martin.blumenstingl@googlemail.com>
- <20210701202540.GA1085600@roeck-us.net> <CAFBinCC2KB-_pOenpWPknCuHV+CCjhP5hqukSkwD3qwRe6OtQw@mail.gmail.com>
- <162518776607.3570193.14348711594242395887@swboyd.mtv.corp.google.com>
- <CAFBinCAASQUB=cg5EFsBQ4jd3TvcCJzV1=sYJci4ibR7FjRcww@mail.gmail.com> <162525955027.3570193.16463056788252699243@swboyd.mtv.corp.google.com>
-In-Reply-To: <162525955027.3570193.16463056788252699243@swboyd.mtv.corp.google.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 3 Jul 2021 00:57:57 +0200
-Message-ID: <CAFBinCBsveheUZeW892J+1iyB_5P67rdLiJHtq4+PoNF4r_4CQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: divider: Switch from .round_rate to
- .determine_rate by default
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea5d9cea-a501-b8d7-e0b7-79110b84c4e6@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Fri 02 Jul 02:35 CDT 2021, Rajendra Nayak wrote:
 
-On Fri, Jul 2, 2021 at 10:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
-[...]
-> I'd prefer we leave round_rate assigned in clk_divider_ops and
-> clk_divider_ro_ops but then also assign the determine_rate function. We
-> have some duplication but that's OK. Then make individual patches to
-> migrate each driver over to the new clk op.
-I just sent a series with those changes: [0]
+> 
+> 
+> On 7/2/2021 2:27 AM, Bjorn Andersson wrote:
+> > On Thu 01 Jul 15:12 CDT 2021, Dmitry Baryshkov wrote:
+> > 
+> > > On Thu, 1 Jul 2021 at 07:23, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> > > > 
+> > > > On Wed 30 Jun 15:29 CDT 2021, Dmitry Baryshkov wrote:
+> > > > 
+> > > > > On Wed, 30 Jun 2021 at 20:11, Bjorn Andersson
+> > > > > <bjorn.andersson@linaro.org> wrote:
+> > > > > > 
+> > > > > > On Wed 30 Jun 10:47 CDT 2021, Dmitry Baryshkov wrote:
+> > > > > > 
+> > > > > > > Hi,
+> > > > > > > 
+> > > > > > > On Wed, 30 Jun 2021 at 18:00, Bjorn Andersson
+> > > > > > > <bjorn.andersson@linaro.org> wrote:
+> > > > > > > > 
+> > > > > > > > On Wed 30 Jun 08:31 CDT 2021, Dmitry Baryshkov wrote:
+> > > > > > > > 
+> > > > > > > > > On sm8250 dispcc and videocc registers are powered up by the MMCX power
+> > > > > > > > > domain. Currently we used a regulator to enable this domain on demand,
+> > > > > > > > > however this has some consequences, as genpd code is not reentrant.
+> > > > > > > > > 
+> > > > > > > > > Teach Qualcomm clock controller code about setting up power domains and
+> > > > > > > > > using them for gdsc control.
+> > > > > > > > > 
+> > > > > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > > > 
+> > > > > > > > There's a proposal to add a generic binding for statically assigning a
+> > > > > > > > performance states here:
+> > > > > > > > 
+> > > > > > > > https://lore.kernel.org/linux-arm-msm/1622095949-2014-1-git-send-email-rnayak@codeaurora.org/
+> > > > > 
+> > > > > I checked this thread. It looks like Rajendra will also switch to the
+> > > > > "required-opps" property. So if that series goes in first, we can drop
+> > > > > the call to set_performance_state. If this one goes in first, we can
+> > > > > drop the set_performance_state call after getting Rajendra's work in.
+> > > > > 
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > But that said, do you really need this?
+> > > > > > > > 
+> > > > > > > > The requirement for driving MMCX to LOW_SVS on SM8250 (and NOM on
+> > > > > > > > SM8150/SC8180x) seems to only come from the fact that you push MDP_CLK
+> > > > > > > > to 460MHz in &mdss.
+> > > > > > > > 
+> > > > > > > > But then in &mdss_mdp you do the same using an opp-table based on the
+> > > > > > > > actual MDP_CLK, which per its power-domains will scale MMCX accordingly.
+> > > > > > > 
+> > > > > > > MDSS and DSI would bump up MMCX performance state requirements on
+> > > > > > > their own, depending on the frequency being selected.
+> > > > > > > 
+> > > > > > 
+> > > > > > Right, but as I copied things from the sm8250.dtsi to come up with
+> > > > > > sm8150/sc8180x.dtsi I concluded that as soon as the assigned-clockrate
+> > > > > > in &mdss kicks in I need the performance state to be at NOM.
+> > > > > > 
+> > > > > > So keeping the assigned-clockrate in &mdss means that MMCX will never go
+> > > > > > below NOM.
+> > > > > 
+> > > > > No, because once MDP is fully running, it will lower the clock frequency:
+> > > > > 
+> > > > > # grep mdp_clk /sys/kernel/debug/clk/clk_summary
+> > > > >            disp_cc_mdss_mdp_clk_src       1        1        0
+> > > > > 150000000          0     0  50000         ?
+> > > > >               disp_cc_mdss_mdp_clk       2        2        0
+> > > > > 150000000          0     0  50000         Y
+> > > > > 
+> > > > 
+> > > > But won't that just lower the performance state requested by the
+> > > > &mdss_mdp, while the &mdss still votes for NOM - with the outcome being
+> > > > that we maintain NOM even if the clock goes down?
+> > > 
+> > > &mdss doesn't vote on performance state. At least it does not on
+> > > msm/msm-next which I have at hand right now.
+> > > &mdss toggles mdss_gdsc, but does not assign any performance state.
+> > > 
+> > 
+> > Right, but per the upstream implementation, enabling MDSS_GDSC could in
+> > itself fail, because unless something else has driven up the performance
+> > state the enable that trickles up won't actually turn on the supply.
+> > 
+> > > On the other hand &mdss_mdp and &dsi0 clearly vote on mmcx's performance state.
+> > > 
+> > 
+> > Right, but it does so as part of its clock scaling, so this makes
+> > perfect sense to me.
+> > 
+> > > > 
+> > > > > > 
+> > > > > > > > So wouldn't it be sufficient to ensure that MDSS_GDSC is parented by
+> > > > > > > > MMCX and then use opp-tables associated with the devices that scales the
+> > > > > > > > clock and thereby actually carries the "required-opps".
+> > > > > > > 
+> > > > > > > Actually no. I set the performance state in the qcom_cc_map, so that
+> > > > > > > further register access is possible. Initially I was doing this in the
+> > > > > > > qcom_cc_really_probe() and it was already too late.
+> > > > > > > Just to remind: this patchset is not about MDSS_GDSC being parented by
+> > > > > > > MMCX, it is about dispcc/videocc registers being gated with MMCX.
+> > > > > > > 
+> > > > > > 
+> > > > > > So you're saying that just enabling MMCX isn't enough to touch the
+> > > > > > dispcc/videocc registers? If that's the case it seems like MMCX's
+> > > > > > definition of "on" needs to be adjusted - because just specifying MMCX
+> > > > > > as the power-domain for dispcc/videocc and enabling pm_runtime should
+> > > > > > ensure that MMCX is enabled when the clock registers are accessed (I
+> > > > > > don't see anything like that for the GDSC part though).
+> > > > > 
+> > > > > No, it is not enough. If I comment out the set_performance_state call,
+> > > > > the board reboots.
+> > > > > 
+> > > > > However I can set the opps as low as RET and register access will work.
+> > > > > I'll run more experiments and if everything works as expected, I can
+> > > > > use retention or min_svs level in the next iteration.
+> > > > > Just note that downstream specifies low_svs as minimum voltage level
+> > > > > for MMCX regulator.
+> > > > > 
+> > > > 
+> > > > It doesn't make sense to me that a lone power_on on the power-domain
+> > > > wouldn't give us enough juice to poke the registers.
+> > > > 
+> > > > But digging into the rpmhpd implementation answers the question, simply
+> > > > invoking rpmhpd_power_on() is a nop, unless
+> > > > rpmhpd_set_performance_state() has previously been called, because
+> > > > pd->corner is 0. So this explains why enable isn't sufficient.
+> > > > 
+> > > > Compare this with the rpmpd implementation that will send an
+> > > > enable request to the RPM in this case.
+> 
+> Right, in case of RPMh, there was no separate 'enable' request which
+> could be sent, there was just a 'corner' request.
+> 
+> I don't completely recall, but the reason to not send a 'default corner'
+> on enable was perhaps to keep the enable and set_performance orthogonal.
+> 
+> However, given we then decided to send the lowest possible corner
+> in disable, it perhaps makes sense to send a 'lowest non-zero corner' on enable
+> as well.
+> 
 
-> We could stack a final patch on top to remove the round_rate function
-> from clk divider.  Unfortunately, if some driver wants to use round_rate
-> then it will fail in interesting ways. Probably best to live with it
-> until we decide to drop round_rate entirely. Patches to convert all the
-> round_rate code over to determine_rate would be welcome in the meantime.
-For now I have omitted the patch to remove .round_rate from clk_divider_ops.
-Also I will start migrating .round_rate over to .determine_rate in
-drivers/clk/meson/ (as it's the only hardware with CCF support that I
-have).
+I was slightly worries that the change would dump cx and mx from
+whatever level the bootloader put it at down to LOW_SVS during boot.
 
+But both rb3 and rb5 boots fine with this change, so I posted it here:
+https://lore.kernel.org/linux-arm-msm/20210703025449.2687201-1-bjorn.andersson@linaro.org/
 
-Best regards,
-Martin
+> > > 
+> > > Do you think that we should change that to:
+> > > 
+> > > rpmhpd_aggregate_corner(pd, max(pd->corner, 1)) ?
+> > > 
+> > > Or
+> > > 
+> > > rpmhpd_aggregate_corner(pd, max(pd->corner, pd->levels[1])) ?
+> > > 
+> > 
+> > In rpmhpd_power_on() and rpmhpd_set_performance_state() we pass the
+> > index of the entry in pd->levels[] that we want, but in
+> > rpmhpd_power_off() we pass the value of pd->levels[0].
+> > 
+> > So I would suggest dropping the if (pd->corner) and doing:
+> > 
+> >    rpmhpd_aggregate_corner(pd, max(pd->corner, 1));
+> 
+> So the index value represents the hlvl (0-15) that eventually gets sent to
+> rpmh, the pd->levels are the sparse vlvl values that come from the command
+> DB mappings.
+> 
+> What seems sane is to sent the lowest non-zero vlvl. That in most cases
+> would be at index 1, but for some which do not support complete off,
+> it could be at index 0.
+> 
 
+I took this into consideration in above patch, keeping track of the
+first non-zero corner and using this when the domain is enabled.
 
-[0] https://patchwork.kernel.org/project/linux-clk/cover/20210702225145.2643303-1-martin.blumenstingl@googlemail.com/
+Unfortunately, if the first entry would be say LOW_SVS power_off would
+request corner (hlvl) 64. So I fixed that in patch 1/2 in above series.
+
+Regards,
+Bjorn
+
+> > 
+> > And it seems both rb3 and rb5 still boots with this change (but I need
+> > to do some more testing to know for sure).
+> > 
+> > > > 
+> > > > > > I thought our problem you had was that you need to set a
+> > > > > > performance_state in order to clock up some of the clocks - e.g.
+> > > > > > MDP_CLK.
+> > > > > 
+> > > > > No, even register access needs proper perf state.
+> > > > > 
+> > > > 
+> > > > Per above finding you're right, enabling a rpmhpd power-domain doesn't
+> > > > do anything. And I don't find this intuitive or even in line with the
+> > > > expectations of the api...
+> > > > 
+> > > > 
+> > > > 
+> > > > A quick test booting rb3 and rb5 seems to indicate that it's possible to
+> > > > initialize pd->corner to 1 (to ensure that enable at least gives us the
+> > > > lowest level).
+> > > > 
+> > > > set_performance_state(0) will however then result in voting for "off",
+> > > > rather than the lowest enabled level.
+> > > 
+> > > Well, set_performance_state(0) means that "the device wouldn't
+> > > participate anymore to find the target performance state of the
+> > > genpd".
+> > 
+> > I agree.
+> > 
+> > > Strictly speaking it does not specify whether it is ok to turn
+> > > it off or not. (like the regulator with the voltage set to 0V).
+> > > But I'd also like to hear a comment from Stephen here.
+> > > 
+> > 
+> > Looking at other power-domains (e.g. gdsc and rpmpd) enabling the
+> > power-domain means it is no longer off and if you need some specific
+> > performance state you have to vote for that.
+> > 
+> > So I'm also interested in hearing if there's any reasoning behind how
+> > this was written.
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> 
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
