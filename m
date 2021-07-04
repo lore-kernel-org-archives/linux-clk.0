@@ -5,55 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2434DC07E9B
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Jul 2021 02:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C199CC07E9E
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Jul 2021 02:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8FF861936
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Jul 2021 02:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A610761936
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Jul 2021 02:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbhGDCnZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Jul 2021 22:43:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33488 "EHLO
+        id S229787AbhGDCna (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Jul 2021 22:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbhGDCnY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Jul 2021 22:43:24 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0146DC061764
-        for <linux-clk@vger.kernel.org>; Sat,  3 Jul 2021 19:40:50 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id a2so14585020pgi.6
-        for <linux-clk@vger.kernel.org>; Sat, 03 Jul 2021 19:40:49 -0700 (PDT)
+        with ESMTP id S229893AbhGDCna (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Jul 2021 22:43:30 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31ECC0613DC
+        for <linux-clk@vger.kernel.org>; Sat,  3 Jul 2021 19:40:55 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id x16so13237818pfa.13
+        for <linux-clk@vger.kernel.org>; Sat, 03 Jul 2021 19:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SJ6mWKBojJfVdE79tK2x9bM0KQ+BiVthSv3BXWqHjkA=;
-        b=aCFrfva8wFoCWLRwo8eKYLEdNKeqnJuogWU0ePmKz+CrEJIoYiNVa1G1lfCAj2bH6r
-         fDWc2EWpHYaAbvjaRBdcjXDdlJ0Zy8vW12pP86Mtyj58l8GuNZxzj4lrCTTMug3ml7XB
-         26h9lYHdQMuqyqrz4uX5Xxs6YTLRgGgH3c4QXuwePFVS4gGTib7w3ngck8BfOHaC39if
-         mrAWQVjW3LUAFa8cFStyfKYBZhwwD35muKPPZuoQKonbjai3pEm/w52tYGya0lKNxdmw
-         22ORKfmPqqiLsGvUnIyWayhLvYN0lxviZxTMQO3+J1w6j/aQn3+lAfzOxx9DoqqA6ZAy
-         tyYA==
+        bh=d8JSTZ8+AJaTgMTmOHganaZdhQwLLSMBu10AnlPFiu8=;
+        b=PnY/ZDSCQHF9HQBdG9c1eAxBf+DvgnK/Fp3L2oNhBpUlIXGXseKmWkKH0t83FxzfVe
+         6ySklp1/zytHkgSkwaFl+PtOvzK/zeYaE8DzjHDdUO/KrLZ9it8CaaTNZO2zlfWNZWy+
+         FMHC6JMpOOTIJ937i3DJBh/BHNj53v3u5zIoZE5FUNJXVLB9EWjrDMB/xX1djQqgfRtu
+         c5gRdUHkyGOl4wRVekD2GYVZtFN96P8u0tIIDKs9Q8AuHAYaJSEOq25vKcrh9L4XN5I+
+         lebw/BuVFLpsGTt6mdDce1WSNKnJ181mNdFOB92XdxjLet+OptG0oPA8K9c5pKZldc4h
+         W62A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SJ6mWKBojJfVdE79tK2x9bM0KQ+BiVthSv3BXWqHjkA=;
-        b=a7E1A3OcgxnsS7X5ces//iMj1V/N53nRazxtxBNB+2py0QYMS9EeR4oECKgt/4PsTy
-         qTgXFVdZFqSDZHqxLxduDjX+yb9IpehRH0xJW4lEXU19VPx8cDUm+g5D6kSVfk2qJ8dC
-         XWqrsYwpdVor9F0T3CmY804hZakd1hkUfkeENqAzkp9MjPiWqvyiZWMmSoqr97It5WlA
-         xIyxPaKwb9cSxy+Of+vO4DmGW4pqh62hdHkjyaiJbXEGzZlgc83T2Ib5HkrC5LvSfcKN
-         +VL9q9cyIhdLiqGqTpyHbuOUwABUJc7ad8Bc8Z9fOiE81e30KUxI0GvKMhR3BafZpzm9
-         44sA==
-X-Gm-Message-State: AOAM531i+SL59y31AN0IZbnGuV2gNYvG5FlQv6oP/p1xDz58NVVzts2r
-        gG/KcQYnCrLcZiU8VgfmhSCVQQ==
-X-Google-Smtp-Source: ABdhPJwVZjknSowvP1KPgjYS6i71VgkhYhJCfSnpQN6uLbbERr6blxgt9xjDrYhh+GgXgBRj29RYvw==
-X-Received: by 2002:a05:6a00:1508:b029:30a:2b2:b2ea with SMTP id q8-20020a056a001508b029030a02b2b2eamr7762189pfu.30.1625366449541;
-        Sat, 03 Jul 2021 19:40:49 -0700 (PDT)
+        bh=d8JSTZ8+AJaTgMTmOHganaZdhQwLLSMBu10AnlPFiu8=;
+        b=A2qFTEjSk3Ze3GB60NTgdx/VGU3A7W+V1br/IUN1ch6WvNboLVDFyBtVZzTXdAuZib
+         rcZOfuhOXuK0q0QhA7POJ1anPOG+Lo/yrl+X3MkUJ5W1hQ6JRv+mLqBjzGPzyu6UIqI0
+         Ph42evd8KKBvJ+C5RBlEBe0dctico7Ad2hm35BeyKpaFz9xoFC7yHaIU2VLOAgSzwDZk
+         pAzllc0P2aw6g0yJYnAuGavCX8wyMD8ZaFCkK7xlayQvlMIxhYdzM59aZmFiQ7oDkKRA
+         nRvX0dqqvq4JX0F5Y+u/TVoeNS81N8upuYfWoI6ukCMd/j/iNGzDJbZmOup3jQYR68R1
+         wZvA==
+X-Gm-Message-State: AOAM533+H7QYGSs77JH1BHiwDpbl/5s03N6diQBp3N0SmStg3yQfz38u
+        YEGCkOqzeG2qQEeADUkO8mC4mA==
+X-Google-Smtp-Source: ABdhPJw30azYjSjAVyKtrYg9dwjnrZwUuxSrQwuNQdK1ZESMOLH4te0aJZ/9Jy4bxaJUh4+WFSHMUw==
+X-Received: by 2002:a63:de45:: with SMTP id y5mr1273481pgi.261.1625366454995;
+        Sat, 03 Jul 2021 19:40:54 -0700 (PDT)
 Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id g17sm9394624pgh.61.2021.07.03.19.40.47
+        by smtp.gmail.com with ESMTPSA id g17sm9394624pgh.61.2021.07.03.19.40.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Jul 2021 19:40:49 -0700 (PDT)
+        Sat, 03 Jul 2021 19:40:54 -0700 (PDT)
 From:   Shawn Guo <shawn.guo@linaro.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,9 +62,9 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v2 2/4] clk: qcom: a53pll/mux: Use unique clock name
-Date:   Sun,  4 Jul 2021 10:40:30 +0800
-Message-Id: <20210704024032.11559-3-shawn.guo@linaro.org>
+Subject: [PATCH v2 4/4] clk: qcom: a53-pll: Add MSM8939 a53pll support
+Date:   Sun,  4 Jul 2021 10:40:32 +0800
+Message-Id: <20210704024032.11559-5-shawn.guo@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210704024032.11559-1-shawn.guo@linaro.org>
 References: <20210704024032.11559-1-shawn.guo@linaro.org>
@@ -72,78 +72,112 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Different from MSM8916 which has only one a53pll/mux clock, MSM8939 gets
-three for Cluster0 (little cores), Cluster1 (big cores) and CCI (Cache
-Coherent Interconnect).  That said, a53pll/mux clock needs to be named
-uniquely.  Append @unit-address of device node to the clock name, so
-that a53pll/mux will be named like below on MSM8939.
-
-  a53pll@b016000
-  a53pll@b116000
-  a53pll@b1d0000
-
-  a53mux@b1d1000
-  a53mux@b011000
-  a53mux@b111000
+MSM8939 has 3 a53pll clocks with different frequency table for Cluster0,
+Cluster1 and CCI.  It adds function qcom_a53pll_get_freq_tbl() to create
+pll_freq_tbl from OPP, so that those a53pll frequencies can be defined
+in DT with operating-points-v2 bindings rather than being coded in the
+driver.  In this case, one compatible rather than three would be needed
+for these 3 a53pll clocks.
 
 Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 ---
- drivers/clk/qcom/a53-pll.c      | 8 +++++++-
- drivers/clk/qcom/apcs-msm8916.c | 8 +++++++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/a53-pll.c | 59 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 58 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-index d6756bd777ce..96a118be912d 100644
+index 96a118be912d..9e6decb9c26f 100644
 --- a/drivers/clk/qcom/a53-pll.c
 +++ b/drivers/clk/qcom/a53-pll.c
-@@ -37,6 +37,7 @@ static const struct regmap_config a53pll_regmap_config = {
+@@ -6,9 +6,11 @@
+  * Author: Georgi Djakov <georgi.djakov@linaro.org>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_opp.h>
+ #include <linux/regmap.h>
+ #include <linux/module.h>
+ 
+@@ -34,6 +36,55 @@ static const struct regmap_config a53pll_regmap_config = {
+ 	.fast_io		= true,
+ };
+ 
++static struct pll_freq_tbl *qcom_a53pll_get_freq_tbl(struct device *dev)
++{
++	struct pll_freq_tbl *freq_tbl;
++	unsigned long xo_freq;
++	unsigned long freq;
++	struct clk *xo_clk;
++	int count;
++	int ret;
++	int i;
++
++	xo_clk = devm_clk_get(dev, "xo");
++	if (IS_ERR(xo_clk))
++		return NULL;
++
++	xo_freq = clk_get_rate(xo_clk);
++
++	ret = devm_pm_opp_of_add_table(dev);
++	if (ret)
++		return NULL;
++
++	count = dev_pm_opp_get_opp_count(dev);
++	if (count <= 0)
++		return NULL;
++
++	freq_tbl = devm_kcalloc(dev, count + 1, sizeof(*freq_tbl), GFP_KERNEL);
++	if (!freq_tbl)
++		return NULL;
++
++	for (i = 0, freq = 0; i < count; i++, freq++) {
++		struct dev_pm_opp *opp;
++
++		opp = dev_pm_opp_find_freq_ceil(dev, &freq);
++		if (IS_ERR(opp))
++			return NULL;
++
++		/* Skip the freq that is not divisible */
++		if (freq % xo_freq)
++			continue;
++
++		freq_tbl[i].freq = freq;
++		freq_tbl[i].l = freq / xo_freq;
++		freq_tbl[i].n = 1;
++
++		dev_pm_opp_put(opp);
++	}
++
++	return freq_tbl;
++}
++
  static int qcom_a53pll_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	struct regmap *regmap;
- 	struct resource *res;
- 	struct clk_pll *pll;
-@@ -66,7 +67,12 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
+@@ -65,7 +116,12 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
+ 	pll->mode_reg = 0x00;
+ 	pll->status_reg = 0x1c;
  	pll->status_bit = 16;
- 	pll->freq_tbl = a53pll_freq;
- 
--	init.name = "a53pll";
-+	/* Use an unique name by appending @unit-address */
-+	init.name = devm_kasprintf(dev, GFP_KERNEL, "a53pll%s",
-+				   strchrnul(np->full_name, '@'));
-+	if (!init.name)
-+		return -ENOMEM;
+-	pll->freq_tbl = a53pll_freq;
 +
- 	init.parent_names = (const char *[]){ "xo" };
- 	init.num_parents = 1;
- 	init.ops = &clk_pll_sr2_ops;
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index d7ac6d6b15b6..89e0730810ac 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -46,6 +46,7 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device *parent = dev->parent;
-+	struct device_node *np = parent->of_node;
- 	struct clk_regmap_mux_div *a53cc;
- 	struct regmap *regmap;
- 	struct clk_init_data init = { };
-@@ -61,7 +62,12 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	if (!a53cc)
- 		return -ENOMEM;
++	pll->freq_tbl = qcom_a53pll_get_freq_tbl(dev);
++	if (!pll->freq_tbl) {
++		/* Fall on a53pll_freq if no freq_tbl is found from OPP */
++		pll->freq_tbl = a53pll_freq;
++	}
  
--	init.name = "a53mux";
-+	/* Use an unique name by appending parent's @unit-address */
-+	init.name = devm_kasprintf(dev, GFP_KERNEL, "a53mux%s",
-+				   strchrnul(np->full_name, '@'));
-+	if (!init.name)
-+		return -ENOMEM;
-+
- 	init.parent_data = pdata;
- 	init.num_parents = ARRAY_SIZE(pdata);
- 	init.ops = &clk_regmap_mux_div_ops;
+ 	/* Use an unique name by appending @unit-address */
+ 	init.name = devm_kasprintf(dev, GFP_KERNEL, "a53pll%s",
+@@ -96,6 +152,7 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id qcom_a53pll_match_table[] = {
+ 	{ .compatible = "qcom,msm8916-a53pll" },
++	{ .compatible = "qcom,msm8939-a53pll" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, qcom_a53pll_match_table);
 -- 
 2.17.1
 
