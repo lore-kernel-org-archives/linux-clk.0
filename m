@@ -2,121 +2,349 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400EBC07E99
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 08:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91569C07E98
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 09:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23EDA613B6
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 08:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61F85613C2
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 09:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhGEIEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jul 2021 04:04:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
+        id S230245AbhGEJFo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jul 2021 05:05:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbhGEIEb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jul 2021 04:04:31 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B85C061574
-        for <linux-clk@vger.kernel.org>; Mon,  5 Jul 2021 01:01:55 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1m0JY4-0000hQ-TF; Mon, 05 Jul 2021 10:01:48 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1m0JY1-0000t7-0J; Mon, 05 Jul 2021 10:01:45 +0200
-Date:   Mon, 5 Jul 2021 10:01:44 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-spi@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
- clocks enabled clocks
-Message-ID: <20210705080144.zfbzkm7l3gmnh6st@pengutronix.de>
-References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
- <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
- <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+        with ESMTP id S230194AbhGEJFn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jul 2021 05:05:43 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5510AC061760
+        for <linux-clk@vger.kernel.org>; Mon,  5 Jul 2021 02:03:07 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id i13so9865398plb.10
+        for <linux-clk@vger.kernel.org>; Mon, 05 Jul 2021 02:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zTANOCgDl07f+pgpXMUflI8h4nDdn4J/uu3NjZ1gbFs=;
+        b=INzzGvakbbKp5o4fCYmZv2Ti2Ie6ucQSCMOZg4+/SPak6UQfXoJrVHaTOIdPQQEiwh
+         uYTKynF67a5RCQCYenRyes1RrbMapyGDDRbB4AALTMHWeaHmSvWK741n6IUgWh1a6tKi
+         eUKRpMryS1INEbWQjU03pXY+VbNXzpd4E9GGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zTANOCgDl07f+pgpXMUflI8h4nDdn4J/uu3NjZ1gbFs=;
+        b=mpnU1d2NqKvyA8H+YMTEg2jg97Z+nIkfWLApG6o84lpEoXfKuVvSwV+GQ53Bqo5OYM
+         lpw9G4JvAZCUlvB+E313w+WP3IX0kTpF6xVcWsHsm7Ax++MllGqwTh7LXzdH5ccxeOce
+         iaZyP3LTiFTCO5s/n667751FgvG/9BY1ptThuKKE8NaL3rllHp1D+plrDJ/rKRUAEk6j
+         yHWEc0WzrahADgs8dYfJQGrEE8glKdPyA4E8KS+VK2MORQVfUc2S7io0dro5n36KsXci
+         dR5vu0BvCCN5a2UQL6D7G2fAtU/iAoISG0ju3NjKlh5QUT3SZO++e/49Ym7fCUdYj0M2
+         wL/w==
+X-Gm-Message-State: AOAM5304H8zu26wIaePejk7ny9N8+ZJWeT0dAl4d08omwR4aqMFX+q14
+        +NJsmXdJgozjPQn3BqReoVyf9A==
+X-Google-Smtp-Source: ABdhPJz4U8RuE4T/AV7ya4qWRVLxeaYZId56hsJ5pUMFgMT7Vk1eC96suHGKqPu13PLvdtVbnYsAmQ==
+X-Received: by 2002:a17:90a:d241:: with SMTP id o1mr13990092pjw.77.1625475786816;
+        Mon, 05 Jul 2021 02:03:06 -0700 (PDT)
+Received: from google.com ([2401:fa00:1:10:f66e:ef34:adcd:b33b])
+        by smtp.gmail.com with ESMTPSA id y15sm1839895pfl.92.2021.07.05.02.03.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jul 2021 02:03:06 -0700 (PDT)
+Date:   Mon, 5 Jul 2021 17:03:02 +0800
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 05/22] clk: mediatek: Add MT8195 audio clock support
+Message-ID: <YOLKxrJin5kkwiIl@google.com>
+References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
+ <20210616224743.5109-6-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zkue7xi2s6vksapu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20210616224743.5109-6-chun-jie.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---zkue7xi2s6vksapu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 17, 2021 at 06:47:26AM +0800, Chun-Jie Chen wrote:
+> Add MT8195 audio clock provider
+> 
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+>  drivers/clk/mediatek/Kconfig          |   6 +
+>  drivers/clk/mediatek/Makefile         |   1 +
+>  drivers/clk/mediatek/clk-mt8195-aud.c | 198 ++++++++++++++++++++++++++
+>  3 files changed, 205 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8195-aud.c
+> 
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 6707aba3d500..e2bae9d490a4 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -588,6 +588,12 @@ config COMMON_CLK_MT8195
+>  	help
+>  	  This driver supports MediaTek MT8195 basic clocks.
+>  
+> +config COMMON_CLK_MT8195_AUDSYS
+> +	bool "Clock driver for MediaTek MT8195 audsys"
+> +	depends on COMMON_CLK_MT8195
+> +	help
+> +	  This driver supports MediaTek MT8195 audsys clocks.
+> +
 
-Hello Stephen,
+The clock modules aren't shared between different chips, so either we
+enable support for all clock hardware in one chip or we don't. It
+doesn't make sense to support just some of them. So having just one
+Kconfig option and having all drivers under it is better.
 
-On Fri, Jun 25, 2021 at 07:14:34PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, Jun 09, 2021 at 10:21:23PM +0200, Uwe Kleine-K=F6nig wrote:
-> > given that I don't succeed in getting any feedback for my patch set, I'm
-> > trying with a pull request today. It would be really great if this pull
-> > request made it finally in for the next merge window.
->=20
-> It seems sending a pull request didn't help either :-\
->=20
-> I'm waiting since October for feedback, several people expressed to like
-> this series and I want to make use of it to simplify a few drivers. I'm
-> quite annoyed that your missing feedback blocks me from further
-> improving stuff.
+>  config COMMON_CLK_MT8516
+>  	bool "Clock driver for MediaTek MT8516"
+>  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index f8002d8966e1..f27c04314186 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -81,5 +81,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195.o
+> +obj-$(CONFIG_COMMON_CLK_MT8195_AUDSYS) += clk-mt8195-aud.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
+> diff --git a/drivers/clk/mediatek/clk-mt8195-aud.c b/drivers/clk/mediatek/clk-mt8195-aud.c
+> new file mode 100644
+> index 000000000000..db5f80d41de0
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8195-aud.c
+> @@ -0,0 +1,198 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +//
+> +// Copyright (c) 2021 MediaTek Inc.
+> +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-gate.h"
+> +
+> +#include <dt-bindings/clock/mt8195-clk.h>
+> +
+> +static const struct mtk_gate_regs aud0_cg_regs = {
+> +	.set_ofs = 0x0,
+> +	.clr_ofs = 0x0,
+> +	.sta_ofs = 0x0,
+> +};
+> +
+> +static const struct mtk_gate_regs aud1_cg_regs = {
+> +	.set_ofs = 0x10,
+> +	.clr_ofs = 0x10,
+> +	.sta_ofs = 0x10,
+> +};
+> +
+> +static const struct mtk_gate_regs aud2_cg_regs = {
+> +	.set_ofs = 0x14,
+> +	.clr_ofs = 0x14,
+> +	.sta_ofs = 0x14,
+> +};
+> +
+> +static const struct mtk_gate_regs aud3_cg_regs = {
+> +	.set_ofs = 0x18,
+> +	.clr_ofs = 0x18,
+> +	.sta_ofs = 0x18,
+> +};
+> +
+> +static const struct mtk_gate_regs aud4_cg_regs = {
+> +	.set_ofs = 0x4,
+> +	.clr_ofs = 0x4,
+> +	.sta_ofs = 0x4,
+> +};
+> +
+> +static const struct mtk_gate_regs aud5_cg_regs = {
+> +	.set_ofs = 0xc,
+> +	.clr_ofs = 0xc,
+> +	.sta_ofs = 0xc,
+> +};
+> +
+> +#define GATE_AUD0(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud0_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +#define GATE_AUD1(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud1_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +#define GATE_AUD2(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud2_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +#define GATE_AUD3(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud3_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +#define GATE_AUD4(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud4_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +#define GATE_AUD5(_id, _name, _parent, _shift)			\
+> +	GATE_MTK(_id, _name, _parent, &aud5_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +static const struct mtk_gate aud_clks[] = {
+> +	/* AUD0 */
+> +	GATE_AUD0(CLK_AUD_AFE, "aud_afe", "a1sys_hp_sel", 2),
+> +	GATE_AUD0(CLK_AUD_LRCK_CNT, "aud_lrck_cnt", "a1sys_hp_sel", 4),
+> +	GATE_AUD0(CLK_AUD_SPDIFIN_TUNER_APLL, "aud_spdifin_tuner_apll", "apll4_sel", 10),
+> +	GATE_AUD0(CLK_AUD_SPDIFIN_TUNER_DBG, "aud_spdifin_tuner_dbg", "apll4_sel", 11),
+> +	GATE_AUD0(CLK_AUD_UL_TML, "aud_ul_tml", "a1sys_hp_sel", 18),
+> +	GATE_AUD0(CLK_AUD_APLL1_TUNER, "aud_apll1_tuner", "apll1_sel", 19),
+> +	GATE_AUD0(CLK_AUD_APLL2_TUNER, "aud_apll2_tuner", "apll2_sel", 20),
+> +	GATE_AUD0(CLK_AUD_TOP0_SPDF, "aud_top0_spdf", "aud_iec_sel", 21),
+> +	GATE_AUD0(CLK_AUD_APLL, "aud_apll", "apll1_sel", 23),
+> +	GATE_AUD0(CLK_AUD_APLL2, "aud_apll2", "apll2_sel", 24),
+> +	GATE_AUD0(CLK_AUD_DAC, "aud_dac", "a1sys_hp_sel", 25),
+> +	GATE_AUD0(CLK_AUD_DAC_PREDIS, "aud_dac_predis", "a1sys_hp_sel", 26),
+> +	GATE_AUD0(CLK_AUD_TML, "aud_tml", "a1sys_hp_sel", 27),
+> +	GATE_AUD0(CLK_AUD_ADC, "aud_adc", "a1sys_hp_sel", 28),
+> +	GATE_AUD0(CLK_AUD_DAC_HIRES, "aud_dac_hires", "audio_h_sel", 31),
+> +	/* AUD1 */
+> +	GATE_AUD1(CLK_AUD_I2SIN, "aud_i2sin", "a1sys_hp_sel", 0),
+> +	GATE_AUD1(CLK_AUD_TDM_IN, "aud_tdm_in", "a1sys_hp_sel", 1),
+> +	GATE_AUD1(CLK_AUD_I2S_OUT, "aud_i2s_out", "a1sys_hp_sel", 6),
+> +	GATE_AUD1(CLK_AUD_TDM_OUT, "aud_tdm_out", "a1sys_hp_sel", 7),
+> +	GATE_AUD1(CLK_AUD_HDMI_OUT, "aud_hdmi_out", "a1sys_hp_sel", 8),
+> +	GATE_AUD1(CLK_AUD_ASRC11, "aud_asrc11", "a1sys_hp_sel", 16),
+> +	GATE_AUD1(CLK_AUD_ASRC12, "aud_asrc12", "a1sys_hp_sel", 17),
+> +	GATE_AUD1(CLK_AUD_MULTI_IN, "aud_multi_in", "mphone_slave_b", 19),
+> +	GATE_AUD1(CLK_AUD_INTDIR, "aud_intdir", "intdir_sel", 20),
+> +	GATE_AUD1(CLK_AUD_A1SYS, "aud_a1sys", "a1sys_hp_sel", 21),
+> +	GATE_AUD1(CLK_AUD_A2SYS, "aud_a2sys", "a2sys_sel", 22),
+> +	GATE_AUD1(CLK_AUD_PCMIF, "aud_pcmif", "a1sys_hp_sel", 24),
+> +	GATE_AUD1(CLK_AUD_A3SYS, "aud_a3sys", "a3sys_sel", 30),
+> +	GATE_AUD1(CLK_AUD_A4SYS, "aud_a4sys", "a4sys_sel", 31),
+> +	/* AUD2 */
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL1, "aud_memif_ul1", "a1sys_hp_sel", 0),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL2, "aud_memif_ul2", "a1sys_hp_sel", 1),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL3, "aud_memif_ul3", "a1sys_hp_sel", 2),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL4, "aud_memif_ul4", "a1sys_hp_sel", 3),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL5, "aud_memif_ul5", "a1sys_hp_sel", 4),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL6, "aud_memif_ul6", "a1sys_hp_sel", 5),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL8, "aud_memif_ul8", "a1sys_hp_sel", 7),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL9, "aud_memif_ul9", "a1sys_hp_sel", 8),
+> +	GATE_AUD2(CLK_AUD_MEMIF_UL10, "aud_memif_ul10", "a1sys_hp_sel", 9),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL2, "aud_memif_dl2", "a1sys_hp_sel", 18),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL3, "aud_memif_dl3", "a1sys_hp_sel", 19),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL6, "aud_memif_dl6", "a1sys_hp_sel", 22),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL7, "aud_memif_dl7", "a1sys_hp_sel", 23),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL8, "aud_memif_dl8", "a1sys_hp_sel", 24),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL10, "aud_memif_dl10", "a1sys_hp_sel", 26),
+> +	GATE_AUD2(CLK_AUD_MEMIF_DL11, "aud_memif_dl11", "a1sys_hp_sel", 27),
+> +	/* AUD3 */
+> +	GATE_AUD3(CLK_AUD_GASRC0, "aud_gasrc0", "asm_h_sel", 0),
+> +	GATE_AUD3(CLK_AUD_GASRC1, "aud_gasrc1", "asm_h_sel", 1),
+> +	GATE_AUD3(CLK_AUD_GASRC2, "aud_gasrc2", "asm_h_sel", 2),
+> +	GATE_AUD3(CLK_AUD_GASRC3, "aud_gasrc3", "asm_h_sel", 3),
+> +	GATE_AUD3(CLK_AUD_GASRC4, "aud_gasrc4", "asm_h_sel", 4),
+> +	GATE_AUD3(CLK_AUD_GASRC5, "aud_gasrc5", "asm_h_sel", 5),
+> +	GATE_AUD3(CLK_AUD_GASRC6, "aud_gasrc6", "asm_h_sel", 6),
+> +	GATE_AUD3(CLK_AUD_GASRC7, "aud_gasrc7", "asm_h_sel", 7),
+> +	GATE_AUD3(CLK_AUD_GASRC8, "aud_gasrc8", "asm_h_sel", 8),
+> +	GATE_AUD3(CLK_AUD_GASRC9, "aud_gasrc9", "asm_h_sel", 9),
+> +	GATE_AUD3(CLK_AUD_GASRC10, "aud_gasrc10", "asm_h_sel", 10),
+> +	GATE_AUD3(CLK_AUD_GASRC11, "aud_gasrc11", "asm_h_sel", 11),
+> +	GATE_AUD3(CLK_AUD_GASRC12, "aud_gasrc12", "asm_h_sel", 12),
+> +	GATE_AUD3(CLK_AUD_GASRC13, "aud_gasrc13", "asm_h_sel", 13),
+> +	GATE_AUD3(CLK_AUD_GASRC14, "aud_gasrc14", "asm_h_sel", 14),
+> +	GATE_AUD3(CLK_AUD_GASRC15, "aud_gasrc15", "asm_h_sel", 15),
+> +	GATE_AUD3(CLK_AUD_GASRC16, "aud_gasrc16", "asm_h_sel", 16),
+> +	GATE_AUD3(CLK_AUD_GASRC17, "aud_gasrc17", "asm_h_sel", 17),
+> +	GATE_AUD3(CLK_AUD_GASRC18, "aud_gasrc18", "asm_h_sel", 18),
+> +	GATE_AUD3(CLK_AUD_GASRC19, "aud_gasrc19", "asm_h_sel", 19),
+> +	/* AUD4 */
+> +	GATE_AUD4(CLK_AUD_A1SYS_HP, "aud_a1sys_hp", "a1sys_hp_sel", 2),
+> +	GATE_AUD4(CLK_AUD_AFE_DMIC1, "aud_afe_dmic1", "a1sys_hp_sel", 10),
+> +	GATE_AUD4(CLK_AUD_AFE_DMIC2, "aud_afe_dmic2", "a1sys_hp_sel", 11),
+> +	GATE_AUD4(CLK_AUD_AFE_DMIC3, "aud_afe_dmic3", "a1sys_hp_sel", 12),
+> +	GATE_AUD4(CLK_AUD_AFE_DMIC4, "aud_afe_dmic4", "a1sys_hp_sel", 13),
+> +	GATE_AUD4(CLK_AUD_AFE_26M_DMIC_TM, "aud_afe_26m_dmic_tm", "a1sys_hp_sel", 14),
+> +	GATE_AUD4(CLK_AUD_UL_TML_HIRES, "aud_ul_tml_hires", "audio_h_sel", 16),
+> +	GATE_AUD4(CLK_AUD_ADC_HIRES, "aud_adc_hires", "audio_h_sel", 17),
+> +	GATE_AUD4(CLK_AUD_ADDA6_ADC, "aud_adda6_adc", "a1sys_hp_sel", 18),
+> +	GATE_AUD4(CLK_AUD_ADDA6_ADC_HIRES, "aud_adda6_adc_hires", "audio_h_sel", 19),
+> +	/* AUD5 */
+> +	GATE_AUD5(CLK_AUD_LINEIN_TUNER, "aud_linein_tuner", "apll5_sel", 5),
+> +	GATE_AUD5(CLK_AUD_EARC_TUNER, "aud_earc_tuner", "apll3_sel", 7),
+> +};
 
-There is still no feedback, not even something like: "I saw your
-nagging, sorry. I'm drown in other missions, please have some more
-patience."
+These are all clock gates, and are all internal to the audio hardware,
+i.e. not used by other drivers or modules.
 
-I assume it's not to much to expect at least such a reply after more
-than 8 months?
+So these don't actually need to be in a separate clk driver. They can be
+modelled within ASoC as supplies that are automatically managed by ASoC
+core. Otherwise just have them as bits that are toggled by the audio
+driver's start/stop sequencing code, like they are now, but through
+vastly more complicated plumbing.
 
-Best regards
-Uwe
+Please work with the audio driver owner to see if this can be moved into
+the audio driver.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Regards
+ChenYu
 
---zkue7xi2s6vksapu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDivGUACgkQwfwUeK3K
-7AkjnAf/a6JWigt/E4r2Q+YarOahwo6FeKczLbaLzTCJNlhBmRV/Meyb3zKO0C/f
-tejQizaLLLrHlhP/iSjItUpzMJ0PxECM/xWhaAuAq5Bir9J5EjBj1ryFdYB/Styv
-Bv4gAmoEbjPAaoOimPt0eZaoe1vXJ+KhtGyYV89a77GZLPOjZvAugKbdxU5TU46i
-oLbAQEjgroBM93AMRc/BiakWh6OAnLb1lu69Z3Vc7GbZPeSDoEkZBjqFi3Q+EAA8
-UbvamISvheZ8ZHvjuxRxCGv7IQv4ZmBrRiLJePrboNTKGhUMktt4Zc7Ye0rMoNTc
-6iDHWYLtjng09CMf01KEsc39jpmN5g==
-=A+R2
------END PGP SIGNATURE-----
-
---zkue7xi2s6vksapu--
+> +
+> +static int clk_mt8195_aud_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_onecell_data *clk_data;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int r;
+> +
+> +	clk_data = mtk_alloc_clk_data(CLK_AUD_NR_CLK);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	r = mtk_clk_register_gates(node, aud_clks, ARRAY_SIZE(aud_clks), clk_data);
+> +	if (r)
+> +		return r;
+> +
+> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +	if (r)
+> +		goto err_clk_provider;
+> +
+> +	r = devm_of_platform_populate(&pdev->dev);
+> +	if (r)
+> +		goto err_plat_populate;
+> +
+> +	return 0;
+> +
+> +err_plat_populate:
+> +	of_clk_del_provider(node);
+> +err_clk_provider:
+> +	return r;
+> +}
+> +
+> +static const struct of_device_id of_match_clk_mt8195_aud[] = {
+> +	{ .compatible = "mediatek,mt8195-audsys", },
+> +	{}
+> +};
+> +
+> +static struct platform_driver clk_mt8195_aud_drv = {
+> +	.probe = clk_mt8195_aud_probe,
+> +	.driver = {
+> +		.name = "clk-mt8195-aud",
+> +		.of_match_table = of_match_clk_mt8195_aud,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(clk_mt8195_aud_drv);
+> -- 
+> 2.18.0
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
