@@ -2,169 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4616EC07E99
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 10:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A435C07E99
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 12:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E401613C8
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 10:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B26613E0
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 12:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230495AbhGEKKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jul 2021 06:10:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbhGEKKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jul 2021 06:10:01 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E74FC061762
-        for <linux-clk@vger.kernel.org>; Mon,  5 Jul 2021 03:07:24 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id m15so5261468plx.7
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jul 2021 03:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=URzqQGQoXOhjWiVA59OemrOZ6RGERDqTdQyNEXeAAck=;
-        b=W+oJyrd0cywPJ2WKOIn0+/TZJnDNS67AnkdeDildmOBCR2YDCCSxGoymgaKDCH/Xs2
-         2Tt2Ykz8fdNewWrffXxMSL+OWuktoSP4WM0aP454Xp46wwMb5eQDfNyXE37UeyxZgEgh
-         ZqpnLRE0tGHO7RNqsdazo3gKrVWcANSkbLE+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=URzqQGQoXOhjWiVA59OemrOZ6RGERDqTdQyNEXeAAck=;
-        b=HbxqWm8zeXYSdNR27/nRr8jDKUbns60ccxWgfHo7KOar3EXlcPKlwyF1dLVCeUuBdx
-         wQC5MlUrSjmlSR6LnTofS6woqvVF0eFuRjlr/aSdIjRvvIFyxslPHTCPuQdPUPXAS+QL
-         sNJ52bobhRGOINesMNI+HEfhhfqhoiu2CWcPx8d8isgi15r/HBupeVq/zfiSbpaCdToq
-         p9Zd/AJn+6+BYrikIVTw6WoEtTqPgl6TyGc0n2gucyDAgyw/W32rzqaSeiU7wAwibCNO
-         d5sDY1iKIzmPVYlOYxgU9Q6ORbcs7aW/o1g2zcp9T7kt+YkTIgNDvBRU4resYjGLFytx
-         +AHQ==
-X-Gm-Message-State: AOAM530uVNPOhwQ9JDGccHnjoTtSNgO4lVVaoK1VW3ZlSW80KbiYyz/v
-        AjTS6lpHGkoKX3CBr3SrcUniCQ==
-X-Google-Smtp-Source: ABdhPJzLaiyM+hJRO34T6/7krD6/7coonwGydXEI2SqB2V3Cc/mLh/HDAsZW7o4nnnI4Moc5m/2Myw==
-X-Received: by 2002:a17:902:bd03:b029:11c:d504:c1ce with SMTP id p3-20020a170902bd03b029011cd504c1cemr11838106pls.7.1625479643848;
-        Mon, 05 Jul 2021 03:07:23 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:10:f66e:ef34:adcd:b33b])
-        by smtp.gmail.com with ESMTPSA id s126sm12354864pfb.164.2021.07.05.03.07.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jul 2021 03:07:23 -0700 (PDT)
-Date:   Mon, 5 Jul 2021 18:07:19 +0800
-From:   Chen-Yu Tsai <wenst@chromium.org>
+        id S230440AbhGEM5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jul 2021 08:57:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230188AbhGEM5z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 5 Jul 2021 08:57:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 33DD0613E0;
+        Mon,  5 Jul 2021 12:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625489718;
+        bh=DL/qfcwl7Mep35KybLuFTSiya/Gs+1I2TD7zA77f8q8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MnWkYcT2jqvq7PjDgs2KzxLL6OQfPVobZRxWv1r3FgKMdG93QhxM4UQC9niDaUduc
+         zZST0SESd6LjNo7Cigo4Txqmwrcg1XDOfAsh/OFIWTfF4/6HwFs4XycSgDLLurqMPm
+         Dewv4LzkogHsJdo5gQyddmXn68J0CGkAXOSWXt91ylcXdZjkQbwjXizpehYz2V3G4F
+         wFNtOdKd9T47eeI9+4/tuLBp5iV/qd+S7mnEDtuXrtrAuGRxl9MpPzlLyLFBXt447G
+         GASPDQ5sVteJG886R2PiAVXYv8+pYk/kFaMiJJrbVY7Jcpa9rnosG39q0TP/XzOTl6
+         Arz+9US8SfwTQ==
+Received: by mail-ej1-f54.google.com with SMTP id bg14so28905247ejb.9;
+        Mon, 05 Jul 2021 05:55:18 -0700 (PDT)
+X-Gm-Message-State: AOAM530kdGPgD8xUKjSQjwIHzA62yvGffzgmgfDdOM4T9ldD1Df+oDLx
+        eYlEKCc6zQsvHHXoFnv2gVWZZxz0CBn3GySb2w==
+X-Google-Smtp-Source: ABdhPJz9geTByoPzNQSQooTOiO202kzh3UBmiiWSZZQvrpQFu4TaOlsLcSVYB+yGdIfA6X9oPf8eOjKGIf6mgQo89KE=
+X-Received: by 2002:a17:907:728e:: with SMTP id dt14mr13157240ejc.75.1625489716804;
+ Mon, 05 Jul 2021 05:55:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210705033824.1934-1-chun-jie.chen@mediatek.com> <20210705033824.1934-3-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210705033824.1934-3-chun-jie.chen@mediatek.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Mon, 5 Jul 2021 20:55:05 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_-wLsBwWaaBX0tzt2e5z+3vLO2yMmX2VrCCtO5cs=_PqQ@mail.gmail.com>
+Message-ID: <CAAOTY_-wLsBwWaaBX0tzt2e5z+3vLO2yMmX2VrCCtO5cs=_PqQ@mail.gmail.com>
+Subject: Re: [v12 02/20] dt-bindings: ARM: Mediatek: Add mmsys document
+ binding for MT8192
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH 06/22] clk: mediatek: Add MT8195 audio src clock support
-Message-ID: <YOLZ12WWkk/0kAnd@google.com>
-References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
- <20210616224743.5109-7-chun-jie.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210616224743.5109-7-chun-jie.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Chun-Jie Chen <chun-jie.chen@mediatek.com> =E6=96=BC 2021=E5=B9=B47=E6=9C=
+=885=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8A=E5=8D=8811:44=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> This patch adds the mmsys document binding for MT8192 SoC.
 
-On Thu, Jun 17, 2021 at 06:47:27AM +0800, Chun-Jie Chen wrote:
-> Add MT8195 audio src source clock provider
-> 
+Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+
+>
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > ---
->  drivers/clk/mediatek/Kconfig              |  6 +++
->  drivers/clk/mediatek/Makefile             |  1 +
->  drivers/clk/mediatek/clk-mt8195-aud_src.c | 60 +++++++++++++++++++++++
->  3 files changed, 67 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8195-aud_src.c
-> 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index e2bae9d490a4..62dd02bc2755 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -594,6 +594,12 @@ config COMMON_CLK_MT8195_AUDSYS
->  	help
->  	  This driver supports MediaTek MT8195 audsys clocks.
->  
-> +config COMMON_CLK_MT8195_AUDSYS_SRC
-> +	bool "Clock driver for MediaTek MT8195 audsys_src"
-> +	depends on COMMON_CLK_MT8195
-> +	help
-> +	  This driver supports MediaTek MT8195 audsys_src clocks.
-> +
-
-Same comments regarding the Kconfig symbol as the previous patch.
-
->  config COMMON_CLK_MT8516
->  	bool "Clock driver for MediaTek MT8516"
->  	depends on ARCH_MEDIATEK || COMPILE_TEST
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index f27c04314186..52a5d3f49ff0 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -82,5 +82,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
->  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
->  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_AUDSYS) += clk-mt8195-aud.o
-> +obj-$(CONFIG_COMMON_CLK_MT8195_AUDSYS_SRC) += clk-mt8195-aud_src.o
->  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
->  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-> diff --git a/drivers/clk/mediatek/clk-mt8195-aud_src.c b/drivers/clk/mediatek/clk-mt8195-aud_src.c
-> new file mode 100644
-> index 000000000000..7cabe0d68825
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8195-aud_src.c
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +//
-> +// Copyright (c) 2021 MediaTek Inc.
-> +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-gate.h"
-> +
-> +#include <dt-bindings/clock/mt8195-clk.h>
-> +
-> +static const struct mtk_gate_regs aud_src_cg_regs = {
-> +	.set_ofs = 0x1004,
-> +	.clr_ofs = 0x1004,
-> +	.sta_ofs = 0x1004,
-> +};
-> +
-> +#define GATE_AUD_SRC(_id, _name, _parent, _shift)			\
-> +	GATE_MTK(_id, _name, _parent, &aud_src_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
-> +
-> +static const struct mtk_gate aud_src_clks[] = {
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC0, "aud_src_asrc0", "asm_h_sel", 0),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC1, "aud_src_asrc1", "asm_h_sel", 1),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC2, "aud_src_asrc2", "asm_h_sel", 2),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC3, "aud_src_asrc3", "asm_h_sel", 3),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC4, "aud_src_asrc4", "asm_h_sel", 4),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC5, "aud_src_asrc5", "asm_h_sel", 5),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC6, "aud_src_asrc6", "asm_h_sel", 6),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC7, "aud_src_asrc7", "asm_h_sel", 7),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC8, "aud_src_asrc8", "asm_h_sel", 8),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC9, "aud_src_asrc9", "asm_h_sel", 9),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC10, "aud_src_asrc10", "asm_h_sel", 10),
-> +	GATE_AUD_SRC(CLK_AUD_SRC_ASRC11, "aud_src_asrc11", "asm_h_sel", 11),
-
-And same thing about moving this into the audio driver. AFAICT there is
-no audio driver supporting this hardware block, so this will never get
-used.
-
-
-Regards
-ChenYu
+>  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt          | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsy=
+s.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> index 78c50733985c..9712a6831fab 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> @@ -16,6 +16,7 @@ Required Properties:
+>         - "mediatek,mt8167-mmsys", "syscon"
+>         - "mediatek,mt8173-mmsys", "syscon"
+>         - "mediatek,mt8183-mmsys", "syscon"
+> +       - "mediatek,mt8192-mmsys", "syscon"
+>  - #clock-cells: Must be 1
+>
+>  For the clock control, the mmsys controller uses the common clk binding =
+from
+> --
+> 2.18.0
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
