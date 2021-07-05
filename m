@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD5EC07E9A
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3962DC11F66
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 313B9613D8
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2683F613E2
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbhGEDo2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Jul 2021 23:44:28 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39353 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229787AbhGEDo0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Jul 2021 23:44:26 -0400
-X-UUID: 0a9f3bab683f4267bfa1a63bf1b52568-20210705
-X-UUID: 0a9f3bab683f4267bfa1a63bf1b52568-20210705
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+        id S230015AbhGEDof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Jul 2021 23:44:35 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:47440 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229689AbhGEDoe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Jul 2021 23:44:34 -0400
+X-UUID: a7ecdb0403a64a0797ef902d0fb4f882-20210705
+X-UUID: a7ecdb0403a64a0797ef902d0fb4f882-20210705
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1050446760; Mon, 05 Jul 2021 11:41:48 +0800
+        with ESMTP id 375631538; Mon, 05 Jul 2021 11:41:54 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 5 Jul 2021 11:41:46 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 5 Jul 2021 11:41:53 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 5 Jul 2021 11:41:46 +0800
+ Transport; Mon, 5 Jul 2021 11:41:52 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -43,9 +43,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v12 09/20] clk: mediatek: Add MT8192 audio clock support
-Date:   Mon, 5 Jul 2021 11:38:13 +0800
-Message-ID: <20210705033824.1934-10-chun-jie.chen@mediatek.com>
+Subject: [v12 11/20] clk: mediatek: Add MT8192 imgsys clock support
+Date:   Mon, 5 Jul 2021 11:38:15 +0800
+Message-ID: <20210705033824.1934-12-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
 References: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
@@ -56,58 +56,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8192 audio clock provider
+Add MT8192 imgsys and imgsys2 clock providers
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 ---
- drivers/clk/mediatek/Kconfig          |   6 ++
- drivers/clk/mediatek/Makefile         |   1 +
- drivers/clk/mediatek/clk-mt8192-aud.c | 118 ++++++++++++++++++++++++++
- 3 files changed, 125 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8192-aud.c
+ drivers/clk/mediatek/Kconfig          |  6 +++
+ drivers/clk/mediatek/Makefile         |  1 +
+ drivers/clk/mediatek/clk-mt8192-img.c | 70 +++++++++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-img.c
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 6075b48377d5..909f423d7c4c 100644
+index a39a4c201c9e..38011dccfe47 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -508,6 +508,12 @@ config COMMON_CLK_MT8192
+@@ -520,6 +520,12 @@ config COMMON_CLK_MT8192_CAMSYS
  	help
- 	  This driver supports MediaTek MT8192 basic clocks.
+ 	  This driver supports MediaTek MT8192 camsys and camsys_raw clocks.
  
-+config COMMON_CLK_MT8192_AUDSYS
-+	bool "Clock driver for MediaTek MT8192 audsys"
++config COMMON_CLK_MT8192_IMGSYS
++	bool "Clock driver for MediaTek MT8192 imgsys"
 +	depends on COMMON_CLK_MT8192
 +	help
-+	  This driver supports MediaTek MT8192 audsys clocks.
++	  This driver supports MediaTek MT8192 imgsys and imgsys2 clocks.
 +
  config COMMON_CLK_MT8516
  	bool "Clock driver for MediaTek MT8516"
  	depends on ARCH_MEDIATEK || COMPILE_TEST
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index fcde42160720..1d0f2e8e9661 100644
+index 94bf7a03fd88..91392cb333fd 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
-@@ -68,5 +68,6 @@ obj-$(CONFIG_COMMON_CLK_MT8183_MMSYS) += clk-mt8183-mm.o
- obj-$(CONFIG_COMMON_CLK_MT8183_VDECSYS) += clk-mt8183-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
+@@ -70,5 +70,6 @@ obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
-+obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
++obj-$(CONFIG_COMMON_CLK_MT8192_IMGSYS) += clk-mt8192-img.o
  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8192-aud.c b/drivers/clk/mediatek/clk-mt8192-aud.c
+diff --git a/drivers/clk/mediatek/clk-mt8192-img.c b/drivers/clk/mediatek/clk-mt8192-img.c
 new file mode 100644
-index 000000000000..f28d56628045
+index 000000000000..7ce3abe42577
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8192-aud.c
-@@ -0,0 +1,118 @@
++++ b/drivers/clk/mediatek/clk-mt8192-img.c
+@@ -0,0 +1,70 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// Copyright (c) 2021 MediaTek Inc.
 +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 +
 +#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
++#include <linux/of_device.h>
 +#include <linux/platform_device.h>
 +
 +#include "clk-mtk.h"
@@ -115,110 +115,62 @@ index 000000000000..f28d56628045
 +
 +#include <dt-bindings/clock/mt8192-clk.h>
 +
-+static const struct mtk_gate_regs aud0_cg_regs = {
-+	.set_ofs = 0x0,
-+	.clr_ofs = 0x0,
++static const struct mtk_gate_regs img_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
 +	.sta_ofs = 0x0,
 +};
 +
-+static const struct mtk_gate_regs aud1_cg_regs = {
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x4,
-+	.sta_ofs = 0x4,
++#define GATE_IMG(_id, _name, _parent, _shift)	\
++	GATE_MTK(_id, _name, _parent, &img_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++
++static const struct mtk_gate img_clks[] = {
++	GATE_IMG(CLK_IMG_LARB9, "img_larb9", "img1_sel", 0),
++	GATE_IMG(CLK_IMG_LARB10, "img_larb10", "img1_sel", 1),
++	GATE_IMG(CLK_IMG_DIP, "img_dip", "img1_sel", 2),
++	GATE_IMG(CLK_IMG_GALS, "img_gals", "img1_sel", 12),
 +};
 +
-+static const struct mtk_gate_regs aud2_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0x8,
-+	.sta_ofs = 0x8,
++static const struct mtk_gate img2_clks[] = {
++	GATE_IMG(CLK_IMG2_LARB11, "img2_larb11", "img1_sel", 0),
++	GATE_IMG(CLK_IMG2_LARB12, "img2_larb12", "img1_sel", 1),
++	GATE_IMG(CLK_IMG2_MFB, "img2_mfb", "img1_sel", 6),
++	GATE_IMG(CLK_IMG2_WPE, "img2_wpe", "img1_sel", 7),
++	GATE_IMG(CLK_IMG2_MSS, "img2_mss", "img1_sel", 8),
++	GATE_IMG(CLK_IMG2_GALS, "img2_gals", "img1_sel", 12),
 +};
 +
-+#define GATE_AUD0(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &aud0_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
-+
-+#define GATE_AUD1(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &aud1_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
-+
-+#define GATE_AUD2(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &aud2_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
-+
-+static const struct mtk_gate aud_clks[] = {
-+	/* AUD0 */
-+	GATE_AUD0(CLK_AUD_AFE, "aud_afe", "audio_sel", 2),
-+	GATE_AUD0(CLK_AUD_22M, "aud_22m", "aud_engen1_sel", 8),
-+	GATE_AUD0(CLK_AUD_24M, "aud_24m", "aud_engen2_sel", 9),
-+	GATE_AUD0(CLK_AUD_APLL2_TUNER, "aud_apll2_tuner", "aud_engen2_sel", 18),
-+	GATE_AUD0(CLK_AUD_APLL_TUNER, "aud_apll_tuner", "aud_engen1_sel", 19),
-+	GATE_AUD0(CLK_AUD_TDM, "aud_tdm", "aud_1_sel", 20),
-+	GATE_AUD0(CLK_AUD_ADC, "aud_adc", "audio_sel", 24),
-+	GATE_AUD0(CLK_AUD_DAC, "aud_dac", "audio_sel", 25),
-+	GATE_AUD0(CLK_AUD_DAC_PREDIS, "aud_dac_predis", "audio_sel", 26),
-+	GATE_AUD0(CLK_AUD_TML, "aud_tml", "audio_sel", 27),
-+	GATE_AUD0(CLK_AUD_NLE, "aud_nle", "audio_sel", 28),
-+	/* AUD1 */
-+	GATE_AUD1(CLK_AUD_I2S1_B, "aud_i2s1_b", "audio_sel", 4),
-+	GATE_AUD1(CLK_AUD_I2S2_B, "aud_i2s2_b", "audio_sel", 5),
-+	GATE_AUD1(CLK_AUD_I2S3_B, "aud_i2s3_b", "audio_sel", 6),
-+	GATE_AUD1(CLK_AUD_I2S4_B, "aud_i2s4_b", "audio_sel", 7),
-+	GATE_AUD1(CLK_AUD_CONNSYS_I2S_ASRC, "aud_connsys_i2s_asrc", "audio_sel", 12),
-+	GATE_AUD1(CLK_AUD_GENERAL1_ASRC, "aud_general1_asrc", "audio_sel", 13),
-+	GATE_AUD1(CLK_AUD_GENERAL2_ASRC, "aud_general2_asrc", "audio_sel", 14),
-+	GATE_AUD1(CLK_AUD_DAC_HIRES, "aud_dac_hires", "audio_h_sel", 15),
-+	GATE_AUD1(CLK_AUD_ADC_HIRES, "aud_adc_hires", "audio_h_sel", 16),
-+	GATE_AUD1(CLK_AUD_ADC_HIRES_TML, "aud_adc_hires_tml", "audio_h_sel", 17),
-+	GATE_AUD1(CLK_AUD_ADDA6_ADC, "aud_adda6_adc", "audio_sel", 20),
-+	GATE_AUD1(CLK_AUD_ADDA6_ADC_HIRES, "aud_adda6_adc_hires", "audio_h_sel", 21),
-+	GATE_AUD1(CLK_AUD_3RD_DAC, "aud_3rd_dac", "audio_sel", 28),
-+	GATE_AUD1(CLK_AUD_3RD_DAC_PREDIS, "aud_3rd_dac_predis", "audio_sel", 29),
-+	GATE_AUD1(CLK_AUD_3RD_DAC_TML, "aud_3rd_dac_tml", "audio_sel", 30),
-+	GATE_AUD1(CLK_AUD_3RD_DAC_HIRES, "aud_3rd_dac_hires", "audio_h_sel", 31),
-+	/* AUD2 */
-+	GATE_AUD2(CLK_AUD_I2S5_B, "aud_i2s5_b", "audio_sel", 0),
-+	GATE_AUD2(CLK_AUD_I2S6_B, "aud_i2s6_b", "audio_sel", 1),
-+	GATE_AUD2(CLK_AUD_I2S7_B, "aud_i2s7_b", "audio_sel", 2),
-+	GATE_AUD2(CLK_AUD_I2S8_B, "aud_i2s8_b", "audio_sel", 3),
-+	GATE_AUD2(CLK_AUD_I2S9_B, "aud_i2s9_b", "audio_sel", 4),
++static const struct mtk_clk_desc img_desc = {
++	.clks = img_clks,
++	.num_clks = ARRAY_SIZE(img_clks),
 +};
 +
-+static int clk_mt8192_aud_probe(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_AUD_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	r = mtk_clk_register_gates(node, aud_clks, ARRAY_SIZE(aud_clks), clk_data);
-+	if (r)
-+		return r;
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		return r;
-+
-+	r = devm_of_platform_populate(&pdev->dev);
-+	if (r)
-+		of_clk_del_provider(node);
-+
-+	return r;
-+}
-+
-+static const struct of_device_id of_match_clk_mt8192_aud[] = {
-+	{ .compatible = "mediatek,mt8192-audsys", },
-+	{}
++static const struct mtk_clk_desc img2_desc = {
++	.clks = img2_clks,
++	.num_clks = ARRAY_SIZE(img2_clks),
 +};
 +
-+static struct platform_driver clk_mt8192_aud_drv = {
-+	.probe = clk_mt8192_aud_probe,
++static const struct of_device_id of_match_clk_mt8192_img[] = {
++	{
++		.compatible = "mediatek,mt8192-imgsys",
++		.data = &img_desc,
++	}, {
++		.compatible = "mediatek,mt8192-imgsys2",
++		.data = &img2_desc,
++	}, {
++		/* sentinel */
++	}
++};
++
++static struct platform_driver clk_mt8192_img_drv = {
++	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8192-aud",
-+		.of_match_table = of_match_clk_mt8192_aud,
++		.name = "clk-mt8192-img",
++		.of_match_table = of_match_clk_mt8192_img,
 +	},
 +};
 +
-+builtin_platform_driver(clk_mt8192_aud_drv);
++builtin_platform_driver(clk_mt8192_img_drv);
 -- 
 2.18.0
 
