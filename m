@@ -8,57 +8,58 @@ X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF11C07E99
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 15:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83812C07E9B
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 15:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDCAC613D1
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 15:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 535F161278
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 15:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbhGEPnF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jul 2021 11:43:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40688 "EHLO
+        id S231831AbhGEPrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jul 2021 11:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231814AbhGEPnE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jul 2021 11:43:04 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68203C06175F;
-        Mon,  5 Jul 2021 08:40:27 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id p8so22610614wrr.1;
-        Mon, 05 Jul 2021 08:40:27 -0700 (PDT)
+        with ESMTP id S231806AbhGEPrt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jul 2021 11:47:49 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D2BC061574;
+        Mon,  5 Jul 2021 08:45:11 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id l5so5850070wrv.7;
+        Mon, 05 Jul 2021 08:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+SRLE0tPUsz9JGstgxnhEOYaBDJCX4/2/ht+oLnNatg=;
-        b=AnNCZDrC3XgFdjPmO4zWV+8xVX1Th2OcBIhf7ZUoCjVQqYTtQji90c/PaaZ998+M6x
-         z+LgD+6xEdGuyQMtGu5eVL3xsvJRnlRlrbSnsrETnUchmH8g60zFl1eodg9a7wMptgt2
-         mtJnBD4uyv0FmTr1SjqDvXieQ6XJ0jicfWlDxlN7vH3mPI3hUvpRwhGEqNZMPJkn9XvH
-         h3GPLdT/qrgj9hrBLFogAitMbbhjNCHgUvAiWrBRkW5EZC/eDLGvSHphrlChLj4OyOT0
-         uGOTXi3M91mqAwcxUIcmir3cGsRO0QSK03TgAP65Ykpr94a50/1JgBItbp5e0Op9AHUc
-         3QVQ==
+        bh=iRm7ng62vz94LNteI1Cih0zeAdgyP1p1V+2xJCFvsqg=;
+        b=VKCvWgx307Vniav5+5GwJdAoX+BqLeBProcFBWAg1Db+3j859JQYDj247SVBafkYz6
+         tp3+x3bLx5Wq9bbY3k5uQWCBDyVRH6A8ILbuys1nMGOFw44HHEteT6ZLYgzVqj4WYhhd
+         h7RMf1Z+1W/z6H+JYAK+u9jv/TkqCFSRWe9o69Nhv1sfaFpsiKtbZvjJ89VHwU90ujhW
+         4axxUUHR2NVjRciPhafM1vWaObcE3qqgdp4o/nPV1bdtbdn6acDXtJa/UHrF61BBSJ4M
+         mHpT7TTEhMn8Jq6729O34Yhk8jZiSX5cT+QYsciOIOgPJjQa8f5oS0ASk5/rM1kMWTax
+         Pf5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+SRLE0tPUsz9JGstgxnhEOYaBDJCX4/2/ht+oLnNatg=;
-        b=Pe2RC8FpnkanqpIlgf0dW4cnM+X/oB1zCydKUaFa5sWA1l7T5OCpTJ5A6e/EjzyUdh
-         h78wHAXZmpacOMq+fWCOTaC/A911IhMq0Iq/RRUY0kVlMSigb6ol+tX5CKTCN6kSXnRL
-         QDQ2K3On9JGi8WGXyABtfqO+pn+JdT3H2I6ZvsbWTbTEc7wNKf72B97GBkDdfhNREa2g
-         OxL0QZrXsxgvaLg01G0KG95cIR8wxg8zKLl1m6fr0JNrksmmVImbYSMjk6oBWzlFKWMc
-         DCz4mcj0ObNkSL9FXyM6DY/OY0ql6AqirUzjqCeMwUQbK301RA6hpwbhsy0smqRmiuYo
-         t9Pw==
-X-Gm-Message-State: AOAM533eDfNYqw4xIFcsE0d2KaLB+y1ul2IkjrvtINFGXS2VYnvUVYxC
-        f8Xat18hLNmW/Er6+53EfN0=
-X-Google-Smtp-Source: ABdhPJzIVjdY5LyWZGNBnQbxixb6xvnvBMZ3/L2ZACruHYs5eHf+9pOKYeyPGKILeKujuggFhiDH3w==
-X-Received: by 2002:a5d:4c88:: with SMTP id z8mr16172872wrs.259.1625499625999;
-        Mon, 05 Jul 2021 08:40:25 -0700 (PDT)
+        bh=iRm7ng62vz94LNteI1Cih0zeAdgyP1p1V+2xJCFvsqg=;
+        b=GOPPTuEFLuWLbBkTbrPXFAcSrUlbcWlrkkxfoPxsg8PdUlSUytMKjw8+SS3sMurSvY
+         Wtbkx5XHexQyTXqyWJgWj2L9tLoWh9suHihbbPTFgYk37QVo2md28u3mWyZgtQFcPtt9
+         iXEVIBMHqKAN/kkWmSrJePlKlWo3k/tRoxCrAh4gma/Y41UYxPf8MXXmQ8jcOGszt0NN
+         22KF1UB7T/TFujAKBisDAXcE1KhFLXxuLrNMPa2gvS/37wtde6FZ9ZEb31aEOUwvT/Vg
+         +Qm04ZjyBHtyIvBJWGs16I3Oci2kMdSoOSts7cPMNEz/BUj8vjkHd2Nk45YpIVLlhOp+
+         x4jQ==
+X-Gm-Message-State: AOAM5339ctzbNUkBxS9CefuoY5q3v7PR0xZI1VvqXxZHzttvXGXNjcT1
+        8ZqqxUWU2TYytNdofzGInQY=
+X-Google-Smtp-Source: ABdhPJzc63RLP0dLTZRU0oPe/Q+B3XBpkwNbTucwsbP8b4phCD5U2diRKEdWeN26wMIkt907FvnvNg==
+X-Received: by 2002:a05:6000:118d:: with SMTP id g13mr16362365wrx.191.1625499910517;
+        Mon, 05 Jul 2021 08:45:10 -0700 (PDT)
 Received: from ziggy.stardust (static-55-132-6-89.ipcom.comunitel.net. [89.6.132.55])
-        by smtp.gmail.com with ESMTPSA id 31sm14971533wrs.79.2021.07.05.08.40.24
+        by smtp.gmail.com with ESMTPSA id v25sm13917133wrd.65.2021.07.05.08.45.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jul 2021 08:40:25 -0700 (PDT)
+        Mon, 05 Jul 2021 08:45:10 -0700 (PDT)
 Subject: Re: [v12 02/20] dt-bindings: ARM: Mediatek: Add mmsys document
  binding for MT8192
+From:   Matthias Brugger <matthias.bgg@gmail.com>
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
@@ -69,13 +70,13 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
  <20210705033824.1934-3-chun-jie.chen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <564fa3c8-1d85-5e98-f3f9-f83cb17e905a@gmail.com>
-Date:   Mon, 5 Jul 2021 17:40:24 +0200
+ <564fa3c8-1d85-5e98-f3f9-f83cb17e905a@gmail.com>
+Message-ID: <15d27282-54b2-2cfe-7f44-2df3be11dd40@gmail.com>
+Date:   Mon, 5 Jul 2021 17:45:09 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <20210705033824.1934-3-chun-jie.chen@mediatek.com>
+In-Reply-To: <564fa3c8-1d85-5e98-f3f9-f83cb17e905a@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,29 +84,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 05/07/2021 05:38, Chun-Jie Chen wrote:
-> This patch adds the mmsys document binding for MT8192 SoC.
+On 05/07/2021 17:40, Matthias Brugger wrote:
 > 
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt          | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> index 78c50733985c..9712a6831fab 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> @@ -16,6 +16,7 @@ Required Properties:
->  	- "mediatek,mt8167-mmsys", "syscon"
->  	- "mediatek,mt8173-mmsys", "syscon"
->  	- "mediatek,mt8183-mmsys", "syscon"
-> +	- "mediatek,mt8192-mmsys", "syscon"
->  - #clock-cells: Must be 1
->  
->  For the clock control, the mmsys controller uses the common clk binding from
+> On 05/07/2021 05:38, Chun-Jie Chen wrote:
+>> This patch adds the mmsys document binding for MT8192 SoC.
+>>
+>> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > 
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> 
+
+Of course, that's not what we need here...
+
+Now pushed to v5.14-tmp/dts64 until v5.14-rc1 is released.
+
+Thanks!
+Matthias
+
+>> ---
+>>  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt          | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> index 78c50733985c..9712a6831fab 100644
+>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> @@ -16,6 +16,7 @@ Required Properties:
+>>  	- "mediatek,mt8167-mmsys", "syscon"
+>>  	- "mediatek,mt8173-mmsys", "syscon"
+>>  	- "mediatek,mt8183-mmsys", "syscon"
+>> +	- "mediatek,mt8192-mmsys", "syscon"
+>>  - #clock-cells: Must be 1
+>>  
+>>  For the clock control, the mmsys controller uses the common clk binding from
+>>
+
