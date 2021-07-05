@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA91BC07E9A
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C044C07E9A
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAEE7613D8
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E969C613DA
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jul 2021 03:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhGEDo7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Jul 2021 23:44:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39786 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230132AbhGEDo4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Jul 2021 23:44:56 -0400
-X-UUID: 7288552813d44815ba0a61c894cf5bd2-20210705
-X-UUID: 7288552813d44815ba0a61c894cf5bd2-20210705
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        id S230129AbhGEDpG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Jul 2021 23:45:06 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:47875 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230118AbhGEDpC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Jul 2021 23:45:02 -0400
+X-UUID: b39ee3735c08476f9870a01504f4f443-20210705
+X-UUID: b39ee3735c08476f9870a01504f4f443-20210705
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1310400862; Mon, 05 Jul 2021 11:42:15 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 691492012; Mon, 05 Jul 2021 11:42:23 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
  mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 5 Jul 2021 11:42:13 +0800
+ 15.0.1497.2; Mon, 5 Jul 2021 11:42:21 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 5 Jul 2021 11:42:13 +0800
+ Transport; Mon, 5 Jul 2021 11:42:21 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -43,9 +43,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v12 17/20] clk: mediatek: Add MT8192 msdc clock support
-Date:   Mon, 5 Jul 2021 11:38:21 +0800
-Message-ID: <20210705033824.1934-18-chun-jie.chen@mediatek.com>
+Subject: [v12 20/20] clk: mediatek: Add MT8192 vencsys clock support
+Date:   Mon, 5 Jul 2021 11:38:24 +0800
+Message-ID: <20210705033824.1934-21-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
 References: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
@@ -56,51 +56,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8192 msdc and msdc top clock providers
+Add MT8192 vencsys clock provider
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 ---
- drivers/clk/mediatek/Kconfig           |  6 ++
+ drivers/clk/mediatek/Kconfig           |  6 +++
  drivers/clk/mediatek/Makefile          |  1 +
- drivers/clk/mediatek/clk-mt8192-msdc.c | 85 ++++++++++++++++++++++++++
- 3 files changed, 92 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8192-msdc.c
+ drivers/clk/mediatek/clk-mt8192-venc.c | 53 ++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-venc.c
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 5b89a4dbe2b9..88b24f74aff2 100644
+index 31779f2c5c83..576babd86f98 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -556,6 +556,12 @@ config COMMON_CLK_MT8192_MMSYS
+@@ -574,6 +574,12 @@ config COMMON_CLK_MT8192_VDECSYS
  	help
- 	  This driver supports MediaTek MT8192 mmsys clocks.
+ 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
  
-+config COMMON_CLK_MT8192_MSDC
-+	bool "Clock driver for MediaTek MT8192 msdc"
++config COMMON_CLK_MT8192_VENCSYS
++	bool "Clock driver for MediaTek MT8192 vencsys"
 +	depends on COMMON_CLK_MT8192
 +	help
-+	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
++	  This driver supports MediaTek MT8192 vencsys clocks.
 +
  config COMMON_CLK_MT8516
  	bool "Clock driver for MediaTek MT8516"
  	depends on ARCH_MEDIATEK || COMPILE_TEST
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 838bb0131c97..8e4e343d4af4 100644
+index 887dd6bcf7f2..15bc045f0b71 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
-@@ -76,5 +76,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_IPESYS) += clk-mt8192-ipe.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MDPSYS) += clk-mt8192-mdp.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MFGCFG) += clk-mt8192-mfg.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MMSYS) += clk-mt8192-mm.o
-+obj-$(CONFIG_COMMON_CLK_MT8192_MSDC) += clk-mt8192-msdc.o
+@@ -79,5 +79,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_MMSYS) += clk-mt8192-mm.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_MSDC) += clk-mt8192-msdc.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
++obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8192-msdc.c b/drivers/clk/mediatek/clk-mt8192-msdc.c
+diff --git a/drivers/clk/mediatek/clk-mt8192-venc.c b/drivers/clk/mediatek/clk-mt8192-venc.c
 new file mode 100644
-index 000000000000..87c3b79b79cf
+index 000000000000..c0d867bff09e
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8192-msdc.c
-@@ -0,0 +1,85 @@
++++ b/drivers/clk/mediatek/clk-mt8192-venc.c
+@@ -0,0 +1,53 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// Copyright (c) 2021 MediaTek Inc.
@@ -115,77 +115,45 @@ index 000000000000..87c3b79b79cf
 +
 +#include <dt-bindings/clock/mt8192-clk.h>
 +
-+static const struct mtk_gate_regs msdc_cg_regs = {
-+	.set_ofs = 0xb4,
-+	.clr_ofs = 0xb4,
-+	.sta_ofs = 0xb4,
-+};
-+
-+static const struct mtk_gate_regs msdc_top_cg_regs = {
-+	.set_ofs = 0x0,
-+	.clr_ofs = 0x0,
++static const struct mtk_gate_regs venc_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
 +	.sta_ofs = 0x0,
 +};
 +
-+#define GATE_MSDC(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &msdc_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
++#define GATE_VENC(_id, _name, _parent, _shift)	\
++	GATE_MTK(_id, _name, _parent, &venc_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
 +
-+#define GATE_MSDC_TOP(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &msdc_top_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
-+
-+static const struct mtk_gate msdc_clks[] = {
-+	GATE_MSDC(CLK_MSDC_AXI_WRAP, "msdc_axi_wrap", "axi_sel", 22),
++static const struct mtk_gate venc_clks[] = {
++	GATE_VENC(CLK_VENC_SET0_LARB, "venc_set0_larb", "venc_sel", 0),
++	GATE_VENC(CLK_VENC_SET1_VENC, "venc_set1_venc", "venc_sel", 4),
++	GATE_VENC(CLK_VENC_SET2_JPGENC, "venc_set2_jpgenc", "venc_sel", 8),
++	GATE_VENC(CLK_VENC_SET5_GALS, "venc_set5_gals", "venc_sel", 28),
 +};
 +
-+static const struct mtk_gate msdc_top_clks[] = {
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_AES_0P, "msdc_top_aes_0p", "aes_msdcfde_sel", 0),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_SRC_0P, "msdc_top_src_0p", "infra_msdc0_src", 1),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_SRC_1P, "msdc_top_src_1p", "infra_msdc1_src", 2),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_SRC_2P, "msdc_top_src_2p", "infra_msdc2_src", 3),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_P_MSDC0, "msdc_top_p_msdc0", "axi_sel", 4),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_P_MSDC1, "msdc_top_p_msdc1", "axi_sel", 5),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_P_MSDC2, "msdc_top_p_msdc2", "axi_sel", 6),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_P_CFG, "msdc_top_p_cfg", "axi_sel", 7),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_AXI, "msdc_top_axi", "axi_sel", 8),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_H_MST_0P, "msdc_top_h_mst_0p", "infra_msdc0", 9),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_H_MST_1P, "msdc_top_h_mst_1p", "infra_msdc1", 10),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_H_MST_2P, "msdc_top_h_mst_2p", "infra_msdc2", 11),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_MEM_OFF_DLY_26M, "msdc_top_mem_off_dly_26m", "clk26m", 12),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_32K, "msdc_top_32k", "clk32k", 13),
-+	GATE_MSDC_TOP(CLK_MSDC_TOP_AHB2AXI_BRG_AXI, "msdc_top_ahb2axi_brg_axi", "axi_sel", 14),
++static const struct mtk_clk_desc venc_desc = {
++	.clks = venc_clks,
++	.num_clks = ARRAY_SIZE(venc_clks),
 +};
 +
-+static const struct mtk_clk_desc msdc_desc = {
-+	.clks = msdc_clks,
-+	.num_clks = ARRAY_SIZE(msdc_clks),
-+};
-+
-+static const struct mtk_clk_desc msdc_top_desc = {
-+	.clks = msdc_top_clks,
-+	.num_clks = ARRAY_SIZE(msdc_top_clks),
-+};
-+
-+static const struct of_device_id of_match_clk_mt8192_msdc[] = {
++static const struct of_device_id of_match_clk_mt8192_venc[] = {
 +	{
-+		.compatible = "mediatek,mt8192-msdc",
-+		.data = &msdc_desc,
-+	}, {
-+		.compatible = "mediatek,mt8192-msdc_top",
-+		.data = &msdc_top_desc,
++		.compatible = "mediatek,mt8192-vencsys",
++		.data = &venc_desc,
 +	}, {
 +		/* sentinel */
 +	}
 +};
 +
-+static struct platform_driver clk_mt8192_msdc_drv = {
++static struct platform_driver clk_mt8192_venc_drv = {
 +	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8192-msdc",
-+		.of_match_table = of_match_clk_mt8192_msdc,
++		.name = "clk-mt8192-venc",
++		.of_match_table = of_match_clk_mt8192_venc,
 +	},
 +};
 +
-+builtin_platform_driver(clk_mt8192_msdc_drv);
++builtin_platform_driver(clk_mt8192_venc_drv);
 -- 
 2.18.0
 
