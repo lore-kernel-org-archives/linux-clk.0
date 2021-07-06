@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F4C07E9C
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A228C11F67
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 12:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0C9461DA6
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296E461995
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 12:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237797AbhGFLhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jul 2021 07:37:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47556 "EHLO mail.kernel.org"
+        id S238237AbhGFMcF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jul 2021 08:32:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237497AbhGFLgL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:36:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 305C161DD2;
-        Tue,  6 Jul 2021 11:28:10 +0000 (UTC)
+        id S233767AbhGFLd1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:33:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DA09461D16;
+        Tue,  6 Jul 2021 11:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570890;
-        bh=VRiB4e/oV2wd/QVms/CEJTexIoeWeKX66K3/aNZKRQ8=;
+        s=k20201202; t=1625570570;
+        bh=y8iXxVXXd/AOH5XweXyaMmgPxDeTzTqTSdSk83oT19w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=adtABtafbgZEQVPRZLBNbg6K/Eve4fejj8kSrVPkOSk7l55kCxSA+vY4zSCvpLBPa
-         ODKUphKqZ9GIjAqZANxhlptN1ZVvm1vp93lGIB2n3qzBYFT2kKaro/2LOcA+weiI45
-         y0uneUcgfxbXvPUTZWRufUQw/dqa4TnXgTu54F66sa3BzeBUtzZNRwQFr4tmIePcIN
-         Fsrzh+mJfmeRGqVBxhn6dTJYpuT0Y4TT5KhGUIldN+l2UpqnX/1SfJyKJBwjEX0T2Q
-         +5avFq2mCE9JFCyg1fjmxppHn3wT30CxD5rqT5HcZT4/VwqmTWsRt8sd2tv9i3sn99
-         W66Ikji5qaYqQ==
+        b=NaayqTvJfKFVxd2+FmH9QUZZaMcfll/8GGx35TZtaUyQ3p45JbuaXEF08yKsKlG6f
+         TOOcVk+hUJt6CGdiS8Tv0Lkke80sq0yQM7HEjKNlqcORbb8dD6wIq5GqGdmbH42OQv
+         zmKMiTYr2EjZP5IY589/5GBgLSqaRk9cREOQTjP1QltU/OQViXm+VFaR719i8LLUSn
+         CpwHeVAgUoRppQf22XYVxDLY5h6uIELnpHSYCRDlizQ+kZJb+KnIJ3LavbzB7LQYGY
+         GHCoKPYauOZvpCpCa6J4aKnYgfSjVAps8d7nNvnHlid7bsS9K8i/azWf/pJLoGZFFn
+         Ljg8/J8yfcHZw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/45] clk: renesas: r8a77995: Add ZA2 clock
-Date:   Tue,  6 Jul 2021 07:27:20 -0400
-Message-Id: <20210706112749.2065541-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 036/137] clk: renesas: r8a77995: Add ZA2 clock
+Date:   Tue,  6 Jul 2021 07:20:22 -0400
+Message-Id: <20210706112203.2062605-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706112749.2065541-1-sashal@kernel.org>
-References: <20210706112749.2065541-1-sashal@kernel.org>
+In-Reply-To: <20210706112203.2062605-1-sashal@kernel.org>
+References: <20210706112203.2062605-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -70,11 +70,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 8434d5530fb1..4a3633ebcc6b 100644
+index 5b4691117b47..026e2612c33c 100644
 --- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
 +++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -73,6 +73,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
+@@ -75,6 +75,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
  
  	/* Core Clock Outputs */
 +	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,     2, 1),
