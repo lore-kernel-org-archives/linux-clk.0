@@ -5,45 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5C9C11F6E
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EC8C11F77
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5DE61D4B
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FF2061CF6
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234714AbhGFL2c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jul 2021 07:28:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35318 "EHLO mail.kernel.org"
+        id S237782AbhGFLhV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jul 2021 07:37:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233663AbhGFL0N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:26:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A9C3061396;
-        Tue,  6 Jul 2021 11:19:43 +0000 (UTC)
+        id S237336AbhGFLgF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:36:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C08061CBA;
+        Tue,  6 Jul 2021 11:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570384;
-        bh=NOfpLa5aBZ+YeJoN+sifc7XSiFFqJYiYutLvPXV94U8=;
+        s=k20201202; t=1625570821;
+        bh=P4f2miCRuly/3tykNstOWv5BDlkoAbto2iCjn6xPuzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cnVVXFz+VnIvPHOKg9sq1rnQuDn0Y+DYOdArtahEzjfceNqUbuKgUOWsJBwe6yaUs
-         L9Rns2miEZf5BhKDokO7UG+wVT0xxxHM0miErmWs7BdsY3xDLumW5t0oNQrAq1xbtA
-         2fgk9Lnhz1V0sAwUAAeGakloLNfU3dLRlTNO69Gtzoku17c0501SgyoQJ+pQHFpVjX
-         3cHKdhLGF+kwcddygYf5wUoklQQBtegkQsB8pUJVBN4BuCNC38rwzCOtPjWV21psdf
-         QL5U+yEuOHzEZm2o29dC2B7NB2lKFSUsTaQpeT8yhglZasX2sz6NGrTh6UPyq8H7bX
-         zy2+y47LKfNmQ==
+        b=be1i++fXZCO7B0C9jlmqahvMzRolTpkWN3HTUaGR3JvQYVBPOyYKe+vVYfWhoZLWm
+         8n7zgOWEvdCJvhBrGOBLAKB0NiErEfDcOAt4wStrMdzx1970TMgAF5FmHxEVXNCJ6n
+         Ir409qSEe0vQhkVzp/FfUJ9vCrEDD8mbbB31nLTe/Ss8rnmRrxE9kVS9xQxVRzL5yv
+         tcx0s0OpYdacvrO9ZhZ6EJmCSCs6XYEMfs/9jMmnUySSRIJkFAc5Q1s+uXZRPuptse
+         3/Meew/UsFl0Hu00HAKOeWpxUMuZODDc32KFczNHF4fY8Ej2inWpsWv5LLSmaJE9tf
+         nRlgyon6Sp/Uw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yang Yingliang <yangyingliang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 058/160] clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing()
-Date:   Tue,  6 Jul 2021 07:16:44 -0400
-Message-Id: <20210706111827.2060499-58-sashal@kernel.org>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 17/55] clk: renesas: r8a77995: Add ZA2 clock
+Date:   Tue,  6 Jul 2021 07:26:00 -0400
+Message-Id: <20210706112638.2065023-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706111827.2060499-1-sashal@kernel.org>
-References: <20210706111827.2060499-1-sashal@kernel.org>
+In-Reply-To: <20210706112638.2065023-1-sashal@kernel.org>
+References: <20210706112638.2065023-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -52,37 +51,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit f13570e7e830ca4fbf4869015af8492b8918445e ]
+[ Upstream commit 790c06cc5df263cdaff748670cc65958c81b0951 ]
 
-After calling clk_prepare_enable(), clk_disable_unprepare() needs
-be called when prepare_timing_change() failed.
+R-Car D3 ZA2 clock is from PLL0D3 or S0,
+and it can be controlled by ZA2CKCR.
+It is needed for R-Car Sound, but is not used so far.
+Using default settings is very enough at this point.
+This patch adds it by DEF_FIXED().
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/87pmxclrmy.wl-kuninori.morimoto.gx@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra124-emc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index bdf6f4a51617..74c1d894cca8 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -249,8 +249,10 @@ static int emc_set_timing(struct tegra_clk_emc *tegra,
- 	div = timing->parent_rate / (timing->rate / 2) - 2;
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index 9e16931e6f28..e0011db4f201 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -73,6 +73,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
  
- 	err = tegra->prepare_timing_change(emc, timing->rate);
--	if (err)
-+	if (err) {
-+		clk_disable_unprepare(timing->parent);
- 		return err;
-+	}
- 
- 	spin_lock_irqsave(tegra->lock, flags);
- 
+ 	/* Core Clock Outputs */
++	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,     2, 1),
+ 	DEF_FIXED("z2",        R8A77995_CLK_Z2,    CLK_PLL0D3,     1, 1),
+ 	DEF_FIXED("ztr",       R8A77995_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A77995_CLK_ZT,    CLK_PLL1,       4, 1),
 -- 
 2.30.2
 
