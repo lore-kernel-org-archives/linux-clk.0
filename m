@@ -2,158 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BC9C07E9C
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 06:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C54C07E96
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 07:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D80561991
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 06:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675CC61983
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jul 2021 07:24:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbhGFGYr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jul 2021 02:24:47 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:41705 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230490AbhGFGYD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jul 2021 02:24:03 -0400
-X-UUID: 02874489df5e40ac97263657c24eaf20-20210706
-X-UUID: 02874489df5e40ac97263657c24eaf20-20210706
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 998959620; Tue, 06 Jul 2021 14:21:22 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 6 Jul 2021 14:21:20 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 6 Jul 2021 14:21:20 +0800
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v13 21/21] clk: mediatek: Add MT8192 vencsys clock support
-Date:   Tue, 6 Jul 2021 14:19:20 +0800
-Message-ID: <20210706061920.16013-22-chun-jie.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20210706061920.16013-1-chun-jie.chen@mediatek.com>
-References: <20210706061920.16013-1-chun-jie.chen@mediatek.com>
+        id S230218AbhGFH06 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jul 2021 03:26:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230164AbhGFH06 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jul 2021 03:26:58 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 846C1C061574
+        for <linux-clk@vger.kernel.org>; Tue,  6 Jul 2021 00:24:20 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id k140so4266776vkk.6
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jul 2021 00:24:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BXh3LzMCPP9L3ynAA0aGj0fxSvyTuYRtJFcDwUyQ7PM=;
+        b=ZIphNHFNEE+seeFzTENuNO09jbaTUpM+qAatBWg9z0OBgpHgSDgYdxW/N8q56+yYjC
+         uFfkpNkI5HG0/PJylwJ99SjyHOUMS7/0SNzBdfl+5gxYPRY5LZu9wDrC/DrNrxI8oHYk
+         h9YxZ4nWUZcRKcPPdkO+43Z3EaDuswEjNlmgrDAZp2h6jPXSVfLLsnQxmaGSN5BxM8dS
+         9dPZPCGZ4SHklmfPXQRNDi2qGu5GVV+icfOyhgKcIk3E/5LFYYekvWLRh/ylqotC+lSw
+         m/oiXlzuHBBJIokhaULIVJnKw64+77TX5fY18Gx014ybnp4b/q7iwFHjLN7we8/jn6ER
+         /t2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BXh3LzMCPP9L3ynAA0aGj0fxSvyTuYRtJFcDwUyQ7PM=;
+        b=sPB4lo9MQ6BSw9rBEWoUfmP9tAd8URRTwR/Go1ESzmn1cMdfNMTOS5YcuYxhRo/kJq
+         DQTV1fLGFVAQk/m91NO0PUdzNeXnLUO2B1QMfKDrJcseLrVrURwPzaLVUD70hOMUDZSJ
+         uhhKxCSGKsV3Tf8PGRtVfqlCxSQxGaDUMncu1H3N582vpdJ7LaI4X9FSWmYkmsgIgv8w
+         j0lns441QzIF+q9b8Qu2M+7IMpGrDKB/W5GqXERszdp+xXxmmxWBn9NdxNayQUBjIu0H
+         DU/fL/GYm81chaPa8ChJFFF2uZjyrOCuJvINYBujNxv5V16kl2ZScCD80V1ZjRg03ko4
+         P7Dg==
+X-Gm-Message-State: AOAM530guF/83RMy+JARboYtl4ifPSVImLheWdGWG1H2A9+GN73OLt+P
+        6F1QSoSQLqCe3YHPD91c0SadD0h2yjM+2MwyE05v7Q==
+X-Google-Smtp-Source: ABdhPJyZeMUXryowDLyT5UVj1MHKnIf7P7os2mdRoNlHRDoSTvU/zN5waPK5F8cB2dqXSY/D/fBD96r1SW3yJTF2u+U=
+X-Received: by 2002:a05:6122:588:: with SMTP id i8mr1747116vko.6.1625556259411;
+ Tue, 06 Jul 2021 00:24:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
+ <20210630133149.3204290-2-dmitry.baryshkov@linaro.org> <CAPDyKFpXD3rCmp53LFFYky_xQv9ucofvTezG5qWyDZt427chNQ@mail.gmail.com>
+ <CAA8EJpob=TpXiJozac-5sKJzE71ddWRFDj7D2-F=W=a2mgKvxA@mail.gmail.com>
+ <CAPDyKFq-vwMchLFb3JvK7B9ZQ9=z-TXzGHUij6CocTR+VmAOqQ@mail.gmail.com> <YN4W7vd3Yep+DX3N@yoga>
+In-Reply-To: <YN4W7vd3Yep+DX3N@yoga>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 6 Jul 2021 09:23:42 +0200
+Message-ID: <CAPDyKFrPyu6dT_+G3-ivPTLGS0G1kd9Tph_Pi2VP7ycEn3R5AQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx
+ power domain
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8192 vencsys clock provider
+On Thu, 1 Jul 2021 at 21:26, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 01 Jul 11:58 CDT 2021, Ulf Hansson wrote:
+>
+> > On Thu, 1 Jul 2021 at 18:39, Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > On Thu, 1 Jul 2021 at 19:17, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > >
+> > > > On Wed, 30 Jun 2021 at 15:31, Dmitry Baryshkov
+> > > > <dmitry.baryshkov@linaro.org> wrote:
+> > > > >
+> > > > > On sm8250 dispcc requires MMCX power domain to be powered up before
+> > > > > clock controller's registers become available. For now sm8250 was using
+> > > > > external regulator driven by the power domain to describe this
+> > > > > relationship. Switch into specifying power-domain and required opp-state
+> > > > > directly.
+> > > > >
+> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > ---
+> > > > >  .../bindings/clock/qcom,dispcc-sm8x50.yaml    | 19 +++++++++++++++++++
+> > > > >  1 file changed, 19 insertions(+)
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > > > > index 0cdf53f41f84..48d86fb34fa7 100644
+> > > > > --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+> > > > > @@ -55,6 +55,16 @@ properties:
+> > > > >    reg:
+> > > > >      maxItems: 1
+> > > > >
+> > > > > +  power-domains:
+> > > > > +    description:
+> > > > > +      A phandle and PM domain specifier for the MMCX power domain.
+> > > > > +    maxItems: 1
+> > > > > +
+> > > >
+> > > > Should you perhaps state that this is a parent domain? Or it isn't?
+> > > >
+> > > > Related to this and because this is a power domain provider, you
+> > > > should probably reference the common power-domain bindings somewhere
+> > > > here. Along the lines of this:
+> > > >
+> > > > - $ref: power-domain.yaml#
+> > > >
+> > > > As an example, you could have a look at
+> > > > Documentation/devicetree/bindings/power/pd-samsung.yaml.
+> > >
+> > > I'll take a look.
+> > >
+> > > >
+> > > > > +  required-opps:
+> > > > > +    description:
+> > > > > +      Performance state to use for MMCX to enable register access.
+> > > > > +    maxItems: 1
+> > > >
+> > > > According to the previous discussions, I was under the assumption that
+> > > > this property belongs to a consumer node rather than in the provider
+> > > > node, no?
+> > >
+> > > It is both a consumer and a provider. It consumes SM8250_MMCX from
+> > > rpmhpd and provides MMSC_GDSC.
+> >
+> > That sounds a bit weird to me.
+> >
+>
+> dispcc is a hardware block powered by MMCX, so it is a consumer of it
+> and needs to control MMCX.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
----
- drivers/clk/mediatek/Kconfig           |  6 +++
- drivers/clk/mediatek/Makefile          |  1 +
- drivers/clk/mediatek/clk-mt8192-venc.c | 53 ++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8192-venc.c
+Right, that sounds reasonable.
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 31779f2c5c83..576babd86f98 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -574,6 +574,12 @@ config COMMON_CLK_MT8192_VDECSYS
- 	help
- 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
- 
-+config COMMON_CLK_MT8192_VENCSYS
-+	bool "Clock driver for MediaTek MT8192 vencsys"
-+	depends on COMMON_CLK_MT8192
-+	help
-+	  This driver supports MediaTek MT8192 vencsys clocks.
-+
- config COMMON_CLK_MT8516
- 	bool "Clock driver for MediaTek MT8516"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 887dd6bcf7f2..15bc045f0b71 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -79,5 +79,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_MMSYS) += clk-mt8192-mm.o
- obj-$(CONFIG_COMMON_CLK_MT8192_MSDC) += clk-mt8192-msdc.o
- obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
- obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
-+obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
- obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
- obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8192-venc.c b/drivers/clk/mediatek/clk-mt8192-venc.c
-new file mode 100644
-index 000000000000..c0d867bff09e
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8192-venc.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright (c) 2021 MediaTek Inc.
-+// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt8192-clk.h>
-+
-+static const struct mtk_gate_regs venc_cg_regs = {
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x8,
-+	.sta_ofs = 0x0,
-+};
-+
-+#define GATE_VENC(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &venc_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
-+
-+static const struct mtk_gate venc_clks[] = {
-+	GATE_VENC(CLK_VENC_SET0_LARB, "venc_set0_larb", "venc_sel", 0),
-+	GATE_VENC(CLK_VENC_SET1_VENC, "venc_set1_venc", "venc_sel", 4),
-+	GATE_VENC(CLK_VENC_SET2_JPGENC, "venc_set2_jpgenc", "venc_sel", 8),
-+	GATE_VENC(CLK_VENC_SET5_GALS, "venc_set5_gals", "venc_sel", 28),
-+};
-+
-+static const struct mtk_clk_desc venc_desc = {
-+	.clks = venc_clks,
-+	.num_clks = ARRAY_SIZE(venc_clks),
-+};
-+
-+static const struct of_device_id of_match_clk_mt8192_venc[] = {
-+	{
-+		.compatible = "mediatek,mt8192-vencsys",
-+		.data = &venc_desc,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver clk_mt8192_venc_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.driver = {
-+		.name = "clk-mt8192-venc",
-+		.of_match_table = of_match_clk_mt8192_venc,
-+	},
-+};
-+
-+builtin_platform_driver(clk_mt8192_venc_drv);
--- 
-2.18.0
+>
+> > In my view and per the common power domain bindings (as pointed to
+> > above): If a power domain provider is a consumer of another power
+> > domain, that per definition means that there is a parent domain
+> > specified.
+> >
+>
+> And in addition to needing MMCX to access the dispcc, the exposed
+> power-domain "MDSS_GDSC" is powered by the same MMCX and as such
+> MDSS_GDSC should be a subdomain of MMCX.
 
+What do you mean by "exposed"? It sounds like you are saying that
+"MDSS_GDSC" is an artificial power domain, no?
+
+If that's the case, more exactly, why is it like this?
+
+My apologies if I bother you with details, but as a maintainer of
+genpd, it is very useful to me to have the complete picture.
+
+>
+>
+> But what I was trying to say yesterday is that the power-domain property
+> should be sufficient and that we shouldn't need to drive MMCX to a
+> particular performance_state in order to access the registers.
+>
+> Then as clients make votes on clock rates that requires higher
+> performance_state, they would describe this in their opp-tables etc.
+>
+>
+> But without any performance_state requests, pd->corner will in
+> rpmhpd_power_on() be 0 and as such powering on the power-domain won't
+> actually do anything. Similarly dev_pm_genpd_set_performance_state(dev,
+> 0) on an active power-domain from rpmhpd will turn it off.
+
+Yes, I noticed the patches you posted. Thanks for helping out here!
+
+>
+>
+> So the reason why Dmitry is adding the required-opps to the binding is
+> to get rpmhpd to actually tell the hardware to turn on the power domain.
+> And I don't think this is in accordance with the framework's
+> expectations.
+
+I agree!
+
+>
+> Regards,
+> Bjorn
+
+Kind regards
+Uffe
