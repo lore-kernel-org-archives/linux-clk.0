@@ -7,105 +7,142 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E07C07E96
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 03:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24A3C07E95
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 04:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEAF161CB9
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 03:17:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA11361C71
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 04:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbhGGDTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jul 2021 23:19:50 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:37319 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230250AbhGGDTm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jul 2021 23:19:42 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id D9455580452;
-        Tue,  6 Jul 2021 23:17:02 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 06 Jul 2021 23:17:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=juuqFtaoRobQQ
-        sYNJO/H9QK58gSnRD3PdI9BHJOIPdI=; b=UnNTlUns4nF4Sm60H29+2nOnMa8aB
-        ujFlja4gyim5mdIgthZtrVM82T/Au2CQGWApBlNEJVxeJ6fOzwXnN/6j6vbpmlF0
-        ZjrGCn9+gF7Jq6NdIDxwb+nvOdd40FVi7m30DcsX30oFeSxz45iBSVR6n8HRFU5b
-        1xGL7oCXmc9eZDFRRStJ4Jlu1yTeVt7mnUFHuW4RibHH6iMX4QYR3emKcor1szaV
-        UJjNvHdxsQqV3C2I6CC+wFS0ABxabPUDm20q3N8mXFbmT1bZrSP4YVQ55Gjm0dH2
-        Y9w79boLX2LGoOzN2RejXiHE9IpkNqdH7O27iG++RbYoMNTXK7AVDj5pQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=juuqFtaoRobQQsYNJO/H9QK58gSnRD3PdI9BHJOIPdI=; b=V38zsJJk
-        r17GENdNywIXRqq2tpIgAqydXMi3A1dalLoYL+q3/D9XTiGF7phRMZu3nPK4O9Bm
-        dADjTgDFvjFXTPO2LfJ/qWCdmwq5FQNFFqny1zGc3Sz1YzrgFLMiQ/9TLKKqfxIW
-        NPQeufoGPgpZOEoNhhAQx0pDENrFiiLu3OhUWSqvUeyFNR+y4n3mM9imQBKzvcCs
-        caUHsm3InkJ50si+LjQh5BONpwJEBCHRj8xBGhXHdKyNeHnEg5E9RBaGKM58AWnN
-        /795qgBpvWvUNrvvuQR5gxJOYrk20CYIV569hxInMYqUksaL6FUOPJGptoClTSi+
-        dQGXyOQeGHnlQw==
-X-ME-Sender: <xms:rhzlYKP4kZqMi1sJLhFXdbLCnlsiqjR_6ZVWtXEljDOV-3o4Rvfi0A>
-    <xme:rhzlYI9rw83llC2Aft_wTEPlzFJ-P7ahORIqn8JZVwF1j0Y1OpmuA8Eanzdij0YKH
-    QnA9nOuKeNBNiNvObw>
-X-ME-Received: <xmr:rhzlYBSeC1D_MwovPp0paPrzJZYBxs1x_t8ho0b54tVD1Vt6uABeHkLYFSWBIvOGyc9ZnRPmi6s8BiuxSA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrtddugdeghecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghes
-    fhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeeihffgteelkeelffduke
-    dtheevudejvdegkeekjeefhffhhfetudetgfdtffeunecuvehluhhsthgvrhfuihiivgep
-    tdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgoh
-    grthdrtghomh
-X-ME-Proxy: <xmx:rhzlYKuyS9yzXybC25Igtk2NRv6mq3ybw5gXSjsY98ye9rrKshsO7g>
-    <xmx:rhzlYCd5qArvZXvXDWQK64Csb3kIowmGzoY9sGGM9FZG8Ke0Bp9Ueg>
-    <xmx:rhzlYO07b-mMZBqWpaVUQufe0W_jAoO0eean7kCdMXQeP083eNB40Q>
-    <xmx:rhzlYDWjyxu7iGsnrcLm2X2vvnZG61DrFKFOQQMlGFACDPEcIEM4jQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 6 Jul 2021 23:16:57 -0400 (EDT)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
-        vkoul@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v2 9/9] MIPS: Make a alias for pistachio_defconfig
-Date:   Wed,  7 Jul 2021 11:15:52 +0800
-Message-Id: <20210707031552.20166-10-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210707031552.20166-1-jiaxun.yang@flygoat.com>
-References: <20210707031552.20166-1-jiaxun.yang@flygoat.com>
+        id S230038AbhGGEnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jul 2021 00:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229883AbhGGEnD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jul 2021 00:43:03 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67123C061574
+        for <linux-clk@vger.kernel.org>; Tue,  6 Jul 2021 21:40:23 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 59-20020a9d0ac10000b0290462f0ab0800so1030357otq.11
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jul 2021 21:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C5H4e4u0XsnmjBPbEPHm1B40OwiQKYlLnQ9+wCD+65I=;
+        b=wIEjLTUOfdCzQXZEwRXFkoa1kydtdqNNIQsXs1VYWvqdTaTP0o3VZmN65zVAM8UsgH
+         Cz5N0ibLBP8mkNthNXy9vOCeiArIiMQuyn2IikuvqxSDByks550lO0Nx4/wnI9cAlLOZ
+         I6euGtircGIDI+R+SI2l5nQKXRbE8093YZZFNawxhWiq1A85zpeDsu/NVdrGUHwUjsUC
+         vS5UelTJTxvO/N3KKaW9kP7YJcXnWtu3afbiX1aC8vaMlxjJHdSqZ6F3XEaetXbX06dE
+         qLLurS+daipcSeNQ0CVmmx4xmiaU3RfG4OivAll4qgGsOzXViMiXkvCD5ZJotYRNvIjD
+         mXqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C5H4e4u0XsnmjBPbEPHm1B40OwiQKYlLnQ9+wCD+65I=;
+        b=nU6gW05j+QgrG4tRE/3NbO3l9MmegXXVCDjG0IrLXpAZBHAXN44EGrSwDjYhrbaYtv
+         84ByNaEklfFVaHjBtuYm0jrtep5YRhA8uI9fjvc235gC3aOKXhE5i+pBD5lQt19e0SYY
+         fVyAgVKOG9qizk2aEwWCZOklDAxuV0DZCPmeHoY1N1AtP+KCG4/ELyqt8ZCxu4Vo7uD1
+         TPwQiDp3LaegNq2HmaRMTtrFQ38t0K0VJY2EYoqMSpbHdqei7L7xaCO1YUG6U912MbLD
+         9r3GsQoR08EEXXzZtC5BEgXAzOcWDUVPozZTewYopYL4eqLicw2r0SUBp1EHx/A7v4xg
+         QhPw==
+X-Gm-Message-State: AOAM5325JhQg5+Yd3Ghm8hgO26qJ9YNtNCynhmo/SkCwaQLmqaI631Rs
+        qYpsq5tjOMvvVeyDY+ALLARNOQ==
+X-Google-Smtp-Source: ABdhPJwx1dbI/LyZnXSbUHZWIvb7/jTFRODDFHRsfOLnK2J5LuVmqLE8neL+BWlSo55aYkhzvqBA9w==
+X-Received: by 2002:a05:6830:1584:: with SMTP id i4mr3653881otr.353.1625632822719;
+        Tue, 06 Jul 2021 21:40:22 -0700 (PDT)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id k13sm3706405otl.50.2021.07.06.21.40.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jul 2021 21:40:22 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Mike Tipton <mdtipton@codeaurora.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [RFC] clk: Allow forcing an unused clock to be disabled
+Date:   Tue,  6 Jul 2021 21:38:59 -0700
+Message-Id: <20210707043859.195870-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For those who miss the old defconfig, make a alias to generic
-kernel.
+The process of disabling unused clocks will skip clocks that are not
+enabled by Linux, but doesn't implement the is_enabled() callback to
+read back the hardware state. In the case that it's determined that the
+parent clock is enabled this might be turned off, causing the skipped
+clock to lock up.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
-v2: Fix typo 'xilfpga
----
- arch/mips/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+One such case is the RCG "mdp_clk_src" in the Qualcomm SDM845, which at
+boot is parented by "disp_cc_pll0", which during clk_disable_unused() is
+left untouched, while the parent is disabled.
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index 258234c35a09..c299c6ae91af 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -563,6 +563,9 @@ sead3micro_defconfig-y		:= micro32r2el_defconfig BOARDS=sead-3
- legacy_defconfigs		+= xilfpga_defconfig
- xilfpga_defconfig-y		:= 32r2el_defconfig BOARDS=xilfpga
+Later the typical next operation for "mdp_clk_src" is an
+assigned-clock-rates will cause the next enable attempt to reparent the
+RCG. But the RCG needs both the old and new parent to be ticking to
+perform this switch and will therefor not complete.
+
+Introduce a new flag for clock drivers to mark that clocks that should
+be assumed to be enabled even when is_enabled isn't implemented and mark
+the "mdp_clk_src" clock for SDM845 as such.
+This allows the driver to transition the RCG from the PLL to a clock
+source that is known to be enabled when the future reparenting operation
+is undertaken.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+Naturally this patch should be split in a core and driver part, but for the
+sake of the RFC I made both changes in the same patch.
+
+ drivers/clk/clk.c                | 2 +-
+ drivers/clk/qcom/dispcc-sdm845.c | 1 +
+ include/linux/clk-provider.h     | 2 ++
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65508eb89ec9..9e4789d106f3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1265,7 +1265,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ 	 * sequence.  call .disable_unused if available, otherwise fall
+ 	 * back to .disable
+ 	 */
+-	if (clk_core_is_enabled(core)) {
++	if (clk_core_is_enabled(core) || core->flags & CLK_ASSUME_ENABLED_BOOT) {
+ 		trace_clk_disable(core);
+ 		if (core->ops->disable_unused)
+ 			core->ops->disable_unused(core->hw);
+diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+index 735adfefc379..046f7e656f7c 100644
+--- a/drivers/clk/qcom/dispcc-sdm845.c
++++ b/drivers/clk/qcom/dispcc-sdm845.c
+@@ -267,6 +267,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+ 		.parent_data = disp_cc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+ 		.ops = &clk_rcg2_shared_ops,
++		.flags = CLK_ASSUME_ENABLED_BOOT,
+ 	},
+ };
  
-+legacy_defconfigs		+= pistachio_defconfig
-+pistachio_defconfig-y		:= 32r2el_defconfig BOARDS=marduk
-+
- .PHONY: $(legacy_defconfigs)
- $(legacy_defconfigs):
- 	$(Q)$(MAKE) -f $(srctree)/Makefile $($@-y)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 162a2e5546a3..d00ca925842c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -32,6 +32,8 @@
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
+ /* duty cycle call may be forwarded to the parent clock */
+ #define CLK_DUTY_CYCLE_PARENT	BIT(13)
++/* assume clock is enabled if found unused in late init */
++#define CLK_ASSUME_ENABLED_BOOT	BIT(14)
+ 
+ struct clk;
+ struct clk_hw;
 -- 
-2.32.0
+2.29.2
 
