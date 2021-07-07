@@ -2,233 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E737C07E95
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 05:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB65C07E9C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 09:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11DC9619C5
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 05:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B0F61CB9
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 09:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbhGGFGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jul 2021 01:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230108AbhGGFGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jul 2021 01:06:47 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E7EC061574
-        for <linux-clk@vger.kernel.org>; Tue,  6 Jul 2021 22:04:02 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id 65so47449oie.11
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jul 2021 22:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZwJ6LzMYt92aA7ipQ1QaHUSOYNKd4HK3usxDJ6K7NKM=;
-        b=PGN9NdUnXnCAdb8kuPDg2/8BBx3g2U09UWEkOuU3CoaeWRP2zV9wavZF+QlJHnjCWK
-         7HLqF4HNg71I5OGbiu9dLgiu0i8/zjXgOATD3gf8YD8G1vSsat8s7UKoIEq9A1fOAO54
-         Sm9M8PbYlkiVOXEC1yQCaW1UpO7ZSUpZ7KDt55DFT03M5jLcvy5pYR4bfU3pMhIb0w/W
-         oMTlA97aDAUjTs93SdusWlCB6Uu16surdUd/MIut0z56PbmGlAcy6d8yJYMEDMfpbdp0
-         OLv6VJt/T1SyHT9HgxNmgjuSE9LolYJDGSyq3QylDdCsqSEbvRPpWRjGfsRF2+PhKjSY
-         cM+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZwJ6LzMYt92aA7ipQ1QaHUSOYNKd4HK3usxDJ6K7NKM=;
-        b=jiqvstto0FbpxKWTSAThXbKTTFrRTS3yprUHt3el9syo2fw3liYimvH92moSB1RgS8
-         +AOccmDZyujERKJONYq3cR6fn9ngVPpnKkS0xbMCLf8gzWdg8i+dw3aoYpoUwGHIkzk2
-         XUWz/QpJZGuLtzHwTs4wX7nBROVkXVT6G8bRQYUpiTORtImR1E5ehmxrzqB3XlKRjIaS
-         eGBMPSuQ/Ckn+KYZs3ZD2noBKVgdWzCNreGa0KW6O8NfV3ZUSUhZtVIWDoCnseVz526d
-         5Zre45dPmJDc0qfrf4kehdgpfAJHwt6vd0/P//qmf510azhVK3lGAzi8zlGB0Oy4VIBj
-         T14A==
-X-Gm-Message-State: AOAM530FcdckitWxR+a4ow+uh8s4s5XHgb8omNF/mg1xVo2fBjr+FxAD
-        h0h2nUZbJVRdeDHEUajC671Vvw==
-X-Google-Smtp-Source: ABdhPJyX3o3IfKJMEmv3UDHct1fG27sWu3pT+IFd99WMQOQwlG2vBE3hZFGg3IT7WSO/FOJ7DDmq7w==
-X-Received: by 2002:aca:4b43:: with SMTP id y64mr2905391oia.176.1625634241482;
-        Tue, 06 Jul 2021 22:04:01 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r186sm3899058oia.6.2021.07.06.22.03.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 22:04:00 -0700 (PDT)
-Date:   Wed, 7 Jul 2021 00:03:58 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx
- power domain
-Message-ID: <YOU1vv4zSWfe0P7Y@yoga>
-References: <20210630133149.3204290-1-dmitry.baryshkov@linaro.org>
- <20210630133149.3204290-2-dmitry.baryshkov@linaro.org>
- <CAPDyKFpXD3rCmp53LFFYky_xQv9ucofvTezG5qWyDZt427chNQ@mail.gmail.com>
- <CAA8EJpob=TpXiJozac-5sKJzE71ddWRFDj7D2-F=W=a2mgKvxA@mail.gmail.com>
- <CAPDyKFq-vwMchLFb3JvK7B9ZQ9=z-TXzGHUij6CocTR+VmAOqQ@mail.gmail.com>
- <YN4W7vd3Yep+DX3N@yoga>
- <CAPDyKFrPyu6dT_+G3-ivPTLGS0G1kd9Tph_Pi2VP7ycEn3R5AQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrPyu6dT_+G3-ivPTLGS0G1kd9Tph_Pi2VP7ycEn3R5AQ@mail.gmail.com>
+        id S231221AbhGGJDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jul 2021 05:03:23 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:44696 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231163AbhGGJDW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jul 2021 05:03:22 -0400
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 81696CF108;
+        Wed,  7 Jul 2021 17:00:38 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P12363T139710634645248S1625648429145477_;
+        Wed, 07 Jul 2021 17:00:36 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <424240f1a1861d822a67a8b0f4269bef>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: linux-spi@vger.kernel.org
+X-RCPT-COUNT: 20
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Jon Lin <jon.lin@rock-chips.com>
+To:     linux-spi@vger.kernel.org
+Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Subject: [PATCH v11 03/10] arm64: dts: rockchip: Add SFC to PX30
+Date:   Wed,  7 Jul 2021 17:00:20 +0800
+Message-Id: <20210707090027.32608-4-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210707090027.32608-1-jon.lin@rock-chips.com>
+References: <20210707090027.32608-1-jon.lin@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 06 Jul 02:23 CDT 2021, Ulf Hansson wrote:
+From: Chris Morgan <macromorgan@hotmail.com>
 
-> On Thu, 1 Jul 2021 at 21:26, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> >
-> > On Thu 01 Jul 11:58 CDT 2021, Ulf Hansson wrote:
-> >
-> > > On Thu, 1 Jul 2021 at 18:39, Dmitry Baryshkov
-> > > <dmitry.baryshkov@linaro.org> wrote:
-> > > >
-> > > > On Thu, 1 Jul 2021 at 19:17, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > >
-> > > > > On Wed, 30 Jun 2021 at 15:31, Dmitry Baryshkov
-> > > > > <dmitry.baryshkov@linaro.org> wrote:
-> > > > > >
-> > > > > > On sm8250 dispcc requires MMCX power domain to be powered up before
-> > > > > > clock controller's registers become available. For now sm8250 was using
-> > > > > > external regulator driven by the power domain to describe this
-> > > > > > relationship. Switch into specifying power-domain and required opp-state
-> > > > > > directly.
-> > > > > >
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > ---
-> > > > > >  .../bindings/clock/qcom,dispcc-sm8x50.yaml    | 19 +++++++++++++++++++
-> > > > > >  1 file changed, 19 insertions(+)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > > > > index 0cdf53f41f84..48d86fb34fa7 100644
-> > > > > > --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> > > > > > @@ -55,6 +55,16 @@ properties:
-> > > > > >    reg:
-> > > > > >      maxItems: 1
-> > > > > >
-> > > > > > +  power-domains:
-> > > > > > +    description:
-> > > > > > +      A phandle and PM domain specifier for the MMCX power domain.
-> > > > > > +    maxItems: 1
-> > > > > > +
-> > > > >
-> > > > > Should you perhaps state that this is a parent domain? Or it isn't?
-> > > > >
-> > > > > Related to this and because this is a power domain provider, you
-> > > > > should probably reference the common power-domain bindings somewhere
-> > > > > here. Along the lines of this:
-> > > > >
-> > > > > - $ref: power-domain.yaml#
-> > > > >
-> > > > > As an example, you could have a look at
-> > > > > Documentation/devicetree/bindings/power/pd-samsung.yaml.
-> > > >
-> > > > I'll take a look.
-> > > >
-> > > > >
-> > > > > > +  required-opps:
-> > > > > > +    description:
-> > > > > > +      Performance state to use for MMCX to enable register access.
-> > > > > > +    maxItems: 1
-> > > > >
-> > > > > According to the previous discussions, I was under the assumption that
-> > > > > this property belongs to a consumer node rather than in the provider
-> > > > > node, no?
-> > > >
-> > > > It is both a consumer and a provider. It consumes SM8250_MMCX from
-> > > > rpmhpd and provides MMSC_GDSC.
-> > >
-> > > That sounds a bit weird to me.
-> > >
-> >
-> > dispcc is a hardware block powered by MMCX, so it is a consumer of it
-> > and needs to control MMCX.
-> 
-> Right, that sounds reasonable.
-> 
-> >
-> > > In my view and per the common power domain bindings (as pointed to
-> > > above): If a power domain provider is a consumer of another power
-> > > domain, that per definition means that there is a parent domain
-> > > specified.
-> > >
-> >
-> > And in addition to needing MMCX to access the dispcc, the exposed
-> > power-domain "MDSS_GDSC" is powered by the same MMCX and as such
-> > MDSS_GDSC should be a subdomain of MMCX.
-> 
-> What do you mean by "exposed"? It sounds like you are saying that
-> "MDSS_GDSC" is an artificial power domain, no?
-> 
-> If that's the case, more exactly, why is it like this?
-> 
-> My apologies if I bother you with details, but as a maintainer of
-> genpd, it is very useful to me to have the complete picture.
-> 
+Add a devicetree entry for the Rockchip SFC for the PX30 SOC.
 
-The display hardware blocks are powered by the MDSS_GDSC power-domain,
-which is a subdomain to the MMCX power domain.
+Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+---
 
-MDSS_GDSC is controlled by registers in the display clock controller
-block, which is also powered by the MMCX power domain.
+Changes in v11: None
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+Changes in v1: None
 
-Lastly the MMCX power domain is controlled through the RPMh, using the
-rpmhpd driver.
+ arch/arm64/boot/dts/rockchip/px30.dtsi | 38 ++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index 09baa8a167ce..d854f2577067 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -966,6 +966,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	sfc: spi@ff3a0000 {
++		compatible = "rockchip,sfc";
++		reg = <0x0 0xff3a0000 0x0 0x4000>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
++		clock-names = "clk_sfc", "hclk_sfc";
++		pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus4>;
++		pinctrl-names = "default";
++		power-domains = <&power PX30_PD_MMC_NAND>;
++		status = "disabled";
++	};
++
+ 	nfc: nand-controller@ff3b0000 {
+ 		compatible = "rockchip,px30-nfc";
+ 		reg = <0x0 0xff3b0000 0x0 0x4000>;
+@@ -1967,6 +1979,32 @@
+ 			};
+ 		};
+ 
++		sfc {
++			sfc_bus4: sfc-bus4 {
++				rockchip,pins =
++					<1 RK_PA0 3 &pcfg_pull_none>,
++					<1 RK_PA1 3 &pcfg_pull_none>,
++					<1 RK_PA2 3 &pcfg_pull_none>,
++					<1 RK_PA3 3 &pcfg_pull_none>;
++			};
++
++			sfc_bus2: sfc-bus2 {
++				rockchip,pins =
++					<1 RK_PA0 3 &pcfg_pull_none>,
++					<1 RK_PA1 3 &pcfg_pull_none>;
++			};
++
++			sfc_cs0: sfc-cs0 {
++				rockchip,pins =
++					<1 RK_PA4 3 &pcfg_pull_none>;
++			};
++
++			sfc_clk: sfc-clk {
++				rockchip,pins =
++					<1 RK_PB1 3 &pcfg_pull_none>;
++			};
++		};
++
+ 		lcdc {
+ 			lcdc_rgb_dclk_pin: lcdc-rgb-dclk-pin {
+ 				rockchip,pins =
+-- 
+2.17.1
 
 
 
-As such, specifying MMCX as the power-domain for the dispcc block and
-making the dispcc driver use that same power-domain as parent for the
-MDSS_GDSC seems to accurately depict these relationships.
-
-Regards,
-Bjorn
-
-> >
-> >
-> > But what I was trying to say yesterday is that the power-domain property
-> > should be sufficient and that we shouldn't need to drive MMCX to a
-> > particular performance_state in order to access the registers.
-> >
-> > Then as clients make votes on clock rates that requires higher
-> > performance_state, they would describe this in their opp-tables etc.
-> >
-> >
-> > But without any performance_state requests, pd->corner will in
-> > rpmhpd_power_on() be 0 and as such powering on the power-domain won't
-> > actually do anything. Similarly dev_pm_genpd_set_performance_state(dev,
-> > 0) on an active power-domain from rpmhpd will turn it off.
-> 
-> Yes, I noticed the patches you posted. Thanks for helping out here!
-> 
-> >
-> >
-> > So the reason why Dmitry is adding the required-opps to the binding is
-> > to get rpmhpd to actually tell the hardware to turn on the power domain.
-> > And I don't think this is in accordance with the framework's
-> > expectations.
-> 
-> I agree!
-> 
-> >
-> > Regards,
-> > Bjorn
-> 
-> Kind regards
-> Uffe
