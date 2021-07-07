@@ -2,98 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF29C11F66
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 13:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC2BC07E9C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60EEA61A2B
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 13:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C43D61CCA
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbhGGNQ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jul 2021 09:16:28 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:55515 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231594AbhGGNQ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jul 2021 09:16:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1625663625; x=1657199625;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OrFXiBwz/YRPNtkOvyK5iHEwXaa6NwWIdZB7F3lWqcQ=;
-  b=OHjO5XlWpxjjk8tsRFS9zsNBjZZF6BMBY9lvjk18wbPC1PNKMse0Id56
-   edFUTcSCUlmcNROPhBRH9rM1jedxorCl4/vDU7R6hVqb8LWEzzJWea6/u
-   UjZXXSPK2YmXwf4OMfldVbN7VWIFc5Uw806roz42SDjj2uQNczmOL7MGP
-   f2TNhLo0y9hE/jV6v4OZtZ2o20xUveoM3bXD/1HFd+up2LpH6OQyaYKSk
-   BhGStcbvsfxynvgn+fcS+lo/Dt3CUI9pcZ9kGI69+MSriPsclu7dGLbdt
-   Gbk4VBQ0WPCkpNfv5WGw2ATBgQ49dTk0wrn/EWn98GZxxMO8uwevXRtLZ
-   w==;
-IronPort-SDR: jqBTg+4MLviX3rE4Qw208TIsfSNlxzKBsFjphK8dHm5z25LFRCUCovZb66Afl7a7RzjbC42ZZv
- 72xPR1EOGpBS35A/Fz8/IZPhFo8YsQSneSd9HmamW0jQ4Cf2WAI2DYZ8sqQnFnNliIAvKFB9t+
- EJIYfBt+ZDLrM1jem1fEvPYjHFdRdlzHcRtmfMu2FohzwUTRMsVpB/V9BJgPhLFEoDG0LYGbAz
- h6SpJjVYDes+zffTsktbPA6YrWfrbqFBER+e399oIRdCgGVZJSV8Sq7t/h6n6vAaUBX9R3ts5E
- kKU=
-X-IronPort-AV: E=Sophos;i="5.83,331,1616482800"; 
-   d="scan'208";a="121241726"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Jul 2021 06:13:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 7 Jul 2021 06:13:44 -0700
-Received: from rob-ult-m19940.amer.actel.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Wed, 7 Jul 2021 06:13:41 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <claudiu.beznea@microchip.com>,
-        "Codrin Ciubotariu" <codrin.ciubotariu@microchip.com>
-Subject: [PATCH] clk: at91: clk-generated: Limit the requested rate to our range
-Date:   Wed, 7 Jul 2021 16:12:13 +0300
-Message-ID: <20210707131213.3283509-1-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.30.2
+        id S230089AbhGGRur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jul 2021 13:50:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229956AbhGGRur (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jul 2021 13:50:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 61B1561CC8;
+        Wed,  7 Jul 2021 17:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625680086;
+        bh=NwW9hPZbo6WiaVKQyVLBNly7QG86j34upQqrPkM7lOI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N2Sijyod0DuXB32lTjytbHlzdmAzBRYmg1GW74O/g7kSdvSttqoNLZtfsEi833iiy
+         V+6TOPW7dFk98dW8LTT5NYlGOVb0yhtM5K1A5huUc2OlYOCjC/tyHaz1fGpRTYoBjO
+         62GdMD1lXp0mWtj9E5El1UqQz4dgPe18kgD3QVZf/zVPc7pziiNlb7+vQpKNbfi4Ph
+         Le7PT52I+XonZ0/aNiYJFWO5iZygX/HFQYcLpNtaxgFKDyZtfAq289Gyq6Xpalr6Jz
+         ps0qJKYaCXB+RnQfQ8pzdjkO5ZFEnR580PRR0D5HUl8tUE9crnwLC1FO0RAT2VzRty
+         EEF/BNXp3O3PQ==
+Date:   Wed, 7 Jul 2021 18:47:35 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Lin <jon.lin@rock-chips.com>
+Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org, heiko@sntech.de,
+        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
+        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-mtd@lists.infradead.org, p.yadav@ti.com,
+        macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Subject: Re: [RFC PATCH v11 02/10] spi: rockchip-sfc: add rockchip serial
+ flash controller
+Message-ID: <20210707174735.GL4394@sirena.org.uk>
+References: <20210707090810.5717-1-jon.lin@rock-chips.com>
+ <20210707090810.5717-3-jon.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DheUW4aQn8WJk6WR"
+Content-Disposition: inline
+In-Reply-To: <20210707090810.5717-3-jon.lin@rock-chips.com>
+X-Cookie: I will never lie to you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On clk_generated_determine_rate(), the requested rate could be outside
-of clk's range. Limit the rate to the clock's range to not return an
-error.
 
-Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- drivers/clk/at91/clk-generated.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+--DheUW4aQn8WJk6WR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index b4fc8d71daf2..b656d25a9767 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -128,6 +128,12 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 	int i;
- 	u32 div;
- 
-+	/* do not look for a rate that is outside of our range */
-+	if (gck->range.max && req->rate > gck->range.max)
-+		req->rate = gck->range.max;
-+	if (gck->range.min && req->rate < gck->range.min)
-+		req->rate = gck->range.min;
-+
- 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
- 		if (gck->chg_pid == i)
- 			continue;
--- 
-2.30.2
+On Wed, Jul 07, 2021 at 05:08:02PM +0800, Jon Lin wrote:
 
+This looks pretty nice, a few small issues below but nothing major:
+
+> +/* Maximum clock values from datasheet suggest keeping clock value under
+> + * 150MHz. No minimum or average value is suggested, but the U-boot BSP driver
+> + * has a minimum of 10MHz and a default of 80MHz which seems reasonable.
+> + */
+
+It's OK to just not specify a minimum if the hardware doesn't have one,
+and AFAICT the driver doesn't actually use the default speed (the SPI
+stack will generally try to go as fast as possible by default, the board
+can configure the maximum speed and should be doing that if there's
+issues).
+
+> +static irqreturn_t rockchip_sfc_irq_handler(int irq, void *dev_id)
+> +{
+> +	struct rockchip_sfc *sfc = dev_id;
+> +	u32 reg;
+> +
+> +	reg = readl(sfc->regbase + SFC_RISR);
+> +
+> +	/* Clear interrupt */
+> +	writel_relaxed(reg, sfc->regbase + SFC_ICLR);
+> +
+> +	if (reg & SFC_RISR_DMA)
+> +		complete(&sfc->cp);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+This will unconditionally ack any interrupt that is flagged, and doesn't
+verify that there were any at all.  This won't work if the interrupt
+ever gets shared and will mean that if something goes wrong and an
+unexpected interrupt happens we'll at best just ignore it, at worst
+we'll end up with a screaming interrupt constantly firing.  It'd be
+better to at least return IRQ_NONE if we got anything unexpected (I
+guess just if SFC_RISR_DMA isn't set, assuming there's nothing else
+we're intentionally ignoring).
+
+> +	master->mode_bits = SPI_TX_QUAD | SPI_TX_DUAL | SPI_RX_QUAD | SPI_RX_DUAL;
+
+Should it also do SPI_HALF_DUPLEX?
+
+> +	ret = devm_request_irq(dev, ret, rockchip_sfc_irq_handler,
+> +			       0, pdev->name, sfc);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to request irq\n");
+> +
+> +		return ret;
+> +	}
+
+Should we have a call to _irq_mask() before this to make sure that the
+mask is set up correctly in the hardware, just in case?
+
+--DheUW4aQn8WJk6WR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDl6LYACgkQJNaLcl1U
+h9CYCgf/edFgXLelZ8xTZPdjXTqht/bm/19/3/7E8zPciE7D4Rg52/Q7aSkg8FQT
+jeygndJe7ci6hOFa7wB4e7JEbeG68kEMKxMb0wum83t5yxaN3P3eorLQY38uOH6j
+NrvCs4tfsdJZGUPqvCZrCB/LC3JrvWv/Mqt8X0QijX0gMxfbERz05TEgtkDiHnrs
+iT+0XOmMrLMRNZUhwvT7kc99SuUi3f+XZ8O1PiDk5mYQmdhU2rl73p4XdS5xTixJ
+lzkaj7IPNZ4TLqWKYvgZBr5qB6LPDdz+xO8aWv43Tfzi23IzcbBH5WEseHHmHd8u
+fwzwyxWgxo6Wp9b+qiwS/MKug2MEow==
+=oXL8
+-----END PGP SIGNATURE-----
+
+--DheUW4aQn8WJk6WR--
