@@ -2,134 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC2BC07E9C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FA8C11F66
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C43D61CCA
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D21E61CCC
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbhGGRur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jul 2021 13:50:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229956AbhGGRur (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Jul 2021 13:50:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 61B1561CC8;
-        Wed,  7 Jul 2021 17:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625680086;
-        bh=NwW9hPZbo6WiaVKQyVLBNly7QG86j34upQqrPkM7lOI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N2Sijyod0DuXB32lTjytbHlzdmAzBRYmg1GW74O/g7kSdvSttqoNLZtfsEi833iiy
-         V+6TOPW7dFk98dW8LTT5NYlGOVb0yhtM5K1A5huUc2OlYOCjC/tyHaz1fGpRTYoBjO
-         62GdMD1lXp0mWtj9E5El1UqQz4dgPe18kgD3QVZf/zVPc7pziiNlb7+vQpKNbfi4Ph
-         Le7PT52I+XonZ0/aNiYJFWO5iZygX/HFQYcLpNtaxgFKDyZtfAq289Gyq6Xpalr6Jz
-         ps0qJKYaCXB+RnQfQ8pzdjkO5ZFEnR580PRR0D5HUl8tUE9crnwLC1FO0RAT2VzRty
-         EEF/BNXp3O3PQ==
-Date:   Wed, 7 Jul 2021 18:47:35 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Lin <jon.lin@rock-chips.com>
-Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org, heiko@sntech.de,
-        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
-        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
-        linux-mtd@lists.infradead.org, p.yadav@ti.com,
-        macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [RFC PATCH v11 02/10] spi: rockchip-sfc: add rockchip serial
- flash controller
-Message-ID: <20210707174735.GL4394@sirena.org.uk>
-References: <20210707090810.5717-1-jon.lin@rock-chips.com>
- <20210707090810.5717-3-jon.lin@rock-chips.com>
+        id S231161AbhGGR5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jul 2021 13:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230164AbhGGR5v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jul 2021 13:57:51 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD18C061574;
+        Wed,  7 Jul 2021 10:55:10 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id r26so6126098lfp.2;
+        Wed, 07 Jul 2021 10:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zQxdG9I9Woa7S81uA0jzyR2yog0q49/Cb6/kJl+fdKw=;
+        b=DPrgZiDxLxxXsaeiP6iCEpP5oqHrr32wA0cgJIU4nTet5CoaGBrMeLBSTguCnSMbsf
+         gZSBa6ckD574dcRSLXAaPOlgMNbtP5ibJLmgmaQs3IZbdYdaZNtkt8ORDtjofcwHrpeo
+         X0pDJA+cYDO1swW6g2Q2kqyKOTO8fpwcrGsKNfFX/veaD7X5aR4tyN0UwJxW0cVdsaAG
+         wlWHp1S8Dy3fnognXmJmrEUuiv9qpsJ8J1pNRtCaj4AIEeFfDE7oFqSg21b7NKdpOwWN
+         XML0iqOjspip/aEkvl7rbFttEMF9B2+b9l4hm+y9A0hch9vub5tdcE9jmGOqsqC3kS/C
+         qxzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zQxdG9I9Woa7S81uA0jzyR2yog0q49/Cb6/kJl+fdKw=;
+        b=SIllCcHpYNOh3tkuYWBZBkuoWgBvxQZyTM2WPLeqas7xaY6r6Jp5pGNpHjzcS5ydhu
+         1e8Y5NfrdVDDiVWYJ7p0GMJDK97/W7HRqwFJOREKVpxmoTwq1c9SsaPHEDgVZMXsr6CE
+         fG861IzeMxIM+IaH7ReKg3ug4Klma3aBLY9IHyZac/xYXZqC6HZtvNCfryot6a0j7Tzv
+         OvmRzr10mxy5M9OL0zE76g7clMAy1vj6WA1L1wMr2zqf2oQR2pzLo6sZcga2UwVQE778
+         uX2fnNaTvf827Hh96ekki0+34M8j592Gu3GPh2QCbN64v9L/yooG8waCsWW2n+pkY4dC
+         xWEw==
+X-Gm-Message-State: AOAM532YfHHC6+Sac5KqK109SIuzShlDaMd+n6jYbDyq0oPLTz7aiHf9
+        wJUpWrf6n2PKp92W+yI2zq8u6Zs0akg=
+X-Google-Smtp-Source: ABdhPJwyOvh7JP+XAqY+4wG4EDAsP16uap1AjswsK9fEtNc3A6WHJwpiIM6SORNrG7sPVt+w1f6m0Q==
+X-Received: by 2002:ac2:5189:: with SMTP id u9mr4551247lfi.161.1625680508344;
+        Wed, 07 Jul 2021 10:55:08 -0700 (PDT)
+Received: from [192.168.1.102] ([178.176.76.61])
+        by smtp.gmail.com with ESMTPSA id i6sm1761452lfe.164.2021.07.07.10.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 10:55:08 -0700 (PDT)
+Subject: Re: [PATCH v2 4/9] clocksource/drivers/pistachio: Make it seletable
+ for MIPS
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+References: <20210707031552.20166-1-jiaxun.yang@flygoat.com>
+ <20210707031552.20166-5-jiaxun.yang@flygoat.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <99803248-0a48-c4a8-e278-47e0794dbc48@gmail.com>
+Date:   Wed, 7 Jul 2021 20:55:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DheUW4aQn8WJk6WR"
-Content-Disposition: inline
-In-Reply-To: <20210707090810.5717-3-jon.lin@rock-chips.com>
-X-Cookie: I will never lie to you.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210707031552.20166-5-jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello!
 
---DheUW4aQn8WJk6WR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   "Selectable" in the subject.
 
-On Wed, Jul 07, 2021 at 05:08:02PM +0800, Jon Lin wrote:
+On 7/7/21 6:15 AM, Jiaxun Yang wrote:
 
-This looks pretty nice, a few small issues below but nothing major:
+> So it will be avilable for generic MIPS kenrel.
 
-> +/* Maximum clock values from datasheet suggest keeping clock value under
-> + * 150MHz. No minimum or average value is suggested, but the U-boot BSP driver
-> + * has a minimum of 10MHz and a default of 80MHz which seems reasonable.
-> + */
+   "Kernel" here. :-)
 
-It's OK to just not specify a minimum if the hardware doesn't have one,
-and AFAICT the driver doesn't actually use the default speed (the SPI
-stack will generally try to go as fast as possible by default, the board
-can configure the maximum speed and should be doing that if there's
-issues).
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+[...]
 
-> +static irqreturn_t rockchip_sfc_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct rockchip_sfc *sfc = dev_id;
-> +	u32 reg;
-> +
-> +	reg = readl(sfc->regbase + SFC_RISR);
-> +
-> +	/* Clear interrupt */
-> +	writel_relaxed(reg, sfc->regbase + SFC_ICLR);
-> +
-> +	if (reg & SFC_RISR_DMA)
-> +		complete(&sfc->cp);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-This will unconditionally ack any interrupt that is flagged, and doesn't
-verify that there were any at all.  This won't work if the interrupt
-ever gets shared and will mean that if something goes wrong and an
-unexpected interrupt happens we'll at best just ignore it, at worst
-we'll end up with a screaming interrupt constantly firing.  It'd be
-better to at least return IRQ_NONE if we got anything unexpected (I
-guess just if SFC_RISR_DMA isn't set, assuming there's nothing else
-we're intentionally ignoring).
-
-> +	master->mode_bits = SPI_TX_QUAD | SPI_TX_DUAL | SPI_RX_QUAD | SPI_RX_DUAL;
-
-Should it also do SPI_HALF_DUPLEX?
-
-> +	ret = devm_request_irq(dev, ret, rockchip_sfc_irq_handler,
-> +			       0, pdev->name, sfc);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to request irq\n");
-> +
-> +		return ret;
-> +	}
-
-Should we have a call to _irq_mask() before this to make sure that the
-mask is set up correctly in the hardware, just in case?
-
---DheUW4aQn8WJk6WR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDl6LYACgkQJNaLcl1U
-h9CYCgf/edFgXLelZ8xTZPdjXTqht/bm/19/3/7E8zPciE7D4Rg52/Q7aSkg8FQT
-jeygndJe7ci6hOFa7wB4e7JEbeG68kEMKxMb0wum83t5yxaN3P3eorLQY38uOH6j
-NrvCs4tfsdJZGUPqvCZrCB/LC3JrvWv/Mqt8X0QijX0gMxfbERz05TEgtkDiHnrs
-iT+0XOmMrLMRNZUhwvT7kc99SuUi3f+XZ8O1PiDk5mYQmdhU2rl73p4XdS5xTixJ
-lzkaj7IPNZ4TLqWKYvgZBr5qB6LPDdz+xO8aWv43Tfzi23IzcbBH5WEseHHmHd8u
-fwzwyxWgxo6Wp9b+qiwS/MKug2MEow==
-=oXL8
------END PGP SIGNATURE-----
-
---DheUW4aQn8WJk6WR--
+MBR, Sergei
