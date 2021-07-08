@@ -2,64 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596F5C07E9C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 19:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C01EC07E96
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 21:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43FC761629
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 19:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CBEE61876
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 21:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229631AbhGHTwB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jul 2021 15:52:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230313AbhGHTwB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Jul 2021 15:52:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 36A4261624;
-        Thu,  8 Jul 2021 19:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625773759;
-        bh=B9RCB4X19xbIZdutfXulFdU1lYb6hchiDOkejg+sW0E=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=QoVFKOCjOy2t0UdjTrXWP77g1caS+xsamDtoNY4NOfFtaJ7lpBcYla7sxmuk4Oyfq
-         7WqOfPW2Eeoky7FHehH93cIO43BXYY3nPQ8YCxvtAWWAt9E6O11gNdXShJdzHCSKaG
-         1Duw7jD7kYUCP5+SagkmOHOWggByH51Dim9sg3XFbH8et0C8jJMAQOgKfSO4WICDrO
-         x3Dr0gZjHlgYsgD8TI8HkTud1KZrI/iLuwDIaYPQd34keW3He8Ji4XW6OojQ/HWeRE
-         uY8Y24r7VUdcQxODvMBdAxZrP2W626uItlz2sAtWLfJXnOwm/KyS86HmD1WbxW5Efk
-         /IuThED3B3Xmg==
-Subject: Re: [GIT PULL] clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210708001431.437073-1-sboyd@kernel.org>
-References: <20210708001431.437073-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210708001431.437073-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: 783d08bd02f5d33d6e9e7fea62b727e2b6fe6462
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b0dfd9af28b60d7ec42c359ae84c1ba97e093100
-Message-Id: <162577375919.18035.2259842155066295152.pr-tracker-bot@kernel.org>
-Date:   Thu, 08 Jul 2021 19:49:19 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S230493AbhGHVTq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jul 2021 17:19:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230442AbhGHVTp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jul 2021 17:19:45 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B940DC061574;
+        Thu,  8 Jul 2021 14:17:02 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id g12so6012803qtb.2;
+        Thu, 08 Jul 2021 14:17:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qhNCek1xtdj76seGr2wXrhHbDhfAVbqvV61hRojd1RQ=;
+        b=lXZaCE2gmQc0KU22v+NVx5STy9blkrK0GKzCp2rRlBUtv7wqCKBL1yxexM0beeWnKA
+         uZVxtZb7fmarRJYBuHSjGJKhAeZdzAw78dMa3Wi4BRH3Fznaze0pjbDAJaPf92y+fYmP
+         UEiDZQKxxt60WAtNjCiQx7U3qzgSBuE1zsWu0wogwu6a4xutsq/z089pfVtCHjSyyTjx
+         lUFfh85AuBmZtQf4zE7a75XIdNxP7zUUMhHEK7yZ7Fp38y8lsQHigI1JVzU0SzIK4h8A
+         J5t/JwiZGJqZ/xSfmWYBhENbPSR9hkuDWCp/FDzO0IndajLmmxQ3DoEtd4gOaw+Osb97
+         vooA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qhNCek1xtdj76seGr2wXrhHbDhfAVbqvV61hRojd1RQ=;
+        b=tIGQm7Fj3Q1dVMoSP04n98nflIb7tgR86HgDGF+QNcHAN7iDMIyHCEZnuAPrs1NHvy
+         yyRsJrDOMAYPIgg9s5Pnlu8N7wHg3PITeeav1faW86lDHVnE7qcGAFGpDU1EO/YF0dtK
+         adwMIDYXw9wsdbzdqAGXJHM9vlNJlWbh9bXhtbg1jQ7fR1KpbnXLfDrgaDrgbnsWVClE
+         rjDjwJuY11a78T5ou13vXOpIkbY1nSXhN5A4NzMeMl6DLOg4Btx/JR/iFvTmksJ03Hsi
+         GZEj1HFevmMbCgI+ba+I9LpMszc5DRqQws3zFwyJUnoFs+SyMwi242nBN8Nyn1yvje8L
+         AQuA==
+X-Gm-Message-State: AOAM530/SkRYwaWIZxSftRfg8ZfwxbVLKNWW78lHnu0GQ5gB6fnEQ3ve
+        62SEPVM5hpPkuIgINTsFgOE=
+X-Google-Smtp-Source: ABdhPJxSWsouqEq936RKj3dNQJDU/c7gIj5QYin7eeExCLf6R6mMITojz5f1Xe6ElhHMhecGatI22w==
+X-Received: by 2002:a05:622a:1817:: with SMTP id t23mr29037453qtc.161.1625779021878;
+        Thu, 08 Jul 2021 14:17:01 -0700 (PDT)
+Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
+        by smtp.gmail.com with ESMTPSA id z22sm1554860qkj.23.2021.07.08.14.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jul 2021 14:17:01 -0700 (PDT)
+From:   Liam Beguin <liambeguin@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Liam Beguin <liambeguin@gmail.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] clk: lmk04832: drop redundant fallthrough statements
+Date:   Thu,  8 Jul 2021 17:16:45 -0400
+Message-Id: <20210708211645.3621902-1-liambeguin@gmail.com>
+X-Mailer: git-send-email 2.30.1.489.g328c10930387
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Wed,  7 Jul 2021 17:14:31 -0700:
+When the body of a case statement is empty, it is well understood that
+it is intentional and explicit fallthrough statements are not required.
+Drop them.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Signed-off-by: Liam Beguin <liambeguin@gmail.com>
+---
+ drivers/clk/clk-lmk04832.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b0dfd9af28b60d7ec42c359ae84c1ba97e093100
-
-Thank you!
-
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index c7a3a029fb1e..8f02c0b88000 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -269,23 +269,14 @@ static bool lmk04832_regmap_rd_regs(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case LMK04832_REG_RST3W ... LMK04832_REG_ID_MASKREV:
+-		fallthrough;
+ 	case LMK04832_REG_ID_VNDR_MSB:
+-		fallthrough;
+ 	case LMK04832_REG_ID_VNDR_LSB:
+-		fallthrough;
+ 	case LMK04832_REG_CLKOUT_CTRL0(0) ... LMK04832_REG_PLL2_DLD_CNT_LSB:
+-		fallthrough;
+ 	case LMK04832_REG_PLL2_LD:
+-		fallthrough;
+ 	case LMK04832_REG_PLL2_PD:
+-		fallthrough;
+ 	case LMK04832_REG_PLL1R_RST:
+-		fallthrough;
+ 	case LMK04832_REG_CLR_PLL_LOST ... LMK04832_REG_RB_DAC_VAL_LSB:
+-		fallthrough;
+ 	case LMK04832_REG_RB_HOLDOVER:
+-		fallthrough;
+ 	case LMK04832_REG_SPI_LOCK:
+ 		return true;
+ 	default:
+@@ -297,27 +288,18 @@ static bool lmk04832_regmap_wr_regs(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case LMK04832_REG_RST3W:
+-		fallthrough;
+ 	case LMK04832_REG_POWERDOWN:
+ 		return true;
+ 	case LMK04832_REG_ID_DEV_TYPE ... LMK04832_REG_ID_MASKREV:
+-		fallthrough;
+ 	case LMK04832_REG_ID_VNDR_MSB:
+-		fallthrough;
+ 	case LMK04832_REG_ID_VNDR_LSB:
+ 		return false;
+ 	case LMK04832_REG_CLKOUT_CTRL0(0) ... LMK04832_REG_PLL2_DLD_CNT_LSB:
+-		fallthrough;
+ 	case LMK04832_REG_PLL2_LD:
+-		fallthrough;
+ 	case LMK04832_REG_PLL2_PD:
+-		fallthrough;
+ 	case LMK04832_REG_PLL1R_RST:
+-		fallthrough;
+ 	case LMK04832_REG_CLR_PLL_LOST ... LMK04832_REG_RB_DAC_VAL_LSB:
+-		fallthrough;
+ 	case LMK04832_REG_RB_HOLDOVER:
+-		fallthrough;
+ 	case LMK04832_REG_SPI_LOCK:
+ 		return true;
+ 	default:
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.30.1.489.g328c10930387
+
