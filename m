@@ -2,155 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA0DC07E96
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 04:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F7AC07E96
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 08:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3831361CC4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 04:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E34961CE8
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 08:16:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbhGHEFv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jul 2021 00:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbhGHEFu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jul 2021 00:05:50 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68054C061574
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jul 2021 21:03:09 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id 59-20020a9d0ac10000b0290462f0ab0800so4533971otq.11
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jul 2021 21:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LI3mWvB8lqUFGvKYUXsvMTLD9MEpZDie47p/GO3vV7o=;
-        b=dfDisRytYYc6d3VLj+BMhvLmtLfEklteHqskcBCPXxy4TdDU2KNo8oUc1tdtzSMU18
-         0g8z9h1Yg6I82liAWNJOnBZzRLfXTOXCRNX71n521CkwN5feUYd/EjOeC26eHQ+UC79A
-         KgZUVuk8RgQ7plPKn+DF+MTn8lAN28ZZSaXoOYqgANNQJmLshvBu8zNKSYUxnha0BPIk
-         6XvJpq1mJT9ILgODnZ78ZhcxlhsCD/rgmwQym6Si+wDtXad0dXSIbzH+At23qZH0CrWr
-         YI0853Z16xoA6bzhyaNSYUt9WGBg1PlfmjWvGpbJrIjsLtWMNiCQzsJNlpJ0p6/oCMOQ
-         /G6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LI3mWvB8lqUFGvKYUXsvMTLD9MEpZDie47p/GO3vV7o=;
-        b=Tz3QSs5gnzdgTwgwLsRwlvV6zYADtQNBXv9bGn7ii9nmBgdiCwJsF6RfjzJ316lXnz
-         KoE2Q//Cf5V/QcRdDMLeiNKiO3l447OMG64Z+r9RIKRGuH0ZUJXjbGMNjDYkzZ0snPIp
-         Kf882fyaDXnJIeZg9ob0lgIxki1TPZGBjKVO22mnXntNMK46QWMYhPIOC9ieVUPV99Gg
-         nvtOo7qJ6ZuQRL5RWsGTgzxZs/s9HE+Ipv7HZnt9SYzhD/Kke/Plafu+LrLVlA61FFED
-         2n5XZ6Dq3boTkzJ13/sdhJTjM8ioxLwZZJ+y43+DgWDEk/lOYIZ8u28mqGZaEm+LyAAT
-         dx9g==
-X-Gm-Message-State: AOAM532o2Wm5HwuISOWcZ3qnnFSUNlP7u5GX1Ja7E+HC5w5ImnmEIz2y
-        jXKASAEZAFy2Pi7DSbTu7gQAxA==
-X-Google-Smtp-Source: ABdhPJxhFdzn1V5BN2rsi6/9LciGzGQyVOAZEWx2F9EgznLWW75+n9cE4ygA1eiC1sIthtWvESEn2Q==
-X-Received: by 2002:a05:6830:22d6:: with SMTP id q22mr21753964otc.40.1625716988743;
-        Wed, 07 Jul 2021 21:03:08 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id h3sm265711oti.34.2021.07.07.21.03.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 21:03:08 -0700 (PDT)
-Date:   Wed, 7 Jul 2021 23:03:06 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmitry.baryshkov@linaro.org, jonathan@marek.ca,
-        robert.foss@linaro.org
-Subject: Re: [PATCH 1/2] clk: qcom: camcc-sm8250: Fix absent mmcx regulator
- reference
-Message-ID: <YOZ4+ptO+eQbmxal@yoga>
-References: <20210708010839.692242-1-bryan.odonoghue@linaro.org>
- <20210708010839.692242-2-bryan.odonoghue@linaro.org>
+        id S231195AbhGHITV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jul 2021 04:19:21 -0400
+Received: from m12-17.163.com ([220.181.12.17]:51249 "EHLO m12-17.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231192AbhGHITU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Jul 2021 04:19:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=kcYGs
+        PzfsZlyhcUFg4rflfnBWa3H0eyFNFoxec1S+6Y=; b=nQvc5tUTjGH1OLSZ7UR5y
+        gMc82rXcFAj3n804Cvcs10BmbjupCPkgNOWDRF9Mp6wuUNVarvktX3g13BTbCIp4
+        23BRtd0shZIxy7c7khwRHiVGjFZv1C6YFp8/hJd/YzDPO4DzEHdIJ2RiLz09Acjx
+        QaXqBPpimjgGVRMc/CEBm8=
+Received: from localhost (unknown [116.21.252.58])
+        by smtp13 (Coremail) with SMTP id EcCowADX1o4ytOZg7j2u_g--.6376S2;
+        Thu, 08 Jul 2021 16:15:46 +0800 (CST)
+From:   Rudy Lo <luhuadong@163.com>
+Cc:     luhuadong@163.com, Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx8: Unified initcall function
+Date:   Thu,  8 Jul 2021 16:15:42 +0800
+Message-Id: <20210708081543.186820-1-luhuadong@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210708010839.692242-2-bryan.odonoghue@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: EcCowADX1o4ytOZg7j2u_g--.6376S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFy5tFWDKFWkur18JryxXwb_yoW5GF15pF
+        4UGrW7Ar18WF4xZ3ZrAr4UZFyYya42qa4j9Fy7A34F9395AFyDWF10qa48Zr1DJr45Wr1f
+        t34jvr4I9F4avr7anT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UTGQgUUUUU=
+X-Originating-IP: [116.21.252.58]
+X-CM-SenderInfo: 5oxk3tpgrqwqqrwthudrp/xtbByRnJx11vlH8TcgAAsm
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 07 Jul 20:08 CDT 2021, Bryan O'Donoghue wrote:
+It is better to use builtin_platform_driver initcall for clk driver
+rather then module_platform_driver, refer to clk-imx8qxp.c file.
 
-> The current implementation omits the necessary mmcx supply, which means if
-> you are running the code for this block and a prior clock driver, like say
-> the videocc hasn't run, then a reset will be generated the first time we
-> touch these registers.
-> 
-> Fixes: 5d66ca79b58c ("clk: qcom: Add camera clock controller driver for SM8250")
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Rudy Lo <luhuadong@163.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 2 +-
+ drivers/clk/imx/clk-imx8mn.c | 2 +-
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ drivers/clk/imx/clk-imx8mq.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-camcc isn't enabled in the upstream dts yet and I expect that we're
-going to conclude on defining these GDSCs as subdomains of the cc's
-power-domain in time for v5.15.
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index f1919fafb124..fa20b08e64f1 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -654,7 +654,7 @@ static struct platform_driver imx8mm_clk_driver = {
+ 		.of_match_table = imx8mm_clk_of_match,
+ 	},
+ };
+-module_platform_driver(imx8mm_clk_driver);
++builtin_platform_driver(imx8mm_clk_driver);
+ 
+ MODULE_AUTHOR("Bai Ping <ping.bai@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8MM clock driver");
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 88f6630cd472..67b9ded112e4 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -605,7 +605,7 @@ static struct platform_driver imx8mn_clk_driver = {
+ 		.of_match_table = imx8mn_clk_of_match,
+ 	},
+ };
+-module_platform_driver(imx8mn_clk_driver);
++builtin_platform_driver(imx8mn_clk_driver);
+ 
+ MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8MN clock driver");
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 12837304545d..cdb40e61cef0 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -735,7 +735,7 @@ static struct platform_driver imx8mp_clk_driver = {
+ 		.of_match_table = imx8mp_clk_of_match,
+ 	},
+ };
+-module_platform_driver(imx8mp_clk_driver);
++builtin_platform_driver(imx8mp_clk_driver);
+ 
+ MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8MP clock driver");
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index c491bc9c61ce..54f17de30935 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -630,7 +630,7 @@ static struct platform_driver imx8mq_clk_driver = {
+ 		.of_match_table = imx8mq_clk_of_match,
+ 	},
+ };
+-module_platform_driver(imx8mq_clk_driver);
++builtin_platform_driver(imx8mq_clk_driver);
+ 
+ MODULE_AUTHOR("Abel Vesa <abel.vesa@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8MQ clock driver");
+-- 
+2.25.1
 
-I don't mind if Stephen picks this to make sure the driver is
-functional, but I will hold off on the dts change.
 
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/qcom/camcc-sm8250.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-> index 439eaafdcc86..c51112546bfc 100644
-> --- a/drivers/clk/qcom/camcc-sm8250.c
-> +++ b/drivers/clk/qcom/camcc-sm8250.c
-> @@ -2212,6 +2212,7 @@ static struct gdsc bps_gdsc = {
->  	},
->  	.flags = HW_CTRL | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct gdsc ipe_0_gdsc = {
-> @@ -2221,6 +2222,7 @@ static struct gdsc ipe_0_gdsc = {
->  	},
->  	.flags = HW_CTRL | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct gdsc sbi_gdsc = {
-> @@ -2230,6 +2232,7 @@ static struct gdsc sbi_gdsc = {
->  	},
->  	.flags = HW_CTRL | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct gdsc ife_0_gdsc = {
-> @@ -2239,6 +2242,7 @@ static struct gdsc ife_0_gdsc = {
->  	},
->  	.flags = POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct gdsc ife_1_gdsc = {
-> @@ -2248,6 +2252,7 @@ static struct gdsc ife_1_gdsc = {
->  	},
->  	.flags = POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct gdsc titan_top_gdsc = {
-> @@ -2257,6 +2262,7 @@ static struct gdsc titan_top_gdsc = {
->  	},
->  	.flags = POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.supply = "mmcx",
->  };
->  
->  static struct clk_regmap *cam_cc_sm8250_clocks[] = {
-> -- 
-> 2.30.1
-> 
