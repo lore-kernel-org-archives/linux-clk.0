@@ -2,94 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-25.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BA4C07E95
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 21:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F16C07E95
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 00:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF2CA61C4C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jul 2021 21:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9909761C37
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 00:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbhGGV5f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jul 2021 17:57:35 -0400
-Received: from msg-1.mailo.com ([213.182.54.11]:59808 "EHLO msg-1.mailo.com"
+        id S230020AbhGHARN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jul 2021 20:17:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229956AbhGGV5e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Jul 2021 17:57:34 -0400
-X-Greylist: delayed 1225 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Jul 2021 17:57:34 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-        t=1625693659; bh=uVLcTeTi9/NfOuP9ILJQsYxEqwD0GlA+5zKs0YR3vDs=;
-        h=X-EA-Auth:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-         References:Content-Type:MIME-Version:Content-Transfer-Encoding;
-        b=GBs/uke5gFPa3oWiTA5V8ZpviZkGRbFONX446DC/mbnkmTb4FRhjaJfuOYKRjeWO2
-         qdIqc0V0kS5Z/Gcrv3H0dX67MHm1JEONUlEHCeLe9MZFivCo02jyvgaVEsyuzYkTux
-         xggDGGp2vaf57eGmwGROAiq42abvoR/0ZELUSHME=
-Received: by b-3.in.mailobj.net [192.168.90.13] with ESMTP
-        via proxy.mailoo.org [213.182.55.207]
-        Wed,  7 Jul 2021 23:34:19 +0200 (CEST)
-X-EA-Auth: qxLiGfzMY0iYof9pXOFmNbfz6GyxS7hNbOM3VyP6p733skERCuG09izmvGam57+QvZ4haxsk1duhgCuDrjM8Xc8+jmwl2xUr6Ig6lz2usSo=
-Message-ID: <c780e9df1b2f1eef6af1c9a10662f5a1952a1fae.camel@mailoo.org>
-Subject: Re: [PATCH v2 0/4] Add MSM8939 APCS/A53PLL clock support
-From:   Vincent Knecht <vincent.knecht@mailoo.org>
-To:     Shawn Guo <shawn.guo@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Benjamin Li <benl@squareup.com>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Wed, 07 Jul 2021 23:34:19 +0200
-In-Reply-To: <20210704024032.11559-1-shawn.guo@linaro.org>
-References: <20210704024032.11559-1-shawn.guo@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S230018AbhGHARN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jul 2021 20:17:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 80CB661C3C;
+        Thu,  8 Jul 2021 00:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625703272;
+        bh=xdbFQAKZxe2rQ8QW3Kr/YdsXADMveFnveGkjkTpWiPY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lJmo3Xaef+ADzyRv4urQIn9luO7wC4RA2MU/S+6XZlb0AjjGurlV3lyThDux21ORk
+         6oSKHV9qut4mCcFAct455Ol4h11p3KisZLrqzSs9tGLOgTR7M8fQGwERoVQUVSW+gm
+         3cfN0CQk+83AVsi+Oghf2+fHcxOtdVpAHqCt2VyOwGasUpwNAz7V/arc+U6r7M6PPS
+         s2RuXoTgALebtVODLNBKqnFBC2k2Ykv8XfZy3/i65ChQn5R9O0muDl9CLwpG4WZZMM
+         npIw8hUu1AlfqZizbEtOvqvM8b2dPuKye2SJj6i/h3SYGFb7lR0J+RwhW6Y4SEY07Z
+         tEOOjlEQW4JPQ==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk changes for the merge window
+Date:   Wed,  7 Jul 2021 17:14:31 -0700
+Message-Id: <20210708001431.437073-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.32.0.93.g670b81a890-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le dimanche 04 juillet 2021 =C3=A0 10:40 +0800, Shawn Guo a =C3=A9crit=C2=
-=A0:
-> This series adds MSM8939 APCS/A53PLL clock support.=C2=A0 Most outstandin=
-g
-> thing about MSM8939 is that it integrates 3 APCS instances, for Cluster0
-> (little cores), Cluster1 (big cores) and CCI (Cache Coherent Interconnect=
-)
-> respectively.
->=20
-> Changes for v2:
-> - Reword the commit log of first patch as suggested by Stephen.
-> - Drop 'clock-output-names' bindings and use @unit-address to get unique
-> =C2=A0 a53pll/mux clock names.
-> - Use 'operating-points-v2' bindings to pass frequency table via OPP, so
-> =C2=A0 that we can use one single compatible for all 3 MSM8939 a53pll.
->=20
-> Shawn Guo (4):
-> =C2=A0 clk: qcom: apcs-msm8916: Flag a53mux instead of a53pll as critical
-> =C2=A0 clk: qcom: a53pll/mux: Use unique clock name
-> =C2=A0 dt-bindings: clock: Update qcom,a53pll bindings for MSM8939 suppor=
-t
-> =C2=A0 clk: qcom: a53-pll: Add MSM8939 a53pll support
->=20
-> =C2=A0.../bindings/clock/qcom,a53pll.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +
-> =C2=A0drivers/clk/qcom/a53-pll.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- | 68 ++++++++++++++++++-
-> =C2=A0drivers/clk/qcom/apcs-msm8916.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++-
-> =C2=A03 files changed, 76 insertions(+), 5 deletions(-)
+The following changes since commit d2b21013bf5fb177c08b2c9c4dfa32ee0fc97b53:
 
-Hello,
+  Merge branches 'clk-st', 'clk-si' and 'clk-hisilicon' into clk-next (2021-06-29 13:33:42 -0700)
 
-would you have a msm8939 dtsi/dts reference file working with all recent
-contributions for this SoC ?
-We the msm8939-focused PostmarketOS gang would be happy to boot our devices
-and test patches but we're not able to boot anything more recent that 5.9..=
-.
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
+for you to fetch changes up to 783d08bd02f5d33d6e9e7fea62b727e2b6fe6462:
 
+  Revert "clk: divider: Switch from .round_rate to .determine_rate by default" (2021-07-01 18:12:59 -0700)
 
+----------------------------------------------------------------
+The second batch of clk driver code for -rc1
+
+ - A handful of fixes for lmk04832 driver
+ - Migrate the basic clk divider to use determine rate ops
+ - Fix modpost build for hisilicon hi3559a driver
+ - Actually set the parent in k210_clk_set_parent()
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      clk: lmk04832: Fix spelling mistakes in dev_err messages and comments
+
+Damien Le Moal (1):
+      clk: k210: Fix k210_clk_set_parent()
+
+Martin Blumenstingl (3):
+      clk: divider: Add re-usable determine_rate implementations
+      clk: divider: Switch from .round_rate to .determine_rate by default
+      clk: meson: regmap: switch to determine_rate for the dividers
+
+Stephen Boyd (2):
+      clk: hisilicon: hi3559a: Drop __init markings everywhere
+      Revert "clk: divider: Switch from .round_rate to .determine_rate by default"
+
+Wang Hai (2):
+      clk: stm32mp1: fix missing spin_lock_init()
+      clk: lmk04832: fix return value check in lmk04832_probe()
+
+ drivers/clk/clk-divider.c           | 75 ++++++++++++++++++++++++++++++-------
+ drivers/clk/clk-k210.c              |  1 +
+ drivers/clk/clk-lmk04832.c          | 20 +++++-----
+ drivers/clk/clk-stm32mp1.c          |  1 +
+ drivers/clk/hisilicon/clk-hi3559a.c | 39 ++++++++++---------
+ drivers/clk/meson/clk-regmap.c      | 19 +++++-----
+ include/linux/clk-provider.h        |  6 +++
+ 7 files changed, 107 insertions(+), 54 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
