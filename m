@@ -2,99 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDADC07E96
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 14:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596F5C07E9C
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 19:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5949761263
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 14:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FC761629
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jul 2021 19:49:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231905AbhGHOSX convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jul 2021 10:18:23 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:60291 "EHLO
-        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbhGHOSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jul 2021 10:18:23 -0400
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 37B69C46A2;
-        Thu,  8 Jul 2021 14:13:58 +0000 (UTC)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id DEEA2C000A;
-        Thu,  8 Jul 2021 14:13:34 +0000 (UTC)
-Date:   Thu, 8 Jul 2021 16:13:34 +0200
-From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+        id S229631AbhGHTwB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jul 2021 15:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230313AbhGHTwB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Jul 2021 15:52:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 36A4261624;
+        Thu,  8 Jul 2021 19:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625773759;
+        bh=B9RCB4X19xbIZdutfXulFdU1lYb6hchiDOkejg+sW0E=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=QoVFKOCjOy2t0UdjTrXWP77g1caS+xsamDtoNY4NOfFtaJ7lpBcYla7sxmuk4Oyfq
+         7WqOfPW2Eeoky7FHehH93cIO43BXYY3nPQ8YCxvtAWWAt9E6O11gNdXShJdzHCSKaG
+         1Duw7jD7kYUCP5+SagkmOHOWggByH51Dim9sg3XFbH8et0C8jJMAQOgKfSO4WICDrO
+         x3Dr0gZjHlgYsgD8TI8HkTud1KZrI/iLuwDIaYPQd34keW3He8Ji4XW6OojQ/HWeRE
+         uY8Y24r7VUdcQxODvMBdAxZrP2W626uItlz2sAtWLfJXnOwm/KyS86HmD1WbxW5Efk
+         /IuThED3B3Xmg==
+Subject: Re: [GIT PULL] clk changes for the merge window
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210708001431.437073-1-sboyd@kernel.org>
+References: <20210708001431.437073-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210708001431.437073-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 783d08bd02f5d33d6e9e7fea62b727e2b6fe6462
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b0dfd9af28b60d7ec42c359ae84c1ba97e093100
+Message-Id: <162577375919.18035.2259842155066295152.pr-tracker-bot@kernel.org>
+Date:   Thu, 08 Jul 2021 19:49:19 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: at91: fix count of periph clocks passed to
- pmc_data_allocate
-Message-ID: <20210708161334.039d09fb@fixe.home>
-In-Reply-To: <YMB8RYhCY4WVQXg+@piout.net>
-References: <20210609080145.44226-1-clement.leger@bootlin.com>
-        <YMB8RYhCY4WVQXg+@piout.net>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+The pull request you sent on Wed,  7 Jul 2021 17:14:31 -0700:
 
-Le Wed, 9 Jun 2021 10:31:01 +0200,
-Alexandre Belloni <alexandre.belloni@bootlin.com> a écrit :
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-> hi,
-> 
-> Subject should have been:
-> clk: at91: sama5d2: fix count of periph clocks passed to
-> pmc_data_allocate
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b0dfd9af28b60d7ec42c359ae84c1ba97e093100
 
-This patch can actually be discarded since it won't fix allocation at
-all but will just allocate more data than needed since nck already
-returns the max .id field of the periph array.
+Thank you!
 
-> 
-> 
-> On 09/06/2021 10:01:44+0200, Clément Léger wrote:
-> > When allocating clk_hw structure, only the periph32 clocks are
-> > considered. Since sama5d2_periphck are also added to the phws there
-> > is currently an out of bound write. Fix this by adding the count of
-> > periphck to periph32ck.
-> > 
-> > Signed-off-by: Clément Léger <clement.leger@bootlin.com>  
-> Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
-> 
-> > ---
-> >  drivers/clk/at91/sama5d2.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> > index 3d1f78176c3e..663b73a032ee 100644
-> > --- a/drivers/clk/at91/sama5d2.c
-> > +++ b/drivers/clk/at91/sama5d2.c
-> > @@ -170,7 +170,7 @@ static void __init sama5d2_pmc_setup(struct
-> > device_node *np) 
-> >  	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
-> >  					nck(sama5d2_systemck),
-> > -					nck(sama5d2_periph32ck),
-> > +					nck(sama5d2_periphck) +
-> > nck(sama5d2_periph32ck), nck(sama5d2_gck), 3);
-> >  	if (!sama5d2_pmc)
-> >  		return;
-> > -- 
-> > 2.32.0
-> >   
-> 
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
