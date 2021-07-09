@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA0FC07E99
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A407DC11F68
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0FCC61457
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B27561451
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbhGIEeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 00:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38072 "EHLO
+        id S229908AbhGIEec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 00:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbhGIEeZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 00:34:25 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D26BC061765
-        for <linux-clk@vger.kernel.org>; Thu,  8 Jul 2021 21:31:41 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id q4so5908849ljp.13
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jul 2021 21:31:41 -0700 (PDT)
+        with ESMTP id S231137AbhGIEe0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 00:34:26 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E37C06175F
+        for <linux-clk@vger.kernel.org>; Thu,  8 Jul 2021 21:31:43 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id q18so20668649lfc.7
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jul 2021 21:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KLWZj85HgqkOqv1HxmNCRrODidaWLC0A2DygbxwWKbA=;
-        b=sParuvrSW3yxOcQImsE/pSCTQsOWei74sYLKne+13T8AGuPpPTPGmK5tqJ4t/huvC5
-         JqLDLskOrOsSFTCiWSPOnOYtGMF4nepGfge0N7s3Hc2mQCV92Y5FnUvfk0avW1wP+c/O
-         zzNNICJ5cPLJvz5M4slRZs6w+pZrJ2ssyQW6qzU7Zf7w27OyOE2+MuwolUJ6dxR/tcoq
-         vY/bsMKFBI5LVvmLS9I2oRBAiazKiG3T7ow9wMDWwo8URO7kgblsJCAbCSFsR5eFXJjI
-         OyANlUpiTCdH4cosnKXw09vr+OuDE0MVDu62o3ozIoT9t05f2bPckUVb+Wn8gGPc1hu4
-         5xMQ==
+        bh=89M3kJH8Z+ezz3X5xX4Jb+p6yEZY6o3ZbKwB3aRtLuw=;
+        b=Pq6G2lRNhxw2vUhHwwMP5b3OyWgTa/hegNC+tgzuvNtJVP2KQi1yzBsVU/T9DkgCm9
+         2lzKbNs2lCbjDaCqwJYxG3Lug+E/uCOEzEX3+uAj8maq3ApVt+FkTix5La9N0KDdV+n4
+         rOxQHIVNw2hdhCLEN03XQtZb7ra7c3BNNhZlZwUhy69u8mwrwRtkdeW5wlp6bB+79FpC
+         SQLmjZNW8ueVUTAwdDOeWMOEN6M6qt2rG86Sz7hhxRsjEsqMsDFDYiR4+57Iep8Xzsg5
+         nxJlBAqu1l6w7vfo6ilFZPZFYcbe/W5WrNYliWhOkKgjmTnPNz1U9AH9L48oaAOHIHhR
+         aGGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KLWZj85HgqkOqv1HxmNCRrODidaWLC0A2DygbxwWKbA=;
-        b=o1QbiD26Qfnl0cAmjl0D0ie5CzYxLupkxi6T/MMP1EybUPEwQ3huLVbVB8VjhLFR60
-         poBASs++cKZMhIb/X/cJL8i+p10HM+klKILkZQH2si9P9fdGuRadpp7EUbKL7J7CIbMa
-         HGck2MQaCNfRIAvYrYJI5azQks0SkHuFgwXoLYiAaE40BpkI3pqXWP7r2Lz9ZFz/3o8F
-         McmDkZMwq0MQDl+Z7weaEcY//YscJvzoWY99mn7iaf7UHGPy8sRBcQl37EPQ9Yxgh8MZ
-         B8MLVA94qNwl6ebZ/MWCqf7KVo3uV8YH4MQ/5W+PDxxgHOzMw6ZHreeZAcmMp7dIHJZZ
-         5DRQ==
-X-Gm-Message-State: AOAM532r3e0JXQdOiBLUin/mcNwT50ioykNojSMJ1VzrQ25KB2oXw75o
-        UR5LTUmPp4o4YfpreoVELLDnpQ==
-X-Google-Smtp-Source: ABdhPJzC7Z+xZjYcUQMVMQp4Gm4Y3ui0lhahHrsnQGoO/Uq+qBwQl2gqLJ7mDclck5qgW7HBdX0rhQ==
-X-Received: by 2002:a2e:a54a:: with SMTP id e10mr27331977ljn.120.1625805099320;
-        Thu, 08 Jul 2021 21:31:39 -0700 (PDT)
+        bh=89M3kJH8Z+ezz3X5xX4Jb+p6yEZY6o3ZbKwB3aRtLuw=;
+        b=Evym0zNMkxGvqAu5BIQ5Q5SyyZw70DA/o8ZZN0JvkoxjDoKMN7qPaGwGq1ksFROBbg
+         3HAhnXmtU/C1CwmS+pPsVCvFQ+imP4Pgi2CeWSceMhrGl5tdT3J5IL+YBwBqqdXfHhE5
+         AQf7qYJKdVSbfrMEEyQ8dgfUEZ15uBAKEY26wuWEDR6XomifLOE/NCUQImiC3R5/lgJC
+         2ZPinAajM748IV2PRwhmxlRZx/gii6uIGBP3Y06hko/HcPz8mHOyWJuv6ryZuFNH/DGT
+         /iVlwDlOblBMUDLbXcBJdzfbvYD9bj7qIYdgzVsm5R3KU9LqAAZF0LyeTgURMXZz2Oqm
+         n3yg==
+X-Gm-Message-State: AOAM532cFQ7ANvviRkm3w+2D4Xg/Ouj412T0q+MPyzEzh6NPNy0Zh7ye
+        ef+UMPawewHmzjXrBfxmkVZ4eg==
+X-Google-Smtp-Source: ABdhPJxjr4KOVW/vv2+NJuenHFEE/zVGc85kBiQOrraHkR6yx60M/RGbz/Un+Am7IUgnNnrrl+IC6g==
+X-Received: by 2002:ac2:4d37:: with SMTP id h23mr22176135lfk.177.1625805102035;
+        Thu, 08 Jul 2021 21:31:42 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id h1sm13028lft.174.2021.07.08.21.31.38
+        by smtp.gmail.com with ESMTPSA id h1sm13028lft.174.2021.07.08.21.31.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jul 2021 21:31:38 -0700 (PDT)
+        Thu, 08 Jul 2021 21:31:41 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 1/7] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx power domain
-Date:   Fri,  9 Jul 2021 07:31:30 +0300
-Message-Id: <20210709043136.533205-2-dmitry.baryshkov@linaro.org>
+Subject: [RESEND PATCH v2 4/7] clk: qcom: gdsc: enable optional power domain support
+Date:   Fri,  9 Jul 2021 07:31:33 +0300
+Message-Id: <20210709043136.533205-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
 References: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
@@ -81,48 +81,148 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sm8250 dispcc requires MMCX power domain to be powered up before
-clock controller's registers become available. For now sm8250 was using
-external regulator driven by the power domain to describe this
-relationship. Switch into specifying power-domain and required opp-state
-directly.
+On sm8250 dispcc and videocc registers are powered up by the MMCX power
+domain. Currently we used a regulator to enable this domain on demand,
+however this has some consequences, as genpd code is not reentrant.
+
+Teach Qualcomm clock controller code about setting up power domains and
+using them for gdsc control.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml      | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/qcom/common.c | 37 +++++++++++++++++++++++++++++++------
+ drivers/clk/qcom/gdsc.c   |  5 +++++
+ 2 files changed, 36 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-index 0cdf53f41f84..d5c4fed56b6e 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-@@ -55,6 +55,11 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 60d2a78d1395..43d8f8feeb3c 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -10,6 +10,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/reset-controller.h>
+ #include <linux/of.h>
++#include <linux/pm_runtime.h>
  
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+    maxItems: 1
+ #include "common.h"
+ #include "clk-rcg.h"
+@@ -224,6 +225,11 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
+ 	return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+ }
+ 
++static void qcom_cc_pm_runtime_disable(void *data)
++{
++	pm_runtime_disable(data);
++}
 +
- required:
-   - compatible
-   - reg
-@@ -69,6 +74,7 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-     clock-controller@af00000 {
-       compatible = "qcom,sm8250-dispcc";
-       reg = <0x0af00000 0x10000>;
-@@ -89,5 +95,6 @@ examples:
-       #clock-cells = <1>;
-       #reset-cells = <1>;
-       #power-domain-cells = <1>;
-+      power-domains = <&rpmhpd SM8250_MMCX>;
-     };
- ...
+ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+ {
+@@ -241,6 +247,18 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
++	pm_runtime_enable(dev);
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		pm_runtime_put(dev);
++		pm_runtime_disable(dev);
++		return ret;
++	}
++
++	ret = devm_add_action_or_reset(dev, qcom_cc_pm_runtime_disable, dev);
++	if (ret)
++		goto err;
++
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+ 	reset->rcdev.ops = &qcom_reset_ops;
+@@ -251,7 +269,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 
+ 	ret = devm_reset_controller_register(dev, &reset->rcdev);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	if (desc->gdscs && desc->num_gdscs) {
+ 		scd = devm_kzalloc(dev, sizeof(*scd), GFP_KERNEL);
+@@ -262,11 +280,11 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 		scd->num = desc->num_gdscs;
+ 		ret = gdsc_register(scd, &reset->rcdev, regmap);
+ 		if (ret)
+-			return ret;
++			goto err;
+ 		ret = devm_add_action_or_reset(dev, qcom_cc_gdsc_unregister,
+ 					       scd);
+ 		if (ret)
+-			return ret;
++			goto err;
+ 	}
+ 
+ 	cc->rclks = rclks;
+@@ -277,7 +295,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	for (i = 0; i < num_clk_hws; i++) {
+ 		ret = devm_clk_hw_register(dev, clk_hws[i]);
+ 		if (ret)
+-			return ret;
++			goto err;
+ 	}
+ 
+ 	for (i = 0; i < num_clks; i++) {
+@@ -286,14 +304,21 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 
+ 		ret = devm_clk_register_regmap(dev, rclks[i]);
+ 		if (ret)
+-			return ret;
++			goto err;
+ 	}
+ 
+ 	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
+ 	if (ret)
+-		return ret;
++		goto err;
++
++	pm_runtime_put(dev);
+ 
+ 	return 0;
++
++err:
++	pm_runtime_put(dev);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+ 
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 51ed640e527b..9401d01533c8 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -427,6 +427,7 @@ int gdsc_register(struct gdsc_desc *desc,
+ 			continue;
+ 		scs[i]->regmap = regmap;
+ 		scs[i]->rcdev = rcdev;
++		scs[i]->pd.dev.parent = desc->dev;
+ 		ret = gdsc_init(scs[i]);
+ 		if (ret)
+ 			return ret;
+@@ -439,6 +440,8 @@ int gdsc_register(struct gdsc_desc *desc,
+ 			continue;
+ 		if (scs[i]->parent)
+ 			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
++		else if (!IS_ERR_OR_NULL(dev->pm_domain))
++			pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+ 	}
+ 
+ 	return of_genpd_add_provider_onecell(dev->of_node, data);
+@@ -457,6 +460,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
+ 			continue;
+ 		if (scs[i]->parent)
+ 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
++		else if (!IS_ERR_OR_NULL(dev->pm_domain))
++			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+ 	}
+ 	of_genpd_del_provider(dev->of_node);
+ }
 -- 
 2.30.2
 
