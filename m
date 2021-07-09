@@ -4,68 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AABDC11F66
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 13:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A9FC07E9C
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 14:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA79B611B0
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 13:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B65E613AB
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 14:04:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232392AbhGINZX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 09:25:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
+        id S231963AbhGIOHF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 10:07:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232915AbhGINZM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 09:25:12 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B59DC0617AA
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 06:22:28 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id j14so4489257qvu.6
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 06:22:28 -0700 (PDT)
+        with ESMTP id S232250AbhGIOHE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 10:07:04 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62A1C0613E6
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 07:04:19 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id j10-20020a05683015cab02904b568e08dccso3319853otr.4
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 07:04:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aUdetFpscS7z5mzy6zDPEGWjEPyrEwCZ6IQKdhH5RqU=;
-        b=f+1d67OBKROioDqaoZP3olVJvJePOGGDY4hvk8uwOWpHh81rQi3F7lWMDqXIMfN9Zi
-         fdeKziL1dyXDjYTe3hQXSjxqdOBDg73SMN0xtwj0FaXUyCjdr+QcfE2Tz8b4E6DzSiB3
-         rIFUTrxkcBLEeLk7HSsMH3nr7rJYfiGfZ5gYzq+jQ3RN+5FVJWzFzC5aZvE0aI1XaqbG
-         EdS9PwNe9S0NYTtJ9q7Ooc9wa+3SMjdfjCHg2t/UUUmhQJ9CYPRbSGnWwoNDJ6A/jybj
-         l9FApuUjfv6J4EOgB1vpgRhFHIp7N1+cGjesePlupAOQfUVQm+AlvDQdIK+vrMJ7kg/L
-         fdEQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TX6vfvV6xPvXi865OM1f31aZqqq3YhvC3wszTwMxnp4=;
+        b=Enfw0QZT6nGJCd93wxNDAwj/LnOC4v2LdX0LKGX8PnY9FD8sh7hVcMrvUYKSC5O+uW
+         mQpCuBp8FuvGl3r7lxgaqwSvFEc252QTk6urF+S8Z+bO8M1Phjb3JJQHETCS0Pc1/kjX
+         TB40ETeL+wHrLl+Hh/0tWT8DvfKw+k4NzeEF0rdjZ1td8cvugFa59ODqfrJ0zkoN32Zz
+         2MV24X3n0gVvO9N5P0tX16PfgZxP+1JheIPji83Hxw4pv78H09UWhFLxKwWFgcZQMUAf
+         9iYXw58TYO9bz7ZQuMaTtdoAtBYPYN9BD0gnl2NO5zjmfAGDQmQn2x5S0dCjGn6eKihc
+         GdqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aUdetFpscS7z5mzy6zDPEGWjEPyrEwCZ6IQKdhH5RqU=;
-        b=jUoUd1oET+jhBaWGfze+Ludd8kU9jBGOQp41152iywKbhSnDC7V9sRJXfVlFRUXp2I
-         WFOzn4D712hnoHWJtR/4a9a2FLmlPDRYo3UgI/kVbOyI+n+u9NNeGV+EnfPRQcCuW5Ij
-         gKux7RVxdP28i1pCkf7nMLI9ZN6UEFczy8A4TQq858G4xcKSP5Rv7zRN6bpvPr3xck98
-         oMAAlMGhCv6/7sURlR2jsGvY1fTKMfGQp5IYa4wHeOgoigV17lYw0BmajMs+j5WjLPvM
-         4FB6ihhcGKe5FgOe12Gmkp6K4JozXKFLSz22IMVosz+ZvE1NGu6BSTsJH2i0jRbextAE
-         7sHQ==
-X-Gm-Message-State: AOAM5329TCZ16DxMaIIevPUTrP4GO1SpLYsJKhI+EtRLDeinDwDABxhj
-        Qj/ulCBo/0bkndvdyRrTZiiMVY0UxKgQtsBwToZYfg==
-X-Google-Smtp-Source: ABdhPJzdB0FYlrfuu64VS+J5VILBGu9IkUAR2Hrqo8yWahFjCk3lhWfpwC7c5b1gLQOHxPFY72rpDJMVgx2wawg2s40=
-X-Received: by 2002:a05:6214:1cb:: with SMTP id c11mr36374856qvt.47.1625836947110;
- Fri, 09 Jul 2021 06:22:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
- <20210709043136.533205-5-dmitry.baryshkov@linaro.org> <CAPDyKFprYK8bSk+rdnDt3xRUR9BRNdyRiBdefO+s7qzOwHf7hg@mail.gmail.com>
- <CAA8EJprrjz=o7Ymt1mNBZASzTeX==1ceRTeKA4f3QrVMcpO6xg@mail.gmail.com>
- <CAPDyKFoLcsYLisEiOF66dDsV+759c5k0PD64uxU11jc5VTdNYQ@mail.gmail.com>
- <CAA8EJpr2HEm4R+bGrH6DHA_z8bjN69Zam9UUiAeKAr5vsCKr3A@mail.gmail.com> <CAPDyKFr+-qXbi4z4_wzDRaMMLKSKM7zNr55Kt-AOk97mVKM+8A@mail.gmail.com>
-In-Reply-To: <CAPDyKFr+-qXbi4z4_wzDRaMMLKSKM7zNr55Kt-AOk97mVKM+8A@mail.gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 9 Jul 2021 16:22:15 +0300
-Message-ID: <CAA8EJpr+N-GwY63SSpqURBrQ=Xmx51MAFZzXqSiD6x89yB-DAQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2 4/7] clk: qcom: gdsc: enable optional power
- domain support
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TX6vfvV6xPvXi865OM1f31aZqqq3YhvC3wszTwMxnp4=;
+        b=pWekk5XEOoFAlZBE9HKQm2oagjvsxxXhV7icCHgLWb5Gr+8VP7e3Lewg+OJvHqKTNw
+         h4G4vkeH0ZGkfJoOLg0iRxQDuEcdzQDXYJ8yU8CWVgns4gt5X1TVZ3ZIR+NnI23WZvyU
+         Y/QHG2k7i10aNC6bI5BYw7oIm7VIkxTDVZpGYoNpC6llrhqFyyqAgFEcS1iZcixNsKvK
+         y9DA6JQCEP8P8iUIM6I08jeKfkjeRKHrFxsSGXmfrt8IuCId4E5sZGzCSRr70QDhAt1l
+         bv3RuG+mrMzUm6xUL9Rp4gdsCH3TBIkoTyNtBz/WK2VkkSvJpfGg1xdDL7WKuxIA/iqe
+         Tafg==
+X-Gm-Message-State: AOAM5306QSQf5utCmII+lYwD6jLxjdkKxmE1NWusz6dbVYtArmejaGu9
+        dlLU5NN4Nhy1Z6CtuP6NdIVUJg==
+X-Google-Smtp-Source: ABdhPJzIDhSJUTRPozTPQGyrBSmsmXhiPyvTgmPQE7N0Ls7GRZrApt6swvIwy5tScjMirF6BHjw7UA==
+X-Received: by 2002:a05:6830:138b:: with SMTP id d11mr28190492otq.341.1625839459066;
+        Fri, 09 Jul 2021 07:04:19 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id r186sm1219318oia.6.2021.07.09.07.04.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jul 2021 07:04:18 -0700 (PDT)
+Date:   Fri, 9 Jul 2021 09:04:15 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
@@ -74,16 +68,29 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         DTML <devicetree@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RESEND PATCH v2 4/7] clk: qcom: gdsc: enable optional power
+ domain support
+Message-ID: <YOhXX+u9HuScTDp6@yoga>
+References: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
+ <20210709043136.533205-5-dmitry.baryshkov@linaro.org>
+ <CAPDyKFprYK8bSk+rdnDt3xRUR9BRNdyRiBdefO+s7qzOwHf7hg@mail.gmail.com>
+ <CAA8EJprrjz=o7Ymt1mNBZASzTeX==1ceRTeKA4f3QrVMcpO6xg@mail.gmail.com>
+ <CAPDyKFoLcsYLisEiOF66dDsV+759c5k0PD64uxU11jc5VTdNYQ@mail.gmail.com>
+ <CAA8EJpr2HEm4R+bGrH6DHA_z8bjN69Zam9UUiAeKAr5vsCKr3A@mail.gmail.com>
+ <CAPDyKFr+-qXbi4z4_wzDRaMMLKSKM7zNr55Kt-AOk97mVKM+8A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFr+-qXbi4z4_wzDRaMMLKSKM7zNr55Kt-AOk97mVKM+8A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 9 Jul 2021 at 16:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
+On Fri 09 Jul 08:14 CDT 2021, Ulf Hansson wrote:
+
 > On Fri, 9 Jul 2021 at 14:59, Dmitry Baryshkov
 > <dmitry.baryshkov@linaro.org> wrote:
 > >
@@ -161,40 +168,53 @@ On Fri, 9 Jul 2021 at 16:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 > > are powered by the MMCX domain. I can not attach it to the child
 > > (GDSC) domain either: in the case of videocc there are 4 child
 > > domains.
->
+> 
 > The dispcc device should *not* be attached to a PM domain.
->
+> 
+
+dispcc is powered by the MMCX power domain, so it needs to be on if you
+want to touch the registers.
+
+I presume that for genpd this might not be a problem as long as all the
+exposed power domains are parented by the genpd provider's parent, as
+the core would turn the parent on before and turn off after performing
+those operations. But without attaching to the domain we don't have
+power to get through probe/registration.
+
+Further more, dispcc is also a clock driver and there's certainly
+operations where the genpd framework won't save us.
+
 > Instead it should be registered as a genpd provider and the
 > corresponding PM domains it provides, should be assigned as child
 > domains to the MMCX domain.
->
+> 
+
+Right, this relationship is today missing and is what Dmitry needs to
+add - so that the parent domains stays powered even when we're not
+keeping the parent domain enabled to poke the dispcc.
+
 > This is exactly what the child/parent domain support in genpd is there
 > to help with.
-
-This is done in this patchset. If we stop attaching dispcc to the MMCX
-genpd, I'll have to locate it in a different way, but the idea is
-implemented here.
-
+> 
 > > An alternative would be to request that all users of the provided
 > > clocks power on one of the child domains. However this is also not
 > > perfect. If some generic code (e.g. clock framework) calls into
 > > provided clocks (e.g. because of assigned-clock-rates), this can
 > > happen w/o proper power domain being powered up yet.
->
+> 
 > Issues with power on/off synchronization during genpd initializations
 > and genpd provider registration, certainly need to be fixed and I am
 > happy to help. However, my point is that I think it's a bad idea to
 > fix it through modelling the PM domain hierarchy in an incorrect way.
+> 
 
-So, which device should I pass to clk_register to handle runtime PM
-for the provided clocks? dispcc, should I not?
-Then if the dispcc is not attached, we will have to manually handle
-MMCX from dispcc's runtime pm callbacks. Correct?
+This was my initial feeling to the patch as well and I think it might be
+better to push the pm_runtime_get/put operations into gdsc.c - in
+particular if you're saying that the general case is not for the genpd
+provider itself to be powered by the specified parent domain.
 
-Could you please be more specific, why is it so wrong to attach dispcc
-to the MMCX genpd?
+At least we could start by doing it manually in gdsc.c and possibly move
+it into the framework if we're confident that it's a good idea.
 
-
--- 
-With best wishes
-Dmitry
+Regards,
+Bjorn
