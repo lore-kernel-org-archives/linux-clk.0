@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EE1C11F76
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464CFC07E9C
 	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 17:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01A29613CA
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 17:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BC78613FC
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 17:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbhGIRfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 13:35:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45388 "EHLO
+        id S230256AbhGIRfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 13:35:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbhGIRew (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 13:34:52 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8B7C0613E7
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 10:32:07 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id u18so14981694lfl.2
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 10:32:07 -0700 (PDT)
+        with ESMTP id S230103AbhGIRex (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 13:34:53 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051F1C0613F0
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 10:32:09 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id a18so24659279lfs.10
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 10:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+l6RNZfO6t53h33tKaqwIC7dbp1+6FXvY3b6ZyHCbIM=;
-        b=kQuxiBVKZRCQhRmh45OAszosxWefqx6abf0JSPJUbxbD9VD1vshSdblR4to5B1zeIM
-         gd8P/SUQNBTpNjdAGm/Vt/WxQYMdp1eyfknRL6zQz2yYIj8SjED/S67WvXdGuFsHcucV
-         yP7AV5XY9AkTDI7TM3U+dXuVLX1325XamDBt0rTAkgGP2JDMyPzB8GXg6cYbjBGMEMBA
-         cfWkwwa5VIvDB/nR3p/Mnpr4zWOd+f7R9OEUH0nlcdlJJit2FFVL11Wi+mdCgOesS+JZ
-         1Em+7pkqqScZifBTk7Jm6onIvpzJUbHEAe9vNdZgnPmHzI+OrF/rfvb/1XwAtWGOm+YA
-         nW/g==
+        bh=SjFzSjONYuEpNPrn8vILKcXv8t+6phQCfA+Cce2Zw8Y=;
+        b=p1R064hgfUHwIESmq5LWdQ94d96i6QYw/zDC96aRgFZNeECDduxwX5DPaypaqL8KvL
+         qq9vz4ZgnML2KJfPa6ObS6NeNfG2TIX1xOGXMZRdjMtDU3+ZwhWDlWgwL2Y2t6QBllsZ
+         xJCH8mDwzSbeJ+L7X8saMxxPRidmmJ8fMQNF0ifXOaa/ZyOjmVQYOuh2zhGUKEgBQTL7
+         a7BLDovTgb7UTa8F9oH64kxrVpk8PMltfj7qNrUZVtpFKwraRRPtpGiY5pVOuk/DK8iu
+         esK8He96Cw4cAEP84HrkKLYrb1Qh0kfK7hCyuGXXa4bakHyxLUsT4f8tpPxe+AHKTtpt
+         0IMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+l6RNZfO6t53h33tKaqwIC7dbp1+6FXvY3b6ZyHCbIM=;
-        b=GIuL1Y6xrfFTQGCb2A3uo7uOlyWJgKZD6RmXfooBm2zi8nliYZaJbhflDzf+DZM9wE
-         lDu+EA6DB4ar/jGTjJUADj5/onNnTkydMveXzeTUq4CgQwwWCanxQWj4Q42aNNtRmNgk
-         fMf/Ax6ZhmYeeO1SesYj6nORDDGQ0DKdaD7qVKkCtfAZFx3eKGb7OtR3yrNe6pixx91B
-         BwJUyx/ZP/DVkFwNaMMHSxxGgXygjmJnB84MViFozGb9bn+2FypR+3n8O1C8mho41Git
-         8KHi78gFWU+VzrFfex7Q8ptobF5dRLeHfuJx7K8Kx2VqJvRc7yhJeKgpm/ax2N0zi8Ge
-         0RYQ==
-X-Gm-Message-State: AOAM530YdqEZU/+s7KgItDdmci7cUspFvhYpKLXOpTq3hNqQsWPEdyok
-        ZyieDJ/NPNG6lW1Wud0xBHBlIw==
-X-Google-Smtp-Source: ABdhPJyYC2SMo3GbiZe2sCoQeOOag4DBODidkGofQbLQmNSpc0jDQUBnJbh9tjna+TVj5nncPrh8Xw==
-X-Received: by 2002:a19:6d01:: with SMTP id i1mr30576206lfc.422.1625851925764;
-        Fri, 09 Jul 2021 10:32:05 -0700 (PDT)
+        bh=SjFzSjONYuEpNPrn8vILKcXv8t+6phQCfA+Cce2Zw8Y=;
+        b=lU9L9USqV74zTujwuE6aMbKeFOUAEq1SuhWSHA26Z0hnEL2bp5dTjcvjWFMVFpJAcq
+         2SlreUmgEN0nUyRD5yJFB2Gj7AWirYcLoXPnYZnh7VSryZriTq+fxREEGP93HkvOmOVe
+         yTC3Gf9fWA6pYv6IRhYwduluYyH3Y1F9HwDV/AharzZPWQ1Qmu26Ml/jBPvchKTFk6IY
+         dAABpmmHN8/6RhA7aa4cY9tdaGyoiboXZRGXn8e55ksi7tcefPrsH3kPyVcaBYB8BjMs
+         iL4lyTxJfmavjGR+P8TGrWaBDnxs3M4vkPOLzLfR49xclLhWp93ryCZZFUJ6J2kY8v0v
+         UScw==
+X-Gm-Message-State: AOAM5314o7GgiEAU9tiU7bmBr91zUsOQbgdROstpb3DbpyfgtKeuR7XD
+        RDD/5iCa/QlBtTAKr487mKWt8g==
+X-Google-Smtp-Source: ABdhPJxxhH7SM7baNOUo0Mq3dmeWjfYanS0QKQOTHAWpnSZ35GCpRbqzhPLXwGtMNwnpbKIk3Yhe5Q==
+X-Received: by 2002:a19:6a09:: with SMTP id u9mr1385279lfu.119.1625851927371;
+        Fri, 09 Jul 2021 10:32:07 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b14sm511129lfb.132.2021.07.09.10.32.05
+        by smtp.gmail.com with ESMTPSA id b14sm511129lfb.132.2021.07.09.10.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jul 2021 10:32:05 -0700 (PDT)
+        Fri, 09 Jul 2021 10:32:07 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/7] dt-bindings: clock: qcom,videocc: add mmcx power domain
-Date:   Fri,  9 Jul 2021 20:31:57 +0300
-Message-Id: <20210709173202.667820-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 4/7] clk: qcom: gdsc: call runtime PM functions for the provider device
+Date:   Fri,  9 Jul 2021 20:31:59 +0300
+Message-Id: <20210709173202.667820-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210709173202.667820-1-dmitry.baryshkov@linaro.org>
 References: <20210709173202.667820-1-dmitry.baryshkov@linaro.org>
@@ -81,48 +81,159 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sm8250 videocc requires MMCX power domain to be powered up before
-clock controller's registers become available. For now sm8250 was using
-external regulator driven by the power domain to describe this
-relationship. Switch into specifying power-domain and required opp-state
-directly.
+In order to properly handle runtime PM status of the provider device,
+call pm_runtime_get/pm_runtime_put on the clock controller device.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,videocc.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/qcom/gdsc.c | 66 ++++++++++++++++++++++++++++++++++++++---
+ drivers/clk/qcom/gdsc.h |  2 ++
+ 2 files changed, 64 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-index 567202942b88..db4ada6acf27 100644
---- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-@@ -47,6 +47,11 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index ccd36617d067..6bec31fccb09 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/ktime.h>
+ #include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset-controller.h>
+@@ -50,6 +51,30 @@ enum gdsc_status {
+ 	GDSC_ON
+ };
  
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+    maxItems: 1
++static int gdsc_pm_runtime_get(struct gdsc *sc)
++{
++	int ret;
 +
- required:
-   - compatible
-   - reg
-@@ -61,6 +66,7 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-     clock-controller@ab00000 {
-       compatible = "qcom,sdm845-videocc";
-       reg = <0x0ab00000 0x10000>;
-@@ -69,5 +75,6 @@ examples:
-       #clock-cells = <1>;
-       #reset-cells = <1>;
-       #power-domain-cells = <1>;
-+      power-domains = <&rpmhpd SM8250_MMCX>;
-     };
- ...
++	if (!sc->rpm_dev)
++		return 0;
++
++	ret = pm_runtime_get_sync(sc->rpm_dev);
++	if (ret < 0) {
++		pm_runtime_put_noidle(sc->rpm_dev);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int gdsc_pm_runtime_put(struct gdsc *sc)
++{
++	if (!sc->rpm_dev)
++		return 0;
++
++	return pm_runtime_put_sync(sc->rpm_dev);
++}
++
+ /* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
+ static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
+ {
+@@ -232,9 +257,8 @@ static void gdsc_retain_ff_on(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
+ }
+ 
+-static int gdsc_enable(struct generic_pm_domain *domain)
++static int _gdsc_enable(struct gdsc *sc)
+ {
+-	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
+ 	if (sc->pwrsts == PWRSTS_ON)
+@@ -290,11 +314,28 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 	return 0;
+ }
+ 
+-static int gdsc_disable(struct generic_pm_domain *domain)
++static int gdsc_enable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
++	ret = gdsc_pm_runtime_get(sc);
++	if (ret)
++		return ret;
++
++	ret = _gdsc_enable(sc);
++	if (ret) {
++		gdsc_pm_runtime_put(sc);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int _gdsc_disable(struct gdsc *sc)
++{
++	int ret;
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+ 
+@@ -329,6 +370,18 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	return 0;
+ }
+ 
++static int gdsc_disable(struct generic_pm_domain *domain)
++{
++	struct gdsc *sc = domain_to_gdsc(domain);
++	int ret;
++
++	ret = _gdsc_disable(sc);
++	if (ret)
++		return ret;
++
++	return gdsc_pm_runtime_put(sc);
++}
++
+ static int gdsc_init(struct gdsc *sc)
+ {
+ 	u32 mask, val;
+@@ -425,6 +478,8 @@ int gdsc_register(struct gdsc_desc *desc,
+ 	for (i = 0; i < num; i++) {
+ 		if (!scs[i])
+ 			continue;
++		if (pm_runtime_enabled(dev))
++			scs[i]->rpm_dev = dev;
+ 		scs[i]->regmap = regmap;
+ 		scs[i]->rcdev = rcdev;
+ 		ret = gdsc_init(scs[i]);
+@@ -486,7 +541,10 @@ void gdsc_unregister(struct gdsc_desc *desc)
+  */
+ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+ {
++	struct gdsc *sc = domain_to_gdsc(domain);
++
+ 	/* Do nothing but give genpd the impression that we were successful */
+-	return 0;
++	/* Get the runtime PM device only */
++	return gdsc_pm_runtime_get(sc);
+ }
+ EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 5bb396b344d1..a82982df0a55 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -25,6 +25,7 @@ struct reset_controller_dev;
+  * @resets: ids of resets associated with this gdsc
+  * @reset_count: number of @resets
+  * @rcdev: reset controller
++ * @rpm_dev: runtime PM device
+  */
+ struct gdsc {
+ 	struct generic_pm_domain	pd;
+@@ -58,6 +59,7 @@ struct gdsc {
+ 
+ 	const char 			*supply;
+ 	struct regulator		*rsupply;
++	struct device 			*rpm_dev;
+ };
+ 
+ struct gdsc_desc {
 -- 
 2.30.2
 
