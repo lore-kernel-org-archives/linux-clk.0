@@ -2,69 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B07DC07E9C
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 10:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3477CC07E99
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 11:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA48611C0
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 10:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1608A613BA
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 11:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbhGIKsc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 06:48:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37614 "EHLO
+        id S230508AbhGILmd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 07:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbhGIKsb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 06:48:31 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376C1C0613DD
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 03:45:47 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id f13so22276211lfh.6
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 03:45:47 -0700 (PDT)
+        with ESMTP id S230501AbhGILmd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 07:42:33 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA18C0613E5
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 04:39:50 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id r125so1394375qkf.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 04:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C6mnLkibuTq3O3RIj/A8hWNd/xjHPJDMjDp1O/G3Qf8=;
-        b=LzauGJ/W0SJTz14zlRSNp3tG3n9Ws3VCF9I3Gog1j48Ial81lRhuyOJirZjXtkPrP+
-         AixliN35gUn87RpjY/M1wP5drdEFDx0DidjeHpy0NUBPRCTf4I7F8iwvXNjRajr+JTNN
-         Q6k1Aqwq55REnZXeSgNZwNlz7EsQUbgevJ/0o=
+        bh=V80QwRmpVqLUC1/pv95T7LChrvArer3bS4sHJ/jE7pM=;
+        b=Mcjrj+EF55gxmaqc6tz/ekD7I3bs3f1Lm68LlK8VTuwLZE/S80ym58HLfCWIU40S2P
+         /6pA9l+yCKaWXsASDqXmV9tfCj6PfvOSLgSzFkR9cNTxTLckiK3XECwRkA4OeZJmLdfm
+         spqDijNKbfXMffSPvv5Nw6EqQrfHyTI/fIm5+nFauKeUwoCrSsKsootOJO2TgFAGu9CT
+         rG0kT7BuO8vvcVOXYAmSIv0+6B6QtHQo7zz3j54JQ3p1ohaSlYj0lUOOPsTVFgikAByZ
+         znYtPwnzfWXVV9+DYX25XdSF1l9wx+9wAge9RE02zg0H7be9miB+lHdAVfCLe2tZXuyW
+         Wiew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C6mnLkibuTq3O3RIj/A8hWNd/xjHPJDMjDp1O/G3Qf8=;
-        b=MATUdipMIGJIbXJ0Pi5x5bzAtjkq53NTSjW8oJx0V60Ydv5guOHtKifsLUvMFq1hXd
-         FChnqFt/6sPUrmWLlA8+e6owk/yO4L2NUUD6/P132MGfrOvJbUEPRWRc2Ehdm9FTnfNZ
-         rQceIwPols80P3dpimngjAHv0pg6SquE1BOz9CT3s2MESWWhycUH/8vombzAgE7/rh63
-         Y8CNyUohnclZZfl0mIlUepWWPy+CgR3tht538Um+qIA9L8a3B+ncxbougzKEPXtH9Hlt
-         aUeHMhcUfxqaMQkm/x20bAyVOcOQr6IQHmvJ78Tn8FxOiU1gYWeS7PcAU6tJ33l9yD58
-         sVIQ==
-X-Gm-Message-State: AOAM530Sx+9ytCdfH9W+5v2lQ7Ig0QImtjcADffbVrcD9obf/URbS21o
-        dGBFqvdEInIrFOTXE825acYSFSF+pfaHF/DClDrTPw==
-X-Google-Smtp-Source: ABdhPJx7RqOTMWa8I+UjEb9qnMaV29Z5bjjjl2WI7vBQRSsRr6A1xwWtK7BUmL37N4gurtLIBXKjiVTD256GsKYP1Jc=
-X-Received: by 2002:a05:6512:1303:: with SMTP id x3mr27753514lfu.276.1625827545601;
- Fri, 09 Jul 2021 03:45:45 -0700 (PDT)
+        bh=V80QwRmpVqLUC1/pv95T7LChrvArer3bS4sHJ/jE7pM=;
+        b=VKGORZTXOZWzr5if4fEvw9/q/qPR49Wv42yn+5TEbh5vyjVDKro9xivqT8T7sFvlxi
+         Oz23K2vdBySEZ45oHMLaI4IPmr1837sywfxPsORpZFin4G3TuszzX01fDEc7/ftCdPdh
+         EJwEubGt0I7MgZxD5ebdpTm1VeT7/c0EfRCyAx2VtWcyyyBF2UQQRFBc+otVTwU+QqzP
+         L619i5lvOmiuQKS+jYHRggGFiHahCtz4MuQiNKT4iVK4hcI2VFr62StOxFydeo23eDbi
+         qPT+96SqYlk17GR5KDfx+Zms9Frg75OR6B4vBZ7tYtMmRA6I7OyZOVCwrJrxmOPkWznE
+         Y0Eg==
+X-Gm-Message-State: AOAM532hXe/lZSYiYRsDL7WVwcrmOMlmCXlzC0uESxzr7X9i7XJPj53V
+        EySCR0AFsJFQdNUmeXqgWY52cmVtejRY5mfw5X9aFw==
+X-Google-Smtp-Source: ABdhPJyMo2wUMKJXK0KxcB+yRDpiHkai20Amf0pxsUSYlncs5xFeAFIIYQibhXDSSQCVAbQKVd7GDIA5UvRkYIIBUOs=
+X-Received: by 2002:a05:620a:651:: with SMTP id a17mr13144418qka.434.1625830789281;
+ Fri, 09 Jul 2021 04:39:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210616224743.5109-1-chun-jie.chen@mediatek.com> <20210616224743.5109-20-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210616224743.5109-20-chun-jie.chen@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 9 Jul 2021 18:45:34 +0800
-Message-ID: <CAGXv+5EyKJ=-hY+-kzzeFOZhSwiTTmGPi-4ux01hyimJfoEJRw@mail.gmail.com>
-Subject: Re: [PATCH 19/22] clk: mediatek: Add MT8195 vppsys1 clock support
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
+References: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
+ <20210709043136.533205-4-dmitry.baryshkov@linaro.org> <CAPDyKFoNPkFqGMvR=JGXNVXp-UfWLUqReZ0DGP8+0PBh+7dCRg@mail.gmail.com>
+In-Reply-To: <CAPDyKFoNPkFqGMvR=JGXNVXp-UfWLUqReZ0DGP8+0PBh+7dCRg@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 9 Jul 2021 14:39:37 +0300
+Message-ID: <CAA8EJpqykAyBKBADuGUQeZjG5-NPC6HgieNQLtWeA+McG_BMqw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 3/7] PM: domains: Add support for runtime PM
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -72,177 +80,150 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-On Thu, Jun 17, 2021 at 7:00 AM Chun-Jie Chen
-<chun-jie.chen@mediatek.com> wrote:
+On Fri, 9 Jul 2021 at 11:25, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Add MT8195 vppsys1 clock provider
+> On Fri, 9 Jul 2021 at 06:32, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > Registers for some genpds can be located in the SoC area, powered up by
+> > another power domain. To enabled access to those registers, respective
+> > domain should be turned on.
+> >
+> > This patch adds basic infrastructure to the genpd code to allow
+> > implementing drivers for such genpd. PM domain can provide the parent
+> > device through the genpd->dev.parent pointer. If its provided at the
+> > pm_genpd_init() call time and if it is pm-enabled, genpd power_on and
+> > power_off operations will call pm_runtime_get_sync() before powering up
+> > the domain and pm_runtime_put_sync() after powering it down.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> ---
->  drivers/clk/mediatek/Kconfig           |   6 ++
->  drivers/clk/mediatek/Makefile          |   1 +
->  drivers/clk/mediatek/clk-mt8195-vpp1.c | 110 +++++++++++++++++++++++++
->  3 files changed, 117 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8195-vpp1.c
+> Hi Dmitry,
 >
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 2deef026fbb4..91b1c19da1ab 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -672,6 +672,12 @@ config COMMON_CLK_MT8195_VPPSYS0
->         help
->           This driver supports MediaTek MT8195 vppsys0 clocks.
+> Using runtime PM for the genpd provider device, is not the correct
+> approach. If the provider domain needs another domain to be powered on
+> to work correctly, that per definition means that it has a parent
+> domain.
 >
-> +config COMMON_CLK_MT8195_VPPSYS1
-> +       bool "Clock driver for MediaTek MT8195 vppsys1"
-> +       depends on COMMON_CLK_MT8195
-> +       help
-> +         This driver supports MediaTek MT8195 vppsys1 clocks.
-> +
->  config COMMON_CLK_MT8516
->         bool "Clock driver for MediaTek MT8516"
->         depends on ARCH_MEDIATEK || COMPILE_TEST
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 34cd7f2c71ac..fbf57473bb91 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -95,5 +95,6 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VDOSYS0) += clk-mt8195-vdo0.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_VDOSYS1) += clk-mt8195-vdo1.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) += clk-mt8195-venc.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS0) += clk-mt8195-vpp0.o
-> +obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS1) += clk-mt8195-vpp1.o
->  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
->  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> new file mode 100644
-> index 000000000000..0650ba86d5b6
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> @@ -0,0 +1,110 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +//
-> +// Copyright (c) 2021 MediaTek Inc.
-> +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-gate.h"
-> +
-> +#include <dt-bindings/clock/mt8195-clk.h>
-> +
-> +static const struct mtk_gate_regs vpp10_cg_regs = {
+> I suggest you try to build the correct PM domain topology, via using
+> pm_genpd_add_subdomain() or of_genpd_add_subdomain(), then genpd will
+> manages the power on/off for parent/child domain internally.
 
-Again, please add a separator.
+Indeed, this patch seems redundant now, with the
+pm_genpd_add_subdomain call in place.
+Would you like me to resend a v3 just dropping this patch?
 
-> +       .set_ofs = 0x104,
-> +       .clr_ofs = 0x108,
-> +       .sta_ofs = 0x100,
-> +};
-> +
-> +static const struct mtk_gate_regs vpp11_cg_regs = {
-> +       .set_ofs = 0x114,
-> +       .clr_ofs = 0x118,
-> +       .sta_ofs = 0x110,
-> +};
-> +
-> +#define GATE_VPP10(_id, _name, _parent, _shift)                        \
-> +       GATE_MTK(_id, _name, _parent, &vpp10_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +#define GATE_VPP11(_id, _name, _parent, _shift)                        \
-> +       GATE_MTK(_id, _name, _parent, &vpp11_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +static const struct mtk_gate vpp1_clks[] = {
-> +       /* VPP10 */
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_OVL, "vpp1_svpp1_mdp_ovl", "vpp_sel", 0),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_TCC, "vpp1_svpp1_mdp_tcc", "vpp_sel", 1),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_WROT, "vpp1_svpp1_mdp_wrot", "vpp_sel", 2),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_VPP_PAD, "vpp1_svpp1_vpp_pad", "vpp_sel", 3),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_WROT, "vpp1_svpp2_mdp_wrot", "vpp_sel", 4),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_VPP_PAD, "vpp1_svpp2_vpp_pad", "vpp_sel", 5),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_MDP_WROT, "vpp1_svpp3_mdp_wrot", "vpp_sel", 6),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_VPP_PAD, "vpp1_svpp3_vpp_pad", "vpp_sel", 7),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_RDMA, "vpp1_svpp1_mdp_rdma", "vpp_sel", 8),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_FG, "vpp1_svpp1_mdp_fg", "vpp_sel", 9),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_RDMA, "vpp1_svpp2_mdp_rdma", "vpp_sel", 10),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_FG, "vpp1_svpp2_mdp_fg", "vpp_sel", 11),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_MDP_RDMA, "vpp1_svpp3_mdp_rdma", "vpp_sel", 12),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_MDP_FG, "vpp1_svpp3_mdp_fg", "vpp_sel", 13),
-> +       GATE_VPP10(CLK_VPP1_VPP_SPLIT, "vpp1_vpp_split", "vpp_sel", 14),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_VDO0_DL_RELAY, "vpp1_svpp2_vdo0_dl_relay", "vpp_sel", 15),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_TDSHP, "vpp1_svpp1_mdp_tdshp", "vpp_sel", 16),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_COLOR, "vpp1_svpp1_mdp_color", "vpp_sel", 17),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_VDO1_DL_RELAY, "vpp1_svpp3_vdo1_dl_relay", "vpp_sel", 18),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_VPP_MERGE, "vpp1_svpp2_vpp_merge", "vpp_sel", 19),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_COLOR, "vpp1_svpp2_mdp_color", "vpp_sel", 20),
-> +       GATE_VPP10(CLK_VPP1_VPPSYS1_GALS, "vpp1_vppsys1_gals", "vpp_sel", 21),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_VPP_MERGE, "vpp1_svpp3_vpp_merge", "vpp_sel", 22),
-> +       GATE_VPP10(CLK_VPP1_SVPP3_MDP_COLOR, "vpp1_svpp3_mdp_color", "vpp_sel", 23),
-> +       GATE_VPP10(CLK_VPP1_VPPSYS1_LARB, "vpp1_vppsys1_larb", "vpp_sel", 24),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_RSZ, "vpp1_svpp1_mdp_rsz", "vpp_sel", 25),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_HDR, "vpp1_svpp1_mdp_hdr", "vpp_sel", 26),
-> +       GATE_VPP10(CLK_VPP1_SVPP1_MDP_AAL, "vpp1_svpp1_mdp_aal", "vpp_sel", 27),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_HDR, "vpp1_svpp2_mdp_hdr", "vpp_sel", 28),
-> +       GATE_VPP10(CLK_VPP1_SVPP2_MDP_AAL, "vpp1_svpp2_mdp_aal", "vpp_sel", 29),
-> +       GATE_VPP10(CLK_VPP1_DL_ASYNC, "vpp1_dl_async", "vpp_sel", 30),
-> +       GATE_VPP10(CLK_VPP1_LARB5_FAKE_ENG, "vpp1_larb5_fake_eng", "vpp_sel", 31),
-> +       /* VPP11 */
-> +       GATE_VPP11(CLK_VPP1_SVPP3_MDP_HDR, "vpp1_svpp3_mdp_hdr", "vpp_sel", 0),
-> +       GATE_VPP11(CLK_VPP1_SVPP3_MDP_AAL, "vpp1_svpp3_mdp_aal", "vpp_sel", 1),
-> +       GATE_VPP11(CLK_VPP1_SVPP2_VDO1_DL_RELAY, "vpp1_svpp2_vdo1_dl_relay", "vpp_sel", 2),
-> +       GATE_VPP11(CLK_VPP1_LARB6_FAKE_ENG, "vpp1_larb6_fake_eng", "vpp_sel", 3),
-> +       GATE_VPP11(CLK_VPP1_SVPP2_MDP_RSZ, "vpp1_svpp2_mdp_rsz", "vpp_sel", 4),
-> +       GATE_VPP11(CLK_VPP1_SVPP3_MDP_RSZ, "vpp1_svpp3_mdp_rsz", "vpp_sel", 5),
-> +       GATE_VPP11(CLK_VPP1_SVPP3_VDO0_DL_RELAY, "vpp1_svpp3_vdo0_dl_relay", "vpp_sel", 6),
-> +       GATE_VPP11(CLK_VPP1_DISP_MUTEX, "vpp1_disp_mutex", "vpp_sel", 7),
-> +       GATE_VPP11(CLK_VPP1_SVPP2_MDP_TDSHP, "vpp1_svpp2_mdp_tdshp", "vpp_sel", 8),
-> +       GATE_VPP11(CLK_VPP1_SVPP3_MDP_TDSHP, "vpp1_svpp3_mdp_tdshp", "vpp_sel", 9),
-> +       GATE_VPP11(CLK_VPP1_VPP0_DL1_RELAY, "vpp1_vpp0_dl1_relay", "vpp_sel", 10),
-> +       GATE_VPP11(CLK_VPP1_HDMI_META, "vpp1_hdmi_meta", "hdmirx_p", 11),
-> +       GATE_VPP11(CLK_VPP1_VPP_SPLIT_HDMI, "vpp1_vpp_split_hdmi", "hdmirx_p", 12),
-> +       GATE_VPP11(CLK_VPP1_DGI_IN, "vpp1_dgi_in", "in_dgi", 13),
-> +       GATE_VPP11(CLK_VPP1_DGI_OUT, "vpp1_dgi_out", "dgi_out_sel", 14),
-> +       GATE_VPP11(CLK_VPP1_VPP_SPLIT_DGI, "vpp1_vpp_split_dgi", "dgi_out_sel", 15),
-> +       GATE_VPP11(CLK_VPP1_VPP0_DL_ASYNC, "vpp1_vpp0_dl_async", "vpp_sel", 16),
-> +       GATE_VPP11(CLK_VPP1_VPP0_DL_RELAY, "vpp1_vpp0_dl_relay", "vpp_sel", 17),
-> +       GATE_VPP11(CLK_VPP1_VPP_SPLIT_26M, "vpp1_vpp_split_26m", "clk26m", 26),
-
-The last two aren't in the datasheet.
-
-Same general comments apply.
+>
+> Kind regards
+> Uffe
+>
+> > ---
+> >  drivers/base/power/domain.c | 33 +++++++++++++++++++++++++++++++++
+> >  include/linux/pm_domain.h   |  6 ++++++
+> >  2 files changed, 39 insertions(+)
+> >
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index e5d97174c254..7d49531c9731 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -482,6 +482,30 @@ void dev_pm_genpd_set_next_wakeup(struct device *dev, ktime_t next)
+> >  }
+> >  EXPORT_SYMBOL_GPL(dev_pm_genpd_set_next_wakeup);
+> >
+> > +static int _genpd_pm_runtime_get(struct generic_pm_domain *genpd)
+> > +{
+> > +       int ret;
+> > +
+> > +       if (!(genpd->flags & _GENPD_FLAG_RPM_ENABLED))
+> > +               return 0;
+> > +
+> > +       ret = pm_runtime_get_sync(genpd->dev.parent);
+> > +       if (ret < 0) {
+> > +               pm_runtime_put_noidle(genpd->dev.parent);
+> > +               return ret;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void _genpd_pm_runtime_put(struct generic_pm_domain *genpd)
+> > +{
+> > +       if (!(genpd->flags & _GENPD_FLAG_RPM_ENABLED))
+> > +               return;
+> > +
+> > +       pm_runtime_put_sync(genpd->dev.parent);
+> > +}
+> > +
+> >  static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+> >  {
+> >         unsigned int state_idx = genpd->state_idx;
+> > @@ -497,6 +521,10 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+> >         if (ret)
+> >                 return ret;
+> >
+> > +       ret = _genpd_pm_runtime_get(genpd);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> >         if (!genpd->power_on)
+> >                 goto out;
+> >
+> > @@ -526,6 +554,7 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+> >         raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_ON, NULL);
+> >         return 0;
+> >  err:
+> > +       _genpd_pm_runtime_put(genpd);
+> >         raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
+> >                                 NULL);
+> >         return ret;
+> > @@ -572,6 +601,7 @@ static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
+> >                  genpd->name, "off", elapsed_ns);
+> >
+> >  out:
+> > +       _genpd_pm_runtime_put(genpd);
+> >         raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
+> >                                 NULL);
+> >         return 0;
+> > @@ -1986,6 +2016,9 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+> >         genpd->domain.ops.complete = genpd_complete;
+> >         genpd->domain.start = genpd_dev_pm_start;
+> >
+> > +       if (genpd->dev.parent && pm_runtime_enabled(genpd->dev.parent))
+> > +               genpd->flags |= _GENPD_FLAG_RPM_ENABLED;
+> > +
+> >         if (genpd->flags & GENPD_FLAG_PM_CLK) {
+> >                 genpd->dev_ops.stop = pm_clk_suspend;
+> >                 genpd->dev_ops.start = pm_clk_resume;
+> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> > index 21a0577305ef..e86cd7cfc9ec 100644
+> > --- a/include/linux/pm_domain.h
+> > +++ b/include/linux/pm_domain.h
+> > @@ -60,6 +60,10 @@
+> >   * GENPD_FLAG_MIN_RESIDENCY:   Enable the genpd governor to consider its
+> >   *                             components' next wakeup when determining the
+> >   *                             optimal idle state.
+> > + *
+> > + * _GENPD_FLAG_RPM_ENABLED:    Use genpd's parent dev for runtime power
+> > + *                             management. There is no need to set this flag,
+> > + *                             it will be detected automatically.
+> >   */
+> >  #define GENPD_FLAG_PM_CLK       (1U << 0)
+> >  #define GENPD_FLAG_IRQ_SAFE     (1U << 1)
+> > @@ -69,6 +73,8 @@
+> >  #define GENPD_FLAG_RPM_ALWAYS_ON (1U << 5)
+> >  #define GENPD_FLAG_MIN_RESIDENCY (1U << 6)
+> >
+> > +#define _GENPD_FLAG_RPM_ENABLED         (1U << 31)
+> > +
+> >  enum gpd_status {
+> >         GENPD_STATE_ON = 0,     /* PM domain is on */
+> >         GENPD_STATE_OFF,        /* PM domain is off */
+> > --
+> > 2.30.2
+> >
 
 
-ChenYu
 
-> +};
-> +
-> +static const struct mtk_clk_desc vpp1_desc = {
-> +       .clks = vpp1_clks,
-> +       .num_clks = ARRAY_SIZE(vpp1_clks),
-> +};
-> +
-> +static const struct of_device_id of_match_clk_mt8195_vpp1[] = {
-> +       {
-> +               .compatible = "mediatek,mt8195-vppsys1",
-> +               .data = &vpp1_desc,
-> +       }, {
-> +               /* sentinel */
-> +       }
-> +};
-> +
-> +static struct platform_driver clk_mt8195_vpp1_drv = {
-> +       .probe = mtk_clk_simple_probe,
-> +       .driver = {
-> +               .name = "clk-mt8195-vpp1",
-> +               .of_match_table = of_match_clk_mt8195_vpp1,
-> +       },
-> +};
-> +
-> +builtin_platform_driver(clk_mt8195_vpp1_drv);
-> --
-> 2.18.0
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+-- 
+With best wishes
+Dmitry
