@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA29C11F66
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA0FC07E99
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5563E61466
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0FCC61457
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 04:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbhGIEea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 00:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38084 "EHLO
+        id S231276AbhGIEeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 00:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbhGIEeZ (ORCPT
+        with ESMTP id S229762AbhGIEeZ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 00:34:25 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC24C061760
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D26BC061765
         for <linux-clk@vger.kernel.org>; Thu,  8 Jul 2021 21:31:41 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id b40so5905462ljf.12
+Received: by mail-lj1-x22b.google.com with SMTP id q4so5908849ljp.13
         for <linux-clk@vger.kernel.org>; Thu, 08 Jul 2021 21:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+l6RNZfO6t53h33tKaqwIC7dbp1+6FXvY3b6ZyHCbIM=;
-        b=WlwvwLrQoeElCrOz8khcG1qUMUEX4LRnDzheKeTWgD0s/tDz3fm1rN5TCIGDvNLuWo
-         VCeygJMIaI/e0Mx4OmU4mn7CbsYP+a2twV4vfJ1QwL1CbFLkihZ1ers+wr1iLTyzN6hI
-         rVEyAGniCLt28C3LKq5xbcM0+urmeCV3MuGXUggWspmcLEXOKDmV/IMYZnkFONNhqa8D
-         NMfMfVYJdp2WVsQ30HIsoUniSnmW1SERAu5uRkjqzYBJknZIlFVxMESm+QpmKsmvE5t2
-         E7nyWENWm9fzwvquITAraHwHDC8DFgOtwlP9nr/T+YzFL2Lgpe5g8QXOeZDOrZeuk45/
-         0kNQ==
+        bh=KLWZj85HgqkOqv1HxmNCRrODidaWLC0A2DygbxwWKbA=;
+        b=sParuvrSW3yxOcQImsE/pSCTQsOWei74sYLKne+13T8AGuPpPTPGmK5tqJ4t/huvC5
+         JqLDLskOrOsSFTCiWSPOnOYtGMF4nepGfge0N7s3Hc2mQCV92Y5FnUvfk0avW1wP+c/O
+         zzNNICJ5cPLJvz5M4slRZs6w+pZrJ2ssyQW6qzU7Zf7w27OyOE2+MuwolUJ6dxR/tcoq
+         vY/bsMKFBI5LVvmLS9I2oRBAiazKiG3T7ow9wMDWwo8URO7kgblsJCAbCSFsR5eFXJjI
+         OyANlUpiTCdH4cosnKXw09vr+OuDE0MVDu62o3ozIoT9t05f2bPckUVb+Wn8gGPc1hu4
+         5xMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+l6RNZfO6t53h33tKaqwIC7dbp1+6FXvY3b6ZyHCbIM=;
-        b=KNe2LCTc9+gChqMJaKOwSJR7NEoq3MagwSHOq4GjqvvsC525t52ox5txphrVsrfBj+
-         QVgp5SQMqbwrFlva0wBRcElavkIKA0U9BRrPFcBAsHsSnecfUfB/NIiAdHKwKXfOIKPt
-         AYC/5HjAoTWWd1qYjj/XsfJQArMd9o8Iss+eycORl1eXB5YzJiAwA+UnnObgN7P8a1hF
-         2jBo2pml70d091eStzKECzvaDQWic4IaoG11r7yM5H09Q8gQOkdotn+0AilFT1sj9BRe
-         WBWGio/bZPqglksObAuZTk1NiHPBNxT/D/fLo1aGYakAAAf5U4gximfWIr140ZqryCsI
-         e1Zg==
-X-Gm-Message-State: AOAM530NL6HFzEdNIQwA0vVrlm5z7RrWX1XSR0DkLAJs5Fa3Lgyhelxg
-        9z6IdzUSiKt28BwgxHcg/ts99g==
-X-Google-Smtp-Source: ABdhPJzJ2+kFilhrLt7SsXBip2dwdXrJIpKz5q8WYP9kQ47A3T9krwTqZFcblwqNnP6Hh6jPrB0U8w==
-X-Received: by 2002:a2e:9c84:: with SMTP id x4mr22464773lji.161.1625805100191;
-        Thu, 08 Jul 2021 21:31:40 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id h1sm13028lft.174.2021.07.08.21.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=KLWZj85HgqkOqv1HxmNCRrODidaWLC0A2DygbxwWKbA=;
+        b=o1QbiD26Qfnl0cAmjl0D0ie5CzYxLupkxi6T/MMP1EybUPEwQ3huLVbVB8VjhLFR60
+         poBASs++cKZMhIb/X/cJL8i+p10HM+klKILkZQH2si9P9fdGuRadpp7EUbKL7J7CIbMa
+         HGck2MQaCNfRIAvYrYJI5azQks0SkHuFgwXoLYiAaE40BpkI3pqXWP7r2Lz9ZFz/3o8F
+         McmDkZMwq0MQDl+Z7weaEcY//YscJvzoWY99mn7iaf7UHGPy8sRBcQl37EPQ9Yxgh8MZ
+         B8MLVA94qNwl6ebZ/MWCqf7KVo3uV8YH4MQ/5W+PDxxgHOzMw6ZHreeZAcmMp7dIHJZZ
+         5DRQ==
+X-Gm-Message-State: AOAM532r3e0JXQdOiBLUin/mcNwT50ioykNojSMJ1VzrQ25KB2oXw75o
+        UR5LTUmPp4o4YfpreoVELLDnpQ==
+X-Google-Smtp-Source: ABdhPJzC7Z+xZjYcUQMVMQp4Gm4Y3ui0lhahHrsnQGoO/Uq+qBwQl2gqLJ7mDclck5qgW7HBdX0rhQ==
+X-Received: by 2002:a2e:a54a:: with SMTP id e10mr27331977ljn.120.1625805099320;
         Thu, 08 Jul 2021 21:31:39 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id h1sm13028lft.174.2021.07.08.21.31.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jul 2021 21:31:38 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 2/7] dt-bindings: clock: qcom,videocc: add mmcx power domain
-Date:   Fri,  9 Jul 2021 07:31:31 +0300
-Message-Id: <20210709043136.533205-3-dmitry.baryshkov@linaro.org>
+Subject: [RESEND PATCH v2 1/7] dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx power domain
+Date:   Fri,  9 Jul 2021 07:31:30 +0300
+Message-Id: <20210709043136.533205-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
 References: <20210709043136.533205-1-dmitry.baryshkov@linaro.org>
@@ -81,7 +81,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sm8250 videocc requires MMCX power domain to be powered up before
+On sm8250 dispcc requires MMCX power domain to be powered up before
 clock controller's registers become available. For now sm8250 was using
 external regulator driven by the power domain to describe this
 relationship. Switch into specifying power-domain and required opp-state
@@ -89,14 +89,14 @@ directly.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,videocc.yaml | 7 +++++++
+ .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml      | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-index 567202942b88..db4ada6acf27 100644
---- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-@@ -47,6 +47,11 @@ properties:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+index 0cdf53f41f84..d5c4fed56b6e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+@@ -55,6 +55,11 @@ properties:
    reg:
      maxItems: 1
  
@@ -108,15 +108,15 @@ index 567202942b88..db4ada6acf27 100644
  required:
    - compatible
    - reg
-@@ -61,6 +66,7 @@ additionalProperties: false
+@@ -69,6 +74,7 @@ additionalProperties: false
  examples:
    - |
      #include <dt-bindings/clock/qcom,rpmh.h>
 +    #include <dt-bindings/power/qcom-rpmpd.h>
-     clock-controller@ab00000 {
-       compatible = "qcom,sdm845-videocc";
-       reg = <0x0ab00000 0x10000>;
-@@ -69,5 +75,6 @@ examples:
+     clock-controller@af00000 {
+       compatible = "qcom,sm8250-dispcc";
+       reg = <0x0af00000 0x10000>;
+@@ -89,5 +95,6 @@ examples:
        #clock-cells = <1>;
        #reset-cells = <1>;
        #power-domain-cells = <1>;
