@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303CFC07E9E
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 01:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A04C11F6F
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 01:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21655613B2
+	by mail.kernel.org (Postfix) with ESMTP id B4737613B2
 	for <linux-clk@archiver.kernel.org>; Fri,  9 Jul 2021 01:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbhGIBdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jul 2021 21:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55006 "EHLO
+        id S230413AbhGIBdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jul 2021 21:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230336AbhGIBde (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jul 2021 21:33:34 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84908C06175F
-        for <linux-clk@vger.kernel.org>; Thu,  8 Jul 2021 18:30:51 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id q18so19946922lfc.7
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jul 2021 18:30:51 -0700 (PDT)
+        with ESMTP id S230372AbhGIBdf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jul 2021 21:33:35 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58390C061762
+        for <linux-clk@vger.kernel.org>; Thu,  8 Jul 2021 18:30:49 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id e20so5364531ljn.8
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jul 2021 18:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ViWAwMziOjMwHhwls8FGGD+OSf0htK/WswqBD2gjBM4=;
-        b=DbTxSS1jLF83CsCHOvMsMre+MPG0QQCLcdDPMJxLGEsa7fhokx3Awpk8KWm3mEiC/d
-         yDGbbBKMvX5h2fM7h93fjZmxwgg6In3iZnRLdXIcTpa8wGHec6UF7IL31D5ZySMUuxUX
-         /IjNk0kZW6taAw2ZqXIIFwM5PniYFlasJjyqv7GpZ0tXrrVbT50Vv63TskTUIniSf1ui
-         glYlS7W8XBssjAjhhDbDximXDo+y6Un2LqZXRbXJhhRcJOjx2jqg1ETvEy9kWM8Vorqu
-         /GmMv/rgJAQCDere/Pw0Z6rjFhISpoHOgZM30w3yWxwBW5l7SfzcEfOgs+jvbefGnxr/
-         wfnQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wyP7J/Id9E/NiKqq0jzeu92fkn8P4xmDSwnVicPRwts=;
+        b=L0qpGINqAiLCW1vDeTta9d6iA3Qhk3vsc0qpOo3yqfMdLWREhYEwaHTQ6MVA7q1hYr
+         +AWh2YiU680qW0hGh9a7jxN6EZdNgJ8i7DiXR7kH5fMlHLxW8qEUIzF9zkHnmk7rClVq
+         1PlhS0v65woul6wWtwRrz+VfPIg0eu9DTn7QVUCqL6+dRngkTHLhz1T2sQgdGlVebFis
+         F6QMElGQc6qhoGdpEFsQvh4lmbQAYoZxF72OZKia0HVnTLrGYOAidBVTm+0ROmUK7qwj
+         Oybaoadvn99Ul0IhAfER5yEMiAr77dSb8iFZxUH1IfUDxV7PFnNf487c9ITYC3eY0DKH
+         qMtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ViWAwMziOjMwHhwls8FGGD+OSf0htK/WswqBD2gjBM4=;
-        b=YotqZL0LtsHQC0b2OzgPWdtxaTy/1vI5PR43PslXkaVPhiryCdIBbQyDtEc5szWaal
-         b9hfRdOBh2NsmZmSbCG8KJvOunJsfBm6BXOAcIgA+Qxbo+YlNDIKR6MyDErwp23gBiyy
-         7H8U4rtAIENgCTAX6EbtocidwWb/xOGIrO17jxhCknStlSn8SGhmMGRivTXDObTZ9YVd
-         tD/wUyHjw2B7pF8mJIoE+MrIJh9Oai2qYlZmB8OijvGbGhIRkCYyPHgY9j9AnGCmIkkP
-         sE3XgsZ2bFgyze6UHLghKxw/x1qSm5hzQ1ZWZfs4YiE6IkodzdIqVGE0XqPdkUHU4dlH
-         l4TQ==
-X-Gm-Message-State: AOAM532wZlJVqxIlz1urq3qEkEUfuRaQLedtecGZ6bpeZo+4YHwJQKXx
-        DgjhwinuaUrs51uO+ls4b2LPOQ==
-X-Google-Smtp-Source: ABdhPJxXnwaid02H2Q5orrJpxSZjmVtX+riiVW0cuKAi7LO6/R3lc+qzBqiTrS6iqtzAv4C69hTerA==
-X-Received: by 2002:a05:6512:50e:: with SMTP id o14mr25137340lfb.286.1625794249897;
-        Thu, 08 Jul 2021 18:30:49 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wyP7J/Id9E/NiKqq0jzeu92fkn8P4xmDSwnVicPRwts=;
+        b=mo/05F2Frt3FWssjfNH34cE7CQ6wUiX6c2vHYf2RTLIQwX10rkifTPmaDG8az3KoBU
+         3pm6uwjzYgnnl7Op2qibNN87HdaMHRFxCGY04gKOcUHAMct+FLM7PA6Lm0uLFVVih9i2
+         SigiN4gssrZp7aHD5B2n5jFZo3A9sxdOs9gzBYAJcok4omhzw8vPhkN8EemfSOdhjjvY
+         EQ/rftL+ayDsKapdf4fnpMFgwCYXsQXyZh56uPGqup4gdR+owej/ucADQUKdzYMpwOxT
+         6HVYuqLXZgsiFO42GfwcqOp/FA7y1EN37+3Qo/aJfm7zdDk2DumlZuW6VDDHuFu8Y1o0
+         NBDw==
+X-Gm-Message-State: AOAM531IsbwK0FlGTwd84kjGx9E4yn9ViPkavXDpvgXyjM1LsOgNyb+R
+        IQVwab0Ex1CWTRZlhR8fYtzmYg==
+X-Google-Smtp-Source: ABdhPJwSiOxtKirHq+83112xdbi6R/UqdH2ba0ZYAeKWBSHK7MNc8HrJzfkrZWgI4roFi/eL5MwEWw==
+X-Received: by 2002:a2e:a546:: with SMTP id e6mr27080250ljn.155.1625794247525;
+        Thu, 08 Jul 2021 18:30:47 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id u16sm405637ljj.113.2021.07.08.18.30.49
+        by smtp.gmail.com with ESMTPSA id u16sm405637ljj.113.2021.07.08.18.30.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jul 2021 18:30:49 -0700 (PDT)
+        Thu, 08 Jul 2021 18:30:47 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,131 +69,54 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] PM: domains: Add support for runtime PM
-Date:   Fri,  9 Jul 2021 04:30:39 +0300
-Message-Id: <20210709013043.495233-4-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/7] clk: qcom: use power-domain for sm8250's clock controllers
+Date:   Fri,  9 Jul 2021 04:30:36 +0300
+Message-Id: <20210709013043.495233-1-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210709013043.495233-1-dmitry.baryshkov@linaro.org>
-References: <20210709013043.495233-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Registers for some genpds can be located in the SoC area, powered up by
-another power domain. To enabled access to those registers, respective
-domain should be turned on.
+On SM8250 both the display and video clock controllers are powered up by
+the MMCX power domain. Handle this by linking clock controllers to the
+proper power domain, and using runtime power management to enable and
+disable the MMCX power domain.
 
-This patch adds basic infrastructure to the genpd code to allow
-implementing drivers for such genpd. PM domain can provide the parent
-device through the genpd->dev.parent pointer. If its provided at the
-pm_genpd_init() call time and if it is pm-enabled, genpd power_on and
-power_off operations will call pm_runtime_get_sync() before powering up
-the domain and pm_runtime_put_sync() after powering it down.
+Dependencies:
+- https://lore.kernel.org/linux-pm/20210603093438.138705-1-ulf.hansson@linaro.org/ (merged in 5.14)
+- https://lore.kernel.org/linux-arm-msm/20210703005416.2668319-1-bjorn.andersson@linaro.org/
+  (pending)
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/base/power/domain.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/pm_domain.h   |  6 ++++++
- 2 files changed, 39 insertions(+)
+Changes since v1:
+ - Rebase on top of Bjorn's patches, removing the need for setting
+   performance state directly.
+ - Move runtime PM calls from GDSC code to generic genpd code.
+ - Always call pm_runtime_enable in the Qualcomm generic clock
+   controller code.
+ - Register GDSC power domains as subdomains of the domain powering the
+   clock controller if there is one.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e5d97174c254..14e75a62254d 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -482,6 +482,30 @@ void dev_pm_genpd_set_next_wakeup(struct device *dev, ktime_t next)
- }
- EXPORT_SYMBOL_GPL(dev_pm_genpd_set_next_wakeup);
- 
-+static int _genpd_pm_runtime_get(struct generic_pm_domain *genpd)
-+{
-+	int ret;
-+
-+	if (!(genpd->flags & _GENPD_FLAG_RPM_ENABLED))
-+		return 0;
-+
-+	ret = pm_runtime_get_sync(genpd->dev.parent);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(genpd->dev.parent);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void _genpd_pm_runtime_put(struct generic_pm_domain *genpd)
-+{
-+	if (!(genpd->flags & _GENPD_FLAG_RPM_ENABLED))
-+		return;
-+
-+	pm_runtime_put_sync(genpd->dev.parent);
-+}
-+
- static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
- {
- 	unsigned int state_idx = genpd->state_idx;
-@@ -497,6 +521,10 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
- 	if (ret)
- 		return ret;
- 
-+	ret = _genpd_pm_runtime_get(genpd);
-+	if (ret)
-+		return ret;
-+
- 	if (!genpd->power_on)
- 		goto out;
- 
-@@ -526,6 +554,7 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
- 	raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_ON, NULL);
- 	return 0;
- err:
-+	_genpd_pm_runtime_put(genpd);
- 	raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
- 				NULL);
- 	return ret;
-@@ -572,6 +601,7 @@ static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
- 		 genpd->name, "off", elapsed_ns);
- 
- out:
-+	_genpd_pm_runtime_put(genpd);
- 	raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
- 				NULL);
- 	return 0;
-@@ -1986,6 +2016,9 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
- 	genpd->domain.ops.complete = genpd_complete;
- 	genpd->domain.start = genpd_dev_pm_start;
- 
-+	if (genpd->dev.parent && pm_runtime_enabled(genpd->dev.parent))
-+		genpd->flags |= GENPD_FLAG_RPM_ENABLED;
-+
- 	if (genpd->flags & GENPD_FLAG_PM_CLK) {
- 		genpd->dev_ops.stop = pm_clk_suspend;
- 		genpd->dev_ops.start = pm_clk_resume;
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 21a0577305ef..e86cd7cfc9ec 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -60,6 +60,10 @@
-  * GENPD_FLAG_MIN_RESIDENCY:	Enable the genpd governor to consider its
-  *				components' next wakeup when determining the
-  *				optimal idle state.
-+ *
-+ * _GENPD_FLAG_RPM_ENABLED:	Use genpd's parent dev for runtime power
-+ *				management. There is no need to set this flag,
-+ *				it will be detected automatically.
-  */
- #define GENPD_FLAG_PM_CLK	 (1U << 0)
- #define GENPD_FLAG_IRQ_SAFE	 (1U << 1)
-@@ -69,6 +73,8 @@
- #define GENPD_FLAG_RPM_ALWAYS_ON (1U << 5)
- #define GENPD_FLAG_MIN_RESIDENCY (1U << 6)
- 
-+#define _GENPD_FLAG_RPM_ENABLED	 (1U << 31)
-+
- enum gpd_status {
- 	GENPD_STATE_ON = 0,	/* PM domain is on */
- 	GENPD_STATE_OFF,	/* PM domain is off */
--- 
-2.30.2
+----------------------------------------------------------------
+Dmitry Baryshkov (7):
+      dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx power domain
+      dt-bindings: clock: qcom,videocc: add mmcx power domain
+      PM: domains: Add support for runtime PM
+      clk: qcom: gdsc: enable optional power domain support
+      arm64: dts: qcom: sm8250: remove mmcx regulator
+      clk: qcom: dispcc-sm8250: stop using mmcx regulator
+      clk: qcom: videocc-sm8250: stop using mmcx regulator
+
+ .../bindings/clock/qcom,dispcc-sm8x50.yaml         |  7 ++++
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  7 ++++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi               | 11 ++-----
+ drivers/base/power/domain.c                        | 33 +++++++++++++++++++
+ drivers/clk/qcom/common.c                          | 37 ++++++++++++++++++----
+ drivers/clk/qcom/dispcc-sm8250.c                   |  1 -
+ drivers/clk/qcom/gdsc.c                            |  5 +++
+ drivers/clk/qcom/videocc-sm8250.c                  |  4 ---
+ include/linux/pm_domain.h                          |  6 ++++
+ 9 files changed, 91 insertions(+), 20 deletions(-)
+
 
