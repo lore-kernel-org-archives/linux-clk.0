@@ -5,115 +5,372 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED80EC07E9B
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 03:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA8DC07E99
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 03:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8E28613B2
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 03:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549D26135C
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 03:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbhGJDdw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jul 2021 23:33:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37474 "EHLO
+        id S231851AbhGJDrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jul 2021 23:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbhGJDdw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 23:33:52 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA85C0613DD
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 20:31:07 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id 59-20020a9d0ac10000b0290462f0ab0800so11549243otq.11
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 20:31:07 -0700 (PDT)
+        with ESMTP id S231839AbhGJDrR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jul 2021 23:47:17 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63C9C0613DD
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jul 2021 20:44:31 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id u66so9053626oif.13
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jul 2021 20:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=628XlwR0qY2cfM6R9xRL/FEnuuCOAFzEXqSiz//9b68=;
-        b=qfWkF+Sqrkh5K+66fQnOvQcVgs3gS97rI2z9q1i8PSoPmRBqw2EynL9TDIkS8ln0pW
-         lzEoFCzopYcMM9OWO/Ba/Jbv2yjTZpDEogAy+gURxWPk+8TugtvLNnTCNxT40S3MEGpi
-         H0lXhdq8gnm4XW8iYwsmQyGLwVYdbFexm/BcMnJtAJpih56MnJKXgyUcRF1vhCYAjtyM
-         UsVpN6qZGQ6FiKnns6OTguJT7UhcxSu+gBMy0jPNcGwliamCwW6cQC7m/9iV8p1Ym61M
-         Hf9XEsmzg1qUrROGJeBQH9vVx2Xt6vXYVUaipow1pNZpSVW3jATWemFpshW06xCEtvI/
-         aSVw==
+        bh=Ot6dYFfZoCP1N73irmJFNTrvJCHr40HtrhRleGwTm8o=;
+        b=fJ9VdrV8k8rF7jp1zmJ2jev98lgnYV0xySr4oIAJiIJtCGbng1Xw29ZqXyL7mwPKW/
+         EtGvTc2CKV0KhysJ9spDaa/E8buxQCM9dv18ofAY7JpzcSJVn8j1kCPHux7L1NJjyKUY
+         PbKAaHXrZiHdkpxQOdWuS2iPCPwpDlkhTQgxpnUw3bmX6azKFb5c9GIF7MkFwCeZXQkP
+         nWLCRD1e8CcOPHjupk8setCHerV+YWhzJ1MKZRrKsmRj/2oKYu+5y+XUAvPAw5hIH3zU
+         MhwSKNpT8utztpLH0PqeybVVrWW6Zue4iM4R890mpKJDr2FCYNEIBprTMc9f3zVHQraf
+         MDKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=628XlwR0qY2cfM6R9xRL/FEnuuCOAFzEXqSiz//9b68=;
-        b=B21DB2AFYkfvA2jSWwNS0VbbbxdWuMnZ06e69tiVu0BgU8KwzEHLLGCfiTzcel/nZV
-         0NZX/g9oLZriOCxfGiJ7eDdDNU4gT4qSykmgx5Fi+G11oPXSKoUYX/P0tlPKYTIxzd3W
-         1/Qh+9C9Kg2UnQ47EF8/ZCOCyx4ECW7FGaybMUx7uRxLj0pHYk0+5IdKCs77ZILOt6+K
-         0YlQjbYmsJF2XfczWhsjyR1x2A4Cbs0uxpD8UQX3divj3k6ox7fjl1wdoiVAOi5sKRs6
-         X5cXAHbAcSxBxc4hjVliVxk6QzG8ZQ3H56fEnQV6EoBW9vNUTSOowLJBy7J25Be2G3Io
-         Mb+g==
-X-Gm-Message-State: AOAM532PbdUfzY362cr5rYybj6af/uQgrNuHNZtjZpEPL69s1J4hvax4
-        kSpsjBKXCwjWR0rSOKmOuqvehg==
-X-Google-Smtp-Source: ABdhPJxtddVvy7AlxqGl7cdNcA0g5E+M2xFoVJ0okMmuet0quLQh0YL5ldkb7hb/C21TqcjHXXVuzw==
-X-Received: by 2002:a05:6830:85:: with SMTP id a5mr7670999oto.154.1625887866376;
-        Fri, 09 Jul 2021 20:31:06 -0700 (PDT)
+        bh=Ot6dYFfZoCP1N73irmJFNTrvJCHr40HtrhRleGwTm8o=;
+        b=LOxkyIXCaN8yBXrCJ1wMFWQ+wzBUjovNuxiOguiV8jG51Ly9W2VD7nRFdby8ci00bj
+         7qi5RNNgltbo8UgxUGOaw3HgvxlSiXTdDTewofYLKU8qPp+XKgqlPC7EZu7To2AoNT7M
+         oUXleMHPfgX+tDwBunVvgYcoSaaKl3HtdFT+ZZFEj5OkRPRbs7O2aIa80GLLLc1gGqP0
+         wghG1Bd+hKnRGxQywMg9g4kUrhXeXExmOS+Fdk70pHXAOmzHUs92gbsALFFYLPqyEVPQ
+         4RFa2g/rYB3Ccv0xL54oEr37o3bOL3fmPYdU3PPb2stwUTymtJvVJLywrBUaX9JpnsEr
+         M8bA==
+X-Gm-Message-State: AOAM53395p7mZD8mDl/zhPNjszAfUdpnAjGW51mHji/Nu5m3+lQP3Fcf
+        4fvVZNYNVXGVtquTPJJqMebDaA==
+X-Google-Smtp-Source: ABdhPJzojx1P0A6dNb9Wjh1DxSjCrCJdX+ays1yTu1vu9UmyUCHLuXFY0VrtVGpNjrcAmhyvXxy0mw==
+X-Received: by 2002:aca:ed0c:: with SMTP id l12mr13042730oih.53.1625888671270;
+        Fri, 09 Jul 2021 20:44:31 -0700 (PDT)
 Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id y18sm1585169oiv.46.2021.07.09.20.31.05
+        by smtp.gmail.com with ESMTPSA id m1sm1541593otl.0.2021.07.09.20.44.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jul 2021 20:31:06 -0700 (PDT)
-Date:   Fri, 9 Jul 2021 22:31:03 -0500
+        Fri, 09 Jul 2021 20:44:30 -0700 (PDT)
+Date:   Fri, 9 Jul 2021 22:44:28 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     quic_vamslank@quicinc.com
-Cc:     agross@kernel.org, linus.walleij@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org
-Subject: Re: [PATCH 5/5] dt-bindings: clock: Introduce pdc bindings for SDX65
-Message-ID: <YOkUd3B0vvclk7un@yoga>
-References: <20210709200339.17638-1-quic_vamslank@quicinc.com>
- <20210709200339.17638-6-quic_vamslank@quicinc.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] clk: qcom: gdsc: enable optional power domain
+ support
+Message-ID: <YOkXnEVshAy0qmPm@yoga>
+References: <20210710013253.1134341-1-dmitry.baryshkov@linaro.org>
+ <20210710013253.1134341-4-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210709200339.17638-6-quic_vamslank@quicinc.com>
+In-Reply-To: <20210710013253.1134341-4-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 09 Jul 15:03 CDT 2021, quic_vamslank@quicinc.com wrote:
+On Fri 09 Jul 20:32 CDT 2021, Dmitry Baryshkov wrote:
 
-> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
+> On sm8250 dispcc and videocc registers are powered up by the MMCX power
+> domain. Currently we use a regulator to enable this domain on demand,
+> however this has some consequences, as genpd code is not reentrant.
 > 
-> Add compatible for SDX65 pdc.
+> Teach Qualcomm clock controller code about setting up runtime PM and
+> using specified genpd for gdsc powerup. Clock core will use runtime_pm
+> calls to ensure that clock registers are accessible. The genpd code will
+> powerup the parent domain when gdsc is powered, thus ensuring that the
+> power stays on. Make gdsc code also use pm_runtime calls to ensure that
+> registers are accessible during the gdsc_enable/gdsc_disable operations.
 > 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/common.c | 37 +++++++++++++++++----
+>  drivers/clk/qcom/gdsc.c   | 67 +++++++++++++++++++++++++++++++++++++--
+>  drivers/clk/qcom/gdsc.h   |  2 ++
+>  3 files changed, 97 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 60d2a78d1395..43d8f8feeb3c 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/of.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include "common.h"
+>  #include "clk-rcg.h"
+> @@ -224,6 +225,11 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
+>  	return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+>  }
+>  
+> +static void qcom_cc_pm_runtime_disable(void *data)
+> +{
+> +	pm_runtime_disable(data);
+> +}
+> +
+>  int qcom_cc_really_probe(struct platform_device *pdev,
+>  			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+>  {
+> @@ -241,6 +247,18 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  	if (!cc)
+>  		return -ENOMEM;
+>  
+> +	pm_runtime_enable(dev);
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+As I said in v3, this will result in double pm_runtime_enable(), which
+is not allowed. What I didn't remember is that we have 6 drivers that
+rely on pm_runtime to keep their iface clock enabled during clock
+operations, so it's not only isolated to the turingcc driver.
 
-That said, this patch is independent from the clock patches and would be
-picked up by a different maintainer than the clock patches, so including
-it in the same series only risk complicating the pickup of the patch.
+> +	ret = pm_runtime_get_sync(dev);
 
-And with that in mind, looking at the recipients of all your patches you
-forgot toadd Stephen to the clock patches, Linus is not involved in
-the clock patches and you completely missed the irq maintainer.
+And I still think that you should add this to gdsc_init(), like you do
+in gdsc_enable() and gdsc_disable.
 
-Please use scripts/get_maintainer.pl to list the appropriate recipients
-for each patch(series), to ensure that your patches will get the
-attention they deserve.
+Combined, there are no longer any changes to common.c
 
-Thanks,
+
+The rest of this looks good now!
+
+Regards,
 Bjorn
 
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> ---
->  .../devicetree/bindings/interrupt-controller/qcom,pdc.txt        | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> index e9afb48182c7..7bdbffb572dc 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> @@ -22,6 +22,7 @@ Properties:
->  		    - "qcom,sdm845-pdc": For SDM845
->  		    - "qcom,sdm8250-pdc": For SM8250
->  		    - "qcom,sdm8350-pdc": For SM8350
-> +		    - "qcom,sdx65-pdc": For SDX65
+> +	if (ret < 0) {
+> +		pm_runtime_put(dev);
+> +		pm_runtime_disable(dev);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_add_action_or_reset(dev, qcom_cc_pm_runtime_disable, dev);
+> +	if (ret)
+> +		goto err;
+> +
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+>  	reset->rcdev.ops = &qcom_reset_ops;
+> @@ -251,7 +269,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
 >  
->  - reg:
->  	Usage: required
+>  	ret = devm_reset_controller_register(dev, &reset->rcdev);
+>  	if (ret)
+> -		return ret;
+> +		goto err;
+>  
+>  	if (desc->gdscs && desc->num_gdscs) {
+>  		scd = devm_kzalloc(dev, sizeof(*scd), GFP_KERNEL);
+> @@ -262,11 +280,11 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  		scd->num = desc->num_gdscs;
+>  		ret = gdsc_register(scd, &reset->rcdev, regmap);
+>  		if (ret)
+> -			return ret;
+> +			goto err;
+>  		ret = devm_add_action_or_reset(dev, qcom_cc_gdsc_unregister,
+>  					       scd);
+>  		if (ret)
+> -			return ret;
+> +			goto err;
+>  	}
+>  
+>  	cc->rclks = rclks;
+> @@ -277,7 +295,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  	for (i = 0; i < num_clk_hws; i++) {
+>  		ret = devm_clk_hw_register(dev, clk_hws[i]);
+>  		if (ret)
+> -			return ret;
+> +			goto err;
+>  	}
+>  
+>  	for (i = 0; i < num_clks; i++) {
+> @@ -286,14 +304,21 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  
+>  		ret = devm_clk_register_regmap(dev, rclks[i]);
+>  		if (ret)
+> -			return ret;
+> +			goto err;
+>  	}
+>  
+>  	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
+>  	if (ret)
+> -		return ret;
+> +		goto err;
+> +
+> +	pm_runtime_put(dev);
+>  
+>  	return 0;
+> +
+> +err:
+> +	pm_runtime_put(dev);
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+>  
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 51ed640e527b..cfe875f87efe 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/ktime.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset-controller.h>
+> @@ -50,6 +51,30 @@ enum gdsc_status {
+>  	GDSC_ON
+>  };
+>  
+> +static int gdsc_pm_runtime_get(struct gdsc *sc)
+> +{
+> +	int ret;
+> +
+> +	if (!sc->dev)
+> +		return 0;
+> +
+> +	ret = pm_runtime_get_sync(sc->dev);
+> +	if (ret < 0) {
+> +		pm_runtime_put_noidle(sc->dev);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int gdsc_pm_runtime_put(struct gdsc *sc)
+> +{
+> +	if (!sc->dev)
+> +		return 0;
+> +
+> +	return pm_runtime_put_sync(sc->dev);
+> +}
+> +
+>  /* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
+>  static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
+>  {
+> @@ -232,9 +257,8 @@ static void gdsc_retain_ff_on(struct gdsc *sc)
+>  	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
+>  }
+>  
+> -static int gdsc_enable(struct generic_pm_domain *domain)
+> +static int _gdsc_enable(struct gdsc *sc)
+>  {
+> -	struct gdsc *sc = domain_to_gdsc(domain);
+>  	int ret;
+>  
+>  	if (sc->pwrsts == PWRSTS_ON)
+> @@ -290,11 +314,26 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> -static int gdsc_disable(struct generic_pm_domain *domain)
+> +static int gdsc_enable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+>  	int ret;
+>  
+> +	ret = gdsc_pm_runtime_get(sc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = _gdsc_enable(sc);
+> +
+> +	gdsc_pm_runtime_put(sc);
+> +
+> +	return ret;
+> +}
+> +
+> +static int _gdsc_disable(struct gdsc *sc)
+> +{
+> +	int ret;
+> +
+>  	if (sc->pwrsts == PWRSTS_ON)
+>  		return gdsc_assert_reset(sc);
+>  
+> @@ -329,6 +368,22 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> +static int gdsc_disable(struct generic_pm_domain *domain)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	int ret;
+> +
+> +	ret = gdsc_pm_runtime_get(sc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = _gdsc_disable(sc);
+> +
+> +	gdsc_pm_runtime_put(sc);
+> +
+> +	return ret;
+> +}
+> +
+>  static int gdsc_init(struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+> @@ -425,6 +480,8 @@ int gdsc_register(struct gdsc_desc *desc,
+>  	for (i = 0; i < num; i++) {
+>  		if (!scs[i])
+>  			continue;
+> +		if (pm_runtime_enabled(dev))
+> +			scs[i]->dev = dev;
+>  		scs[i]->regmap = regmap;
+>  		scs[i]->rcdev = rcdev;
+>  		ret = gdsc_init(scs[i]);
+> @@ -439,6 +496,8 @@ int gdsc_register(struct gdsc_desc *desc,
+>  			continue;
+>  		if (scs[i]->parent)
+>  			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+> +		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+> +			pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+>  	}
+>  
+>  	return of_genpd_add_provider_onecell(dev->of_node, data);
+> @@ -457,6 +516,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
+>  			continue;
+>  		if (scs[i]->parent)
+>  			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
+> +		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+> +			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+>  	}
+>  	of_genpd_del_provider(dev->of_node);
+>  }
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 5bb396b344d1..702d47a87af6 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -25,6 +25,7 @@ struct reset_controller_dev;
+>   * @resets: ids of resets associated with this gdsc
+>   * @reset_count: number of @resets
+>   * @rcdev: reset controller
+> + * @dev: the device holding the GDSC, used for pm_runtime calls
+>   */
+>  struct gdsc {
+>  	struct generic_pm_domain	pd;
+> @@ -58,6 +59,7 @@ struct gdsc {
+>  
+>  	const char 			*supply;
+>  	struct regulator		*rsupply;
+> +	struct device 			*dev;
+>  };
+>  
+>  struct gdsc_desc {
 > -- 
-> 2.32.0
+> 2.30.2
 > 
