@@ -2,63 +2,43 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D94C07E9C
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 02:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCDBC07E99
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 04:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A47D6103E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 02:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0CF6610D0
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 04:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232443AbhGLCMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 11 Jul 2021 22:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232307AbhGLCMp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jul 2021 22:12:45 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BE9C0613E5
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jul 2021 19:09:56 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id u13so553798lfs.11
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jul 2021 19:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fM/Oy5bOgt7mKFRvTNxt2QAAYi9G5M9AeISf1+v5+R4=;
-        b=JR13ydL2pgfVrqWGcICji8HduZQRqph1SSNq5A6dQwiJeT+zqtnY6chinMUJmIhrXw
-         d/1Rm7XZN0ltq+M3ctooK2XkhKuCuh+GyTxnKwBAimuROEqE8B+VGc/HyF68KFwUUKa3
-         hPSJyU9Rj8v/DKDr45D603U3PeUTQtlCLQXMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fM/Oy5bOgt7mKFRvTNxt2QAAYi9G5M9AeISf1+v5+R4=;
-        b=m83BArORNa936g3a087e1LrtQx5WVo1uADJQlcRGPmNXultO73nzkqWs3buDo+p435
-         1UCqzQUHj8lJZcdd9gZDCrNu8X8zP4c5IKE905wxSu9+Yko780uNaGeh5G1H4/KHADin
-         EcEXuBnwftUwPoJ+LEirtO/s+t6DeKRcFVjSzA4Ahq8isA/7zsqRWIRS9MyemF5RaghU
-         Nvv4lHCVI9qztPsvqpbEl/Sxoh3NZxyD/EVwIrHKWfYu3/Gt5S7N+p7NThxlg+K0c+i8
-         Rf1ikuKZxXbtOQvbtYP6zo09lcW1e11KtUHBsYCAE1RH1bWLBN7ipnq8yK5Y8RmazT9i
-         m6vw==
-X-Gm-Message-State: AOAM532BxeEWnW56NAvO7KR63rMfoCFhs+OQdVtHfPpCMPiskTlGFjEc
-        /Q5hKDy2X5dVWQ0HSN8xs71z6TiuFSG1gwWGvtbWBQ==
-X-Google-Smtp-Source: ABdhPJy3z/dZbYRHM+0TcvhewBbde3o956Sw+S+O6P51REENfjiDQVtZyMzvrkaeTvigfVEMk/HVOB/SCFK26foLKjg=
-X-Received: by 2002:ac2:53a3:: with SMTP id j3mr44343lfh.479.1626055794585;
- Sun, 11 Jul 2021 19:09:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
- <20210616224743.5109-6-chun-jie.chen@mediatek.com> <YOLKxrJin5kkwiIl@google.com>
- <3b52d1781db5b67a04cdbd18852e0857f8b73a38.camel@mediatek.com>
-In-Reply-To: <3b52d1781db5b67a04cdbd18852e0857f8b73a38.camel@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 12 Jul 2021 10:09:43 +0800
-Message-ID: <CAGXv+5FRc_hj03aqW-3XqqP5FpLX7zGwZ79-473a_HNOgrJQNA@mail.gmail.com>
+        id S229998AbhGLEim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jul 2021 00:38:42 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:41722 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229505AbhGLEim (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 00:38:42 -0400
+X-UUID: 822e7ddaf3224e2aa3e30feaef9bfe34-20210712
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=hrbvRGC7OU+XT0g/Z/h59hrTZ0pUIiKb8kUnknC9BKA=;
+        b=eVrUKKHlW+ExTLAMh+v+IPKG+IDbx4AlOjZbncMzaCvt1G0NLiSD3DudqLKGDsH4nsCbNj0tKvvQeRjPvfXLOIP4DuT3rHMSfvOI00ttS5hDdz5XdzjFOTak2NUt4LoIocn7E81/i+gnwTJ4EN3I22CGBSmErh7YFh0UGcN+kaQ=;
+X-UUID: 822e7ddaf3224e2aa3e30feaef9bfe34-20210712
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1622651359; Mon, 12 Jul 2021 12:35:49 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 12 Jul 2021 12:35:48 +0800
+Received: from mtksdccf07 (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 12 Jul 2021 12:35:48 +0800
+Message-ID: <c05485ad5db717afc8abb5070b33611c4d6a156f.camel@mediatek.com>
 Subject: Re: [PATCH 05/22] clk: mediatek: Add MT8195 audio clock support
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     Trevor Wu <trevor.wu@mediatek.com>,
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+CC:     Trevor Wu <trevor.wu@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
@@ -73,310 +53,268 @@ Cc:     Trevor Wu <trevor.wu@mediatek.com>,
         srv_heupstream <srv_heupstream@mediatek.com>,
         Project_Global_Chrome_Upstream_Group 
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Mon, 12 Jul 2021 12:35:47 +0800
+In-Reply-To: <CAGXv+5FRc_hj03aqW-3XqqP5FpLX7zGwZ79-473a_HNOgrJQNA@mail.gmail.com>
+References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
+         <20210616224743.5109-6-chun-jie.chen@mediatek.com>
+         <YOLKxrJin5kkwiIl@google.com>
+         <3b52d1781db5b67a04cdbd18852e0857f8b73a38.camel@mediatek.com>
+         <CAGXv+5FRc_hj03aqW-3XqqP5FpLX7zGwZ79-473a_HNOgrJQNA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+T24gTW9uLCAyMDIxLTA3LTEyIGF0IDEwOjA5ICswODAwLCBDaGVuLVl1IFRzYWkgd3JvdGU6DQo+
+IEhpLA0KPiANCj4gT24gTW9uLCBKdWwgMTIsIDIwMjEgYXQgOToyNiBBTSBDaHVuLUppZSBDaGVu
+DQo+IDxjaHVuLWppZS5jaGVuQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gT24gTW9u
+LCAyMDIxLTA3LTA1IGF0IDE3OjAzICswODAwLCBDaGVuLVl1IFRzYWkgd3JvdGU6DQo+ID4gPiBI
+aSwNCj4gPiA+IA0KPiA+ID4gT24gVGh1LCBKdW4gMTcsIDIwMjEgYXQgMDY6NDc6MjZBTSArMDgw
+MCwgQ2h1bi1KaWUgQ2hlbiB3cm90ZToNCj4gPiA+ID4gQWRkIE1UODE5NSBhdWRpbyBjbG9jayBw
+cm92aWRlcg0KPiA+ID4gPiANCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogQ2h1bi1KaWUgQ2hlbiA8
+Y2h1bi1qaWUuY2hlbkBtZWRpYXRlay5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZHJpdmVy
+cy9jbGsvbWVkaWF0ZWsvS2NvbmZpZyAgICAgICAgICB8ICAgNiArDQo+ID4gPiA+ICBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9NYWtlZmlsZSAgICAgICAgIHwgICAxICsNCj4gPiA+ID4gIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTUtYXVkLmMgfCAxOTgNCj4gPiA+ID4gKysrKysrKysrKysr
+KysrKysrKysrKysrKysNCj4gPiA+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMjA1IGluc2VydGlvbnMo
+KykNCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGst
+bXQ4MTk1LWF1ZC5jDQo+ID4gPiA+IA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
+bWVkaWF0ZWsvS2NvbmZpZw0KPiA+ID4gPiBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL0tjb25maWcN
+Cj4gPiA+ID4gaW5kZXggNjcwN2FiYTNkNTAwLi5lMmJhZTlkNDkwYTQgMTAwNjQ0DQo+ID4gPiA+
+IC0tLSBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL0tjb25maWcNCj4gPiA+ID4gKysrIGIvZHJpdmVy
+cy9jbGsvbWVkaWF0ZWsvS2NvbmZpZw0KPiA+ID4gPiBAQCAtNTg4LDYgKzU4OCwxMiBAQCBjb25m
+aWcgQ09NTU9OX0NMS19NVDgxOTUNCj4gPiA+ID4gICAgIGhlbHANCj4gPiA+ID4gICAgICAgVGhp
+cyBkcml2ZXIgc3VwcG9ydHMgTWVkaWFUZWsgTVQ4MTk1IGJhc2ljIGNsb2Nrcy4NCj4gPiA+ID4g
+DQo+ID4gPiA+ICtjb25maWcgQ09NTU9OX0NMS19NVDgxOTVfQVVEU1lTDQo+ID4gPiA+ICsgICBi
+b29sICJDbG9jayBkcml2ZXIgZm9yIE1lZGlhVGVrIE1UODE5NSBhdWRzeXMiDQo+ID4gPiA+ICsg
+ICBkZXBlbmRzIG9uIENPTU1PTl9DTEtfTVQ4MTk1DQo+ID4gPiA+ICsgICBoZWxwDQo+ID4gPiA+
+ICsgICAgIFRoaXMgZHJpdmVyIHN1cHBvcnRzIE1lZGlhVGVrIE1UODE5NSBhdWRzeXMgY2xvY2tz
+Lg0KPiA+ID4gPiArDQo+ID4gPiANCj4gPiA+IFRoZSBjbG9jayBtb2R1bGVzIGFyZW4ndCBzaGFy
+ZWQgYmV0d2VlbiBkaWZmZXJlbnQgY2hpcHMsIHNvDQo+ID4gPiBlaXRoZXIgd2UNCj4gPiA+IGVu
+YWJsZSBzdXBwb3J0IGZvciBhbGwgY2xvY2sgaGFyZHdhcmUgaW4gb25lIGNoaXAgb3Igd2UgZG9u
+J3QuIEl0DQo+ID4gPiBkb2Vzbid0IG1ha2Ugc2Vuc2UgdG8gc3VwcG9ydCBqdXN0IHNvbWUgb2Yg
+dGhlbS4gU28gaGF2aW5nIGp1c3QNCj4gPiA+IG9uZQ0KPiA+ID4gS2NvbmZpZyBvcHRpb24gYW5k
+IGhhdmluZyBhbGwgZHJpdmVycyB1bmRlciBpdCBpcyBiZXR0ZXIuDQo+ID4gPiANCj4gPiA+ID4g
+IGNvbmZpZyBDT01NT05fQ0xLX01UODUxNg0KPiA+ID4gPiAgICAgYm9vbCAiQ2xvY2sgZHJpdmVy
+IGZvciBNZWRpYVRlayBNVDg1MTYiDQo+ID4gPiA+ICAgICBkZXBlbmRzIG9uIEFSQ0hfTUVESUFU
+RUsgfHwgQ09NUElMRV9URVNUDQo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRp
+YXRlay9NYWtlZmlsZQ0KPiA+ID4gPiBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL01ha2VmaWxlDQo+
+ID4gPiA+IGluZGV4IGY4MDAyZDg5NjZlMS4uZjI3YzA0MzE0MTg2IDEwMDY0NA0KPiA+ID4gPiAt
+LS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9NYWtlZmlsZQ0KPiA+ID4gPiArKysgYi9kcml2ZXJz
+L2Nsay9tZWRpYXRlay9NYWtlZmlsZQ0KPiA+ID4gPiBAQCAtODEsNSArODEsNiBAQCBvYmotJChD
+T05GSUdfQ09NTU9OX0NMS19NVDgxOTJfU0NQX0FEU1ApICs9DQo+ID4gPiA+IGNsay0NCj4gPiA+
+ID4gbXQ4MTkyLXNjcF9hZHNwLm8NCj4gPiA+ID4gIG9iai0kKENPTkZJR19DT01NT05fQ0xLX01U
+ODE5Ml9WREVDU1lTKSArPSBjbGstbXQ4MTkyLXZkZWMubw0KPiA+ID4gPiAgb2JqLSQoQ09ORklH
+X0NPTU1PTl9DTEtfTVQ4MTkyX1ZFTkNTWVMpICs9IGNsay1tdDgxOTItdmVuYy5vDQo+ID4gPiA+
+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDgxOTUpICs9IGNsay1tdDgxOTUubw0KPiA+ID4g
+PiArb2JqLSQoQ09ORklHX0NPTU1PTl9DTEtfTVQ4MTk1X0FVRFNZUykgKz0gY2xrLW10ODE5NS1h
+dWQubw0KPiA+ID4gPiAgb2JqLSQoQ09ORklHX0NPTU1PTl9DTEtfTVQ4NTE2KSArPSBjbGstbXQ4
+NTE2Lm8NCj4gPiA+ID4gIG9iai0kKENPTkZJR19DT01NT05fQ0xLX01UODUxNl9BVURTWVMpICs9
+IGNsay1tdDg1MTYtYXVkLm8NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlh
+dGVrL2Nsay1tdDgxOTUtYXVkLmMNCj4gPiA+ID4gYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGst
+bXQ4MTk1LWF1ZC5jDQo+ID4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gPiA+IGluZGV4
+IDAwMDAwMDAwMDAwMC4uZGI1ZjgwZDQxZGUwDQo+ID4gPiA+IC0tLSAvZGV2L251bGwNCj4gPiA+
+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5NS1hdWQuYw0KPiA+ID4gPiBA
+QCAtMCwwICsxLDE5OCBAQA0KPiA+ID4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
+TC0yLjAtb25seQ0KPiA+ID4gPiArLy8NCj4gPiA+ID4gKy8vIENvcHlyaWdodCAoYykgMjAyMSBN
+ZWRpYVRlayBJbmMuDQo+ID4gPiA+ICsvLyBBdXRob3I6IENodW4tSmllIENoZW4gPGNodW4tamll
+LmNoZW5AbWVkaWF0ZWsuY29tPg0KPiA+ID4gPiArDQo+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgv
+Y2xrLXByb3ZpZGVyLmg+DQo+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvb2ZfcGxhdGZvcm0uaD4N
+Cj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gPiA+ID4gKw0K
+PiA+ID4gPiArI2luY2x1ZGUgImNsay1tdGsuaCINCj4gPiA+ID4gKyNpbmNsdWRlICJjbGstZ2F0
+ZS5oIg0KPiA+ID4gPiArDQo+ID4gPiA+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svbXQ4
+MTk1LWNsay5oPg0KPiA+ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19n
+YXRlX3JlZ3MgYXVkMF9jZ19yZWdzID0gew0KPiA+ID4gPiArICAgLnNldF9vZnMgPSAweDAsDQo+
+ID4gPiA+ICsgICAuY2xyX29mcyA9IDB4MCwNCj4gPiA+ID4gKyAgIC5zdGFfb2ZzID0gMHgwLA0K
+PiA+ID4gPiArfTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtf
+Z2F0ZV9yZWdzIGF1ZDFfY2dfcmVncyA9IHsNCj4gPiA+ID4gKyAgIC5zZXRfb2ZzID0gMHgxMCwN
+Cj4gPiA+ID4gKyAgIC5jbHJfb2ZzID0gMHgxMCwNCj4gPiA+ID4gKyAgIC5zdGFfb2ZzID0gMHgx
+MCwNCj4gPiA+ID4gK307DQo+ID4gPiA+ICsNCj4gPiA+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
+bXRrX2dhdGVfcmVncyBhdWQyX2NnX3JlZ3MgPSB7DQo+ID4gPiA+ICsgICAuc2V0X29mcyA9IDB4
+MTQsDQo+ID4gPiA+ICsgICAuY2xyX29mcyA9IDB4MTQsDQo+ID4gPiA+ICsgICAuc3RhX29mcyA9
+IDB4MTQsDQo+ID4gPiA+ICt9Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgY29uc3Qgc3Ry
+dWN0IG10a19nYXRlX3JlZ3MgYXVkM19jZ19yZWdzID0gew0KPiA+ID4gPiArICAgLnNldF9vZnMg
+PSAweDE4LA0KPiA+ID4gPiArICAgLmNscl9vZnMgPSAweDE4LA0KPiA+ID4gPiArICAgLnN0YV9v
+ZnMgPSAweDE4LA0KPiA+ID4gPiArfTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBtdGtfZ2F0ZV9yZWdzIGF1ZDRfY2dfcmVncyA9IHsNCj4gPiA+ID4gKyAgIC5zZXRf
+b2ZzID0gMHg0LA0KPiA+ID4gPiArICAgLmNscl9vZnMgPSAweDQsDQo+ID4gPiA+ICsgICAuc3Rh
+X29mcyA9IDB4NCwNCj4gPiA+ID4gK307DQo+ID4gPiA+ICsNCj4gPiA+ID4gK3N0YXRpYyBjb25z
+dCBzdHJ1Y3QgbXRrX2dhdGVfcmVncyBhdWQ1X2NnX3JlZ3MgPSB7DQo+ID4gPiA+ICsgICAuc2V0
+X29mcyA9IDB4YywNCj4gPiA+ID4gKyAgIC5jbHJfb2ZzID0gMHhjLA0KPiA+ID4gPiArICAgLnN0
+YV9vZnMgPSAweGMsDQo+ID4gPiA+ICt9Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5lIEdB
+VEVfQVVEMChfaWQsIF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpDQo+ID4gPiA+IFwNCj4gPiA+ID4g
+KyAgIEdBVEVfTVRLKF9pZCwgX25hbWUsIF9wYXJlbnQsICZhdWQwX2NnX3JlZ3MsIF9zaGlmdCwN
+Cj4gPiA+ID4gJm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ID4gPiArDQo+ID4gPiA+
+ICsjZGVmaW5lIEdBVEVfQVVEMShfaWQsIF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpDQo+ID4gPiA+
+IFwNCj4gPiA+ID4gKyAgIEdBVEVfTVRLKF9pZCwgX25hbWUsIF9wYXJlbnQsICZhdWQxX2NnX3Jl
+Z3MsIF9zaGlmdCwNCj4gPiA+ID4gJm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ID4g
+PiArDQo+ID4gPiA+ICsjZGVmaW5lIEdBVEVfQVVEMihfaWQsIF9uYW1lLCBfcGFyZW50LCBfc2hp
+ZnQpDQo+ID4gPiA+IFwNCj4gPiA+ID4gKyAgIEdBVEVfTVRLKF9pZCwgX25hbWUsIF9wYXJlbnQs
+ICZhdWQyX2NnX3JlZ3MsIF9zaGlmdCwNCj4gPiA+ID4gJm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0
+Y2xyKQ0KPiA+ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5lIEdBVEVfQVVEMyhfaWQsIF9uYW1lLCBf
+cGFyZW50LCBfc2hpZnQpDQo+ID4gPiA+IFwNCj4gPiA+ID4gKyAgIEdBVEVfTVRLKF9pZCwgX25h
+bWUsIF9wYXJlbnQsICZhdWQzX2NnX3JlZ3MsIF9zaGlmdCwNCj4gPiA+ID4gJm10a19jbGtfZ2F0
+ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5lIEdBVEVfQVVENChf
+aWQsIF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpDQo+ID4gPiA+IFwNCj4gPiA+ID4gKyAgIEdBVEVf
+TVRLKF9pZCwgX25hbWUsIF9wYXJlbnQsICZhdWQ0X2NnX3JlZ3MsIF9zaGlmdCwNCj4gPiA+ID4g
+Jm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5l
+IEdBVEVfQVVENShfaWQsIF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpDQo+ID4gPiA+IFwNCj4gPiA+
+ID4gKyAgIEdBVEVfTVRLKF9pZCwgX25hbWUsIF9wYXJlbnQsICZhdWQ1X2NnX3JlZ3MsIF9zaGlm
+dCwNCj4gPiA+ID4gJm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ID4gPiArDQo+ID4g
+PiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlIGF1ZF9jbGtzW10gPSB7DQo+ID4gPiA+
+ICsgICAvKiBBVUQwICovDQo+ID4gPiA+ICsgICBHQVRFX0FVRDAoQ0xLX0FVRF9BRkUsICJhdWRf
+YWZlIiwgImExc3lzX2hwX3NlbCIsIDIpLA0KPiA+ID4gPiArICAgR0FURV9BVUQwKENMS19BVURf
+TFJDS19DTlQsICJhdWRfbHJja19jbnQiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiA+ID4gNCksDQo+
+ID4gPiA+ICsgICBHQVRFX0FVRDAoQ0xLX0FVRF9TUERJRklOX1RVTkVSX0FQTEwsDQo+ID4gPiA+
+ICJhdWRfc3BkaWZpbl90dW5lcl9hcGxsIiwNCj4gPiA+ID4gImFwbGw0X3NlbCIsIDEwKSwNCj4g
+PiA+ID4gKyAgIEdBVEVfQVVEMChDTEtfQVVEX1NQRElGSU5fVFVORVJfREJHLA0KPiA+ID4gPiAi
+YXVkX3NwZGlmaW5fdHVuZXJfZGJnIiwNCj4gPiA+ID4gImFwbGw0X3NlbCIsIDExKSwNCj4gPiA+
+ID4gKyAgIEdBVEVfQVVEMChDTEtfQVVEX1VMX1RNTCwgImF1ZF91bF90bWwiLCAiYTFzeXNfaHBf
+c2VsIiwNCj4gPiA+ID4gMTgpLA0KPiA+ID4gPiArICAgR0FURV9BVUQwKENMS19BVURfQVBMTDFf
+VFVORVIsICJhdWRfYXBsbDFfdHVuZXIiLA0KPiA+ID4gPiAiYXBsbDFfc2VsIiwNCj4gPiA+ID4g
+MTkpLA0KPiA+ID4gPiArICAgR0FURV9BVUQwKENMS19BVURfQVBMTDJfVFVORVIsICJhdWRfYXBs
+bDJfdHVuZXIiLA0KPiA+ID4gPiAiYXBsbDJfc2VsIiwNCj4gPiA+ID4gMjApLA0KPiA+ID4gPiAr
+ICAgR0FURV9BVUQwKENMS19BVURfVE9QMF9TUERGLCAiYXVkX3RvcDBfc3BkZiIsDQo+ID4gPiA+
+ICJhdWRfaWVjX3NlbCIsDQo+ID4gPiA+IDIxKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMChDTEtf
+QVVEX0FQTEwsICJhdWRfYXBsbCIsICJhcGxsMV9zZWwiLCAyMyksDQo+ID4gPiA+ICsgICBHQVRF
+X0FVRDAoQ0xLX0FVRF9BUExMMiwgImF1ZF9hcGxsMiIsICJhcGxsMl9zZWwiLCAyNCksDQo+ID4g
+PiA+ICsgICBHQVRFX0FVRDAoQ0xLX0FVRF9EQUMsICJhdWRfZGFjIiwgImExc3lzX2hwX3NlbCIs
+IDI1KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMChDTEtfQVVEX0RBQ19QUkVESVMsICJhdWRfZGFj
+X3ByZWRpcyIsDQo+ID4gPiA+ICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiAyNiksDQo+ID4gPiA+
+ICsgICBHQVRFX0FVRDAoQ0xLX0FVRF9UTUwsICJhdWRfdG1sIiwgImExc3lzX2hwX3NlbCIsIDI3
+KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMChDTEtfQVVEX0FEQywgImF1ZF9hZGMiLCAiYTFzeXNf
+aHBfc2VsIiwgMjgpLA0KPiA+ID4gPiArICAgR0FURV9BVUQwKENMS19BVURfREFDX0hJUkVTLCAi
+YXVkX2RhY19oaXJlcyIsDQo+ID4gPiA+ICJhdWRpb19oX3NlbCIsDQo+ID4gPiA+IDMxKSwNCj4g
+PiA+ID4gKyAgIC8qIEFVRDEgKi8NCj4gPiA+ID4gKyAgIEdBVEVfQVVEMShDTEtfQVVEX0kyU0lO
+LCAiYXVkX2kyc2luIiwgImExc3lzX2hwX3NlbCIsIDApLA0KPiA+ID4gPiArICAgR0FURV9BVUQx
+KENMS19BVURfVERNX0lOLCAiYXVkX3RkbV9pbiIsICJhMXN5c19ocF9zZWwiLCAxKSwNCj4gPiA+
+ID4gKyAgIEdBVEVfQVVEMShDTEtfQVVEX0kyU19PVVQsICJhdWRfaTJzX291dCIsICJhMXN5c19o
+cF9zZWwiLA0KPiA+ID4gPiA2KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMShDTEtfQVVEX1RETV9P
+VVQsICJhdWRfdGRtX291dCIsICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiA3KSwNCj4gPiA+ID4g
+KyAgIEdBVEVfQVVEMShDTEtfQVVEX0hETUlfT1VULCAiYXVkX2hkbWlfb3V0IiwgImExc3lzX2hw
+X3NlbCIsDQo+ID4gPiA+IDgpLA0KPiA+ID4gPiArICAgR0FURV9BVUQxKENMS19BVURfQVNSQzEx
+LCAiYXVkX2FzcmMxMSIsICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiAxNiksDQo+ID4gPiA+ICsg
+ICBHQVRFX0FVRDEoQ0xLX0FVRF9BU1JDMTIsICJhdWRfYXNyYzEyIiwgImExc3lzX2hwX3NlbCIs
+DQo+ID4gPiA+IDE3KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMShDTEtfQVVEX01VTFRJX0lOLCAi
+YXVkX211bHRpX2luIiwNCj4gPiA+ID4gIm1waG9uZV9zbGF2ZV9iIiwNCj4gPiA+ID4gMTkpLA0K
+PiA+ID4gPiArICAgR0FURV9BVUQxKENMS19BVURfSU5URElSLCAiYXVkX2ludGRpciIsICJpbnRk
+aXJfc2VsIiwgMjApLA0KPiA+ID4gPiArICAgR0FURV9BVUQxKENMS19BVURfQTFTWVMsICJhdWRf
+YTFzeXMiLCAiYTFzeXNfaHBfc2VsIiwgMjEpLA0KPiA+ID4gPiArICAgR0FURV9BVUQxKENMS19B
+VURfQTJTWVMsICJhdWRfYTJzeXMiLCAiYTJzeXNfc2VsIiwgMjIpLA0KPiA+ID4gPiArICAgR0FU
+RV9BVUQxKENMS19BVURfUENNSUYsICJhdWRfcGNtaWYiLCAiYTFzeXNfaHBfc2VsIiwgMjQpLA0K
+PiA+ID4gPiArICAgR0FURV9BVUQxKENMS19BVURfQTNTWVMsICJhdWRfYTNzeXMiLCAiYTNzeXNf
+c2VsIiwgMzApLA0KPiA+ID4gPiArICAgR0FURV9BVUQxKENMS19BVURfQTRTWVMsICJhdWRfYTRz
+eXMiLCAiYTRzeXNfc2VsIiwgMzEpLA0KPiA+ID4gPiArICAgLyogQVVEMiAqLw0KPiA+ID4gPiAr
+ICAgR0FURV9BVUQyKENMS19BVURfTUVNSUZfVUwxLCAiYXVkX21lbWlmX3VsMSIsDQo+ID4gPiA+
+ICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiAwKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMihDTEtf
+QVVEX01FTUlGX1VMMiwgImF1ZF9tZW1pZl91bDIiLA0KPiA+ID4gPiAiYTFzeXNfaHBfc2VsIiwN
+Cj4gPiA+ID4gMSksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9VTDMsICJh
+dWRfbWVtaWZfdWwzIiwNCj4gPiA+ID4gImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDIpLA0KPiA+
+ID4gPiArICAgR0FURV9BVUQyKENMS19BVURfTUVNSUZfVUw0LCAiYXVkX21lbWlmX3VsNCIsDQo+
+ID4gPiA+ICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiAzKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVE
+MihDTEtfQVVEX01FTUlGX1VMNSwgImF1ZF9tZW1pZl91bDUiLA0KPiA+ID4gPiAiYTFzeXNfaHBf
+c2VsIiwNCj4gPiA+ID4gNCksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9V
+TDYsICJhdWRfbWVtaWZfdWw2IiwNCj4gPiA+ID4gImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDUp
+LA0KPiA+ID4gPiArICAgR0FURV9BVUQyKENMS19BVURfTUVNSUZfVUw4LCAiYXVkX21lbWlmX3Vs
+OCIsDQo+ID4gPiA+ICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiA3KSwNCj4gPiA+ID4gKyAgIEdB
+VEVfQVVEMihDTEtfQVVEX01FTUlGX1VMOSwgImF1ZF9tZW1pZl91bDkiLA0KPiA+ID4gPiAiYTFz
+eXNfaHBfc2VsIiwNCj4gPiA+ID4gOCksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDIoQ0xLX0FVRF9N
+RU1JRl9VTDEwLCAiYXVkX21lbWlmX3VsMTAiLA0KPiA+ID4gPiAiYTFzeXNfaHBfc2VsIiwNCj4g
+PiA+ID4gOSksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9ETDIsICJhdWRf
+bWVtaWZfZGwyIiwNCj4gPiA+ID4gImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDE4KSwNCj4gPiA+
+ID4gKyAgIEdBVEVfQVVEMihDTEtfQVVEX01FTUlGX0RMMywgImF1ZF9tZW1pZl9kbDMiLA0KPiA+
+ID4gPiAiYTFzeXNfaHBfc2VsIiwNCj4gPiA+ID4gMTkpLA0KPiA+ID4gPiArICAgR0FURV9BVUQy
+KENMS19BVURfTUVNSUZfREw2LCAiYXVkX21lbWlmX2RsNiIsDQo+ID4gPiA+ICJhMXN5c19ocF9z
+ZWwiLA0KPiA+ID4gPiAyMiksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9E
+TDcsICJhdWRfbWVtaWZfZGw3IiwNCj4gPiA+ID4gImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDIz
+KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMihDTEtfQVVEX01FTUlGX0RMOCwgImF1ZF9tZW1pZl9k
+bDgiLA0KPiA+ID4gPiAiYTFzeXNfaHBfc2VsIiwNCj4gPiA+ID4gMjQpLA0KPiA+ID4gPiArICAg
+R0FURV9BVUQyKENMS19BVURfTUVNSUZfREwxMCwgImF1ZF9tZW1pZl9kbDEwIiwNCj4gPiA+ID4g
+ImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDI2KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMihDTEtf
+QVVEX01FTUlGX0RMMTEsICJhdWRfbWVtaWZfZGwxMSIsDQo+ID4gPiA+ICJhMXN5c19ocF9zZWwi
+LA0KPiA+ID4gPiAyNyksDQo+ID4gPiA+ICsgICAvKiBBVUQzICovDQo+ID4gPiA+ICsgICBHQVRF
+X0FVRDMoQ0xLX0FVRF9HQVNSQzAsICJhdWRfZ2FzcmMwIiwgImFzbV9oX3NlbCIsIDApLA0KPiA+
+ID4gPiArICAgR0FURV9BVUQzKENMS19BVURfR0FTUkMxLCAiYXVkX2dhc3JjMSIsICJhc21faF9z
+ZWwiLCAxKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMiwgImF1ZF9nYXNy
+YzIiLCAiYXNtX2hfc2VsIiwgMiksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDMoQ0xLX0FVRF9HQVNS
+QzMsICJhdWRfZ2FzcmMzIiwgImFzbV9oX3NlbCIsIDMpLA0KPiA+ID4gPiArICAgR0FURV9BVUQz
+KENMS19BVURfR0FTUkM0LCAiYXVkX2dhc3JjNCIsICJhc21faF9zZWwiLCA0KSwNCj4gPiA+ID4g
+KyAgIEdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDNSwgImF1ZF9nYXNyYzUiLCAiYXNtX2hfc2VsIiwg
+NSksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzYsICJhdWRfZ2FzcmM2Iiwg
+ImFzbV9oX3NlbCIsIDYpLA0KPiA+ID4gPiArICAgR0FURV9BVUQzKENMS19BVURfR0FTUkM3LCAi
+YXVkX2dhc3JjNyIsICJhc21faF9zZWwiLCA3KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMyhDTEtf
+QVVEX0dBU1JDOCwgImF1ZF9nYXNyYzgiLCAiYXNtX2hfc2VsIiwgOCksDQo+ID4gPiA+ICsgICBH
+QVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzksICJhdWRfZ2FzcmM5IiwgImFzbV9oX3NlbCIsIDkpLA0K
+PiA+ID4gPiArICAgR0FURV9BVUQzKENMS19BVURfR0FTUkMxMCwgImF1ZF9nYXNyYzEwIiwgImFz
+bV9oX3NlbCIsIDEwKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMTEsICJh
+dWRfZ2FzcmMxMSIsICJhc21faF9zZWwiLCAxMSksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDMoQ0xL
+X0FVRF9HQVNSQzEyLCAiYXVkX2dhc3JjMTIiLCAiYXNtX2hfc2VsIiwgMTIpLA0KPiA+ID4gPiAr
+ICAgR0FURV9BVUQzKENMS19BVURfR0FTUkMxMywgImF1ZF9nYXNyYzEzIiwgImFzbV9oX3NlbCIs
+IDEzKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMTQsICJhdWRfZ2FzcmMx
+NCIsICJhc21faF9zZWwiLCAxNCksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDMoQ0xLX0FVRF9HQVNS
+QzE1LCAiYXVkX2dhc3JjMTUiLCAiYXNtX2hfc2VsIiwgMTUpLA0KPiA+ID4gPiArICAgR0FURV9B
+VUQzKENMS19BVURfR0FTUkMxNiwgImF1ZF9nYXNyYzE2IiwgImFzbV9oX3NlbCIsIDE2KSwNCj4g
+PiA+ID4gKyAgIEdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMTcsICJhdWRfZ2FzcmMxNyIsICJhc21f
+aF9zZWwiLCAxNyksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzE4LCAiYXVk
+X2dhc3JjMTgiLCAiYXNtX2hfc2VsIiwgMTgpLA0KPiA+ID4gPiArICAgR0FURV9BVUQzKENMS19B
+VURfR0FTUkMxOSwgImF1ZF9nYXNyYzE5IiwgImFzbV9oX3NlbCIsIDE5KSwNCj4gPiA+ID4gKyAg
+IC8qIEFVRDQgKi8NCj4gPiA+ID4gKyAgIEdBVEVfQVVENChDTEtfQVVEX0ExU1lTX0hQLCAiYXVk
+X2Exc3lzX2hwIiwgImExc3lzX2hwX3NlbCIsDQo+ID4gPiA+IDIpLA0KPiA+ID4gPiArICAgR0FU
+RV9BVUQ0KENMS19BVURfQUZFX0RNSUMxLCAiYXVkX2FmZV9kbWljMSIsDQo+ID4gPiA+ICJhMXN5
+c19ocF9zZWwiLA0KPiA+ID4gPiAxMCksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDQoQ0xLX0FVRF9B
+RkVfRE1JQzIsICJhdWRfYWZlX2RtaWMyIiwNCj4gPiA+ID4gImExc3lzX2hwX3NlbCIsDQo+ID4g
+PiA+IDExKSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVENChDTEtfQVVEX0FGRV9ETUlDMywgImF1ZF9h
+ZmVfZG1pYzMiLA0KPiA+ID4gPiAiYTFzeXNfaHBfc2VsIiwNCj4gPiA+ID4gMTIpLA0KPiA+ID4g
+PiArICAgR0FURV9BVUQ0KENMS19BVURfQUZFX0RNSUM0LCAiYXVkX2FmZV9kbWljNCIsDQo+ID4g
+PiA+ICJhMXN5c19ocF9zZWwiLA0KPiA+ID4gPiAxMyksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDQo
+Q0xLX0FVRF9BRkVfMjZNX0RNSUNfVE0sICJhdWRfYWZlXzI2bV9kbWljX3RtIiwNCj4gPiA+ID4g
+ImExc3lzX2hwX3NlbCIsIDE0KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVENChDTEtfQVVEX1VMX1RN
+TF9ISVJFUywgImF1ZF91bF90bWxfaGlyZXMiLA0KPiA+ID4gPiAiYXVkaW9faF9zZWwiLCAxNiks
+DQo+ID4gPiA+ICsgICBHQVRFX0FVRDQoQ0xLX0FVRF9BRENfSElSRVMsICJhdWRfYWRjX2hpcmVz
+IiwNCj4gPiA+ID4gImF1ZGlvX2hfc2VsIiwNCj4gPiA+ID4gMTcpLA0KPiA+ID4gPiArICAgR0FU
+RV9BVUQ0KENMS19BVURfQUREQTZfQURDLCAiYXVkX2FkZGE2X2FkYyIsDQo+ID4gPiA+ICJhMXN5
+c19ocF9zZWwiLA0KPiA+ID4gPiAxOCksDQo+ID4gPiA+ICsgICBHQVRFX0FVRDQoQ0xLX0FVRF9B
+RERBNl9BRENfSElSRVMsICJhdWRfYWRkYTZfYWRjX2hpcmVzIiwNCj4gPiA+ID4gImF1ZGlvX2hf
+c2VsIiwgMTkpLA0KPiA+ID4gPiArICAgLyogQVVENSAqLw0KPiA+ID4gPiArICAgR0FURV9BVUQ1
+KENMS19BVURfTElORUlOX1RVTkVSLCAiYXVkX2xpbmVpbl90dW5lciIsDQo+ID4gPiA+ICJhcGxs
+NV9zZWwiLCA1KSwNCj4gPiA+ID4gKyAgIEdBVEVfQVVENShDTEtfQVVEX0VBUkNfVFVORVIsICJh
+dWRfZWFyY190dW5lciIsDQo+ID4gPiA+ICJhcGxsM19zZWwiLA0KPiA+ID4gPiA3KSwNCj4gPiA+
+ID4gK307DQo+ID4gPiANCj4gPiA+IFRoZXNlIGFyZSBhbGwgY2xvY2sgZ2F0ZXMsIGFuZCBhcmUg
+YWxsIGludGVybmFsIHRvIHRoZSBhdWRpbw0KPiA+ID4gaGFyZHdhcmUsDQo+ID4gPiBpLmUuIG5v
+dCB1c2VkIGJ5IG90aGVyIGRyaXZlcnMgb3IgbW9kdWxlcy4NCj4gPiA+IA0KPiA+ID4gU28gdGhl
+c2UgZG9uJ3QgYWN0dWFsbHkgbmVlZCB0byBiZSBpbiBhIHNlcGFyYXRlIGNsayBkcml2ZXIuIFRo
+ZXkNCj4gPiA+IGNhbg0KPiA+ID4gYmUNCj4gPiA+IG1vZGVsbGVkIHdpdGhpbiBBU29DIGFzIHN1
+cHBsaWVzIHRoYXQgYXJlIGF1dG9tYXRpY2FsbHkgbWFuYWdlZA0KPiA+ID4gYnkNCj4gPiA+IEFT
+b0MNCj4gPiA+IGNvcmUuIE90aGVyd2lzZSBqdXN0IGhhdmUgdGhlbSBhcyBiaXRzIHRoYXQgYXJl
+IHRvZ2dsZWQgYnkgdGhlDQo+ID4gPiBhdWRpbw0KPiA+ID4gZHJpdmVyJ3Mgc3RhcnQvc3RvcCBz
+ZXF1ZW5jaW5nIGNvZGUsIGxpa2UgdGhleSBhcmUgbm93LCBidXQNCj4gPiA+IHRocm91Z2gNCj4g
+PiA+IHZhc3RseSBtb3JlIGNvbXBsaWNhdGVkIHBsdW1iaW5nLg0KPiA+ID4gDQo+ID4gPiBQbGVh
+c2Ugd29yayB3aXRoIHRoZSBhdWRpbyBkcml2ZXIgb3duZXIgdG8gc2VlIGlmIHRoaXMgY2FuIGJl
+DQo+ID4gPiBtb3ZlZA0KPiA+ID4gaW50bw0KPiA+ID4gdGhlIGF1ZGlvIGRyaXZlci4NCj4gPiA+
+IA0KPiA+ID4gUmVnYXJkcw0KPiA+ID4gQ2hlbll1DQo+ID4gPiANCj4gPiANCj4gPiBUaGUgYWZl
+IGRldmljZSB3aWxsIGJlIHRoZSBjaGlsZCBvZiBhdWRzeXMgY2xvY2sgcHJvdmlkZXIgbm9kZSBh
+bmQNCj4gPiBhdWRzeXMgY2xvY2sgZHJpdmVyIHdpbGwgdXNlIGRldm1fb2ZfcGxhdGZvcm1fcG9w
+dWxhdGUoKSB0bw0KPiA+IHBvcHVsYXRlDQo+ID4gYWZlIGRldmljZSB3aGVuIGF1ZHN5cyBjbG9j
+ayBnYXRlcyBhcmUgcmVnaXN0ZXJlZCBzdWNjZXNzZnVsbHksDQo+ID4gSXQgbWVhbnMgYWZlIHdp
+bGwgYmUgdG9nZ2xlZCBieSBhdWRzeXMgY2xvY2ssIGRvIHlvdSBzdWdnZXN0IHRvDQo+ID4gY2hh
+bmdlDQo+ID4gdGhlIHRvZ2dsZWQgb3JkZXI/DQo+IA0KPiBXaGF0IEknbSBzYXlpbmcgaXMgdGhh
+dCB0aGV5IHNob3VsZG4ndCBiZSByZXByZXNlbnRlZCBhcyB0d28gZHJpdmVycw0KPiBhbmQgdHdv
+IGRldmljZXMgaW4gTGludXguIFRoZXkgYXJlIGluIHRoZSBzYW1lIGFkZHJlc3Mgc3BhY2UsIGFu
+ZCB0aGUNCj4gY2xvY2tzIGFyZW4ndCB1c2VkIGJ5IGFueSBvdGhlciBoYXJkd2FyZSBibG9jay4g
+SW4gdGhlIGRldmljZSB0cmVlIHdlDQo+IHNob3VsZCByZXByZXNlbnQgdGhlbSBhcyBvbmUgdW5p
+ZmllZCBkZXZpY2UsIHVubGVzcyB0aGVyZSBpcyBhIGdvb2QNCj4gcmVhc29uLCBzdWNoIGFzIGhh
+cmR3YXJlIGRlc2lnbiwgbm90IHRvIGRvIHNvLiBJbiB0aGUgZHJpdmVycywgd2UgY2FuDQo+IGFj
+dHVhbGx5IGp1c3QgZ2V0IHJpZCBvZiB0aGUgYXVkc3lzIGNsb2NrIGRyaXZlciwgYW5kIGhhdmUg
+dGhlIGFmZQ0KPiBkcml2ZXIgdG9nZ2xlIHRoZSBjbG9jayBlbmFibGUgYml0cyBkaXJlY3RseS4g
+VHJlYXQgdGhlbSBhcyBhbnkgb3RoZXINCj4gImVuYWJsZSBiaXRzIiB0aGF0IGV4aXN0IGluIGFu
+eSBoYXJkd2FyZS4NCj4gDQo+IA0KPiBDaGVuWXUNCg0KQmVjYXVzZSB0aGUgcGFyZW50IHNvdXJj
+ZSBvZiBhdWRpbyBjbG9jayBnYXRlIGlzIG90aGVyIGNsb2NrcyBtb2RlbCBpbg0KQ0NGLCBpZiB3
+ZSBnZXQgcmlkIG9mIHRoZSBhdWRzeXMgY2xvY2sgZHJpdmVyIHRoZW4gYXVkaW8gZHJpdmVyIG5l
+ZWQgdG8NCmd1YXJhbnRlZSB0aGUgY2xvY2sgZGVwZW5kZW5jZSBieSBpdHNlbGYsIHRoYXQgbWFr
+ZXMgdGhlIGNvbnRyb2wgb2YNCmF1ZHN5cyBjbG9jayBnYXRlIG1vcmUgY29tcGxpY2F0ZWQuDQoN
+CkJlc3QgUmVnYXJkcywNCkNodW4tSmllDQo=
 
-On Mon, Jul 12, 2021 at 9:26 AM Chun-Jie Chen
-<chun-jie.chen@mediatek.com> wrote:
->
-> On Mon, 2021-07-05 at 17:03 +0800, Chen-Yu Tsai wrote:
-> > Hi,
-> >
-> > On Thu, Jun 17, 2021 at 06:47:26AM +0800, Chun-Jie Chen wrote:
-> > > Add MT8195 audio clock provider
-> > >
-> > > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > > ---
-> > >  drivers/clk/mediatek/Kconfig          |   6 +
-> > >  drivers/clk/mediatek/Makefile         |   1 +
-> > >  drivers/clk/mediatek/clk-mt8195-aud.c | 198
-> > > ++++++++++++++++++++++++++
-> > >  3 files changed, 205 insertions(+)
-> > >  create mode 100644 drivers/clk/mediatek/clk-mt8195-aud.c
-> > >
-> > > diff --git a/drivers/clk/mediatek/Kconfig
-> > > b/drivers/clk/mediatek/Kconfig
-> > > index 6707aba3d500..e2bae9d490a4 100644
-> > > --- a/drivers/clk/mediatek/Kconfig
-> > > +++ b/drivers/clk/mediatek/Kconfig
-> > > @@ -588,6 +588,12 @@ config COMMON_CLK_MT8195
-> > >     help
-> > >       This driver supports MediaTek MT8195 basic clocks.
-> > >
-> > > +config COMMON_CLK_MT8195_AUDSYS
-> > > +   bool "Clock driver for MediaTek MT8195 audsys"
-> > > +   depends on COMMON_CLK_MT8195
-> > > +   help
-> > > +     This driver supports MediaTek MT8195 audsys clocks.
-> > > +
-> >
-> > The clock modules aren't shared between different chips, so either we
-> > enable support for all clock hardware in one chip or we don't. It
-> > doesn't make sense to support just some of them. So having just one
-> > Kconfig option and having all drivers under it is better.
-> >
-> > >  config COMMON_CLK_MT8516
-> > >     bool "Clock driver for MediaTek MT8516"
-> > >     depends on ARCH_MEDIATEK || COMPILE_TEST
-> > > diff --git a/drivers/clk/mediatek/Makefile
-> > > b/drivers/clk/mediatek/Makefile
-> > > index f8002d8966e1..f27c04314186 100644
-> > > --- a/drivers/clk/mediatek/Makefile
-> > > +++ b/drivers/clk/mediatek/Makefile
-> > > @@ -81,5 +81,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-
-> > > mt8192-scp_adsp.o
-> > >  obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
-> > >  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
-> > >  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195.o
-> > > +obj-$(CONFIG_COMMON_CLK_MT8195_AUDSYS) += clk-mt8195-aud.o
-> > >  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
-> > >  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-> > > diff --git a/drivers/clk/mediatek/clk-mt8195-aud.c
-> > > b/drivers/clk/mediatek/clk-mt8195-aud.c
-> > > new file mode 100644
-> > > index 000000000000..db5f80d41de0
-> > > --- /dev/null
-> > > +++ b/drivers/clk/mediatek/clk-mt8195-aud.c
-> > > @@ -0,0 +1,198 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +//
-> > > +// Copyright (c) 2021 MediaTek Inc.
-> > > +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > > +
-> > > +#include <linux/clk-provider.h>
-> > > +#include <linux/of_platform.h>
-> > > +#include <linux/platform_device.h>
-> > > +
-> > > +#include "clk-mtk.h"
-> > > +#include "clk-gate.h"
-> > > +
-> > > +#include <dt-bindings/clock/mt8195-clk.h>
-> > > +
-> > > +static const struct mtk_gate_regs aud0_cg_regs = {
-> > > +   .set_ofs = 0x0,
-> > > +   .clr_ofs = 0x0,
-> > > +   .sta_ofs = 0x0,
-> > > +};
-> > > +
-> > > +static const struct mtk_gate_regs aud1_cg_regs = {
-> > > +   .set_ofs = 0x10,
-> > > +   .clr_ofs = 0x10,
-> > > +   .sta_ofs = 0x10,
-> > > +};
-> > > +
-> > > +static const struct mtk_gate_regs aud2_cg_regs = {
-> > > +   .set_ofs = 0x14,
-> > > +   .clr_ofs = 0x14,
-> > > +   .sta_ofs = 0x14,
-> > > +};
-> > > +
-> > > +static const struct mtk_gate_regs aud3_cg_regs = {
-> > > +   .set_ofs = 0x18,
-> > > +   .clr_ofs = 0x18,
-> > > +   .sta_ofs = 0x18,
-> > > +};
-> > > +
-> > > +static const struct mtk_gate_regs aud4_cg_regs = {
-> > > +   .set_ofs = 0x4,
-> > > +   .clr_ofs = 0x4,
-> > > +   .sta_ofs = 0x4,
-> > > +};
-> > > +
-> > > +static const struct mtk_gate_regs aud5_cg_regs = {
-> > > +   .set_ofs = 0xc,
-> > > +   .clr_ofs = 0xc,
-> > > +   .sta_ofs = 0xc,
-> > > +};
-> > > +
-> > > +#define GATE_AUD0(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud0_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +#define GATE_AUD1(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud1_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +#define GATE_AUD2(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud2_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +#define GATE_AUD3(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud3_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +#define GATE_AUD4(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud4_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +#define GATE_AUD5(_id, _name, _parent, _shift)
-> > > \
-> > > +   GATE_MTK(_id, _name, _parent, &aud5_cg_regs, _shift,
-> > > &mtk_clk_gate_ops_no_setclr)
-> > > +
-> > > +static const struct mtk_gate aud_clks[] = {
-> > > +   /* AUD0 */
-> > > +   GATE_AUD0(CLK_AUD_AFE, "aud_afe", "a1sys_hp_sel", 2),
-> > > +   GATE_AUD0(CLK_AUD_LRCK_CNT, "aud_lrck_cnt", "a1sys_hp_sel", 4),
-> > > +   GATE_AUD0(CLK_AUD_SPDIFIN_TUNER_APLL, "aud_spdifin_tuner_apll",
-> > > "apll4_sel", 10),
-> > > +   GATE_AUD0(CLK_AUD_SPDIFIN_TUNER_DBG, "aud_spdifin_tuner_dbg",
-> > > "apll4_sel", 11),
-> > > +   GATE_AUD0(CLK_AUD_UL_TML, "aud_ul_tml", "a1sys_hp_sel", 18),
-> > > +   GATE_AUD0(CLK_AUD_APLL1_TUNER, "aud_apll1_tuner", "apll1_sel",
-> > > 19),
-> > > +   GATE_AUD0(CLK_AUD_APLL2_TUNER, "aud_apll2_tuner", "apll2_sel",
-> > > 20),
-> > > +   GATE_AUD0(CLK_AUD_TOP0_SPDF, "aud_top0_spdf", "aud_iec_sel",
-> > > 21),
-> > > +   GATE_AUD0(CLK_AUD_APLL, "aud_apll", "apll1_sel", 23),
-> > > +   GATE_AUD0(CLK_AUD_APLL2, "aud_apll2", "apll2_sel", 24),
-> > > +   GATE_AUD0(CLK_AUD_DAC, "aud_dac", "a1sys_hp_sel", 25),
-> > > +   GATE_AUD0(CLK_AUD_DAC_PREDIS, "aud_dac_predis", "a1sys_hp_sel",
-> > > 26),
-> > > +   GATE_AUD0(CLK_AUD_TML, "aud_tml", "a1sys_hp_sel", 27),
-> > > +   GATE_AUD0(CLK_AUD_ADC, "aud_adc", "a1sys_hp_sel", 28),
-> > > +   GATE_AUD0(CLK_AUD_DAC_HIRES, "aud_dac_hires", "audio_h_sel",
-> > > 31),
-> > > +   /* AUD1 */
-> > > +   GATE_AUD1(CLK_AUD_I2SIN, "aud_i2sin", "a1sys_hp_sel", 0),
-> > > +   GATE_AUD1(CLK_AUD_TDM_IN, "aud_tdm_in", "a1sys_hp_sel", 1),
-> > > +   GATE_AUD1(CLK_AUD_I2S_OUT, "aud_i2s_out", "a1sys_hp_sel", 6),
-> > > +   GATE_AUD1(CLK_AUD_TDM_OUT, "aud_tdm_out", "a1sys_hp_sel", 7),
-> > > +   GATE_AUD1(CLK_AUD_HDMI_OUT, "aud_hdmi_out", "a1sys_hp_sel", 8),
-> > > +   GATE_AUD1(CLK_AUD_ASRC11, "aud_asrc11", "a1sys_hp_sel", 16),
-> > > +   GATE_AUD1(CLK_AUD_ASRC12, "aud_asrc12", "a1sys_hp_sel", 17),
-> > > +   GATE_AUD1(CLK_AUD_MULTI_IN, "aud_multi_in", "mphone_slave_b",
-> > > 19),
-> > > +   GATE_AUD1(CLK_AUD_INTDIR, "aud_intdir", "intdir_sel", 20),
-> > > +   GATE_AUD1(CLK_AUD_A1SYS, "aud_a1sys", "a1sys_hp_sel", 21),
-> > > +   GATE_AUD1(CLK_AUD_A2SYS, "aud_a2sys", "a2sys_sel", 22),
-> > > +   GATE_AUD1(CLK_AUD_PCMIF, "aud_pcmif", "a1sys_hp_sel", 24),
-> > > +   GATE_AUD1(CLK_AUD_A3SYS, "aud_a3sys", "a3sys_sel", 30),
-> > > +   GATE_AUD1(CLK_AUD_A4SYS, "aud_a4sys", "a4sys_sel", 31),
-> > > +   /* AUD2 */
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL1, "aud_memif_ul1", "a1sys_hp_sel",
-> > > 0),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL2, "aud_memif_ul2", "a1sys_hp_sel",
-> > > 1),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL3, "aud_memif_ul3", "a1sys_hp_sel",
-> > > 2),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL4, "aud_memif_ul4", "a1sys_hp_sel",
-> > > 3),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL5, "aud_memif_ul5", "a1sys_hp_sel",
-> > > 4),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL6, "aud_memif_ul6", "a1sys_hp_sel",
-> > > 5),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL8, "aud_memif_ul8", "a1sys_hp_sel",
-> > > 7),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL9, "aud_memif_ul9", "a1sys_hp_sel",
-> > > 8),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_UL10, "aud_memif_ul10", "a1sys_hp_sel",
-> > > 9),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL2, "aud_memif_dl2", "a1sys_hp_sel",
-> > > 18),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL3, "aud_memif_dl3", "a1sys_hp_sel",
-> > > 19),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL6, "aud_memif_dl6", "a1sys_hp_sel",
-> > > 22),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL7, "aud_memif_dl7", "a1sys_hp_sel",
-> > > 23),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL8, "aud_memif_dl8", "a1sys_hp_sel",
-> > > 24),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL10, "aud_memif_dl10", "a1sys_hp_sel",
-> > > 26),
-> > > +   GATE_AUD2(CLK_AUD_MEMIF_DL11, "aud_memif_dl11", "a1sys_hp_sel",
-> > > 27),
-> > > +   /* AUD3 */
-> > > +   GATE_AUD3(CLK_AUD_GASRC0, "aud_gasrc0", "asm_h_sel", 0),
-> > > +   GATE_AUD3(CLK_AUD_GASRC1, "aud_gasrc1", "asm_h_sel", 1),
-> > > +   GATE_AUD3(CLK_AUD_GASRC2, "aud_gasrc2", "asm_h_sel", 2),
-> > > +   GATE_AUD3(CLK_AUD_GASRC3, "aud_gasrc3", "asm_h_sel", 3),
-> > > +   GATE_AUD3(CLK_AUD_GASRC4, "aud_gasrc4", "asm_h_sel", 4),
-> > > +   GATE_AUD3(CLK_AUD_GASRC5, "aud_gasrc5", "asm_h_sel", 5),
-> > > +   GATE_AUD3(CLK_AUD_GASRC6, "aud_gasrc6", "asm_h_sel", 6),
-> > > +   GATE_AUD3(CLK_AUD_GASRC7, "aud_gasrc7", "asm_h_sel", 7),
-> > > +   GATE_AUD3(CLK_AUD_GASRC8, "aud_gasrc8", "asm_h_sel", 8),
-> > > +   GATE_AUD3(CLK_AUD_GASRC9, "aud_gasrc9", "asm_h_sel", 9),
-> > > +   GATE_AUD3(CLK_AUD_GASRC10, "aud_gasrc10", "asm_h_sel", 10),
-> > > +   GATE_AUD3(CLK_AUD_GASRC11, "aud_gasrc11", "asm_h_sel", 11),
-> > > +   GATE_AUD3(CLK_AUD_GASRC12, "aud_gasrc12", "asm_h_sel", 12),
-> > > +   GATE_AUD3(CLK_AUD_GASRC13, "aud_gasrc13", "asm_h_sel", 13),
-> > > +   GATE_AUD3(CLK_AUD_GASRC14, "aud_gasrc14", "asm_h_sel", 14),
-> > > +   GATE_AUD3(CLK_AUD_GASRC15, "aud_gasrc15", "asm_h_sel", 15),
-> > > +   GATE_AUD3(CLK_AUD_GASRC16, "aud_gasrc16", "asm_h_sel", 16),
-> > > +   GATE_AUD3(CLK_AUD_GASRC17, "aud_gasrc17", "asm_h_sel", 17),
-> > > +   GATE_AUD3(CLK_AUD_GASRC18, "aud_gasrc18", "asm_h_sel", 18),
-> > > +   GATE_AUD3(CLK_AUD_GASRC19, "aud_gasrc19", "asm_h_sel", 19),
-> > > +   /* AUD4 */
-> > > +   GATE_AUD4(CLK_AUD_A1SYS_HP, "aud_a1sys_hp", "a1sys_hp_sel", 2),
-> > > +   GATE_AUD4(CLK_AUD_AFE_DMIC1, "aud_afe_dmic1", "a1sys_hp_sel",
-> > > 10),
-> > > +   GATE_AUD4(CLK_AUD_AFE_DMIC2, "aud_afe_dmic2", "a1sys_hp_sel",
-> > > 11),
-> > > +   GATE_AUD4(CLK_AUD_AFE_DMIC3, "aud_afe_dmic3", "a1sys_hp_sel",
-> > > 12),
-> > > +   GATE_AUD4(CLK_AUD_AFE_DMIC4, "aud_afe_dmic4", "a1sys_hp_sel",
-> > > 13),
-> > > +   GATE_AUD4(CLK_AUD_AFE_26M_DMIC_TM, "aud_afe_26m_dmic_tm",
-> > > "a1sys_hp_sel", 14),
-> > > +   GATE_AUD4(CLK_AUD_UL_TML_HIRES, "aud_ul_tml_hires",
-> > > "audio_h_sel", 16),
-> > > +   GATE_AUD4(CLK_AUD_ADC_HIRES, "aud_adc_hires", "audio_h_sel",
-> > > 17),
-> > > +   GATE_AUD4(CLK_AUD_ADDA6_ADC, "aud_adda6_adc", "a1sys_hp_sel",
-> > > 18),
-> > > +   GATE_AUD4(CLK_AUD_ADDA6_ADC_HIRES, "aud_adda6_adc_hires",
-> > > "audio_h_sel", 19),
-> > > +   /* AUD5 */
-> > > +   GATE_AUD5(CLK_AUD_LINEIN_TUNER, "aud_linein_tuner",
-> > > "apll5_sel", 5),
-> > > +   GATE_AUD5(CLK_AUD_EARC_TUNER, "aud_earc_tuner", "apll3_sel",
-> > > 7),
-> > > +};
-> >
-> > These are all clock gates, and are all internal to the audio
-> > hardware,
-> > i.e. not used by other drivers or modules.
-> >
-> > So these don't actually need to be in a separate clk driver. They can
-> > be
-> > modelled within ASoC as supplies that are automatically managed by
-> > ASoC
-> > core. Otherwise just have them as bits that are toggled by the audio
-> > driver's start/stop sequencing code, like they are now, but through
-> > vastly more complicated plumbing.
-> >
-> > Please work with the audio driver owner to see if this can be moved
-> > into
-> > the audio driver.
-> >
-> > Regards
-> > ChenYu
-> >
->
-> The afe device will be the child of audsys clock provider node and
-> audsys clock driver will use devm_of_platform_populate() to populate
-> afe device when audsys clock gates are registered successfully,
-> It means afe will be toggled by audsys clock, do you suggest to change
-> the toggled order?
-
-What I'm saying is that they shouldn't be represented as two drivers
-and two devices in Linux. They are in the same address space, and the
-clocks aren't used by any other hardware block. In the device tree we
-should represent them as one unified device, unless there is a good
-reason, such as hardware design, not to do so. In the drivers, we can
-actually just get rid of the audsys clock driver, and have the afe
-driver toggle the clock enable bits directly. Treat them as any other
-"enable bits" that exist in any hardware.
-
-
-ChenYu
