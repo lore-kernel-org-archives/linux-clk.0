@@ -2,87 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B06C07E9C
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 19:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA23C07E9C
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 19:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6876124C
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 19:13:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D1660698
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 19:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236264AbhGLTQj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jul 2021 15:16:39 -0400
-Received: from mail-il1-f178.google.com ([209.85.166.178]:43607 "EHLO
-        mail-il1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235768AbhGLTQj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 15:16:39 -0400
-Received: by mail-il1-f178.google.com with SMTP id w1so18679898ilg.10;
-        Mon, 12 Jul 2021 12:13:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=A/ti7YMTwDsmvSfnd0XpCHfTDnupbMR/HAk/uSkogbI=;
-        b=AmrzGhsTp+DI5lDXpP0oPoYixutADzTpaVe60uCkO97n90kImY21DWo/jkF/klycDb
-         wG7MQ5Jq6DbJMMYqYBkG2RRV8hjcVhq/Dvo6qTqkulIVR4Qsg0hfyy+Zlf8HYoedfUBC
-         DN/nNZt8lNEh6dPbYVhiEcayRrUoh4tKQki8zBmo3OiWnCX/U0EwSJfdNTETOElY8i3a
-         BrbuI7R118cw64AWkvvrFP3mZlgYzxF65WN8bPXp/IiRCQUGADXDTRxBPxCOwnmrbYOp
-         LMDiLAxoOtq6ARQMagRVjPXey8OjdQYmqzefo0EueU/whCM5n1ebjh+/Mbkc9hnehF3G
-         2QMg==
-X-Gm-Message-State: AOAM531OaDKuhF5QmnDXTyVW10n1GZZ8iBOyfJxjoVQfrSTZCUQXyqOc
-        UbCg7QI5O+Wfk2JBXLhwzQ==
-X-Google-Smtp-Source: ABdhPJygV4RswIzgdTiCxC5pzTkty3UXCrrwiSu8z/zCEsTkxaIzKR8ZRgypCiMuyA2sepUa31hZ1Q==
-X-Received: by 2002:a92:1e08:: with SMTP id e8mr303229ile.10.1626117230440;
-        Mon, 12 Jul 2021 12:13:50 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id d205sm8076550iof.31.2021.07.12.12.13.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 12:13:49 -0700 (PDT)
-Received: (nullmailer pid 2320952 invoked by uid 1000);
-        Mon, 12 Jul 2021 19:13:46 -0000
-Date:   Mon, 12 Jul 2021 13:13:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        angelogioacchino.delregno@somainline.org,
-        linux-arm-msm@vger.kernel.org, jamipkettunen@somainline.org,
-        martin.botka@somainline.org, Stephen Boyd <sboyd@kernel.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Taniya Das <tdas@codeaurora.org>,
-        marijn.suijten@somainline.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S234617AbhGLTrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jul 2021 15:47:24 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:61964 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230199AbhGLTrX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 15:47:23 -0400
+X-IronPort-AV: E=Sophos;i="5.84,234,1620658800"; 
+   d="scan'208";a="87354838"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 13 Jul 2021 04:44:33 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5FE5840E011B;
+        Tue, 13 Jul 2021 04:44:30 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v3 2/3] clk: qcom: Add msm8994 MMCC driver
-Message-ID: <20210712191346.GA2320915@robh.at.kernel.org>
-References: <20210618111435.595689-1-konrad.dybcio@somainline.org>
- <20210618111435.595689-2-konrad.dybcio@somainline.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210618111435.595689-2-konrad.dybcio@somainline.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/5] pin and gpio controller driver for Renesas RZ/G2L
+Date:   Mon, 12 Jul 2021 20:44:17 +0100
+Message-Id: <20210712194422.12405-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 18 Jun 2021 13:14:33 +0200, Konrad Dybcio wrote:
-> Add a driver for managing MultiMedia SubSystem clocks on msm8994
-> and its derivatives.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> ---
->  drivers/clk/qcom/Kconfig                      |    9 +
->  drivers/clk/qcom/Makefile                     |    1 +
->  drivers/clk/qcom/mmcc-msm8994.c               | 2494 +++++++++++++++++
->  include/dt-bindings/clock/qcom,mmcc-msm8994.h |  155 +
->  4 files changed, 2659 insertions(+)
->  create mode 100644 drivers/clk/qcom/mmcc-msm8994.c
->  create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8994.h
-> 
+Hi All,
 
-Acked-by: Rob Herring <robh@kernel.org>
+This patch series adds pin and gpio controller driver for Renesas RZ/G2L
+SoC. RZ/G2L has a simple pin and GPIO controller combined similar to RZ/A2.
+
+This patch series applies on top of https://git.kernel.org/pub/scm/linux/
+kernel/git/geert/renesas-drivers.git/log/?h=topic/rzg2l-update-clock-defs-v4
+
+Cheers,
+Prabhakar
+
+Changes for v2:
+* Added support for per pin pinmux support
+* Added support for pins to set configs
+* Dropped pfc-r9a07g044.c/h
+* Fixed review comments pointed by Geert
+* Included clock/reset changes
+* Included DTS/I changes
+
+Lad Prabhakar (5):
+  dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Add DT bindings for
+    RZ/G2L pinctrl
+  pinctrl: renesas: Add RZ/G2L pin and gpio controller driver
+  drivers: clk: renesas: r9a07g044-cpg: Add GPIO clock and reset entries
+  arm64: dts: renesas: r9a07g044: Add pinctrl node
+  arm64: dts: renesas: rzg2l-smarc: Add scif0 pins
+
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  155 +++
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   13 +
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |   10 +
+ drivers/clk/renesas/r9a07g044-cpg.c           |    5 +
+ drivers/pinctrl/renesas/Kconfig               |   11 +
+ drivers/pinctrl/renesas/Makefile              |    1 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 1196 +++++++++++++++++
+ include/dt-bindings/pinctrl/rzg2l-pinctrl.h   |   23 +
+ 8 files changed, 1414 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/renesas/pinctrl-rzg2l.c
+ create mode 100644 include/dt-bindings/pinctrl/rzg2l-pinctrl.h
+
+
+base-commit: 06c1e6911a7a76b446e4b00fc8bad5d8465932f8
+-- 
+2.17.1
+
