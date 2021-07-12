@@ -2,687 +2,294 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFC3C07E9B
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 14:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63033C07E9B
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 01:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80868610CB
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jul 2021 14:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4160961042
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 01:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230325AbhGJOEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Jul 2021 10:04:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbhGJOEW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Jul 2021 10:04:22 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E68C0613E8
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jul 2021 07:01:37 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id t30so13391303ljo.5
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jul 2021 07:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dkbuvydLh1tNR6vGgtgf1nG349bm9CLolZfbIxwL9UA=;
-        b=Njsx3/m1k526vnM1o6yKejwVh5KlhY6RFe6bJnMBq4I84IdVKMJ7sut39u5NfFuh1Q
-         0aVPGzH+sDeMKS5rD3DtsViXM32V/ojwmfhM9sFlVxiTwEuIcXvfBUL37UFH7QriThnL
-         AajJ5U+dgaKV1eXi7b9WiKP45XQeUP2ow5YN5dzfNv/GfdSAEi1klM4JXLTFXY3Ay/B9
-         orq7h3LWPt6A8xASl9JzCK+dhGuMP08qXtus6bIskNvAisO0cIgTKcDPgHR5N8wLHv/N
-         TZuNJBXuYHDwPupe8jtL0S3hV77WXADi+SRuKDIFHf8M2uA0B9UAoCy9BCbZC2qqcbVY
-         gvqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dkbuvydLh1tNR6vGgtgf1nG349bm9CLolZfbIxwL9UA=;
-        b=SiWbLraO9pzMq83oDXMbQXP6mUi9aN0xYp2cSSp/cICmSTftbMsMOSl3ym115y/dXs
-         cfqAMDiuFs0RtcaP4XPaMEvdUPswDscG4Z/xxKwPraNZHBq1aD9Gadj3LIaJbb8Hfrso
-         UYUBrElXWtNEDzS7ftXS08qQI/Gje7UVs73cMz3w+/T1J7MyA0H4JS9TgdQcmWckAvXL
-         kiZuy4B01X391DTMkbymr5lVZ6oev4iHjM0P6OAUe3uTpxyD2YCzzJoxYjS7Tyo+bOqT
-         7ffPYa0QIZ8xJOHlW3vraYrf59CoMfJCJj4faSYivgpKb7bUyOsZfd7JI6CYcGIm+Fi7
-         wwNQ==
-X-Gm-Message-State: AOAM532ttkkiDp5jAgGN4AgJ7kF8R4MjvS07hUvBwSPBsB/rnw4RGHP+
-        25bFEpk8uHEq58JwXha6J2qN2Q==
-X-Google-Smtp-Source: ABdhPJwXerIAG0Cjgpusop3O0+c/6fIZpaKnuLjgXUq5fJaxcgxycnUhpx7rTbmauJ/JsXP2G7hTBA==
-X-Received: by 2002:a05:651c:150a:: with SMTP id e10mr35084576ljf.215.1625925695727;
-        Sat, 10 Jul 2021 07:01:35 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id o17sm716111lfr.253.2021.07.10.07.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Jul 2021 07:01:35 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S230022AbhGLB2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Jul 2021 21:28:55 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:57466 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229997AbhGLB2z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jul 2021 21:28:55 -0400
+X-UUID: 92874e047db94079ba50da9a46fc81d3-20210712
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=BrVkYvul2t18VHZFlmSxM78jQXtF/EmfXqAkVip/sj8=;
+        b=JB2GlvLwajpP6+YMrynBedoM3Oo/WkjlsFe5soO0pCt+bzUxZOX476QeaShnj8ixlXwl2ry1D4JzFnwbjluS9kmPmxDzmTamIEyzWxofL3ncAkRu98mtn5OboLrJGTswcBI0ojutbMXZrxMq5stxO7ij8gHiYhb7r2xh50I1zGk=;
+X-UUID: 92874e047db94079ba50da9a46fc81d3-20210712
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 820331364; Mon, 12 Jul 2021 09:26:04 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 12 Jul 2021 09:26:03 +0800
+Received: from mtksdccf07 (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 12 Jul 2021 09:26:03 +0800
+Message-ID: <3b52d1781db5b67a04cdbd18852e0857f8b73a38.camel@mediatek.com>
+Subject: Re: [PATCH 05/22] clk: mediatek: Add MT8195 audio clock support
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Trevor Wu <trevor.wu@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 2/2] clk: qcom: move pm_clk functionality into common code
-Date:   Sat, 10 Jul 2021 17:01:30 +0300
-Message-Id: <20210710140130.1176657-3-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710140130.1176657-1-dmitry.baryshkov@linaro.org>
-References: <20210710140130.1176657-1-dmitry.baryshkov@linaro.org>
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Mon, 12 Jul 2021 09:26:03 +0800
+In-Reply-To: <YOLKxrJin5kkwiIl@google.com>
+References: <20210616224743.5109-1-chun-jie.chen@mediatek.com>
+         <20210616224743.5109-6-chun-jie.chen@mediatek.com>
+         <YOLKxrJin5kkwiIl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Several Qualcomm clock controller drivers use pm_clk functionality.
-Instead of having common code in all the drivers, move the pm_clk
-handling to the qcom_cc_map/qcom_cc_probe.
-
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/camcc-sc7180.c       |  44 ++--------
- drivers/clk/qcom/common.c             | 113 +++++++++++++++++++++++---
- drivers/clk/qcom/common.h             |   6 ++
- drivers/clk/qcom/lpasscorecc-sc7180.c |  56 +++----------
- drivers/clk/qcom/mss-sc7180.c         |  40 ++-------
- drivers/clk/qcom/q6sstop-qcs404.c     |  36 ++------
- drivers/clk/qcom/turingcc-qcs404.c    |  34 ++------
- 7 files changed, 142 insertions(+), 187 deletions(-)
-
-diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-index 9bcf2f8ed4de..1c6c1b7fab51 100644
---- a/drivers/clk/qcom/camcc-sc7180.c
-+++ b/drivers/clk/qcom/camcc-sc7180.c
-@@ -9,7 +9,6 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/pm_clock.h>
--#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,camcc-sc7180.h>
-@@ -1631,8 +1630,12 @@ static const struct regmap_config cam_cc_sc7180_regmap_config = {
- 	.fast_io = true,
- };
- 
-+static const char * const cam_cc_sc7180_pm_clks[] = { "xo", "iface" };
-+
- static const struct qcom_cc_desc cam_cc_sc7180_desc = {
- 	.config = &cam_cc_sc7180_regmap_config,
-+	.pm_clks = cam_cc_sc7180_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(cam_cc_sc7180_pm_clks),
- 	.clk_hws = cam_cc_sc7180_hws,
- 	.num_clk_hws = ARRAY_SIZE(cam_cc_sc7180_hws),
- 	.clks = cam_cc_sc7180_clocks,
-@@ -1652,33 +1655,9 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
--	if (ret < 0)
--		return ret;
--
--	ret = pm_clk_add(&pdev->dev, "xo");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to acquire XO clock\n");
--		goto disable_pm_runtime;
--	}
--
--	ret = pm_clk_add(&pdev->dev, "iface");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to acquire iface clock\n");
--		goto disable_pm_runtime;
--	}
--
--	ret = pm_runtime_get(&pdev->dev);
--	if (ret)
--		goto destroy_pm_clk;
--
- 	regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
--	if (IS_ERR(regmap)) {
--		ret = PTR_ERR(regmap);
--		pm_runtime_put(&pdev->dev);
--		goto destroy_pm_clk;
--	}
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
- 
- 	clk_fabia_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
- 	clk_fabia_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
-@@ -1686,21 +1665,12 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
- 	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
- 
- 	ret = qcom_cc_really_probe(pdev, &cam_cc_sc7180_desc, regmap);
--	pm_runtime_put(&pdev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
--		goto destroy_pm_clk;
-+		return 0;
- 	}
- 
- 	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
- }
- 
- static const struct dev_pm_ops cam_cc_pm_ops = {
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index ed7c516a597a..e1d34561cab7 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -7,6 +7,8 @@
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
- #include <linux/clk-provider.h>
- #include <linux/reset-controller.h>
- #include <linux/of.h>
-@@ -69,12 +71,86 @@ int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map, u8 src)
- }
- EXPORT_SYMBOL_GPL(qcom_find_src_index);
- 
-+static void qcom_cc_pm_runtime_disable(void *data)
-+{
-+	pm_runtime_disable(data);
-+}
-+
-+static void qcom_cc_pm_clk_destroy(void *data)
-+{
-+	pm_clk_destroy(data);
-+}
-+
-+static int
-+qcom_cc_add_pm_clks(struct platform_device *pdev, const struct qcom_cc_desc *desc)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+	int i;
-+
-+	if (!desc->num_pm_clks)
-+		return 0;
-+
-+	ret = pm_clk_create(dev);
-+	if (ret < 0)
-+		return ret;
-+	ret = devm_add_action_or_reset(dev, qcom_cc_pm_clk_destroy, dev);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < desc->num_pm_clks; i++) {
-+		ret = pm_clk_add(dev, desc->pm_clks[i]);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to acquire %s pm clk\n", desc->pm_clks[i]);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+qcom_cc_manage_pm(struct platform_device *pdev, const struct qcom_cc_desc *desc)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	/* For now enable runtime PM only if we have PM clocks in use */
-+	if (desc->num_pm_clks && !pm_runtime_enabled(dev)) {
-+		pm_runtime_enable(dev);
-+
-+		ret = devm_add_action_or_reset(dev, qcom_cc_pm_runtime_disable, dev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = qcom_cc_add_pm_clks(pdev, desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Other code might have enabled runtime PM, resume device here */
-+	if (pm_runtime_enabled(dev)) {
-+		ret = pm_runtime_get_sync(dev);
-+		if (ret) {
-+			pm_runtime_put_noidle(dev);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static struct regmap *
- qcom_cc_map_by_index(struct platform_device *pdev, const struct qcom_cc_desc *desc, int index)
- {
- 	void __iomem *base;
- 	struct resource *res;
- 	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ret = qcom_cc_manage_pm(pdev, desc);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
- 	base = devm_ioremap_resource(dev, res);
-@@ -244,8 +320,10 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	struct clk_hw **clk_hws = desc->clk_hws;
- 
- 	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
--	if (!cc)
--		return -ENOMEM;
-+	if (!cc) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
- 
- 	reset = &cc->reset;
- 	reset->rcdev.of_node = dev->of_node;
-@@ -257,22 +335,25 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 
- 	ret = devm_reset_controller_register(dev, &reset->rcdev);
- 	if (ret)
--		return ret;
-+		goto err;
- 
- 	if (desc->gdscs && desc->num_gdscs) {
- 		scd = devm_kzalloc(dev, sizeof(*scd), GFP_KERNEL);
--		if (!scd)
--			return -ENOMEM;
-+		if (!scd) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
- 		scd->dev = dev;
- 		scd->scs = desc->gdscs;
- 		scd->num = desc->num_gdscs;
- 		ret = gdsc_register(scd, &reset->rcdev, regmap);
- 		if (ret)
--			return ret;
-+			goto err;
- 		ret = devm_add_action_or_reset(dev, qcom_cc_gdsc_unregister,
- 					       scd);
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 
- 	cc->rclks = rclks;
-@@ -283,7 +364,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	for (i = 0; i < num_clk_hws; i++) {
- 		ret = devm_clk_hw_register(dev, clk_hws[i]);
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 
- 	for (i = 0; i < num_clks; i++) {
-@@ -292,14 +373,26 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 
- 		ret = devm_clk_register_regmap(dev, rclks[i]);
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 
- 	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
- 	if (ret)
--		return ret;
-+		goto err;
-+
-+	if (pm_runtime_enabled(dev)) {
-+		/* for the LPASS on sc7180, which uses autosuspend */
-+		pm_runtime_mark_last_busy(dev);
-+		pm_runtime_put(dev);
-+	}
- 
- 	return 0;
-+
-+err:
-+	if (pm_runtime_enabled(dev))
-+		pm_runtime_put(dev);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
- 
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index bb39a7e106d8..5b45e2033a92 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -19,8 +19,14 @@ struct clk_hw;
- #define PLL_VOTE_FSM_ENA	BIT(20)
- #define PLL_VOTE_FSM_RESET	BIT(21)
- 
-+/*
-+ * Note: if pm_clks are used, pm_clk_suspend/resume should be called manually
-+ * from runtime pm callbacks (or just passed to SET_RUNTIME_PM_OPS).
-+ */
- struct qcom_cc_desc {
- 	const struct regmap_config *config;
-+	const char *const *pm_clks;
-+	size_t num_pm_clks;
- 	struct clk_regmap **clks;
- 	size_t num_clks;
- 	const struct qcom_reset_map *resets;
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 2e0ecc38efdd..5c7faa36305a 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -338,8 +338,12 @@ static struct regmap_config lpass_core_cc_sc7180_regmap_config = {
- 	.fast_io = true,
- };
- 
-+static const char * const lpass_sc7180_pm_clks[] = { "iface" };
-+
- static const struct qcom_cc_desc lpass_core_hm_sc7180_desc = {
- 	.config = &lpass_core_cc_sc7180_regmap_config,
-+	.pm_clks = lpass_sc7180_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(lpass_sc7180_pm_clks),
- 	.gdscs = lpass_core_hm_sc7180_gdscs,
- 	.num_gdscs = ARRAY_SIZE(lpass_core_hm_sc7180_gdscs),
- };
-@@ -352,55 +356,20 @@ static const struct qcom_cc_desc lpass_core_cc_sc7180_desc = {
- 
- static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
- 	.config = &lpass_core_cc_sc7180_regmap_config,
-+	.pm_clks = lpass_sc7180_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(lpass_sc7180_pm_clks),
- 	.gdscs = lpass_audio_hm_sc7180_gdscs,
- 	.num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
- };
- 
--static void lpass_pm_runtime_disable(void *data)
--{
--	pm_runtime_disable(data);
--}
--
--static void lpass_pm_clk_destroy(void *data)
--{
--	pm_clk_destroy(data);
--}
--
--static int lpass_create_pm_clks(struct platform_device *pdev)
--{
--	int ret;
--
--	pm_runtime_use_autosuspend(&pdev->dev);
--	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
--	pm_runtime_enable(&pdev->dev);
--
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = pm_clk_add(&pdev->dev, "iface");
--	if (ret < 0)
--		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--
--	return ret;
--}
--
- static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
- {
- 	const struct qcom_cc_desc *desc;
- 	struct regmap *regmap;
- 	int ret;
- 
--	ret = lpass_create_pm_clks(pdev);
--	if (ret)
--		return ret;
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
- 
- 	lpass_core_cc_sc7180_regmap_config.name = "lpass_audio_cc";
- 	desc = &lpass_audio_hm_sc7180_desc;
-@@ -428,20 +397,15 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
- 
- 	ret = qcom_cc_really_probe(pdev, &lpass_core_cc_sc7180_desc, regmap);
- 
--	pm_runtime_mark_last_busy(&pdev->dev);
--	pm_runtime_put_autosuspend(&pdev->dev);
--
- 	return ret;
- }
- 
- static int lpass_hm_core_probe(struct platform_device *pdev)
- {
- 	const struct qcom_cc_desc *desc;
--	int ret;
- 
--	ret = lpass_create_pm_clks(pdev);
--	if (ret)
--		return ret;
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
- 
- 	lpass_core_cc_sc7180_regmap_config.name = "lpass_hm_core";
- 	desc = &lpass_core_hm_sc7180_desc;
-diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
-index 673fa1a4f734..41b448a0f5ff 100644
---- a/drivers/clk/qcom/mss-sc7180.c
-+++ b/drivers/clk/qcom/mss-sc7180.c
-@@ -63,48 +63,19 @@ static struct clk_regmap *mss_sc7180_clocks[] = {
- 	[MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
- };
- 
-+static const char * const mss_sc7180_pm_clks[] = { "cfg_ahb" };
-+
- static const struct qcom_cc_desc mss_sc7180_desc = {
- 	.config = &mss_regmap_config,
-+	.pm_clks = mss_sc7180_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(mss_sc7180_pm_clks),
- 	.clks = mss_sc7180_clocks,
- 	.num_clks = ARRAY_SIZE(mss_sc7180_clocks),
- };
- 
- static int mss_sc7180_probe(struct platform_device *pdev)
- {
--	int ret;
--
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		goto disable_pm_runtime;
--
--	ret = pm_clk_add(&pdev->dev, "cfg_ahb");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
--	}
--
--	ret = qcom_cc_probe(pdev, &mss_sc7180_desc);
--	if (ret < 0)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int mss_sc7180_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
--
--	return 0;
-+	return qcom_cc_probe(pdev, &mss_sc7180_desc);
- }
- 
- static const struct dev_pm_ops mss_sc7180_pm_ops = {
-@@ -119,7 +90,6 @@ MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
- 
- static struct platform_driver mss_sc7180_driver = {
- 	.probe		= mss_sc7180_probe,
--	.remove		= mss_sc7180_remove,
- 	.driver		= {
- 		.name		= "sc7180-mss",
- 		.of_match_table = mss_sc7180_match_table,
-diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
-index 723f932fbf7d..398c237417f8 100644
---- a/drivers/clk/qcom/q6sstop-qcs404.c
-+++ b/drivers/clk/qcom/q6sstop-qcs404.c
-@@ -117,6 +117,8 @@ static struct regmap_config q6sstop_regmap_config = {
- 	.fast_io	= true,
- };
- 
-+static const char * const qcs404_pm_clks[] = { NULL };
-+
- static struct clk_regmap *q6sstop_qcs404_clocks[] = {
- 	[LCC_AHBFABRIC_CBC_CLK] = &lcc_ahbfabric_cbc_clk.clkr,
- 	[LCC_Q6SS_AHBS_CBC_CLK] = &lcc_q6ss_ahbs_cbc_clk.clkr,
-@@ -144,6 +146,8 @@ static struct clk_regmap *tcsr_qcs404_clocks[] = {
- 
- static const struct qcom_cc_desc tcsr_qcs404_desc = {
- 	.config = &q6sstop_regmap_config,
-+	.pm_clks = qcs404_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(qcs404_pm_clks),
- 	.clks = tcsr_qcs404_clocks,
- 	.num_clks = ARRAY_SIZE(tcsr_qcs404_clocks),
- };
-@@ -159,46 +163,19 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
- 	const struct qcom_cc_desc *desc;
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		goto disable_pm_runtime;
--
--	ret = pm_clk_add(&pdev->dev, NULL);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
--	}
--
- 	q6sstop_regmap_config.name = "q6sstop_tcsr";
- 	desc = &tcsr_qcs404_desc;
- 
- 	ret = qcom_cc_probe_by_index(pdev, 1, desc);
- 	if (ret)
--		goto destroy_pm_clk;
-+		return ret;
- 
- 	q6sstop_regmap_config.name = "q6sstop_cc";
- 	desc = &q6sstop_qcs404_desc;
- 
- 	ret = qcom_cc_probe_by_index(pdev, 0, desc);
- 	if (ret)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+		return ret;
- 
- 	return 0;
- }
-@@ -209,7 +186,6 @@ static const struct dev_pm_ops q6sstopcc_pm_ops = {
- 
- static struct platform_driver q6sstopcc_qcs404_driver = {
- 	.probe		= q6sstopcc_qcs404_probe,
--	.remove		= q6sstopcc_qcs404_remove,
- 	.driver		= {
- 		.name	= "qcs404-q6sstopcc",
- 		.of_match_table = q6sstopcc_qcs404_match_table,
-diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-index 4cfbbf5bf4d9..ba283812ef7c 100644
---- a/drivers/clk/qcom/turingcc-qcs404.c
-+++ b/drivers/clk/qcom/turingcc-qcs404.c
-@@ -100,8 +100,12 @@ static const struct regmap_config turingcc_regmap_config = {
- 	.fast_io	= true,
- };
- 
-+static const char * const turingcc_pm_clks[] = { NULL };
-+
- static const struct qcom_cc_desc turingcc_desc = {
- 	.config = &turingcc_regmap_config,
-+	.pm_clks = turingcc_pm_clks,
-+	.num_pm_clks = ARRAY_SIZE(turingcc_pm_clks),
- 	.clks = turingcc_clocks,
- 	.num_clks = ARRAY_SIZE(turingcc_clocks),
- };
-@@ -110,36 +114,9 @@ static int turingcc_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		goto disable_pm_runtime;
--
--	ret = pm_clk_add(&pdev->dev, NULL);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
--	}
--
- 	ret = qcom_cc_probe(pdev, &turingcc_desc);
- 	if (ret < 0)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int turingcc_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+		return ret;
- 
- 	return 0;
- }
-@@ -156,7 +133,6 @@ MODULE_DEVICE_TABLE(of, turingcc_match_table);
- 
- static struct platform_driver turingcc_driver = {
- 	.probe		= turingcc_probe,
--	.remove		= turingcc_remove,
- 	.driver		= {
- 		.name	= "qcs404-turingcc",
- 		.of_match_table = turingcc_match_table,
--- 
-2.30.2
+T24gTW9uLCAyMDIxLTA3LTA1IGF0IDE3OjAzICswODAwLCBDaGVuLVl1IFRzYWkgd3JvdGU6DQo+
+IEhpLA0KPiANCj4gT24gVGh1LCBKdW4gMTcsIDIwMjEgYXQgMDY6NDc6MjZBTSArMDgwMCwgQ2h1
+bi1KaWUgQ2hlbiB3cm90ZToNCj4gPiBBZGQgTVQ4MTk1IGF1ZGlvIGNsb2NrIHByb3ZpZGVyDQo+
+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQ2h1bi1KaWUgQ2hlbiA8Y2h1bi1qaWUuY2hlbkBtZWRp
+YXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL0tjb25maWcgICAg
+ICAgICAgfCAgIDYgKw0KPiA+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9NYWtlZmlsZSAgICAgICAg
+IHwgICAxICsNCj4gPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5NS1hdWQuYyB8IDE5
+OA0KPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwg
+MjA1IGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21l
+ZGlhdGVrL2Nsay1tdDgxOTUtYXVkLmMNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9j
+bGsvbWVkaWF0ZWsvS2NvbmZpZw0KPiA+IGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvS2NvbmZpZw0K
+PiA+IGluZGV4IDY3MDdhYmEzZDUwMC4uZTJiYWU5ZDQ5MGE0IDEwMDY0NA0KPiA+IC0tLSBhL2Ry
+aXZlcnMvY2xrL21lZGlhdGVrL0tjb25maWcNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRl
+ay9LY29uZmlnDQo+ID4gQEAgLTU4OCw2ICs1ODgsMTIgQEAgY29uZmlnIENPTU1PTl9DTEtfTVQ4
+MTk1DQo+ID4gIAloZWxwDQo+ID4gIAkgIFRoaXMgZHJpdmVyIHN1cHBvcnRzIE1lZGlhVGVrIE1U
+ODE5NSBiYXNpYyBjbG9ja3MuDQo+ID4gIA0KPiA+ICtjb25maWcgQ09NTU9OX0NMS19NVDgxOTVf
+QVVEU1lTDQo+ID4gKwlib29sICJDbG9jayBkcml2ZXIgZm9yIE1lZGlhVGVrIE1UODE5NSBhdWRz
+eXMiDQo+ID4gKwlkZXBlbmRzIG9uIENPTU1PTl9DTEtfTVQ4MTk1DQo+ID4gKwloZWxwDQo+ID4g
+KwkgIFRoaXMgZHJpdmVyIHN1cHBvcnRzIE1lZGlhVGVrIE1UODE5NSBhdWRzeXMgY2xvY2tzLg0K
+PiA+ICsNCj4gDQo+IFRoZSBjbG9jayBtb2R1bGVzIGFyZW4ndCBzaGFyZWQgYmV0d2VlbiBkaWZm
+ZXJlbnQgY2hpcHMsIHNvIGVpdGhlciB3ZQ0KPiBlbmFibGUgc3VwcG9ydCBmb3IgYWxsIGNsb2Nr
+IGhhcmR3YXJlIGluIG9uZSBjaGlwIG9yIHdlIGRvbid0LiBJdA0KPiBkb2Vzbid0IG1ha2Ugc2Vu
+c2UgdG8gc3VwcG9ydCBqdXN0IHNvbWUgb2YgdGhlbS4gU28gaGF2aW5nIGp1c3Qgb25lDQo+IEtj
+b25maWcgb3B0aW9uIGFuZCBoYXZpbmcgYWxsIGRyaXZlcnMgdW5kZXIgaXQgaXMgYmV0dGVyLg0K
+PiANCj4gPiAgY29uZmlnIENPTU1PTl9DTEtfTVQ4NTE2DQo+ID4gIAlib29sICJDbG9jayBkcml2
+ZXIgZm9yIE1lZGlhVGVrIE1UODUxNiINCj4gPiAgCWRlcGVuZHMgb24gQVJDSF9NRURJQVRFSyB8
+fCBDT01QSUxFX1RFU1QNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvTWFr
+ZWZpbGUNCj4gPiBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL01ha2VmaWxlDQo+ID4gaW5kZXggZjgw
+MDJkODk2NmUxLi5mMjdjMDQzMTQxODYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvbWVk
+aWF0ZWsvTWFrZWZpbGUNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9NYWtlZmlsZQ0K
+PiA+IEBAIC04MSw1ICs4MSw2IEBAIG9iai0kKENPTkZJR19DT01NT05fQ0xLX01UODE5Ml9TQ1Bf
+QURTUCkgKz0gY2xrLQ0KPiA+IG10ODE5Mi1zY3BfYWRzcC5vDQo+ID4gIG9iai0kKENPTkZJR19D
+T01NT05fQ0xLX01UODE5Ml9WREVDU1lTKSArPSBjbGstbXQ4MTkyLXZkZWMubw0KPiA+ICBvYmot
+JChDT05GSUdfQ09NTU9OX0NMS19NVDgxOTJfVkVOQ1NZUykgKz0gY2xrLW10ODE5Mi12ZW5jLm8N
+Cj4gPiAgb2JqLSQoQ09ORklHX0NPTU1PTl9DTEtfTVQ4MTk1KSArPSBjbGstbXQ4MTk1Lm8NCj4g
+PiArb2JqLSQoQ09ORklHX0NPTU1PTl9DTEtfTVQ4MTk1X0FVRFNZUykgKz0gY2xrLW10ODE5NS1h
+dWQubw0KPiA+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDg1MTYpICs9IGNsay1tdDg1MTYu
+bw0KPiA+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDg1MTZfQVVEU1lTKSArPSBjbGstbXQ4
+NTE2LWF1ZC5vDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgx
+OTUtYXVkLmMNCj4gPiBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxOTUtYXVkLmMNCj4g
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAwMDAwMC4uZGI1ZjgwZDQx
+ZGUwDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
+ay1tdDgxOTUtYXVkLmMNCj4gPiBAQCAtMCwwICsxLDE5OCBAQA0KPiA+ICsvLyBTUERYLUxpY2Vu
+c2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5DQo+ID4gKy8vDQo+ID4gKy8vIENvcHlyaWdodCAo
+YykgMjAyMSBNZWRpYVRlayBJbmMuDQo+ID4gKy8vIEF1dGhvcjogQ2h1bi1KaWUgQ2hlbiA8Y2h1
+bi1qaWUuY2hlbkBtZWRpYXRlay5jb20+DQo+ID4gKw0KPiA+ICsjaW5jbHVkZSA8bGludXgvY2xr
+LXByb3ZpZGVyLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPiA+ICsj
+aW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQo+ID4gKw0KPiA+ICsjaW5jbHVkZSAi
+Y2xrLW10ay5oIg0KPiA+ICsjaW5jbHVkZSAiY2xrLWdhdGUuaCINCj4gPiArDQo+ID4gKyNpbmNs
+dWRlIDxkdC1iaW5kaW5ncy9jbG9jay9tdDgxOTUtY2xrLmg+DQo+ID4gKw0KPiA+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IG10a19nYXRlX3JlZ3MgYXVkMF9jZ19yZWdzID0gew0KPiA+ICsJLnNldF9v
+ZnMgPSAweDAsDQo+ID4gKwkuY2xyX29mcyA9IDB4MCwNCj4gPiArCS5zdGFfb2ZzID0gMHgwLA0K
+PiA+ICt9Ow0KPiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfZ2F0ZV9yZWdzIGF1
+ZDFfY2dfcmVncyA9IHsNCj4gPiArCS5zZXRfb2ZzID0gMHgxMCwNCj4gPiArCS5jbHJfb2ZzID0g
+MHgxMCwNCj4gPiArCS5zdGFfb2ZzID0gMHgxMCwNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0YXRp
+YyBjb25zdCBzdHJ1Y3QgbXRrX2dhdGVfcmVncyBhdWQyX2NnX3JlZ3MgPSB7DQo+ID4gKwkuc2V0
+X29mcyA9IDB4MTQsDQo+ID4gKwkuY2xyX29mcyA9IDB4MTQsDQo+ID4gKwkuc3RhX29mcyA9IDB4
+MTQsDQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlX3Jl
+Z3MgYXVkM19jZ19yZWdzID0gew0KPiA+ICsJLnNldF9vZnMgPSAweDE4LA0KPiA+ICsJLmNscl9v
+ZnMgPSAweDE4LA0KPiA+ICsJLnN0YV9vZnMgPSAweDE4LA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAr
+c3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfZ2F0ZV9yZWdzIGF1ZDRfY2dfcmVncyA9IHsNCj4gPiAr
+CS5zZXRfb2ZzID0gMHg0LA0KPiA+ICsJLmNscl9vZnMgPSAweDQsDQo+ID4gKwkuc3RhX29mcyA9
+IDB4NCwNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX2dhdGVf
+cmVncyBhdWQ1X2NnX3JlZ3MgPSB7DQo+ID4gKwkuc2V0X29mcyA9IDB4YywNCj4gPiArCS5jbHJf
+b2ZzID0gMHhjLA0KPiA+ICsJLnN0YV9vZnMgPSAweGMsDQo+ID4gK307DQo+ID4gKw0KPiA+ICsj
+ZGVmaW5lIEdBVEVfQVVEMChfaWQsIF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpCQkJDQo+ID4gXA0K
+PiA+ICsJR0FURV9NVEsoX2lkLCBfbmFtZSwgX3BhcmVudCwgJmF1ZDBfY2dfcmVncywgX3NoaWZ0
+LA0KPiA+ICZtdGtfY2xrX2dhdGVfb3BzX25vX3NldGNscikNCj4gPiArDQo+ID4gKyNkZWZpbmUg
+R0FURV9BVUQxKF9pZCwgX25hbWUsIF9wYXJlbnQsIF9zaGlmdCkJCQkNCj4gPiBcDQo+ID4gKwlH
+QVRFX01USyhfaWQsIF9uYW1lLCBfcGFyZW50LCAmYXVkMV9jZ19yZWdzLCBfc2hpZnQsDQo+ID4g
+Jm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyKQ0KPiA+ICsNCj4gPiArI2RlZmluZSBHQVRFX0FV
+RDIoX2lkLCBfbmFtZSwgX3BhcmVudCwgX3NoaWZ0KQkJCQ0KPiA+IFwNCj4gPiArCUdBVEVfTVRL
+KF9pZCwgX25hbWUsIF9wYXJlbnQsICZhdWQyX2NnX3JlZ3MsIF9zaGlmdCwNCj4gPiAmbXRrX2Ns
+a19nYXRlX29wc19ub19zZXRjbHIpDQo+ID4gKw0KPiA+ICsjZGVmaW5lIEdBVEVfQVVEMyhfaWQs
+IF9uYW1lLCBfcGFyZW50LCBfc2hpZnQpCQkJDQo+ID4gXA0KPiA+ICsJR0FURV9NVEsoX2lkLCBf
+bmFtZSwgX3BhcmVudCwgJmF1ZDNfY2dfcmVncywgX3NoaWZ0LA0KPiA+ICZtdGtfY2xrX2dhdGVf
+b3BzX25vX3NldGNscikNCj4gPiArDQo+ID4gKyNkZWZpbmUgR0FURV9BVUQ0KF9pZCwgX25hbWUs
+IF9wYXJlbnQsIF9zaGlmdCkJCQkNCj4gPiBcDQo+ID4gKwlHQVRFX01USyhfaWQsIF9uYW1lLCBf
+cGFyZW50LCAmYXVkNF9jZ19yZWdzLCBfc2hpZnQsDQo+ID4gJm10a19jbGtfZ2F0ZV9vcHNfbm9f
+c2V0Y2xyKQ0KPiA+ICsNCj4gPiArI2RlZmluZSBHQVRFX0FVRDUoX2lkLCBfbmFtZSwgX3BhcmVu
+dCwgX3NoaWZ0KQkJCQ0KPiA+IFwNCj4gPiArCUdBVEVfTVRLKF9pZCwgX25hbWUsIF9wYXJlbnQs
+ICZhdWQ1X2NnX3JlZ3MsIF9zaGlmdCwNCj4gPiAmbXRrX2Nsa19nYXRlX29wc19ub19zZXRjbHIp
+DQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlIGF1ZF9jbGtzW10gPSB7
+DQo+ID4gKwkvKiBBVUQwICovDQo+ID4gKwlHQVRFX0FVRDAoQ0xLX0FVRF9BRkUsICJhdWRfYWZl
+IiwgImExc3lzX2hwX3NlbCIsIDIpLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfTFJDS19DTlQs
+ICJhdWRfbHJja19jbnQiLCAiYTFzeXNfaHBfc2VsIiwgNCksDQo+ID4gKwlHQVRFX0FVRDAoQ0xL
+X0FVRF9TUERJRklOX1RVTkVSX0FQTEwsICJhdWRfc3BkaWZpbl90dW5lcl9hcGxsIiwNCj4gPiAi
+YXBsbDRfc2VsIiwgMTApLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfU1BESUZJTl9UVU5FUl9E
+QkcsICJhdWRfc3BkaWZpbl90dW5lcl9kYmciLA0KPiA+ICJhcGxsNF9zZWwiLCAxMSksDQo+ID4g
+KwlHQVRFX0FVRDAoQ0xLX0FVRF9VTF9UTUwsICJhdWRfdWxfdG1sIiwgImExc3lzX2hwX3NlbCIs
+IDE4KSwNCj4gPiArCUdBVEVfQVVEMChDTEtfQVVEX0FQTEwxX1RVTkVSLCAiYXVkX2FwbGwxX3R1
+bmVyIiwgImFwbGwxX3NlbCIsDQo+ID4gMTkpLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfQVBM
+TDJfVFVORVIsICJhdWRfYXBsbDJfdHVuZXIiLCAiYXBsbDJfc2VsIiwNCj4gPiAyMCksDQo+ID4g
+KwlHQVRFX0FVRDAoQ0xLX0FVRF9UT1AwX1NQREYsICJhdWRfdG9wMF9zcGRmIiwgImF1ZF9pZWNf
+c2VsIiwNCj4gPiAyMSksDQo+ID4gKwlHQVRFX0FVRDAoQ0xLX0FVRF9BUExMLCAiYXVkX2FwbGwi
+LCAiYXBsbDFfc2VsIiwgMjMpLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfQVBMTDIsICJhdWRf
+YXBsbDIiLCAiYXBsbDJfc2VsIiwgMjQpLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfREFDLCAi
+YXVkX2RhYyIsICJhMXN5c19ocF9zZWwiLCAyNSksDQo+ID4gKwlHQVRFX0FVRDAoQ0xLX0FVRF9E
+QUNfUFJFRElTLCAiYXVkX2RhY19wcmVkaXMiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAyNiksDQo+
+ID4gKwlHQVRFX0FVRDAoQ0xLX0FVRF9UTUwsICJhdWRfdG1sIiwgImExc3lzX2hwX3NlbCIsIDI3
+KSwNCj4gPiArCUdBVEVfQVVEMChDTEtfQVVEX0FEQywgImF1ZF9hZGMiLCAiYTFzeXNfaHBfc2Vs
+IiwgMjgpLA0KPiA+ICsJR0FURV9BVUQwKENMS19BVURfREFDX0hJUkVTLCAiYXVkX2RhY19oaXJl
+cyIsICJhdWRpb19oX3NlbCIsDQo+ID4gMzEpLA0KPiA+ICsJLyogQVVEMSAqLw0KPiA+ICsJR0FU
+RV9BVUQxKENMS19BVURfSTJTSU4sICJhdWRfaTJzaW4iLCAiYTFzeXNfaHBfc2VsIiwgMCksDQo+
+ID4gKwlHQVRFX0FVRDEoQ0xLX0FVRF9URE1fSU4sICJhdWRfdGRtX2luIiwgImExc3lzX2hwX3Nl
+bCIsIDEpLA0KPiA+ICsJR0FURV9BVUQxKENMS19BVURfSTJTX09VVCwgImF1ZF9pMnNfb3V0Iiwg
+ImExc3lzX2hwX3NlbCIsIDYpLA0KPiA+ICsJR0FURV9BVUQxKENMS19BVURfVERNX09VVCwgImF1
+ZF90ZG1fb3V0IiwgImExc3lzX2hwX3NlbCIsIDcpLA0KPiA+ICsJR0FURV9BVUQxKENMS19BVURf
+SERNSV9PVVQsICJhdWRfaGRtaV9vdXQiLCAiYTFzeXNfaHBfc2VsIiwgOCksDQo+ID4gKwlHQVRF
+X0FVRDEoQ0xLX0FVRF9BU1JDMTEsICJhdWRfYXNyYzExIiwgImExc3lzX2hwX3NlbCIsIDE2KSwN
+Cj4gPiArCUdBVEVfQVVEMShDTEtfQVVEX0FTUkMxMiwgImF1ZF9hc3JjMTIiLCAiYTFzeXNfaHBf
+c2VsIiwgMTcpLA0KPiA+ICsJR0FURV9BVUQxKENMS19BVURfTVVMVElfSU4sICJhdWRfbXVsdGlf
+aW4iLCAibXBob25lX3NsYXZlX2IiLA0KPiA+IDE5KSwNCj4gPiArCUdBVEVfQVVEMShDTEtfQVVE
+X0lOVERJUiwgImF1ZF9pbnRkaXIiLCAiaW50ZGlyX3NlbCIsIDIwKSwNCj4gPiArCUdBVEVfQVVE
+MShDTEtfQVVEX0ExU1lTLCAiYXVkX2Exc3lzIiwgImExc3lzX2hwX3NlbCIsIDIxKSwNCj4gPiAr
+CUdBVEVfQVVEMShDTEtfQVVEX0EyU1lTLCAiYXVkX2Eyc3lzIiwgImEyc3lzX3NlbCIsIDIyKSwN
+Cj4gPiArCUdBVEVfQVVEMShDTEtfQVVEX1BDTUlGLCAiYXVkX3BjbWlmIiwgImExc3lzX2hwX3Nl
+bCIsIDI0KSwNCj4gPiArCUdBVEVfQVVEMShDTEtfQVVEX0EzU1lTLCAiYXVkX2Ezc3lzIiwgImEz
+c3lzX3NlbCIsIDMwKSwNCj4gPiArCUdBVEVfQVVEMShDTEtfQVVEX0E0U1lTLCAiYXVkX2E0c3lz
+IiwgImE0c3lzX3NlbCIsIDMxKSwNCj4gPiArCS8qIEFVRDIgKi8NCj4gPiArCUdBVEVfQVVEMihD
+TEtfQVVEX01FTUlGX1VMMSwgImF1ZF9tZW1pZl91bDEiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAw
+KSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX1VMMiwgImF1ZF9tZW1pZl91bDIiLCAi
+YTFzeXNfaHBfc2VsIiwNCj4gPiAxKSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX1VM
+MywgImF1ZF9tZW1pZl91bDMiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAyKSwNCj4gPiArCUdBVEVf
+QVVEMihDTEtfQVVEX01FTUlGX1VMNCwgImF1ZF9tZW1pZl91bDQiLCAiYTFzeXNfaHBfc2VsIiwN
+Cj4gPiAzKSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX1VMNSwgImF1ZF9tZW1pZl91
+bDUiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiA0KSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01F
+TUlGX1VMNiwgImF1ZF9tZW1pZl91bDYiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiA1KSwNCj4gPiAr
+CUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX1VMOCwgImF1ZF9tZW1pZl91bDgiLCAiYTFzeXNfaHBf
+c2VsIiwNCj4gPiA3KSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX1VMOSwgImF1ZF9t
+ZW1pZl91bDkiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiA4KSwNCj4gPiArCUdBVEVfQVVEMihDTEtf
+QVVEX01FTUlGX1VMMTAsICJhdWRfbWVtaWZfdWwxMCIsICJhMXN5c19ocF9zZWwiLA0KPiA+IDkp
+LA0KPiA+ICsJR0FURV9BVUQyKENMS19BVURfTUVNSUZfREwyLCAiYXVkX21lbWlmX2RsMiIsICJh
+MXN5c19ocF9zZWwiLA0KPiA+IDE4KSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVEX01FTUlGX0RM
+MywgImF1ZF9tZW1pZl9kbDMiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAxOSksDQo+ID4gKwlHQVRF
+X0FVRDIoQ0xLX0FVRF9NRU1JRl9ETDYsICJhdWRfbWVtaWZfZGw2IiwgImExc3lzX2hwX3NlbCIs
+DQo+ID4gMjIpLA0KPiA+ICsJR0FURV9BVUQyKENMS19BVURfTUVNSUZfREw3LCAiYXVkX21lbWlm
+X2RsNyIsICJhMXN5c19ocF9zZWwiLA0KPiA+IDIzKSwNCj4gPiArCUdBVEVfQVVEMihDTEtfQVVE
+X01FTUlGX0RMOCwgImF1ZF9tZW1pZl9kbDgiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAyNCksDQo+
+ID4gKwlHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9ETDEwLCAiYXVkX21lbWlmX2RsMTAiLCAiYTFz
+eXNfaHBfc2VsIiwNCj4gPiAyNiksDQo+ID4gKwlHQVRFX0FVRDIoQ0xLX0FVRF9NRU1JRl9ETDEx
+LCAiYXVkX21lbWlmX2RsMTEiLCAiYTFzeXNfaHBfc2VsIiwNCj4gPiAyNyksDQo+ID4gKwkvKiBB
+VUQzICovDQo+ID4gKwlHQVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzAsICJhdWRfZ2FzcmMwIiwgImFz
+bV9oX3NlbCIsIDApLA0KPiA+ICsJR0FURV9BVUQzKENMS19BVURfR0FTUkMxLCAiYXVkX2dhc3Jj
+MSIsICJhc21faF9zZWwiLCAxKSwNCj4gPiArCUdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMiwgImF1
+ZF9nYXNyYzIiLCAiYXNtX2hfc2VsIiwgMiksDQo+ID4gKwlHQVRFX0FVRDMoQ0xLX0FVRF9HQVNS
+QzMsICJhdWRfZ2FzcmMzIiwgImFzbV9oX3NlbCIsIDMpLA0KPiA+ICsJR0FURV9BVUQzKENMS19B
+VURfR0FTUkM0LCAiYXVkX2dhc3JjNCIsICJhc21faF9zZWwiLCA0KSwNCj4gPiArCUdBVEVfQVVE
+MyhDTEtfQVVEX0dBU1JDNSwgImF1ZF9nYXNyYzUiLCAiYXNtX2hfc2VsIiwgNSksDQo+ID4gKwlH
+QVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzYsICJhdWRfZ2FzcmM2IiwgImFzbV9oX3NlbCIsIDYpLA0K
+PiA+ICsJR0FURV9BVUQzKENMS19BVURfR0FTUkM3LCAiYXVkX2dhc3JjNyIsICJhc21faF9zZWwi
+LCA3KSwNCj4gPiArCUdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDOCwgImF1ZF9nYXNyYzgiLCAiYXNt
+X2hfc2VsIiwgOCksDQo+ID4gKwlHQVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzksICJhdWRfZ2FzcmM5
+IiwgImFzbV9oX3NlbCIsIDkpLA0KPiA+ICsJR0FURV9BVUQzKENMS19BVURfR0FTUkMxMCwgImF1
+ZF9nYXNyYzEwIiwgImFzbV9oX3NlbCIsIDEwKSwNCj4gPiArCUdBVEVfQVVEMyhDTEtfQVVEX0dB
+U1JDMTEsICJhdWRfZ2FzcmMxMSIsICJhc21faF9zZWwiLCAxMSksDQo+ID4gKwlHQVRFX0FVRDMo
+Q0xLX0FVRF9HQVNSQzEyLCAiYXVkX2dhc3JjMTIiLCAiYXNtX2hfc2VsIiwgMTIpLA0KPiA+ICsJ
+R0FURV9BVUQzKENMS19BVURfR0FTUkMxMywgImF1ZF9nYXNyYzEzIiwgImFzbV9oX3NlbCIsIDEz
+KSwNCj4gPiArCUdBVEVfQVVEMyhDTEtfQVVEX0dBU1JDMTQsICJhdWRfZ2FzcmMxNCIsICJhc21f
+aF9zZWwiLCAxNCksDQo+ID4gKwlHQVRFX0FVRDMoQ0xLX0FVRF9HQVNSQzE1LCAiYXVkX2dhc3Jj
+MTUiLCAiYXNtX2hfc2VsIiwgMTUpLA0KPiA+ICsJR0FURV9BVUQzKENMS19BVURfR0FTUkMxNiwg
+ImF1ZF9nYXNyYzE2IiwgImFzbV9oX3NlbCIsIDE2KSwNCj4gPiArCUdBVEVfQVVEMyhDTEtfQVVE
+X0dBU1JDMTcsICJhdWRfZ2FzcmMxNyIsICJhc21faF9zZWwiLCAxNyksDQo+ID4gKwlHQVRFX0FV
+RDMoQ0xLX0FVRF9HQVNSQzE4LCAiYXVkX2dhc3JjMTgiLCAiYXNtX2hfc2VsIiwgMTgpLA0KPiA+
+ICsJR0FURV9BVUQzKENMS19BVURfR0FTUkMxOSwgImF1ZF9nYXNyYzE5IiwgImFzbV9oX3NlbCIs
+IDE5KSwNCj4gPiArCS8qIEFVRDQgKi8NCj4gPiArCUdBVEVfQVVENChDTEtfQVVEX0ExU1lTX0hQ
+LCAiYXVkX2Exc3lzX2hwIiwgImExc3lzX2hwX3NlbCIsIDIpLA0KPiA+ICsJR0FURV9BVUQ0KENM
+S19BVURfQUZFX0RNSUMxLCAiYXVkX2FmZV9kbWljMSIsICJhMXN5c19ocF9zZWwiLA0KPiA+IDEw
+KSwNCj4gPiArCUdBVEVfQVVENChDTEtfQVVEX0FGRV9ETUlDMiwgImF1ZF9hZmVfZG1pYzIiLCAi
+YTFzeXNfaHBfc2VsIiwNCj4gPiAxMSksDQo+ID4gKwlHQVRFX0FVRDQoQ0xLX0FVRF9BRkVfRE1J
+QzMsICJhdWRfYWZlX2RtaWMzIiwgImExc3lzX2hwX3NlbCIsDQo+ID4gMTIpLA0KPiA+ICsJR0FU
+RV9BVUQ0KENMS19BVURfQUZFX0RNSUM0LCAiYXVkX2FmZV9kbWljNCIsICJhMXN5c19ocF9zZWwi
+LA0KPiA+IDEzKSwNCj4gPiArCUdBVEVfQVVENChDTEtfQVVEX0FGRV8yNk1fRE1JQ19UTSwgImF1
+ZF9hZmVfMjZtX2RtaWNfdG0iLA0KPiA+ICJhMXN5c19ocF9zZWwiLCAxNCksDQo+ID4gKwlHQVRF
+X0FVRDQoQ0xLX0FVRF9VTF9UTUxfSElSRVMsICJhdWRfdWxfdG1sX2hpcmVzIiwNCj4gPiAiYXVk
+aW9faF9zZWwiLCAxNiksDQo+ID4gKwlHQVRFX0FVRDQoQ0xLX0FVRF9BRENfSElSRVMsICJhdWRf
+YWRjX2hpcmVzIiwgImF1ZGlvX2hfc2VsIiwNCj4gPiAxNyksDQo+ID4gKwlHQVRFX0FVRDQoQ0xL
+X0FVRF9BRERBNl9BREMsICJhdWRfYWRkYTZfYWRjIiwgImExc3lzX2hwX3NlbCIsDQo+ID4gMTgp
+LA0KPiA+ICsJR0FURV9BVUQ0KENMS19BVURfQUREQTZfQURDX0hJUkVTLCAiYXVkX2FkZGE2X2Fk
+Y19oaXJlcyIsDQo+ID4gImF1ZGlvX2hfc2VsIiwgMTkpLA0KPiA+ICsJLyogQVVENSAqLw0KPiA+
+ICsJR0FURV9BVUQ1KENMS19BVURfTElORUlOX1RVTkVSLCAiYXVkX2xpbmVpbl90dW5lciIsDQo+
+ID4gImFwbGw1X3NlbCIsIDUpLA0KPiA+ICsJR0FURV9BVUQ1KENMS19BVURfRUFSQ19UVU5FUiwg
+ImF1ZF9lYXJjX3R1bmVyIiwgImFwbGwzX3NlbCIsDQo+ID4gNyksDQo+ID4gK307DQo+IA0KPiBU
+aGVzZSBhcmUgYWxsIGNsb2NrIGdhdGVzLCBhbmQgYXJlIGFsbCBpbnRlcm5hbCB0byB0aGUgYXVk
+aW8NCj4gaGFyZHdhcmUsDQo+IGkuZS4gbm90IHVzZWQgYnkgb3RoZXIgZHJpdmVycyBvciBtb2R1
+bGVzLg0KPiANCj4gU28gdGhlc2UgZG9uJ3QgYWN0dWFsbHkgbmVlZCB0byBiZSBpbiBhIHNlcGFy
+YXRlIGNsayBkcml2ZXIuIFRoZXkgY2FuDQo+IGJlDQo+IG1vZGVsbGVkIHdpdGhpbiBBU29DIGFz
+IHN1cHBsaWVzIHRoYXQgYXJlIGF1dG9tYXRpY2FsbHkgbWFuYWdlZCBieQ0KPiBBU29DDQo+IGNv
+cmUuIE90aGVyd2lzZSBqdXN0IGhhdmUgdGhlbSBhcyBiaXRzIHRoYXQgYXJlIHRvZ2dsZWQgYnkg
+dGhlIGF1ZGlvDQo+IGRyaXZlcidzIHN0YXJ0L3N0b3Agc2VxdWVuY2luZyBjb2RlLCBsaWtlIHRo
+ZXkgYXJlIG5vdywgYnV0IHRocm91Z2gNCj4gdmFzdGx5IG1vcmUgY29tcGxpY2F0ZWQgcGx1bWJp
+bmcuDQo+IA0KPiBQbGVhc2Ugd29yayB3aXRoIHRoZSBhdWRpbyBkcml2ZXIgb3duZXIgdG8gc2Vl
+IGlmIHRoaXMgY2FuIGJlIG1vdmVkDQo+IGludG8NCj4gdGhlIGF1ZGlvIGRyaXZlci4NCj4gDQo+
+IFJlZ2FyZHMNCj4gQ2hlbll1DQo+IA0KDQpUaGUgYWZlIGRldmljZSB3aWxsIGJlIHRoZSBjaGls
+ZCBvZiBhdWRzeXMgY2xvY2sgcHJvdmlkZXIgbm9kZSBhbmQNCmF1ZHN5cyBjbG9jayBkcml2ZXIg
+d2lsbCB1c2UgZGV2bV9vZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpIHRvIHBvcHVsYXRlDQphZmUgZGV2
+aWNlIHdoZW4gYXVkc3lzIGNsb2NrIGdhdGVzIGFyZSByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseSwN
+Ckl0IG1lYW5zIGFmZSB3aWxsIGJlIHRvZ2dsZWQgYnkgYXVkc3lzIGNsb2NrLCBkbyB5b3Ugc3Vn
+Z2VzdCB0byBjaGFuZ2UNCnRoZSB0b2dnbGVkIG9yZGVyPw0KDQpCZXN0IFJlZ2FyZHMsDQpDaHVu
+LUppZQ0KDQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IGNsa19tdDgxOTVfYXVkX3Byb2JlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBjbGtfb25lY2Vs
+bF9kYXRhICpjbGtfZGF0YTsNCj4gPiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSA9IHBkZXYt
+PmRldi5vZl9ub2RlOw0KPiA+ICsJaW50IHI7DQo+ID4gKw0KPiA+ICsJY2xrX2RhdGEgPSBtdGtf
+YWxsb2NfY2xrX2RhdGEoQ0xLX0FVRF9OUl9DTEspOw0KPiA+ICsJaWYgKCFjbGtfZGF0YSkNCj4g
+PiArCQlyZXR1cm4gLUVOT01FTTsNCj4gPiArDQo+ID4gKwlyID0gbXRrX2Nsa19yZWdpc3Rlcl9n
+YXRlcyhub2RlLCBhdWRfY2xrcywNCj4gPiBBUlJBWV9TSVpFKGF1ZF9jbGtzKSwgY2xrX2RhdGEp
+Ow0KPiA+ICsJaWYgKHIpDQo+ID4gKwkJcmV0dXJuIHI7DQo+ID4gKw0KPiA+ICsJciA9IG9mX2Ns
+a19hZGRfcHJvdmlkZXIobm9kZSwgb2ZfY2xrX3NyY19vbmVjZWxsX2dldCwNCj4gPiBjbGtfZGF0
+YSk7DQo+ID4gKwlpZiAocikNCj4gPiArCQlnb3RvIGVycl9jbGtfcHJvdmlkZXI7DQo+ID4gKw0K
+PiA+ICsJciA9IGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoJnBkZXYtPmRldik7DQo+ID4gKwlp
+ZiAocikNCj4gPiArCQlnb3RvIGVycl9wbGF0X3BvcHVsYXRlOw0KPiA+ICsNCj4gPiArCXJldHVy
+biAwOw0KPiA+ICsNCj4gPiArZXJyX3BsYXRfcG9wdWxhdGU6DQo+ID4gKwlvZl9jbGtfZGVsX3By
+b3ZpZGVyKG5vZGUpOw0KPiA+ICtlcnJfY2xrX3Byb3ZpZGVyOg0KPiA+ICsJcmV0dXJuIHI7DQo+
+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG9mX21h
+dGNoX2Nsa19tdDgxOTVfYXVkW10gPSB7DQo+ID4gKwl7IC5jb21wYXRpYmxlID0gIm1lZGlhdGVr
+LG10ODE5NS1hdWRzeXMiLCB9LA0KPiA+ICsJe30NCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0YXRp
+YyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGNsa19tdDgxOTVfYXVkX2RydiA9IHsNCj4gPiArCS5w
+cm9iZSA9IGNsa19tdDgxOTVfYXVkX3Byb2JlLA0KPiA+ICsJLmRyaXZlciA9IHsNCj4gPiArCQku
+bmFtZSA9ICJjbGstbXQ4MTk1LWF1ZCIsDQo+ID4gKwkJLm9mX21hdGNoX3RhYmxlID0gb2ZfbWF0
+Y2hfY2xrX210ODE5NV9hdWQsDQo+ID4gKwl9LA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArYnVpbHRp
+bl9wbGF0Zm9ybV9kcml2ZXIoY2xrX210ODE5NV9hdWRfZHJ2KTsNCj4gPiAtLSANCj4gPiAyLjE4
+LjANCj4gPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K
+PiA+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiA+IExpbnV4LW1lZGlhdGVrQGxpc3Rz
+LmluZnJhZGVhZC5vcmcNCj4gPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2xpbnV4LW1lZGlhdGVrDQo=
 
