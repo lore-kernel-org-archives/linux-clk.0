@@ -6,272 +6,304 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48046C07E9A
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 16:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55E9C07E9A
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 16:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F45761206
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 16:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07BD61158
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jul 2021 16:28:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232643AbhGLQWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jul 2021 12:22:09 -0400
-Received: from mail-il1-f175.google.com ([209.85.166.175]:43726 "EHLO
-        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231821AbhGLQWJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 12:22:09 -0400
-Received: by mail-il1-f175.google.com with SMTP id w1so18092274ilg.10;
-        Mon, 12 Jul 2021 09:19:20 -0700 (PDT)
+        id S234603AbhGLQbJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jul 2021 12:31:09 -0400
+Received: from mail-io1-f51.google.com ([209.85.166.51]:36619 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234515AbhGLQbJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 12:31:09 -0400
+Received: by mail-io1-f51.google.com with SMTP id u7so23393941ion.3;
+        Mon, 12 Jul 2021 09:28:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=BYWFIpvnWOMWw5lwd/Bql1Vd1w1jWkUEvAEN0va6yYQ=;
-        b=fgVo1vlojsridWcHK7WYIqta7wPG7npdHPfmytUgAsWbUy3IcifYLWlOEeSI95gn+2
-         xOnZlOg/LzQgfE+uJicQx0hiY1npMDDB7stPwj4Fx/eL48iC7p0eNWGle81OC8Infb+k
-         BdJBSqSYsvZ5n93va9dNzyHUn+wRaqdGf7xwquCKRkx01S6fUE/rEOwpP79p/F1nvMPC
-         xKjoBIrd/ndoL42ivHTlKua6lBvLaaszp/NAb5u3xu6X2+ka0DpFVO58yQUmSKvRQDEu
-         Nk9NL0QG5Zm4bfEDeJVZe7Q9CdEi9Yt33ru2MgUHrduBX6YbHzUAgZ/YWpcS/WnP1JEn
-         7XNg==
-X-Gm-Message-State: AOAM530uLYNkGXmo6PFUbXhHJmM7t/Rz+DJzoAljCB8lgGRXQuk3nSFV
-        1OEI2Aod1KS1MR+lnRy3Yw==
-X-Google-Smtp-Source: ABdhPJyCUSsKUs1qYQs/Fe5xR2z3A+oR1b+ETcomlrG8Tj3YzNAWzZe3u4suyj+O250ZxIo+KVQz0A==
-X-Received: by 2002:a05:6e02:138b:: with SMTP id d11mr1077187ilo.229.1626106759265;
-        Mon, 12 Jul 2021 09:19:19 -0700 (PDT)
+        bh=vtNA/NB6LmO/HpICnchTMvKV6NLDa7WSvyUr9ghzAGw=;
+        b=U3jm6VjEtC9v+coXt+FzCAqAV3VtHzaEIftAnDzICSCShCC70/64hB0dsiLyqkaCiU
+         ZMW0ueLt+w0Pb3xAuxNwaFYZJKgMataHpjZ+W3CDTkj9tw/rvaC7u/nmQoX7+RTqIF42
+         96MBhg+XqK0gqXGKhOy/DYnuY7ZqbCiXxPLxNLVRyTuxb9xDF2QXR9hgtXgrbiXjfaDJ
+         eqNuYfiTTBtQfY5rq+DF2x1uqIHd5Y1YFZ0zs7KaCgatbmuhzKnB+vNFc8eZ81Bn5NoL
+         eMbuLs2YPnz5H/n3Ru9LhKrfzQa1wfk03T7UYXmCXb67BAZtxLEPssDtXiGP7pmgeQPi
+         ittA==
+X-Gm-Message-State: AOAM531x4B/LYAQTbJKjGX/GqO0Z4TUQS5/82EzFA320qHqmMOD6j1Gx
+        B6TkJEStf/ywsCYdgaOIxQ==
+X-Google-Smtp-Source: ABdhPJzNQ7OrUXjoJbtZO9uUa3yYVt3uS4vQdxhkvDXfG8KztNvdfvkDCFhF4vwBgaGRxQyEMbIxig==
+X-Received: by 2002:a02:620a:: with SMTP id d10mr46166061jac.22.1626107299526;
+        Mon, 12 Jul 2021 09:28:19 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id b2sm5042148ioj.19.2021.07.12.09.19.16
+        by smtp.gmail.com with ESMTPSA id m26sm7910221ioo.23.2021.07.12.09.28.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 09:19:18 -0700 (PDT)
-Received: (nullmailer pid 2045715 invoked by uid 1000);
-        Mon, 12 Jul 2021 16:19:15 -0000
-Date:   Mon, 12 Jul 2021 10:19:15 -0600
+        Mon, 12 Jul 2021 09:28:18 -0700 (PDT)
+Received: (nullmailer pid 2059719 invoked by uid 1000);
+        Mon, 12 Jul 2021 16:28:16 -0000
+Date:   Mon, 12 Jul 2021 10:28:16 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jon Lin <jon.lin@rock-chips.com>
-Cc:     linux-spi@vger.kernel.org, broonie@kernel.org, heiko@sntech.de,
-        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
-        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
-        linux-mtd@lists.infradead.org, p.yadav@ti.com,
-        macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [RFC PATCH v11 01/10] dt-bindings: rockchip-sfc: Bindings for
- Rockchip serial flash controller
-Message-ID: <20210712161915.GA2034807@robh.at.kernel.org>
-References: <20210707090810.5717-1-jon.lin@rock-chips.com>
- <20210707090810.5717-2-jon.lin@rock-chips.com>
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, geert+renesas@glider.be,
+        david.cater.jc@renesas.com, michal.simek@xilinx.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: Add binding for Renesas 8T49N241
+Message-ID: <20210712162816.GA2050345@robh.at.kernel.org>
+References: <20210707182659.20548-1-alexander.helms.jy@renesas.com>
+ <20210707182659.20548-2-alexander.helms.jy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210707090810.5717-2-jon.lin@rock-chips.com>
+In-Reply-To: <20210707182659.20548-2-alexander.helms.jy@renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 05:08:01PM +0800, Jon Lin wrote:
-> From: Chris Morgan <macromorgan@hotmail.com>
+On Wed, Jul 07, 2021 at 11:26:58AM -0700, Alex Helms wrote:
+> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
+> The 8T49N241 accepts up to two differential or single-ended input clocks
+> and a fundamental-mode crystal input. The internal PLL can lock to either
+> of the input reference clocks or to the crystal to behave as a frequency
+> synthesizer.
 > 
-> Add bindings for the Rockchip serial flash controller. New device
-> specific parameter of rockchip,sfc-no-dma included in documentation.
-> 
-> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 > ---
+>  .../bindings/clock/renesas,8t49n241.yaml      | 188 ++++++++++++++++++
+>  MAINTAINERS                                   |   6 +
+>  2 files changed, 194 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
 > 
-> Changes in v11: None
-> Changes in v10: None
-> Changes in v9: None
-> Changes in v8:
-> - Fix indent 4 to 2 in yaml
-
-Sigh, my comments from v7 still remain. I told you the same thing on v8.
-
-> 
-> Changes in v7:
-> - Fix up the sclk_sfc parent error in rk3036
-> - Unify to "rockchip,sfc" compatible id because all the feature update
->   will have a new IP version, so the driver is used for the SFC IP in
->   all SoCs
-> - Change to use node "sfc" to name the SFC pinctrl group
-> - Add subnode reg property check
-> - Add rockchip_sfc_adjust_op_size to workaround in CMD + DUMMY case
-> - Limit max_iosize to 32KB
-> 
-> Changes in v6:
-> - Add support in device trees for rv1126(Declared in series 5 but not
->   submitted)
-> - Change to use "clk_sfc" "hclk_sfc" as clock lable, since it does not
->   affect interpretation and has been widely used
-> - Support sfc tx_dual, tx_quad(Declared in series 5 but not submitted)
-> - Simplify the code, such as remove "rockchip_sfc_register_all"(Declared
->   in series 5 but not submitted)
-> - Support SFC ver4 ver5(Declared in series 5 but not submitted)
-> - Add author Chris Morgan and Jon Lin to spi-rockchip-sfc.c
-> - Change to use devm_spi_alloc_master and spi_unregister_master
-> 
-> Changes in v5:
-> - Add support in device trees for rv1126
-> - Support sfc tx_dual, tx_quad
-> - Simplify the code, such as remove "rockchip_sfc_register_all"
-> - Support SFC ver4 ver5
-> 
-> Changes in v4:
-> - Changing patch back to an "RFC". An engineer from Rockchip
->   reached out to me to let me know they are working on this patch for
->   upstream, I am submitting this v4 for the community to see however
->   I expect Jon Lin (jon.lin@rock-chips.com) will submit new patches
->   soon and these are the ones we should pursue for mainlining. Jon's
->   patch series should include support for more hardware than this
->   series.
-> - Clean up documentation more and ensure it is correct per
->   make dt_binding_check.
-> - Add support in device trees for rk3036, rk3308, and rv1108.
-> - Add ahb clock (hclk_sfc) support for rk3036.
-> - Change rockchip_sfc_wait_fifo_ready() to use a switch statement.
-> - Change IRQ code to only mark IRQ as handled if it handles the
->   specific IRQ (DMA transfer finish) it is supposed to handle.
-> 
-> Changes in v3:
-> - Changed the name of the clocks to sfc/ahb (from clk-sfc/clk-hsfc).
-> - Changed the compatible string from rockchip,sfc to
->   rockchip,rk3036-sfc. A quick glance at the datasheets suggests this
->   driver should work for the PX30, RK180x, RK3036, RK312x, RK3308 and
->   RV1108 SoCs, and possibly more. However, I am currently only able
->   to test this on a PX30 (an RK3326). The technical reference manuals
->   appear to list the same registers for each device.
-> - Corrected devicetree documentation for formatting and to note these
->   changes.
-> - Replaced the maintainer with Heiko Stuebner and myself, as we will
->   take ownership of this going forward.
-> - Noted that the device (per the reference manual) supports 4 CS, but
->   I am only able to test a single CS (CS 0).
-> - Reordered patches to comply with upstream rules.
-> 
-> Changes in v2:
-> - Reimplemented driver using spi-mem subsystem.
-> - Removed power management code as I couldn't get it working properly.
-> - Added device tree bindings for Odroid Go Advance.
-> 
-> Changes in v1:
-> hanges made in this new series versus the v8 of the old series:
-> - Added function to read spi-rx-bus-width from device tree, in the
->   event that the SPI chip supports 4x mode but only has 2 pins
->   wired (such as the Odroid Go Advance).
-> - Changed device tree documentation from txt to yaml format.
-> - Made "reset" message a dev_dbg from a dev_info.
-> - Changed read and write fifo functions to remove redundant checks.
-> - Changed the write and read from relaxed to non-relaxed when
->   starting the DMA transfer or reading the DMA IRQ.
-> - Changed from dma_coerce_mask_and_coherent to just
->   dma_set_mask_and_coherent.
-> - Changed name of get_if_type to rockchip_sfc_get_if_type.
-> 
->  .../devicetree/bindings/spi/rockchip-sfc.yaml | 88 +++++++++++++++++++
->  1 file changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml b/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
 > new file mode 100644
-> index 000000000000..162993a97290
+> index 000000000..4e26b3f11
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> @@ -0,0 +1,88 @@
+> +++ b/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> @@ -0,0 +1,188 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/spi/rockchip-sfc.yaml#
+> +$id: http://devicetree.org/schemas/clock/renesas,8t49n241.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Rockchip Serial Flash Controller (SFC)
+> +title: Binding for Renesas 8T49N241 Universal Frequency Translator
+> +
+> +description: |
+> +  The 8T49N241 has one fractional-feedback PLL that can be used as a
+> +  jitter attenuator and frequency translator. It is equipped with one
+> +  integer and three fractional output dividers, allowing the generation
+> +  of up to four different output frequencies, ranging from 8kHz to 1GHz.
+> +  These frequencies are completely independent of each other, the input
+> +  reference frequencies and the crystal reference frequency. The device
+> +  places virtually no constraints on input to output frequency conversion,
+> +  supporting all FEC rates, including the new revision of ITU-T
+> +  Recommendation G.709 (2009), most with 0ppm conversion error.
+> +  The outputs may select among LVPECL, LVDS, HCSL or LVCMOS output levels.
+> +
+> +  The driver can read a full register map from the DT, and will use that
+> +  register map to initialize the attached part (via I2C) when the system
+> +  boots. Any configuration not supported by the common clock framework
+> +  must be done via the full register map, including optimized settings.
+> +
+> +  The 8T49N241 accepts up to two differential or single-ended input clocks
+> +  and a fundamental-mode crystal input. The internal PLL can lock to either
+> +  of the input reference clocks or just to the crystal to behave as a
+> +  frequency synthesizer. The PLL can use the second input for redundant
+> +  backup of the primary input reference, but in this case, both input clock
+> +  references must be related in frequency.
+> +
+> +  All outputs are currently assumed to be LVDS, unless overridden in the
+> +  full register map in the DT.
 > +
 > +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +  - Chris Morgan <macromorgan@hotmail.com>
-> +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
+> +  - Alex Helms <alexander.helms.jy@renesas.com>
+> +  - David Cater <david.cater.jc@renesas.com>
 > +
 > +properties:
 > +  compatible:
-> +    oneOf:
+> +    enum:
+> +      - 8t49n241
 
-Don't need oneOf when there is only one.
-
-> +      - const: rockchip,sfc
-
-As I mentioned in v7, add a comment here why a non-specific compatible 
-string is okay here.
+Needs a vendor prefix.
 
 > +
 > +  reg:
-> +    maxItems: 1
+> +    description: I2C device address
+> +    enum: [ 0x7c, 0x6c, 0x7d, 0x6d, 0x7e, 0x6e, 0x7f, 0x6f ]
 > +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Bus Clock
-> +      - description: Module Clock
+> +  '#clock-cells':
+> +    const: 1
 > +
 > +  clock-names:
+> +    description: Name of the input clock
+
+Drop. That's every 'clock-names'.
+
+> +    minItems: 1
+> +    maxItems: 3
 > +    items:
-> +      - const: clk_sfc
-> +      - const: hclk_sfc
+> +      enum: [ input-xtal, input-clk0, input-clk1 ]
+
+'input-' is redundant.
+
 > +
-> +  power-domains:
-> +    maxItems: 1
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
 > +
-> +  rockchip,sfc-no-dma:
-> +    description: Disable DMA and utilize FIFO mode only
-> +    type: boolean
-> +
-> +patternProperties:
-> +  "^flash@[0-3]$":
-> +    type: object
-> +    properties:
-> +      reg:
-> +        minimum: 0
-> +        maximum: 3
+> +  settings:
+> +    description: Optional, list of space separated ASCII numbers in hex.
+
+Huh?
+
+> +      This list is the entire register map of the product and must contain
+> +      791 items.
+
+What is this for?
+
+Seems suspect, but would need a vendor prefix and type at a minimum.
+
 > +
 > +required:
 > +  - compatible
 > +  - reg
-> +  - interrupts
+> +  - '#clock-cells'
 > +  - clocks
 > +  - clock-names
 > +
-> +unevaluatedProperties: false
+> +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    #include <dt-bindings/clock/px30-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/px30-power.h>
+> +    /* 25MHz reference clock */
+> +    input_clk0: input_clk0 {
+> +      compatible = "fixed-clock";
+> +      #clock-cells = <0>;
+> +      clock-frequency = <25000000>;
+> +    };
 > +
-> +    sfc: spi@ff3a0000 {
-> +        compatible = "rockchip,sfc";
-> +        reg = <0xff3a0000 0x4000>;
-> +        interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
-> +        clock-names = "clk_sfc", "hclk_sfc";
-> +        pinctrl-0 = <&sfc_clk &sfc_cs &sfc_bus2>;
-> +        pinctrl-names = "default";
-> +        power-domains = <&power PX30_PD_MMC_NAND>;
+> +    i2c@0 {
+> +        reg = <0x0 0x100>;
 > +        #address-cells = <1>;
 > +        #size-cells = <0>;
 > +
-> +        flash@0 {
-> +            compatible = "jedec,spi-nor";
-> +            reg = <0>;
-> +            spi-max-frequency = <108000000>;
-> +            spi-rx-bus-width = <2>;
-> +            spi-tx-bus-width = <2>;
+> +        renesas8t49n241_1: clock-generator@6c {
+> +            compatible = "renesas,8t49n241";
+> +            reg = <0x6c>;
+> +            #clock-cells = <1>;
+> +
+> +            clocks = <&input_clk0>;
+> +            clock-names = "input-clk0";
 > +        };
 > +    };
 > +
-> +...
+> +    /* Consumer referencing the 8T49N241 Q1 */
+> +    consumer {
+> +        /* ... */
+> +        clocks = <&renesas8t49n241_1 1>;
+> +        /* ... */
+> +    };
+> +  - |
+> +    /* 40MHz crystal */
+> +    input_xtal: input_xtal {
+> +      compatible = "fixed-clock";
+> +      #clock-cells = <0>;
+> +      clock-frequency = <40000000>;
+> +    };
+> +
+> +    i2c@0 {
+> +        reg = <0x0 0x100>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        renesas8t49n241_2: clock-generator@6c {
+> +            compatible = "renesas,8t49n241";
+> +            reg = <0x6c>;
+> +            #clock-cells = <1>;
+> +
+> +            clocks = <&input_xtal>;
+> +            clock-names = "input-xtal";
+> +
+> +            settings=[
+> +                09 50 00 60 67 C5 6C FF 03 00 30 00 00 01 00 00
+> +                01 07 00 00 07 00 00 77 6D 06 00 00 00 00 00 FF
+> +                FF FF FF 00 3F 00 2A 00 16 33 33 00 01 00 00 D0
+> +                00 00 00 00 00 00 00 00 00 04 00 00 00 02 00 00
+> +                00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 D7 0A 2B 20 00 00 00 0B
+> +                00 00 00 00 00 00 00 00 00 00 27 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                C3 00 08 01 00 00 00 00 00 00 00 00 00 30 00 00
+> +                00 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> +                00 00 00 00 85 00 00 9C 01 D4 02 71 07 00 00 00
+> +                00 83 00 10 02 08 8C
+> +            ];
+> +        };
+> +    };
+> +
+> +    /* Consumer referencing the 8T49N241 Q1 */
+> +    consumer {
+> +        /* ... */
+> +        clocks = <&renesas8t49n241_2 1>;
+> +        /* ... */
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0cce91cd5..882d79ead 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15575,6 +15575,12 @@ F:	include/linux/rpmsg/
+>  F:	include/uapi/linux/rpmsg.h
+>  F:	samples/rpmsg/
+>  
+> +RENESAS 8T49N24X DRIVER
+> +M:	Alex Helms <alexander.helms.jy@renesas.com>
+> +M:	David Cater <david.cater.jc@renesas.com>
+> +S:	Odd Fixes
+> +F:	Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> +
+>  RENESAS CLOCK DRIVERS
+>  M:	Geert Uytterhoeven <geert+renesas@glider.be>
+>  L:	linux-renesas-soc@vger.kernel.org
 > -- 
-> 2.17.1
-> 
-> 
+> 2.30.2
 > 
 > 
