@@ -3,77 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F219C07E95
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 21:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3158DC07E96
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 22:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 411A661363
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 21:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12C7D61380
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 22:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235716AbhGMVxN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 17:53:13 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:45772 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234947AbhGMVxM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 17:53:12 -0400
-Received: by mail-io1-f54.google.com with SMTP id y16so6041606iol.12;
-        Tue, 13 Jul 2021 14:50:22 -0700 (PDT)
+        id S235973AbhGMWev (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 18:34:51 -0400
+Received: from mail-io1-f47.google.com ([209.85.166.47]:40801 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234665AbhGMWeu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 18:34:50 -0400
+Received: by mail-io1-f47.google.com with SMTP id l5so29200150iok.7;
+        Tue, 13 Jul 2021 15:32:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RnEa5dv+l7cOs0gPE0rTIeCxkfrj4i5OqfYNRI+rvCU=;
-        b=q62zGV1VElr/XEcGWs6WAWbubpcfIVlQIKJZirRJ/gXmZqsEbvqVBfmOjRtrOaneDn
-         tqK0A+0N7rxktuzuFb56JP0sMQzPdSQ8btdfg/d4Uqe8ugQXjDKvEqG87oWnDoDUvK1u
-         MGiwo1uxPOwY9LWQfUwA3NKh/9UYrut8CaaG0BaogNhXHeJovya2PzefMPDpSGz655io
-         48FsK85lQOYYj/TIfLuko8QHUS7O/W4HHSe2Ebowj7+DL+rEZpVOuvcO08f7rUlR0DZM
-         RybxSmV8Jsd3hlPj2T16bidisLfHd2U2472GwZY+Xd6REDV4ATkBWO4G/bOKFQtPeF/y
-         3MIA==
-X-Gm-Message-State: AOAM533RJa/SESocOGz/qWclEv7+VfQaMHDXEe6pklYQw0tPDQi1FBLC
-        pTx+zGbhOzNhLZIOJzrzJw==
-X-Google-Smtp-Source: ABdhPJwUAQDIwsXCEWvWxZVw93gRVjeoG6rhcZoj9jDIJ5KLG3p6NJ2qY84PQCRKvmgrQGzfyty8nA==
-X-Received: by 2002:a02:cd1a:: with SMTP id g26mr5976739jaq.38.1626213022168;
-        Tue, 13 Jul 2021 14:50:22 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zJOGESND0RpQd7wW/8FnMhsqA7RcGpj0uSfi8+VGwv8=;
+        b=d7aiPwQwPqRFfHSabmAxGeSg7gmcJ0vOFaNLZqRKX5fLPCKBbXpaUSSgrdd6B7mVKP
+         gOmk4td9Tt3d0wm7V/77h7+/I1sarObKPNptgZ++KEArxDZZrs/M1q/NugO6DIVGEmaz
+         jD9LcOuXQbegKKQ3jya3ugFSBkPhwz1WPs0HtTJznIa2aSQtC83A3E1HcJ6QuvRuIkRd
+         rp+jIGwFp6AXQWKT3VnPC9ryfOX5CUzyyV7zl0uMN0D/2PXKCI+EtiGjMye5K+3FtA4K
+         Fa2Uk9YK6vs4w56JtKWZCLxlx+Wed0VZqQEuR4K63AtEWheUOF3tyZdPGfl1biFH+2mw
+         E4mA==
+X-Gm-Message-State: AOAM530C17fFJpIZB3h69cPnMxV4TdYpsVP6bMpswZScI+UJw30Muf04
+        aHdUpKvnjGNMFrpIRyt7YA==
+X-Google-Smtp-Source: ABdhPJz1d46pu2vcSu76a7flxKU7PsAfKfnYCiNZXRXcLD6wsgGbAfyWQKyXycrFgMpK7yb8vPTy6A==
+X-Received: by 2002:a05:6602:190:: with SMTP id m16mr4939448ioo.14.1626215519919;
+        Tue, 13 Jul 2021 15:31:59 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id h13sm100447ila.44.2021.07.13.14.50.20
+        by smtp.gmail.com with ESMTPSA id f3sm84676iob.30.2021.07.13.15.31.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jul 2021 14:50:21 -0700 (PDT)
-Received: (nullmailer pid 904604 invoked by uid 1000);
-        Tue, 13 Jul 2021 21:50:19 -0000
-Date:   Tue, 13 Jul 2021 15:50:19 -0600
+        Tue, 13 Jul 2021 15:31:59 -0700 (PDT)
+Received: (nullmailer pid 968799 invoked by uid 1000);
+        Tue, 13 Jul 2021 22:31:56 -0000
+Date:   Tue, 13 Jul 2021 16:31:56 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        devicetree@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, srv_heupstream@mediatek.com
-Subject: Re: [v13 03/21] dt-bindings: ARM: Mediatek: Add audsys document
- binding for MT8192
-Message-ID: <20210713215019.GA904547@robh.at.kernel.org>
-References: <20210706061920.16013-1-chun-jie.chen@mediatek.com>
- <20210706061920.16013-4-chun-jie.chen@mediatek.com>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     sihui.liu@ingenic.com, devicetree@vger.kernel.org,
+        paul@crapouillou.net, jun.jiang@ingenic.com,
+        dongsheng.qiu@ingenic.com, linux-kernel@vger.kernel.org,
+        sernia.zhou@foxmail.com, mturquette@baylibre.com,
+        aric.pzqi@ingenic.com, robh+dt@kernel.org,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        rick.tyliu@ingenic.com, sboyd@kernel.org
+Subject: Re: [PATCH v6 07/11] dt-bindings: clock: Add documentation for
+ JZ4775 and X2000 bindings.
+Message-ID: <20210713223156.GA968744@robh.at.kernel.org>
+References: <1624981102-26248-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1624981102-26248-8-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210706061920.16013-4-chun-jie.chen@mediatek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1624981102-26248-8-git-send-email-zhouyanjie@wanyeetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 06 Jul 2021 14:19:02 +0800, Chun-Jie Chen wrote:
-> This patch adds the audsys document binding for MT8192 SoC.
+On Tue, 29 Jun 2021 23:38:18 +0800, 周琰杰 (Zhou Yanjie) wrote:
+> Add documentation for the clock bindings of the JZ4775 SoC and the
+> X2000 SoC from Ingenic.
 > 
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 > ---
->  .../devicetree/bindings/arm/mediatek/mediatek,audsys.txt         | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> Notes:
+>     v5:
+>     New patch.
+> 
+>     v5->v6:
+>     No change.
+> 
+>  Documentation/devicetree/bindings/clock/ingenic,cgu.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
