@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE348C07E96
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A163C11F67
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB6E61363
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1604C610D1
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236982AbhGMX2M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 19:28:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
+        id S237012AbhGMX2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 19:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236873AbhGMX2L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 19:28:11 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CC8C0613EF;
-        Tue, 13 Jul 2021 16:25:19 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id l17-20020a05600c1d11b029021f84fcaf75so2723420wms.1;
-        Tue, 13 Jul 2021 16:25:19 -0700 (PDT)
+        with ESMTP id S236989AbhGMX2M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 19:28:12 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDBFC061786;
+        Tue, 13 Jul 2021 16:25:20 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id i2-20020a05600c3542b02902058529ea07so232329wmq.3;
+        Tue, 13 Jul 2021 16:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qQtFi3Hnx4K3qedNDcjWCvPvHnc34scNXSyJRM66eyc=;
-        b=O/qHa4p8MUICgTw2moGtJHisz2F0qV71BT3dbeMDgUXv/x4+5h3u0twAFSJzUipAxr
-         QGSW48t3kwX0Pmyk0J4M2o28wylS7QEEjfVWnTfAitPIIX/k1ZWmk8DiZAj+eesy3Wus
-         IvHbL6JXs1V/EcIJKWION1Sl9cuspToxmpq5s9rfnpb4rcvUIm3ttnVUalhulkrPdsLv
-         Wz4Pghpqc+xXFDRiPjxFQv0mcODuCb3TnBoqEH7m7+Zmb/QLlcM1JOYiPajSNSno/+dv
-         N85Krrv37jqo2cEYfaJ1Ilmn6BRI0Iz8RqS8amoe5fyHa8BoqdqrV79RmAUq+uFM6Yga
-         44Xw==
+        bh=nrJy8AHK/eMoKNEana9935MG2OFHXBd4iLiXE078rqM=;
+        b=MqMNlGZvFCWJoDGiOyBWk8cuaLbaS9ZVVzThxAMnItmnNYXYKWoDzHLG6CeD5dnTDN
+         wtIt6z6CPUOgVsYo2hHPzFq3nqBCWEBdi0U/ijUKqsJX2lEI1NUYb7cpxfM6Ea4w/qbJ
+         yIu2ERoxxJTvLQYT0vWFmX/ro4895EJPeoW/QC1aHFoo61SHhvjHlJ48e2COb6Z1ZaeO
+         oRfkY8diLLbdp2gCD5q1RdpaYYJPCTwdMdA+dkQxzrEIuZLYB1Yck9iCuv84n8R1A5df
+         V5j1t/NcEFX25uxjmzoUpGbm6NAY+Rlz1I1u7TddCzI5ARKLK5Ln7NiHUJkQjdd5MGv9
+         vcyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qQtFi3Hnx4K3qedNDcjWCvPvHnc34scNXSyJRM66eyc=;
-        b=Ci09jNlRLVHn82QYAJz+voUIj/HWrDJKWAEl8eYw7OXpMctt5pX+XKQTgE/dCTAG+E
-         iigPEThjClN2RD2XgaeT1zMjS2JHTppuevysmz9Xj2vyHq6AXgkdBRP3puvkZKFGZIdS
-         n0CGba7FJF2iILZWmjeMULLMRahqs1/uTgS8zmxOG7iaQxYVMqUjhPNf3wRYJrTAzQaw
-         1CluuTybxj2m3Sop5VKsHwy/UpynTiCFtP//n5N6St8lyAtK+1eAuB+biNph0VTRg7Ds
-         wUTo9fmGnWYaT8HCLFBDNj455yTmocVcoDgrwjreBk/+OvggWS6cnRvCx4waDuyxiVwU
-         xKqg==
-X-Gm-Message-State: AOAM531jm53FmA9JcM6u68NTKDs3JtOyGinJvnGE2VdWr6Gu7tyd3je1
-        APxDqP7QolcKwjLTyL9tHyM=
-X-Google-Smtp-Source: ABdhPJyZ7mnr+2FtCpzC0i7HKv0GbjmCDE4Hv35Q6SXgvJihuYYbPLxTsQr0J5yi07J72MH5t5j1IQ==
-X-Received: by 2002:a7b:c013:: with SMTP id c19mr653114wmb.158.1626218718324;
-        Tue, 13 Jul 2021 16:25:18 -0700 (PDT)
+        bh=nrJy8AHK/eMoKNEana9935MG2OFHXBd4iLiXE078rqM=;
+        b=KseJP43Hl7gLdm21Imxuvcnn94wxQmXa9ONg5N/gxL4xmvFqXS1VFlAgqsFf4WP41w
+         IFh+oh4V1q6LvdYldCXGhDouGADXUEEdLlbNkA3c/KB/nBhv583ZO3+K0AOsKJQYuVJa
+         x1S+JWtUAP2VBr5CTH+27Hy14ZbipiBDVwEEvhGH3UL3pPULNn2G1oPjKaNLIdWajVM+
+         8N5w6DHTviBX3rKhOjqtdlyXpNQN3U7QsBe1ceUiFrWJVATv3t3lcfLCNhNBU3JKgkIz
+         kbIwFuLs6VRgK3m31CgLg9HoIYUoz9yLGLAzvffNF6fsUq1S7l9Uh0xGOHLqk9DXpa6v
+         Ra6g==
+X-Gm-Message-State: AOAM532kb+/203ac7SKLEI2reKAYddQNvC25iPdtj2PgYRulMWtJmurx
+        e9s+aho3EqgV/Gsf9qK0wj7wJejM+xg=
+X-Google-Smtp-Source: ABdhPJy0vtt/jzN8eYmaXvrmdL/LH5RbSaen7X/593wZJsexT5Y7x73sJJQ2LQvexSearVkr/4xcmw==
+X-Received: by 2002:a05:600c:4e8f:: with SMTP id f15mr7912526wmq.174.1626218719597;
+        Tue, 13 Jul 2021 16:25:19 -0700 (PDT)
 Received: from localhost.localdomain (dynamic-2a01-0c23-c041-6f00-f22f-74ff-fe21-0725.c23.pool.telefonica.de. [2a01:c23:c041:6f00:f22f:74ff:fe21:725])
-        by smtp.googlemail.com with ESMTPSA id o11sm3857390wmc.2.2021.07.13.16.25.17
+        by smtp.googlemail.com with ESMTPSA id o11sm3857390wmc.2.2021.07.13.16.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jul 2021 16:25:18 -0700 (PDT)
+        Tue, 13 Jul 2021 16:25:19 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, jbrunet@baylibre.com,
         narmstrong@baylibre.com,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/6] clk: meson: meson8b: Use CLK_SET_RATE_NO_REPARENT for vclk{,2}_in_sel
-Date:   Wed, 14 Jul 2021 01:25:05 +0200
-Message-Id: <20210713232510.3057750-2-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/6] clk: meson: meson8b: Add the HDMI PLL M/N parameters
+Date:   Wed, 14 Jul 2021 01:25:07 +0200
+Message-Id: <20210713232510.3057750-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
 References: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
@@ -74,39 +74,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use CLK_SET_RATE_NO_REPARENT for the vclk{,2}_in_sel clocks. The only
-parent which is actually used is vid_pll_final_div. This should be set
-using assigned-clock-parents in the .dts rather than removing some
-"unwanted" clock parents from the clock driver.
+The 3.10 vendor kernel uses only specific HDMI PLL M/N parameter
+combinations. The PLL won't lock for values smaller than 50 if the
+internal doubling (which is yet unknown how to use it) is disabled.
+However, when this doubling is enabled then the values smaller than 50
+will lock just fine. The only restriction for values greater than 50 is
+that the resulting frequency must not exceed the 3.0GHz limit.
 
-Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+These values are taken from the endlessm 3.10 kernel which includes
+additional M/N combinations for some VESA and 75Hz display modes.
+
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/meson/meson8b.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/meson/meson8b.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index a844d35b553a..0f8bd707217a 100644
+index 9ccffbfe44e5..8f29d26ed726 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -1175,7 +1175,7 @@ static struct clk_regmap meson8b_vclk_in_sel = {
- 		.ops = &clk_regmap_mux_ro_ops,
- 		.parent_hws = meson8b_vclk_mux_parent_hws,
- 		.num_parents = ARRAY_SIZE(meson8b_vclk_mux_parent_hws),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+@@ -118,6 +118,27 @@ static struct clk_regmap meson8b_fixed_pll = {
  	},
  };
  
-@@ -1358,7 +1358,7 @@ static struct clk_regmap meson8b_vclk2_in_sel = {
- 		.ops = &clk_regmap_mux_ro_ops,
- 		.parent_hws = meson8b_vclk_mux_parent_hws,
- 		.num_parents = ARRAY_SIZE(meson8b_vclk_mux_parent_hws),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++static const struct pll_params_table hdmi_pll_params_table[] = {
++	PLL_PARAMS(40, 1),
++	PLL_PARAMS(42, 1),
++	PLL_PARAMS(44, 1),
++	PLL_PARAMS(45, 1),
++	PLL_PARAMS(49, 1),
++	PLL_PARAMS(52, 1),
++	PLL_PARAMS(54, 1),
++	PLL_PARAMS(56, 1),
++	PLL_PARAMS(59, 1),
++	PLL_PARAMS(60, 1),
++	PLL_PARAMS(61, 1),
++	PLL_PARAMS(62, 1),
++	PLL_PARAMS(64, 1),
++	PLL_PARAMS(66, 1),
++	PLL_PARAMS(68, 1),
++	PLL_PARAMS(71, 1),
++	PLL_PARAMS(82, 1),
++	{ /* sentinel */ }
++};
++
+ static struct clk_regmap meson8b_hdmi_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -150,6 +171,7 @@ static struct clk_regmap meson8b_hdmi_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
+ 		},
++		.table = hdmi_pll_params_table,
  	},
- };
- 
+ 	.hw.init = &(struct clk_init_data){
+ 		/* sometimes also called "HPLL" or "HPLL PLL" */
 -- 
 2.32.0
 
