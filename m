@@ -2,129 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F157EC07E96
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 14:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C992C07E95
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 14:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D05AC610CB
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 14:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75CB6128C
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 14:46:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236765AbhGMOho (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 10:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236636AbhGMOho (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 10:37:44 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3647BC0613DD;
-        Tue, 13 Jul 2021 07:34:53 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id r132so35138990yba.5;
-        Tue, 13 Jul 2021 07:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o26ZWzPRkUKxW7dKY8cTnlaNNdlHOXHXpVuJuquhP0A=;
-        b=Vu1RQ75f9qBy76rHqt3Hcd0Yb+0r7nJDqi+zaGM5TdAEJKRFiJimauCSJE1b3WXTC9
-         dLiu0Cogkj3K0IHdVmHuGRqvChcQJBg2xNMO78iLXN6FKuodi/ls7z/pkwdqvr+NOnYJ
-         0EujToruwaAdYV6jepuXW3pYpXk6/PVW/r9fjqCMHQ3UC81NXku3ObKRm5LggfcfqW2i
-         dyHhQrSJwxKkBqdknn6zGOA5GztWAVGEmND9BFTEcgyB6WQliki8ZkjG8H9vBW2tpdHS
-         en8L7O+91QQVkdwF7341UpIF2on+V0KBI8O4YEMjsYvW6G0Re1KILppzl9D9vC0l/6MQ
-         sdKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o26ZWzPRkUKxW7dKY8cTnlaNNdlHOXHXpVuJuquhP0A=;
-        b=ncr2PIZ9WDXAuo2VOGzYNApLzjO4UeC2HCeRg4PepEmbkOk5uwBLe/gHdlcUnpKTRH
-         nyjKHyr21KWo0IWqq9E8MxSN/rSxhOcqxkRCaRwVf9GTBSY3+EULle8yXH/BxDMzeJg4
-         hNF0w8a86BQyUuvHRAuaDAe9kLNznsB+8UsxE+cW5fWXC9Dj7jeb6J0Us2vS2rZGKVuq
-         zCIfunk5QatcLVq6GN85vp9BswcUrOowApFVWAJZD6ghuUhY6nk4hLgOK9bavsFvdVe1
-         jxOaILJkdtIKK6ZFgPwT5UAo/b1Fc8XYlLTq/pf37isr+XB/5JQDHbLy8ctdMNDKInO7
-         B8HA==
-X-Gm-Message-State: AOAM533hFA8x5SgZW6X3Cp8eeQ/IMUwicduN1obWyIRsUWsupxkzLkKf
-        LjInwN04sZpSkLRjliu971rYQqN99zMCtrrVzFA=
-X-Google-Smtp-Source: ABdhPJyJ7Xf38f0WykdTNWoI680e4zcq7wrLMtkjotg66KWRFaSxmNQfshRrUqs2zFuHBAK1fPsTzIZmlxINm8JYY5s=
-X-Received: by 2002:a25:d491:: with SMTP id m139mr6192892ybf.156.1626186892341;
- Tue, 13 Jul 2021 07:34:52 -0700 (PDT)
+        id S236882AbhGMOtW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 10:49:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236883AbhGMOtW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Jul 2021 10:49:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 695D961289;
+        Tue, 13 Jul 2021 14:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626187592;
+        bh=/oei90Ltg62kh8uWBdh1e3F5iY/fUBosgEXNrPGV8eM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DLjkEgMVuzJNNkwwONJ4zssNmeFtCQzlZR1aDCtwiayFNLOVQlv4G59X8y6w7nR9K
+         64QurgCEOprICLkPTQHqiMeaOQynMPpK7I6bDWZjDQLh4kCFcUuEM6gSR2489JRUki
+         +HcL/Z19Nf2mFpRNWsULJnSBy/MPzIFh6rvgkh5uILOkEGyr375ZKJdA233cFXs4ku
+         WOzi1XhMeWbBZRohTuMwiNm5cMDLDNzP/dXLWp04XdyHKhRTGtP58QSuUpzQenSyGO
+         cfsmy+E11ZwbZ0B+EcadWFRVWVBGEnLy7EMu7A4JIWxPfhIb/b5n761VbWjBTRMFAK
+         //LTIAHa706iw==
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        stable@vger.kernel.org, Kris Chaplin <kris.chaplin@intel.com>
+Subject: [PATCH 1/3] clk: socfpga: agilex: fix the parents of the psi_ref_clk
+Date:   Tue, 13 Jul 2021 09:46:19 -0500
+Message-Id: <20210713144621.605140-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210712194422.12405-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210712194422.12405-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <53e6c8fa-311f-f100-dd06-d806ab593488@gmail.com>
-In-Reply-To: <53e6c8fa-311f-f100-dd06-d806ab593488@gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 13 Jul 2021 15:34:26 +0100
-Message-ID: <CA+V-a8uB-QmtYjBQ7sondsfeQvBOMhmsYPd=0R4TrxzvO=zs6w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: rzg2l-smarc: Add scif0 pins
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sergei,
+The psi_ref_clk comes from the C2 node of the main_pll and periph_pll,
+not the C3.
 
-Thank you for the review.
+Fixes: 80c6b7a0894f ("clk: socfpga: agilex: add clock driver for the Agilex platform")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kris Chaplin <kris.chaplin@intel.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-agilex.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Tue, Jul 13, 2021 at 12:18 PM Sergei Shtylyov
-<sergei.shtylyov@gmail.com> wrote:
->
-> On 12.07.2021 22:44, Lad Prabhakar wrote:
->
-> > Add scif0 pins in pinctrl node and update the scif0 node
-> > to include pinctrl property.
->
->     Properties? There are a couple... :-)
->
-Agreed will update the commit message.
+diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+index 1cb21ea79c64..9dffe9ba0e74 100644
+--- a/drivers/clk/socfpga/clk-agilex.c
++++ b/drivers/clk/socfpga/clk-agilex.c
+@@ -107,10 +107,10 @@ static const struct clk_parent_data gpio_db_free_mux[] = {
+ };
+ 
+ static const struct clk_parent_data psi_ref_free_mux[] = {
+-	{ .fw_name = "main_pll_c3",
+-	  .name = "main_pll_c3", },
+-	{ .fw_name = "peri_pll_c3",
+-	  .name = "peri_pll_c3", },
++	{ .fw_name = "main_pll_c2",
++	  .name = "main_pll_c2", },
++	{ .fw_name = "peri_pll_c2",
++	  .name = "peri_pll_c2", },
+ 	{ .fw_name = "osc1",
+ 	  .name = "osc1", },
+ 	{ .fw_name = "cb-intosc-hs-div2-clk",
+-- 
+2.25.1
 
-Cheers,
-Prabhakar
-
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> >   arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi | 10 ++++++++++
-> >   1 file changed, 10 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-> > index adcd4f50519e..0987163f25ee 100644
-> > --- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-> [...]
-> >       clock-frequency = <24000000>;
-> >   };
-> >
-> > +&pinctrl {
-> > +     scif0_pins: scif0 {
-> > +             pinmux = <RZG2L_PORT_PINMUX(38, 0, 1)>, /* TxD */
-> > +                      <RZG2L_PORT_PINMUX(38, 1, 1)>; /* RxD */
-> > +     };
-> > +};
-> > +
-> >   &scif0 {
-> > +     pinctrl-0 = <&scif0_pins>;
-> > +     pinctrl-names = "default";
-> >       status = "okay";
-> >   };
-> >
->
-> MBR, Sergei
