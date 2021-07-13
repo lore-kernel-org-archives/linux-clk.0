@@ -2,125 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4175C07E96
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 11:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC650C07E95
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 12:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2A0961363
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 11:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ABBB61166
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 12:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235881AbhGMLVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 07:21:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235574AbhGMLVd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 07:21:33 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDC7C0613EE;
-        Tue, 13 Jul 2021 04:18:42 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 141so12867515ljj.2;
-        Tue, 13 Jul 2021 04:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DmW58CuQRiPy8Sg0c4NVO3FTMCEg7IqqiVpTucaJ3Tw=;
-        b=pabDNbwM68BJYigpwysEF85rUs211QosqbU8je6wotBV50cemlTavOMzN1CN6vUAa1
-         bxhS3HOMeoZq+xr0xRnedvScLuAX6X1m+gW0lHfl8BWSZdVSQLbdlAV6+RfnmeTEMv+k
-         aoyfJchdeYQWBKp/S7L/a5bmQEVNWuSA+8SqUba9qBBBMfeP7XJvxhgm76wW24c/6Ld0
-         tY+/ljx9S/G+o5gMEXfmQDLmsoeFK8aVJag0ZxMhb8stDjzZ/ypHL0xZygRGSXPkNBPs
-         rk8Rxu3MmsWRdv6UpxdaMIPthQv2rw8I0CiPo22t1s0ihY12hS8Qs0cZSg+PHR6Ndvd/
-         uSwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=DmW58CuQRiPy8Sg0c4NVO3FTMCEg7IqqiVpTucaJ3Tw=;
-        b=oU/ukQwy6/eXlxFUUCQ5tBZFtgVAFsWJuPCENWlETtGUV4fHWOqczThvp42DOdLyfx
-         OmaK6vIxMEqPjhCls4Olzsvg7HUG1vxEmQUo0FPTgpQjg38VS1AAOJiRyhFgrXrpZnMb
-         030EmIRTH4H4W52/TABCx7/5lwuw1BTqlPFeW9ZywNpm2kuRBp9jzeIn0CrHGyUrDNlX
-         SnWBsf6axpLKzxdW5X6AwtPjyCnVA6sOO6V1bXr9bCGGFnSixjuFna+NLg40PMTzDQ82
-         Zlyl92skHlgwg21s4gaYhZfyzdqRyzb7RI134YKS5lJDtxTibK1kJ+nZA2bTL2zIo3Uz
-         eaOA==
-X-Gm-Message-State: AOAM531DomxcGhFYUD25sJy08nB1qC/pDAUvpDXYwbqhjD19e4LeQIEI
-        HazCqMnMopI3HXpyz3lbSNk=
-X-Google-Smtp-Source: ABdhPJyvTGjEOf/NF26HuZzFFaI4eu/hHQhCJ+22spNmcJAWehw9gBPsA+afahpC0rX9Ib53v8by6Q==
-X-Received: by 2002:a2e:88ca:: with SMTP id a10mr1850235ljk.361.1626175120561;
-        Tue, 13 Jul 2021 04:18:40 -0700 (PDT)
-Received: from [192.168.1.100] ([178.176.78.85])
-        by smtp.gmail.com with ESMTPSA id k12sm1442939lfv.14.2021.07.13.04.18.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jul 2021 04:18:40 -0700 (PDT)
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: rzg2l-smarc: Add scif0 pins
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-References: <20210712194422.12405-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210712194422.12405-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <53e6c8fa-311f-f100-dd06-d806ab593488@gmail.com>
-Date:   Tue, 13 Jul 2021 14:18:30 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S235981AbhGMMK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 08:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235936AbhGMMK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Jul 2021 08:10:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E8038610C7;
+        Tue, 13 Jul 2021 12:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626178056;
+        bh=veIKrgu4aKMMb8Pa4igOFFjco3WGvRXm9loSYXLs+Lk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G2Re8vWU1x1K/uW6MuMZnM8fGH+4B6y0hotREznO2jb8/W+nK1rCVDkVuHoXJBJeq
+         3oAqxB8Rx9TKkPMjHAy5dQ2AuLan2c4D3Z8qmd0xvQ0caK+XdS+6ftPNxszQg70ebv
+         k9QCnDGMwM2vWwqvIVVXy1ug98AhmiJRZFwMZdOBZsjKt/XYgTXtQ+bbXjP8yUdKTr
+         OBiuHL5TxLorQw/+x5oXbo0t8uhOLf/WMkThLUho3lWCiPBUs9dohkTvTOwx2Fx2eA
+         L1KSg6XnsxmDO6szZYrZgcFFtyL4yMQABdizxsCy+LNK12IOEWxNlfRM9UB2KWlqNG
+         FmCYCq8WZOvVg==
+Date:   Tue, 13 Jul 2021 13:07:00 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Lin <jon.lin@rock-chips.com>
+Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org, heiko@sntech.de,
+        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
+        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-mtd@lists.infradead.org, p.yadav@ti.com,
+        macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Subject: Re: [PATCH v12 01/10] dt-bindings: rockchip-sfc: Bindings for
+ Rockchip serial flash controller
+Message-ID: <20210713120700.GA4098@sirena.org.uk>
+References: <20210713094456.23288-1-jon.lin@rock-chips.com>
+ <20210713094456.23288-2-jon.lin@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20210712194422.12405-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Disposition: inline
+In-Reply-To: <20210713094456.23288-2-jon.lin@rock-chips.com>
+X-Cookie: Keep away from fire or flame.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12.07.2021 22:44, Lad Prabhakar wrote:
 
-> Add scif0 pins in pinctrl node and update the scif0 node
-> to include pinctrl property.
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Properties? There are a couple... :-)
+On Tue, Jul 13, 2021 at 05:44:47PM +0800, Jon Lin wrote:
 
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->   arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-> index adcd4f50519e..0987163f25ee 100644
-> --- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-[...]
->   	clock-frequency = <24000000>;
->   };
->   
-> +&pinctrl {
-> +	scif0_pins: scif0 {
-> +		pinmux = <RZG2L_PORT_PINMUX(38, 0, 1)>,	/* TxD */
-> +			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
-> +	};
-> +};
-> +
->   &scif0 {
-> +	pinctrl-0 = <&scif0_pins>;
-> +	pinctrl-names = "default";
->   	status = "okay";
->   };
-> 
+> +properties:
+> +  compatible:
+> +    const: rockchip,sfc
 
-MBR, Sergei
+Rob has repeatedly queried how generic this compatible is - can you
+please respond to this?
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDtgeQACgkQJNaLcl1U
+h9Aj+Qf9HQEP3TDGE1oQIqNLlImhDQnaT3hnM3Iy5CN5AFSzz3RoFWud4t5AfnMI
+qKTI9Fs2uk6PR+G/6eC1l0tqcK3K1tCguZG+q6QX7hfqknaA5OTiSGKA+SkflOV+
+FLkrz0jfnx3PsZDPIFo8mom9zKoBu/J9Tx170c2LFu9UV4wAta5ciZYjvi2Qk4Bp
+F4LZ6PMrJEIJia4OeAdJDjezUlaCNQUOMrKdhYLNaxezLSPAqKZ1GFE7SL5/r9mM
+xuD7k3FykkG+XyeAPgClbLM6201FvsM2Jg+lP5mjHYkFudHZ6C6BRC6SMuyxuXNn
+hRrqvW5E2j49VH3K459GsKOmZb5yFw==
+=eWOC
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
