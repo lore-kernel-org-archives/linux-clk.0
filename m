@@ -2,240 +2,238 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC62DC07E95
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 15:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B10F5C11F67
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 19:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDF761360
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 15:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D8026128E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 19:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236935AbhGMPSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 11:18:09 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:43659 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236966AbhGMPSI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Jul 2021 11:18:08 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1626189319; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=wNk2kWJRtSvKzNwn5hqu0xVFKx04qP99TBr5FfD1dAE=; b=wlffIu99qAJ26u6/r3NHKHQQOxD97pPzkmpAMvV69saU/otQvr56HLOzFT5R4IIGZXKPix+v
- lynrLwsMjsuaPTZT2kd8ZDze+QA7Vy5Lw5IdsmyeFM3+lQIUHQ08Co+P43dvDyky7mxGBGQT
- TbRbh9EiBH9pRHEhQSuA7sOKu50=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 60edad7506ea41c941b2c053 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 13 Jul 2021 15:12:53
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A1800C43217; Tue, 13 Jul 2021 15:12:52 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00888C433D3;
-        Tue, 13 Jul 2021 15:12:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00888C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 2/7] dt-bindings: clock: Add SC7280 DISPCC clock binding
-Date:   Tue, 13 Jul 2021 20:42:18 +0530
-Message-Id: <1626189143-12957-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1626189143-12957-1-git-send-email-tdas@codeaurora.org>
-References: <1626189143-12957-1-git-send-email-tdas@codeaurora.org>
+        id S234394AbhGMThv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 15:37:51 -0400
+Received: from mail-io1-f54.google.com ([209.85.166.54]:41929 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230376AbhGMThu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 15:37:50 -0400
+Received: by mail-io1-f54.google.com with SMTP id b1so28702271ioz.8;
+        Tue, 13 Jul 2021 12:34:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eXNbiOfz2OADKu5/Fro0uEc8qfMv6oN+akM7nAMsoNs=;
+        b=R5rmT8ovYq4T9/0xGqehGSjL2Tkr709x7kPP68DY1EqMpoNcw7BgNbAxp3J5ngszVn
+         8W2efjOTgRrAoEobCI4hFcCFO1t6kHHLpLzIwK5Py/VyfSuOkW9EVZtUbAp8ugV2Vl+m
+         tWL5L08czLP5JTQJNz5EJOFJdUX1ILP9izXYPs1ITg+zCiX8ecKGJhuH+EfwBpIwv1sD
+         +dMWDupVjw367iIJPFtdi4dcygoHlxIUwqDQpes3LTzBXQL+tObiKdlMHhZ7N4xzi7b+
+         KvKV1o+lGhKQaIK0mCqdbdGpD9TOIT48Ao9yBowHgfn3kCKRDzmIovBHuH4CxeJ91Wvx
+         mZjQ==
+X-Gm-Message-State: AOAM530Hw1faVojnBObdZAsNQxX4C/QjEdeFFb6DAgf2KMfWFseJBrC1
+        klLKwSIRkKIE4fjYpyvEaHETiT9BRQ==
+X-Google-Smtp-Source: ABdhPJzw9lbjwb1pdT4tIxapva2T9ilTykdW85tANNfljZrD6J0J6zkjV6l4axi9xOmTnyTsjbnCSg==
+X-Received: by 2002:a5d:928f:: with SMTP id s15mr4391019iom.142.1626204898597;
+        Tue, 13 Jul 2021 12:34:58 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.248])
+        by smtp.googlemail.com with ESMTPSA id k13sm4640772ilv.18.2021.07.13.12.34.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jul 2021 12:34:57 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-clk@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] dt-bindings: More dropping redundant minItems/maxItems
+Date:   Tue, 13 Jul 2021 13:34:53 -0600
+Message-Id: <20210713193453.690290-1-robh@kernel.org>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for display clock controller subsystem for
-Qualcomm Technology Inc's SC7280 SoCs.
+Another round of removing redundant minItems/maxItems from new schema in
+the recent merge window.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+same size as the list is redundant and can be dropped. Note that is DT
+schema specific behavior and not standard json-schema behavior. The tooling
+will fixup the final schema adding any unspecified minItems/maxItems.
+
+This condition is partially checked with the meta-schema already, but
+only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+An improved meta-schema is pending.
+
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org
+Cc: iommu@lists.linux-foundation.org
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/qcom,sc7280-dispcc.yaml         | 94 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,dispcc-sc7280.h     | 55 +++++++++++++
- 2 files changed, 149 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
+ .../devicetree/bindings/clock/brcm,iproc-clocks.yaml      | 1 -
+ .../devicetree/bindings/iommu/rockchip,iommu.yaml         | 2 --
+ .../bindings/memory-controllers/arm,pl353-smc.yaml        | 1 -
+ Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml  | 8 --------
+ .../devicetree/bindings/rtc/faraday,ftrtc010.yaml         | 1 -
+ Documentation/devicetree/bindings/usb/nxp,isp1760.yaml    | 2 --
+ 6 files changed, 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-new file mode 100644
-index 0000000..2178666
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sc7280-dispcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Display Clock & Reset Controller Binding for SC7280
-+
-+maintainers:
-+  - Taniya Das <tdas@codeaurora.org>
-+
-+description: |
-+  Qualcomm display clock control module which supports the clocks, resets and
-+  power domains on SC7280.
-+
-+  See also dt-bindings/clock/qcom,dispcc-sc7280.h.
-+
-+properties:
-+  compatible:
-+    const: qcom,sc7280-dispcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: GPLL0 source from GCC
-+      - description: Byte clock from DSI PHY
-+      - description: Pixel clock from DSI PHY
-+      - description: Link clock from DP PHY
-+      - description: VCO DIV clock from DP PHY
-+      - description: Link clock from EDP PHY
-+      - description: VCO DIV clock from EDP PHY
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: gcc_disp_gpll0_clk
-+      - const: dsi0_phy_pll_out_byteclk
-+      - const: dsi0_phy_pll_out_dsiclk
-+      - const: dp_phy_pll_link_clk
-+      - const: dp_phy_pll_vco_div_clk
-+      - const: edp_phy_pll_link_clk
-+      - const: edp_phy_pll_vco_div_clk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@af00000 {
-+      compatible = "qcom,sc7280-dispcc";
-+      reg = <0x0af00000 0x200000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-+               <&dsi_phy 0>,
-+               <&dsi_phy 1>,
-+               <&dp_phy 0>,
-+               <&dp_phy 1>,
-+               <&edp_phy 0>,
-+               <&edp_phy 1>;
-+      clock-names = "bi_tcxo",
-+                    "gcc_disp_gpll0_clk",
-+                    "dsi0_phy_pll_out_byteclk",
-+                    "dsi0_phy_pll_out_dsiclk",
-+                    "dp_phy_pll_link_clk",
-+                    "dp_phy_pll_vco_div_clk",
-+                    "edp_phy_pll_link_clk",
-+                    "edp_phy_pll_vco_div_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-new file mode 100644
-index 0000000..a4a692c
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SC7280_H
-+#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SC7280_H
-+
-+/* DISP_CC clocks */
-+#define DISP_CC_PLL0					0
-+#define DISP_CC_MDSS_AHB_CLK				1
-+#define DISP_CC_MDSS_AHB_CLK_SRC			2
-+#define DISP_CC_MDSS_BYTE0_CLK				3
-+#define DISP_CC_MDSS_BYTE0_CLK_SRC			4
-+#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC			5
-+#define DISP_CC_MDSS_BYTE0_INTF_CLK			6
-+#define DISP_CC_MDSS_DP_AUX_CLK				7
-+#define DISP_CC_MDSS_DP_AUX_CLK_SRC			8
-+#define DISP_CC_MDSS_DP_CRYPTO_CLK			9
-+#define DISP_CC_MDSS_DP_CRYPTO_CLK_SRC			10
-+#define DISP_CC_MDSS_DP_LINK_CLK			11
-+#define DISP_CC_MDSS_DP_LINK_CLK_SRC			12
-+#define DISP_CC_MDSS_DP_LINK_DIV_CLK_SRC		13
-+#define DISP_CC_MDSS_DP_LINK_INTF_CLK			14
-+#define DISP_CC_MDSS_DP_PIXEL_CLK			15
-+#define DISP_CC_MDSS_DP_PIXEL_CLK_SRC			16
-+#define DISP_CC_MDSS_EDP_AUX_CLK			17
-+#define DISP_CC_MDSS_EDP_AUX_CLK_SRC			18
-+#define DISP_CC_MDSS_EDP_LINK_CLK			19
-+#define DISP_CC_MDSS_EDP_LINK_CLK_SRC			20
-+#define DISP_CC_MDSS_EDP_LINK_DIV_CLK_SRC		21
-+#define DISP_CC_MDSS_EDP_LINK_INTF_CLK			22
-+#define DISP_CC_MDSS_EDP_PIXEL_CLK			23
-+#define DISP_CC_MDSS_EDP_PIXEL_CLK_SRC			24
-+#define DISP_CC_MDSS_ESC0_CLK				25
-+#define DISP_CC_MDSS_ESC0_CLK_SRC			26
-+#define DISP_CC_MDSS_MDP_CLK				27
-+#define DISP_CC_MDSS_MDP_CLK_SRC			28
-+#define DISP_CC_MDSS_MDP_LUT_CLK			29
-+#define DISP_CC_MDSS_NON_GDSC_AHB_CLK			30
-+#define DISP_CC_MDSS_PCLK0_CLK				31
-+#define DISP_CC_MDSS_PCLK0_CLK_SRC			32
-+#define DISP_CC_MDSS_ROT_CLK				33
-+#define DISP_CC_MDSS_ROT_CLK_SRC			34
-+#define DISP_CC_MDSS_RSCC_AHB_CLK			35
-+#define DISP_CC_MDSS_RSCC_VSYNC_CLK			36
-+#define DISP_CC_MDSS_VSYNC_CLK				37
-+#define DISP_CC_MDSS_VSYNC_CLK_SRC			38
-+#define DISP_CC_SLEEP_CLK				39
-+#define DISP_CC_XO_CLK					40
-+
-+/* DISP_CC power domains */
-+#define DISP_CC_MDSS_CORE_GDSC				0
-+
-+#endif
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+index 8dc7b404ee12..1174c9aa9934 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+@@ -50,7 +50,6 @@ properties:
+ 
+   reg:
+     minItems: 1
+-    maxItems: 3
+     items:
+       - description: base register
+       - description: power register
+diff --git a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+index d2e28a9e3545..ba9124f721f1 100644
+--- a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
++++ b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+@@ -28,14 +28,12 @@ properties:
+       - description: configuration registers for MMU instance 0
+       - description: configuration registers for MMU instance 1
+     minItems: 1
+-    maxItems: 2
+ 
+   interrupts:
+     items:
+       - description: interruption for MMU instance 0
+       - description: interruption for MMU instance 1
+     minItems: 1
+-    maxItems: 2
+ 
+   clocks:
+     items:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml b/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
+index 7a63c85ef8c5..01c9acf9275d 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
+@@ -57,7 +57,6 @@ properties:
+ 
+   ranges:
+     minItems: 1
+-    maxItems: 3
+     description: |
+       Memory bus areas for interacting with the devices. Reflects
+       the memory layout with four integer values following:
+diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
+index e5f1a33332a5..dd5a64969e37 100644
+--- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
++++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
+@@ -84,7 +84,6 @@ properties:
+ 
+   interrupts:
+     minItems: 1
+-    maxItems: 3
+     items:
+       - description: NAND CTLRDY interrupt
+       - description: FLASH_DMA_DONE if flash DMA is available
+@@ -92,7 +91,6 @@ properties:
+ 
+   interrupt-names:
+     minItems: 1
+-    maxItems: 3
+     items:
+       - const: nand_ctlrdy
+       - const: flash_dma_done
+@@ -148,8 +146,6 @@ allOf:
+     then:
+       properties:
+         reg-names:
+-          minItems: 2
+-          maxItems: 2
+           items:
+             - const: nand
+             - const: nand-int-base
+@@ -161,8 +157,6 @@ allOf:
+     then:
+       properties:
+         reg-names:
+-          minItems: 3
+-          maxItems: 3
+           items:
+             - const: nand
+             - const: nand-int-base
+@@ -175,8 +169,6 @@ allOf:
+     then:
+       properties:
+         reg-names:
+-          minItems: 3
+-          maxItems: 3
+           items:
+             - const: nand
+             - const: iproc-idm
+diff --git a/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml b/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
+index 657c13b62b67..056d42daae06 100644
+--- a/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
++++ b/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
+@@ -30,7 +30,6 @@ properties:
+     maxItems: 1
+ 
+   clocks:
+-    minItems: 2
+     items:
+       - description: PCLK clocks
+       - description: EXTCLK clocks. Faraday calls it CLK1HZ and says the clock
+diff --git a/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml b/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
+index a88f99adfe8e..f238848ad094 100644
+--- a/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
++++ b/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
+@@ -25,14 +25,12 @@ properties:
+ 
+   interrupts:
+     minItems: 1
+-    maxItems: 2
+     items:
+       - description: Host controller interrupt
+       - description: Device controller interrupt in isp1761
+ 
+   interrupt-names:
+     minItems: 1
+-    maxItems: 2
+     items:
+       - const: host
+       - const: peripheral
+-- 
+2.27.0
 
