@@ -2,238 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10F5C11F67
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 19:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CE9C11F69
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 21:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8026128E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 19:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA191613C3
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 21:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234394AbhGMThv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 15:37:51 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:41929 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbhGMThu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 15:37:50 -0400
-Received: by mail-io1-f54.google.com with SMTP id b1so28702271ioz.8;
-        Tue, 13 Jul 2021 12:34:59 -0700 (PDT)
+        id S235772AbhGMVku (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 17:40:50 -0400
+Received: from mail-il1-f174.google.com ([209.85.166.174]:39768 "EHLO
+        mail-il1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234947AbhGMVkt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 17:40:49 -0400
+Received: by mail-il1-f174.google.com with SMTP id a7so5409805iln.6;
+        Tue, 13 Jul 2021 14:37:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eXNbiOfz2OADKu5/Fro0uEc8qfMv6oN+akM7nAMsoNs=;
-        b=R5rmT8ovYq4T9/0xGqehGSjL2Tkr709x7kPP68DY1EqMpoNcw7BgNbAxp3J5ngszVn
-         8W2efjOTgRrAoEobCI4hFcCFO1t6kHHLpLzIwK5Py/VyfSuOkW9EVZtUbAp8ugV2Vl+m
-         tWL5L08czLP5JTQJNz5EJOFJdUX1ILP9izXYPs1ITg+zCiX8ecKGJhuH+EfwBpIwv1sD
-         +dMWDupVjw367iIJPFtdi4dcygoHlxIUwqDQpes3LTzBXQL+tObiKdlMHhZ7N4xzi7b+
-         KvKV1o+lGhKQaIK0mCqdbdGpD9TOIT48Ao9yBowHgfn3kCKRDzmIovBHuH4CxeJ91Wvx
-         mZjQ==
-X-Gm-Message-State: AOAM530Hw1faVojnBObdZAsNQxX4C/QjEdeFFb6DAgf2KMfWFseJBrC1
-        klLKwSIRkKIE4fjYpyvEaHETiT9BRQ==
-X-Google-Smtp-Source: ABdhPJzw9lbjwb1pdT4tIxapva2T9ilTykdW85tANNfljZrD6J0J6zkjV6l4axi9xOmTnyTsjbnCSg==
-X-Received: by 2002:a5d:928f:: with SMTP id s15mr4391019iom.142.1626204898597;
-        Tue, 13 Jul 2021 12:34:58 -0700 (PDT)
-Received: from xps15.herring.priv ([64.188.179.248])
-        by smtp.googlemail.com with ESMTPSA id k13sm4640772ilv.18.2021.07.13.12.34.54
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=XG4xRifa1Y/AuqQNHbBHo4FxHIDghL/k6L/P4dYHb4s=;
+        b=fJ4+B/8EB84whatQgRu+Bh7UaFLgC+QfeFq+ATBpiCwE5GxKdTeQw+AKXtxuZWwAmR
+         g6m1n2Tpb4dCAlBthOvjL+f21t+PAwxc5R+5cGS8nEbCZKjTZLLjZRaW2KnkhTWchm+/
+         7zZsFy+2dshjQNDwuDPULKzy70MiPul3TtG9pRIBVCmVystqiiAhjZRkiOngHtR3e2iu
+         Bbzod2huH8FYo5zdf2sJkqaI14Bvl1Rvof2axD21gVVGksSH1KZiPgTIYRXIjApZb4Ot
+         xvrExPBLVXv1SdxjR0SNPzsA4x2SGRajIgGE7ObdmJEzPtT/HoKBxRoe5+6//fd8YuSZ
+         3CiA==
+X-Gm-Message-State: AOAM531IByBNu5OKATT1DJXa8e/Q6+QrBOwqMss0v7r3WnseuL+1pcVG
+        A0kUp2EO1JTOzm5gq0SsJA==
+X-Google-Smtp-Source: ABdhPJzwQ8achpdhJTPLQ7MBLIBm/5e6ZfshfMm2jmNNlXzIu+Aih5AMKlmxesIcV/77YUtvBSEUjQ==
+X-Received: by 2002:a05:6e02:1527:: with SMTP id i7mr4276502ilu.134.1626212278680;
+        Tue, 13 Jul 2021 14:37:58 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id t15sm106235iln.36.2021.07.13.14.37.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jul 2021 12:34:57 -0700 (PDT)
+        Tue, 13 Jul 2021 14:37:57 -0700 (PDT)
+Received: (nullmailer pid 879321 invoked by uid 1000);
+        Tue, 13 Jul 2021 21:37:53 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-clk@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] dt-bindings: More dropping redundant minItems/maxItems
-Date:   Tue, 13 Jul 2021 13:34:53 -0600
-Message-Id: <20210713193453.690290-1-robh@kernel.org>
-X-Mailer: git-send-email 2.27.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-gpio@vger.kernel.org
+In-Reply-To: <20210712194422.12405-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20210712194422.12405-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210712194422.12405-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Add DT bindings for RZ/G2L pinctrl
+Date:   Tue, 13 Jul 2021 15:37:53 -0600
+Message-Id: <1626212273.288301.879320.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Another round of removing redundant minItems/maxItems from new schema in
-the recent merge window.
+On Mon, 12 Jul 2021 20:44:18 +0100, Lad Prabhakar wrote:
+> Add device tree binding documentation and header file for Renesas
+> RZ/G2L pinctrl.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../pinctrl/renesas,rzg2l-pinctrl.yaml        | 155 ++++++++++++++++++
+>  include/dt-bindings/pinctrl/rzg2l-pinctrl.h   |  23 +++
+>  2 files changed, 178 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/rzg2l-pinctrl.h
+> 
 
-If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
-same size as the list is redundant and can be dropped. Note that is DT
-schema specific behavior and not standard json-schema behavior. The tooling
-will fixup the final schema adding any unspecified minItems/maxItems.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-This condition is partially checked with the meta-schema already, but
-only if both 'minItems' and 'maxItems' are equal to the 'items' length.
-An improved meta-schema is pending.
+yamllint warnings/errors:
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sebastian Siewior <bigeasy@linutronix.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org
-Cc: iommu@lists.linux-foundation.org
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/brcm,iproc-clocks.yaml      | 1 -
- .../devicetree/bindings/iommu/rockchip,iommu.yaml         | 2 --
- .../bindings/memory-controllers/arm,pl353-smc.yaml        | 1 -
- Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml  | 8 --------
- .../devicetree/bindings/rtc/faraday,ftrtc010.yaml         | 1 -
- Documentation/devicetree/bindings/usb/nxp,isp1760.yaml    | 2 --
- 6 files changed, 15 deletions(-)
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.example.dts:29.34-35 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1418: dt_binding_check] Error 2
+\ndoc reference errors (make refcheckdocs):
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-index 8dc7b404ee12..1174c9aa9934 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-@@ -50,7 +50,6 @@ properties:
- 
-   reg:
-     minItems: 1
--    maxItems: 3
-     items:
-       - description: base register
-       - description: power register
-diff --git a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
-index d2e28a9e3545..ba9124f721f1 100644
---- a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
-@@ -28,14 +28,12 @@ properties:
-       - description: configuration registers for MMU instance 0
-       - description: configuration registers for MMU instance 1
-     minItems: 1
--    maxItems: 2
- 
-   interrupts:
-     items:
-       - description: interruption for MMU instance 0
-       - description: interruption for MMU instance 1
-     minItems: 1
--    maxItems: 2
- 
-   clocks:
-     items:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml b/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
-index 7a63c85ef8c5..01c9acf9275d 100644
---- a/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
-@@ -57,7 +57,6 @@ properties:
- 
-   ranges:
-     minItems: 1
--    maxItems: 3
-     description: |
-       Memory bus areas for interacting with the devices. Reflects
-       the memory layout with four integer values following:
-diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
-index e5f1a33332a5..dd5a64969e37 100644
---- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
-+++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.yaml
-@@ -84,7 +84,6 @@ properties:
- 
-   interrupts:
-     minItems: 1
--    maxItems: 3
-     items:
-       - description: NAND CTLRDY interrupt
-       - description: FLASH_DMA_DONE if flash DMA is available
-@@ -92,7 +91,6 @@ properties:
- 
-   interrupt-names:
-     minItems: 1
--    maxItems: 3
-     items:
-       - const: nand_ctlrdy
-       - const: flash_dma_done
-@@ -148,8 +146,6 @@ allOf:
-     then:
-       properties:
-         reg-names:
--          minItems: 2
--          maxItems: 2
-           items:
-             - const: nand
-             - const: nand-int-base
-@@ -161,8 +157,6 @@ allOf:
-     then:
-       properties:
-         reg-names:
--          minItems: 3
--          maxItems: 3
-           items:
-             - const: nand
-             - const: nand-int-base
-@@ -175,8 +169,6 @@ allOf:
-     then:
-       properties:
-         reg-names:
--          minItems: 3
--          maxItems: 3
-           items:
-             - const: nand
-             - const: iproc-idm
-diff --git a/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml b/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
-index 657c13b62b67..056d42daae06 100644
---- a/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
-+++ b/Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
-@@ -30,7 +30,6 @@ properties:
-     maxItems: 1
- 
-   clocks:
--    minItems: 2
-     items:
-       - description: PCLK clocks
-       - description: EXTCLK clocks. Faraday calls it CLK1HZ and says the clock
-diff --git a/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml b/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
-index a88f99adfe8e..f238848ad094 100644
---- a/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
-+++ b/Documentation/devicetree/bindings/usb/nxp,isp1760.yaml
-@@ -25,14 +25,12 @@ properties:
- 
-   interrupts:
-     minItems: 1
--    maxItems: 2
-     items:
-       - description: Host controller interrupt
-       - description: Device controller interrupt in isp1761
- 
-   interrupt-names:
-     minItems: 1
--    maxItems: 2
-     items:
-       - const: host
-       - const: peripheral
--- 
-2.27.0
+See https://patchwork.ozlabs.org/patch/1504169
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
