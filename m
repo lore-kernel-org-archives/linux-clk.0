@@ -2,88 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC650C07E95
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 12:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC59CC07E95
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 13:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABBB61166
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 12:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83D3561175
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 13:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235981AbhGMMK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 08:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235936AbhGMMK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Jul 2021 08:10:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E8038610C7;
-        Tue, 13 Jul 2021 12:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626178056;
-        bh=veIKrgu4aKMMb8Pa4igOFFjco3WGvRXm9loSYXLs+Lk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G2Re8vWU1x1K/uW6MuMZnM8fGH+4B6y0hotREznO2jb8/W+nK1rCVDkVuHoXJBJeq
-         3oAqxB8Rx9TKkPMjHAy5dQ2AuLan2c4D3Z8qmd0xvQ0caK+XdS+6ftPNxszQg70ebv
-         k9QCnDGMwM2vWwqvIVVXy1ug98AhmiJRZFwMZdOBZsjKt/XYgTXtQ+bbXjP8yUdKTr
-         OBiuHL5TxLorQw/+x5oXbo0t8uhOLf/WMkThLUho3lWCiPBUs9dohkTvTOwx2Fx2eA
-         L1KSg6XnsxmDO6szZYrZgcFFtyL4yMQABdizxsCy+LNK12IOEWxNlfRM9UB2KWlqNG
-         FmCYCq8WZOvVg==
-Date:   Tue, 13 Jul 2021 13:07:00 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Lin <jon.lin@rock-chips.com>
-Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org, heiko@sntech.de,
-        jbx6244@gmail.com, hjc@rock-chips.com, yifeng.zhao@rock-chips.com,
-        sugar.zhang@rock-chips.com, linux-rockchip@lists.infradead.org,
-        linux-mtd@lists.infradead.org, p.yadav@ti.com,
-        macroalpha82@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH v12 01/10] dt-bindings: rockchip-sfc: Bindings for
- Rockchip serial flash controller
-Message-ID: <20210713120700.GA4098@sirena.org.uk>
-References: <20210713094456.23288-1-jon.lin@rock-chips.com>
- <20210713094456.23288-2-jon.lin@rock-chips.com>
+        id S236596AbhGMNka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 09:40:30 -0400
+Received: from mail-vk1-f177.google.com ([209.85.221.177]:41634 "EHLO
+        mail-vk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236222AbhGMNka (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 09:40:30 -0400
+Received: by mail-vk1-f177.google.com with SMTP id q124so1732291vka.8;
+        Tue, 13 Jul 2021 06:37:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ks+aQKe2+n4Zk0Ta4yhtI3Gp8O8SNuAgjxZAciGA2PU=;
+        b=QxbfGksVo9mep89bil9LSDVB8K2B9KKcFKa+EXApU3ZWViA6CAT/ZgdPzDIvxEIKjw
+         WVWh/gSP6Zwfs6Np+El5G41d6pLHHSA30Usa41TkJRzGIvTlBwBn71grKr2pj3N1oBza
+         j0paunip912RjjPABfcKvSlkrFQwFOqi1+zUgOmfFOvn+rp+RPpdwbo5j09OQjnC5GGv
+         E2DRd3ef79u18KjiUzaJuneRd/BoOAiMew9AosEoYvhN3SR6NP73iOkylm8cREOGtI/n
+         xqXtIgRJm9yaAwD/L+ommMy40Vsx584XJ39+tJw0mmORW0xtAt8gDeiXjG+LY9BbZnLk
+         m5vg==
+X-Gm-Message-State: AOAM5314fmwtzQok8pYBT75b8JqXjcFRHolQC48c/5QnOI8WPp7/zB6C
+        vXkJT9pWfHFYvPJ4To5lq6G9RpbP2FPF2aGBGMY=
+X-Google-Smtp-Source: ABdhPJzbX0h4Uh+m6cq4jAo57sstkGWVD2F8nZ8RsWP64JZ3iNA/azYn/kT1fRyfpJYji4mRYdsYPVQZmFe18hOGedk=
+X-Received: by 2002:a05:6122:b72:: with SMTP id h18mr5122218vkf.1.1626183459647;
+ Tue, 13 Jul 2021 06:37:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Content-Disposition: inline
-In-Reply-To: <20210713094456.23288-2-jon.lin@rock-chips.com>
-X-Cookie: Keep away from fire or flame.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210712194422.12405-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210712194422.12405-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210712194422.12405-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 13 Jul 2021 15:37:28 +0200
+Message-ID: <CAMuHMdX4bmJgtESAM50n7XbphG8BTJcC7GrDSQ+1LFrQMQpgfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] drivers: clk: renesas: r9a07g044-cpg: Add GPIO
+ clock and reset entries
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jul 12, 2021 at 9:44 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add GPIO clock and reset entries in CPG driver.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.15.
 
-On Tue, Jul 13, 2021 at 05:44:47PM +0800, Jon Lin wrote:
+Gr{oetje,eeting}s,
 
-> +properties:
-> +  compatible:
-> +    const: rockchip,sfc
+                        Geert
 
-Rob has repeatedly queried how generic this compatible is - can you
-please respond to this?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDtgeQACgkQJNaLcl1U
-h9Aj+Qf9HQEP3TDGE1oQIqNLlImhDQnaT3hnM3Iy5CN5AFSzz3RoFWud4t5AfnMI
-qKTI9Fs2uk6PR+G/6eC1l0tqcK3K1tCguZG+q6QX7hfqknaA5OTiSGKA+SkflOV+
-FLkrz0jfnx3PsZDPIFo8mom9zKoBu/J9Tx170c2LFu9UV4wAta5ciZYjvi2Qk4Bp
-F4LZ6PMrJEIJia4OeAdJDjezUlaCNQUOMrKdhYLNaxezLSPAqKZ1GFE7SL5/r9mM
-xuD7k3FykkG+XyeAPgClbLM6201FvsM2Jg+lP5mjHYkFudHZ6C6BRC6SMuyxuXNn
-hRrqvW5E2j49VH3K459GsKOmZb5yFw==
-=eWOC
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
