@@ -2,198 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B151AC11F66
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 03:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7164CC07E95
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 09:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94C27610A7
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 03:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8126115A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 09:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbhGMDEH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jul 2021 23:04:07 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:15251 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbhGMDEE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jul 2021 23:04:04 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1626145275; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=HB7jBeoN0dr1qnyamHbemyhTM6XR1B1zi7zhzexijIU=; b=QMaW7ydjJMqFKirt2ClT+VE+b+2V0GcjiU4Yc+ZzqCk7fXC/gk5CkWavyoVksfoCCeebbSoF
- aFHgKB+dD/hfn793nYglLawEq4mIwWIJr6vUHXVf/LQXdgPFZnksARdc67RFmvh4gR8tgy1X
- ktIXRIJrhIr7IsRktzj4Sz3sG6U=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 60ed01de5e3e57240b0816ce (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 13 Jul 2021 03:00:46
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A4F52C433F1; Tue, 13 Jul 2021 03:00:45 +0000 (UTC)
-Received: from [192.168.0.100] (unknown [49.204.181.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09413C433D3;
-        Tue, 13 Jul 2021 03:00:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09413C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 6/6] clk: qcom: Add video clock controller driver for
- SC7280
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-References: <1619519590-3019-1-git-send-email-tdas@codeaurora.org>
- <1619519590-3019-7-git-send-email-tdas@codeaurora.org>
- <162261760498.4130789.12499425999582046146@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <bd275558-5280-23d5-33b6-88746588e336@codeaurora.org>
-Date:   Tue, 13 Jul 2021 08:30:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <162261760498.4130789.12499425999582046146@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S235465AbhGMJ5L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jul 2021 05:57:11 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:35958 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235453AbhGMJ5H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 05:57:07 -0400
+Received: from localhost (unknown [192.168.167.13])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 06134D5BD9;
+        Tue, 13 Jul 2021 17:54:09 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P30158T139873832912640S1626170037329023_;
+        Tue, 13 Jul 2021 17:53:59 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <f4edf0553fb64da733e924475bc5017d>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: linux-spi@vger.kernel.org
+X-RCPT-COUNT: 20
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Jon Lin <jon.lin@rock-chips.com>
+To:     linux-spi@vger.kernel.org
+Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Subject: [PATCH v12 10/10] arm64: dts: rockchip: Enable SFC for Odroid Go Advance
+Date:   Tue, 13 Jul 2021 17:53:55 +0800
+Message-Id: <20210713095355.3249-1-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210713094718.1709-1-jon.lin@rock-chips.com>
+References: <20210713094718.1709-1-jon.lin@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+From: Chris Morgan <macromorgan@hotmail.com>
 
-Thanks for your review.
+This enables the Rockchip Serial Flash Controller for the Odroid Go
+Advance. Note that while the attached SPI NOR flash and the controller
+both support quad read mode, only 2 of the required 4 pins are present.
+The rx bus width is set to 2 for this reason, and tx bus width is set
+to 1 for compatibility reasons.
 
-On 6/2/2021 12:36 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2021-04-27 03:33:10)
->> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
->> new file mode 100644
->> index 0000000..3387154
->> --- /dev/null
->> +++ b/drivers/clk/qcom/videocc-sc7280.c
->> @@ -0,0 +1,372 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,videocc-sc7280.h>
->> +
->> +#include "clk-alpha-pll.h"
->> +#include "clk-branch.h"
->> +#include "clk-rcg.h"
->> +#include "common.h"
->> +#include "reset.h"
->> +#include "gdsc.h"
->> +
->> +enum {
->> +       P_BI_TCXO,
->> +       P_SLEEP_CLK,
->> +       P_VIDEO_PLL0_OUT_EVEN,
->> +};
->> +
->> +static struct pll_vco lucid_vco[] = {
-> 
-> const?
-> 
+Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+---
 
-Yes, next patch will have this updated.
+Changes in v12: None
+Changes in v11:
+- The tx is set to 1 for Odroid Go Advance device
 
->> +       { 249600000, 2000000000, 0 },
->> +};
->> +
-> [...]
->> +
->> +static const struct parent_map video_cc_parent_map_0[] = {
->> +       { P_BI_TCXO, 0 },
->> +       { P_VIDEO_PLL0_OUT_EVEN, 3 },
->> +};
->> +
->> +static const struct clk_parent_data video_cc_parent_data_0[] = {
->> +       { .fw_name = "bi_tcxo" },
->> +       { .hw = &video_pll0.clkr.hw },
->> +};
->> +
->> +static const struct parent_map video_cc_parent_map_1[] = {
->> +       { P_SLEEP_CLK, 0 },
->> +};
->> +
->> +static const struct clk_parent_data video_cc_parent_data_1[] = {
->> +       { .fw_name = "sleep_clk" },
->> +};
->> +
->> +static const struct parent_map video_cc_parent_map_2[] = {
->> +       { P_BI_TCXO, 0 },
->> +};
->> +
->> +static const struct clk_parent_data video_cc_parent_data_2_ao[] = {
->> +       { .fw_name = "bi_tcxo_ao" },
-> 
-> This is new. Why would we want the video clk parent state to turn off
-> when the CPU is off? Does the video engine keep XO enabled for itself?
-> Can you please add some comment into the code explaining why it's ok to
-> use the ao clk here?
-> 
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+Changes in v1: None
 
-This clock is from HW design is enabled, thus our generation scripts 
-have marked it to _ao. But I will be removing this in the next patch as 
-it is not required to be modelled.
+ .../boot/dts/rockchip/rk3326-odroid-go2.dts      | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
->> +};
->> +
->> +static const struct freq_tbl ftbl_video_cc_iris_clk_src[] = {
->> +       F(133333333, P_VIDEO_PLL0_OUT_EVEN, 3, 0, 0),
->> +       F(240000000, P_VIDEO_PLL0_OUT_EVEN, 2, 0, 0),
->> +       F(335000000, P_VIDEO_PLL0_OUT_EVEN, 2, 0, 0),
->> +       F(424000000, P_VIDEO_PLL0_OUT_EVEN, 2, 0, 0),
->> +       F(460000000, P_VIDEO_PLL0_OUT_EVEN, 2, 0, 0),
->> +       { }
->> +};
-> [...]
->> +
->> +static struct clk_branch video_cc_xo_clk = {
->> +       .halt_reg = 0x7018,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x7018,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "video_cc_xo_clk",
->> +                       .parent_hws = (const struct clk_hw*[]){
->> +                               &video_cc_xo_clk_src.clkr.hw,
->> +                       },
->> +                       .num_parents = 1,
->> +                       .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-> 
-> Please add a comment why it is critical.
-> 
-
-Next patch will remove this clock. As it is already enabled from HW, 
-will not model the clock to not disable it from SW.
-
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
+index 49c97f76df77..4410a6ef5ada 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3326-odroid-go2.dts
+@@ -484,6 +484,22 @@
+ 	status = "okay";
+ };
+ 
++&sfc {
++	pinctrl-0 = <&sfc_clk &sfc_cs0 &sfc_bus2>;
++	pinctrl-names = "default";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <108000000>;
++		spi-rx-bus-width = <2>;
++		spi-tx-bus-width = <1>;
++	};
++};
++
+ &tsadc {
+ 	status = "okay";
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.17.1
 
---
+
+
