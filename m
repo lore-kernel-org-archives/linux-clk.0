@@ -2,108 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2547EC07E9A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 09:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8CCC11F66
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 09:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0272661374
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 09:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C57613AA
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 09:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238223AbhGNJP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jul 2021 05:15:29 -0400
-Received: from mga14.intel.com ([192.55.52.115]:12515 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238123AbhGNJP3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Jul 2021 05:15:29 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10044"; a="210130738"
-X-IronPort-AV: E=Sophos;i="5.84,238,1620716400"; 
-   d="scan'208";a="210130738"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 02:12:37 -0700
-X-IronPort-AV: E=Sophos;i="5.84,238,1620716400"; 
-   d="scan'208";a="413227226"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 02:12:35 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1m3awP-00DFh0-4X; Wed, 14 Jul 2021 12:12:29 +0300
-Date:   Wed, 14 Jul 2021 12:12:29 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Liu Ying <victor.liu@nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S238647AbhGNJ05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 05:26:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238362AbhGNJ05 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 05:26:57 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A5EC06175F
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jul 2021 02:24:05 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
+        by albert.telenet-ops.be with bizsmtp
+        id UxQ02500h1ccfby06xQ0WW; Wed, 14 Jul 2021 11:24:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3b7Y-0015NQ-Di; Wed, 14 Jul 2021 11:24:00 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3b7X-00A35F-PB; Wed, 14 Jul 2021 11:23:59 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: <soc.lore.kernel.org>
+To:     soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [RFC PATCH] clk: fractional-divider: Correct max_{m,n} handed
- over to rational_best_approximation()
-Message-ID: <YO6qfQMcvr9szZTJ@smile.fi.intel.com>
-References: <20210714064129.1321277-1-victor.liu@nxp.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] Renesas fixes for v5.14
+Date:   Wed, 14 Jul 2021 11:23:50 +0200
+Message-Id: <cover.1626253929.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210714064129.1321277-1-victor.liu@nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 02:41:29PM +0800, Liu Ying wrote:
-> If a fractional divider clock has the flag
-> CLK_FRAC_DIVIDER_ZERO_BASED set, the maximum
-> numerator and denominator handed over to
-> rational_best_approximation(), in this case
-> max_m and max_n, should be increased by one
-> comparing to those have the flag unset.  Without
-> this patch, a zero based fractional divider
-> with 1-bit mwidth and 3-bit nwidth would wrongly
-> generate 96MHz clock rate if the parent clock
-> rate is 288MHz, while the expected clock rate
-> is 115.2MHz with m = 2 and n = 5.
+	Hi soc folks,
 
-Make sure that your editor is configured to allow you to have lines ~70-72
-characters long.
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
-...
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
 
-> The patch is RFC, because the rationale behind the below snippet in
-> clk_fd_general_approximation() is unclear to Jacky and me and we are
-> not sure if there is any room to improve this patch due to the snippet.
-> Maybe, Andy may help shed some light here.  Thanks.
-> 
-> -----------------------------------8<---------------------------------
-> /*
->  * Get rate closer to *parent_rate to guarantee there is no overflow
->  * for m and n. In the result it will be the nearest rate left shifted
->  * by (scale - fd->nwidth) bits.
->  */
+are available in the Git repository at:
 
-I don't know how to rephrase above comment better.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v5.14-tag1
 
-> scale = fls_long(*parent_rate / rate - 1);
-> if (scale > fd->nwidth)
-> 	rate <<= scale - fd->nwidth;
+for you to fetch changes up to 432b52eea3dcf48083bafa4b2b6ef5b054ead609:
 
-This takes an advantage of the numbers be in a form of
+  ARM: shmobile: defconfig: Restore graphical consoles (2021-07-13 09:45:51 +0200)
 
-	n = k * 2^m, (1)
+----------------------------------------------------------------
+Renesas fixes for v5.14
 
-where m will be scale in the snippet above. Thus, if n can be represented by
-(1), we opportunistically reduce amount of bits needed for it by shifting right
-by m bits.
+  - Fix a clock/reset handling design issue on the new RZ/G2L SoC,
+    requiring an atomic change to DT binding definitions, clock driver,
+    and DTS,
+  - Restore graphical consoles in the shmobile_defconfig.
 
-Does it make sense?
+Background for the first part: after queuing the initial support for the
+new Renesas RZ/G2{L,LC} SoCs for v5.14, we discovered an issue with the
+way how clocks and resets are handled for modules more complex than
+serial ports and i2c controllers.  Fixing that required a redesign of
+the DT binding definitions, which are a hard dependency for both the
+clock/reset driver and DTS.
+As all future changes to the RZ/G2L clock driver and DTS files depend on
+this, it would be good if this would make it for v5.14-rc2.
 
-The code looks good to me, btw, although I dunno if you need to call the newly
-introduced function before or after the above mentioned snippet.
+Sorry for the mess, and thanks for pulling!
 
--- 
-With Best Regards,
-Andy Shevchenko
+----------------------------------------------------------------
+Biju Das (5):
+      clk: renesas: rzg2l: Add multi clock PM support
+      clk: renesas: r9a07g044: Rename divider table
+      clk: renesas: r9a07g044: Fix P1 Clock
+      clk: renesas: r9a07g044: Add P2 Clock support
+      dt-bindings: clock: r9a07g044-cpg: Update clock/reset definitions
 
+Geert Uytterhoeven (1):
+      ARM: shmobile: defconfig: Restore graphical consoles
 
+ arch/arm/configs/shmobile_defconfig        |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi |   4 +-
+ drivers/clk/renesas/r9a07g044-cpg.c        |  79 ++++++----
+ drivers/clk/renesas/renesas-rzg2l-cpg.c    | 110 +++++++-------
+ drivers/clk/renesas/renesas-rzg2l-cpg.h    |  37 +++--
+ include/dt-bindings/clock/r9a07g044-cpg.h  | 236 ++++++++++++++++++++++-------
+ 6 files changed, 320 insertions(+), 147 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
