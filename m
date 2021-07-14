@@ -2,101 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2EEC07E9A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 10:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E76C07E9A
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 10:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D56261042
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 10:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34026610A7
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 10:38:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239066AbhGNKUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jul 2021 06:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60012 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238728AbhGNKUb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 06:20:31 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FDAC061760
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jul 2021 03:17:39 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
-        by albert.telenet-ops.be with bizsmtp
-        id UyHd2500Y1ccfby06yHdua; Wed, 14 Jul 2021 12:17:37 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m3bxR-0016dr-J9; Wed, 14 Jul 2021 12:17:37 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m3bxR-00A6PD-67; Wed, 14 Jul 2021 12:17:37 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        id S232091AbhGNKlX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 06:41:23 -0400
+Received: from mga02.intel.com ([134.134.136.20]:20183 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229518AbhGNKlX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Jul 2021 06:41:23 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10044"; a="197509553"
+X-IronPort-AV: E=Sophos;i="5.84,238,1620716400"; 
+   d="scan'208";a="197509553"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 03:38:31 -0700
+X-IronPort-AV: E=Sophos;i="5.84,238,1620716400"; 
+   d="scan'208";a="571132598"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 03:38:28 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1m3cHW-00DHDb-Fl; Wed, 14 Jul 2021 13:38:22 +0300
+Date:   Wed, 14 Jul 2021 13:38:22 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Liu Ying <victor.liu@nxp.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH resend] clk: Align provider-specific CLK_* bit definitions
-Date:   Wed, 14 Jul 2021 12:17:36 +0200
-Message-Id: <5468cd9e50cda8fc59cb6baab9413c6c0de1a974.1626257689.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [RFC PATCH] clk: fractional-divider: Correct max_{m,n} handed
+ over to rational_best_approximation()
+Message-ID: <YO6+nkzDlNM/KJio@smile.fi.intel.com>
+References: <20210714064129.1321277-1-victor.liu@nxp.com>
+ <YO6qfQMcvr9szZTJ@smile.fi.intel.com>
+ <1f1b38f9c42093bea5e6a8ccb458bdf799069157.camel@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f1b38f9c42093bea5e6a8ccb458bdf799069157.camel@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The definition of CLK_MULTIPLIER_ROUND_CLOSEST is not aligned to the two
-bit definitions next to it.  A deeper inspection reveals that the
-alignment of CLK_MULTIPLIER_ROUND_CLOSEST does match the most common
-alignment.
+On Wed, Jul 14, 2021 at 06:10:46PM +0800, Liu Ying wrote:
+> On Wed, 2021-07-14 at 12:12 +0300, Andy Shevchenko wrote:
+> > On Wed, Jul 14, 2021 at 02:41:29PM +0800, Liu Ying wrote:
 
-Align the bit definitions for the various provider types throughout the
-file at 40 columns, to increase uniformity.
+...
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/clk-provider.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> > > /*
+> > >  * Get rate closer to *parent_rate to guarantee there is no overflow
+> > >  * for m and n. In the result it will be the nearest rate left shifted
+> > >  * by (scale - fd->nwidth) bits.
+> > >  */
+> > 
+> > I don't know how to rephrase above comment better.
+> > 
+> > > scale = fls_long(*parent_rate / rate - 1);
+> > > if (scale > fd->nwidth)
+> > > 	rate <<= scale - fd->nwidth;
+> > 
+> > This takes an advantage of the numbers be in a form of
+> > 
+> > 	n = k * 2^m, (1)
+> > 
+> > where m will be scale in the snippet above. Thus, if n can be represented by
+> > (1), we opportunistically reduce amount of bits needed for it by shifting right
+> > by m bits.
+> > 
+> > Does it make sense?
+> 
+> Thanks for your explaination.
+> But, sorry, Jacky and I still don't understand this.
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index d83b829305c05d40..7be81d5fcf8c4844 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -342,7 +342,7 @@ struct clk_fixed_rate {
- 	unsigned long	flags;
- };
- 
--#define CLK_FIXED_RATE_PARENT_ACCURACY		BIT(0)
-+#define CLK_FIXED_RATE_PARENT_ACCURACY	BIT(0)
- 
- extern const struct clk_ops clk_fixed_rate_ops;
- struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
-@@ -1020,8 +1020,8 @@ struct clk_fractional_divider {
- 
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
- 
--#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
--#define CLK_FRAC_DIVIDER_BIG_ENDIAN		BIT(1)
-+#define CLK_FRAC_DIVIDER_ZERO_BASED	BIT(0)
-+#define CLK_FRAC_DIVIDER_BIG_ENDIAN	BIT(1)
- 
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
-@@ -1069,9 +1069,9 @@ struct clk_multiplier {
- 
- #define to_clk_multiplier(_hw) container_of(_hw, struct clk_multiplier, hw)
- 
--#define CLK_MULTIPLIER_ZERO_BYPASS		BIT(0)
-+#define CLK_MULTIPLIER_ZERO_BYPASS	BIT(0)
- #define CLK_MULTIPLIER_ROUND_CLOSEST	BIT(1)
--#define CLK_MULTIPLIER_BIG_ENDIAN		BIT(2)
-+#define CLK_MULTIPLIER_BIG_ENDIAN	BIT(2)
- 
- extern const struct clk_ops clk_multiplier_ops;
- 
+Okay, We have two values in question:
+ r_o (original rate of the parent clock)
+ r_u (the rate user asked for)
+
+We have a pre-scaler block which asks for
+ m (denominator)
+ n (nominator)
+values to be provided to satisfy the (2)
+
+	r_u ~= r_o * m / n, (2)
+
+where we try our best to make it "=" instead of "~=".
+
+Now, m and n have the limitation by a range, e.g.
+
+	n >= 1, n < N_lim, where N_lim = 2^nlim. (3)
+
+Hence, from (2) and (3), assuming the worst case m = 1,
+
+	ln2(r_o / r_u) <= nlim. (4)
+
+The above code tries to satisfy (4).
+
+Have you got it now?
+
+> > The code looks good to me, btw, although I dunno if you need to call the newly
+> > introduced function before or after the above mentioned snippet.
+> 
+> Assuming that snippet is fully orthogonal to this patch, then it
+> doesn't matter if it's before or after.
+
+Please, double check this. Because you play with limits, while we expect them
+to satisfy (3).
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
