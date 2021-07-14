@@ -2,155 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 837E5C11F66
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43488C07E9A
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 06:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67DF96135A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jul 2021 23:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239C4613A9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 06:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237068AbhGMX2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jul 2021 19:28:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237061AbhGMX2P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jul 2021 19:28:15 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC79CC0613EE;
-        Tue, 13 Jul 2021 16:25:22 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id m11-20020a05600c3b0bb0290228f19cb433so2726661wms.0;
-        Tue, 13 Jul 2021 16:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FH75JwQEVliZTaWQznunNwTYXm+Fo6iQYmM7PbpCqSg=;
-        b=fX5FxxXqlzoY7IxLhQNQg1smTSkSn1eHqVimKllvBWfJTwrNPzR1Vrmp8VR/Lq1jIo
-         a0SbXWKhZenNgh0uKQDmLwDf6R3mFKNIuOupKkUclmsRjj8EKFOWCVZug+H0eE15Japw
-         /hxLUZTqVdzeTa7nhhGLSSRlbSsUxM4JRlmxKHE9khgg2nsjtk+euga2pgJTtQuFcIpb
-         1apBe7gFE6sDYtHpr0+XzvUcS216jM1IejOTdxW1WfkoHmCzZVDAMD8zDrzKAqvb19Dd
-         VaxEtLmqr3NId1hApJ1XxE1uvcQpuyM7pZrIs9WKSmG19HsMwOLMhYz0PxMjl3W+HJiE
-         247g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FH75JwQEVliZTaWQznunNwTYXm+Fo6iQYmM7PbpCqSg=;
-        b=aOtIdfqbSC3dpZXXNVZ5LkWo3Hq2csqHtA4lNdwV/5uMEAi709S5sFdZSF8gM95FUi
-         9UA8SRSr2dVlMiey9WXYuk9+qoAcWvnDmQ4+9D8eDQDDYrNsYZKmrGZm1f/CWHyXPZ3I
-         6hCTTkuOpdNE/hYpgqg8bUf6f12kVX76FTpJFUc5w/xQmRjXrd6O/WdwGPgbI9+h1Aws
-         V52CY7XNjWXwfBitF1Xo8+gDVQp7tF45XgWLuBJUDwkpIr3uWXjcV+TlM/q7xY7OFMk9
-         IMnjJrIV3e/tiT4SWajPWlpR9o2mauxFzOf7LSbtCqeYRgezuC5q6KKJ6nwHdzfhSKwH
-         f+aw==
-X-Gm-Message-State: AOAM532g/O4QuLYtNy5J+q8xF/exKKb4e8q17j3XpSTOYFJPmJV2WSoX
-        toGAPoXLKVCiV1VXyzKDZE8=
-X-Google-Smtp-Source: ABdhPJxnNKco3a/kivcsIRnmdxRAj+ZXML03zzTKPNo++xrIsOEnuoPpZAmSAlxRz8mspb013enWwg==
-X-Received: by 2002:a05:600c:4841:: with SMTP id j1mr7773098wmo.88.1626218721546;
-        Tue, 13 Jul 2021 16:25:21 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a01-0c23-c041-6f00-f22f-74ff-fe21-0725.c23.pool.telefonica.de. [2a01:c23:c041:6f00:f22f:74ff:fe21:725])
-        by smtp.googlemail.com with ESMTPSA id o11sm3857390wmc.2.2021.07.13.16.25.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jul 2021 16:25:21 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, jbrunet@baylibre.com,
-        narmstrong@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 6/6] clk: meson: meson8b: Export the video clocks
-Date:   Wed, 14 Jul 2021 01:25:10 +0200
-Message-Id: <20210713232510.3057750-7-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
-References: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
+        id S238149AbhGNGpr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 02:45:47 -0400
+Received: from mail-vi1eur05on2074.outbound.protection.outlook.com ([40.107.21.74]:17345
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237948AbhGNGpq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Jul 2021 02:45:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cSG12F7+2mUJ/8GyOfCBkmWc6RMVrt4fgytaMJ15cDdXAK9iQaixcGdPGiaeba1BSxBD8E6pYZvSDV5CfabGVKxdYP2fCk/7gGYs763f8msGWyuAuz181R5fzd7pMv2HF1XMDypiTJTiq/A/AiU+454Qo671DulgC51am3rXmhN61Gj4MmUbNXOTJNNNqEt45I+rbCgTLTxrM3PoPz2rDfgYfuiow+c1UBqXMi00g/iVTgKCPBJt1ME/eZ3IdQz5yPLXX1tw6hMVdd/CH9L9De5ffZUf8uRGA5zsulsJy0PGrq3bXoxXhsO7BJO+xRPw6Xu8A3eH2dcM+IVwLBGrLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cLYDlWzqdA2sBfyGBYYAfzZj+pUhlMJmvlUdGjkhHMU=;
+ b=EYYt2MCi006cZx6NwkdbjLQCE4BWX79gYcx/fJ91vfjBnacmVKn3qVZIkPen1spbhlEBAZWS8fgar6FTVxxvKv7fWOtPddJ1gaDjzDaxxLigBBVPApoelGKBlLVkrA0mdMbcn62qFa2B5TtnoJ+oxfnWX7XoqCGh4OOtR3QzpK0ipA2KNZrvQCWz95lUaIoac6DsGOJOLX7ELmwaz7EQ496Frrc4ClMdjrK51dQGW0o3mmBIYfmSDKIqeTgw3/VWFfaEHSDt3TrYtKEZrYA9MCVI6SXMK60pnDGTLM1rXzAjUUWJjAjZDb/i2+vdoYNWvecBZ2marOA+cCSO02Xjaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cLYDlWzqdA2sBfyGBYYAfzZj+pUhlMJmvlUdGjkhHMU=;
+ b=eWSqdiY2KKTgpzL3TFlHPej/Ik9RxYY39h+NLNfYE+OzpZAm5h0JkJQpjmzY2epW/Abatvg4h442DqCYV5Y4ROfj2xXWe81wz+ld1pFQ2bSWkch+t6MtTgPxCzm4gClhtgybquSelJ8OodAMAMtZ7lM9JbE81k0GSbi5l9BY5+g=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AM6PR04MB4455.eurprd04.prod.outlook.com (2603:10a6:20b:15::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.23; Wed, 14 Jul
+ 2021 06:42:34 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::1d4c:c3f2:dbbb:88f2]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::1d4c:c3f2:dbbb:88f2%9]) with mapi id 15.20.4242.023; Wed, 14 Jul 2021
+ 06:42:34 +0000
+From:   Liu Ying <victor.liu@nxp.com>
+To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>
+Subject: [RFC PATCH] clk: fractional-divider: Correct max_{m,n} handed over to rational_best_approximation()
+Date:   Wed, 14 Jul 2021 14:41:29 +0800
+Message-Id: <20210714064129.1321277-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0127.apcprd03.prod.outlook.com
+ (2603:1096:4:91::31) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0127.apcprd03.prod.outlook.com (2603:1096:4:91::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.10 via Frontend Transport; Wed, 14 Jul 2021 06:42:31 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9fc58e38-742e-4634-0c5d-08d946928fd8
+X-MS-TrafficTypeDiagnostic: AM6PR04MB4455:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB44557D0B5F41E85855B3E80C98139@AM6PR04MB4455.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2MUL8/z3vMY5J7GayXSTkj7dHp1MLBIEwa8kzPoKFD1mKprPxkjPTa/8z/1Su4KvY2jFtISAC1+tdk5ZuwUD6xQUcRkZUP9KJOuPnGy+uUaII5R4AqHr1IqYwu/RTU5jpClEUi2fFTLh9MVeUNiksZsAlNm4cd6bPgcWuNe9gjrKhCcVXaerjDQZ4saiJdhhqnbZkHjth8us3qDsRiSQLye5/x0jeHajz54zrkPpFkSZDth0rfW9SZXOSxtRuCWeHzUgCBJRDvktdP0+iF2s4YHCdE6OLk2rI2XBNJy5N92IwYi8fDXw12xzgVum8fHomxSWC/mVNFtq8X+uaF3ytI5txZO2iLhLTRaKRuTHcjLV+cwvk++Ncoo5c9EEfplo5u2NyaLMjUun8MOobYK+UYmmkaWuoRFGO7Q31K6KSDmfKj+Rfr2YQlYeTQMRVkTZIYlHOUWpIwiHSAGSdpTS2aZLcAO04bPOuWcjwsrwscb5q5GGwpedUuAGyWHNM0CPKc3fI38AER0naJnNqLusaGB+rmwBdhg+cVTVkxIBUGC7y/DxN7Vd4K83SUT64kuzi+2MpG4qtLcByoX37beW+oAyQEqBD3v+f7F91egQFoyjViYSx6MKYbCQhEG6+a4LnEDtFOyBrOPvzimEEj1l76QU7Bn7jYdeFVMLB2id0iRLsOiED+tXsH13eVlQML3zHC63wcfI0TTANv7R6OJViA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(366004)(346002)(136003)(396003)(8676002)(83380400001)(956004)(38350700002)(2616005)(5660300002)(6486002)(26005)(316002)(52116002)(38100700002)(8936002)(1076003)(478600001)(86362001)(6512007)(54906003)(66556008)(6506007)(66476007)(4326008)(36756003)(66946007)(186003)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kAqJ7TRpXCgfKqYOvl84ii3kFKqldy76mI/K1EmHTQ2plFywhV6U5HVRPLBW?=
+ =?us-ascii?Q?aBneCeITV/+1FBWP1/JjuZclRM8RGgn7C32l35u38JK4uL5Hrce8Y/JCyGbJ?=
+ =?us-ascii?Q?rYQ84v81upwYXqH7zgcT6pUuf/CRwotgyaWvfea6OmVDK+fS3ZDnHNtLsesk?=
+ =?us-ascii?Q?VxnImRrY0Ll1ByayBIH5QAEc+UX2vYR8o2kxu4flKsGishBsf2yAOzfYjvVR?=
+ =?us-ascii?Q?gT3Tmy8I2y7/EIe9WeTZou4uki9j+xY4vnldBaNkv3uyZIRrDICUVIBj5oNC?=
+ =?us-ascii?Q?c9N5foMekYd2d6lqFchsxnJYUnrX9EPw5EYiK2jAjLGIj6A0wc1qqsTU+YGg?=
+ =?us-ascii?Q?OfZXabcIOTex17aI8HcnOxlnmbfiXdaCjveC615bRSsAyg7zAoD2yQNPcled?=
+ =?us-ascii?Q?DMPdlLuToFsA7jpxJS09Lv5QQ85A0yu28hFBG0iM6YHqr8ZUknbUFueMUwHw?=
+ =?us-ascii?Q?Zy6wSSIysExQbC3oMgO+OadG58j3ZGONAGCYVPLOzERTvtcRWZ+6Y3O41OKD?=
+ =?us-ascii?Q?MOWXsXEWT0H4+/zTTdO/DPobLbs4rPsnk0tlPf5ir+wgdRd9Iy+HLKaLg0bn?=
+ =?us-ascii?Q?VLgVWa0XnLl3For3y7QM4jwOxSwWEEoUlMqdxiFpLZHI4k0SrRwrLrvQ5Jfx?=
+ =?us-ascii?Q?Ra+mVTXP77CJgpcm/9epgpBfaAfkGNtMXV5beK9taoFqFUbRh2OXMzX33ajx?=
+ =?us-ascii?Q?Bs131xXBMiQ2tmnlcEqXlolc8huYC/rZ0L0+KOmC7PzqyNMyJn0Xb6A/UlSQ?=
+ =?us-ascii?Q?MBnGhG51tu33WhkvwfxEM0S66CjrOiMi3kPoT832muS0b69mAZANOCmfxasX?=
+ =?us-ascii?Q?PiV/CjdJ3Pd7cKUJtk1PFcl9UD4G/qyaeNi6h28t/SBvbxNUCPUoX0MijC9O?=
+ =?us-ascii?Q?6lWP77wmb43i8dUnDRZozoe+MK8ax/UV5SK8YDwS/+wkY9uSg2LJqk/K/70l?=
+ =?us-ascii?Q?gxW1BIIaiPnziGHwwdPnctzOc43lt40hVVaCZplc7iZU7BaQxGw3AKw7dlsQ?=
+ =?us-ascii?Q?7/5AZLv9yXvKIXDoFNwDV9oLqLDHVflwE/JPcqi5pENUk0Qb9MjYlZOmZv2u?=
+ =?us-ascii?Q?TLX8P1G92k5CaXvzZQv+nIlXQ4T2h0CsKJBsKf2LMaYtTEURJCsfZFM4S7S3?=
+ =?us-ascii?Q?NCFGTyg6gDBIiCyVOw0c/mXiS0BQQnvYBRa4p9MwwBaQnTZTzsv8DQXL2eXm?=
+ =?us-ascii?Q?232ufoqJCflaXkCki8MOE81AVXfs3BtYHLvNAXmtYg5CqNafy9A7G++ut7Ol?=
+ =?us-ascii?Q?ok2cWAkFIh8/RIZDCEa0JnvFGgO9OCRNZo4J8XSi3croQyckV4yEFi7a4mOu?=
+ =?us-ascii?Q?wHSWQ9tpyjggPXjMdWCIvdtP?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fc58e38-742e-4634-0c5d-08d946928fd8
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2021 06:42:34.3609
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2+xW4xVVuGcZydXMyp5IYrZnakm+rCBustdIq++fr9pp7oIDVPhfyHyzS1Zyagw5vdfKMYXhKYORkcGrNnXsMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4455
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Setting the video clocks requires fine-tuned adjustments of various
-video clocks. Export the required ones to allow changing the video clock
-for the CVBS and HDMI outputs at runtime.
+If a fractional divider clock has the flag
+CLK_FRAC_DIVIDER_ZERO_BASED set, the maximum
+numerator and denominator handed over to
+rational_best_approximation(), in this case
+max_m and max_n, should be increased by one
+comparing to those have the flag unset.  Without
+this patch, a zero based fractional divider
+with 1-bit mwidth and 3-bit nwidth would wrongly
+generate 96MHz clock rate if the parent clock
+rate is 288MHz, while the expected clock rate
+is 115.2MHz with m = 2 and n = 5.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Fixes: e983da27f70e ("clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support")
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+Signed-off-by: Jacky Bai <ping.bai@nxp.com>
 ---
- drivers/clk/meson/meson8b.h              | 12 +-----------
- include/dt-bindings/clock/meson8b-clkc.h | 10 ++++++++++
- 2 files changed, 11 insertions(+), 11 deletions(-)
+The patch is RFC, because the rationale behind the below snippet in
+clk_fd_general_approximation() is unclear to Jacky and me and we are
+not sure if there is any room to improve this patch due to the snippet.
+Maybe, Andy may help shed some light here.  Thanks.
 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index b5b591943e80..ce62ed47cbfc 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -117,14 +117,11 @@
- #define CLKID_PERIPH_SEL	125
- #define CLKID_AXI_SEL		127
- #define CLKID_L2_DRAM_SEL	129
--#define CLKID_HDMI_PLL_LVDS_OUT	131
--#define CLKID_HDMI_PLL_HDMI_OUT	132
-+#define CLKID_HDMI_PLL_LVDS_OUT 131
- #define CLKID_VID_PLL_IN_SEL	133
- #define CLKID_VID_PLL_IN_EN	134
- #define CLKID_VID_PLL_PRE_DIV	135
- #define CLKID_VID_PLL_POST_DIV	136
--#define CLKID_VID_PLL_FINAL_DIV	137
--#define CLKID_VCLK_IN_SEL	138
- #define CLKID_VCLK_IN_EN	139
- #define CLKID_VCLK_DIV1		140
- #define CLKID_VCLK_DIV2_DIV	141
-@@ -135,7 +132,6 @@
- #define CLKID_VCLK_DIV6		146
- #define CLKID_VCLK_DIV12_DIV	147
- #define CLKID_VCLK_DIV12	148
--#define CLKID_VCLK2_IN_SEL	149
- #define CLKID_VCLK2_IN_EN	150
- #define CLKID_VCLK2_DIV1	151
- #define CLKID_VCLK2_DIV2_DIV	152
-@@ -147,17 +143,11 @@
- #define CLKID_VCLK2_DIV12_DIV	158
- #define CLKID_VCLK2_DIV12	159
- #define CLKID_CTS_ENCT_SEL	160
--#define CLKID_CTS_ENCT		161
- #define CLKID_CTS_ENCP_SEL	162
--#define CLKID_CTS_ENCP		163
- #define CLKID_CTS_ENCI_SEL	164
--#define CLKID_CTS_ENCI		165
- #define CLKID_HDMI_TX_PIXEL_SEL	166
--#define CLKID_HDMI_TX_PIXEL	167
- #define CLKID_CTS_ENCL_SEL	168
--#define CLKID_CTS_ENCL		169
- #define CLKID_CTS_VDAC0_SEL	170
--#define CLKID_CTS_VDAC0		171
- #define CLKID_HDMI_SYS_SEL	172
- #define CLKID_HDMI_SYS_DIV	173
- #define CLKID_MALI_0_SEL	175
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index f33781338eda..78aa07fd7cc0 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -105,6 +105,16 @@
- #define CLKID_PERIPH		126
- #define CLKID_AXI		128
- #define CLKID_L2_DRAM		130
-+#define CLKID_HDMI_PLL_HDMI_OUT	132
-+#define CLKID_VID_PLL_FINAL_DIV	137
-+#define CLKID_VCLK_IN_SEL	138
-+#define CLKID_VCLK2_IN_SEL	149
-+#define CLKID_CTS_ENCT		161
-+#define CLKID_CTS_ENCP		163
-+#define CLKID_CTS_ENCI		165
-+#define CLKID_HDMI_TX_PIXEL	167
-+#define CLKID_CTS_ENCL		169
-+#define CLKID_CTS_VDAC0		171
- #define CLKID_HDMI_SYS		174
- #define CLKID_VPU		190
- #define CLKID_VDEC_1		196
+-----------------------------------8<---------------------------------
+/*
+ * Get rate closer to *parent_rate to guarantee there is no overflow
+ * for m and n. In the result it will be the nearest rate left shifted
+ * by (scale - fd->nwidth) bits.
+ */
+scale = fls_long(*parent_rate / rate - 1);
+if (scale > fd->nwidth)
+	rate <<= scale - fd->nwidth;
+-----------------------------------8<---------------------------------
+
+Jacky helped test this patch on i.MX7ulp EVK platform.
+
+ drivers/clk/clk-fractional-divider.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index b1e556f20911..86e985e14468 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -30,6 +30,19 @@ static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
+ 		writel(val, fd->reg);
+ }
+ 
++static inline void clk_fd_get_max_m_n(struct clk_fractional_divider *fd,
++				      unsigned long *max_m,
++				      unsigned long *max_n)
++{
++	*max_m = GENMASK(fd->mwidth - 1, 0);
++	*max_n = GENMASK(fd->nwidth - 1, 0);
++
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		(*max_m)++;
++		(*max_n)++;
++	}
++}
++
+ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 					unsigned long parent_rate)
+ {
+@@ -73,7 +86,7 @@ static void clk_fd_general_approximation(struct clk_hw *hw, unsigned long rate,
+ 					 unsigned long *m, unsigned long *n)
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+-	unsigned long scale;
++	unsigned long scale, max_m, max_n;
+ 
+ 	/*
+ 	 * Get rate closer to *parent_rate to guarantee there is no overflow
+@@ -84,9 +97,9 @@ static void clk_fd_general_approximation(struct clk_hw *hw, unsigned long rate,
+ 	if (scale > fd->nwidth)
+ 		rate <<= scale - fd->nwidth;
+ 
+-	rational_best_approximation(rate, *parent_rate,
+-			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+-			m, n);
++	clk_fd_get_max_m_n(fd, &max_m, &max_n);
++
++	rational_best_approximation(rate, *parent_rate, max_m, max_n, m, n);
+ }
+ 
+ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -115,12 +128,13 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+ 	unsigned long flags = 0;
++	unsigned long max_m, max_n;
+ 	unsigned long m, n;
+ 	u32 val;
+ 
+-	rational_best_approximation(rate, parent_rate,
+-			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+-			&m, &n);
++	clk_fd_get_max_m_n(fd, &max_m, &max_n);
++
++	rational_best_approximation(rate, parent_rate, max_m, max_n, &m, &n);
+ 
+ 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+ 		m--;
 -- 
-2.32.0
+2.25.1
 
