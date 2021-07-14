@@ -2,115 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C496C07E9A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 13:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87127C11F67
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 15:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBE61613B6
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 13:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67AB7613D7
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 15:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbhGNN3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jul 2021 09:29:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46702 "EHLO
+        id S239597AbhGNPQl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:16:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231521AbhGNN3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 09:29:04 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2690C061760
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jul 2021 06:26:12 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
-        by baptiste.telenet-ops.be with bizsmtp
-        id V1SB250061ccfby011SBKr; Wed, 14 Jul 2021 15:26:11 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m3etu-0019B9-U7; Wed, 14 Jul 2021 15:26:10 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m3etu-00AawP-9N; Wed, 14 Jul 2021 15:26:10 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S239608AbhGNPQk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 11:16:40 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1437CC06175F;
+        Wed, 14 Jul 2021 08:13:48 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id e20so3906939ljn.8;
+        Wed, 14 Jul 2021 08:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GztcTOsUqEihFXn3Q2HotsLpAiI5v2MRtVUADm5nE2M=;
+        b=GuuD5AUWzD4szy767jIAfUPEbCm+DAz3oMX+l+cze0C6RVSHnnS4HMlCovzyloBU30
+         O7+Fi92es4OtWurIs7RZQlMv5K5fB3dZQD3/T/X5gTuKGy3VSx3EafxIuokhnVENrCmr
+         Ntr+rR/0/Lpyg0lGTctYYXkxTPt+lNNK0Yb+88MyqMS8ITsPPYCv9KiHJUjWlWSxu9dV
+         wi91vfNZO8hNiquAekt7JIMQTEZY1VlUMOnqf9NXMHs4SoS6yaZv56wsmdl7o0AE+EtH
+         wM7Gayrcbr56p1g/B+Ee4eRESfnUukSzXs9cF3a0qv8bnwuJTwMqz+WKQiIaxvW8IoFA
+         lnLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GztcTOsUqEihFXn3Q2HotsLpAiI5v2MRtVUADm5nE2M=;
+        b=KHqSpAhgS+0H6p35+l1CUEeEjNJHnCg+izF+cJSykkjg/BeKHpk63R7rwhvCZUkgF1
+         2lRtzR+4EIHPyt8Tsc09uuFz5KHmHoL5Aqe4YrWBGOa+WrPegTiAJNbNGF1vMObduhqT
+         j0Wl6s8IC4b24CQ+t+zr5ViIzFQRQs6MLclumLiVnXIMWYwUhRQuTjFrrIRWU92AmSJO
+         tp2v1AxTf1qBmMFT1d0VKlRtd7aQ7FU6NUxXFB6jGinchN0O9xGkPmw8k1LlPtnqFYzQ
+         yImmb9n6RVB2pvlvVafNUCAK31g+id8bcg5FJVaSerCMc5X31KpzGSAl/YQyK9fUfws5
+         R+Tg==
+X-Gm-Message-State: AOAM53371u9XQnymFrq21lnDzoYGzqDIQOmLOejH32B4Ako/DIxBjvlM
+        rpKTBxwyXeFwOk5zzw2gEgAoxJ/eLcc=
+X-Google-Smtp-Source: ABdhPJxd7XItkZMbc1ywTqFI9DfcL57kFHqq8ei6QSbVOkDgVsFwR8X39raQrW0tQZWkGd0ptYtISA==
+X-Received: by 2002:a2e:9e95:: with SMTP id f21mr9383501ljk.137.1626275626276;
+        Wed, 14 Jul 2021 08:13:46 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
+        by smtp.googlemail.com with ESMTPSA id t24sm184249lfb.76.2021.07.14.08.13.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jul 2021 08:13:45 -0700 (PDT)
+Subject: Re: [PATCH v8 2/9] clk: tegra: Fix refcounting of gate clocks
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Rename renesas-rzg2l-cpg.[ch] to rzg2l-cpg.[ch]
-Date:   Wed, 14 Jul 2021 15:26:01 +0200
-Message-Id: <edc442daaedffcf10e835ff479d906fcae0e59db.1626268821.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20210516163041.12818-1-digetx@gmail.com>
+ <20210516163041.12818-3-digetx@gmail.com>
+ <fa13f623-dbd1-9b0c-dfd1-8d58800e04b4@nvidia.com>
+ <e61f1ee5-2c1e-7a1b-094e-810a587ce3cd@gmail.com>
+Message-ID: <35e7f162-1746-82c7-4129-0654beb77a79@gmail.com>
+Date:   Wed, 14 Jul 2021 18:13:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <e61f1ee5-2c1e-7a1b-094e-810a587ce3cd@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rename renesas-rzg2l-cpg.c and renesas-rzg2l-cpg.h to rzg2l-cpg.c resp.
-rzg2l-cpg.h, for consistency with other (sub)drivers.
+14.07.2021 14:59, Dmitry Osipenko пишет:
+> I now see this has been picked up for stable, but I don't see where
+> this was tagged for stable and so I am not sure how that happened?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v5.15.
-
- drivers/clk/renesas/Makefile                             | 2 +-
- drivers/clk/renesas/r9a07g044-cpg.c                      | 2 +-
- drivers/clk/renesas/{renesas-rzg2l-cpg.c => rzg2l-cpg.c} | 2 +-
- drivers/clk/renesas/{renesas-rzg2l-cpg.h => rzg2l-cpg.h} | 0
- 4 files changed, 3 insertions(+), 3 deletions(-)
- rename drivers/clk/renesas/{renesas-rzg2l-cpg.c => rzg2l-cpg.c} (99%)
- rename drivers/clk/renesas/{renesas-rzg2l-cpg.h => rzg2l-cpg.h} (100%)
-
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 5c6c5c721d98d827..7d018700d08bd9dc 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -37,7 +37,7 @@ obj-$(CONFIG_CLK_RCAR_CPG_LIB)		+= rcar-cpg-lib.o
- obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+= rcar-gen2-cpg.o
- obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+= rcar-gen3-cpg.o
- obj-$(CONFIG_CLK_RCAR_USB2_CLOCK_SEL)	+= rcar-usb2-clock-sel.o
--obj-$(CONFIG_CLK_RZG2L)			+= renesas-rzg2l-cpg.o
-+obj-$(CONFIG_CLK_RZG2L)			+= rzg2l-cpg.o
- 
- # Generic
- obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index ed5f5c11ac12d925..a71f920f5dfaa7da 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -12,7 +12,7 @@
- 
- #include <dt-bindings/clock/r9a07g044-cpg.h>
- 
--#include "renesas-rzg2l-cpg.h"
-+#include "rzg2l-cpg.h"
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
-diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-similarity index 99%
-rename from drivers/clk/renesas/renesas-rzg2l-cpg.c
-rename to drivers/clk/renesas/rzg2l-cpg.c
-index 9addc9dae31ac115..3b3b2c3347f3763f 100644
---- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -29,7 +29,7 @@
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- 
--#include "renesas-rzg2l-cpg.h"
-+#include "rzg2l-cpg.h"
- 
- #ifdef DEBUG
- #define WARN_DEBUG(x)	WARN_ON(x)
-diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-similarity index 100%
-rename from drivers/clk/renesas/renesas-rzg2l-cpg.h
-rename to drivers/clk/renesas/rzg2l-cpg.h
--- 
-2.25.1
-
+I don't know it was picked for stable. Maybe bot picks up all patches
+that have a "fix" word in commit message.
