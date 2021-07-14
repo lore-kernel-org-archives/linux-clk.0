@@ -3,79 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC18C47E48
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278E6C1B08C
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 21:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7701A613D7
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 045B9613CC
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 21:08:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234019AbhGNUxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jul 2021 16:53:31 -0400
-Received: from mail-il1-f179.google.com ([209.85.166.179]:41873 "EHLO
-        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhGNUxb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 16:53:31 -0400
-Received: by mail-il1-f179.google.com with SMTP id p3so2930078ilg.8;
-        Wed, 14 Jul 2021 13:50:39 -0700 (PDT)
+        id S235198AbhGNVLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 17:11:38 -0400
+Received: from mail-io1-f51.google.com ([209.85.166.51]:43541 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235120AbhGNVLi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 17:11:38 -0400
+Received: by mail-io1-f51.google.com with SMTP id k16so3836596ios.10;
+        Wed, 14 Jul 2021 14:08:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=OWiXarIXPKw2aPNSw9cZV80U357Vkr2GsrGVpeyjsQc=;
-        b=r+p5GVPlvwqJBg7VZwdjrNVLcebvyuIEReFtyCCY7FpWztuF9gogCX5fHog7UO8gRp
-         xi83kU7SHalZGQwrvNzGargsnal4ojFVuemA4kX6uYgWtdVDAR3CMbwcMM8G/BYaUvLP
-         P2p0vjs3wtTWIIvFOOHk6OjgnOBRZv4xrc7toD51im85wM5gaTa/L2jvBB50FGTRtdtm
-         znhH1u90mpfe/G7xInM10wV/bYLfxaAsmtWbxT72t4FKnNIbXkNiWbOYFvnxaJQ2DJpS
-         7ckXxqCEcLGmBRlnQukoC5xIMk+C8b3Gdou8OZpw9X3/4iwbjXc4wFOBD1qulBRtnpfX
-         g5Fg==
-X-Gm-Message-State: AOAM532KGu+vivFgf+OvcBuYZbTnDUc1F6f092Q0Xi8LYuIINsXt4ICO
-        1fSDDtZLzvvBxYzB9u8Ydw==
-X-Google-Smtp-Source: ABdhPJzIfokFz27UgVWurE1fZaeC9BUgl5IrSdDrPhzocFmPLHSsTMbDVpo92BgESGG0aAKy86GhDw==
-X-Received: by 2002:a92:ddce:: with SMTP id d14mr8016882ilr.279.1626295838837;
-        Wed, 14 Jul 2021 13:50:38 -0700 (PDT)
+        bh=Z5aC/xNGPLZVKGpScwExw74ebefIhtn/rWcpqTAwDEw=;
+        b=NsghyrzVw5LQlaevPf5sfiVUpyANgZ9a9PHTWSKnvn5+ybu7qK5CDFVyNowoXnzWUS
+         UxbJRkq2wdrG6wnBHEdBlYNzkkZnkQfpg/ZBsw5GO2vXpd1EfSrkPHYR8XJzjiy8U0un
+         hMqrunZo+75XMcZRmxL8o9Cazm9YTS+1I00VKMNV3/B1H9UAu/EOECo+W8YSu0Z/cQ20
+         9i1lfTJqdfPLNqWI/GgcZdqLubQy8OqgiAZtN5gBy31LFykxG2NZnCWF5CfD6FyW2wfF
+         +6aFSCZRpbtgoNZFVKREpcrDufQdqRWLOma1bV5YkbWKQE4hSEmnWmmhVZ+WhilME59s
+         An7Q==
+X-Gm-Message-State: AOAM531My0Gjrh6gI0T4xRhNkf0SFAXv8d6/vc0JXvKG7oIArIKhGrjY
+        v1xWIfA/LWv2aOceVf+f3796UHOjkUln
+X-Google-Smtp-Source: ABdhPJwvgJqL668Qul4ApNrxAJtsDyY6myGAu4WkvRNOjFn14sehvJHJs60+0s13mUNHx2BlfsbY/w==
+X-Received: by 2002:a5d:80cf:: with SMTP id h15mr91378ior.30.1626296925575;
+        Wed, 14 Jul 2021 14:08:45 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id 204sm1844033ioc.50.2021.07.14.13.50.36
+        by smtp.gmail.com with ESMTPSA id h12sm1977719ilj.6.2021.07.14.14.08.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 13:50:38 -0700 (PDT)
-Received: (nullmailer pid 3498425 invoked by uid 1000);
-        Wed, 14 Jul 2021 20:50:35 -0000
-Date:   Wed, 14 Jul 2021 14:50:35 -0600
+        Wed, 14 Jul 2021 14:08:44 -0700 (PDT)
+Received: (nullmailer pid 3527061 invoked by uid 1000);
+        Wed, 14 Jul 2021 21:08:42 -0000
+Date:   Wed, 14 Jul 2021 15:08:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Iskren Chernev <iskren.chernev@gmail.com>
-Cc:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Kathiravan T <kathirav@codeaurora.org>,
-        devicetree@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+To:     Martin Botka <martin.botka@somainline.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        angelogioacchino.delregno@somainline.org,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 4/5] dt-bindings: power: rpmpd: Add SM6115 to rpmpd
- binding
-Message-ID: <20210714205035.GA3498367@robh.at.kernel.org>
-References: <20210627185927.695411-1-iskren.chernev@gmail.com>
- <20210627185927.695411-5-iskren.chernev@gmail.com>
+        linux-kernel@vger.kernel.org, martin.botka1@gmail.com,
+        paul.bouchara@somainline.org, konrad.dybcio@somainline.org,
+        marijn.suijten@somainline.org, Stephen Boyd <sboyd@kernel.org>,
+        jamipkettunen@somainline.org, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 2/3] dt-bindings: clk: qcom: smd-rpm: Document
+ SM6125 compatible
+Message-ID: <20210714210842.GA3526993@robh.at.kernel.org>
+References: <20210629102624.194378-1-martin.botka@somainline.org>
+ <20210629102624.194378-3-martin.botka@somainline.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210627185927.695411-5-iskren.chernev@gmail.com>
+In-Reply-To: <20210629102624.194378-3-martin.botka@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 27 Jun 2021 21:59:26 +0300, Iskren Chernev wrote:
-> Add compatible and constants for the power domains exposed by the RPM
-> in the Qualcomm SM4250/6115 platforms.
+On Tue, 29 Jun 2021 12:26:22 +0200, Martin Botka wrote:
+> Document the newly added compatible for sm6125 rpmcc.
 > 
-> Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
 > ---
->  .../devicetree/bindings/power/qcom,rpmpd.yaml          |  1 +
->  include/dt-bindings/power/qcom-rpmpd.h                 | 10 ++++++++++
->  2 files changed, 11 insertions(+)
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
