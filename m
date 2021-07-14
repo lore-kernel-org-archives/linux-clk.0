@@ -3,80 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CA7C12002
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B58EC1B08C
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FEC0613BF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD5A613C5
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jul 2021 20:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbhGNUtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jul 2021 16:49:42 -0400
-Received: from mail-il1-f171.google.com ([209.85.166.171]:38572 "EHLO
-        mail-il1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbhGNUtl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 16:49:41 -0400
-Received: by mail-il1-f171.google.com with SMTP id e2so2933377ilu.5;
-        Wed, 14 Jul 2021 13:46:48 -0700 (PDT)
+        id S231664AbhGNUu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jul 2021 16:50:28 -0400
+Received: from mail-il1-f170.google.com ([209.85.166.170]:39525 "EHLO
+        mail-il1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230352AbhGNUu2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jul 2021 16:50:28 -0400
+Received: by mail-il1-f170.google.com with SMTP id a7so2928134iln.6;
+        Wed, 14 Jul 2021 13:47:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Bgvj/SJ/AqigmGZ6fxs5N5l8G6izL9YxC3iPTOMdD6s=;
-        b=SVA9CX9rAtY8KuE1kpMG4f0GGznAOcvHYY6Kq2WMBAA/AMtTxk4kj+iR15WaqTooke
-         TtVgCcuUYBkdtNgu9aGVqq2mOtdEGW5dzb6WzN/pUi1bdvxofpFZFY7yvKiauCeqSA2k
-         h9vD7VSbeWzDtIAvQ6dGQlAaOSd70LK2Qt4dGdGVsiCxdcvdMC2AFh5hWCy33c6AaRAf
-         v9cFfo+E+loZzAkaSR8Y0BH6WwzFQpZ1O+dWvaXF6AmpaOyV+grWjtdWT5n2yOjOX0sv
-         eyfe9a37p6Paln9GI5fZq+90TPeSvwEoHza9et4aUrfw3CwZYAVuQHm53iMHfgllxyGl
-         ZtVg==
-X-Gm-Message-State: AOAM5305DUo3g15sumRXf+jqPdj2crYrSHcU8dMtu01KfaDBYBUL8ksi
-        JrqAEX1dxzrtVV/RZBfkWQ==
-X-Google-Smtp-Source: ABdhPJyuEc2hl418Ur5eqpgXhulnn/slL25AuA2kwT0+WKbjntZFyl4jzNA/MF3uxvxiked/D64mQQ==
-X-Received: by 2002:a92:d083:: with SMTP id h3mr7978120ilh.157.1626295608626;
-        Wed, 14 Jul 2021 13:46:48 -0700 (PDT)
+        bh=hCrQsr8030QN2p/VmjzY+fbs0waPepfIG6ng+18St3M=;
+        b=ccO8yEYVQVf9VYLfUbdcG+fLJhC7cyOrmCFrxa2bjwisf2c8SExzCP50t6fF9u6eNP
+         HKTPzv5ozVT6n4l9z5GGpGckRGPUu2/ZmUIAWt6k23ZI8NsyiORD2nV0s1SBNydSTnZQ
+         2BKB5gqIqnvyijFRb1fHyhUNtlVUcjIlImzgnVHFwtAEKoHncUaJSPauj90wC54SFcDO
+         weeB82tE9FFLvpIpEGSNgtGd+KoiYSiFLgyZSqoxXjOoCSS7c7SgHIb92CIwz3O/QJ/c
+         KnZ1500L2dsyXAeuLXu6ltP3VGvHLfT+PQjcA4Q8xz65EjfB7SKI5ULR/tiFxzT5sQnb
+         NucA==
+X-Gm-Message-State: AOAM533xco2vKk0j01CgpjFGJy0T8DhlvwEFHAf6vKwK5t52/EU83Xtq
+        hyewDLJuWPxo+kOGjMc5Mg==
+X-Google-Smtp-Source: ABdhPJyriRY2Dp/IymiSzqV6rt/anfKm58iFssDF5tQrraAZOAKjXZmJuFRqgbqpB2vGblyApL3FBg==
+X-Received: by 2002:a92:ddc3:: with SMTP id d3mr8312842ilr.190.1626295655920;
+        Wed, 14 Jul 2021 13:47:35 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id x11sm1680021ilc.40.2021.07.14.13.46.47
+        by smtp.gmail.com with ESMTPSA id p21sm1939916iog.37.2021.07.14.13.47.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 13:46:48 -0700 (PDT)
-Received: (nullmailer pid 3492030 invoked by uid 1000);
-        Wed, 14 Jul 2021 20:46:46 -0000
-Date:   Wed, 14 Jul 2021 14:46:46 -0600
+        Wed, 14 Jul 2021 13:47:35 -0700 (PDT)
+Received: (nullmailer pid 3493513 invoked by uid 1000);
+        Wed, 14 Jul 2021 20:47:32 -0000
+Date:   Wed, 14 Jul 2021 14:47:32 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Iskren Chernev <iskren.chernev@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        linux-arm-msm@vger.kernel.org,
+Cc:     devicetree@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clk: qcom: gcc-sm6115: Document
- SM6115 GCC
-Message-ID: <20210714204646.GA3491973@robh.at.kernel.org>
-References: <20210627185538.690277-1-iskren.chernev@gmail.com>
- <20210627185538.690277-2-iskren.chernev@gmail.com>
+        Kathiravan T <kathirav@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, phone-devel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: soc: qcom: smd-rpm: Add SM6115
+ compatible
+Message-ID: <20210714204732.GA3493456@robh.at.kernel.org>
+References: <20210627185927.695411-1-iskren.chernev@gmail.com>
+ <20210627185927.695411-2-iskren.chernev@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210627185538.690277-2-iskren.chernev@gmail.com>
+In-Reply-To: <20210627185927.695411-2-iskren.chernev@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 27 Jun 2021 21:55:37 +0300, Iskren Chernev wrote:
-> Add device tree bindings for global clock controller on SM6115 and
-> SM4250 SoCs (pin and software compatible).
+On Sun, 27 Jun 2021 21:59:23 +0300, Iskren Chernev wrote:
+> Add the dt-binding for the rpm on the Qualcomm SM4250/6115 SoC platform.
 > 
 > Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
 > ---
->  .../bindings/clock/qcom,gcc-sm6115.yaml       |  72 +++++++
->  include/dt-bindings/clock/qcom,gcc-sm6115.h   | 201 ++++++++++++++++++
->  2 files changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
+>  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
