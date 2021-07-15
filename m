@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79669C6379D
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB40CC6377E
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65A1E6120A
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D29613CA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238299AbhGOSYt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 14:24:49 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:45253 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238301AbhGOSYq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 14:24:46 -0400
+        id S238471AbhGOSY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 14:24:57 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:20070 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238511AbhGOSYy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 14:24:54 -0400
 X-IronPort-AV: E=Sophos;i="5.84,243,1620658800"; 
-   d="scan'208";a="87715306"
+   d="scan'208";a="87775126"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2021 03:21:51 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2021 03:21:59 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2C3B840C5552;
-        Fri, 16 Jul 2021 03:21:47 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F1D0D40C5552;
+        Fri, 16 Jul 2021 03:21:55 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,9 +42,9 @@ Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 4/6] clk: renesas: r9a07g044-cpg: Add entry for fixed clock P0_DIV2
-Date:   Thu, 15 Jul 2021 19:21:21 +0100
-Message-Id: <20210715182123.23372-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6/6] arm64: dts: renesas: r9a07g044: Add CANFD node
+Date:   Thu, 15 Jul 2021 19:21:23 +0100
+Message-Id: <20210715182123.23372-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -52,36 +52,69 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add entry for fixed core clock P0_DIV2 and assign LAST_DT_CORE_CLK
-to R9A07G044_LAST_CORE_CLK.
+Add CANFD node to R9A07G044 (RZ/G2L) SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 78fae93cf249..0876df9c286d 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -16,7 +16,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 9a7489dc70d1..fdb990b90f72 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -13,6 +13,13 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A07G044_OSCCLK,
-+	LAST_DT_CORE_CLK = R9A07G044_LAST_CORE_CLK,
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	/* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
+ 	extal_clk: extal {
+ 		compatible = "fixed-clock";
+@@ -89,6 +96,36 @@
+ 			status = "disabled";
+ 		};
  
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -77,6 +77,7 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("I", R9A07G044_CLK_I, CLK_PLL1, 1, 1),
- 	DEF_DIV("P0", R9A07G044_CLK_P0, CLK_PLL2_DIV16, DIVPL2A,
- 		dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
-+	DEF_FIXED("P0_DIV2", R9A07G044_CLK_P0_DIV2, R9A07G044_CLK_P0, 1, 2),
- 	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV20, 1, 1),
- 	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
- 		DIVPL3B, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
++		canfd: can@10050000 {
++			compatible = "renesas,r9a07g044-canfd", "renesas,rzg2l-canfd";
++			reg = <0 0x10050000 0 0x8000>;
++			interrupts = <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A07G044_CANFD_PCLK>,
++				 <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>,
++				 <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>;
++			assigned-clock-rates = <50000000>;
++			resets = <&cpg R9A07G044_CANFD_RSTP_N>,
++				 <&cpg R9A07G044_CANFD_RSTC_N>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		i2c0: i2c@10058000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.17.1
 
