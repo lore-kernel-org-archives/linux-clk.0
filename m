@@ -2,79 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8939C636C8
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 17:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC674C636C9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA8FE611F1
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 17:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88645613CA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236652AbhGOSBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 14:01:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:56906 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236602AbhGOSBl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Jul 2021 14:01:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3DDB6D;
-        Thu, 15 Jul 2021 10:58:47 -0700 (PDT)
-Received: from [10.57.36.240] (unknown [10.57.36.240])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0314E3F7D8;
-        Thu, 15 Jul 2021 10:58:45 -0700 (PDT)
-Subject: Re: [PATCH v1 1/3] clk: fractional-divider: Export approximation algo
- to the CCF users
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        kernel test robot <lkp@intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kbuild-all@lists.01.org,
-        Michael Turquette <mturquette@baylibre.com>
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com>
- <202107152356.7gQSC0vc-lkp@intel.com>
- <CAHp75VcxP6QSoATProqjqJ_kmjXr4FfjijohCyumrw_gmj904w@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9e1c1fde-fbbc-69d4-9273-192844037cd8@arm.com>
-Date:   Thu, 15 Jul 2021 18:58:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VcxP6QSoATProqjqJ_kmjXr4FfjijohCyumrw_gmj904w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S233013AbhGOSYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 14:24:31 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:61202 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232539AbhGOSYb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 14:24:31 -0400
+X-IronPort-AV: E=Sophos;i="5.84,243,1620658800"; 
+   d="scan'208";a="87775111"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2021 03:21:36 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 890D840C5552;
+        Fri, 16 Jul 2021 03:21:32 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/6] Renesas RZ/G2L CANFD support
+Date:   Thu, 15 Jul 2021 19:21:17 +0100
+Message-Id: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-07-15 17:51, Andy Shevchenko wrote:
-> On Thu, Jul 15, 2021 at 7:49 PM kernel test robot <lkp@intel.com> wrote:
->> I love your patch! Yet something to improve:
-> 
-> Definitely!
-> 
->> All errors (new ones prefixed by >>):
->>
->>>> drivers/clk/rockchip/clk.c:27:10: fatal error: clk-fractional-divider.h: No such file or directory
->>        27 | #include "clk-fractional-divider.h"
->>           |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>     compilation terminated.
-> 
-> Indeed. No idea how to compile-test this on x86.
-> Let me see what I can do to avoid other issues.
+Hi All,
 
-Ha, the individual SoC-specific parts have COMPILE_TEST support, but the 
-top-level COMMON_CLK_ROCKCHIP doesn't. That could probably be fixed.
+This patch series adds CANFD support to Renesas RZ/G2L family.
 
-Otherwise, you can always grab a toolchain from [1] (if your distro 
-doesn't offer one already) and cross-compile - defconfig for arm64 or 
-multi_v7_defconfig for arm should cover it.
+CANFD block on RZ/G2L SoC is almost identical to one found on
+R-Car Gen3 SoC's. On RZ/G2L SoC interrupt sources for each channel
+are split into individual sources.
 
-Robin.
+Patches are based on top of [1] (master branch) + patch [2].
 
-[1] https://cdn.kernel.org/pub/tools/crosstool/
+Cheers,
+Prabhakar
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/
+20210712194422.12405-4-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Lad Prabhakar (6):
+  dt-bindings: net: can: renesas,rcar-canfd: Document RZ/G2L SoC
+  can: rcar_canfd: Add support for RZ/G2L family
+  dt-bindings: clk: r9a07g044-cpg: Add entry for P0_DIV2 core clock
+  clk: renesas: r9a07g044-cpg: Add entry for fixed clock P0_DIV2
+  clk: renesas: r9a07g044-cpg: Add clock and reset entries for CANFD
+  arm64: dts: renesas: r9a07g044: Add CANFD node
+
+ .../bindings/net/can/renesas,rcar-canfd.yaml  |  45 ++-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  37 +++
+ drivers/clk/renesas/r9a07g044-cpg.c           |   7 +-
+ drivers/net/can/rcar/rcar_canfd.c             | 275 ++++++++++++++++--
+ include/dt-bindings/clock/r9a07g044-cpg.h     |   2 +
+ 5 files changed, 328 insertions(+), 38 deletions(-)
+
+
+base-commit: b37235d5fdf50e5f1c23f868ab70bbe640081b21
+prerequisite-patch-id: 7436c0d801737268ef470fcb50e620428286e085
+-- 
+2.17.1
+
