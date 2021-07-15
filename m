@@ -2,84 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03866C07E96
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B61AC07E96
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2F70613F5
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C9CC613E9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230375AbhGOQVK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 12:21:10 -0400
-Received: from mail-il1-f182.google.com ([209.85.166.182]:45596 "EHLO
-        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbhGOQVK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 12:21:10 -0400
-Received: by mail-il1-f182.google.com with SMTP id b6so5478807iln.12;
-        Thu, 15 Jul 2021 09:18:17 -0700 (PDT)
+        id S231676AbhGOQz0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 12:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57808 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229695AbhGOQzZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 12:55:25 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B458FC06175F;
+        Thu, 15 Jul 2021 09:52:31 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id j9so6029927pfc.5;
+        Thu, 15 Jul 2021 09:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5mUlg+XLAlWs2OpGsm7v1Fxu/dScyzw5iATM/EAu2yA=;
+        b=Usx8MphYIkqlfCMOPrXG6SMy8C3xTpgMSgFEPeWJ6KRIWjauV5XzBe6Bs2gVK+jcn2
+         jQ5mq6lx18Q14GQpc7DuCL6zEeyy0u7DNix1bdscl+GSRS38NkGhd+8BxktMTbBcqaPI
+         My0xt93eB9/MRbSwiGorYyuOJa0FXGHikM8MZIV9+za6QrORyrR++BuxY5pSIgU0EuH+
+         wgM44M4LEfn4DAr/72Xyk/C55oZHZSKRVaFdv6NFRoqIWvmp9EfRm8xEHDl4TfMsi21s
+         NzXtoIARIWcRZW79iX53qHbE5AncBusdCdeNMtGJ7z/CwfX7cSlB8AhysekFiwcEMM/E
+         W3Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RRUPLOLj8bV7cCtORPQ6IMltdHs8hBKhq3BjsT9zV+k=;
-        b=BoZ4OnN/FkLVEnNrc85QxFvuWSwBYtAc9Bz3sZNPrjdgLuKjT15Cw2/XyHhSaMNcbC
-         L3ARXljd2366A/C0CBtcuEPQQp30wAJ/STI+O3LpwUj3O1JszBIFsW7ERwT6TFFG+6Ge
-         CdSqftXIsAYChq2bR5nDzkh/pbCv5EpUZkFuWy0DTt2lRrXNus4CEChDgsLDWnEsO4Sl
-         CLWwZ755v1aj3bGoU3WW+QcqGiB2zVwIEmfKsiJt84575/e/Mo1WlCYxulWawCS+tNrt
-         teqtN2gcFn/JEtza7NSFSNf9lSFYXpldNcwWOrPlYfNgSuoYHwrDICcOEjqVpAZhZ7Bg
-         ATgw==
-X-Gm-Message-State: AOAM531hbuNdNEBucc7qoqoEtOKPlm9OqZ60LuR1oen9jz4s1xEGqbGT
-        /os73ledfgpj9W5vq/7MkA==
-X-Google-Smtp-Source: ABdhPJwIwTM19EP/DwAWM3MnwcDVy9Ok3pJjQ6Ma4W83fJ1lk2elXaCssiJf0zFQNdQjHUvGDw3BFg==
-X-Received: by 2002:a92:7d08:: with SMTP id y8mr3025493ilc.43.1626365896782;
-        Thu, 15 Jul 2021 09:18:16 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id w11sm3324926ioj.47.2021.07.15.09.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 09:18:15 -0700 (PDT)
-Received: (nullmailer pid 1179769 invoked by uid 1000);
-        Thu, 15 Jul 2021 16:18:13 -0000
-Date:   Thu, 15 Jul 2021 10:18:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 2/6] dt-bindings: clock: qcom,videocc: add mmcx power
- domain
-Message-ID: <20210715161813.GA1179714@robh.at.kernel.org>
-References: <20210710013253.1134341-1-dmitry.baryshkov@linaro.org>
- <20210710013253.1134341-3-dmitry.baryshkov@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5mUlg+XLAlWs2OpGsm7v1Fxu/dScyzw5iATM/EAu2yA=;
+        b=SWScJh0x60pI36NH6XSXviI/xtvUU/kWu+P9VGSawB6ynrLJ6W68kU6n7DScYEuF+q
+         P8yal12AWg+juFmW4qZuPZ9mRQX2ZFUNjEha3gwXanOVLEcZ9bP1xQa09xm2uQVg8OG/
+         LtbiLWIkMmPPv+NeBbiYdy32Oopv+XhOxsXBaX8VhBH5dNGUkOq50P6CcQCvp4Eh8Cbe
+         vP1tJU9IOGpfs2q398NiWqaEJ+1IGabqjIGKY4BU8f00NvSWVuFpmLBtZxUD7t1X7/ST
+         3GQp5Tzf2RW+m/16qydtfKeCCm57YKlD3htnTFNhJLA9dSqO8wcxC8kbZYmin0BmBznd
+         qFow==
+X-Gm-Message-State: AOAM532Dj2gD2wH5NHsCvXQZZV7seCiaUKcJvfwPfyHduSZ0vAhNCU9G
+        14p0dfY6yA8JHzAsGGlHCLPbzn9n/hDy/SP2foQ=
+X-Google-Smtp-Source: ABdhPJxbxh9MntYcaLyvO5NKj1X9Jd024SE3i4PphFkTofHotG9CHRDsLmrs+8TpoEP0WCtgUHxu9XuSS2x3Z/nMqZg=
+X-Received: by 2002:a05:6a00:a1e:b029:2e2:89d8:5c87 with SMTP id
+ p30-20020a056a000a1eb02902e289d85c87mr5462920pfh.73.1626367951167; Thu, 15
+ Jul 2021 09:52:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210710013253.1134341-3-dmitry.baryshkov@linaro.org>
+References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com> <202107152356.7gQSC0vc-lkp@intel.com>
+In-Reply-To: <202107152356.7gQSC0vc-lkp@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 15 Jul 2021 19:51:51 +0300
+Message-ID: <CAHp75VcxP6QSoATProqjqJ_kmjXr4FfjijohCyumrw_gmj904w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] clk: fractional-divider: Export approximation algo
+ to the CCF users
+To:     kernel test robot <lkp@intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kbuild-all@lists.01.org,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 10 Jul 2021 04:32:49 +0300, Dmitry Baryshkov wrote:
-> On sm8250 videocc requires MMCX power domain to be powered up before
-> clock controller's registers become available. For now sm8250 was using
-> external regulator driven by the power domain to describe this
-> relationship. Switch into specifying power-domain and required opp-state
-> directly.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,videocc.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+On Thu, Jul 15, 2021 at 7:49 PM kernel test robot <lkp@intel.com> wrote:
+> I love your patch! Yet something to improve:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Definitely!
+
+> All errors (new ones prefixed by >>):
+>
+> >> drivers/clk/rockchip/clk.c:27:10: fatal error: clk-fractional-divider.h: No such file or directory
+>       27 | #include "clk-fractional-divider.h"
+>          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>    compilation terminated.
+
+Indeed. No idea how to compile-test this on x86.
+Let me see what I can do to avoid other issues.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
