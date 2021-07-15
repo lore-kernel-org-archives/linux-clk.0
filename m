@@ -2,93 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B61AC07E96
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DCCC636C7
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 17:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9CC613E9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 16:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAF93613DB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 17:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbhGOQz0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 12:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbhGOQzZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 12:55:25 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B458FC06175F;
-        Thu, 15 Jul 2021 09:52:31 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id j9so6029927pfc.5;
-        Thu, 15 Jul 2021 09:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5mUlg+XLAlWs2OpGsm7v1Fxu/dScyzw5iATM/EAu2yA=;
-        b=Usx8MphYIkqlfCMOPrXG6SMy8C3xTpgMSgFEPeWJ6KRIWjauV5XzBe6Bs2gVK+jcn2
-         jQ5mq6lx18Q14GQpc7DuCL6zEeyy0u7DNix1bdscl+GSRS38NkGhd+8BxktMTbBcqaPI
-         My0xt93eB9/MRbSwiGorYyuOJa0FXGHikM8MZIV9+za6QrORyrR++BuxY5pSIgU0EuH+
-         wgM44M4LEfn4DAr/72Xyk/C55oZHZSKRVaFdv6NFRoqIWvmp9EfRm8xEHDl4TfMsi21s
-         NzXtoIARIWcRZW79iX53qHbE5AncBusdCdeNMtGJ7z/CwfX7cSlB8AhysekFiwcEMM/E
-         W3Bg==
+        id S229738AbhGORaS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 13:30:18 -0400
+Received: from mail-io1-f46.google.com ([209.85.166.46]:40643 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229506AbhGORaR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 13:30:17 -0400
+Received: by mail-io1-f46.google.com with SMTP id l5so7391627iok.7;
+        Thu, 15 Jul 2021 10:27:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5mUlg+XLAlWs2OpGsm7v1Fxu/dScyzw5iATM/EAu2yA=;
-        b=SWScJh0x60pI36NH6XSXviI/xtvUU/kWu+P9VGSawB6ynrLJ6W68kU6n7DScYEuF+q
-         P8yal12AWg+juFmW4qZuPZ9mRQX2ZFUNjEha3gwXanOVLEcZ9bP1xQa09xm2uQVg8OG/
-         LtbiLWIkMmPPv+NeBbiYdy32Oopv+XhOxsXBaX8VhBH5dNGUkOq50P6CcQCvp4Eh8Cbe
-         vP1tJU9IOGpfs2q398NiWqaEJ+1IGabqjIGKY4BU8f00NvSWVuFpmLBtZxUD7t1X7/ST
-         3GQp5Tzf2RW+m/16qydtfKeCCm57YKlD3htnTFNhJLA9dSqO8wcxC8kbZYmin0BmBznd
-         qFow==
-X-Gm-Message-State: AOAM532Dj2gD2wH5NHsCvXQZZV7seCiaUKcJvfwPfyHduSZ0vAhNCU9G
-        14p0dfY6yA8JHzAsGGlHCLPbzn9n/hDy/SP2foQ=
-X-Google-Smtp-Source: ABdhPJxbxh9MntYcaLyvO5NKj1X9Jd024SE3i4PphFkTofHotG9CHRDsLmrs+8TpoEP0WCtgUHxu9XuSS2x3Z/nMqZg=
-X-Received: by 2002:a05:6a00:a1e:b029:2e2:89d8:5c87 with SMTP id
- p30-20020a056a000a1eb02902e289d85c87mr5462920pfh.73.1626367951167; Thu, 15
- Jul 2021 09:52:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DohR+1i8O/Ca9VBCwrtBoD9xd67cOkMh3anA0GO0rf4=;
+        b=tC/npXTmrN2pGZOkO4nl25jwdH7D5Vf0rFwg5DuO82tspat3/zYVmJYdHIr2I5TnYl
+         fLV6ltsvcFCRbuwlYpz1Q98zIgchLZzK8rQSjVTgPN51ODH1e5LLrD2PiP6yzFF9bUfG
+         BCPd3DjOtumquuAT+UP9GOvMHkuE52ODKV8Ot5b8+m/Suk2vGQvikkY75fBy1IaDITM7
+         3hM2KfxUfHS7YiGKFX/qv+Oz93+GhswqP7CihT6TBPW0NjPdJwS2bh3e0bIzaYHVCd8E
+         YHf6TBHdvpsECpSNIZxIPCOrlnsghyUyZZ6EC9+uRHZaZAvDBpPAr9Z3hToD5NpWt9/z
+         au5g==
+X-Gm-Message-State: AOAM531QzRsGMEK3YafL/KanDK+o5mQh6Y511Gvo/bK/XUE+2QuzUMWN
+        kNuHH04UGutR4XfpqGyN0g==
+X-Google-Smtp-Source: ABdhPJxpacVeR1g0h3tK5DpkkdcGYkmcfxQhiQGPGBMSNVCRM/zVFgZ5cUX0sm4Ft4KA2M1Tr599wQ==
+X-Received: by 2002:a05:6638:41a7:: with SMTP id az39mr5058581jab.52.1626370044144;
+        Thu, 15 Jul 2021 10:27:24 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r1sm2803809ilt.37.2021.07.15.10.27.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jul 2021 10:27:23 -0700 (PDT)
+Received: (nullmailer pid 1284108 invoked by uid 1000);
+        Thu, 15 Jul 2021 17:27:20 -0000
+Date:   Thu, 15 Jul 2021 11:27:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: clock: qcom: Update license for GCC
+ SC7280
+Message-ID: <20210715172720.GA1284055@robh.at.kernel.org>
+References: <1626189143-12957-1-git-send-email-tdas@codeaurora.org>
+ <1626189143-12957-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com> <202107152356.7gQSC0vc-lkp@intel.com>
-In-Reply-To: <202107152356.7gQSC0vc-lkp@intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 15 Jul 2021 19:51:51 +0300
-Message-ID: <CAHp75VcxP6QSoATProqjqJ_kmjXr4FfjijohCyumrw_gmj904w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] clk: fractional-divider: Export approximation algo
- to the CCF users
-To:     kernel test robot <lkp@intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kbuild-all@lists.01.org,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1626189143-12957-2-git-send-email-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 7:49 PM kernel test robot <lkp@intel.com> wrote:
-> I love your patch! Yet something to improve:
+On Tue, 13 Jul 2021 20:42:17 +0530, Taniya Das wrote:
+> Update BSD license for GCC clock ids.
+> 
+> Fixes: 87a3d523b38c ("dt-bindings: clock: Add SC7280 GCC clock binding")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-sc7280.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Definitely!
-
-> All errors (new ones prefixed by >>):
->
-> >> drivers/clk/rockchip/clk.c:27:10: fatal error: clk-fractional-divider.h: No such file or directory
->       27 | #include "clk-fractional-divider.h"
->          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
->    compilation terminated.
-
-Indeed. No idea how to compile-test this on x86.
-Let me see what I can do to avoid other issues.
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Rob Herring <robh@kernel.org>
