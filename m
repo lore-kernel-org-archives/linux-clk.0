@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EF1C636CB
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FB9C64997
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAF7613D2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD51D613D2
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 18:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238351AbhGOSYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 14:24:46 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:47270 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238283AbhGOSYm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 14:24:42 -0400
+        id S238502AbhGOSYw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 14:24:52 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:45253 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238411AbhGOSYu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jul 2021 14:24:50 -0400
 X-IronPort-AV: E=Sophos;i="5.84,243,1620658800"; 
-   d="scan'208";a="87775120"
+   d="scan'208";a="87715309"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2021 03:21:47 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2021 03:21:55 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 44F6940C5552;
-        Fri, 16 Jul 2021 03:21:44 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 16E0540C555E;
+        Fri, 16 Jul 2021 03:21:51 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,9 +42,9 @@ Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/6] dt-bindings: clk: r9a07g044-cpg: Add entry for P0_DIV2 core clock
-Date:   Thu, 15 Jul 2021 19:21:20 +0100
-Message-Id: <20210715182123.23372-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5/6] clk: renesas: r9a07g044-cpg: Add clock and reset entries for CANFD
+Date:   Thu, 15 Jul 2021 19:21:22 +0100
+Message-Id: <20210715182123.23372-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -52,31 +52,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add P0_DIV2 core clock required for CANFD module. CANFD core clock is
-sourced from P0_DIV2 referenced from HW manual Rev.0.50.
-
-Also add R9A07G044_LAST_CORE_CLK entry to avoid changes in
-r9a07g044-cpg.c file.
+Add clock and reset entries for CANFD in CPG driver.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- include/dt-bindings/clock/r9a07g044-cpg.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/r9a07g044-cpg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/dt-bindings/clock/r9a07g044-cpg.h b/include/dt-bindings/clock/r9a07g044-cpg.h
-index 0728ad07ff7a..2fd20db0b2f4 100644
---- a/include/dt-bindings/clock/r9a07g044-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g044-cpg.h
-@@ -30,6 +30,8 @@
- #define R9A07G044_CLK_P2		19
- #define R9A07G044_CLK_AT		20
- #define R9A07G044_OSCCLK		21
-+#define R9A07G044_CLK_P0_DIV2		22
-+#define R9A07G044_LAST_CORE_CLK		23
- 
- /* R9A07G044 Module Clocks */
- #define R9A07G044_CA55_SCLK		0
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 0876df9c286d..78f0efb19af8 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -141,6 +141,8 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 				0x584, 4),
+ 	DEF_MOD("sci0",		R9A07G044_SCI0_CLKP, R9A07G044_CLK_P0,
+ 				0x588, 0),
++	DEF_MOD("canfd",	R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
++				0x594, 0),
+ 	DEF_MOD("gpio",		R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
+ 				0x598, 0),
+ };
+@@ -169,6 +171,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
+ 	DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
+ 	DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
++	DEF_RST(R9A07G044_CANFD_RSTP_N, 0x894, 0),
++	DEF_RST(R9A07G044_CANFD_RSTC_N, 0x894, 1),
+ 	DEF_RST(R9A07G044_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A07G044_GPIO_PORT_RESETN, 0x898, 1),
+ 	DEF_RST(R9A07G044_GPIO_SPARE_RESETN, 0x898, 2),
 -- 
 2.17.1
 
