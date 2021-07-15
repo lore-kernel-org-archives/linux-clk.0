@@ -2,229 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163D4C07E96
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 05:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11227C07E96
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 07:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFA0A6136E
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 05:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEF2E61358
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jul 2021 07:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239819AbhGOFbp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jul 2021 01:31:45 -0400
-Received: from mail-eopbgr00067.outbound.protection.outlook.com ([40.107.0.67]:37191
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S231518AbhGOH0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jul 2021 03:26:18 -0400
+Received: from mail-eopbgr1410121.outbound.protection.outlook.com ([40.107.141.121]:11712
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239812AbhGOFbp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Jul 2021 01:31:45 -0400
+        id S231508AbhGOH0R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Jul 2021 03:26:17 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=goWypVsYRP78qCcu6Dag6ZnFiLFaTBXH+S9+5W/NskTVvGBEcRFUs4ZKP3kj1dRytciWKy9TM4Hr0gOsHpLJuDCdp3cy/XrMYGFwut0bqTmlGZvgvTuF7nWvs4CCnodEGAPGvMrPsVeO4vqZiwY9fc9LvZKppGcCJMw+0xYMcGTcIKMgK8r3MLud2xYH6ooEtihKYq5vRs89PBIdy5UfBqZzlJlPmYWNd13ZGU3nNAiBUvOeMfoqLruLVXyoZCb4IztU3R6nrYgmadBk4g9Xe9TCs+jXr/KZNH57mCsbw71U/jU3VPLsa4Vp5xvuOaymTbXkWh0DnuePV+7AVOxgzw==
+ b=J4GAfoZlNpENEZJ4ueWnG4iodBO60uiZePonniyAn858Z+Ipn7yC0SsaXzIeBPC6mlJi2QOkRyT3Og14irMEXYrIwqZOAMf0hwfWkIFJplr8B2VTQxU4+sBKZg98kuLV45SGrN1zPDPS0YrgIrK8BjcEPC8VNRtGt2FinLf+DLqmLTXyjJQN55LBBEep+qPMv+E3PNmoDzWm9dkHxbeGNMRUwLss6gJ1qPUTIPAEzp89Ji9IiiwszJ+C5/llpA4W55ldKtK+JBClNR5gqAJ3BAOIpKPTmZwal3WmpsY9FKWdhThGdgeNhQ2ZG44ZLRDhxjTDqUIAI/eCxMFHQ2l0mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXM1eIA3MA0T63sJa5iDhWrvaDW/AFFdFfy9nDC2P8g=;
- b=ZWWJXZeuqTSzZC/mTNP/EU7mYcomfOPtx25MN80fYykHlCidpIrtbfyiJo1oz1r/MwRPMrQgukDlMeglb/FxnWVf7j2FoW5dXaccaRs11TSSMHpzi7i940Grut17IwJQN2S6j55Go7jjDJl7P4Y7dejkZhCQRABJnxGZ4DlV1KbdRGwxrZZp6ZLgufiodEBxCroiPpxcAMYn0t+Ph1l4B1/SAPR2b+WMGisaIhrfkXbVtEy0K3vi1oEMNhyRfpQPoObrYDcLq4ETWbiOJd5lXgTIgLB64cqlUBotGQ0ZU1YM2dxu8bIrrep+kJxZi7AT+jtCjzrP86FM5NbwkPIy1A==
+ bh=nFhoHTLbv5CohbPZk1ubssmnkrV4VDaYtKIrAYZ03To=;
+ b=QGU4Ao6PrEuLvSQPHb4NNTdF7GUDc1juVr1lCrUe2IBOYwc76TTNqafwjpSVeWXUfN5rQhurmwe79cRiahh9dZJZZceexc5MNMi+P/RaYQvFp499Qgd8x3ndaGyEYmdl0Spqs9OScsmbzJVPN04/R/tdaX0NoU3pBukyb7FJpvxa67+G43DtD9+M2D5CzN8fapy8uqTAeiFdtoce/Ek03b+2dujTgg+LY+vb5tkldhLj6q9POuj7nIx+Aj0i3VzNpospkRgGRmpfeWDfTn2d2H9BLcB8gfbpNwPtrb1oBZa4XkjZU2R/MhDJBvDiXuI+K3XT5YTeFgxbztfizf9IaA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXM1eIA3MA0T63sJa5iDhWrvaDW/AFFdFfy9nDC2P8g=;
- b=Yzrju6DYGLHeDIawlNefkhHlETDTFl85agdkdTZnXtaX/Ku8Io0C53UZ5HHnL7lazTbDlb5eQC50ip1ZykzfX2IUTkc8ziC92+oDdD52r6H5cyjCYOl6Zj8gpXEEjthRqoEY/dZ20HP9Z9WX32F4/6FVxhp9guylysywGO0aQtQ=
-Authentication-Results: linux.intel.com; dkim=none (message not signed)
- header.d=none;linux.intel.com; dmarc=none action=none header.from=nxp.com;
-Received: from DB8PR04MB7051.eurprd04.prod.outlook.com (2603:10a6:10:fd::20)
- by DB3PR0402MB3915.eurprd04.prod.outlook.com (2603:10a6:8:e::30) with
+ bh=nFhoHTLbv5CohbPZk1ubssmnkrV4VDaYtKIrAYZ03To=;
+ b=PwTZiXN3lzHluAZBykxrc9/SliZjdtna+1ay4Ze3/oFjsYY1zS90km1c4Dv/mD+KmRtvnSMMX+B+m4oe3zoyuDw6DkjYjJrC4J5CatE3+vcMJHrwQL6u3SWbFXmmC/eF8U3DlBty/Yn4KG1oOc6ZHoCDAK7pnOgMKR1+hbrrp2I=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OS0PR01MB5731.jpnprd01.prod.outlook.com (2603:1096:604:be::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Thu, 15 Jul
- 2021 05:28:50 +0000
-Received: from DB8PR04MB7051.eurprd04.prod.outlook.com
- ([fe80::bc7d:3cd3:b58d:b44c]) by DB8PR04MB7051.eurprd04.prod.outlook.com
- ([fe80::bc7d:3cd3:b58d:b44c%8]) with mapi id 15.20.4331.022; Thu, 15 Jul 2021
- 05:28:50 +0000
-Message-ID: <0ae047e216298e6239e39ec40a2d545ac07a7406.camel@nxp.com>
-Subject: Re: [RFC PATCH] clk: fractional-divider: Correct max_{m,n} handed
- over to rational_best_approximation()
-From:   Liu Ying <victor.liu@nxp.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ 2021 07:23:23 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe%9]) with mapi id 15.20.4331.021; Thu, 15 Jul 2021
+ 07:23:23 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Date:   Thu, 15 Jul 2021 13:26:48 +0800
-In-Reply-To: <YO7AcaHyB8js9FJg@smile.fi.intel.com>
-References: <20210714064129.1321277-1-victor.liu@nxp.com>
-         <YO6qfQMcvr9szZTJ@smile.fi.intel.com>
-         <1f1b38f9c42093bea5e6a8ccb458bdf799069157.camel@nxp.com>
-         <YO6+nkzDlNM/KJio@smile.fi.intel.com> <YO7AcaHyB8js9FJg@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0122.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::26) To DB8PR04MB7051.eurprd04.prod.outlook.com
- (2603:10a6:10:fd::20)
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: Rename renesas-rzg2l-cpg.[ch] to
+ rzg2l-cpg.[ch]
+Thread-Topic: [PATCH] clk: renesas: Rename renesas-rzg2l-cpg.[ch] to
+ rzg2l-cpg.[ch]
+Thread-Index: AQHXeLPSc/S8lcxbakyilFFDbitA26tDonhA
+Date:   Thu, 15 Jul 2021 07:23:22 +0000
+Message-ID: <OS0PR01MB592293A58EABB918281B323386129@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <edc442daaedffcf10e835ff479d906fcae0e59db.1626268821.git.geert+renesas@glider.be>
+In-Reply-To: <edc442daaedffcf10e835ff479d906fcae0e59db.1626268821.git.geert+renesas@glider.be>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: glider.be; dkim=none (message not signed)
+ header.d=none;glider.be; dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 30a04875-b18c-4bc1-dab7-08d947616ddd
+x-ms-traffictypediagnostic: OS0PR01MB5731:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OS0PR01MB5731EC644A8F1BD1846A0AD886129@OS0PR01MB5731.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kmkm6MlYoF0ie6k1WZ4DyCoN+D7sIGxMeohmoT4hDW+/C+7bUSTYtIs7u0vtL35yl0NRJAHyi2WL8z7ndC546HxlLbv9jH9CieiyLrHUiNb0cE5AZfYXOa9VVA6jFF7jGecgMMqAChcdX/41EPURqOb1VHOpW9jmdKeBi8JsU8xSZuVZqVC1To4J6lDSbb2d2sH686cznZaAcTk/MJfqooZdcaC1Spkukikzvfi6+cxJpS6ODVemCr+OC5kErhWNmz8CVFfa91zOCG+19joEE2VWXN8LgiKw/DLognlkhXccDhZlY3VTyBuHaaX8vm67xA/57n5NmuOhZl2b3ZYZVUULNcysdKEoQKH0FwpYvSaK0ahoae6h3mtK9ATXUSJqtS56+4gTSGa0S0WvVmK6V2eLbhDGsDIn8ExMoYPMWlmHjiUJWn3QPNyae+IDjTRs0mPmCfU7vdMVYBO5YZuFcvPeHjjVlf/zjTTrGO8ZrGB9z9dBCAjzMIG0ogZbwtQLHZHHdVS3qvAsOIFmwC3utRX+TVQF6bBV3v/PsQD+eCutKrPWHVKcmYpp89E9ltKXgS8DIJ2czL818+DIVkdbphMS1aGv8/cG/qmJxJtU/DKkMLrDWL6cizCSbLA2frpvaUzRf2EVpqBAO4oeQ6OVxbIrKDkWd/FSFd7eJyo0Owk5uYMAfZmrnvqWbx2FR7HGHLtq8f5ASGEJ8gwVrRN1Cw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(76116006)(52536014)(33656002)(38100700002)(478600001)(53546011)(9686003)(122000001)(316002)(83380400001)(5660300002)(26005)(6636002)(2906002)(66446008)(54906003)(6506007)(71200400001)(8936002)(64756008)(66556008)(55016002)(8676002)(186003)(86362001)(7696005)(4326008)(66476007)(110136005)(66946007)(38070700004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?o/OCk66uZ07qYuy/HPCsn/vRLYNNo/UDRYT1GsWYKArQZ4HSfpK1d444+x2U?=
+ =?us-ascii?Q?em9U0at/QmZaScaQGLqfo0mdaGdefv1VBc8WHIEO0fZhskBX/PEGZ0qsZcV3?=
+ =?us-ascii?Q?J5dDGxsrnhJixlLzO0JR5DyHQV8dT/QqDPxbJTc5frPZH7vinNYQHJshGEzf?=
+ =?us-ascii?Q?mxjyiHxNlPqHDRZjVs8iWllonb3uzYMH9YIDVpJVONE8MLcLGod2Lp7bvmWC?=
+ =?us-ascii?Q?S3lbGEUy+lJ0LDMfuSyqRKb0eEq3yOeR59IBvKNOZrYa6bOuLlSSoCQEO3fw?=
+ =?us-ascii?Q?9IeScZFgFYAhd9RY7xhfqcY+I2hyugs1XVwx/Tt5UL6C/xeAzvjZo4LI689l?=
+ =?us-ascii?Q?w1VWh3txIaSH/EwzVpsP7AmgYX1a1HsLm0nZERMGLD0bPweZEbId6x1RgFvi?=
+ =?us-ascii?Q?JeV7fxup6bj+lXoD/3xfdujlLhQSoxQrYBysc8jmv2LLs+m60bSSyDg6QgBn?=
+ =?us-ascii?Q?OjVGc6hFmJHsBS5FD0JEXvKlVDQjfPbr1/hDzDVmzKvZm2NS/Jj47dDXY0RQ?=
+ =?us-ascii?Q?lUuiEzTjqbpDyw+R9Cye7k1WuQ/V657Bpk9uNnIvLMH96LMCNRlL01Xuzzg6?=
+ =?us-ascii?Q?C/0JNd3nu9+hmSD4PbA5mDUmXrIJWiOdxycfti7fPu6sIHOH4AziaN5/qlbD?=
+ =?us-ascii?Q?SBbI5a9H8LD23kSe76fljRipciD7tnnDwzSLroajHEwzigOne8fUWDwt97b/?=
+ =?us-ascii?Q?gm/SGvawsRx6KIn80AAb7OhKkQPxh8nrUnr+D39UsdwCXF5YRGvGPMeMTvKw?=
+ =?us-ascii?Q?YIDkbPsvNb0tGe2m/bMx80i7OrurBj2ckvYm8l+jxHhil9dU3xyeN8GzOj/R?=
+ =?us-ascii?Q?WQ+wROk4r4axCXdq9k0g2godjfh1SkIAQBSHrLiS/89KIjjI9MRmw6lGkt7X?=
+ =?us-ascii?Q?BywxEy5c6spJLgu/f0Zxo43dBXBp+RYc9z2DwX+JiWezDV+lHWjPa8OFmSCE?=
+ =?us-ascii?Q?7+yp5M3jd2dHCZk2jPMz1D+YnCdzvAeUTZWY66SdiyG2Aq8lJDktNVqdpBpK?=
+ =?us-ascii?Q?ac23jLLnNxSuZ76CeYaCMLrffBpcr6x6rChs4oh1uUxDI/V4EE0J7Dpxm7/Q?=
+ =?us-ascii?Q?TfY8XnWJlP4oOWOLo/0ZDr55sXhAzfeBREKGVEFHiv7EplyOemLUVxJAlnkT?=
+ =?us-ascii?Q?q2v2cbwCEb5K4+PmPcw1qsCQ/WAkVyS36WqOKhUQ7uw2s2LsL7foqIY4DRkU?=
+ =?us-ascii?Q?ErIjEb+inJN82dlAY5CG3USUsIyMQEXIrv9MWIfVAlSkSK1s2C0YQkSJvMvJ?=
+ =?us-ascii?Q?Oio8Zir0JLHrlbViBpD2xeKGlYWjslxl0sfL5D3IloZNRkdent4i+XAKfL5z?=
+ =?us-ascii?Q?bMESA61EGbhlykevKgz1vgd1?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from blueberry (119.31.174.66) by SG2PR01CA0122.apcprd01.prod.exchangelabs.com (2603:1096:4:40::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Thu, 15 Jul 2021 05:28:47 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 59615d14-dae4-4a1e-63da-08d947516d8d
-X-MS-TrafficTypeDiagnostic: DB3PR0402MB3915:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB3PR0402MB3915285EE8C85A9008081F5298129@DB3PR0402MB3915.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1443;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jt+jPDqLDjy7yaQmwze+h+ZQOqcF5zBLCMp8tljyeGiEfVKPYdNR71kGVrI1dppckmFMSQ2WcGzL22zRiFxdMK+bFjW1uNCT8H4Nx44/ppXI2MmFFNZagNG+qZwZ27VsBllat0gbngLRsQt0tYnQufYEgxrb7cLsTWlopNIpvkQ3RD6QuNsPUkUHt9HP/qO4m9F+x712Nd4cg74cFAqNOtpJ8bLiRudlwsqpuVmH2MBIynORBcuOekAx9Vxq2PFQ3+cnPLoW/7Si95nrJtrsWUKKX/Tl/u+6VMnJN3bJsCoB6tXy/UJfh936g0Fj51PvYIdiVn18APk+gu3zsqwT6SYmSD/05haMJrY3H0qTRgPb2KztfLEYkrg7IL9ZcrV0lpBo3owOSV2XcYNyNBnaiEP7FHeVu3p17wUljZAQ6N7oT+AeeDpORX2lo0PK6y2Jdifwy9CMoGlmyy/hdCrxRNTg9c6i2NfbCYPngiuTui1LczfsxwzPglXu/3GEbVnnkt+PdRCnnRgjD7j1L2e19L1Wphd7xlg4h9RL8baSAy7Lbcp4yjxyMiTjgriDC3AwpYX1RyCXlCA6hYFbAjhf8kRaBH3gXC3q6JiS57dU9aK7cv6M9NeX8kz9gHNvA+pEKnGkFRrbZ//e4sc6XKYAa8kr0SNuEJ0eoibRiFH3sms8+rL7K43u1ZCzrZEskMTRZkiQc/oqjIAVs5Lc3LGVhw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7051.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(6496006)(478600001)(52116002)(36756003)(6916009)(66556008)(2616005)(956004)(86362001)(38350700002)(186003)(66476007)(38100700002)(4326008)(26005)(6486002)(2906002)(5660300002)(8676002)(54906003)(66946007)(316002)(83380400001)(8936002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N3dSWVZNOVlWR1prK0Q5RVlOdm4wZXRBbng1VjFGbnM0anFPQ0g2ZW1wdmR2?=
- =?utf-8?B?SFViZm9yR3cvKzE3MGpjOG5BSWpNSG52VndSSG41Ti8yN1h3SmFjcFlRWU1X?=
- =?utf-8?B?MUlxWVF6MW1RTmNNWHI4TVNqOFo3WitzWmhmOFkwU3IxOGRhdUcrUDZoc2xS?=
- =?utf-8?B?ckhFdSs0NHZsTkVmQVY0WkoxWks2STlFTVp2YW1oZHgvWGpCeGxrYklybHRR?=
- =?utf-8?B?Uy9rQ2tSS3FpQk1KR3hwbXBRNDVyS2czeThveDNKZ0p2YUhGTVlzUEsvT2dB?=
- =?utf-8?B?WkU0dGU2ODU4cG9rSEtQQkR2ZFJQc2EvUW9vYzg4OWZsbkMxRU5JQXFQZkFN?=
- =?utf-8?B?UW4zR28xUi92eHhYY3REZGhSMjlXUWxrdlJrdHVyTkNqandIT3ozNGFENHJ3?=
- =?utf-8?B?cW1TL2pnTytsdU50andVMmlXSVBCYzVuVHQ5WW5FU2R5bWNWbTNrMnBVTmFx?=
- =?utf-8?B?bGdwazVLbVAvM0tiZVZWTldIclRrUnNiRXFkQ0p5R2ZxTisxemw3djk1VEo1?=
- =?utf-8?B?aG96TTN6SS9VNkdZME40REppV3VYNDEycmVJNFVHRklqQk9aSjZHQWhTd1Fr?=
- =?utf-8?B?UmluV3U0NlAyd2pMaHV0UmhWcXcvOWNwWFNtOURyVThaYUxmVUs0ODBNSXlJ?=
- =?utf-8?B?aldTK2xybytwemd3cTRWUm9SbjU0QlFuT2xvRVJoWnBIaGpwQStoaVE5TDBx?=
- =?utf-8?B?d0thbjdoYmcvbUhXbDRnVzZ4WS93c0NiNUI5ZW8xdUVzK0lLU2QydkhpS0Qw?=
- =?utf-8?B?dTdjMUlPVE5XUytzcFN3bW1OY3FzUGR1Y2tNM2RBai9oQjc5UDR3aktScU1V?=
- =?utf-8?B?cG42WFRGSTE5MENBMmtpdG41d3JOUHMrdnEzcVlBZFVoU2RHNHdwOUQvN0Iv?=
- =?utf-8?B?YkpnN3Rva0dORVhDR08rTjZSYTdUSUVGVThRN1ZWSnZhTllSK1BUcVZmWWNv?=
- =?utf-8?B?ejVOU1VoVnBTMERXMW1aOFBYdFQ3UjhBTTVFcWd6ejZlQWlnOHc4MlZrRGlW?=
- =?utf-8?B?Sk13ZDhOSzkxam5mRTgxZ1I2QTEwSmlHVEhsSGtuV2trZmhBQ2o0di8rZDVy?=
- =?utf-8?B?bmlEdmlnR1cvS21hMTBPUVlENXlVanlZdVpyUldndzRMSUNOcHh6L2wwUGEv?=
- =?utf-8?B?OFA5MTRQMFBxZW5PR3ZYMnlVdjJwOWRpVk90bDBwVHhKeStxYk10VFRLa0ZS?=
- =?utf-8?B?QlN0cldTSTFHT2ZlaVdaZlJQSlpUK2M2bkZreDFIQTZuTGNaSDVPZExnc3Uz?=
- =?utf-8?B?WVFxN1NUbktYb01pUzNRcjdaakZqWndIdDhZQ0dpazNIQmdoM01udWlUVmZk?=
- =?utf-8?B?QW43YzM2aVdTUXo1ZmE2MmtrUHBOVzhpS3QvSWRmYnhHdm5TN3ZpbVdhbjdM?=
- =?utf-8?B?aXRSckhZcFpiNDF2dlRCeHgzTVhPazd0WkpMOGp1cllaK2VIVTBjbVozOWlL?=
- =?utf-8?B?NzdUaWVRNXRxZ1pBbmkzRnpGM09yYWlQaVl2Tko3OEJBK21YOVZSbG1kTSsy?=
- =?utf-8?B?MFRvdFVUeDVNWDNiYUdsSFBOUjEvSTFEVmdLSVlkb29NaUswOG1kVFRSak1V?=
- =?utf-8?B?Rm9WaWM5a3ZLQWpBTzI2NDhEdVBvWWFqbm9OUHZzRmhiTE5WcFhBd1B0S0Fk?=
- =?utf-8?B?aEJKWDZxRE1SMDVCdm8vVFBaL0pkTXRCcjl2YWZ0VnFLWUpSS21SVFV3V2hq?=
- =?utf-8?B?c2t1cUhpRUVYY2hJbFpYYlQremUwNStaS0x6VEsvczN2N1IxNVZJckt1bzZW?=
- =?utf-8?Q?76ZdwITfemA5+5OC/EGFkCTzdC10eD19xubLiIB?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59615d14-dae4-4a1e-63da-08d947516d8d
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7051.eurprd04.prod.outlook.com
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2021 05:28:50.7811
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30a04875-b18c-4bc1-dab7-08d947616ddd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2021 07:23:22.9684
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8VFP0V2dJ7KIR8KC1cglvdAeAhdkFHa3U5fHXSh4075zh24YEhG9i/Q9QwM13tPNeQA93vl6gvwJNlbWc0mRpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3915
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Kkgkk3JFFQBAruEtgfvW34f0haRALDKA2VwtPyq3ieF5fYEpbmueZfmJNa9J2zMFTkyFWC42xUkyhGeVR6JenInqYMftkYOFs7tLTQijh1Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5731
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2021-07-14 at 13:46 +0300, Andy Shevchenko wrote:
-> On Wed, Jul 14, 2021 at 01:38:22PM +0300, Andy Shevchenko wrote:
-> > On Wed, Jul 14, 2021 at 06:10:46PM +0800, Liu Ying wrote:
-> > > On Wed, 2021-07-14 at 12:12 +0300, Andy Shevchenko wrote:
-> > > > On Wed, Jul 14, 2021 at 02:41:29PM +0800, Liu Ying wrote:
-> > 
-> > ...
-> > 
-> > > > > /*
-> > > > >  * Get rate closer to *parent_rate to guarantee there is no overflow
-> > > > >  * for m and n. In the result it will be the nearest rate left shifted
-> > > > >  * by (scale - fd->nwidth) bits.
-> > > > >  */
-> > > > 
-> > > > I don't know how to rephrase above comment better.
-> > > > 
-> > > > > scale = fls_long(*parent_rate / rate - 1);
-> > > > > if (scale > fd->nwidth)
-> > > > > 	rate <<= scale - fd->nwidth;
-> > > > 
-> > > > This takes an advantage of the numbers be in a form of
-> > > > 
-> > > > 	n = k * 2^m, (1)
-> > > > 
-> > > > where m will be scale in the snippet above. Thus, if n can be represented by
-> > > > (1), we opportunistically reduce amount of bits needed for it by shifting right
-> > > > by m bits.
-> > > > Does it make sense?
-> > > 
-> > > Thanks for your explaination.
-> > > But, sorry, Jacky and I still don't understand this.
-> 
-> It seems I poorly chose the letters for (1). Let's rewrite above as
-> 
-> This takes an advantage of the numbers be in a form of
-> 
-> 	a = k * 2^b, (1)
-> 
-> where b will be scale in the snippet above. Thus, if a can be represented by
-> (1), we opportunistically reduce amount of bits needed for it by shifting right
-> by b bits.
-> 
-> Also note, "shifting right" here is about the result of n (see below).
-> 
-> > Okay, We have two values in question:
-> >  r_o (original rate of the parent clock)
-> >  r_u (the rate user asked for)
-> > 
-> > We have a pre-scaler block which asks for
-> >  m (denominator)
-> >  n (nominator)
-> > values to be provided to satisfy the (2)
-> > 
-> > 	r_u ~= r_o * m / n, (2)
-> > 
-> > where we try our best to make it "=" instead of "~=".
-> > 
-> > Now, m and n have the limitation by a range, e.g.
-> > 
-> > 	n >= 1, n < N_lim, where N_lim = 2^nlim. (3)
-> > 
-> > Hence, from (2) and (3), assuming the worst case m = 1,
-> > 
-> > 	ln2(r_o / r_u) <= nlim. (4)
-> > 
-> > The above code tries to satisfy (4).
-> > 
-> > Have you got it now?
+Hi Geert,
 
-I'm afraid I haven't, sorry. Jacky, what about you?
+Thanks for the patch.
 
-Is that snippet really needed?
 
-Without that snippet, it seems that rational_best_approximation() is
-able to offer best_numerator and best_denominator without the risk of
-overflow for m and n, since max_numerator and max_denominator are
-already handed over to rational_best_approximation()?
-
-Does rational_best_approximation() always offer best_numerator by the
-range of [1, max_numerator] and best_denominator [1, max_denominator]?
+> -----Original Message-----
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> Sent: 14 July 2021 14:26
+> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>; Prabhakar Mahadev Lad <prabhakar.mahadev-
+> lad.rj@bp.renesas.com>; Biju Das <biju.das.jz@bp.renesas.com>
+> Cc: linux-clk@vger.kernel.org; linux-renesas-soc@vger.kernel.org; Geert
+> Uytterhoeven <geert+renesas@glider.be>
+> Subject: [PATCH] clk: renesas: Rename renesas-rzg2l-cpg.[ch] to rzg2l-
+> cpg.[ch]
+>=20
+> Rename renesas-rzg2l-cpg.c and renesas-rzg2l-cpg.h to rzg2l-cpg.c resp.
+> rzg2l-cpg.h, for consistency with other (sub)drivers.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Biju Das <biju.das.jz@bp.renesas.com>
 
 Regards,
-Liu Ying
-
-> > 
-> > > > The code looks good to me, btw, although I dunno if you need to call the newly
-> > > > introduced function before or after the above mentioned snippet.
-> > > 
-> > > Assuming that snippet is fully orthogonal to this patch, then it
-> > > doesn't matter if it's before or after.
-> > 
-> > Please, double check this. Because you play with limits, while we expect them
-> > to satisfy (3).
-> > 
-> > -- 
-> > With Best Regards,
-> > Andy Shevchenko
-> > 
-> > 
+Biju
+> ---
+> To be queued in renesas-clk for v5.15.
+>=20
+>  drivers/clk/renesas/Makefile                             | 2 +-
+>  drivers/clk/renesas/r9a07g044-cpg.c                      | 2 +-
+>  drivers/clk/renesas/{renesas-rzg2l-cpg.c =3D> rzg2l-cpg.c} | 2 +-
+> drivers/clk/renesas/{renesas-rzg2l-cpg.h =3D> rzg2l-cpg.h} | 0
+>  4 files changed, 3 insertions(+), 3 deletions(-)  rename
+> drivers/clk/renesas/{renesas-rzg2l-cpg.c =3D> rzg2l-cpg.c} (99%)  rename
+> drivers/clk/renesas/{renesas-rzg2l-cpg.h =3D> rzg2l-cpg.h} (100%)
+>=20
+> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+> index 5c6c5c721d98d827..7d018700d08bd9dc 100644
+> --- a/drivers/clk/renesas/Makefile
+> +++ b/drivers/clk/renesas/Makefile
+> @@ -37,7 +37,7 @@ obj-$(CONFIG_CLK_RCAR_CPG_LIB)		+=3D rcar-cpg-
+> lib.o
+>  obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+=3D rcar-gen2-cpg.o
+>  obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+=3D rcar-gen3-cpg.o
+>  obj-$(CONFIG_CLK_RCAR_USB2_CLOCK_SEL)	+=3D rcar-usb2-clock-sel.o
+> -obj-$(CONFIG_CLK_RZG2L)			+=3D renesas-rzg2l-cpg.o
+> +obj-$(CONFIG_CLK_RZG2L)			+=3D rzg2l-cpg.o
+>=20
+>  # Generic
+>  obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+=3D renesas-cpg-mssr.o
+> diff --git a/drivers/clk/renesas/r9a07g044-cpg.c
+> b/drivers/clk/renesas/r9a07g044-cpg.c
+> index ed5f5c11ac12d925..a71f920f5dfaa7da 100644
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -12,7 +12,7 @@
+>=20
+>  #include <dt-bindings/clock/r9a07g044-cpg.h>
+>=20
+> -#include "renesas-rzg2l-cpg.h"
+> +#include "rzg2l-cpg.h"
+>=20
+>  enum clk_ids {
+>  	/* Core Clock Outputs exported to DT */ diff --git
+> a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-
+> cpg.c similarity index 99% rename from drivers/clk/renesas/renesas-rzg2l-
+> cpg.c
+> rename to drivers/clk/renesas/rzg2l-cpg.c index
+> 9addc9dae31ac115..3b3b2c3347f3763f 100644
+> --- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -29,7 +29,7 @@
+>=20
+>  #include <dt-bindings/clock/renesas-cpg-mssr.h>
+>=20
+> -#include "renesas-rzg2l-cpg.h"
+> +#include "rzg2l-cpg.h"
+>=20
+>  #ifdef DEBUG
+>  #define WARN_DEBUG(x)	WARN_ON(x)
+> diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.h
+> b/drivers/clk/renesas/rzg2l-cpg.h similarity index 100% rename from
+> drivers/clk/renesas/renesas-rzg2l-cpg.h
+> rename to drivers/clk/renesas/rzg2l-cpg.h
+> --
+> 2.25.1
 
