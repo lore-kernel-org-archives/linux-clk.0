@@ -2,156 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A712C636CA
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 09:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A3FC07E95
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 09:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3F43613F6
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 09:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15ED3613F2
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 09:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238411AbhGPJFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jul 2021 05:05:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
+        id S231513AbhGPJRK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jul 2021 05:17:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231513AbhGPJFV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jul 2021 05:05:21 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F60C06175F;
-        Fri, 16 Jul 2021 02:02:27 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id v189so13735149ybg.3;
-        Fri, 16 Jul 2021 02:02:27 -0700 (PDT)
+        with ESMTP id S231354AbhGPJRJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jul 2021 05:17:09 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5471BC06175F;
+        Fri, 16 Jul 2021 02:14:14 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id j184so8009448qkd.6;
+        Fri, 16 Jul 2021 02:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cIlG7Tj9PHyebgVnc/iO72vl2A3TQGm2yNs4i4yWOOU=;
-        b=fBRyinH2auRaW9VIjTG5wuhme+khhzh95O8QGjyGLLHSKjsDmpWtA/VF7HcPLJ9gbo
-         5VwU5bebcUVWTaaklRRm69PmicVKPVvjlzzohECC5oRVOJ0UbA8OGH8t3BRCDeezJgwX
-         C9zekLGi5deY5C4huxsgPL/H9psWfPrVbGJdk5RynO542q0BRQ9PUgn8KbDt0dFNiKz1
-         Yxk6hCjk0csqtFYncP7l6u5jioXRB+Md9P9NINnE89OUr/XiAYfzP2HUzyxFMYrj0KLj
-         2sTBqouS+/m/nRj95/hyB2ZQN5vaZn3NmXIyYuI42hvBJvb5A73lkUXFNPOoG/dkWXov
-         1EsQ==
+         :cc:content-transfer-encoding;
+        bh=5nHyHeeg0sAwOgeidjlIYb/LHCQuXohNm0EqxrfVk9k=;
+        b=UqN4ny2Ni4+BsBB84HzqT3PiWlMw6FunTBIC8Ua2q71hIEaqc5NudukFFVCgGAPgPd
+         w/GSCwFA9z2KgYiIJ5f/KFKDTo/NqrUwo/cV12zjFM6Fzni/xI6NLhmAJwOyK7lwLocM
+         f7nnz1VHF7hjCw083/Oe/5TRtWsnbUPD+i9lwHuNwmoKBgodl1J7fLUHUT+ezp5VKV/A
+         aUBejtQHR/BlPOw9m4iMxjqs9IpCn4BpWY+U7oq1FJ47sL/K+X6ypdQ7hpw6jTdqcCvS
+         aIxQcVYAjzvuHIRriyeJWcJipAGm/MunmX9zkyc9+cjxlgLXyF7js71Ns6OTSQss+wmG
+         KkzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cIlG7Tj9PHyebgVnc/iO72vl2A3TQGm2yNs4i4yWOOU=;
-        b=qQy4jA3e4vhySIlwOUUNjqXeurAGW2Nos+7MCoCLbinobn6v4FJv4w7rh1ABqDATzf
-         BArYBr0uKLeu8LB06mgjd7RiYrn+Em1ykS25gVPImZiFGHQZFao3w+VPXfD+TMiHbuMd
-         R0Ql4aNgcrUjxlJIevPGE4FenBmUkHIymAEpbG8oIipBh+9kfUQVoPdjRuLleXqWfo+x
-         SeAdZno1T10ENkx3fU7G3Dr7hQRVLp1ai4aFIC+cNPbR66KiFvbVaz6DgikVy78TaFUl
-         A1JJrLGPuDZqWOSesBCOH/0uv0lqWuMJ9p5uhGbzMJtVp72TiakiU3dWT7LbNkizkaTY
-         ep0g==
-X-Gm-Message-State: AOAM530jAcILAquGisPNUD19GoXVlO0yPf7Hmz5obPXvo6WS1DB+lHME
-        pxN7xEfbnRG4NnbXqDSUnTqxYOxTK9SfV0S9ahc=
-X-Google-Smtp-Source: ABdhPJzjZH+UpiII0wGH5jTfkZY4AH/3/G0jav7ObOm0JDClSdgeFVXQOBQAE0iXvC9eFeyGX7vYwHMNfgK5VhLCc74=
-X-Received: by 2002:a25:d491:: with SMTP id m139mr11115293ybf.156.1626426146574;
- Fri, 16 Jul 2021 02:02:26 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5nHyHeeg0sAwOgeidjlIYb/LHCQuXohNm0EqxrfVk9k=;
+        b=NZJDw+eGJ5yUp8SgvDIHbvHzIc9AuX/SwKVDk1uma6zff4WMOfkCrVkWMUsbekuGuR
+         Y8WxaOMd1hnx7Bz4HUMBcdJjslNPahmSVwgVzDdEjHSD/V/UlNapUv4nbZF+7wVlMIh2
+         orE1YSJS0PNJhNh4fMRR8Lk4YD6le/va5yVy+4zdq8XOKkpyNu08FsAyqBaNRNA458+D
+         KwTd6Y3Q4SP+AYMw+EGQwQv71XPWNKOaX3sbzGvMgb6Bh/bW7fjpZoVSuthNA4czs3qr
+         F343OT/DBv4CNgXsG1qXF1PEHULV9uo6akRZRyVQlpktDxcTVkeDkTWALNtn84qv4vai
+         zyqg==
+X-Gm-Message-State: AOAM532MZG1ailA+kynqz3iXDMn9Gu1qjA/3tSbAak/Ql7lsxF9JlbIQ
+        HOCAEOsslpiFIZkVXwOthQ0/jFvVtNgT1fGC1FE=
+X-Google-Smtp-Source: ABdhPJyv8vRrrVwRbL05wQBF4Q8RvwkM8M53S1zfEw6SidleJEHeKW0gtfeX4hjK76PLX0zynuRGX7FJoBYu/PQkC88=
+X-Received: by 2002:a05:620a:6c9:: with SMTP id 9mr8753638qky.303.1626426853528;
+ Fri, 16 Jul 2021 02:14:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210715182123.23372-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdV3JkV5D5_PsngoLiLPA_B1VBvRKsCz7j2tXKYVE_Bx9A@mail.gmail.com>
- <CA+V-a8v5m-F-n4E9HpwLe1C9gHWepTc0rCVk5oh5RCJ7oTXe2A@mail.gmail.com> <CAMuHMdWBqLcCGWkP9JoALuiXT1m9a1rRwR8ExShUQmJ1HCikZA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWBqLcCGWkP9JoALuiXT1m9a1rRwR8ExShUQmJ1HCikZA@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Fri, 16 Jul 2021 10:02:00 +0100
-Message-ID: <CA+V-a8v9H5T_eNn3j2Eb4iS9Stww0y8kFxNPqX_R7qePY0kKww@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: clk: r9a07g044-cpg: Add entry for
- P0_DIV2 core clock
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+References: <0000000000002de98c05c61dba72@google.com> <162525917933.3570193.3861451207856095054@swboyd.mtv.corp.google.com>
+In-Reply-To: <162525917933.3570193.3861451207856095054@swboyd.mtv.corp.google.com>
+From:   Dongjiu Geng <gengdongjiu1@gmail.com>
+Date:   Fri, 16 Jul 2021 17:14:01 +0800
+Message-ID: <CABSBigQw_zSi6akKKXneqSHe56Q1Q_Y25CPQ4ZmT88n72BQgrg@mail.gmail.com>
+Subject: Re: [syzbot] upstream build error (16)
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dongjiu Geng <gengdongjiu@huawei.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
+        syzbot <syzbot+567c9f52d94ad483cac5@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Sorry for my late response,  I just saw it.
+Thanks very much for Stephen Boyd's fix.
 
-On Fri, Jul 16, 2021 at 9:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Stephen Boyd <sboyd@kernel.org> =E4=BA=8E2021=E5=B9=B47=E6=9C=883=E6=97=A5=
+=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=884:56=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Hi Prabhakar,
->
-> On Fri, Jul 16, 2021 at 10:45 AM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Fri, Jul 16, 2021 at 9:08 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Thu, Jul 15, 2021 at 8:21 PM Lad Prabhakar
-> > > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > > Add P0_DIV2 core clock required for CANFD module. CANFD core clock is
-> > > > sourced from P0_DIV2 referenced from HW manual Rev.0.50.
-> > >
-> > > OK.
-> > >
-> > > > Also add R9A07G044_LAST_CORE_CLK entry to avoid changes in
-> > > > r9a07g044-cpg.c file.
-> > >
-> > > I'm not so fond of adding this.  Unlike the other definitions, it is
-> > > not really part of the bindings, but merely a convenience definition
-> > > for the driver.  Furthermore it has to change when a new definition
-> > > is ever added.
-> > >
-> > Agreed will drop this.
+> Quoting syzbot (2021-07-01 23:04:23)
+> > Hello,
 > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > ---
-> > > >  include/dt-bindings/clock/r9a07g044-cpg.h | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > >
-> > > > diff --git a/include/dt-bindings/clock/r9a07g044-cpg.h b/include/dt-bindings/clock/r9a07g044-cpg.h
-> > > > index 0728ad07ff7a..2fd20db0b2f4 100644
-> > > > --- a/include/dt-bindings/clock/r9a07g044-cpg.h
-> > > > +++ b/include/dt-bindings/clock/r9a07g044-cpg.h
-> > > > @@ -30,6 +30,8 @@
-> > > >  #define R9A07G044_CLK_P2               19
-> > > >  #define R9A07G044_CLK_AT               20
-> > > >  #define R9A07G044_OSCCLK               21
-> > > > +#define R9A07G044_CLK_P0_DIV2          22
-> > > > +#define R9A07G044_LAST_CORE_CLK                23
-> > >
-> > > Third issue: off-by-one error, it should be 22 ;-)
-> > >
-> > 23 was intentionally as these numbers aren't used for core clock count
-> > we use r9a07g044_core_clks[] instead.
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    3dbdb38e Merge branch 'for-5.14' of git://git.kernel.or=
+g/p..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D11c93764300=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcaee64f929f=
+74d56
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D567c9f52d94ad=
+483cac5
+> > userspace arch: arm
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+567c9f52d94ad483cac5@syzkaller.appspotmail.com
+> >
+> > drivers/clk/hisilicon/clk-hi3559a.c:818: undefined reference to `hisi_r=
+eset_exit'
+> > drivers/clk/hisilicon/clk-hi3559a.c:800: undefined reference to `hisi_r=
+eset_init'
+> > arm-linux-gnueabi-ld: drivers/clk/hisilicon/clk-hi3559a.c:806: undefine=
+d reference to `hisi_reset_exit'
+> >
 >
-> It ends up as an off-by-one bug in the range check in
-> rzg2l_cpg_clk_src_twocell_get().
+> I think we fixed it. It's staged to merge in the next couple days.
 >
-Ooops missed that!
-
-Cheers,
-Prabhakar
-
-> > Said that I'll drop this.
->
-> OK.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+> #syz fix: clk: hisilicon: hi3559a: Drop __init markings everywhere
