@@ -2,126 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04BAC07E95
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 05:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B62EC636CB
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 07:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4058613E9
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 05:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5147613DF
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 07:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbhGPFUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jul 2021 01:20:32 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38062 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229822AbhGPFUb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jul 2021 01:20:31 -0400
-X-UUID: 7d71cf090aac449fb2111e54fd8f4390-20210716
-X-UUID: 7d71cf090aac449fb2111e54fd8f4390-20210716
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 2027036149; Fri, 16 Jul 2021 13:17:34 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 16 Jul 2021 13:17:33 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 16 Jul 2021 13:17:33 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabien Parent <fparent@baylibre.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [RESEND PATCH] clk: mediatek: make COMMON_CLK_MT8167* depend on COMMON_CLK_MT8167
-Date:   Fri, 16 Jul 2021 13:17:32 +0800
-Message-ID: <20210716051732.3422-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        id S235208AbhGPHle (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jul 2021 03:41:34 -0400
+Received: from mail-vs1-f45.google.com ([209.85.217.45]:42681 "EHLO
+        mail-vs1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231966AbhGPHld (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jul 2021 03:41:33 -0400
+Received: by mail-vs1-f45.google.com with SMTP id u7so4479122vst.9;
+        Fri, 16 Jul 2021 00:38:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/8xw8kA+i02VusdPbd0JDRclj3jeC0DgBPnvEpMrBZo=;
+        b=eXRKIlFJb5txJErZQlr54C0z65DSs1meTzz1poPWBkumvap6WBGWeDyCuXCxufOP3y
+         jr0xhuE14rkhTTLkOhpcZSCXaGm8R/aRS9SQ5MRBz7SbxGafX8sPKbBhUFFfn0w4ELVG
+         Hf2glLV09ggm/u2f5Ymt/S9YiLYFFPg6i8+2wdFNW4NO3uj8sus/1HQqJZ+0gzvVzuGx
+         rufNsds94vKYXEb0kTB3GtCyra84Lx0Vjjno/6xK6Eq+FgG24RG9aD8zznYghPNZzQIN
+         ddBgxyymAKAUAzjHyw8cFWpPtOrRq2iEvgBYPes7UgKLCoAhH3i/9E6UMTXpO7pZDFGY
+         4wHA==
+X-Gm-Message-State: AOAM531YEjpLT8Aurm8SG/omQUrJF9S55cVdcIpi449HrAQ1vqC7ABaT
+        Vvi4py5yMvcrPsPxU81Jncez7m52AL9jy2xlGbY=
+X-Google-Smtp-Source: ABdhPJzATlxh7v3TPVScN/pNQlX1LkPyBHWHSVXqQh9KOM24RerTxuY4NXa4lzjc15K3hgij1fF57C1RZ44OvNYZ4wQ=
+X-Received: by 2002:a05:6102:2828:: with SMTP id ba8mr11030321vsb.18.1626421118272;
+ Fri, 16 Jul 2021 00:38:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20210715182123.23372-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210715182123.23372-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210715182123.23372-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 16 Jul 2021 09:38:27 +0200
+Message-ID: <CAMuHMdU7zKFL_qio3vdTUgxPkQjxOW6K1TjPzDQja8ioYXYZNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: net: can: renesas,rcar-canfd: Document
+ RZ/G2L SoC
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I found that COMMON_CLK_MT8167* do not depend on COMMON_CLK_MT8167,
-so it is possible to config:
+Hi Prabhakar,
 
-CONFIG_COMMON_CLK_MT8167=n
-CONFIG_COMMON_CLK_MT8167_*=y
+On Thu, Jul 15, 2021 at 8:21 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add CANFD binding documentation for Renesas RZ/G2L SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Although it does not cause build breaks with such configuration,
-I think it is clearer to make COMMON_CLK_MT8167* depend on
-COMMON_CLK_MT8167.
+Thanks for your patch!
 
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- drivers/clk/mediatek/Kconfig | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+> --- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 886e2d9fced5..ce6d59e4ca82 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -362,41 +362,36 @@ config COMMON_CLK_MT8167
- 
- config COMMON_CLK_MT8167_AUDSYS
- 	bool "Clock driver for MediaTek MT8167 audsys"
--	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
--	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	depends on COMMON_CLK_MT8167
-+	default COMMON_CLK_MT8167
- 	help
- 	  This driver supports MediaTek MT8167 audsys clocks.
- 
- config COMMON_CLK_MT8167_IMGSYS
- 	bool "Clock driver for MediaTek MT8167 imgsys"
--	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
--	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	depends on COMMON_CLK_MT8167
-+	default COMMON_CLK_MT8167
- 	help
- 	  This driver supports MediaTek MT8167 imgsys clocks.
- 
- config COMMON_CLK_MT8167_MFGCFG
- 	bool "Clock driver for MediaTek MT8167 mfgcfg"
--	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
--	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	depends on COMMON_CLK_MT8167
-+	default COMMON_CLK_MT8167
- 	help
- 	  This driver supports MediaTek MT8167 mfgcfg clocks.
- 
- config COMMON_CLK_MT8167_MMSYS
- 	bool "Clock driver for MediaTek MT8167 mmsys"
--	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
--	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	depends on COMMON_CLK_MT8167
-+	default COMMON_CLK_MT8167
- 	help
- 	  This driver supports MediaTek MT8167 mmsys clocks.
- 
- config COMMON_CLK_MT8167_VDECSYS
- 	bool "Clock driver for MediaTek MT8167 vdecsys"
--	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
--	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	depends on COMMON_CLK_MT8167
-+	default COMMON_CLK_MT8167
- 	help
- 	  This driver supports MediaTek MT8167 vdecsys clocks.
- 
+> @@ -78,6 +79,38 @@ patternProperties:
+>        node.  Each child node supports the "status" property only, which
+>        is used to enable/disable the respective channel.
+>
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - renesas,rzg2l-canfd
+> +then:
+> +  properties:
+> +    interrupts:
+> +      items:
+> +        - description: CAN global error interrupt
+> +        - description: CAN receive FIFO interrupt
+> +        - description: CAN0 error interrupt
+> +        - description: CAN0 transmit interrupt
+> +        - description: CAN0 transmit/receive FIFO receive completion interrupt
+> +        - description: CAN1 error interrupt
+> +        - description: CAN1 transmit interrupt
+> +        - description: CAN1 transmit/receive FIFO receive completion interrupt
+
+Does it make sense to add interrupt-names?
+
+> +
+> +    resets:
+> +      maxItems: 2
+
+Same here, for reset-names?
+Or a list of descriptions, so we know which reset serves what purpose.
+
+> +
+> +else:
+> +  properties:
+> +    interrupts:
+> +      items:
+> +        - description: Channel interrupt
+> +        - description: Global interrupt
+> +
+> +    resets:
+> +      maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+
+The rest looks good to me.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
