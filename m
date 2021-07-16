@@ -2,128 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E84FC07E95
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 13:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D82C07E95
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 13:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2CA0613F5
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 13:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BD1B61260
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 13:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239577AbhGPNWs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jul 2021 09:22:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:12143 "EHLO mga11.intel.com"
+        id S240001AbhGPNhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jul 2021 09:37:23 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56332 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232804AbhGPNWs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Jul 2021 09:22:48 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10046"; a="207704388"
+        id S239996AbhGPNhV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Jul 2021 09:37:21 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10046"; a="197993394"
 X-IronPort-AV: E=Sophos;i="5.84,245,1620716400"; 
-   d="scan'208";a="207704388"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2021 06:19:52 -0700
+   d="scan'208";a="197993394"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2021 06:34:26 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,245,1620716400"; 
-   d="scan'208";a="494935556"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2021 06:19:49 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1m4Nkk-00EEoF-L8; Fri, 16 Jul 2021 16:19:42 +0300
-Date:   Fri, 16 Jul 2021 16:19:42 +0300
+   d="scan'208";a="429191754"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 16 Jul 2021 06:34:23 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 4C00A2CB; Fri, 16 Jul 2021 16:34:51 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Liu Ying <victor.liu@nxp.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Elaine Zhang <zhangqing@rock-chips.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH v1 2/3] clk: fractional-divider: Introduce NO_PRESCALER
- flag
-Message-ID: <YPGHbvaCv/x/JlgH@smile.fi.intel.com>
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com>
- <20210715120752.29174-2-andriy.shevchenko@linux.intel.com>
- <7941107fda10f075395870528f0e52d42e502d92.camel@nxp.com>
+        linux-rockchip@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Liu Ying <victor.liu@nxp.com>
+Subject: [PATCH v2 3/3] clk: fractional-divider: Document the arithmetics used behind the code
+Date:   Fri, 16 Jul 2021 16:34:48 +0300
+Message-Id: <20210716133448.24890-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210716133448.24890-1-andriy.shevchenko@linux.intel.com>
+References: <20210716133448.24890-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7941107fda10f075395870528f0e52d42e502d92.camel@nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 10:43:57AM +0800, Liu Ying wrote:
-> On Thu, 2021-07-15 at 15:07 +0300, Andy Shevchenko wrote:
-> > The newly introduced flag, when set, makes the flow to skip
-> > the assumption that the caller will use an additional 2^scale
-> > prescaler to get the desired clock rate.
-> 
-> Now, I start to be aware of the reason why the "left shifting" is
-> needed but still not 100% sure that details are all right. IIUC, you
-> are considering a potential HW prescaler here, while I thought the HW
-> model is just a fractional divider(M/N) and the driver is fully
-> agnostic to the potential HW prescaler.
+It appears that some code lines raise the question why they are needed
+and how they are participated in the calculus of the resulting values.
 
-It's not AFAICS. Otherwise we will get saturated values which is much worse
-then shifted left frequency. Anyway, this driver appeared first for the hardware
-that has it for all users, so currently the assumption stays.
+Document this in a form of the top comment in the module file.
 
-...
+Reported-by: Liu Ying <victor.liu@nxp.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: renamed variables in formulas to follow the code, added floor()
+ drivers/clk/clk-fractional-divider.c | 34 +++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-> >  	scale = fls_long(*parent_rate / rate - 1);
-> > -	if (scale > fd->nwidth)
-> > +	if (scale > fd->nwidth && !(fd->flags & CLK_FRAC_DIVIDER_NO_PRESCALER))
-> >  		rate <<= scale - fd->nwidth;
-> 
-> First of all, check the CLK_FRAC_DIVIDER_NO_PRESCALER flag for the
-> entire above snippet of code?
-
-OK.
-
-> Second and more important, it seems that it would be good to decouple
-> the prescaler knowledge from this fractional divider clk driver so as
-> to make it simple(Output rate = (m / n) * parent_rate).  This way, the
-> CLK_FRAC_DIVIDER_NO_PRESCALER flag is not even needed at the first
-> place, which means rational_best_approximation() just _directly_
-> offer best_{numerator,denominator} for all cases.
-
-Feel free to submit a patch, just give a good test to avoid breakage of almost
-all users of this driver.
-
-> Further more, is it
-> possilbe for rational_best_approximation() to make sure there is no
-> risk of overflow for best_{numerator,denominator}, since
-> max_{numerator,denominator} are already handed over to
-> rational_best_approximation()?
-
-How? It can not be satisfied for all possible inputs.
-
-> Overflowed/unreasonable
-> best_{numerator,denominator} don't sound like the "best" offered value.
-
-I don't follow here. If you got saturated values it means that your input is
-not convergent. In practice it means that we will supply quite a bad value to
-the caller.
-
-> If that's impossible, then audit best_{numerator,denominator} after
-> calling rational_best_approximation()?
-
-And? I do not understand what you will do if you get the values of m and n
-as m = 1, n = 2^nlim - 1.
-
-> Make sense?
-
-Not really. I probably miss your point, sorry.
-
-So, I will submit v2 with addressed first comment and LKP noticed compiler
-error.
-
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 5f4b6a8aef67..7f7f688f8de5 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -3,8 +3,38 @@
+  * Copyright (C) 2014 Intel Corporation
+  *
+  * Adjustable fractional divider clock implementation.
+- * Output rate = (m / n) * parent_rate.
+  * Uses rational best approximation algorithm.
++ *
++ * Output is calculated as
++ *
++ *	rate = (m / n) * parent_rate				(1)
++ *
++ * This is useful when on die we have a prescaler block which asks for
++ * m (numerator) and n (denominator) values to be provided to satisfy
++ * the (1) as much as possible.
++ *
++ * Since m and n have the limitation by a range, e.g.
++ *
++ *	n >= 1, n < N_width, where N_width = 2^nwidth		(2)
++ *
++ * for some cases the output may be saturated. Hence, from (1) and (2),
++ * assuming the worst case when m = 1, the inequality
++ *
++ *	floor(log2(parent_rate / rate)) <= nwidth		(3)
++ *
++ * may be derived. Thus, in cases when
++ *
++ *	(parent_rate / rate) >> N_width				(4)
++ *
++ * we scale up the rate by 2^scale, where
++ *
++ *	scale = floor(log2(parent_rate / rate)) - nwidth	(5)
++ *
++ * and assume that the IP, that needs m and n, has also its own
++ * prescaler, which is capable to divide by 2^scale. In this way
++ * we get the denominator to satisfy the desired range (2) and
++ * at the same time much much better result of m and n than simple
++ * saturated values.
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -81,6 +111,8 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 	 * Get rate closer to *parent_rate to guarantee there is no overflow
+ 	 * for m and n. In the result it will be the nearest rate left shifted
+ 	 * by (scale - fd->nwidth) bits.
++	 *
++	 * For the detailed explanation see the top comment in this file.
+ 	 */
+ 	if (!(fd->flags & CLK_FRAC_DIVIDER_NO_PRESCALER)) {
+ 		unsigned long scale = fls_long(*parent_rate / rate - 1);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.2
 
