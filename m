@@ -2,147 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513E4C07E95
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 16:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5516AC12002
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 19:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23D5F613E8
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 16:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 359A8613FD
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jul 2021 19:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbhGPQkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jul 2021 12:40:10 -0400
-Received: from smtp-33.italiaonline.it ([213.209.10.33]:56200 "EHLO libero.it"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229534AbhGPQkK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Jul 2021 12:40:10 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it ([79.54.92.92])
-        by smtp-33.iol.local with ESMTPA
-        id 4QpnmKGx8S6GM4QpsmO3AZ; Fri, 16 Jul 2021 18:37:13 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1626453433; bh=b1AOLJtPfVADgUal1s0AlJOIZO8zgx8Ko6/esPl3A8g=;
-        h=From;
-        b=anVN9WSxSaYI63mR+0y0sM1bgfiKoxU3qBaCO9+fZQ3foKdlmhZW3MiLpJvZp0EoF
-         ECrRIGkfvOyo9oalvB0UsNrH+898tudc2T6XfwrBDAUfN3vkD0auxhKes/Rln7z/vs
-         sC16S3WZEhvhP69Op1zduO//7c5aVyoAqxvq/Zty3yUfWO5yBl5N4APrl2gahYxwBu
-         cS5s0JssHaudjojFjiAdgEV3QfzzKTozMR9gYi964lNwwRlOZejGu6zlL2EI79rI09
-         9MOX2qPlrCJC6UuKVSPDyDh8QJUKXguJ3LaeUYgwQrNGQJEOBLNsFOWNi1kb9z/tSE
-         xzS1dlMmOp4TQ==
-X-CNFS-Analysis: v=2.4 cv=AcF0o1bG c=1 sm=1 tr=0 ts=60f1b5b9 cx=a_exe
- a=eKwsI+FXzXP/Nc4oRbpalQ==:117 a=eKwsI+FXzXP/Nc4oRbpalQ==:17 a=VwQbUJbxAAAA:8
- a=wSIzyl8AIrrWyGTfDxQA:9 a=AjGcO6oz07-iQ99wixmX:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-clk@vger.kernel.org
-Cc:     Dario Binacchi <dariobin@libero.it>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v3] clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
-Date:   Fri, 16 Jul 2021 18:37:05 +0200
-Message-Id: <20210716163705.17604-1-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-X-CMAE-Envelope: MS4xfJxbT8k/rZDUZkIZXuZWj34PEjbhLofZCmyd+fVDszIgxppuniAz5txJibFr+oZgoioUPgFeXqmmqBQYE6rd3je3s6ppBzhuZyl5erphtXEEdAYlbqx+
- eEca0JLZ5Cg5plMg1CBE2yBIZura+YuW4Kp1Do0LjCXMf10msyIuMlD43QIHR3AONAd6dqynYlcCigj/Dz92FzCGVj+Wja1PyiVFVpeVNj0nBqHgcWady+6L
- 2ZzN3XXTTG+cqionmQJJmCl/q4v9SohQVuYi1cyhKUtvW7RzP9jTE4QHSx/1oMNF9bTgBzDSdXPJWLs3jFu3fDW0K9BGLm42aOGtKECtfOv7Gb2fMiPA8vPB
- 97bDyAGua/h25E2WrNHTXdNKUAzLWNOFqUelE040aOS0ZY0yt7j1BdRfvQD17QIm+hmKWXQSdJLR39YbXaURvUvqwsgXW0x3omfHgvEJI5NfJe+9T2hLtMwU
- rLkWwmOn5KKUGVjwAorFISz9TRLRI/aNNQuIwjPjaiE5Y8GJQA2/RC+N5Uco55iXYpGDCBTgFiF7poYjExdaUWxHEdkJV6vh9hb9Gg/DNl8yWF7vg8n5P/NF
- DUA/nVnui3WrxtpDExGpIriB
+        id S230376AbhGPTUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jul 2021 15:20:06 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:21940 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230256AbhGPTUF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jul 2021 15:20:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1626463030; x=1657999030;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=F3qFxoWuttwrIoU5MmfRCmTy007uSOQOuWxMKEt4HP0=;
+  b=Rt0erlNJUnUVD9rrU8i/jHEcs1mQmh9TAUPxAzVaGbngQa0P3nUj08d2
+   lTRRKWqGd+WBRP5j3vmURR2n97Qqtv105R6T3dlavxWYh6eHj5UNckMvB
+   rpy4MBNPiFjjlKpNlr7rEsrWUDA/6s62UDKOKzxPCbOzrLn/rTkRSE+ia
+   3mbqj4WlJC2XC9/KtQcWya4YZ0rTODr0aejOXtFAoDcQvidccZfEYO0cG
+   tqsmVEVy9q1aPMdYDRG08DN6Fm/fC8istIWNTnwHQipOZ7/0rxvTRJGGD
+   Ms2EpHttzD1DU7zTZvyrv0v5mtCNXYZ9mCY5dYNlOtZoiGE7Qiw8qqNFm
+   w==;
+IronPort-SDR: Y+Tu3euWzPOM0Dp3/IZ/fHkfQpfauDc2+EcaTM5GKlgAdMj4Bs4uzJXVmHF45XT/zJTtvo1hjQ
+ d3T/MQoyNDwK/Ifvy6oHb//EdCXNytD2U1xhuwfGU1Z/YFB0wi24EMluxyTy/jXA8O4w5mr37h
+ 0HpC3i3ZnlYHb1C7qcjlitpabNkrc1rdscdzeT7QAwqu2lAVFSD5/WmkoeS29HEId8kFd6V5+F
+ gU0MlTLQsZ2RKSCI4I/fUTyhTXRErF3v2/4l57CPVl/EKMWL+CSeyV5t3JIWWVRPLGIq3xrriA
+ fRMCoCvd2F2ZkCpUjLnUTQp9
+X-IronPort-AV: E=Sophos;i="5.84,245,1620716400"; 
+   d="scan'208";a="136229222"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 Jul 2021 12:17:09 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 16 Jul 2021 12:17:09 -0700
+Received: from [10.12.72.255] (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Fri, 16 Jul 2021 12:17:07 -0700
+Subject: Re: [PATCH] clk: at91: clk-generated: Limit the requested rate to our
+ range
+To:     Codrin Ciubotariu - M19940 <Codrin.Ciubotariu@microchip.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches - M43218 <Ludovic.Desroches@microchip.com>,
+        Claudiu Beznea - M18063 <Claudiu.Beznea@microchip.com>
+References: <20210707131213.3283509-1-codrin.ciubotariu@microchip.com>
+ <7586cf33-078a-cb85-98c8-9969baa0f19d@microchip.com>
+ <25631072-d9a3-0d84-fd47-4d2414f079f6@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <4393ec64-3891-a875-b948-516efd08817c@microchip.com>
+Date:   Fri, 16 Jul 2021 21:17:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <25631072-d9a3-0d84-fd47-4d2414f079f6@microchip.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling the framebuffer leads to a system hang. Running, as a debug
-hack, the store_pan() function in drivers/video/fbdev/core/fbsysfs.c
-without taking the console_lock, allows to see the crash backtrace on
-the serial line.
+On 09/07/2021 at 11:59, Codrin Ciubotariu - M19940 wrote:
+> On 09.07.2021 12:21, Nicolas Ferre wrote:
+>> On 07/07/2021 at 15:12, Codrin Ciubotariu wrote:
+>>> On clk_generated_determine_rate(), the requested rate could be outside
+>>> of clk's range. Limit the rate to the clock's range to not return an
+>>> error.
+>>
+>> Isn't it saner for the user to return an error code instead of
+>> automatically restrain the dynamics requested without notice?
+>>
+>> Can you elaborate the use case where returning an error is not convenient?
+> 
+> The way I see it, if the user requests a rate that is out of clock's
+> range, the driver's determine_rate() should return min/max, not an
+> error. That is actually the closest rate supported by the clock, which
+> is what determine_rate() should accomplish. The user has no clk API to
+> get clock's range, so there is no way to call clk_round_rate() only for
+> values within our range.
+> 
+> The use cause is with sam9x60's I2S driver, which has to try different
+> rates to get the closest one to what it needs. There is no 'perfect'
+> rate, because there is no AUDIO PLL and we have to try different values
+> for our internal dividers to find the closest one.
+> 
+> https://elixir.bootlin.com/linux/latest/source/sound/soc/atmel/mchp-i2s-mcc.c#L416
 
-~ # echo 0 0 > /sys/class/graphics/fb0/pan
+Sure, makes sense:
 
-[    9.719414] Unhandled exception: IPSR = 00000005 LR = fffffff1
-[    9.726937] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.733008] Hardware name: STM32 (Device Tree Support)
-[    9.738296] PC is at clk_gate_is_enabled+0x0/0x28
-[    9.743426] LR is at stm32f4_pll_div_set_rate+0xf/0x38
-[    9.748857] pc : [<0011e4be>]    lr : [<0011f9e3>]    psr: 0100000b
-[    9.755373] sp : 00bc7be0  ip : 00000000  fp : 001f3ac4
-[    9.760812] r10: 002610d0  r9 : 01efe920  r8 : 00540560
-[    9.766269] r7 : 02e7ddb0  r6 : 0173eed8  r5 : 00000000  r4 : 004027c0
-[    9.773081] r3 : 0011e4bf  r2 : 02e7ddb0  r1 : 0173eed8  r0 : 1d3267b8
-[    9.779911] xPSR: 0100000b
-[    9.782719] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.788791] Hardware name: STM32 (Device Tree Support)
-[    9.794120] [<0000afa1>] (unwind_backtrace) from [<0000a33f>] (show_stack+0xb/0xc)
-[    9.802421] [<0000a33f>] (show_stack) from [<0000a8df>] (__invalid_entry+0x4b/0x4c)
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-The `pll_num' field in the post_div_data configuration contained a wrong
-value which also referenced an uninitialized hardware clock when
-clk_register_pll_div() was called.
+Regards,
+   Nicolas
 
-Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
-
----
-I added Gabriel Fernandez's 'Reviewed-by' tag as requested by himself
-15 days ago at https://lore.kernel.org/patchwork/patch/1450964/.
-
-Changes in v3:
-- Add Gabriel Fernandez 'Reviewed-by' tag.
-
-Changes in v2:
-- Change  'u8 pll_num' from 'stm32f4_pll_post_div_data' structure into
-  'int pll_idx'.
-
- drivers/clk/clk-stm32f4.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 18117ce5ff85..5c75e3d906c2 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -526,7 +526,7 @@ struct stm32f4_pll {
- 
- struct stm32f4_pll_post_div_data {
- 	int idx;
--	u8 pll_num;
-+	int pll_idx;
- 	const char *name;
- 	const char *parent;
- 	u8 flag;
-@@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
- 
- #define MAX_POST_DIV 3
- static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
--	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
-+	{ CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
- 
--	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
-+	{ CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
- 
--	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-+	{ NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
- 		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
- };
- 
-@@ -1774,7 +1774,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 				post_div->width,
- 				post_div->flag_div,
- 				post_div->div_table,
--				clks[post_div->pll_num],
-+				clks[post_div->pll_idx],
- 				&stm32f4_clk_lock);
- 
- 		if (post_div->idx != NO_IDX)
 -- 
-2.17.1
-
+Nicolas Ferre
