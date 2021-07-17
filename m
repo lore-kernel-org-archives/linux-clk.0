@@ -2,220 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E781BC636C9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842ACC636CA
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 17:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC570613E3
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B94D6115C
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 17:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233567AbhGQMmW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jul 2021 08:42:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39658 "EHLO mail.kernel.org"
+        id S232601AbhGQR37 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jul 2021 13:29:59 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:59922 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230112AbhGQMmV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Jul 2021 08:42:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1E213611C1;
-        Sat, 17 Jul 2021 12:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626525565;
-        bh=K6FKq2NmXzk9TyUl3buQDg5LY+AZGHy3lCAN8OTMS+E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nby5l6ojX9m54x9eJTp9/09VzM8+1X/hdyDfX48z3W72vfKaN4bWwi0UXwpckiscX
-         Kq+IjjGBH3uTwNrROzqincKriR2eRRQ5/IsBtm5+3q0uSn24BOA+iYKKJ5f8hso1Xb
-         VbDDhSHGpdPsRkeg6qNh2iqcTBnoRTs8fmwt87QSPSMBpJBedXdalnizYmryrs6ZOy
-         EPY9sYu1wYX/8vKQTVGVhnvIDJ9gcidThGH3h0pdQuUkcXKBQ8za2LaxKUi9ceW26i
-         popqxMk4qVC4tJ31r/1kFOvtOrsJo/7S6Cq4E2H2yFl4t9wBMor+eC/cul+esqST+g
-         xTD0aijgvG8FQ==
-Received: by pali.im (Postfix)
-        id 4AE1BEA7; Sat, 17 Jul 2021 14:39:23 +0200 (CEST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S232010AbhGQR36 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Jul 2021 13:29:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+        Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+        In-Reply-To:References; bh=JHiMbsp05pbGMAUABzAHsB0xUjHxzmh4UHPPdbARD7U=; b=kc
+        YCaWUaoFG8tUNAUF++VCslkyByjSaaAWsQzrmC1jXnzwsSL4hA9BkmFgJ5JovrTmWGkmrYhbmXEf7
+        nJnhND6SgI1xfIt1pr21UC6jhy4H3ScNJ7eLXsO5fcvyzGzIVdJfOfNwUPHKfL8r7N+UG9P+0c9I1
+        lE3zjbDC8Q5t2RQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1m4o5T-00DkJo-MT; Sat, 17 Jul 2021 19:26:51 +0200
+Date:   Sat, 17 Jul 2021 19:26:51 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Andrew Lunn" <andrew@lunn.ch>,
-        "Gregory Clement" <gregory.clement@bootlin.com>,
-        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
-        "Vladimir Vid" <vladimir.vid@sartura.hr>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 5/5] serial: mvebu-uart: implement support for baudrates higher than 230400
-Date:   Sat, 17 Jul 2021 14:38:29 +0200
-Message-Id: <20210717123829.5201-6-pali@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210717123829.5201-1-pali@kernel.org>
+Subject: Re: [PATCH v3 2/5] serial: mvebu-uart: implement UART clock driver
+ for configuring UART base clock
+Message-ID: <YPMS24faTg9tqreR@lunn.ch>
 References: <20210624224909.6350-1-pali@kernel.org>
  <20210717123829.5201-1-pali@kernel.org>
+ <20210717123829.5201-3-pali@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210717123829.5201-3-pali@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This change implements simple usage of fractional divisor. When main
-divisor D is too large to represent requested baudrate then use divisor M
-from fractional divisor feature. All the M prescalers are set to same and
-maximal value 63, so fractional part is not used at all.
+On Sat, Jul 17, 2021 at 02:38:26PM +0200, Pali Roh·r wrote:
+> @@ -445,6 +472,7 @@ static void mvebu_uart_shutdown(struct uart_port *port)
+>  static int mvebu_uart_baud_rate_set(struct uart_port *port, unsigned int baud)
+>  {
+>  	unsigned int d_divisor, m_divisor;
+> +	unsigned long flags;
+>  	u32 brdv, osamp;
+>  
+>  	if (!port->uartclk)
+> @@ -463,10 +491,12 @@ static int mvebu_uart_baud_rate_set(struct uart_port *port, unsigned int baud)
+>  	m_divisor = OSAMP_DEFAULT_DIVISOR;
+>  	d_divisor = DIV_ROUND_CLOSEST(port->uartclk, baud * m_divisor);
+>  
+> +	spin_lock_irqsave(&mvebu_uart_lock, flags);
 
-Tests showed that UART at 1500000 baudrate via this configuration is stable
-and usable. So there is no need to implement complicated calculation of
-fractional coefficients yet.
+Hi Pali
 
-To use this feature with higher baudrates, it is required to use UART clock
-provided by UART clock driver. Default boot xtal clock is not capable of
-higher baudrates and this change also contains code for determining upper
-limit of possible baudrate.
+You only need spin_lock_irqsave() if you plan on taking the spinlock
+in an interrupt handler. It seems unlikely the baud rate will be
+changed in interrupt context? Please check, and then swap to plain
+spin_lock().
 
-Signed-off-by: Pali Roh√°r <pali@kernel.org>
----
- drivers/tty/serial/mvebu-uart.c | 79 ++++++++++++++++++++++++++-------
- 1 file changed, 62 insertions(+), 17 deletions(-)
+>  	brdv = readl(port->membase + UART_BRDV);
+>  	brdv &= ~BRDV_BAUD_MASK;
+>  	brdv |= d_divisor;
+>  	writel(brdv, port->membase + UART_BRDV);
+> +	spin_unlock_irqrestore(&mvebu_uart_lock, flags);
+>  
+>  	osamp = readl(port->membase + UART_OSAMP);
+>  	osamp &= ~OSAMP_DIVISORS_MASK;
 
-diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-index f3fb1f3718f2..925b3e0c098c 100644
---- a/drivers/tty/serial/mvebu-uart.c
-+++ b/drivers/tty/serial/mvebu-uart.c
-@@ -99,6 +99,7 @@
- #define UART_OSAMP		0x14
- #define  OSAMP_DEFAULT_DIVISOR	16
- #define  OSAMP_DIVISORS_MASK	0x3F3F3F3F
-+#define  OSAMP_MAX_DIVISOR	63
- 
- #define MVEBU_NR_UARTS		2
- 
-@@ -479,18 +480,59 @@ static int mvebu_uart_baud_rate_set(struct uart_port *port, unsigned int baud)
- 		return -EOPNOTSUPP;
- 
- 	/*
--	 * The baudrate is derived from the UART clock thanks to two divisors:
--	 *   > D ("baud generator"): can divide the clock from 2 to 2^10 - 1.
--	 *   > M ("fractional divisor"): allows a better accuracy for
--	 *     baudrates higher than 230400.
-+	 * The baudrate is derived from the UART clock thanks to divisors:
-+	 *   > d1 * d2 ("TBG divisors"): can divide only TBG clock from 1 to 6
-+	 *   > D ("baud generator"): can divide the clock from 1 to 1023
-+	 *   > M ("fractional divisor"): allows a better accuracy (from 1 to 63)
- 	 *
--	 * As the derivation of M is rather complicated, the code sticks to its
--	 * default value (x16) when all the prescalers are zeroed, and only
--	 * makes use of D to configure the desired baudrate.
-+	 * Exact formulas for calculating baudrate:
-+	 *
-+	 * with default x16 scheme:
-+	 *   baudrate = xtal / (d * 16)
-+	 *   baudrate = tbg / (d1 * d2 * d * 16)
-+	 *
-+	 * with fractional divisor:
-+	 *   baudrate = 10 * xtal / (d * (3 * (m1 + m2) + 2 * (m3 + m4)))
-+	 *   baudrate = 10 * tbg / (d1*d2 * d * (3 * (m1 + m2) + 2 * (m3 + m4)))
-+	 *
-+	 * Oversampling value:
-+	 *   osamp = (m1 << 0) | (m2 << 8) | (m3 << 16) | (m4 << 24);
-+	 *
-+	 * Where m1 controls number of clock cycles per bit for bits 1,2,3;
-+	 * m2 for bits 4,5,6; m3 for bits 7,8 and m4 for bits 9,10.
-+	 *
-+	 * To simplify baudrate setup set all the M prescalers to same value.
-+	 * For 9600 baudrate and higher it is enough to use just default (x16)
-+	 * divisor or fractional divisor with M = 63, so there is no need to
-+	 * use real fractional support (when the M prescalers are not equal).
-+	 *
-+	 * When all the M prescalers are zeroed then default (x16) divisor is
-+	 * used. Default x16 scheme is more stable than M (fractional divisor),
-+	 * so use M only when D divisor is not enough to derivate baudrate.
-+	 *
-+	 * Member port->uartclk is either xtal clock rate or TBG clock rate
-+	 * divided by (d1 * d2). So UART clock driver already sets d1 and d2
-+	 * divisors and UART driver cannot change them. Moreover they are
-+	 * shared with both UARTs.
- 	 */
-+
- 	m_divisor = OSAMP_DEFAULT_DIVISOR;
- 	d_divisor = DIV_ROUND_CLOSEST(port->uartclk, baud * m_divisor);
- 
-+	if (d_divisor > BRDV_BAUD_MAX) {
-+		/*
-+		 * Experiments showed that small M divisors are unstable.
-+		 * So use maximal possible M = 63 and calculate D divisor.
-+		 */
-+		m_divisor = OSAMP_MAX_DIVISOR;
-+		d_divisor = DIV_ROUND_CLOSEST(port->uartclk, baud * m_divisor);
-+	}
-+
-+	if (d_divisor < 1)
-+		d_divisor = 1;
-+	else if (d_divisor > BRDV_BAUD_MAX)
-+		d_divisor = BRDV_BAUD_MAX;
-+
- 	spin_lock_irqsave(&mvebu_uart_lock, flags);
- 	brdv = readl(port->membase + UART_BRDV);
- 	brdv &= ~BRDV_BAUD_MASK;
-@@ -500,6 +542,9 @@ static int mvebu_uart_baud_rate_set(struct uart_port *port, unsigned int baud)
- 
- 	osamp = readl(port->membase + UART_OSAMP);
- 	osamp &= ~OSAMP_DIVISORS_MASK;
-+	if (m_divisor != OSAMP_DEFAULT_DIVISOR)
-+		osamp |= (m_divisor << 0) | (m_divisor << 8) |
-+			(m_divisor << 16) | (m_divisor << 24);
- 	writel(osamp, port->membase + UART_OSAMP);
- 
- 	return 0;
-@@ -529,14 +574,14 @@ static void mvebu_uart_set_termios(struct uart_port *port,
- 		port->ignore_status_mask |= STAT_RX_RDY(port) | STAT_BRK_ERR;
- 
- 	/*
--	 * Maximal divisor is 1023 * 16 when using default (x16) scheme.
--	 * Maximum achievable frequency with simple baudrate divisor is 230400.
--	 * Since the error per bit frame would be of more than 15%, achieving
--	 * higher frequencies would require to implement the fractional divisor
--	 * feature.
-+	 * Maximal divisor is 1023 and maximal fractional divisor is 63. And
-+	 * experiments showed that baudrates above 1/80 of base clock are not
-+	 * stable and usable. So disallow baudrate above 1/80 of the base clock.
-+	 * When port->uartclk is not available then mvebu_uart_baud_rate_set()
-+	 * fails so values min_baud and max_baud in this case does not matter.
- 	 */
--	min_baud = DIV_ROUND_UP(port->uartclk, 1023 * 16);
--	max_baud = 230400;
-+	min_baud = DIV_ROUND_UP(port->uartclk, BRDV_BAUD_MAX*OSAMP_MAX_DIVISOR);
-+	max_baud = port->uartclk / 80;
- 
- 	baud = uart_get_baud_rate(port, termios, old, min_baud, max_baud);
- 	if (mvebu_uart_baud_rate_set(port, baud)) {
-@@ -1394,14 +1439,14 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
- 			 * Calculate the smallest TBG d1 and d2 divisors that
- 			 * still can provide 9600 baudrate.
- 			 */
--			d1 = DIV_ROUND_UP(rate, 9600 * OSAMP_DEFAULT_DIVISOR *
-+			d1 = DIV_ROUND_UP(rate, 9600 * OSAMP_MAX_DIVISOR *
- 						BRDV_BAUD_MAX);
- 			if (d1 < 1)
- 				d1 = 1;
- 			else if (d1 > CLK_TBG_DIV1_MAX)
- 				d1 = CLK_TBG_DIV1_MAX;
- 
--			d2 = DIV_ROUND_UP(rate, 9600 * OSAMP_DEFAULT_DIVISOR *
-+			d2 = DIV_ROUND_UP(rate, 9600 * OSAMP_MAX_DIVISOR *
- 						BRDV_BAUD_MAX * d1);
- 			if (d2 < 1)
- 				d2 = 1;
-@@ -1416,7 +1461,7 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
- 		}
- 
- 		/* Skip clock source which cannot provide 9600 baudrate */
--		if (rate > 9600 * OSAMP_DEFAULT_DIVISOR * BRDV_BAUD_MAX * d1 * d2)
-+		if (rate > 9600 * OSAMP_MAX_DIVISOR * BRDV_BAUD_MAX * d1 * d2)
- 			continue;
- 
- 		/*
--- 
-2.20.1
+> +	/* Recalculate UART1 divisor so UART1 baudrate does not change */
+> +	if (prev_clock_rate) {
+> +		divisor = DIV_U64_ROUND_CLOSEST((u64)(val & BRDV_BAUD_MASK) *
+> +						parent_clock_rate * prev_d1d2,
+> +						prev_clock_rate * d1 * d2);
+> +		if (divisor < 1)
+> +			divisor = 1;
+> +		else if (divisor > BRDV_BAUD_MAX)
+> +			divisor = BRDV_BAUD_MAX;
+> +		val = (val & ~BRDV_BAUD_MASK) | divisor;
+> +	}
 
+I don't see any range checks in the patch which verifies the requested
+baud rate is actually possible. With code like this, it seems like the
+baud rate change will be successful, but the actual baud rate will not
+be what is requested.
+
+> +	/* Recalculate UART2 divisor so UART2 baudrate does not change */
+> +	if (prev_clock_rate) {
+> +		val = readl(uart_clock_base->reg2);
+> +		divisor = DIV_U64_ROUND_CLOSEST((u64)(val & BRDV_BAUD_MASK) *
+> +						parent_clock_rate * prev_d1d2,
+> +						prev_clock_rate * d1 * d2);
+> +		if (divisor < 1)
+> +			divisor = 1;
+> +		else if (divisor > BRDV_BAUD_MAX)
+> +			divisor = BRDV_BAUD_MAX;
+> +		val = (val & ~BRDV_BAUD_MASK) | divisor;
+> +		writel(val, uart_clock_base->reg2);
+
+Here it looks like UART1 could request a baud rate change, which ends
+up setting the clocks so that UART2 is out of range? Could the change
+for UART1 be successful, but you end up breaking UART2? I'm thinking
+when you are at opposite ends of the scale. UART2 is running at
+110baud and UART1 at 230400baud.
+
+	Andrew
