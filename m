@@ -2,171 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A6EC636C9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4E4C636C9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2844D60233
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25CC5613EE
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jul 2021 12:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbhGQMWX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jul 2021 08:22:23 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:34092 "EHLO gloria.sntech.de"
+        id S230112AbhGQMlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jul 2021 08:41:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229471AbhGQMWW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Jul 2021 08:22:22 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1m4jHq-00051D-Eo; Sat, 17 Jul 2021 14:19:18 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 1/3] clk: fractional-divider: Export approximation algo to the CCF users
-Date:   Sat, 17 Jul 2021 14:19:17 +0200
-Message-ID: <10550544.QTc0DxZM9B@diego>
-In-Reply-To: <20210716133448.24890-1-andriy.shevchenko@linux.intel.com>
-References: <20210716133448.24890-1-andriy.shevchenko@linux.intel.com>
+        id S229471AbhGQMlo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Jul 2021 08:41:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 389D961285;
+        Sat, 17 Jul 2021 12:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626525528;
+        bh=2Yit2k4uDAQ+Npx8/IXzxBh/GhjT1kx6H+uYPeax3WY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oJ4/by3lNsgTX1+KqA4I3lcmb5kYVk8Mt4AZOmz38C34j9iQS00kUes7WOj50syU0
+         j+U54LAqA8voUBURpN2B5/54zX69nsvgar31Bvomy9wZ9ZdTHfrQFB98baR/MEet40
+         JC5lRQVCxwbBZnFXb6CJZPRkzk2VJTYH772oq5UGWacj46sDrGyW3eKcvO4rqiogxC
+         qHBjsobDlIZ38T3Wsr7WZ1UaXEk5PvRyH13LGu0D/iLegumP6GyEDGTBXheiQI8QZX
+         njaSIceFvdFLn8r6EKaP6gY0Ikjzz22D9VZ2+HKlzO05igPnM36rDLLyIdJXv/4CHM
+         pYzCkPlI3Ocqg==
+Received: by pali.im (Postfix)
+        id 6CD79EA7; Sat, 17 Jul 2021 14:38:45 +0200 (CEST)
+From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Andrew Lunn" <andrew@lunn.ch>,
+        "Gregory Clement" <gregory.clement@bootlin.com>,
+        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+        "Vladimir Vid" <vladimir.vid@sartura.hr>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/5] serial: mvebu-uart: Support for higher baudrates
+Date:   Sat, 17 Jul 2021 14:38:24 +0200
+Message-Id: <20210717123829.5201-1-pali@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210624224909.6350-1-pali@kernel.org>
+References: <20210624224909.6350-1-pali@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Freitag, 16. Juli 2021, 15:34:46 CEST schrieb Andy Shevchenko:
-> At least one user currently duplicates some functions that are provided
-> by fractional divider module. Let's export approximation algo and replace
-> the open-coded variant.
-> 
-> As a bonus the exported function will get better documentation in place.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This patch series add support for baudrates higher than 230400 on
+Marvell Armada 37xx boards.
 
-on Rockchip rk3288 and rk3399
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+This new version v3 is rebased on top of Linus master branch and all
+already applied patches were dropped. There are no changes in patches
+itself since v2.
 
-Also for dropping the Rockchip-specific copy in favor of the main
-implementation
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Please review these patches as they touch both Device Tree bindings and
+mvebu-uart.c driver.
 
+Pali Rohár (5):
+  math64: New DIV_U64_ROUND_CLOSEST helper
+  serial: mvebu-uart: implement UART clock driver for configuring UART
+    base clock
+  dt-bindings: mvebu-uart: document DT bindings for
+    marvell,armada-3700-uart-clock
+  arm64: dts: marvell: armada-37xx: add device node for UART clock and
+    use it
+  serial: mvebu-uart: implement support for baudrates higher than 230400
 
+ .../bindings/clock/armada3700-uart-clock.txt  |  24 +
+ .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+ .../arm64/boot/dts/marvell/armada-3720-db.dts |   4 +
+ .../dts/marvell/armada-3720-espressobin.dtsi  |   4 +
+ .../dts/marvell/armada-3720-turris-mox.dts    |   4 +
+ .../boot/dts/marvell/armada-3720-uDPU.dts     |   4 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  15 +-
+ drivers/tty/serial/Kconfig                    |   1 +
+ drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
+ include/linux/math64.h                        |  13 +
+ 10 files changed, 649 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.txt
 
-> ---
-> v2: fixed compilation error (LKP), successfully compile-tested on x86
->  drivers/clk/clk-fractional-divider.c | 11 +++++++----
->  drivers/clk/clk-fractional-divider.h |  9 +++++++++
->  drivers/clk/rockchip/clk.c           | 17 +++--------------
->  3 files changed, 19 insertions(+), 18 deletions(-)
->  create mode 100644 drivers/clk/clk-fractional-divider.h
-> 
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index b1e556f20911..535d299af646 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -14,6 +14,8 @@
->  #include <linux/slab.h>
->  #include <linux/rational.h>
->  
-> +#include "clk-fractional-divider.h"
-> +
->  static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
->  {
->  	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
-> @@ -68,9 +70,10 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
->  	return ret;
->  }
->  
-> -static void clk_fd_general_approximation(struct clk_hw *hw, unsigned long rate,
-> -					 unsigned long *parent_rate,
-> -					 unsigned long *m, unsigned long *n)
-> +void clk_fractional_divider_general_approximation(struct clk_hw *hw,
-> +						  unsigned long rate,
-> +						  unsigned long *parent_rate,
-> +						  unsigned long *m, unsigned long *n)
->  {
->  	struct clk_fractional_divider *fd = to_clk_fd(hw);
->  	unsigned long scale;
-> @@ -102,7 +105,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->  	if (fd->approximation)
->  		fd->approximation(hw, rate, parent_rate, &m, &n);
->  	else
-> -		clk_fd_general_approximation(hw, rate, parent_rate, &m, &n);
-> +		clk_fractional_divider_general_approximation(hw, rate, parent_rate, &m, &n);
->  
->  	ret = (u64)*parent_rate * m;
->  	do_div(ret, n);
-> diff --git a/drivers/clk/clk-fractional-divider.h b/drivers/clk/clk-fractional-divider.h
-> new file mode 100644
-> index 000000000000..4fa359a12ef4
-> --- /dev/null
-> +++ b/drivers/clk/clk-fractional-divider.h
-> @@ -0,0 +1,9 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +struct clk_hw;
-> +
-> +void clk_fractional_divider_general_approximation(struct clk_hw *hw,
-> +						  unsigned long rate,
-> +						  unsigned long *parent_rate,
-> +						  unsigned long *m,
-> +						  unsigned long *n);
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 049e5e0b64f6..b7be7e11b0df 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -22,6 +22,8 @@
->  #include <linux/regmap.h>
->  #include <linux/reboot.h>
->  #include <linux/rational.h>
-> +
-> +#include "../clk-fractional-divider.h"
->  #include "clk.h"
->  
->  /*
-> @@ -178,10 +180,8 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
->  		unsigned long rate, unsigned long *parent_rate,
->  		unsigned long *m, unsigned long *n)
->  {
-> -	struct clk_fractional_divider *fd = to_clk_fd(hw);
->  	unsigned long p_rate, p_parent_rate;
->  	struct clk_hw *p_parent;
-> -	unsigned long scale;
->  
->  	p_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
->  	if ((rate * 20 > p_rate) && (p_rate % rate != 0)) {
-> @@ -190,18 +190,7 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
->  		*parent_rate = p_parent_rate;
->  	}
->  
-> -	/*
-> -	 * Get rate closer to *parent_rate to guarantee there is no overflow
-> -	 * for m and n. In the result it will be the nearest rate left shifted
-> -	 * by (scale - fd->nwidth) bits.
-> -	 */
-> -	scale = fls_long(*parent_rate / rate - 1);
-> -	if (scale > fd->nwidth)
-> -		rate <<= scale - fd->nwidth;
-> -
-> -	rational_best_approximation(rate, *parent_rate,
-> -			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
-> -			m, n);
-> +	clk_fractional_divider_general_approximation(hw, rate, parent_rate, m, n);
->  }
->  
->  static struct clk *rockchip_clk_register_frac_branch(
-> 
-
-
-
+-- 
+2.20.1
 
