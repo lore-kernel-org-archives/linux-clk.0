@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F85DC6377A
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB2FC6377B
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 876FF60E09
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A256611B0
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232946AbhGRKwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jul 2021 06:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59658 "EHLO
+        id S233142AbhGRKwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jul 2021 06:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233043AbhGRKwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:12 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7942C0613DF
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:13 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id b29so137176ljf.11
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:13 -0700 (PDT)
+        with ESMTP id S233250AbhGRKwR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:17 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625D4C0613E6
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:16 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id g22so12368466lfu.0
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lYWJNz4RjhdOK3xgOEToM1HEgwLI9uBrUK4vDt0ZL48=;
-        b=zpvRKC8FyYNchdzHLterZZRcnXOibDPnmrNJbeuyo3fw3zuEhDgQCJ0dpuJpARUqyT
-         NtVCUUvQTSPYP6yecupgZVu4E/yvMyP4jnDJs5OpT/Cq3CZ8pb5E0v+wVVyrvTqPopSr
-         MRifeAA1c5W7vyNaIlPiz1Z1uSbyNF4BhY+DaVJpiRCeLALGPCRzjCpywOL82F+hjzD6
-         QDeh1Gs1ePASoscEhcv5Y8RXy2uJTQudBra0sJbsxOFsRsP7SaoQGaqYOYre+Y2LADpS
-         JI+oRXfwQAj4X3bMB/izS8Z3VF39Qbusf79Ar5fy/7736ptLRmEIG99vfX3KVyymnjI9
-         +fvQ==
+        bh=Dd9ei2GjQiFjh9R1NgRmYWUwg7rsPR4hERBwm4wpjv0=;
+        b=m7dK3rl7blk+8UA/hKxKhQOYMPdH3NxlSmNnG/o1aJEhXEUlncPQuZKivbsbSFsd6D
+         3i21AAMkCywCkVBzFWjOAv/d6Z+UDg82Z67QAhvpgJtzh0LcxglFAY9ZrBRrQ8Al6d8l
+         lMQf+xWLEFiq96qDgAQPKVXhvqYLYe3nkO04nG49x/8iNM8x9LOo0LdZgU7iW9o/PdXg
+         3ucl5q2Sryk4BpUbVP99WB8wcvbyb9Bx+L+AF/axWZZXqEQtAavjhflpKRkmLUluLJjB
+         oqrA7G4uMYhngaGUONxfgVAVFnMRQ2sZnRSjZ7o3VcXH2T90XIyy28jrmDw769Z+hdgK
+         NvoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lYWJNz4RjhdOK3xgOEToM1HEgwLI9uBrUK4vDt0ZL48=;
-        b=Q5N0DRjLwt047jV2nL4zlD9I+HRAq58yKG5DhhpaAr3VECxtrF1vgz4oSQkHQUHyEj
-         pp7Y1WhfEk+69QDCeaYtDnP1cTAHAvkahEnYlI7d/fQD5uAPSNkAjdmukngVxjORwxvm
-         SRz8uqFyFpiwkUFkfwZhAzHCa5a6yMUy/vT1MtDGLAOCydWsP5Z8MRxoeMxmyYnzVhXW
-         w1SSv8C2Tw4zgqcMvtZMjKIo5EDTVRtiOIdtLqHdIggnyiUse++SsYUE3Y9Z4pAv37D1
-         wa7GlnLIJjsKjznS1CAq/3i9+J4TCJ0+37F4FxclwQVQtAd4etVRd+m+JleOxfqliOXw
-         Bx9g==
-X-Gm-Message-State: AOAM532olo8gakq6pdb7Lr0BPuapEdG3qxPwfrqWjBLmiZ742wGzcMCS
-        Ok0lFwppX7fiKfXwiG32amXchQ==
-X-Google-Smtp-Source: ABdhPJwoq3uuZ5wcVgOC89J45Vc8WLkFm1xkOj3Zpon6mb2K7wzf5/lKITc7L981i6t6HT4hGeJYKg==
-X-Received: by 2002:a05:651c:1253:: with SMTP id h19mr17404671ljh.303.1626605352314;
-        Sun, 18 Jul 2021 03:49:12 -0700 (PDT)
+        bh=Dd9ei2GjQiFjh9R1NgRmYWUwg7rsPR4hERBwm4wpjv0=;
+        b=dWQuX7c0gH0DLh3dres7We3RTFTvRwFa4fUPGf8KsiO4rmGxse2vd5mwE0uSJxFTe3
+         gNwbijPg1KvsXRi+6vbTAZwv7UcS1aTfYar1/lcwWgfvQwW/hM6SZTLkZolns7QSJN+E
+         Z8neMvFAhlDdM8YUgqSOXURwj/SuyU+Slra8P/vYtl8KTAbxxfeIFduwi6sNjLtHNBqp
+         Rldz058hreiYO6SBPbT8IyqilCZgnudgP08Z5ZWg6VT4Lh+52W1p2U2FX+liWl28PFZw
+         FqgHFM1TC/BPUAzSOLeCgmmpWTazrijRPWLfx/hulgQ3amPgdrP0KpcejytuWdyUDweO
+         CMfA==
+X-Gm-Message-State: AOAM530bt2ZUnd5A7I/GNWuXf+kUq2MvBZd2coK61tQt9sJLYJmesxDH
+        NItwY79TZ/NVwa1cP2+Yz8X2Lg==
+X-Google-Smtp-Source: ABdhPJw9tTR2amz089wkuVxYZzBd42218zETpGO9Z5ykKpcbYkr4c1GBjVvi8xaDTDShfKRsEqLNwg==
+X-Received: by 2002:a19:c1d2:: with SMTP id r201mr14921339lff.148.1626605354671;
+        Sun, 18 Jul 2021 03:49:14 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.11
+        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jul 2021 03:49:11 -0700 (PDT)
+        Sun, 18 Jul 2021 03:49:14 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/9] clk: qcom: gdsc: enable optional power domain support
-Date:   Sun, 18 Jul 2021 13:48:58 +0300
-Message-Id: <20210718104901.454843-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 9/9] clk: qcom: videocc-sm8250: stop using mmcx regulator
+Date:   Sun, 18 Jul 2021 13:49:01 +0300
+Message-Id: <20210718104901.454843-10-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
 References: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
@@ -81,163 +81,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sm8250 dispcc and videocc registers are powered up by the MMCX power
-domain. Currently we use a regulator to enable this domain on demand,
-however this has some consequences, as genpd code is not reentrant.
-
-Make gdsc code also use pm_runtime calls to ensure that registers are
-accessible during the gdsc_enable/gdsc_disable operations.
+Now as the common qcom clock controller code has been taught about power
+domains, stop mentioning mmcx supply as a way to power up the clock
+controller's gdscs.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/qcom/gdsc.c | 59 ++++++++++++++++++++++++++++++++++++++---
- drivers/clk/qcom/gdsc.h |  2 ++
- 2 files changed, 58 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/videocc-sm8250.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 51ed640e527b..a0781d7284cc 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/ktime.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset-controller.h>
-@@ -50,6 +51,22 @@ enum gdsc_status {
- 	GDSC_ON
+diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
+index d996b76f4e30..ad46c4014a40 100644
+--- a/drivers/clk/qcom/videocc-sm8250.c
++++ b/drivers/clk/qcom/videocc-sm8250.c
+@@ -277,7 +277,6 @@ static struct gdsc mvs0c_gdsc = {
+ 	},
+ 	.flags = 0,
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.supply = "mmcx",
  };
  
-+static int gdsc_pm_runtime_get(struct gdsc *sc)
-+{
-+	if (!sc->dev)
-+		return 0;
-+
-+	return pm_runtime_resume_and_get(sc->dev);
-+}
-+
-+static int gdsc_pm_runtime_put(struct gdsc *sc)
-+{
-+	if (!sc->dev)
-+		return 0;
-+
-+	return pm_runtime_put_sync(sc->dev);
-+}
-+
- /* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
- static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
- {
-@@ -232,9 +249,8 @@ static void gdsc_retain_ff_on(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
- }
- 
--static int gdsc_enable(struct generic_pm_domain *domain)
-+static int _gdsc_enable(struct gdsc *sc)
- {
--	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
- 	if (sc->pwrsts == PWRSTS_ON)
-@@ -290,11 +306,26 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 	return 0;
- }
- 
--static int gdsc_disable(struct generic_pm_domain *domain)
-+static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	ret = gdsc_pm_runtime_get(sc);
-+	if (ret)
-+		return ret;
-+
-+	ret = _gdsc_enable(sc);
-+
-+	gdsc_pm_runtime_put(sc);
-+
-+	return ret;
-+}
-+
-+static int _gdsc_disable(struct gdsc *sc)
-+{
-+	int ret;
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
-@@ -329,6 +360,22 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	return 0;
- }
- 
-+static int gdsc_disable(struct generic_pm_domain *domain)
-+{
-+	struct gdsc *sc = domain_to_gdsc(domain);
-+	int ret;
-+
-+	ret = gdsc_pm_runtime_get(sc);
-+	if (ret)
-+		return ret;
-+
-+	ret = _gdsc_disable(sc);
-+
-+	gdsc_pm_runtime_put(sc);
-+
-+	return ret;
-+}
-+
- static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
-@@ -425,6 +472,8 @@ int gdsc_register(struct gdsc_desc *desc,
- 	for (i = 0; i < num; i++) {
- 		if (!scs[i])
- 			continue;
-+		if (pm_runtime_enabled(dev))
-+			scs[i]->dev = dev;
- 		scs[i]->regmap = regmap;
- 		scs[i]->rcdev = rcdev;
- 		ret = gdsc_init(scs[i]);
-@@ -439,6 +488,8 @@ int gdsc_register(struct gdsc_desc *desc,
- 			continue;
- 		if (scs[i]->parent)
- 			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
-+		else if (!IS_ERR_OR_NULL(dev->pm_domain))
-+			pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
- 	}
- 
- 	return of_genpd_add_provider_onecell(dev->of_node, data);
-@@ -457,6 +508,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
- 			continue;
- 		if (scs[i]->parent)
- 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
-+		else if (!IS_ERR_OR_NULL(dev->pm_domain))
-+			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
- 	}
- 	of_genpd_del_provider(dev->of_node);
- }
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 5bb396b344d1..702d47a87af6 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -25,6 +25,7 @@ struct reset_controller_dev;
-  * @resets: ids of resets associated with this gdsc
-  * @reset_count: number of @resets
-  * @rcdev: reset controller
-+ * @dev: the device holding the GDSC, used for pm_runtime calls
-  */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-@@ -58,6 +59,7 @@ struct gdsc {
- 
- 	const char 			*supply;
- 	struct regulator		*rsupply;
-+	struct device 			*dev;
+ static struct gdsc mvs1c_gdsc = {
+@@ -287,7 +286,6 @@ static struct gdsc mvs1c_gdsc = {
+ 	},
+ 	.flags = 0,
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.supply = "mmcx",
  };
  
- struct gdsc_desc {
+ static struct gdsc mvs0_gdsc = {
+@@ -297,7 +295,6 @@ static struct gdsc mvs0_gdsc = {
+ 	},
+ 	.flags = HW_CTRL,
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.supply = "mmcx",
+ };
+ 
+ static struct gdsc mvs1_gdsc = {
+@@ -307,7 +304,6 @@ static struct gdsc mvs1_gdsc = {
+ 	},
+ 	.flags = HW_CTRL,
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.supply = "mmcx",
+ };
+ 
+ static struct clk_regmap *video_cc_sm8250_clocks[] = {
 -- 
 2.30.2
 
