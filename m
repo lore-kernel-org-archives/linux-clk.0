@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E49C636C8
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35182C6377B
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1D476120D
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B0661220
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232405AbhGRKwL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jul 2021 06:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59672 "EHLO
+        id S232898AbhGRKwO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jul 2021 06:52:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232582AbhGRKwK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:10 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBE8C0613DE
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:11 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id l11so5958701ljq.4
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:11 -0700 (PDT)
+        with ESMTP id S233034AbhGRKwM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:12 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26935C0613DC
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:13 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id bn5so20814398ljb.10
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GJaDlSnC/hNhPjnByAZZc7+i+wuzXCs6r81DcH7ZrtQ=;
-        b=fOrwFKO8hCB4KF5iZ77VIRLzhnDn5dNI/OjCTxBsZ0asUn2D4nousCeDDGiL+dgaAn
-         fRMtB2ck1sUEEs28HAPX+yW4tFI+QoSf1FBQDI05XrUWBO/W+QJiXIsC/qcqrROobv8X
-         7z66KaR4fC7GdcPW7CdMZKgNO9r2LN5nGPh36aUYCzUiWRCKWZhWGOGVRTTY5REt4OkQ
-         iUU6QdTthfxbFXynV97MPcM7RhCN8ALl7pFRAjDEpCXcZx3dDX7TPzRCh3z6ACBnMTRa
-         t7BJyYDlAH5JgXEFtvSSX7AzJK7VFJa+IYTkb5ndXNAeq4tYKT3tT6h6fJBY+w+MK/ZQ
-         Nj+A==
+        bh=JPnE4vurU9PkRVowEC7li0cxdIi4nYwl+uw77ku/+po=;
+        b=djJXp5zRLDPGCdVtBXwbxLa9g+CRF8URjpJzVuHrCeN0dDkCiZoSerJVx6FFNQciyW
+         VAMeVfkWR7+Yo5N5gu+go18RQAVzfzmfT1/RZDRTO2rr/BPrisQxjP8BXE/bHahdfdC0
+         jfwy7LpLRmKF1NyPv7iGM5LyQ9d2BCwF0rtcpi2/SVkx60BAkLC//MHal2yPNSouAr4C
+         02G5O1X+JBtxvwhE8aKYS/SvqVU/d9yP6gSm9klJtugOItiYZP106lGSKFcUW1mMMn3c
+         Yt2dxCfEUQPTr08ofETmLVwAP+98wsSBJOAFbb4Js/JsSoa/U6r4Z5y3FgNneGsZQ25f
+         dLvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GJaDlSnC/hNhPjnByAZZc7+i+wuzXCs6r81DcH7ZrtQ=;
-        b=ogLwavSnyZjNZl/HlzIk/JegIV1YUiLVrYrp4OPUYEGHrNvkSMNNYFpaelGbdEqt/D
-         /2FQmvRcAFk3ht0vTUw9ujlMSqm/Xej1HZz2T1cULLAaVNSGN30ZMZqA/5IoL/aQ7Xwl
-         HsfmYaO92BbSQzL9n6feIRbOw9xBgDjsCIfQhCx7Ou0JGI3dD/f+js28tB9oPwcIuP6K
-         qicqIq2GmEPTCoYBRF8gef1cdqaBMT3oBgLLkUpHuycJf6nRMRSVCoXSJL/x16RPLC2F
-         zqRZykt7pQQGRWK6sIpbxUhp6T/frZcCc9CVzy7BCK4uoCyg8qE0N5n/K6GIUMB00Jm3
-         PsCg==
-X-Gm-Message-State: AOAM531r42FSdh9DHqFp7RoOtov3S85peOtmgEaL9RKCnEBwAIKlLspr
-        JmY8iDvx+XkeoTW/Z6tD/6CsNg==
-X-Google-Smtp-Source: ABdhPJyMQquMJjidV1UHOgUkuaiISk2VANqD+GcTanBH8fW5PnvtIqRQQ9e8ceMkwSQ8b4gJNfSfDg==
-X-Received: by 2002:a05:651c:488:: with SMTP id s8mr17854625ljc.328.1626605349861;
-        Sun, 18 Jul 2021 03:49:09 -0700 (PDT)
+        bh=JPnE4vurU9PkRVowEC7li0cxdIi4nYwl+uw77ku/+po=;
+        b=XijKLFNXxbZJj/y+Mn22W3GPeRPS9YeNgya9dhVPsCpsMxBBfe9K3UAW1T+E/85Ioa
+         2gyzYrijEmKwCijCYeSC6xybOOeDbjKzOBmmqd2eRy0+cUutCxAY6bOEa1V7kRaLvrd0
+         vo3CfJfBaUXLH/J3o0+ZzdhiqqL7ddRmgrP8jTzk4T5t25C0qA+ftCPQSgC2zkcfwpkw
+         il6hwWTVM8I2XiEcUSHSYqeD9LcQ6CPuMdaS4yczI8JOCh1JqHEAsyG2NUGD2wTWejFa
+         ca9sMXY2adGnUbW2iHREtH0rWW1Uxm0kw2bl+8sGEzodmPR1P6Zo6Ec88n1/lu7t9meT
+         f8OA==
+X-Gm-Message-State: AOAM531YmY8gb7XZHoq8dD/VUsBqT8YjZyCtqBX7kotMlRnG6h/szEKn
+        51bd04v7Br5wRGYkPYdFqsvAAw==
+X-Google-Smtp-Source: ABdhPJxDmsddJ5kwioWxb3qwVxtqYqdE27le2Bym+Zke6QOXYJCSkwJVfWJTrcyMEXJ5orKASBH9eQ==
+X-Received: by 2002:a05:651c:3d0:: with SMTP id f16mr18057204ljp.169.1626605351527;
+        Sun, 18 Jul 2021 03:49:11 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.09
+        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jul 2021 03:49:09 -0700 (PDT)
+        Sun, 18 Jul 2021 03:49:11 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/9] PM: runtime: add devm_pm_runtime_enable helper
-Date:   Sun, 18 Jul 2021 13:48:55 +0300
-Message-Id: <20210718104901.454843-4-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 5/9] clk: qcom: videocc-sm8250: use runtime PM for the clock controller
+Date:   Sun, 18 Jul 2021 13:48:57 +0300
+Message-Id: <20210718104901.454843-6-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
 References: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
@@ -81,65 +81,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add helper function handling typical driver action: call
-pm_runtime_enable at the probe() time and disable it during remove().
+On sm8250 dispcc and videocc registers are powered up by the MMCX power
+domain. Use runtime PM calls to make sure that required power domain is
+powered on while we access clock controller's registers.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/base/power/runtime.c | 17 +++++++++++++++++
- include/linux/pm_runtime.h   |  4 ++++
- 2 files changed, 21 insertions(+)
+ drivers/clk/qcom/videocc-sm8250.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 8a66eaf731e4..ec94049442b9 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1447,6 +1447,23 @@ void pm_runtime_enable(struct device *dev)
+diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
+index 7b435a1c2c4b..d996b76f4e30 100644
+--- a/drivers/clk/qcom/videocc-sm8250.c
++++ b/drivers/clk/qcom/videocc-sm8250.c
+@@ -6,6 +6,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+ #include <dt-bindings/clock/qcom,videocc-sm8250.h>
+@@ -367,10 +368,21 @@ MODULE_DEVICE_TABLE(of, video_cc_sm8250_match_table);
+ static int video_cc_sm8250_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
++	int ret;
++
++	ret = devm_pm_runtime_enable(&pdev->dev);
++	if (ret)
++		return ret;
++
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret)
++		return ret;
+ 
+ 	regmap = qcom_cc_map(pdev, &video_cc_sm8250_desc);
+-	if (IS_ERR(regmap))
++	if (IS_ERR(regmap)) {
++		pm_runtime_put(&pdev->dev);
+ 		return PTR_ERR(regmap);
++	}
+ 
+ 	clk_lucid_pll_configure(&video_pll0, regmap, &video_pll0_config);
+ 	clk_lucid_pll_configure(&video_pll1, regmap, &video_pll1_config);
+@@ -379,7 +391,11 @@ static int video_cc_sm8250_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &video_cc_sm8250_desc, regmap);
++	ret = qcom_cc_really_probe(pdev, &video_cc_sm8250_desc, regmap);
++
++	pm_runtime_put(&pdev->dev);
++
++	return ret;
  }
- EXPORT_SYMBOL_GPL(pm_runtime_enable);
  
-+static void pm_runtime_disable_action(void *data)
-+{
-+	pm_runtime_disable(data);
-+}
-+
-+/**
-+ * devm_pm_runtime_enable - devres-enabled version of pm_runtime_enable.
-+ * @dev: Device to handle.
-+ */
-+int devm_pm_runtime_enable(struct device *dev)
-+{
-+	pm_runtime_enable(dev);
-+
-+	return devm_add_action_or_reset(dev, pm_runtime_disable_action, dev);
-+}
-+EXPORT_SYMBOL_GPL(devm_pm_runtime_enable);
-+
- /**
-  * pm_runtime_forbid - Block runtime PM of a device.
-  * @dev: Device to handle.
-diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-index aab8b35e9f8a..222da43b7096 100644
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -59,6 +59,8 @@ extern void pm_runtime_put_suppliers(struct device *dev);
- extern void pm_runtime_new_link(struct device *dev);
- extern void pm_runtime_drop_link(struct device_link *link);
- 
-+extern int devm_pm_runtime_enable(struct device *dev);
-+
- /**
-  * pm_runtime_get_if_in_use - Conditionally bump up runtime PM usage counter.
-  * @dev: Target device.
-@@ -253,6 +255,8 @@ static inline void __pm_runtime_disable(struct device *dev, bool c) {}
- static inline void pm_runtime_allow(struct device *dev) {}
- static inline void pm_runtime_forbid(struct device *dev) {}
- 
-+static inline int devm_pm_runtime_enable(struct device *dev) { return 0; }
-+
- static inline void pm_suspend_ignore_children(struct device *dev, bool enable) {}
- static inline void pm_runtime_get_noresume(struct device *dev) {}
- static inline void pm_runtime_put_noidle(struct device *dev) {}
+ static struct platform_driver video_cc_sm8250_driver = {
 -- 
 2.30.2
 
