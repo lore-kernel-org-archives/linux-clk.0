@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FF7C636CE
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D590C636CA
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 649506128D
+	by mail.kernel.org (Postfix) with ESMTP id E1DFD611AC
 	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 10:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233225AbhGRKwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jul 2021 06:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59656 "EHLO
+        id S233043AbhGRKwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jul 2021 06:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232946AbhGRKwK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:10 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E0F8C061765
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:12 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id u13so24241596lfs.11
-        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:12 -0700 (PDT)
+        with ESMTP id S233117AbhGRKwO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 06:52:14 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE18FC061762
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:14 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id b26so24301996lfo.4
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jul 2021 03:49:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iaKylTHK8D5EzB/xiSIklLRQLkt7yfSNwyCfbc/j47o=;
-        b=CumnnenME8Jyt67j9cGkgxVdCUPijZ3W406ZSjfKl+O2mNfMofR/47JrDLfV3KXUOE
-         SzvReEkCSbbMj0r2eMR7Ddw/QFIoMRIamBtsMxGDLikqCmWRKs4QwMo6uvopIW92pcSg
-         C0bLwqobwmgNWduQlpWgZWv7oxb7s3ll6UsjFf4nny6CfNdrZakatnGd5Z7Lee6+mdKq
-         8RQNDtLJCb42v7dlSX35lSy2gEcCvcxcFtLL9oLzcQVdo+KC3gDf7pvCu86YOcO32tIq
-         +D7XvmCae4PZNaxpwjhcEekYitsFQUUHvxwiopdIEf/qTCjOlARY1WNKR2No+6bLskbt
-         t7zw==
+        bh=2Qkf7InvNZ2y8KQubxZPlzmD4hgwtxBXZ9UnPUjB8P4=;
+        b=RRsoxHGBvjH2xV4InZKCB8jOFlbCa/XTumOyjqOHXt7VQ1Po5CC60loafdYxQocVrM
+         BS/MM4jEmbn2JKMz9vOnMgvUzGBx/2QBpHfvXY5jvK8oowuE4GYyJfpMv7DVQMkL2bxe
+         5wwA294Mx7y4FfC1H40ZFvG8SrKhNIQOGAwyEFFo1Bnga+1vml0qs3y/2dxiMoinfT2Y
+         Y1AuFD2tV1jIQMnif3r0JuetkWWKnlaO8bRJVJRFcdI5AtOKVSdLu/FEP7TDnOLVy/1V
+         dowS+s74qQDatxb1q2RvDvefoI+OiWcT7XMO4m6+rfkUOLrNJMgjGcmp+ddk1nwmVjCD
+         fG/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iaKylTHK8D5EzB/xiSIklLRQLkt7yfSNwyCfbc/j47o=;
-        b=nYaR8yjYwS0606t8hYuU2aFmYpEMgPYo+qc4bx9Q4GBG4MwVe1CVb6Yr4CrnMkD4Bf
-         utrGEkXqcxjQxyiLv30zG7JgOXeEfYg2v4GiffaOMXnXNLCNagwtTNFaroLwcyPK5p5T
-         wdIPna+TgvhzaqBwVBLUtGSyApzSMM93DDH/YqEPHkzmJVuBGetHb99EQV5vOhXuX9oa
-         MESn8Tm2CMgEUYLvVmo1PwTQDsNwjG59ivi/BwH3TJDC9U+HbgJNor0XUbT0qlhU4IDq
-         MpKVxZlANDvySAwzL7/RYYNJ/gDfNrw95pEMZsu5xre+X/AWSYzq/4CfTHaaSJIMialL
-         zP/Q==
-X-Gm-Message-State: AOAM5311AsCzG/Gf6PJHcpPfI2BaXo61Swp5In0XF7j0nEcJv7MEOeW5
-        m/lnsVV1XkPbYc/2SZrkVhroNg==
-X-Google-Smtp-Source: ABdhPJw2lQkwNP5CbJWu7ZcteEgCd+uNashq+KVb6JiKvFbJBPytB7KVrkagT7MSOBFBaEcQ7Rl0rw==
-X-Received: by 2002:a05:6512:322a:: with SMTP id f10mr3855591lfe.625.1626605350779;
-        Sun, 18 Jul 2021 03:49:10 -0700 (PDT)
+        bh=2Qkf7InvNZ2y8KQubxZPlzmD4hgwtxBXZ9UnPUjB8P4=;
+        b=EWgVZvZxAjPlmjCq3505oQQSN/HB+TaVL0wiSfp+3aEOViDNYy7SWfMdkbAnhzld6o
+         UpuGuPbFl9hekZBiOAxZJB6PzxGdHaKuHc7zxUyNwicw2g39agxjd8OGQVwtc5nh7CrM
+         FZBHbhnMfNp7esI45yw66Yas13J6hnsrkuEp/9nldjkdHz7HctiwwIJeg+nTUrOAyqx6
+         H+2sHXcQ034HJYtAOSRV0HBmif68wDDfIXbX6qAxxjPM6BaAhHxt+oFt+krqbhv22qCO
+         WT7Pp/x9pi/nW8UJl+eAr+P59l2rJXUJGIKO2OLIPonS5ZFEiA+VtWLQhd8LuOV87cLH
+         MNaQ==
+X-Gm-Message-State: AOAM533OaKcTM8vIxcDm0e2sPQpkMenZfYzYxW4p+BwmIp+JIKxl+4xT
+        KTHlRxF5XNZgE9YG+G2eDeNRUQ==
+X-Google-Smtp-Source: ABdhPJwfoDB/iCADpwV6UyFERAs3JlCxRFghSDlCbj31LETCI1eN3BwtLgm8iSqeX1UbXeHFOhmXIg==
+X-Received: by 2002:a05:6512:2347:: with SMTP id p7mr14932342lfu.253.1626605353126;
+        Sun, 18 Jul 2021 03:49:13 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.09
+        by smtp.gmail.com with ESMTPSA id y22sm1039528lfh.154.2021.07.18.03.49.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jul 2021 03:49:10 -0700 (PDT)
+        Sun, 18 Jul 2021 03:49:12 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/9] clk: qcom: dispcc-sm8250: use runtime PM for the clock controller
-Date:   Sun, 18 Jul 2021 13:48:56 +0300
-Message-Id: <20210718104901.454843-5-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 7/9] arm64: dts: qcom: sm8250: remove mmcx regulator
+Date:   Sun, 18 Jul 2021 13:48:59 +0300
+Message-Id: <20210718104901.454843-8-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
 References: <20210718104901.454843-1-dmitry.baryshkov@linaro.org>
@@ -81,63 +81,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sm8250 dispcc and videocc registers are powered up by the MMCX power
-domain. Use runtime PM calls to make sure that required power domain is
-powered on while we access clock controller's registers.
+Switch dispcc and videocc into using MMCX domain directly. Drop the now
+unused mmcx regulator.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sm8250.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8250.dtsi | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index 601c7c0ba483..0625fea6d7ba 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -6,6 +6,7 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
+diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+index 4798368b02ef..bce5e9a9dd84 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+@@ -273,13 +273,6 @@ memory@80000000 {
+ 		reg = <0x0 0x80000000 0x0 0x0>;
+ 	};
  
-@@ -1229,10 +1230,21 @@ MODULE_DEVICE_TABLE(of, disp_cc_sm8250_match_table);
- static int disp_cc_sm8250_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
-+
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	regmap = qcom_cc_map(pdev, &disp_cc_sm8250_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
- 
- 	/* note: trion == lucid, except for the prepare() op */
- 	BUILD_BUG_ON(CLK_ALPHA_PLL_TYPE_TRION != CLK_ALPHA_PLL_TYPE_LUCID);
-@@ -1257,7 +1269,11 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
- 	/* DISP_CC_XO_CLK always-on */
- 	regmap_update_bits(regmap, 0x605c, BIT(0), BIT(0));
- 
--	return qcom_cc_really_probe(pdev, &disp_cc_sm8250_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8250_desc, regmap);
-+
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
- }
- 
- static struct platform_driver disp_cc_sm8250_driver = {
+-	mmcx_reg: mmcx-reg {
+-		compatible = "regulator-fixed-domain";
+-		power-domains = <&rpmhpd SM8250_MMCX>;
+-		required-opps = <&rpmhpd_opp_low_svs>;
+-		regulator-name = "MMCX";
+-	};
+-
+ 	pmu {
+ 		compatible = "arm,armv8-pmuv3";
+ 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+@@ -2451,7 +2444,7 @@ videocc: clock-controller@abf0000 {
+ 			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
+ 				 <&rpmhcc RPMH_CXO_CLK>,
+ 				 <&rpmhcc RPMH_CXO_CLK_A>;
+-			mmcx-supply = <&mmcx_reg>;
++			power-domains = <&rpmhpd SM8250_MMCX>;
+ 			clock-names = "iface", "bi_tcxo", "bi_tcxo_ao";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+@@ -2720,7 +2713,7 @@ opp-358000000 {
+ 		dispcc: clock-controller@af00000 {
+ 			compatible = "qcom,sm8250-dispcc";
+ 			reg = <0 0x0af00000 0 0x10000>;
+-			mmcx-supply = <&mmcx_reg>;
++			power-domains = <&rpmhpd SM8250_MMCX>;
+ 			clocks = <&rpmhcc RPMH_CXO_CLK>,
+ 				 <&dsi0_phy 0>,
+ 				 <&dsi0_phy 1>,
 -- 
 2.30.2
 
