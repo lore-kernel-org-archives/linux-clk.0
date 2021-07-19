@@ -2,88 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90740C63797
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24C1C12002
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 09:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0CD613F2
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD2461026
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 09:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235549AbhGSIS1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 04:18:27 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:18125 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235494AbhGSISW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 04:18:22 -0400
-X-IronPort-AV: E=Sophos;i="5.84,251,1620658800"; 
-   d="scan'208";a="88056621"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2021 17:59:00 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DB1C9400A11D;
-        Mon, 19 Jul 2021 17:58:56 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S235340AbhGSI3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 04:29:44 -0400
+Received: from mail-ua1-f45.google.com ([209.85.222.45]:43613 "EHLO
+        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234991AbhGSI3o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 04:29:44 -0400
+Received: by mail-ua1-f45.google.com with SMTP id 109so6539635uar.10;
+        Mon, 19 Jul 2021 02:10:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=okZDt5izpXJNQv5Y4DDOChxLzV07ajEvC7VBXiOh8LY=;
+        b=cWGHAQ8PE09glp6S2rRn1Q69PKDOfXc7dilXirlBC41DyJdtTQIPq28zaBkipYr4h4
+         15x6eb4axcrcSjgpr5n1KXfqQ/oK90bIOJlqYsPvZByRJvS8MaRDyoeSRhDMv/q3zoGg
+         yhoXp2mI7MMQKtl6hxmMbli9GmGu+XO57rG7/Ny+QMeiTHf7V284S3GZiW8yOYeNQN+e
+         3sT9IFBCAwuf+B5agur1kHJMP1DKM77L1xu90uO7RQB1GDbvZ4fbByrXu+CBRLyFpp2m
+         AhM2fSom/e0QhNEKH9rKDPb+GBEZEfJ9TYOViz95Wa03ElD+OtYjuruwRgi3qwDjYgVD
+         Mv4A==
+X-Gm-Message-State: AOAM531Mrm1j5YPwZWQLgvT2zZTVsyUroXEdxlqnKLbs8qo4/oxEggbf
+        0C/K74WY0VfXKxPeLz6f1XDNzjz1cc9mq7MjfZA=
+X-Google-Smtp-Source: ABdhPJyza0rPFLN5A/2Q2WHtSDUhBdeTHSClHJ20aCaqDmOuQrq62WvQ5lCixLrr/o2RJaTRBm2jNEZq6ndlDa0DlwI=
+X-Received: by 2002:a9f:3649:: with SMTP id s9mr24642802uad.2.1626685823482;
+ Mon, 19 Jul 2021 02:10:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210713214126.2278-1-alexander.helms.jy@renesas.com> <20210713214126.2278-3-alexander.helms.jy@renesas.com>
+In-Reply-To: <20210713214126.2278-3-alexander.helms.jy@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 19 Jul 2021 11:10:12 +0200
+Message-ID: <CAMuHMdW5cYfc39pHWavW84ftjBAvyaSVCeLPtMB4o_8L6msW2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] clk: Add ccf driver for Renesas 8T49N241
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Alexandru Ardelean <aardelean@deviqon.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/4] clk: renesas: r9a07g044-cpg: Add clock and reset entries for ADC
-Date:   Mon, 19 Jul 2021 09:58:39 +0100
-Message-Id: <20210719085840.21842-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210719085840.21842-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210719085840.21842-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        david.cater.jc@renesas.com, Michal Simek <michal.simek@xilinx.com>,
+        kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock and reset entries for ADC block in CPG driver.
+Hi Alex,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a07g044-cpg.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Tue, Jul 13, 2021 at 11:41 PM Alex Helms
+<alexander.helms.jy@renesas.com> wrote:
+> This is a common clock framework driver that supports the 8T49N241 chip.
+> No other chips in the family are currently supported. The driver
+> supports setting the rate for all four outputs on the chip and
+> automatically calculating/setting the appropriate VCO value.
+>
+> The driver can read a full register map from the device tree
+> and will use that register map to initialize the attached device
+> (via I2C) when the system boots. Any configuration not supported by
+> the common clock framework must be done via the full register map,
+> including optimized settings.
+>
+> All outputs are currently assumed to be LVDS unless overridden in
+> the full register map in the DT.
+>
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index ae24e0397d3c..f4ebbde358c6 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -102,6 +102,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x584, 4),
- 	DEF_MOD("sci0",		R9A07G044_SCI0_CLKP, R9A07G044_CLK_P0,
- 				0x588, 0),
-+	DEF_MOD("adc_adclk",	R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
-+				0x5a8, 0),
-+	DEF_MOD("adc_pclk",	R9A07G044_ADC_PCLK, R9A07G044_CLK_P0,
-+				0x5a8, 1),
- };
- 
- static struct rzg2l_reset r9a07g044_resets[] = {
-@@ -114,6 +118,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
- 	DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
- 	DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
-+	DEF_RST(R9A07G044_ADC_PRESETN, 0x8a8, 0),
-+	DEF_RST(R9A07G044_ADC_ADRST_N, 0x8a8, 1),
- };
- 
- static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+Thanks for your patch!
+
+> Reported-by: kernel test robot <lkp@intel.com>
+
+I don't think that line belongs here (lkp requesting 8T49N241
+support? ;-)
+
+> ---
+>  MAINTAINERS                         |   1 +
+>  drivers/clk/Kconfig                 |  21 +
+>  drivers/clk/renesas/8t49n24x-core.c | 836 ++++++++++++++++++++++++++++
+>  drivers/clk/renesas/8t49n24x-core.h | 250 +++++++++
+>  drivers/clk/renesas/8t49n24x.c      | 572 +++++++++++++++++++
+>  drivers/clk/renesas/Makefile        |   4 +
+>  6 files changed, 1684 insertions(+)
+>  create mode 100644 drivers/clk/renesas/8t49n24x-core.c
+>  create mode 100644 drivers/clk/renesas/8t49n24x-core.h
+>  create mode 100644 drivers/clk/renesas/8t49n24x.c
+
+As this is a driver for a discrete part originally from IDT, not a
+clock generator integrated on a Renesas SoC, I think it belongs under
+drivers/clk/ instead of drivers/clk/renesas/.  That would align
+nicely with the Kconfig symbol already residing in drivers/clk/Kconfig.
+
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15580,6 +15580,7 @@ M:      Alex Helms <alexander.helms.jy@renesas.com>
+>  M:     David Cater <david.cater.jc@renesas.com>
+>  S:     Odd Fixes
+>  F:     Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> +F:     drivers/clk/renesas/8t49n24x*
+>
+>  RENESAS CLOCK DRIVERS
+>  M:     Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
