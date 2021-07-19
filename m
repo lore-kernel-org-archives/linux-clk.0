@@ -2,103 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B47C07E9D
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 13:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6BBC07E95
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 14:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 388FC61186
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 13:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 236A861003
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 14:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240516AbhGSNG7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 09:06:59 -0400
-Received: from mail-io1-f52.google.com ([209.85.166.52]:46874 "EHLO
-        mail-io1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240506AbhGSNG7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 09:06:59 -0400
-Received: by mail-io1-f52.google.com with SMTP id p186so19973899iod.13;
-        Mon, 19 Jul 2021 06:47:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=oFd3MlNUQRlX4N33x8e/4VBraKu1g4Ilixv0NOLhWz0=;
-        b=tWUKd6xysrGDBy2dKII1YaVf29RmEOJb53e/cUw/mGfcwHdx+4ueF6Z2t/alz4l/mO
-         nSxO66EH+cQa1tLXFUXzcaT83fgnctA9pqZQhQmQbnUEiSGzpTWpqbfp2MmSwlAzB+Xj
-         F9d9BiZ607cDGdqE9hL3RLpwM52SZGz6gVDvLvLFs5yFGcymEU5r24h+rkqRLH6EWvhK
-         pI+UbQPsHWWeMoZKFc7f7q7fDp9/C65dubuDyWtfGwirp9cyvXc5dhUWPSmAZWosNSB5
-         Kde+zlPgP1xZlpb0Ro0yQM96W4HYq6do9vShD+c3sh7rEelRnfM6yX9xDKHAFyDz8Sva
-         Gjpw==
-X-Gm-Message-State: AOAM530hcJW1fDQOkNRHM5uWgQaknvy6A7iFw3kP6zB2IuHK0YIreAWd
-        sWDMFyiKkUTOFFPWo0sJiw==
-X-Google-Smtp-Source: ABdhPJzPtqUoDpGjzuH0PNyDyTfPsZwsMzRCiGIw7vDzjRgE9t1FpcLTpQP+rirn7ZBjJymyYAfRgg==
-X-Received: by 2002:a5d:87d0:: with SMTP id q16mr19030655ios.109.1626702458777;
-        Mon, 19 Jul 2021 06:47:38 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id l9sm1974883ilv.31.2021.07.19.06.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jul 2021 06:47:38 -0700 (PDT)
-Received: (nullmailer pid 1811206 invoked by uid 1000);
-        Mon, 19 Jul 2021 13:47:28 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S241099AbhGSN7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 09:59:06 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:4499 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232395AbhGSN7F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 09:59:05 -0400
+X-IronPort-AV: E=Sophos;i="5.84,252,1620658800"; 
+   d="scan'208";a="88086566"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2021 23:39:43 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C4694003EC3;
+        Mon, 19 Jul 2021 23:39:39 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
-        devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-iio@vger.kernel.org,
-        Alexandru Ardelean <aardelean@deviqon.com>
-In-Reply-To: <20210719085840.21842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210719085840.21842-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210719085840.21842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: Add binding documentation for Renesas RZ/G2L A/D converter
-Date:   Mon, 19 Jul 2021 07:47:28 -0600
-Message-Id: <1626702448.448880.1811205.nullmailer@robh.at.kernel.org>
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/5] Renesas RZ/G2L CANFD support
+Date:   Mon, 19 Jul 2021 15:38:06 +0100
+Message-Id: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 19 Jul 2021 09:58:37 +0100, Lad Prabhakar wrote:
-> Add binding documentation for Renesas RZ/G2L A/D converter block.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 134 ++++++++++++++++++
->  1 file changed, 134 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> 
+Hi All,
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+This patch series adds CANFD support to Renesas RZ/G2L family.
 
-yamllint warnings/errors:
+CANFD block on RZ/G2L SoC is almost identical to one found on
+R-Car Gen3 SoC's. On RZ/G2L SoC interrupt sources for each channel
+are split into individual sources.
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dts:26.28-29 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1418: dt_binding_check] Error 2
-\ndoc reference errors (make refcheckdocs):
+Cheers,
+Prabhakar
 
-See https://patchwork.ozlabs.org/patch/1506856
+Changes for v2:
+* Added interrupt-names property and marked it as required for 
+  RZ/G2L family
+* Added descriptions for reset property
+* Re-used irq handlers on RZ/G2L SoC
+* Added new enum for chip_id
+* Dropped R9A07G044_LAST_CORE_CLK
+* Dropped patch (clk: renesas: r9a07g044-cpg: Add clock and reset
+  entries for CANFD) as its been merged into renesas tree
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Lad Prabhakar (5):
+  dt-bindings: net: can: renesas,rcar-canfd: Document RZ/G2L SoC
+  can: rcar_canfd: Add support for RZ/G2L family
+  dt-bindings: clk: r9a07g044-cpg: Add entry for P0_DIV2 core clock
+  clk: renesas: r9a07g044-cpg: Add entry for fixed clock P0_DIV2
+  arm64: dts: renesas: r9a07g044: Add CANFD node
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+ .../bindings/net/can/renesas,rcar-canfd.yaml  |  66 ++++++-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  42 +++++
+ drivers/clk/renesas/r9a07g044-cpg.c           |   3 +-
+ drivers/net/can/rcar/rcar_canfd.c             | 178 +++++++++++++++---
+ include/dt-bindings/clock/r9a07g044-cpg.h     |   1 +
+ 5 files changed, 252 insertions(+), 38 deletions(-)
 
-pip3 install dtschema --upgrade
 
-Please check and re-submit.
+base-commit: 2734d6c1b1a089fb593ef6a23d4b70903526fe0c
+-- 
+2.17.1
 
