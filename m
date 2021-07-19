@@ -2,224 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE9CC12002
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 03:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683EDC12002
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40DA26108B
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 03:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40CB760FDA
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233759AbhGSDVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jul 2021 23:21:09 -0400
-Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:14658
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S229777AbhGSF11 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 01:27:27 -0400
+Received: from mail-am6eur05on2050.outbound.protection.outlook.com ([40.107.22.50]:30147
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233720AbhGSDVJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 18 Jul 2021 23:21:09 -0400
+        id S229512AbhGSF10 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Jul 2021 01:27:26 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bEL0bJOjeKHk2hppEQVCE2z4fEGPczZTnyQiZWNVEhs0OjYFGtl4u76Ljoa9Tw4odXIoLoea7Bx34xkWPOF+sYZZ3xHYo4dwT8X2GXlzpmaOflmDUm/470sj9mu8J/3zW28/tx62xt8QtjWl4LqEHHuOpw72Elh2+0KXRj7lP9VGdprSL+VG3WgBUlS7Ha8/9Nul5FYnh+Id2Yx7h4jPc1flstMb7/sHMHI3iYOimPbXWUpOG5MikL/N4TJYvdG1+LiaQSbK1pA0JdVqniAPd7+IK/d6ot8ILXLyFa7GDUYfuJqNMTkzGGycCantiO8oSwDolJPngymio28EVIQECQ==
+ b=Bwjj5yfg9UtcdVbmK8pR3MIuVf6TbkAcAoCyZVcDNSaLjL6Z9EQ/Jv13n8sLRBlBdpJqqJn3iHwpbWr1i2XyRQwc9v8E49KYh6vCUTHBhlRvZujr3HIKIY1ZsQb3bsR1jKjKv3XaDuagQvvqI8Rrgpye67Kl5UDAKtAkDiLMao3OBLLYpPwOV7r+mkY5p32t88BW8n+i1+sqj+Usib5g0tcFpjcAxQtbMRttIkNXv6UgG79sD6PMRP5PYjDApeMPrV/OuA30c1skiaEWMdyy7AcsW2gj8GC5GX5rg+Nhb0C1XpF9oJkcIGmynq0h4A+77nfv4Qjlu2XkMj6NR+moGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wvIJK6hc1uvGiyYhnExc+UtllW3zbf2N/IRX12z61Ew=;
- b=PGkwzC3mhSlHawOuvNUAqIy2YWr4dKVR4td1jCW/TI4AwQdpUUG5G6mCnHmKSBs+jSV85Mzh2JMBjQHqjKXx7Lf4voKB8Wq73uUTmcFYVVQ+suHYED5XQW+Z7F3Gd1nYP+NIJTqEvhJLf2VP7H1W3L5be2abI27Ww/E6cldL0D/BaSKdx2zAGg9Rp3XuqY4EcvQghH5LR22CJY9/vGgPWwVOmEDEq02dEQe1pueYKkjChziOPXOnvc+bCBXN9fZ7mFaVA7oYoZCMaV+SfKFUQcC1jyFVCvLI4yT+A4tvDK7P5iW52TRaJWWpfUd+/RKnBy49mmg04MWpRDGUyDf0nQ==
+ bh=VM4I9i8wA1OdMkWgGnFeMEhS3SKw2ygXFMTRQp12nOY=;
+ b=Kz/KoiZmuFro75t9g4OQREV6CJEpxXGuwh73PsaaAgEHQ5LOUnaKfRIy+cqOERLbSgOVAR5ideo9ITd+XVxzauvHAO84a9qbuIM3Gsyeaw6pFnEG5MokDxi5WrsppEJ+GY9JZ0gzfcZQz0DBr3LublUphpqSzyjC8Z998yYtQj3W7dGczhvU1BkjLrJ+R2xe1zmYJ/nJim23fpFC6gpKYPw4kVxK5SLnMMZDS0tDXXQH50HhviW1QytGkx+RiPzma9bM1HpmAVTsIGe/svzSphQPxR3L+ADj4M4enpJx8exkrtsRD9Iz9JDZDkTRgkXC3mI/vm4KNhNJ5LYxeaPUQA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wvIJK6hc1uvGiyYhnExc+UtllW3zbf2N/IRX12z61Ew=;
- b=LzREP5aUspOQuAx5ciwPq7lnS4PlDP4wYfRSmL/JyyV6DDKDihBSoLkhr04r4cjAZXAAuTqofromGK/6aEm27aXq1OFep8DVoZFrI87VQxmGBupJPDUIuw29a6M57PSwjzIggqfvZCYOx/TlB0MBtlFBvfroolB8QtxISkK55TI=
-Authentication-Results: linux.intel.com; dkim=none (message not signed)
- header.d=none;linux.intel.com; dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM5PR0402MB2786.eurprd04.prod.outlook.com (2603:10a6:203:99::9) with
+ bh=VM4I9i8wA1OdMkWgGnFeMEhS3SKw2ygXFMTRQp12nOY=;
+ b=W+HxgeXvIA1dYtQIqGX6Vz+XdMgvHzjQmNTcvhTZ2eVyQx5wQlAfoY2eMM0dzpvL53CZmuavCOvA2HDKAxsn0HTj+Bu6AWaqEdI3+3uXKnRsHzTQ7ciauNCglTMfqt5husFoI2ppRbj9pTUSvW8d83scmpwVUOLrBIZhswHOOKw=
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from DBBPR04MB7930.eurprd04.prod.outlook.com (2603:10a6:10:1ea::12)
+ by DB7PR04MB5244.eurprd04.prod.outlook.com (2603:10a6:10:21::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.23; Mon, 19 Jul
- 2021 03:18:07 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::8c66:a7b4:1dc7:2c27]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::8c66:a7b4:1dc7:2c27%7]) with mapi id 15.20.4331.032; Mon, 19 Jul 2021
- 03:18:07 +0000
-Message-ID: <bfa0c16e88c0d445137290b2bef104e5fa74d78a.camel@nxp.com>
-Subject: Re: [PATCH v1 2/3] clk: fractional-divider: Introduce NO_PRESCALER
- flag
-From:   Liu Ying <victor.liu@nxp.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Date:   Mon, 19 Jul 2021 11:16:07 +0800
-In-Reply-To: <YPGHbvaCv/x/JlgH@smile.fi.intel.com>
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com>
-         <20210715120752.29174-2-andriy.shevchenko@linux.intel.com>
-         <7941107fda10f075395870528f0e52d42e502d92.camel@nxp.com>
-         <YPGHbvaCv/x/JlgH@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR06CA0143.apcprd06.prod.outlook.com
- (2603:1096:1:1f::21) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.29; Mon, 19 Jul
+ 2021 05:24:24 +0000
+Received: from DBBPR04MB7930.eurprd04.prod.outlook.com
+ ([fe80::b570:add1:2832:dd3d]) by DBBPR04MB7930.eurprd04.prod.outlook.com
+ ([fe80::b570:add1:2832:dd3d%9]) with mapi id 15.20.4331.031; Mon, 19 Jul 2021
+ 05:24:24 +0000
+From:   Jacky Bai <ping.bai@nxp.com>
+To:     shawnguo@kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
+        abel.vesa@nxp.com, s.hauer@pengutronix.de, p.zabel@pengutronix.de
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 0/9] Add imx8ulp clock & reset driver support
+Date:   Mon, 19 Jul 2021 13:34:21 +0800
+Message-Id: <20210719053430.1442505-1-ping.bai@nxp.com>
+X-Mailer: git-send-email 2.26.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0126.apcprd06.prod.outlook.com
+ (2603:1096:1:1d::28) To DBBPR04MB7930.eurprd04.prod.outlook.com
+ (2603:10a6:10:1ea::12)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from blueberry (119.31.174.66) by SG2PR06CA0143.apcprd06.prod.outlook.com (2603:1096:1:1f::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Mon, 19 Jul 2021 03:18:04 +0000
+Received: from localhost.localdomain (119.31.174.71) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Mon, 19 Jul 2021 05:24:21 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f364f49c-76ca-4b45-7ccc-08d94a63d460
-X-MS-TrafficTypeDiagnostic: AM5PR0402MB2786:
+X-MS-Office365-Filtering-Correlation-Id: efa82001-a2a9-45c3-2f81-08d94a757871
+X-MS-TrafficTypeDiagnostic: DB7PR04MB5244:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM5PR0402MB2786700F23946ADCD718C9ED98E19@AM5PR0402MB2786.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <DB7PR04MB524418E7EDFA275E8781496387E19@DB7PR04MB5244.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2CFMhLGfb2aVpAFYOQBSUE+zpuAaVR52IzlPZ0nYs63WYrmK0H2RAM/70WdWKPZk3xIKGgbRjlNDjpOAWWy/qJYJHdlckkGQW7onv3S96xBHQGuZsiIvpXm6F5bn8QIMhpbvpcIHUo4fP1oUgJuoFxPC93dnaPA5mZlhZyKUd1KMb6JRatIkT0iEzOGQrwJjbpGrkm3P5AxpCAEOR5Xg1t1ZQryjUfMAzGUZ/FBkrroKlAT6dxDK9PVPnckJjvyXnOj744gFS/BKnt/ek7qO50o9GYCKNg2p9/trZpuliUielgdhVXrLfHTOCvWJIYofifjj+dysTOb6xho1fvw0tFCL4qvBODd5MI/y3rlyv09Y7v73h1N089n9hzJeNEi9/qcnETWa7dYhgg1h3zk01l4wmzcwGm586f9nEGsfIoh1FAhlNEfGdgy0g55Zy5fj2k4/ciHO7HpVwzcDzYD5Khh3TNy8S58DavWiVIQ7fS9pqiRQvGv7j/8i45y3z1Mwr2gcmDjKLBa8+AZ+22CdwPe7YrW1d1KK4OKxfFEtF9Gd1pbjbqdW8UWDZn2YMmetdCmNiFwjdSbTNuXRgU5kpUnnf9p4tSLkgnPgNv9IhhWnAzEE1kBs8Q33ze3jg97HW/CdoOST9C6hqPhOdZfFSwlshXa5LuTORyFf3MJnDD7GV+9AXOdV1VzUDYHFQ9b3ve3tBAo5BGj4vlg54KlyiQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(136003)(366004)(39860400002)(396003)(346002)(8936002)(6486002)(8676002)(38350700002)(38100700002)(956004)(66556008)(5660300002)(2906002)(66476007)(66946007)(2616005)(36756003)(26005)(6916009)(316002)(4326008)(54906003)(83380400001)(186003)(86362001)(52116002)(6496006)(478600001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: GrVcTk4NpbMa48L7Re0tELZEeUzG0PdVxBHBYnVd68v36gTd+6geeIy/ONNv5uaO8sIwNE6eRNf/NoKhBmlGsESRNaef2nNYHWBGm+vxC2n3vyCufCeRU/ug3hJ+ltYKW5lNzCkHg/OExzrr1Tap7M2fbYVjs4FlaV5eVGeIjWksf4N5IqX4W0riSSmchQ18B/GY8B3k1QMBfNTooV+tBHn24S/ZxkhQi5e37KUhIXKwXsU7mc2OLCp5JZz8DKmG/SPTTmRl7mCNFhfvOnEN05ZiNrr1r/6QY7AKGfcDGRyO2zRb1pd6pzjunbXp4/tze/cI6dYB2ytBsQfRwGN1Y47YjxxEHwO7Qq9WSDb8rjgLwrSRbxlTVWsJhgPcPPv52hlHR3w0jJbZFNo351fT1HdQ1izQfwkhuZVBdA/GZ47EXpvJ+V6ATmu7kU1OMptoS+v1iLfKsPU5wcNmpBXsFTl4j2OOK5FURkf+nQVhfcF6TzcmQ+95E2zbCx+sNxHQRV4wSsZAZwR0BSyMtAJKaLTAG/o4iAeDJ2yN3Hi6nhCQxUnjSSsJB8zD56JyRIYfW0LtwsB5ui4bGGyWfFp5K27F5Z9ecP0tpAmiVSIdReLCMiNHogtna8Cn2tHgOtMFqmc1Ss0sXMsorocDJSsb+gv4ynm0unqiOAJ+VYT05YAv/rCiK55X3aw6pBuIZP26W0rAu2LWrumab3IzUvjyn+YAP7h20Zto+/IxKskNWFIIJ3YRzSNJl0+b8krevqmZHQTAlQ5gQJChutcnLY2vw7tgrc5BTC1DNW8vCNN51e1u7mz2NyxMAIwP8Z7q9hdT
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7930.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(396003)(366004)(346002)(136003)(478600001)(966005)(83380400001)(6512007)(38350700002)(38100700002)(6506007)(956004)(36756003)(2906002)(4326008)(1076003)(316002)(5660300002)(2616005)(6486002)(52116002)(86362001)(26005)(66476007)(186003)(66556008)(8676002)(66946007)(8936002)(32563001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cXQ5UlVNaE5aZldleCtDZ29LQm5TWkZXNVczMHMzQ1U3c20rRzd4UFhHZmtl?=
- =?utf-8?B?eG01UHNDeGhBV2NwVEVOM0hDSDBuOGY0TzFVYmdCTlkxYVVrcHNFelZNdTFT?=
- =?utf-8?B?bEZrWUhZZGRJNVZ2K2tiZ0ZFLy9ySFhCb3RZMTZIZDI4Y2NaUVJDRWIvTjg4?=
- =?utf-8?B?ZURkUlJISVFqNlNiRXhjcEdaRERtelI1d1NtTmNRb1Await4OWxpNTYvWkVv?=
- =?utf-8?B?alhLUzc0enQ5VEtXSDNaK2Y2ZThDZkdmemhMdnB6Q1lBUzkyU0hJTFF2Z1d5?=
- =?utf-8?B?eEJkc0Z4L3UxUXBHWjNrbXF3Z0Foek81U2syRndDdG5JZjg3M0RoTVpJUGZI?=
- =?utf-8?B?K3pSSlQ5dzZzYXU4eEdKN2ZVaW5hTXBTR3hOZExwRGxmYmwzMXRidWtMWFhF?=
- =?utf-8?B?SnQxM0RPYjhHQmh1V0hwT04vVTR5OEF3emxPalFCbTI5T21hZEMzOGx5UFM2?=
- =?utf-8?B?bnhNd0R4T1IrbmFUYzF4Q1pIZDlIdWVDZk04MkgrS0FPTENmc2tlV2VjUjZI?=
- =?utf-8?B?S2VJK0M4QWlDOHhpTktZVDY3T1B3dVJFWjVudmdrTitpOXFxbG5hQzZFLzZj?=
- =?utf-8?B?QmxCd0ZPOFZwaXRvTmtKUGQrZXBsL0E1WXN2UG1RTDQ4Qm9HZitkMmJ4eHpH?=
- =?utf-8?B?VFJ6NW9BZ2RhaVRsTm55bXZMNUxaVU1uNnJ6Rk4vTmRSRmNiM0tqaXJKYlpY?=
- =?utf-8?B?dkR0N1J2cWZQVWdwZXJWSFE4Ui9KaW9JTEZoSENYQzEwKzBJQlJyY2FCRmtZ?=
- =?utf-8?B?aTZNYU5DSVNNK2dRRWFtaHg4RkRlb0xsL2xOYzdEY0xEekVsT05YeVE1Nk45?=
- =?utf-8?B?RStUK1k1eDRBZ3RHS1QwYjRHTWN1QS9aS1FhVGZZcmNsdVU5VjBjR2FXTUlB?=
- =?utf-8?B?YVNnM281eU5zZXAycUtvTGRJMEtWVjBXaDlKcFRpdmNaOHlUVHM4MXdleDhp?=
- =?utf-8?B?NktLMEx6djlVTk04T0p2QW04SXh1QmU3aXE0Vnl1SmM2VFlnVDJtSTBoUnJG?=
- =?utf-8?B?ViszZGpEMXN4Q2NoUkZMcVlSUms3Y3pHZ0RDaVdCbWY4YUVMZ1oxR3lWMDd3?=
- =?utf-8?B?dDlmZno0U240SEovMFVIVzZWWjlhZ1dMQzRkdDRxdzFEZXQ0Q3cyN3JTcWJr?=
- =?utf-8?B?c05pVDJPU1JtQTE2dFhXZUk1TjJ0elF4MWNsaVc0ejFvYjhieGlHNklLMWpt?=
- =?utf-8?B?ZjNaRXNSdDdER1RQeW4yc05OK2dJbUE1OUkyaFRXN1A3em9wUFQ3NG5jY1Fp?=
- =?utf-8?B?b3hVTlIyK3FkeTFXNGV0MkZiVHZSOXFiV24zNmJQKzZRSkN3Yms1M0J6MWtp?=
- =?utf-8?B?SGlrYWo2K0tBUmE2Nm5lRCtVL3Bza3pGS1pxSjJQVW1CNW54UDhBcXo0QmZy?=
- =?utf-8?B?N1d4NS91RFVzdnRMWXFjYW01SitNKzNlTVJ5TGQwL3Q5bFBkUGZveVhWZjA4?=
- =?utf-8?B?ZEI5Rkx5STJ3SDM4SlBNbGJYMkR4MGQ5WHlFQ29JL1lhSzQ5TlFCZHVqYk9O?=
- =?utf-8?B?b0w4NWJmWTdsZjFsZ1JlNlcvWDA3RXV3M05VTmFNUkFXSWYzY2ZrNFhqUGJq?=
- =?utf-8?B?bFdvQUorQWRaUkJFYStVZTZiamN0WE9ybEtraWtLWm5HMEVUWG1rb1VMRVN4?=
- =?utf-8?B?ZHIwZnI5amlhUXNuM2YzRjhpU2o4VDl6SnRCcGZrczlJUTBldHpoOURUcjhC?=
- =?utf-8?B?c241WXJlY21HQzVDbEdhRkNLM2xqUm10ZWN4YXlrRFVzUEJvb09xV0QxdFRJ?=
- =?utf-8?Q?bp1ls+MenisDZwzbgkhFg7tI9WQw6rnOA1brkuq?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tUqSFneq0iQkdahU17mdMtq2nxG99QaA7GIAXKPYv0E9AOwrBxxJ4PzQsHUK?=
+ =?us-ascii?Q?pvkw3KrZj/4WqqnO/0nhZSUJuhgfpYwEllntXAe9GylTspFHUZT3EjVS5n1a?=
+ =?us-ascii?Q?fEqx+bzluAWddwGqHSmVRAZ9n/mNK+Al2sX3QIMZVxIYcadbcDHNjEWX3Hx7?=
+ =?us-ascii?Q?pt/UMvDoJGkAD7cZN2NYKUjxy0h/KLDFKY4TwqeqkUZwpJNGk/tTwWTxOKtB?=
+ =?us-ascii?Q?9SFDD/D3OJ1WXzbZmuqrFO5lypd9R4+IbkW2G5+EEd2CwXfefnLgp8y1+R4N?=
+ =?us-ascii?Q?/nIskFZz/iuBDByCkuXw++Eu7u2vdg1MtXfzUNTewfrZkgcKOpzJlMxY+oDQ?=
+ =?us-ascii?Q?vZ8w68FRt7fc3WdNKwQKXMLnruAXvk1kxwizZZ0D8MpOQQLYt83rU68zJMPu?=
+ =?us-ascii?Q?M1plp+fLPxkH8dnQwwEY4zU4x4bWznthOmKeQ+m0Ctul0hkKSZXCiFUmwTeq?=
+ =?us-ascii?Q?8cOw/bCcJ5Dty7MZwOhjvGK1HQND45MyPHFo9pgLrYLD1rp8sAvwhJkIfBZV?=
+ =?us-ascii?Q?tPzMIo7VUSYn/9XFn1cawK0Zc/zOXLbcq6kDzMkfb6tuDHlDW6lsV0OFTcQ6?=
+ =?us-ascii?Q?KM6XyKh4sLBuZwOjDVXpCw9p11KuqguSq6yZTwtoA3SM2TtPY6uZwMuy3ME+?=
+ =?us-ascii?Q?0nh+m/cZclhEr3Vsad1Giak4GU89sm7pg109H9GfhNEgcPRu8+gkzsaGw6qW?=
+ =?us-ascii?Q?7bBigLUcFm6hNcjBUC/QEhIUlLI+e8Fqwm3FPiCfl+LX3A0rQXD5H0mhjcIq?=
+ =?us-ascii?Q?9k2x8QAEJQn8xj1598BUqC3BGFd9bO58srcGJ2p8BvIb1EXcg/29tdi7OttG?=
+ =?us-ascii?Q?48bbLm170WRuZh4nI2uMu3EaqIol7aM424reegKH9xHLzcy1dLT03TohzhAh?=
+ =?us-ascii?Q?AfojgA/UQofc/+JloKWGLmV+3RWZa5ZuEbFeX/f35s41+HPTDw3w3/64/VvV?=
+ =?us-ascii?Q?M9Gs2FuGvJ+SPh0NVs/uXYBn+NX9N3UvWX3pWX5yWApiWurqgeEajbxTR5bK?=
+ =?us-ascii?Q?72dA6y7VPI0XIEOHxbwUFmYciqPeoRzq2HUbOEE/1EIJIboHNYm7Gru0ea61?=
+ =?us-ascii?Q?AfIH941zthPxkUBqXQTH6cocR3onZJphk+Ktnrmp0TCXfZ+e6nQUCfKZFu1Y?=
+ =?us-ascii?Q?F6mv78+46T/0nMO+EdskqVE3f7Dq57I2Ffr8Wt3tDhfq878+lWY7tMxvPCQl?=
+ =?us-ascii?Q?sxTJphmZWp23uGqNtfOj2jzCVha49Ji+6luNx+MagNMpMe5yQelipASfB0pW?=
+ =?us-ascii?Q?/yBrXJNGGJw1N/xzIIc7bdxM786Mq79bEJIbkbPVkY+XzsPBgWhJcQTJINtr?=
+ =?us-ascii?Q?FIPFYdjKcn0j4B+P2lw4jYke?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f364f49c-76ca-4b45-7ccc-08d94a63d460
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: efa82001-a2a9-45c3-2f81-08d94a757871
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7930.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 03:18:07.6191
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 05:24:24.4288
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QMnzUg5y/JAJtI0rh2aCxS0/VNiCVp4BWY+vkxKTOzm6ppzperYFr2bnPDmgU/Bpllr7tAmjITU0ioA8x4r9UQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2786
+X-MS-Exchange-CrossTenant-UserPrincipalName: +RO5dhXEB1D8T7lrLLmvTg/hYj2MX3RRP9PPIMIiV9GXJL6j/y1NeEzAt91a0ZNyMgpkIvDKL4FwWsqOtnwrzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5244
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2021-07-16 at 16:19 +0300, Andy Shevchenko wrote:
-> On Fri, Jul 16, 2021 at 10:43:57AM +0800, Liu Ying wrote:
-> > On Thu, 2021-07-15 at 15:07 +0300, Andy Shevchenko wrote:
-> > > The newly introduced flag, when set, makes the flow to skip
-> > > the assumption that the caller will use an additional 2^scale
-> > > prescaler to get the desired clock rate.
-> > 
-> > Now, I start to be aware of the reason why the "left shifting" is
-> > needed but still not 100% sure that details are all right. IIUC, you
-> > are considering a potential HW prescaler here, while I thought the HW
-> > model is just a fractional divider(M/N) and the driver is fully
-> > agnostic to the potential HW prescaler.
-> 
-> It's not AFAICS. Otherwise we will get saturated values which is much worse
-> then shifted left frequency. Anyway, this driver appeared first for the hardware
-> that has it for all users, so currently the assumption stays.
-> 
-> ...
-> 
-> > >  	scale = fls_long(*parent_rate / rate - 1);
-> > > -	if (scale > fd->nwidth)
-> > > +	if (scale > fd->nwidth && !(fd->flags & CLK_FRAC_DIVIDER_NO_PRESCALER))
-> > >  		rate <<= scale - fd->nwidth;
-> > 
-> > First of all, check the CLK_FRAC_DIVIDER_NO_PRESCALER flag for the
-> > entire above snippet of code?
-> 
-> OK.
-> 
-> > Second and more important, it seems that it would be good to decouple
-> > the prescaler knowledge from this fractional divider clk driver so as
-> > to make it simple(Output rate = (m / n) * parent_rate).  This way, the
-> > CLK_FRAC_DIVIDER_NO_PRESCALER flag is not even needed at the first
-> > place, which means rational_best_approximation() just _directly_
-> > offer best_{numerator,denominator} for all cases.
-> 
-> Feel free to submit a patch, just give a good test to avoid breakage of almost
-> all users of this driver.
+This patchset adds the clock & reset driver support for i.MX8ULP.
+For some of the PCC slot, As there is a SWRST control bit share
+the same pcc register for peripheral reset ccontrol. To simplify
+the case, register the pcc reset controller driver when pcc
+clock driver is registered.
 
-Maybe someone may do that.  I just shared my thought that it sounds
-like a good idea to decouple the prescaler knowledge from this
-fractional divider clk driver.
+Patch 1/9  for the dt-bindings part is send out for review previously
+with the dts patchset:
+https://patchwork.kernel.org/project/linux-arm-kernel/cover/20210607083921.2668568-1-ping.bai@nxp.com/
 
-> 
-> > Further more, is it
-> > possilbe for rational_best_approximation() to make sure there is no
-> > risk of overflow for best_{numerator,denominator}, since
-> > max_{numerator,denominator} are already handed over to
-> > rational_best_approximation()?
-> 
-> How? It can not be satisfied for all possible inputs.
+Shawn suggests to send out the clock driver part firstly, so this
+patch is included in this patchset for now.
 
-Just have rational_best_approximation() make sure
-best_{numerator,denominator} are in the range of
-[1, max_{numerator,denominator}] for all given_{numerator,denominator}.
-At the same time, best_numerator/best_denominator should be as close
-to given_numerator/given_denominator as possible. For this particular
-fractional divider clk use case, clk_round_rate() can be called
-multiple times until users find rounded rate is ok.
+Anson Huang (1):
+  clk: imx: disable i.mx7ulp composite clock during initialization
 
-> 
-> > Overflowed/unreasonable
-> > best_{numerator,denominator} don't sound like the "best" offered value.
-> 
-> I don't follow here. If you got saturated values it means that your input is
-> not convergent. In practice it means that we will supply quite a bad value to
-> the caller.
+Jacky Bai (8):
+  dt-bindings: clock: Add imx8ulp clock support
+  clk: imx: Update the pllv4 to support imx8ulp
+  clk: imx: Update the compsite driver to support imx8ulp
+  clk: imx: Add 'CLK_SET_RATE_NO_REPARENT' for composite-7ulp
+  clk: imx: disable the pfd when set pfdv2 clock rate
+  clk: imx: Update the pfdv2 for 8ulp specific support
+  clk: imx: Add clock driver for imx8ulp
+  clk: imx: Add the pcc reset controller support on imx8ulp
 
-Just like I mentioned above, if given_{numerator,denominator} are not
-convergent, best_numerator/best_denominator should be as close
-to given_numerator/given_denominator as possible and at the same time
-best_{numerator,denominator} are in the range of
-[1, max_{numerator,denominator}].  This way, caller may have chance to
-propose convergent inputs.
+ .../bindings/clock/imx8ulp-clock.yaml         | 128 ++++
+ drivers/clk/imx/Kconfig                       |   7 +
+ drivers/clk/imx/Makefile                      |   2 +
+ drivers/clk/imx/clk-composite-7ulp.c          |  87 ++-
+ drivers/clk/imx/clk-imx7ulp.c                 |  20 +-
+ drivers/clk/imx/clk-imx8ulp.c                 | 574 ++++++++++++++++++
+ drivers/clk/imx/clk-pfdv2.c                   |  22 +-
+ drivers/clk/imx/clk-pllv4.c                   |  34 +-
+ drivers/clk/imx/clk.h                         |  24 +-
+ include/dt-bindings/clock/imx8ulp-clock.h     | 262 ++++++++
+ include/dt-bindings/reset/imx8ulp-pcc-reset.h |  59 ++
+ 11 files changed, 1187 insertions(+), 32 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8ulp-clock.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8ulp.c
+ create mode 100644 include/dt-bindings/clock/imx8ulp-clock.h
+ create mode 100644 include/dt-bindings/reset/imx8ulp-pcc-reset.h
 
-Regards,
-Liu Ying
-
-> 
-> > If that's impossible, then audit best_{numerator,denominator} after
-> > calling rational_best_approximation()?
-> 
-> And? I do not understand what you will do if you get the values of m and n
-> as m = 1, n = 2^nlim - 1.
-> 
-> > Make sense?
-> 
-> Not really. I probably miss your point, sorry.
-> 
-> So, I will submit v2 with addressed first comment and LKP noticed compiler
-> error.
-> 
+-- 
+2.26.2
 
