@@ -2,154 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4934EC636C8
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 13:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9486C636C8
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 02:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF6C61184
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jul 2021 13:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C059961029
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 02:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230461AbhGROAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jul 2021 10:00:07 -0400
-Received: from smtp-34.italiaonline.it ([213.209.10.34]:47849 "EHLO libero.it"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230307AbhGROAH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 18 Jul 2021 10:00:07 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
- ([79.45.45.231])
-        by smtp-34.iol.local with ESMTPA
-        id 57Hym0FThLCum57I2mIAvx; Sun, 18 Jul 2021 15:57:07 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1626616627; bh=rOfM+3SnDUoi4Zw7AQaIgYut2m3EXateesuCvJ04ulU=;
-        h=From;
-        b=JrnyqGMhY4RO+0YzAjovFlnHMyqriWq3eUn8pOak0yBMk9GgJCqTwUjA/6OLd+NHK
-         U0bQHXqK+msbDgUjlcsCHFm812Xicq42VfkwifuyfNC4eI6QW3PCqNT2in4mlbBudB
-         Kz014GqJjZfayD2j0LPbL4cGh4OuxgyUQMWDSvyTtq3JKjozwYblduys3UNYXA3kwc
-         S6yWJ8yBIxTbT6IDl4ez00l0hgAY+hKYBxx4gMyGiGapcr5iy3Vo+FAI6TaNZztJQt
-         8ZDd205s12ngVELTnq0iTn84a/U14wF9VZEuSIlJcEu7hpEsveKHDcRatMgvFC6TQ6
-         U1ZJVrBJrSrYw==
-X-CNFS-Analysis: v=2.4 cv=a8D1SWeF c=1 sm=1 tr=0 ts=60f43333 cx=a_exe
- a=TX8r+oJM0yLPAmPh5WrBoQ==:117 a=TX8r+oJM0yLPAmPh5WrBoQ==:17 a=8b9GpE9nAAAA:8
- a=VwQbUJbxAAAA:8 a=wSIzyl8AIrrWyGTfDxQA:9 a=T3LWEMljR5ZiDmsYVIUa:22
- a=AjGcO6oz07-iQ99wixmX:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-clk@vger.kernel.org
-Cc:     Dario Binacchi <dariobin@libero.it>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v4] clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
-Date:   Sun, 18 Jul 2021 15:57:00 +0200
-Message-Id: <20210718135700.27247-1-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-X-CMAE-Envelope: MS4xfNdcUJVaPcCs2XhTQXQRRi4T1vSjJGkxrKaH2JDps0CgcRK7Q9xaRlwEOZudmAeMlX5cm38tkXi5bMbmGsCxY7Tj8G0GutHOCKFzK//aYXqbp6v6TyZ+
- 0/aVFhsZHmYYbaA6buzm+Et5WRSx6AyVOA5kiGg7FPTcHWI1RcBSunm/krObAZGP4HyBU3jThxziNkuDrK2dQg8aCXI64iC+JK3Lz80MOW+H9bwapI6wjZMu
- yC0o5C3HnZ+fpQ4tKm6+yTdYhJR0oYN5skye/fldQP6Q2P7p7RbNHR9biYJS4wob5n2VUzALpHWMljEfF1ytNLy5g+ZKVCWJSc85+yP3bp7s0+yMQhpQkKIh
- VZqB/RfZRco2/sAZgNuBPvsXxNognotXOimzkGwuHokVTVqUGfgwrK93Vu47sxXpAVFyZI0GWk79ziW/SgtfctHx0Jm2QSK3tuQt/iGkQ3CSJLProBJth6oj
- UHyp5uvQrYNG5/u4FstZWizFm0EaSlztYpB+WvVhF+MeRMExj+pEhPM/SesmvFMh5K+7fkyh+KZ/SC3D+31//a/n9bwJUYPsk7aNP9Ytx7ilz0wSuWzbEn7n
- HOVkiEanhMdCEaCU5c2cqHjp
+        id S233894AbhGSC6p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jul 2021 22:58:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233720AbhGSC6o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jul 2021 22:58:44 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD593C061762;
+        Sun, 18 Jul 2021 19:55:44 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id 23so15408189qke.0;
+        Sun, 18 Jul 2021 19:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iNXlxu41QAi9eyXyEp9P4BgFOZiugUdeuIzu212ysvs=;
+        b=V6b+NmivyRSSIkWo9qNI8PdtQvoet39umINKYQvmFV3Ibk8dDcLbnezTU2TL3xVuwX
+         lxx2g0Ie3iY7hoaJX6L660D24e67DqEYVhla1z0HNqfy/y+BI3+J6pptyMaNSOExyt9g
+         eyLD5IfT05e00WXxfe2SpXCQKR6s4ezib/xSKVm7rVb8d2PqMrG5BoxOAmpKpQWvyNEM
+         YYUV5Zgy3TNTHVgWNn2qH5QZL1Hh0o74isy/24unaCkkimHnJ6MQruXwkblRxzuvlxzi
+         uHN21iSpu5XdyLaT6g/d4pM4bXzsNlRSacqFKeXjThvqnJacjYwCVvLv/i18gbby2pPF
+         0YVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iNXlxu41QAi9eyXyEp9P4BgFOZiugUdeuIzu212ysvs=;
+        b=Q2lomFf2rUAfMWOaBFX22hR81a/EeJtV+L98fvNAdOXOwkz8x8v5qYi6yVjXR6kFLI
+         s7CcgomEyo1GmfrIwY8AKWGqBS1Lxcp9lTmyeR1GUjtgImZJGOR9PT4dYmxnZ509ejOd
+         3PlXJDPpxXzgJc3P63EapsBD1WTvF5lnbEjn2ItwaxZ0FYUAPZWulykh9JbhdaAIOceP
+         G5dMzEDIVNq+YxRIvLLS4UdaGX1sXvkjGOTmw3o6QcnKuKMljvJ0do2WpnfeMa12TwqO
+         vHPpCigUQr2gJSkJ4dE95yg5va3gsScmDnyF4Ee4Sh5uQsum/UsqtUfISW/FUlJgnvbg
+         aMUQ==
+X-Gm-Message-State: AOAM533+bfHxFqFKVA9+L4paWYUhkohN1x00uaMBUdaiULU7iqv4EJhz
+        d6KK4N7GKuh6kSX8POvakD+UxZmwvmI/4C/D5FI=
+X-Google-Smtp-Source: ABdhPJwB1y+j+sdeR4vc3gg4ZAWtWNDHGEX12CxUO8SxSeJWWN0gV4rMiFEYtb/b/PQi3QMyw20pv7/8kplWmcPQI1w=
+X-Received: by 2002:a05:620a:6c9:: with SMTP id 9mr22232077qky.303.1626663344173;
+ Sun, 18 Jul 2021 19:55:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210717043159.12566-1-rdunlap@infradead.org>
+In-Reply-To: <20210717043159.12566-1-rdunlap@infradead.org>
+From:   Dongjiu Geng <gengdongjiu1@gmail.com>
+Date:   Mon, 19 Jul 2021 10:55:36 +0800
+Message-ID: <CABSBigROX2sYdcOOt=L45_hhdz9reff3t1rD-6M2vDLQ35LcOQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: hisilicon: hi3559a: select RESET_HISI
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        Stephen Boyd <sboyd@kernel.org>, stable@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling the framebuffer leads to a system hang. Running, as a debug
-hack, the store_pan() function in drivers/video/fbdev/core/fbsysfs.c
-without taking the console_lock, allows to see the crash backtrace on
-the serial line.
+Randy Dunlap <rdunlap@infradead.org> =E4=BA=8E2021=E5=B9=B47=E6=9C=8817=E6=
+=97=A5=E5=91=A8=E5=85=AD =E4=B8=8B=E5=8D=8812:34=E5=86=99=E9=81=93=EF=BC=9A
+>
+> The clk-hi3559a driver uses functions from reset.c so it should
+> select RESET_HISI to avoid build errors.
+>
+> Fixes these build errors:
+> aarch64-linux-ld: drivers/clk/hisilicon/clk-hi3559a.o: in function `hi355=
+9av100_crg_remove':
+> clk-hi3559a.c:(.text+0x158): undefined reference to `hisi_reset_exit'
+> aarch64-linux-ld: drivers/clk/hisilicon/clk-hi3559a.o: in function `hi355=
+9av100_crg_probe':
+> clk-hi3559a.c:(.text+0x1f4): undefined reference to `hisi_reset_init'
+> aarch64-linux-ld: clk-hi3559a.c:(.text+0x238): undefined reference to `hi=
+si_reset_exit'
+>
+> Fixes: 6c81966107dc ("clk: hisilicon: Add clock driver for hi3559A SoC")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Cc: Dongjiu Geng <gengdongjiu@huawei.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: stable@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> ---
+>  drivers/clk/hisilicon/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> --- linux-next-20210716.orig/drivers/clk/hisilicon/Kconfig
+> +++ linux-next-20210716/drivers/clk/hisilicon/Kconfig
+> @@ -18,6 +18,7 @@ config COMMON_CLK_HI3519
+>  config COMMON_CLK_HI3559A
+>         bool "Hi3559A Clock Driver"
+>         depends on ARCH_HISI || COMPILE_TEST
+> +       select RESET_HISI
+>         default ARCH_HISI
+>         help
+>           Build the clock driver for hi3559a.
 
-~ # echo 0 0 > /sys/class/graphics/fb0/pan
-
-[    9.719414] Unhandled exception: IPSR = 00000005 LR = fffffff1
-[    9.726937] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.733008] Hardware name: STM32 (Device Tree Support)
-[    9.738296] PC is at clk_gate_is_enabled+0x0/0x28
-[    9.743426] LR is at stm32f4_pll_div_set_rate+0xf/0x38
-[    9.748857] pc : [<0011e4be>]    lr : [<0011f9e3>]    psr: 0100000b
-[    9.755373] sp : 00bc7be0  ip : 00000000  fp : 001f3ac4
-[    9.760812] r10: 002610d0  r9 : 01efe920  r8 : 00540560
-[    9.766269] r7 : 02e7ddb0  r6 : 0173eed8  r5 : 00000000  r4 : 004027c0
-[    9.773081] r3 : 0011e4bf  r2 : 02e7ddb0  r1 : 0173eed8  r0 : 1d3267b8
-[    9.779911] xPSR: 0100000b
-[    9.782719] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.788791] Hardware name: STM32 (Device Tree Support)
-[    9.794120] [<0000afa1>] (unwind_backtrace) from [<0000a33f>] (show_stack+0xb/0xc)
-[    9.802421] [<0000a33f>] (show_stack) from [<0000a8df>] (__invalid_entry+0x4b/0x4c)
-
-The `pll_num' field in the post_div_data configuration contained a wrong
-value which also referenced an uninitialized hardware clock when
-clk_register_pll_div() was called.
-
-Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-
----
-I added Gabriel Fernandez's 'Reviewed-by' tag as requested by himself
-15 days ago at https://lore.kernel.org/patchwork/patch/1450964/.
-
-Changes in v4:
-- Really add Gabriel Fernandez 'Reviewed-by' tag. In version 3 I forgot
-  to add the tag.
-
-Changes in v3:
-- Add Gabriel Fernandez 'Reviewed-by' tag.
-
-Changes in v2:
-- Change  'u8 pll_num' from 'stm32f4_pll_post_div_data' structure into
-  'int pll_idx'.
-
- drivers/clk/clk-stm32f4.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 18117ce5ff85..5c75e3d906c2 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -526,7 +526,7 @@ struct stm32f4_pll {
- 
- struct stm32f4_pll_post_div_data {
- 	int idx;
--	u8 pll_num;
-+	int pll_idx;
- 	const char *name;
- 	const char *parent;
- 	u8 flag;
-@@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
- 
- #define MAX_POST_DIV 3
- static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
--	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
-+	{ CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
- 
--	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
-+	{ CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
- 
--	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-+	{ NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
- 		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
- };
- 
-@@ -1774,7 +1774,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 				post_div->width,
- 				post_div->flag_div,
- 				post_div->div_table,
--				clks[post_div->pll_num],
-+				clks[post_div->pll_idx],
- 				&stm32f4_clk_lock);
- 
- 		if (post_div->idx != NO_IDX)
--- 
-2.17.1
-
+Reviewed-by: Dongjiu Geng <gengdongjiu1@gmail.com>
