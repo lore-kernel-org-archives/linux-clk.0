@@ -2,142 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 785C5C07E9B
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 12:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AB0C12002
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 12:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 560456113C
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 12:40:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA97660FF3
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 12:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236571AbhGSL7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 07:59:51 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:42442 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231388AbhGSL7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 07:59:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1626698431; x=1658234431;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=LphTvQ9qQb/eskQE8zd6P6M+Q9NSt9+K+RJ/M9CLCnk=;
-  b=VCa+slt6zz3ZgNoaMWlaqZYImO2IHDjduH/lJxiGyn4NkFCF92au1HDD
-   PujFVXTjDrijGqibylZ43eYyV9q89bDQa3bziz/hrxw/XkYvkQdagtar8
-   DAeD2lvbBVlzVWDphJNpGXwfWLfj4gYFwhXGaVdj18Ivr3DQB9LM/ExWh
-   oa/Bl2PDKk+uinCDTFS5XFekRH8j84ZYjv1rISY1COwUaNXLcLr4M90Ck
-   RfLvxo9I2ZyhV2h7f/2vvbh9Mk/8xXZoH0i4wsP/wlkmjqDKNfSGrYp4K
-   pfSM9gOk6Hjwv/QaaUwrVFhsQfhgydmW0U619rzIzyIY3Ku7s1XBrMQUl
-   g==;
-IronPort-SDR: O6qEEB/cRuNp99ePHwqQGzBnFR4+MHFMQO8aNZH3MyRvSWZOznqmb4irre1NphFj9W+Y/h6Zx4
- VQHfczD3gXm/b6nF6pLaSaNo2eypDYBYl6dS1PxiPifyi+U4w4FdXkbt3E+6D+Glcr6W4MM9Mt
- sav8EcTDM6jdmQ1aN0oek+Eck3zZxdAFOSQponaLrhzchmKKt0UJDOiLT3GKzr34zxx/+dAUUT
- 03IXas2r7Vn8Pei3M+xzcEIzBFb61lP6CebLXCgfShknH3GpWtV1cnZWVrQLf0jnVApnpEtR9R
- LfCFcDtiSxEvjCI6HQGiiZWe
-X-IronPort-AV: E=Sophos;i="5.84,252,1620716400"; 
-   d="scan'208";a="125075524"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Jul 2021 05:40:30 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 19 Jul 2021 05:40:30 -0700
-Received: from [10.12.68.173] (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Mon, 19 Jul 2021 05:40:28 -0700
-Subject: Re: [PATCH 1/2] ARM: at91: fix link error
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux@armlinux.org.uk>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-CC:     <eugen.hristev@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sfr@canb.auug.org.au>
-References: <20210719080317.1045832-1-claudiu.beznea@microchip.com>
- <20210719080317.1045832-2-claudiu.beznea@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <9f5f6c1b-835c-46ae-6466-70aaafccd6e9@microchip.com>
-Date:   Mon, 19 Jul 2021 14:40:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S237018AbhGSMFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 08:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236899AbhGSMFI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 08:05:08 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA3CC061574;
+        Mon, 19 Jul 2021 05:03:33 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id s18so18849807pgg.8;
+        Mon, 19 Jul 2021 05:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tto4OVvjuCgq4lBBMOSB4qS7FSxO1fllKtx/pkaH/aM=;
+        b=LuQ/kJePBiQ2sZZAE0U5rHZDK1pdMQwE9VZ/S1Ngpg6VDNtB2XUn3nHKtrus/jXsFL
+         i1lw2oX51zCuDbuZUa4I1oUHkZLWAHBLZbqo2+4AP94xWDDpwz2RAMITYgt3Z2NYrbsJ
+         OmzY7hYqC/SQz0xg4Ih0X55QSOi7Pk6pdKCt+E67doyzAo3xVWu8+mYajawkR49UeerC
+         ZZ6Lycm/hFybFuKM2+4qybHbosPe5tR++hIoIrWSoIeSf6R+xn37t0WDEALhJyku01EC
+         pG1O5vPG10586FZ7rWFMqvGuxgj+mJj+CS31+3sGJL4lFmIVLPAkvLoFJQFUY6kjtok9
+         DlJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tto4OVvjuCgq4lBBMOSB4qS7FSxO1fllKtx/pkaH/aM=;
+        b=hz4cQqpFW+i7zmx/Le2W/npqr1OhU+n93YzfHev/h1XodIQp2+PJJcEUuYFm++1yqK
+         FS0+U3Zph2HH3F7nq+5GeCzcs0rDKFiGtwJkJkXHnvkpjRtsKTwnALw7trf326InDem4
+         XhKHRbfDCjDWhoLB7RUJO6KdR2Taxw84Jl9/piYqJKUaTVkiGV+0yDHp6JrU2phxBKF6
+         3L/Na1AmbPFCiWNxymmNdWLXBOmJG0zn1E90JOtD455AURYxjTRThUz7P0cwupjE+gMi
+         qOIyG41TaeSIK4ko0h2cwP+Pg5CiItoL05gUWp2uyebDLiZl9dJAw/A3mDEzbkVANkzs
+         Wh0A==
+X-Gm-Message-State: AOAM531uPY5pMPgfA//0rXQ106mViL3asyfPAMU/3mxKLZFOQYivXUER
+        fxIpxzyhm/4CLHd28FD8YE8LzGJ2JQW36qWlLZo=
+X-Google-Smtp-Source: ABdhPJwpKyQgs0rJ1djIB80LNagdLFagxsrcE0J+H7ot1s1STaLkL2e1Q8aLp4hs86aGu8FTDeXY8TYxDB9kCjSh568=
+X-Received: by 2002:a65:434a:: with SMTP id k10mr25333382pgq.4.1626698747965;
+ Mon, 19 Jul 2021 05:45:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210719080317.1045832-2-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210624224909.6350-1-pali@kernel.org> <20210625143617.12826-1-pali@kernel.org>
+ <20210625143617.12826-8-pali@kernel.org> <CAMuHMdUCEHtqNk-nGJhPK_=NrgSoRhmC99J9pdGqQxcWpoFqGg@mail.gmail.com>
+ <20210625153803.u6uesckcqyvvo7dl@pali>
+In-Reply-To: <20210625153803.u6uesckcqyvvo7dl@pali>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 19 Jul 2021 15:45:08 +0300
+Message-ID: <CAHp75Vdzb9yhm490vAhL7O0S+5FPR=sM1Tohqi70xYV+bXVr8g@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] math64: New DIV_U64_ROUND_CLOSEST helper
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+On Fri, Jun 25, 2021 at 6:39 PM Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> On Friday 25 June 2021 17:22:31 Geert Uytterhoeven wrote:
+> > On Fri, Jun 25, 2021 at 4:37 PM Pali Roh=C3=A1r <pali@kernel.org> wrote=
+:
 
-On 19/07/2021 at 10:03, Claudiu Beznea wrote:
-> PM support for SAMA7G5 has been submitted to mailing list before SAMA7G5
-> soc support thus the SAMA7G5 was not present in AT91 Kconfig file at
-> that moment. SoC support for SAMA7G5 hasn't added the proper PM flags to
-> Kconfig thus the link error bellow:
-> 
-> arch/arm/mach-at91/sama7.o: In function `sama7_dt_device_init':
-> sama7.c:(.init.text+0x18): undefined reference to `sama7_pm_init'
-> make: *** [Makefile:1176: vmlinux] Error 1
-> 
-> Add proper flags to AT91 Kconfig file to solve the issue.
-> 
-> Fixes: 5617a08dd9e1 ("ARM: at91: pm: add pm support for SAMA7G5")
-> Fixes: 18d694ecd91e ("ARM: at91: add new SoC sama7g5")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->   arch/arm/mach-at91/Kconfig | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-> index f52b46bccd85..b09bb2279f7f 100644
-> --- a/arch/arm/mach-at91/Kconfig
-> +++ b/arch/arm/mach-at91/Kconfig
-> @@ -204,6 +204,9 @@ config ATMEL_PM
->   config SOC_SAMA7
->   	bool
->   	select ARM_GIC
-> +	select ATMEL_PM if PM
-> +	select ATMEL_SDRAMC
->   	select MEMORY
->   	select SOC_SAM_V7
-> +	select SRAM if PM
+...
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > +/*
+> > > + * DIV_U64_ROUND_CLOSEST - unsigned 64bit divide with 32bit divisor =
+rounded to nearest integer
 
-I squashed this patch in 18d694ecd91e ("ARM: at91: add new SoC 
-sama7g5"), verified that it compiles and rebased the at91-soc branch on 
-it. The commit message is as follow (wrapped):
+> > > + * @dividend: unsigned 64bit dividend
 
-ARM: at91: add new SoC sama7g5
+(1)
 
-Add new SoC from at91 family : sama7g5
+> > > + * @divisor: unsigned 32bit divisor
+> > > + *
+> > > + * Divide unsigned 64bit dividend by unsigned 32bit divisor
+> > > + * and round to closest integer.
+> > > + *
+> > > + * Return: dividend / divisor rounded to nearest integer
+> > > + */
+> > > +#define DIV_U64_ROUND_CLOSEST(dividend, divisor)       \
+> > > +       ({ u32 _tmp =3D (divisor); div_u64((u64)(dividend) + _tmp / 2=
+, _tmp); })
+> >
+> > Given "dividend" should already be an unsigned 64-bit value, I don't
+> > think the cast to "u64" is needed. Similar macros in this file also
+> > don't have the cast.
+>
+> It is just to ensure that plus operation between dividend and _tmp is
+> evaluated in 64-bit context to prevent overflow. Just a case when user
+> calls this macro with 32-bit dividend param.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-[claudiu.beznea@microchip.com: Select PLL, generic clock and UTMI 
-support, add PM configs]
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Link: 
-https://lore.kernel.org/r/20210409113116.482199-1-eugen.hristev@microchip.com
-Link: 
-https://lore.kernel.org/r/20210719080317.1045832-2-claudiu.beznea@microchip.com
+This contradicts (1).
 
-Added lore link will allow us to trace this part of the discussion.
-Here is the new branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git/log/?h=at91-soc
+> As it is a macro (and not
+> inline function) type is not automatically enforced.
+>
+> DIV_S64_ROUND_CLOSEST macro assigns its argument into temporary 64-bit
+> variable which then ensures usage of 64-bit arithmetic operations. Same
+> applies for DIV64_U64_ROUND_CLOSEST and DIV64_U64_ROUND_UP macros.
+>
+> So this is reason why I added explicit cast to u64.
 
-Tell me if it's good for you.
+I don't see the reason for casting in the current code. Probably you
+need to rephrase documentation to explain why it's there.
 
-Thanks for having fixed that so quickly. Best regards,
-   Nicolas
-
-
--- 
-Nicolas Ferre
+--=20
+With Best Regards,
+Andy Shevchenko
