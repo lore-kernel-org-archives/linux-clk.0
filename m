@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4440DC636C9
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C61C12002
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D4F461182
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1AE6117A
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 05:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbhGSF1v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 01:27:51 -0400
-Received: from mail-am6eur05on2045.outbound.protection.outlook.com ([40.107.22.45]:16897
+        id S233052AbhGSF1z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 01:27:55 -0400
+Received: from mail-am6eur05on2062.outbound.protection.outlook.com ([40.107.22.62]:46049
         "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229906AbhGSF1v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Jul 2021 01:27:51 -0400
+        id S229906AbhGSF1z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Jul 2021 01:27:55 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AQofr4mtRDWaBJ/f44zFhaor0xwvGA92UKcW4LZtJkCzhAy+5bSRqwfxXmf7p8eybq17I3hehWCx1U31XQeDMCQRiACwCPJ73Rrc062TdrfYvX2uqaksEkVcmw1dQDSlfF3VfwkQhVBT9nC9SygPgDUlcP2EtPC2pl9Cncnef0I2ZNnhLQ+CBv2sN26NJWbgFc+bjU3eXWNk+xHGsIQd/Xg3HG9qGOc0/fRM+WDabqc3KyCvwUwFKwAHDmCDOHIXDlGlVtZaAoggATbYECcMEgVlskavLL5oQpFn8kyVjRHXt9z2eozmvL0j6sHFuJPEjCNkn1XtmLrzjbwJ3kb1ZA==
+ b=fP9PyUxhgjHuA8H+xbx4Q9s6PhDVOmvYDYwEaVCdR6XqS/UjdvNo2P4hPDbccZ3HF0FydzRxDWj6wQehepoNMCkWhFzqY7rWa9Mp1gmEPdSUeMsUJoxqhVY0c/D3SGay6w12LRtMTVR+FMzioxheknPJquWXNIs9Yu5UYgYnqXb0UgHJfx3CvS94cJD3rmVkVkuL+T9Os5x8htxsQVe21wYxyAdlHtJIBE+bFJL95MYM7WytF6YDoAmupkSvOMxHAHOUS73aCZYuvKxzq7WHgAyRt7d+PUh/TfJ2AqWySF1gbLn7P/eeTtNzMIH5pZ+cIy11mvRgttMACx87mBE6+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SiHwM+0WA7cXLVH6BcSWzgps7Dl5B3a/jw7LHHfo7Ck=;
- b=kaW2+vNVL2l5TjeTBsZ1L8xJ4Q69f6V1uep8uo/bxm9uhhiWsZGc7Mww+DDLZ9ZSBthyu7yfR24TbgJjFLfTdfMl/GuTAntN6zyVtRpEAsA+6h8huBKiD0Zc84Muevl6h/eyfdhY9SuDHUPfyjkqvmk5PakeJtxLRbmoB39Co3+eB3OWtLuW+ycWzFumal1fixgwWpDW8QB87ZxcLJQ0wPVf4kucuVaj0QLJpr3jegBInPhG/ezvqeIiIhcqe1G+Om4Wy1UJaIEoaKcJLtAXjh0p539ZE7aCuJHfGn+HQlav1t+pSEgv/EVeu8FBTC1Mxvc3LJ2tY9C2Kez126to6Q==
+ bh=Y2eDneCKknwYklHa/Dw/8a2/nssGUX258MoQJ8nLSmc=;
+ b=FNKmIqehDyzu0QAotOfTzbhtKID1kRukwzBbXvPzJSnrGGhisjPzW+6+qlVoztdr/56IJayh4oy1UZ3Jt+kXnN16SY08DScJfpfxaMuIa4Tnv1KEnT09guulO9QVCeqhvlwE8JoatK6ln7A4l1/rlNNqOR5ZOkJyJAr5xQGUvYd6YW1cPHgQjUqzsSdryK5MRTq114hdPrBYobywCK4ii1/e6f7g6QIHr0KvXETwmb6s/0RFl2weeSQOPWkQJeAq1GSGXSyjBKej8t+iriBw4aRltUt0fAM06vWq15WZLjeC2ZxwPb7qYYGjROQsKct6DIRkTAwvtD9MWKrbOYDxBw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SiHwM+0WA7cXLVH6BcSWzgps7Dl5B3a/jw7LHHfo7Ck=;
- b=CBtLQsGFztwe1Wl9Qr2rBHaE7YCALwaFWbow59h9sXbsE3dyKSEn6nHiG28LGEbpSkrmfx/uYXKglfpnv1KmgWHzzRvOUlfs4KO3v83QYkQ6GgDZ4r4b5guugMjDtqU4TDoRNMcM/6D9sX1MRsf5GG5ZoboxMEVqzHUHGLdbb/w=
+ bh=Y2eDneCKknwYklHa/Dw/8a2/nssGUX258MoQJ8nLSmc=;
+ b=KTzQpzmzNqHthB231RfSvCRA3Z67437lBtwgQfR4TgaCBQdT5FNQtjY50YogCU91QJrAngrR2M40c9bXdQ3273jg9s4GB2IzlcU9h+EXjkK6Ji7VrL2dirjpJsakWou5XzNriYZV3KWldMXqeM8HsKDpqvW7m347vrtfsZIC16g=
 Authentication-Results: kernel.org; dkim=none (message not signed)
  header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
 Received: from DBBPR04MB7930.eurprd04.prod.outlook.com (2603:10a6:10:1ea::12)
  by DB7PR04MB5244.eurprd04.prod.outlook.com (2603:10a6:10:21::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.29; Mon, 19 Jul
- 2021 05:24:50 +0000
+ 2021 05:24:54 +0000
 Received: from DBBPR04MB7930.eurprd04.prod.outlook.com
  ([fe80::b570:add1:2832:dd3d]) by DBBPR04MB7930.eurprd04.prod.outlook.com
  ([fe80::b570:add1:2832:dd3d%9]) with mapi id 15.20.4331.031; Mon, 19 Jul 2021
- 05:24:50 +0000
+ 05:24:54 +0000
 From:   Jacky Bai <ping.bai@nxp.com>
 To:     shawnguo@kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
         abel.vesa@nxp.com, s.hauer@pengutronix.de, p.zabel@pengutronix.de
 Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 6/9] clk: imx: disable the pfd when set pfdv2 clock rate
-Date:   Mon, 19 Jul 2021 13:34:27 +0800
-Message-Id: <20210719053430.1442505-7-ping.bai@nxp.com>
+Subject: [PATCH 7/9] clk: imx: Update the pfdv2 for 8ulp specific support
+Date:   Mon, 19 Jul 2021 13:34:28 +0800
+Message-Id: <20210719053430.1442505-8-ping.bai@nxp.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210719053430.1442505-1-ping.bai@nxp.com>
 References: <20210719053430.1442505-1-ping.bai@nxp.com>
@@ -63,93 +63,152 @@ X-ClientProxiedBy: SG2PR06CA0126.apcprd06.prod.outlook.com
  (2603:10a6:10:1ea::12)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.71) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Mon, 19 Jul 2021 05:24:47 +0000
+Received: from localhost.localdomain (119.31.174.71) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Mon, 19 Jul 2021 05:24:51 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d647ae39-e826-4c4e-1afb-08d94a7587f0
+X-MS-Office365-Filtering-Correlation-Id: f325522d-d441-4eff-6177-08d94a758a63
 X-MS-TrafficTypeDiagnostic: DB7PR04MB5244:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB7PR04MB5244EF1165246763BCB3710D87E19@DB7PR04MB5244.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Microsoft-Antispam-PRVS: <DB7PR04MB5244942C37D74EF93789BE5787E19@DB7PR04MB5244.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZhhdtIMuUDnk1mUhFR/fKj6if7y2uVrlBTn24EEPZVX+kbcM29tFhdpuatiMiUySsqJY9Qf6LcLFnL6MavYPycGFY7BN3225LzBxErAquyVhGXz3AudII5QqCzTRsyb0LcbTMU//IU1m8+zQEXmltEaZiY/xs2ojVvvmeQdgG1NVxN0A35duXZYHgkZxhEx3IsGHlMkBjbba4UJjAxG+TlkueP+/ueGQq7nz7yidwa25xrlmOJrbkEVbmCvHDTGh7lie+vVlGikKZIK6dwYWHAaNHDcAXHsqXugOTUU5Io9A7mN1ZoL6hCZQzhgJKLh6du6dzF+a3V5Y5aBcdSqP0SeuyLQE6RHZL8dK13zqrHNvGBbbIIrkhBlUIHKZ2EvOt9HZeEgt2ybFvznqEVubV6vX293+2MB3UKOxfXKaDqe67XD+W9MSxL/Cw/jSzhGWQ+0j+8f/1tKJiDqwtP/rC1qdxPWrznASwbbnNwl8yTqt7TclAIPcvDGRiDbOuj5zyv2ArHAJM1upb26GqpnWdaRKwR5nOTG+VNcbjrZVSLWgXJLtvbpl6BkSQk8nYOfGjRX6C5JJE3M8FFf9sV1w8qnK4/AsGus1qNh9dbp5Mr0SuLVFA7v/dvYWh/FM0apyFmbJEg9NhcokriXCBn57Zi/mLcdMg53Rfr6lj7OJUn4xHjxz76Q2qiGcJeIpvGYtQXORC2yoTNK1PSgFV8QNE+cq1UhsyLUqMj/Hd6C2fRs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7930.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(396003)(366004)(346002)(136003)(478600001)(83380400001)(6512007)(38350700002)(38100700002)(6506007)(956004)(36756003)(2906002)(4326008)(1076003)(316002)(5660300002)(2616005)(6486002)(52116002)(86362001)(26005)(66476007)(186003)(66556008)(8676002)(66946007)(8936002)(6666004)(21314003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 8oq/+WQisx+vhNueai72FH4JwrlL7l9FJHEEixDaXJfB05o0ocuu2LRjUb/jBYYUBVCGGOaMRfLV36z92Akk/rAZp8Y37O467NwT9TEI3tsUn8e9rZOKl/wbWWmPPgIu33xkgEFbxPXW3nO5v7eX1v7lhxASErYiseafd1k4v+HjhMMvY4eIPWvU4owfp69XoCWRYDEle7Plf9z2ANxg5nPBnjcW/UvXdAEV0R1A4tIIOXKE695QAhXMKx7ITLIbxpX0gyyBMHnX30D9ZIaczMvSPN+vvrqPothglKQav27P/VeoPtDyG0YxVROZxb3dqrYUWtCiHc8Mc1u8/jIfKyu8jCcz020CyJV59z4YZps2dUzOO4Gtobf/puXkCI6rBjp2Pp4/0rttyIr5FLNF9sHMPYOh9JOarHqbjHPCKWJwrgOBbnAu2e+h3XOwLqdM6BDV9k2owCx3cpf1jwVCck+3l8TX3TOR/Nh8qfX6wvut53zLVbZ07avpsKDfZO2cyM5a4icj1BF1ffAmEsgHjgvlHWG+s6up40L5GUqDfTGVjmaw+vUdmyRb55r/PCT1CyfdM8b9wc3iKlozyrKQy1tSP3ncbeZ+LSgEqZxxVQ+FXkTMXBI8etYkhhvORDXZf3Xj1K6u2e25rpEMw8SNN4iqDlTVrRTq+mcjZF6ZbZBnrgYwELVc4l925RooZ1bLcSoiQ/Io0aQIedOJpc96QQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7930.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(396003)(366004)(346002)(136003)(478600001)(83380400001)(6512007)(38350700002)(38100700002)(15650500001)(6506007)(956004)(36756003)(2906002)(4326008)(1076003)(316002)(5660300002)(2616005)(6486002)(52116002)(86362001)(26005)(66476007)(186003)(66556008)(8676002)(66946007)(8936002)(6666004);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0nofiigfL2zZPtl56giRRbLmZs6OFT8GBlWVcgx7jQ/8rpGvBXM43jXofnXp?=
- =?us-ascii?Q?RG7JlLhOCg3QMLJLhZojvdzBcVVvR8m40d/ZS4nNoictn1PMcf/4x6w8vAwf?=
- =?us-ascii?Q?/D/RlspUrzvugd24DlvFI22Cgvaz9OwlMKeszfmXDQVi9UgpEnkTSIiP7whB?=
- =?us-ascii?Q?ekrN0Cl1z2k+SNUu06Dgc9Yx9r2tSuaUw4hc//UrV1mz66jSjxtvz1o2Aot6?=
- =?us-ascii?Q?bQSMUq0VurAmIpD1KGV9Ge+BxnTg1DfVmoPtx4fsWv86qD+GVzYXvpjxuGwK?=
- =?us-ascii?Q?obi6FoA0Pq4P2VqE01DEwCR/qrkmBUbj6G+JtjrutOsowhzJAQzGfV+Zc2ju?=
- =?us-ascii?Q?diSa8ApSpwRbOXfUI0G4bVP0nH/DYaDF2aOvA5wJmiIoOiipu2pzzOcwTEow?=
- =?us-ascii?Q?sVhi4MSwtONHem3kKWqu2TLd+ua/9WQahBKZO6tV8qtOQ8qdJ8f1wo3/Lg07?=
- =?us-ascii?Q?7deQssFFyBv5ghp4ZAavBPuE5XrcFF9PG9w4azij9NlqIEJiP2I0kPTGhTTW?=
- =?us-ascii?Q?pmbAQtPr6n5P/CJ5HIkL0G77GGSbycB7WEaJr7qH4jQbYEQZEJBuYpRJwM8c?=
- =?us-ascii?Q?sZrBSUoF7BBjKsNM8doeW4N8EMw/dyRvzoHFWeWcJvYK26Cv7u8I2Cl1Er4o?=
- =?us-ascii?Q?ZsOXmTM2PWcYj4F84a1RPIhKsYOj31ucu5qjW5TYPqvg8h3fKecoRUWc60Ds?=
- =?us-ascii?Q?+2fGmrXDhcgCQb6CbF5/yELHbiWdkGJgpHbFgExxemefjSY/BQOWv4FqlTRB?=
- =?us-ascii?Q?vT6M3afwPwz7rHJo5mG9yLDj9rv5T61h0p3VPDN5l53GuNAIbEO2Xnnkihye?=
- =?us-ascii?Q?MO/e29/GZTH0bWOr429hOcEjqdiLmdgVExfB/J/7cO8jxk50/spU0mcrQgH7?=
- =?us-ascii?Q?iL8OsVhr+V0YqJQt/IW1Ssbqmtnbvkomq6PWmFsuKruVhaTWFLYGcN5163op?=
- =?us-ascii?Q?BzKXDGOM+gGmW7yJp6WxPvhMWLj9BYovV+vHzzAziZayZ24Y4V0zj+A7rfDd?=
- =?us-ascii?Q?JBs/RSVvs6CPPbwwgFsYmErI+x/wzsjhfqwzEobtMZjBh+ArK3Z2Mdred7TA?=
- =?us-ascii?Q?teZrSSXyA7DwSqUFQEg8Suk7NrfgG1Rwer7imZAsD8HJZkpXrmlpFqAu0h8F?=
- =?us-ascii?Q?osMyQTTzn7VOxXYi6cIuVZYZJnI7tMzF3ER6mn3UQ9HH5ZPcZH1sMfAyzLK8?=
- =?us-ascii?Q?otWBgkrfPXaq7/GAdswgka99hm0l2EewWUBz36P6dnm5cMystjLlyvrczgwF?=
- =?us-ascii?Q?c5gmrYRmdwoWtB98SvPI3wpkjfbIjIOnRqXIZYe8biIhJo3oniVdaTkpWKDD?=
- =?us-ascii?Q?rAhILCL3+BCK9AyHhOC+bxNL?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q8g04j8D6hTg9vbe8Hh9dEHaFMOUH4vGFVBiOs/1RbwpEbPBBdrRBykMTr+d?=
+ =?us-ascii?Q?FQW9JNAIwXyArzuxAkmg5wnRPU9JipzKdoa7JeC3K7PTCHZNgIx08PUZxB8s?=
+ =?us-ascii?Q?EaVUmG7SUG9AQnK5VroR6jedJQWZUQw3r6VjYLW9JCBXdj8qxU+qnTpoFmEG?=
+ =?us-ascii?Q?bqdybog8hYpdkagvoYbEQpQQ0T7f3dNcBTV87ueCdpB1gcJO7Mntw/qhhT0O?=
+ =?us-ascii?Q?CmXuRdbxGSb5b/AfbW8PTX6TjmtIXXDaoguiP7kwAKX8o11aGgzlQkxxYwXz?=
+ =?us-ascii?Q?NEjLC93dteW0k2ruuUgBhNpiJzrHQGGlvKOg+CPgBSLGM+r8QVGGdH9SuPhR?=
+ =?us-ascii?Q?0OlAGM+Bu7nja3Thsz9I8BdRq7uKyGXKVvt/ML7+asTZVaGVQNKFwUnK5i8L?=
+ =?us-ascii?Q?1HKJJvSU2buOE90uzdTglE99IXVF+AuNL8H1BtXf+PLAgPuiyo77czRlSSzR?=
+ =?us-ascii?Q?vB5fZ+ofHFcWEfcgFzuGjCOnddXtpqKjEfveEYyXuAvjN+HZwBbNosHjy7hP?=
+ =?us-ascii?Q?6JZSnjyk9bDcmmf8Y1cLRThxuVhATdEJBhNy+JvIwT5BQVUbB/KF6DSZ7wj9?=
+ =?us-ascii?Q?W9gixWj8L7Nz2LERgO/tlvOIV4A42YuJcCyEhozOjbKEppXyZlHyI/BJZGAs?=
+ =?us-ascii?Q?lNE4aChAtxD5D0goRHR9kIaJNVppYRBiU/URpBFrCkGRwGBZBOBYobE5yKfO?=
+ =?us-ascii?Q?wzhHuAwZCrOFKgLYY4bZhfWf1O1A7CImuZc5a2OgIb9sd9L4PTBvif/yunVk?=
+ =?us-ascii?Q?DD4R7cPLz+ghyDXb2TgWiXSJC1Ru1AMcrfiI5sBY7bMWWpFNT8FxNA2pM6Qf?=
+ =?us-ascii?Q?z/CTteHoNup6wJuJqBnI7sSghyc2V6O8+K4q7eWT0vKsumYJj9wPSJSEJncF?=
+ =?us-ascii?Q?SkoeFXbMoCwdh3izHTXmnQKKczGAmipfm8NkNGZuqchgxRRPJsJYK5sdl9Uz?=
+ =?us-ascii?Q?ptYo8DHGqK7CtZpxCc9AhPzf+p4KDl/rOglmMEzlXmGdAAb+odCLVnukOFMP?=
+ =?us-ascii?Q?uCx1Qr6uxl1PbaXjB7LKKbLLDOrxvWmnLZds6krqtWQ7Jdmh4iY0ggLrTWeA?=
+ =?us-ascii?Q?ElAtozg55+bKGBYJZtKO+L8DTwiEC1RrhVkiNppMFfCu9U9XtTsVwJXTcT0S?=
+ =?us-ascii?Q?bsjqg1UaaLRB7JJQZvaDfyF5So2dlsQaWp779YFayTyRx1Fm7SCvTO8eB8D6?=
+ =?us-ascii?Q?zfnXh3/m3XGxD7n/77poJIhDbnaZtmVfLPeUlTc0b+2KL81DiAX5QGLo4eD+?=
+ =?us-ascii?Q?arbMFHNhu+E2xYGT99Rsl1ykWda5T13kPNhSaRcBkuFIZsVi8bi7BvT6smVb?=
+ =?us-ascii?Q?MJzF1osRD0vY38f+6sm9dHfl?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d647ae39-e826-4c4e-1afb-08d94a7587f0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f325522d-d441-4eff-6177-08d94a758a63
 X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7930.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 05:24:50.3706
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 05:24:54.4805
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eL3YYOQm1oAY7ZdPJGRlRDBb5sO8q2f1t0elnMVhqIQgXfdiMfPXZSlLOCG4MFLlTL6XdKz6gzs9dOFgriDpVw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: p9Jab+HutumJBL5A4RxJ1gXjJptpSnJKAe0jGB6wdIHEFa66r/inbx1vTgtQIHgfIHFF6xK3nm0lhK028hOn0A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5244
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is possible that a PFD is enabled in HW but not in SW. That
-means the enable count & prepare count of the PFD clock is '0',
-so the 'CLK_SET_RATE' flag can do nothing when the rate is changed
-while the PFD is hw enabled. In order to safely change the pfd
-rate, we can disable the PFD directly if it is hw enabled but not
-used by SW end user.
+On i.MX8ULP, the 'CLK_SET_RATE_PARENT' flag should NOT be
+set and according to the laest RM, the PFD divider value range
+seems will be changed in the future, so update the pfdv2 to
+include the specific support for i.MX8ULP.
 
 Signed-off-by: Jacky Bai <ping.bai@nxp.com>
 ---
- drivers/clk/imx/clk-pfdv2.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx7ulp.c | 16 ++++++++--------
+ drivers/clk/imx/clk-pfdv2.c   |  9 ++++++---
+ drivers/clk/imx/clk.h         |  9 +++++++--
+ 3 files changed, 21 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index ba50d6db8097..b6e45e77ee39 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -82,16 +82,16 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ 	hws[IMX7ULP_CLK_SPLL]		= imx_clk_hw_pllv4(IMX_PLLV4_IMX7ULP, "spll",  "spll_pre_div", base + 0x600);
+ 
+ 	/* APLL PFDs */
+-	hws[IMX7ULP_CLK_APLL_PFD0]	= imx_clk_hw_pfdv2("apll_pfd0", "apll", base + 0x50c, 0);
+-	hws[IMX7ULP_CLK_APLL_PFD1]	= imx_clk_hw_pfdv2("apll_pfd1", "apll", base + 0x50c, 1);
+-	hws[IMX7ULP_CLK_APLL_PFD2]	= imx_clk_hw_pfdv2("apll_pfd2", "apll", base + 0x50c, 2);
+-	hws[IMX7ULP_CLK_APLL_PFD3]	= imx_clk_hw_pfdv2("apll_pfd3", "apll", base + 0x50c, 3);
++	hws[IMX7ULP_CLK_APLL_PFD0]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "apll_pfd0", "apll", base + 0x50c, 0);
++	hws[IMX7ULP_CLK_APLL_PFD1]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "apll_pfd1", "apll", base + 0x50c, 1);
++	hws[IMX7ULP_CLK_APLL_PFD2]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "apll_pfd2", "apll", base + 0x50c, 2);
++	hws[IMX7ULP_CLK_APLL_PFD3]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "apll_pfd3", "apll", base + 0x50c, 3);
+ 
+ 	/* SPLL PFDs */
+-	hws[IMX7ULP_CLK_SPLL_PFD0]	= imx_clk_hw_pfdv2("spll_pfd0", "spll", base + 0x60C, 0);
+-	hws[IMX7ULP_CLK_SPLL_PFD1]	= imx_clk_hw_pfdv2("spll_pfd1", "spll", base + 0x60C, 1);
+-	hws[IMX7ULP_CLK_SPLL_PFD2]	= imx_clk_hw_pfdv2("spll_pfd2", "spll", base + 0x60C, 2);
+-	hws[IMX7ULP_CLK_SPLL_PFD3]	= imx_clk_hw_pfdv2("spll_pfd3", "spll", base + 0x60C, 3);
++	hws[IMX7ULP_CLK_SPLL_PFD0]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "spll_pfd0", "spll", base + 0x60C, 0);
++	hws[IMX7ULP_CLK_SPLL_PFD1]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "spll_pfd1", "spll", base + 0x60C, 1);
++	hws[IMX7ULP_CLK_SPLL_PFD2]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "spll_pfd2", "spll", base + 0x60C, 2);
++	hws[IMX7ULP_CLK_SPLL_PFD3]	= imx_clk_hw_pfdv2(IMX_PFDV2_IMX7ULP, "spll_pfd3", "spll", base + 0x60C, 3);
+ 
+ 	/* PLL Mux */
+ 	hws[IMX7ULP_CLK_APLL_PFD_SEL]	= imx_clk_hw_mux_flags("apll_pfd_sel", base + 0x508, 14, 2, apll_pfd_sels, ARRAY_SIZE(apll_pfd_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
 diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
-index 6b744c84278e..9cba83521988 100644
+index 9cba83521988..42505669cdfb 100644
 --- a/drivers/clk/imx/clk-pfdv2.c
 +++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -161,8 +161,17 @@ static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!rate)
- 		return -EINVAL;
+@@ -200,8 +200,8 @@ static const struct clk_ops clk_pfdv2_ops = {
+ 	.is_enabled     = clk_pfdv2_is_enabled,
+ };
  
--	/* PFD can NOT change rate without gating */
--	WARN_ON(clk_pfdv2_is_enabled(hw));
-+	/*
-+	 * PFD can NOT change rate without gating.
-+	 * as the PFDs may enabled in HW by default but no
-+	 * consumer used it, the enable count is '0', so the
-+	 * 'SET_RATE_GATE' can NOT help on blocking the set_rate
-+	 * ops especially for 'assigned-clock-xxx'. In order
-+	 * to simplify the case, just disable the PFD if it is
-+	 * enabled in HW but not in SW.
-+	 */
-+	if (clk_pfdv2_is_enabled(hw))
-+		clk_pfdv2_disable(hw);
+-struct clk_hw *imx_clk_hw_pfdv2(const char *name, const char *parent_name,
+-			     void __iomem *reg, u8 idx)
++struct clk_hw *imx_clk_hw_pfdv2(enum imx_pfdv2_type type, const char *name,
++			     const char *parent_name, void __iomem *reg, u8 idx)
+ {
+ 	struct clk_init_data init;
+ 	struct clk_pfdv2 *pfd;
+@@ -223,7 +223,10 @@ struct clk_hw *imx_clk_hw_pfdv2(const char *name, const char *parent_name,
+ 	init.ops = &clk_pfdv2_ops;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+-	init.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT;
++	if (type == IMX_PFDV2_IMX7ULP)
++		init.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT;
++	else
++		init.flags = CLK_SET_RATE_GATE;
  
- 	tmp = tmp * 18 + rate / 2;
- 	do_div(tmp, rate);
+ 	pfd->hw.init = &init;
+ 
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 2acac152c4aa..76de2972d021 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -47,6 +47,11 @@ enum imx_pllv4_type {
+ 	IMX_PLLV4_IMX8ULP,
+ };
+ 
++enum imx_pfdv2_type {
++	IMX_PFDV2_IMX7ULP,
++	IMX_PFDV2_IMX8ULP,
++};
++
+ /* NOTE: Rate table should be kept sorted in descending order. */
+ struct imx_pll14xx_rate_table {
+ 	unsigned int rate;
+@@ -220,8 +225,8 @@ struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *parent,
+ struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
+ 
+-struct clk_hw *imx_clk_hw_pfdv2(const char *name, const char *parent_name,
+-			     void __iomem *reg, u8 idx);
++struct clk_hw *imx_clk_hw_pfdv2(enum imx_pfdv2_type type, const char *name,
++	 const char *parent_name, void __iomem *reg, u8 idx);
+ 
+ struct clk_hw *imx_clk_hw_busy_divider(const char *name, const char *parent_name,
+ 				 void __iomem *reg, u8 shift, u8 width,
 -- 
 2.26.2
 
