@@ -2,133 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BB0C12002
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E32EC636C9
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70EF661181
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17812613F6
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 08:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235032AbhGSIHD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 04:07:03 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:31636 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234920AbhGSIGw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 04:06:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1626681833; x=1658217833;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6nzt5yiAvhxMKL7rPLuDR0oOaQ4zLZ3+WTR88aoj8sI=;
-  b=Kb3aMdVBD+clVwr8iaEm4egxrcjXmCInt5jiQ4CuadhK3V1hakH7DR3S
-   6CQ/763RLux8AMQtQf4orgjqjKa1q29gQJIVuIaSa5m2bVfsN6u/su5rb
-   PyP0nI/VaYlVkc3mUFgAKTBMebqOpzBfJewdZHJtcM9BRuYIih9Qi3vhi
-   lPmeKxPKGUuNIZy17NENIv/xC5zaXDYhx70y3hhFXfLBNeG00Ub0MJjIr
-   0k+DXhKUorMJoXEmcxZRnAG7cB4x+dgnL0UPpGlGnrGDdMkTOhcDRxOxB
-   JIl7+6EFJ8YGDzgFLH3r4CoLIOfpzRfX7ofMOOtK2At/JBSIzSJq++6YD
-   g==;
-IronPort-SDR: dhI/Rgc7DzpyD+1nHj7ZiWhO4QaiQ4xmX02N1cUmgqu7bDrctZVHg7Gj/uiVY1lha9wsgYL67u
- VBVgc8kTJrH/q3q6LMd0BK8wFoVqpO4Xxzc8+8BoE92LXIpi7dKNWI5XH0U6XqhuX0KU6+dCiW
- dODI/coRVvL1Ia9l67yQgOdbpdQomdqaZgnRaw7E52BFovFfEsaceIKVg9iuG5qYyqVpPfnbKa
- Pjw14maDgA0kqDqKO5c/1wUkp89r9quERyHaGwfJOTY+0mJQ/Akq8TaxLL/itc0K0XMiSptOUQ
- 9OfHpe70TAyw9uc3tqTtRhsZ
-X-IronPort-AV: E=Sophos;i="5.84,251,1620716400"; 
-   d="scan'208";a="136432819"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Jul 2021 01:03:49 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 19 Jul 2021 01:03:49 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Mon, 19 Jul 2021 01:03:46 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <linux@armlinux.org.uk>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <eugen.hristev@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sfr@canb.auug.org.au>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 2/2] clk: at91: add register definition for sama7g5's master clock
-Date:   Mon, 19 Jul 2021 11:03:17 +0300
-Message-ID: <20210719080317.1045832-3-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210719080317.1045832-1-claudiu.beznea@microchip.com>
-References: <20210719080317.1045832-1-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+        id S235406AbhGSISL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 04:18:11 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:14960 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235382AbhGSISL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 04:18:11 -0400
+X-IronPort-AV: E=Sophos;i="5.84,251,1620658800"; 
+   d="scan'208";a="88109128"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 19 Jul 2021 17:58:49 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AF7D0400A881;
+        Mon, 19 Jul 2021 17:58:45 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alexandru Ardelean <aardelean@deviqon.com>
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/4] Renesas RZ/G2L ADC driver support
+Date:   Mon, 19 Jul 2021 09:58:36 +0100
+Message-Id: <20210719085840.21842-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add register definitions for SAMA7G5's master clock. These would be
-also used by architecture specific power saving code.
+Hi All,
 
-Fixes: 6cb0e54412a3 ("ARM: at91: pm: add support for MCK1..4 save/restore for ulp modes")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
+This patch series adds ADC support for Renesas RZ/G2L family.
 
-Hi Stephen,
+Cheers,
+Prabhakar
 
-This is a part from patch at [1]. I keep it at minimum (only definitions)
-for faster acceptance as the build is broken on arm multi_v7_defconfig
-without it).
-In next version of patch at [1] I will update it accordingly.
+Changes for v2:
+* Update binding doc, dropped gpios/renesas-rzg2l,adc-trigger-mode
+  properties included channel property to represent each wired channel.
+* Fixed review comments pointed by Alexandru, implemented pm runtime
+  support, dropped mlock usage
+* Fixed review comments pointed by Jonathan, renamed the macros,
+  simplified the code.
+* Included clock and DT patches
 
-Thank you,
-Claudiu Beznea
+Lad Prabhakar (4):
+  dt-bindings: iio: adc: Add binding documentation for Renesas RZ/G2L
+    A/D converter
+  iio: adc: Add driver for Renesas RZ/G2L A/D converter
+  clk: renesas: r9a07g044-cpg: Add clock and reset entries for ADC
+  arm64: dts: renesas: r9a07g044: Add ADC node
 
-[1] https://lore.kernel.org/linux-clk/20210401122726.28528-5-claudiu.beznea@microchip.com/
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 134 +++++
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  42 ++
+ drivers/clk/renesas/r9a07g044-cpg.c           |   6 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rzg2l_adc.c                   | 545 ++++++++++++++++++
+ 7 files changed, 746 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+ create mode 100644 drivers/iio/adc/rzg2l_adc.c
 
- include/linux/clk/at91_pmc.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
 
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index a4f82e836a7c..ccb3f034bfa9 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -137,6 +137,32 @@
- #define			AT91_PMC_PLLADIV2_ON		(1 << 12)
- #define		AT91_PMC_H32MXDIV	BIT(24)
- 
-+#define	AT91_PMC_MCR_V2		0x30				/* Master Clock Register [SAMA7G5 only] */
-+#define		AT91_PMC_MCR_V2_ID_MSK	(0xF)
-+#define			AT91_PMC_MCR_V2_ID(_id)		((_id) & AT91_PMC_MCR_V2_ID_MSK)
-+#define		AT91_PMC_MCR_V2_CMD	(1 << 7)
-+#define		AT91_PMC_MCR_V2_DIV	(7 << 8)
-+#define			AT91_PMC_MCR_V2_DIV1		(0 << 8)
-+#define			AT91_PMC_MCR_V2_DIV2		(1 << 8)
-+#define			AT91_PMC_MCR_V2_DIV4		(2 << 8)
-+#define			AT91_PMC_MCR_V2_DIV8		(3 << 8)
-+#define			AT91_PMC_MCR_V2_DIV16		(4 << 8)
-+#define			AT91_PMC_MCR_V2_DIV32		(5 << 8)
-+#define			AT91_PMC_MCR_V2_DIV64		(6 << 8)
-+#define			AT91_PMC_MCR_V2_DIV3		(7 << 8)
-+#define		AT91_PMC_MCR_V2_CSS	(0x1F << 16)
-+#define			AT91_PMC_MCR_V2_CSS_MD_SLCK	(0 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_TD_SLCK	(1 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_MAINCK	(2 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_MCK0	(3 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_SYSPLL	(5 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_DDRPLL	(6 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_IMGPLL	(7 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_BAUDPLL	(8 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_AUDIOPLL	(9 << 16)
-+#define			AT91_PMC_MCR_V2_CSS_ETHPLL	(10 << 16)
-+#define		AT91_PMC_MCR_V2_EN	(1 << 28)
-+
- #define AT91_PMC_XTALF		0x34			/* Main XTAL Frequency Register [SAMA7G5 only] */
- 
- #define	AT91_PMC_USB		0x38			/* USB Clock Register [some SAM9 only] */
+base-commit: 2734d6c1b1a089fb593ef6a23d4b70903526fe0c
 -- 
-2.25.1
+2.17.1
 
