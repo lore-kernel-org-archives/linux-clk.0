@@ -2,152 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C26C07E95
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 02:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4480C07E95
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 08:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE2AF61164
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 02:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B87D3611ED
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 08:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241141AbhGTB1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 21:27:02 -0400
-Received: from mo-csw1514.securemx.jp ([210.130.202.153]:58570 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243342AbhGTBM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 21:12:58 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 16K1rOiW010794; Tue, 20 Jul 2021 10:53:25 +0900
-X-Iguazu-Qid: 34trdvrI5wL6V4xAkw
-X-Iguazu-QSIG: v=2; s=0; t=1626746004; q=34trdvrI5wL6V4xAkw; m=qWIDuXWqrJ+8ImDtKgQtACT4BETEY+WGKe6oDzsPh8Q=
-Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
-        by relay.securemx.jp (mx-mr1513) id 16K1rNeR039833
-        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 20 Jul 2021 10:53:24 +0900
-Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id 035BF1000C3;
-        Tue, 20 Jul 2021 10:53:23 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 16K1rL8E026676;
-        Tue, 20 Jul 2021 10:53:22 +0900
-Date:   Tue, 20 Jul 2021 10:53:21 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Rob Herring <robh@kernel.org>
+        id S233384AbhGTHgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Jul 2021 03:36:16 -0400
+Received: from mail-db8eur05on2059.outbound.protection.outlook.com ([40.107.20.59]:27233
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233450AbhGTHfP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Jul 2021 03:35:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UmFbCd7p9WGWfJDpXNv1iB3mRuGt/KzHJSxvvqztCxj/JMLjansebIpkKacOXEKADexeFKmTbFDvEQqky0Ojgi/kI92ZPN/5l3xD1/Uz4+ZGfbhhmPNzaFZwj7E1KP1pueDLjHjp9UrYJ0HR5iFjz6iizsHp+nm8tSDIj5qffKFPNmOP1uzD6yyDT1493uyoQfCIQfvc/RlSo3JJlSrkdBJfwJr4R0+2q/zUP3ZqJ2kUBOAvpKEPcSSv/9RxUFy6NZgdRKJbIcMxsT9TYbJDVel3yteVVfljN5YajcExgd7p7IV01Yn0v73utiokP2htKnsUWl5DCyyNKhoYsjWI/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vqEs3XX8y44blTai5ApBPUg/lNc0WdOSjAf9ZyjCkiE=;
+ b=fDgTa1NDbdWbt1WD3vZ3XjNLHq/PmgmtodJvT0wSq/9Pf1EgDqL+jQYgXIC8Q4trS4uQHise/J0Hm9t7/NdAeQFGOt+A8zRkFkJf/J1ZPgKHGD7z56mEcHw0qxxfVjDA9UheXLeFhzx+wQwjxgv3EO+WeM9KM8cnjhPd2po4GMIUXHLMn4gbpnwvwcEF6nQAFvL3l08xdX+hkUq8wdCBq5JtdAbND4aef8Ue7J4eLen69xlmaK0888i71A4kSTkwXCz06eqIbZzvjBn3LJwkwVcyM6fLJDCmhOhtguQRMXC6YzyTbej/yebuJQdhuBc7izRmUxzkM5oAv7cVHpqzxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vqEs3XX8y44blTai5ApBPUg/lNc0WdOSjAf9ZyjCkiE=;
+ b=F6zZ8l6NNQsFepev4SeG7j8enXRN290NOQ+un1ML4tzIbFE9Hu4ruTlzZIBRunfL1NjNjc8bx784dVAc3HtNEs0XjQhFAUbJY1ErC3fOWOQ5URqQ1OFiBW5NDR7tFcjkCtXK3Op36922h/ek80Bim0tm2TLdanWRZRkzxPHUn/w=
+Authentication-Results: 163.com; dkim=none (message not signed)
+ header.d=none;163.com; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com (2603:10a6:800:57::8)
+ by VE1PR04MB7293.eurprd04.prod.outlook.com (2603:10a6:800:1a8::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Tue, 20 Jul
+ 2021 08:15:41 +0000
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::1dc0:b737:bf34:46b]) by VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::1dc0:b737:bf34:46b%3]) with mapi id 15.20.4331.034; Tue, 20 Jul 2021
+ 08:15:40 +0000
+Date:   Tue, 20 Jul 2021 11:15:38 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Rudy Lo <luhuadong@163.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, punit1.agrawal@toshiba.co.jp,
-        yuji2.ishikawa@toshiba.co.jp, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] dt-bindings: clock: Add DT bindings for SMU of
- Toshiba Visconti TMPV770x SoC
-X-TSB-HOP: ON
-Message-ID: <20210720015321.6gndhnblrv54ncy3@toshiba.co.jp>
-References: <20210624034337.282386-1-nobuhiro1.iwamatsu@toshiba.co.jp>
- <20210624034337.282386-4-nobuhiro1.iwamatsu@toshiba.co.jp>
- <20210714192447.GA3059664@robh.at.kernel.org>
-MIME-Version: 1.0
+Subject: Re: [PATCH] clk: imx8: Unified initcall function
+Message-ID: <YPaGKokUH9nqQ6to@ryzen>
+References: <20210708081543.186820-1-luhuadong@163.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210714192447.GA3059664@robh.at.kernel.org>
+In-Reply-To: <20210708081543.186820-1-luhuadong@163.com>
+X-ClientProxiedBy: VI1P195CA0007.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:800:d0::17) To VI1PR0401MB2559.eurprd04.prod.outlook.com
+ (2603:10a6:800:57::8)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ryzen (188.26.184.129) by VI1P195CA0007.EURP195.PROD.OUTLOOK.COM (2603:10a6:800:d0::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Tue, 20 Jul 2021 08:15:40 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d0f6fbb6-3176-44dd-c0c7-08d94b56900e
+X-MS-TrafficTypeDiagnostic: VE1PR04MB7293:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VE1PR04MB7293236256237672571D24F0F6E29@VE1PR04MB7293.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: i70ex784nQtPn5YK/59PLlNSdbL5yjRwjC7MimyoIWXhjq7kiFU6Yud0djQ2peyLgoqvlbuHxaF28EM0XmSoKgWWwIzATeFUHjWRgbV0IdRGeJs1TYIEJRkbODEdOMgkyJMHs4LlrkaiSyV+662FQgnmAJ5mECpj/OXqVuqjbZBjdjn38j614jpX6oQIbQSx21MGHMRegK984q7gwhR84a1Sul56AnTv1VYkFqWs7alEVNrneWcb72mVCU+B+B7RTyLsbrhCajBBhFXxVY9dQ/YI7mcdMrgjMc8SlF2DHH0qRYBiaQGJpCFg5aIRFrO6cSTj+LiOyXjUyuBa1YTzqCQ+j6f2gv5WL2WR4LXwWe030jh72bHCcN109pxeGZWNgA8qvD9zGzehpvto6xPzWhUbvy5ghRfsr7w3kkMx9oxol0m0Atx23dDkF4n2y2lZXKVD4ha51ncUXdDTX44y53ERNekrZfafyxDVUyaiDX1UjtOC7vxD0p4hDm1WqB48g/3ZDJqdtsWQz8VSfk7eRxLGqbDagevL+NzTTzeGJJ1jn0l8DN/m0EtG9jEPbUk/78jeGZjOJ0+n6Qjd0e6Sw0YCoaXToVI9Hl8BXjBnpma2H3m+rsrY8uqlRRKG9LCvJbnaYGyzpJwzXiyXefBgOyAf0WpOLtqbnXPMyCUCGOvTrQGvfYnhP35ePk1GMbLAn33meW9S1wEilT6JRtQsPA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0401MB2559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(346002)(376002)(136003)(366004)(39860400002)(6916009)(54906003)(6496006)(26005)(53546011)(186003)(5660300002)(44832011)(956004)(33716001)(38100700002)(8676002)(7416002)(8936002)(66476007)(86362001)(4326008)(52116002)(2906002)(66946007)(66556008)(38350700002)(478600001)(9576002)(83380400001)(55016002)(9686003)(316002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+QQY/Ir8FznvEd1WKhF3GN/3N7Sx0qAxJROqfgRkyYPKuzHblzg4W4mFmW/P?=
+ =?us-ascii?Q?SBOg36dFtTB9qJct5y1o7n2XjW41qsjZpv3LW0FQcjoGuDniAMIdfxK/56Kt?=
+ =?us-ascii?Q?zgw2UOH4YRT3k4v48IxTajJLAsmxH+mXklH+UbwscaSrAQm6S0CBt+P/oUmD?=
+ =?us-ascii?Q?TVrysYcvgKTm2r4SEchoJ1NZI74fgzcxQkyh3Tl8AJ0SsG6DO3YhsGAhFYCa?=
+ =?us-ascii?Q?dM6AlcTfmz0ehBPhrZ9Ia6IQvD0fep9dfvWpgiSpKzgl+vw5uXlixC4mrwNo?=
+ =?us-ascii?Q?NZ7ygFlYiyJ7g01/2Mf6cUNWRfD0AfM//GnsJ5OWwHvRyt5ks/n35jneSOxq?=
+ =?us-ascii?Q?BS5aglEawBoEsR7WSkwvsLKWefxoVkuhvhUY5lJD445d6VtNgmZaehUDcezF?=
+ =?us-ascii?Q?SjpwnUkHxkNpiEitmTWU8o7Hm6zIUZma732KLacisS/Mc+sNQlenpJ/6+pKl?=
+ =?us-ascii?Q?z04aUV00/hZnqHSBlirCRkejthZPlCkCSCN6rNc/P6T5msV9gPoLsZ1zwZ/Y?=
+ =?us-ascii?Q?OM4OwL1miYCUji6KISOoN+xyiLi0fvzJrGBMqOeebU2GYkR8WjC88I/C2EZe?=
+ =?us-ascii?Q?JE45ferxMv4qfPGtjuaOlPmBeY0vXTSPnQnVb+uw7hd4kUWACicbsjVZTazX?=
+ =?us-ascii?Q?oTPVoKTMxUmm9uuh7kglw/AUoslVBag+x2M2yNHBcVqE+htSsbuZBKf9L1nT?=
+ =?us-ascii?Q?NG7+E+Mwssoz7XcsFIztmDokS+6e4S3oSAKnKWfoZICmDp85HO2mSGsqx5Zq?=
+ =?us-ascii?Q?EkAKwPK4t0rER2uWVg6a5/wneQtpf8yUYOumM77EkKpdIVSUmhX94n/rbRLh?=
+ =?us-ascii?Q?yTYxbOU65Yvd+Z9IrztAcWvbCa0fl8H3qlMdnOBd81cbMCAYNO5ukEv5wv4p?=
+ =?us-ascii?Q?ghe4IfG3rOL9Sh2mQrw7iJayd3Qp5tQhdmdpdYPsMtrLMU6CGu8kJMELEUTX?=
+ =?us-ascii?Q?K5L4xIEOO18EMjHIpI4EAOmAVhyPZbE8pHbwA+iaqNqT2E8kdk3IFKiPjhwr?=
+ =?us-ascii?Q?QeJDBZHfagM2o4ou2c/4UKAfzCE++QIm31egkP1nU8i4QtbYivAzU0Nk1O97?=
+ =?us-ascii?Q?4f9DZowt/P2BR+uYO4kQU+G8zkZLiUaMpr1VZwRWWIipt1uE4tpl+BXMzpCR?=
+ =?us-ascii?Q?GZ8F0M+n5y4ZEKsvEa236eeORWj+XL8pN1J3mbICBctefJLXSeQJBAXAfVMR?=
+ =?us-ascii?Q?8PwrJsuhP44aO9xDvmXvzlzmLAqbDF78zMzde09ILzvxRiKgsFzwYO+oig2o?=
+ =?us-ascii?Q?S4RWW4EGoA3+D1iI6D4jjaO0gQI7obceH7+01eD76ydjWOJLBk28jW+wi8Jk?=
+ =?us-ascii?Q?cx0ajlgTvcqcMATx0VjnjpkC?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0f6fbb6-3176-44dd-c0c7-08d94b56900e
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0401MB2559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2021 08:15:40.8381
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k8XBGXoiJ87icZ6AqmY4Bfl87B1ac/4m3iRtJJXPhRAw46DNyEcz/pqRDow8pwurIw955y8hhXl0zToRvBh11w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7293
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-HI,
-
-Thanks for your review.
-
-On Wed, Jul 14, 2021 at 01:24:47PM -0600, Rob Herring wrote:
-> On Thu, Jun 24, 2021 at 12:43:36PM +0900, Nobuhiro Iwamatsu wrote:
-> > Add device tree bindings for SMU (System Management Unit) controller of
-> > Toshiba Visconti TMPV770x SoC series.
-> > 
-> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > ---
-> >  .../clock/toshiba,tmpv770x-pismu.yaml         | 50 +++++++++++++++++++
-> >  1 file changed, 50 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pismu.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pismu.yaml b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pismu.yaml
-> > new file mode 100644
-> > index 000000000000..18fdf4f2831b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pismu.yaml
-> > @@ -0,0 +1,50 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/toshiba,tmpv770x-pismu.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Toshiba Visconti5 TMPV770x SMU controller Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > +
-> > +description:
-> > +  Toshia Visconti5 SMU (System Management Unit) which supports the clock
-> > +  and resets on TMPV770x.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: toshiba,tmpv7708-pismu
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> 
-> Is there a connection to the PLLs? What are the clock inputs?
-
-The PLL used by this driver is created by the pll driver, and these
-relationships are held by the structures within this driver.
-Should I move these from driver to DT?
-
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#clock-cells"
-> > +  - "#reset-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    soc {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        pismu: pismu@24200000 {
-> 
-> clock-controller@...
-
-I will fix.
-
-> 
-> > +            compatible = "toshiba,tmpv7708-pismu";
-> > +            reg = <0 0x24200000 0 0x2140>;
-> > +            #clock-cells = <1>;
-> > +            #reset-cells = <1>;
-> > +        };
-> > +    };
-> > +...
-> > -- 
-> > 2.32.0
-> > 
-> > 
+On 21-07-08 16:15:42, Rudy Lo wrote:
+> It is better to use builtin_platform_driver initcall for clk driver
+> rather then module_platform_driver, refer to clk-imx8qxp.c file.
 > 
 
-Best regards,
-  Nobuhiro
+NAK for now. I think this would break GKI.
 
+> Signed-off-by: Rudy Lo <luhuadong@163.com>
+> ---
+>  drivers/clk/imx/clk-imx8mm.c | 2 +-
+>  drivers/clk/imx/clk-imx8mn.c | 2 +-
+>  drivers/clk/imx/clk-imx8mp.c | 2 +-
+>  drivers/clk/imx/clk-imx8mq.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index f1919fafb124..fa20b08e64f1 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -654,7 +654,7 @@ static struct platform_driver imx8mm_clk_driver = {
+>  		.of_match_table = imx8mm_clk_of_match,
+>  	},
+>  };
+> -module_platform_driver(imx8mm_clk_driver);
+> +builtin_platform_driver(imx8mm_clk_driver);
+>  
+>  MODULE_AUTHOR("Bai Ping <ping.bai@nxp.com>");
+>  MODULE_DESCRIPTION("NXP i.MX8MM clock driver");
+> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+> index 88f6630cd472..67b9ded112e4 100644
+> --- a/drivers/clk/imx/clk-imx8mn.c
+> +++ b/drivers/clk/imx/clk-imx8mn.c
+> @@ -605,7 +605,7 @@ static struct platform_driver imx8mn_clk_driver = {
+>  		.of_match_table = imx8mn_clk_of_match,
+>  	},
+>  };
+> -module_platform_driver(imx8mn_clk_driver);
+> +builtin_platform_driver(imx8mn_clk_driver);
+>  
+>  MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
+>  MODULE_DESCRIPTION("NXP i.MX8MN clock driver");
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 12837304545d..cdb40e61cef0 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -735,7 +735,7 @@ static struct platform_driver imx8mp_clk_driver = {
+>  		.of_match_table = imx8mp_clk_of_match,
+>  	},
+>  };
+> -module_platform_driver(imx8mp_clk_driver);
+> +builtin_platform_driver(imx8mp_clk_driver);
+>  
+>  MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
+>  MODULE_DESCRIPTION("NXP i.MX8MP clock driver");
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> index c491bc9c61ce..54f17de30935 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -630,7 +630,7 @@ static struct platform_driver imx8mq_clk_driver = {
+>  		.of_match_table = imx8mq_clk_of_match,
+>  	},
+>  };
+> -module_platform_driver(imx8mq_clk_driver);
+> +builtin_platform_driver(imx8mq_clk_driver);
+>  
+>  MODULE_AUTHOR("Abel Vesa <abel.vesa@nxp.com>");
+>  MODULE_DESCRIPTION("NXP i.MX8MQ clock driver");
+> -- 
+> 2.25.1
+> 
+> 
