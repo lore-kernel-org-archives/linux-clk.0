@@ -7,36 +7,45 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5DDC07E9B
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 10:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A94C07E9B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 10:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E820610D2
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 10:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A059610D2
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 10:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236314AbhGTJmZ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Jul 2021 05:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235694AbhGTJmP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jul 2021 05:42:15 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 560D4C061767
-        for <linux-clk@vger.kernel.org>; Tue, 20 Jul 2021 03:22:54 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1m5mtc-0001eN-Mp; Tue, 20 Jul 2021 12:22:40 +0200
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1m5mtZ-0002RW-T3; Tue, 20 Jul 2021 12:22:37 +0200
-Message-ID: <dc2de27b087c7030ea7e76dd31bb3d8bce18d97f.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/5] dt-bindings: net: can: renesas,rcar-canfd:
- Document RZ/G2L SoC
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S236664AbhGTJu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Jul 2021 05:50:58 -0400
+Received: from mail-ua1-f41.google.com ([209.85.222.41]:43908 "EHLO
+        mail-ua1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237861AbhGTJuu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jul 2021 05:50:50 -0400
+Received: by mail-ua1-f41.google.com with SMTP id 109so7895008uar.10;
+        Tue, 20 Jul 2021 03:31:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cFJr3mnxmkAIaRVKTYv7QqTxKFA58WNsYKCu7chQapI=;
+        b=ZQqhW6TMLHax5JVUXRn319CU2pgZnIZwGBToaDTfcEePCjPiGlfVTv/N79KdIpv4n8
+         yZQO0rV1CKpxmAutOW1HIemQz2jlWcFgdcaRcOo2Xv1DSKfmN2Nawn7BfrSxEM18Cj/6
+         t0gugw3UUP2qiUcvuqS1wMVuIcOL5pjQnGBgDSUkrVHMOyrPsnru4LMvNZ2aLwThBxSC
+         7JWJ4K4SQOb0dwbJgWWrmN4vgwIB01AwKy99gejj4jXl7KwJoK+0KM0zh+kgG+Ftxv9O
+         L+p5fl4OKhSGf7+25nLpwUWIQ9rbqmwJYUo9yo3OBNa2uQsN1gLIS2I/0K7Ue9Yox4ad
+         g7EQ==
+X-Gm-Message-State: AOAM530R9D/fUS9wVLbZgGjAmTtaA+/YHEx/E4Fe0ty1yBvLIJIA6GXa
+        5BOlEjI+Xvj/85xjJQ9dvqwOgvCkLNNIiebxBiA=
+X-Google-Smtp-Source: ABdhPJx/ZYpxNeEBypBsMcNZBb58Bq9X6WTtWKsSNi6NMeuUBQjblbsD5zBbvCvq65O90njI6YIwBFB4rrfE2qmBb4Q=
+X-Received: by 2002:ab0:2554:: with SMTP id l20mr30624074uan.58.1626777067084;
+ Tue, 20 Jul 2021 03:31:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210719143811.2135-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210719143811.2135-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 20 Jul 2021 12:30:55 +0200
+Message-ID: <CAMuHMdXkPDaaRZZTCyn-Mwfakuzui69GWuiKUWYEOyhQmuFB=w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] can: rcar_canfd: Add support for RZ/G2L family
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
         Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
@@ -44,118 +53,181 @@ To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>
-Date:   Tue, 20 Jul 2021 12:22:37 +0200
-In-Reply-To: <20210719143811.2135-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-         <20210719143811.2135-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lad,
+Hi Prabhakar,
 
-On Mon, 2021-07-19 at 15:38 +0100, Lad Prabhakar wrote:
-> Add CANFD binding documentation for Renesas RZ/G2L SoC.
-> 
+On Mon, Jul 19, 2021 at 4:39 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> CANFD block on RZ/G2L SoC is almost identical to one found on
+> R-Car Gen3 SoC's. On RZ/G2L SoC interrupt sources for each channel
+> are split into different sources and the IP doesn't divide (1/2)
+> CANFD clock within the IP.
+>
+> This patch adds compatible string for RZ/G2L family and registers
+> the irq handlers required for CANFD operation. IRQ numbers are now
+> fetched based on names instead of indices. For backward compatibility
+> on non RZ/G2L SoC's we fallback reading based on indices.
+>
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/net/can/renesas,rcar-canfd.yaml  | 66 +++++++++++++++++--
->  1 file changed, 60 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> index 0b33ba9ccb47..4fb6dd370904 100644
-> --- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> @@ -30,13 +30,15 @@ properties:
->                - renesas,r8a77995-canfd     # R-Car D3
->            - const: renesas,rcar-gen3-canfd # R-Car Gen3 and RZ/G2
->  
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g044-canfd    # RZ/G2{L,LC}
-> +          - const: renesas,rzg2l-canfd     # RZ/G2L family
-> +
->    reg:
->      maxItems: 1
->  
-> -  interrupts:
-> -    items:
-> -      - description: Channel interrupt
-> -      - description: Global interrupt
-> +  interrupts: true
->  
->    clocks:
->      maxItems: 3
-> @@ -50,8 +52,7 @@ properties:
->    power-domains:
->      maxItems: 1
->  
-> -  resets:
-> -    maxItems: 1
-> +  resets: true
->  
->    renesas,no-can-fd:
->      $ref: /schemas/types.yaml#/definitions/flag
-> @@ -91,6 +92,59 @@ required:
->    - channel0
->    - channel1
->  
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - renesas,rzg2l-canfd
-> +then:
-> +  properties:
-> +    interrupts:
-> +      items:
-> +        - description: CAN global error interrupt
-> +        - description: CAN receive FIFO interrupt
-> +        - description: CAN0 error interrupt
-> +        - description: CAN0 transmit interrupt
-> +        - description: CAN0 transmit/receive FIFO receive completion interrupt
-> +        - description: CAN1 error interrupt
-> +        - description: CAN1 transmit interrupt
-> +        - description: CAN1 transmit/receive FIFO receive completion interrupt
-> +
-> +    interrupt-names:
-> +      items:
-> +        - const: g_error
-> +        - const: g_rx_fifo
-> +        - const: can0_error
-> +        - const: can0_tx
-> +        - const: can0_tx_rx_fifo_receive_completion
-> +        - const: can1_error
-> +        - const: can1_tx
-> +        - const: can1_tx_rx_fifo_receive_completion
-> +
-> +    resets:
-> +      items:
-> +        - description: CANFD_RSTP_N
-> +        - description: CANFD_RSTC_N
 
-Do you know what the "P" and "C" stands for? It would be nice if the
-description could tell us what the reset lines are used for.
+Thanks for your patch!
 
-I would prefer if you used these names (or shortened versions, for
-example "rstp_n", "rstc_n") as "reset-names" and let the driver
-reference the resets by name instead of by index.
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -37,9 +37,15 @@
+>  #include <linux/bitmap.h>
+>  #include <linux/bitops.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/reset.h>
+>
+>  #define RCANFD_DRV_NAME                        "rcar_canfd"
+>
+> +enum rcanfd_chip_id {
+> +       RENESAS_RCAR_GEN3 = 0,
+> +       RENESAS_RZG2L,
+> +};
+> +
+>  /* Global register bits */
+>
+>  /* RSCFDnCFDGRMCFG */
+> @@ -513,6 +519,9 @@ struct rcar_canfd_global {
+>         enum rcar_canfd_fcanclk fcan;   /* CANFD or Ext clock */
+>         unsigned long channels_mask;    /* Enabled channels mask */
+>         bool fdmode;                    /* CAN FD or Classical CAN only mode */
+> +       struct reset_control *rstc1;     /* Pointer to reset source1 */
+> +       struct reset_control *rstc2;     /* Pointer to reset source2 */
 
-regards
-Philipp
+Are these comments helpful? IMHO they're stating the obvious.
+
+> +       enum rcanfd_chip_id chip_id;
+>  };
+>
+>  /* CAN FD mode nominal rate constants */
+> @@ -1577,6 +1586,45 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+>         priv->can.clock.freq = fcan_freq;
+>         dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
+>
+> +       if (gpriv->chip_id == RENESAS_RZG2L) {
+> +               char *irq_name;
+> +               int err_irq;
+> +               int tx_irq;
+> +
+> +               err_irq = platform_get_irq_byname(pdev, ch == 0 ? "can0_error" : "can1_error");
+> +               if (err_irq < 0) {
+> +                       err = err_irq;
+> +                       goto fail;
+> +               }
+> +
+> +               tx_irq = platform_get_irq_byname(pdev, ch == 0 ? "can0_tx" : "can1_tx");
+> +               if (tx_irq < 0) {
+> +                       err = tx_irq;
+> +                       goto fail;
+> +               }
+> +
+> +               irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+> +                                         "canfd.chnerr%d", ch);
+
+if (!irq_name) {
+    ret = -ENOMEM;
+    goto fail;
+}
+
+> +               err = devm_request_irq(&pdev->dev, err_irq,
+> +                                      rcar_canfd_channel_interrupt, 0,
+> +                                      irq_name, gpriv);
+> +               if (err) {
+> +                       dev_err(&pdev->dev, "devm_request_irq CH Err(%d) failed, error %d\n",
+> +                               err_irq, err);
+> +                       goto fail;
+> +               }
+> +               irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+> +                                         "canfd.chntx%d", ch);
+
+Likewise.
+
+> +               err = devm_request_irq(&pdev->dev, tx_irq,
+> +                                      rcar_canfd_channel_interrupt, 0,
+> +                                      irq_name, gpriv);
+> +               if (err) {
+> +                       dev_err(&pdev->dev, "devm_request_irq Tx (%d) failed, error %d\n",
+> +                               tx_irq, err);
+> +                       goto fail;
+> +               }
+> +       }
+> +
+>         if (gpriv->fdmode) {
+>                 priv->can.bittiming_const = &rcar_canfd_nom_bittiming_const;
+>                 priv->can.data_bittiming_const =
+
+> @@ -1649,27 +1700,64 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+>         if (of_child && of_device_is_available(of_child))
+>                 channels_mask |= BIT(1);        /* Channel 1 */
+>
+> -       ch_irq = platform_get_irq(pdev, 0);
+> -       if (ch_irq < 0) {
+> -               err = ch_irq;
+> -               goto fail_dev;
+> -       }
+> +       if (chip_id == RENESAS_RCAR_GEN3) {
+> +               ch_irq = platform_get_irq_byname(pdev, "ch_int");
+
+platform_get_irq_byname_optional()?
+Unless you want to urge people to update their DTB.
+
+> +               if (ch_irq < 0) {
+> +                       /* For backward compatibility get irq by index */
+> +                       ch_irq = platform_get_irq(pdev, 0);
+> +                       if (ch_irq < 0)
+> +                               return ch_irq;
+> +               }
+>
+> -       g_irq = platform_get_irq(pdev, 1);
+> -       if (g_irq < 0) {
+> -               err = g_irq;
+> -               goto fail_dev;
+> +               g_irq = platform_get_irq_byname(pdev, "g_int");
+
+Likewise,
+
+> +               if (g_irq < 0) {
+> +                       /* For backward compatibility get irq by index */
+> +                       g_irq = platform_get_irq(pdev, 1);
+> +                       if (g_irq < 0)
+> +                               return g_irq;
+> +               }
+> +       } else {
+> +               g_irq = platform_get_irq_byname(pdev, "g_error");
+> +               if (g_irq < 0)
+> +                       return g_irq;
+> +
+> +               g_rx_irq = platform_get_irq_byname(pdev, "g_rx_fifo");
+> +               if (g_rx_irq < 0)
+> +                       return g_rx_irq;
+>         }
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
