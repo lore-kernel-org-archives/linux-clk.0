@@ -2,85 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250ECC07E95
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 23:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5017DC6377E
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 01:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 028556113C
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jul 2021 23:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D14611ED
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 01:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346214AbhGSWjK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jul 2021 18:39:10 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:40710 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349383AbhGSWH4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 18:07:56 -0400
-Received: by mail-io1-f54.google.com with SMTP id l5so21935879iok.7;
-        Mon, 19 Jul 2021 15:48:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=H+s1FDJ9EwBpkzI+GJ2O2JpJDnxLYii183SrSuO+Z9Q=;
-        b=dtEoXoCtREb3czbexVOw1AGQx6cB/jsFV2I81fAJiuHV+jYo6djKR3IPau5a7vVh4x
-         KdFrGd6nnZNQCSjuvFmrLwb1EXVP09w7zo+b+g4aTwlyDuJ38r+qZZozsL9ms93zRx/G
-         DEABxchHBkR7YE+aaCCEVpR5xmn7m8GWvELlKQD8eZw/yXF7iRYiwS0V3ZEdeNCcIw6o
-         Tc0wdbX+4QSWRPqn7Mf62QJdoRCcj1xansSWRTDZnINums5vl4xvEFvpZWtTbSJjkxPx
-         588OviQkJ6KrIAWjG2vcE7whbRS+HR6LeApZb/9ZWX1ZHgrrkC7faTGehU0den+9B1OM
-         OY+A==
-X-Gm-Message-State: AOAM532EFVKhKcBaOTZkccjsmfRNYKqGakayMBoMXrSt5qQYgGTViNy/
-        3wzu+opOw4Nj3MN30sf8vg==
-X-Google-Smtp-Source: ABdhPJyyAAbHjlBKXIRhGHRG8Vcao9f7aE9QjW/W+gSmpqk3LF8NcoieqQS9WPRPZeZvmJfv8Uqycw==
-X-Received: by 2002:a05:6602:198:: with SMTP id m24mr7802813ioo.144.1626734886835;
-        Mon, 19 Jul 2021 15:48:06 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id v11sm10296671ilh.52.2021.07.19.15.48.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jul 2021 15:48:06 -0700 (PDT)
-Received: (nullmailer pid 2769072 invoked by uid 1000);
-        Mon, 19 Jul 2021 22:48:04 -0000
-Date:   Mon, 19 Jul 2021 16:48:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alex Helms <alexander.helms.jy@renesas.com>
-Cc:     robh+dt@kernel.org, geert+renesas@glider.be,
-        mturquette@baylibre.com, linux-renesas-soc@vger.kernel.org,
-        david.cater.jc@renesas.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        michal.simek@xilinx.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: Add binding for Renesas 8T49N241
-Message-ID: <20210719224804.GA2768983@robh.at.kernel.org>
-References: <20210719182001.1573-1-alexander.helms.jy@renesas.com>
- <20210719182001.1573-2-alexander.helms.jy@renesas.com>
+        id S237290AbhGTBGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jul 2021 21:06:53 -0400
+Received: from mo-csw1515.securemx.jp ([210.130.202.154]:39676 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238901AbhGTA7u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jul 2021 20:59:50 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 16K1dnMa020160; Tue, 20 Jul 2021 10:39:50 +0900
+X-Iguazu-Qid: 34tr8rsmpL7lZ8fR6E
+X-Iguazu-QSIG: v=2; s=0; t=1626745189; q=34tr8rsmpL7lZ8fR6E; m=7jWreV28C33jvpXcV98QWw+Q/3s1CLDKk4R69WmRN5Q=
+Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
+        by relay.securemx.jp (mx-mr1512) id 16K1dlUu037777
+        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 20 Jul 2021 10:39:49 +0900
+Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id C61D21000C4;
+        Tue, 20 Jul 2021 10:39:47 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 16K1dl1E012788;
+        Tue, 20 Jul 2021 10:39:47 +0900
+Date:   Tue, 20 Jul 2021 10:39:43 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, punit1.agrawal@toshiba.co.jp,
+        yuji2.ishikawa@toshiba.co.jp, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] clk: visconti: Add support common clock driver
+ and reset driver
+X-TSB-HOP: ON
+Message-ID: <20210720013943.worr5h3u7tcpfvwy@toshiba.co.jp>
+References: <20210624034337.282386-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <20210624034337.282386-2-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <20210714192130.GA3000985@robh.at.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210719182001.1573-2-alexander.helms.jy@renesas.com>
+In-Reply-To: <20210714192130.GA3000985@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 19 Jul 2021 11:20:00 -0700, Alex Helms wrote:
-> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
-> The 8T49N241 accepts up to two differential or single-ended input clocks
-> and a fundamental-mode crystal input. The internal PLL can lock to either
-> of the input reference clocks or to the crystal to behave as a frequency
-> synthesizer.
+Hi,
+
+Thanks for your review.
+
+On Wed, Jul 14, 2021 at 01:21:30PM -0600, Rob Herring wrote:
+> On Thu, Jun 24, 2021 at 12:43:34PM +0900, Nobuhiro Iwamatsu wrote:
+> > This adds support for common interface of the common clock and reset driver
+> > for Toshiba Visconti5 and its SoC, TMPV7708. The PIPLLCT provides the PLL,
+> > and the PISMU provides clock and reset functionality.
+> > Each drivers are provided in this patch.
+> > 
+> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > ---
+> >  drivers/clk/Makefile                         |   1 +
+> >  drivers/clk/visconti/Makefile                |   5 +
+> >  drivers/clk/visconti/clkc-tmpv770x.c         | 246 +++++++++++++
+> >  drivers/clk/visconti/clkc.c                  | 220 +++++++++++
+> >  drivers/clk/visconti/clkc.h                  |  75 ++++
+> >  drivers/clk/visconti/pll-tmpv770x.c          |  96 +++++
+> >  drivers/clk/visconti/pll.c                   | 369 +++++++++++++++++++
+> >  drivers/clk/visconti/pll.h                   |  63 ++++
+> >  drivers/clk/visconti/reset.c                 | 111 ++++++
+> >  drivers/clk/visconti/reset.h                 |  35 ++
 > 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,8t49n241.yaml      | 190 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 196 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+> >  include/dt-bindings/clock/toshiba,tmpv770x.h | 181 +++++++++
+> >  include/dt-bindings/reset/toshiba,tmpv770x.h |  41 +++
 > 
+> These belong with the binding.
 
+OK, I will include this to DT binding patche from next.
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+> 
+> >  12 files changed, 1443 insertions(+)
+> >  create mode 100644 drivers/clk/visconti/Makefile
+> >  create mode 100644 drivers/clk/visconti/clkc-tmpv770x.c
+> >  create mode 100644 drivers/clk/visconti/clkc.c
+> >  create mode 100644 drivers/clk/visconti/clkc.h
+> >  create mode 100644 drivers/clk/visconti/pll-tmpv770x.c
+> >  create mode 100644 drivers/clk/visconti/pll.c
+> >  create mode 100644 drivers/clk/visconti/pll.h
+> >  create mode 100644 drivers/clk/visconti/reset.c
+> >  create mode 100644 drivers/clk/visconti/reset.h
+> >  create mode 100644 include/dt-bindings/clock/toshiba,tmpv770x.h
+> >  create mode 100644 include/dt-bindings/reset/toshiba,tmpv770x.h
+> 
+> > diff --git a/include/dt-bindings/clock/toshiba,tmpv770x.h b/include/dt-bindings/clock/toshiba,tmpv770x.h
+> > new file mode 100644
+> > index 000000000000..923b47a11730
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/toshiba,tmpv770x.h
+> > @@ -0,0 +1,181 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> Dual license DT headers please.
 
-If a tag was not added on purpose, please state why and what changed.
+OK, I will update.
+
+Best regards,
+  Nobuhiro
+
 
