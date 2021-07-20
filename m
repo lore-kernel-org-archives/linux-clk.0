@@ -4,59 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B6FC636C8
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 21:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9131C07E9B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 21:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED50F610F7
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 21:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C3C60E0B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jul 2021 21:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234164AbhGTU3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Jul 2021 16:29:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
+        id S231607AbhGTUuw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Jul 2021 16:50:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229887AbhGTUWY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Jul 2021 16:22:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DE3E610CC;
-        Tue, 20 Jul 2021 21:03:02 +0000 (UTC)
+        id S231974AbhGTUuo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Jul 2021 16:50:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8583160D07;
+        Tue, 20 Jul 2021 21:31:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626814982;
-        bh=nU3Q98eKKTVbBIJmjwymH4v+GdzqvaK368pjfDDkD+Y=;
+        s=k20201202; t=1626816682;
+        bh=i23eFEgSE0wuhLAejNnKB7S2wizVK8Av41Ojl11uxBc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lXinCvv1m+FuF1G8EyUJ/1ShLdirRI+NGrXqfgghINwN5KybESBD8YqoOy2NfdqCX
-         rLdbPBUYiXncr9vFMMvE62/Rmn5+WAtABb/39oiqxkB81NGuKSTodRkbg5vZRxL1Q1
-         0QVZLUDti1BUixWR+RN8O/UbXxR+8o6HiAYhL+lM4chgEyRZ7d99mKEuqMeAfEzpNy
-         ruM6+Tv2+UxJhMOpk93VEVdU6H9OZ2uDtqwehuv7VLL6iyQmFW3jqsgtl2pwo7UZbC
-         GkDE9YuIQEs7W0P6XfKR4jOqr8vYGRlrBtza09FaNw/CC4EaLn1uAz2Y5u2PQUXxEm
-         gN07myiKHvR1Q==
+        b=Lbvp9Fb212Yc8Un6EW2mD0F1mM75CtTpnwORJkMUaJybD4UckohiEDWsY96OvIvY/
+         RMasGoTavM8G+3+TeSFA66aUfTRcvF4rfti/jE71r3s+BVNwF9Ttj5oSGVZx0lA2Ge
+         HZanppRxCOAvFHA2FzaskaqXlBnH1iO2G22G5raRiuodv3qyhUPDmqYxUWtzFNxElf
+         F8D9s5hdiuvSokHUKzFcFMK2ytLuQUlgaqsW6EmSlX6XPdZUByZ7TomalyvZ1zqWFR
+         RNXmivlQgfZ/BP/nDLU3NtKF7VwCAsBv9TNCXwWlBnuICmlGqt1MQ2BXsRgVepWxHe
+         iKi8FVxQQfl8Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1626189143-12957-7-git-send-email-tdas@codeaurora.org>
-References: <1626189143-12957-1-git-send-email-tdas@codeaurora.org> <1626189143-12957-7-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: clock: Add SC7280 VideoCC clock binding
+In-Reply-To: <20210713193453.690290-1-robh@kernel.org>
+References: <20210713193453.690290-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: More dropping redundant minItems/maxItems
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 20 Jul 2021 14:03:01 -0700
-Message-ID: <162681498102.2679160.5347078476306227193@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-clk@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Date:   Tue, 20 Jul 2021 14:31:20 -0700
+Message-ID: <162681668027.2679160.3696036662982059954@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2021-07-13 08:12:22)
-> Add device tree bindings for video clock subsystem clock
-> controller for Qualcomm Technology Inc's SC7280 SoCs.
+Quoting Rob Herring (2021-07-13 12:34:53)
+> Another round of removing redundant minItems/maxItems from new schema in
+> the recent merge window.
 >=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with t=
+he
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooli=
+ng
+> will fixup the final schema adding any unspecified minItems/maxItems.
+>=20
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
+>=20
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Sebastian Siewior <bigeasy@linutronix.de>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: iommu@lists.linux-foundation.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 
-Applied to clk-next
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
