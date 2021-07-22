@@ -2,253 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627DEC63793
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 07:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66D6C63798
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 07:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4B461279
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 07:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FD146128A
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 07:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbhGVGoQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jul 2021 02:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbhGVGoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jul 2021 02:44:15 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1B4C061575;
-        Thu, 22 Jul 2021 00:24:49 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id q13so2539698plx.7;
-        Thu, 22 Jul 2021 00:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DbhXmwk5Pgzr5UQORj6l6ot/ogt5bLsSYD4MP0zFRBc=;
-        b=HYM6RoWm5g49/PXCJj6Xhe0GgOE7DxU0Tehwo88pZh91j1akuzczp8zKDb2T1iFFQe
-         eCXo2v0YdFrCPB79U8SuoEnCAucDkzipdL87DTcc1ln5uOcXJUlN2FDo2j/yjy2fIJGQ
-         tXuV3X9Z1TGg/wIcbJE4ar7x7rYa/IBfbULL1hVY2qNRReGOaI1gYXUTa1Eoi9FTWCCl
-         siNQUupjNVtUw5E4QbYpQ+h3t2chJp/6TUIDbbjyDZCMsJBdAJoAuZpAREb8vWPOo/Eu
-         cGDCdlkQ2wwv1Lhc+PWPFu53iHJRxlsob5o7y3xgBGKpb8cbHNzkPXR/DHVVVeVVNxdV
-         pvfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DbhXmwk5Pgzr5UQORj6l6ot/ogt5bLsSYD4MP0zFRBc=;
-        b=i78vy1SUBZBxaY7L85N+ZJ4z9zv7Q39CnlVFWO3ylUjoI79IjWeZ0l32HHcxXLzF7M
-         56WC6IcGlNNvFELT5IW4GWRqvKdFh5M9BihLc1PyzWo7Miw2vDIt37q+LYWkpafFTNq9
-         z7UImGpGg5w8XKjZS7CUSeIrNTmCHI/ss/Rj26kELiq6h7ZyCTr5KH4Q3YnVjXYVh333
-         kOpXTxjk2R2lLLTaMD9IKZwcxfa6niJ0qlKBGKS1Y6TJh+82qXSU2n42d7vepqNzOBRG
-         57VdGF4BMRzdbqDMSddt0EDGpe8PE0UhBdyehRyig/f0nQayJPSRQWOuEWbjV6CvdxV/
-         IDtg==
-X-Gm-Message-State: AOAM531MRqSQhxpntMk4ib6Dl1VWxqHME4aezucxhKmv1cY7vMWV0pWl
-        OzPCernrnSOG+asM5TGdMkdsdio5//ws9b8vje0=
-X-Google-Smtp-Source: ABdhPJyyEcKv27+DRphwUCE/WWwYG6XnZHoQbnNglY/CmSuTPJUUWByMD+hhoqNyl3YfpxsO7BnV8vSVeMNShlm1AzQ=
-X-Received: by 2002:a17:902:fe97:b029:12b:aebf:6484 with SMTP id
- x23-20020a170902fe97b029012baebf6484mr1236099plm.0.1626938689114; Thu, 22 Jul
- 2021 00:24:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com>
- <20210715120752.29174-2-andriy.shevchenko@linux.intel.com>
- <7941107fda10f075395870528f0e52d42e502d92.camel@nxp.com> <YPGHbvaCv/x/JlgH@smile.fi.intel.com>
- <bfa0c16e88c0d445137290b2bef104e5fa74d78a.camel@nxp.com> <YPVrkAarqSBMY1tV@smile.fi.intel.com>
- <6b2a6408fcff0d064746d7a77db7b9502c66ad20.camel@nxp.com>
-In-Reply-To: <6b2a6408fcff0d064746d7a77db7b9502c66ad20.camel@nxp.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 22 Jul 2021 10:24:12 +0300
-Message-ID: <CAHp75VeTyWe6SWpWMRYh4Ah6LYULNHBuSo7Tq2AX=vdsObnTLw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] clk: fractional-divider: Introduce NO_PRESCALER flag
-To:     Liu Ying <victor.liu@nxp.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        id S231124AbhGVG7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jul 2021 02:59:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230506AbhGVG7e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Jul 2021 02:59:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7796461285;
+        Thu, 22 Jul 2021 07:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626939610;
+        bh=o6+shJ52XMYNQNL2m3wHwNbYWTR597KJl90PUNArBLo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cKXULSP4oq5JT3+CeONyQO6qhyXtHxTMRKgwhsb5+7eo/oYTJ3tnGmYMqezCpwLQt
+         pv1iFUKyb8eXEDJq24A1GHK+OtX5ejT5oK10O1zzQ62ClMRTJCufD7tBKdfXvoP/zh
+         CfiNi9losz69I0yhh4OHuxnGko2niR/dUI5ioD7n/DPKNyCSemLx+oD5InIsAifDUH
+         9DKub1k9Q3g0utH/8y2nnz54r/b30yI0pV5Htzjs5ZwPH/Ihl7rHt1h/Hvd3+6dI/7
+         FyWWrmZhOx7yTS6iuLaGaoxO4xEp0FX0Czgv9nci3vI9rb4A+9qH7mPXYlXYHTipXM
+         2J8sjktuLHafQ==
+Date:   Thu, 22 Jul 2021 09:40:03 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
+        linux-pwm@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-spi@vger.kernel.org,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
+ clocks enabled clocks
+Message-ID: <YPkg0wtYIoHKpTUW@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
+        linux-pwm@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-spi@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>, kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+ <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
+ <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+ <20210705080144.zfbzkm7l3gmnh6st@pengutronix.de>
+ <20210722060654.nudpdtemosi64nlb@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XxsZNqK/fNX7gchR"
+Content-Disposition: inline
+In-Reply-To: <20210722060654.nudpdtemosi64nlb@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 22, 2021 at 9:04 AM Liu Ying <victor.liu@nxp.com> wrote:
-> On Mon, 2021-07-19 at 15:09 +0300, Andy Shevchenko wrote:
-> > On Mon, Jul 19, 2021 at 11:16:07AM +0800, Liu Ying wrote:
-> > > On Fri, 2021-07-16 at 16:19 +0300, Andy Shevchenko wrote:
-> > > > On Fri, Jul 16, 2021 at 10:43:57AM +0800, Liu Ying wrote:
-> > > > > On Thu, 2021-07-15 at 15:07 +0300, Andy Shevchenko wrote:
 
-> > > > > Second and more important, it seems that it would be good to decouple
-> > > > > the prescaler knowledge from this fractional divider clk driver so as
-> > > > > to make it simple(Output rate = (m / n) * parent_rate).  This way, the
-> > > > > CLK_FRAC_DIVIDER_NO_PRESCALER flag is not even needed at the first
-> > > > > place, which means rational_best_approximation() just _directly_
-> > > > > offer best_{numerator,denominator} for all cases.
-> > > >
-> > > > Feel free to submit a patch, just give a good test to avoid breakage of almost
-> > > > all users of this driver.
-> > >
-> > > Maybe someone may do that.
-> >
-> > Perhaps. The idea per se is good I think, but I doubt that the implementation
-> > will be plausible.
-> >
-> > > I just shared my thought that it sounds
-> > > like a good idea
-> >
-> > Thanks!
-> >
-> > > to decouple the prescaler knowledge from this
-> > > fractional divider clk driver.
-> >
-> > Are you suggesting that each of the device that has _private_ pre-scaler has to
-> > be a clock provider at the same time?
->
-> Maybe it depends on specific devices.  But, if a device is designed to
-> dedicatedly control clocks, being a clock provider seems to be
-> intuitive.
+--XxsZNqK/fNX7gchR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK.
 
-> > OTOH you will probably need irrespresentable hierarchy to avoid saturated values.
-> >
-> > At least those two issues I believe makes the idea fade in complications of the
-> > actual implementation. But again, send the code (you or anybody else) and we will
-> > see how it looks like.
->
-> Aside from making this fractional divider clk driver simple, there
-> seems to be another reason for decoupling the prescaler knowledge from
-> the driver.  That is, the 'left shifting' done in
-> clk_fd_general_approximation()/clk_fd_round_rate() is likely to cause
-> mis-match bewteen 'rate = clk_round_rate(clk, r);' and
-> 'clk_set_rate(clk, r); rate = clk_get_rate(clk);' as kerneldoc
-> of clk_round_rate() mentions that they are kinda equivalent
-> in include/linux/clk.h. clk_fd_set_rate() doesn't really contain the
-> 'left shifting'.
->
-> So, it looks like decoupling is the right way to go.
+> The next merge window is over now. The pull request still merges fine
+> into v5.14-rc2. I'm still convinced it adds some benefit and I want to
+> use it to simplify a bunch of drivers. But I cannot without this being
+> merged.
+>=20
+> Do I have to consider creating these functions in the pwm namespace to
+> continue here? This cannot be the right thing to do?!
 
-OK.
+What about adding gkh to the list explaining the situation to him?
 
-...
 
-> > > > > Further more, is it
-> > > > > possilbe for rational_best_approximation() to make sure there is no
-> > > > > risk of overflow for best_{numerator,denominator}, since
-> > > > > max_{numerator,denominator} are already handed over to
-> > > > > rational_best_approximation()?
-> > > >
-> > > > How? It can not be satisfied for all possible inputs.
-> > >
-> > > Just have rational_best_approximation() make sure
-> > > best_{numerator,denominator} are in the range of
-> > > [1, max_{numerator,denominator}] for all given_{numerator,denominator}.
-> > > At the same time, best_numerator/best_denominator should be as close
-> > > to given_numerator/given_denominator as possible. For this particular
-> > > fractional divider clk use case, clk_round_rate() can be called
-> > > multiple times until users find rounded rate is ok.
-> >
-> > How is it supposed to work IRL? E.g. this driver is being used for UART. Serial
->
-> I guess the drivers are drivers/acpi/acpi_lpss.c and drivers/mfd/intel-
-> lpss.c? Both for Intel.
+--XxsZNqK/fNX7gchR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-At least those I have knowledge of. Others, if any, seem to have taken
-this into account.
+-----BEGIN PGP SIGNATURE-----
 
-> > core (or even TTY) has a specific function to approximate the baud rate and it
-> > tries it 2 or 3 times. In case of *saturated* values it won't progress anyhow
-> > because from best rational approximation algorithm the very first attempt would
-> > be done against the best possible clock rate.
-> >
-> > Can you provide some code skeleton to see?
->
-> Perhaps, two approaches can be taken in driver which uses the
-> fractional divider clock:
-> 1) Tune prescaler to generate higher rate or lower rate accordingly
-> when clk_round_rate() for the fractional divider clock returns lower or
-> higher rates then desired rate. This might take several rounds until
-> desired rate is satisfied w/wo a tolerated bias.
-> 2) Put working clock rates and/or parent clock rates in a table as sort
-> of prior knowledge, which means less code for rate negotiation.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmD5IM4ACgkQFA3kzBSg
+KbbQlQ/+OItE/h5w5Gl6Ds3163rOIE8E80gug6P3SeEFgsN7dJQ0sC6A4N3OMkqg
+CyZdF147YyFObHApfRwLd8doZnrDU6KMdUWZ0u8krD/RIIX6iw5rj7wf2CkXM75v
+JFpqcXRq5kVkRSphukdvuLs8AWUFO98WfaAsGNos9zyIdoS+Uap+g4eYhZg0/+dl
+O81wZGNh0JHlezXUzbrOx1boEwW2IQP5F1pQQYheBYD6IEBqF44LCEAd0DqE1pXN
+E8V08ljGrHrPcwJ9GwIyHE3LkxYytW8FkR7LaTxuCz+Gi5tplw6wbAhJSG68fxOM
+Ihm+JnB5V/2jgzk9nFdF7QmzR1OorTndmUUQAvk7bqne8wcom/RQm76oSsglRL4M
+0YQniC2usKNRW7xTqhfFkQrodTaNF2B+MjImErHG7Vy5Gxw7QtH71QqYq0BHb/TV
+rUIMrmfFl37BeXUFV6Tnzjw5iw5GhELEaIhVz8aiXv5GIhWxBrhdp6y8VR9nx+ob
+QTA8UpUWrxOKtPAYY/ImiLTTyUYaluSweaIHnp+wA1cIf0VqO2AqO8lo+7g/9jYl
+ikmMXLSxqhleG4dmDbd075ozy84rt8pcaEQdpahst5eyic0f37oRKfca7RVX9Gn6
+4ojKHGnunYZPdY5hSfdHDMSCzRd77EhYBYLLJNyhfpja6HSXwzI=
+=ltgz
+-----END PGP SIGNATURE-----
 
-Often 2) is a bad idea which I'm against from day 1. I prefer to
-calculate what can be calculated.
-The 1) looks better but requires several (unnecessary IIRC) rounds.
-Why not supply the additional parameter(s) to tell that we have a
-prescaller with certain limitations?
-
-...
-
-> > > > > Overflowed/unreasonable
-> > > > > best_{numerator,denominator} don't sound like the "best" offered value.
-> > > >
-> > > > I don't follow here. If you got saturated values it means that your input is
-> > > > not convergent. In practice it means that we will supply quite a bad value to
-> > > > the caller.
-> > >
-> > > Just like I mentioned above, if given_{numerator,denominator} are not
-> > > convergent, best_numerator/best_denominator should be as close
-> > > to given_numerator/given_denominator as possible and at the same time
-> > > best_{numerator,denominator} are in the range of
-> > > [1, max_{numerator,denominator}].  This way, caller may have chance to
-> > > propose convergent inputs.
-> >
-> > How? Again, provide some code to understand this better.
-> > (Spoiler: arithmetics won't allow you to do this. Or maybe
-> >  I'm badly missing something very simple and obvious...)
-> >
-> > And, if it's possible to achieve, are you suggesting that part of
-> > what CCF driver should do the users will have been doing by their
-> > own?
->
-> Well, I just think it doesn't seem to be necessary for the CCF/common
-> frational drivider clk driver to have the prescaler knowledge. The
-> prescaler knowledge can be in a dedicated clk provider(if appropriate)
-> or somewhere else.
-
-I might disagree on the grounds of the HW hierarchy and the best that
-we may achieve in _one_ pass. For example, for a 16-bit additional
-prescaler it will require up to 16 steps to get the best possible
-values for the m/n. Instead we may supply to this driver the
-information about subordinate prescaler and get the best m/n. The
-caller will need to just divide the resulting rate by the asked rate
-to get a prescaler value.
-
-...
-
-> > TL;DR: please send a code to discuss.
->
-> It seems that you have some experience on those intel drivers, this
-> clock driver and rational algorithm driver and you probably have intel
-> HWs to test.  May I encourage you to look into this and decouple the
-> prescaler knowledge out :-)
->
-> >
-> > Thanks for review and you review of v2 is warmly welcomed!
->
-> I'd like to see patches to decouple the prescaler knowledge out.
-
-Then produce them! Currently the code works for all its users and does
-not need any changes (documentation is indeed a gap).
-
-> V2, like v1, tries to consolidate the knowledge in this fractional
-> divider clk driver. So, not the right direction I think.
-
-Then why are you commenting here and not there? :-)
-I think I would drop patch 2 from the set (patch 1 is Acked and patch
-3 is definitely needed to describe current state of affairs) on the
-grounds of the comments.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--XxsZNqK/fNX7gchR--
