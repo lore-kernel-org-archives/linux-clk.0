@@ -2,339 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5FEC63793
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 09:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98121C63793
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 09:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 457FD60C3D
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 09:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD826121E
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jul 2021 09:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230491AbhGVIag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jul 2021 04:30:36 -0400
-Received: from mail-eopbgr00052.outbound.protection.outlook.com ([40.107.0.52]:51479
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S231255AbhGVIve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jul 2021 04:51:34 -0400
+Received: from mail-eopbgr30080.outbound.protection.outlook.com ([40.107.3.80]:1856
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230419AbhGVIaf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Jul 2021 04:30:35 -0400
+        id S231282AbhGVIvc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Jul 2021 04:51:32 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BUC17JzOq5DeG8ZoGxDL0GDlWoxm/2xZofxT25fVg0XUKIPqqOhINgC70w11A8hpGxiq9CkkgNSDhtm05r6uFzjSzAJKzw7Q0fAUk+gcI04naaJT95lB0cU0qpaXcl+J7F5lGr9ZNjldIwvAlUxByiwHkCFV/Rd9covlyw4PSORSxdey1+5M2+kUNWyy91ojVySyb1FP0o0/8t8gDEQ05owlZglUJnFIJ4huJQaUhLuwLAaZEYV6dC4xJERCcSEduk5WOdgQdQyMB/0WarXTXiyih9ZCKIIBoq4xMfEEkNm8NHGdxmMxCgQ1bbCr1/5D2JQrqdk3rTNHQzf67JfvpQ==
+ b=ZAWWzAXTR7tHmA3wzGK8oig8cFEayWGz5djQPsS+2DQZqkVLKNgVrfP87bxO8XAs7rB3UmMEPIiAQ+ypcGo1IMErEcXZKdA7YKUOvBRO09KKU1No7LvLaGVvekyhU1kbKgBRhD2W2UyZv4B7fRcwWpUO/DpEk28EPfqrnRuGbAfxUYnqIZcX75whKQ0bKQ3DvFuKDlxZsvgjbMnxLNwF0cx3OOCpya7ohXb9UDaQxJUt+Of0k68m8bQ6sWE2u8mIKh6RqxnPnSzD4eQoEwXpk97VD5AuTxJAO2dpFrIKFE+OZY4pisawY3KYcHYNZ2jGwTeRMW2LsPc8Ikp6sXCIcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G6m6oL1cIQxiN6sWWq41ryMlisj7W9Eux+yNLJAwDNM=;
- b=dr0b9i8LgOHdDZUxsmjCO02uZnfpv7HhqHGVAoyron7tyiP2Xefn3lxARgyvU7/P0ayDgB0o0f5R/pAIxikbozcqxn51S1T2cnMOx8wl9tgY6CN/9sevEY+3Ep9evDwrPD0rS+jVMe6Tdzgedlx554wane5iFVDnquB3VCTI5QHqY3dDQoPlIHlimlmd7rDQoJknT7iGLZtNczQMFRkXYSKvZ8P9KNRKpvMWPSaDFIalOLFpZznfDRMEQ8tsuULF/DK7rAj2t39oPGOxhqI3eZklNrjL8Yus8rKR1GIq9N9Zl9eiATZQplgUYE9YhtE3KQ3p1H6xQYZ09mpsSiI+4A==
+ bh=/ozjink1ka6LHGtdtp9y9jrgkC+3MBZFrOUmbfTWSQo=;
+ b=RUnna3dQiqOkc0lltSupXTygIKqKB/t18wcqmP2Ki8xolmcouDP5V5ktgvO1RnW6WS8G+0G9SnlnN5Jc+Pg1BEOI9q8mjjB9OFIfWelKq6ZwLUfKEmSo4ZJqZ1AqDDN6zk6F+j254Kax4kDAwV7biIbt8vApdEmGgh05b72Ab0hrbyyhI86D0kxFIVQ7+1E4e1PqP/eaOWvo3f5cM/KqCLr0DfMWqwRdKBY8vzrMxnIsfXv1xh7xFTm2RVfuoEMJXnTFBfcT9ZuqRiXSfXKm4VR6QilQ+Fgt6UOmbMt+f2iy+rFxWlGQQKg4s5+q75fI17m8FtG6GDdJDFlFu1K43A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G6m6oL1cIQxiN6sWWq41ryMlisj7W9Eux+yNLJAwDNM=;
- b=o4JEOBdFKokzu/e6wuAQODjg4uTrivwdx53uXUPDU8A94FiE880u70fK0R69VWhHe86vzjIq7XuujdZppH5r4COfoW693okfB4Ae/f2t9qwwXmbWPjSas/4auAciBppdTgCOUkLjf1HlrxaccJd3i2JGKZ/U/h1X1/jzQ/IcJrM=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=nxp.com;
+ bh=/ozjink1ka6LHGtdtp9y9jrgkC+3MBZFrOUmbfTWSQo=;
+ b=hviVaNezXag1wU6SoFsn6zUwDhVHVi/7Yg0fyRvYzubBLueeljJKV8+yrhVjX8cM42efFxbSnttDKseE0Gabuq5PFGXmrm5+sbzh5AH9rvgnTiqSklTUHo/1Tu6J1Kuq1UhQ0KTFMV1Hm5RUUVYLXO71x42Z0iTfrOvw4I0LXJA=
+Authentication-Results: linux.intel.com; dkim=none (message not signed)
+ header.d=none;linux.intel.com; dmarc=none action=none header.from=nxp.com;
 Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM6PR04MB6184.eurprd04.prod.outlook.com (2603:10a6:20b:b4::18) with
+ by AM6PR04MB5862.eurprd04.prod.outlook.com (2603:10a6:20b:a0::25) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.26; Thu, 22 Jul
- 2021 09:11:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.25; Thu, 22 Jul
+ 2021 09:31:38 +0000
 Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
  ([fe80::8c66:a7b4:1dc7:2c27]) by AM7PR04MB7046.eurprd04.prod.outlook.com
  ([fe80::8c66:a7b4:1dc7:2c27%8]) with mapi id 15.20.4352.025; Thu, 22 Jul 2021
- 09:11:08 +0000
-Message-ID: <3cd7393a34ca991184722e57b6c64737973b31c4.camel@nxp.com>
-Subject: Re: [PATCH v1 2/3] clk: fractional-divider: Introduce NO_PRESCALER
+ 09:31:38 +0000
+Message-ID: <9117e5212a3b743ca541918ec2b701c159ac752c.camel@nxp.com>
+Subject: Re: [PATCH v2 2/3] clk: fractional-divider: Introduce NO_PRESCALER
  flag
 From:   Liu Ying <victor.liu@nxp.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Heiko Stuebner <heiko@sntech.de>,
         Elaine Zhang <zhangqing@rock-chips.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Jacky Bai <ping.bai@nxp.com>
-Date:   Thu, 22 Jul 2021 17:08:52 +0800
-In-Reply-To: <CAHp75VeTyWe6SWpWMRYh4Ah6LYULNHBuSo7Tq2AX=vdsObnTLw@mail.gmail.com>
-References: <20210715120752.29174-1-andriy.shevchenko@linux.intel.com>
-         <20210715120752.29174-2-andriy.shevchenko@linux.intel.com>
-         <7941107fda10f075395870528f0e52d42e502d92.camel@nxp.com>
-         <YPGHbvaCv/x/JlgH@smile.fi.intel.com>
-         <bfa0c16e88c0d445137290b2bef104e5fa74d78a.camel@nxp.com>
-         <YPVrkAarqSBMY1tV@smile.fi.intel.com>
-         <6b2a6408fcff0d064746d7a77db7b9502c66ad20.camel@nxp.com>
-         <CAHp75VeTyWe6SWpWMRYh4Ah6LYULNHBuSo7Tq2AX=vdsObnTLw@mail.gmail.com>
+Date:   Thu, 22 Jul 2021 17:29:23 +0800
+In-Reply-To: <20210716133448.24890-2-andriy.shevchenko@linux.intel.com>
+References: <20210716133448.24890-1-andriy.shevchenko@linux.intel.com>
+         <20210716133448.24890-2-andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.4-0ubuntu1 
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGBP274CA0008.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::20)
+X-ClientProxiedBy: SGXP274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::19)
  To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from blueberry (119.31.174.66) by SGBP274CA0008.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.25 via Frontend Transport; Thu, 22 Jul 2021 09:11:04 +0000
+Received: from blueberry (119.31.174.66) by SGXP274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.25 via Frontend Transport; Thu, 22 Jul 2021 09:31:35 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3dcfe46c-66b9-4bfa-ee93-08d94cf0a414
-X-MS-TrafficTypeDiagnostic: AM6PR04MB6184:
+X-MS-Office365-Filtering-Correlation-Id: ffe9a0b6-1228-4816-7493-08d94cf38189
+X-MS-TrafficTypeDiagnostic: AM6PR04MB5862:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM6PR04MB61846D96E73FDA261E33C92698E49@AM6PR04MB6184.eurprd04.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <AM6PR04MB586278F73FFA70DFD28DF75198E49@AM6PR04MB5862.eurprd04.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: myv2TFbMi3HMYO6PoZQJUll4xKMTK1h/17AlNxun7F7Uy5WnwJxWMPsBTpwwtmjmtbpCTnSHsJkBnU+mwwzn3zmQxDIZDZKeJ04sX/6v9BoCmVex22tQk8YS2xQxhHjolpnFoM+gKhEjPgJLFCZ2DRah8M+PShxpAlkvX5kIXJEAT0jFFcNZyYid1/OmAKXJS0EkzYU0GlO8lAF9u5Eujt6ZkdEHnZPaFDX4AHdIQOv0iaZbg4xjOqURwnBgw6uHHNzhcy1WFi/4iJ66S/gCjitC44t9AETO5wTrRGzAYp0gnmBRBrZ/42BZBRFGpNVb7dr8QmhMPOLBcqWLFou9tZ85LMOU6269YwSV2Z/t8m/XyrbSuJMbIc6VTAZF2gdkTSSd/MMLP5zg0iF4WH3lNeX5iS7rm7Za9/WHKZmK07jMFhCFGg7zdQdaL96SDAEwRhYVKyOWvszFwk8Dhz7hFNJVbpd+dh9uzhytqMwoklfwX7H9N4MKmvWoTcPP21tAiogRhtqqP9Hb53qz0kRf2wj3xw1FnWd9ySgVpa99vmZ5Hr6tcF/ag06hqP8NERDf8f1N76TijJhZkWKRSoSx+9IcuV5zdg6VMuaeFiw5Av/AHPf+fiKmWVbu9GBj27EY4JnPWmIktHgRSFcBrYaV+hXtyFIbicWRxk2RJMGsevcm3P49WnZ4REYJkM9JrSJFBvWwgb+DttzRrORCL27KeupwR7c3h7ySJyJZbwQZA0Q=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(6486002)(2906002)(52116002)(2616005)(86362001)(4326008)(66556008)(66946007)(5660300002)(6916009)(508600001)(8936002)(956004)(6666004)(54906003)(7416002)(38350700002)(38100700002)(26005)(6496006)(316002)(66476007)(83380400001)(36756003)(53546011)(8676002)(175924003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: WzpgOt2OuIvgmhtD6QNTggZzSTYmmeHugPvSw8UsK9CCRHblmy6qBKeLF/861raSr45SvnEE1vDk0bfHaZDzZEJqfjMedymn62sHDpiqhJEcxyMRFE7ilAWbl5mKrl5iKp3xVwQhLZp4TCRpO+Y3P2hPwfhAOu0cvkDG1R7QUINWCAhKpDbNUwTnh0k73RWEMqkLtGdoPZvdNNdJ/o4bco7vjNTnG4108G28TZP2twj/nxKdJ0882M/XOuYRrk4Ni2m/ibgleECFHBuVFs0KP68Q0VwhgsIbKZpnkltTbo7EvL0LZTs8DmzklNBb1wJ0qDapmpaaq26esQMLSnFLfc/RhiNWMeVNVD7pdZzDMFkV0OIjQSZD7lB7DQb57afpKfq4XBTzFj9Fz7NutnWaxcr4wSmwJ3GyiY01XiraX43GG8Sb+KI+zFVucZ9nl+W6QTxEglozrFb4c3YNCt/DqCfnsiVFp91271XmY9vUb/fu/DaT2kYT+CCWQvbe01Sx891O3WZO1vOyxSnMqLhyyY44FRkrQxcDIZNW8p0oZMzmvfVQoxcVi7Ti8VfArM+fWUB2YniVUK6LO2zdsks4cxDlUpvBTYleoECB/Ky5v8AIDTfM5GlmIzEecj/W6B8GkCjt407qH4kmDnh1FnbnSfOAk+N9rpu+8K+TFys7kUPSIgTMcvyTBrHTiy7zEl+rT2VuL+cSa4wPBFnCBUA+Cw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(396003)(136003)(346002)(366004)(478600001)(66556008)(66946007)(66476007)(83380400001)(8936002)(110136005)(2616005)(86362001)(956004)(316002)(6496006)(54906003)(6666004)(36756003)(8676002)(186003)(6486002)(26005)(52116002)(2906002)(38100700002)(4326008)(5660300002)(38350700002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WElWZTk4a0JYTjVzdnZnbU1xTUFWbi9SYU9pSjFkUTNHaXNjU09GVmEwY2sw?=
- =?utf-8?B?U1dSeTRlNzdNa0pnZ2ZqYzRIWmRHM00vd1k2YW1pS2NXMFZTRWVvUTN4d1B5?=
- =?utf-8?B?dkFlRm5IQ0l3bmovR1orT0NlWGF3cXhzc3RKMkdmaC9mZG5XNWh3R2FXNmor?=
- =?utf-8?B?dm5CcU5qK01ieTIzMGhjWmc3bk5IV25tWFZjb0xXL1ZsM0JQTkVZZW5lSnhp?=
- =?utf-8?B?Qk9KRmlaeDY0RWVHQ294NitJdHhTbERJV1g1KzVrMFdsTWJrTlRXcTltcnNl?=
- =?utf-8?B?VVI0bGhPVWlsVEliVFI0STlXdWZIRnIvdFY2MEhyVTdGb0hTWENrWVZuOThH?=
- =?utf-8?B?b29tdXBUUWhqWjRqNEtvc2JnTmlSaStmbThlQ05yZW12czJ5UkoxNzBmVlBT?=
- =?utf-8?B?WEgzRHA3NTk1VjNBWEhqeWpseVl0cHZLc1MwU0dDRngwNXJWa0FadEVlZUlt?=
- =?utf-8?B?RW9SeXE1M0J5QXdtQTlkQ2hkWkpXRTEvOVRMakdFcmYyYXNFcTR0NGJxMnlQ?=
- =?utf-8?B?QXltZVVvTUdkWTB3VGlYd1FJZUNQWXFEbDdNMU94eFJ1MVZIRHk1dHJqU1d1?=
- =?utf-8?B?TzVHbCs2dWVrY2ZWeXJDZTZWNkowOVg5dGwvQ3FnTEVqMHcrTWJPYUJJZVJ4?=
- =?utf-8?B?UVlaQXJZOFd4c08xcjgwWnQyNGZLeDlpTmNmQUh3WU5BWDFOeUR1aVZubUZr?=
- =?utf-8?B?NTNuRlVZZ3FUQnkyRkRXdVFsSDFoK21TR0JKU0FkMDkrUDhyN2pwOTFGbU1x?=
- =?utf-8?B?TzB0WlhQNzB0WlhVRnpuUVdYenVNRmtnWUlPRG1QOU53YWtUTXdsbFE4K2xT?=
- =?utf-8?B?MG0zUTRvZHlIUFVMdndNN082OGM0QUd3K1doRFpCRHMva2ZVSG1nVHhQTUE2?=
- =?utf-8?B?aUh1M29YNy9mbW1yeVIzeE1SNFlKdm1BdDIraWlJNVJNMTZhUHIwT2xaQmRx?=
- =?utf-8?B?Sk5sQi94bTMzTlhUWVNERXcrUktkcTUxNFVzKzd3c0dhNCsycTRvMG4rWCs0?=
- =?utf-8?B?bzBQWG5iMTVjSnJSMDk1RVgvY0VDeXovTXlZZGxJR01ZbzExRUJ1YTFmUUJY?=
- =?utf-8?B?OFlyRi9zZG40SUhOTmphWkdzR1FxQTZLS25SMDJBQUt3b054RDJEV05zZG5K?=
- =?utf-8?B?Q2t3emd5UWdwbmQ5UlExRDFUbVpic2Zta3FKYzlyQUhqU1Mxay9nTnJReFlJ?=
- =?utf-8?B?L3dvTm8vMlhCNnJzaVpXL1NpQnhQd1I2OEEwaUpzSHBCMUlURlkvNCtERjhl?=
- =?utf-8?B?T0NGeXNUeEo3c29VU25YaXNLSWJlT3FvNjJZMFFKSDNmSjc0Zjd2a21GL1ZS?=
- =?utf-8?B?QzZuL2hUVzV2dUI4aEwveVFEN3M3RFdmempIWlNMWEZsMWZPcjN6L3JpRSt2?=
- =?utf-8?B?SXUxT29YajZCamRwTXpNZ1F3bERZYWFHY3JyQVVQZk5ZUHdkOEdoaFQ5RWFH?=
- =?utf-8?B?bjUvL1MrMlIzSUU1S0piYWEzVU9kd2h5TXl5VFE5ZUFGU1kyWE9MTmJMcTB2?=
- =?utf-8?B?WTJOUEk3QlFBc1NUWCt5ZTkzZXBDN1U5MkVPSERGR1dVRHVSMW4zRXVPUnpi?=
- =?utf-8?B?SlVSWG5ST0t0UnR5RUYwRk0xSGY4bkpiUnRHSzRWMDM2LzJLMTN6c01VTmZ2?=
- =?utf-8?B?S1d6VmVqU1lSUjhkekp6YnJ2VmU4d3o3WE5vOXFKbHFuUlUzc1dpZjJRTVEw?=
- =?utf-8?B?Szk4QnN0RmNxWlJ2QVl5UkJmQm9wS09OS09mMFYxbUVaNEw1L0RCaFIxUE4x?=
- =?utf-8?Q?bn1rskDnvmMf4BALcgwWjwIFbgQ3+uUf/1EQ/FH?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VEVlYytYdzZFdW1mR1lOeitMK29ZSzBacG5jMTdTSmxWemozK2kxWkZTYmFL?=
+ =?utf-8?B?eWozZ3p4ekc2dzU3NlFvRWRMT2RWKy9Ic0pWVCt1TmFpTXh5NjcwaU94NkFm?=
+ =?utf-8?B?Q3ZrS3VZVDZzd2k0bnBrZzdaUGo5UVI5Y1pMeXNWeHNxVGhXamFtNXA5Y3h6?=
+ =?utf-8?B?SmxoWDVHZUxYSkdQSHdZelluNjZFS1dudlR3NjdIM3FTVnFhUi8yZERNTUli?=
+ =?utf-8?B?M2JVdmlmMzNoVzZ2ZVFhY2F2MldEYi9yTUJrdkdnYXBHc3o4MFZNSUNuOGxP?=
+ =?utf-8?B?bXZuNVJFVUx1bkU0SDJWWlluZUg1QzZOT2ROUkp0VkJFb3FYSDJ5dUJqN0kw?=
+ =?utf-8?B?VkJiM2RZT3BwR054amhOZG5QeFhKYUM2N0szRHkvSm9DSThHVzdGSzlZZmhT?=
+ =?utf-8?B?NWt2VVE4R2pLY0JJVVpKZXIzeDhYTHhBeDBzM3lvTGU1cFcrRzdvelhuYU9G?=
+ =?utf-8?B?ZWxlNXdwQ21hQktVNStMYkNKdEJWNzFmUnpkMU8vRUxsWWRHNng2d1ljVlBI?=
+ =?utf-8?B?M2lpOFFmcHRsSE9zRmZuT2xlK2pGTTJxbmc3QWFMUnZQTSs2YS9EbG03K2Vw?=
+ =?utf-8?B?dENOWTVSOXVDTlJnb2puaFhMVjdteWt2dFBVV1VlTVU4NS9sZktNVEtMN2g3?=
+ =?utf-8?B?NjZ5MzN1dHZqUUNKYmtoL2lNNWZiaFdudDFLNzU1b3FNbFlseXZxcUpkUDEv?=
+ =?utf-8?B?UDgrbG9jQU9WbWE2cXUwa1pyZ0pwclNvRUMyNW9MRHhLY2cwZTFabGNVYVpX?=
+ =?utf-8?B?d21BR1Z6THp0dCtxRit0S2VPWWNMTlJCeXF6RzF0ZWcwM1RPc1h6cGlXUmor?=
+ =?utf-8?B?LytxWWhnTjZKQm9oNEZqOG95bzJ6OUpiWUI1WHJsOElua2g1Mkl4SmJ4NTVx?=
+ =?utf-8?B?QkwzWmEzWnErM3lIL3JRWjN5QTY5NW82eVZqYkJsQ3FKMUFSNE1TNUkzV0pa?=
+ =?utf-8?B?dXkyeVE2L2Q0VWRoWUh2bGxnMGQ4V1MxeHM0eEJXTGpNc0h0WWh6eGp5Tk10?=
+ =?utf-8?B?akhpQ2piNHUyNzg1QjB3Vjlnd2cwaXBMaGx1S2MwREY5eFg5ZDE3VG5ZSlhk?=
+ =?utf-8?B?YnBaUGNwYnZUamRWZVk1aXdyeWM0MlhZeW0zdTVsblBrbUVCd2RhbGlGMUV3?=
+ =?utf-8?B?M1FCZngzL1VVdWlOY000M0kwTFA4djN0eGtkUFp0Q1BzbE1jazA3Q2tTUmtD?=
+ =?utf-8?B?VXpKWDhaSHFVTWZKRzJWNUFLU2gxR3R4UjV3a21hUW82QmRxb2ZtQjJnekFt?=
+ =?utf-8?B?S2E3cytOUXBlSmcycjhkWEhYRWFWNkdZUk16Z00vS0JIbUUyUll6YXBMakRJ?=
+ =?utf-8?B?RGVXTVFhejM4V0NDWm5PSUFmdnpaVEVucjgrZTRSRmFkd2UrMWdudUZRRWNt?=
+ =?utf-8?B?OGo4OXJzZk8xZXNmSC9PTk96U0RvKzZKcjE2Y2VkNVZRVENlZjl6U0d0Y1h2?=
+ =?utf-8?B?S1kxYmUxTTF2ckZ1RllIaU1yQzRydzJ0a1RGN0Mxdjc0RzhTVUxQQ1huL2JB?=
+ =?utf-8?B?bnV6SVl2Z1d4aFVGa1o0d3JLQzYxeWRtbVNtcTRDcVJPME16N091MXZVbFJW?=
+ =?utf-8?B?RXNrZnA3eW1ybjEyejN0RzhQZWwvYzkvMVFkVFc1VU52ekZNQjVtYUtmV0tT?=
+ =?utf-8?B?cUdvN1BmWS9obnRSUk44VXk0TmlYaWIxYkFNaC9PWitCeG80K3dXcUoyZ2pU?=
+ =?utf-8?B?OGRIWDRKUnN0VUtaVWdiK3RjNU50ZFYzVUs5Vk5ZRUFCMi9rOXVQamU2UXAy?=
+ =?utf-8?Q?3aDOhZMoPXsUuMmpEQd3IG5wSNDUzuMejj/MWrt?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcfe46c-66b9-4bfa-ee93-08d94cf0a414
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffe9a0b6-1228-4816-7493-08d94cf38189
 X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2021 09:11:08.1190
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2021 09:31:38.5540
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p7w3ewlIGIUUp/86DUm+q+YWG4AaikUb4n2jXGqHyqhBkZzLBs/3/WvRJHNyEWGBp8xuPlQGrJQysDy0EDFVRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6184
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1KIYKVORoQJPjezS+cqwxc+yZlE3LAfmy2KmpK3E9ZkAA/8e7W67lM3Gdxp3AHL8GhkEHVxroKyjA5vYip9/IQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5862
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2021-07-22 at 10:24 +0300, Andy Shevchenko wrote:
-> On Thu, Jul 22, 2021 at 9:04 AM Liu Ying <victor.liu@nxp.com> wrote:
-> > On Mon, 2021-07-19 at 15:09 +0300, Andy Shevchenko wrote:
-> > > On Mon, Jul 19, 2021 at 11:16:07AM +0800, Liu Ying wrote:
-> > > > On Fri, 2021-07-16 at 16:19 +0300, Andy Shevchenko wrote:
-> > > > > On Fri, Jul 16, 2021 at 10:43:57AM +0800, Liu Ying wrote:
-> > > > > > On Thu, 2021-07-15 at 15:07 +0300, Andy Shevchenko wrote:
-> > > > > > Second and more important, it seems that it would be good to decouple
-> > > > > > the prescaler knowledge from this fractional divider clk driver so as
-> > > > > > to make it simple(Output rate = (m / n) * parent_rate).  This way, the
-> > > > > > CLK_FRAC_DIVIDER_NO_PRESCALER flag is not even needed at the first
-> > > > > > place, which means rational_best_approximation() just _directly_
-> > > > > > offer best_{numerator,denominator} for all cases.
-> > > > > 
-> > > > > Feel free to submit a patch, just give a good test to avoid breakage of almost
-> > > > > all users of this driver.
-> > > > 
-> > > > Maybe someone may do that.
-> > > 
-> > > Perhaps. The idea per se is good I think, but I doubt that the implementation
-> > > will be plausible.
-> > > 
-> > > > I just shared my thought that it sounds
-> > > > like a good idea
-> > > 
-> > > Thanks!
-> > > 
-> > > > to decouple the prescaler knowledge from this
-> > > > fractional divider clk driver.
-> > > 
-> > > Are you suggesting that each of the device that has _private_ pre-scaler has to
-> > > be a clock provider at the same time?
-> > 
-> > Maybe it depends on specific devices.  But, if a device is designed to
-> > dedicatedly control clocks, being a clock provider seems to be
-> > intuitive.
-> 
-> OK.
-> 
-> > > OTOH you will probably need irrespresentable hierarchy to avoid saturated values.
-> > > 
-> > > At least those two issues I believe makes the idea fade in complications of the
-> > > actual implementation. But again, send the code (you or anybody else) and we will
-> > > see how it looks like.
-> > 
-> > Aside from making this fractional divider clk driver simple, there
-> > seems to be another reason for decoupling the prescaler knowledge from
-> > the driver.  That is, the 'left shifting' done in
-> > clk_fd_general_approximation()/clk_fd_round_rate() is likely to cause
-> > mis-match bewteen 'rate = clk_round_rate(clk, r);' and
-> > 'clk_set_rate(clk, r); rate = clk_get_rate(clk);' as kerneldoc
-> > of clk_round_rate() mentions that they are kinda equivalent
-> > in include/linux/clk.h. clk_fd_set_rate() doesn't really contain the
-> > 'left shifting'.
-> > 
-> > So, it looks like decoupling is the right way to go.
-> 
-> OK.
-> 
-> ...
-> 
-> > > > > > Further more, is it
-> > > > > > possilbe for rational_best_approximation() to make sure there is no
-> > > > > > risk of overflow for best_{numerator,denominator}, since
-> > > > > > max_{numerator,denominator} are already handed over to
-> > > > > > rational_best_approximation()?
-> > > > > 
-> > > > > How? It can not be satisfied for all possible inputs.
-> > > > 
-> > > > Just have rational_best_approximation() make sure
-> > > > best_{numerator,denominator} are in the range of
-> > > > [1, max_{numerator,denominator}] for all given_{numerator,denominator}.
-> > > > At the same time, best_numerator/best_denominator should be as close
-> > > > to given_numerator/given_denominator as possible. For this particular
-> > > > fractional divider clk use case, clk_round_rate() can be called
-> > > > multiple times until users find rounded rate is ok.
-> > > 
-> > > How is it supposed to work IRL? E.g. this driver is being used for UART. Serial
-> > 
-> > I guess the drivers are drivers/acpi/acpi_lpss.c and drivers/mfd/intel-
-> > lpss.c? Both for Intel.
-> 
-> At least those I have knowledge of. Others, if any, seem to have taken
-> this into account.
-> 
-> > > core (or even TTY) has a specific function to approximate the baud rate and it
-> > > tries it 2 or 3 times. In case of *saturated* values it won't progress anyhow
-> > > because from best rational approximation algorithm the very first attempt would
-> > > be done against the best possible clock rate.
-> > > 
-> > > Can you provide some code skeleton to see?
-> > 
-> > Perhaps, two approaches can be taken in driver which uses the
-> > fractional divider clock:
-> > 1) Tune prescaler to generate higher rate or lower rate accordingly
-> > when clk_round_rate() for the fractional divider clock returns lower or
-> > higher rates then desired rate. This might take several rounds until
-> > desired rate is satisfied w/wo a tolerated bias.
-> > 2) Put working clock rates and/or parent clock rates in a table as sort
-> > of prior knowledge, which means less code for rate negotiation.
-> 
-> Often 2) is a bad idea which I'm against from day 1. I prefer to
-> calculate what can be calculated.
-> The 1) looks better but requires several (unnecessary IIRC) rounds.
-> Why not supply the additional parameter(s) to tell that we have a
-> prescaller with certain limitations?
+On Fri, 2021-07-16 at 16:34 +0300, Andy Shevchenko wrote:
+> The newly introduced flag, when set, makes the flow to skip
+> the assumption that the caller will use an additional 2^scale
+> prescaler to get the desired clock rate.
 
-To me, it's kinda too much information to this common frational divider
-clk driver.  Making the common driver simple and easy to maintain is
-important.
+As I mentioned in v1 comment, it seems to be good to decouple the
+prescaler knowledge from this common fractional divider clk driver.
+This way, we'll make it simpler and easier to maintain. Also, then, the
+NO_PRESCALER flag is not needed at all.  However, it seems that two
+Intel drivers which use the frational divider drivers will be affected
+and rate negotiation logics need to be implemented for them.  Please
+consider if it's doable or not.
 
-> 
-> ...
-> 
-> > > > > > Overflowed/unreasonable
-> > > > > > best_{numerator,denominator} don't sound like the "best" offered value.
-> > > > > 
-> > > > > I don't follow here. If you got saturated values it means that your input is
-> > > > > not convergent. In practice it means that we will supply quite a bad value to
-> > > > > the caller.
-> > > > 
-> > > > Just like I mentioned above, if given_{numerator,denominator} are not
-> > > > convergent, best_numerator/best_denominator should be as close
-> > > > to given_numerator/given_denominator as possible and at the same time
-> > > > best_{numerator,denominator} are in the range of
-> > > > [1, max_{numerator,denominator}].  This way, caller may have chance to
-> > > > propose convergent inputs.
-> > > 
-> > > How? Again, provide some code to understand this better.
-> > > (Spoiler: arithmetics won't allow you to do this. Or maybe
-> > >  I'm badly missing something very simple and obvious...)
-> > > 
-> > > And, if it's possible to achieve, are you suggesting that part of
-> > > what CCF driver should do the users will have been doing by their
-> > > own?
-> > 
-> > Well, I just think it doesn't seem to be necessary for the CCF/common
-> > frational drivider clk driver to have the prescaler knowledge. The
-> > prescaler knowledge can be in a dedicated clk provider(if appropriate)
-> > or somewhere else.
-> 
-> I might disagree on the grounds of the HW hierarchy and the best that
-> we may achieve in _one_ pass. For example, for a 16-bit additional
-> prescaler it will require up to 16 steps to get the best possible
-
-Would that be an unacceptable performance penalty?
-
-> values for the m/n. Instead we may supply to this driver the
-> information about subordinate prescaler and get the best m/n. The
-> caller will need to just divide the resulting rate by the asked rate
-> to get a prescaler value.
-
-IMHO, a simpler fractional divider clk driver without the prescaler
-knowledge wins the tradeoff.
-
-> 
-> ...
-> 
-> > > TL;DR: please send a code to discuss.
-> > 
-> > It seems that you have some experience on those intel drivers, this
-> > clock driver and rational algorithm driver and you probably have intel
-> > HWs to test.  May I encourage you to look into this and decouple the
-> > prescaler knowledge out :-)
-> > 
-> > > Thanks for review and you review of v2 is warmly welcomed!
-> > 
-> > I'd like to see patches to decouple the prescaler knowledge out.
-> 
-> Then produce them! Currently the code works for all its users and does
-> not need any changes (documentation is indeed a gap).
-
-IIUC, only the two Intel drivers mentioned before are affected.
-Rockchip has it's own ->approximation() callback and i.MX7ulp hasn't
-the prescaler(IIUC), thus kinda not affected.  So, perhaps you may help
-look into this and decouple the prescaler knowledge out, as it seems
-that you have experience on the relevant drivers and HW to test.
-Anyway, to me, it is _not_ a must to have if you really think it's hard
-to do or unnesessary :-)
-
-> 
-> > V2, like v1, tries to consolidate the knowledge in this fractional
-> > divider clk driver. So, not the right direction I think.
-> 
-> Then why are you commenting here and not there? :-)
-
-Maybe v2 was sent too quickly as the decoupling comment on v1 hasn't
-been sufficiently discussed :-) I'll comment v2 briefly.
-
-> I think I would drop patch 2 from the set (patch 1 is Acked and patch
-> 3 is definitely needed to describe current state of affairs) on the
-> grounds of the comments.
-
-Please consider i.MX7ulp, as it hasn't the prescaler IIUC. i.MX7ulp
-needs NO_PRESCALER flag, if we keep the prescaler knowledge in this
-driver ofc.
+If we ultimately keep the prescaler knowledge here, please consider to
+add the NO_PRESCALER flag for i.MX7ulp as it hasn't the prescaler IIUC.
 
 Regards,
 Liu Ying
 
+> 
+> Reported-by: Liu Ying <victor.liu@nxp.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> v2: moved entire snipped under new flag check (Liu)
+>  drivers/clk/clk-fractional-divider.c | 10 ++++++----
+>  include/linux/clk-provider.h         |  5 +++++
+>  2 files changed, 11 insertions(+), 4 deletions(-)
 
 
