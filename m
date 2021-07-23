@@ -2,122 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E846C4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jul 2021 14:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37913C432BE
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jul 2021 16:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45FB1608FB
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jul 2021 14:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 210B260EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jul 2021 16:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235351AbhGWNuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jul 2021 09:50:37 -0400
-Received: from mail-io1-f46.google.com ([209.85.166.46]:41828 "EHLO
-        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233665AbhGWNuh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jul 2021 09:50:37 -0400
-Received: by mail-io1-f46.google.com with SMTP id r6so2760470ioj.8;
-        Fri, 23 Jul 2021 07:31:11 -0700 (PDT)
+        id S229622AbhGWPdU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jul 2021 11:33:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230001AbhGWPdU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jul 2021 11:33:20 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8046C061760
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jul 2021 09:13:52 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id m13so2867759lfg.13
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jul 2021 09:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZG8EM0ibWzAiSvgD/0B7tPbf0jFZ6hKm+43FjwPiK0k=;
+        b=rlD9kU3EsUgSAXXwAp5ElP1YPzxO3q0z7M6zy8r9F8vzIGyuKKeFnlfR9ePbi3O+MU
+         iKrGUnx/6N3cB1WpOZ3l8JtjE9kKvbBMcWMS/7maqJLonFHGN4PMWzQzYUYx0S8sf0TZ
+         fRm7+ki8JlaKrLWfiuAWY1vq+4PhJc2PsEviDvGe6iOMTui96hfNscclgm+3wlXss7Iz
+         QloERXBZuBfrXWAaeZsHGAF3yuWj8k0znpzgm0Bg31Fr/VQJ+dU3lm1pyEknTf2xdyIQ
+         aJeXg082bW/eiNMFNYX4m/WuwYqi151M+Np4xmVwExaBSvO//B5JCmj+UIgUgMhnG4ls
+         S59A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=NCcIgxYk2Vttr+/GWq3ETgT01MgTyWJladRF/YKSKgE=;
-        b=omq1YTcMadGVcmRusGPO7B9qiuZD110hkrcfnNgN+qOssMmYIbiLAT3aarRekpdCeo
-         Alu1ESwPpYy/ky3Bcs27NwVWX7xU3Nwl0p4NhpWZJoZE13Ket7+TXJS+J2xCh0Cv8o9Z
-         RTR+4gLC98o3NYSomYvyf68/8JkY3y30+ZrTgJ4OUyraUeD0lCUU5HFdmlm7EG0pxXgt
-         +Fz/7R34A7KpGruSJecTgnl06s8z9+ev20gp6x9KoPebOSk8MrerSwXQXTBK7MJNgTa1
-         7hujJWi+VvmuWUbPN2gLrY8bP9x2nTS4TcnoZTR3qLE+Sj+aYExAnz5TIXwQW2IGCsuz
-         RlQw==
-X-Gm-Message-State: AOAM530Qg2LVc9rbu3cH/jO1XGkFRXzRFAZLAg/tXDjM42Ew+wrCxWCm
-        /seCPIUdDJtaUv/7xIO4b6a9uCqnXA==
-X-Google-Smtp-Source: ABdhPJyro8jafGw1WcIhCSZ6bzKfFnYsROLksjos5spxpAsZb4yrc8UVZS1YcTFsQdppsjMPNB+EQg==
-X-Received: by 2002:a02:c906:: with SMTP id t6mr4444638jao.117.1627050670595;
-        Fri, 23 Jul 2021 07:31:10 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id x16sm16094443ila.84.2021.07.23.07.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jul 2021 07:31:08 -0700 (PDT)
-Received: (nullmailer pid 1988198 invoked by uid 1000);
-        Fri, 23 Jul 2021 14:31:05 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     quic_vamslank@quicinc.com
-Cc:     linux-clk@vger.kernel.org, maz@kernel.org, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        tglx@linutronix.de, mturquette@baylibre.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org
-In-Reply-To: <40f4b835961e81283ee4b065804a86ddaf98cabb.1626986805.git.quic_vamslank@quicinc.com>
-References: <cover.1626986805.git.quic_vamslank@quicinc.com> <40f4b835961e81283ee4b065804a86ddaf98cabb.1626986805.git.quic_vamslank@quicinc.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add SDX65 GCC clock bindings
-Date:   Fri, 23 Jul 2021 08:31:05 -0600
-Message-Id: <1627050665.694861.1988197.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZG8EM0ibWzAiSvgD/0B7tPbf0jFZ6hKm+43FjwPiK0k=;
+        b=ayfTOt2scdYO6SUXlczegiR2gQ0jcPuC6uKeFVhEMc/GVocl1i9D9huc/EXgAE7zwr
+         oWaL5t4EoFeos9/NDufUdCwTNOhmUpdm1/PE7+IvgSH9Afw8Mm8xuTZwuSC0SICG0xLA
+         z8IEaRzMG+/SfgOP5l0CF8PmdCstjcu6eERMvZXgD0B9e7Dfl7G1pZEYQI7k+jk9lEbJ
+         MXaDen+dokDq6HN03bT4Sia1LV8LMO1loWUbQ45zAfSyHzeR2bPiw5/vgi7VHRzrlg48
+         tfEqTUXhaZFmTDxow2lcBno8E+jbf2wGPZ7Bmu0YptBdhVS5rrnsfNsXi4VK79WQV+zj
+         82hQ==
+X-Gm-Message-State: AOAM531+X54VcxSpa3VXz8pCAxneXY9x0ldEZknZec+H/lNLaHoX5+Zs
+        F3ZBIhiBwcTlZoWPcrLTRnRJ+o1NvoOCd0Z2lGHHCA==
+X-Google-Smtp-Source: ABdhPJxugAzgYOKChCqv3cRo/aKnwy4Bq+Q7V7eWSMFB1s+HkNGhWLe4KTH/emdsfmJ5hrY2eynft8sPj9YUAjJjH8k=
+X-Received: by 2002:a05:6512:3696:: with SMTP id d22mr3678649lfs.586.1627056830723;
+ Fri, 23 Jul 2021 09:13:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210627045631.2882-1-jiaxun.yang@flygoat.com> <20210627045631.2882-7-jiaxun.yang@flygoat.com>
+In-Reply-To: <20210627045631.2882-7-jiaxun.yang@flygoat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 23 Jul 2021 18:13:39 +0200
+Message-ID: <CACRpkdZkvSg___ZxdE639SMbTs5rJbjHBq-HkTCuv0e645Rssg@mail.gmail.com>
+Subject: Re: [PATCH 6/9] pinctrl: pistachio: Make it as a option
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-mips@vger.kernel.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-phy@lists.infradead.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 22 Jul 2021 14:09:38 -0700, quic_vamslank@quicinc.com wrote:
-> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
-> 
-> Add device tree bindings for global clock controller on SDX65 SOCs.
-> 
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> ---
->  .../bindings/clock/qcom,gcc-sdx65.yaml        |  79 ++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sdx65.h    | 122 ++++++++++++++++++
->  2 files changed, 201 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx65.h
-> 
+On Sun, Jun 27, 2021 at 6:57 AM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> So it will be avilable for generic MIPS kernel.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-yamllint warnings/errors:
+Is this solved, or should I apply this patch?
 
-dtschema/dtc warnings/errors:
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.example.dts'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 45, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 120, in get_single_data
-    node = self.composer.get_single_node()
-  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
-  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 773, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 848, in _ruamel_yaml.CParser._compose_sequence_node
-  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
-ruamel.yaml.scanner.ScannerError: while scanning a block scalar
-  in "<unicode string>", line 65, column 5
-found a tab character where an indentation space is expected
-  in "<unicode string>", line 71, column 1
-make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-./Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml:  while scanning a block scalar
-  in "<unicode string>", line 65, column 5
-found a tab character where an indentation space is expected
-  in "<unicode string>", line 71, column 1
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml: ignoring, error parsing file
-warning: no schema found in file: ./Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
-make: *** [Makefile:1418: dt_binding_check] Error 2
-\ndoc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1508862
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Yours,
+Linus Walleij
