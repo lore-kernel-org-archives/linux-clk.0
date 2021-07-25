@@ -2,214 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAD6C4338F
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 14:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D120CC4338F
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 16:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B922260E09
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 14:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1CDE60F42
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 16:07:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231214AbhGYOMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jul 2021 10:12:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231128AbhGYOMS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 25 Jul 2021 10:12:18 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE54760720;
-        Sun, 25 Jul 2021 14:52:43 +0000 (UTC)
-Date:   Sun, 25 Jul 2021 15:55:15 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
+        id S229709AbhGYP1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jul 2021 11:27:03 -0400
+Received: from smtp-34.italiaonline.it ([213.209.10.34]:43768 "EHLO libero.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229584AbhGYP1D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 25 Jul 2021 11:27:03 -0400
+Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
+ ([79.45.45.231])
+        by smtp-34.iol.local with ESMTPA
+        id 7gf2mU8UALCum7gf5mo1iZ; Sun, 25 Jul 2021 18:07:32 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1627229252; bh=rOfM+3SnDUoi4Zw7AQaIgYut2m3EXateesuCvJ04ulU=;
+        h=From;
+        b=uYrg/mrygjeSW3+2Covd4dD+ZJ9D691CVb1P6hEu9MgUYn4ZdZBxWRV6TMEFThQza
+         YxWcF3+HGm0qqDdHNnenNtZMdZeUgeQtAldtHb1se2AGDLcLiO4l6TX/xOfVCJiSjb
+         oB1MNuDvAgKzpMlnz2T6Nsow/Kdkzx02km7PhSi/Jqiw7EHndVEOF9as5LYm2byPdG
+         GkiFC7GbIVN8JeY61Vnwj4aj8a+GyM8MOBVeqJAY8GkKv3O7op1AM3ZQAIXn3FZZA1
+         dv4OkvqZkHVizerOL/ZsrADaVPQ54sIv7O9nlFtvvtn7v+eoFksUhfNRMg9lFk0UMe
+         TML/9Aj5Z+kHQ==
+X-CNFS-Analysis: v=2.4 cv=a8D1SWeF c=1 sm=1 tr=0 ts=60fd8c44 cx=a_exe
+ a=TX8r+oJM0yLPAmPh5WrBoQ==:117 a=TX8r+oJM0yLPAmPh5WrBoQ==:17 a=8b9GpE9nAAAA:8
+ a=VwQbUJbxAAAA:8 a=wSIzyl8AIrrWyGTfDxQA:9 a=T3LWEMljR5ZiDmsYVIUa:22
+ a=AjGcO6oz07-iQ99wixmX:22
+From:   Dario Binacchi <dariobin@libero.it>
+To:     linux-clk@vger.kernel.org
+Cc:     Dario Binacchi <dariobin@libero.it>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 2/4] iio: adc: Add driver for Renesas RZ/G2L A/D
- converter
-Message-ID: <20210725155515.25c727b9@jic23-huawei>
-In-Reply-To: <CA+V-a8v28TuGa9Vay9wraRetEK4XZBm6BU4USZYTdFR4BkwBBQ@mail.gmail.com>
-References: <20210719085840.21842-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210719085840.21842-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210724190601.084d43e7@jic23-huawei>
-        <CA+V-a8v28TuGa9Vay9wraRetEK4XZBm6BU4USZYTdFR4BkwBBQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
+Date:   Sun, 25 Jul 2021 18:07:25 +0200
+Message-Id: <20210725160725.10788-1-dariobin@libero.it>
+X-Mailer: git-send-email 2.17.1
+X-CMAE-Envelope: MS4xfO3Vs1lRaT+cPZQpqJqax0ul7UhhyiydwUfOqesDADLoHnBJ0edwg9Neh9c6e+Msd+HBHwor0jnn9YCTNqbTzJEyNsygW4Jg3S1lk+wuOLsrqn7DJxvb
+ jRJIlHf49/Y8M6aJxRatlcOeEDcmi5EMCTr65TEUJ63RCuFV4EFdryFPsGX39QrJRy+gKilcBWpiXFfXD1ZhbxYPfiVudpf1smoM3UDofcbagq9Y6dCqVQ0j
+ 5lB/bwsPWaeekER9s1GGFbSWb+js36QPtL2VT2o1LLWw51gSZO9qCBs6/uXWIcwWeESiMTOAPEp3VaLSUQha4QpSXiPEetqXSDXyxsaS03Fj7rtT1i2d5odI
+ Ci99jdiANw14kqkoMqUaU1fvClaYAvsU/gxA+09gsCgxBT28hYzplfiSmOpIDvITdWcShHY7S2OFrTOfHs401TkoR4X80+YmK9xtduulSW+frnsPo630Wnbi
+ kAzwmpL17scaOnORR162xXJ9s1mRYOE/n+vqM9+Q+DiBdeznaTa4u4+cp/PY70wlUO2Ly/Q7tKnguY41dqnTA4o434jztZ+eyfyymjt/uk+zcglWpbT2JlvM
+ PBgeTo97thVGs9pGsdMPu7q8
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 25 Jul 2021 13:18:53 +0100
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+Enabling the framebuffer leads to a system hang. Running, as a debug
+hack, the store_pan() function in drivers/video/fbdev/core/fbsysfs.c
+without taking the console_lock, allows to see the crash backtrace on
+the serial line.
 
-> Hi Jonathan,
-> 
-> Thank you for the review.
-> 
-> On Sat, Jul 24, 2021 at 7:03 PM Jonathan Cameron <jic23@kernel.org> wrote:
-> >
-> > On Mon, 19 Jul 2021 09:58:38 +0100
-> > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> >  
-> > > Add ADC driver support for Renesas RZ/G2L A/D converter in SW
-> > > trigger mode.
-> > >
-> > > A/D Converter block is a successive approximation analog-to-digital
-> > > converter with a 12-bit accuracy and supports a maximum of 8 input
-> > > channels.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>  
-> >
-> > Hi Lad,
-> >
-> > A few additional comments inline.
-> >
-> > Thanks,
-> >
-> > Jonathan
-> >  
+~ # echo 0 0 > /sys/class/graphics/fb0/pan
 
-...
+[    9.719414] Unhandled exception: IPSR = 00000005 LR = fffffff1
+[    9.726937] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
+[    9.733008] Hardware name: STM32 (Device Tree Support)
+[    9.738296] PC is at clk_gate_is_enabled+0x0/0x28
+[    9.743426] LR is at stm32f4_pll_div_set_rate+0xf/0x38
+[    9.748857] pc : [<0011e4be>]    lr : [<0011f9e3>]    psr: 0100000b
+[    9.755373] sp : 00bc7be0  ip : 00000000  fp : 001f3ac4
+[    9.760812] r10: 002610d0  r9 : 01efe920  r8 : 00540560
+[    9.766269] r7 : 02e7ddb0  r6 : 0173eed8  r5 : 00000000  r4 : 004027c0
+[    9.773081] r3 : 0011e4bf  r2 : 02e7ddb0  r1 : 0173eed8  r0 : 1d3267b8
+[    9.779911] xPSR: 0100000b
+[    9.782719] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
+[    9.788791] Hardware name: STM32 (Device Tree Support)
+[    9.794120] [<0000afa1>] (unwind_backtrace) from [<0000a33f>] (show_stack+0xb/0xc)
+[    9.802421] [<0000a33f>] (show_stack) from [<0000a8df>] (__invalid_entry+0x4b/0x4c)
 
-> 
-> > > +#define RZG2L_ADFIL                  0x2c
-> > > +#define RZG2L_ADCR(n)                        (0x30 + ((n) * 0x4))
-> > > +#define RZG2L_ADCR_AD_MASK           GENMASK(11, 0)
-> > > +
-> > > +#define RZG2L_ADC_MAX_CHANNELS               8
-> > > +#define RZG2L_ADC_CHN_MASK           0x7
-> > > +#define RZG2L_ADC_TIMEOUT            usecs_to_jiffies(1 * 4)
-> > > +
-> > > +struct rzg2l_adc_data {
-> > > +     const struct iio_chan_spec *channels;
-> > > +     u8 num_channels;
-> > > +};
-> > > +
-> > > +struct rzg2l_adc {
-> > > +     void __iomem *base;
-> > > +     struct clk *pclk;
-> > > +     struct clk *adclk;
-> > > +     struct reset_control *presetn;
-> > > +     struct reset_control *adrstn;
-> > > +     struct completion completion;
-> > > +     const struct rzg2l_adc_data *data;
-> > > +     u16 last_val[RZG2L_ADC_MAX_CHANNELS];
-> > > +};
-> > > +
-> > > +static const char * const rzg2l_adc_channel_name[] = {
-> > > +     "adc0",  
-> > Is it useful to expose these as labels to userspace?
-> > Seems unnecessary given they map directly to the channel
-> > numbers.
-> >  
-> Exposing  them as this may vary depending on the wiring on the board,
-> so it  would be better for user space to know which channels are
-> available.
+The `pll_num' field in the post_div_data configuration contained a wrong
+value which also referenced an uninitialized hardware clock when
+clk_register_pll_div() was called.
 
-Hmm.  One thing to take into account is the IIO ABI doesn't require
-channel numbers to be consecutive.  There are a few drivers where
-they aren't due to channel optionality.
+Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
+Signed-off-by: Dario Binacchi <dariobin@libero.it>
+Reviewed-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Perhaps that would make sense here?  If not, I'm fine with leaving
-these as you have it.  They do no harm.
+---
+I added Gabriel Fernandez's 'Reviewed-by' tag as requested by himself
+15 days ago at https://lore.kernel.org/patchwork/patch/1450964/.
 
-> 
-> > > +     "adc1",
-> > > +     "adc2",
-> > > +     "adc3",
-> > > +     "adc4",
-> > > +     "adc5",
-> > > +     "adc6",
-> > > +     "adc7",
-> > > +};
-> > > +
-...
+Changes in v4:
+- Really add Gabriel Fernandez 'Reviewed-by' tag. In version 3 I forgot
+  to add the tag.
 
-> > > +static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
-> > > +{
-> > > +     u32 reg;
-> > > +
-> > > +     if (rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_ADBSY)
-> > > +             return -EBUSY;
-> > > +
-> > > +     rzg2l_set_trigger(adc);
-> > > +
-> > > +     /* select channel */
-> > > +     reg = rzg2l_adc_readl(adc, RZG2L_ADM(2));
-> > > +     reg &= RZG2L_ADM2_CHSEL_CLEAR;
-> > > +     reg |= BIT(ch);
-> > > +     rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
-> > > +
-> > > +     reg = rzg2l_adc_readl(adc, RZG2L_ADM(3));
-> > > +     reg &= RZG2L_ADM3_ADIL_CLEAR;
-> > > +     reg |= RZG2L_ADM3_ADCMP;
-> > > +     reg |= RZG2L_ADM3_ADSMP;  
-> >
-> > No loss in readability in combining the two lines above and shorter
-> > code is always good.  Having the mask on a separate line makes
-> > sense but the |= pair doesn't.
-> >  
-> Agreed will move to the same line.
-> 
-> > What is a bit unusual here is you clear some bits then write different
-> > ones.  That is presumably relying on the fact that the ADCCMP part
-> > is always set to the same value.  That seems unwise to assume from
-> > a long term maintainability point of view.
-> >  
-> The ADIL bits have to be set to zero, so I am clearing the ADIL bits
-> (bit 24-bits 31) and the ADCMP/ADSMP should be set to specific values
-> oxe/0x578 respectively.
+Changes in v3:
+- Add Gabriel Fernandez 'Reviewed-by' tag.
 
-Understood, but from this 'local' bit of code it's not obvious that they don't
-have other bits say, perhaps ADSMP is set to 0x483 for example by some
-other code? (obviously it isn't, but it's nice to not have to sanity check
-the rest of the driver to be sure!)  So normal thing to do would be to also
-mask those bits out. 
+Changes in v2:
+- Change  'u8 pll_num' from 'stm32f4_pll_post_div_data' structure into
+  'int pll_idx'.
 
-I'm a bit curious on whether there are other bits in this register that make it
-useful to do the read modify write cycle? (doesn't seem to be a public
-datasheet from a quick google...)
+ drivers/clk/clk-stm32f4.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> 
-> > > +     rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
-> > > +
-> > > +     reg = rzg2l_adc_readl(adc, RZG2L_ADIVC);
-> > > +     reg &= RZG2L_ADIVC_DIVADC_CLEAR;
-> > > +     reg |= RZG2L_ADIVC_DIVADC_4;
-> > > +     rzg2l_adc_writel(adc, RZG2L_ADIVC, reg);
-> > > +
-> > > +     reg = rzg2l_adc_readl(adc, RZG2L_ADINT);
-> > > +     reg &= ~RZG2L_ADINT_INTS;
-> > > +     reg &= RZG2L_ADINT_CH_CLEAR;
-> > > +     reg |= RZG2L_ADINT_CSEEN;
-> > > +     reg |= BIT(ch);
-> > > +     rzg2l_adc_writel(adc, RZG2L_ADINT, reg);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-...
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 18117ce5ff85..5c75e3d906c2 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -526,7 +526,7 @@ struct stm32f4_pll {
+ 
+ struct stm32f4_pll_post_div_data {
+ 	int idx;
+-	u8 pll_num;
++	int pll_idx;
+ 	const char *name;
+ 	const char *parent;
+ 	u8 flag;
+@@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
+ 
+ #define MAX_POST_DIV 3
+ static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
+-	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
++	{ CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
+ 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
+ 
+-	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
++	{ CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
+ 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
+ 
+-	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
++	{ NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
+ 		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
+ };
+ 
+@@ -1774,7 +1774,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 				post_div->width,
+ 				post_div->flag_div,
+ 				post_div->div_table,
+-				clks[post_div->pll_num],
++				clks[post_div->pll_idx],
+ 				&stm32f4_clk_lock);
+ 
+ 		if (post_div->idx != NO_IDX)
+-- 
+2.17.1
 
-Thanks,
-
-Jonathan
