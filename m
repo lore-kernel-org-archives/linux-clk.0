@@ -2,370 +2,302 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C20C4320E
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 07:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0604C4320A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 884D660F49
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 07:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA19A60F49
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232690AbhGZGhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jul 2021 02:37:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:57662 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232585AbhGZGh2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 02:37:28 -0400
-X-UUID: 15cf67d2c12848109e833f98c2dbbfef-20210726
-X-UUID: 15cf67d2c12848109e833f98c2dbbfef-20210726
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 197119199; Mon, 26 Jul 2021 15:17:54 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 26 Jul 2021 15:17:52 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 26 Jul 2021 15:17:52 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        id S232820AbhGZIhv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jul 2021 04:37:51 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:21462 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232808AbhGZIhv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 04:37:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1627291100; x=1658827100;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=jn3lCa50lQXV8x//dJv7/5r0zEd3AEULkuvluHz2WcI=;
+  b=D0JvrbaidFd7+lDY+6Yuiwdo8SyZYlm5p3LumHxF3TlozokXbtcIioxY
+   YtXjb/GRVYzyjLoFx8PJTQPjgC78Ds+lma5NnG8w5dmDlxs19pyuYF75w
+   ChhYKIi2LT4EFOcBCaeQbP495T/G7g1MZb13ESt/lK2o45p5INYbaA9Os
+   WgHIV1mSPTs00uEZ1TE6Tto6TsTYJevVSMGLoAnzpc5V/fKstS0Z0LVTb
+   QrGuqAMP7T1swqSt7nX6YD8MLCnNWhOMOyds4w3Jsv5RphPAXAtCnQMyW
+   300ZTkarwuFrLmjjeVZOToUd2pI/tmzigdMRPjKmPWDf9ZvEpmylTJUnx
+   Q==;
+IronPort-SDR: 2BjAZhTj+3VwTAAFPLYNL3fhNI1jL/Az0GJ5kAZRBisVv6QYzD96lkS9wA93VaMGGbrqyqA1jH
+ MA7iEBbQ/nEczdkpyxvtUFTIKCwI+Ad4IyrGLF3Q6zg0ZPhSnntXLA4KDkYjKk51nPn6leIiMb
+ 4v1/9hybsFp0gE8D9JkF7YNPUZXfmPMQfo5qq6UhVQSpWkeTmM1YD32PB5iWamsti+dyq112Zr
+ a7xuccpuf6oCnHHCPa2HNvhV238O4Oy5aIv3DOs2mGntTmLA/g+5j284w0lHvn6lfmV+VYc+QR
+ U38TbujhdnXLqPp+M16I2t5D
+X-IronPort-AV: E=Sophos;i="5.84,270,1620716400"; 
+   d="scan'208";a="137508085"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Jul 2021 02:18:18 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 26 Jul 2021 02:18:18 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2
+ via Frontend Transport; Mon, 26 Jul 2021 02:18:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Sj1bAk1sHaS8XPismWR7UMBrPHowpekNS1Qm3e0rbpySnJmN2VMBQMtApXknm2atjqZWR4n+t92iR5V/4myg8TT9rj6ZLxAKApayulG/D00rodnMA8wju8HS2F7Z9bMtL/tVo6u4ACCYdBGINBViXi3cdhkTT0VyWtPSuHTblt6QRA/NkuRl0bKsdjTiqXE4qKQioWoHwtsyR0xmKrMGSzn7C4GAvU+btFTSPZYbm6ho1qecpNcyKuoj11LE6ukdaxSV0PqmJ1nl2VnkEMVLLQIr/skJjGLToUIOjjvVXGsA2U9YOFelZrN838c47QWuKpC8LUwx4e3bTMgms3qpXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YNYvxzFePqBinR8G6JW5BFGo6blJpXMBpFH+nKB3sGg=;
+ b=Cu1UFVkXwMHIrWPrTeijjYxL69JYWYww1ExlJAC0J6x+bnXqezekhIEuS15b7z7K80s+/ZqZzp9WoHHYLp8y//wOOImTj5Dq0pglsUz5lzbt/yi5lYMHOix+pdz4/Z6vkcEtEo4+l6OMDrXCQLo5di3U9UgqgEXchcqs62BwmAV9ClaQzOAHIWKXRn/KXWg+i8VvZQVEBLOCfRfb/iHoufo9anypuombKn90R4HYYR4zXGetFjMX6FoOfXxaVL9faUd8NeJwRooWyfMaKewOIakXd4Aikja+6Fjc7BFAJoHLpp08/ouXrkcV/dSV38D83CTstArSF6hj+HiboRBRUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YNYvxzFePqBinR8G6JW5BFGo6blJpXMBpFH+nKB3sGg=;
+ b=Q4qLWiIwDMSHc43gUz+CXi/iAn/QpnuCfBsjyalb4DQYgae/dxjfg1KJvme8TGFLcDnO5/iwLpaaS4iGSq60LkcDSFVIa0o/JD7gLGHTzJv9alsUaDulasftj4CurJeSeC+S4eRcuQOLTuyDVM5OlzDBN4Uhs+Qv67AkWZqb2+s=
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com (2603:10b6:5:69::31) by
+ DM6PR11MB4075.namprd11.prod.outlook.com (2603:10b6:5:198::25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4352.29; Mon, 26 Jul 2021 09:18:16 +0000
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::619c:afc6:5264:d3c]) by DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::619c:afc6:5264:d3c%5]) with mapi id 15.20.4352.031; Mon, 26 Jul 2021
+ 09:18:16 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <u.kleine-koenig@pengutronix.de>, <andy.shevchenko@gmail.com>
+CC:     <wsa@kernel.org>, <sboyd@kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
+        <a.zummo@towertech.it>, <mturquette@baylibre.com>,
+        <Nicolas.Ferre@microchip.com>, <linux-spi@vger.kernel.org>,
+        <o.rempel@pengutronix.de>, <Ludovic.Desroches@microchip.com>,
+        <broonie@kernel.org>, <thierry.reding@gmail.com>,
+        <aardelean@deviqon.com>, <kernel@pengutronix.de>,
+        <Jonathan.Cameron@huawei.com>, <akpm@linux-foundation.org>,
+        <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     John Crispin <john@phrozen.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH 12/12] arm64: dts: mediatek: add mt7986b support
-Date:   Mon, 26 Jul 2021 15:14:39 +0800
-Message-ID: <20210726071439.14248-13-sam.shih@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20210726071439.14248-1-sam.shih@mediatek.com>
-References: <20210726071439.14248-1-sam.shih@mediatek.com>
+        <torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
+ clocks enabled clocks
+Thread-Topic: [PULL] Add variants of devm_clk_get for prepared and enabled
+ clocks enabled clocks
+Thread-Index: AQHXgf8pHY06FI1b/UyQmpkpzohMFQ==
+Date:   Mon, 26 Jul 2021 09:18:16 +0000
+Message-ID: <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+ <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
+ <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+ <20210705080144.zfbzkm7l3gmnh6st@pengutronix.de>
+ <20210722060654.nudpdtemosi64nlb@pengutronix.de> <YPkg0wtYIoHKpTUW@kunai>
+ <20210722081817.2tsjzof4gvldq6ka@pengutronix.de> <YPlfcbkxiBmB+vw1@kunai>
+ <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
+ <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
+In-Reply-To: <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+authentication-results: pengutronix.de; dkim=none (message not signed)
+ header.d=none;pengutronix.de; dmarc=none action=none
+ header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 04d48598-70e6-44e6-b400-08d950164d48
+x-ms-traffictypediagnostic: DM6PR11MB4075:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB407529003CA9ADAA1072622287E89@DM6PR11MB4075.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: IWOAEkNP1TE9bQoELQMiIMMHAg9jvm1z4aQP92ANCHITbx4NCxriNGuZH0Xh3WDd4YGoVs03rTP3A/FiQgcEHcdpBh6bYLjKFE+GKpkobqwonG5tEAASyPp/zmAuoZlEvxGyLq8oe72m0qD82OTlKcLaEUMr9vdcVxEupD740OlVInAXKpUXnCQUOCL03O1RTl6V0lYQjUWAWTI6he3l8GJwZsn2E25lsrV+/UfZfwsTumiyNtE0YJb+njQ+9BeO3lahMJVpKeC2c1IrpfczdzzqpjwOL3L6uaLg5a8aHnvbr0j23gW/zKvTJZG5/Mai/Le65Jo6Q1tBVS1I0rOIxFoePs+3ZZlLA+vRMdwM8zOIgmqU8/zMBg9jJkzFZ9hPnJHurnvztaeICG+f2gDN5XWzaEbj7WFCvrijeXoPM5Ay+wxUw13l2rmmyt4fOIAIWpxnPT9vHu6iLRyN+ncsvs3cn7ck+SWMf8HpkkARnfKK4rWh51Xit3X3H48Q2xwxsUXGWivDWcqK3K5SwVYzJ1JH0ecj4hx2KmtPetJSGa1JtXC2poSwzsmG261I+3pRyfApIuOcWeaGx1J+cp4JTqsMYMuZNquHjKxmcPMsgKwhdF6rcsKHx/txauhD1teAk90gh5zsYhWYrvTLOZN0plwzGCaIw6AW/Wh94Y5JCs+8vFvEPjGK0p/X0H8tB30+MIMLrij/Ad8kmOoWHLOhff+romMpCW47JNJ/oXwO30YMRt9jHgJcr+Gm6k+INNrWzJB+Pe02CZ0sdvhW3bVjcwT0lqAav0dk7ncWs9ePqaJe62fgXFLiqBME70KW05RtVB9pivWCITkKeE+FbqM+jlONcy/Tef8hUmKYHbskl9GNLhFv2f6MsxoVXVAF6u/vyvgxT4oxAzCtK+KndM/pMA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3420.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(966005)(316002)(66946007)(6512007)(7416002)(54906003)(71200400001)(86362001)(110136005)(186003)(91956017)(76116006)(508600001)(66574015)(66476007)(66556008)(66446008)(26005)(83380400001)(6506007)(2906002)(36756003)(2616005)(53546011)(122000001)(31686004)(6486002)(4001150100001)(64756008)(31696002)(5660300002)(8936002)(38100700002)(4326008)(8676002)(45980500001)(43740500002)(38070700004);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?ybk2M8lqJRIt5DXObhEwLVoCLIhUO1hH177bHQ1QN9c5DYelHp8Ekpki?=
+ =?Windows-1252?Q?XIsjvKvr8o7yJ3r6r6B/LDYDczu4iylOggyHNfmWhTB1Lf7CzgecRqnP?=
+ =?Windows-1252?Q?JobiUJrd0e3jV1n6qlLgKKo1eojJ/lCr+hBujQrM+MN82DgyWr0b3uEg?=
+ =?Windows-1252?Q?/rFF0GKjfCQEKrnXvhgbf3BIzUlPTmh0bBTeUO4pbqg1fcEK+whZQObf?=
+ =?Windows-1252?Q?ZHYkp2EL7+zC2Bh8yna/S9jhaXzZd+OagaGquFjVtpg/eGxl7isy6vRn?=
+ =?Windows-1252?Q?bbVdaElwixwpQc0Mw0NdDFFjODb+dRJ72ADVUVb+aXXy6kMIhG6Da0Kw?=
+ =?Windows-1252?Q?Hm1KFP6F0LTmQxiBxBDrNd2Ukz79AtkeDPNISugEQco8aLgFj/z51eMh?=
+ =?Windows-1252?Q?lmwootUCnamIviOOX2qAIULboLqFpwIF+/I4Nssh2tgW1ZylGEdRBtWB?=
+ =?Windows-1252?Q?a3U1n9uwixGzHTHzuYrjMjL8SCeVXnbWqlCA2234D6J/veQzX4fE39nL?=
+ =?Windows-1252?Q?8Rawajm2WOfJ1Cx9tAOExTgLRcCCO2IoJetU7t8CqdqbOOQ+LRRBtRqs?=
+ =?Windows-1252?Q?xLPk8qSFEEtiJqLn0wh0rmZrfs0YQhDoWRaEShDeBMFOlMVVR1e9MJut?=
+ =?Windows-1252?Q?6Wn0wjUCnXltGr2EtH2SMaNiDzEdP1fuo71GF8RWHHh8C5hDct9kQmyF?=
+ =?Windows-1252?Q?OlTWGy7Ncf+F16pYXuItJhBea8r5ds5Zb+Vhwzc8EFZc+SdaKaLtK6Cd?=
+ =?Windows-1252?Q?LBAtlsgytumJlfrOw8unvWFfVT0E86PPj7/rHkAGb8J3+pWPkvKHyeP0?=
+ =?Windows-1252?Q?581sv9o0YI7WFc1NChIzjKTbZSVlImZOkcLNZpkrsa5ePXwqS8lZ/HDg?=
+ =?Windows-1252?Q?BuWg2EpscIruLMyVLYdooIAv2hV6Jh8UZ+Z/pI8EtgNoyKYb7DOBz7Ch?=
+ =?Windows-1252?Q?gbUGp0DYatebGl8MWOOz6Rd0DegchHQrLxLgkQWqvwU3izdNtX6fxUmS?=
+ =?Windows-1252?Q?WD98VHqjPS3nDKnmEYnwmPBeE2nsQpdGReDI/WrG+R69LLGSz5wa+8bL?=
+ =?Windows-1252?Q?RtgWpB14K4ilpTx2BF1yoHg06UYRTx3YZZo0e/Xr9M0k7ZO4Em9EEI7b?=
+ =?Windows-1252?Q?+rhmWBgE9/BFIP9VEsVj3mnuqDqzuVkyymECmtjJrrO4JPwqUQVXrOV4?=
+ =?Windows-1252?Q?5Vz/CRb/95UUD0/pkVPvPnH6zZXdvm8D//KvE7iQcMUbYIC55++fu4Xl?=
+ =?Windows-1252?Q?AWDL5pniNZwr5DmCnDGs5dbY+vXiXZOhDozlTIkqsnaZEFiurG7riSex?=
+ =?Windows-1252?Q?Oj+mueve+XCAMb73tVoWVVg6GmsyO63XeKebcnq9LE74RzNioDn7yZeE?=
+ =?Windows-1252?Q?K/GZEOoMhZaxZN/oB79i4VdEPl4s63tPiCw=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <2EB1600D5387994EBEA2785CF265B011@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3420.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04d48598-70e6-44e6-b400-08d950164d48
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2021 09:18:16.4269
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CWOz8+d7+fQpkgUc8hqaiG61U0SCix3gjeDu4lNUG/TyJ2F92jo9AdSavtEOok7hqFz+pIzthUoq3Dy7RK4j+Fz5lhjjsvPfUfIjNezpNo0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4075
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add basic chip support for Mediatek mt7986b, include
-uart nodes with correct clocks, rng node with correct clock,
-watchdog node and mt7986b pinctrl node.
+On 23.07.2021 12:13, Uwe Kleine-K=F6nig wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e content is safe
+>=20
+>=20
+> ForwardedMessage.eml
+>=20
+> Subject:
+> Re: [PULL] Add variants of devm_clk_get for prepared and enabled clocks
+> enabled clocks
+> From:
+> Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> Date:
+> 23.07.2021, 12:13
+>=20
+> To:
+> Andy Shevchenko <andy.shevchenko@gmail.com>
+> CC:
+> Wolfram Sang <wsa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+> "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+> "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Alexandre Bellon=
+i
+> <alexandre.belloni@bootlin.com>, Claudiu Beznea
+> <claudiu.beznea@microchip.com>, Alessandro Zummo <a.zummo@towertech.it>,
+> Michael Turquette <mturquette@baylibre.com>, Nicolas Ferre
+> <nicolas.ferre@microchip.com>, "linux-spi@vger.kernel.org"
+> <linux-spi@vger.kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>,
+> Ludovic Desroches <ludovic.desroches@microchip.com>, Mark Brown
+> <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandr=
+u
+> Ardelean <aardelean@deviqon.com>, "kernel@pengutronix.de"
+> <kernel@pengutronix.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+> Andrew Morton <akpm@linux-foundation.org>, Lee Jones
+> <lee.jones@linaro.org>, "linux-clk@vger.kernel.org"
+> <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+> <linux-arm-kernel@lists.infradead.org>, Linus Torvalds
+> <torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+>=20
+>=20
+> Hello,
+>=20
+> [adding Linus and lkml to Cc: and adding some more context]=20
+>=20
+> On Wed, Jun 09, 2021 at 10:21:23PM +0200, Uwe Kleine-K=F6nig wrote:
+>> given that I don't succeed in getting any feedback for my patch set, I'm
+>> trying with a pull request today.
+> This is for a series that is currently in v7 and didn't get any feedback
+> at all yet. The history is:
+>=20
+> v1: 2020-10-13, https://lore.kernel.org/linux-clk/20201013082132.661993-1=
+-u.kleine-koenig@pengutronix.de
+>     no feedback at all
+>=20
+> v2: 2021-03-01, https://lore.kernel.org/linux-clk/20210301110821.1445756-=
+1-uwe@kleine-koenig.org
+>     kernel test robot identified some issues
+>=20
+> v3: 2021-03-01, https://lore.kernel.org/linux-clk/20210301135053.1462168-=
+1-u.kleine-koenig@pengutronix.de
+>     I added a few driver patches to show the benefit. (However in a way
+>     that the autobuilders don't understand, so there were some false
+>     positive build failure reports.)
+>=20
+> v4: 2021-03-30, https://lore.kernel.org/linux-clk/20210330181755.204339-1=
+-u.kleine-koenig@pengutronix.de
+>     Got some feedback for the converted drivers by the respective
+>     maintainers. Some were indifferent, some found it good
+>=20
+> v5: 2021-04-22, https://lore.kernel.org/linux-clk/20210422065726.1646742-=
+1-u.kleine-koenig@pengutronix.de
+>     Fixed a problem in one of the driver changes (i2c-imx), no feedback
+>     apart from pointing out a few typos, silence from the clk
+>     maintainers
+>=20
+> v6: 2021-04-26, https://lore.kernel.org/linux-clk/20210426141730.2826832-=
+1-u.kleine-koenig@pengutronix.de
+>     Just the typos fixed, no feedback
+>=20
+> v6 resend: 2021-05-10, https://lore.kernel.org/linux-clk/20210510061724.9=
+40447-1-u.kleine-koenig@pengutronix.de
+>     no changes in code. Got some feedback from Jonathan Cameron
+>=20
+> v7: 2021-05-10, https://lore.kernel.org/linux-clk/20210510174142.986250-1=
+-u.kleine-koenig@pengutronix.de
+>     Adress Jonathan's feedback, recieved some more acks from non-clk
+>     people
+>=20
+> pull request: 2021-07-09, https://lore.kernel.org/linux-clk/2021060920212=
+3.u5rmw7al4x3rrvun@pengutronix.de
+>=20
+> On Fri, Jul 23, 2021 at 11:26:58AM +0300, Andy Shevchenko wrote:
+>> On Thursday, July 22, 2021, Wolfram Sang <wsa@kernel.org> wrote:
+>>
+>>>>> What about adding gkh to the list explaining the situation to him?
+>>>> Greg doesn't like devm_ stuff.
+>>>>
+>>>> I already asked Arnd who doesn't want to interfere and akpm who didn't
+>>>> react either up to now.
+>>> Wow, okay, that is frustrating.
+>> The situation simply shows the process gap and One Maintainer nowadays i=
+s
+>> far from enough to satisfy demands.
+> Technically there are two maintainers for drivers/clk, Michael Turquette
+> and Stephen Boyd. It seems Michael is MIA and Stephen doesn't have the
+> capacity to address all requests.
+>=20
+>> What I think about is that we need to escalate this to Linus and
+>> others and elaborate the mechanisms how to squeeze a new (additional)
+>> maintainer when the original one is not responsive. Let=92s say some
+>> procedural steps. Otherwise we doomed because of human factor.
+> Assuming there was some process for this, is there someone who is
+> willing to take responsibility here?
 
-Add cpu node, timer node, gic node, psci and reserved-memory node
-for ARM Trusted Firmware,
+Hi,
 
-Add clock controller nodes, include 40M clock source, topckgen, infracfg,
-infracfg_ao (always on), apmixedsys and ethernet subsystem.
+In the last year I worked on AT91 clock drivers and I would be available
+for taking responsibility beyond AT91 clocks (if everyone's OK with this),
+in whatever form the current maintainers and people in the audience would
+agree, if any (co-maintainer or other forms that could be useful). The idea
+is to help things progress as I also have patches waiting for feedback on
+clock mailing list for almost 6 months.
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/Makefile        |   1 +
- arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts |  21 ++
- arch/arm64/boot/dts/mediatek/mt7986b.dtsi    | 235 +++++++++++++++++++
- 3 files changed, 257 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b.dtsi
+Let me know if I can be helpful.
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index e6c3a73b9e4a..d555e43d1ccc 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm-hana.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts b/arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts
-new file mode 100644
-index 000000000000..8296f1d27e77
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2021 MediaTek Inc.
-+ * Author: Sam.Shih <sam.shih@mediatek.com>
-+ */
-+
-+/dts-v1/;
-+#include "mt7986b.dtsi"
-+
-+/ {
-+	model = "MediaTek MT7986b RFB";
-+	compatible = "mediatek,mt7986b-rfb";
-+	chosen {
-+		bootargs = "console=ttyS0,115200n1 loglevel=8  \
-+				earlycon=uart8250,mmio32,0x11002000";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986b.dtsi b/arch/arm64/boot/dts/mediatek/mt7986b.dtsi
-new file mode 100644
-index 000000000000..4b001729b50e
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7986b.dtsi
-@@ -0,0 +1,235 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2021 MediaTek Inc.
-+ * Author: Sam.Shih <sam.shih@mediatek.com>
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/mt7986-clk.h>
-+
-+/ {
-+	compatible = "mediatek,mt7986b";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	clk40m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <40000000>;
-+		clock-output-names = "clkxtal";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x0>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x3>;
-+			#cooling-cells = <2>;
-+		};
-+	};
-+
-+	psci {
-+		compatible  = "arm,psci-0.2";
-+		method      = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		/* 192 KiB reserved for ARM Trusted Firmware (BL31) */
-+		secmon_reserved: secmon@43000000 {
-+			reg = <0 0x43000000 0 0x30000>;
-+			no-map;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		clock-frequency = <13000000>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>,
-+			      <0 0x0c080000 0 0x200000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		infracfg_ao: infracfg_ao@10001000 {
-+			compatible = "mediatek,mt7986-infracfg_ao", "syscon";
-+			reg = <0 0x10001000 0 0x68>;
-+			#clock-cells = <1>;
-+		};
-+
-+		infracfg: infracfg@10001040 {
-+			compatible = "mediatek,mt7986-infracfg", "syscon";
-+			reg = <0 0x1000106c 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		topckgen: topckgen@1001b000 {
-+			compatible = "mediatek,mt7986-topckgen", "syscon";
-+			reg = <0 0x1001B000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		watchdog: watchdog@1001c000 {
-+			compatible = "mediatek,mt7986-wdt",
-+				     "mediatek,mt6589-wdt";
-+			reg = <0 0x1001c000 0 0x1000>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			#reset-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		apmixedsys: apmixedsys@1001e000 {
-+			compatible = "mediatek,mt7986-apmixedsys";
-+			reg = <0 0x1001E000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pio: pinctrl@1001f000 {
-+			compatible = "mediatek,mt7986b-pinctrl";
-+			reg = <0 0x1001f000 0 0x1000>,
-+			      <0 0x11c30000 0 0x1000>,
-+			      <0 0x11c40000 0 0x1000>,
-+			      <0 0x11e20000 0 0x1000>,
-+			      <0 0x11e30000 0 0x1000>,
-+			      <0 0x11f00000 0 0x1000>,
-+			      <0 0x11f10000 0 0x1000>,
-+			      <0 0x1000b000 0 0x1000>;
-+			reg-names = "gpio_base", "iocfg_rt_base", "iocfg_rb_base",
-+				    "iocfg_lt_base", "iocfg_lb_base", "iocfg_tr_base",
-+				    "iocfg_tl_base", "eint";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pio 0 0 41>, <&pio 66 66 35>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&gic>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		sgmiisys0: syscon@10060000 {
-+			compatible = "mediatek,mt7986-sgmiisys",
-+				     "mediatek,mt7986-sgmiisys_0",
-+				     "syscon";
-+			reg = <0 0x10060000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		sgmiisys1: syscon@10070000 {
-+			compatible = "mediatek,mt7986-sgmiisys",
-+				     "mediatek,mt7986-sgmiisys_1",
-+				     "syscon";
-+			reg = <0 0x10070000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		trng: trng@1020f000 {
-+			compatible = "mediatek,mt7986-rng",
-+				     "mediatek,mt7623-rng";
-+			reg = <0 0x1020f000 0 0x100>;
-+			clocks = <&infracfg_ao CK_INFRA_TRNG_CK>;
-+			clock-names = "rng";
-+			status = "disabled";
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt7986-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&infracfg_ao CK_INFRA_UART0_SEL>,
-+				 <&infracfg_ao CK_INFRA_UART0_CK>;
-+			clock-names = "baud", "bus";
-+			assigned-clocks = <&topckgen CK_TOP_UART_SEL>,
-+					  <&infracfg_ao CK_INFRA_UART0_SEL>;
-+			assigned-clock-parents = <&topckgen CK_TOP_CB_CKSQ_40M>,
-+						 <&infracfg CK_INFRA_UART>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt7986-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&infracfg_ao CK_INFRA_UART1_SEL>,
-+				 <&infracfg_ao CK_INFRA_UART1_CK>;
-+			clock-names = "baud", "bus";
-+			assigned-clocks = <&infracfg_ao CK_INFRA_UART1_SEL>;
-+			assigned-clock-parents = <&infracfg CK_INFRA_CK_F26M>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@11004000 {
-+			compatible = "mediatek,mt7986-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11004000 0 0x400>;
-+			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&infracfg_ao CK_INFRA_UART2_SEL>,
-+				 <&infracfg_ao CK_INFRA_UART2_CK>;
-+			clock-names = "baud", "bus";
-+			assigned-clocks = <&infracfg_ao CK_INFRA_UART2_SEL>;
-+			assigned-clock-parents = <&infracfg CK_INFRA_CK_F26M>;
-+			status = "disabled";
-+		};
-+
-+		ethsys: syscon@15000000 {
-+			 #address-cells = <1>;
-+			 #size-cells = <1>;
-+			 compatible = "mediatek,mt7986-ethsys",
-+				      "syscon";
-+			 reg = <0 0x15000000 0 0x1000>;
-+			 #clock-cells = <1>;
-+			 #reset-cells = <1>;
-+		};
-+
-+	};
-+
-+};
--- 
-2.29.2
+Thank you,
+Claudiu Beznea
+
+>=20
+> Best regards
+> Uwe
+> =20
+> -- Pengutronix e.K. | Uwe Kleine-K=F6nig | Industrial Linux Solutions |
+> https://www.pengutronix.de/ |
+>=20
 
