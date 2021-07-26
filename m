@@ -2,188 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC48C4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15139C4320A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C04D60F11
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E58A060F11
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 09:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232454AbhGZIjw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jul 2021 04:39:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42930 "EHLO
+        id S233059AbhGZJMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jul 2021 05:12:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232295AbhGZIjw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 04:39:52 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DB3C061765
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 02:20:21 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id bp1so14293255lfb.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 02:20:21 -0700 (PDT)
+        with ESMTP id S232861AbhGZJMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 05:12:38 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891B8C061757;
+        Mon, 26 Jul 2021 02:53:06 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id e21so6409062pla.5;
+        Mon, 26 Jul 2021 02:53:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UyAhVW8SUVdW2juHf4NXSIfTyUpw2d4E9HcLC6UlbsU=;
-        b=PFhaUyyioW4u4jvnVZfDpQc+0BSgWt8O5W+h2/JkXloGBxxa1lz6qvX+LcbuUXQc2N
-         Z/sV52rf44gz4YnpyNlA3a5x50wV6yKSQCx7U00BnemtwgGM+ascTy/4/9Bei7pKU0i6
-         ejhLDXqu6p6hD3mYKZgz79DXesDgefxzliTwg=
+         :cc:content-transfer-encoding;
+        bh=J11jCx264fDkYB4Ey5+F/K1O59ZJzQ0+bvigKGl9vLw=;
+        b=C5VW49QstETO2+nuSLBxPYmWT5UFG2d/DKZGk6G0dcyb9Sqw4lenOzvlZ2r3hw57W9
+         xiHEJuhlXYAvbBDr/48DS+PgQu3WoEdrKEkxAaKWojCGTTPQB3Z+cfG/Lsp0m7J9SIaE
+         t4ByfnivIBylnuZYOWpEsiwmqjREBX+DdpcWvaP16OujRGFnVMnjGXrzq0571LSzPXHh
+         XtvE0oJ8yb0nTDNYGjYRojSDcDh8+cZsO2pz0+brbSO2JMCML5/9lALcQB4Vr8Fw2EYI
+         7he4EPa/V2gcoi89RG3Kh8E/TtNrrVuW8O9w2A5q6qujRae2MXBrqAQDwKt2Hw/UDERV
+         Cegw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UyAhVW8SUVdW2juHf4NXSIfTyUpw2d4E9HcLC6UlbsU=;
-        b=l++qwGwphYJ/PG7YmqD0wWjBrH+zLdhKplOOlqK+UbIcSTQ9MFANqcVa76bcfIlD8D
-         mYTk71h2n+qR+tFIbuRok2bE6xQhZljnuS2z7JVvl5rGw4iOQxan0NI8fr39/8yVUb5u
-         MKDc19w35LP7LFBs0VboQ+k+78AFjUV2RHLlMSPrDInNQR3egnkaZQcXz8pMC2kgKj7Y
-         lRbUR53AYvaNKGqNqG3we3677b+Tab5Q9ELozWApW4JvzqTjAAKuZyVAooABBRbzBTor
-         ui8fiAmY/wAFN2wErjST8hgO+yExd8GMZFho5pfS1Z09D6F57wYySg5800fPIlbn6AYG
-         peaA==
-X-Gm-Message-State: AOAM5307sNOGUgcwtcxEC87gQz1FfcuWiAu1Dgn7KxoJY6D9WvtrzcQZ
-        UvxnnLHEQ8W43pbjHkn5JSwf4t5vPzKdgd0LPOxCBw==
-X-Google-Smtp-Source: ABdhPJxZeDoaO4+lBiCkXyq/2Admv1+kefRfVNjKKrFIMZn357CPp9SKVLhT5mJJhxTofCy8T41M60sD5j6u/8BBBOQ=
-X-Received: by 2002:ac2:48b8:: with SMTP id u24mr12319860lfg.587.1627291219448;
- Mon, 26 Jul 2021 02:20:19 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=J11jCx264fDkYB4Ey5+F/K1O59ZJzQ0+bvigKGl9vLw=;
+        b=JSflZndkBukGECewBB1symzTn++pC5DR1L+9BPWhSrlJzN/kE9vYxh9bnT7q9XNayT
+         GdN8K+cvf5VflGGY3hQt46zUyrw7jLwsZuFddeh21gBWBRiE6T+el8iakAR+kGM6N0Lq
+         VhAxUeKr58nz0Lo3qcmOtBfIJwkDo6UgKZcGxOQRdObQ0HDERlLjTIbM5c25unXJ7GTY
+         Zk7FroWleUxNa/MNGzedk65JX1VP8i7ANzojzPQIWjtXRchJ3dWXmkXr4BJ/H2WtkY3m
+         t4eyMgZojSZCRSB/9ZghIFhST6ILvqxBHFFR/Sv/3wmv5tBNb6u8aop6/vd/vPJHNl/p
+         1MpA==
+X-Gm-Message-State: AOAM532mHcOakdBVA9OC+jcIBCGSHfSIRXe5BzW8sAZxb9OvQKn5mS9F
+        HUdFFT0Xi8CBvD5/dXmEk0T8tKZOmgGm6iJ25wk=
+X-Google-Smtp-Source: ABdhPJyrleBpLvLSD6dget3tB6MIaHE3pdYrzLelP+QIQO/diqAZwSWk0ozlkYeOVamNBz/HZ52KPSJJUEEKdjIN/b0=
+X-Received: by 2002:a17:90b:1194:: with SMTP id gk20mr25831664pjb.181.1627293186051;
+ Mon, 26 Jul 2021 02:53:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210726071439.14248-1-sam.shih@mediatek.com> <20210726071439.14248-2-sam.shih@mediatek.com>
-In-Reply-To: <20210726071439.14248-2-sam.shih@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 26 Jul 2021 17:20:08 +0800
-Message-ID: <CAGXv+5GeEBAkXKfA=S7XGOLYtCRihP5ov6kSiw+eevPAi74GAQ@mail.gmail.com>
-Subject: Re: [PATCH 01/12] dt-bindings: clock: mediatek: document clk bindings
- for mediatek mt7986 SoC
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-gpio@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-        John Crispin <john@phrozen.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>
+References: <20210510174142.986250-1-u.kleine-koenig@pengutronix.de>
+ <20210609202123.u5rmw7al4x3rrvun@pengutronix.de> <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+ <20210705080144.zfbzkm7l3gmnh6st@pengutronix.de> <20210722060654.nudpdtemosi64nlb@pengutronix.de>
+ <YPkg0wtYIoHKpTUW@kunai> <20210722081817.2tsjzof4gvldq6ka@pengutronix.de>
+ <YPlfcbkxiBmB+vw1@kunai> <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
+ <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+In-Reply-To: <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 26 Jul 2021 12:52:26 +0300
+Message-ID: <CAHp75VeFXJ-0ak7=a0QCtKNdFpu98W6iJ2YuR4MpNx+U4rHe2A@mail.gmail.com>
+Subject: Re: [PULL] Add variants of devm_clk_get for prepared and enabled
+ clocks enabled clocks
+To:     Claudiu.Beznea@microchip.com
+Cc:     u.kleine-koenig@pengutronix.de, wsa@kernel.org, sboyd@kernel.org,
+        linux-rtc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        alexandre.belloni@bootlin.com, a.zummo@towertech.it,
+        mturquette@baylibre.com, Nicolas.Ferre@microchip.com,
+        linux-spi@vger.kernel.org, o.rempel@pengutronix.de,
+        Ludovic.Desroches@microchip.com, broonie@kernel.org,
+        thierry.reding@gmail.com, aardelean@deviqon.com,
+        kernel@pengutronix.de, Jonathan.Cameron@huawei.com,
+        akpm@linux-foundation.org, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 3:17 PM Sam Shih <sam.shih@mediatek.com> wrote:
+On Mon, Jul 26, 2021 at 12:18 PM <Claudiu.Beznea@microchip.com> wrote:
+> On 23.07.2021 12:13, Uwe Kleine-K=C3=B6nig wrote:
+> > From:
+> > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> > Date:
+> > 23.07.2021, 12:13
+> > On Wed, Jun 09, 2021 at 10:21:23PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> >> given that I don't succeed in getting any feedback for my patch set, I=
+'m
+> >> trying with a pull request today.
+> > This is for a series that is currently in v7 and didn't get any feedbac=
+k
+> > at all yet. The history is:
+> >
+> > v1: 2020-10-13, https://lore.kernel.org/linux-clk/20201013082132.661993=
+-1-u.kleine-koenig@pengutronix.de
+> >     no feedback at all
+> >
+> > v2: 2021-03-01, https://lore.kernel.org/linux-clk/20210301110821.144575=
+6-1-uwe@kleine-koenig.org
+> >     kernel test robot identified some issues
+> >
+> > v3: 2021-03-01, https://lore.kernel.org/linux-clk/20210301135053.146216=
+8-1-u.kleine-koenig@pengutronix.de
+> >     I added a few driver patches to show the benefit. (However in a way
+> >     that the autobuilders don't understand, so there were some false
+> >     positive build failure reports.)
+> >
+> > v4: 2021-03-30, https://lore.kernel.org/linux-clk/20210330181755.204339=
+-1-u.kleine-koenig@pengutronix.de
+> >     Got some feedback for the converted drivers by the respective
+> >     maintainers. Some were indifferent, some found it good
+> >
+> > v5: 2021-04-22, https://lore.kernel.org/linux-clk/20210422065726.164674=
+2-1-u.kleine-koenig@pengutronix.de
+> >     Fixed a problem in one of the driver changes (i2c-imx), no feedback
+> >     apart from pointing out a few typos, silence from the clk
+> >     maintainers
+> >
+> > v6: 2021-04-26, https://lore.kernel.org/linux-clk/20210426141730.282683=
+2-1-u.kleine-koenig@pengutronix.de
+> >     Just the typos fixed, no feedback
+> >
+> > v6 resend: 2021-05-10, https://lore.kernel.org/linux-clk/20210510061724=
+.940447-1-u.kleine-koenig@pengutronix.de
+> >     no changes in code. Got some feedback from Jonathan Cameron
+> >
+> > v7: 2021-05-10, https://lore.kernel.org/linux-clk/20210510174142.986250=
+-1-u.kleine-koenig@pengutronix.de
+> >     Adress Jonathan's feedback, recieved some more acks from non-clk
+> >     people
+> >
+> > pull request: 2021-07-09, https://lore.kernel.org/linux-clk/20210609202=
+123.u5rmw7al4x3rrvun@pengutronix.de
+> >
+> > On Fri, Jul 23, 2021 at 11:26:58AM +0300, Andy Shevchenko wrote:
+> >> On Thursday, July 22, 2021, Wolfram Sang <wsa@kernel.org> wrote:
+> >>
+> >>>>> What about adding gkh to the list explaining the situation to him?
+> >>>> Greg doesn't like devm_ stuff.
+> >>>>
+> >>>> I already asked Arnd who doesn't want to interfere and akpm who didn=
+'t
+> >>>> react either up to now.
+> >>> Wow, okay, that is frustrating.
+> >> The situation simply shows the process gap and One Maintainer nowadays=
+ is
+> >> far from enough to satisfy demands.
+> > Technically there are two maintainers for drivers/clk, Michael Turquett=
+e
+> > and Stephen Boyd. It seems Michael is MIA and Stephen doesn't have the
+> > capacity to address all requests.
+> >
+> >> What I think about is that we need to escalate this to Linus and
+> >> others and elaborate the mechanisms how to squeeze a new (additional)
+> >> maintainer when the original one is not responsive. Let=E2=80=99s say =
+some
+> >> procedural steps. Otherwise we doomed because of human factor.
+> > Assuming there was some process for this, is there someone who is
+> > willing to take responsibility here?
 >
-> This patch adds the binding documentation for topckgen, apmixedsys,
-> infracfg, infracfg_ao, and ethernet subsystem clocks.
+> Hi,
 >
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> ---
->  .../devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt    | 1 +
->  .../devicetree/bindings/arm/mediatek/mediatek,ethsys.txt        | 1 +
->  .../devicetree/bindings/arm/mediatek/mediatek,infracfg.txt      | 2 ++
->  .../devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt      | 2 ++
->  .../devicetree/bindings/arm/mediatek/mediatek,topckgen.txt      | 1 +
->  5 files changed, 7 insertions(+)
+> In the last year I worked on AT91 clock drivers and I would be available
+> for taking responsibility beyond AT91 clocks (if everyone's OK with this)=
+,
+> in whatever form the current maintainers and people in the audience would
+> agree, if any (co-maintainer or other forms that could be useful). The id=
+ea
+> is to help things progress as I also have patches waiting for feedback on
+> clock mailing list for almost 6 months.
 >
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> index ea827e8763de..3fa755866528 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> @@ -14,6 +14,7 @@ Required Properties:
->         - "mediatek,mt7622-apmixedsys"
->         - "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
->         - "mediatek,mt7629-apmixedsys"
-> +       - "mediatek,mt7986-apmixedsys"
->         - "mediatek,mt8135-apmixedsys"
->         - "mediatek,mt8167-apmixedsys", "syscon"
->         - "mediatek,mt8173-apmixedsys"
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> index 6b7e8067e7aa..0502db73686b 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> @@ -10,6 +10,7 @@ Required Properties:
->         - "mediatek,mt7622-ethsys", "syscon"
->         - "mediatek,mt7623-ethsys", "mediatek,mt2701-ethsys", "syscon"
->         - "mediatek,mt7629-ethsys", "syscon"
-> +       - "mediatek,mt7986-ethsys", "syscon"
->  - #clock-cells: Must be 1
->  - #reset-cells: Must be 1
->
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-> index eb3523c7a7be..5f68c30162bf 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-> @@ -15,6 +15,8 @@ Required Properties:
->         - "mediatek,mt7622-infracfg", "syscon"
->         - "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
->         - "mediatek,mt7629-infracfg", "syscon"
-> +       - "mediatek,mt7986-infracfg", "syscon"
-> +       - "mediatek,mt7986-infracfg_ao", "syscon"
->         - "mediatek,mt8135-infracfg", "syscon"
->         - "mediatek,mt8167-infracfg", "syscon"
->         - "mediatek,mt8173-infracfg", "syscon"
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
-> index 30cb645c0e54..0e1184392941 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
-> @@ -8,6 +8,8 @@ Required Properties:
->  - compatible: Should be:
->         - "mediatek,mt7622-sgmiisys", "syscon"
->         - "mediatek,mt7629-sgmiisys", "syscon"
-> +       - "mediatek,mt7986-sgmiisys", "mediatek,mt7986-sgmiisys_0", "syscon"
-> +       - "mediatek,mt7986-sgmiisys", "mediatek,mt7986-sgmiisys_1", "syscon"
+> Let me know if I can be helpful.
 
-The order should be: most specific compatible string first, followed by
-fallbacks.
+I think so. Many subsystems relatively recently (in the last couple of
+years or so) enforced that new drivers have to have official
+maintainers. Besides that it's warmly welcome to register existing
+drivers in the MAINTAINERS database. I would tell you go ahead and
+become a maintainer of AT91 clocks and it will definitely reduce the
+burden on Stephan's shoulders.
 
-Furthermore, based on the driver patch and the fact that they share the
-same compatible string, it seems you shouldn't need to have two compatible
-strings for two identical hardware blocks. The need for separate entries
-to have different clock names is an implementation detail. Please consider
-using and supporting clock-output-names.
+The idea is that you will send a PR to CCF maintainers instead of
+patches, although it's expected that patches appear in the mailing
+list beforehand anyway.
 
-Also, please check out the MT8195 clock driver series [1]. I'm guessing
-a lot of the comments apply to this one as well.
-
-Regards
-ChenYu
-
-[1] https://lore.kernel.org/linux-mediatek/20210616224743.5109-1-chun-jie.chen@mediatek.com/T/#t
-
-
->  - #clock-cells: Must be 1
->
->  The SGMIISYS controller uses the common clk binding from
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-> index 5ce7578cf274..b82422bb717f 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-> @@ -14,6 +14,7 @@ Required Properties:
->         - "mediatek,mt7622-topckgen"
->         - "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
->         - "mediatek,mt7629-topckgen"
-> +       - "mediatek,mt7986-topckgen", "syscon"
->         - "mediatek,mt8135-topckgen"
->         - "mediatek,mt8167-topckgen", "syscon"
->         - "mediatek,mt8173-topckgen"
-> --
-> 2.29.2
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+--=20
+With Best Regards,
+Andy Shevchenko
