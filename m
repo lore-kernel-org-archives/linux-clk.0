@@ -2,154 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D120CC4338F
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 16:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7748C432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 07:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1CDE60F42
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jul 2021 16:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A725A60F52
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 07:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbhGYP1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jul 2021 11:27:03 -0400
-Received: from smtp-34.italiaonline.it ([213.209.10.34]:43768 "EHLO libero.it"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229584AbhGYP1D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 25 Jul 2021 11:27:03 -0400
-Received: from passgat-Modern-14-A10M.homenet.telecomitalia.it
- ([79.45.45.231])
-        by smtp-34.iol.local with ESMTPA
-        id 7gf2mU8UALCum7gf5mo1iZ; Sun, 25 Jul 2021 18:07:32 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1627229252; bh=rOfM+3SnDUoi4Zw7AQaIgYut2m3EXateesuCvJ04ulU=;
-        h=From;
-        b=uYrg/mrygjeSW3+2Covd4dD+ZJ9D691CVb1P6hEu9MgUYn4ZdZBxWRV6TMEFThQza
-         YxWcF3+HGm0qqDdHNnenNtZMdZeUgeQtAldtHb1se2AGDLcLiO4l6TX/xOfVCJiSjb
-         oB1MNuDvAgKzpMlnz2T6Nsow/Kdkzx02km7PhSi/Jqiw7EHndVEOF9as5LYm2byPdG
-         GkiFC7GbIVN8JeY61Vnwj4aj8a+GyM8MOBVeqJAY8GkKv3O7op1AM3ZQAIXn3FZZA1
-         dv4OkvqZkHVizerOL/ZsrADaVPQ54sIv7O9nlFtvvtn7v+eoFksUhfNRMg9lFk0UMe
-         TML/9Aj5Z+kHQ==
-X-CNFS-Analysis: v=2.4 cv=a8D1SWeF c=1 sm=1 tr=0 ts=60fd8c44 cx=a_exe
- a=TX8r+oJM0yLPAmPh5WrBoQ==:117 a=TX8r+oJM0yLPAmPh5WrBoQ==:17 a=8b9GpE9nAAAA:8
- a=VwQbUJbxAAAA:8 a=wSIzyl8AIrrWyGTfDxQA:9 a=T3LWEMljR5ZiDmsYVIUa:22
- a=AjGcO6oz07-iQ99wixmX:22
-From:   Dario Binacchi <dariobin@libero.it>
-To:     linux-clk@vger.kernel.org
-Cc:     Dario Binacchi <dariobin@libero.it>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        id S232096AbhGZGgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jul 2021 02:36:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55862 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231774AbhGZGgg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 02:36:36 -0400
+X-UUID: acb8997731e54c20a9623734505e804f-20210726
+X-UUID: acb8997731e54c20a9623734505e804f-20210726
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1892193250; Mon, 26 Jul 2021 15:16:54 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 26 Jul 2021 15:16:52 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 26 Jul 2021 15:16:52 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
-Date:   Sun, 25 Jul 2021 18:07:25 +0200
-Message-Id: <20210725160725.10788-1-dariobin@libero.it>
-X-Mailer: git-send-email 2.17.1
-X-CMAE-Envelope: MS4xfO3Vs1lRaT+cPZQpqJqax0ul7UhhyiydwUfOqesDADLoHnBJ0edwg9Neh9c6e+Msd+HBHwor0jnn9YCTNqbTzJEyNsygW4Jg3S1lk+wuOLsrqn7DJxvb
- jRJIlHf49/Y8M6aJxRatlcOeEDcmi5EMCTr65TEUJ63RCuFV4EFdryFPsGX39QrJRy+gKilcBWpiXFfXD1ZhbxYPfiVudpf1smoM3UDofcbagq9Y6dCqVQ0j
- 5lB/bwsPWaeekER9s1GGFbSWb+js36QPtL2VT2o1LLWw51gSZO9qCBs6/uXWIcwWeESiMTOAPEp3VaLSUQha4QpSXiPEetqXSDXyxsaS03Fj7rtT1i2d5odI
- Ci99jdiANw14kqkoMqUaU1fvClaYAvsU/gxA+09gsCgxBT28hYzplfiSmOpIDvITdWcShHY7S2OFrTOfHs401TkoR4X80+YmK9xtduulSW+frnsPo630Wnbi
- kAzwmpL17scaOnORR162xXJ9s1mRYOE/n+vqM9+Q+DiBdeznaTa4u4+cp/PY70wlUO2Ly/Q7tKnguY41dqnTA4o434jztZ+eyfyymjt/uk+zcglWpbT2JlvM
- PBgeTo97thVGs9pGsdMPu7q8
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [PATCH 00/12] Add basic SoC support for mediatek mt7986
+Date:   Mon, 26 Jul 2021 15:14:27 +0800
+Message-ID: <20210726071439.14248-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling the framebuffer leads to a system hang. Running, as a debug
-hack, the store_pan() function in drivers/video/fbdev/core/fbsysfs.c
-without taking the console_lock, allows to see the crash backtrace on
-the serial line.
+This patch adds basic SoC support for Mediatek's new 4-core SoC,
+MT7986, which is mainly for wifi-router application.
 
-~ # echo 0 0 > /sys/class/graphics/fb0/pan
+Sam Shih (12):
+  dt-bindings: clock: mediatek: document clk bindings for mediatek
+    mt7986 SoC
+  clk: mediatek: add mt7986 clock IDs
+  clk: mediatek: add mt7986 clock support
+  pinctrl: mediatek: moore: use pin number in mtk_pin_desc instead of
+    array index
+  dt-bindings: pinctrl: update bindings for MT7986 SoC
+  pinctrl: mediatek: add support for MT7986 SoC
+  dt-bindings: arm64: dts: mediatek: Add mt7986 series
+  dt-bindings: rng: mediatek: add mt7986 to mtk rng binding
+  dt-bindings: serial: Add compatible for Mediatek MT7986
+  dt-bindings: watchdog: Add compatible for Mediatek MT7986
+  arm64: dts: mediatek: add mt7986a support
+  arm64: dts: mediatek: add mt7986b support
 
-[    9.719414] Unhandled exception: IPSR = 00000005 LR = fffffff1
-[    9.726937] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.733008] Hardware name: STM32 (Device Tree Support)
-[    9.738296] PC is at clk_gate_is_enabled+0x0/0x28
-[    9.743426] LR is at stm32f4_pll_div_set_rate+0xf/0x38
-[    9.748857] pc : [<0011e4be>]    lr : [<0011f9e3>]    psr: 0100000b
-[    9.755373] sp : 00bc7be0  ip : 00000000  fp : 001f3ac4
-[    9.760812] r10: 002610d0  r9 : 01efe920  r8 : 00540560
-[    9.766269] r7 : 02e7ddb0  r6 : 0173eed8  r5 : 00000000  r4 : 004027c0
-[    9.773081] r3 : 0011e4bf  r2 : 02e7ddb0  r1 : 0173eed8  r0 : 1d3267b8
-[    9.779911] xPSR: 0100000b
-[    9.782719] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-[    9.788791] Hardware name: STM32 (Device Tree Support)
-[    9.794120] [<0000afa1>] (unwind_backtrace) from [<0000a33f>] (show_stack+0xb/0xc)
-[    9.802421] [<0000a33f>] (show_stack) from [<0000a8df>] (__invalid_entry+0x4b/0x4c)
+ .../devicetree/bindings/arm/mediatek.yaml     |    8 +
+ .../arm/mediatek/mediatek,apmixedsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt |    1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |    2 +
+ .../arm/mediatek/mediatek,sgmiisys.txt        |    2 +
+ .../arm/mediatek/mediatek,topckgen.txt        |    1 +
+ .../bindings/pinctrl/pinctrl-mt7622.txt       |  284 +++
+ .../devicetree/bindings/rng/mtk-rng.yaml      |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt   |    1 +
+ .../devicetree/bindings/watchdog/mtk-wdt.txt  |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |    2 +
+ arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts  |   49 +
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi     |  235 +++
+ arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts  |   21 +
+ arch/arm64/boot/dts/mediatek/mt7986b.dtsi     |  235 +++
+ drivers/clk/mediatek/Kconfig                  |   17 +
+ drivers/clk/mediatek/Makefile                 |    2 +
+ drivers/clk/mediatek/clk-mt7986-eth.c         |  132 ++
+ drivers/clk/mediatek/clk-mt7986.c             |  610 ++++++
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-moore.c      |   61 +
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c     | 1640 +++++++++++++++++
+ include/dt-bindings/clock/mt7986-clk.h        |  244 +++
+ 24 files changed, 3558 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7986.c
+ create mode 100644 include/dt-bindings/clock/mt7986-clk.h
 
-The `pll_num' field in the post_div_data configuration contained a wrong
-value which also referenced an uninitialized hardware clock when
-clk_register_pll_div() was called.
-
-Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
-Signed-off-by: Dario Binacchi <dariobin@libero.it>
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-
----
-I added Gabriel Fernandez's 'Reviewed-by' tag as requested by himself
-15 days ago at https://lore.kernel.org/patchwork/patch/1450964/.
-
-Changes in v4:
-- Really add Gabriel Fernandez 'Reviewed-by' tag. In version 3 I forgot
-  to add the tag.
-
-Changes in v3:
-- Add Gabriel Fernandez 'Reviewed-by' tag.
-
-Changes in v2:
-- Change  'u8 pll_num' from 'stm32f4_pll_post_div_data' structure into
-  'int pll_idx'.
-
- drivers/clk/clk-stm32f4.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 18117ce5ff85..5c75e3d906c2 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -526,7 +526,7 @@ struct stm32f4_pll {
- 
- struct stm32f4_pll_post_div_data {
- 	int idx;
--	u8 pll_num;
-+	int pll_idx;
- 	const char *name;
- 	const char *parent;
- 	u8 flag;
-@@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
- 
- #define MAX_POST_DIV 3
- static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
--	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
-+	{ CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
- 
--	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
-+	{ CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
- 		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
- 
--	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-+	{ NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
- 		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
- };
- 
-@@ -1774,7 +1774,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 				post_div->width,
- 				post_div->flag_div,
- 				post_div->div_table,
--				clks[post_div->pll_num],
-+				clks[post_div->pll_idx],
- 				&stm32f4_clk_lock);
- 
- 		if (post_div->idx != NO_IDX)
 -- 
-2.17.1
+2.29.2
 
