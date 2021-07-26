@@ -2,119 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1180C4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE189C432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8951C60F56
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5D8760F59
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231820AbhGZKNk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jul 2021 06:13:40 -0400
-Received: from mail-vs1-f51.google.com ([209.85.217.51]:41758 "EHLO
-        mail-vs1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231792AbhGZKNk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 06:13:40 -0400
-Received: by mail-vs1-f51.google.com with SMTP id g2so4942359vsb.8;
-        Mon, 26 Jul 2021 03:54:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H5pwP3wwekTmwOt3jguCNsgHt2FsmfWLxfT1Dbstxk4=;
-        b=N/pf/xfX82UqYyO9Z1ZMyrAnfMtJUItveNGpSqoZIcWMIE+HYS00EEgAWaE8Ogbo6C
-         wFZSHU8Sl5SjmBkIPbFUNxvgesmfQVcoE8PEYe+CV4ZpwU3cMpqvFvaT0XdBN3Q7w5Qx
-         bPs64WEh7wCHTACKK9toJX57SstLRJ+cKtzFvGctsd/cyIY3HUUR4qkwIJOXzJbsbOVZ
-         Zgg+6NQs3Q8OnzGtK5+CNiDTZNHHVwgahHpqyCIphbT8GizfYqAkCBdyyUpIjUTdhT4b
-         qi60VYzGXrfY8UHHYsI7yCWLpgcApKyjjW2WJ/a/wvou6PANpwx8VgrRCiiAilXduTG1
-         Iw4A==
-X-Gm-Message-State: AOAM532e66j5u4J8jQcXtckXPc7qKG7XPVcotdGi40S6ZmMTAa0wgoKy
-        T7XcLHAQ+rbN+N+zL6H+guGv5r3LvGEFkpFivAg=
-X-Google-Smtp-Source: ABdhPJySKQRmXCMSSoSMlSHgV9KzwEPIBAHyisHnCZizm5I5R0Zk7U1qNaeF0/XFwTKT6GMF22IbL6egss4mdhgfd5U=
-X-Received: by 2002:a67:8702:: with SMTP id j2mr11341904vsd.3.1627296847976;
- Mon, 26 Jul 2021 03:54:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210722141351.13668-1-biju.das.jz@bp.renesas.com> <20210722141351.13668-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210722141351.13668-3-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 26 Jul 2021 12:53:57 +0200
-Message-ID: <CAMuHMdUSe3gkOcU9rMOyQBwFzYJrS0D9PosWDxirTmKbc_xx+w@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/18] drivers: clk: renesas: rzg2l-cpg: Add
- support to handle MUX clocks
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S231792AbhGZKRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jul 2021 06:17:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33746 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232334AbhGZKRL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 06:17:11 -0400
+X-UUID: 28ee40d46c664887908e903d2e78c20b-20210726
+X-UUID: 28ee40d46c664887908e903d2e78c20b-20210726
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1134525413; Mon, 26 Jul 2021 18:57:36 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 26 Jul 2021 18:57:35 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 26 Jul 2021 18:57:34 +0800
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [v14 00/21] Mediatek MT8192 clock support
+Date:   Mon, 26 Jul 2021 18:56:58 +0800
+Message-ID: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+this patch series is based on 5.14-rc1.
 
+changes since v13:
+- no change (rebased to 5.14)
 
-On Thu, Jul 22, 2021 at 4:14 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add support to handle mux clocks inorder to select a clock source
-> from multiple sources.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+changes since v12:
+-  move audsys binding to "mediatek,audsys.txt" (patch 3)
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.h
-> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> @@ -43,6 +43,7 @@ struct cpg_core_clk {
->         const struct clk_div_table *dtable;
->         const char * const *parent_names;
->         int flag;
-> +       int mux_flags;
->         int num_parents;
->  };
->
+changes since v11:
+- move mmsys binding to "mediatek,mmsys.txt" (patch 2)
+- fix new DT binding error (patch 1)
 
-I'd move SEL_PLL_PACK() from [PATCH 03/18] here, as it applies to
-"_conf" in DEF_MUX() below.
+change since v10:
+- refine binding document in patch 1 (drop the 'oneOf')
 
-> @@ -54,6 +55,9 @@ enum clk_types {
->
->         /* Clock with divider */
->         CLK_TYPE_DIV,
-> +
-> +       /* Clock with clock source selector */
-> +       CLK_TYPE_MUX,
->  };
->
->  #define DEF_TYPE(_name, _id, _type...) \
-> @@ -69,6 +73,11 @@ enum clk_types {
->  #define DEF_DIV(_name, _id, _parent, _conf, _dtable, _flag) \
->         DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
->                  .parent = _parent, .dtable = _dtable, .flag = _flag)
-> +#define DEF_MUX(_name, _id, _conf, _parent_names, _num_parents, _flag, \
-> +               _mux_flags) \
-> +       DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = _conf, \
-> +                .parent_names = _parent_names, .num_parents = _num_parents, \
-> +                .flag = _flag, .mux_flags = _mux_flags)
->
->  /**
->   * struct rzg2l_mod_clk - Module Clocks definitions
+change since v9:
+- combine similiar dt-binding file for system and functional clock
+- change api of getting regmap if it's not a syscon node (patch 3)
 
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+change since v8:
+- fix mm dt-binding file conflict.
 
-Gr{oetje,eeting}s,
+reason for sending v8:
+- due to this patch series including dt-binding file, so add
+device tree reviewer to mail list, no change between [1] and v8.
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=454523
 
-                        Geert
+reason for resending v7:
+- add review history from series below
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=405295
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+change since v6:
+- update from series below
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=405295
+- fix DT bindings fail
+- fix checkpatch warning
+- update mux ops without gate control
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+change since v5:
+- remove unused clocks by rolling Tinghan's patches[1][2] into series
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=398781
+[2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=405143
+- remove dts related patches from series
+
+change since v4:
+- merge some subsystem into same driver
+- add a generic probe function to reduce duplicated code
+
+changes since v3:
+- add critical clocks
+- split large patches into small ones
+
+changes since v2:
+- update and split dt-binding documents by functionalities
+- add error checking in probe() function
+- fix incorrect clock relation and add critical clocks
+- update license identifier and minor fix of coding style
+
+changes since v1:
+- fix asymmetrical control of PLL
+- have en_mask used as divider enable mask on all MediaTek SoC
+
+Chun-Jie Chen (21):
+  dt-bindings: ARM: Mediatek: Add new document bindings of MT8192 clock
+  dt-bindings: ARM: Mediatek: Add mmsys document binding for MT8192
+  dt-bindings: ARM: Mediatek: Add audsys document binding for MT8192
+  clk: mediatek: Add dt-bindings of MT8192 clocks
+  clk: mediatek: Get regmap without syscon compatible check
+  clk: mediatek: Fix asymmetrical PLL enable and disable control
+  clk: mediatek: Add configurable enable control to mtk_pll_data
+  clk: mediatek: Add mtk_clk_simple_probe() to simplify clock providers
+  clk: mediatek: Add MT8192 basic clocks support
+  clk: mediatek: Add MT8192 audio clock support
+  clk: mediatek: Add MT8192 camsys clock support
+  clk: mediatek: Add MT8192 imgsys clock support
+  clk: mediatek: Add MT8192 imp i2c wrapper clock support
+  clk: mediatek: Add MT8192 ipesys clock support
+  clk: mediatek: Add MT8192 mdpsys clock support
+  clk: mediatek: Add MT8192 mfgcfg clock support
+  clk: mediatek: Add MT8192 mmsys clock support
+  clk: mediatek: Add MT8192 msdc clock support
+  clk: mediatek: Add MT8192 scp adsp clock support
+  clk: mediatek: Add MT8192 vdecsys clock support
+  clk: mediatek: Add MT8192 vencsys clock support
+
+ .../bindings/arm/mediatek/mediatek,audsys.txt |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |    1 +
+ .../arm/mediatek/mediatek,mt8192-clock.yaml   |  199 +++
+ .../mediatek/mediatek,mt8192-sys-clock.yaml   |   65 +
+ drivers/clk/mediatek/Kconfig                  |   80 +
+ drivers/clk/mediatek/Makefile                 |   13 +
+ drivers/clk/mediatek/clk-cpumux.c             |    2 +-
+ drivers/clk/mediatek/clk-mt8192-aud.c         |  118 ++
+ drivers/clk/mediatek/clk-mt8192-cam.c         |  107 ++
+ drivers/clk/mediatek/clk-mt8192-img.c         |   70 +
+ .../clk/mediatek/clk-mt8192-imp_iic_wrap.c    |  119 ++
+ drivers/clk/mediatek/clk-mt8192-ipe.c         |   57 +
+ drivers/clk/mediatek/clk-mt8192-mdp.c         |   82 +
+ drivers/clk/mediatek/clk-mt8192-mfg.c         |   50 +
+ drivers/clk/mediatek/clk-mt8192-mm.c          |  108 ++
+ drivers/clk/mediatek/clk-mt8192-msdc.c        |   85 ++
+ drivers/clk/mediatek/clk-mt8192-scp_adsp.c    |   50 +
+ drivers/clk/mediatek/clk-mt8192-vdec.c        |   94 ++
+ drivers/clk/mediatek/clk-mt8192-venc.c        |   53 +
+ drivers/clk/mediatek/clk-mt8192.c             | 1326 +++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |   25 +-
+ drivers/clk/mediatek/clk-mtk.h                |   28 +-
+ drivers/clk/mediatek/clk-mux.c                |   11 +-
+ drivers/clk/mediatek/clk-mux.h                |   18 +-
+ drivers/clk/mediatek/clk-pll.c                |   31 +-
+ drivers/clk/mediatek/reset.c                  |    2 +-
+ include/dt-bindings/clock/mt8192-clk.h        |  585 ++++++++
+ 27 files changed, 3356 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-aud.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-ipe.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-mdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-msdc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-scp_adsp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8192.c
+ create mode 100644 include/dt-bindings/clock/mt8192-clk.h
+
+-- 
+2.18.0
+
