@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9786BC432BE
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D73C4320A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81D3060F57
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ED1E60E09
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jul 2021 10:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbhGZKRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jul 2021 06:17:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34366 "EHLO
+        id S233218AbhGZKRm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jul 2021 06:17:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34528 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233375AbhGZKRd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 06:17:33 -0400
-X-UUID: ea8195bf47e34072af12f04c63bd4314-20210726
-X-UUID: ea8195bf47e34072af12f04c63bd4314-20210726
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        with ESMTP id S233287AbhGZKRj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jul 2021 06:17:39 -0400
+X-UUID: 9f0a6f5047d142a0b1ef16b6840f1729-20210726
+X-UUID: 9f0a6f5047d142a0b1ef16b6840f1729-20210726
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 965019640; Mon, 26 Jul 2021 18:57:59 +0800
+        with ESMTP id 810884174; Mon, 26 Jul 2021 18:58:03 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 26 Jul 2021 18:57:57 +0800
+ 15.0.1497.2; Mon, 26 Jul 2021 18:58:02 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 26 Jul 2021 18:57:57 +0800
+ Transport; Mon, 26 Jul 2021 18:58:02 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -43,9 +43,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v14 06/21] clk: mediatek: Fix asymmetrical PLL enable and disable control
-Date:   Mon, 26 Jul 2021 18:57:04 +0800
-Message-ID: <20210726105719.15793-7-chun-jie.chen@mediatek.com>
+Subject: [v14 08/21] clk: mediatek: Add mtk_clk_simple_probe() to simplify clock providers
+Date:   Mon, 26 Jul 2021 18:57:06 +0800
+Message-ID: <20210726105719.15793-9-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
 References: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
@@ -56,79 +56,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In fact, the en_mask is a combination of divider enable mask
-and pll enable bit(bit0).
-Before this patch, we enabled both divider mask and bit0 in prepare(),
-but only cleared the bit0 in unprepare().
-In the future, we hope en_mask will only be used as divider enable mask.
-The enable register(CON0) will be set in 2 steps:
-first is divider mask, and then bit0 during prepare(), and vice versa.
-But considering backward compatibility, at this stage we allow en_mask
-to be a combination or a pure divider enable mask.
-And then we will make en_mask a pure divider enable mask in another
-following patch series.
+Most of subsystem clock providers only need to register clock gates
+in their probe() function.
+To reduce the duplicated code by add a generic function.
 
-Reviewed-by: Ikjoon Jang <ikjn@chromium.org>
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 ---
- drivers/clk/mediatek/clk-pll.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-mtk.c | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h |  8 ++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index f440f2cd0b69..11ed5d1d1c36 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -238,6 +238,7 @@ static int mtk_pll_prepare(struct clk_hw *hw)
- {
- 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
- 	u32 r;
-+	u32 div_en_mask;
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 37d2aa32175e..4b6096c44d74 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -13,6 +13,7 @@
+ #include <linux/clkdev.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/device.h>
++#include <linux/of_device.h>
  
- 	r = readl(pll->pwr_addr) | CON0_PWR_ON;
- 	writel(r, pll->pwr_addr);
-@@ -247,10 +248,15 @@ static int mtk_pll_prepare(struct clk_hw *hw)
- 	writel(r, pll->pwr_addr);
- 	udelay(1);
- 
--	r = readl(pll->base_addr + REG_CON0);
--	r |= pll->data->en_mask;
-+	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
- 	writel(r, pll->base_addr + REG_CON0);
- 
-+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
-+	if (div_en_mask) {
-+		r = readl(pll->base_addr + REG_CON0) | div_en_mask;
-+		writel(r, pll->base_addr + REG_CON0);
-+	}
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -286,3 +287,25 @@ void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+ 			clk_data->clks[mcd->id] = clk;
+ 	}
+ }
 +
- 	__mtk_pll_tuner_enable(pll);
- 
- 	udelay(20);
-@@ -268,6 +274,7 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
- {
- 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
- 	u32 r;
-+	u32 div_en_mask;
- 
- 	if (pll->data->flags & HAVE_RST_BAR) {
- 		r = readl(pll->base_addr + REG_CON0);
-@@ -277,8 +284,13 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
- 
- 	__mtk_pll_tuner_disable(pll);
- 
--	r = readl(pll->base_addr + REG_CON0);
--	r &= ~CON0_BASE_EN;
-+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
-+	if (div_en_mask) {
-+		r = readl(pll->base_addr + REG_CON0) & ~div_en_mask;
-+		writel(r, pll->base_addr + REG_CON0);
-+	}
++int mtk_clk_simple_probe(struct platform_device *pdev)
++{
++	const struct mtk_clk_desc *mcd;
++	struct clk_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++	int r;
 +
-+	r = readl(pll->base_addr + REG_CON0) & ~CON0_BASE_EN;
- 	writel(r, pll->base_addr + REG_CON0);
++	mcd = of_device_get_match_data(&pdev->dev);
++	if (!mcd)
++		return -EINVAL;
++
++	clk_data = mtk_alloc_clk_data(mcd->num_clks);
++	if (!clk_data)
++		return -ENOMEM;
++
++	r = mtk_clk_register_gates(node, mcd->clks, mcd->num_clks, clk_data);
++	if (r)
++		return r;
++
++	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++}
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 31c7cb304508..7de41c3b3206 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -10,6 +10,7 @@
+ #include <linux/regmap.h>
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
++#include <linux/platform_device.h>
  
- 	r = readl(pll->pwr_addr) | CON0_ISO_EN;
+ struct clk;
+ struct clk_onecell_data;
+@@ -250,4 +251,11 @@ void mtk_register_reset_controller(struct device_node *np,
+ void mtk_register_reset_controller_set_clr(struct device_node *np,
+ 	unsigned int num_regs, int regofs);
+ 
++struct mtk_clk_desc {
++	const struct mtk_gate *clks;
++	size_t num_clks;
++};
++
++int mtk_clk_simple_probe(struct platform_device *pdev);
++
+ #endif /* __DRV_CLK_MTK_H */
 -- 
 2.18.0
 
