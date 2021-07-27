@@ -2,168 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFE4C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E627C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57A556103C
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E56AF60F4F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbhG0RTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 13:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbhG0RTF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jul 2021 13:19:05 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF25AC061765
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jul 2021 10:19:03 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id f12so16891697ljn.1
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jul 2021 10:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EMKWXZtE5RzPWua1cq/oXCQ10pVyhkDWH2JkBv8IzRE=;
-        b=WDylNfEoqUnBJgtw5pd2YnP89bIdjwjaAHabyeAKLlcxUC35meTxrsF9izCvbb5Icw
-         7VPug7fz6lRT5Q2DPJRTS4rqbbAd/whmzeu0r6ho8LHAUHjN5m8DO1EmORbCTQXGF7cf
-         vJoeBKx1gi63AHPmkm4/4TwsArRZ5NP6TtQLpH4HTM2nxgN6MOBj/VIqFSBug1sCGK69
-         zxl0NuvTI+g0EOt9VSIMVje0CxHI570XIeqt/nouCUSF9X+oHkTUykWu6GbiijAEJQoL
-         2s84nezCRx+bjmt6OAcKVdryjdZvni4JTVQ7+X+QpfppmCLiO1TFEt9n/ImLAjydxX8u
-         wz8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EMKWXZtE5RzPWua1cq/oXCQ10pVyhkDWH2JkBv8IzRE=;
-        b=UTJERcSCTjtMlje/cq1ZDpci4FyQ8kAf0NY8Bvb0vfje4l6/aIEKWOii+Y+i449jUL
-         JX/lWdzlkkpOG6RC0eOPCozqUSinNAZ76Mvp9nGbI2aqJYSVyQp+REXZc9o6rHlB5ceX
-         eEwo9lxDS2agc/5wxFm1Wswfvnt627tc3zUGpQW0eNkULyzo7qWbPv1yLOD3lcaGbfeP
-         BkhkMOqaGeIIvx/FeuRm5wc3CBi6WqeXIXg4dvjbTXXjx2VqSF5cY1XozDeylfJTaJoI
-         SSGZuPvDcZyAt7ptWZXkO02I8nJH1JjSuw4Xea0HkyH0kGy7JESSFS1IObVNswBUs8Ce
-         8qSA==
-X-Gm-Message-State: AOAM532uAQXSuUdD+JhV0bDYZyDabtk7n2CZTuQ/Py/zVPWfUpd0GKPx
-        5AaFE+/2KDMbFeT3UEJI3snC6Q==
-X-Google-Smtp-Source: ABdhPJyRpUWScg+dO+hqpBI6/lrusL5mh299ENzytzR1KCmx8DwDzev4pUnPm/k7xL1JggxRjD7BOg==
-X-Received: by 2002:a05:651c:10a2:: with SMTP id k2mr16075335ljn.89.1627406342156;
-        Tue, 27 Jul 2021 10:19:02 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id g1sm373727lfb.300.2021.07.27.10.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jul 2021 10:19:01 -0700 (PDT)
-Subject: Re: [PATCH] clk: qcom: dispcc-sm8250: Add additional parent clocks
- for DP
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210721224610.3035258-1-bjorn.andersson@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <963af972-5061-5375-aee3-34c0571975d8@linaro.org>
-Date:   Tue, 27 Jul 2021 20:19:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S229529AbhG0Rxr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 13:53:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230090AbhG0Rxr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Jul 2021 13:53:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CB2DD60F59;
+        Tue, 27 Jul 2021 17:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627408426;
+        bh=BY/TXrvnkbGZ01/1AG98R06TzvddjiYo8uxzL+mIFsQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Nzlokk7MHArfhr6WtCArBQCmH6G65YWq35WF7bunTLrd8/SjYwgU/+XUvEVGYvp7m
+         fI3wYPI0Y+fL3YFyFUXogY0WByB9W8OCXhXxl0D60YBWG21SI9VLdxNPtIER+kSni8
+         cFF8aI7DF0L0U7kOHdbxsXbIY1Fqm+ii+LJ1SKPgGBp4BsArP73Ih/o4IkpL5Ww3aQ
+         PXYeOgO3QJF6ZNv9SXpm5K5Ul4efcnyj+fsxZamzlzbVBwBWWRFL9mll3MqsTcW8sl
+         TPbzcfTPdOrSpZQ00EdbRc2TaDak0188IvTVFMoWY5iHj9YI6mf6iCjimDqepyORYC
+         2SbqArN/de/+Q==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210721224610.3035258-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210726105719.15793-2-chun-jie.chen@mediatek.com>
+References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-2-chun-jie.chen@mediatek.com>
+Subject: Re: [v14 01/21] dt-bindings: ARM: Mediatek: Add new document bindings of MT8192 clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 27 Jul 2021 10:53:44 -0700
+Message-ID: <162740842455.2368309.639019751189620294@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/07/2021 01:46, Bjorn Andersson wrote:
-> The clock controller has two additional clock source pairs, in order to
-> support more than a single DisplayPort PHY. List these, so it's possible
-> to describe them all.
-> 
-> Also drop the unnecessary freq_tbl for the link clock sources, to allow
-> these parents to be used.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+Quoting Chun-Jie Chen (2021-07-26 03:56:59)
+> This patch adds the new binding documentation for system clock
+> and functional clock on Mediatek MT8192.
+>=20
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->   drivers/clk/qcom/dispcc-sm8250.c | 22 ++++++++++++----------
->   1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> index 601c7c0ba483..bf9ffe1a1cf4 100644
-> --- a/drivers/clk/qcom/dispcc-sm8250.c
-> +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> @@ -26,6 +26,10 @@ enum {
->   	P_DISP_CC_PLL1_OUT_MAIN,
->   	P_DP_PHY_PLL_LINK_CLK,
->   	P_DP_PHY_PLL_VCO_DIV_CLK,
-> +	P_DPTX1_PHY_PLL_LINK_CLK,
-> +	P_DPTX1_PHY_PLL_VCO_DIV_CLK,
-> +	P_DPTX2_PHY_PLL_LINK_CLK,
-> +	P_DPTX2_PHY_PLL_VCO_DIV_CLK,
->   	P_EDP_PHY_PLL_LINK_CLK,
->   	P_EDP_PHY_PLL_VCO_DIV_CLK,
->   	P_DSI0_PHY_PLL_OUT_BYTECLK,
-> @@ -98,12 +102,20 @@ static const struct parent_map disp_cc_parent_map_0[] = {
->   	{ P_BI_TCXO, 0 },
->   	{ P_DP_PHY_PLL_LINK_CLK, 1 },
->   	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
-> +	{ P_DPTX1_PHY_PLL_LINK_CLK, 3 },
-> +	{ P_DPTX1_PHY_PLL_VCO_DIV_CLK, 4 },
-> +	{ P_DPTX2_PHY_PLL_LINK_CLK, 5 },
-> +	{ P_DPTX2_PHY_PLL_VCO_DIV_CLK, 6 },
->   };
->   
->   static const struct clk_parent_data disp_cc_parent_data_0[] = {
->   	{ .fw_name = "bi_tcxo" },
->   	{ .fw_name = "dp_phy_pll_link_clk" },
->   	{ .fw_name = "dp_phy_pll_vco_div_clk" },
-> +	{ .fw_name = "dptx1_phy_pll_link_clk" },
-> +	{ .fw_name = "dptx1_phy_pll_vco_div_clk" },
-> +	{ .fw_name = "dptx2_phy_pll_link_clk" },
-> +	{ .fw_name = "dptx2_phy_pll_vco_div_clk" },
->   };
->   
->   static const struct parent_map disp_cc_parent_map_1[] = {
-> @@ -269,20 +281,11 @@ static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
->   	},
->   };
->   
-> -static const struct freq_tbl ftbl_disp_cc_mdss_dp_link1_clk_src[] = {
-> -	F(162000000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
-> -	F(270000000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
-> -	F(540000000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
-> -	F(810000000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 disp_cc_mdss_dp_link1_clk_src = {
->   	.cmd_rcgr = 0x220c,
->   	.mnd_width = 0,
->   	.hid_width = 5,
->   	.parent_map = disp_cc_parent_map_0,
-> -	.freq_tbl = ftbl_disp_cc_mdss_dp_link1_clk_src,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "disp_cc_mdss_dp_link1_clk_src",
->   		.parent_data = disp_cc_parent_data_0,
-> @@ -296,7 +299,6 @@ static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
->   	.mnd_width = 0,
->   	.hid_width = 5,
->   	.parent_map = disp_cc_parent_map_0,
-> -	.freq_tbl = ftbl_disp_cc_mdss_dp_link1_clk_src,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "disp_cc_mdss_dp_link_clk_src",
->   		.parent_data = disp_cc_parent_data_0,
-> 
 
-
--- 
-With best wishes
-Dmitry
+Applied to clk-next
