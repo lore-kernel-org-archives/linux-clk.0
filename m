@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF167C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6063DC4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 878AE60F9C
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E37660F9B
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232495AbhG0VsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 17:48:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45190 "EHLO mail.kernel.org"
+        id S232142AbhG0Vy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 17:54:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231668AbhG0VsW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Jul 2021 17:48:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 67EE360F6E;
-        Tue, 27 Jul 2021 21:48:21 +0000 (UTC)
+        id S232013AbhG0Vy1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Jul 2021 17:54:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2864960F91;
+        Tue, 27 Jul 2021 21:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627422501;
-        bh=8LKEBG4jsItD6+/7Ls5h/7i/KgXlhXEjlYmjO6GKFn0=;
+        s=k20201202; t=1627422867;
+        bh=JWPqEvdUD8XWRfGIETHhThBzPZ1y5KHckWrOO7MNCm4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=awTMMMgiprVIwRJpypdqfSFF5DawWhWP7PgkTE/RiL7F2Ihrl7bYEYvV1rtVw4JJq
-         1zEmSZjN3IjV4VcCa7K5lpij0cF9VwcOyaeXj7A7TNPWKUyLHLIkkH+/l2yszkQ7HQ
-         ABwaY/zcPpft7eWlUNxzGuYy3UISm/6IHXundpZcQgiMGERzVMyNTuCppVzgtY8QjI
-         NupROoKGbjPBTKZoUA1pyICFR8mzz1mANRQ5jnRZUNrG85xXBv4be2sW5CEvRoLwPF
-         gX5o+KTu/s10RiZezGsJrXLPk/wwNYAw9xMvDAGvF2tiXMmexBxa7YWkwjV8gZg3qj
-         YlPa5Fg+da1iA==
+        b=Nx+y9acfxSoGNyQY0DdES7IM4xXVKE9r5oQfyovMOz1Y2d+RX2RSJYC3Um0X4JCSP
+         IFc5HwrefhyZ7QjYB4ZrqjGp7psXCAUTRyX+nyF9AScBAJ+JppIGSmH/yJq+qvfPnG
+         DwVExajkTWQDgFxC2XwsDCRwz3K1tlW5pbcwN43lfo1qMTITa/4vwjvgLIG7Ttnwhj
+         q28lMq0WhFtuB++DzOsriqmRwLpLHA06vSn8+6rkpExAof89eOEe7G6A89QuRiS5do
+         P7k6yJWPzgRjzHMVcC68oHyx9chVI3HfRjLvBoWjj3w0eol54qV/J+SY5E7cEkXSGj
+         oHHZ4jYHj/0cg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210629102624.194378-3-martin.botka@somainline.org>
-References: <20210629102624.194378-1-martin.botka@somainline.org> <20210629102624.194378-3-martin.botka@somainline.org>
-Subject: Re: [RESEND PATCH v2 2/3] dt-bindings: clk: qcom: smd-rpm: Document SM6125 compatible
+In-Reply-To: <20210717112742.7196-1-digetx@gmail.com>
+References: <20210717112742.7196-1-digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra: Implement disable_unused() of tegra_clk_sdmmc_mux_ops
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        paul.bouchara@somainline.org,
-        Martin Botka <martin.botka@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Martin Botka <martin.botka@somainline.org>, martin.botka1@gmail.com
-Date:   Tue, 27 Jul 2021 14:48:20 -0700
-Message-ID: <162742250022.2368309.6386650243971693584@swboyd.mtv.corp.google.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Tue, 27 Jul 2021 14:54:24 -0700
+Message-ID: <162742286477.2368309.2790017158875617305@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Botka (2021-06-29 03:26:22)
-> Document the newly added compatible for sm6125 rpmcc.
+Quoting Dmitry Osipenko (2021-07-17 04:27:42)
+> Implement disable_unused() callback of tegra_clk_sdmmc_mux_ops to fix
+> imbalanced disabling of the unused MMC clock on Tegra210 Jetson Nano.
 >=20
-> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+> Fixes: c592c8a28f58 ("clk: tegra: Fix refcounting of gate clocks")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com> # T210 Nano
+> Tested-by: Jon Hunter <jonathanh@nvidia.com> # T210 Nano
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
