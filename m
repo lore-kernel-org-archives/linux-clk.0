@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE92C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43805C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 062DF60F8F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 281F360F4F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 17:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230186AbhG0R4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 13:56:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46476 "EHLO mail.kernel.org"
+        id S229903AbhG0R45 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 13:56:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230435AbhG0R4p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Jul 2021 13:56:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C8646056B;
-        Tue, 27 Jul 2021 17:56:44 +0000 (UTC)
+        id S229529AbhG0R44 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Jul 2021 13:56:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ADB3360F11;
+        Tue, 27 Jul 2021 17:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627408604;
-        bh=ZF8wgQL8ya5hJrdbE7ElZ+y/AC2fEVAzKC0WCAIOM8g=;
+        s=k20201202; t=1627408616;
+        bh=/JE9CGQQa0Lu/VOUB7HHBRvNBpkPRzdpiUBTomM8n6w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Id2UwbcXa69DeFUAt19RScuQ+/V175vPfIsktNnDwVrVGz+IEVUN2TLckNFVSq26N
-         EaG6KWN7dK5+Bi4kKKv5U9T/tXZvXubi2fSZUwY1yljOQT4QE+b3cNIgsUCAtOm/EC
-         +lm+q1lJrgowUyl0XBHeBPV6ksQblupj++I27MJDHPtaUHYUjB6kaw5rQbmPch43Vk
-         6G1rUZv7ae2uqdI1LM8BwXK98c3qqPZTE7EI84mAXv5UjviKcR73COfInDxqtPBhg9
-         6FlmSKbXtfS1VyKA71MLRSfLAz5XH0WhiKsfGeRLCiAX+y97ZqzTY0+xJq7NMOJtBI
-         TkKrpnDiI19lw==
+        b=WLJhHdJZlrIWqULlBQpWG1YVkqXimVm0F50DLRRlUSGZMrmTzPa055GP58qQ+HO7w
+         e+Jr4+rtQ6muigxkbcGauujBU1neDVnwx/o0dGrYtZMAKcZH7slojomi7YtaD+4MUU
+         It4FwyOQ1w5Ap0oHb9tvC+y9s0fjclJG6YQRahnytO01Y4s7whhtA+wrnjG4YozUX2
+         WbTXrC9yUl8OryFlK8zY8UuDTB3q6A68vJI4OvBbIAduGg5Ve1XGadhwCXHqI1XKLt
+         uObczhgpeo6psLkD6w1eWi6vJ92R5jqhVKWTJ5pvhXIswJ8wqT09EX7HLcs+yBd2y9
+         h/Trr3KLLKZ3g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210726105719.15793-16-chun-jie.chen@mediatek.com>
-References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-16-chun-jie.chen@mediatek.com>
-Subject: Re: [v14 15/21] clk: mediatek: Add MT8192 mdpsys clock support
+In-Reply-To: <20210726105719.15793-17-chun-jie.chen@mediatek.com>
+References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-17-chun-jie.chen@mediatek.com>
+Subject: Re: [v14 16/21] clk: mediatek: Add MT8192 mfgcfg clock support
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -48,15 +48,15 @@ To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 27 Jul 2021 10:56:42 -0700
-Message-ID: <162740860259.2368309.5808478569910109438@swboyd.mtv.corp.google.com>
+Date:   Tue, 27 Jul 2021 10:56:54 -0700
+Message-ID: <162740861465.2368309.8626055730410519223@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chun-Jie Chen (2021-07-26 03:57:13)
-> Add MT8192 mdpsys clock provider
+Quoting Chun-Jie Chen (2021-07-26 03:57:14)
+> Add MT8192 mfgcfg clock provider
 >=20
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
