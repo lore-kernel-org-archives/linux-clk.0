@@ -5,56 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E957C432BE
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 681EFC4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D15161050
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49C3360E09
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234745AbhG0Ehn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 00:37:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53888 "EHLO
+        id S234962AbhG0Ei0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 00:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbhG0Ehm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jul 2021 00:37:42 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5BEC061760
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:37:42 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id ca5so3677138pjb.5
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:37:42 -0700 (PDT)
+        with ESMTP id S234865AbhG0EiZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jul 2021 00:38:25 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91595C061764
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:38:25 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id m1so16068221pjv.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sHCpjMG3bJheGspgPwPgXoTuuhMeCojN1Vcw1raYNbg=;
-        b=XImY6I5BO9PSo6vX6AyLIflKwvN5weee2a4Oh4nHjX8SbZeTMAYJXg0QeK2FKOnAh2
-         J7Iao0Pmh2ZE30+livAgtKfi6ljvex1FccPw3GWqwx2pJ3E6axqUC/LTf0Atarck2uor
-         KuPkt8VrZlVVYG3ft4eCSuLwyqmxlEFIJFots=
+        bh=hCM6aDqQlj672QNNN33XxbB1KA2gsQSovUNFK/0sjFg=;
+        b=DrDU/26Z3jIjjNMzkvdGR9rNb1RDbCZPotepcGCH0snHc/AmzgHXAzzH0SdjaQ1mPy
+         GY84SAdyMr7tNwk6wdulckqzhOojnOhPlp/dW/054ErgQUwYUzUSNHZfm7Pks2+gHnFQ
+         klizi6BgKspN3ulK9gCMxeE/OjsQa4b5VJpiY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sHCpjMG3bJheGspgPwPgXoTuuhMeCojN1Vcw1raYNbg=;
-        b=jg2EwUEf7Gp3Nia21Pw6FWcJVIe38XkrI4/l7n0CfPPzNftwpupiWCAvqFOzOAG90M
-         85TXJ5UNQ07g65+WEz5jdPBNdBC3w/d06RIIhiDnxTocflrV82p9Kr+FkEyTl6X+htMS
-         DwhQbFY+3kl4tWarVI/wrVGdZAF0MBmwncW3ExEXTJq+wlt5ESF8Z1pxE6otRMas52Uu
-         SvFgRL9/cXuz2iOKnkFdMmLbfl76MfKm/C4MjhBbJyq3Rx7P2zphaG8x4T+yTjMFj394
-         aQPeDLxyLYQeB8u1FwLME+aCPIhxrWKGwWBd2TIY8gtRKND9PupHOpDHuumxmWsGPAXN
-         k8ww==
-X-Gm-Message-State: AOAM533rsgeceQJfvAv8XrTbZLZ6CGjofZjiR/vf3hFm1kCGq6Y6DLxp
-        R4vrOyPdSAlcuFJSzPDvYo+RO0Anw51VPqeLsTcz4A==
-X-Google-Smtp-Source: ABdhPJxoMQnZyC8tW7HpIKMFF7+41G/TLa4K7yYK4o+MYvmtPlRKMcIhTLK2m30euPRcf43I2fDHvUwmfzLx9pB6wjg=
-X-Received: by 2002:a17:90a:8403:: with SMTP id j3mr2289387pjn.112.1627360662060;
- Mon, 26 Jul 2021 21:37:42 -0700 (PDT)
+        bh=hCM6aDqQlj672QNNN33XxbB1KA2gsQSovUNFK/0sjFg=;
+        b=RSTIhHZyIjfcrSUbAF2WPTonC8TetapFJzYrbwWChU9bFO6+QE96SkpU93jjjGZwL3
+         HsJ/naibLjawpDDrSh8ivBEUdvr/T1Gp9r1THCF345zybxTIP5V+OGFAnwL7mYLxOR1H
+         lTyocPv/v5LIvcUe6hWBABQb8vvLX8CX7kP7yJgydszhjq1zSKDKD1sdDi+x1p9qd4XZ
+         6Hoz2DIwXQOMZJc7kpZx/xJu3aD4bDpDRHZ5MvpaVhCiUdUUnsPblHNFm0vTFtq8mKKt
+         C6VFt/iUJJZRDluqo74Go7gqj04jle4bkGW/3ImfL6t5cjfqZGhuVLexR3yTnGnHmLKJ
+         7sQA==
+X-Gm-Message-State: AOAM532Ev2n4qs8IvOjDc0umQ7QRTSQhYK8M+I10hBj3sLxS3A/6CRMl
+        /tt+LGPD77Xgz/VjNiu0Fh18vjmwmaLd+ilXbeaM4Q==
+X-Google-Smtp-Source: ABdhPJw1I0ipQcf1mUHF8PpOYbrM0NpOo6vsm3gZYflpD3/0aDHJFNjYHGyNJztuit7nHdXSI3z60HYGFeYYm9x7nKY=
+X-Received: by 2002:aa7:81d8:0:b029:308:1d33:a5fa with SMTP id
+ c24-20020aa781d80000b02903081d33a5famr20861701pfn.55.1627360705046; Mon, 26
+ Jul 2021 21:38:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-6-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210726105719.15793-6-chun-jie.chen@mediatek.com>
+References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-9-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210726105719.15793-9-chun-jie.chen@mediatek.com>
 From:   Ikjoon Jang <ikjn@chromium.org>
-Date:   Tue, 27 Jul 2021 12:37:31 +0800
-Message-ID: <CAATdQgBdSqotJ_ZWSGzq7SbK-=qzwc+ptQidNgXFjR2C2VcPgQ@mail.gmail.com>
-Subject: Re: [v14 05/21] clk: mediatek: Get regmap without syscon compatible check
+Date:   Tue, 27 Jul 2021 12:38:13 +0800
+Message-ID: <CAATdQgDxBeDCHKy52XCk8bGNA=fcMFMMf9Q5SZZ4L5SZO9xdYQ@mail.gmail.com>
+Subject: Re: [v14 08/21] clk: mediatek: Add mtk_clk_simple_probe() to simplify
+ clock providers
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -69,19 +71,21 @@ Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         <devicetree@vger.kernel.org>,
         srv_heupstream <srv_heupstream@mediatek.com>,
         Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 6:59 PM Chun-Jie Chen
+On Mon, Jul 26, 2021 at 7:00 PM Chun-Jie Chen
 <chun-jie.chen@mediatek.com> wrote:
 >
-> Not all clock providers need to be marked compatible with "syscon"
-> for system configuration usage, so use device_node_to_regmap() to
-> skip "syscon" check.
+> Most of subsystem clock providers only need to register clock gates
+> in their probe() function.
+> To reduce the duplicated code by add a generic function.
 >
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 
 Reviewed-by: Ikjoon Jang <ikjn@chromium.org>
