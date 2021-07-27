@@ -3,64 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BDBC4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 18:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F8AC4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 18:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6E5360E08
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 18:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27EB760F9E
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 18:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbhG0SbD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 14:31:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34080 "EHLO mail.kernel.org"
+        id S230005AbhG0Sds (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 14:33:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229593AbhG0SbD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Jul 2021 14:31:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD5DA60E08;
-        Tue, 27 Jul 2021 18:31:02 +0000 (UTC)
+        id S229453AbhG0Sds (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Jul 2021 14:33:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0DB0360E08;
+        Tue, 27 Jul 2021 18:33:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627410662;
-        bh=APLtPhVPrplvweEN8D0BeBpWv3i66EvGiF2G81lV2CQ=;
+        s=k20201202; t=1627410828;
+        bh=IoOC+f1m/YhQqNhVUFsH6+csX5fiqfZsvIU8e2BPats=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G0RGxi8RZ0px/ZbKNTMNd0MgOjJRJV5FgeyFTm1hkBtSOtS5WVTy55Y2A06fQho9l
-         ohHXAK33Qd4JM0iqq2CeJZtx5RaP62Id5OzoiXRjvZnCYdpnYvcPTrsQu9PAiPwnPe
-         w89PLvs3KpWO/hi2O7sskxoiOKx6JQD7TVcti1tHXADcphKsmU8UlHCz6yUi18rIeO
-         IFVnqihdOooMyfbqkbOlUqsE2udGO93YA5yAyoeqviLjaz/A5CeYYg69S6lGOVSA3i
-         C7PzHrUHpeYelLK7YzotpeZmmIhAe5Ray+QHBRb3wN2/LdyhJnMASwU3QF/5woJgfu
-         oC3ao2XrcEutQ==
+        b=I+ocGSufKazh8ZWpBPK2NYgfV15CZu1lN7aB7iX5rdq/oG245Q9cPh7r+PqFTF1IN
+         5zJQIt/S+A9KaOP3u9WZenlj5LIQf+fPc9dWewKAO4WKvLdwa5TEGvMpisR/ZdniC9
+         HoKT8IVkSjL/0i1kNskDZTkao/4Rtt5cXyoxyiytToHv3Alm8xwyaZOwUJKCA6y5SS
+         y+tctTnQ42+QHitTpj3oBkc2JaYarLOTW5Q4hmMbkNaYWmeP1Cxi5ExUhptgnk1xa7
+         bnlnwGUsyiUdQPka0I+bJIM0e/flrc4w46vrFT6nARv6V2DLoxNAB6Wf/AoCjQQ2dV
+         cD60pwL9n38BQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210721224610.3035258-1-bjorn.andersson@linaro.org>
-References: <20210721224610.3035258-1-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] clk: qcom: dispcc-sm8250: Add additional parent clocks for DP
+In-Reply-To: <20210627185538.690277-3-iskren.chernev@gmail.com>
+References: <20210627185538.690277-1-iskren.chernev@gmail.com> <20210627185538.690277-3-iskren.chernev@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add Global Clock controller (GCC) driver for SM6115
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 27 Jul 2021 11:31:01 -0700
-Message-ID: <162741066149.2368309.9294368400080752080@swboyd.mtv.corp.google.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Date:   Tue, 27 Jul 2021 11:33:46 -0700
+Message-ID: <162741082663.2368309.12852214008454271169@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2021-07-21 15:46:10)
-> The clock controller has two additional clock source pairs, in order to
-> support more than a single DisplayPort PHY. List these, so it's possible
-> to describe them all.
->=20
-> Also drop the unnecessary freq_tbl for the link clock sources, to allow
-> these parents to be used.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+Quoting Iskren Chernev (2021-06-27 11:55:38)
+> diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
+> new file mode 100644
+> index 000000000000..e3c830b33dec
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sm6115.c
+> @@ -0,0 +1,3623 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
 
-Applied to clk-next
+Should be clk-provider.h in this list as well.
+
+> +
+> +#include <dt-bindings/clock/qcom,gcc-sm6115.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "common.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_CORE_BI_PLL_TEST_SE,
+> +       P_GPLL0_OUT_AUX2,
+> +       P_GPLL0_OUT_EARLY,
+> +       P_GPLL10_OUT_MAIN,
+> +       P_GPLL11_OUT_AUX,
+> +       P_GPLL11_OUT_AUX2,
+> +       P_GPLL11_OUT_MAIN,
+> +       P_GPLL3_OUT_EARLY,
+> +       P_GPLL3_OUT_MAIN,
+> +       P_GPLL4_OUT_MAIN,
+> +       P_GPLL6_OUT_EARLY,
+> +       P_GPLL6_OUT_MAIN,
+> +       P_GPLL7_OUT_MAIN,
+> +       P_GPLL8_OUT_EARLY,
+> +       P_GPLL8_OUT_MAIN,
+> +       P_GPLL9_OUT_EARLY,
+> +       P_GPLL9_OUT_MAIN,
+> +       P_SLEEP_CLK,
+> +};
+> +
+> +static const struct parent_map gcc_parent_map_0[] =3D {
+> +       { P_BI_TCXO, 0 },
+> +       { P_GPLL0_OUT_EARLY, 1 },
+> +       { P_GPLL0_OUT_AUX2, 2 },
+> +       { P_CORE_BI_PLL_TEST_SE, 7 },
+> +};
+> +
+> +static const char * const gcc_parent_names_0[] =3D {
+
+Please use struct clk_parent_data instead of these arrays of strings.
+
+> +       "bi_tcxo",
+> +       "gpll0",
+> +       "gpll0_out_aux2",
+> +       "core_bi_pll_test_se",
+> +};
+
+And add newlines between structs.
+
+> +static const char * const gcc_parent_names_0_ao[] =3D {
+> +       "bi_tcxo_ao",
+> +       "gpll0",
+> +       "gpll0_out_aux2",
+> +       "core_bi_pll_test_se",
+> +};
+> +
