@@ -3,69 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB2CC4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 20:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA717C4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFC6060F6B
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 20:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7D1660FC2
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 21:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231944AbhG0UvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 16:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52666 "EHLO mail.kernel.org"
+        id S232169AbhG0Vki (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 17:40:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231730AbhG0UvL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Jul 2021 16:51:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5585160F58;
-        Tue, 27 Jul 2021 20:51:11 +0000 (UTC)
+        id S231445AbhG0Vki (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Jul 2021 17:40:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AC27E60EB2;
+        Tue, 27 Jul 2021 21:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627419071;
-        bh=ZIAjZ+J0iM89/8iaYAsrzwXlGKwIu50aciYe7xisdIA=;
+        s=k20201202; t=1627422037;
+        bh=RG9Y5mEABOP2Zfajpg0c6IEQUjXaHwO+h+7pQW1y0y0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Iy7h+BBwq9IL6jp3mYo8vrM0zHcirWiozWGO0wtYDmlTqEzgNfSVQhQM8Pl6UoaaV
-         AWG2yjLwOCgdde3DOJjOx1n01J83tiv++6yKIlDnEjZ5GPcgCk7mcyfhMt3g/zfcll
-         HDrtGr6W4hskPwXO6fgt6ZYEprcCfHvXrooAPXNa27qPtyVwUgpyUMWzlLuBhs50RB
-         jNCICm0fT+g3Jlcl4lHuHP63WN41bRTaMANnrcp+vECGOIxIYm9IeD24kFUobLO8JN
-         ZXfk3erYuuC3pmGDKudMhw2Se6WN9+hNQSFFOAQaBozPDOOa8jk/iWynW+O+6BxVky
-         N4i9BD7r79r2w==
+        b=IF5USOQunlvbtCVtqaXPPLuA0tEOJIuD4kFn9dmgFfWOBx3I7tPlTWW60pnZBkZm2
+         31ab5Tw18iC63zgLt30DRvcDNuZE4rOSioQfYwerO7QA0K+aePY3r6VZ1Q8QcsEwvv
+         A62zEz7QD2GjaM4HgwR3dAUsv9OVuRxHkMOykUu+eS/LruLSOi3mlYKfKfxp78rmWf
+         76j6HoAMgkb58RZbYatSNn39RgtXw306J7+fIWN3GL2FCcIyEMFGozyfrWBB50HdNx
+         xvtXxdufFTWwuDMCaGMUOpHFbOUCtk4J/klCJxNd4zfY1g1RWywoehKI157NRZcwxl
+         NYOd1PLckRYig==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YPVWY4h+nSP6IGZc@ryzen>
-References: <20210702085438.1988087-1-aisheng.dong@nxp.com> <YPVWY4h+nSP6IGZc@ryzen>
-Subject: Re: [PATCH 1/1] clk: imx6q: fix uart earlycon unwork
+In-Reply-To: <20210627185927.695411-4-iskren.chernev@gmail.com>
+References: <20210627185927.695411-1-iskren.chernev@gmail.com> <20210627185927.695411-4-iskren.chernev@gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: qcom: smd: Add support for SM6115 rpm clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dongas86@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de,
-        aford173@gmail.com, stable@vger.kernel.org
-To:     Abel Vesa <abel.vesa@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Date:   Tue, 27 Jul 2021 13:51:10 -0700
-Message-ID: <162741907003.2368309.8765989426815970294@swboyd.mtv.corp.google.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Date:   Tue, 27 Jul 2021 14:40:35 -0700
+Message-ID: <162742203549.2368309.17168877833046620648@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2021-07-19 03:39:31)
-> On 21-07-02 16:54:38, Dong Aisheng wrote:
-> > The earlycon depends on the bootloader setup UART clocks being retained.
-> > There're actually two uart clocks (ipg, per) on MX6QDL,
-> > but the 'Fixes' commit change to register only one which means
-> > another clock may be disabled during booting phase
-> > and result in the earlycon unwork.
-> >=20
-> > Cc: stable@vger.kernel.org # v5.10+
-> > Fixes: 379c9a24cc23 ("clk: imx: Fix reparenting of UARTs not associated=
- with stdout")
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
->=20
->=20
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
->=20
-> Stephen, will you pick this up ?
->=20
+Quoting Iskren Chernev (2021-06-27 11:59:25)
+> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+> index bc0be1d4be5f..dfdd4f20f5fd 100644
+> --- a/drivers/soc/qcom/smd-rpm.c
+> +++ b/drivers/soc/qcom/smd-rpm.c
+> @@ -242,6 +242,7 @@ static const struct of_device_id qcom_smd_rpm_of_matc=
+h[] =3D {
+>         { .compatible =3D "qcom,rpm-msm8996" },
+>         { .compatible =3D "qcom,rpm-msm8998" },
+>         { .compatible =3D "qcom,rpm-sdm660" },
+> +       { .compatible =3D "qcom,rpm-sm6115" },
+>         { .compatible =3D "qcom,rpm-sm6125" },
+>         { .compatible =3D "qcom,rpm-qcs404" },
+>         {}
 
-Sure I can pick it up if you need me to pick it to fixes?
+Does this hunk need to be part of this patch?
