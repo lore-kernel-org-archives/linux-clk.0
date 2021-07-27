@@ -5,58 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681EFC4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D05C4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49C3360E09
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647A860E09
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jul 2021 04:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234962AbhG0Ei0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jul 2021 00:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
+        id S235050AbhG0EjS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jul 2021 00:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234865AbhG0EiZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jul 2021 00:38:25 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91595C061764
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:38:25 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id m1so16068221pjv.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:38:25 -0700 (PDT)
+        with ESMTP id S235027AbhG0EjR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jul 2021 00:39:17 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C1EAC061760
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:39:17 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id f13so3880806plj.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jul 2021 21:39:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hCM6aDqQlj672QNNN33XxbB1KA2gsQSovUNFK/0sjFg=;
-        b=DrDU/26Z3jIjjNMzkvdGR9rNb1RDbCZPotepcGCH0snHc/AmzgHXAzzH0SdjaQ1mPy
-         GY84SAdyMr7tNwk6wdulckqzhOojnOhPlp/dW/054ErgQUwYUzUSNHZfm7Pks2+gHnFQ
-         klizi6BgKspN3ulK9gCMxeE/OjsQa4b5VJpiY=
+        bh=PXqkOOR1pOtYMzsgwXDzf42bCaKreSWxIwhWwvEeqtI=;
+        b=AG59QGBYG2d8MJl+DmYb3WwVZKqVqgzyq3bnKbAV3gdhJeC91VtLz4113YUwJCoQO2
+         Ct39sGCQGldasZApaM/KRIgysBJ9pVrgbJOVYVEgnlU1m/CalsRwAnIXsQNVX/lFkB+N
+         bLBfyxvcMlkA0M8Dq7eyk8XbnByWU0n/wYTRg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hCM6aDqQlj672QNNN33XxbB1KA2gsQSovUNFK/0sjFg=;
-        b=RSTIhHZyIjfcrSUbAF2WPTonC8TetapFJzYrbwWChU9bFO6+QE96SkpU93jjjGZwL3
-         HsJ/naibLjawpDDrSh8ivBEUdvr/T1Gp9r1THCF345zybxTIP5V+OGFAnwL7mYLxOR1H
-         lTyocPv/v5LIvcUe6hWBABQb8vvLX8CX7kP7yJgydszhjq1zSKDKD1sdDi+x1p9qd4XZ
-         6Hoz2DIwXQOMZJc7kpZx/xJu3aD4bDpDRHZ5MvpaVhCiUdUUnsPblHNFm0vTFtq8mKKt
-         C6VFt/iUJJZRDluqo74Go7gqj04jle4bkGW/3ImfL6t5cjfqZGhuVLexR3yTnGnHmLKJ
-         7sQA==
-X-Gm-Message-State: AOAM532Ev2n4qs8IvOjDc0umQ7QRTSQhYK8M+I10hBj3sLxS3A/6CRMl
-        /tt+LGPD77Xgz/VjNiu0Fh18vjmwmaLd+ilXbeaM4Q==
-X-Google-Smtp-Source: ABdhPJw1I0ipQcf1mUHF8PpOYbrM0NpOo6vsm3gZYflpD3/0aDHJFNjYHGyNJztuit7nHdXSI3z60HYGFeYYm9x7nKY=
-X-Received: by 2002:aa7:81d8:0:b029:308:1d33:a5fa with SMTP id
- c24-20020aa781d80000b02903081d33a5famr20861701pfn.55.1627360705046; Mon, 26
- Jul 2021 21:38:25 -0700 (PDT)
+        bh=PXqkOOR1pOtYMzsgwXDzf42bCaKreSWxIwhWwvEeqtI=;
+        b=R/Pgnaj96WNPXT5ydWRDfdOVWrB9y1tsjNW8HnGE6v0o5dxcq5z3cxbTaGdHHxPmwB
+         kksz9hBtZcB79Ac8w7qEzh/gzTpzqh/5CVigOjZLiKBaPBjFVdeVPwvO5GPw/cqCpnkM
+         qhLy8p1cfCbmdPXUFpv5+vWjztCofv+TgSbgFarKPs2yYSIgbWzFfwBQq77UQSpkQ7Q6
+         fN3cXkDtFBYuq+6ODHdHpps8W94Jg5tCX8xkzoczDAhwEbIiLTpukh2WK/qmP8ezWJe1
+         hiY9ti5PO/IUtWxOu7TgB3CCb/Nah7k+33YuFPew+j9ON+z5a1NdCWCvOgBUh2olLbWR
+         1ayg==
+X-Gm-Message-State: AOAM533IhRyd8VaWO/Slb7yfdTDTwsg9Bu+W3Cf68ksvSJHNAR5GaPpw
+        YD+SWvI+H/atbsy55l/WCZU2fYzrEagkoRRKR3tFlA==
+X-Google-Smtp-Source: ABdhPJzk2XckOwQ6RCK2+Om3VQvLRLUz2rIVS0DubiOZfADOQ28pfm6zggkraLwAfixhBtKFGDUi7GmMyCICb0wLD1U=
+X-Received: by 2002:a63:8f04:: with SMTP id n4mr21076455pgd.317.1627360756729;
+ Mon, 26 Jul 2021 21:39:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-9-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210726105719.15793-9-chun-jie.chen@mediatek.com>
+References: <20210726105719.15793-1-chun-jie.chen@mediatek.com> <20210726105719.15793-10-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210726105719.15793-10-chun-jie.chen@mediatek.com>
 From:   Ikjoon Jang <ikjn@chromium.org>
-Date:   Tue, 27 Jul 2021 12:38:13 +0800
-Message-ID: <CAATdQgDxBeDCHKy52XCk8bGNA=fcMFMMf9Q5SZZ4L5SZO9xdYQ@mail.gmail.com>
-Subject: Re: [v14 08/21] clk: mediatek: Add mtk_clk_simple_probe() to simplify
- clock providers
+Date:   Tue, 27 Jul 2021 12:39:05 +0800
+Message-ID: <CAATdQgAGEqDyPJ7bnPsCow+BAFYJMdOs_mk8XCkz5Yy66x07mw@mail.gmail.com>
+Subject: Re: [v14 09/21] clk: mediatek: Add MT8192 basic clocks support
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -78,12 +76,11 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 7:00 PM Chun-Jie Chen
+On Mon, Jul 26, 2021 at 7:03 PM Chun-Jie Chen
 <chun-jie.chen@mediatek.com> wrote:
 >
-> Most of subsystem clock providers only need to register clock gates
-> in their probe() function.
-> To reduce the duplicated code by add a generic function.
+> Add MT8192 basic clock providers, include topckgen, apmixedsys,
+> infracfg and pericfg.
 >
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
