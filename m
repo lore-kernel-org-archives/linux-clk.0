@@ -2,156 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3A7C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 20:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61863C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 20:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD6B461040
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 20:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4682A60F02
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 20:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbhG1UHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jul 2021 16:07:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60994 "EHLO
+        id S231126AbhG1U0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jul 2021 16:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbhG1UHw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jul 2021 16:07:52 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D325C061765
-        for <linux-clk@vger.kernel.org>; Wed, 28 Jul 2021 13:07:50 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id w6so5215812oiv.11
-        for <linux-clk@vger.kernel.org>; Wed, 28 Jul 2021 13:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=97hQfQK7XavPSltv9pN4yF2y5jNc7cIdloHZZGHQCvY=;
-        b=Z7jTTKBFGpWIxboKqwgJRsOZp1J+aWDmjni8p5+XEVDRVJmY29+ni5XltyAcjXJrPd
-         VKRiyGY2cxhdfvhTRdTJXxMi8S4rhnmsf7fgxGaIh3UvIFWi4IDtUyJAop5wHOt23ZWF
-         4DS/rBN4kxsmc5k3UIkqOFWLnzdGHlERYnLb/rN8QlBNhMpET6iELjrDWctsQitUPXGL
-         2sckHJR93BoAb3Tm7MNt5hGZ34d1TvqTBveiQqtTZfbncswKMzJrgB6ult5Anul6wbBt
-         IngUJZkLp/kFIdNqQ4EVmz2DH5drGaBqdJBFNlZL/yfplvskUs3XOZoFU1YNCvGzVSnO
-         EDgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=97hQfQK7XavPSltv9pN4yF2y5jNc7cIdloHZZGHQCvY=;
-        b=oMUis6+sUmGCOomhCHxZzFi+Vme1PaaBVP3QJcHk3nFUrQhxXWBh/CWfjvo523S4t8
-         DvU2ynuNBanVZqi0BlH7GjlObC6kE0dMtcT82JMLh981/QTTemGaT1CPfQgbwDvdIAW6
-         0bVGERlqd5Tiu1IeNPxEf98Btz998RxN0mZuXhQs40Rz4k41zjn+k3AEwyE8mR/aRksP
-         8SRgq5+jflBeZkO+txYI14gscSrj69DfrmuB2V4yEM0MQOtpIL/T8tg8gU5dx8D2vtzW
-         HeWqSGMnQWb6W3QLuW9YMCmBp++iwyY7C/9X5j7Zsmv0vl5q+QjQyHaEavy3kkcE/AZX
-         YP8w==
-X-Gm-Message-State: AOAM5339rh9smyagOYN6NDxchYHrqZPOqR1vTQ2USWLZXQNJG2sB89kQ
-        83FNg4+E6GHytTMPWLyiqqcPVg==
-X-Google-Smtp-Source: ABdhPJwD7U8+qAvbZ4kuKnlj7p/+LPIrjaNSnetymU4fcJ2ltcIGDeO08kf0oVPEIdx8JqShaVs4sA==
-X-Received: by 2002:aca:1e12:: with SMTP id m18mr7648287oic.95.1627502869900;
-        Wed, 28 Jul 2021 13:07:49 -0700 (PDT)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id n1sm182047otk.34.2021.07.28.13.07.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 13:07:49 -0700 (PDT)
-Date:   Wed, 28 Jul 2021 13:05:59 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
+        with ESMTP id S229878AbhG1U0M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jul 2021 16:26:12 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3848CC061757
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jul 2021 13:26:10 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1m8q7j-0001DY-CD; Wed, 28 Jul 2021 22:25:51 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1m8q7f-00016c-Jz; Wed, 28 Jul 2021 22:25:47 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1m8q7f-00018J-IS; Wed, 28 Jul 2021 22:25:47 +0200
+Date:   Wed, 28 Jul 2021 22:25:47 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] PM: clk: add devm_pm_clk_create helper
-Message-ID: <YQG4pz/z2nBNA+tJ@ripper>
-References: <20210728142445.774158-1-dmitry.baryshkov@linaro.org>
- <20210728142445.774158-3-dmitry.baryshkov@linaro.org>
+        Claudiu.Beznea@microchip.com
+Cc:     Arnd Bergmann <arnd@arndb.de>, andy.shevchenko@gmail.com,
+        alexandre.belloni@bootlin.com, Nicolas.Ferre@microchip.com,
+        thierry.reding@gmail.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        o.rempel@pengutronix.de, Ludovic.Desroches@microchip.com,
+        aardelean@deviqon.com, linux-pwm@vger.kernel.org,
+        broonie@kernel.org, Jonathan.Cameron@huawei.com,
+        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        wsa@kernel.org, kernel@pengutronix.de, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org
+Subject: About clk maintainership [Was: Re: [PULL] Add variants of
+ devm_clk_get for prepared and enabled clocks enabled clocks]
+Message-ID: <20210728202547.7uvfwflpruku7yps@pengutronix.de>
+References: <20210609202123.u5rmw7al4x3rrvun@pengutronix.de>
+ <20210625171434.3xusxpxjprcdqa47@pengutronix.de>
+ <20210705080144.zfbzkm7l3gmnh6st@pengutronix.de>
+ <20210722060654.nudpdtemosi64nlb@pengutronix.de>
+ <YPkg0wtYIoHKpTUW@kunai>
+ <20210722081817.2tsjzof4gvldq6ka@pengutronix.de>
+ <YPlfcbkxiBmB+vw1@kunai>
+ <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
+ <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
+ <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6qq7fthau66l5qry"
 Content-Disposition: inline
-In-Reply-To: <20210728142445.774158-3-dmitry.baryshkov@linaro.org>
+In-Reply-To: <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 28 Jul 07:24 PDT 2021, Dmitry Baryshkov wrote:
 
-> Add devm_pm_clk_create helper, devres-enabled version of the
-> pm_clk_create(), which will call pm_clk_destroy at the correct time.
-> 
+--6qq7fthau66l5qry
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As with path 1, please describe why this is a good thing. (I definitely
-think it is, but I've been part of the discussion leading up to this
-patch)
+Hello,
 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/base/power/clock_ops.c | 17 +++++++++++++++++
->  include/linux/pm_clock.h       |  5 +++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> index 0251f3e6e61d..4110c19c08dc 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -519,6 +519,23 @@ void pm_clk_destroy(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(pm_clk_destroy);
->  
-> +static void pm_clk_destroy_action(void *data)
-> +{
-> +	pm_clk_destroy(data);
-> +}
-> +
+I adapted the Subject in the hope to catch Stephen's and Michael's
+attention. My impression is that this thread isn't on their radar yet,
+but the topic here seems important enough to get a matching Subject.
 
-As this is an addition to the API, it deserves some kerneldoc.
+On Mon, Jul 26, 2021 at 09:18:16AM +0000, Claudiu.Beznea@microchip.com wrot=
+e:
+> > On Fri, Jul 23, 2021 at 11:26:58AM +0300, Andy Shevchenko wrote:
+> >> On Thursday, July 22, 2021, Wolfram Sang <wsa@kernel.org> wrote:
+> >>>>>> [ some frustration for not getting feedback for clk patches ]
+> >>>>> What about adding gkh to the list explaining the situation to him?
+> >>>> Greg doesn't like devm_ stuff.
+> >>>>
+> >>>> I already asked Arnd who doesn't want to interfere and akpm who didn=
+'t
+> >>>> react either up to now.
+> >>> Wow, okay, that is frustrating.
+> >> The situation simply shows the process gap and One Maintainer nowadays=
+ is
+> >> far from enough to satisfy demands.
+> >=20
+> > Technically there are two maintainers for drivers/clk, Michael Turquette
+> > and Stephen Boyd. It seems Michael is MIA and Stephen doesn't have the
+> > capacity to address all requests.
+> >=20
+> >> What I think about is that we need to escalate this to Linus and
+> >> others and elaborate the mechanisms how to squeeze a new (additional)
+> >> maintainer when the original one is not responsive. Let=E2=80=99s say =
+some
+> >> procedural steps. Otherwise we doomed because of human factor.
+> >=20
+> > Assuming there was some process for this, is there someone who is
+> > willing to take responsibility here?
+>=20
+> In the last year I worked on AT91 clock drivers and I would be available
+> for taking responsibility beyond AT91 clocks (if everyone's OK with this),
+> in whatever form the current maintainers and people in the audience would
+> agree, if any (co-maintainer or other forms that could be useful). The id=
+ea
+> is to help things progress as I also have patches waiting for feedback on
+> clock mailing list for almost 6 months.
+>=20
+> Let me know if I can be helpful.
 
-Regards,
-Bjorn
+Wondering about how we can progress here I think it's crucial that
+Stephen and/or Michael share their thoughts about how they intend to
+care for drivers/clk in the future.
 
-> +int devm_pm_clk_create(struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = pm_clk_create(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_add_action_or_reset(dev, pm_clk_destroy_action, dev);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_pm_clk_create);
-> +
->  /**
->   * pm_clk_suspend - Disable clocks in a device's PM clock list.
->   * @dev: Device to disable the clocks for.
-> diff --git a/include/linux/pm_clock.h b/include/linux/pm_clock.h
-> index 8ddc7860e131..ada3a0ab10bf 100644
-> --- a/include/linux/pm_clock.h
-> +++ b/include/linux/pm_clock.h
-> @@ -47,6 +47,7 @@ extern void pm_clk_remove(struct device *dev, const char *con_id);
->  extern void pm_clk_remove_clk(struct device *dev, struct clk *clk);
->  extern int pm_clk_suspend(struct device *dev);
->  extern int pm_clk_resume(struct device *dev);
-> +extern int devm_pm_clk_create(struct device *dev);
->  #else
->  static inline bool pm_clk_no_clocks(struct device *dev)
->  {
-> @@ -83,6 +84,10 @@ static inline void pm_clk_remove(struct device *dev, const char *con_id)
->  static inline void pm_clk_remove_clk(struct device *dev, struct clk *clk)
->  {
->  }
-> +static inline int devm_pm_clk_create(struct device *dev)
-> +{
-> +	return -EINVAL;
-> +}
->  #endif
->  
->  #ifdef CONFIG_HAVE_CLK
-> -- 
-> 2.30.2
-> 
+Do you want to keep the maintainer post long-term? Or only for a
+transitional period until someone else can take care? Is your
+non-presence only temporal and is it foreseeable that you will increase
+your efforts in the next weeks/months again? Do you welcome a
+co-maintainer? What kind of involvement would you consider helpful?
+
+Thanks to Claudiu for offering to support here, at least from my side
+this is very appreciated.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--6qq7fthau66l5qry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmEBvToACgkQwfwUeK3K
+7Aksbwf/YlXrflASuxAw9ZMxMY43DC3nIKdf2RTKOgtNNEFOXGHJAhFzxIb9D6Iu
+yUJ9O3vjSnS2L56hUNq4WzAFg/QFj29vCHYwMlI3S0rKJAbPik+NbdakEvgjgGSH
+G5jhi2RKJDosXRHy2djyjqINHgjPViVka7qVoa2+hJnOLrfGmUjSzWTbWBE69Zs+
+Zm0HSIg9VXbOpxcqxy55PNTkn5hzQ03rvHR6VeqnB15Pab9AHSKDta5yfReZPWoP
+/WHoVwCGU6JmlKbTAqCePaDG0Y0HfUQjhg6aQj1Z823tT9LcNP8khCE2tbhM0ii7
+5y0J8EYhxmhak5kFGiuNPYvYGgfTsw==
+=SgSy
+-----END PGP SIGNATURE-----
+
+--6qq7fthau66l5qry--
