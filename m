@@ -2,108 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C52C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 08:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C00BC4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 09:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4D2460D07
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 08:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F2C60F9C
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 09:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232290AbhG1Irf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jul 2021 04:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbhG1Ire (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jul 2021 04:47:34 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D7AC061757;
-        Wed, 28 Jul 2021 01:47:33 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id o2-20020a9d22020000b0290462f0ab0800so1312439ota.11;
-        Wed, 28 Jul 2021 01:47:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mj+6onJ5YCrGEwa+OUlRe/rsn1CusgezZwhDmz7NI9g=;
-        b=QbywKMqDBE2vyLGvddwKLvEEqPYtYiP3KuLnBqSbk/reeT/yJKLmp+2pGPy1CzN2tU
-         YosFnFUjFJnJiVu2bZ2PHFo1VbGF+xD7bgcTdyX9tN0iCiy0PDPbMSD5MeqYdz8uTBY9
-         zbAGxVhPOAuyXVCN5l2rBNacN9h8QsmrEEo3jf8CXyvKbCuXnMIez7YF/nWdu5i5STdI
-         Niy4RYY6GsSIFn5wg8E5h7B3v7lQhY27ggHOwZjd38aaDUY8Jq0Vo+N25s1LPJcGKTC/
-         fTodhzcfijSudfAaxvR+CHbWYv55iNEbxOeuSZAkKreFiX6SozBK2M+4NN3dTuHh17NY
-         T1pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mj+6onJ5YCrGEwa+OUlRe/rsn1CusgezZwhDmz7NI9g=;
-        b=ZoeAElpB0CiGi0+qSUS5ruofnzEU/J3iDeL6cpbvHb1IMTMaCBXAz7/7dLgaeiXCpU
-         gee7o9HZx6PUiZboOitGzjBbDOXnqrlaImIT+Kdg8YcUnEkcAL16wTCpeNiT1MU0rWKi
-         nfMdJ1E1P9CiMRHROBbgNvbiANN2Uf+QwNSvqwe90s5vXdkyFNfrpBMAL4fk/0yu0WLL
-         GSy/YUuWVxAJw+dlsiMW0B4SpWLStxBw1Oe6/tSam/Nndcos0ncDFHZjJh654KcjD+s8
-         JqZ47JSVaW0WIrhlgi1u2hDgfs3Rqh5sQ2j1p6hYTQ0O48QlYov2GZmoxCVZKGi7eQLi
-         T7cA==
-X-Gm-Message-State: AOAM531/StrHinsvgOFT42u7zVQk0oOzQNphOAJnPfcXWpHp169lWnJJ
-        nmYeKQrux1Xy2YTMi4X2nl0XtcBfUvefKqmXhF0=
-X-Google-Smtp-Source: ABdhPJyTdb7oER2azfgjeqt4WdAGg6eOms+MJ2WoWxr9GEQkVXuK60ACrXuJ/QqNL6CNBrr6qYi+l1txUCDAqqvnjjQ=
-X-Received: by 2002:a9d:27a4:: with SMTP id c33mr18699138otb.281.1627462053217;
- Wed, 28 Jul 2021 01:47:33 -0700 (PDT)
+        id S233734AbhG1Jx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jul 2021 05:53:59 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:48604 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232014AbhG1Jx7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Jul 2021 05:53:59 -0400
+Received: from [95.90.166.74] (helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1m8gGB-0004qG-7D; Wed, 28 Jul 2021 11:53:55 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Yunhao Tian <t123yh@outlook.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     t123yh.xyz@gmail.com, Yunhao Tian <t123yh@outlook.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: rk3308: make ddrphy4x clock critical
+Date:   Wed, 28 Jul 2021 11:53:54 +0200
+Message-ID: <2634451.ElGaqSPkdT@diego>
+In-Reply-To: <162734809017.2368309.7901135942001140161@swboyd.mtv.corp.google.com>
+References: <BYAPR20MB24886765F888A9705CBEB70789E39@BYAPR20MB2488.namprd20.prod.outlook.com> <162734809017.2368309.7901135942001140161@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
- <20210726105719.15793-3-chun-jie.chen@mediatek.com> <162740843452.2368309.13157283201271440368@swboyd.mtv.corp.google.com>
-In-Reply-To: <162740843452.2368309.13157283201271440368@swboyd.mtv.corp.google.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Wed, 28 Jul 2021 10:47:21 +0200
-Message-ID: <CAFqH_51D0A_Oht785cxvWjuNFYgLL25-qX1QEpLhWBARtTgVMA@mail.gmail.com>
-Subject: Re: [v14 02/21] dt-bindings: ARM: Mediatek: Add mmsys document
- binding for MT8192
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chun-Jie and Stephen,
-
-Missatge de Stephen Boyd <sboyd@kernel.org> del dia dt., 27 de jul.
-2021 a les 19:54:
->
-> Quoting Chun-Jie Chen (2021-07-26 03:57:00)
-> > This patch adds the mmsys document binding for MT8192 SoC.
-> >
-> > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-> > Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> > Acked-by: Rob Herring <robh@kernel.org>
+Am Dienstag, 27. Juli 2021, 03:08:10 CEST schrieb Stephen Boyd:
+> Quoting Yunhao Tian (2021-07-21 05:48:16)
+> > Currently, no driver support for DDR memory controller (DMC) is present,
+> > as a result, no driver is explicitly consuming the ddrphy clock. This means
+> > that VPLL1 (parent of ddr clock) will be shutdown if we enable
+> > and then disable any child clock of VPLL1 (e.g. SCLK_I2S0_8CH_TX).
+> > If VPLL1 is disabled, the whole system will freeze, because the DDR
+> > controller will lose its clock. So, it's necessary to prevent VPLL1 from
+> > shutting down, by marking the ddrphy4x CLK_IS_CRITICAL.
+> > 
+> > This bug was discovered when I was porting rockchip_i2s_tdm driver to
+> > mainline kernel from Rockchip 4.4 kernel. I guess that other Rockchip
+> > SoCs without DMC driver may need the same patch. If this applies to
+> > other devices, please let us know.
+> > 
+> > Signed-off-by: Yunhao Tian <t123yh@outlook.com>
 > > ---
->
-> Applied to clk-next
->
+> >  drivers/clk/rockchip/clk-rk3308.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
+> > index 2c3bd0c749f2..6be077166330 100644
+> > --- a/drivers/clk/rockchip/clk-rk3308.c
+> > +++ b/drivers/clk/rockchip/clk-rk3308.c
+> > @@ -564,7 +564,7 @@ static struct rockchip_clk_branch rk3308_clk_branches[] __initdata = {
+> >         COMPOSITE(SCLK_DDRCLK, "clk_ddrphy4x_src", mux_dpll_vpll0_vpll1_p, CLK_IGNORE_UNUSED,
+> >                         RK3308_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 3, DFLAGS,
+> >                         RK3308_CLKGATE_CON(0), 10, GFLAGS),
+> > -       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED,
+> > +       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED | CLK_IS_CRITICAL,
+> 
+> Is it not enabled by default?
 
-This will conflict in linux-next as the binding was already converted
-to yaml. See
+All gates are enabled by default, but this gate shares a common parent
+tree down to a pll, so if another leaf-user is disabling their part, this
+untracked clock would get disabled as well.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml?id=63e1125e6bb8eae3cd20292f6a10ee421dd574ae
+On that note, I remember a sort of CLK_HANDOFF was planned way back
+in the past, meaning clock is critical until a driver picks it up, after this the
+driver is responsible for it. Did that get any momentum?
 
-Thanks,
-  Enric
+Heiko
 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+
+
