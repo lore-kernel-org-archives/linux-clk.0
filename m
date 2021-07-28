@@ -2,201 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D24C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 10:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84640C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 10:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C92AD60F9D
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 10:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6006B60F9E
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jul 2021 10:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235619AbhG1KEe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jul 2021 06:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235573AbhG1KEO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jul 2021 06:04:14 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4707C061757;
-        Wed, 28 Jul 2021 03:04:12 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id 10so2090866ill.10;
-        Wed, 28 Jul 2021 03:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4PuMlVCT7jMo4ZUqy0sj2FkowOIa3Yr3Zei1WjK4tiA=;
-        b=AWZTCHu7T5tDCBGNj2065haI/yecsifbY8dfwcme2JRMk8FMCmoOHNTIjCkzpLYFIv
-         S30c2e6mCzbSJIX4XWzVBOBpIExeLx0+ttzOAt4u4mfWDzvy1nFcYC0VvtFaz0qVlclR
-         I/TXFNRGkCgzSacCWtjEQvKKjyyVmJ8rMHbk0kftXxM9X/pyPm5YomGi33MC2kCnTg4N
-         9vrEtX2R4F6wrVtJ0xjBuwjq4xJmJUaqcHNlJNBdj3CVetu8Q+MazQJxY0HHi+4udad/
-         fYyrkNidxVgeq5enqYnGQ48QLqXYaCA7K9tYa/MnDKcaOGKtzjjwQSe1GDUJzOH9cC/c
-         HWfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4PuMlVCT7jMo4ZUqy0sj2FkowOIa3Yr3Zei1WjK4tiA=;
-        b=swE60Lxe3wsy4uXaKYKSzIFAUOlRGBIeQNDsbOyJElNmeCKbtia0r2igrBq7hhpOPi
-         ErHITcA4QWOmU+fSr03BWItjDgkVDS4AG811wjG5WXhNHpuxmuXRAfAIjO1u1mHSMc+T
-         Vi5h1JKtnYZUNKolwWs3jRrvI84FdvGLq6fYrOZ57gQeHE2LTc4uRigVLwlay2893jbK
-         pJoNO3j+VVnQNyCGfZqghbtN8QGAZKR2Ai9rEsE5jusng4RPRAAFanCJVyt2dowwEXdC
-         sKX/trLRIiqmyz1i28j18ZvkorqgsrM0MDHi06FD68pcy35AsFOVda/neZTbnN84GlI6
-         DfmQ==
-X-Gm-Message-State: AOAM531fjdqLq8xdufXSJXW3bmqRulezQOR4kHlnr2WyVG43yoISdmNJ
-        BY9CqZFhIDMcANrTdMKLxcGgC5Yh++stUiTeCvc=
-X-Google-Smtp-Source: ABdhPJwiBckW54PjAZOZYMsrEe18cAg4IeU8j8uuKh2570XMFa280TbMFS8RZaButWFLjO5NqGSTmXtVlCCKShsSrVo=
-X-Received: by 2002:a05:6e02:20eb:: with SMTP id q11mr20348722ilv.272.1627466652056;
- Wed, 28 Jul 2021 03:04:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210725160725.10788-1-dariobin@libero.it>
-In-Reply-To: <20210725160725.10788-1-dariobin@libero.it>
-From:   Dillon Hua <dillonhua@gmail.com>
-Date:   Wed, 28 Jul 2021 18:03:36 +0800
-Message-ID: <CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for
- I2S/SAI PLLs
-To:     Dario Binacchi <dariobin@libero.it>
-Cc:     linux-clk@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S231907AbhG1KVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jul 2021 06:21:12 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:44146 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229574AbhG1KVL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jul 2021 06:21:11 -0400
+X-UUID: a6123fab58ef4b71af91edc86908cd1a-20210728
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=pOtzGqpNSphuXXqUkv0xXxPPYQqKavCRJjR/ns5nsaE=;
+        b=Tk67lpeXIABoys/9Twvsix2+Lwo8zk+DjnM/l9dkiKzn2GuVvg+PCvD0fUfprX9MtTgXBrY2FFTB7U8E/ud0vAkzBL/K03r4+meFtJiYyMpCXUJi3cYC20NOeKfKpbnB+6tma5f6fnJ/4NYiNLvL+ufbbgXZ0lHYQYP2aoF8e+w=;
+X-UUID: a6123fab58ef4b71af91edc86908cd1a-20210728
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 202140126; Wed, 28 Jul 2021 18:21:05 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 28 Jul 2021 18:21:04 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 28 Jul 2021 18:21:04 +0800
+Message-ID: <fd1a7b95ea63296e350aa04dce1dbb4f8c84092c.camel@mediatek.com>
+Subject: Re: [v14 02/21] dt-bindings: ARM: Mediatek: Add mmsys document
+ binding for MT8192
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Wed, 28 Jul 2021 18:21:04 +0800
+In-Reply-To: <CAFqH_51D0A_Oht785cxvWjuNFYgLL25-qX1QEpLhWBARtTgVMA@mail.gmail.com>
+References: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
+         <20210726105719.15793-3-chun-jie.chen@mediatek.com>
+         <162740843452.2368309.13157283201271440368@swboyd.mtv.corp.google.com>
+         <CAFqH_51D0A_Oht785cxvWjuNFYgLL25-qX1QEpLhWBARtTgVMA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dario,
+T24gV2VkLCAyMDIxLTA3LTI4IGF0IDEwOjQ3ICswMjAwLCBFbnJpYyBCYWxsZXRibyBTZXJyYSB3
+cm90ZToNCj4gSGkgQ2h1bi1KaWUgYW5kIFN0ZXBoZW4sDQo+IA0KPiBNaXNzYXRnZSBkZSBTdGVw
+aGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+IGRlbCBkaWEgZHQuLCAyNyBkZSBqdWwuDQo+IDIw
+MjEgYSBsZXMgMTk6NTQ6DQo+ID4gDQo+ID4gUXVvdGluZyBDaHVuLUppZSBDaGVuICgyMDIxLTA3
+LTI2IDAzOjU3OjAwKQ0KPiA+ID4gVGhpcyBwYXRjaCBhZGRzIHRoZSBtbXN5cyBkb2N1bWVudCBi
+aW5kaW5nIGZvciBNVDgxOTIgU29DLg0KPiA+ID4gDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVu
+LUppZSBDaGVuIDxjaHVuLWppZS5jaGVuQG1lZGlhdGVrLmNvbT4NCj4gPiA+IFJldmlld2VkLWJ5
+OiBDaHVuLUt1YW5nIEh1IDxjaHVua3VhbmcuaHVAa2VybmVsLm9yZz4NCj4gPiA+IFJldmlld2Vk
+LWJ5OiBNYXR0aGlhcyBCcnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPg0KPiA+ID4gQWNr
+ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gPiAtLS0NCj4gPiANCj4g
+PiBBcHBsaWVkIHRvIGNsay1uZXh0DQo+ID4gDQo+IA0KPiBUaGlzIHdpbGwgY29uZmxpY3QgaW4g
+bGludXgtbmV4dCBhcyB0aGUgYmluZGluZyB3YXMgYWxyZWFkeSBjb252ZXJ0ZWQNCj4gdG8geWFt
+bC4gU2VlDQo+IA0KPiANCmh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczovL2dpdC5r
+ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0L2xpbnV4LW5leHQuZ2l0L2Nv
+bW1pdC9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlh
+dGVrLG1tc3lzLnlhbWw/aWQ9NjNlMTEyNWU2YmI4ZWFlM2NkMjAyOTJmNmExMGVlNDIxZGQ1NzRh
+ZV9fOyEhQ1RSTktBOXdNZzBBUmJ3ITFsOUl5dXp6eWRVSm1HYUVSUExjYUwycFNkemJ1QlN0TVI0
+X2pxVzFhVnlWd0JHZFVVX2cyMmp5RGhxYkNseDREYU5UJA0KPiAgDQo+IA0KPiBUaGFua3MsDQo+
+ICAgRW5yaWMNCj4gDQoNCkkgd2lsbCByZXNlbmQgbW1zeXMgYmluZGluZyBkb2N1bWVudCBzaW5n
+bHkgYmFzZWQgb24gWzFdLg0KDQpbMV0gDQpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3By
+b2plY3QvbGludXgtbWVkaWF0ZWsvbGlzdC8/c2VyaWVzPTQ4NTE2NQ0KDQoNCkJlc3QgUmVnYXJk
+cywNCkNodW4tSmllDQoNCj4gPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXw0KPiA+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiA+IExpbnV4LW1l
+ZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gPiANCmh0dHBzOi8vdXJsZGVmZW5zZS5jb20v
+djMvX19odHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LW1l
+ZGlhdGVrX187ISFDVFJOS0E5d01nMEFSYnchMWw5SXl1enp5ZFVKbUdhRVJQTGNhTDJwU2R6YnVC
+U3RNUjRfanFXMWFWeVZ3QkdkVVVfZzIyanlEaHFiQ3BLWWxxNkkkDQo+ID4gIA0K
 
-I have a similar patch [1] submitted last year.
-Unfortunately, it did not get accepted by the maintainer.
-
-Just a reminder here for you, should remove
-
-{ STM32F4_RCC_APB2ENR, 26, "ltdc", "apb2_div" },
-
-from stm32{f429, f469, f746, f769}_gates[]; or else
-run into white screen after the kernel enters the console.
-
-This patch was verified by Patrice Chotard, you can
-find  the history from [2].
-
-Hope you can help to submit a patch to include [2], thanks.
-
-[1]
-https://lore.kernel.org/linux-arm-kernel/1590564453-24499-7-git-send-email-dillon.minfei@gmail.com/
-https://lore.kernel.org/linux-arm-kernel/1590564453-24499-6-git-send-email-dillon.minfei@gmail.com/
-
-resend this year:
-https://lore.kernel.org/lkml/1590378348-8115-6-git-send-email-dillon.minfei@gmail.com/
-
-[2]
-https://lore.kernel.org/lkml/6915fa2a-e211-476f-8317-6825e280c322@foss.st.com/
-
-Thanks
-Best Regards
-
-Dillon
-
-On Mon, Jul 26, 2021 at 12:08 AM Dario Binacchi <dariobin@libero.it> wrote:
->
-> Enabling the framebuffer leads to a system hang. Running, as a debug
-> hack, the store_pan() function in drivers/video/fbdev/core/fbsysfs.c
-> without taking the console_lock, allows to see the crash backtrace on
-> the serial line.
->
-> ~ # echo 0 0 > /sys/class/graphics/fb0/pan
->
-> [    9.719414] Unhandled exception: IPSR = 00000005 LR = fffffff1
-> [    9.726937] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-> [    9.733008] Hardware name: STM32 (Device Tree Support)
-> [    9.738296] PC is at clk_gate_is_enabled+0x0/0x28
-> [    9.743426] LR is at stm32f4_pll_div_set_rate+0xf/0x38
-> [    9.748857] pc : [<0011e4be>]    lr : [<0011f9e3>]    psr: 0100000b
-> [    9.755373] sp : 00bc7be0  ip : 00000000  fp : 001f3ac4
-> [    9.760812] r10: 002610d0  r9 : 01efe920  r8 : 00540560
-> [    9.766269] r7 : 02e7ddb0  r6 : 0173eed8  r5 : 00000000  r4 : 004027c0
-> [    9.773081] r3 : 0011e4bf  r2 : 02e7ddb0  r1 : 0173eed8  r0 : 1d3267b8
-> [    9.779911] xPSR: 0100000b
-> [    9.782719] CPU: 0 PID: 49 Comm: sh Not tainted 5.13.0-rc5 #9
-> [    9.788791] Hardware name: STM32 (Device Tree Support)
-> [    9.794120] [<0000afa1>] (unwind_backtrace) from [<0000a33f>] (show_stack+0xb/0xc)
-> [    9.802421] [<0000a33f>] (show_stack) from [<0000a8df>] (__invalid_entry+0x4b/0x4c)
->
-> The `pll_num' field in the post_div_data configuration contained a wrong
-> value which also referenced an uninitialized hardware clock when
-> clk_register_pll_div() was called.
->
-> Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
-> Signed-off-by: Dario Binacchi <dariobin@libero.it>
-> Reviewed-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> ---
-> I added Gabriel Fernandez's 'Reviewed-by' tag as requested by himself
-> 15 days ago at https://lore.kernel.org/patchwork/patch/1450964/.
->
-> Changes in v4:
-> - Really add Gabriel Fernandez 'Reviewed-by' tag. In version 3 I forgot
->   to add the tag.
->
-> Changes in v3:
-> - Add Gabriel Fernandez 'Reviewed-by' tag.
->
-> Changes in v2:
-> - Change  'u8 pll_num' from 'stm32f4_pll_post_div_data' structure into
->   'int pll_idx'.
->
->  drivers/clk/clk-stm32f4.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 18117ce5ff85..5c75e3d906c2 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -526,7 +526,7 @@ struct stm32f4_pll {
->
->  struct stm32f4_pll_post_div_data {
->         int idx;
-> -       u8 pll_num;
-> +       int pll_idx;
->         const char *name;
->         const char *parent;
->         u8 flag;
-> @@ -557,13 +557,13 @@ static const struct clk_div_table post_divr_table[] = {
->
->  #define MAX_POST_DIV 3
->  static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
-> -       { CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
-> +       { CLK_I2SQ_PDIV, PLL_VCO_I2S, "plli2s-q-div", "plli2s-q",
->                 CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
->
-> -       { CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
-> +       { CLK_SAIQ_PDIV, PLL_VCO_SAI, "pllsai-q-div", "pllsai-q",
->                 CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
->
-> -       { NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-> +       { NO_IDX, PLL_VCO_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
->                 STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
->  };
->
-> @@ -1774,7 +1774,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->                                 post_div->width,
->                                 post_div->flag_div,
->                                 post_div->div_table,
-> -                               clks[post_div->pll_num],
-> +                               clks[post_div->pll_idx],
->                                 &stm32f4_clk_lock);
->
->                 if (post_div->idx != NO_IDX)
-> --
-> 2.17.1
->
