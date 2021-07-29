@@ -2,472 +2,498 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE0BC432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 14:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01423C4320E
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 18:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2C7D60F6F
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 14:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E5760F6F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 18:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237253AbhG2O2b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jul 2021 10:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234999AbhG2O2b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jul 2021 10:28:31 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D14C0613C1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jul 2021 07:28:28 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id k13so4024113qth.10
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jul 2021 07:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wLj2QK1R5utvd4vrSnwikE1e+hVxBjjxq1nXuXjo4gI=;
-        b=AbSYxlJb8Smx3Z/+e5otONwijclrDAkIj7xU+PKleTPInFmOC2OjWYR8Zbr1a4R6wE
-         G4nrTw2njuNTe7uf/a+XwwtE91dp1ZhFLSaArKUjwYjgOIrkEPv138OTymtmkVB/1gKb
-         JUPYN0Zt+tyivETVlSQS61nEIJ4yOg+b/ZMYHlKuRPv0W6jt6DjrjNJuiW7Ciok62ddt
-         LQeHIPH0r1L1iHwoUsXM/m9/9OFhT5QORWbx7xlKdcl7xsB+77Ii0nJcPnhVqz63rxYt
-         4PzpbeVOlcbeD8qYORf9g9cQF2vilK4r7WmE20EUwYqYT9qNnKxFAWFVVoHsZJs2MTP1
-         UOaQ==
+        id S231594AbhG2Sza (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jul 2021 14:55:30 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:45947 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231475AbhG2Sz3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jul 2021 14:55:29 -0400
+Received: by mail-io1-f48.google.com with SMTP id l126so8430878ioa.12;
+        Thu, 29 Jul 2021 11:55:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wLj2QK1R5utvd4vrSnwikE1e+hVxBjjxq1nXuXjo4gI=;
-        b=j5G8IFHFBHC2JDVXY/H1JLJ+dmhD7bvik5pNzrqGhVFVzdG2q1VOjgGeqOt9MmoMTD
-         1AlC6ovc+S95yrQUGBF5Lwuz/lkVjcrYnmcuPibeLJd5PhLFxU4YNelH5Ey+Wt0sPRHj
-         S/pHRoddToEcCx5OaPzZlhAPVxcE4mb7FY7055puj2HLY4pmL75IPBPniGSbLtFBwe1G
-         CoDQn7luJhiSK4YaBc+PAhU9n4UYugue3zn8yHtL40buUyumxFysev1KfJCAwjl7jMsH
-         yzyvWKdixoJznvdyl+9QmJPZ6NnC0KLYEfNDPPmXDMAd3tV/5zlgNL9Z+r9e7RlaXUDg
-         jIfA==
-X-Gm-Message-State: AOAM530zr7zZ7R8R11w/H8/Mg0dnqj1So0o+IBWRHkp95Z7jyFniYzoD
-        4KXIs2I/FUJNfw7uCc4CTAxJxGVapfEtDY0V+y6L3A==
-X-Google-Smtp-Source: ABdhPJxyJ/rYH79KnYLvQd4hmKuqktWzGYbo36HWzJnr8rUgZyn2syDgkgiytXEsZjV7bxNJWR5h0+R/kOT2EQh5qvQ=
-X-Received: by 2002:ac8:6697:: with SMTP id d23mr4367324qtp.135.1627568907353;
- Thu, 29 Jul 2021 07:28:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N5HQJNffQhFc+K7rZRG2l6Sl7paEKGLe+E3AH1r857E=;
+        b=UawhYtTze828VUok10r0/7DICPRZdGk1/LMb/OzCI+i9rjlPHmqB5ytcrJUyFFuId6
+         z8BaGrJClk4UYnZFEnD2okWvOkis5jyHAFkRjnjeFILEy71P27YJOWzVcXGv9UN14HRy
+         rdZJnRjRJ0JofZwqmXgpz7A4rVYup9JkS0G/oxcho2LnHeNQm2kHHOvBcF/svq5YWnJu
+         IZd0na50AyjcfxxUPqah6MoOTUJq4Uo+rv8pl7Oz6J/axiZyV+Nzw2bxtvJMIK4JX048
+         g1r1MpuDNLBbqrYkl9RPAW3Io7UcHWgihIkcCMz49HsNy4/YcWrKLHKJIivfjzjpN6qV
+         61dQ==
+X-Gm-Message-State: AOAM532ankn5FglHydOJ98LhKMd7EM87llaCp5O6qnhfqM9wd/ZP4HID
+        JM56dUAYYZGUUY+shmq66w==
+X-Google-Smtp-Source: ABdhPJxUw2c4O+y9uR5m/u13d7fpFerjUtdc2sxKB90UeO9WWhGT2afU+Lm2nBPKLdTMW0anzD9pwg==
+X-Received: by 2002:a05:6638:3452:: with SMTP id q18mr5619349jav.111.1627584924892;
+        Thu, 29 Jul 2021 11:55:24 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id q11sm1309957ile.71.2021.07.29.11.55.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jul 2021 11:55:22 -0700 (PDT)
+Received: (nullmailer pid 683968 invoked by uid 1000);
+        Thu, 29 Jul 2021 18:55:21 -0000
+Date:   Thu, 29 Jul 2021 12:55:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jacky Bai <ping.bai@nxp.com>
+Cc:     shawnguo@kernel.org, sboyd@kernel.org, abel.vesa@nxp.com,
+        s.hauer@pengutronix.de, p.zabel@pengutronix.de,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: clock: Add imx8ulp clock support
+Message-ID: <YQL5mVakoyAovx3M@robh.at.kernel.org>
+References: <20210719053430.1442505-1-ping.bai@nxp.com>
+ <20210719053430.1442505-2-ping.bai@nxp.com>
 MIME-Version: 1.0
-References: <20210728142445.774158-1-dmitry.baryshkov@linaro.org>
- <20210728142445.774158-4-dmitry.baryshkov@linaro.org> <YQFxEIRWRZscPgJl@yoga>
-In-Reply-To: <YQFxEIRWRZscPgJl@yoga>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 29 Jul 2021 17:28:16 +0300
-Message-ID: <CAA8EJpqzcuctWaOeqq2-mqW3o-DSNPNEmoiDWEcry+SQ+2-uDg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: qcom: use devm_pm_runtime_enable and devm_pm_clk_create
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210719053430.1442505-2-ping.bai@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 28 Jul 2021 at 18:00, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Wed 28 Jul 09:24 CDT 2021, Dmitry Baryshkov wrote:
->
-> > Use two new helpers instead of pm_runtime_enable() and pm_clk_create(),
-> > removing the need for calling pm_runtime_disable and pm_clk_destroy().
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
-> It's quite reasonable to expect that Rafael wants to take the two first
-> patches through his tree, but I expect that these clock patches will
-> conflict with your other changes resulting in a less smooth path into
-> mainline.
+On Mon, Jul 19, 2021 at 01:34:22PM +0800, Jacky Bai wrote:
+> Add the clock dt-binding file for i.MX8ULP.
+> 
+> For pcc node, it will also be used as a reset controller,
+> so add the '#reset-cells' property description and add the
+> pcc reset IDs.
+> 
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> ---
+>  changes:
+>   - Move this patch from dts patchset into this patchset
+>   - Resolve Rob's comments
 
-I do not expect any conflicts in the clock code. The gdsc fixes do not
-touch these parts.
+That's not all that helpful of a changelog. Assume I don't remember my 
+comments, so give me a hint as to what part needs to be looked at again.
 
-> Grepping the tree for candidates I find many better examples, that
-> we don't foresee any conflicting changes..
->
-> So may I suggest that you fix drivers/hwspinlock/omap_hwspinlock.c and
-> drivers/hwspinlock/stm32_hwspinlock.c, then I (as maintainer) can Ack
-> those changes and Rafael can take the series in his tree for v5.15.
+> ---
+>  .../bindings/clock/imx8ulp-clock.yaml         | 128 +++++++++
+>  include/dt-bindings/clock/imx8ulp-clock.h     | 262 ++++++++++++++++++
+>  include/dt-bindings/reset/imx8ulp-pcc-reset.h |  59 ++++
+>  3 files changed, 449 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8ulp-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/imx8ulp-clock.h
+>  create mode 100644 include/dt-bindings/reset/imx8ulp-pcc-reset.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx8ulp-clock.yaml b/Documentation/devicetree/bindings/clock/imx8ulp-clock.yaml
+> new file mode 100644
+> index 000000000000..9eb0c3c2a49d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx8ulp-clock.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/imx8ulp-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX8ULP Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Jacky Bai <ping.bai@nxp.com>
+> +
+> +description: |
+> +  On i.MX8ULP, The clock sources generation, distribution and management is
+> +  under the control of several CGCs & PCCs modules. The CGC modules generate
+> +  and distribute clocks on the device. PCC modules control clock selection,
+> +  optional division and clock gating mode for peripherals
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx8ulp-cgc1
+> +      - fsl,imx8ulp-cgc2
+> +      - fsl,imx8ulp-pcc3
+> +      - fsl,imx8ulp-pcc4
+> +      - fsl,imx8ulp-pcc5
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks: true
+> +
+> +  clock-names: true
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-cgc1
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: rosc
+> +            - description: sosc
+> +            - description: frosc
+> +            - description: lposc
+> +
+> +        clock-names:
+> +          items:
+> +            - const: rosc
+> +            - const: sosc
+> +            - const: frosc
+> +            - const: lposc
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-cgc2
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: sosc
+> +            - description: frosc
+> +
+> +        clock-names:
+> +          items:
+> +            - const: sosc
+> +            - const: frosc
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-cgc1
+> +              - fsl,imx8ulp-cgc2
+> +    then:
+> +      required:
+> +        - clocks
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-pcc3
+> +              - fsl,imx8ulp-pcc4
+> +              - fsl,imx8ulp-pcc5
+> +    then:
+> +      required:
+> +        - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock Control Module node:
+> +  - |
+> +    clock-controller@292c0000 {
+> +        compatible = "fsl,imx8ulp-cgc1";
+> +        reg = <0x292c0000 0x10000>;
+> +        clocks = <&rosc>, <&sosc>, <&frosc>, <&lposc>;
+> +        clock-names = "rosc", "sosc", "frosc", "lposc";
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    clock-controller@292d0000 {
+> +        compatible = "fsl,imx8ulp-pcc3";
+> +        reg = <0x292d0000 0x10000>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+> new file mode 100644
+> index 000000000000..cb449c991643
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/imx8ulp-clock.h
+> @@ -0,0 +1,262 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ OR MIT */
+> +/*
+> + * Copyright 2021 NXP
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_IMX8ULP_H
+> +#define __DT_BINDINGS_CLOCK_IMX8ULP_H
+> +
+> +#define IMX8ULP_CLK_DUMMY			0
+> +#define IMX8ULP_CLK_ROSC			1
+> +#define IMX8ULP_CLK_FROSC			2
+> +#define IMX8ULP_CLK_LPOSC			3
+> +#define IMX8ULP_CLK_SOSC			4
+> +
+> +/* CGC1 */
+> +#define IMX8ULP_CLK_SPLL2			5
+> +#define IMX8ULP_CLK_SPLL3			6
+> +#define IMX8ULP_CLK_A35_SEL			7
+> +#define IMX8ULP_CLK_A35_DIV			8
+> +#define IMX8ULP_CLK_SPLL2_PRE_SEL		9
+> +#define IMX8ULP_CLK_SPLL3_PRE_SEL		10
+> +#define IMX8ULP_CLK_SPLL3_PFD0			11
+> +#define IMX8ULP_CLK_SPLL3_PFD1			12
+> +#define IMX8ULP_CLK_SPLL3_PFD2			13
+> +#define IMX8ULP_CLK_SPLL3_PFD3			14
+> +#define IMX8ULP_CLK_SPLL3_PFD0_DIV1		15
+> +#define IMX8ULP_CLK_SPLL3_PFD0_DIV2		16
+> +#define IMX8ULP_CLK_SPLL3_PFD1_DIV1		17
+> +#define IMX8ULP_CLK_SPLL3_PFD1_DIV2		18
+> +#define IMX8ULP_CLK_SPLL3_PFD2_DIV1		19
+> +#define IMX8ULP_CLK_SPLL3_PFD2_DIV2		20
+> +#define IMX8ULP_CLK_SPLL3_PFD3_DIV1		21
+> +#define IMX8ULP_CLK_SPLL3_PFD3_DIV2		22
+> +#define IMX8ULP_CLK_NIC_SEL			23
+> +#define IMX8ULP_CLK_NIC_AD_DIVPLAT		24
+> +#define IMX8ULP_CLK_NIC_PER_DIVPLAT		25
+> +#define IMX8ULP_CLK_XBAR_SEL			26
+> +#define IMX8ULP_CLK_XBAR_AD_DIVPLAT		27
+> +#define IMX8ULP_CLK_XBAR_DIVBUS			28
+> +#define IMX8ULP_CLK_XBAR_AD_SLOW		29
+> +#define IMX8ULP_CLK_SOSC_DIV1			30
+> +#define IMX8ULP_CLK_SOSC_DIV2			31
+> +#define IMX8ULP_CLK_SOSC_DIV3			32
+> +#define IMX8ULP_CLK_FROSC_DIV1			33
+> +#define IMX8ULP_CLK_FROSC_DIV2			34
+> +#define IMX8ULP_CLK_FROSC_DIV3			35
+> +#define IMX8ULP_CLK_SPLL3_VCODIV		36
+> +#define IMX8ULP_CLK_SPLL3_PFD0_DIV1_GATE	37
+> +#define IMX8ULP_CLK_SPLL3_PFD0_DIV2_GATE	38
+> +#define IMX8ULP_CLK_SPLL3_PFD1_DIV1_GATE	39
+> +#define IMX8ULP_CLK_SPLL3_PFD1_DIV2_GATE	40
+> +#define IMX8ULP_CLK_SPLL3_PFD2_DIV1_GATE	41
+> +#define IMX8ULP_CLK_SPLL3_PFD2_DIV2_GATE	42
+> +#define IMX8ULP_CLK_SPLL3_PFD3_DIV1_GATE	43
+> +#define IMX8ULP_CLK_SPLL3_PFD3_DIV2_GATE	44
+> +#define IMX8ULP_CLK_SOSC_DIV1_GATE		45
+> +#define IMX8ULP_CLK_SOSC_DIV2_GATE		46
+> +#define IMX8ULP_CLK_SOSC_DIV3_GATE		47
+> +#define IMX8ULP_CLK_FROSC_DIV1_GATE		48
+> +#define IMX8ULP_CLK_FROSC_DIV2_GATE		49
+> +#define IMX8ULP_CLK_FROSC_DIV3_GATE		50
+> +#define IMX8ULP_CLK_SAI4_SEL			51
+> +#define IMX8ULP_CLK_SAI5_SEL			52
+> +#define IMX8ULP_CLK_AUD_CLK1			53
+> +#define IMX8ULP_CLK_ARM				54
+> +#define IMX8ULP_CLK_ENET_TS_SEL			55
+> +
+> +#define IMX8ULP_CLK_CGC1_END			56
+> +
+> +/* CGC2 */
+> +#define IMX8ULP_CLK_PLL4_PRE_SEL	0
+> +#define IMX8ULP_CLK_PLL4		1
+> +#define IMX8ULP_CLK_PLL4_VCODIV		2
+> +#define IMX8ULP_CLK_DDR_SEL		3
+> +#define IMX8ULP_CLK_DDR_DIV		4
+> +#define IMX8ULP_CLK_LPAV_AXI_SEL	5
+> +#define IMX8ULP_CLK_LPAV_AXI_DIV	6
+> +#define IMX8ULP_CLK_LPAV_AHB_DIV	7
+> +#define IMX8ULP_CLK_LPAV_BUS_DIV	8
+> +#define IMX8ULP_CLK_PLL4_PFD0		9
+> +#define IMX8ULP_CLK_PLL4_PFD1		10
+> +#define IMX8ULP_CLK_PLL4_PFD2		11
+> +#define IMX8ULP_CLK_PLL4_PFD3		12
+> +#define IMX8ULP_CLK_PLL4_PFD0_DIV1_GATE	13
+> +#define IMX8ULP_CLK_PLL4_PFD0_DIV2_GATE	14
+> +#define IMX8ULP_CLK_PLL4_PFD1_DIV1_GATE	15
+> +#define IMX8ULP_CLK_PLL4_PFD1_DIV2_GATE	16
+> +#define IMX8ULP_CLK_PLL4_PFD2_DIV1_GATE	17
+> +#define IMX8ULP_CLK_PLL4_PFD2_DIV2_GATE	18
+> +#define IMX8ULP_CLK_PLL4_PFD3_DIV1_GATE	19
+> +#define IMX8ULP_CLK_PLL4_PFD3_DIV2_GATE	20
+> +#define IMX8ULP_CLK_PLL4_PFD0_DIV1	21
+> +#define IMX8ULP_CLK_PLL4_PFD0_DIV2	22
+> +#define IMX8ULP_CLK_PLL4_PFD1_DIV1	23
+> +#define IMX8ULP_CLK_PLL4_PFD1_DIV2	24
+> +#define IMX8ULP_CLK_PLL4_PFD2_DIV1	25
+> +#define IMX8ULP_CLK_PLL4_PFD2_DIV2	26
+> +#define IMX8ULP_CLK_PLL4_PFD3_DIV1	27
+> +#define IMX8ULP_CLK_PLL4_PFD3_DIV2	28
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV1_GATE	29
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV2_GATE	30
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV3_GATE	31
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV1	32
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV2	33
+> +#define IMX8ULP_CLK_CGC2_SOSC_DIV3	34
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV1_GATE	35
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV2_GATE	36
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV3_GATE	37
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV1	38
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV2	39
+> +#define IMX8ULP_CLK_CGC2_FROSC_DIV3	40
+> +#define IMX8ULP_CLK_AUD_CLK2		41
+> +#define IMX8ULP_CLK_SAI6_SEL		42
+> +#define IMX8ULP_CLK_SAI7_SEL		43
+> +#define IMX8ULP_CLK_SPDIF_SEL		44
+> +#define IMX8ULP_CLK_HIFI_SEL		45
+> +#define IMX8ULP_CLK_HIFI_DIVCORE	46
+> +#define IMX8ULP_CLK_HIFI_DIVPLAT	47
+> +#define IMX8ULP_CLK_DSI_PHY_REF		48
+> +
+> +#define IMX8ULP_CLK_CGC2_END		49
+> +
+> +/* PCC3 */
+> +#define IMX8ULP_CLK_WDOG3		0
+> +#define IMX8ULP_CLK_WDOG4		1
+> +#define IMX8ULP_CLK_LPIT1		2
+> +#define IMX8ULP_CLK_TPM4		3
+> +#define IMX8ULP_CLK_TPM5		4
+> +#define IMX8ULP_CLK_FLEXIO1		5
+> +#define IMX8ULP_CLK_I3C2		6
+> +#define IMX8ULP_CLK_LPI2C4		7
+> +#define IMX8ULP_CLK_LPI2C5		8
+> +#define IMX8ULP_CLK_LPUART4		9
+> +#define IMX8ULP_CLK_LPUART5		10
+> +#define IMX8ULP_CLK_LPSPI4		11
+> +#define IMX8ULP_CLK_LPSPI5		12
+> +#define IMX8ULP_CLK_DMA1_MP		13
+> +#define IMX8ULP_CLK_DMA1_CH0		14
+> +#define IMX8ULP_CLK_DMA1_CH1		15
+> +#define IMX8ULP_CLK_DMA1_CH2		16
+> +#define IMX8ULP_CLK_DMA1_CH3		17
+> +#define IMX8ULP_CLK_DMA1_CH4		18
+> +#define IMX8ULP_CLK_DMA1_CH5		19
+> +#define IMX8ULP_CLK_DMA1_CH6		20
+> +#define IMX8ULP_CLK_DMA1_CH7		21
+> +#define IMX8ULP_CLK_DMA1_CH8		22
+> +#define IMX8ULP_CLK_DMA1_CH9		23
+> +#define IMX8ULP_CLK_DMA1_CH10		24
+> +#define IMX8ULP_CLK_DMA1_CH11		25
+> +#define IMX8ULP_CLK_DMA1_CH12		26
+> +#define IMX8ULP_CLK_DMA1_CH13		27
+> +#define IMX8ULP_CLK_DMA1_CH14		28
+> +#define IMX8ULP_CLK_DMA1_CH15		29
+> +#define IMX8ULP_CLK_DMA1_CH16		30
+> +#define IMX8ULP_CLK_DMA1_CH17		31
+> +#define IMX8ULP_CLK_DMA1_CH18		32
+> +#define IMX8ULP_CLK_DMA1_CH19		33
+> +#define IMX8ULP_CLK_DMA1_CH20		34
+> +#define IMX8ULP_CLK_DMA1_CH21		35
+> +#define IMX8ULP_CLK_DMA1_CH22		36
+> +#define IMX8ULP_CLK_DMA1_CH23		37
+> +#define IMX8ULP_CLK_DMA1_CH24		38
+> +#define IMX8ULP_CLK_DMA1_CH25		39
+> +#define IMX8ULP_CLK_DMA1_CH26		40
+> +#define IMX8ULP_CLK_DMA1_CH27		41
+> +#define IMX8ULP_CLK_DMA1_CH28		42
+> +#define IMX8ULP_CLK_DMA1_CH29		43
+> +#define IMX8ULP_CLK_DMA1_CH30		44
+> +#define IMX8ULP_CLK_DMA1_CH31		45
+> +#define IMX8ULP_CLK_MU3_A		46
+> +#define IMX8ULP_CLK_MU0_B		47
+> +
+> +#define IMX8ULP_CLK_PCC3_END		48
+> +
+> +/* PCC4 */
+> +#define IMX8ULP_CLK_FLEXSPI2		0
+> +#define IMX8ULP_CLK_TPM6		1
+> +#define IMX8ULP_CLK_TPM7		2
+> +#define IMX8ULP_CLK_LPI2C6		3
+> +#define IMX8ULP_CLK_LPI2C7		4
+> +#define IMX8ULP_CLK_LPUART6		5
+> +#define IMX8ULP_CLK_LPUART7		6
+> +#define IMX8ULP_CLK_SAI4		7
+> +#define IMX8ULP_CLK_SAI5		8
+> +#define IMX8ULP_CLK_PCTLE		9
+> +#define IMX8ULP_CLK_PCTLF		10
+> +#define IMX8ULP_CLK_USDHC0		11
+> +#define IMX8ULP_CLK_USDHC1		12
+> +#define IMX8ULP_CLK_USDHC2		13
+> +#define IMX8ULP_CLK_USB0		14
+> +#define IMX8ULP_CLK_USB0_PHY		15
+> +#define IMX8ULP_CLK_USB1		16
+> +#define IMX8ULP_CLK_USB1_PHY		17
+> +#define IMX8ULP_CLK_USB_XBAR		18
+> +#define IMX8ULP_CLK_ENET		19
+> +#define IMX8ULP_CLK_SFA1		20
+> +#define IMX8ULP_CLK_RGPIOE		21
+> +#define IMX8ULP_CLK_RGPIOF		22
+> +
+> +#define IMX8ULP_CLK_PCC4_END		23
+> +
+> +/* PCC5 */
+> +#define IMX8ULP_CLK_TPM8		0
+> +#define IMX8ULP_CLK_SAI6		1
+> +#define IMX8ULP_CLK_SAI7		2
+> +#define IMX8ULP_CLK_SPDIF		3
+> +#define IMX8ULP_CLK_ISI			4
+> +#define IMX8ULP_CLK_CSI_REGS 		5
+> +#define IMX8ULP_CLK_PCTLD		6
+> +#define IMX8ULP_CLK_CSI			7
+> +#define IMX8ULP_CLK_DSI			8
+> +#define IMX8ULP_CLK_WDOG5		9
+> +#define IMX8ULP_CLK_EPDC		10
+> +#define IMX8ULP_CLK_PXP			11
+> +#define IMX8ULP_CLK_SFA2		12
+> +#define IMX8ULP_CLK_GPU2D		13
+> +#define IMX8ULP_CLK_GPU3D		14
+> +#define IMX8ULP_CLK_DC_NANO		15
+> +#define IMX8ULP_CLK_CSI_CLK_UI 		16
+> +#define IMX8ULP_CLK_CSI_CLK_ESC		17
+> +#define IMX8ULP_CLK_RGPIOD		18
+> +#define IMX8ULP_CLK_DMA2_MP		19
+> +#define IMX8ULP_CLK_DMA2_CH0		20
+> +#define IMX8ULP_CLK_DMA2_CH1		21
+> +#define IMX8ULP_CLK_DMA2_CH2		22
+> +#define IMX8ULP_CLK_DMA2_CH3		23
+> +#define IMX8ULP_CLK_DMA2_CH4		24
+> +#define IMX8ULP_CLK_DMA2_CH5		25
+> +#define IMX8ULP_CLK_DMA2_CH6		26
+> +#define IMX8ULP_CLK_DMA2_CH7		27
+> +#define IMX8ULP_CLK_DMA2_CH8		28
+> +#define IMX8ULP_CLK_DMA2_CH9		29
+> +#define IMX8ULP_CLK_DMA2_CH10		30
+> +#define IMX8ULP_CLK_DMA2_CH11		31
+> +#define IMX8ULP_CLK_DMA2_CH12		32
+> +#define IMX8ULP_CLK_DMA2_CH13		33
+> +#define IMX8ULP_CLK_DMA2_CH14		34
+> +#define IMX8ULP_CLK_DMA2_CH15		35
+> +#define IMX8ULP_CLK_DMA2_CH16		36
+> +#define IMX8ULP_CLK_DMA2_CH17		37
+> +#define IMX8ULP_CLK_DMA2_CH18		38
+> +#define IMX8ULP_CLK_DMA2_CH19		39
+> +#define IMX8ULP_CLK_DMA2_CH20		40
+> +#define IMX8ULP_CLK_DMA2_CH21		41
+> +#define IMX8ULP_CLK_DMA2_CH22		42
+> +#define IMX8ULP_CLK_DMA2_CH23		43
+> +#define IMX8ULP_CLK_DMA2_CH24		44
+> +#define IMX8ULP_CLK_DMA2_CH25		45
+> +#define IMX8ULP_CLK_DMA2_CH26		46
+> +#define IMX8ULP_CLK_DMA2_CH27		47
+> +#define IMX8ULP_CLK_DMA2_CH28		48
+> +#define IMX8ULP_CLK_DMA2_CH29		49
+> +#define IMX8ULP_CLK_DMA2_CH30		50
+> +#define IMX8ULP_CLK_DMA2_CH31		51
+> +#define IMX8ULP_CLK_MU2_B		52
+> +#define IMX8ULP_CLK_MU3_B		53
+> +#define IMX8ULP_CLK_AVD_SIM		54
+> +#define IMX8ULP_CLK_DSI_TX_ESC		55
+> +
+> +#define IMX8ULP_CLK_PCC5_END		56
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/imx8ulp-pcc-reset.h b/include/dt-bindings/reset/imx8ulp-pcc-reset.h
+> new file mode 100644
+> index 000000000000..e99a4735c3c4
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/imx8ulp-pcc-reset.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
 
-These two would use devm_pm_runtime_enable, but not the
-devm_pm_clk_create. Thus I'd still prefer to modify these few drivers
-(note, the generification is a separate patch and I can safely drop it
-for now).
-
-> Then as v5.15-rc1 lands, we have the API and we can follow up changing
-> these more complex drivers - and those patches can go through the
-> individual maintainer trees.
->
-> Regards,
-> Bjorn
->
-> > ---
-> >  drivers/clk/qcom/camcc-sc7180.c       | 25 +++++++++------------
-> >  drivers/clk/qcom/lpass-gfm-sm8250.c   | 21 ++++++++----------
-> >  drivers/clk/qcom/lpasscorecc-sc7180.c | 18 ++-------------
-> >  drivers/clk/qcom/mss-sc7180.c         | 30 +++++++------------------
-> >  drivers/clk/qcom/q6sstop-qcs404.c     | 32 ++++++++-------------------
-> >  drivers/clk/qcom/turingcc-qcs404.c    | 30 +++++++------------------
-> >  6 files changed, 46 insertions(+), 110 deletions(-)
-> >
-> > diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-> > index 9bcf2f8ed4de..ce73ee9037cb 100644
-> > --- a/drivers/clk/qcom/camcc-sc7180.c
-> > +++ b/drivers/clk/qcom/camcc-sc7180.c
-> > @@ -1652,32 +1652,35 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
-> >       struct regmap *regmap;
-> >       int ret;
-> >
-> > -     pm_runtime_enable(&pdev->dev);
-> > -     ret = pm_clk_create(&pdev->dev);
-> > +     ret = devm_pm_runtime_enable(&pdev->dev);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = devm_pm_clk_create(&pdev->dev);
-> >       if (ret < 0)
-> >               return ret;
-> >
-> >       ret = pm_clk_add(&pdev->dev, "xo");
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "Failed to acquire XO clock\n");
-> > -             goto disable_pm_runtime;
-> > +             return ret;
-> >       }
-> >
-> >       ret = pm_clk_add(&pdev->dev, "iface");
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "Failed to acquire iface clock\n");
-> > -             goto disable_pm_runtime;
-> > +             return ret;
-> >       }
-> >
-> >       ret = pm_runtime_get(&pdev->dev);
-> >       if (ret)
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >
-> >       regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
-> >       if (IS_ERR(regmap)) {
-> >               ret = PTR_ERR(regmap);
-> >               pm_runtime_put(&pdev->dev);
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >       }
-> >
-> >       clk_fabia_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
-> > @@ -1689,18 +1692,10 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
-> >       pm_runtime_put(&pdev->dev);
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >       }
-> >
-> >       return 0;
-> > -
-> > -destroy_pm_clk:
-> > -     pm_clk_destroy(&pdev->dev);
-> > -
-> > -disable_pm_runtime:
-> > -     pm_runtime_disable(&pdev->dev);
-> > -
-> > -     return ret;
-> >  }
-> >
-> >  static const struct dev_pm_ops cam_cc_pm_ops = {
-> > diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
-> > index f5e31e692b9b..96f476f24eb2 100644
-> > --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
-> > +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
-> > @@ -251,15 +251,18 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
-> >       if (IS_ERR(cc->base))
-> >               return PTR_ERR(cc->base);
-> >
-> > -     pm_runtime_enable(dev);
-> > -     err = pm_clk_create(dev);
-> > +     err = devm_pm_runtime_enable(dev);
-> >       if (err)
-> > -             goto pm_clk_err;
-> > +             return err;
-> > +
-> > +     err = devm_pm_clk_create(dev);
-> > +     if (err)
-> > +             return err;
-> >
-> >       err = of_pm_clk_add_clks(dev);
-> >       if (err < 0) {
-> >               dev_dbg(dev, "Failed to get lpass core voting clocks\n");
-> > -             goto clk_reg_err;
-> > +             return err;
-> >       }
-> >
-> >       for (i = 0; i < data->onecell_data->num; i++) {
-> > @@ -273,22 +276,16 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
-> >
-> >               err = devm_clk_hw_register(dev, &data->gfm_clks[i]->hw);
-> >               if (err)
-> > -                     goto clk_reg_err;
-> > +                     return err;
-> >
-> >       }
-> >
-> >       err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> >                                         data->onecell_data);
-> >       if (err)
-> > -             goto clk_reg_err;
-> > +             return err;
-> >
-> >       return 0;
-> > -
-> > -clk_reg_err:
-> > -     pm_clk_destroy(dev);
-> > -pm_clk_err:
-> > -     pm_runtime_disable(dev);
-> > -     return err;
-> >  }
-> >
-> >  static const struct of_device_id lpass_gfm_clk_match_table[] = {
-> > diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > index 2e0ecc38efdd..ac09b7b840ab 100644
-> > --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > @@ -356,32 +356,18 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
-> >       .num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
-> >  };
-> >
-> > -static void lpass_pm_runtime_disable(void *data)
-> > -{
-> > -     pm_runtime_disable(data);
-> > -}
-> > -
-> > -static void lpass_pm_clk_destroy(void *data)
-> > -{
-> > -     pm_clk_destroy(data);
-> > -}
-> > -
-> >  static int lpass_create_pm_clks(struct platform_device *pdev)
-> >  {
-> >       int ret;
-> >
-> >       pm_runtime_use_autosuspend(&pdev->dev);
-> >       pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
-> > -     pm_runtime_enable(&pdev->dev);
-> >
-> > -     ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
-> > +     ret = devm_pm_runtime_enable(&pdev->dev);
-> >       if (ret)
-> >               return ret;
-> >
-> > -     ret = pm_clk_create(&pdev->dev);
-> > -     if (ret)
-> > -             return ret;
-> > -     ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
-> > +     ret = devm_pm_clk_create(&pdev->dev);
-> >       if (ret)
-> >               return ret;
-> >
-> > diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
-> > index 673fa1a4f734..5a1407440662 100644
-> > --- a/drivers/clk/qcom/mss-sc7180.c
-> > +++ b/drivers/clk/qcom/mss-sc7180.c
-> > @@ -73,36 +73,23 @@ static int mss_sc7180_probe(struct platform_device *pdev)
-> >  {
-> >       int ret;
-> >
-> > -     pm_runtime_enable(&pdev->dev);
-> > -     ret = pm_clk_create(&pdev->dev);
-> > +     ret = devm_pm_runtime_enable(&pdev->dev);
-> >       if (ret)
-> > -             goto disable_pm_runtime;
-> > +             return ret;
-> > +
-> > +     ret = devm_pm_clk_create(&pdev->dev);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       ret = pm_clk_add(&pdev->dev, "cfg_ahb");
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "failed to acquire iface clock\n");
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >       }
-> >
-> >       ret = qcom_cc_probe(pdev, &mss_sc7180_desc);
-> >       if (ret < 0)
-> > -             goto destroy_pm_clk;
-> > -
-> > -     return 0;
-> > -
-> > -destroy_pm_clk:
-> > -     pm_clk_destroy(&pdev->dev);
-> > -
-> > -disable_pm_runtime:
-> > -     pm_runtime_disable(&pdev->dev);
-> > -
-> > -     return ret;
-> > -}
-> > -
-> > -static int mss_sc7180_remove(struct platform_device *pdev)
-> > -{
-> > -     pm_clk_destroy(&pdev->dev);
-> > -     pm_runtime_disable(&pdev->dev);
-> > +             return ret;
-> >
-> >       return 0;
-> >  }
-> > @@ -119,7 +106,6 @@ MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
-> >
-> >  static struct platform_driver mss_sc7180_driver = {
-> >       .probe          = mss_sc7180_probe,
-> > -     .remove         = mss_sc7180_remove,
-> >       .driver         = {
-> >               .name           = "sc7180-mss",
-> >               .of_match_table = mss_sc7180_match_table,
-> > diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
-> > index 723f932fbf7d..507386bee07d 100644
-> > --- a/drivers/clk/qcom/q6sstop-qcs404.c
-> > +++ b/drivers/clk/qcom/q6sstop-qcs404.c
-> > @@ -159,15 +159,18 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
-> >       const struct qcom_cc_desc *desc;
-> >       int ret;
-> >
-> > -     pm_runtime_enable(&pdev->dev);
-> > -     ret = pm_clk_create(&pdev->dev);
-> > +     ret = devm_pm_runtime_enable(&pdev->dev);
-> >       if (ret)
-> > -             goto disable_pm_runtime;
-> > +             return ret;
-> > +
-> > +     ret = devm_pm_clk_create(&pdev->dev);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       ret = pm_clk_add(&pdev->dev, NULL);
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "failed to acquire iface clock\n");
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >       }
-> >
-> >       q6sstop_regmap_config.name = "q6sstop_tcsr";
-> > @@ -175,30 +178,14 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
-> >
-> >       ret = qcom_cc_probe_by_index(pdev, 1, desc);
-> >       if (ret)
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >
-> >       q6sstop_regmap_config.name = "q6sstop_cc";
-> >       desc = &q6sstop_qcs404_desc;
-> >
-> >       ret = qcom_cc_probe_by_index(pdev, 0, desc);
-> >       if (ret)
-> > -             goto destroy_pm_clk;
-> > -
-> > -     return 0;
-> > -
-> > -destroy_pm_clk:
-> > -     pm_clk_destroy(&pdev->dev);
-> > -
-> > -disable_pm_runtime:
-> > -     pm_runtime_disable(&pdev->dev);
-> > -
-> > -     return ret;
-> > -}
-> > -
-> > -static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
-> > -{
-> > -     pm_clk_destroy(&pdev->dev);
-> > -     pm_runtime_disable(&pdev->dev);
-> > +             return ret;
-> >
-> >       return 0;
-> >  }
-> > @@ -209,7 +196,6 @@ static const struct dev_pm_ops q6sstopcc_pm_ops = {
-> >
-> >  static struct platform_driver q6sstopcc_qcs404_driver = {
-> >       .probe          = q6sstopcc_qcs404_probe,
-> > -     .remove         = q6sstopcc_qcs404_remove,
-> >       .driver         = {
-> >               .name   = "qcs404-q6sstopcc",
-> >               .of_match_table = q6sstopcc_qcs404_match_table,
-> > diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-> > index 4cfbbf5bf4d9..4543bda793f4 100644
-> > --- a/drivers/clk/qcom/turingcc-qcs404.c
-> > +++ b/drivers/clk/qcom/turingcc-qcs404.c
-> > @@ -110,36 +110,23 @@ static int turingcc_probe(struct platform_device *pdev)
-> >  {
-> >       int ret;
-> >
-> > -     pm_runtime_enable(&pdev->dev);
-> > -     ret = pm_clk_create(&pdev->dev);
-> > +     ret = devm_pm_runtime_enable(&pdev->dev);
-> >       if (ret)
-> > -             goto disable_pm_runtime;
-> > +             return ret;
-> > +
-> > +     ret = devm_pm_clk_create(&pdev->dev);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       ret = pm_clk_add(&pdev->dev, NULL);
-> >       if (ret < 0) {
-> >               dev_err(&pdev->dev, "failed to acquire iface clock\n");
-> > -             goto destroy_pm_clk;
-> > +             return ret;
-> >       }
-> >
-> >       ret = qcom_cc_probe(pdev, &turingcc_desc);
-> >       if (ret < 0)
-> > -             goto destroy_pm_clk;
-> > -
-> > -     return 0;
-> > -
-> > -destroy_pm_clk:
-> > -     pm_clk_destroy(&pdev->dev);
-> > -
-> > -disable_pm_runtime:
-> > -     pm_runtime_disable(&pdev->dev);
-> > -
-> > -     return ret;
-> > -}
-> > -
-> > -static int turingcc_remove(struct platform_device *pdev)
-> > -{
-> > -     pm_clk_destroy(&pdev->dev);
-> > -     pm_runtime_disable(&pdev->dev);
-> > +             return ret;
-> >
-> >       return 0;
-> >  }
-> > @@ -156,7 +143,6 @@ MODULE_DEVICE_TABLE(of, turingcc_match_table);
-> >
-> >  static struct platform_driver turingcc_driver = {
-> >       .probe          = turingcc_probe,
-> > -     .remove         = turingcc_remove,
-> >       .driver         = {
-> >               .name   = "qcs404-turingcc",
-> >               .of_match_table = turingcc_match_table,
-> > --
-> > 2.30.2
-> >
-
-
-
--- 
-With best wishes
-Dmitry
+Dual license needed here too.
