@@ -2,77 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3047C4338F
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 20:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EF9C4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 20:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC7A60ED4
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 20:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1AED60F22
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 20:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbhG2UBG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jul 2021 16:01:06 -0400
-Received: from mail-io1-f47.google.com ([209.85.166.47]:39545 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbhG2UBF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jul 2021 16:01:05 -0400
-Received: by mail-io1-f47.google.com with SMTP id f6so2821094ioc.6;
-        Thu, 29 Jul 2021 13:01:01 -0700 (PDT)
+        id S232559AbhG2UH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jul 2021 16:07:56 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:34666 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229625AbhG2UHz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jul 2021 16:07:55 -0400
+Received: by mail-io1-f49.google.com with SMTP id y200so8689053iof.1;
+        Thu, 29 Jul 2021 13:07:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=RXP6K1wIyYRxvLAYaYwOm7HemWSaNT0LgWv3Dij0oMo=;
-        b=JaQxa3huBa/mbNIL1hB7q/KLryvAl0XQA+ZffjzrAu3LqsBDV97wg3VOEcM82Xei82
-         tKanAwEVpWkqqVw0tjUUkOzMZqwk0O18qRvlAvQ62RYSQ0WyJAEzPuB7JQz4J1g+3oyi
-         KqObnbzMIKR7fRSgbWoJRw5DkMCvG0P/++qH9X3/bRsP5ipl9dEOHsPLTLDX1jFgGUau
-         jcYEu4AKBEbMSC867uJpC8S59xILfSG+FhQYgrfLTa315QFHobchniQ8t2GWlUscw5a9
-         Ntt7ISeldklMr5st0sS/VEjRA0uPxwuOcuduIT8zrZDl0DI29HPpe0eoTvbrd6r5sCAP
-         ezkw==
-X-Gm-Message-State: AOAM531RGSqqAB7rho63iYpxJXXMSpJPJ+G6cAVg3XjiTfnwgrlYvKNS
-        m8Pvqfcurk76diqGOLb0+rNu4U0BOA==
-X-Google-Smtp-Source: ABdhPJx0wYbPhjn+z3CxRd5p6aEqdjNBfJCQ0krHCOeiRJ9o9ZU9Lm5aqjB9xrj5r2Sz5UEDXAKVHg==
-X-Received: by 2002:a05:6638:1915:: with SMTP id p21mr5884034jal.104.1627588861054;
-        Thu, 29 Jul 2021 13:01:01 -0700 (PDT)
+        bh=QO/WfzL+H9JSHCrFRmOhK3luO+OzS6BYWSjnCbIsHOY=;
+        b=ogxLqITRbgHrNF3Qj0wf0XpEG/Sj/DA49AHBZ7iHvZlbKUkjlvMxHstS0tbxnDJrpc
+         24OOZRRYIPfjru1gNaU1DyYG/ZcgBTgTwYp0b3lc5RsNew0KPOma3LSxi4w0T8T7ZLkr
+         n+aE4KkIoBc+jmLeBCsYXoIE0hoYXysIwUPmUZ70MWEgYe3ASLHS/Gc4hwljvdNcd342
+         AFaGIm6vtVuNrR3AjgLZUGH5veyxFXOT9jZYm/soNxTeWruVTJLC7+nBQFqFHCKKBkG5
+         cmsnqfG05DoXKc4T/aMgkUWfGjhs0CdTeccmvsWplheboZqGd5Oz0OZNz9LNS6OK8yH+
+         eGlA==
+X-Gm-Message-State: AOAM533pIw//5C/9RH+eonW1kiWgJbDqfxsrw4asu8rKA0OlWCQG9qjU
+        8YQ5+d28evWDuRb5BFukzA==
+X-Google-Smtp-Source: ABdhPJzwEJKwbd/+V0akzxUCas/tLB1H8pjLcqQH81WKpYRqMVrRL73j0U9ntncGv23AqAgDbmHXEQ==
+X-Received: by 2002:a05:6638:2111:: with SMTP id n17mr5850026jaj.76.1627589270257;
+        Thu, 29 Jul 2021 13:07:50 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id p21sm2734695iog.37.2021.07.29.13.00.59
+        by smtp.gmail.com with ESMTPSA id h15sm2324632ils.46.2021.07.29.13.07.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 13:01:00 -0700 (PDT)
-Received: (nullmailer pid 786531 invoked by uid 1000);
-        Thu, 29 Jul 2021 20:00:59 -0000
-Date:   Thu, 29 Jul 2021 14:00:59 -0600
+        Thu, 29 Jul 2021 13:07:49 -0700 (PDT)
+Received: (nullmailer pid 797802 invoked by uid 1000);
+        Thu, 29 Jul 2021 20:07:46 -0000
+Date:   Thu, 29 Jul 2021 14:07:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gpucc-sm8150: Add SC8180x support
-Message-ID: <YQMI+4j8Nl7veuyU@robh.at.kernel.org>
-References: <20210721225329.3035779-1-bjorn.andersson@linaro.org>
+To:     quic_vamslank@quicinc.com
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, maz@kernel.org, mturquette@baylibre.com,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org
+Subject: Re: [PATCH v2 4/6] dt-bindings: clock: Introduce RPMHCC bindings for
+ SDX65
+Message-ID: <YQMKkjywdNs5WD7I@robh.at.kernel.org>
+References: <cover.1626986805.git.quic_vamslank@quicinc.com>
+ <6fcab884c2238640b53f6aba1e3c7068ba36868f.1626986805.git.quic_vamslank@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210721225329.3035779-1-bjorn.andersson@linaro.org>
+In-Reply-To: <6fcab884c2238640b53f6aba1e3c7068ba36868f.1626986805.git.quic_vamslank@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 21 Jul 2021 15:53:29 -0700, Bjorn Andersson wrote:
-> The GPU clock controller found in SC8180x is a variant of the same block
-> found in SM8150, but with one additional clock frequency for the
-> gmu_clk_src clock.
+On Thu, 22 Jul 2021 14:09:41 -0700, quic_vamslank@quicinc.com wrote:
+> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Add compatible for SDX65 RPMHCC.
+> 
+> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  .../devicetree/bindings/clock/qcom,gpucc.yaml        |  1 +
->  drivers/clk/qcom/gpucc-sm8150.c                      | 12 ++++++++++++
->  2 files changed, 13 insertions(+)
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
