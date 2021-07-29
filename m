@@ -2,208 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371CEC4320A
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 19:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2F1C4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 19:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B089608FB
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 19:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6235860F21
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jul 2021 19:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232080AbhG2Tee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jul 2021 15:34:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229606AbhG2Tee (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Jul 2021 15:34:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B2E9B60E76;
-        Thu, 29 Jul 2021 19:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627587270;
-        bh=4AE8gySMnmw4ukw7WiP/vi7kSExtOyQED99CxMrW4aY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=F0dn6pqLLxt8U3AFzExMEoXrzzdy5UoPXiAhyFTWi3fWLq8/tSDXl/JEssxNcK8+p
-         jiLObenKDCuUo8ok6W1UGS1F5Wtt63p2NY57+JcWM5PcoFs+e1PRVKb+7tqTRkgepS
-         pi1d58N5SJB0YDqXyEHcPuWd1B/RR0k0snIOnikcQ8veB2o0NsCOPNmZqQKHYYXETK
-         5GT7zRfg2GWYgsNPSzQzaQdqrd5VgG7q46smVp9ce7FjpX6gq7xX0CYtqNaS+o+bzM
-         6n33c9gB1zdB9RY4GF1nPaGh9UVcxupSnvQpJBW9Td3nEaxF5rhAzB9X/3MtC1ZQxW
-         QdpJmadgH5fUQ==
-Received: by mail-ed1-f43.google.com with SMTP id p21so9664216edi.9;
-        Thu, 29 Jul 2021 12:34:30 -0700 (PDT)
-X-Gm-Message-State: AOAM531Af1tGMfvkESSlgmUPsg2Qk4GHYVP2LUXT0sWjY4iybqJ0UdTw
-        0wfwzs52CYkCbUqJNO1GupyxU0OtflS3vsE5Zg==
-X-Google-Smtp-Source: ABdhPJzW42FQ84WoTXyLSP20bPgulZO3lChpHA4mx21rS0OBJSN1BS+qHjGAUCwD7/f1CJJMLq3vUg8n/UH8xvh19vw=
-X-Received: by 2002:aa7:c603:: with SMTP id h3mr7723900edq.165.1627587269262;
- Thu, 29 Jul 2021 12:34:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210519143700.27392-1-bhupesh.sharma@linaro.org>
- <20210519143700.27392-2-bhupesh.sharma@linaro.org> <20210521014316.GA2462277@robh.at.kernel.org>
- <CAH=2NtwzFMre_+6LRM_JL+itbG09UuKLtH+Awbv_zK++qns49w@mail.gmail.com>
-In-Reply-To: <CAH=2NtwzFMre_+6LRM_JL+itbG09UuKLtH+Awbv_zK++qns49w@mail.gmail.com>
+        id S232249AbhG2Tyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jul 2021 15:54:38 -0400
+Received: from mail-io1-f41.google.com ([209.85.166.41]:44844 "EHLO
+        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229896AbhG2Tyh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jul 2021 15:54:37 -0400
+Received: by mail-io1-f41.google.com with SMTP id l18so8610592ioh.11;
+        Thu, 29 Jul 2021 12:54:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=agDK+KljcQcvbEkie478xz4qKpaetAkSyYL26XY85vE=;
+        b=OUUftMzzEg6IlgNw4YLUVpDFdvepgtWesOANNWCFPA8vWaSm9VjXk3ylrejVY7CZI4
+         d/yvy97kfAIUqOD3iUpoHE+W8UbmnqJgvbIvt2s4kSFulUaJCYeMwueHdJW+5xGa+XKN
+         JDOQPAT6+k/A9V7drp9esxi7/c3/Kp7kPDUR/8BL4iaJ7maxK7i23lJMoLUel8PAXiTi
+         tHffRaJh9/A4fILUJ7Ee9bDODfJLtc9nUmtNbJNve5rMbtEIQnrTsoJrNft2OP4+jn80
+         N1/oAmas/2e1cxjmmfkusEjfuFZCGfad9ckNefPnMx0X1hF9wnvtMjEh1ZUM9eAPkpSa
+         R+8w==
+X-Gm-Message-State: AOAM532oh8tt9JrcTGRnYt2HgsZs2KXX/h1H3gO68gRw8t0YkBPj3C4h
+        EiKbrLr5REDBnQtevnNTag==
+X-Google-Smtp-Source: ABdhPJy3XSbKdbiXhOCqzGfvfo36ub0ApsGvz7A26hYdxBPp9/PbHUy08JdN0jcSXnBGsdvMN/X09A==
+X-Received: by 2002:a5e:c803:: with SMTP id y3mr5408025iol.107.1627588473340;
+        Thu, 29 Jul 2021 12:54:33 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id n12sm2509104ilo.57.2021.07.29.12.54.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jul 2021 12:54:32 -0700 (PDT)
+Received: (nullmailer pid 775940 invoked by uid 1000);
+        Thu, 29 Jul 2021 19:54:31 -0000
+Date:   Thu, 29 Jul 2021 13:54:31 -0600
 From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 29 Jul 2021 13:34:17 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+AoAs_4-LBVoP_vzNF0Unn3jU2KRXMoJv8A7TJC_v+xg@mail.gmail.com>
-Message-ID: <CAL_Jsq+AoAs_4-LBVoP_vzNF0Unn3jU2KRXMoJv8A7TJC_v+xg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/17] dt-bindings: qcom-bam: Convert binding to YAML
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/2 v2] dt-bindings: clock: u8500: Rewrite in YAML and
+ extend
+Message-ID: <YQMHdy9FFoN9xX6Y@robh.at.kernel.org>
+References: <20210720231837.1576130-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210720231837.1576130-1-linus.walleij@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 3, 2021 at 9:27 PM Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
->
-> Hello Rob,
->
-> Thanks for the review and sorry for the late reply.
->
-> On Fri, 21 May 2021 at 07:13, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, May 19, 2021 at 08:06:44PM +0530, Bhupesh Sharma wrote:
-> > > Convert Qualcomm BAM DMA devicetree binding to YAML.
-> > >
-> > > Cc: Thara Gopinath <thara.gopinath@linaro.org>
-> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > Cc: Andy Gross <agross@kernel.org>
-> > > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > > Cc: David S. Miller <davem@davemloft.net>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Vinod Koul <vkoul@kernel.org>
-> > > Cc: dmaengine@vger.kernel.org
-> > > Cc: linux-clk@vger.kernel.org
-> > > Cc: linux-crypto@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: bhupesh.linux@gmail.com
-> > > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/dma/qcom_bam_dma.txt  | 50 ----------
-> > >  .../devicetree/bindings/dma/qcom_bam_dma.yaml | 91 +++++++++++++++++++
-> > >  2 files changed, 91 insertions(+), 50 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt b/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
-> > > deleted file mode 100644
-> > > index cf5b9e44432c..000000000000
-> > > --- a/Documentation/devicetree/bindings/dma/qcom_bam_dma.txt
-> > > +++ /dev/null
-> > > @@ -1,50 +0,0 @@
-> > > -QCOM BAM DMA controller
-> > > -
-> > > -Required properties:
-> > > -- compatible: must be one of the following:
-> > > - * "qcom,bam-v1.4.0" for MSM8974, APQ8074 and APQ8084
-> > > - * "qcom,bam-v1.3.0" for APQ8064, IPQ8064 and MSM8960
-> > > - * "qcom,bam-v1.7.0" for MSM8916
-> > > -- reg: Address range for DMA registers
-> > > -- interrupts: Should contain the one interrupt shared by all channels
-> > > -- #dma-cells: must be <1>, the cell in the dmas property of the client device
-> > > -  represents the channel number
-> > > -- clocks: required clock
-> > > -- clock-names: must contain "bam_clk" entry
-> > > -- qcom,ee : indicates the active Execution Environment identifier (0-7) used in
-> > > -  the secure world.
-> > > -- qcom,controlled-remotely : optional, indicates that the bam is controlled by
-> > > -  remote proccessor i.e. execution environment.
-> > > -- num-channels : optional, indicates supported number of DMA channels in a
-> > > -  remotely controlled bam.
-> > > -- qcom,num-ees : optional, indicates supported number of Execution Environments
-> > > -  in a remotely controlled bam.
-> > > -
-> > > -Example:
-> > > -
-> > > -     uart-bam: dma@f9984000 = {
-> > > -             compatible = "qcom,bam-v1.4.0";
-> > > -             reg = <0xf9984000 0x15000>;
-> > > -             interrupts = <0 94 0>;
-> > > -             clocks = <&gcc GCC_BAM_DMA_AHB_CLK>;
-> > > -             clock-names = "bam_clk";
-> > > -             #dma-cells = <1>;
-> > > -             qcom,ee = <0>;
-> > > -     };
-> > > -
-> > > -DMA clients must use the format described in the dma.txt file, using a two cell
-> > > -specifier for each channel.
-> > > -
-> > > -Example:
-> > > -     serial@f991e000 {
-> > > -             compatible = "qcom,msm-uart";
-> > > -             reg = <0xf991e000 0x1000>
-> > > -                     <0xf9944000 0x19000>;
-> > > -             interrupts = <0 108 0>;
-> > > -             clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
-> > > -                     <&gcc GCC_BLSP1_AHB_CLK>;
-> > > -             clock-names = "core", "iface";
-> > > -
-> > > -             dmas = <&uart-bam 0>, <&uart-bam 1>;
-> > > -             dma-names = "rx", "tx";
-> > > -     };
-> > > diff --git a/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> > > new file mode 100644
-> > > index 000000000000..173e4d7508a6
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/dma/qcom_bam_dma.yaml
-> > > @@ -0,0 +1,91 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/dma/qcom_bam_dma.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: QCOM BAM DMA controller binding
-> > > +
-> > > +maintainers:
-> > > +  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > > +
-> > > +description: |
-> > > +  This document defines the binding for the BAM DMA controller
-> > > +  found on Qualcomm parts.
-> > > +
-> > > +allOf:
-> > > +  - $ref: "dma-controller.yaml#"
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - qcom,bam-v1.4.0
-> > > +      - qcom,bam-v1.3.0
-> > > +      - qcom,bam-v1.7.0
-> >
-> > Can we keep the SoC association please.
->
-> The original bam dma bindings are as per the underlying bam IP
-> version, so I would prefer that we keep it this way for this series.
->
-> Later on I can send a patchset to convert the bam DMA dt-bindings, dts
-> and driver to work with 'SoC association' instead.
+On Wed, 21 Jul 2021 01:18:36 +0200, Linus Walleij wrote:
+> This rewrites the ux500/u8500 clock bindings in YAML schema and extends them
+> with the PRCC reset controller.
+> 
+> The bindings are a bit idiomatic but it just reflects their age, the ux500
+> platform was used as guinea pig for early device tree conversion of platforms
+> in 2015. The new subnode for the reset controller follows the pattern of the
+> old bindings and adds a node with reset-cells for this.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Use an enum for compatible.
+> - Mark the reset controller as object (node)
+> - Mandate 2 #reset-cells on the reset controller.
+> - Small blurb that PRCC 4 does not exist.
+> - Rebase on v5.14-rc1
+> - Cc Philipp Zabel
+> ---
+>  .../bindings/clock/stericsson,u8500-clks.yaml | 121 ++++++++++++++++++
+>  .../devicetree/bindings/clock/ux500.txt       |  64 ---------
+>  .../reset/stericsson,db8500-prcc-reset.h      |  51 ++++++++
+>  3 files changed, 172 insertions(+), 64 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,u8500-clks.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ux500.txt
+>  create mode 100644 include/dt-bindings/reset/stericsson,db8500-prcc-reset.h
+> 
 
-I just mean keep a comment with the mapping of versions to SoC:
-
-> > > - * "qcom,bam-v1.4.0" for MSM8974, APQ8074 and APQ8084
-> > > - * "qcom,bam-v1.3.0" for APQ8064, IPQ8064 and MSM8960
-> > > - * "qcom,bam-v1.7.0" for MSM8916
-
-Otherwise, we are losing that information.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
