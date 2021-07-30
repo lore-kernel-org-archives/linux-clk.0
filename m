@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A7DC432BE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 19:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA73BC4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 19:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B812B60EFF
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 19:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BCD360EFF
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 19:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbhG3TC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 15:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55984 "EHLO
+        id S231166AbhG3TFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 15:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbhG3TC3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 15:02:29 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8F8C0613C1
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 12:02:24 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id w15so151707vkm.9
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 12:02:24 -0700 (PDT)
+        with ESMTP id S230522AbhG3TFO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 15:05:14 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F93C06175F
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 12:05:09 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id t26so4363565uao.12
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 12:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gBCAezsRz+diDpubea9ipqu5sk3T7ijBYsLpPq9JW6g=;
-        b=bDgWF2lqGMUdyCyKt7IN7yXqW3h+wIKUz+MPEaJhXXpzBEp0DfQjh9CuOEjG0CzTM/
-         d6go/2disbc51wRYj5T56dCFF7xi2Rz1b2FVK3dHv6J18v1pdUDD/alM4dyrmFzkPCVA
-         pP2PTVAS15KrTJIylWJrNUaLIw9s/j/JfrkmfrXlXajpC+0My7997AyW3R5J/44mKOOD
-         nrdt1iHUwHO5PLk/3S8/L/SSLcWT+jC4zfOY46O7rmUAcjmKFHEE6P0UkaKf0pB+CJ9J
-         X9SBMLKBTsJ+2Oq0jxxtMYwnzVaEmgz0h/cJoTjfTTFS3JhqVDJAxAVuUCMp6LLFiBD1
-         mfDw==
+        bh=lI7MSErWXqY8bqPMsLO7ItBW3m+DVtFHrgMs+xiZXJA=;
+        b=bD1vPWsa2lKCLWxXOLT+1UnDwNSAZJwXtAOcVDw+V/e40KbH2sue31nkHNrjIfFRB/
+         BslMGwza2qlB9k4lB4tO8GZi4lLygpVjJnrgAiTX9A7XBavBoVYpWz3C439RTw40hYb7
+         73WS9zbvN0I0GTONPEJId0bIjO6Zedp5S1f6UUSWvz+fMoo07JM1RVxe7VoY2BjtChkG
+         tINUW4cLZsSrQXDv/IC1J4t5H4sO1p60pLv1CLwlu7PZSlznBrwaq8HglsTegVI/57/i
+         EWGSpjcw2sq4qEWxwTHVfSifkhwulE/3Tp9P4dX00x66yvod5f/3IpJCqOX4iPM3SVa+
+         24Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gBCAezsRz+diDpubea9ipqu5sk3T7ijBYsLpPq9JW6g=;
-        b=a8qulx1bmo9obbMEK7Rmli0qW/sf6iD5+eTEqy9L1lw/G8ruzSfXbZsSZI8kc9wSuc
-         Gqb+fQLACeyk8e2YJAS7GfNLfTLSJFeR4r+NDOBSSUkjZb3poIcCTk/6BN92rITv5515
-         lZ3N7muyJ1zpIFOc5vURwP/QTSevw0jLd/hAM7UzZkGDkdbB3+FDneVNx2MZxw0xXosC
-         kTVSEpAUhR942aVNvX2sDze8R5t2UM5Pfpt54iTMJRazjCOhV2iQ2KgPoMtD6svP2gGX
-         3iER5bvolkZHeaR8fynF6fatuQX9LYRj48YjU2SOSN8rcsQFR17aGuK1jMQ9V7DD+45F
-         RzyQ==
-X-Gm-Message-State: AOAM5306BHn1tOMXQlKRlMQ3TskEbEeKzFwYkUvbrd1fhXbDujiH+z/k
-        bNgoBLAdzxXuMr3jNxScyfCD+R4qBmOdmVca55AdfQ==
-X-Google-Smtp-Source: ABdhPJy6d7W9hl2/7EtbdW42ci7f/PLQYOiCiB8PwC/au40+bBBTWt2EtWiXxIl/RIdt37Nw/MAlL2jVYoYJ1eEgjXE=
-X-Received: by 2002:a1f:3651:: with SMTP id d78mr3095853vka.0.1627671743462;
- Fri, 30 Jul 2021 12:02:23 -0700 (PDT)
+        bh=lI7MSErWXqY8bqPMsLO7ItBW3m+DVtFHrgMs+xiZXJA=;
+        b=PuZTCTTPWAZ8WwLlHZ2Zouw0/V63rcEFCuCOOpJ5sJq0F5KdLK99urW5sypJSPelI+
+         HIjfBBS42nAkoqapI1madDqZU1Jqd6cd+6kY4ljnhGnc2tYH3BEKiIVtnDMVGf5XKMm/
+         Vrwdp2N/Opz0MIlAxh7C8Z+b/MCGnIQtZ0Y102e73MgccLBx3P+aV2tyJYD6tj8MM4XW
+         SC2vI/CwYisDgMJBhVUjvti03CjVF7fQqRRsncohqTZDhklD1tQAkYWCC9IT/Ih6fXb5
+         Zu/bbRhdMBwYakk+DSHYTcoQupH2DHxdNY8ccfKUlvnO3mh/nvWCvYxvBe203B+2cCbf
+         XKlg==
+X-Gm-Message-State: AOAM531Lxms9q7iKJ/eMb8wqlWUshijGZgEgtwAnzoaSLgAR6jVfXhV7
+        nGa4ZxoroqyudxPEYYzuqxRdNnKGAnELQSGMinsLPw==
+X-Google-Smtp-Source: ABdhPJxKt0a6oYMaEe+KWlQ+pBTttefGnJsa9zMvoC3nKXiwFjF1SfuJWc7o7a7CAIlZOh6JUnBHXF86ZK2SwHk1TRQ=
+X-Received: by 2002:ab0:4e22:: with SMTP id g34mr3841963uah.17.1627671908951;
+ Fri, 30 Jul 2021 12:05:08 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <5e35b0a7-13aa-3c62-ca49-14af2fcb2a08@canonical.com> <c3486111-0ec9-9679-d2a2-68b2f33a2450@canonical.com>
-In-Reply-To: <c3486111-0ec9-9679-d2a2-68b2f33a2450@canonical.com>
+ <20210730144922.29111-8-semen.protsenko@linaro.org> <45da758c-d32d-293b-f4c7-12b58ebca8ac@canonical.com>
+In-Reply-To: <45da758c-d32d-293b-f4c7-12b58ebca8ac@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 30 Jul 2021 22:02:12 +0300
-Message-ID: <CAPLW+4kbnJEBkc0D=RWt59JxBan8X1uDy6sSXBiYAq8N9FDV6A@mail.gmail.com>
-Subject: Re: [PATCH 00/12] Add minimal support for Exynos850 SoC
+Date:   Fri, 30 Jul 2021 22:04:57 +0300
+Message-ID: <CAPLW+4=xa-cMR-oqOmEV=su6k=pWE8qSupYoq5evaDr=T26aEA@mail.gmail.com>
+Subject: Re: [PATCH 07/12] dt-bindings: serial: samsung: Add Exynos850 doc
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -87,57 +87,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-
-On Fri, 30 Jul 2021 at 20:21, Krzysztof Kozlowski
+On Fri, 30 Jul 2021 at 19:35, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> On 30/07/2021 17:18, Krzysztof Kozlowski wrote:
-> > On 30/07/2021 16:49, Sam Protsenko wrote:
-> >> This patch series adds initial platform support for Samsung Exynos850
-> >> SoC [1]. With this patchset it's possible to run the kernel with BusyBox
-> >> rootfs as a RAM disk. More advanced platform support (like MMC driver
-> >> additions) will be added later. The idea is to keep the first submission
-> >> minimal to ease the review, and then build up on top of that.
-> >>
-> >> [1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
-> >>
+> On 30/07/2021 16:49, Sam Protsenko wrote:
+> > Add compatible string for Exynos850 SoC.
 > >
-> > Great work!
-> >
-
-Thanks, Krzysztof! And thank you for reviewing the whole series.
-
-> > What's the SoC revision number (should be accessible via
-> > /sys/bus/soc/devices/soc0/)? Recent wrap in numbering of Exynos chips
-> > might bring confusion...
-
-# cat /sys/devices/soc0/revision
-0
-
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
 >
-> Judging by vendor's sources it is quite confusing. It looks mostly like
-> Exynos3830 but in few other cases it uses Exynos9 compatibles (Exynos9,
-> Exynos9820). Only in few places there is Exynos850. Marketing department
-> made it so confusing...  The revision embedded in SoC would be very
-> interesting.
+> Thanks for the patches!
+>
+> Please put this one before other serial changes but does not have to be
+> first in the entire series.
 >
 
-As I understand, this SoC is called Exynos850 everywhere now.
-Exynos3830 is its old name, not used anymore. As you noticed from
-patch #2, it shares some definitions with Exynos9 SoC, so I guess some
-software is similar for both architectures. Not sure about hardware
-though, never worked with Exynos9 CPUs. Anyway, I asked Samsung
-representatives about naming, and it seems like we should stick to
-"Exynos850" name, even in code.
+Done. Will be present in v2.
 
-> Anyway, judging by current versioning, there is a risk Samsung will come
-> with a new chipset name conflicting with existing ones. It already
-> overflowed.
->
-> It's even worse with a thingy called "Exynos9 auto" which hides
-> numbering even more.
->
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 >
 > Best regards,
 > Krzysztof
