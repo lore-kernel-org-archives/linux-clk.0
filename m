@@ -5,64 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29373C4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 16:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BAEC4320A
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 16:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0585360EE6
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 16:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE6D600D1
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 16:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbhG3Qe7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 12:34:59 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52808
+        id S229852AbhG3QgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 12:36:01 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52944
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229510AbhG3Qe6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 12:34:58 -0400
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        by vger.kernel.org with ESMTP id S229682AbhG3Qf7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 12:35:59 -0400
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id E8DB93F237
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 16:34:52 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 64BC03F243
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 16:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627662892;
-        bh=LOZkX2Gn1AlaUpgTb3/KKeIofvF4AshHz3LJwLGMhDk=;
+        s=20210705; t=1627662954;
+        bh=r6WBOzzzU71Avbpbkb7MJv5FMhuteThAgMvx7ePk7s4=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=JD1ZfK8pFVkvqaRDgdGpfCk4kRfcHvJQHV4EDZ+7HFrcoOJuysVUz0uno45kNj/KT
-         heLXZu9M8FYd/ehc2t7b3nUpMrP3zRQSUrVx1SNmksADwNVh2LVJ4hNWGm8KwHnSB6
-         flrq99BOGH+AB76P0OQ5pSdjb8BhR9vdn5dZoyO7H33GXywHilNl4IvZstmqBC6k/J
-         ChfqpgC6TawPTCQdJXj5FLa0GZrz2zwjjct0o9RBNrShPX1fIqYtZ+3tn2bkSN5x81
-         mzc+fFei5bQBEsrwVG2habPRQGBoA53JpxuaFoVA2Emzq4x6jrLKV/fth4kjPu8qQ/
-         i6lKZ4J8kKTAw==
-Received: by mail-ej1-f69.google.com with SMTP id ci25-20020a1709072679b029058e79f6c38aso2974332ejc.13
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 09:34:52 -0700 (PDT)
+        b=ezwLRmvHQ/MfPcVmQT1RbewuFDc5ZpJ/mMgMzx32gPb7jSD4dNQkO343EUQDi1j3y
+         WEPsuTiNDBICn+1SSt7auYbrfp7tpP+diR626Es2wITargm0m2FEOPcH1Tu16ycUmF
+         r2vbfpc+iHEtkjrGN49cHa27aNrWU7ziocUj4dvsfCXkq6Qv/Vlq2j2Pdoro1TDmVF
+         nJ78AzLKgJfwg0KWjFpQyzXrhRnyPD5vdVa7tn6Xm75HD9cZK7tocPWGAX9FsQb8Hq
+         4mgOnJtDtUpmbUNjVNICkOVatBnHvV/tykFZP+9Fl5T6vou8PqBHkDZrIFzlKb8a7S
+         +truZ6NHC7QPQ==
+Received: by mail-ej1-f71.google.com with SMTP id a17-20020a1709062b11b02905882d7951afso3293468ejg.4
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 09:35:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=LOZkX2Gn1AlaUpgTb3/KKeIofvF4AshHz3LJwLGMhDk=;
-        b=D6vCJK7IV3VlwLVSTFvlSufl+vFXLuvMfI75W5w0I4IcsPEG4yLCdskal3gNjXpEyy
-         nxsa/x0DpiF8ax6vSAmK89faPSJIjgJiT9UyJ0nvpqrq9CB/jHhZHJRzMZ/0DNP3HbG0
-         tF/di+IikgkQmTktCzMLdiTLSBkAcDk+qS8M1/ysEP9JxcS+v4ZjGsV7p/Oq2WhxdJNq
-         /ucdsmvM8KZidWKnBlXQOJ7hlKK6XxY9VC8nsS2RiZcLr1fk7QXNab5jCC9dp8MnhxOr
-         3WxahIkSWnj2U16TVohohe0DbPzowok8fxhQWq+Ro8gfmj7cIr5G3U9v9HylL9kJ4Gn4
-         D0Vg==
-X-Gm-Message-State: AOAM531oA33kB26lB4+p0hPLFMOWGxCxta6T+J+7y93z0Gvufl3kKkMi
-        8kVrfuyOq2eAsrgovaGzcQUhTsD5ex/SvGnVEVa1ooFcprs5YGOSrF6KrOYcB6SgHNEX/JC5oL4
-        eQYBdlUwLGqK7W4w4t0MYMGLwrE7NUCa8nk8RIA==
-X-Received: by 2002:a17:906:c0d1:: with SMTP id bn17mr3262433ejb.511.1627662892674;
-        Fri, 30 Jul 2021 09:34:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyAQ3oDEvssRhYOquKsKs0awtj++lTiixkq4+khiYVFew5afUiOqz586WxPl24Q2+jJCRUS5Q==
-X-Received: by 2002:a17:906:c0d1:: with SMTP id bn17mr3262411ejb.511.1627662892551;
-        Fri, 30 Jul 2021 09:34:52 -0700 (PDT)
+        bh=r6WBOzzzU71Avbpbkb7MJv5FMhuteThAgMvx7ePk7s4=;
+        b=HBXcFdCUDZ+9aij5notvcI43NYt1EG4WbZ7iS2psw/W1Bbm8T17SjhogOo2hZr1iR9
+         lRwdSefTgngS7WpPQg1eLZj/kEdcqwV0gtYtjBnkG3Ptp1t1qd5RgkDZnmXq9U8wqGP+
+         IqZDLoa1q4T69z2DLXXgp9aI4G99KXHlcJliXXZSoHNxjcKwSTnsh8U8odiIUtvm0EWi
+         FPJl8bRtReUXPGiE9rychD0vW5y7d52KuahetvGXx2BjpdClSdybmkOYIqJua1FYITH3
+         2UMDO/gak1Vn8QYCDBzDePvi0C2cK8evYgsAg6MYRaFy0Yl5A54lE8qq9CrTMaTWQqZj
+         lAAA==
+X-Gm-Message-State: AOAM530RiQqjqZsJp29RfBHg4+JlZBECVzR0HwFK8RFUifl9ckmM1o2O
+        3PjyMq7wRX3UrWXtfPSuBXlVR1A7eNTZpSboBFBVxngzLV0nEGmfKVEqoiTI8v0voLws9s6Vcth
+        xgCGQvrmElph/ejOFBSkHDyLjQ07cNf51QxsqDw==
+X-Received: by 2002:a17:907:766c:: with SMTP id kk12mr3257260ejc.525.1627662954049;
+        Fri, 30 Jul 2021 09:35:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwWkxEaV8vcHXDuB7QVly4oizqMQCUQ0S+bTlZqlWe7m7kMOzOsno/9k+vpyqKWr+t6iPU+7A==
+X-Received: by 2002:a17:907:766c:: with SMTP id kk12mr3257225ejc.525.1627662953841;
+        Fri, 30 Jul 2021 09:35:53 -0700 (PDT)
 Received: from [192.168.8.102] ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id b25sm928440edv.9.2021.07.30.09.34.49
+        by smtp.gmail.com with ESMTPSA id la23sm734067ejc.63.2021.07.30.09.35.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jul 2021 09:34:51 -0700 (PDT)
-Subject: Re: [PATCH 05/12] tty: serial: samsung: Fix driver data macros style
+        Fri, 30 Jul 2021 09:35:53 -0700 (PDT)
+Subject: Re: [PATCH 07/12] dt-bindings: serial: samsung: Add Exynos850 doc
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -83,14 +84,14 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-serial@vger.kernel.org
 References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-6-semen.protsenko@linaro.org>
+ <20210730144922.29111-8-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <e11d0e60-9bbc-16d2-c8ea-42d3d93e97d1@canonical.com>
-Date:   Fri, 30 Jul 2021 18:34:49 +0200
+Message-ID: <45da758c-d32d-293b-f4c7-12b58ebca8ac@canonical.com>
+Date:   Fri, 30 Jul 2021 18:35:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210730144922.29111-6-semen.protsenko@linaro.org>
+In-Reply-To: <20210730144922.29111-8-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -99,23 +100,19 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30/07/2021 16:49, Sam Protsenko wrote:
-> Make checkpatch happy by fixing this error:
-> 
->     ERROR: Macros with complex values should be enclosed in parentheses
-> 
-> Although this change is made to keep macros consistent with consequent
-> patches (adding driver data for new SoC), it's intentionally added as a
-> separate patch to ease possible porting efforts in future.
+> Add compatible string for Exynos850 SoC.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/tty/serial/samsung_tty.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
+Thanks for the patches!
+
+Please put this one before other serial changes but does not have to be
+first in the entire series.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
 
 Best regards,
 Krzysztof
