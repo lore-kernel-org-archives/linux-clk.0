@@ -2,280 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10101C4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 02:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79880C4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 06:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA5A960FE7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 02:39:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A27360F0F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 06:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236104AbhG3CjO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jul 2021 22:39:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229949AbhG3CjM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Jul 2021 22:39:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B1DE60F4A;
-        Fri, 30 Jul 2021 02:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627612748;
-        bh=6B3cVhx4nV2A6xXvK3y3d2QgXJRAdj2dPPUe5a3+gR0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YvR6wk3vhV0GEB5HSt4Hv9ev7AY7CtQVerfzNu4BbRtfcYBZvOfomHCO4C8Sav45r
-         H51hdMv2RXso7C/PTknw9rbSltwZHK3wjX8F9e9qOtbkRN2VO1Bsh4PqA8R/gTlrFA
-         /u+uv/T957dYErrqAuSjAo7p6wZTxhky0ZWmIkUk5/6h/zdn4aHVeOJT/IRZ5iF1b/
-         h+95gimEfe1hzLnVdC2O5BTosamqmjEkMLQcovyb6xsuJvWR/ArhaydtmuFJBrwFEa
-         DlsvAwh5MC7OwQSB7o14QRn9UfvqM6Bsu52qWsphHS0uMTRqVJKLbo9E840/AAXGmP
-         995J1gGEBhJzw==
-Date:   Fri, 30 Jul 2021 08:09:03 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     quic_vamslank@quicinc.com
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, maz@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] clk: qcom: Add new PLL type for SDX65
-Message-ID: <YQNmR27CQnN1snyK@matsya>
-References: <cover.1626986805.git.quic_vamslank@quicinc.com>
- <223a1d8020d50c35ff2621f95d69b4a626b6893b.1626986805.git.quic_vamslank@quicinc.com>
+        id S230188AbhG3GBY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 02:01:24 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:59332 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229999AbhG3GBY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 02:01:24 -0400
+X-UUID: 133bdf798d1d4bdea61193d3e62c6a14-20210730
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=qN+SSS+RDr3jspXwlX0b2sqOdjALlK8YN/RxXhX+HtU=;
+        b=F5tJrVikPsZsZt+aDmcnRYAKw2SUgurm3iZQ/Ieh0koIjw7ItGOeRbvggTjlu3ldloprb/G0RDMBzZYbCyQaE9B9fHhprZXGT5f/TETvr5aiCxa2dXJyHaQOR6lEiE1aclzzAn6d38siifOGDhX/9wJb4gSnpOFigtdV6cT7bb0=;
+X-UUID: 133bdf798d1d4bdea61193d3e62c6a14-20210730
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 2073826091; Fri, 30 Jul 2021 14:01:16 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 30 Jul
+ 2021 14:01:14 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 30 Jul 2021 14:01:14 +0800
+Message-ID: <083a0e8fdd07c0f940285dce2dc26cb0f5e798a6.camel@mediatek.com>
+Subject: Re: [PATCH 01/12] dt-bindings: clock: mediatek: document clk
+ bindings for mediatek mt7986 SoC
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+CC:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        "Seiya Wang" <seiya.wang@mediatek.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>
+Date:   Fri, 30 Jul 2021 14:01:14 +0800
+In-Reply-To: <CAGXv+5GeEBAkXKfA=S7XGOLYtCRihP5ov6kSiw+eevPAi74GAQ@mail.gmail.com>
+References: <20210726071439.14248-1-sam.shih@mediatek.com>
+         <20210726071439.14248-2-sam.shih@mediatek.com>
+         <CAGXv+5GeEBAkXKfA=S7XGOLYtCRihP5ov6kSiw+eevPAi74GAQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <223a1d8020d50c35ff2621f95d69b4a626b6893b.1626986805.git.quic_vamslank@quicinc.com>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Vamsi,
+SGksDQoNCk9uIE1vbiwgMjAyMS0wNy0yNiBhdCAxNzoyMCArMDgwMCwgQ2hlbi1ZdSBUc2FpIHdy
+b3RlOg0KPiBGdXJ0aGVybW9yZSwgYmFzZWQgb24gdGhlIGRyaXZlciBwYXRjaCBhbmQgdGhlIGZh
+Y3QgdGhhdCB0aGV5IHNoYXJlDQo+IHRoZQ0KPiBzYW1lIGNvbXBhdGlibGUgc3RyaW5nLCBpdCBz
+ZWVtcyB5b3Ugc2hvdWxkbid0IG5lZWQgdG8gaGF2ZSB0d28NCj4gY29tcGF0aWJsZQ0KPiBzdHJp
+bmdzIGZvciB0d28gaWRlbnRpY2FsIGhhcmR3YXJlIGJsb2Nrcy4gVGhlIG5lZWQgZm9yIHNlcGFy
+YXRlDQo+IGVudHJpZXMNCj4gdG8gaGF2ZSBkaWZmZXJlbnQgY2xvY2sgbmFtZXMgaXMgYW4gaW1w
+bGVtZW50YXRpb24gZGV0YWlsLiBQbGVhc2UNCj4gY29uc2lkZXINCj4gdXNpbmcgYW5kIHN1cHBv
+cnRpbmcgY2xvY2stb3V0cHV0LW5hbWVzLg0KPiANCj4gQWxzbywgcGxlYXNlIGNoZWNrIG91dCB0
+aGUgTVQ4MTk1IGNsb2NrIGRyaXZlciBzZXJpZXMgWzFdLiBJJ20NCj4gZ3Vlc3NpbmcNCj4gYSBs
+b3Qgb2YgdGhlIGNvbW1lbnRzIGFwcGx5IHRvIHRoaXMgb25lIGFzIHdlbGwuDQo+IA0KPiBSZWdh
+cmRzDQo+IENoZW5ZdQ0KPiANCj4gWzFdIA0KPiBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19f
+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtbWVkaWF0ZWsvMjAyMTA2MTYyMjQ3NDMuNTEw
+OS0xLWNodW4tamllLmNoZW5AbWVkaWF0ZWsuY29tL1QvKnRfXztJdyEhQ1RSTktBOXdNZzBBUmJ3
+ITI5cGI0VEppR0hMdkxiWUpnREIyRGhmOE1wdzVWVTh6Vi1XM05yTWFuX1JQUXJ0V1QyRWRSVHl5
+aldwdTBuWkUkDQo+ICANCj4gDQoNCkkgaGF2ZSBvcmdhbml6ZWQgeW91ciBjb21tZW50cyBpbiAi
+TWVkaWF0ZWsgTVQ4MTk1IGNsb2NrIHN1cHBvcnQiDQpzZXJpZXMgaW50byB0aGUgZm9sbG93aW5n
+IGxpc3QsIHJlcGx5IHRvIHlvdXIgaGVyZToNCg0KPiBkdC1iaW5kaW5nOiBNb3ZlIHRoZSBub3Qt
+dG8tYmUtZXhwb3NlZCBjbG9jayB0byBkcml2ZXIgZGlyZWN0b3J5IG9yDQo+IHNpbXBseSBsZWZ0
+IG91dA0KT2theSwgdGhhbmtzIGZvciB5b3VyIGNvbW1lbnQsIEkgd2lsbCB1cGRhdGUgdGhpcyBp
+biB0aGUgbmV4dCBwYXRjaCBzZXQNCg0KPiBkZXNjcmliZSBzb21lIG9mIHRoZSBjbG9jayByZWxh
+dGlvbnMgYmV0d2VlbiB0aGUgdmFyaW91cyBjbG9jaw0KPiBjb250cm9sbGVycw0KSSBoYXZlIGNo
+ZWNrZWQgdGhlIGZpbGVzIGluDQoiRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Fy
+bS9tZWRpYXRlayIsIEl0IHNlZW1zIHRoYXQgYWxsDQpNZWRpYVRlayBTb0MgY2xvY2tzIGFyZSBz
+aW1wbHkgZGVzY3JpYmVkIGJ5IGVhY2ggY29udHJvbGxlciwgbGlrZQ0KIm1lZGlhdGVrLGluZnJh
+Y2ZnLnR4dCIgYW5kICJtZWRpYXRlayx0b3Bja2dlbi50eHQiLCBhbmQgdGhvc2UgZG9jdW1lbnQN
+Cm9ubHkgaW5jbHVkZSBjb21wYXRpYmxlIHN0cmluZ3MgaW5mb3JtYXRpb24gYW5kIGV4YW1wbGVz
+Lg0KQ2FuIHdlIGluc2VydCB0aGUgY2xvY2sgcmVsYXRpb25zaGlwIG9mIE1UNzk4NiBkaXJlY3Rs
+bHkgaW4gY29tbW9uDQpkb2N1bWVudHM/DQpPciB3ZSBzaG91bGQgYWRkIGEgbmV3ICJtZWRpYXRl
+ayxtdDc5ODYtY2xvY2sueWFtbCIgYW5kIG1vdmUgY29tcGF0aWJsZQ0Kc3RyaW5ncyBpbmZvcm1h
+dGlvbiBhbmQgZXhhbXBsZSB0byB0aGlzIGZpbGUsIGFuZCBpbnNlcnQgY2xvY2sNCnJlbGF0aW9u
+c2hpcCBkZXNjcmlwdGlvbnMgdG8gdGhpcyBmaWxlPyBXb3VsZG7igJl0IGl0IGJlIHN0cmFuZ2Ug
+dG8gc2tpcA0KZXhpc3RpbmcgZmlsZXMgYW5kIGNyZWF0ZSBhIG5ldyBvbmU/DQoNCj4gZXh0ZXJu
+YWwgb3NjaWxsYXRvcidzIGNhc2UsIHRoZSBvc2NpbGxhdG9yIGlzIGRlc2NyaWJlZCBpbiB0aGUg
+ZGV2aWNlDQo+IHRyZWUNClllcywgd2UgaGF2ZSAiY2xreHRhbCIgaW4gdGhlIERULCB3aGljaCBz
+dGFuZHMgZm9yIGV4dGVybmFsIG9zY2lsbGF0b3IsDQpBbGwgY2xvY2tzIGluIGFwbWl4ZWRzeXMg
+dXNlICJjbGt4dGFsIiBhcyB0aGUgcGFyZW50IGNsb2NrDQoNCj4gRHVhbCBsaWNlbnNlIHBsZWFz
+ZSAoYW5kIHRoZSBkdHMgZmlsZXMpLg0KT2theSwgdGhhbmtzIGZvciB5b3VyIGNvbW1lbnQsIEkg
+d2lsbCB1cGRhdGUgdGhpcyBpbiB0aGUgbmV4dCBwYXRjaCBzZXQNCg0KPiBXaHkgYXJlIHRoaXMg
+YW5kIG90aGVyIDE6MSBmYWN0b3IgY2xrcyBuZWVkZWQ/IFRoZXkgbG9vayBsaWtlDQo+IHBsYWNl
+aG9sZGVycy4gUGxlYXNlIHJlbW92ZSB0aGVtLg0KT2theSwgdGhhbmtzIGZvciB5b3VyIGNvbW1l
+bnQsIEkgd2lsbCB1cGRhdGUgdGhpcyBpbiB0aGUgbmV4dCBwYXRjaCBzZXQNCg0KPiBNZXJnZSBk
+dXBsaWNhdGUgcGFyZW50IGluc3RhbmNlcw0KV2UgaGF2ZSBjb25zaWRlcmVkIHRoaXMgaW4gdGhl
+IE1UNzk4NiBiYXNpYyBjbG9jayBkcml2ZXIsIGJ1dCBJIHdpbGwNCmNoZWNrIGFnYWluLiBJZiBj
+b3JyZWN0aW9ucyBhcmUgbmVlZGVkLCBJIHdpbGwgbWFrZSBjaGFuZ2VzIGluIHRoZSBuZXh0DQpw
+YXRjaCBzZXQuDQoNCj4gTGVha2luZyBjbGtfZGF0YSBpZiBzb21lIGZ1bmN0aW9uIHJldHVybiBm
+YWlsDQpPa2F5LCB0aGFua3MgZm9yIHlvdXIgY29tbWVudCwgSSB3aWxsIHVwZGF0ZSB0aGlzIGlu
+IHRoZSBuZXh0IHBhdGNoIHNldA0KDQo+IFRoaXMgZmlsZSBjb250YWlucyBmb3VyIGRyaXZlcnMu
+IFRoZXkgZG8gbm90IGhhdmUgZGVwZW5kIG9uIGVhY2gNCj4gb3RoZXIsIGFuZCBkbyBub3QgbmVl
+ZCB0byBiZSBpbiB0aGUgc2FtZSBmaWxlLiBQbGVhc2Ugc3BsaXQgdGhlbSBpbnRvDQo+IGRpZmZl
+cmVuIGZpbGVzIGFuZCBwcmVmZXJhYmx5IGRpZmZlcmVudCBwYXRjaGVzDQpPa2F5LCB0aGFua3Mg
+Zm9yIHlvdXIgY29tbWVudCwgSSB3aWxsIHNlcGFyYXRlIHRob3NlIGNsb2NrIGRyaXZlcnMgaW4N
+CnRoZSBuZXh0IHBhdGNoIHNldA0KDQo+IElzIHRoZXJlIGFueSBwYXJ0aWN1bGFyIHJlYXNvbiBm
+b3IgYXJjaF9pbml0Y2FsbA0KV2UgaGF2ZSBjb25zaWRlcmVkIHRoaXMgaW4gTVQ3OTg2IGJhc2lj
+IGNsb2NrIGRyaXZlciwgYW5kIHVzZQ0KQ0xLX09GX0RFQ0xBUkUgaW5zdGVhZCBvZiBhcmNoX2lu
+aXRjYWxsLg0KDQpBbm90aGVyIHF1ZXN0aW9uOg0KU2hvdWxkIHRoZSBjbG9jayBwYXRjaGVzIGlu
+ICJBZGQgYmFzaWMgU29DIHN1cHBvcnQgZm9yIE1lZGlhVGVrIG10Nzk4NiINCm5lZWQgdG8gYmUg
+c2VwYXJhdGVkIGludG8gYW5vdGhlciBwYXRjaCBzZXJpZXMsIHN1Y2ggYXMgTVQ4MTk1DQoiTWVk
+aWF0ZWsgTVQ4MTk1IGNsb2NrIHN1cHBvcnQiID8gDQoNCg0KUmVnYXJkcw0KU2FtDQo=
 
-On 22-07-21, 14:09, quic_vamslank@quicinc.com wrote:
-> From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-
-Can you please add the type of pll in patch title. Something like Add
-LUCID_EVO pll
-
-> 
-> Add a new PLL type for SDX65 SoC from Qualcomm.
-> 
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 170 +++++++++++++++++++++++++++++++
->  drivers/clk/qcom/clk-alpha-pll.h |   4 +
->  2 files changed, 174 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index c6eb99169ddc..93c8917b7273 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> + * Copyright (c) 2021, Qualcomm Innovation Center, Inc. All rights reserved.
->   * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
->   */
->  
-> @@ -126,6 +127,20 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->  		[PLL_OFF_TEST_CTL_U] = 0x1c,
->  		[PLL_OFF_STATUS] = 0x2c,
->  	},
-> +        [CLK_ALPHA_PLL_TYPE_LUCID_EVO] = {
-> +                [PLL_OFF_OPMODE] = 0x04,
-> +                [PLL_OFF_STATUS] = 0x0c,
-> +                [PLL_OFF_L_VAL] = 0x10,
-> +                [PLL_OFF_ALPHA_VAL] = 0x14,
-> +                [PLL_OFF_USER_CTL] = 0x18,
-> +                [PLL_OFF_USER_CTL_U] = 0x1c,
-> +                [PLL_OFF_CONFIG_CTL] = 0x20,
-> +                [PLL_OFF_CONFIG_CTL_U] = 0x24,
-> +                [PLL_OFF_CONFIG_CTL_U1] = 0x28,
-> +                [PLL_OFF_TEST_CTL] = 0x2c,
-> +                [PLL_OFF_TEST_CTL_U] = 0x30,
-> +                [PLL_OFF_TEST_CTL_U1] = 0x34,
-> +        },
->  };
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->  
-> @@ -155,12 +170,14 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->  
->  /* LUCID PLL specific settings and offsets */
->  #define LUCID_PCAL_DONE		BIT(27)
-> +#define LUCID_EVO_PLL_L_VAL_MASK        GENMASK(15, 0)
->  
->  /* LUCID 5LPE PLL specific settings and offsets */
->  #define LUCID_5LPE_PCAL_DONE		BIT(11)
->  #define LUCID_5LPE_ALPHA_PLL_ACK_LATCH	BIT(13)
->  #define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
->  #define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
-> +#define LUCID_EVO_ENABLE_VOTE_RUN       BIT(25)
->  
->  #define pll_alpha_width(p)					\
->  		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
-> @@ -1777,3 +1794,156 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
->  	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
->  };
->  EXPORT_SYMBOL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
-> +
-> +static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-
-Use a regmap ptr like we do for other functions here?
-
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* If in FSM mode, just vote for it */
-> +	if (val & LUCID_EVO_ENABLE_VOTE_RUN) {
-> +		ret = clk_enable_regmap(hw);
-> +		if (ret)
-> +			return ret;
-> +		return wait_for_pll_enable_lock(pll);
-> +	}
-> +
-> +	/* Check if PLL is already enabled */
-> +	ret = trion_pll_is_enabled(pll, pll->clkr.regmap);
-> +	if (ret < 0)
-> +		return ret;
-> +	else if (ret) {
-> +		pr_warn("%s PLL is already enabled\n",
-> +				clk_hw_get_name(&pll->clkr.hw));
-> +		return 0;
-> +	}
-> +
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-> +			PLL_RESET_N, PLL_RESET_N);
-
-this and others should fit in a single line (with regmap ptr)
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set operation mode to RUN */
-> +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_RUN);
-> +
-> +	ret = wait_for_pll_enable_lock(pll);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable the PLL outputs */
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-> +			PLL_OUT_MASK, PLL_OUT_MASK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable the global PLL outputs */
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-> +			PLL_OUTCTRL, PLL_OUTCTRL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Ensure that the write above goes through before returning. */
-> +	mb();
-
-why is this required?
-
-> +	return ret;
-> +}
-> +
-> +static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-
-regmap here too
-
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
-> +	if (ret)
-> +		return;
-> +
-> +	/* If in FSM mode, just unvote it */
-> +	if (val & LUCID_EVO_ENABLE_VOTE_RUN) {
-> +		clk_disable_regmap(hw);
-> +		return;
-> +	}
-> +
-> +	/* Disable the global PLL output */
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-> +			PLL_OUTCTRL, 0);
-> +	if (ret)
-> +		return;
-> +
-> +	/* Disable the PLL outputs */
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-> +			PLL_OUT_MASK, 0);
-> +	if (ret)
-> +		return;
-> +
-> +	/* Place the PLL mode in STANDBY */
-> +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll),
-> +			PLL_STANDBY);
-> +}
-> +
-> +static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-
-too long pls split to two lines!
-
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	u32 l, frac;
-> +
-> +	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
-> +	l &= LUCID_EVO_PLL_L_VAL_MASK;
-> +	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
-> +
-> +	return alpha_pll_calc_rate(parent_rate, l, frac, ALPHA_REG_16BIT_WIDTH);
-> +}
-
-looks like you should reuse clk_trion_pll_recalc_rate() instead...
-
-> +
-> +static int clk_lucid_evo_pll_postdiv_set_rate(struct clk_hw *hw,
-> +		unsigned long rate, unsigned long parent_rate)
-> +{
-> +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> +	int i, val = 0, div, ret;
-> +
-> +	/*
-> +	 * If the PLL is in FSM mode, then treat set_rate callback as a
-> +	 * no-operation.
-> +	 */
-> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & LUCID_EVO_ENABLE_VOTE_RUN)
-> +		return 0;
-> +
-> +	if (!pll->post_div_table) {
-> +		pr_err("Missing the post_div_table for the PLL\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	for (i = 0; i < pll->num_post_div; i++) {
-> +		if (pll->post_div_table[i].div == div) {
-> +			val = pll->post_div_table[i].val;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-> +			(BIT(pll->width) - 1) << pll->post_div_shift,
-> +			val << pll->post_div_shift);
-> +}
-
-clk_lucid_5lpe_pll_postdiv_set_rate() looks similar?
-
--- 
-~Vinod
