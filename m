@@ -2,194 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677EFC4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 20:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8EDC4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 21:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4303A60E09
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 20:24:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 149FA60F46
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 21:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbhG3UYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 16:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbhG3UYJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 16:24:09 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DCFC061765;
-        Fri, 30 Jul 2021 13:24:03 -0700 (PDT)
-Received: from [192.168.1.59] (bband-dyn19.178-41-181.t-com.sk [178.41.181.19])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4BBEF3EA5A;
-        Fri, 30 Jul 2021 22:24:01 +0200 (CEST)
-Date:   Fri, 30 Jul 2021 22:23:55 +0200
-From:   Martin Botka <martin.botka@somainline.org>
-Subject: Re: [RESEND PATCH v2 3/3] rpmcc: Add support for SM6125
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     martin.botka1@gmail.com, ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        paul.bouchara@somainline.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S231376AbhG3VW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 17:22:57 -0400
+Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:55224 "EHLO
+        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230310AbhG3VW5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Jul 2021 17:22:57 -0400
+Received: from oxapps-35-162.iol.local ([10.101.8.208])
+        by smtp-18.iol.local with ESMTPA
+        id 9ZxxmK9xfxWyj9Zxxmk9Ao; Fri, 30 Jul 2021 23:22:50 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+        t=1627680170; bh=MIRh6b4BlqCNSWoiYnKkCTt6g5l7D5bTi3Cy1ajNnVk=;
+        h=From;
+        b=qcZjZfXvM43R5W6hKxrkHOoeu5uef+esI0zTC2CPyjMg0XjM68DSkxyF8R2hdAL+c
+         LFRLTcDIoKdzQSvInsAfyDCuc1gln5zb91KfesU4hPRL72D8hByg5DTyYUNFOKyyml
+         nno7iNqpGj6GzZamvbDHiCyXA31T0JDgoHpxhYjJMOkAyJb5ALzSmuu1qSarWP/7zI
+         Wx5imZuwLgKMjVI5WxMTugs965rrPFkR9h74CiYp0lUUB/g/uJrACTtGyIKnMX4+5L
+         Idk4YHf5869Q8IBt7d3uOxtU91XcwyiNLoklmegBhm6ukbX3E3XHe0J4Fmzz4UMew1
+         ydR14enANGukQ==
+X-CNFS-Analysis: v=2.4 cv=d+kwdTvE c=1 sm=1 tr=0 ts=61046daa cx=a_exe
+ a=OCAZjQWm+uh9gf1btJle/A==:117 a=ph_LecQPeAcA:10 a=IkcTkHD0fZMA:10
+ a=7HzzVYOy9wMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Clq-v84VBH2wsqQnF40A:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+Date:   Fri, 30 Jul 2021 23:22:49 +0200 (CEST)
+From:   Dario Binacchi <dariobin@libero.it>
+To:     Stephen Boyd <sboyd@kernel.org>, Dillon Hua <dillonhua@gmail.com>
+Cc:     linux-clk@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <VBR2XQ.FOVZA5CIE6Z12@somainline.org>
-In-Reply-To: <N5R2XQ.AHZHRMRZKWYV1@somainline.org>
-References: <20210629102624.194378-1-martin.botka@somainline.org>
-        <20210629102624.194378-4-martin.botka@somainline.org>
-        <162742239972.2368309.5551349117052770211@swboyd.mtv.corp.google.com>
-        <N5R2XQ.AHZHRMRZKWYV1@somainline.org>
-X-Mailer: geary/40.0
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Message-ID: <1098513125.52015.1627680169782@mail1.libero.it>
+In-Reply-To: <162767443658.714452.1239845779696330360@swboyd.mtv.corp.google.com>
+References: <20210725160725.10788-1-dariobin@libero.it>
+ <CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com>
+ <1926284813.753014.1627553002984@mail1.libero.it>
+ <162767443658.714452.1239845779696330360@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for
+ I2S/SAI PLLs
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
+X-Originating-IP: 79.45.223.112
+X-Originating-Client: open-xchange-appsuite
+x-libjamsun: rqnWdyeqWISTUy7ZHXC51GaKgPrQD3at
+x-libjamv: YVidEiow+UM=
+X-CMAE-Envelope: MS4xfEv2HuVu70s5x/tl23e8NZEi5LwPXWPJ+Qq1UOZ2efPVf9+ZByj7mXUuSW5Dg6ShVAMU27eU2I7xBjDlWXh82UdfPiT8lTDENDLRJxoE4+0bVzb/SbZ8
+ MBppciMk2uXYHLu3HSHDPjKQx+5stpbqsT5G7tX26IOFVB3Wv+BsQ+lnbsp5GJD+ltSTqBGvsGOArWz3K87QBcMNoRqXx/ZZjXqtGEhb97PbQeoVNSCEOsd/
+ tazRbpq59fxxFgbiXqL8gjL7wPYo2HXqijzkX5I/li2zVzK+wro7TMTfwtYfYHyCwtebyF7nau8/JdUDV68nrDg8GllVnSgNkXqyQSPQNhLPb063nKijbijy
+ m4ifJLGwHs5+m+E//qh4kv2LtdP7indFiGnM+wVyq75/iuPlxZx3expKsFgxAZjHKmBpI3duX0n1mKyF9dH1Wg7/zWeVdrUELOoN9vpCf9buK3f1rDax1I+i
+ qCxMzV5YZfhbKQcRp1i9Iz1i90GbRupohVd8Jn0NiAvBGmP2akzcpFRydiZA855/xlaHJvupf870u1gTfe1CSdSyh9qiHHUMIQwfoA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Completely ignore it. Brain fart.
+Hi Stephen,
 
-On Fri, Jul 30 2021 at 10:20:11 PM +0200, Martin Botka 
-<martin.botka@somainline.org> wrote:
-> Actually not all.
+> Il 30/07/2021 21:47 Stephen Boyd <sboyd@kernel.org> ha scritto:
 > 
-> On Tue, Jul 27 2021 at 02:46:39 PM -0700, Stephen Boyd 
-> <sboyd@kernel.org> wrote:
->> Quoting Martin Botka (2021-06-29 03:26:23)
->>>  diff --git a/drivers/clk/qcom/clk-smd-rpm.c 
->>> b/drivers/clk/qcom/clk-smd-rpm.c
->>>  index 8200c26b968c..51458f740ba0 100644
->>>  --- a/drivers/clk/qcom/clk-smd-rpm.c
->>>  +++ b/drivers/clk/qcom/clk-smd-rpm.c
->>>  @@ -1059,6 +1059,61 @@ static const struct rpm_smd_clk_desc 
->>> rpm_clk_sdm660 = {
->>>          .num_clks = ARRAY_SIZE(sdm660_clks),
->>>   };
->>> 
->>>  +/* SM6125 */
->>>  +DEFINE_CLK_SMD_RPM_BRANCH(sm6125, bi_tcxo, bi_tcxo_ao,
->>>  +                                       QCOM_SMD_RPM_MISC_CLK, 0, 
->>> 19200000);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, 
->>> QCOM_SMD_RPM_BUS_CLK, 1);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, bimc_clk, bimc_a_clk, 
->>> QCOM_SMD_RPM_MEM_CLK, 0);
->> 
->> Can we use msm8916_bimc_clk?
->> 
->>>  +DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, 
->>> QCOM_SMD_RPM_BUS_CLK, 2);
->>>  +DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk,
->>>  +                                       QCOM_SMD_RPM_MISC_CLK, 1, 
->>> 19200000);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, ce1_clk, ce1_a_clk, 
->>> QCOM_SMD_RPM_CE_CLK, 0);
->> 
->> Can we use msm8992_ce1_clk?
->> 
->>>  +DEFINE_CLK_SMD_RPM(sm6125, ipa_clk, ipa_a_clk, 
->>> QCOM_SMD_RPM_IPA_CLK, 0);
->> 
->> Can we use msm8976_ipa_clk?
->> 
->>>  +DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, 
->>> QCOM_SMD_RPM_QUP_CLK, 0);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, 
->>> QCOM_SMD_RPM_MMAXI_CLK, 0);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, 
->>> QCOM_SMD_RPM_MMAXI_CLK, 1);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk,
->>>  +                                               
->>> QCOM_SMD_RPM_BUS_CLK, 0);
->>>  +DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk,
->>>  +                                               
->>> QCOM_SMD_RPM_BUS_CLK, 5);
->>>  +
->>>  +/* SMD_XO_BUFFER */
->>>  +DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk1, ln_bb_clk1_a, 1);
->> 
->> msm8916?
+>  
+> Quoting Dario Binacchi (2021-07-29 03:03:22)
+> > Hi Dillon,
+> > 
+> > > Il 28/07/2021 12:03 Dillon Hua <dillonhua@gmail.com> ha scritto:
+> > > 
+> > >  
+> > > Hi Dario,
+> > > 
+> > > I have a similar patch [1] submitted last year.
+> > > Unfortunately, it did not get accepted by the maintainer.
+> > > 
+> > > Just a reminder here for you, should remove
+> > > 
+> > > { STM32F4_RCC_APB2ENR, 26, "ltdc", "apb2_div" },
+> > 
+> > Thank you for your suggestion.
+> > While testing the patch on the stm32f469-disco board I didn't
+> > notice the white screen issue. I'll try to run the tests again. 
+> > I will let you know.
+> > 
 > 
-> msm8916 one is not ln_.
-> 
->> 
->>>  +DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk2, ln_bb_clk2_a, 2);
->> 
->> msm8916?
-> 
-> Same reason.
-> 
->> 
->>>  +DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, ln_bb_clk3, ln_bb_clk3_a, 3);
->> 
->> sdm660?
->> 
->>>  +DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk1, rf_clk1_a, 4);
->> 
->> msm8916?
->> 
->>>  +DEFINE_CLK_SMD_RPM_XO_BUFFER(sm6125, rf_clk2, rf_clk2_a, 5);
->> 
->> msm8916?
->> 
->>>  +
->>>  +static struct clk_smd_rpm *sm6125_clks[] = {
->>>  +       [RPM_SMD_XO_CLK_SRC] = &sm6125_bi_tcxo,
->>>  +       [RPM_SMD_XO_A_CLK_SRC] = &sm6125_bi_tcxo_ao,
->>>  +       [RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
->>>  +       [RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
->>>  +       [RPM_SMD_BIMC_CLK] = &sm6125_bimc_clk,
->>>  +       [RPM_SMD_BIMC_A_CLK] = &sm6125_bimc_a_clk,
->>>  +       [RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
->>>  +       [RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
->>>  +       [RPM_SMD_RF_CLK1] = &sm6125_rf_clk1,
->>>  +       [RPM_SMD_RF_CLK1_A] = &sm6125_rf_clk1_a,
->>>  +       [RPM_SMD_RF_CLK2] = &sm6125_rf_clk2,
->>>  +       [RPM_SMD_RF_CLK2_A] = &sm6125_rf_clk2_a,
->>>  +       [RPM_SMD_LN_BB_CLK1] = &sm6125_ln_bb_clk1,
->>>  +       [RPM_SMD_LN_BB_CLK1_A] = &sm6125_ln_bb_clk1_a,
->>>  +       [RPM_SMD_LN_BB_CLK2] = &sm6125_ln_bb_clk2,
->>>  +       [RPM_SMD_LN_BB_CLK2_A] = &sm6125_ln_bb_clk2_a,
->>>  +       [RPM_SMD_LN_BB_CLK3] = &sm6125_ln_bb_clk3,
->>>  +       [RPM_SMD_LN_BB_CLK3_A] = &sm6125_ln_bb_clk3_a,
->>>  +       [RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
->>>  +       [RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
->>>  +       [RPM_SMD_CE1_CLK] = &sm6125_ce1_clk,
->>>  +       [RPM_SMD_CE1_A_CLK] = &sm6125_ce1_a_clk,
->>>  +};
->>>  +
->>>  +static const struct rpm_smd_clk_desc rpm_clk_sm6125 = {
->>>  +       .clks = sm6125_clks,
->>>  +       .num_clks = ARRAY_SIZE(sm6125_clks),
->>>  +};
->>>  +
->>>   static const struct of_device_id rpm_smd_clk_match_table[] = {
->>>          { .compatible = "qcom,rpmcc-msm8916", .data = 
->>> &rpm_clk_msm8916 },
->>>          { .compatible = "qcom,rpmcc-msm8936", .data = 
->>> &rpm_clk_msm8936 },
->>>  diff --git a/include/linux/soc/qcom/smd-rpm.h 
->>> b/include/linux/soc/qcom/smd-rpm.h
->>>  index f2645ec52520..b737d7e456e4 100644
->>>  --- a/include/linux/soc/qcom/smd-rpm.h
->>>  +++ b/include/linux/soc/qcom/smd-rpm.h
->>>  @@ -28,6 +28,7 @@ struct qcom_smd_rpm;
->>>   #define QCOM_SMD_RPM_NCPA      0x6170636E
->>>   #define QCOM_SMD_RPM_NCPB      0x6270636E
->>>   #define QCOM_SMD_RPM_OCMEM_PWR 0x706d636f
->>>  +#define QCOM_SMD_RPM_QUP_CLK   0x00707571
->>>   #define QCOM_SMD_RPM_QPIC_CLK  0x63697071
->>>   #define QCOM_SMD_RPM_SMPA      0x61706d73
->>>   #define QCOM_SMD_RPM_SMPB      0x62706d73
->> 
->> Two patches are adding this in different places.
-> 
+> Ok, I'll drop this from the tree.
 
+The patch fixes commit 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs"),
+so IMHO it should not be dropped from the tree.
+What Dillon suggests, if confirmed, should be fixed by another patch.
 
+Thanks and regards,
+Dario
