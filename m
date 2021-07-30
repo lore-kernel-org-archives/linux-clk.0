@@ -2,137 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32448C432BE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 13:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DA5C4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 14:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3DA60F94
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 13:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC58A60C40
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 14:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238998AbhG3Noz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 09:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57178 "EHLO
+        id S239206AbhG3Ota (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 10:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231139AbhG3Noy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 09:44:54 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3CF1C06175F
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 06:44:49 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:69f0:c617:e432:6919])
-        by albert.telenet-ops.be with bizsmtp
-        id bRkn250052oLRg906RknpP; Fri, 30 Jul 2021 15:44:47 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m9Sog-002Gs5-OL; Fri, 30 Jul 2021 15:44:46 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1m9Sog-00HKCm-8j; Fri, 30 Jul 2021 15:44:46 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.15
-Date:   Fri, 30 Jul 2021 15:44:42 +0200
-Message-Id: <cover.1627652021.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S231342AbhG3Ota (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 10:49:30 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9471FC0613D3
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 07:49:25 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id y12so13556029edo.6
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 07:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5PHkR+YSvqa36gxNmyyX6WoOgZM8UVlxbzCVysbca2U=;
+        b=ppXxSci0wZJY7XnVRY4yu+4+WjQPwflcLFwiLy+QQ2ntOFZXb3dYBrtgAZwQGOi+NV
+         8ryr8dUU1x3Pk72hg5RJMDLvQ6HSfUlWQ8EhsjLq8MHTWl9lHdDa4QV/YXWlXDc0UCNe
+         memZ6BED5+EO4wvTQgR1+L8lXlCDQ5+LPoltjuRKc5UlGaxNzX9gLhdJYS/OBhee8/Vc
+         vF93q4YTSPaGqnxeDvez4Id9seJG7z85l00ime4MS8Q4naLZzzVDb/iC/jBEJatL+c+8
+         imSkgBkD7IX3F6D//6uXm7OsGe26LDkBDkshApcHXIjIpdAH4bgPtgEvxKRogza7ZtXh
+         y8SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5PHkR+YSvqa36gxNmyyX6WoOgZM8UVlxbzCVysbca2U=;
+        b=DQjBd4J3OOMRKY4kSzaLKOVjK9KfnD0Sb6HpxC4cm89yJDHgyvRJsUuUM7VtzSpkF0
+         bMhIYhdMXlA8Rgs2efhh3KnWhAUEL8aE4hNMetDhDyCrcdEx6BOrE6sToeXwhlYkbICE
+         2iu2IppWn44jw/4gQo1JxFwMPzaRz2Gk5eEs7Y1hWU8PR4L/9EoJFVcjpoywkD8ycn8+
+         x6+UNQXFeC+G9gaxDoBZf2LYkutwTCP3DbXd+ystUN5Vz3QaRE5c1Xi5yDBNV/R22I6o
+         1wxxPly33vd0oQjBYz3vyn57em7rrZpgayO/kZ1RriCncfpI8EQY7XbjnxVvi/yO/xRt
+         kTiA==
+X-Gm-Message-State: AOAM530j5UNoXDlQNb0d3Lzymn61TVv8fjyNXXd5VBXfDUTVo2ssU71M
+        m2G/ezMsFCVLoXchIDCJa2r9dQ==
+X-Google-Smtp-Source: ABdhPJwdxvjBr38jNA7cLuHBawxASA9D/0kL5M54NafNl/0JLAWo7243dU/nVXHaEZWEexPUYsyDJw==
+X-Received: by 2002:a05:6402:49a:: with SMTP id k26mr3291469edv.279.1627656564172;
+        Fri, 30 Jul 2021 07:49:24 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id p16sm785006eds.73.2021.07.30.07.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jul 2021 07:49:23 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH 00/12] Add minimal support for Exynos850 SoC
+Date:   Fri, 30 Jul 2021 17:49:10 +0300
+Message-Id: <20210730144922.29111-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+This patch series adds initial platform support for Samsung Exynos850
+SoC [1]. With this patchset it's possible to run the kernel with BusyBox
+rootfs as a RAM disk. More advanced platform support (like MMC driver
+additions) will be added later. The idea is to keep the first submission
+minimal to ease the review, and then build up on top of that.
 
-The following changes since commit 2734d6c1b1a089fb593ef6a23d4b70903526fe0c:
+[1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
 
-  Linux 5.14-rc2 (2021-07-18 14:13:49 -0700)
+Jaehyoung Choi (1):
+  pinctrl: samsung: Fix pinctrl bank pin count
 
-are available in the Git repository at:
+Sam Protsenko (11):
+  pinctrl: samsung: Add Exynos850 SoC specific data
+  dt-bindings: pinctrl: samsung: Add Exynos850 doc
+  tty: serial: samsung: Init USI to keep clocks running
+  tty: serial: samsung: Fix driver data macros style
+  tty: serial: samsung: Add Exynos850 SoC data
+  dt-bindings: serial: samsung: Add Exynos850 doc
+  MAINTAINERS: Cover Samsung clock YAML bindings
+  dt-bindings: clock: Add bindings for Exynos850 clock controller
+  clk: samsung: Add Exynos850 clock driver stub
+  dt-bindings: interrupt-controller: Add IRQ constants for Exynos850
+  arm64: dts: exynos: Add Exynos850 SoC support
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.15-tag1
+ .../bindings/clock/exynos850-clock.yaml       |  70 ++
+ .../bindings/pinctrl/samsung-pinctrl.txt      |   1 +
+ .../bindings/serial/samsung_uart.yaml         |   1 +
+ MAINTAINERS                                   |   3 +-
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-exynos850.c           |  63 ++
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 129 +++
+ drivers/pinctrl/samsung/pinctrl-exynos.h      |  29 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |   4 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+ drivers/tty/serial/samsung_tty.c              |  50 +-
+ include/dt-bindings/clock/exynos850.h         | 267 ++++++
+ .../interrupt-controller/exynos850.h          | 290 +++++++
+ include/linux/serial_s3c.h                    |   9 +
+ 17 files changed, 1970 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos850-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-usi.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos850.c
+ create mode 100644 include/dt-bindings/clock/exynos850.h
+ create mode 100644 include/dt-bindings/interrupt-controller/exynos850.h
 
-for you to fetch changes up to d28b1e03dc8d1070538ca3ea3f4e6732109ddf42:
+-- 
+2.30.2
 
-  clk: renesas: r9a07g044: Add entry for fixed clock P0_DIV2 (2021-07-26 14:15:23 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.15
-
-  - Add display (DU and DSI) clocks on R-Car V3U,
-  - Add I2C, DMAC, USB, sound (SSIF-2), GPIO, CANFD, and ADC clocks and
-    resets on RZ/G2L,
-  - Miscellaneous fixes and improvements.
-
-Note:
-  - This pull request is based on v5.14-rc2, as older versions do not
-    include the atomic fixes to RZ/G2L DT binding definitions, clock
-    driver, and DTS in renesas-fixes-for-v5.14-tag1,
-  - This includes another update (append-only) to the Renesas RZ/G2L DT
-    Binding Definitions, which is expected to appear in a later pull
-    request for the soc tree, too.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (4):
-      clk: renesas: r9a07g044: Add I2C clocks/resets
-      clk: renesas: r9a07g044: Add DMAC clocks/resets
-      clk: renesas: r9a07g044: Add USB clocks/resets
-      clk: renesas: r9a07g044: Add SSIF-2 clock and reset entries
-
-Dan Carpenter (2):
-      clk: renesas: rzg2l: Fix a double free on error
-      clk: renesas: rzg2l: Avoid mixing error pointers and NULL
-
-Geert Uytterhoeven (3):
-      clk: renesas: rzg2: Rename i2c-dvfs to iic-pmic
-      clk: renesas: Rename renesas-rzg2l-cpg.[ch] to rzg2l-cpg.[ch]
-      Merge tag 'renesas-r9a07g044-dt-binding-defs-tag2' into renesas-clk-for-v5.15
-
-Kieran Bingham (2):
-      clk: renesas: r8a779a0: Add the DU clock
-      clk: renesas: r8a779a0: Add the DSI clocks
-
-Lad Prabhakar (6):
-      clk: renesas: rzg2l: Fix off-by-one check in rzg2l_cpg_clk_src_twocell_get()
-      clk: renesas: r9a07g044: Add GPIO clock and reset entries
-      clk: renesas: r9a07g044: Add clock and reset entries for CANFD
-      clk: renesas: r9a07g044: Add clock and reset entries for ADC
-      dt-bindings: clock: r9a07g044-cpg: Add entry for P0_DIV2 core clock
-      clk: renesas: r9a07g044: Add entry for fixed clock P0_DIV2
-
-Yang Li (2):
-      clk: renesas: rzg2l: Remove unneeded semicolon
-      clk: renesas: rzg2l: Fix return value and unused assignment
-
- drivers/clk/renesas/Makefile                       |  2 +-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/r8a774b1-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/r8a774e1-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  5 +-
- drivers/clk/renesas/r9a07g044-cpg.c                | 72 +++++++++++++++++++++-
- .../renesas/{renesas-rzg2l-cpg.c => rzg2l-cpg.c}   | 22 +++----
- .../renesas/{renesas-rzg2l-cpg.h => rzg2l-cpg.h}   |  0
- include/dt-bindings/clock/r9a07g044-cpg.h          |  1 +
- 10 files changed, 87 insertions(+), 23 deletions(-)
- rename drivers/clk/renesas/{renesas-rzg2l-cpg.c => rzg2l-cpg.c} (98%)
- rename drivers/clk/renesas/{renesas-rzg2l-cpg.h => rzg2l-cpg.h} (100%)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
