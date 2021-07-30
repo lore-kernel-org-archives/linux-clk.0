@@ -2,146 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40267C4320A
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC772C4320A
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9E56101C
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF53961057
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230515AbhG3WCa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 18:02:30 -0400
-Received: from relay01.th.seeweb.it ([5.144.164.162]:55309 "EHLO
-        relay01.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231300AbhG3WCa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 18:02:30 -0400
-Received: from TimeMachine.lan (bband-dyn19.178-41-181.t-com.sk [178.41.181.19])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 32C2A202E8;
-        Sat, 31 Jul 2021 00:02:23 +0200 (CEST)
-From:   Martin Botka <martin.botka@somainline.org>
-To:     martin.botka1@gmail.com
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        paul.bouchara@somainline.org,
-        Martin Botka <martin.botka@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S233146AbhG3W2Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 18:28:24 -0400
+Received: from mail-il1-f172.google.com ([209.85.166.172]:43586 "EHLO
+        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233153AbhG3W2X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 18:28:23 -0400
+Received: by mail-il1-f172.google.com with SMTP id x7so7577261ilh.10;
+        Fri, 30 Jul 2021 15:28:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=D52Vy0CgcE0wfPHmI57Uv6O5bCcoMUm9q+qsHe1m5OE=;
+        b=Ym4V16ChMgDMYEcRaLIj91P7ur1Qpanl56iMYdBlNaTx4OaPOpycWoNmHs2h6uc6b1
+         rWad75hIj6FZhjv4bpojPzVl5R1KsRsAGITujjg9Fd129vMnaYoK9R6zpqIxNkR1TFkW
+         F+jdqyyGp5YOqfaEumsa3lxkY4HWr0QXlAx8kxjn8WFmpKFhgQ6qm6DpFGyDkw4ZmBc4
+         dbmmL1RldrAwQRvqs7CkELEhY5DtJDz7rUGNPsoi+QsV1LI0l2hZLe9kPa/7+ouAkNpB
+         SbKqpjGzpO0pHBtY7+n4azgp7JpDxW4Dads8t8CwG7VVUMxifGWE6f18PjPdmvGQrafP
+         Aihg==
+X-Gm-Message-State: AOAM53277ZtUwun3pAOoYs/Kbi1yt+9CBm0ReEgPi/3lX0JeN5sxY2oX
+        +ZPV1vkG28VVt1q/uAlH6Q==
+X-Google-Smtp-Source: ABdhPJwxFmwDv+5IpRAc36U/IY0R6KHUZxqyVwE7pzDL8f+orD1mZ/cnblLwZldJa1oLxZ4RdtDipw==
+X-Received: by 2002:a92:cf4d:: with SMTP id c13mr1018767ilr.300.1627684098045;
+        Fri, 30 Jul 2021 15:28:18 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id d18sm1505290ile.32.2021.07.30.15.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jul 2021 15:28:17 -0700 (PDT)
+Received: (nullmailer pid 3442795 invoked by uid 1000);
+        Fri, 30 Jul 2021 22:28:10 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Jiri Slaby <jirislaby@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 1/1] clk: qcom: smd: Add support for SM6125 rpm clocks
-Date:   Fri, 30 Jul 2021 23:59:24 +0200
-Message-Id: <20210730215924.733350-2-martin.botka@somainline.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210730215924.733350-1-martin.botka@somainline.org>
-References: <20210730215924.733350-1-martin.botka@somainline.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Amit Pundir <amit.pundir@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-serial@vger.kernel.org
+In-Reply-To: <20210730144922.29111-10-semen.protsenko@linaro.org>
+References: <20210730144922.29111-1-semen.protsenko@linaro.org> <20210730144922.29111-10-semen.protsenko@linaro.org>
+Subject: Re: [PATCH 09/12] dt-bindings: clock: Add bindings for Exynos850 clock controller
+Date:   Fri, 30 Jul 2021 16:28:10 -0600
+Message-Id: <1627684090.562853.3442794.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add rpm smd clocks, PMIC and bus clocks which are required on SM6125
-for clients to vote on.
+On Fri, 30 Jul 2021 17:49:19 +0300, Sam Protsenko wrote:
+> Add documentation for Exynos850 clock driver bindings and corresponding
+> clock ID constants, which will be used further both in clock driver and
+> in device tree files. Constants are grouped per domain basis (CMU) for
+> more convenient usage, but those are just unique numbers and have
+> nothing to do with register offsets, etc.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../bindings/clock/exynos850-clock.yaml       |  70 +++++
+>  include/dt-bindings/clock/exynos850.h         | 267 ++++++++++++++++++
+>  2 files changed, 337 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/exynos850-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/exynos850.h
+> 
 
-Signed-off-by: Martin Botka <martin.botka@somainline.org>
----
- drivers/clk/qcom/clk-smd-rpm.c   | 56 ++++++++++++++++++++++++++++++++
- include/linux/soc/qcom/smd-rpm.h |  1 +
- 2 files changed, 57 insertions(+)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 800b2fef1887..c85cd0981543 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -913,6 +913,61 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
- 	.num_clks = ARRAY_SIZE(sdm660_clks),
- };
- 
-+/* SM6125 */
-+DEFINE_CLK_SMD_RPM(sm6125, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM_BRANCH(sm6125, qdss_clk, qdss_a_clk,
-+					QCOM_SMD_RPM_MISC_CLK, 1, 19200000);
-+DEFINE_CLK_SMD_RPM(sm6125, qup_clk, qup_a_clk, QCOM_SMD_RPM_QUP_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMAXI_CLK, 1);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_periph_clk, snoc_periph_a_clk,
-+						QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6125, snoc_lpass_clk, snoc_lpass_a_clk,
-+						QCOM_SMD_RPM_BUS_CLK, 5);
-+
-+static struct clk_smd_rpm *sm6125_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
-+	[RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK] = &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &msm8916_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8916_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2] = &msm8916_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A] = &msm8916_rf_clk2_a,
-+	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
-+	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8992_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8992_ce1_a_clk,
-+	[RPM_SMD_LN_BB_CLK1] = &msm8916_bb_clk1,
-+	[RPM_SMD_LN_BB_CLK1_A] = &msm8916_bb_clk1_a,
-+	[RPM_SMD_LN_BB_CLK2] = &msm8916_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &msm8916_bb_clk2_a,
-+	[RPM_SMD_LN_BB_CLK3] = &sdm660_ln_bb_clk3,
-+	[RPM_SMD_LN_BB_CLK3_A] = &sdm660_ln_bb_clk3_a,
-+	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
-+	[RPM_SMD_QUP_A_CLK] = &sm6125_qup_a_clk,
-+	[RPM_SMD_MMRT_CLK] = &sm6125_mmrt_clk,
-+	[RPM_SMD_MMRT_A_CLK] = &sm6125_mmrt_a_clk,
-+	[RPM_SMD_MMNRT_CLK] = &sm6125_mmnrt_clk,
-+	[RPM_SMD_MMNRT_A_CLK] = &sm6125_mmnrt_a_clk,
-+	[RPM_SMD_SNOC_PERIPH_CLK] = &sm6125_snoc_periph_clk,
-+	[RPM_SMD_SNOC_PERIPH_A_CLK] = &sm6125_snoc_periph_a_clk,
-+	[RPM_SMD_SNOC_LPASS_CLK] = &sm6125_snoc_lpass_clk,
-+	[RPM_SMD_SNOC_LPASS_A_CLK] = &sm6125_snoc_lpass_a_clk,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_sm6125 = {
-+	.clks = sm6125_clks,
-+	.num_clks = ARRAY_SIZE(sm6125_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
-@@ -925,6 +980,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ .compatible = "qcom,rpmcc-sdm660",  .data = &rpm_clk_sdm660  },
-+	{ .compatible = "qcom,rpmcc-sm6125",  .data = &rpm_clk_sm6125  },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index f2645ec52520..c5b98dc2c7a9 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -29,6 +29,7 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_NCPB	0x6270636E
- #define QCOM_SMD_RPM_OCMEM_PWR	0x706d636f
- #define QCOM_SMD_RPM_QPIC_CLK	0x63697071
-+#define QCOM_SMD_RPM_QUP_CLK	0x707571
- #define QCOM_SMD_RPM_SMPA	0x61706d73
- #define QCOM_SMD_RPM_SMPB	0x62706d73
- #define QCOM_SMD_RPM_SPDM	0x63707362
--- 
-2.32.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/clock/exynos850-clock.example.dts:71.27-28 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/clock/exynos850-clock.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1419: dt_binding_check] Error 2
+\ndoc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1511715
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
