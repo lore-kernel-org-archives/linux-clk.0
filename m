@@ -2,109 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8EDC4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 21:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8690C4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 149FA60F46
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 21:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20CC6101C
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jul 2021 22:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231376AbhG3VW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jul 2021 17:22:57 -0400
-Received: from smtp-18-i2.italiaonline.it ([213.209.12.18]:55224 "EHLO
-        libero.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230310AbhG3VW5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Jul 2021 17:22:57 -0400
-Received: from oxapps-35-162.iol.local ([10.101.8.208])
-        by smtp-18.iol.local with ESMTPA
-        id 9ZxxmK9xfxWyj9Zxxmk9Ao; Fri, 30 Jul 2021 23:22:50 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1627680170; bh=MIRh6b4BlqCNSWoiYnKkCTt6g5l7D5bTi3Cy1ajNnVk=;
-        h=From;
-        b=qcZjZfXvM43R5W6hKxrkHOoeu5uef+esI0zTC2CPyjMg0XjM68DSkxyF8R2hdAL+c
-         LFRLTcDIoKdzQSvInsAfyDCuc1gln5zb91KfesU4hPRL72D8hByg5DTyYUNFOKyyml
-         nno7iNqpGj6GzZamvbDHiCyXA31T0JDgoHpxhYjJMOkAyJb5ALzSmuu1qSarWP/7zI
-         Wx5imZuwLgKMjVI5WxMTugs965rrPFkR9h74CiYp0lUUB/g/uJrACTtGyIKnMX4+5L
-         Idk4YHf5869Q8IBt7d3uOxtU91XcwyiNLoklmegBhm6ukbX3E3XHe0J4Fmzz4UMew1
-         ydR14enANGukQ==
-X-CNFS-Analysis: v=2.4 cv=d+kwdTvE c=1 sm=1 tr=0 ts=61046daa cx=a_exe
- a=OCAZjQWm+uh9gf1btJle/A==:117 a=ph_LecQPeAcA:10 a=IkcTkHD0fZMA:10
- a=7HzzVYOy9wMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Clq-v84VBH2wsqQnF40A:9
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-Date:   Fri, 30 Jul 2021 23:22:49 +0200 (CEST)
-From:   Dario Binacchi <dariobin@libero.it>
-To:     Stephen Boyd <sboyd@kernel.org>, Dillon Hua <dillonhua@gmail.com>
-Cc:     linux-clk@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        id S231984AbhG3WC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jul 2021 18:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231215AbhG3WC3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jul 2021 18:02:29 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204E6C061765
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jul 2021 15:02:24 -0700 (PDT)
+Received: from TimeMachine.lan (bband-dyn19.178-41-181.t-com.sk [178.41.181.19])
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 4EAF2202E6;
+        Sat, 31 Jul 2021 00:02:22 +0200 (CEST)
+From:   Martin Botka <martin.botka@somainline.org>
+To:     martin.botka1@gmail.com
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        konrad.dybcio@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        paul.bouchara@somainline.org,
+        Martin Botka <martin.botka@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Message-ID: <1098513125.52015.1627680169782@mail1.libero.it>
-In-Reply-To: <162767443658.714452.1239845779696330360@swboyd.mtv.corp.google.com>
-References: <20210725160725.10788-1-dariobin@libero.it>
- <CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com>
- <1926284813.753014.1627553002984@mail1.libero.it>
- <162767443658.714452.1239845779696330360@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for
- I2S/SAI PLLs
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/1] RPMCC for SM6125
+Date:   Fri, 30 Jul 2021 23:59:23 +0200
+Message-Id: <20210730215924.733350-1-martin.botka@somainline.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev34
-X-Originating-IP: 79.45.223.112
-X-Originating-Client: open-xchange-appsuite
-x-libjamsun: rqnWdyeqWISTUy7ZHXC51GaKgPrQD3at
-x-libjamv: YVidEiow+UM=
-X-CMAE-Envelope: MS4xfEv2HuVu70s5x/tl23e8NZEi5LwPXWPJ+Qq1UOZ2efPVf9+ZByj7mXUuSW5Dg6ShVAMU27eU2I7xBjDlWXh82UdfPiT8lTDENDLRJxoE4+0bVzb/SbZ8
- MBppciMk2uXYHLu3HSHDPjKQx+5stpbqsT5G7tX26IOFVB3Wv+BsQ+lnbsp5GJD+ltSTqBGvsGOArWz3K87QBcMNoRqXx/ZZjXqtGEhb97PbQeoVNSCEOsd/
- tazRbpq59fxxFgbiXqL8gjL7wPYo2HXqijzkX5I/li2zVzK+wro7TMTfwtYfYHyCwtebyF7nau8/JdUDV68nrDg8GllVnSgNkXqyQSPQNhLPb063nKijbijy
- m4ifJLGwHs5+m+E//qh4kv2LtdP7indFiGnM+wVyq75/iuPlxZx3expKsFgxAZjHKmBpI3duX0n1mKyF9dH1Wg7/zWeVdrUELOoN9vpCf9buK3f1rDax1I+i
- qCxMzV5YZfhbKQcRp1i9Iz1i90GbRupohVd8Jn0NiAvBGmP2akzcpFRydiZA855/xlaHJvupf870u1gTfe1CSdSyh9qiHHUMIQwfoA==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This patch adds support for the
+RPMCC found in SM6125 SoC.
 
-> Il 30/07/2021 21:47 Stephen Boyd <sboyd@kernel.org> ha scritto:
-> 
->  
-> Quoting Dario Binacchi (2021-07-29 03:03:22)
-> > Hi Dillon,
-> > 
-> > > Il 28/07/2021 12:03 Dillon Hua <dillonhua@gmail.com> ha scritto:
-> > > 
-> > >  
-> > > Hi Dario,
-> > > 
-> > > I have a similar patch [1] submitted last year.
-> > > Unfortunately, it did not get accepted by the maintainer.
-> > > 
-> > > Just a reminder here for you, should remove
-> > > 
-> > > { STM32F4_RCC_APB2ENR, 26, "ltdc", "apb2_div" },
-> > 
-> > Thank you for your suggestion.
-> > While testing the patch on the stm32f469-disco board I didn't
-> > notice the white screen issue. I'll try to run the tests again. 
-> > I will let you know.
-> > 
-> 
-> Ok, I'll drop this from the tree.
+I did not include patches that were already merged.
 
-The patch fixes commit 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs"),
-so IMHO it should not be dropped from the tree.
-What Dillon suggests, if confirmed, should be fixed by another patch.
+Changes in v2:
+Add commit description to all the patches
 
-Thanks and regards,
-Dario
+Changes in v3:
+Drop merged patches
+Squash adding compatible
+Deduplicate clocks
+Nicer commit message
+Use defined but prev not used clocks using the
+recently added dt-binding for them (In linux-next)
+Sort sm6125 clocks according to their
+ID in qcom,rpmcc.h
+
+Martin Botka (3):
+  clk: qcom: smd: Add support for SM6125 rpm clocks
+
+ drivers/clk/qcom/clk-smd-rpm.c   | 56 ++++++++++++++++++++++++++++++++
+ include/linux/soc/qcom/smd-rpm.h |  1 +
+ 2 files changed, 57 insertions(+)
+
+-- 
+2.32.0
+
