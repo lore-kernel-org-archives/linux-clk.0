@@ -2,164 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C1BC4338F
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A769C43214
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0477861040
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3322A60F35
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhGaH3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Jul 2021 03:29:46 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41048
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230172AbhGaH3q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Jul 2021 03:29:46 -0400
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 98F2B3F232
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jul 2021 07:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627716579;
-        bh=7szpzek0sYJQJU9q3jPOrpIZQhKhL2Waoumc2yNvU78=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=gK78iDW31WXNAKEY4Te/5C3LOWAvuswD7dRowoPNOqIa7S7gKSrL/h4sAjkLqOmO4
-         690GdyEGZKfaksZdIxDQ1bhvZLp0inZ7qBzjfR/FNodDiojeXoiH3dvv+/uho0iY4K
-         uL2Gwcr5PesTeHH0lexDebXVRP8SM9tRaBgBTQsWaGyKQUdwLU95OZ3GPzDLWLyOA5
-         mQAi3umgoOZLfoCSHXlqlNfzh/nrx6B9srMGjZ47Oho4xhDRjxlI1Lcz9akh46w8r6
-         sTrfPNVbyRMVPs4y2HaRSeOBvxQwVyITfQOvCW8h4iQqVXJYMnjtMHOR/WbbXat/Bq
-         qcoorMFnGj/fg==
-Received: by mail-ej1-f70.google.com with SMTP id ju25-20020a17090798b9b029058c24b55273so3755902ejc.8
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jul 2021 00:29:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7szpzek0sYJQJU9q3jPOrpIZQhKhL2Waoumc2yNvU78=;
-        b=Ee6ZKkGS3HmqJ4+jHSPQBAGM3HFXHDXS0gR77lTVoFvL1oUCZbaERIyHwb/4nuHmQX
-         ugcTRDozDsXdbn+yao1kOFjHSaxYT+luxThZTgCSukNiFfIoWqdBD/4Se3QTPzdWYqDZ
-         1OXVxYDdBGueEyMsNuq5hbOYBPtpLl0XwVpAuj3GOa5pkIhnLMcm63n4dyWRiBrDWhh2
-         E8ZlSO3AHKtlNXHvMJ/0feLcLVH09eZW4hadtAuNozN/NTsee/zjLWRHLmhiruxaabAy
-         BOTwZLXkY1FErBwMhbLo/MtLh498JJ9Vm2yu24AwuHmFuzbl83qVfK1jYaHjjfr09UXk
-         2hmQ==
-X-Gm-Message-State: AOAM530giCt0fdF7QxpMdqmcsu1ZMiMjSpnmTpahpOmXEJ46YxQJ+T2D
-        G1fy7WCuFvDk36bdoRN/UvlKV5ZSzY1YPfzgJFIbJBoKz6t1deyvsH11d9ffIUgpBttgK2uz7XY
-        zYMOFkKIZT+tUCZkLiioITXJjrUKq4spn2zvWCA==
-X-Received: by 2002:a05:6402:299:: with SMTP id l25mr7768590edv.283.1627716579288;
-        Sat, 31 Jul 2021 00:29:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxUxBOyxyGNdZMeniqKHPWuWGs2AKaZZj7ShbIHSxUlg3RJCNhhDtExvwhxpbohpRLzf5RItQ==
-X-Received: by 2002:a05:6402:299:: with SMTP id l25mr7768575edv.283.1627716579171;
-        Sat, 31 Jul 2021 00:29:39 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id v13sm1361312ejh.62.2021.07.31.00.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Jul 2021 00:29:38 -0700 (PDT)
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <5e35b0a7-13aa-3c62-ca49-14af2fcb2a08@canonical.com>
- <c3486111-0ec9-9679-d2a2-68b2f33a2450@canonical.com>
- <CAPLW+4kbnJEBkc0D=RWt59JxBan8X1uDy6sSXBiYAq8N9FDV6A@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 00/12] Add minimal support for Exynos850 SoC
-Message-ID: <13f166bb-7103-25d5-35a6-8ec53a1f1817@canonical.com>
-Date:   Sat, 31 Jul 2021 09:29:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S232196AbhGaHl3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Jul 2021 03:41:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230196AbhGaHl1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 31 Jul 2021 03:41:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3148A60EE6;
+        Sat, 31 Jul 2021 07:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627717281;
+        bh=Hv1Kjt0wM3IMrL51Qq27kQRTwgyaY1whymskpzTrLBg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Mfe/v8Uz7KZzXezwTwjXNOUR+12p4qzmq6509mWK4HR6HXGPAgYYHOsPNIDypMN4W
+         dptRTFmjMlRcoslggxxB3pGQBj0x6UrIzpyRhgK0eHShF1H4ayZFJwSjbVOjohBESi
+         S7z2KmeryQRXtF7eCeDb2EWvnztkdGkPMUlZcvNgWKzC+b7h/pDhgVb1avCQX29DcW
+         jD3PhoYFAFhcJd+plY+0d1jbLOvWrCoQRpOp8y4dhHXeVVhAQXt6M5qmuAJacc37Fb
+         htU5NUsNIGPVW4EzuZd3O1Ri4wdN/qcx17MjnStx1zor6X+sjRKLhzQ7jQZ84kkJOU
+         +DAteW7woUfZA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4kbnJEBkc0D=RWt59JxBan8X1uDy6sSXBiYAq8N9FDV6A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210728204033.GF22278@shell.armlinux.org.uk>
+References: <20210625171434.3xusxpxjprcdqa47@pengutronix.de> <20210722060654.nudpdtemosi64nlb@pengutronix.de> <YPkg0wtYIoHKpTUW@kunai> <20210722081817.2tsjzof4gvldq6ka@pengutronix.de> <YPlfcbkxiBmB+vw1@kunai> <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com> <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com> <20210728202547.7uvfwflpruku7yps@pengutronix.de> <20210728204033.GF22278@shell.armlinux.org.uk>
+Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of devm_clk_get for prepared and enabled clocks enabled clocks]
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Claudiu.Beznea@microchip.com, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+        lee.jones@linaro.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Ludovic.Desroches@microchip.com,
+        o.rempel@pengutronix.de, andy.shevchenko@gmail.com,
+        aardelean@deviqon.com, linux-pwm@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, broonie@kernel.org,
+        Jonathan.Cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
+        a.zummo@towertech.it, linux-spi@vger.kernel.org, wsa@kernel.org,
+        kernel@pengutronix.de, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org
+To:     Russell King (Oracle) <linux@armlinux.org.uk>,
+        <u.kleine-koenig@pengutronix.de>
+Date:   Sat, 31 Jul 2021 00:41:19 -0700
+Message-ID: <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/07/2021 21:02, Sam Protsenko wrote:
-> Hi Krzysztof,
-> 
-> On Fri, 30 Jul 2021 at 20:21, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 30/07/2021 17:18, Krzysztof Kozlowski wrote:
->>> On 30/07/2021 16:49, Sam Protsenko wrote:
->>>> This patch series adds initial platform support for Samsung Exynos850
->>>> SoC [1]. With this patchset it's possible to run the kernel with BusyBox
->>>> rootfs as a RAM disk. More advanced platform support (like MMC driver
->>>> additions) will be added later. The idea is to keep the first submission
->>>> minimal to ease the review, and then build up on top of that.
->>>>
->>>> [1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
->>>>
->>>
->>> Great work!
->>>
-> 
-> Thanks, Krzysztof! And thank you for reviewing the whole series.
-> 
->>> What's the SoC revision number (should be accessible via
->>> /sys/bus/soc/devices/soc0/)? Recent wrap in numbering of Exynos chips
->>> might bring confusion...
-> 
-> # cat /sys/devices/soc0/revision
-> 0
+Quoting Russell King (Oracle) (2021-07-28 13:40:34)
+> > I adapted the Subject in the hope to catch Stephen's and Michael's
+> > attention. My impression is that this thread isn't on their radar yet,
+> > but the topic here seems important enough to get a matching Subject.
 
-soc_id but you're right it won't be set for unknown SoCs. You need to
-extend drivers/soc/samsung/exynos-chipid.c to parse new values (E3830000
-for product ID) and maybe new register offsets (previous offset is 0x0,
-for 3830 is 0x10 I think). Also revision mask might change.
+The thread is on my radar but...
 
->> Judging by vendor's sources it is quite confusing. It looks mostly like
->> Exynos3830 but in few other cases it uses Exynos9 compatibles (Exynos9,
->> Exynos9820). Only in few places there is Exynos850. Marketing department
->> made it so confusing...  The revision embedded in SoC would be very
->> interesting.
->>
-> 
-> As I understand, this SoC is called Exynos850 everywhere now.
-> Exynos3830 is its old name, not used anymore. As you noticed from
-> patch #2, it shares some definitions with Exynos9 SoC, so I guess some
-> software is similar for both architectures. Not sure about hardware
-> though, never worked with Exynos9 CPUs. Anyway, I asked Samsung
-> representatives about naming, and it seems like we should stick to
-> "Exynos850" name, even in code.
+>=20
+> Have you thought about sending your pull request to the clk API
+> maintainer (iow, me) ?
+>=20
 
++1 This patch doesn't fall under CCF maintainer.
 
-Since the chip identifies itself as E3830000, I would prefer naming
-matching real product ID instead of what is pushed by marketing or sales
-representatives. The marketing names don't have to follow any
-engineering rules, they can be changed and renamed. Sales follows rather
-money and corporate rules, not consistency for upstream project.
+ $ ./scripts/get_maintainer.pl -f include/linux/clk.h
+ Russell King <linux@armlinux.org.uk> (maintainer:CLK API)
+ linux-clk@vger.kernel.org (open list:CLK API)
+ linux-kernel@vger.kernel.org (open list)
 
+Finally, this sort of patch has been discussed for years and I didn't
+see any mention of those previous attempts in the patch series. Has
+something changed since that time? I think we've got a bunch of hand
+rolled devm things in the meantime but not much else.=20
 
-Best regards,
-Krzysztof
+I still wonder if it would be better if we had some sort of DT binding
+that said "turn this clk on when the driver probes this device and keep
+it on until the driver is unbound". That would probably work well for
+quite a few drivers that don't want to ever call clk_get() or
+clk_prepare_enable() and could tie into the assigned-clock-rates
+property in a way that let us keep the platform details out of the
+drivers. We could also go one step further and make a clk pm domain when
+this new property is present and then have the clk be enabled based on
+runtime PM of the device (and if runtime PM is disabled then just enable
+it at driver probe time).
