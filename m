@@ -2,94 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E303EC4338F
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A2DC4338F
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C232460F3A
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6337C61019
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231902AbhGaHqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Jul 2021 03:46:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37018 "EHLO mail.kernel.org"
+        id S232258AbhGaHxt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Jul 2021 03:53:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230441AbhGaHqu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 31 Jul 2021 03:46:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 94A1660F35;
-        Sat, 31 Jul 2021 07:46:44 +0000 (UTC)
+        id S230503AbhGaHxt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 31 Jul 2021 03:53:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3529C60F46;
+        Sat, 31 Jul 2021 07:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627717604;
-        bh=XoRLlO6yREwE79bg45XGs0yLsmam6jgdgV4yxxcmUaU=;
+        s=k20201202; t=1627718023;
+        bh=1KJVYCEuJ5jV6qNfQDq5kolD2QvDiKAsaWJLINb42vk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DE+Qr0CUdXaG4/Gy3FxgREAMgqUUl/IEOMLYhXN/0tT2CR+QuyhG9sMVbVEnpdSR8
-         Osz1ONhYxO2Ht2emZ5ejlOHI9+yRydrQfqOGBl4LyoNBNi5uGUIQj0cKoQXjkkqfhW
-         HknJ9/Zt7Pp11mgrax6TM6pALywRc2Ag5nmXrE3J1nfK16Bov14TsaJ20prqaggERw
-         0/wIKw0jNuRvtSGv7IoYECay3Rz7I6/8KrSybBZuDUvonbMg1EO/XlZftEvU0aNBXQ
-         gnbAyB2rq3RlsWNBOis9/6wBptNxP/9cGryTHcvKS32sJaEJ3ugjkPfjhHiahE51yl
-         /zfmhEy9C+FHw==
+        b=KTmL4svsIHOnIZK42fAMAfvm0IXfzS3/1ujkK42dwR7TSFBuzdsgZeeR72OOAnwl1
+         yt2Jqn759Qni/JoQv8jUSAkdOqNLMzcqHtTAHQxLWm8DB6mBLcxrjV/d8ySCt20mqS
+         arIVOI9OSRIulhNLeHbouD7NTxXz37Cv2eCI8UKBcDM9E29DfvPz4xGr3xG/pBsQ2C
+         Ukyu1v3ERT0VcFSLhIgIjEle3DxUFjlIXKWwDc7yRMwF5uIotZ2ibMJ9Ht8DW2428y
+         +CkEqTdKVp2smYz5XbqOHm82hklDrLsGZVPVIcFBik3Fwur2l4T8eqxSiiTEqQScc2
+         cTcWRfPUA5A7Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c9ac6fa07e81cb79c1eb8f2760a040eb0c72f0a6.1626986805.git.quic_vamslank@quicinc.com>
-References: <cover.1626986805.git.quic_vamslank@quicinc.com> <c9ac6fa07e81cb79c1eb8f2760a040eb0c72f0a6.1626986805.git.quic_vamslank@quicinc.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: clock: Introduce pdc bindings for SDX65
+In-Reply-To: <20210731025950.2238582-1-briannorris@chromium.org>
+References: <20210731025950.2238582-1-briannorris@chromium.org>
+Subject: Re: [PATCH] clk: fix leak on devm_clk_bulk_get_all() unwind
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Vamsi krishna Lanka <quic_vamslank@quicinc.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, maz@kernel.org,
-        mturquette@baylibre.com, quic_vamslank@quicinc.com,
-        robh+dt@kernel.org, tglx@linutronix.de
-Date:   Sat, 31 Jul 2021 00:46:43 -0700
-Message-ID: <162771760329.714452.3247897858898753903@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>, stable@vger.kernel.org
+To:     Brian Norris <briannorris@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Sat, 31 Jul 2021 00:53:41 -0700
+Message-ID: <162771802186.714452.5743429710136064714@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting quic_vamslank@quicinc.com (2021-07-22 14:09:43)
-> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
+Quoting Brian Norris (2021-07-30 19:59:50)
+> clk_bulk_get_all() allocates an array of struct clk_bulk data for us
+> (unlike clk_bulk_get()), so we need to free it. Let's use the
+> clk_bulk_put_all() helper.
 >=20
-> Add compatible for SDX65 pdc.
-
-This isn't clk related. It's an interrupt controller. Please don't send
-this to linux-clk list.
-
+> kmemleak complains, on an RK3399 Gru/Kevin system:
 >=20
-> To: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Kozlowski <krzk@kernel.org>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> unreferenced object 0xffffff80045def00 (size 128):
+>   comm "swapper/0", pid 1, jiffies 4294667682 (age 86.394s)
+>   hex dump (first 32 bytes):
+>     44 32 60 fe fe ff ff ff 00 00 00 00 00 00 00 00  D2`.............
+>     48 32 60 fe fe ff ff ff 00 00 00 00 00 00 00 00  H2`.............
+>   backtrace:
+>     [<00000000742860d6>] __kmalloc+0x22c/0x39c
+>     [<00000000b0493f2c>] clk_bulk_get_all+0x64/0x188
+>     [<00000000325f5900>] devm_clk_bulk_get_all+0x58/0xa8
+>     [<00000000175b9bc5>] dwc3_probe+0x8ac/0xb5c
+>     [<000000009169e2f9>] platform_drv_probe+0x9c/0xbc
+>     [<000000005c51e2ee>] really_probe+0x13c/0x378
+>     [<00000000c47b1f24>] driver_probe_device+0x84/0xc0
+>     [<00000000f870fcfb>] __device_attach_driver+0x94/0xb0
+>     [<000000004d1b92ae>] bus_for_each_drv+0x8c/0xd8
+>     [<00000000481d60c3>] __device_attach+0xc4/0x150
+>     [<00000000a163bd36>] device_initial_probe+0x1c/0x28
+>     [<00000000accb6bad>] bus_probe_device+0x3c/0x9c
+>     [<000000001a199f89>] device_add+0x218/0x3cc
+>     [<000000001bd84952>] of_device_add+0x40/0x50
+>     [<000000009c658c29>] of_platform_device_create_pdata+0xac/0x100
+>     [<0000000021c69ba4>] of_platform_bus_create+0x190/0x224
+>=20
+> Fixes: f08c2e2865f6 ("clk: add managed version of clk_bulk_get_all")
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 > ---
->  .../devicetree/bindings/interrupt-controller/qcom,pdc.txt        | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,=
-pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.t=
-xt
-> index e9afb48182c7..7bdbffb572dc 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> @@ -22,6 +22,7 @@ Properties:
->                     - "qcom,sdm845-pdc": For SDM845
->                     - "qcom,sdm8250-pdc": For SM8250
->                     - "qcom,sdm8350-pdc": For SM8350
-> +                   - "qcom,sdx65-pdc": For SDX65
-> =20
->  - reg:
->         Usage: required
-> --=20
-> 2.32.0
->
+
+Applied to clk-fixes
