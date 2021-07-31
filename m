@@ -2,93 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A769C43214
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E303EC4338F
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3322A60F35
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C232460F3A
+	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 07:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232196AbhGaHl3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Jul 2021 03:41:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36210 "EHLO mail.kernel.org"
+        id S231902AbhGaHqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 31 Jul 2021 03:46:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230196AbhGaHl1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 31 Jul 2021 03:41:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3148A60EE6;
-        Sat, 31 Jul 2021 07:41:21 +0000 (UTC)
+        id S230441AbhGaHqu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 31 Jul 2021 03:46:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 94A1660F35;
+        Sat, 31 Jul 2021 07:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627717281;
-        bh=Hv1Kjt0wM3IMrL51Qq27kQRTwgyaY1whymskpzTrLBg=;
+        s=k20201202; t=1627717604;
+        bh=XoRLlO6yREwE79bg45XGs0yLsmam6jgdgV4yxxcmUaU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Mfe/v8Uz7KZzXezwTwjXNOUR+12p4qzmq6509mWK4HR6HXGPAgYYHOsPNIDypMN4W
-         dptRTFmjMlRcoslggxxB3pGQBj0x6UrIzpyRhgK0eHShF1H4ayZFJwSjbVOjohBESi
-         S7z2KmeryQRXtF7eCeDb2EWvnztkdGkPMUlZcvNgWKzC+b7h/pDhgVb1avCQX29DcW
-         jD3PhoYFAFhcJd+plY+0d1jbLOvWrCoQRpOp8y4dhHXeVVhAQXt6M5qmuAJacc37Fb
-         htU5NUsNIGPVW4EzuZd3O1Ri4wdN/qcx17MjnStx1zor6X+sjRKLhzQ7jQZ84kkJOU
-         +DAteW7woUfZA==
+        b=DE+Qr0CUdXaG4/Gy3FxgREAMgqUUl/IEOMLYhXN/0tT2CR+QuyhG9sMVbVEnpdSR8
+         Osz1ONhYxO2Ht2emZ5ejlOHI9+yRydrQfqOGBl4LyoNBNi5uGUIQj0cKoQXjkkqfhW
+         HknJ9/Zt7Pp11mgrax6TM6pALywRc2Ag5nmXrE3J1nfK16Bov14TsaJ20prqaggERw
+         0/wIKw0jNuRvtSGv7IoYECay3Rz7I6/8KrSybBZuDUvonbMg1EO/XlZftEvU0aNBXQ
+         gnbAyB2rq3RlsWNBOis9/6wBptNxP/9cGryTHcvKS32sJaEJ3ugjkPfjhHiahE51yl
+         /zfmhEy9C+FHw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210728204033.GF22278@shell.armlinux.org.uk>
-References: <20210625171434.3xusxpxjprcdqa47@pengutronix.de> <20210722060654.nudpdtemosi64nlb@pengutronix.de> <YPkg0wtYIoHKpTUW@kunai> <20210722081817.2tsjzof4gvldq6ka@pengutronix.de> <YPlfcbkxiBmB+vw1@kunai> <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com> <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com> <20210728202547.7uvfwflpruku7yps@pengutronix.de> <20210728204033.GF22278@shell.armlinux.org.uk>
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of devm_clk_get for prepared and enabled clocks enabled clocks]
+In-Reply-To: <c9ac6fa07e81cb79c1eb8f2760a040eb0c72f0a6.1626986805.git.quic_vamslank@quicinc.com>
+References: <cover.1626986805.git.quic_vamslank@quicinc.com> <c9ac6fa07e81cb79c1eb8f2760a040eb0c72f0a6.1626986805.git.quic_vamslank@quicinc.com>
+Subject: Re: [PATCH v2 6/6] dt-bindings: clock: Introduce pdc bindings for SDX65
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Claudiu.Beznea@microchip.com, alexandre.belloni@bootlin.com,
-        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-        lee.jones@linaro.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, Ludovic.Desroches@microchip.com,
-        o.rempel@pengutronix.de, andy.shevchenko@gmail.com,
-        aardelean@deviqon.com, linux-pwm@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, broonie@kernel.org,
-        Jonathan.Cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
-        a.zummo@towertech.it, linux-spi@vger.kernel.org, wsa@kernel.org,
-        kernel@pengutronix.de, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org
-To:     Russell King (Oracle) <linux@armlinux.org.uk>,
-        <u.kleine-koenig@pengutronix.de>
-Date:   Sat, 31 Jul 2021 00:41:19 -0700
-Message-ID: <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Vamsi krishna Lanka <quic_vamslank@quicinc.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, maz@kernel.org,
+        mturquette@baylibre.com, quic_vamslank@quicinc.com,
+        robh+dt@kernel.org, tglx@linutronix.de
+Date:   Sat, 31 Jul 2021 00:46:43 -0700
+Message-ID: <162771760329.714452.3247897858898753903@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Russell King (Oracle) (2021-07-28 13:40:34)
-> > I adapted the Subject in the hope to catch Stephen's and Michael's
-> > attention. My impression is that this thread isn't on their radar yet,
-> > but the topic here seems important enough to get a matching Subject.
+Quoting quic_vamslank@quicinc.com (2021-07-22 14:09:43)
+> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
+>=20
+> Add compatible for SDX65 pdc.
 
-The thread is on my radar but...
+This isn't clk related. It's an interrupt controller. Please don't send
+this to linux-clk list.
 
 >=20
-> Have you thought about sending your pull request to the clk API
-> maintainer (iow, me) ?
+> To: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Kozlowski <krzk@kernel.org>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../devicetree/bindings/interrupt-controller/qcom,pdc.txt        | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-
-+1 This patch doesn't fall under CCF maintainer.
-
- $ ./scripts/get_maintainer.pl -f include/linux/clk.h
- Russell King <linux@armlinux.org.uk> (maintainer:CLK API)
- linux-clk@vger.kernel.org (open list:CLK API)
- linux-kernel@vger.kernel.org (open list)
-
-Finally, this sort of patch has been discussed for years and I didn't
-see any mention of those previous attempts in the patch series. Has
-something changed since that time? I think we've got a bunch of hand
-rolled devm things in the meantime but not much else.=20
-
-I still wonder if it would be better if we had some sort of DT binding
-that said "turn this clk on when the driver probes this device and keep
-it on until the driver is unbound". That would probably work well for
-quite a few drivers that don't want to ever call clk_get() or
-clk_prepare_enable() and could tie into the assigned-clock-rates
-property in a way that let us keep the platform details out of the
-drivers. We could also go one step further and make a clk pm domain when
-this new property is present and then have the clk be enabled based on
-runtime PM of the device (and if runtime PM is disabled then just enable
-it at driver probe time).
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,=
+pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.t=
+xt
+> index e9afb48182c7..7bdbffb572dc 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+> @@ -22,6 +22,7 @@ Properties:
+>                     - "qcom,sdm845-pdc": For SDM845
+>                     - "qcom,sdm8250-pdc": For SM8250
+>                     - "qcom,sdm8350-pdc": For SM8350
+> +                   - "qcom,sdx65-pdc": For SDX65
+> =20
+>  - reg:
+>         Usage: required
+> --=20
+> 2.32.0
+>
