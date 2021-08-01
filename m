@@ -2,434 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A7FC432BE
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 19:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38530C4338F
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Aug 2021 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1879961050
-	for <linux-clk@archiver.kernel.org>; Sat, 31 Jul 2021 19:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 151AE61054
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Aug 2021 10:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbhGaTut (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 31 Jul 2021 15:50:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58306 "EHLO
+        id S231766AbhHAKfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Aug 2021 06:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231455AbhGaTur (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 31 Jul 2021 15:50:47 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DEC3C06179C
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jul 2021 12:50:40 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id g13so25374229lfj.12
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jul 2021 12:50:40 -0700 (PDT)
+        with ESMTP id S231765AbhHAKfK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Aug 2021 06:35:10 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4DFC0613CF;
+        Sun,  1 Aug 2021 03:35:02 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id o5so25966643ejy.2;
+        Sun, 01 Aug 2021 03:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v2Fy/yGaCX8hbu5Oi1QSk2N9k+27AOHOBEBqCYJNREY=;
-        b=ofjFcHw8vnpiG28ngDkLY4kJ8axNyITsRDNjaeCQCtwbTubdUqEVqrsdFXT5vEFn+x
-         7mGVPjQHqgwcVWoLNJppuTlfdpjRceVJTpfA40ByNSu/8Xgv08VWJprZAk0jY4qIrf9J
-         LNbcyXZiF/Q2igmrGohsnccy1Ceoil9zkagLgQVd/xdFyGcyzoCjvVYcOSOxC6sogfcl
-         sSSwXui0AqeoIC63uxbfC9m4s/1QRq3LiLke86i6FDtIJSE4aPpROeEMxNxPSTHcms85
-         s3svTljZCqnARE0mXyhVHgXKtrOAwfEcDTidJJPhyMhTtFa1nQb23A/T3fMkMOsmjo/q
-         KGhQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dW9enhfJrllCelpsKYJGBNZiqnu2wZkLbVkcvB/C17s=;
+        b=Hhfn0YDBmJJwRgNS5s2VyXZr8YgPjQQNAxYU65yM0gFbVh3EuDpFhB0zJ8bRmC5YKB
+         ypU13WQRpxXP4CaiU0VI21VSCTuUPXw/u0z1k2wGWU5RpkLO6CZmsvRgYutBGVf0EAxm
+         eanKjo3RgpaMEN1oxDL32WkJA+SgSRx3qQkpfy7Nn8WJWYMh/fLp/9iVK+yCTjkRbdAq
+         2m3mw2ASeL4xeZPOSgASEBiGOYhIIKVxdJEomHYHZMVEup3CuvMtS0PC8jxuGoerASrm
+         7LC0TssJeqsnDEa7KTzZbpGc2qFQA8utcQ3sQUb/4sdAZ90rlrcsGCQQ/2iNNbN3rT9U
+         hSTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v2Fy/yGaCX8hbu5Oi1QSk2N9k+27AOHOBEBqCYJNREY=;
-        b=cnL9RQ9u3a8IX7VwsuExP/9Qa+uw+npbttY/8dm+NNNddRF+suHKbGb1XWG5vKIw3L
-         zOraLth5rlGo+Vyybi8RHWTwLkDDQzcOiRMh+coiiNYDur2QKX+jpRJe0n3ByWgHUWzr
-         tC+9xUlgp6IURQwnOFCaQaW9zkbqluQWFxdx3hf0iabpK9xB/ZfDO5BSarqnqJdLjZOS
-         UPm4ktJPxylDGCWhlWdmrHFqqRhOtYavxpue7nkWIAVag+EIfC8FiWRDNItfjxkoC7b3
-         0Sx/Hjxb6vZFe5C4q0upZDxl2rE+TLhAtDT+staTuk238drwHlyn/CQIECOB8Rpr6XD+
-         F6Mw==
-X-Gm-Message-State: AOAM530ki+y/8dxhemT0ZIaeJMIQnGSQzStI3yUtVpHRKQ6rR5xYwDax
-        42Q2N4O58bPa66VVttvCnq94yg==
-X-Google-Smtp-Source: ABdhPJwB7rcWruf5UENIhjGqd2Hqa/ndKwbOAVJXbVJ3Q3w4X4CSFhE9arzGyl4eYe/zRiUi1nL0TQ==
-X-Received: by 2002:a19:6f07:: with SMTP id k7mr6598801lfc.86.1627761038901;
-        Sat, 31 Jul 2021 12:50:38 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id f3sm469827lfm.76.2021.07.31.12.50.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 12:50:38 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dW9enhfJrllCelpsKYJGBNZiqnu2wZkLbVkcvB/C17s=;
+        b=oUuq7AdPeAe+NjoDb/BO6v/JefID6LBAnCiJwigCfIY3SkjZnTYyqp3uW6IZ3iu/V3
+         IMsX7ISbhI4z1Dz8SU7lq3EsVDmKtS+zOXh0oA7TcrbdYVYeOwK6CzOIrX/R4MKbNIHv
+         K1NufNPci5t0sNY1/FVlbebETFrapU0HYr9a+136qdzGUt2Kkq8ewjTbelSJ2scovcGa
+         PrCnwJKwDdEdc1sD/SSvrr3/T/1R6PH23FHoSz26rl6y2pIQ8fOKcsYE9viEg+NWMM4o
+         neIbYKhk9lFrBa1ENIKDhHArFYbbVDPjigj157yibsAFExekYWCT1skOCe8S/9Iw9JAt
+         mbCg==
+X-Gm-Message-State: AOAM530DVDa+09OVK2rLBpMEO9J35aHzvGrE2FbhCqf2nUeBiHdXmoH4
+        i/QhEGwHnu3ZYt/zIqjhHjHoXi7ItPM07Q==
+X-Google-Smtp-Source: ABdhPJy0SKgrEXetlOisF4GWqB2BGBMhWco35AWKpSH5pEZx9O12tPLqVL2xT6SmCYNUBY+GiD7icg==
+X-Received: by 2002:a17:906:4784:: with SMTP id cw4mr10641567ejc.160.1627814101415;
+        Sun, 01 Aug 2021 03:35:01 -0700 (PDT)
+Received: from localhost (178-169-161-196.razgrad.ddns.bulsat.com. [178.169.161.196])
+        by smtp.gmail.com with ESMTPSA id x13sm2892573ejv.64.2021.08.01.03.34.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Aug 2021 03:35:00 -0700 (PDT)
+From:   Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v3 3/3] clk: qcom: use devm_pm_runtime_enable and devm_pm_clk_create
-Date:   Sat, 31 Jul 2021 22:50:34 +0300
-Message-Id: <20210731195034.979084-4-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210731195034.979084-1-dmitry.baryshkov@linaro.org>
-References: <20210731195034.979084-1-dmitry.baryshkov@linaro.org>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Subject: [PATCH v3 0/2] Add GCC for SM4250/6115
+Date:   Sun,  1 Aug 2021 13:34:46 +0300
+Message-Id: <20210801103448.3329333-1-iskren.chernev@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use two new helpers instead of pm_runtime_enable() and pm_clk_create(),
-removing the need for calling pm_runtime_disable and pm_clk_destroy().
+This patch adds support for the Global Clock Controller on QCom SM4250 and
+SM6115, codename bengal. The code is taken from OnePlus repo [1]. The two
+platforms are identical so there is only one compat string.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/camcc-sc7180.c       | 25 +++++++++------------
- drivers/clk/qcom/lpass-gfm-sm8250.c   | 21 ++++++++----------
- drivers/clk/qcom/lpasscorecc-sc7180.c | 18 ++-------------
- drivers/clk/qcom/mss-sc7180.c         | 30 +++++++------------------
- drivers/clk/qcom/q6sstop-qcs404.c     | 32 ++++++++-------------------
- drivers/clk/qcom/turingcc-qcs404.c    | 30 +++++++------------------
- 6 files changed, 46 insertions(+), 110 deletions(-)
+[1]: https://github.com/OnePlusOSS/android_kernel_oneplus_sm4250
 
-diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-index 9bcf2f8ed4de..ce73ee9037cb 100644
---- a/drivers/clk/qcom/camcc-sc7180.c
-+++ b/drivers/clk/qcom/camcc-sc7180.c
-@@ -1652,32 +1652,35 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = devm_pm_clk_create(&pdev->dev);
- 	if (ret < 0)
- 		return ret;
- 
- 	ret = pm_clk_add(&pdev->dev, "xo");
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to acquire XO clock\n");
--		goto disable_pm_runtime;
-+		return ret;
- 	}
- 
- 	ret = pm_clk_add(&pdev->dev, "iface");
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to acquire iface clock\n");
--		goto disable_pm_runtime;
-+		return ret;
- 	}
- 
- 	ret = pm_runtime_get(&pdev->dev);
- 	if (ret)
--		goto destroy_pm_clk;
-+		return ret;
- 
- 	regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
- 	if (IS_ERR(regmap)) {
- 		ret = PTR_ERR(regmap);
- 		pm_runtime_put(&pdev->dev);
--		goto destroy_pm_clk;
-+		return ret;
- 	}
- 
- 	clk_fabia_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
-@@ -1689,18 +1692,10 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
- 	pm_runtime_put(&pdev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
--		goto destroy_pm_clk;
-+		return ret;
- 	}
- 
- 	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
- }
- 
- static const struct dev_pm_ops cam_cc_pm_ops = {
-diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
-index f5e31e692b9b..96f476f24eb2 100644
---- a/drivers/clk/qcom/lpass-gfm-sm8250.c
-+++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
-@@ -251,15 +251,18 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
- 	if (IS_ERR(cc->base))
- 		return PTR_ERR(cc->base);
- 
--	pm_runtime_enable(dev);
--	err = pm_clk_create(dev);
-+	err = devm_pm_runtime_enable(dev);
- 	if (err)
--		goto pm_clk_err;
-+		return err;
-+
-+	err = devm_pm_clk_create(dev);
-+	if (err)
-+		return err;
- 
- 	err = of_pm_clk_add_clks(dev);
- 	if (err < 0) {
- 		dev_dbg(dev, "Failed to get lpass core voting clocks\n");
--		goto clk_reg_err;
-+		return err;
- 	}
- 
- 	for (i = 0; i < data->onecell_data->num; i++) {
-@@ -273,22 +276,16 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
- 
- 		err = devm_clk_hw_register(dev, &data->gfm_clks[i]->hw);
- 		if (err)
--			goto clk_reg_err;
-+			return err;
- 
- 	}
- 
- 	err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 					  data->onecell_data);
- 	if (err)
--		goto clk_reg_err;
-+		return err;
- 
- 	return 0;
--
--clk_reg_err:
--	pm_clk_destroy(dev);
--pm_clk_err:
--	pm_runtime_disable(dev);
--	return err;
- }
- 
- static const struct of_device_id lpass_gfm_clk_match_table[] = {
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 2e0ecc38efdd..ac09b7b840ab 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -356,32 +356,18 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
- 	.num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
- };
- 
--static void lpass_pm_runtime_disable(void *data)
--{
--	pm_runtime_disable(data);
--}
--
--static void lpass_pm_clk_destroy(void *data)
--{
--	pm_clk_destroy(data);
--}
--
- static int lpass_create_pm_clks(struct platform_device *pdev)
- {
- 	int ret;
- 
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
--	pm_runtime_enable(&pdev->dev);
- 
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
- 	if (ret)
- 		return ret;
- 
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
-+	ret = devm_pm_clk_create(&pdev->dev);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
-index 673fa1a4f734..5a1407440662 100644
---- a/drivers/clk/qcom/mss-sc7180.c
-+++ b/drivers/clk/qcom/mss-sc7180.c
-@@ -73,36 +73,23 @@ static int mss_sc7180_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
- 	if (ret)
--		goto disable_pm_runtime;
-+		return ret;
-+
-+	ret = devm_pm_clk_create(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	ret = pm_clk_add(&pdev->dev, "cfg_ahb");
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
-+		return ret;
- 	}
- 
- 	ret = qcom_cc_probe(pdev, &mss_sc7180_desc);
- 	if (ret < 0)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int mss_sc7180_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+		return ret;
- 
- 	return 0;
- }
-@@ -119,7 +106,6 @@ MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
- 
- static struct platform_driver mss_sc7180_driver = {
- 	.probe		= mss_sc7180_probe,
--	.remove		= mss_sc7180_remove,
- 	.driver		= {
- 		.name		= "sc7180-mss",
- 		.of_match_table = mss_sc7180_match_table,
-diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
-index 723f932fbf7d..507386bee07d 100644
---- a/drivers/clk/qcom/q6sstop-qcs404.c
-+++ b/drivers/clk/qcom/q6sstop-qcs404.c
-@@ -159,15 +159,18 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
- 	const struct qcom_cc_desc *desc;
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
- 	if (ret)
--		goto disable_pm_runtime;
-+		return ret;
-+
-+	ret = devm_pm_clk_create(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	ret = pm_clk_add(&pdev->dev, NULL);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
-+		return ret;
- 	}
- 
- 	q6sstop_regmap_config.name = "q6sstop_tcsr";
-@@ -175,30 +178,14 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
- 
- 	ret = qcom_cc_probe_by_index(pdev, 1, desc);
- 	if (ret)
--		goto destroy_pm_clk;
-+		return ret;
- 
- 	q6sstop_regmap_config.name = "q6sstop_cc";
- 	desc = &q6sstop_qcs404_desc;
- 
- 	ret = qcom_cc_probe_by_index(pdev, 0, desc);
- 	if (ret)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+		return ret;
- 
- 	return 0;
- }
-@@ -209,7 +196,6 @@ static const struct dev_pm_ops q6sstopcc_pm_ops = {
- 
- static struct platform_driver q6sstopcc_qcs404_driver = {
- 	.probe		= q6sstopcc_qcs404_probe,
--	.remove		= q6sstopcc_qcs404_remove,
- 	.driver		= {
- 		.name	= "qcs404-q6sstopcc",
- 		.of_match_table = q6sstopcc_qcs404_match_table,
-diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-index 4cfbbf5bf4d9..4543bda793f4 100644
---- a/drivers/clk/qcom/turingcc-qcs404.c
-+++ b/drivers/clk/qcom/turingcc-qcs404.c
-@@ -110,36 +110,23 @@ static int turingcc_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_clk_create(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
- 	if (ret)
--		goto disable_pm_runtime;
-+		return ret;
-+
-+	ret = devm_pm_clk_create(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	ret = pm_clk_add(&pdev->dev, NULL);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		goto destroy_pm_clk;
-+		return ret;
- 	}
- 
- 	ret = qcom_cc_probe(pdev, &turingcc_desc);
- 	if (ret < 0)
--		goto destroy_pm_clk;
--
--	return 0;
--
--destroy_pm_clk:
--	pm_clk_destroy(&pdev->dev);
--
--disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
--
--	return ret;
--}
--
--static int turingcc_remove(struct platform_device *pdev)
--{
--	pm_clk_destroy(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+		return ret;
- 
- 	return 0;
- }
-@@ -156,7 +143,6 @@ MODULE_DEVICE_TABLE(of, turingcc_match_table);
- 
- static struct platform_driver turingcc_driver = {
- 	.probe		= turingcc_probe,
--	.remove		= turingcc_remove,
- 	.driver		= {
- 		.name	= "qcs404-turingcc",
- 		.of_match_table = turingcc_match_table,
+v1: https://lkml.org/lkml/2021/6/22/1131
+v2: https://lkml.org/lkml/2021/6/27/157
+
+Changes from v2:
+- Suggested by Stephen Boyd
+  - switch to parent_data in place of parent_names
+- other
+  - drop parent refs to invalid clocks
+  - use pll-alpha regs when possible
+  - drop unused parent defs
+  - add pll test clock to bindings
+
+Changes from v1:
+- remove sm4250 compat, there will be a single sm6115.dtsi for both platforms
+
+Iskren Chernev (2):
+  dt-bindings: clk: qcom: gcc-sm6115: Document SM6115 GCC
+  clk: qcom: Add Global Clock controller (GCC) driver for SM6115
+
+ .../bindings/clock/qcom,gcc-sm6115.yaml       |   74 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-sm6115.c                 | 3582 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm6115.h   |  201 +
+ 5 files changed, 3865 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
+
+
+base-commit: 8d4b477da1a807199ca60e0829357ce7aa6758d5
 -- 
-2.30.2
+2.32.0
 
