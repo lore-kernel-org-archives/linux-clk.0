@@ -2,369 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9FEC4320A
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A91C43214
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 16:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D600661102
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F69E610FD
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 16:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234551AbhHBPyw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 11:54:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+        id S232215AbhHBQio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 12:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229979AbhHBPyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 11:54:52 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA41C061760
-        for <linux-clk@vger.kernel.org>; Mon,  2 Aug 2021 08:54:41 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id t25so5282970uar.13
-        for <linux-clk@vger.kernel.org>; Mon, 02 Aug 2021 08:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bOHjsgsD2KdQNZhj/X5isibZlyiTR/fOFK93D80plwc=;
-        b=r5JUSa8om3a2IqrDpjkld41fhuxUws2xnvEyOIPhBF7HzWydcqePba+WNnvb4bJDUt
-         5wdjOe31hgk6aFtusxeGh5+kD64l249eO1cyWWFwDKiXi3L4jg+NJckJg/ZU22MbMtW3
-         o8NJM5hlGV/4szaeU2LFVOkjosNQFl6+pOtD+rZnDsEY35iIt6BzXZ8oYo6l0q+aIxop
-         S9Jx99Fv7Y14tXmvYuT2rLXqzSPSEPDdBjTDcSkSZ9Nmo6a9qLZoyBpOdTK8O+cGGIlE
-         YJUaZpRJE2F4A3P7dUMIFGi4hafm8QWQjZu8+FwyapCV2NN5Qz6lbUfyxaAKNdsYWJPq
-         VqJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bOHjsgsD2KdQNZhj/X5isibZlyiTR/fOFK93D80plwc=;
-        b=scb+0jjvMi1999Mxmd2g8FpVNhcF0AnHMYn7clit4liGtzTaK/vdbxuZNp7xsZnzGm
-         j5hy+n9VqGBMdTxWsv5vWgn0+uhCGpSqaRKCR99im7+sApIgsNWinEVYSPg4cAPIzyzn
-         Jtmav/Jax5PfCyGdhU1+AJ+MDSrJ6xV5G7ZmXRTTZKHwzPr3tGGqISi5p5ABfcsNvjTx
-         81AFsWCzqSo++Vwvb71u4y+R2uk0XAtzR4MI/zFnpH8lNCQ25kh68WtB06q5TCOOpF7F
-         YD3Jz2o1QCO21Nmuwnm5vrDNpZnUWbNanLC4L3NUh08QEdH9ReUAl451cZtRZzTpnATK
-         Uwug==
-X-Gm-Message-State: AOAM5324TivIis/7hRa1mNeQJCBXBJeiAS47TRBQWxdYaH1zLE9i2nsK
-        X5v3fqleBHTE9aGjHxrF0zw93Zgwo4lbW3GqYdzl5w==
-X-Google-Smtp-Source: ABdhPJwwFeotl04CyVWoVwYJL+BLVjqfP1mwENz8wyrC099+592Gy8L4lxTA4UG3x5KSJX/W1GWpZxmNvh1fX5bxXBk=
-X-Received: by 2002:ab0:6f4b:: with SMTP id r11mr1912984uat.104.1627919680833;
- Mon, 02 Aug 2021 08:54:40 -0700 (PDT)
+        with ESMTP id S229640AbhHBQio (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 12:38:44 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626C9C06175F;
+        Mon,  2 Aug 2021 09:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2C5VpDvj4kp12ZP3fbrD/BbegWSigYIIIq38MkNNSfo=; b=hxhcVz2qm9o0yLFpGk1SYcoHF
+        Wodep1rqY0KYRewJxH1HNutRiIyNnLcsfFFJXK0pLy4JMS0Y+Q00eEALPAjZF/E88PHgAuUWrEV7R
+        7RFY/jMJqxD6dcxMyu3GKV5wJcKbqsbLrhp604K8raxA7uF1hWFysvkVQGu7Hmwfhe921uQjmco7k
+        Orst7YoxF6wmS97e7jXieXl/iegssZYMzEnZCNTfs0RiFH8HQjj7iFHVG4euTh2Ku61Hp+T0oj12H
+        mzJelcqgmFGXZLq7trh1ErTuVE6ywE1Syi8lLtsdc7bDtDQzGYom28l7JBBxXg5CFLU1/xMKb5DVf
+        YnDgRptgQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46858)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1mAaxP-0005x4-VN; Mon, 02 Aug 2021 17:38:27 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1mAaxM-00032D-Kg; Mon, 02 Aug 2021 17:38:24 +0100
+Date:   Mon, 2 Aug 2021 17:38:24 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     alexandre.belloni@bootlin.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        thierry.reding@gmail.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Ludovic.Desroches@microchip.com, o.rempel@pengutronix.de,
+        andy.shevchenko@gmail.com, aardelean@deviqon.com,
+        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        broonie@kernel.org, Jonathan.Cameron@huawei.com,
+        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, wsa@kernel.org, kernel@pengutronix.de,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        Claudiu.Beznea@microchip.com
+Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
+ devm_clk_get for prepared and enabled clocks enabled clocks]
+Message-ID: <20210802163824.GK22278@shell.armlinux.org.uk>
+References: <YPlfcbkxiBmB+vw1@kunai>
+ <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
+ <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
+ <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+ <20210728202547.7uvfwflpruku7yps@pengutronix.de>
+ <20210728204033.GF22278@shell.armlinux.org.uk>
+ <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
+ <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
+ <20210802094810.GJ22278@shell.armlinux.org.uk>
+ <20210802152755.ibisunvibmwhiyry@pengutronix.de>
 MIME-Version: 1.0
-References: <20210720231837.1576130-1-linus.walleij@linaro.org>
-In-Reply-To: <20210720231837.1576130-1-linus.walleij@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 2 Aug 2021 17:54:04 +0200
-Message-ID: <CAPDyKFqSZiHubLDJaQmLtPjLxvU2N9iGY--Yc2ghhyBhcLaqJQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] dt-bindings: clock: u8500: Rewrite in YAML and extend
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210802152755.ibisunvibmwhiyry@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 21 Jul 2021 at 01:20, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> This rewrites the ux500/u8500 clock bindings in YAML schema and extends them
-> with the PRCC reset controller.
->
-> The bindings are a bit idiomatic but it just reflects their age, the ux500
-> platform was used as guinea pig for early device tree conversion of platforms
-> in 2015. The new subnode for the reset controller follows the pattern of the
-> old bindings and adds a node with reset-cells for this.
->
-> Cc: devicetree@vger.kernel.org
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Mon, Aug 02, 2021 at 05:27:55PM +0200, Uwe Kleine-König wrote:
+> Hello Russell,
+> 
+> On Mon, Aug 02, 2021 at 10:48:10AM +0100, Russell King (Oracle) wrote:
+> > I think devm_clk_get() should not be part of CCF but should be
+> > part of the interface level - it's silly to have devm_clk_get()
+> > being CCF but not clk_get(). The same should go for the other
+> > devm wrappers around the plain clk_* interfaces.
+> 
+> What is the practical difference between "Function X is part of CCF" and
+> "Function X is part of the clk interface and there is only CCF who
+> implements it"?
 
-Apologies for the delay! At some point we should also extend these
-bindings by adding a power-domain consumer binding, as each PRCC block
-belongs to the core power domain.
+clkdev is maintained by me as part of the API, and provides clk_get()
+functionality for all clk implementations. To then have devm_clk_get(),
+which merely provides a wrapper around clk_get() adding the devm
+semantics being part of CCF is not sane - devm_clk_get() isn't
+specific to CCF or in fact any clk API implementation.
 
-FWIW:
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > There have been several different approaches to wrapping things up,
+> > but here's a question: should we make it easier to do the lazy thing
+> > (get+enable) or should we make it easier to be power efficient?
+> > Shouldn't we be encouraging people to write power efficient drivers?
+> 
+> Yeah, sounds compelling, but I wonder if that's of practical importance.
+> How many driver authors do you expect to lure into making a better
+> driver just because devm_clk_get_prepared() doesn't exist? In contrast:
+> How many drivers become simpler with devm_clk_get_prepared() and so
+> it becomes easier to maintain them and easier to spot bugs?
+> In the absence of devm_clk_get_prepared(), is it better that several
+> frameworks (or drivers) open code it?
 
-Kind regards
-Uffe
+It probably depends on where you stand on power management and power
+efficiency issues. Personally, I would like to see more effort put
+into drivers to make them more power efficient, and I believe in the
+coming years, power efficiency is going to become a big issue.
 
-> ---
-> ChangeLog v1->v2:
-> - Use an enum for compatible.
-> - Mark the reset controller as object (node)
-> - Mandate 2 #reset-cells on the reset controller.
-> - Small blurb that PRCC 4 does not exist.
-> - Rebase on v5.14-rc1
-> - Cc Philipp Zabel
-> ---
->  .../bindings/clock/stericsson,u8500-clks.yaml | 121 ++++++++++++++++++
->  .../devicetree/bindings/clock/ux500.txt       |  64 ---------
->  .../reset/stericsson,db8500-prcc-reset.h      |  51 ++++++++
->  3 files changed, 172 insertions(+), 64 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,u8500-clks.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/ux500.txt
->  create mode 100644 include/dt-bindings/reset/stericsson,db8500-prcc-reset.h
->
-> diff --git a/Documentation/devicetree/bindings/clock/stericsson,u8500-clks.yaml b/Documentation/devicetree/bindings/clock/stericsson,u8500-clks.yaml
-> new file mode 100644
-> index 000000000000..9bc95a308477
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/stericsson,u8500-clks.yaml
-> @@ -0,0 +1,121 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/stericsson,u8500-clks.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ST-Ericsson DB8500 (U8500) clocks
-> +
-> +maintainers:
-> +  - Ulf Hansson <ulf.hansson@linaro.org>
-> +  - Linus Walleij <linus.walleij@linaro.org>
-> +
-> +description: While named "U8500 clocks" these clocks are inside the
-> +  DB8500 digital baseband system-on-chip and its siblings such as
-> +  DB8520. These bindings consider the clocks present in the SoC
-> +  itself, not off-chip clocks. There are four different on-chip
-> +  clocks - RTC (32 kHz), CPU clock (SMP TWD), PRCMU (power reset and
-> +  control management unit) clocks and PRCC (peripheral reset and
-> +  clock controller) clocks. For some reason PRCC 4 does not exist so
-> +  the itemization can be a bit unintuitive.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - stericsson,u8500-clks
-> +      - stericsson,u8540-clks
-> +      - stericsson,u9540-clks
-> +
-> +  reg:
-> +    items:
-> +      - description: PRCC 1 register area
-> +      - description: PRCC 2 register area
-> +      - description: PRCC 3 register area
-> +      - description: PRCC 5 register area
-> +      - description: PRCC 6 register area
-> +
-> +  prcmu-clock:
-> +    description: A subnode with one clock cell for PRCMU (power, reset, control
-> +      management unit) clocks. The cell indicates which PRCMU clock in the
-> +      prcmu-clock node the consumer wants to use.
-> +    type: object
-> +
-> +    properties:
-> +      '#clock-cells':
-> +        const: 1
-> +
-> +    additionalProperties: false
-> +
-> +  prcc-periph-clock:
-> +    description: A subnode with two clock cells for PRCC (peripheral
-> +      reset and clock controller) peripheral clocks. The first cell indicates
-> +      which PRCC block the consumer wants to use, possible values are 1, 2, 3,
-> +      5, 6. The second cell indicates which clock inside the PRCC block it
-> +      wants, possible values are 0 thru 31.
-> +    type: object
-> +
-> +    properties:
-> +      '#clock-cells':
-> +        const: 2
-> +
-> +    additionalProperties: false
-> +
-> +  prcc-kernel-clock:
-> +    description: A subnode with two clock cells for PRCC (peripheral reset
-> +      and clock controller) kernel clocks. The first cell indicates which PRCC
-> +      block the consumer wants to use, possible values are 1, 2, 3, 5, 6. The
-> +      second cell indicates which clock inside the PRCC block it wants, possible
-> +      values are 0 thru 31.
-> +    type: object
-> +
-> +    properties:
-> +      '#clock-cells':
-> +        const: 2
-> +
-> +    additionalProperties: false
-> +
-> +  prcc-reset-controller:
-> +    description: A subnode with two reset cells for the reset portions of the
-> +      PRCC (peripheral reset and clock controller). The first cell indicates
-> +      which PRCC block the consumer wants to use, possible values are 1, 2, 3
-> +      5 and 6. The second cell indicates which reset line inside the PRCC block
-> +      it wants to control, possible values are 0 thru 31.
-> +    type: object
-> +
-> +    properties:
-> +      '#reset-cells':
-> +        const: 2
-> +
-> +    additionalProperties: false
-> +
-> +  rtc32k-clock:
-> +    description: A subnode with zero clock cells for the 32kHz RTC clock.
-> +    type: object
-> +
-> +    properties:
-> +      '#clock-cells':
-> +        const: 0
-> +
-> +    additionalProperties: false
-> +
-> +  smp-twd-clock:
-> +    description: A subnode for the ARM SMP Timer Watchdog cluster with zero
-> +      clock cells.
-> +    type: object
-> +
-> +    properties:
-> +      '#clock-cells':
-> +        const: 0
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - prcmu-clock
-> +  - prcc-periph-clock
-> +  - prcc-kernel-clock
-> +  - rtc32k-clock
-> +  - smp-twd-clock
-> +
-> +additionalProperties: false
-> diff --git a/Documentation/devicetree/bindings/clock/ux500.txt b/Documentation/devicetree/bindings/clock/ux500.txt
-> deleted file mode 100644
-> index e52bd4b72348..000000000000
-> --- a/Documentation/devicetree/bindings/clock/ux500.txt
-> +++ /dev/null
-> @@ -1,64 +0,0 @@
-> -Clock bindings for ST-Ericsson Ux500 clocks
-> -
-> -Required properties :
-> -- compatible : shall contain only one of the following:
-> -  "stericsson,u8500-clks"
-> -  "stericsson,u8540-clks"
-> -  "stericsson,u9540-clks"
-> -- reg : shall contain base register location and length for
-> -  CLKRST1, 2, 3, 5, and 6 in an array. Note the absence of
-> -  CLKRST4, which does not exist.
-> -
-> -Required subnodes:
-> -- prcmu-clock: a subnode with one clock cell for PRCMU (power,
-> -  reset, control unit) clocks. The cell indicates which PRCMU
-> -  clock in the prcmu-clock node the consumer wants to use.
-> -- prcc-periph-clock: a subnode with two clock cells for
-> -  PRCC (programmable reset- and clock controller) peripheral clocks.
-> -  The first cell indicates which PRCC block the consumer
-> -  wants to use, possible values are 1, 2, 3, 5, 6. The second
-> -  cell indicates which clock inside the PRCC block it wants,
-> -  possible values are 0 thru 31.
-> -- prcc-kernel-clock: a subnode with two clock cells for
-> -  PRCC (programmable reset- and clock controller) kernel clocks
-> -  The first cell indicates which PRCC block the consumer
-> -  wants to use, possible values are 1, 2, 3, 5, 6. The second
-> -  cell indicates which clock inside the PRCC block it wants,
-> -  possible values are 0 thru 31.
-> -- rtc32k-clock: a subnode with zero clock cells for the 32kHz
-> -  RTC clock.
-> -- smp-twd-clock: a subnode for the ARM SMP Timer Watchdog cluster
-> -  with zero clock cells.
-> -
-> -Example:
-> -
-> -clocks {
-> -       compatible = "stericsson,u8500-clks";
-> -       /*
-> -        * Registers for the CLKRST block on peripheral
-> -        * groups 1, 2, 3, 5, 6,
-> -        */
-> -       reg = <0x8012f000 0x1000>, <0x8011f000 0x1000>,
-> -           <0x8000f000 0x1000>, <0xa03ff000 0x1000>,
-> -           <0xa03cf000 0x1000>;
-> -
-> -       prcmu_clk: prcmu-clock {
-> -               #clock-cells = <1>;
-> -       };
-> -
-> -       prcc_pclk: prcc-periph-clock {
-> -               #clock-cells = <2>;
-> -       };
-> -
-> -       prcc_kclk: prcc-kernel-clock {
-> -               #clock-cells = <2>;
-> -       };
-> -
-> -       rtc_clk: rtc32k-clock {
-> -               #clock-cells = <0>;
-> -       };
-> -
-> -       smp_twd_clk: smp-twd-clock {
-> -               #clock-cells = <0>;
-> -       };
-> -};
-> diff --git a/include/dt-bindings/reset/stericsson,db8500-prcc-reset.h b/include/dt-bindings/reset/stericsson,db8500-prcc-reset.h
-> new file mode 100644
-> index 000000000000..ea906896c70f
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/stericsson,db8500-prcc-reset.h
-> @@ -0,0 +1,51 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef _DT_BINDINGS_STE_PRCC_RESET
-> +#define _DT_BINDINGS_STE_PRCC_RESET
-> +
-> +#define DB8500_PRCC_1                          1
-> +#define DB8500_PRCC_2                          2
-> +#define DB8500_PRCC_3                          3
-> +#define DB8500_PRCC_6                          6
-> +
-> +/* Reset lines on PRCC 1 */
-> +#define DB8500_PRCC_1_RESET_UART0              0
-> +#define DB8500_PRCC_1_RESET_UART1              1
-> +#define DB8500_PRCC_1_RESET_I2C1               2
-> +#define DB8500_PRCC_1_RESET_MSP0               3
-> +#define DB8500_PRCC_1_RESET_MSP1               4
-> +#define DB8500_PRCC_1_RESET_SDI0               5
-> +#define DB8500_PRCC_1_RESET_I2C2               6
-> +#define DB8500_PRCC_1_RESET_SPI3               7
-> +#define DB8500_PRCC_1_RESET_SLIMBUS0           8
-> +#define DB8500_PRCC_1_RESET_I2C4               9
-> +#define DB8500_PRCC_1_RESET_MSP3               10
-> +#define DB8500_PRCC_1_RESET_PER_MSP3           11
-> +#define DB8500_PRCC_1_RESET_PER_MSP1           12
-> +#define DB8500_PRCC_1_RESET_PER_MSP0           13
-> +#define DB8500_PRCC_1_RESET_PER_SLIMBUS                14
-> +
-> +/* Reset lines on PRCC 2 */
-> +#define DB8500_PRCC_2_RESET_I2C3               0
-> +#define DB8500_PRCC_2_RESET_PWL                        1
-> +#define DB8500_PRCC_2_RESET_SDI4               2
-> +#define DB8500_PRCC_2_RESET_MSP2               3
-> +#define DB8500_PRCC_2_RESET_SDI1               4
-> +#define DB8500_PRCC_2_RESET_SDI3               5
-> +#define DB8500_PRCC_2_RESET_HSIRX              6
-> +#define DB8500_PRCC_2_RESET_HSITX              7
-> +#define DB8500_PRCC_1_RESET_PER_MSP2           8
-> +
-> +/* Reset lines on PRCC 3 */
-> +#define DB8500_PRCC_3_RESET_SSP0               1
-> +#define DB8500_PRCC_3_RESET_SSP1               2
-> +#define DB8500_PRCC_3_RESET_I2C0               3
-> +#define DB8500_PRCC_3_RESET_SDI2               4
-> +#define DB8500_PRCC_3_RESET_SKE                        5
-> +#define DB8500_PRCC_3_RESET_UART2              6
-> +#define DB8500_PRCC_3_RESET_SDI5               7
-> +
-> +/* Reset lines on PRCC 6 */
-> +#define DB8500_PRCC_3_RESET_RNG                        0
-> +
-> +#endif
-> --
-> 2.31.1
->
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
