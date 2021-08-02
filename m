@@ -2,64 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254D7C4338F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF173C4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB43E60F4C
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EE96054F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:11:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbhHBWJc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 18:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56138 "EHLO mail.kernel.org"
+        id S231609AbhHBWLy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 18:11:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231950AbhHBWJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Aug 2021 18:09:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5284260E78;
-        Mon,  2 Aug 2021 22:09:19 +0000 (UTC)
+        id S231126AbhHBWLw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Aug 2021 18:11:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 36C596018A;
+        Mon,  2 Aug 2021 22:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627942159;
-        bh=fLVQF/t6wPWp+qJ9ehM/MjUmrMCRd15NX4dAGPwnH68=;
+        s=k20201202; t=1627942302;
+        bh=uQ4300Zg9wVJ91sSCEg7PTrzjVOlNO5W7l7vf1E5uW0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JnPV96lgFzoQstMQbGsvksvar5yILQC1BQO2UksHvxMQiepiHEnWO9xePi+uK9v0z
-         WFRVrFzTzlg2ctvNmaenXiFfqBK3FJV24+CgCmDs/4StoUIIwCuKy8390REyGA11Xm
-         nTxIop+8V2RlOB0IhEj8yCiyVvu/1j5Qh+F1WCOJ/DH0mTv0Lk2R9hRrSYTHMY8XhW
-         RYOheQ3Dhf439zEG09uNyGr+vQ3sOzy9XnHS6ozSL3ayUqoFSKPQn8uapzTLa4FmbN
-         ZsMirZ/JMBRfzYHmdJX7gc+oI5r+S2Q2XpM0B0Wg20G2eJ1Wwkl69+BL6B6THFmQ2b
-         35bWXI8U/pylQ==
+        b=IjqxaSj158DoF4zTsoOShFdE/HONMyDFi7XOx6Dsg8O5mlTDm4NjJTTlIDj8AKVFT
+         ng2kySx6BqGjrMu1A7YFt15PoipW4tgwvrkvxrxVXVdLIZIXCXoV6EkfNDRKhvcMhi
+         NLg8v5chatn22gzaOyamO1zs5i8GTwRTxT+hQ/YBl7w5X/qWNBNXOYyKF5/w4f5FCG
+         qGFB26dRykdNrjRH/XOlS3gP/JEcvov4Bck6Iwc5vtbdPAMuS8WbeXO8x9eCK+FRCS
+         t+0neKba/ea6jDt+b7csqDC8O3f2BtWU7EkiuOUau9mzWsa4e9ErUhhOoMgMo12lwf
+         Foeqm4dEyvA2g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1371790418.70998.1627846630234@mail1.libero.it>
-References: <20210725160725.10788-1-dariobin@libero.it> <CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com> <1926284813.753014.1627553002984@mail1.libero.it> <CAPTRvH=R822osk86tRJqJCPNYY85t8t90+HJWcz43iASbcg2Jw@mail.gmail.com> <1371790418.70998.1627846630234@mail1.libero.it>
-Subject: Re: [RESEND PATCH v4] clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
+In-Reply-To: <20210802153657.879499-1-bryan.odonoghue@linaro.org>
+References: <20210802153657.879499-1-bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH] clk: qcom: clk-smd-rpm: Fix invalid RPM_SMD_PCNOC_A_CLK entry
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-To:     Dario Binacchi <dariobin@libero.it>,
-        Dillon Hua <dillonhua@gmail.com>
-Date:   Mon, 02 Aug 2021 15:09:17 -0700
-Message-ID: <162794215799.714452.17355927940378699473@swboyd.mtv.corp.google.com>
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+Date:   Mon, 02 Aug 2021 15:11:40 -0700
+Message-ID: <162794230095.714452.9666166450349622061@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dario Binacchi (2021-08-01 12:37:10)
+Quoting Bryan O'Donoghue (2021-08-02 08:36:57)
+> MSM8936 and MSM8939 both share the same RPMCC clock tree, I've been testi=
+ng
+> on MSM8939 and I've found that RPM_SMD_PCNOC_A_CLK is currently invalid.
 >=20
-> As said in a previous email to Stephen, the patch I submitted fixes commi=
-t 517633ef630e
-> ("clk: stm32f4: Add post divisor for I2S & SAI PLLs"), so IMHO it should =
-not be dropped from the tree.
-> What Dillon suggested should instead be fixed by another patch.
+> RPM_SMD_PCNOC_A_CLK should point to msm8916_pcnoc_a_clk not to
+> msm8916_pcnoc_clk.
+>=20
+> Fixes: a0384ecfe2aa8 ("clk: qcom: smd-rpm: De-duplicate identical entries=
+")
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
 
-Ok. I'll send off the fix to Linus today.
+This is superseded by
+https://lore.kernel.org/r/20210727092613.23056-1-shawn.guo@linaro.org
+
+>  drivers/clk/qcom/clk-smd-rpm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rp=
+m.c
+> index 800b2fef1887f..b2c142f3a649e 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -467,7 +467,7 @@ DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_=
+clk, QCOM_SMD_RPM_BUS_CLK,
+> =20
+>  static struct clk_smd_rpm *msm8936_clks[] =3D {
+>         [RPM_SMD_PCNOC_CLK]             =3D &msm8916_pcnoc_clk,
+> -       [RPM_SMD_PCNOC_A_CLK]           =3D &msm8916_pcnoc_clk,
+> +       [RPM_SMD_PCNOC_A_CLK]           =3D &msm8916_pcnoc_a_clk,
+>         [RPM_SMD_SNOC_CLK]              =3D &msm8916_snoc_clk,
+>         [RPM_SMD_SNOC_A_CLK]            =3D &msm8916_snoc_a_clk,
+>         [RPM_SMD_BIMC_CLK]              =3D &msm8916_bimc_clk,
+> --=20
+> 2.30.1
+>
