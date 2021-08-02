@@ -2,132 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE21CC4338F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6290AC4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 20:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B366961050
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 489C8610FB
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 20:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbhHBT0O convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 15:26:14 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:55654 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229567AbhHBT0O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Aug 2021 15:26:14 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id S231273AbhHBU3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 16:29:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54418 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229729AbhHBU3S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 16:29:18 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C0EC06175F;
+        Mon,  2 Aug 2021 13:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l+fsYpXHnA5UWflt6UdASmUhsqYZSqpyJ5dbaN1LNhI=; b=vjQduL25s9hj45Yfu4BTWPBTU
+        kSrAkTSvbBkmMoP+U+eq7jLxh9RY41POf05sbal5DLZUOHV14VyAkDosbwqMP6hNbjJNzszGxQOFb
+        5wYJIChsZvBSrMFJdmAcTH4YkXzYoyuavecHIGnNfsnYkoQHkamhrzD+2t/mLD6cSA8AE/lejVALP
+        o14n71qmu350xdj1XuaKMWTtEqYO2HM34dB006g4k7212DICITO8uYJP3CFtt6kaRoKcMqpnwP50V
+        UIFDzpfSBBtP1nJ9QQnkdI2ASdn0BAlsWuimFTpAKGqcXPn7safpQjAHW1AXfy3hNuN5xHrP1qriX
+        LkVuUtlRQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46868)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1mAdZY-000515-2w; Mon, 02 Aug 2021 21:26:00 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     Yunhao Tian <t123yh@outlook.com>, t123yh.xyz@gmail.com,
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1mAeYW-0006Ce-VV; Mon, 02 Aug 2021 21:29:00 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1mAeYR-0003Bf-Ax; Mon, 02 Aug 2021 21:28:55 +0100
+Date:   Mon, 2 Aug 2021 21:28:55 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] clk: rk3308: make ddrphy4x clock critical
-Date:   Mon, 02 Aug 2021 21:25:59 +0200
-Message-ID: <16392318.geO5KgaWL5@diego>
-In-Reply-To: <CAGETcx8YYrkCV0UObtOqHUnS29Q-raC54KUh14wqyBDMJ4e46g@mail.gmail.com>
-References: <BYAPR20MB24886765F888A9705CBEB70789E39@BYAPR20MB2488.namprd20.prod.outlook.com> <162758560739.714452.5782743329332725952@swboyd.mtv.corp.google.com> <CAGETcx8YYrkCV0UObtOqHUnS29Q-raC54KUh14wqyBDMJ4e46g@mail.gmail.com>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
+ devm_clk_get for prepared and enabled clocks enabled clocks]
+Message-ID: <20210802202855.GL22278@shell.armlinux.org.uk>
+References: <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
+ <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
+ <20210728202547.7uvfwflpruku7yps@pengutronix.de>
+ <20210728204033.GF22278@shell.armlinux.org.uk>
+ <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
+ <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
+ <20210802094810.GJ22278@shell.armlinux.org.uk>
+ <20210802152755.ibisunvibmwhiyry@pengutronix.de>
+ <20210802163824.GK22278@shell.armlinux.org.uk>
+ <CAHp75VcpA0vOwN8gBj2iikXW2dw+KCgZEM=QJ5Jx6UWqww=iCw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcpA0vOwN8gBj2iikXW2dw+KCgZEM=QJ5Jx6UWqww=iCw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Saravana,
-
-Am Montag, 2. August 2021, 20:24:56 CEST schrieb Saravana Kannan:
-> On Thu, Jul 29, 2021 at 12:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Heiko Stübner (2021-07-28 02:53:54)
-> > > Am Dienstag, 27. Juli 2021, 03:08:10 CEST schrieb Stephen Boyd:
-> > > > Quoting Yunhao Tian (2021-07-21 05:48:16)
-> > > > > Currently, no driver support for DDR memory controller (DMC) is present,
-> > > > > as a result, no driver is explicitly consuming the ddrphy clock. This means
-> > > > > that VPLL1 (parent of ddr clock) will be shutdown if we enable
-> > > > > and then disable any child clock of VPLL1 (e.g. SCLK_I2S0_8CH_TX).
-> > > > > If VPLL1 is disabled, the whole system will freeze, because the DDR
-> > > > > controller will lose its clock. So, it's necessary to prevent VPLL1 from
-> > > > > shutting down, by marking the ddrphy4x CLK_IS_CRITICAL.
-> > > > >
-> > > > > This bug was discovered when I was porting rockchip_i2s_tdm driver to
-> > > > > mainline kernel from Rockchip 4.4 kernel. I guess that other Rockchip
-> > > > > SoCs without DMC driver may need the same patch. If this applies to
-> > > > > other devices, please let us know.
-> > > > >
-> > > > > Signed-off-by: Yunhao Tian <t123yh@outlook.com>
-> > > > > ---
-> > > > >  drivers/clk/rockchip/clk-rk3308.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
-> > > > > index 2c3bd0c749f2..6be077166330 100644
-> > > > > --- a/drivers/clk/rockchip/clk-rk3308.c
-> > > > > +++ b/drivers/clk/rockchip/clk-rk3308.c
-> > > > > @@ -564,7 +564,7 @@ static struct rockchip_clk_branch rk3308_clk_branches[] __initdata = {
-> > > > >         COMPOSITE(SCLK_DDRCLK, "clk_ddrphy4x_src", mux_dpll_vpll0_vpll1_p, CLK_IGNORE_UNUSED,
-> > > > >                         RK3308_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 3, DFLAGS,
-> > > > >                         RK3308_CLKGATE_CON(0), 10, GFLAGS),
-> > > > > -       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED,
-> > > > > +       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED | CLK_IS_CRITICAL,
-> > > >
-> > > > Is it not enabled by default?
-> > >
-> > > All gates are enabled by default, but this gate shares a common parent
-> > > tree down to a pll, so if another leaf-user is disabling their part, this
-> > > untracked clock would get disabled as well.
-> >
-> > Right, this problem is cropping up in different places for various
-> > drivers.
-> >
-> > >
-> > > On that note, I remember a sort of CLK_HANDOFF was planned way back
-> > > in the past, meaning clock is critical until a driver picks it up, after this the
-> > > driver is responsible for it. Did that get any momentum?
-> > >
-> >
-> > Last I saw Saravana sent a patch to sort of connect CLK_HANDOFF to
-> > device driver sync_state() callback. I think we need to at least stash
-> > away that a clk is enabled at boot and then figure out how to tie in
-> > sync_state and/or something else.
+On Mon, Aug 02, 2021 at 08:13:05PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 2, 2021 at 7:38 PM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> > It probably depends on where you stand on power management and power
+> > efficiency issues. Personally, I would like to see more effort put
+> > into drivers to make them more power efficient, and I believe in the
+> > coming years, power efficiency is going to become a big issue.
 > 
-> Yeah, my clk_sync_state() series should do that. I'll get back on that
-> patch this week or next.
-> 
-> Yunhao,
-> 
-> Is there at least some DT device that consumes the DDR phy clock? Can
-> you point me to the DT for this board (not the SoC) so I can take a
-> look at it later?
+> While in the ideal world I 100% agree with the approach, IRL we have
+> to deal with constantly degrading quality of the code and instead of
+> thinking about power management and efficiency the absence of APIs
+> such as discussed provokes not only creating the power management
+> inefficient code, but also memory leaks here and there.
 
-Not for the rk3308. If you're looking for live-examples of handoff clocks,
-I can provide another examples though:
+The point of my previous reply that you quoted above was to make a
+prediction, it wasn't a rejection of the approach.
 
-
-rockchip/clk-rk3288.c - pclk_rkpwm (in the separate critical clock list) ... with
-arch/arm/boot/dts/rk3288.dtsi - clock is supplying pwm nodes.
-
-As the comment in the clock driver suggests (line 850), some boards use
-pwm-regulators for central components. The pwm-regulators are configured
-at boot already, so the clock shouldn't be disabled till the pwm-regulator takes
-over.
-
-
-The whole memory handling is a blank slate on the kernel side for Rockchip
-boards still. The bootloader sets up the memory and nobody has found the
-time to modell things like memory scaling in a nice way yet.
-
-
-Heiko
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
