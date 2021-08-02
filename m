@@ -2,133 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D91C4320E
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 17:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 453D8C4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 18:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4499761108
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 17:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1047D610A2
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 18:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbhHBRN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 13:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34230 "EHLO
+        id S229663AbhHBSZn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 14:25:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbhHBRNz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 13:13:55 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35962C06175F;
-        Mon,  2 Aug 2021 10:13:46 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id m10-20020a17090a34cab0290176b52c60ddso918153pjf.4;
-        Mon, 02 Aug 2021 10:13:46 -0700 (PDT)
+        with ESMTP id S229571AbhHBSZm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 14:25:42 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6C2C061760
+        for <linux-clk@vger.kernel.org>; Mon,  2 Aug 2021 11:25:33 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id e4so16311163ybn.2
+        for <linux-clk@vger.kernel.org>; Mon, 02 Aug 2021 11:25:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=DsrhQp/km3AN3/nCdXzxLh4fYNOYR+90bwDH6yArIzw=;
-        b=LLoLo79j5gKbVjYyumPfqd8k2EvfByskVN/mylgwfFPReilrjWca0h5TBvIfJCDdfl
-         2zIGt7WZV35tZMJt/IAZdVyiR52+3ZBNfH5xiHgVnvEMuFvLJz1iIogrnR1Ivwq2TjSE
-         qyLItKXQ3zNFIOA+sMmEqqyFRn5BFQMwBDZ2ygWI0gNlLanC77pCxeZPVjbMFggnWZvx
-         +0OjCKyFGmd8NSyV4tHRb/LcYH4M+AmwBz6dJ2uFuH8dU5t+oi+Fx2KZk+nmDTDldBTc
-         pF42/DPbjvs7QJw7qOO2FdoPYSKy8E4p1BQld6tr9Jt4Mj3q0Wh77HlK+2w8IxSYIhx7
-         Rt+Q==
+        bh=rgyhSNBwjVthGes2RpVRtUuo2LAriKbUmW6hz5Qrd9g=;
+        b=gaQkvuDdgBKlEs/PlVOGa5TvgBNYLqsuhBXb7qPQEWqwFw0fxDTevKR0X3fI29/nh0
+         SC+Os2urDnjCdcEGHBHLP05n6tYnRfqqQSiTELHjJZMT8HFgIlbfXJL/53kmi4GidZ+3
+         J24lKZiFMjscgFzpGci1rlpIUATL2IItj32Bg4MFfn8khqb6ETjh6I+hGvdVaQTEnF9+
+         yqwo3hq0MsMpQUaV+2/Hwly4fJ0T16kKOSfajcTOgbPgbBd6BGw0LQwWWJYy1//zQViQ
+         fLN3mhVGs4nmX9S3tQ0VF18jo7XhdJs5aho1JTnxuk/g0JIMj/N526STboFf/5mKvEx2
+         sRTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DsrhQp/km3AN3/nCdXzxLh4fYNOYR+90bwDH6yArIzw=;
-        b=fivqjxIZt8QoS/+tRVHuUVdjLNdEZdRrsLvE4zlqT/faWYQTNwAFf3pOwDc7/G2Pb5
-         NgYYQFuppzRXpTf99Lf6f+RGhFX9D1HqW5ag/yDjqOC41STw+x5ewFAa2bd1Gs6vs2+G
-         Qvvj4d5d4o7ImkMdhHR7f5OTwdYKRxi29hQY52+lIBFqqZIRM14WgCXvCGSJ0ed7u1wo
-         SeK8gJP7zy3gq4aixN13Nn3mx09DUM6ijGiJBEjOwJ8DVCnUQcaxPnVvpbvYEkt+EuXO
-         dey9djw2MYgzcqbQ9l5jjLIHCjtlnBmv4rHgJxJdfJ+SbCTbYHPGLr9T2Mcx1rDyn/bt
-         UIXA==
-X-Gm-Message-State: AOAM531KUWVzI8v1UrW6hotoQP6S2L2WRDPNrWc6duBK8OFKBKCspP5O
-        MKPG+BSa1mE6BsuFAY6B/iOQv3n0DEGUGlnubVU=
-X-Google-Smtp-Source: ABdhPJweUosf0ntXfg8F9h9vRNrNHxM5yHY1ehTtGvwGd7VLgJy3fO+s26kJwFxctl4nX18uDgzE3HlPXdBmU9REuUE=
-X-Received: by 2002:a63:5a5b:: with SMTP id k27mr2335806pgm.74.1627924425668;
- Mon, 02 Aug 2021 10:13:45 -0700 (PDT)
+        bh=rgyhSNBwjVthGes2RpVRtUuo2LAriKbUmW6hz5Qrd9g=;
+        b=kOz27txBuJea4LvXWHZwpTyrZNCmk5R6vPEupHDxHNXw7WRnDw+QH47oR+hBJbRYGr
+         BQq0naXVTdmbNSuBcwfkVgdqp8S07aevJhQD5VmSgRiBXLh8Is+9Q84IKmzWUaPgNWih
+         vAe+KuEHtsm8uRUhtU3xfbQMbnAw+at/wKG19boQwhKrWFcAaJSbhTiGxD6fCtfq70lM
+         K8UpK/ALgAYHygv12IYex3nYcu52Dyt1/QPDWosBjZtl2vlL5PdGwwEaeMTMBKgenaZr
+         UAMXithah1OcszNYE4s7OChtpvSzGl2GEGrWev1RLMKrS5EVBYKQWq0c/9Lr4zMlywEH
+         jV+A==
+X-Gm-Message-State: AOAM5317NWA+0TIGBTe7o/WaumsVNJ1JL2oDxb8I5aZHM7NlxLpBQxDE
+        V+5gvOyEqOtUIyq07gWNuSsltCIyxyn1zPMpuMd+4g==
+X-Google-Smtp-Source: ABdhPJwb8GQepycTGtRZVWRW/lbjOjz53+1MJjH4bGCrQdaw9Iwp2WHacVzvngEPy1NIM59b1otMYQBEG/RUVQrwYNY=
+X-Received: by 2002:a25:53c9:: with SMTP id h192mr21521085ybb.310.1627928732246;
+ Mon, 02 Aug 2021 11:25:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <YPlfcbkxiBmB+vw1@kunai> <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
- <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
- <20210728202547.7uvfwflpruku7yps@pengutronix.de> <20210728204033.GF22278@shell.armlinux.org.uk>
- <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
- <20210731120004.i3affxw7upl5y4c5@pengutronix.de> <20210802094810.GJ22278@shell.armlinux.org.uk>
- <20210802152755.ibisunvibmwhiyry@pengutronix.de> <20210802163824.GK22278@shell.armlinux.org.uk>
-In-Reply-To: <20210802163824.GK22278@shell.armlinux.org.uk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 2 Aug 2021 20:13:05 +0300
-Message-ID: <CAHp75VcpA0vOwN8gBj2iikXW2dw+KCgZEM=QJ5Jx6UWqww=iCw@mail.gmail.com>
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
- devm_clk_get for prepared and enabled clocks enabled clocks]
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+References: <BYAPR20MB24886765F888A9705CBEB70789E39@BYAPR20MB2488.namprd20.prod.outlook.com>
+ <162734809017.2368309.7901135942001140161@swboyd.mtv.corp.google.com>
+ <2634451.ElGaqSPkdT@diego> <162758560739.714452.5782743329332725952@swboyd.mtv.corp.google.com>
+In-Reply-To: <162758560739.714452.5782743329332725952@swboyd.mtv.corp.google.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 2 Aug 2021 11:24:56 -0700
+Message-ID: <CAGETcx8YYrkCV0UObtOqHUnS29Q-raC54KUh14wqyBDMJ4e46g@mail.gmail.com>
+Subject: Re: [PATCH] clk: rk3308: make ddrphy4x clock critical
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Yunhao Tian <t123yh@outlook.com>, t123yh.xyz@gmail.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 2, 2021 at 7:38 PM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
-> On Mon, Aug 02, 2021 at 05:27:55PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > Hello Russell,
-> > On Mon, Aug 02, 2021 at 10:48:10AM +0100, Russell King (Oracle) wrote:
-
-...
-
-> > > There have been several different approaches to wrapping things up,
-> > > but here's a question: should we make it easier to do the lazy thing
-> > > (get+enable) or should we make it easier to be power efficient?
-> > > Shouldn't we be encouraging people to write power efficient drivers?
-> >
-> > Yeah, sounds compelling, but I wonder if that's of practical importance=
-.
-> > How many driver authors do you expect to lure into making a better
-> > driver just because devm_clk_get_prepared() doesn't exist? In contrast:
-> > How many drivers become simpler with devm_clk_get_prepared() and so
-> > it becomes easier to maintain them and easier to spot bugs?
-> > In the absence of devm_clk_get_prepared(), is it better that several
-> > frameworks (or drivers) open code it?
+On Thu, Jul 29, 2021 at 12:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> It probably depends on where you stand on power management and power
-> efficiency issues. Personally, I would like to see more effort put
-> into drivers to make them more power efficient, and I believe in the
-> coming years, power efficiency is going to become a big issue.
+> Quoting Heiko St=C3=BCbner (2021-07-28 02:53:54)
+> > Am Dienstag, 27. Juli 2021, 03:08:10 CEST schrieb Stephen Boyd:
+> > > Quoting Yunhao Tian (2021-07-21 05:48:16)
+> > > > Currently, no driver support for DDR memory controller (DMC) is pre=
+sent,
+> > > > as a result, no driver is explicitly consuming the ddrphy clock. Th=
+is means
+> > > > that VPLL1 (parent of ddr clock) will be shutdown if we enable
+> > > > and then disable any child clock of VPLL1 (e.g. SCLK_I2S0_8CH_TX).
+> > > > If VPLL1 is disabled, the whole system will freeze, because the DDR
+> > > > controller will lose its clock. So, it's necessary to prevent VPLL1=
+ from
+> > > > shutting down, by marking the ddrphy4x CLK_IS_CRITICAL.
+> > > >
+> > > > This bug was discovered when I was porting rockchip_i2s_tdm driver =
+to
+> > > > mainline kernel from Rockchip 4.4 kernel. I guess that other Rockch=
+ip
+> > > > SoCs without DMC driver may need the same patch. If this applies to
+> > > > other devices, please let us know.
+> > > >
+> > > > Signed-off-by: Yunhao Tian <t123yh@outlook.com>
+> > > > ---
+> > > >  drivers/clk/rockchip/clk-rk3308.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockch=
+ip/clk-rk3308.c
+> > > > index 2c3bd0c749f2..6be077166330 100644
+> > > > --- a/drivers/clk/rockchip/clk-rk3308.c
+> > > > +++ b/drivers/clk/rockchip/clk-rk3308.c
+> > > > @@ -564,7 +564,7 @@ static struct rockchip_clk_branch rk3308_clk_br=
+anches[] __initdata =3D {
+> > > >         COMPOSITE(SCLK_DDRCLK, "clk_ddrphy4x_src", mux_dpll_vpll0_v=
+pll1_p, CLK_IGNORE_UNUSED,
+> > > >                         RK3308_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 3, D=
+FLAGS,
+> > > >                         RK3308_CLKGATE_CON(0), 10, GFLAGS),
+> > > > -       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUS=
+ED,
+> > > > +       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUS=
+ED | CLK_IS_CRITICAL,
+> > >
+> > > Is it not enabled by default?
+> >
+> > All gates are enabled by default, but this gate shares a common parent
+> > tree down to a pll, so if another leaf-user is disabling their part, th=
+is
+> > untracked clock would get disabled as well.
+>
+> Right, this problem is cropping up in different places for various
+> drivers.
+>
+> >
+> > On that note, I remember a sort of CLK_HANDOFF was planned way back
+> > in the past, meaning clock is critical until a driver picks it up, afte=
+r this the
+> > driver is responsible for it. Did that get any momentum?
+> >
+>
+> Last I saw Saravana sent a patch to sort of connect CLK_HANDOFF to
+> device driver sync_state() callback. I think we need to at least stash
+> away that a clk is enabled at boot and then figure out how to tie in
+> sync_state and/or something else.
 
-While in the ideal world I 100% agree with the approach, IRL we have
-to deal with constantly degrading quality of the code and instead of
-thinking about power management and efficiency the absence of APIs
-such as discussed provokes not only creating the power management
-inefficient code, but also memory leaks here and there.
+Yeah, my clk_sync_state() series should do that. I'll get back on that
+patch this week or next.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Yunhao,
+
+Is there at least some DT device that consumes the DDR phy clock? Can
+you point me to the DT for this board (not the SoC) so I can take a
+look at it later?
+
+Thanks,
+Saravana
