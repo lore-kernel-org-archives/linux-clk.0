@@ -2,88 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF173C4338F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7192C4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0EE96054F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B829E60F41
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231609AbhHBWLy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 18:11:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231126AbhHBWLw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Aug 2021 18:11:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 36C596018A;
-        Mon,  2 Aug 2021 22:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627942302;
-        bh=uQ4300Zg9wVJ91sSCEg7PTrzjVOlNO5W7l7vf1E5uW0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IjqxaSj158DoF4zTsoOShFdE/HONMyDFi7XOx6Dsg8O5mlTDm4NjJTTlIDj8AKVFT
-         ng2kySx6BqGjrMu1A7YFt15PoipW4tgwvrkvxrxVXVdLIZIXCXoV6EkfNDRKhvcMhi
-         NLg8v5chatn22gzaOyamO1zs5i8GTwRTxT+hQ/YBl7w5X/qWNBNXOYyKF5/w4f5FCG
-         qGFB26dRykdNrjRH/XOlS3gP/JEcvov4Bck6Iwc5vtbdPAMuS8WbeXO8x9eCK+FRCS
-         t+0neKba/ea6jDt+b7csqDC8O3f2BtWU7EkiuOUau9mzWsa4e9ErUhhOoMgMo12lwf
-         Foeqm4dEyvA2g==
-Content-Type: text/plain; charset="utf-8"
+        id S231859AbhHBWN7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 18:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231827AbhHBWN7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 18:13:59 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8063DC06175F;
+        Mon,  2 Aug 2021 15:13:49 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id y34so36406998lfa.8;
+        Mon, 02 Aug 2021 15:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+LY1B0NtA0JK5a08N4iEr/UtsIVulJFgN2MwPHf+hzE=;
+        b=W4o8h76qDEBZT08972HXsxiyJvUJs66TEj46yzF4P6vCXqcCaTdYTnvZ9tAPLrb7Xc
+         EqC9AMGEXzC4bQRm9z4Cz+b5obOYTPJxOa4464ZB3lJTZtoVHXuFEqOTdFC48Ubwm77T
+         yLf9KnvlVXcrQbiMQt0b8WMlSwjGR1ELBehR3ucuYEBhce2r9L3i59YaqQfdIexDlFTt
+         KJ5ZNHM9MNzeZKUcrgdLfREcGILRM1T4sEbDUrgkhcIioUBP2abZS2t/Sjf0dFjg+96z
+         NhMt1D5b1Me6pnmrZoYSweJKun9ye4xzd2pbKhTc0Yzttdlj7h11qJnsTK1bw0Mw2RJU
+         iY5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+LY1B0NtA0JK5a08N4iEr/UtsIVulJFgN2MwPHf+hzE=;
+        b=piLUh5QkuDFFQjlkgETf3UIkC94ONl9kFeP8Rnri9eQ70y/yVyHjCL2GyLqIc5CHdL
+         jm318oaH0xskVodLU9YuCf8yEL0L1I+V8ukLhOU14ROg62zulyroWBVoti8xnc5Jwl97
+         E8bwkB7yzWFJrEM5eIDio5/836Iwc/YG7VmrsDA3oGqfMHZ2KP1ZUrw7V7TUIgC76V5W
+         TzKYmrCIeSwfzZrgtf9sJNoTMZO+tkUVpQWLnbeqXFNb1opyeThXh+lZYsq9Pi/CYkLQ
+         1gKN6foIfofwIp6zX59ihbLU1UCKFNcut9g8R/acDVNqwaoiw7MZjW7F80JwTB0GAXuo
+         aqEQ==
+X-Gm-Message-State: AOAM533JNckxVixUcwZMJXCgAha1SWTtBB7LSiCiUn105QpPATu4OaLS
+        IY/7w+HZ7Odr9+W7lKIuWO8=
+X-Google-Smtp-Source: ABdhPJyOe00fOlmprnifb2gQlZGYqeZyMI27H2Z6qrdIeJS+KLfDZvcsJ/u4X/ah51z/dC1pnMeNkg==
+X-Received: by 2002:ac2:4c29:: with SMTP id u9mr4117887lfq.410.1627942427885;
+        Mon, 02 Aug 2021 15:13:47 -0700 (PDT)
+Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
+        by smtp.gmail.com with ESMTPSA id c10sm960167ljn.11.2021.08.02.15.13.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Aug 2021 15:13:47 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] Tegra FUSE clock improvements for 5.15
+Date:   Tue,  3 Aug 2021 01:13:32 +0300
+Message-Id: <20210802221336.32016-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210802153657.879499-1-bryan.odonoghue@linaro.org>
-References: <20210802153657.879499-1-bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH] clk: qcom: clk-smd-rpm: Fix invalid RPM_SMD_PCNOC_A_CLK entry
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, konrad.dybcio@somainline.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Mon, 02 Aug 2021 15:11:40 -0700
-Message-ID: <162794230095.714452.9666166450349622061@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bryan O'Donoghue (2021-08-02 08:36:57)
-> MSM8936 and MSM8939 both share the same RPMCC clock tree, I've been testi=
-ng
-> on MSM8939 and I've found that RPM_SMD_PCNOC_A_CLK is currently invalid.
->=20
-> RPM_SMD_PCNOC_A_CLK should point to msm8916_pcnoc_a_clk not to
-> msm8916_pcnoc_clk.
->=20
-> Fixes: a0384ecfe2aa8 ("clk: qcom: smd-rpm: De-duplicate identical entries=
-")
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
+Hello,
 
-This is superseded by
-https://lore.kernel.org/r/20210727092613.23056-1-shawn.guo@linaro.org
+This series improves handling of the FUSE clock by keeping it enabled only
+when necessary.
 
->  drivers/clk/qcom/clk-smd-rpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rp=
-m.c
-> index 800b2fef1887f..b2c142f3a649e 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -467,7 +467,7 @@ DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_=
-clk, QCOM_SMD_RPM_BUS_CLK,
-> =20
->  static struct clk_smd_rpm *msm8936_clks[] =3D {
->         [RPM_SMD_PCNOC_CLK]             =3D &msm8916_pcnoc_clk,
-> -       [RPM_SMD_PCNOC_A_CLK]           =3D &msm8916_pcnoc_clk,
-> +       [RPM_SMD_PCNOC_A_CLK]           =3D &msm8916_pcnoc_a_clk,
->         [RPM_SMD_SNOC_CLK]              =3D &msm8916_snoc_clk,
->         [RPM_SMD_SNOC_A_CLK]            =3D &msm8916_snoc_a_clk,
->         [RPM_SMD_BIMC_CLK]              =3D &msm8916_bimc_clk,
-> --=20
-> 2.30.1
->
+Dmitry Osipenko (4):
+  soc/tegra: fuse: Clear fuse->clk on driver probe failure
+  soc/tegra: fuse: Add runtime PM support
+  soc/tegra: fuse: Enable fuse clock on suspend for Tegra124
+  clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
+
+ drivers/clk/tegra/clk-tegra-periph.c  |  6 +--
+ drivers/soc/tegra/fuse/fuse-tegra.c   | 60 +++++++++++++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra20.c | 11 +++--
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 16 ++++---
+ drivers/soc/tegra/fuse/fuse.h         |  2 +
+ 5 files changed, 81 insertions(+), 14 deletions(-)
+
+-- 
+2.32.0
+
