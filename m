@@ -2,106 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F821C432BE
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A24DC4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA4060724
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A9B360F5C
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 22:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232979AbhHBWOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 18:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232695AbhHBWOC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 18:14:02 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C4EC06175F;
-        Mon,  2 Aug 2021 15:13:52 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id z2so36463769lft.1;
-        Mon, 02 Aug 2021 15:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NcgHywzOs0dEPbPbKvfBE8iLc6lV0m/3jUIasI7Wu5s=;
-        b=uo2Inim7n3NOhUbdsXO4yvyzZ3U66xiYywNDF9JfshRhgF7jlsS36yJyzJ60QZdU5s
-         AyTd3J9yrvsm4i8PNCUVCvqseFsPWvDoIzy4oqkpaDLaQmAlWWYvRoyNdoLHv6gehc8U
-         cgniC+v772t1j69P5tYFuXr3+f0CYc5qMmaK9gRLfbFd5YYAE2ltryf92LNKmfC61W0E
-         7K5CgytVEZLeoDYHit3TvniAC/rUmfwHvSY6yBCktDtCm6nXRxQ016E+3GBJPVbTCgC7
-         vVkoJ57KHWE9HaFjXgou/q5vTQ3Oaq7BEAVeiQJ0ooo5TM0QXIk1VUbiA/qZk2FQNy4Z
-         rwrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NcgHywzOs0dEPbPbKvfBE8iLc6lV0m/3jUIasI7Wu5s=;
-        b=SlAIRozNK7g5OjyOpc+rttdgj7N0Wpcyjs816X956Mb8J57Oxx1okggMBODk85RE8W
-         Db3imaTTQFbeJjvpEAIqKKB7/wCbKeUASI/OFu+CisB0zkYnWGj1CqN6bBqZt7eBjegE
-         NoRm8qdrwKAouboOIboF13cTA6sJPnUv8U8k0ew/bJbL+XyZbTVCvcV7lYXrcyX9chHm
-         8K/xeH/crgyucVv78IkqB4RsxzQVgvS4vdHi7wNevFhY28KYEBNhTEfQW0D7O6zTTahr
-         70ECUD7Ij039CuS42RW0y3fjODgMZ9I7GJGEa0ugsxwNdCYeZcC4NfwUXuwmTpAPNMNU
-         h4Zg==
-X-Gm-Message-State: AOAM532KMbw9qfMx4rITvJn1bYtj8dbQ6yLE/Q1sev+s+J1WlQqVmW+2
-        ZcXsdOfHFxCRGr3Nq6DJ3AE=
-X-Google-Smtp-Source: ABdhPJznzBO20DYzH1P8yPbcU0xnlT0QFFgMGUtZpqnry6kMLcHox3f9sC7ut9ZB+ZNs0slwx52FHA==
-X-Received: by 2002:ac2:53a6:: with SMTP id j6mr13672850lfh.408.1627942430707;
-        Mon, 02 Aug 2021 15:13:50 -0700 (PDT)
-Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id c10sm960167ljn.11.2021.08.02.15.13.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Aug 2021 15:13:50 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
-Date:   Tue,  3 Aug 2021 01:13:36 +0300
-Message-Id: <20210802221336.32016-5-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210802221336.32016-1-digetx@gmail.com>
-References: <20210802221336.32016-1-digetx@gmail.com>
+        id S231126AbhHBWVO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 18:21:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230156AbhHBWVO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Aug 2021 18:21:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1BDB960F36;
+        Mon,  2 Aug 2021 22:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627942864;
+        bh=6aX9/Bt43bl53L5jhqHaKlrsxRZ9CIuNwap0K/eMxSI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mSLG9Aklw9l2tZh+9Ck1je3fPLx6Cx6xxjMAW7fSE/V1HWI6/XQCVKWpP6/pQBMOB
+         22ocuHFpnDUYWx2Twvo8dxCvxwrQTp6lfMTkmxwRK53cFndvgcEP3PepFLfg3yy5Ys
+         LUaeKzMQGtbglBhtUTP3putUHhy8tzsOPckRboB/jiKpq85pbOJz4Og/B+Auj9Ajqo
+         s5RqQkbK5fgw2y7Mg/gYOTcZ63QeYkd01U2KaXOu7qaYiAw4BbZdDDOdun5uS8/CuM
+         ZrNLkb+UaARq2NHJyNdDDShf9L+DXTrCHY0hf856ETnjbktU483zB5uUpWUXA96wu4
+         cVXXBW+BjbdAg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210801103448.3329333-2-iskren.chernev@gmail.com>
+References: <20210801103448.3329333-1-iskren.chernev@gmail.com> <20210801103448.3329333-2-iskren.chernev@gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clk: qcom: gcc-sm6115: Document SM6115 GCC
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Date:   Mon, 02 Aug 2021 15:21:02 -0700
+Message-ID: <162794286285.714452.14111966516954708252@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-FUSE driver now takes care of keeping the clock enabled when necessary.
-Remove the CLK_IS_CRITICAL flag from the clock.
+Quoting Iskren Chernev (2021-08-01 03:34:47)
+> Add device tree bindings for global clock controller on SM6115 and
+> SM4250 SoCs (pin and software compatible).
+>=20
+> Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-sm6115.yaml       |  74 +++++++
+>  include/dt-bindings/clock/qcom,gcc-sm6115.h   | 201 ++++++++++++++++++
+>  2 files changed, 275 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm61=
+15.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml=
+ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+> new file mode 100644
+> index 000000000000..c8c9eb82b9b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm6115.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for SM6115 and S=
+M4250
+> +
+> +maintainers:
+> +  - Iskren Chernev <iskren.chernev@gmail.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets=
+ and
+> +  power domains on SM4250/6115.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,gcc-sm6115.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sm6115
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Sleep clock source
+> +      - description: PLL test clock source (Optional clock)
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra-periph.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Please drop this last one
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 292d6269daf1..4dcf7f7cb8a0 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -777,11 +777,7 @@ static struct tegra_periph_init_data gate_clks[] = {
- 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
- 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
- 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
--	/*
--	 * Critical for RAM re-repair operation, which must occur on resume
--	 * from LP1 system suspend and as part of CCPLEX cluster switching.
--	 */
--	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
-+	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
- 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
- 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
- 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
--- 
-2.32.0
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: sleep_clk
+> +      - const: core_bi_pll_test_se # Optional clock
 
+And this last one. The test input is never used. I'd make this the same
+as gcc-sc7180, i.e. have the always on XO as an input in case it is
+needed.
+
+> +
+> +  '#clock-cells':
+> +    const: 1
