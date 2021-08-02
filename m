@@ -2,145 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DFCC4338F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E14FC4320A
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE59610FC
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E30610FC
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 15:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234873AbhHBP2W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 11:28:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35280 "EHLO
+        id S234331AbhHBPfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 11:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234839AbhHBP2V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 11:28:21 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FAC4C06175F
-        for <linux-clk@vger.kernel.org>; Mon,  2 Aug 2021 08:28:12 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mAZrC-00076g-Hh; Mon, 02 Aug 2021 17:27:58 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mAZrA-0004Qi-3t; Mon, 02 Aug 2021 17:27:56 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mAZrA-0008Ni-1g; Mon, 02 Aug 2021 17:27:56 +0200
-Date:   Mon, 2 Aug 2021 17:27:55 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     alexandre.belloni@bootlin.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        thierry.reding@gmail.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Ludovic.Desroches@microchip.com, o.rempel@pengutronix.de,
-        andy.shevchenko@gmail.com, aardelean@deviqon.com,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        broonie@kernel.org, Jonathan.Cameron@huawei.com,
-        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, wsa@kernel.org, kernel@pengutronix.de,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        Claudiu.Beznea@microchip.com
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
- devm_clk_get for prepared and enabled clocks enabled clocks]
-Message-ID: <20210802152755.ibisunvibmwhiyry@pengutronix.de>
-References: <20210722081817.2tsjzof4gvldq6ka@pengutronix.de>
- <YPlfcbkxiBmB+vw1@kunai>
- <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
- <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
- <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
- <20210728202547.7uvfwflpruku7yps@pengutronix.de>
- <20210728204033.GF22278@shell.armlinux.org.uk>
- <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
- <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
- <20210802094810.GJ22278@shell.armlinux.org.uk>
+        with ESMTP id S233939AbhHBPfU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 11:35:20 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A6C2C06175F
+        for <linux-clk@vger.kernel.org>; Mon,  2 Aug 2021 08:35:10 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id l4-20020a05600c1d04b02902506f89ad2dso191410wms.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Aug 2021 08:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CqRphvdIf2WgJ/qGVLo1HnyggKC4dKCtnyTo5bfmkDg=;
+        b=S2wd+Sg6KnZacgFEJ99whDtJYm28ysMWAFRPDZnWCPrvAl808RIJveY7Ml+fCI4BqM
+         RZ/OiA+tFq/6ZXDJxq3VqKbIekBZ+zHqs75mlRvRXgF+P1or058BxyEqCuSQksOh1LvY
+         mw45tSpx9K+bAo5qQhVLK4U8d2R0VAxKjA3sLKJo9Apf78bCi+Kyph57iiorSMMzkogO
+         TRQhRJqhpZh/X28iIyQC0xXzw/EJX1rei777rKEOimcYc04biqLFOYezxTMH0gLPAS+S
+         OHqGQjmBmDqT4li9/5iflcwK2JKiuZUXboFvPvyS2G9lNb5eHkZyiIL22tBlsEmt7Vn1
+         W7Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CqRphvdIf2WgJ/qGVLo1HnyggKC4dKCtnyTo5bfmkDg=;
+        b=fYrDTrO2DmWp02QGxDIIYw3WzFkLIWj1uBxxezceWWqYyT5XjnbfCGW3c9gsvaCjet
+         xuU/Dim2ZaCJ6OfAZvDUmfFV3LHib91ZTH09HSQIbb0+gs7PskOXKa1ZagfaRU8KD6sS
+         1uMsCTSdx6EIgDkN1/h5EnZEHplgXNh6xxkR8LN7qGzh6cyNQGJfjDSs7uwSyY/0pG7k
+         5fqy5oUBlBUxONMonmeFs3CJDSE1sAUfOluIQnpY1fvO/BHAsNlYJO3k0qqGh7hoBerc
+         CLtX1gdjrlxlbtSizIdVr7yUgUXwzoZ43ioYSgFQhjwhM+0hkcWc+4XVYFYFkiIBdZLS
+         iqlg==
+X-Gm-Message-State: AOAM531Nilchxa/nXYbsoFaSR1Mv/oJ0/Z3YkwI2ZiaIOzZhWMRGAK2F
+        fEtx8w//yZoHqono9Za8Q0MCag==
+X-Google-Smtp-Source: ABdhPJx5UCETfS+POdnWM9sbDJAE0uL/EJRjQqRJqZXZMwaTsZaYu3148gfTZ4dIxyhaIyEFijdBpA==
+X-Received: by 2002:a05:600c:1ca4:: with SMTP id k36mr2801409wms.107.1627918508326;
+        Mon, 02 Aug 2021 08:35:08 -0700 (PDT)
+Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id d15sm4685413wri.96.2021.08.02.08.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Aug 2021 08:35:07 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        konrad.dybcio@somainline.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH] clk: qcom: clk-smd-rpm: Fix invalid RPM_SMD_PCNOC_A_CLK entry
+Date:   Mon,  2 Aug 2021 16:36:57 +0100
+Message-Id: <20210802153657.879499-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4yhd4k7pc6ksrfur"
-Content-Disposition: inline
-In-Reply-To: <20210802094810.GJ22278@shell.armlinux.org.uk>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+MSM8936 and MSM8939 both share the same RPMCC clock tree, I've been testing
+on MSM8939 and I've found that RPM_SMD_PCNOC_A_CLK is currently invalid.
 
---4yhd4k7pc6ksrfur
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+RPM_SMD_PCNOC_A_CLK should point to msm8916_pcnoc_a_clk not to
+msm8916_pcnoc_clk.
 
-Hello Russell,
+Fixes: a0384ecfe2aa8 ("clk: qcom: smd-rpm: De-duplicate identical entries")
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Aug 02, 2021 at 10:48:10AM +0100, Russell King (Oracle) wrote:
-> On Sat, Jul 31, 2021 at 02:00:04PM +0200, Uwe Kleine-K=F6nig wrote:
-> > Hi Russell, hi Stephen,
-> >=20
-> > On Sat, Jul 31, 2021 at 12:41:19AM -0700, Stephen Boyd wrote:
-> > > +1 This patch doesn't fall under CCF maintainer.
-> >=20
-> > Given that CCF is the only implementer of devm_clk_get at least an Ack
-> > from your side would still be good I guess?
->=20
-> I think devm_clk_get() should not be part of CCF but should be
-> part of the interface level - it's silly to have devm_clk_get()
-> being CCF but not clk_get(). The same should go for the other
-> devm wrappers around the plain clk_* interfaces.
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 800b2fef1887f..b2c142f3a649e 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -467,7 +467,7 @@ DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK,
+ 
+ static struct clk_smd_rpm *msm8936_clks[] = {
+ 	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
+-	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_clk,
++	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
+ 	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
+ 	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
+-- 
+2.30.1
 
-What is the practical difference between "Function X is part of CCF" and
-"Function X is part of the clk interface and there is only CCF who
-implements it"?
-
-> > I found a patch set adding devm variants of clk_enable (e.g.
-> > https://lore.kernel.org/patchwork/patch/755667/) but this approach is
-> > different as it also contains clk_get which IMHO makes more sense=20
-> > The discussion considered wrapping get+enable at one point, but I didn't
-> > find a followup.
->=20
-> There have been several different approaches to wrapping things up,
-> but here's a question: should we make it easier to do the lazy thing
-> (get+enable) or should we make it easier to be power efficient?
-> Shouldn't we be encouraging people to write power efficient drivers?
-
-Yeah, sounds compelling, but I wonder if that's of practical importance.
-How many driver authors do you expect to lure into making a better
-driver just because devm_clk_get_prepared() doesn't exist? In contrast:
-How many drivers become simpler with devm_clk_get_prepared() and so
-it becomes easier to maintain them and easier to spot bugs?
-In the absence of devm_clk_get_prepared(), is it better that several
-frameworks (or drivers) open code it?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---4yhd4k7pc6ksrfur
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmEIDvMACgkQwfwUeK3K
-7Alp/gf/YuHVn2QCiQY9Ln+XZfkad7QXQJYE0+fG2AJ7dxEy13P7sSRuADCYTAGu
-sE2xOSevHd7QQeJjY2UcjHahHyGJwJXMBKLouDyrPEhocQpBd3mp9ewBe1BL/jRH
-4Euz/1SRM2NSfTc9lw7QzxHD6tGOY6Lo6Qj34pE7gKel4UX9FrYOqCoq2YbViMoX
-nVueeVsmqp5pt+mB4tfNDWOA+H7dkH+LoGc0yggaVQW/K+rZqdr/qBYsFq7k4Zjv
-Csk4EcDMhWkDlTekyjRutr3F6uGoCFWvuu52IQqxkVfRVy35Zx0tBpzGtILDTVRB
-Ww69Vm7tkWdIyLcrczBXbDvc7FMunQ==
-=PmG8
------END PGP SIGNATURE-----
-
---4yhd4k7pc6ksrfur--
