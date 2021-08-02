@@ -2,129 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8F8C4320A
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 09:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232A8C4320A
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 13:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3C7961050
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 09:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DEBB61102
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 13:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233105AbhHBJsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 05:48:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233093AbhHBJsd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 05:48:33 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14297C06175F;
-        Mon,  2 Aug 2021 02:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EuWMmKq4SfpJmtGNCymVReAeRTht0Bdg7VG7/exrrCw=; b=yb4BJMeklOXEuLu6GHSoDZ382
-        JZ+rWCauEZ4nW4CeuE0cZ46WaGcFVsah2s21cKq7LWBnQZbSilf6ZLgm1RuMW2+efdfa4R5oUyS33
-        iccBCQjCQgM5WxFlRxXKmtigRhrVf2fIbr/kjSdntCaSPK/D8zcePV7r7YaMBQt0yQNKJ6QA0VJ0X
-        Iu3fG+7/u13Ps85rSxkMA/tDV/Cveq7ySLmUP6NX+6Rnu050OCnX8eWOpKaYVTfp0CmjhSVslUEO1
-        hPiAYviPJylj4ooTBA+mh8PgdUoSzVaICpIkOD3ZT0V1Q0Ui3+X/nCQ48Ry9XpBAs21GVdYNS0ler
-        mUH6f8Bdg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46850)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1mAUYS-0005LR-30; Mon, 02 Aug 2021 10:48:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1mAUYM-0002nN-Mu; Mon, 02 Aug 2021 10:48:10 +0100
-Date:   Mon, 2 Aug 2021 10:48:10 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
+        id S234039AbhHBNkH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 09:40:07 -0400
+Received: from mail-il1-f179.google.com ([209.85.166.179]:43686 "EHLO
+        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234032AbhHBNkF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 09:40:05 -0400
+Received: by mail-il1-f179.google.com with SMTP id x7so13111533ilh.10;
+        Mon, 02 Aug 2021 06:39:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=TENNApnA3pRK87RRsfp5wpxG2YcnGhsJlA20WbVifLk=;
+        b=HswowOqsvG5bejucUm8i5rR1YCKkLAOALcRD/UyxWYWC0C+qwwrScFgG6BjiLmdR3X
+         j58yRYfI78iLnIRZbZoZbil39ORVlTz2qKWdzb2NKiJIF4jFMwmSF0Pa13/XVFtZHLSX
+         X67h7TrjzEMB7AwuK4RM4VqIHClHiUnLVCA9MWxPA/LTNuIL/UQxCgt4exyru4gvEMbS
+         j+KiRm6wHq+c6xQcWYBgxd+mWxL3YeNSoUwnZD+Q18wLMMJeDceHMH5eBZp2HMG+3gcs
+         td29jC0BqQVseq0WodkearWjjZY2YYhUGdLWHDrUDHCkfT6j+z94zB5ui3p+2h6KeBrp
+         6Tmw==
+X-Gm-Message-State: AOAM533mnS140ohCI+HTaPtFd2mzKlwRs4ENUJv9EO0CstVDPCeePr90
+        Wf5aHIWZmnnDrshaApxPFw==
+X-Google-Smtp-Source: ABdhPJzfosP56bJdNxD4Ijzp2ZlTM+40hrVsN+FY9mSl/e1GMizabh/TW6EXI++5V3KCEafHRE7mkw==
+X-Received: by 2002:a05:6e02:1bcc:: with SMTP id x12mr1141093ilv.275.1627911594639;
+        Mon, 02 Aug 2021 06:39:54 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id q7sm7459028iow.12.2021.08.02.06.39.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Aug 2021 06:39:54 -0700 (PDT)
+Received: (nullmailer pid 918766 invoked by uid 1000);
+        Mon, 02 Aug 2021 13:39:43 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Iskren Chernev <iskren.chernev@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
         Michael Turquette <mturquette@baylibre.com>,
-        thierry.reding@gmail.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Ludovic.Desroches@microchip.com, o.rempel@pengutronix.de,
-        andy.shevchenko@gmail.com, aardelean@deviqon.com,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        broonie@kernel.org, Jonathan.Cameron@huawei.com,
-        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        wsa@kernel.org, kernel@pengutronix.de, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, Claudiu.Beznea@microchip.com
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
- devm_clk_get for prepared and enabled clocks enabled clocks]
-Message-ID: <20210802094810.GJ22278@shell.armlinux.org.uk>
-References: <YPkg0wtYIoHKpTUW@kunai>
- <20210722081817.2tsjzof4gvldq6ka@pengutronix.de>
- <YPlfcbkxiBmB+vw1@kunai>
- <CAHp75VfC=s12Unw3+Cn0ag71mM5i90=Jbwj4nYwB5cPKiUTRSA@mail.gmail.com>
- <20210723091331.wl33wtcvvnejuhau@pengutronix.de>
- <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com>
- <20210728202547.7uvfwflpruku7yps@pengutronix.de>
- <20210728204033.GF22278@shell.armlinux.org.uk>
- <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
- <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20210801103448.3329333-2-iskren.chernev@gmail.com>
+References: <20210801103448.3329333-1-iskren.chernev@gmail.com> <20210801103448.3329333-2-iskren.chernev@gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clk: qcom: gcc-sm6115: Document SM6115 GCC
+Date:   Mon, 02 Aug 2021 07:39:43 -0600
+Message-Id: <1627911583.087441.918765.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jul 31, 2021 at 02:00:04PM +0200, Uwe Kleine-König wrote:
-> Hi Russell, hi Stephen,
+On Sun, 01 Aug 2021 13:34:47 +0300, Iskren Chernev wrote:
+> Add device tree bindings for global clock controller on SM6115 and
+> SM4250 SoCs (pin and software compatible).
 > 
-> On Sat, Jul 31, 2021 at 12:41:19AM -0700, Stephen Boyd wrote:
-> > +1 This patch doesn't fall under CCF maintainer.
+> Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-sm6115.yaml       |  74 +++++++
+>  include/dt-bindings/clock/qcom,gcc-sm6115.h   | 201 ++++++++++++++++++
+>  2 files changed, 275 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
 > 
-> Given that CCF is the only implementer of devm_clk_get at least an Ack
-> from your side would still be good I guess?
 
-I think devm_clk_get() should not be part of CCF but should be
-part of the interface level - it's silly to have devm_clk_get()
-being CCF but not clk_get(). The same should go for the other
-devm wrappers around the plain clk_* interfaces.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-> I found a patch set adding devm variants of clk_enable (e.g.
-> https://lore.kernel.org/patchwork/patch/755667/) but this approach is
-> different as it also contains clk_get which IMHO makes more sense 
-> The discussion considered wrapping get+enable at one point, but I didn't
-> find a followup.
+yamllint warnings/errors:
 
-There have been several different approaches to wrapping things up,
-but here's a question: should we make it easier to do the lazy thing
-(get+enable) or should we make it easier to be power efficient?
-Shouldn't we be encouraging people to write power efficient drivers?
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.example.dt.yaml: clock-controller@1400000: clocks: [[4294967295, 0], [4294967295]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.example.dt.yaml: clock-controller@1400000: clock-names: ['bi_tcxo', 'sleep_clk'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+\ndoc reference errors (make refcheckdocs):
 
-> > I still wonder if it would be better if we had some sort of DT binding
-> > that said "turn this clk on when the driver probes this device and keep
-> > it on until the driver is unbound".
-> 
-> This doesn't sound like a hardware property and so I don't think this
-> belongs into DT and I would be surprised if the dt maintainers would be
-> willing to accept an idea with this semantic.
+See https://patchwork.ozlabs.org/patch/1512028
 
-I really don't like that idea - enabling or disabling a clock is
-an implementation decision, one which can change over time. Even
-if a clock is required to be on for e.g. accessing device registers,
-we may decide that, if we want maximum power savings, to disable
-that clock when the device is not being used, but an initial driver
-implementation may not do that. If we encourage people to throw a
-property in DT, then the driver's runtime behaviour becomes a
-combination of the DT being used and the driver implementation.
-Let's keep that to a minimum.
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
