@@ -4,35 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E960FC43216
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 14:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EBEC432BE
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 14:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D25A160F35
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 14:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA0D60F48
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 14:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234483AbhHBOqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 10:46:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48818 "EHLO mail.kernel.org"
+        id S234553AbhHBOqH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 10:46:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234199AbhHBOqD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Aug 2021 10:46:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A16C60E97;
-        Mon,  2 Aug 2021 14:45:54 +0000 (UTC)
+        id S234418AbhHBOqG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Aug 2021 10:46:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3F99E60EB2;
+        Mon,  2 Aug 2021 14:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627915554;
-        bh=Gn6aJIz4qbLtWhu0ndvUgCY6f/5Zfl8nTLtnA2Awyxk=;
+        s=k20201202; t=1627915556;
+        bh=wLgsCp5CDUhRCXB4S/ViBhPh4kOWYhkFzV2F5QKfBPc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C7nIRzYn9fNJNwMx9n4bxSR0d29yPFnS2OvhO9q8J6fHvAHqffixET+GD4vKqPxcc
-         Lssasy6BYnhikjejGqawc+AMg2NsaLX6aYYrwVrJdRl2LWCJKXjGu6Xp5CG0lwVqMN
-         tMPKYHTYvBdJAiXsxxRR7DCCq2KIq9CF1WeOK8iQNUi+KrUM/vSM/jcSHm+L8EGlN4
-         YTH+YsMTT5j3o66nQaqTrzXghTl59jX5ZQQFU1PTRcd201HYk3qsLJRMY7UECfpdQC
-         gSyl48nac7yIOGjTTNVHDRzs5a5Q3y5yfBA4ijD9HQA+2VEQ8aKb8KcFC/5tuUt7Fs
-         o399TURJC8Stw==
+        b=HvAzO1mcwWpzWc4xVXHBh2bDLLrMUliOJ4sG+f1ZHe95YkYehZOvghzSKGuXNFBiA
+         ymAC/GiHcf3ZC+A3nngzRpRygyYYJn7LKv8zmoVHX5D8vLfX30xkQ67zGj3P6O+8/u
+         NAwoDwIcqY3cK4l9d9it86tx25oag/VfA//hATkhSfnYdXEDBDxOZ3+d4ngFj02o+f
+         aeboJF6V4TiL0o9uNSSqVA1blk/wFx0MmP7ApdQduutHcdnozj6+i0sNpvQ8VzJYN9
+         0QoMg/zNMXLFIoFzBuARNLKM5C+/Ahct0POMm880GO6RY3742ZqzXwsG0qMSBdZuu1
+         xHfBmclaiMTqw==
 Received: by pali.im (Postfix)
-        id EE1E6B98; Mon,  2 Aug 2021 16:45:53 +0200 (CEST)
+        id 0215AB98; Mon,  2 Aug 2021 16:45:56 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     Andrew Lunn <andrew@lunn.ch>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 3/6] dt-bindings: mvebu-uart: document DT bindings for marvell,armada-3700-uart-clock
-Date:   Mon,  2 Aug 2021 16:45:26 +0200
-Message-Id: <20210802144529.1520-4-pali@kernel.org>
+Subject: [PATCH v4 5/6] arm64: dts: marvell: armada-37xx: add device node for UART clock and use it
+Date:   Mon,  2 Aug 2021 16:45:28 +0200
+Message-Id: <20210802144529.1520-6-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210802144529.1520-1-pali@kernel.org>
 References: <20210624224909.6350-1-pali@kernel.org>
@@ -59,70 +59,114 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This change adds DT bindings documentation for device nodes with compatible
-string "marvell,armada-3700-uart-clock".
+This change defines DT node for UART clock "marvell,armada-3700-uart-clock"
+and use this UART clock as a base clock for all UART devices.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- .../bindings/clock/armada3700-uart-clock.yaml | 49 +++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts    |  4 ++++
+ .../boot/dts/marvell/armada-3720-espressobin.dtsi |  4 ++++
+ .../boot/dts/marvell/armada-3720-turris-mox.dts   |  4 ++++
+ arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts  |  4 ++++
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi      | 15 +++++++++++++--
+ 5 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-new file mode 100644
-index 000000000000..5ef04f3affda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+title: Marvell Armada 3720 UART clocks
-+properties:
-+  compatible:
-+    const: marvell,armada-3700-uart-clock
-+  reg:
-+    items:
-+      - description: UART Clock Control Register
-+      - description: UART 2 Baud Rate Divisor Register
-+  clocks:
-+    description: |
-+      List of parent clocks suitable for UART from following set:
-+        "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal"
-+      UART clock can use one from this set and when more are provided
-+      then kernel would choose and configure the most suitable one.
-+      It is suggest to specify at least one TBG clock to achieve
-+      baudrates above 230400 and also to specify clock which bootloader
-+      used for UART (most probably xtal) for smooth boot log on UART.
-+  clock-names:
-+    items:
-+      - const: TBG-A-P
-+      - const: TBG-B-P
-+      - const: TBG-A-S
-+      - const: TBG-B-S
-+      - const: xtal
-+    minItems: 1
-+    maxItems: 5
-+  '#clock-cells':
-+    const: 1
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+additionalProperties: false
-+examples:
-+  - |
-+    uartclk: uartclk@12000 {
-+      compatible = "marvell,armada-3700-uart-clock";
-+      reg = <0x12010 0x4>, <0x12210 0x4>;
-+      clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>, <&tbg 3>, <&xtalclk>;
-+      clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal";
-+      #clock-cells = <1>;
-+    };
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+index 3e5789f37206..accf014a6a1e 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+@@ -191,6 +191,10 @@
+ 	};
+ };
+ 
++&uartclk {
++	status = "okay";
++};
++
+ /*
+  * Exported on the micro USB connector CON30(V2.0)/CON32(V1.4) through
+  * an FTDI (also on CON24(V2.0)/CON26(V1.4)).
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
+index 5fc613d24151..d03c7cdfbfb3 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
+@@ -117,6 +117,10 @@
+ 	};
+ };
+ 
++&uartclk {
++	status = "okay";
++};
++
+ /* Exported on the micro USB connector J5 through an FTDI */
+ &uart0 {
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
+index cacf2a05fb22..972c6d400f8b 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
+@@ -167,6 +167,10 @@
+ 	status = "disabled";
+ };
+ 
++&uartclk {
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts b/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
+index 95d46e8d081c..c8217440b8dd 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
+@@ -183,6 +183,10 @@
+ 	phy-names = "usb2-utmi-otg-phy";
+ };
+ 
++&uartclk {
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index 20dd9d9e9d58..d9bdd374cf45 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -132,10 +132,21 @@
+ 				reg = <0x11500 0x40>;
+ 			};
+ 
++			uartclk: uartclk@12000 {
++				compatible = "marvell,armada-3700-uart-clock";
++				reg = <0x12010 0x4>, <0x12210 0x4>;
++				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
++					<&tbg 3>, <&xtalclk>;
++				clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S",
++					"TBG-B-S", "xtal";
++				#clock-cells = <1>;
++				status = "disabled";
++			};
++
+ 			uart0: serial@12000 {
+ 				compatible = "marvell,armada-3700-uart";
+ 				reg = <0x12000 0x18>;
+-				clocks = <&xtalclk>;
++				clocks = <&uartclk 0>;
+ 				interrupts =
+ 				<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+@@ -147,7 +158,7 @@
+ 			uart1: serial@12200 {
+ 				compatible = "marvell,armada-3700-uart-ext";
+ 				reg = <0x12200 0x30>;
+-				clocks = <&xtalclk>;
++				clocks = <&uartclk 1>;
+ 				interrupts =
+ 				<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+ 				<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.20.1
 
