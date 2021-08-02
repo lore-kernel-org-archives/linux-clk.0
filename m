@@ -2,223 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94F4C4338F
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE21CC4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85AB360F51
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B366961050
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Aug 2021 19:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhHBTYo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Aug 2021 15:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbhHBTYo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Aug 2021 15:24:44 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C384C061764
-        for <linux-clk@vger.kernel.org>; Mon,  2 Aug 2021 12:24:34 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id f27so3857306vsp.8
-        for <linux-clk@vger.kernel.org>; Mon, 02 Aug 2021 12:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6NL8fhjdk0TL/HeebMzN8mENLvM91hqvv1V2BLU+G5g=;
-        b=rYpY6n0sMpipTddYKxEKmMdc3FRIO9h9EWI05gy951mRPL+1oPYPlmyOuup8pQ2lrE
-         XWaW+inYuL4+rTp40y27pntjYJ+Cd0nUZz/iBI7xtK3lmzWcn6Z5+tA+wvnVIJkhrMzZ
-         BGgOcZF5gN4z0HNdCjWWX8bp+gEyHzxLn824FbKiGW7PMhRdcP0UumcLOgEHET0I3lIn
-         hwG9ejn5nVdPNRS3896WVqUtYrdV7VMvvd9Ph5U0y5qqDnVE00w73YuQMjF0BttTr13e
-         y16vfZJhjF5Qd8gM8QImaxRWkCqSNZX7GtR5qy/y1Q5r22zNBvfUEZiTnD04k9DbWXfL
-         n73w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6NL8fhjdk0TL/HeebMzN8mENLvM91hqvv1V2BLU+G5g=;
-        b=cKeOq9GMkuObaFIXp+tORTaUz3K6ZckH7RgVuZW9Rs0RtpNdijmhzm4aTia2skqa3W
-         +A7DVlbrq7IJc9OfRrHGVGXzBRNul6v8uPvFWF8k9wLvhkMLS1SveQLz0CRNZYizDhL/
-         +wqflBc8suJ6mxkU1W8ElwqzeO3heExLsVpmlfZ3SM3ePN1hO1HFxdh6fykQHdg9oZS7
-         TA6Khw6HMbksHBznXOHXyiObqTi64QmmZTwlAAl03j2EtgHQhq1Z7z4hYj51BehfOVDs
-         8JENudSF0zZVrLc6fWLWBBAJ4bK+9jIT5N/d5D+rXu7tsY99HoRbiCe5WRWql+6zsUOo
-         oeEg==
-X-Gm-Message-State: AOAM5308WlxXGI+yoUcBFZvHT6nQuX6rLraAhQBzonTmPtkjqbX0Byij
-        U1wfpslUAmahB9agGM9t6ZfWKAnV0qPMSToFR0TJoQ==
-X-Google-Smtp-Source: ABdhPJwj5ivH+XA+udnXW1ju84n1CSmVGUcizuCYfmS2cyxqEpHpDhiYSn4JXLoeQmn6ikJYAaDQkK1+OTlUcKDehdY=
-X-Received: by 2002:a05:6102:21b:: with SMTP id z27mr11724359vsp.27.1627932273429;
- Mon, 02 Aug 2021 12:24:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-3-semen.protsenko@linaro.org> <a2b6b868-e984-440c-75b1-599680537cc9@canonical.com>
-In-Reply-To: <a2b6b868-e984-440c-75b1-599680537cc9@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 2 Aug 2021 22:24:22 +0300
-Message-ID: <CAPLW+4=ewQf8_hMKFFqPRaoqQxhRZZ1=NGboLstvVBOYcTc3aw@mail.gmail.com>
-Subject: Re: [PATCH 02/12] pinctrl: samsung: Add Exynos850 SoC specific data
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S229571AbhHBT0O convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Aug 2021 15:26:14 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:55654 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229567AbhHBT0O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Aug 2021 15:26:14 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1mAdZY-000515-2w; Mon, 02 Aug 2021 21:26:00 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     Yunhao Tian <t123yh@outlook.com>, t123yh.xyz@gmail.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: rk3308: make ddrphy4x clock critical
+Date:   Mon, 02 Aug 2021 21:25:59 +0200
+Message-ID: <16392318.geO5KgaWL5@diego>
+In-Reply-To: <CAGETcx8YYrkCV0UObtOqHUnS29Q-raC54KUh14wqyBDMJ4e46g@mail.gmail.com>
+References: <BYAPR20MB24886765F888A9705CBEB70789E39@BYAPR20MB2488.namprd20.prod.outlook.com> <162758560739.714452.5782743329332725952@swboyd.mtv.corp.google.com> <CAGETcx8YYrkCV0UObtOqHUnS29Q-raC54KUh14wqyBDMJ4e46g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 30 Jul 2021 at 18:22, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 30/07/2021 16:49, Sam Protsenko wrote:
-> > Add Samsung Exynos850 SoC specific data to enable pinctrl support for
-> > all platforms based on Exynos850.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 129 ++++++++++++++++++
-> >  drivers/pinctrl/samsung/pinctrl-exynos.h      |  29 ++++
-> >  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
-> >  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
-> >  4 files changed, 161 insertions(+)
-> >
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> > index b6e56422a700..9c71ff84ba7e 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> > @@ -40,6 +40,24 @@ static const struct samsung_pin_bank_type exynos5433_bank_type_alive = {
-> >       .reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
-> >  };
-> >
-> > +/*
-> > + * Bank type for non-alive type. Bit fields:
-> > + * CON: 4, DAT: 1, PUD: 4, DRV: 4, CONPDN: 2, PUDPDN: 4
-> > + */
-> > +static struct samsung_pin_bank_type exynos850_bank_type_off  = {
-> > +     .fld_width = { 4, 1, 4, 4, 2, 4, },
-> > +     .reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
-> > +};
-> > +
-> > +/*
-> > + * Bank type for alive type. Bit fields:
-> > + * CON: 4, DAT: 1, PUD: 4, DRV: 4
-> > + */
-> > +static struct samsung_pin_bank_type exynos850_bank_type_alive = {
-> > +     .fld_width = { 4, 1, 4, 4, },
-> > +     .reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
-> > +};
-> > +
-> >  /* Pad retention control code for accessing PMU regmap */
-> >  static atomic_t exynos_shared_retention_refcnt;
-> >
-> > @@ -422,3 +440,114 @@ const struct samsung_pinctrl_of_match_data exynos7_of_data __initconst = {
-> >       .ctrl           = exynos7_pin_ctrl,
-> >       .num_ctrl       = ARRAY_SIZE(exynos7_pin_ctrl),
-> >  };
-> > +
-> > +/* pin banks of exynos850 pin-controller 0 (ALIVE) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks0[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
->
-> Why EXYNOS9 not EXYNOS850? Is it really shared with 96xx, 98xx and 9x0
-> series?
->
+Hi Saravana,
 
-Yeah, I double checked and those macros are actually used for 96xx
-SoCs. So I suggest we leave it as is, as it seems to be related to the
-whole architecture series, not only to Exynos850.
+Am Montag, 2. August 2021, 20:24:56 CEST schrieb Saravana Kannan:
+> On Thu, Jul 29, 2021 at 12:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Heiko Stübner (2021-07-28 02:53:54)
+> > > Am Dienstag, 27. Juli 2021, 03:08:10 CEST schrieb Stephen Boyd:
+> > > > Quoting Yunhao Tian (2021-07-21 05:48:16)
+> > > > > Currently, no driver support for DDR memory controller (DMC) is present,
+> > > > > as a result, no driver is explicitly consuming the ddrphy clock. This means
+> > > > > that VPLL1 (parent of ddr clock) will be shutdown if we enable
+> > > > > and then disable any child clock of VPLL1 (e.g. SCLK_I2S0_8CH_TX).
+> > > > > If VPLL1 is disabled, the whole system will freeze, because the DDR
+> > > > > controller will lose its clock. So, it's necessary to prevent VPLL1 from
+> > > > > shutting down, by marking the ddrphy4x CLK_IS_CRITICAL.
+> > > > >
+> > > > > This bug was discovered when I was porting rockchip_i2s_tdm driver to
+> > > > > mainline kernel from Rockchip 4.4 kernel. I guess that other Rockchip
+> > > > > SoCs without DMC driver may need the same patch. If this applies to
+> > > > > other devices, please let us know.
+> > > > >
+> > > > > Signed-off-by: Yunhao Tian <t123yh@outlook.com>
+> > > > > ---
+> > > > >  drivers/clk/rockchip/clk-rk3308.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
+> > > > > index 2c3bd0c749f2..6be077166330 100644
+> > > > > --- a/drivers/clk/rockchip/clk-rk3308.c
+> > > > > +++ b/drivers/clk/rockchip/clk-rk3308.c
+> > > > > @@ -564,7 +564,7 @@ static struct rockchip_clk_branch rk3308_clk_branches[] __initdata = {
+> > > > >         COMPOSITE(SCLK_DDRCLK, "clk_ddrphy4x_src", mux_dpll_vpll0_vpll1_p, CLK_IGNORE_UNUSED,
+> > > > >                         RK3308_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 3, DFLAGS,
+> > > > >                         RK3308_CLKGATE_CON(0), 10, GFLAGS),
+> > > > > -       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED,
+> > > > > +       GATE(0, "clk_ddrphy4x", "clk_ddrphy4x_src", CLK_IGNORE_UNUSED | CLK_IS_CRITICAL,
+> > > >
+> > > > Is it not enabled by default?
+> > >
+> > > All gates are enabled by default, but this gate shares a common parent
+> > > tree down to a pll, so if another leaf-user is disabling their part, this
+> > > untracked clock would get disabled as well.
+> >
+> > Right, this problem is cropping up in different places for various
+> > drivers.
+> >
+> > >
+> > > On that note, I remember a sort of CLK_HANDOFF was planned way back
+> > > in the past, meaning clock is critical until a driver picks it up, after this the
+> > > driver is responsible for it. Did that get any momentum?
+> > >
+> >
+> > Last I saw Saravana sent a patch to sort of connect CLK_HANDOFF to
+> > device driver sync_state() callback. I think we need to at least stash
+> > away that a clk is enabled at boot and then figure out how to tie in
+> > sync_state and/or something else.
+> 
+> Yeah, my clk_sync_state() series should do that. I'll get back on that
+> patch this week or next.
+> 
+> Yunhao,
+> 
+> Is there at least some DT device that consumes the DDR phy clock? Can
+> you point me to the DT for this board (not the SoC) so I can take a
+> look at it later?
 
-> > +     EXYNOS9_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-> > +     EXYNOS9_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-> > +     EXYNOS9_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-> > +     EXYNOS9_PIN_BANK_EINTW(4, 0x080, "gpa4", 0x10),
-> > +     EXYNOS9_PIN_BANK_EINTN(3, 0x0A0, "gpq0"),
-> > +};
-> > +
-> > +/* pin banks of exynos850 pin-controller 1 (CMGP) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks1[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x000, "gpm0", 0x00),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x020, "gpm1", 0x04),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x040, "gpm2", 0x08),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x060, "gpm3", 0x0C),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x080, "gpm4", 0x10),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x0A0, "gpm5", 0x14),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x0C0, "gpm6", 0x18),
-> > +     EXYNOS9_PIN_BANK_EINTW(1, 0x0E0, "gpm7", 0x1C),
-> > +};
-> > +
-> > +/* pin banks of exynos850 pin-controller 2 (AUD) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks2[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTG(5, 0x000, "gpb0", 0x00),
-> > +     EXYNOS9_PIN_BANK_EINTG(5, 0x020, "gpb1", 0x04),
-> > +};
-> > +
-> > +/* pin banks of exynos850 pin-controller 3 (HSI) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks3[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTG(6, 0x000, "gpf2", 0x00),
-> > +};
-> > +
-> > +/* pin banks of exynos850 pin-controller 4 (CORE) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks4[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTG(4, 0x000, "gpf0", 0x00),
-> > +     EXYNOS9_PIN_BANK_EINTG(8, 0x020, "gpf1", 0x04),
-> > +};
-> > +
-> > +/* pin banks of exynos850 pin-controller 5 (PERI) */
-> > +static struct samsung_pin_bank_data exynos850_pin_banks5[] = {
-> > +     /* Must start with EINTG banks, ordered by EINT group number. */
-> > +     EXYNOS9_PIN_BANK_EINTG(2, 0x000, "gpg0", 0x00),
-> > +     EXYNOS9_PIN_BANK_EINTG(6, 0x020, "gpp0", 0x04),
-> > +     EXYNOS9_PIN_BANK_EINTG(4, 0x040, "gpp1", 0x08),
-> > +     EXYNOS9_PIN_BANK_EINTG(4, 0x060, "gpp2", 0x0C),
-> > +     EXYNOS9_PIN_BANK_EINTG(8, 0x080, "gpg1", 0x10),
-> > +     EXYNOS9_PIN_BANK_EINTG(8, 0x0A0, "gpg2", 0x14),
-> > +     EXYNOS9_PIN_BANK_EINTG(1, 0x0C0, "gpg3", 0x18),
-> > +     EXYNOS9_PIN_BANK_EINTG(3, 0x0E0, "gpc0", 0x1C),
-> > +     EXYNOS9_PIN_BANK_EINTG(6, 0x100, "gpc1", 0x20),
-> > +};
-> > +
-> > +static const struct samsung_pin_ctrl exynos850_pin_ctrl[] __initconst = {
-> > +     {
-> > +             /* pin-controller instance 0 ALIVE data */
-> > +             .pin_banks      = exynos850_pin_banks0,
-> > +             .nr_banks       = ARRAY_SIZE(exynos850_pin_banks0),
-> > +             .eint_gpio_init = exynos_eint_gpio_init,
-> > +             .eint_wkup_init = exynos_eint_wkup_init,
-> > +             .suspend        = exynos_pinctrl_suspend,
-> > +             .resume         = exynos_pinctrl_resume,
->
-> I guess retention registers will follow sometime later.
->
+Not for the rk3308. If you're looking for live-examples of handoff clocks,
+I can provide another examples though:
 
-Good point, never noticed retention control is needed for
-suspend/resume to work properly. I will remove suspend/resume ops in
-v2, and PM support will be sent later.
 
-> Best regards,
-> Krzysztof
+rockchip/clk-rk3288.c - pclk_rkpwm (in the separate critical clock list) ... with
+arch/arm/boot/dts/rk3288.dtsi - clock is supplying pwm nodes.
+
+As the comment in the clock driver suggests (line 850), some boards use
+pwm-regulators for central components. The pwm-regulators are configured
+at boot already, so the clock shouldn't be disabled till the pwm-regulator takes
+over.
+
+
+The whole memory handling is a blank slate on the kernel side for Rockchip
+boards still. The bootloader sets up the memory and nobody has found the
+time to modell things like memory scaling in a nice way yet.
+
+
+Heiko
+
+
