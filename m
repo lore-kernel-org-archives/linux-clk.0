@@ -2,83 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F09AC4338F
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 19:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278E3C4338F
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 20:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 505C561029
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 19:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F32260F70
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 20:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239696AbhHCTdG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Aug 2021 15:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239556AbhHCTdG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Aug 2021 15:33:06 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAADEC061757;
-        Tue,  3 Aug 2021 12:32:53 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id hw6so123341ejc.10;
-        Tue, 03 Aug 2021 12:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S6aAs8+0bD6TLDZsc90toizQHtNCGpVqyhMdWMcDyPY=;
-        b=HPyPjNAeb7f0hz2e/L+LyJRnNuFkerE+gU/ZS4zST7TQDJ6/nORmT2lVcAGki5Kv5i
-         0zR1TMKG+4aRVzb0WlTCtnCR3wawppukodqi8rO46PwM9s9HqWSTtT8kcnTJz50DsyF1
-         Y7V8ie+eiW0082wi6+9QA/KQmGg2t6RIZL1M/is9SYnpswB/e7QOVtU2gs8ztFNcVo+y
-         fx2cVHgM3rDz7xmlsNegwYZXhqIF9+KlSZ1IKnVftuzz33rZiLwiYcJU+P9fXjjrDe8a
-         h6hs1wzFqengVzv7mbXGYdIRe6PRgbcDOHtGn3dpv7RiEeK8fumhtkk06c22D9sZVS01
-         G2Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S6aAs8+0bD6TLDZsc90toizQHtNCGpVqyhMdWMcDyPY=;
-        b=TLgpdrxqrADavO9q5iY4hJY3Gh+x25cNUqpgeIakqvWgGZUSgtY1F9fnL7qDaZkPbF
-         NO/spzniaGE9vkb/6YnO+FhrlDHVXFc7OsLzNs9hCeuud4XykCGrOgjIBO78i7KpSCox
-         yhzLzbksXM0PVLAS8foWeYx2NCgRlOQS4Pmvzc6Vp7uGZp+PrhyVIYRcrrMc9nBbPDWy
-         np6tZ0isWutXRJekP1FwevHsqoRB26FfbuvDwZEbTifokWPyjrUD0XOf3GZKvVTFZB8u
-         u4uWkD9JFJUWDHZ+ZRo2QQV8JP281fm+JTPJl+EiGlOXKj7Z0Y8dw2XQ4iB9kBktF2ho
-         1Zkw==
-X-Gm-Message-State: AOAM533T++SAZsFrlQrqFyV2ZN7cRo6FAgqkfJ2Y7evxF6g1JDw1LBQ7
-        G7oOI65sP6a1pv+P+1cIsu3TI72JO9MhuDFyzfq1AbIN
-X-Google-Smtp-Source: ABdhPJzDlmmCxa1Gm7xSn9HFqX7zJVaujUZBMw7ldKjec3V1/92BHARi8ZJBRQErTbupEF340i97zEQbvJ8AOAB3yW0=
-X-Received: by 2002:a17:906:6686:: with SMTP id z6mr22150785ejo.539.1628019172331;
- Tue, 03 Aug 2021 12:32:52 -0700 (PDT)
+        id S239301AbhHCUQY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Aug 2021 16:16:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231599AbhHCUQY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Aug 2021 16:16:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0EF5F60EB2;
+        Tue,  3 Aug 2021 20:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628021773;
+        bh=4Hc5H3tFBMyJGEzXpbHHIkA4xHumd/DYIMeOo+hLB1U=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=tQDbPjAMf95JdIq3bORY3WK8waUp+Vpu3ootxDnbV4GkJK0hclTk+dI9egY7DuiAr
+         1ouL/gaUX5Ni8jJwPr9vVSxCwM3/2KnN/iLRFwHjMS7NdvJAXNJi99zhAjGYeunFNp
+         qzBFkpP4oSLhWkQf3pA7KKCsvryQidRt8X9/AA54fbWxRULaYOyuiYvVBF7CTRPd57
+         BEpyfqnHQ8GA/r2yMBaoDwBaptHtZqEnFgNXRGnlh9dAxTrhbuJjoJeELBqEAI95XD
+         dGrz3Wzwd+aEdDt6szXGPoI8EbelH0aFAlO+O+ErS3tCIR5e24f4zkyF6Fv8kTdqdL
+         IAngTID7axTjQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 3 Aug 2021 21:32:41 +0200
-Message-ID: <CAFBinCDGHdqEDv4DA4QU9T2pmMS3GMSo_tJDzya=Uhcr8Fr5Uw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFBinCDGHdqEDv4DA4QU9T2pmMS3GMSo_tJDzya=Uhcr8Fr5Uw@mail.gmail.com>
+References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com> <CAFBinCDGHdqEDv4DA4QU9T2pmMS3GMSo_tJDzya=Uhcr8Fr5Uw@mail.gmail.com>
 Subject: Re: [PATCH v1 0/6] clk: switch dividers to .determine_rate
-To:     linux-clk@vger.kernel.org, sboyd@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Abel Vesa <abel.vesa@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-clk@vger.kernel.org
+Date:   Tue, 03 Aug 2021 13:16:11 -0700
+Message-ID: <162802177168.3896750.7152723802271449673@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Quoting Martin Blumenstingl (2021-08-03 12:32:41)
+> Hi Stephen,
+>=20
+>=20
+> On Sat, Jul 3, 2021 at 12:51 AM Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+> [...]
+> > Martin Blumenstingl (6):
+> >   clk: divider: Implement and wire up .determine_rate by default
+> >   clk: imx: clk-divider-gate: Switch to clk_divider.determine_rate
+> Abel has already picked this patch (thanks!)
+>=20
+> Can you please take the rest of the series (that is: patch 1 and patches =
+3-6)?
+> I can also re-send them if you prefer that.
+>=20
 
-
-On Sat, Jul 3, 2021 at 12:51 AM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-[...]
-> Martin Blumenstingl (6):
->   clk: divider: Implement and wire up .determine_rate by default
->   clk: imx: clk-divider-gate: Switch to clk_divider.determine_rate
-Abel has already picked this patch (thanks!)
-
-Can you please take the rest of the series (that is: patch 1 and patches 3-6)?
-I can also re-send them if you prefer that.
-
-Best regards,
-Martin
+No need to resend. I can pick them up.
