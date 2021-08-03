@@ -2,107 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C49C4338F
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 08:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB953C4338F
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 08:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA7FE60F11
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 08:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83C7D60C41
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Aug 2021 08:18:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234356AbhHCIMG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Aug 2021 04:12:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45662 "EHLO mail.kernel.org"
+        id S234414AbhHCITI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Aug 2021 04:19:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234260AbhHCIMG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Aug 2021 04:12:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A474260F35;
-        Tue,  3 Aug 2021 08:11:55 +0000 (UTC)
+        id S234238AbhHCITI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Aug 2021 04:19:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5F3DB60F48;
+        Tue,  3 Aug 2021 08:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627978315;
-        bh=msnR5QzQeo3Lq11b0UAkCf4kr/ykeiduGDAXCY8iwbw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=urCAC6Ev+tDAWmhFVuc36aGNlm/4q0CA0aQhxRhVjrC378XcgxLT+2NauPR+ev4nB
-         kSQTcqx6GV8p+sXmGA8LLjetdmJoxKzbw98++UBcURojbIMG+9Mm0XL/gx1SzH7btB
-         BfR06oa72KvsgXu+mKJxPz8EVem7/dkkHl36SBPSPGwDf9dXoauMDbP1KXYzVgIIfB
-         SciCzuPQcywiGCqSlKJeMhom/PvMoFAndKcz6gAZe4BYC7ozau3zU++5NR6L+FlLDP
-         n7EemAaNmXuEQ8uuNcrWYenWr142vQwlhSF9EjbSj3rx3hXSQ+T7/YlDJlBVD12B42
-         BuFVGL3BLEpQg==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210802163824.GK22278@shell.armlinux.org.uk>
-References: <YPlfcbkxiBmB+vw1@kunai> <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <06e799be-b7c0-5b93-8586-678a449d2239@microchip.com> <20210728202547.7uvfwflpruku7yps@pengutronix.de> <20210728204033.GF22278@shell.armlinux.org.uk> <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com> <20210731120004.i3affxw7upl5y4c5@pengutronix.de> <20210802094810.GJ22278@shell.armlinux.org.uk> <20210802152755.ibisunvibmwhiyry@pengutronix.de> <20210802163824.GK22278@shell.armlinux.org.uk>
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of devm_clk_get for prepared and enabled clocks enabled clocks]
+        s=k20201202; t=1627978737;
+        bh=jo1vkTLSsn7o97jvaxaVfv1Rsk4Y3N0xg2r+xbu7uuY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=r2fGxeWs95g1Eu6yjJQUDShK+xub4RuOqsjJmPoJ+XxjUoHgZf3qoGprsYVUZGj78
+         UjsyR49mK9ME2xiAoGnV+01NL+lPrTph7gBzqWbo+9Hx/9bsYfEhK+T5+OYmZ1+gjF
+         J6KsTv9BKdOYuwTghi5SMeg8R0YSU3WkwKlBHY8xuMxPcXX86rkXrnx3cYiZt4ul1t
+         6jUVZ6HJwRqkCZeuNOtlxtmeuAzgtKpGkITDCGyf9vTls7ZIKr85YXsUunmkB+iDk0
+         7KqrXLyC/eqa2cdoPibWSUhkeeewjgEAFTp9fYvsne0ulm4dk+4bvYuZN0WuOtujiD
+         uahTRuW6fyZcg==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     alexandre.belloni@bootlin.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        thierry.reding@gmail.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Ludovic.Desroches@microchip.com, o.rempel@pengutronix.de,
-        andy.shevchenko@gmail.com, aardelean@deviqon.com,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        broonie@kernel.org, Jonathan.Cameron@huawei.com,
-        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        wsa@kernel.org, kernel@pengutronix.de, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, Claudiu.Beznea@microchip.com
-To:     Russell King (Oracle) <linux@armlinux.org.uk>,
-        <u.kleine-koenig@pengutronix.de>
-Date:   Tue, 03 Aug 2021 01:11:54 -0700
-Message-ID: <162797831443.714452.3551045763456936564@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.14-rc4
+Date:   Tue,  3 Aug 2021 01:18:56 -0700
+Message-Id: <20210803081856.3896288-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.32.0.554.ge1b32706d8-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Russell King (Oracle) (2021-08-02 09:38:24)
-> On Mon, Aug 02, 2021 at 05:27:55PM +0200, Uwe Kleine-Konig wrote:
-> > Hello Russell,
-> >=20
-> > On Mon, Aug 02, 2021 at 10:48:10AM +0100, Russell King (Oracle) wrote:
->=20
-> > > There have been several different approaches to wrapping things up,
-> > > but here's a question: should we make it easier to do the lazy thing
-> > > (get+enable) or should we make it easier to be power efficient?
-> > > Shouldn't we be encouraging people to write power efficient drivers?
-> >=20
-> > Yeah, sounds compelling, but I wonder if that's of practical importance.
-> > How many driver authors do you expect to lure into making a better
-> > driver just because devm_clk_get_prepared() doesn't exist? In contrast:
-> > How many drivers become simpler with devm_clk_get_prepared() and so
-> > it becomes easier to maintain them and easier to spot bugs?
-> > In the absence of devm_clk_get_prepared(), is it better that several
-> > frameworks (or drivers) open code it?
->=20
-> It probably depends on where you stand on power management and power
-> efficiency issues. Personally, I would like to see more effort put
-> into drivers to make them more power efficient, and I believe in the
-> coming years, power efficiency is going to become a big issue.
->=20
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
-I agree we should put more effort into power efficiency in the kernel.
-I've occasionally heard from driver writers that they never will turn
-the clk off even in low power modes though. They feel like it's a
-nuisance to have to do anything with the clk framework in their driver.
-When I say "why not use runtime PM?" I get told that they're not turning
-the clk off because it needs to be on all the time, so using runtime PM
-makes the driver more complicated, not less, and adds no value. I think
-some touchscreens are this way, and watchdogs too. Looking at the
-drivers being converted in this series I suspect RTC is one of those
-sorts of devices as well. But SPI and I2C most likely could benefit from
-using runtime PM and so those ones don't feel appropriate to convert.
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
 
-Maybe this series would be more compelling if those various drivers that
-are hand rolling the devm action were converted to the consolidated
-official devm function. The truth is it's already happening in various
-subsystems so consolidating that logic into one place would be a win
-code size wise and very hard to ignore.
+are available in the Git repository at:
 
-Doing
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
- $ git grep devm_add_action | grep clk
+for you to fetch changes up to f828b0bcacef189edbd247e9f48864fc36bfbe33:
 
-seems to catch quite a few of them.
+  clk: fix leak on devm_clk_bulk_get_all() unwind (2021-07-31 00:53:38 -0700)
+
+----------------------------------------------------------------
+A collection of clk driver fixes and one core clk API fix
+
+ - Fix stm32 clk data to avoid a crash early on
+
+ - Fix a randconfig build error in HiSilicon clk driver
+
+ - Avoid an oops at boot on Qualcomm MSM8936 SoCs due to an
+   improper consolidation of structs
+
+ - Fix imbalanced disabling of the unused MMC clock on Tegra210
+   Jetson Nano
+
+ - Plug a memory leak in devm_clk_bulk_get_all() unwind path
+
+----------------------------------------------------------------
+Brian Norris (1):
+      clk: fix leak on devm_clk_bulk_get_all() unwind
+
+Dario Binacchi (1):
+      clk: stm32f4: fix post divisor setup for I2S/SAI PLLs
+
+Dmitry Osipenko (1):
+      clk: tegra: Implement disable_unused() of tegra_clk_sdmmc_mux_ops
+
+Randy Dunlap (1):
+      clk: hisilicon: hi3559a: select RESET_HISI
+
+Shawn Guo (1):
+      clk: qcom: smd-rpm: Fix MSM8936 RPM_SMD_PCNOC_A_CLK
+
+ drivers/clk/clk-devres.c          |  9 ++++++++-
+ drivers/clk/clk-stm32f4.c         | 10 +++++-----
+ drivers/clk/hisilicon/Kconfig     |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c    |  2 +-
+ drivers/clk/tegra/clk-sdmmc-mux.c | 10 ++++++++++
+ 5 files changed, 25 insertions(+), 7 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
