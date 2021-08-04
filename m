@@ -2,132 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D379DC4338F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 15:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA46FC4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A680560F38
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 15:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D55D360F14
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234423AbhHDPBW convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 11:01:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231255AbhHDPBW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Aug 2021 11:01:22 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D34D60D07;
-        Wed,  4 Aug 2021 15:01:09 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1mBIOJ-002wYT-Gx; Wed, 04 Aug 2021 16:01:07 +0100
-Date:   Wed, 04 Aug 2021 16:01:06 +0100
-Message-ID: <87k0l1w8y5.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S232554AbhHDQEC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 12:04:02 -0400
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:38588 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232163AbhHDQD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 12:03:56 -0400
+Received: by mail-oi1-f174.google.com with SMTP id u25so3407395oiv.5;
+        Wed, 04 Aug 2021 09:03:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tKSdWR6LuP7/2+zwPkH2rMp+y8qOWa7f1FszBegCdng=;
+        b=Pnr3VZ/Zzim2ilv4g2t5ExrJQvxpVtJA+gUVhl4SmHrY5nv8V9CAUPrBfUfrGtBwuC
+         2wRa3FYGQyHJZwAnqlbS7I53AGVX++qyg3a3lN4zw3Gvh5UaRnZ+l5QT5GjHqAS36RLv
+         qWVcbuxgEeGsu5nz6VEe2098tYYumHDGCC4GMY8A039sASw6VQqhgATemA1QjO7piB0k
+         fJkP6IqPZyroJVWEKk8QRV7MmUuCZcV3vZFPqPiyq7qQuzHIp9yq7Re4hxdbXaRaXJc7
+         kZuDq0IPF1j0du6x1Vbh40bOyGxUkiQ9A1DuJ9F+bOvdDPuEg4sm0V+2caj25Rk6O7Ix
+         It+w==
+X-Gm-Message-State: AOAM531L5RbLaiE3ntJqU4tjJEu7lF7Tl5ENiAJSS2Zn0S9f01ThCRqp
+        z6uR4K7O7Uz1LYGrsASe2hVDZxJRWLw2O4ID/EM=
+X-Google-Smtp-Source: ABdhPJwb+AFSuQFd9Qt4IaQNDfDv9oeVcM8t2rpq2EZ4QBkdI/asefkWq9s+RrEs9nAXHu5UoYJMOy8tNNLKUXyy6Qo=
+X-Received: by 2002:a05:6808:198c:: with SMTP id bj12mr136049oib.71.1628093023170;
+ Wed, 04 Aug 2021 09:03:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210722193450.35321-1-andriy.shevchenko@linux.intel.com> <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 4 Aug 2021 18:03:31 +0200
+Message-ID: <CAJZ5v0iCmu+P=phePuNeWC4MgMJ08hMtJrKoCUAzjSSnxBzObw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] clk: x86: Rename clk-lpt to more specific clk-lpss-atom
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-In-Reply-To: <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
-        <20210730144922.29111-13-semen.protsenko@linaro.org>
-        <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
-        <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: semen.protsenko@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, jirislaby@kernel.org, gregkh@linuxfoundation.org, ckeepax@opensource.wolfsonmicro.com, ryu.real@samsung.com, tom.gall@linaro.org, sumit.semwal@linaro.org, john.stultz@linaro.org, amit.pundir@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 04 Aug 2021 15:39:38 +0100,
-Sam Protsenko <semen.protsenko@linaro.org> wrote:
-
-> > You are also missing the hypervisor virtual timer interrupt.
+On Fri, Jul 23, 2021 at 3:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Jul 22, 2021 at 9:34 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > >
-> 
-> Checked SoC TRM, there is no PPI for hypervisor virtual timer
-> interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
-> ARM and TRM, almost no description of it. Also, I checked other
-> platforms, and seems like everyone does the same (having only 4
-> interrupts). And I wasn't able to find any documentation on that, so I
-> guess I'll leave it as is, if you don't mind.
+> > The LPT stands for Lynxpoint PCH. However the driver is used on a few
+> > Intel Atom SoCs. Rename it to reflect this in a way how another clock
+> > driver, i.e. clk-pmc-atom, is called.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >
+> > Good to go either via ACPI or CCF tree.
+>
+> In case you want the latter:
+>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
+Assuming that this hasn't been picked up, I'm going to apply it as
+5.15 material.
 
-From the ARMv8 ARM (ARM DDI 0487G.b)
-<quote>
-D11.2.4 Timers
+Thanks!
 
-In an implementation of the Generic Timer that includes EL3, if EL3
-can use AArch64, the following timers are implemented:
-
-* An EL1 physical timer, that:
-  - In Secure state, can be accessed from EL1.
-  - In Non-secure state, can be accessed from EL1 unless those
-    accesses are trapped to EL2.
-    When this timer can be accessed from EL1, an EL1 control
-    determines whether it can be accessed from EL0.
-* A Non-secure EL2 physical timer.
-* A Secure EL3 physical timer. An EL3 control determines whether this
-  register is accessible from Secure EL1.
-* An EL1 virtual timer.
-* When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
-* When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
-* When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
-</quote>
-
-Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
-it does have a NS-EL2 virtual timer. This is further confirmed by the
-TRM which documents CNTHV*_EL2 as valid system registers[1].
-
-So the timer exists, the signal is routed out of the core, and it
-is likely that it is connected to the GIC.
-
-If the designers have omitted it, then it needs to be documented as
-such.
-
-Thanks,
-
-	M.
-
-[1] https://developer.arm.com/documentation/100442/0100/register-descriptions/aarch64-system-registers/aarch64-architectural-system-register-summary
-
--- 
-Without deviation from the norm, progress is not possible.
+> >  drivers/acpi/acpi_lpss.c                       |  6 ++++--
+> >  drivers/clk/x86/Makefile                       |  2 +-
+> >  drivers/clk/x86/{clk-lpt.c => clk-lpss-atom.c} | 12 ++++++------
+> >  include/linux/platform_data/x86/clk-lpss.h     |  2 +-
+> >  4 files changed, 12 insertions(+), 10 deletions(-)
+> >  rename drivers/clk/x86/{clk-lpt.c => clk-lpss-atom.c} (76%)
+> >
+> > diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+> > index 894b7e6ae144..7f163074e4e4 100644
+> > --- a/drivers/acpi/acpi_lpss.c
+> > +++ b/drivers/acpi/acpi_lpss.c
+> > @@ -385,7 +385,9 @@ static struct platform_device *lpss_clk_dev;
+> >
+> >  static inline void lpt_register_clock_device(void)
+> >  {
+> > -       lpss_clk_dev = platform_device_register_simple("clk-lpt", -1, NULL, 0);
+> > +       lpss_clk_dev = platform_device_register_simple("clk-lpss-atom",
+> > +                                                      PLATFORM_DEVID_NONE,
+> > +                                                      NULL, 0);
+> >  }
+> >
+> >  static int register_device_clock(struct acpi_device *adev,
+> > @@ -1337,7 +1339,7 @@ void __init acpi_lpss_init(void)
+> >         const struct x86_cpu_id *id;
+> >         int ret;
+> >
+> > -       ret = lpt_clk_init();
+> > +       ret = lpss_atom_clk_init();
+> >         if (ret)
+> >                 return;
+> >
+> > diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+> > index 18564efdc651..1244c4e568ff 100644
+> > --- a/drivers/clk/x86/Makefile
+> > +++ b/drivers/clk/x86/Makefile
+> > @@ -1,6 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
+> >  obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-fch.o
+> > -clk-x86-lpss-objs              := clk-lpt.o
+> > +clk-x86-lpss-y                 := clk-lpss-atom.o
+> >  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
+> >  obj-$(CONFIG_CLK_LGM_CGU)      += clk-cgu.o clk-cgu-pll.o clk-lgm.o
+> > diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpss-atom.c
+> > similarity index 76%
+> > rename from drivers/clk/x86/clk-lpt.c
+> > rename to drivers/clk/x86/clk-lpss-atom.c
+> > index fbe9fd3ed948..aa9d0bb98f8b 100644
+> > --- a/drivers/clk/x86/clk-lpt.c
+> > +++ b/drivers/clk/x86/clk-lpss-atom.c
+> > @@ -13,7 +13,7 @@
+> >  #include <linux/platform_data/x86/clk-lpss.h>
+> >  #include <linux/platform_device.h>
+> >
+> > -static int lpt_clk_probe(struct platform_device *pdev)
+> > +static int lpss_atom_clk_probe(struct platform_device *pdev)
+> >  {
+> >         struct lpss_clk_data *drvdata;
+> >         struct clk *clk;
+> > @@ -34,14 +34,14 @@ static int lpt_clk_probe(struct platform_device *pdev)
+> >         return 0;
+> >  }
+> >
+> > -static struct platform_driver lpt_clk_driver = {
+> > +static struct platform_driver lpss_atom_clk_driver = {
+> >         .driver = {
+> > -               .name = "clk-lpt",
+> > +               .name = "clk-lpss-atom",
+> >         },
+> > -       .probe = lpt_clk_probe,
+> > +       .probe = lpss_atom_clk_probe,
+> >  };
+> >
+> > -int __init lpt_clk_init(void)
+> > +int __init lpss_atom_clk_init(void)
+> >  {
+> > -       return platform_driver_register(&lpt_clk_driver);
+> > +       return platform_driver_register(&lpss_atom_clk_driver);
+> >  }
+> > diff --git a/include/linux/platform_data/x86/clk-lpss.h b/include/linux/platform_data/x86/clk-lpss.h
+> > index 207e1a317800..41df326583f9 100644
+> > --- a/include/linux/platform_data/x86/clk-lpss.h
+> > +++ b/include/linux/platform_data/x86/clk-lpss.h
+> > @@ -15,6 +15,6 @@ struct lpss_clk_data {
+> >         struct clk *clk;
+> >  };
+> >
+> > -extern int lpt_clk_init(void);
+> > +extern int lpss_atom_clk_init(void);
+> >
+> >  #endif /* __CLK_LPSS_H */
+> > --
+> > 2.30.2
+> >
