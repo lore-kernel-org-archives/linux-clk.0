@@ -2,138 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CE0C432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C22C4338F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9735B60C41
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F4B60C3E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238317AbhHDSHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 14:07:13 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:34550 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230226AbhHDSHN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 14:07:13 -0400
-Received: by mail-ot1-f49.google.com with SMTP id e13-20020a056830200db02904f06fa2790cso2440710otp.1;
-        Wed, 04 Aug 2021 11:07:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SYqG4QXoSp28eXqQGcJnRQ+yb/Mnrr/VGHid3OstWEM=;
-        b=BZt3alAl9T4ch9/PjpSbppW/C+pxLSjnuDMsWnRGqsIvYSyMTwy+ueKL4AprUJH9ks
-         u3WxW9GCPmBCw/zfYc1jp1AWJ8pYWFJ4JAu5jZ4YZVsWQ+SJlFOt9DhFLws+t3ClgghW
-         qwZxK++fgL/+dwQuYe4u10QVQRd8IsnUJUU4WZcWTBoz7eC55LPjsSdxlbSLYFyBKbvX
-         gdlOkPDhkYhBU7rhgiVWH3YbPpdI9DJYQW4PWBBFv2/dAfXzBWURUqoAZ1h7Ugwesbfe
-         law8AaGdQXyJoNMJjUF8LHpJmIDyxL8LCN5DjLdOypLblJNvmH6sPDPvohG/oPVgYbU/
-         j7FQ==
-X-Gm-Message-State: AOAM530pNU/YtjrFZrrWM3cTfYe8NBppZN1jJNM3tkCc0raYSnFb4zBy
-        aWwuaIZ16idUo2spg4GnEAWO2rxPbtjviNgFuoo=
-X-Google-Smtp-Source: ABdhPJzfkepS4uxITjIGI3lPF2wXivJvih2RRS4BkNi5QoB0chen1jcEDWhaltCu67IBdWxRsFvLP7NXLSTRKEv02hI=
-X-Received: by 2002:a05:6830:9a:: with SMTP id a26mr712161oto.260.1628100419994;
- Wed, 04 Aug 2021 11:06:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210731195034.979084-1-dmitry.baryshkov@linaro.org> <20210731195034.979084-2-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20210731195034.979084-2-dmitry.baryshkov@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 4 Aug 2021 20:06:49 +0200
-Message-ID: <CAJZ5v0gWD8WSQU4oPMSdZFM9VpNpc4TAFJ=_wQLB60XFxw-Ciw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: runtime: add devm_pm_runtime_enable helper
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S238576AbhHDSIY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 14:08:24 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:43174 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238289AbhHDSIY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 14:08:24 -0400
+X-IronPort-AV: E=Sophos;i="5.84,295,1620658800"; 
+   d="scan'208";a="89818616"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Aug 2021 03:08:09 +0900
+Received: from localhost.localdomain (unknown [10.226.92.21])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9E69F40BF1F2;
+        Thu,  5 Aug 2021 03:08:07 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH  0/2] Add SDHI clock and reset entries in cpg driver
+Date:   Wed,  4 Aug 2021 19:08:01 +0100
+Message-Id: <20210804180803.29087-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jul 31, 2021 at 9:50 PM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> A typical code pattern for pm_runtime_enable() call is to call it in the
-> _probe function and to call pm_runtime_disable() both from _probe error
-> path and from _remove function. For some drivers the whole remove
-> function would consist of the call to pm_remove_disable().
->
-> Add helper function to replace this bolierplate piece of code. Calling
-> devm_pm_runtime_enable() removes the need for calling
-> pm_runtime_disable() both in the probe()'s error path and in the
-> remove() function.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/base/power/runtime.c | 17 +++++++++++++++++
->  include/linux/pm_runtime.h   |  4 ++++
->  2 files changed, 21 insertions(+)
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 8a66eaf731e4..ec94049442b9 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1447,6 +1447,23 @@ void pm_runtime_enable(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_enable);
->
-> +static void pm_runtime_disable_action(void *data)
-> +{
-> +       pm_runtime_disable(data);
-> +}
-> +
-> +/**
-> + * devm_pm_runtime_enable - devres-enabled version of pm_runtime_enable.
-> + * @dev: Device to handle.
-> + */
-> +int devm_pm_runtime_enable(struct device *dev)
-> +{
-> +       pm_runtime_enable(dev);
-> +
-> +       return devm_add_action_or_reset(dev, pm_runtime_disable_action, dev);
+Add SDHI clock and reset entries in cpg driver.
 
-When exactly is pm_runtime_disable_action() going to run by this rule?
- When the device goes away or when the driver is unbound from it?
+As per the HW manual, we should not directly switch from 533 MHz
+to 400 MHz and vice versa. To change the setting from 533 MHz to 400 MHz
+or vice versa, Switch to 266 MHz first,and then switch to the target
+setting 533 MHz or 400 MHz. So added support in mux to handle this
+condition.
 
-> +}
-> +EXPORT_SYMBOL_GPL(devm_pm_runtime_enable);
-> +
->  /**
->   * pm_runtime_forbid - Block runtime PM of a device.
->   * @dev: Device to handle.
-> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-> index aab8b35e9f8a..222da43b7096 100644
-> --- a/include/linux/pm_runtime.h
-> +++ b/include/linux/pm_runtime.h
-> @@ -59,6 +59,8 @@ extern void pm_runtime_put_suppliers(struct device *dev);
->  extern void pm_runtime_new_link(struct device *dev);
->  extern void pm_runtime_drop_link(struct device_link *link);
->
-> +extern int devm_pm_runtime_enable(struct device *dev);
-> +
->  /**
->   * pm_runtime_get_if_in_use - Conditionally bump up runtime PM usage counter.
->   * @dev: Target device.
-> @@ -253,6 +255,8 @@ static inline void __pm_runtime_disable(struct device *dev, bool c) {}
->  static inline void pm_runtime_allow(struct device *dev) {}
->  static inline void pm_runtime_forbid(struct device *dev) {}
->
-> +static inline int devm_pm_runtime_enable(struct device *dev) { return 0; }
-> +
->  static inline void pm_suspend_ignore_children(struct device *dev, bool enable) {}
->  static inline void pm_runtime_get_noresume(struct device *dev) {}
->  static inline void pm_runtime_put_noidle(struct device *dev) {}
-> --
-> 2.30.2
->
+This patch series is based on renesas-clk-for-v5.15 [1] 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/?h=renesas-clk-for-v5.15
+
+This patch series depend upon [2]
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=522063
+
+Biju Das (2):
+  drivers: clk: renesas: rzg2l-cpg: Add SDHI clk mux support
+  drivers: clk: renesas: r9a07g044-cpg: Add SDHI clock and reset entries
+
+ drivers/clk/renesas/r9a07g044-cpg.c |  37 ++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c     | 106 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     |  12 ++++
+ 3 files changed, 155 insertions(+)
+
+-- 
+2.17.1
+
