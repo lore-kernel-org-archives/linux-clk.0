@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6BDC4338F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDA5C4320E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A57DC6104F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8AB061037
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240316AbhHDSg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 14:36:58 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47348
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240297AbhHDSg6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 14:36:58 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 1C42C3F353
-        for <linux-clk@vger.kernel.org>; Wed,  4 Aug 2021 18:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628102204;
-        bh=kLWUtHA3a5xY5N4esWD+HgIy7cu1PUh6hkksxjyOzDA=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=QEiioed295tlhKw5C0JyTnJTg/9K+9RKyHvE5KwGfbSQmRS9btrYGJdQi5/ofnBbe
-         9Fyyu6sl8y/vDp0pbM3g0sO0W1pVWwdvocgJ/GvuLfeJQaHwIteuu/db9j4To3Fujk
-         t/Etl26CDchJKRyblq9tPQqanCia0K22e0NTivexFbqxhElGBDalzsQ1T56aH0WZKs
-         xsUR8InbVrVdwOhN6Vmqb8n1VMC8a6tPJ22Q+gPLXIN3+0suIhEv7sRifxKH1JcRy1
-         rpjLwhf4yZfazOdjOMi6SY1tNDG5ZqmKu7Oop2BazqBSaR5yJK/mthsLnvB0yXNg9i
-         ihOajgbuYBcdg==
-Received: by mail-ed1-f71.google.com with SMTP id u25-20020aa7d8990000b02903bb6a903d90so1887861edq.17
-        for <linux-clk@vger.kernel.org>; Wed, 04 Aug 2021 11:36:44 -0700 (PDT)
+        id S240332AbhHDShv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 14:37:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240335AbhHDShu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 14:37:50 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D067C0613D5
+        for <linux-clk@vger.kernel.org>; Wed,  4 Aug 2021 11:37:36 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id h7so211207vso.13
+        for <linux-clk@vger.kernel.org>; Wed, 04 Aug 2021 11:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4v3mD/G2snz9EPb0n2yEtj1B1wrpxfXSkVM/rZ+bK44=;
+        b=UiEa1uta1KUv8TDKZIseoNOvN58KiK/nQxRPJnKuD5lTZrBcITzinwOi4xZm8Cf4H7
+         UiXfhR3HHnQsZdXRk1ePk1j0+K+W3KAgbIxU6qZuLGNoAozeTSlsHGPoM7wZY5MDzNcr
+         nveFZTkbRVI2YLs8FY39dWLY7KkMtLVbsWaz+tBzVbl9V8lH0yCJF0cQPx2vikXmRrG2
+         nUuq5oRb71+g/PXYHLEFMPSy6yT9mfdb8ACD9+l7s9e9iPFbUwtqj7AiMeAevCmCZCCb
+         JjlI17bXqD6S7+vljkvff8HX3byQ9kVXLeGHgLOhEdUm9VXdFRVnY2TRpbfwZKlBgO1i
+         O3Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kLWUtHA3a5xY5N4esWD+HgIy7cu1PUh6hkksxjyOzDA=;
-        b=nmryfT3/UXTiHry5WYOPQfX6Y2lGJjM/eeM0wUjeCclkc56nStSdUhvzrXwlhk0CF0
-         Ihxnpo7sBWWw4OrBIGQujwDcycHqEP9ebvJB1g3toPc7fKwaTlpIyEqA1b2tFSgkxKD7
-         0Tc5Yk/MvvOOOfSFJCG0W9ACVWLfkWREd4o6KRgN+GZWEwPPKNCOk9AiBSaMkItMiJ8g
-         l/acT87glOJ0TtvaR+D6Xg9UHStdmMf2VJV6K2veZz2qjsdnnh1Ps4pXaMTnQ+vIDWbe
-         VsS1Pwqo/Ug1orWd1Z3SyO5JNWpNrC9KwhLwHjChhTkkIdSiG84YxFYqs+GZJN9QFHI1
-         2JYg==
-X-Gm-Message-State: AOAM530mjt5BC8pAv+44eLo7We4mDadRwe30KtF+ndgsk2hWdBgmnWO3
-        3U3Mrvj4DPDpB0mptxslaf7FM8bo4dhZoLjlprf9JhaLPLFvgyVjjb54ZmWl/rXMQ4XtoFMkeiy
-        yJAol67SzuQWlCXNBEqNMeUFzR0vPBlbxSzmfHg==
-X-Received: by 2002:a17:906:9c84:: with SMTP id fj4mr572942ejc.356.1628102203667;
-        Wed, 04 Aug 2021 11:36:43 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy9TZSrCE1ZT+ckWS9kno03EUR0eItVE1fmPjRT2brkptWJ/N8BEt1UTXE4ubRLwSxkR5ISYw==
-X-Received: by 2002:a17:906:9c84:: with SMTP id fj4mr572916ejc.356.1628102203469;
-        Wed, 04 Aug 2021 11:36:43 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.43.172])
-        by smtp.gmail.com with ESMTPSA id cm1sm1248761edb.68.2021.08.04.11.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 11:36:42 -0700 (PDT)
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Marc Zyngier <maz@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4v3mD/G2snz9EPb0n2yEtj1B1wrpxfXSkVM/rZ+bK44=;
+        b=OmZh6TSrT7MZ8rqLFJ5lQIfvlv1M+JEHgXon2tQm6TgfgamX6YbA+abv+eD0u/piD8
+         /QY1F5DmjyelUI+GhTe7vUFyk17OE6VC+rSNZc6P01b2NyWDFj6Y3/XueKtHBYRfskyL
+         FRbxnG3PH00GfjtcNOHBPY4XYOw8dihKMH0NGCSqn/nUPs52dcZ1mba5m9iCVfBEvpa+
+         vF3ZlTl4zS87jrOqUSnVXk96QiyYUBfWd0ONS4fCYhf076VuB1fRKI3Q9Vf12gp0YAmj
+         Q3xRUqQ3kqvIC/+aCluNNrVox85hFFuag5eOkspQVUMqnPmqsAX2sAcByydJ6/Nfy/Vi
+         3EaQ==
+X-Gm-Message-State: AOAM532WhEO7SnnD9CWmR1534NCwIEeAoyTTGeCORx8Yx1HdAgLScKTY
+        oKyqhDK4NTQVbKydhOzO9qiz5QLk73M/yNKcpFeS2Q==
+X-Google-Smtp-Source: ABdhPJxf7txyKVStc9ONgBFPDBEr31m+shBvV8OvMRDu9d7Qql+uwVOjtKWRAB+wjysr6bHm+4qOzLKEIRe9Sx5O90o=
+X-Received: by 2002:a67:f60e:: with SMTP id k14mr1496697vso.30.1628102255703;
+ Wed, 04 Aug 2021 11:37:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-13-semen.protsenko@linaro.org> <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+ <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com> <87k0l1w8y5.wl-maz@kernel.org>
+In-Reply-To: <87k0l1w8y5.wl-maz@kernel.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 4 Aug 2021 21:37:24 +0300
+Message-ID: <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+To:     Marc Zyngier <maz@kernel.org>
 Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -87,103 +84,103 @@ Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
         "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-13-semen.protsenko@linaro.org>
- <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
- <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-Message-ID: <bf21badb-804f-45f0-c02b-80ff57ab9931@canonical.com>
-Date:   Wed, 4 Aug 2021 20:36:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/08/2021 16:39, Sam Protsenko wrote:
-> Hi Marc,
-> 
-> On Fri, 30 Jul 2021 at 19:50, Marc Zyngier <maz@kernel.org> wrote:
->>
->> On 2021-07-30 15:49, Sam Protsenko wrote:
->>> Samsung Exynos850 is ARMv8-based mobile-oriented SoC.
->>>
->>> Features:
->>>  * CPU: Cortex-A55 Octa (8 cores), up to 2 GHz
->>>  * Memory interface: LPDDR4/4x 2 channels (12.8 GB/s)
->>>  * SD/MMC: SD 3.0, eMMC5.1 DDR 8-bit
->>>  * Modem: 4G LTE, 3G, GSM/GPRS/EDGE
->>>  * RF: Quad GNSS, WiFi 5 (802.11ac), Bluetooth 5.0
->>>  * GPU: Mali-G52 MP1
->>>  * Codec: 1080p 60fps H64, HEVC, JPEG HW Codec
->>>  * Display: Full HD+ (2520x1080)@60fps LCD
->>>  * Camera: 16+5MP/13+8MP ISP, MIPI CSI 4/4/2, FD, DRC
->>>  * Connectivity: USB 2.0 DRD, USI (SPI/UART/I2C), HSI2C, I3C, ADC,
->>> Audio
->>>
->>> This patch adds minimal SoC support. Particular board device tree files
->>> can include exynos850.dtsi file to get SoC related nodes, and then
->>> reference those nodes further as needed.
->>>
->>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>> ---
->>>  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++++++++
->>>  arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
->>>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
->>>  3 files changed, 1057 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-usi.dtsi
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
->>> b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
->>> new file mode 100644
->>> index 000000000000..4cf0a22cc6db
->>
->> [...]
->>
->>> +     gic: interrupt-controller@12a00000 {
->>> +             compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
->>
->> One thing for sure, it cannot be both. And given that it is
->> an A55-based SoC, it isn't either. It is more likely a GIC400.
->>
-> 
-> Yes, it's GIC-400, thanks for pointing that out. Will fix that in v2.
-> 
->>> +             #interrupt-cells = <3>;
->>> +             #address-cells = <0>;
->>> +             interrupt-controller;
->>> +             reg = <0x0 0x12a01000 0x1000>,
->>> +                   <0x0 0x12a02000 0x1000>,
->>
->> This is wrong. It is architecturally set to 8kB.
->>
-> 
-> Nice catch! Actually there is an error (typo?) in SoC's TRM, saying
-> that Virtual Interface Control Register starts at 0x3000 offset (from
-> 0x12a00000), where it obviously should be 0x4000, that's probably
-> where this dts error originates from. Btw, I'm also seeing the same
-> error in exynos7.dtsi.
+On Wed, 4 Aug 2021 at 18:01, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Wed, 04 Aug 2021 15:39:38 +0100,
+> Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> > > You are also missing the hypervisor virtual timer interrupt.
+> > >
+> >
+> > Checked SoC TRM, there is no PPI for hypervisor virtual timer
+> > interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
+> > ARM and TRM, almost no description of it. Also, I checked other
+> > platforms, and seems like everyone does the same (having only 4
+> > interrupts). And I wasn't able to find any documentation on that, so I
+> > guess I'll leave it as is, if you don't mind.
+>
+> I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
+>
+> From the ARMv8 ARM (ARM DDI 0487G.b)
+> <quote>
+> D11.2.4 Timers
+>
+> In an implementation of the Generic Timer that includes EL3, if EL3
+> can use AArch64, the following timers are implemented:
+>
+> * An EL1 physical timer, that:
+>   - In Secure state, can be accessed from EL1.
+>   - In Non-secure state, can be accessed from EL1 unless those
+>     accesses are trapped to EL2.
+>     When this timer can be accessed from EL1, an EL1 control
+>     determines whether it can be accessed from EL0.
+> * A Non-secure EL2 physical timer.
+> * A Secure EL3 physical timer. An EL3 control determines whether this
+>   register is accessible from Secure EL1.
+> * An EL1 virtual timer.
+> * When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
+> * When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
+> * When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
+> </quote>
+>
+> Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
+> it does have a NS-EL2 virtual timer. This is further confirmed by the
+> TRM which documents CNTHV*_EL2 as valid system registers[1].
+>
+> So the timer exists, the signal is routed out of the core, and it
+> is likely that it is connected to the GIC.
+>
+> If the designers have omitted it, then it needs to be documented as
+> such.
+>
 
-What's the error exactly? The "Virtual interface control register"
-offset (3rd region) is set properly to 0x4000 on Exynos7. Also one for
-the Exynos5433 looks correct.
+Ok, I've checked thoroughly all docs again, and it seems like there is
+no dedicated PPI number for this "EL2 Hypervisor Virtual Timer" in
+Exynos850 SoC. The timer instance itself might exist of course, but
+interrupt line is probably wasn't connected to GIC by SoC designers,
+at least it's not documented.
 
-> Though I don't have a TRM for Exynos7 SoCs, so
-> not sure if I should go ahead and fix that too. Anyway, for Exynos850,
-> I'll fix that in v2 series.
+Moreover, from [1,2] it looks like if it were existing it would have
+been PPI=12 (INTID=28). But in GIC-400 TRM this PPI is assigned to
+"Legacy FIQ signal", and all there is no PPI for Hypervisor Virtual
+Timer documented there as well. In Exynos850 TRM the source for this
+PPI's interrupt source is marked as "-", which means it's not used.
 
+So if you know something that I don't know -- please point me out the
+doc where this PPI line is documented. Otherwise I can add the comment
+to device tree, stating that this interrupt line is not present in
+SoC's GIC, i.e. something like this:
 
-However while we are at addresses - why are you using address-cells 2?
-It adds everywhere additional 0x0 before actual address.
+8<------------------------------------------------------------------------------->8
+    timer {
+        compatible = "arm,armv8-timer";
+        interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
+                      IRQ_TYPE_LEVEL_LOW)>,
+                 <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
+                      IRQ_TYPE_LEVEL_LOW)>,
+                 <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
+                      IRQ_TYPE_LEVEL_LOW)>,
+                 <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
+                      IRQ_TYPE_LEVEL_LOW)>;
+        /* Hypervisor Virtual Timer PPI is not present in this SoC GIC */
+    };
+8<------------------------------------------------------------------------------->8
 
+Is that ok with you?
 
-Best regards,
-Krzysztof
+[1] https://developer.arm.com/documentation/102379/0000/The-processor-timers?lang=en
+[2] https://gem5.googlesource.com/public/gem5/+/refs/heads/master/src/arch/arm/fastmodel/CortexA76/FastModelCortexA76.py#150
+
+> Thanks,
+>
+>         M.
+>
+> [1] https://developer.arm.com/documentation/100442/0100/register-descriptions/aarch64-system-registers/aarch64-architectural-system-register-summary
+>
+> --
+> Without deviation from the norm, progress is not possible.
