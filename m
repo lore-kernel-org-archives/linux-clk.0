@@ -2,176 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA46FC4320A
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AECC4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D55D360F14
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF05E60EFD
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232554AbhHDQEC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 12:04:02 -0400
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:38588 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232163AbhHDQD4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 12:03:56 -0400
-Received: by mail-oi1-f174.google.com with SMTP id u25so3407395oiv.5;
-        Wed, 04 Aug 2021 09:03:43 -0700 (PDT)
+        id S236832AbhHDQ22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 12:28:28 -0400
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:44782 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229725AbhHDQ22 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 12:28:28 -0400
+Received: by mail-ot1-f51.google.com with SMTP id o2-20020a9d22020000b0290462f0ab0800so2132092ota.11;
+        Wed, 04 Aug 2021 09:28:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tKSdWR6LuP7/2+zwPkH2rMp+y8qOWa7f1FszBegCdng=;
-        b=Pnr3VZ/Zzim2ilv4g2t5ExrJQvxpVtJA+gUVhl4SmHrY5nv8V9CAUPrBfUfrGtBwuC
-         2wRa3FYGQyHJZwAnqlbS7I53AGVX++qyg3a3lN4zw3Gvh5UaRnZ+l5QT5GjHqAS36RLv
-         qWVcbuxgEeGsu5nz6VEe2098tYYumHDGCC4GMY8A039sASw6VQqhgATemA1QjO7piB0k
-         fJkP6IqPZyroJVWEKk8QRV7MmUuCZcV3vZFPqPiyq7qQuzHIp9yq7Re4hxdbXaRaXJc7
-         kZuDq0IPF1j0du6x1Vbh40bOyGxUkiQ9A1DuJ9F+bOvdDPuEg4sm0V+2caj25Rk6O7Ix
-         It+w==
-X-Gm-Message-State: AOAM531L5RbLaiE3ntJqU4tjJEu7lF7Tl5ENiAJSS2Zn0S9f01ThCRqp
-        z6uR4K7O7Uz1LYGrsASe2hVDZxJRWLw2O4ID/EM=
-X-Google-Smtp-Source: ABdhPJwb+AFSuQFd9Qt4IaQNDfDv9oeVcM8t2rpq2EZ4QBkdI/asefkWq9s+RrEs9nAXHu5UoYJMOy8tNNLKUXyy6Qo=
-X-Received: by 2002:a05:6808:198c:: with SMTP id bj12mr136049oib.71.1628093023170;
- Wed, 04 Aug 2021 09:03:43 -0700 (PDT)
+        bh=j3kzQ55GGFtb0Mnc40mJ/qjwvjBGrMWl/RUKJOzRSJ4=;
+        b=V/uWiOX4GvD84Kx08E41CAuH525XmKyBaEXVGwNFTcMB4zptUeeJLHWaof7DT7YxkM
+         eCROhGvYSMpugK/OctniIkKrtYWLvWAdbJnViofJjsQxODwLSTwn7YRIrhwW3CxK6ZbZ
+         5a6mE6Bgk4NOc1slWm9wOr4d5lFRIKjRLMmSYoxCxCHV+nvHAs42GVksPDdiB6T6ZTN/
+         j1PkuQ9St7nYwni/LY2CuzOmjqZObPIvM9Uytqn4En4H1AN1Y5EovG71DnI9ynwDDp+d
+         8gQELrh1AFaeJnKLe1O0tRbFzHhpZ//TVl4Au5Wrxl3HyqUOvAr8NuRUID0ChmCaNTtG
+         i5zw==
+X-Gm-Message-State: AOAM5301yYliCatiPHX1wVgwUyiW3jSZTav3G09I4n9MXmqe+Y7H7LAN
+        67RHwJ3KWFp10EJDo6bMccLrRHfzsdNbkk/OAMo=
+X-Google-Smtp-Source: ABdhPJz3wrMIcjsODR4s1X5t9UxcGX3nbsnfrHYhJrS5pP8rhRT2xB1xfqzyfplseVLyyccz/6Wp2X6PeyiM1uJwaTo=
+X-Received: by 2002:a9d:5c8b:: with SMTP id a11mr461995oti.206.1628094494364;
+ Wed, 04 Aug 2021 09:28:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210722193450.35321-1-andriy.shevchenko@linux.intel.com> <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
+References: <20210722193450.35321-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
+ <CAJZ5v0iCmu+P=phePuNeWC4MgMJ08hMtJrKoCUAzjSSnxBzObw@mail.gmail.com> <162809409848.19113.15878488082512415331@swboyd.mtv.corp.google.com>
+In-Reply-To: <162809409848.19113.15878488082512415331@swboyd.mtv.corp.google.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 4 Aug 2021 18:03:31 +0200
-Message-ID: <CAJZ5v0iCmu+P=phePuNeWC4MgMJ08hMtJrKoCUAzjSSnxBzObw@mail.gmail.com>
+Date:   Wed, 4 Aug 2021 18:28:03 +0200
+Message-ID: <CAJZ5v0iu_6yxh1hgNT+C7efJX774fK0jaYYXkC2eMt24cd+Lhg@mail.gmail.com>
 Subject: Re: [PATCH v1 1/1] clk: x86: Rename clk-lpt to more specific clk-lpss-atom
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Michael Turquette <mturquette@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 3:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Wed, Aug 4, 2021 at 6:21 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> On Thu, Jul 22, 2021 at 9:34 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+> Quoting Rafael J. Wysocki (2021-08-04 09:03:31)
+> > On Fri, Jul 23, 2021 at 3:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > >
+> > > On Thu, Jul 22, 2021 at 9:34 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > >
+> > > > The LPT stands for Lynxpoint PCH. However the driver is used on a few
+> > > > Intel Atom SoCs. Rename it to reflect this in a way how another clock
+> > > > driver, i.e. clk-pmc-atom, is called.
+> > > >
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > ---
+> > > >
+> > > > Good to go either via ACPI or CCF tree.
+> > >
+> > > In case you want the latter:
+> > >
+> > > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > >
-> > The LPT stands for Lynxpoint PCH. However the driver is used on a few
-> > Intel Atom SoCs. Rename it to reflect this in a way how another clock
-> > driver, i.e. clk-pmc-atom, is called.
+> > Assuming that this hasn't been picked up, I'm going to apply it as
+> > 5.15 material.
 > >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >
-> > Good to go either via ACPI or CCF tree.
 >
-> In case you want the latter:
->
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> I applied it already to clk tree. Maybe I forgot to send the email,
+> sorry.
 
-Assuming that this hasn't been picked up, I'm going to apply it as
-5.15 material.
-
-Thanks!
-
-> >  drivers/acpi/acpi_lpss.c                       |  6 ++++--
-> >  drivers/clk/x86/Makefile                       |  2 +-
-> >  drivers/clk/x86/{clk-lpt.c => clk-lpss-atom.c} | 12 ++++++------
-> >  include/linux/platform_data/x86/clk-lpss.h     |  2 +-
-> >  4 files changed, 12 insertions(+), 10 deletions(-)
-> >  rename drivers/clk/x86/{clk-lpt.c => clk-lpss-atom.c} (76%)
-> >
-> > diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-> > index 894b7e6ae144..7f163074e4e4 100644
-> > --- a/drivers/acpi/acpi_lpss.c
-> > +++ b/drivers/acpi/acpi_lpss.c
-> > @@ -385,7 +385,9 @@ static struct platform_device *lpss_clk_dev;
-> >
-> >  static inline void lpt_register_clock_device(void)
-> >  {
-> > -       lpss_clk_dev = platform_device_register_simple("clk-lpt", -1, NULL, 0);
-> > +       lpss_clk_dev = platform_device_register_simple("clk-lpss-atom",
-> > +                                                      PLATFORM_DEVID_NONE,
-> > +                                                      NULL, 0);
-> >  }
-> >
-> >  static int register_device_clock(struct acpi_device *adev,
-> > @@ -1337,7 +1339,7 @@ void __init acpi_lpss_init(void)
-> >         const struct x86_cpu_id *id;
-> >         int ret;
-> >
-> > -       ret = lpt_clk_init();
-> > +       ret = lpss_atom_clk_init();
-> >         if (ret)
-> >                 return;
-> >
-> > diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-> > index 18564efdc651..1244c4e568ff 100644
-> > --- a/drivers/clk/x86/Makefile
-> > +++ b/drivers/clk/x86/Makefile
-> > @@ -1,6 +1,6 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> >  obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
-> >  obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-fch.o
-> > -clk-x86-lpss-objs              := clk-lpt.o
-> > +clk-x86-lpss-y                 := clk-lpss-atom.o
-> >  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
-> >  obj-$(CONFIG_CLK_LGM_CGU)      += clk-cgu.o clk-cgu-pll.o clk-lgm.o
-> > diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpss-atom.c
-> > similarity index 76%
-> > rename from drivers/clk/x86/clk-lpt.c
-> > rename to drivers/clk/x86/clk-lpss-atom.c
-> > index fbe9fd3ed948..aa9d0bb98f8b 100644
-> > --- a/drivers/clk/x86/clk-lpt.c
-> > +++ b/drivers/clk/x86/clk-lpss-atom.c
-> > @@ -13,7 +13,7 @@
-> >  #include <linux/platform_data/x86/clk-lpss.h>
-> >  #include <linux/platform_device.h>
-> >
-> > -static int lpt_clk_probe(struct platform_device *pdev)
-> > +static int lpss_atom_clk_probe(struct platform_device *pdev)
-> >  {
-> >         struct lpss_clk_data *drvdata;
-> >         struct clk *clk;
-> > @@ -34,14 +34,14 @@ static int lpt_clk_probe(struct platform_device *pdev)
-> >         return 0;
-> >  }
-> >
-> > -static struct platform_driver lpt_clk_driver = {
-> > +static struct platform_driver lpss_atom_clk_driver = {
-> >         .driver = {
-> > -               .name = "clk-lpt",
-> > +               .name = "clk-lpss-atom",
-> >         },
-> > -       .probe = lpt_clk_probe,
-> > +       .probe = lpss_atom_clk_probe,
-> >  };
-> >
-> > -int __init lpt_clk_init(void)
-> > +int __init lpss_atom_clk_init(void)
-> >  {
-> > -       return platform_driver_register(&lpt_clk_driver);
-> > +       return platform_driver_register(&lpss_atom_clk_driver);
-> >  }
-> > diff --git a/include/linux/platform_data/x86/clk-lpss.h b/include/linux/platform_data/x86/clk-lpss.h
-> > index 207e1a317800..41df326583f9 100644
-> > --- a/include/linux/platform_data/x86/clk-lpss.h
-> > +++ b/include/linux/platform_data/x86/clk-lpss.h
-> > @@ -15,6 +15,6 @@ struct lpss_clk_data {
-> >         struct clk *clk;
-> >  };
-> >
-> > -extern int lpt_clk_init(void);
-> > +extern int lpss_atom_clk_init(void);
-> >
-> >  #endif /* __CLK_LPSS_H */
-> > --
-> > 2.30.2
-> >
+No prob, dropping it now.
