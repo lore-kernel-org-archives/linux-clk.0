@@ -7,162 +7,196 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588D2C4338F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 21:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC17DC4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 21:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 374E260F35
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 21:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E88D60EFD
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 21:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240094AbhHDVD3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 17:03:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
+        id S231539AbhHDVbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 17:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240060AbhHDVDX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 17:03:23 -0400
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1048C06179B
-        for <linux-clk@vger.kernel.org>; Wed,  4 Aug 2021 14:03:07 -0700 (PDT)
-Received: by mail-qv1-xf31.google.com with SMTP id m12so1817485qvt.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 Aug 2021 14:03:07 -0700 (PDT)
+        with ESMTP id S230438AbhHDVbA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 17:31:00 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83394C061799
+        for <linux-clk@vger.kernel.org>; Wed,  4 Aug 2021 14:30:47 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id k24so1834637vsg.9
+        for <linux-clk@vger.kernel.org>; Wed, 04 Aug 2021 14:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Zdp6WltwdPJTiYOXAA38Zmu1ytNFtDVTLeWSJfJQUTA=;
-        b=pYDFpii+lgAAPWns/N8L4Cmo0xyRztJF7JYeWgj8oHRZZO0s6PKpyDemjtdowSWg/S
-         t/RRf2/vebxyVqxstAUzy1XQVdpo8U8CcM+yCecg6xK1+EBidwwDlR2nd79tC2teo5oe
-         ZCU+GD5GpyO+cpGLLnCG9QZHL7wgVOIa2+Z78QvHvuPFzFbA5+hmYx8TocrlDUcXnwKN
-         s7P1cVm4hI9QbQd5xaUp9Tsl9IAFgJAZBcz6tbSZ2qOmwBCbqsRGxKd7EdvtOugP08lB
-         9F/qPbRjJ9qKRp4eN5wwt4phJ1ZXLovPrW7FFMti7r/jNmc5C6U/6nY50hYv5ByHBdo+
-         rNXg==
+        bh=dxaJFL8Y5c22Jta0cMEZC2iEw41WS8AsvJV/yCHApHU=;
+        b=aFm4foLY/Ah5O7HrLETjBorHA/Cbd4vqMKInq5ZltFuYyRmeKeRRProzZ+QYj1F0ki
+         L2nCrSrSWq1ivhi/Sz+Tvs0z70lHYq8V5kPuzV4lb/KmyuYPEesHqj9zGjfXp81gNjwk
+         Hc8Y8XbiQQygnK8nDxfxY4Ea+ILEnS2D8ZLh6V01K3pd1mGl3frQ7WWWlHFzRfyNTfGU
+         j9IzlCghKlDvyGKZMPPu+sM+kackw0OGiBzo3/kNfT8KUCGiNk/ALNyTSEBJ8sZHhQ6i
+         t2uCyKv4JHyjy++JVm1Phmm+hJCtaJj8F1RV4pEnOFs9kYHFlXCAi4Rzj/26hZfjQ9OI
+         vPxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zdp6WltwdPJTiYOXAA38Zmu1ytNFtDVTLeWSJfJQUTA=;
-        b=S/riMeVGham7LCdS7qing6AMCVmH+BxwuGGKAAGK31wmePFg6csYSY5pu5W1MX3Ysc
-         KFJuI3PrRdBqCsiYOMH0RS95prlXmkiTIVH793m2tK8VvwQgkw3jYjq11B026nAoyWVx
-         KlBCGQvg4BVD+t4smPG8QipqHR8jBMvQD2J5H1vQ28oi89aEd8RCZdVL1GPh4OgPQ9an
-         jHzoKmQFDygQjs55FQtAXXbt6K2RvaxjZrEOjNISPtehyzt0ij5J7FnNdtQmvothw7F4
-         fP8djtx0u9TDolzmIva/kI/cJWh/kHyPAUqZLcLyrc4xXP3/nuNnexepJ1JMNhdKEe5k
-         jkIQ==
-X-Gm-Message-State: AOAM532cTFzP+Pay9eWiK6/Y0y6iNdR95FRzhxJmDb8Qh1H15xJFKEOv
-        OmevxaLLpON7MlGNXB7igcrZR+M/ygjSyAxabO665A==
-X-Google-Smtp-Source: ABdhPJwzRxAtYtsckH8eXVYGse7q8J4o42yWbF/cUsPjzKXnvsENpPibR4PjjuetgtQCFE0DxrNZ7FJB/59wegVXnLA=
-X-Received: by 2002:a0c:aa42:: with SMTP id e2mr1547891qvb.23.1628110987030;
- Wed, 04 Aug 2021 14:03:07 -0700 (PDT)
+        bh=dxaJFL8Y5c22Jta0cMEZC2iEw41WS8AsvJV/yCHApHU=;
+        b=TSWHJkk0cwLN54qKjserjHB11GdGNZydG0vHRSTnz5LTTCmpc24WKuFlFG8aLevtRj
+         P3d8F8twfx8elsFCjO0TNiv5FgSIJd8FxzCNTvUzrahqUehsweC2KFW0u/m/aHf+nZVp
+         EzzrE75HoFgn+MOpuhYbxxoOVShlCfjDSgFooFJDOi/hxuUi9DzbSU0tz5wNFPgWG+eA
+         s8ohsM10HOdI7bqwIU6iiHjLBxcDV4h3xK1+AkLiObzGfsFokcqEy8Woe/KlXLZnoQf6
+         fa85Nk7XvnYU4kuJk+NmUUbJ/HjQU/6G0/BkGNP/xizqZm1t/vmvtrUW6RKy26WyAW/Y
+         Yfdw==
+X-Gm-Message-State: AOAM531GrMzhcyyeOpkQg5hrZn8O+kaOC8wUqqt1BAzNRfNxKs2Mlf+a
+        cfXTGVmLyz5AcZYDOENR5Z27dXZkuCSxsrtiZdxGiQ==
+X-Google-Smtp-Source: ABdhPJxs3KtlDburhMJ7hb4H+QMZ+qFnQt7AfD5vKDnUEhepBfw+rufW06PMmUaJ+YMjNVp0Vvi4JO3VVZ/yl7ndwcc=
+X-Received: by 2002:a67:de06:: with SMTP id q6mr2048185vsk.57.1628112646443;
+ Wed, 04 Aug 2021 14:30:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210731195034.979084-1-dmitry.baryshkov@linaro.org>
- <20210731195034.979084-2-dmitry.baryshkov@linaro.org> <CAJZ5v0gWD8WSQU4oPMSdZFM9VpNpc4TAFJ=_wQLB60XFxw-Ciw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gWD8WSQU4oPMSdZFM9VpNpc4TAFJ=_wQLB60XFxw-Ciw@mail.gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 5 Aug 2021 00:02:54 +0300
-Message-ID: <CAA8EJpq5DB2a=C+eo_S7QgVMzpm=mvUcC4DkWwGoKQ1g8trmgA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: runtime: add devm_pm_runtime_enable helper
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-13-semen.protsenko@linaro.org> <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+ <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com> <bf21badb-804f-45f0-c02b-80ff57ab9931@canonical.com>
+In-Reply-To: <bf21badb-804f-45f0-c02b-80ff57ab9931@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 5 Aug 2021 00:30:34 +0300
+Message-ID: <CAPLW+4nY=hozOR+B_0sPZODrk9PXaXg+NB-9pVhDbAjEy7yjhg@mail.gmail.com>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 4 Aug 2021 at 21:07, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Wed, 4 Aug 2021 at 21:36, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 >
-> On Sat, Jul 31, 2021 at 9:50 PM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
+> On 04/08/2021 16:39, Sam Protsenko wrote:
+> > Hi Marc,
 > >
-> > A typical code pattern for pm_runtime_enable() call is to call it in the
-> > _probe function and to call pm_runtime_disable() both from _probe error
-> > path and from _remove function. For some drivers the whole remove
-> > function would consist of the call to pm_remove_disable().
+> > On Fri, 30 Jul 2021 at 19:50, Marc Zyngier <maz@kernel.org> wrote:
+> >>
+> >> On 2021-07-30 15:49, Sam Protsenko wrote:
+> >>> Samsung Exynos850 is ARMv8-based mobile-oriented SoC.
+> >>>
+> >>> Features:
+> >>>  * CPU: Cortex-A55 Octa (8 cores), up to 2 GHz
+> >>>  * Memory interface: LPDDR4/4x 2 channels (12.8 GB/s)
+> >>>  * SD/MMC: SD 3.0, eMMC5.1 DDR 8-bit
+> >>>  * Modem: 4G LTE, 3G, GSM/GPRS/EDGE
+> >>>  * RF: Quad GNSS, WiFi 5 (802.11ac), Bluetooth 5.0
+> >>>  * GPU: Mali-G52 MP1
+> >>>  * Codec: 1080p 60fps H64, HEVC, JPEG HW Codec
+> >>>  * Display: Full HD+ (2520x1080)@60fps LCD
+> >>>  * Camera: 16+5MP/13+8MP ISP, MIPI CSI 4/4/2, FD, DRC
+> >>>  * Connectivity: USB 2.0 DRD, USI (SPI/UART/I2C), HSI2C, I3C, ADC,
+> >>> Audio
+> >>>
+> >>> This patch adds minimal SoC support. Particular board device tree files
+> >>> can include exynos850.dtsi file to get SoC related nodes, and then
+> >>> reference those nodes further as needed.
+> >>>
+> >>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >>> ---
+> >>>  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++++++++
+> >>>  arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
+> >>>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
+> >>>  3 files changed, 1057 insertions(+)
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-usi.dtsi
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> >>> b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> >>> new file mode 100644
+> >>> index 000000000000..4cf0a22cc6db
+> >>
+> >> [...]
+> >>
+> >>> +     gic: interrupt-controller@12a00000 {
+> >>> +             compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+> >>
+> >> One thing for sure, it cannot be both. And given that it is
+> >> an A55-based SoC, it isn't either. It is more likely a GIC400.
+> >>
 > >
-> > Add helper function to replace this bolierplate piece of code. Calling
-> > devm_pm_runtime_enable() removes the need for calling
-> > pm_runtime_disable() both in the probe()'s error path and in the
-> > remove() function.
+> > Yes, it's GIC-400, thanks for pointing that out. Will fix that in v2.
 > >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/base/power/runtime.c | 17 +++++++++++++++++
-> >  include/linux/pm_runtime.h   |  4 ++++
-> >  2 files changed, 21 insertions(+)
+> >>> +             #interrupt-cells = <3>;
+> >>> +             #address-cells = <0>;
+> >>> +             interrupt-controller;
+> >>> +             reg = <0x0 0x12a01000 0x1000>,
+> >>> +                   <0x0 0x12a02000 0x1000>,
+> >>
+> >> This is wrong. It is architecturally set to 8kB.
+> >>
 > >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index 8a66eaf731e4..ec94049442b9 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -1447,6 +1447,23 @@ void pm_runtime_enable(struct device *dev)
-> >  }
-> >  EXPORT_SYMBOL_GPL(pm_runtime_enable);
-> >
-> > +static void pm_runtime_disable_action(void *data)
-> > +{
-> > +       pm_runtime_disable(data);
-> > +}
-> > +
-> > +/**
-> > + * devm_pm_runtime_enable - devres-enabled version of pm_runtime_enable.
-> > + * @dev: Device to handle.
-> > + */
-> > +int devm_pm_runtime_enable(struct device *dev)
-> > +{
-> > +       pm_runtime_enable(dev);
-> > +
-> > +       return devm_add_action_or_reset(dev, pm_runtime_disable_action, dev);
+> > Nice catch! Actually there is an error (typo?) in SoC's TRM, saying
+> > that Virtual Interface Control Register starts at 0x3000 offset (from
+> > 0x12a00000), where it obviously should be 0x4000, that's probably
+> > where this dts error originates from. Btw, I'm also seeing the same
+> > error in exynos7.dtsi.
 >
-> When exactly is pm_runtime_disable_action() going to run by this rule?
->  When the device goes away or when the driver is unbound from it?
+> What's the error exactly? The "Virtual interface control register"
+> offset (3rd region) is set properly to 0x4000 on Exynos7. Also one for
+> the Exynos5433 looks correct.
+>
 
-When the driver is unbound (either because probe() returns an error or
-because __device_release_driver() is being called).
-This corresponds to a typical call to pm_runtime_disable() from the
-probe()'s error path or in the remove() callback.
+The issue is that 2nd region's size is 0x1000, but it must be 0x2000.
+It's defined by GIC-400 architecture, as I understand. Please look at
+[1], table 3-1 has very specific offsets and sizes for each functional
+block, and each particular SoC must adhere to that spec. So having
+0x1000 for 2nd region can't be correct. And because exynos7.dtsi has
+GIC-400 as well, and 0x1000 is specified there for 2nd region size
+too, so I presume there is the same mistake there.
 
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_pm_runtime_enable);
-> > +
-> >  /**
-> >   * pm_runtime_forbid - Block runtime PM of a device.
-> >   * @dev: Device to handle.
-> > diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-> > index aab8b35e9f8a..222da43b7096 100644
-> > --- a/include/linux/pm_runtime.h
-> > +++ b/include/linux/pm_runtime.h
-> > @@ -59,6 +59,8 @@ extern void pm_runtime_put_suppliers(struct device *dev);
-> >  extern void pm_runtime_new_link(struct device *dev);
-> >  extern void pm_runtime_drop_link(struct device_link *link);
-> >
-> > +extern int devm_pm_runtime_enable(struct device *dev);
-> > +
-> >  /**
-> >   * pm_runtime_get_if_in_use - Conditionally bump up runtime PM usage counter.
-> >   * @dev: Target device.
-> > @@ -253,6 +255,8 @@ static inline void __pm_runtime_disable(struct device *dev, bool c) {}
-> >  static inline void pm_runtime_allow(struct device *dev) {}
-> >  static inline void pm_runtime_forbid(struct device *dev) {}
-> >
-> > +static inline int devm_pm_runtime_enable(struct device *dev) { return 0; }
-> > +
-> >  static inline void pm_suspend_ignore_children(struct device *dev, bool enable) {}
-> >  static inline void pm_runtime_get_noresume(struct device *dev) {}
-> >  static inline void pm_runtime_put_noidle(struct device *dev) {}
-> > --
-> > 2.30.2
-> >
+Can you please check the TRM for Exynos7 SoC (if you have one in your
+possession), and see if there is a typo there? E.g. in case of
+Exynos850 TRM I can see that in "Register Map Summary" section the
+offset for the first register (GICH_HCR) in "Virtual Interface Control
+Register" region is specified as 0x3000, where it should be 0x4000, so
+it's probably a typo. But the register description is correct, saying
+that: "Address = Base Address + 0x4000".
 
+[1] https://developer.arm.com/documentation/ddi0471/b/programmers-model/gic-400-register-map
 
+> > Though I don't have a TRM for Exynos7 SoCs, so
+> > not sure if I should go ahead and fix that too. Anyway, for Exynos850,
+> > I'll fix that in v2 series.
+>
+>
+> However while we are at addresses - why are you using address-cells 2?
+> It adds everywhere additional 0x0 before actual address.
+>
 
--- 
-With best wishes
-Dmitry
+Right. For "cpus" node I'll change the address-cells to 1 in my v2
+series. I'll keep address-cells=2 for the root node, but I'm going to
+encapsulate some nodes into soc node (as you suggested earlier), where
+I'll make address-cells=1. That's pretty much how it's done in
+exynos7.dtsi and in exynos5433.dtsi, so I guess that's should be fine
+(to get rid of superfluous 0x0 and conform with other Exynos DTs)?
+
+>
+> Best regards,
+> Krzysztof
