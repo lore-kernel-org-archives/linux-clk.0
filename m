@@ -2,90 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AECC4320A
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CE0C432BE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF05E60EFD
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 16:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9735B60C41
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Aug 2021 18:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236832AbhHDQ22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Aug 2021 12:28:28 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:44782 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229725AbhHDQ22 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 12:28:28 -0400
-Received: by mail-ot1-f51.google.com with SMTP id o2-20020a9d22020000b0290462f0ab0800so2132092ota.11;
-        Wed, 04 Aug 2021 09:28:14 -0700 (PDT)
+        id S238317AbhHDSHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Aug 2021 14:07:13 -0400
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:34550 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230226AbhHDSHN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Aug 2021 14:07:13 -0400
+Received: by mail-ot1-f49.google.com with SMTP id e13-20020a056830200db02904f06fa2790cso2440710otp.1;
+        Wed, 04 Aug 2021 11:07:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=j3kzQ55GGFtb0Mnc40mJ/qjwvjBGrMWl/RUKJOzRSJ4=;
-        b=V/uWiOX4GvD84Kx08E41CAuH525XmKyBaEXVGwNFTcMB4zptUeeJLHWaof7DT7YxkM
-         eCROhGvYSMpugK/OctniIkKrtYWLvWAdbJnViofJjsQxODwLSTwn7YRIrhwW3CxK6ZbZ
-         5a6mE6Bgk4NOc1slWm9wOr4d5lFRIKjRLMmSYoxCxCHV+nvHAs42GVksPDdiB6T6ZTN/
-         j1PkuQ9St7nYwni/LY2CuzOmjqZObPIvM9Uytqn4En4H1AN1Y5EovG71DnI9ynwDDp+d
-         8gQELrh1AFaeJnKLe1O0tRbFzHhpZ//TVl4Au5Wrxl3HyqUOvAr8NuRUID0ChmCaNTtG
-         i5zw==
-X-Gm-Message-State: AOAM5301yYliCatiPHX1wVgwUyiW3jSZTav3G09I4n9MXmqe+Y7H7LAN
-        67RHwJ3KWFp10EJDo6bMccLrRHfzsdNbkk/OAMo=
-X-Google-Smtp-Source: ABdhPJz3wrMIcjsODR4s1X5t9UxcGX3nbsnfrHYhJrS5pP8rhRT2xB1xfqzyfplseVLyyccz/6Wp2X6PeyiM1uJwaTo=
-X-Received: by 2002:a9d:5c8b:: with SMTP id a11mr461995oti.206.1628094494364;
- Wed, 04 Aug 2021 09:28:14 -0700 (PDT)
+        bh=SYqG4QXoSp28eXqQGcJnRQ+yb/Mnrr/VGHid3OstWEM=;
+        b=BZt3alAl9T4ch9/PjpSbppW/C+pxLSjnuDMsWnRGqsIvYSyMTwy+ueKL4AprUJH9ks
+         u3WxW9GCPmBCw/zfYc1jp1AWJ8pYWFJ4JAu5jZ4YZVsWQ+SJlFOt9DhFLws+t3ClgghW
+         qwZxK++fgL/+dwQuYe4u10QVQRd8IsnUJUU4WZcWTBoz7eC55LPjsSdxlbSLYFyBKbvX
+         gdlOkPDhkYhBU7rhgiVWH3YbPpdI9DJYQW4PWBBFv2/dAfXzBWURUqoAZ1h7Ugwesbfe
+         law8AaGdQXyJoNMJjUF8LHpJmIDyxL8LCN5DjLdOypLblJNvmH6sPDPvohG/oPVgYbU/
+         j7FQ==
+X-Gm-Message-State: AOAM530pNU/YtjrFZrrWM3cTfYe8NBppZN1jJNM3tkCc0raYSnFb4zBy
+        aWwuaIZ16idUo2spg4GnEAWO2rxPbtjviNgFuoo=
+X-Google-Smtp-Source: ABdhPJzfkepS4uxITjIGI3lPF2wXivJvih2RRS4BkNi5QoB0chen1jcEDWhaltCu67IBdWxRsFvLP7NXLSTRKEv02hI=
+X-Received: by 2002:a05:6830:9a:: with SMTP id a26mr712161oto.260.1628100419994;
+ Wed, 04 Aug 2021 11:06:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210722193450.35321-1-andriy.shevchenko@linux.intel.com>
- <CAJZ5v0h6OQDB2hijnfinwpwpo_483UkcjGi8jYX4J6VETqLBEA@mail.gmail.com>
- <CAJZ5v0iCmu+P=phePuNeWC4MgMJ08hMtJrKoCUAzjSSnxBzObw@mail.gmail.com> <162809409848.19113.15878488082512415331@swboyd.mtv.corp.google.com>
-In-Reply-To: <162809409848.19113.15878488082512415331@swboyd.mtv.corp.google.com>
+References: <20210731195034.979084-1-dmitry.baryshkov@linaro.org> <20210731195034.979084-2-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20210731195034.979084-2-dmitry.baryshkov@linaro.org>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 4 Aug 2021 18:28:03 +0200
-Message-ID: <CAJZ5v0iu_6yxh1hgNT+C7efJX774fK0jaYYXkC2eMt24cd+Lhg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] clk: x86: Rename clk-lpt to more specific clk-lpss-atom
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+Date:   Wed, 4 Aug 2021 20:06:49 +0200
+Message-ID: <CAJZ5v0gWD8WSQU4oPMSdZFM9VpNpc4TAFJ=_wQLB60XFxw-Ciw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] PM: runtime: add devm_pm_runtime_enable helper
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 4, 2021 at 6:21 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Sat, Jul 31, 2021 at 9:50 PM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 >
-> Quoting Rafael J. Wysocki (2021-08-04 09:03:31)
-> > On Fri, Jul 23, 2021 at 3:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Thu, Jul 22, 2021 at 9:34 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > >
-> > > > The LPT stands for Lynxpoint PCH. However the driver is used on a few
-> > > > Intel Atom SoCs. Rename it to reflect this in a way how another clock
-> > > > driver, i.e. clk-pmc-atom, is called.
-> > > >
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > > ---
-> > > >
-> > > > Good to go either via ACPI or CCF tree.
-> > >
-> > > In case you want the latter:
-> > >
-> > > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Assuming that this hasn't been picked up, I'm going to apply it as
-> > 5.15 material.
-> >
+> A typical code pattern for pm_runtime_enable() call is to call it in the
+> _probe function and to call pm_runtime_disable() both from _probe error
+> path and from _remove function. For some drivers the whole remove
+> function would consist of the call to pm_remove_disable().
 >
-> I applied it already to clk tree. Maybe I forgot to send the email,
-> sorry.
+> Add helper function to replace this bolierplate piece of code. Calling
+> devm_pm_runtime_enable() removes the need for calling
+> pm_runtime_disable() both in the probe()'s error path and in the
+> remove() function.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/base/power/runtime.c | 17 +++++++++++++++++
+>  include/linux/pm_runtime.h   |  4 ++++
+>  2 files changed, 21 insertions(+)
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 8a66eaf731e4..ec94049442b9 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1447,6 +1447,23 @@ void pm_runtime_enable(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(pm_runtime_enable);
+>
+> +static void pm_runtime_disable_action(void *data)
+> +{
+> +       pm_runtime_disable(data);
+> +}
+> +
+> +/**
+> + * devm_pm_runtime_enable - devres-enabled version of pm_runtime_enable.
+> + * @dev: Device to handle.
+> + */
+> +int devm_pm_runtime_enable(struct device *dev)
+> +{
+> +       pm_runtime_enable(dev);
+> +
+> +       return devm_add_action_or_reset(dev, pm_runtime_disable_action, dev);
 
-No prob, dropping it now.
+When exactly is pm_runtime_disable_action() going to run by this rule?
+ When the device goes away or when the driver is unbound from it?
+
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pm_runtime_enable);
+> +
+>  /**
+>   * pm_runtime_forbid - Block runtime PM of a device.
+>   * @dev: Device to handle.
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index aab8b35e9f8a..222da43b7096 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -59,6 +59,8 @@ extern void pm_runtime_put_suppliers(struct device *dev);
+>  extern void pm_runtime_new_link(struct device *dev);
+>  extern void pm_runtime_drop_link(struct device_link *link);
+>
+> +extern int devm_pm_runtime_enable(struct device *dev);
+> +
+>  /**
+>   * pm_runtime_get_if_in_use - Conditionally bump up runtime PM usage counter.
+>   * @dev: Target device.
+> @@ -253,6 +255,8 @@ static inline void __pm_runtime_disable(struct device *dev, bool c) {}
+>  static inline void pm_runtime_allow(struct device *dev) {}
+>  static inline void pm_runtime_forbid(struct device *dev) {}
+>
+> +static inline int devm_pm_runtime_enable(struct device *dev) { return 0; }
+> +
+>  static inline void pm_suspend_ignore_children(struct device *dev, bool enable) {}
+>  static inline void pm_runtime_get_noresume(struct device *dev) {}
+>  static inline void pm_runtime_put_noidle(struct device *dev) {}
+> --
+> 2.30.2
+>
