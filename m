@@ -2,81 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F66C4338F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981A1C432BE
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B75F6113C
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7904060E96
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238940AbhHEPf1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 11:35:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57374 "EHLO
+        id S242265AbhHEPla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 11:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237114AbhHEPf1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 11:35:27 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1BDC061765;
-        Thu,  5 Aug 2021 08:35:12 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id l8-20020a05600c1d08b02902b5acf7d8b5so3302920wms.2;
-        Thu, 05 Aug 2021 08:35:12 -0700 (PDT)
+        with ESMTP id S242168AbhHEPlW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 11:41:22 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFAAC061765;
+        Thu,  5 Aug 2021 08:41:06 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id n12so7162112wrr.2;
+        Thu, 05 Aug 2021 08:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e8yF7W5kwQSE15C2w3dwLP7AW+KLjZQaFC34eOyj880=;
-        b=Px2DyqRFw+DcAzN9Se80GLd810eRZUri4kxdIHMZeKFsJfh3/6FtPXhGCV9c3s2lye
-         VI8X6Wr0DsfEX/S/vS2BCJHenbX67o2jCmoOJBTgqsfqFOHwHADmduKKudoFp7R2MjGx
-         IQyzhbAYlZwhQ71Zb6Cvo1QKixvMksvjDQns0i39Tchkn3CWZ6SGmGOZtDkJYmnW3VAr
-         n/fmT5sn5+vScAJK705SI1CF0E3p5RFwhfHDFKkXpFViT/TcPVuY2IXHyzomdWHEDx1g
-         D4gyzjLc/ys6RMSQdQva9eBlbcuqjYqikGClDyxn7hfsS7XMLW9ggv+0BzTAbLzt4Vzs
-         nPhg==
+        bh=mVQSQN7gzFUu+SQZHn++i1EQsf1unkn38HuidAPY1jk=;
+        b=EnSWxeBF1ZgrkW2cs8zQj6XSQRMdMi2KJwuWBliPKMN5E5fwIQrR6W1KoP6J2MZOQp
+         qtlLcHlvJqbZ9kkwlszodvYM6HSw+1S0fM/KiF1iiDgw0jzZXilEehO5hojIG31rU4RP
+         u2MkbGtI/Di7NufyLVvJwiXbrjChWzgElYtWu2HrlED5EDf0exg/hnt9lJNZp5G39obB
+         BmCx4i3hSxbOhjJnanOoxP75P3guSfyF4RI5AqvlYL4sPfgLVe93T7jHsW5lSeuR+3uO
+         CcKh6CDjt9tfz4Y2U0d6QacHzN5zDz7e8Ed+o7RDYzsMFw7FlMt2lOY36XtW8E/Xtk9k
+         JHRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=e8yF7W5kwQSE15C2w3dwLP7AW+KLjZQaFC34eOyj880=;
-        b=cRu29ptoGThzKXIq1UTXUipF929Nl2sew/MQK1i5d7CbkhUs3rbxyxxF0Gt5j+2zWC
-         8So9DfcVdSP8yIvhqrvtWtxRqmwiLEvchlFoGrkIYAKxY6H/OGtmw/6+EpOYRQa9vks+
-         jFg5NvtvInCeiJzV8GigjNBx1HQE2uFMbUdqZXs3FtwrvFQeW5ASKIcEtYMPMELf0UxV
-         fyTHJHp/REuF851O9ZCW6MnZt07HGpNNd+IX+1TQj+TLp+tjBYqAlz9ThUv4ryr0c8oJ
-         KpQTRHdRsdd3foGWcWIcf8iTboCMBVzSr6NBcdagngBFaa6lCutN/AVWsQEPqXF+kLe4
-         esnQ==
-X-Gm-Message-State: AOAM531KcmLU0ZQjsi08ASN5OwS6UUj+1m9f3MJZ2tqJnvLLv9IplLgX
-        59Zjru6SJlDZ+LzqsD2uvids9oM8BLJy7g==
-X-Google-Smtp-Source: ABdhPJzUbDsFxcl3SF9H4VKEhhq1IOGoLpg6RQ0UVVnvwVDJP321SBzN7VPw7laWZejK9voRoiB63Q==
-X-Received: by 2002:a05:600c:4f42:: with SMTP id m2mr16383078wmq.47.1628177711058;
-        Thu, 05 Aug 2021 08:35:11 -0700 (PDT)
+        bh=mVQSQN7gzFUu+SQZHn++i1EQsf1unkn38HuidAPY1jk=;
+        b=BdFBArsk+Cw06sIAMNdUcQmsXoQ+vIiVTdeyzFZ5qkwlIZA3q+texc5gf8+8R+ozU8
+         YiVepWC0KB/sz5IKd4//fcSfOotNQaIf9L6gufdT7ldH1iaRF6XLygYpayS9iPKyvu8h
+         Hal0OqIy+/DO+EB/Y9VA7QN9TkrD43Zd9TQplQ0rkmreBhxXmHbhUdaw8ltMc/DFhzru
+         mYX2Z7eaIHRQ9Oo9WVgC4On+6HryXbih/SuHbM2ZWnQtUmoxbzwJmaOkZj8WfnOieLT1
+         a9uOK+frRwyN6eFNp1ZVENqapOLtbpgEmY9gitz1eZo2Ra46hnT1QImHJ4dg9VWCcNrR
+         fD6w==
+X-Gm-Message-State: AOAM531YB/aqkEtNhUmeT0WUcstpTEKDIOvU+G8p0wyPz/SWIAEHjmS2
+        fxEUt6M4Q+TkXmYkYb+wQ6A=
+X-Google-Smtp-Source: ABdhPJxCtpqIunU/mFZBvCoYDNuqfTLTZ2pUolhGj+wx3TK++qKad7kmgUfuhNZIAOYiVXXE+6nQ4Q==
+X-Received: by 2002:a5d:6789:: with SMTP id v9mr6099277wru.254.1628178065390;
+        Thu, 05 Aug 2021 08:41:05 -0700 (PDT)
 Received: from ziggy.stardust (static-55-132-6-89.ipcom.comunitel.net. [89.6.132.55])
-        by smtp.gmail.com with ESMTPSA id w13sm7901714wru.72.2021.08.05.08.35.10
+        by smtp.gmail.com with ESMTPSA id l4sm6504709wrw.32.2021.08.05.08.41.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Aug 2021 08:35:10 -0700 (PDT)
-Subject: Re: [v14 02/21] dt-bindings: ARM: Mediatek: Add mmsys document
+        Thu, 05 Aug 2021 08:41:04 -0700 (PDT)
+Subject: Re: [v12 02/20] dt-bindings: ARM: Mediatek: Add mmsys document
  binding for MT8192
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20210726105719.15793-1-chun-jie.chen@mediatek.com>
- <20210726105719.15793-3-chun-jie.chen@mediatek.com>
- <162740843452.2368309.13157283201271440368@swboyd.mtv.corp.google.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <b98aeeee-c544-3025-cc06-ec04be7ab638@gmail.com>
-Date:   Thu, 5 Aug 2021 17:35:09 +0200
+References: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
+ <20210705033824.1934-3-chun-jie.chen@mediatek.com>
+ <564fa3c8-1d85-5e98-f3f9-f83cb17e905a@gmail.com>
+ <15d27282-54b2-2cfe-7f44-2df3be11dd40@gmail.com>
+Message-ID: <e3210d22-7960-f8e4-c12d-d49ac5465463@gmail.com>
+Date:   Thu, 5 Aug 2021 17:41:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <162740843452.2368309.13157283201271440368@swboyd.mtv.corp.google.com>
+In-Reply-To: <15d27282-54b2-2cfe-7f44-2df3be11dd40@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -84,23 +85,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 27/07/2021 19:53, Stephen Boyd wrote:
-> Quoting Chun-Jie Chen (2021-07-26 03:57:00)
->> This patch adds the mmsys document binding for MT8192 SoC.
+On 05/07/2021 17:45, Matthias Brugger wrote:
+> On 05/07/2021 17:40, Matthias Brugger wrote:
 >>
->> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
->> Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+>>
+>> On 05/07/2021 05:38, Chun-Jie Chen wrote:
+>>> This patch adds the mmsys document binding for MT8192 SoC.
+>>>
+>>> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>
 >> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
+>>
 > 
-> Applied to clk-next
+> Of course, that's not what we need here...
+> 
+> Now pushed to v5.14-tmp/dts64 until v5.14-rc1 is released.
 > 
 
-Please drop this patch. The mmsys binding will change to yaml in this merge
-window and this will create a merge conflict.
+Given that the change to yaml was taken by Rob Herring I drop this patch from my
+queue.
 
-Thanks,
+Regards,
 Matthias
+
+> Thanks!
+> Matthias
+> 
+>>> ---
+>>>  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt          | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>>> index 78c50733985c..9712a6831fab 100644
+>>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>>> @@ -16,6 +16,7 @@ Required Properties:
+>>>  	- "mediatek,mt8167-mmsys", "syscon"
+>>>  	- "mediatek,mt8173-mmsys", "syscon"
+>>>  	- "mediatek,mt8183-mmsys", "syscon"
+>>> +	- "mediatek,mt8192-mmsys", "syscon"
+>>>  - #clock-cells: Must be 1
+>>>  
+>>>  For the clock control, the mmsys controller uses the common clk binding from
+>>>
+> 
+
