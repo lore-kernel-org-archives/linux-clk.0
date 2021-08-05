@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39245C4338F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 22:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09061C4338F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 22:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19E2B6113C
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 22:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D53D36113B
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 22:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238356AbhHEWY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 18:24:27 -0400
-Received: from relay08.th.seeweb.it ([5.144.164.169]:36825 "EHLO
-        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbhHEWY0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 18:24:26 -0400
+        id S238146AbhHEWY3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 18:24:29 -0400
+Received: from relay07.th.seeweb.it ([5.144.164.168]:58219 "EHLO
+        relay07.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238659AbhHEWY3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 18:24:29 -0400
 Received: from localhost.localdomain (83.6.167.155.neoplus.adsl.tpnet.pl [83.6.167.155])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 0A5A23F402;
-        Fri,  6 Aug 2021 00:24:08 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id BDC213F367;
+        Fri,  6 Aug 2021 00:24:07 +0200 (CEST)
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 To:     ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
@@ -35,60 +35,35 @@ Cc:     martin.botka@somainline.org,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: smd-rpm: Add mdm9607 clocks
-Date:   Fri,  6 Aug 2021 00:24:00 +0200
-Message-Id: <20210805222400.39027-2-konrad.dybcio@somainline.org>
+Subject: [PATCH 1/2] dt-bindings: clock: qcom: rpmcc: Document MDM9607 compatible
+Date:   Fri,  6 Aug 2021 00:23:59 +0200
+Message-Id: <20210805222400.39027-1-konrad.dybcio@somainline.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210805222400.39027-1-konrad.dybcio@somainline.org>
-References: <20210805222400.39027-1-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for RPM-managed clocks on the MDM9607 platform.
+Add the dt-binding for the RPM Clock Controller on the MDM9607 SoC.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 800b2fef1887..05bca01bf476 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -913,7 +913,30 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
- 	.num_clks = ARRAY_SIZE(sdm660_clks),
- };
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 6cf5a7ec2b4c..d31d98437d11 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -10,6 +10,7 @@ Required properties :
+ - compatible : shall contain only one of the following. The generic
+                compatible "qcom,rpmcc" should be also included.
  
-+static struct clk_smd_rpm *mdm9607_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC]		= &sdm660_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC]		= &sdm660_bi_tcxo_a,
-+	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk,
-+	[RPM_SMD_QPIC_CLK]		= &qcs404_qpic_clk,
-+	[RPM_SMD_QPIC_CLK_A]		= &qcs404_qpic_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_mdm9607 = {
-+	.clks = mdm9607_clks,
-+	.num_clks = ARRAY_SIZE(mdm9607_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-mdm9607", .data = &rpm_clk_mdm9607 },
- 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
++			"qcom,rpmcc-mdm9607", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8660", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8060", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8226", "qcom,rpmcc"
 -- 
 2.32.0
 
