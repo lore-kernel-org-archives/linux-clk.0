@@ -2,183 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B294C4338F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 07:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54648C4338F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 08:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC2B760720
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 07:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0756044F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 08:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237114AbhHEHjg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 03:39:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230471AbhHEHjg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Aug 2021 03:39:36 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9467860F10;
-        Thu,  5 Aug 2021 07:39:22 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1mBXyK-0034vy-Iv; Thu, 05 Aug 2021 08:39:20 +0100
-Date:   Thu, 05 Aug 2021 08:39:20 +0100
-Message-ID: <87y29gbas7.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S232182AbhHEIA2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 04:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239150AbhHEIA2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 04:00:28 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24E1C0613D5
+        for <linux-clk@vger.kernel.org>; Thu,  5 Aug 2021 01:00:12 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id l18so5298866wrv.5
+        for <linux-clk@vger.kernel.org>; Thu, 05 Aug 2021 01:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=wumc4OZ7mBGOruxhA75GZYnXNkQhB5mW1nT6BqQbhoM=;
+        b=OzEDvkO70XEjJpSxi59DeN+Dn6kIot+RdgCjtY4yI40znzqsrqBWxOANTs5It1hlVQ
+         wWl7kpglPubk2ubzYbZPHmqRadHU2jbkvRemE5TEh5xjIByLkJxxxZF1Cf1/Hxa/4o3Z
+         EMF1lgFJsvGL3bRxSmf3SLeuUYOo6wZI4xcHtsZiJAqRf7D/EqeGkXU/KmX0OXwXC1gV
+         5gEOrbj+bXMZ35y70DOAqq2L+kXBst0eJJ6YjpuDbcrCIy2GAzQLTnLdHvka4Uw5I6wx
+         xoEfm6xYSKMY3+A+cGWn8XLltL9F0QnvsT7EmpF6gAgRlGKwCmcO9Rq1bnRJFaLnquuS
+         Ggdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=wumc4OZ7mBGOruxhA75GZYnXNkQhB5mW1nT6BqQbhoM=;
+        b=kD627IAAzbc3RVoRGOzsk9x2KyQbIYrBHINYJtUiRuKlY+at25bOARdWACtEC3jJIu
+         w502zqsFSTyyHoJ/QdkAq/i5gx7cvLzG6EPg/jMUUcQjmt4YpEBFDZfN+GWalIlRg3/W
+         XlMt94HvpZqaxYjMAqNi+XetjO0fKH1/8930ZvhcrJjq3AH40Pm4uXEWTlqeTtMNW8oJ
+         2Wu8GzjIjs8af8mcP51bAoT9Ip5MTpIJuDjETwBjqsVGUdQGKMjVH2E8wXTcHWaKyQy/
+         RXDOfIZCaAxFJmZ9Y4r4O5HnsCNjiKdwDBsrk6yAEO+5FBfJMVDwR40wL+IgKvOH4uNb
+         +9ug==
+X-Gm-Message-State: AOAM5333YJo+avi7L6ZMgN1Pm/ukxsRngYub3RKm9CyoVvPOdy5cDb2v
+        kdRrgoywz7JClgVT0ZKhkpnnpA==
+X-Google-Smtp-Source: ABdhPJwwI7OpevysCPXVydCiImYOL403jvLwB9REh/tzZacm4rsI/wiorAFciqp4F5XD5r0f76eBSQ==
+X-Received: by 2002:a5d:424d:: with SMTP id s13mr3652510wrr.356.1628150411445;
+        Thu, 05 Aug 2021 01:00:11 -0700 (PDT)
+Received: from google.com ([109.180.115.228])
+        by smtp.gmail.com with ESMTPSA id f15sm5133528wrp.12.2021.08.05.01.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Aug 2021 01:00:10 -0700 (PDT)
+Date:   Thu, 5 Aug 2021 09:00:09 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-In-Reply-To: <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
-        <20210730144922.29111-13-semen.protsenko@linaro.org>
-        <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
-        <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-        <87k0l1w8y5.wl-maz@kernel.org>
-        <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: semen.protsenko@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, jirislaby@kernel.org, gregkh@linuxfoundation.org, ckeepax@opensource.wolfsonmicro.com, ryu.real@samsung.com, tom.gall@linaro.org, sumit.semwal@linaro.org, john.stultz@linaro.org, amit.pundir@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mfd: db8500-prcmu: Handle missing FW variant
+Message-ID: <YQuaiW/MSZY4bmok@google.com>
+References: <20210801233314.3150754-1-linus.walleij@linaro.org>
+ <20210801233314.3150754-2-linus.walleij@linaro.org>
+ <YQejHNP1AzFHZ6gK@google.com>
+ <CACRpkdaK0pBgmFSazjJ5NOj9rF9DzUyCfumxyi8PNaS_61_=Ww@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdaK0pBgmFSazjJ5NOj9rF9DzUyCfumxyi8PNaS_61_=Ww@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 04 Aug 2021 19:37:24 +0100,
-Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> 
-> On Wed, 4 Aug 2021 at 18:01, Marc Zyngier <maz@kernel.org> wrote:
+On Thu, 05 Aug 2021, Linus Walleij wrote:
+
+> On Mon, Aug 2, 2021 at 9:47 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > On Mon, 02 Aug 2021, Linus Walleij wrote:
 > >
-> > On Wed, 04 Aug 2021 15:39:38 +0100,
-> > Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >
-> > > > You are also missing the hypervisor virtual timer interrupt.
-> > > >
+> > > There was an "unknown" firmware variant turning up in the wild
+> > > causing problems in the clock driver. Add this missing variant
+> > > and clarify that varian 11 and 15 are Samsung variants, as this
+> > > is now very well known from released products.
 > > >
-> > > Checked SoC TRM, there is no PPI for hypervisor virtual timer
-> > > interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
-> > > ARM and TRM, almost no description of it. Also, I checked other
-> > > platforms, and seems like everyone does the same (having only 4
-> > > interrupts). And I wasn't able to find any documentation on that, so I
-> > > guess I'll leave it as is, if you don't mind.
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: linux-clk@vger.kernel.org
+> > > Cc: phone-devel@vger.kernel.org
+> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > > ---
+> > > Clock maintainers: could you please ACK this so Lee can take
+> > > this into the MFD tree? The chances of merge collisions are
+> > > zero, this code changes very seldom.
+> > > ---
+> > >  drivers/clk/ux500/u8500_of_clk.c | 3 ++-
 > >
-> > I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
+> > >  drivers/mfd/db8500-prcmu.c       | 6 ++++--
+> > >  include/linux/mfd/dbx500-prcmu.h | 3 ++-
 > >
-> > From the ARMv8 ARM (ARM DDI 0487G.b)
-> > <quote>
-> > D11.2.4 Timers
-> >
-> > In an implementation of the Generic Timer that includes EL3, if EL3
-> > can use AArch64, the following timers are implemented:
-> >
-> > * An EL1 physical timer, that:
-> >   - In Secure state, can be accessed from EL1.
-> >   - In Non-secure state, can be accessed from EL1 unless those
-> >     accesses are trapped to EL2.
-> >     When this timer can be accessed from EL1, an EL1 control
-> >     determines whether it can be accessed from EL0.
-> > * A Non-secure EL2 physical timer.
-> > * A Secure EL3 physical timer. An EL3 control determines whether this
-> >   register is accessible from Secure EL1.
-> > * An EL1 virtual timer.
-> > * When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
-> > * When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
-> > * When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
-> > </quote>
-> >
-> > Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
-> > it does have a NS-EL2 virtual timer. This is further confirmed by the
-> > TRM which documents CNTHV*_EL2 as valid system registers[1].
-> >
-> > So the timer exists, the signal is routed out of the core, and it
-> > is likely that it is connected to the GIC.
-> >
-> > If the designers have omitted it, then it needs to be documented as
-> > such.
-> >
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
 > 
-> Ok, I've checked thoroughly all docs again, and it seems like there is
-> no dedicated PPI number for this "EL2 Hypervisor Virtual Timer" in
-> Exynos850 SoC. The timer instance itself might exist of course, but
-> interrupt line is probably wasn't connected to GIC by SoC designers,
-> at least it's not documented.
+> Actually I intended for the clock people to ACK it for you
+> but since it is completely independent of 1/2 it actually works
+> either way, maybe they will rather pick it up, who knows? :D
 
-Can you try and check this? You can directly program the virtual timer
-so that it has a pending interrupt, and then check the pending
-register on the same CPU to see if there is anything appearing there.
+That's fine too.
 
-> Moreover, from [1,2] it looks like if it were existing it would have
-> been PPI=12 (INTID=28). But in GIC-400 TRM this PPI is assigned to
-> "Legacy FIQ signal",
-
-No. That's only if you set the bypass bits in GICD_CTLR, which nobody
-with half a brain would consider doing.
-
-> and all there is no PPI for Hypervisor Virtual
-> Timer documented there as well. In Exynos850 TRM the source for this
-> PPI's interrupt source is marked as "-", which means it's not used.
->
-> So if you know something that I don't know -- please point me out the
-> doc where this PPI line is documented. Otherwise I can add the comment
-> to device tree, stating that this interrupt line is not present in
-> SoC's GIC, i.e. something like this:
-> 
-> 8<------------------------------------------------------------------------------->8
->     timer {
->         compatible = "arm,armv8-timer";
->         interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
->                       IRQ_TYPE_LEVEL_LOW)>,
->                  <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
->                       IRQ_TYPE_LEVEL_LOW)>,
->                  <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
->                       IRQ_TYPE_LEVEL_LOW)>,
->                  <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
->                       IRQ_TYPE_LEVEL_LOW)>;
->         /* Hypervisor Virtual Timer PPI is not present in this SoC GIC */
->     };
-> 8<------------------------------------------------------------------------------->8
-> 
-> Is that ok with you?
-
-I'd rather you verify the above first. And if you can't, I'd like a
-comment that is a bit more explicit:
-
-/* The vendor couldn't be bothered to wire the EL2 Virtual Timers */
-
-Thanks,
-
-	M.
+I assume they will not require an immutable branch, as the turn-over
+in this file is very low.
 
 -- 
-Without deviation from the norm, progress is not possible.
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
