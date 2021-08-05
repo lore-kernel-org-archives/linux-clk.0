@@ -2,131 +2,209 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981A1C432BE
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E691C4320A
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7904060E96
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3E360E78
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:50:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242265AbhHEPla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 11:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242168AbhHEPlW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 11:41:22 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFAAC061765;
-        Thu,  5 Aug 2021 08:41:06 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id n12so7162112wrr.2;
-        Thu, 05 Aug 2021 08:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mVQSQN7gzFUu+SQZHn++i1EQsf1unkn38HuidAPY1jk=;
-        b=EnSWxeBF1ZgrkW2cs8zQj6XSQRMdMi2KJwuWBliPKMN5E5fwIQrR6W1KoP6J2MZOQp
-         qtlLcHlvJqbZ9kkwlszodvYM6HSw+1S0fM/KiF1iiDgw0jzZXilEehO5hojIG31rU4RP
-         u2MkbGtI/Di7NufyLVvJwiXbrjChWzgElYtWu2HrlED5EDf0exg/hnt9lJNZp5G39obB
-         BmCx4i3hSxbOhjJnanOoxP75P3guSfyF4RI5AqvlYL4sPfgLVe93T7jHsW5lSeuR+3uO
-         CcKh6CDjt9tfz4Y2U0d6QacHzN5zDz7e8Ed+o7RDYzsMFw7FlMt2lOY36XtW8E/Xtk9k
-         JHRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mVQSQN7gzFUu+SQZHn++i1EQsf1unkn38HuidAPY1jk=;
-        b=BdFBArsk+Cw06sIAMNdUcQmsXoQ+vIiVTdeyzFZ5qkwlIZA3q+texc5gf8+8R+ozU8
-         YiVepWC0KB/sz5IKd4//fcSfOotNQaIf9L6gufdT7ldH1iaRF6XLygYpayS9iPKyvu8h
-         Hal0OqIy+/DO+EB/Y9VA7QN9TkrD43Zd9TQplQ0rkmreBhxXmHbhUdaw8ltMc/DFhzru
-         mYX2Z7eaIHRQ9Oo9WVgC4On+6HryXbih/SuHbM2ZWnQtUmoxbzwJmaOkZj8WfnOieLT1
-         a9uOK+frRwyN6eFNp1ZVENqapOLtbpgEmY9gitz1eZo2Ra46hnT1QImHJ4dg9VWCcNrR
-         fD6w==
-X-Gm-Message-State: AOAM531YB/aqkEtNhUmeT0WUcstpTEKDIOvU+G8p0wyPz/SWIAEHjmS2
-        fxEUt6M4Q+TkXmYkYb+wQ6A=
-X-Google-Smtp-Source: ABdhPJxCtpqIunU/mFZBvCoYDNuqfTLTZ2pUolhGj+wx3TK++qKad7kmgUfuhNZIAOYiVXXE+6nQ4Q==
-X-Received: by 2002:a5d:6789:: with SMTP id v9mr6099277wru.254.1628178065390;
-        Thu, 05 Aug 2021 08:41:05 -0700 (PDT)
-Received: from ziggy.stardust (static-55-132-6-89.ipcom.comunitel.net. [89.6.132.55])
-        by smtp.gmail.com with ESMTPSA id l4sm6504709wrw.32.2021.08.05.08.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Aug 2021 08:41:04 -0700 (PDT)
-Subject: Re: [v12 02/20] dt-bindings: ARM: Mediatek: Add mmsys document
- binding for MT8192
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        id S242510AbhHEPum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 11:50:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242338AbhHEPul (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Aug 2021 11:50:41 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44A9860234;
+        Thu,  5 Aug 2021 15:50:27 +0000 (UTC)
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1mBfdZ-003AmT-3i; Thu, 05 Aug 2021 16:50:25 +0100
+Date:   Thu, 05 Aug 2021 16:50:24 +0100
+Message-ID: <87sfznc2m7.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20210705033824.1934-1-chun-jie.chen@mediatek.com>
- <20210705033824.1934-3-chun-jie.chen@mediatek.com>
- <564fa3c8-1d85-5e98-f3f9-f83cb17e905a@gmail.com>
- <15d27282-54b2-2cfe-7f44-2df3be11dd40@gmail.com>
-Message-ID: <e3210d22-7960-f8e4-c12d-d49ac5465463@gmail.com>
-Date:   Thu, 5 Aug 2021 17:41:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <15d27282-54b2-2cfe-7f44-2df3be11dd40@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+In-Reply-To: <CAPLW+4nCfSBfwMcemaVvU5MgBACgnhXaW9eAAjw66G6Zhz2Gbw@mail.gmail.com>
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+        <20210730144922.29111-13-semen.protsenko@linaro.org>
+        <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+        <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
+        <87k0l1w8y5.wl-maz@kernel.org>
+        <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
+        <87y29gbas7.wl-maz@kernel.org>
+        <CAPLW+4nCfSBfwMcemaVvU5MgBACgnhXaW9eAAjw66G6Zhz2Gbw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: semen.protsenko@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, jirislaby@kernel.org, gregkh@linuxfoundation.org, ckeepax@opensource.wolfsonmicro.com, ryu.real@samsung.com, tom.gall@linaro.org, sumit.semwal@linaro.org, john.stultz@linaro.org, amit.pundir@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/07/2021 17:45, Matthias Brugger wrote:
-> On 05/07/2021 17:40, Matthias Brugger wrote:
->>
->>
->> On 05/07/2021 05:38, Chun-Jie Chen wrote:
->>> This patch adds the mmsys document binding for MT8192 SoC.
->>>
->>> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
->>
->> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
->>
+On Thu, 05 Aug 2021 16:30:23 +0100,
+Sam Protsenko <semen.protsenko@linaro.org> wrote:
 > 
-> Of course, that's not what we need here...
+> On Thu, 5 Aug 2021 at 10:39, Marc Zyngier <maz@kernel.org> wrote:
+> >
+> > On Wed, 04 Aug 2021 19:37:24 +0100,
+> > Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> > >
+> > > On Wed, 4 Aug 2021 at 18:01, Marc Zyngier <maz@kernel.org> wrote:
+> > > >
+> > > > On Wed, 04 Aug 2021 15:39:38 +0100,
+> > > > Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> > > >
+> > > > > > You are also missing the hypervisor virtual timer interrupt.
+> > > > > >
+> > > > >
+> > > > > Checked SoC TRM, there is no PPI for hypervisor virtual timer
+> > > > > interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
+> > > > > ARM and TRM, almost no description of it. Also, I checked other
+> > > > > platforms, and seems like everyone does the same (having only 4
+> > > > > interrupts). And I wasn't able to find any documentation on that, so I
+> > > > > guess I'll leave it as is, if you don't mind.
+> > > >
+> > > > I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
+> > > >
+> > > > From the ARMv8 ARM (ARM DDI 0487G.b)
+> > > > <quote>
+> > > > D11.2.4 Timers
+> > > >
+> > > > In an implementation of the Generic Timer that includes EL3, if EL3
+> > > > can use AArch64, the following timers are implemented:
+> > > >
+> > > > * An EL1 physical timer, that:
+> > > >   - In Secure state, can be accessed from EL1.
+> > > >   - In Non-secure state, can be accessed from EL1 unless those
+> > > >     accesses are trapped to EL2.
+> > > >     When this timer can be accessed from EL1, an EL1 control
+> > > >     determines whether it can be accessed from EL0.
+> > > > * A Non-secure EL2 physical timer.
+> > > > * A Secure EL3 physical timer. An EL3 control determines whether this
+> > > >   register is accessible from Secure EL1.
+> > > > * An EL1 virtual timer.
+> > > > * When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
+> > > > * When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
+> > > > * When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
+> > > > </quote>
+> > > >
+> > > > Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
+> > > > it does have a NS-EL2 virtual timer. This is further confirmed by the
+> > > > TRM which documents CNTHV*_EL2 as valid system registers[1].
+> > > >
+> > > > So the timer exists, the signal is routed out of the core, and it
+> > > > is likely that it is connected to the GIC.
+> > > >
+> > > > If the designers have omitted it, then it needs to be documented as
+> > > > such.
+> > > >
+> > >
+> > > Ok, I've checked thoroughly all docs again, and it seems like there is
+> > > no dedicated PPI number for this "EL2 Hypervisor Virtual Timer" in
+> > > Exynos850 SoC. The timer instance itself might exist of course, but
+> > > interrupt line is probably wasn't connected to GIC by SoC designers,
+> > > at least it's not documented.
+> >
+> > Can you try and check this? You can directly program the virtual timer
+> > so that it has a pending interrupt, and then check the pending
+> > register on the same CPU to see if there is anything appearing there.
+> >
+> > > Moreover, from [1,2] it looks like if it were existing it would have
+> > > been PPI=12 (INTID=28). But in GIC-400 TRM this PPI is assigned to
+> > > "Legacy FIQ signal",
+> >
+> > No. That's only if you set the bypass bits in GICD_CTLR, which nobody
+> > with half a brain would consider doing.
+> >
+> > > and all there is no PPI for Hypervisor Virtual
+> > > Timer documented there as well. In Exynos850 TRM the source for this
+> > > PPI's interrupt source is marked as "-", which means it's not used.
+> > >
+> > > So if you know something that I don't know -- please point me out the
+> > > doc where this PPI line is documented. Otherwise I can add the comment
+> > > to device tree, stating that this interrupt line is not present in
+> > > SoC's GIC, i.e. something like this:
+> > >
+> > > 8<------------------------------------------------------------------------------->8
+> > >     timer {
+> > >         compatible = "arm,armv8-timer";
+> > >         interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
+> > >                       IRQ_TYPE_LEVEL_LOW)>,
+> > >                  <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
+> > >                       IRQ_TYPE_LEVEL_LOW)>,
+> > >                  <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
+> > >                       IRQ_TYPE_LEVEL_LOW)>,
+> > >                  <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
+> > >                       IRQ_TYPE_LEVEL_LOW)>;
+> > >         /* Hypervisor Virtual Timer PPI is not present in this SoC GIC */
+> > >     };
+> > > 8<------------------------------------------------------------------------------->8
+> > >
+> > > Is that ok with you?
+> >
+> > I'd rather you verify the above first. And if you can't, I'd like a
+> > comment that is a bit more explicit:
+> >
 > 
-> Now pushed to v5.14-tmp/dts64 until v5.14-rc1 is released.
-> 
+> I'm afraid I won't be able to verify your idea: seems like CNTHV_EL2
+> can be only modified (or read) in EL2. I tried to read that reg
+> anyway, which unsurprisingly resulted in el1_undef() BUG. The kernel
+> on my board is running in EL1, and I don't have access to the source
+> code for EL3 bootloaders. I have the source code for the last
+> bootloader, but it's already running in EL1.
 
-Given that the change to yaml was taken by Rob Herring I drop this patch from my
-queue.
+Excellent. Yet another half-usable machine on the block. Just what we
+need.
 
-Regards,
-Matthias
-
-> Thanks!
-> Matthias
 > 
->>> ---
->>>  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt          | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->>> index 78c50733985c..9712a6831fab 100644
->>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->>> @@ -16,6 +16,7 @@ Required Properties:
->>>  	- "mediatek,mt8167-mmsys", "syscon"
->>>  	- "mediatek,mt8173-mmsys", "syscon"
->>>  	- "mediatek,mt8183-mmsys", "syscon"
->>> +	- "mediatek,mt8192-mmsys", "syscon"
->>>  - #clock-cells: Must be 1
->>>  
->>>  For the clock control, the mmsys controller uses the common clk binding from
->>>
+> > /* The vendor couldn't be bothered to wire the EL2 Virtual Timers */
+> >
 > 
+> I'll add the comment as you suggested. I propose we come back to this
+> issue later, either when the need for HV timer arises or when I have
+> some means to test your theory about existing PPI.
 
+If you depend on the vendor to get EL2 access, it is a lost cause,
+unfortunately.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
