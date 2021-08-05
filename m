@@ -2,209 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E691C4320A
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDB6C432BE
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 16:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3E360E78
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 15:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71D3D61154
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Aug 2021 16:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242510AbhHEPum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 11:50:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242338AbhHEPul (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Aug 2021 11:50:41 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A9860234;
-        Thu,  5 Aug 2021 15:50:27 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1mBfdZ-003AmT-3i; Thu, 05 Aug 2021 16:50:25 +0100
-Date:   Thu, 05 Aug 2021 16:50:24 +0100
-Message-ID: <87sfznc2m7.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S229762AbhHEQLc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 12:11:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231161AbhHEQLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Aug 2021 12:11:31 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AB0C0613D5;
+        Thu,  5 Aug 2021 09:11:14 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id e25-20020a05600c4b99b0290253418ba0fbso4104535wmp.1;
+        Thu, 05 Aug 2021 09:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3yVfr8nI8PLISyELvilTpZf23yuPK/Chs+AbBCYqhwI=;
+        b=o29RqF6g5OddzmP0Hm1cVDwOAgHgLA2Pe5tDHHWRxN1H7t5+3uec63+nx3i21s1fTs
+         s9Mf2mVR5b+qdPXUmgtW0BCdVV9FoJALKIp4MdFTLJ/HXFn0rdtxCMuCee0EEYHirJOD
+         ybBAvprn8fE/eRVEogGnL1caa1E5rZY0x0JF95gHFrceG/P4AhjmSERcndZTJzYH0fuO
+         aQEID/xeCw/Gm2o43uvniw8U3sna3ht13iwPsWtL9ugZwpuZmg4VXT5V6wOXokoHAtaz
+         yD6PLm/XcFEGyK8PYjvDBzOX9vceocPkkoWxxn62QwGn2vaO74tknn8/NrLGxyovmcuo
+         Zlpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3yVfr8nI8PLISyELvilTpZf23yuPK/Chs+AbBCYqhwI=;
+        b=nA9652cvLMA4d96xomHacssBiM/4jIhbIc7UyH6Udj1n9zjGB548agnbvnWMf4AycC
+         USBzVZyKoz8JYE9TfOIpWii8lwzzXevmZ7bjI461QGWYtDsuNqk1a3gBKyXzIfnrcf/h
+         WMW6WUgjx2cDcSUgeNTBEiA7z7fD4fIRyCE+NUV0Jz2FztTCIidoZIZ2HdEq8QClADf3
+         toiio59f/VFMJEkvpu3+k5GMQwOV3qPP8Q394y1qJkQWgsxsiwC7AasPdWpAHhJMfpHv
+         2vEuwOg1YG+XPJ2BNbSDEUhvz7P5Fe62k/Aaq742NRBPpuyKIymfoRxsk5tP6DAcAe/o
+         DC9g==
+X-Gm-Message-State: AOAM530C/KZyso1dVoFKesLRVS2cxpBB7GfloJTZlv4FL13rCduoY+Z8
+        yxfwp9fa9CGmyiC33wGuSYA=
+X-Google-Smtp-Source: ABdhPJzdBtA8C3ab4YGROs84S7Mh1Ga3np+vhm9BC6CQEldH4BttWOMOJH29A4kw8snvz14TXwKUNw==
+X-Received: by 2002:a05:600c:1ca7:: with SMTP id k39mr16580779wms.115.1628179873285;
+        Thu, 05 Aug 2021 09:11:13 -0700 (PDT)
+Received: from localhost (178-169-161-196.razgrad.ddns.bulsat.com. [178.169.161.196])
+        by smtp.gmail.com with ESMTPSA id w10sm6336007wrr.23.2021.08.05.09.11.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Aug 2021 09:11:12 -0700 (PDT)
+From:   Iskren Chernev <iskren.chernev@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-In-Reply-To: <CAPLW+4nCfSBfwMcemaVvU5MgBACgnhXaW9eAAjw66G6Zhz2Gbw@mail.gmail.com>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
-        <20210730144922.29111-13-semen.protsenko@linaro.org>
-        <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
-        <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
-        <87k0l1w8y5.wl-maz@kernel.org>
-        <CAPLW+4mMF9B2BiY2hTgHz5=DNbDJZ7TDzt=Xefb5tDKwQhpEew@mail.gmail.com>
-        <87y29gbas7.wl-maz@kernel.org>
-        <CAPLW+4nCfSBfwMcemaVvU5MgBACgnhXaW9eAAjw66G6Zhz2Gbw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: semen.protsenko@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, jirislaby@kernel.org, gregkh@linuxfoundation.org, ckeepax@opensource.wolfsonmicro.com, ryu.real@samsung.com, tom.gall@linaro.org, sumit.semwal@linaro.org, john.stultz@linaro.org, amit.pundir@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Iskren Chernev <iskren.chernev@gmail.com>
+Subject: [PATCH v4 0/2] Add GCC for SM4250/6115
+Date:   Thu,  5 Aug 2021 19:11:05 +0300
+Message-Id: <20210805161107.1194521-1-iskren.chernev@gmail.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 05 Aug 2021 16:30:23 +0100,
-Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> 
-> On Thu, 5 Aug 2021 at 10:39, Marc Zyngier <maz@kernel.org> wrote:
-> >
-> > On Wed, 04 Aug 2021 19:37:24 +0100,
-> > Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> > >
-> > > On Wed, 4 Aug 2021 at 18:01, Marc Zyngier <maz@kernel.org> wrote:
-> > > >
-> > > > On Wed, 04 Aug 2021 15:39:38 +0100,
-> > > > Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> > > >
-> > > > > > You are also missing the hypervisor virtual timer interrupt.
-> > > > > >
-> > > > >
-> > > > > Checked SoC TRM, there is no PPI for hypervisor virtual timer
-> > > > > interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
-> > > > > ARM and TRM, almost no description of it. Also, I checked other
-> > > > > platforms, and seems like everyone does the same (having only 4
-> > > > > interrupts). And I wasn't able to find any documentation on that, so I
-> > > > > guess I'll leave it as is, if you don't mind.
-> > > >
-> > > > I *do* mind, and other DTs being wrong isn't a good enough excuse! ;-)
-> > > >
-> > > > From the ARMv8 ARM (ARM DDI 0487G.b)
-> > > > <quote>
-> > > > D11.2.4 Timers
-> > > >
-> > > > In an implementation of the Generic Timer that includes EL3, if EL3
-> > > > can use AArch64, the following timers are implemented:
-> > > >
-> > > > * An EL1 physical timer, that:
-> > > >   - In Secure state, can be accessed from EL1.
-> > > >   - In Non-secure state, can be accessed from EL1 unless those
-> > > >     accesses are trapped to EL2.
-> > > >     When this timer can be accessed from EL1, an EL1 control
-> > > >     determines whether it can be accessed from EL0.
-> > > > * A Non-secure EL2 physical timer.
-> > > > * A Secure EL3 physical timer. An EL3 control determines whether this
-> > > >   register is accessible from Secure EL1.
-> > > > * An EL1 virtual timer.
-> > > > * When FEAT_VHE is implemented, a Non-secure EL2 virtual timer.
-> > > > * When FEAT_SEL2 is implemented, a Secure EL2 physical timer.
-> > > > * When FEAT_SEL2 is implemented, a Secure EL2 virtual timer.
-> > > > </quote>
-> > > >
-> > > > Cortex-A55 being an ARMv8.2 implementation, it has FEAT_VHE, and thus
-> > > > it does have a NS-EL2 virtual timer. This is further confirmed by the
-> > > > TRM which documents CNTHV*_EL2 as valid system registers[1].
-> > > >
-> > > > So the timer exists, the signal is routed out of the core, and it
-> > > > is likely that it is connected to the GIC.
-> > > >
-> > > > If the designers have omitted it, then it needs to be documented as
-> > > > such.
-> > > >
-> > >
-> > > Ok, I've checked thoroughly all docs again, and it seems like there is
-> > > no dedicated PPI number for this "EL2 Hypervisor Virtual Timer" in
-> > > Exynos850 SoC. The timer instance itself might exist of course, but
-> > > interrupt line is probably wasn't connected to GIC by SoC designers,
-> > > at least it's not documented.
-> >
-> > Can you try and check this? You can directly program the virtual timer
-> > so that it has a pending interrupt, and then check the pending
-> > register on the same CPU to see if there is anything appearing there.
-> >
-> > > Moreover, from [1,2] it looks like if it were existing it would have
-> > > been PPI=12 (INTID=28). But in GIC-400 TRM this PPI is assigned to
-> > > "Legacy FIQ signal",
-> >
-> > No. That's only if you set the bypass bits in GICD_CTLR, which nobody
-> > with half a brain would consider doing.
-> >
-> > > and all there is no PPI for Hypervisor Virtual
-> > > Timer documented there as well. In Exynos850 TRM the source for this
-> > > PPI's interrupt source is marked as "-", which means it's not used.
-> > >
-> > > So if you know something that I don't know -- please point me out the
-> > > doc where this PPI line is documented. Otherwise I can add the comment
-> > > to device tree, stating that this interrupt line is not present in
-> > > SoC's GIC, i.e. something like this:
-> > >
-> > > 8<------------------------------------------------------------------------------->8
-> > >     timer {
-> > >         compatible = "arm,armv8-timer";
-> > >         interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
-> > >                       IRQ_TYPE_LEVEL_LOW)>,
-> > >                  <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
-> > >                       IRQ_TYPE_LEVEL_LOW)>,
-> > >                  <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
-> > >                       IRQ_TYPE_LEVEL_LOW)>,
-> > >                  <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
-> > >                       IRQ_TYPE_LEVEL_LOW)>;
-> > >         /* Hypervisor Virtual Timer PPI is not present in this SoC GIC */
-> > >     };
-> > > 8<------------------------------------------------------------------------------->8
-> > >
-> > > Is that ok with you?
-> >
-> > I'd rather you verify the above first. And if you can't, I'd like a
-> > comment that is a bit more explicit:
-> >
-> 
-> I'm afraid I won't be able to verify your idea: seems like CNTHV_EL2
-> can be only modified (or read) in EL2. I tried to read that reg
-> anyway, which unsurprisingly resulted in el1_undef() BUG. The kernel
-> on my board is running in EL1, and I don't have access to the source
-> code for EL3 bootloaders. I have the source code for the last
-> bootloader, but it's already running in EL1.
+This patch adds support for the Global Clock Controller on QCom SM4250 and
+SM6115, codename bengal. The code is taken from OnePlus repo [1]. The two
+platforms are identical so there is only one compat string.
 
-Excellent. Yet another half-usable machine on the block. Just what we
-need.
+[1]: https://github.com/OnePlusOSS/android_kernel_oneplus_sm4250
 
-> 
-> > /* The vendor couldn't be bothered to wire the EL2 Virtual Timers */
-> >
-> 
-> I'll add the comment as you suggested. I propose we come back to this
-> issue later, either when the need for HV timer arises or when I have
-> some means to test your theory about existing PPI.
+v1: https://lkml.org/lkml/2021/6/22/1131
+v2: https://lkml.org/lkml/2021/6/27/157
+v3: https://lkml.org/lkml/2021/8/1/68
 
-If you depend on the vendor to get EL2 access, it is a lost cause,
-unfortunately.
+Changes from v3:
+- removed test clock from driver/binding
+- fix GCC_SDCC2_BCR value as spotted by Konrad
+- simplified probe function
 
-	M.
+Changes from v2:
+- Suggested by Stephen Boyd
+  - switch to parent_data in place of parent_names
+- other
+  - drop parent refs to invalid clocks
+  - use pll-alpha regs when possible
+  - drop unused parent defs
+  - add pll test clock to bindings
 
+Changes from v1:
+- remove sm4250 compat, there will be a single sm6115.dtsi for both platforms
+
+Iskren Chernev (2):
+  dt-bindings: clk: qcom: gcc-sm6115: Document SM6115 GCC
+  clk: qcom: Add Global Clock controller (GCC) driver for SM6115
+
+ .../bindings/clock/qcom,gcc-sm6115.yaml       |   72 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-sm6115.c                 | 3544 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm6115.h   |  201 +
+ 5 files changed, 3825 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
+
+
+base-commit: 8d4b477da1a807199ca60e0829357ce7aa6758d5
 -- 
-Without deviation from the norm, progress is not possible.
+2.32.0
+
