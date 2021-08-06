@@ -2,190 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46713C43214
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 16:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C25FC4338F
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 17:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2400861179
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 16:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5802611F0
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 17:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239723AbhHFQ6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Aug 2021 12:58:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
+        id S238270AbhHFRDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Aug 2021 13:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239453AbhHFQ6M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 12:58:12 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2EEC061799
-        for <linux-clk@vger.kernel.org>; Fri,  6 Aug 2021 09:57:56 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id a8so5638428vsl.4
-        for <linux-clk@vger.kernel.org>; Fri, 06 Aug 2021 09:57:56 -0700 (PDT)
+        with ESMTP id S235555AbhHFRDU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 13:03:20 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AAFAC0613CF;
+        Fri,  6 Aug 2021 10:03:03 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id h14so11893983wrx.10;
+        Fri, 06 Aug 2021 10:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jyRdCsrj1GlEr3i17zCrA/RuqWCQgwoVhsTIqjVReGU=;
-        b=nw1Ts52SCu6B1wsbHInWfDu47KHigBfQozSZLjBb5uG4y8/sFe4OzQZByR10dzSDEs
-         VpeJMGrhJ4imYXUKE407mfRV/2sXCbQdp5Xgmmh8mxxdafY5TAYqvoA7yiD/X1OBJfDv
-         L38Qz5zSW759Tlgb4Re6g7MVPiM120RfUVHS8XfxJEZdfEjK+QTf40Gx7FdUgzYvLs3O
-         7i4rU/tFT/CTMvwz2RBJem3GMzZehap/lEWlgCBkZ2F7vtXIZ4GH4O5ex6HqecyGdJYb
-         jRuiffdHUN8YpCLTZ5ryZeEVHQzo7JSv9v3Omt524ezJTQciAhiRlSJMCKZf2/Q+LwXz
-         hUXg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ry90ENKPsYIpGExDy1ZF1IVXMmwBeF90JsJopXkAmdI=;
+        b=PGCsnDqIzxO8nkcTh9TUrZKbU2QHXJZsh87b3VLIEkbg6prQuU45RLKKuS7ZAOj6v2
+         02rApMWyFHocSzlgRR0+FoR9yfoBueg8cgTR3uK7HaEMFQBZXh+EqvhT6xI8nQi7wKJv
+         3gFyj82vjg4znvyDI45YfX/nCmHPkephua5pXU047n5TWj9hYq0Sx4o2lWU64VIDxoje
+         whNnHN9lGN5cMfTveTCKmeyDUonqx0VFN4klLmHjo0FRPVHQIKgi6yTavpu/GZy1PJv5
+         vG07dLzcjCwd3tKaQ7XTXSTZUTt0go2KK/18YopPUwaml5GRgHe56oTFXMIdpq91v208
+         fR4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jyRdCsrj1GlEr3i17zCrA/RuqWCQgwoVhsTIqjVReGU=;
-        b=FFsuV4zNbWUBbMElLCHjOmdWAC/SRnDAdeaEhx206Ytgd3rGdZZQ6OUc9rXp65p8CK
-         LWThvoSq/5yh+pWSp2ptDjYyPrl+NDNiHAci1kkVIzyE3bRD2EtVeSLptVXqZUKnQCLi
-         xIbZQUURC6BLHkRIOC+oI2A0lYSxKBGWtacJAZPkKnJrg8vZ78dw0e08x3otRRLYrTgt
-         OLrL3ly/STTyWjojl+91qvnc5zHRKw4Uv3mG/0iZeAvHz3Nx3zdkPqtd6Fpz0qYZAZLY
-         IvjbOHT7Zt8DjsItoQZYd1LU9+3nR88KSwzsf3CvXFr2Elzbn4pndDYdF5OAHpN+Vx6A
-         JlRQ==
-X-Gm-Message-State: AOAM531zHmLodDYOk0agxSM2kbZbq7RMulm2fSViHjOO6lMeEQpf2343
-        QVJlYRhmBKkSiN0ItHOzr7Ao8g32YApcqHl0zdSQdpABRZewZBi5
-X-Google-Smtp-Source: ABdhPJzTq25yNSWiZXX2jLUbzoFsDlhmE5adtlQiqtv29jZT5m3Z+k1kQXXoo4aeW5KqY9IKZmmCWimAcVFI3/TcDgk=
-X-Received: by 2002:a05:6102:ecb:: with SMTP id m11mr9911739vst.34.1628269075986;
- Fri, 06 Aug 2021 09:57:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-13-semen.protsenko@linaro.org> <455cfb5e-dff7-a5c0-3875-49abe3e900f3@canonical.com>
- <CAPLW+4nDS0atrbUFagDA0W_Ky5MvOiY+N+NQoQ+me4pndp_iWg@mail.gmail.com>
- <68734f6c-fc76-595c-8d34-8924dbbbb845@canonical.com> <CAPLW+4n_JKj5xeBHXONcv__vyAFvx3fhXoxJa17NTHK1RSJFJw@mail.gmail.com>
- <b753796c-2ce6-4166-7c20-289e950237ad@canonical.com> <bb08f7a4-1da9-fb20-f091-6a3c37a1f898@canonical.com>
-In-Reply-To: <bb08f7a4-1da9-fb20-f091-6a3c37a1f898@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 6 Aug 2021 19:57:43 +0300
-Message-ID: <CAPLW+4=7n3a2FL9YHYj8dPn+2obFLHvW6DpsDjnG-bxX9--HbQ@mail.gmail.com>
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ry90ENKPsYIpGExDy1ZF1IVXMmwBeF90JsJopXkAmdI=;
+        b=Gvq2/y4pFgiXCJU3lbLlozuEKjFfSJG7WbwSXsnRzF/r+xEVdu6kJXAaG1nQAPhx3k
+         IoMh3sDT1wo6Ns/SJYS7t+hHHe3AC9wqod/5CKjxr9Ch7I7GN+7gpZ8OdcH5CrtcDwAr
+         7YCbqnVGFK+W1I10uZTR7UXwW5xLUey28hcYVcD5yjlkS5H/cw1zxGi/HeZCw3oJa+ga
+         OcQorzhciqirtQ3MSN6qNv1duBvwQcbT3MmzU9P6f0L7YLOKKmCh2lQ8m6KXMXX1zdaH
+         kxyVybHLhu/sIs2KGF48b6zmpOz6jNmXKngzo+hTzWj9hs98SY4JwelopfI2EDqGJEoq
+         crAQ==
+X-Gm-Message-State: AOAM533vDkYskf07tfZF14cJEHiW5zYsI0+zCNhaEje+0nCvwyf5kcos
+        Bd2EhdTWZwYSDbUI/NUutwudVRcVj1Q=
+X-Google-Smtp-Source: ABdhPJwmqZ3gJaD/WzTPk4XMvORgHGG53THT9WtxsPcNejgkGmoo6xNkSoPMQ1Qf5UhB1LLTL5Wd3w==
+X-Received: by 2002:adf:f707:: with SMTP id r7mr11515538wrp.175.1628269382314;
+        Fri, 06 Aug 2021 10:03:02 -0700 (PDT)
+Received: from [192.168.74.110] (178-169-161-196.razgrad.ddns.bulsat.com. [178.169.161.196])
+        by smtp.gmail.com with ESMTPSA id j2sm10435637wrd.14.2021.08.06.10.03.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Aug 2021 10:03:01 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] clk: qcom: smd: Add support for SM6115 rpm clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20210731164827.2756798-1-iskren.chernev@gmail.com>
+ <20210731164827.2756798-2-iskren.chernev@gmail.com>
+ <162821413782.19113.1911724221661020342@swboyd.mtv.corp.google.com>
+From:   Iskren Chernev <iskren.chernev@gmail.com>
+Message-ID: <b4abb286-08f8-b7b3-a163-d2d67c72f7b3@gmail.com>
+Date:   Fri, 6 Aug 2021 20:03:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <162821413782.19113.1911724221661020342@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 6 Aug 2021 at 15:48, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 06/08/2021 14:32, Krzysztof Kozlowski wrote:
-> > On 06/08/2021 14:07, Sam Protsenko wrote:
-> >> On Fri, 6 Aug 2021 at 10:49, Krzysztof Kozlowski
-> >> <krzysztof.kozlowski@canonical.com> wrote:
-> >>>
-> >>> On 06/08/2021 01:06, Sam Protsenko wrote:
-> >>>> On Sat, 31 Jul 2021 at 12:03, Krzysztof Kozlowski
-> >>>> <krzysztof.kozlowski@canonical.com> wrote:
-> >>>>
-> >>>>>>
-> >>>>>> This patch adds minimal SoC support. Particular board device tree =
-files
-> >>>>>> can include exynos850.dtsi file to get SoC related nodes, and then
-> >>>>>> reference those nodes further as needed.
-> >>>>>>
-> >>>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >>>>>> ---
-> >>>>>>  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 +++++++++++++=
-+++++
-> >>>>>>  arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
-> >>>>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
-> >>>>>
-> >>>>> Not buildable. Missing Makefile, missing DTS. Please submit with in=
-itial
-> >>>>> DTS, otherwise no one is able to verify it even compiles.
-> >>>>>
-> >>>>
-> >>>> This device is not available for purchase yet. I'll send the patch f=
-or
-> >>>> board dts once it's announced. I can do all the testing for now, if
-> >>>> you have any specific requests. Would it be possible for us to revie=
-w
-> >>>> and apply only SoC support for now? Will send v2 soon...
-> >>>
-> >>> What you propose is equal to adding a driver (C source code) without
-> >>> ability to compile it. What's the point of having it in the kernel? I=
-t's
-> >>> unverifiable, unbuildable and unusable.
-> >>>
-> >>
-> >> Yes, I understand. That's adding code with no users, and it's not a
-> >> good practice.
-> >>
-> >>> We can review the DTSI however merging has to be with a DTS. Usually =
-the
-> >>> SoC vendor adds first an evalkit (e.g. SMDK board). Maybe you have on=
-e
-> >>> for Exynos850? Otherwise if you cannot disclose the actual board, the
-> >>> DTSI will have to wait. You can submit drivers, though.
-> >>>
-> >>
-> >> Sure, let's go this way. I'll send v2 soon. Improving patches and
-> >> having Reviewed-by tag for those would good enough for me at this
-> >> point. I'll continue to prepare another Exynos850 related patches
-> >> until the actual board is announced, like proper clock driver, reset,
-> >> MMC, etc. Is it ok if I send those for a review too (so I can fix all
-> >> issues ahead)?
-> >
-> > Sure, prepare all necessary drivers earlier. I suspect clocks will be a
-> > real pain because of significant changes modeled in vendor kernel. I
-> > remember Pawe=C5=82 Chmiel (+Cc) was doing something for these:
-> > https://github.com/PabloPL/linux/tree/exynos7420
-> >
-> > I mentioned before - you should also modify the chipid driver. Check
-> > also other drivers in drivers/soc/samsung, although some are needed onl=
-y
-> > for suspend&resume.
-> >
 
-Yes, in due course... There won't be much problems with chip-id
-driver. But pretty much all platform drivers depend on clk, and that
-one I'm afraid I'll have to implement from scratch. Will take me a
-while, as vendor's codebase for clk driver is huge and depend on
-another huge non-upstreamable abstraction layer framework they have,
-and also they have kind of strange home brewed composite clocks...
-Anyway, that's what I'm going to look into next.
 
-Btw, I just sent v2 :)
+On 8/6/21 4:42 AM, Stephen Boyd wrote:
+> Quoting Iskren Chernev (2021-07-31 09:48:26)
+>> Add rpm smd clocks, PMIC and bus clocks which are required on
+>> SM4250/6115 for clients to vote on.
+>>
+>> Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
+>> ---
+> 
+> Applied to clk-next with lots of effort
+> 
 
->
-> You can also take a look at Exynos8895 efforts:
-> https://github.com/ivoszbg/linux/commits/for-upstream/exynos8895
->
-> Since knowledge, datasheets and efforts are quite spread all over, I
-> keep track of some work here:
-> https://exynos.wiki.kernel.org/community
->
+Thank you! Now I see - the clock defs align perfectly with 6125, you can thank
+Konrad for suggesting to reuse the defs, therefore making any 2 patches
+conflict due to clock reuse.
 
-Thanks, Krzysztof! I'm sure that info will help a lot with further
-work, like clock driver.
-
->
-> Best regards,
-> Krzysztof
+Regards,
+Iskren
