@@ -2,111 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666B6C4320A
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 00:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6479EC432BE
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 00:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBEB61078
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 00:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45135611BF
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 00:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236979AbhHFA0d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Aug 2021 20:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
+        id S232079AbhHFAag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Aug 2021 20:30:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235480AbhHFA0c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Aug 2021 20:26:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C6C4D6103B;
-        Fri,  6 Aug 2021 00:26:17 +0000 (UTC)
+        id S235480AbhHFAaf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Aug 2021 20:30:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 72E4861078;
+        Fri,  6 Aug 2021 00:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628209577;
-        bh=YFtjL1PAXNXSdcZpSOdpjOpPtHM0Uq0mwmaKoBiv7Ng=;
+        s=k20201202; t=1628209820;
+        bh=+mtOWYvH54JQ4ZiwWjYbU3ADjpbxBcxt2+P8ungC1J0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=nTBlAbLcMlktPMKTmuZWSwf8qZuNTuimEEJKAP/Jl70nzb4PuCp6jmXm8On/8rZ1e
-         bHd3PWXnDvVTCHCQVNFqLBoxRx+9WiplFvAARRKooeyFeoZhQGZY5iw5Ny+qO8Fqa5
-         rYC46cEsbkvsa/1RbsPZKrfbZLEjfoVhEE4Ue+/xAq8aIgEqmD9eoXeSQVBc//Kdie
-         hmgHunpMJQAq3sRgiUdkuydl0OV6ikTNVBmDP2Q1nKrHjQ2f4jD3anKK/Jy40PXPeG
-         ON3ASC7tam/ND04fURgRmqwi/Vb1kYry7MFHzvt2LrSGQzeU+NkmC5+yKOAxJL3DXL
-         4yEushO9353bA==
+        b=BwJTq9/5xx4DFmhc/ONo+HPpbfsiwf+bPgoqWcSKhaWSRfSqFCfHvzZFjyKqTEaBZ
+         zc516KgsQlmWP0Z3usUcswDhW8CPVovLNA4ZO8dH4Dvnauz/3ikXoYsWcbzyXRmg3N
+         AWusR7+J4/skuj6FYHDC2Gy2sAjP4g2uQwlWJPF0uj0bGLEMS+AAPBj+vPLYq+t0Va
+         CyVoFQRHvrJTDPDtm22tiDGaiJGD7xgCKwgXkG0UiVE4XJrF8FijNl/SPmXNk8zh9V
+         Y9Ab0AJ57cssSm9RoRMrLzaSYJjgAMAjmlUaS/8DG1Br4m25bLH91AgXy4JMBOwgcH
+         JZ/tfp7CxAHlw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210803104012.wf2buscbukxufesl@pengutronix.de>
-References: <20210723091331.wl33wtcvvnejuhau@pengutronix.de> <20210728202547.7uvfwflpruku7yps@pengutronix.de> <20210728204033.GF22278@shell.armlinux.org.uk> <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com> <20210731120004.i3affxw7upl5y4c5@pengutronix.de> <20210802094810.GJ22278@shell.armlinux.org.uk> <20210802152755.ibisunvibmwhiyry@pengutronix.de> <20210802163824.GK22278@shell.armlinux.org.uk> <162797831443.714452.3551045763456936564@swboyd.mtv.corp.google.com> <20210803104012.wf2buscbukxufesl@pengutronix.de>
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of devm_clk_get for prepared and enabled clocks enabled clocks]
+In-Reply-To: <20210802144529.1520-4-pali@kernel.org>
+References: <20210624224909.6350-1-pali@kernel.org> <20210802144529.1520-1-pali@kernel.org> <20210802144529.1520-4-pali@kernel.org>
+Subject: Re: [PATCH v4 3/6] dt-bindings: mvebu-uart: document DT bindings for marvell,armada-3700-uart-clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        alexandre.belloni@bootlin.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        thierry.reding@gmail.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Ludovic.Desroches@microchip.com, o.rempel@pengutronix.de,
-        andy.shevchenko@gmail.com, aardelean@deviqon.com,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        broonie@kernel.org, Jonathan.Cameron@huawei.com,
-        linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        wsa@kernel.org, kernel@pengutronix.de, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, Claudiu.Beznea@microchip.com
-To:     <u.kleine-koenig@pengutronix.de>
-Date:   Thu, 05 Aug 2021 17:26:16 -0700
-Message-ID: <162820957661.19113.17221558053361108175@swboyd.mtv.corp.google.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>, <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>, <pali@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 05 Aug 2021 17:30:19 -0700
+Message-ID: <162820981926.19113.12529765873453602213@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Uwe Kleine-K=C3=B6nig (2021-08-03 03:40:12)
-> On Tue, Aug 03, 2021 at 01:11:54AM -0700, Stephen Boyd wrote:
-> >=20
-> > Maybe this series would be more compelling if those various drivers that
-> > are hand rolling the devm action were converted to the consolidated
-> > official devm function. The truth is it's already happening in various
-> > subsystems so consolidating that logic into one place would be a win
-> > code size wise and very hard to ignore.
-> >=20
-> > Doing
-> >=20
-> >  $ git grep devm_add_action | grep clk
-> >=20
-> > seems to catch quite a few of them.
->=20
-> Another upside is that grepping for these drivers with a potential for
-> further improvement become easier to grep for as
-> devm_clk_get_{prepared,enabled} is a much better hint :-)
+> diff --git a/Documentation/devicetree/bindings/clock/armada3700-uart-cloc=
+k.yaml b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> new file mode 100644
+> index 000000000000..5ef04f3affda
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +title: Marvell Armada 3720 UART clocks
 
-Sorry, but that's a pretty weak argument. I'd think grepping for the
-absence of pm_ops in drivers would be the same hint.
+Please add a newline here
 
->=20
-> The changes to these drivers probably won't go through a clk tree, so
-> adding these patches before adding devm_clk_get_enabled() would only
-> help for the warm and cozy feeling that it is right to do so, correct?
+> +properties:
+> +  compatible:
+> +    const: marvell,armada-3700-uart-clock
 
-It isn't to feel warm and cozy. It's to demonstrate the need for
-consolidating code. Converting the i2c and spi drivers to use this is
-actively damaging the cause though. Those driver frameworks are more
-likely to encourage proper power management around bus transfers, so
-converting them to use the devm API moves them away from power
-management, not closer to it.
+Please add a newline here
 
-This proves why this topic is always contentious. It's too easy to
-blindly convert drivers to get the clk and leave it enabled forever and
-then they never use power management. The janitors win and nobody else.
+> +  reg:
+> +    items:
+> +      - description: UART Clock Control Register
+> +      - description: UART 2 Baud Rate Divisor Register
 
-Is there some way to avoid that trap? Maybe through some combination of
-a device PM function that indicates the driver has no runtime PM
-callbacks (pm_runtime_no_callbacks() perhaps?) and
-devm_clk_get_enabled() checking for that and returning the clk only when
-that call has been made (i.e. pm_runtime_has_no_callbacks())? This
-approach would fail to catch the case where system wide suspend/resume
-could turn the clk off but the driver doesn't do it. I'm not sure how
-much we care about that case though.
+Please add a newline here
 
->=20
-> As my focus is limited to (mostly) drivers/pwm and I already have quite
-> some other patch quests on my list:
+> +  clocks:
+> +    description: |
+> +      List of parent clocks suitable for UART from following set:
+> +        "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal"
+> +      UART clock can use one from this set and when more are provided
+> +      then kernel would choose and configure the most suitable one.
+> +      It is suggest to specify at least one TBG clock to achieve
+> +      baudrates above 230400 and also to specify clock which bootloader
+> +      used for UART (most probably xtal) for smooth boot log on UART.
 
-Don't we all? :)
+Please use items and const like clock-names for the clocks property. The
+description makes me feel like the DT is configuring the choices
+available. Ideally, the clocks and clock-names properties are fixed in
+length and never change unless the compatible changes.
+
+Please add a newline here
+
+> +  clock-names:
+> +    items:
+> +      - const: TBG-A-P
+> +      - const: TBG-B-P
+> +      - const: TBG-A-S
+> +      - const: TBG-B-S
+> +      - const: xtal
+> +    minItems: 1
+> +    maxItems: 5
+
+Please add a newline here
+
+> +  '#clock-cells':
+> +    const: 1
+
+Please add a newline here
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+
+Please add a newline here
+
+> +additionalProperties: false
+
+Please add a newline here
+
+> +examples:
+> +  - |
+> +    uartclk: uartclk@12000 {
+> +      compatible =3D "marvell,armada-3700-uart-clock";
+> +      reg =3D <0x12010 0x4>, <0x12210 0x4>;
+> +      clocks =3D <&tbg 0>, <&tbg 1>, <&tbg 2>, <&tbg 3>, <&xtalclk>;
+> +      clock-names =3D "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal";
+> +      #clock-cells =3D <1>;
+> +    };
