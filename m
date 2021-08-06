@@ -2,180 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1AEC432BE
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 12:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0A9C4338F
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 13:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2111361184
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 12:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B4F4610FB
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 13:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343817AbhHFMsl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Aug 2021 08:48:41 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51282
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343802AbhHFMsb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 08:48:31 -0400
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id 2A61F40684
-        for <linux-clk@vger.kernel.org>; Fri,  6 Aug 2021 12:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628254095;
-        bh=+iMOfeE6Vf9NGHS30HYXv4eokVZ3e25K5G9GYGN0DC8=;
-        h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=qyy4zqB/scUf9TZOVxmmHRWZlVPk1VFfKrzcxRLYcRncNQk0uTMBTxOVssJHCkwXk
-         63HacumoZmXkATPZdgxbCx9IB/Xy3Dbz2+nI+XOjBJFT15iTA5k82J5CYaIs8F1Zcy
-         bpESGLO6lD4PF1MOsqoUibTUIzhMF/7UCOhrboZIO6CHykXCEhMFDPUK9LVkX9iqwx
-         DSxp3Kje92I/jripIkhfcV+kgu06CB/WuZwlIQfY+UyJjNDeqLD0Mm/uZYbcOMs//7
-         PKIxSyUtJ+i0T+25LKOZ6GcFtQ7yxjIpHZLr19PaiSFQ4kR/BNoLHeNfd5Rf00MtQi
-         ipPTh/igVsjhg==
-Received: by mail-ej1-f72.google.com with SMTP id a19-20020a1709063e93b0290551ea218ea2so217149ejj.5
-        for <linux-clk@vger.kernel.org>; Fri, 06 Aug 2021 05:48:15 -0700 (PDT)
+        id S1344019AbhHFN2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Aug 2021 09:28:19 -0400
+Received: from mail-oo1-f45.google.com ([209.85.161.45]:38850 "EHLO
+        mail-oo1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244222AbhHFN2T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 09:28:19 -0400
+Received: by mail-oo1-f45.google.com with SMTP id y23-20020a4a62570000b029028727ffa408so227737oog.5;
+        Fri, 06 Aug 2021 06:28:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+iMOfeE6Vf9NGHS30HYXv4eokVZ3e25K5G9GYGN0DC8=;
-        b=a/cF9XBhGt89w+xcsvrW0BUyZPmjnUdsyaCixLiuM9E3rRiiRbmFvD3CAN5McaNC2K
-         RkorDRDVc9M4J40kTGod60Rmcyn0b0c00f89ofAktB1Lx6rsEz/nk2sSdzcHFxU18eQ7
-         X2PqZ+ap1h7lawkFfvx+JJUE8MUkwd8IuZ4FewcFEoZEY6/rWU94JzltHDViYUesJmKa
-         O3eq8Tk2cmdZ4T4rN8hSFM8qHdtlnvP1yRbgmJau8dMETJSaZWOXlSWh043b+kDUoD+s
-         1l+Oz8Hsg8l8cyhTRNGq+nrFU6hFhGJqykWVLdlr69URqkd2ydW5K6GbPRY7/RR6GLWn
-         d7ng==
-X-Gm-Message-State: AOAM53261j+KAZUUID1AYF4PvGcsj4I/HnbM3V5QLz+Pg4PQUqavDxsn
-        j5lRtlq9E+Ok+ohmtzeNbxxaL1avEGclPcuR2eE/mdEBvTSfZFoNtwwYO8rGS3A1XqTpE5lWcjt
-        2i8zj3xZpk1Zodffjei2z7egptlQMjaqjEfGvkQ==
-X-Received: by 2002:a17:906:2dc5:: with SMTP id h5mr9916694eji.515.1628254094628;
-        Fri, 06 Aug 2021 05:48:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyw0Ophi5VEEXPM4XZ0YWYJmokSCe46iXLol1mXc81JTaSdAe1qWBzFoVyacX3XeKr/xC3Vqg==
-X-Received: by 2002:a17:906:2dc5:: with SMTP id h5mr9916653eji.515.1628254094423;
-        Fri, 06 Aug 2021 05:48:14 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id lw22sm2849189ejb.74.2021.08.06.05.48.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Aug 2021 05:48:13 -0700 (PDT)
-Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-13-semen.protsenko@linaro.org>
- <455cfb5e-dff7-a5c0-3875-49abe3e900f3@canonical.com>
- <CAPLW+4nDS0atrbUFagDA0W_Ky5MvOiY+N+NQoQ+me4pndp_iWg@mail.gmail.com>
- <68734f6c-fc76-595c-8d34-8924dbbbb845@canonical.com>
- <CAPLW+4n_JKj5xeBHXONcv__vyAFvx3fhXoxJa17NTHK1RSJFJw@mail.gmail.com>
- <b753796c-2ce6-4166-7c20-289e950237ad@canonical.com>
-Message-ID: <bb08f7a4-1da9-fb20-f091-6a3c37a1f898@canonical.com>
-Date:   Fri, 6 Aug 2021 14:48:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EwaYK5QiZh6IiR8aTLx1BO+CiD1SZPRY4ebE2HYvd5w=;
+        b=rXw6Xn6KVZk1RG46K0OljhAN5g0F9XEQRw4NBzN1xaohumgOV53BgZaoLbuCAQl5NY
+         nN1YW/Q8YUDK/m+UxkfTWs/WbJFLzbMh0H2cBgIVczWc6SvGk61Buo71/9EzH1Qo2A6G
+         g/qQGcDjsMU4U0qKI5awhLw8mf341L0ifaXPh+KUhKQ/Ou1tpanBtFOU03NMv8nY9h7s
+         pb4tjFJ5ww8CcMLdk3hkoIZ7vk3LjdSdYbfNCGNbgb3lB4nXYTpyDICR8zJoVs0UC051
+         Ul5USHh9SUCLLVGd3gxJi/2Ow6fpmX8zIVVtyVBnXVYtAGgMKa7aMvoB0rnjShX5FFfv
+         YBYw==
+X-Gm-Message-State: AOAM533nu467rQlEQvGVdgi69q/ioKmXUCMxMrvYbYSdXhzzrDIEHLXd
+        K3GTs+YqfWCrec7TK3m/iPql4qgTgr3KLqtCOh8=
+X-Google-Smtp-Source: ABdhPJw8ttVHgV+Oa1vdqUFxeArJcAXGBlUr5m9E2BY5sUKwfIHc7iA/RV3QbuZaxEP4hiE/yJfn+K/21JgqJ/gxR0c=
+X-Received: by 2002:a4a:5dc6:: with SMTP id w189mr6803193ooa.1.1628256482887;
+ Fri, 06 Aug 2021 06:28:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b753796c-2ce6-4166-7c20-289e950237ad@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210731195034.979084-1-dmitry.baryshkov@linaro.org>
+ <20210731195034.979084-2-dmitry.baryshkov@linaro.org> <CAJZ5v0gWD8WSQU4oPMSdZFM9VpNpc4TAFJ=_wQLB60XFxw-Ciw@mail.gmail.com>
+ <CAA8EJpq5DB2a=C+eo_S7QgVMzpm=mvUcC4DkWwGoKQ1g8trmgA@mail.gmail.com>
+In-Reply-To: <CAA8EJpq5DB2a=C+eo_S7QgVMzpm=mvUcC4DkWwGoKQ1g8trmgA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 6 Aug 2021 15:27:51 +0200
+Message-ID: <CAJZ5v0gOZkXp3X3hNTAtyuFoBA2xUMX274qv=yaj0jYD8XRgBw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] PM: runtime: add devm_pm_runtime_enable helper
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/08/2021 14:32, Krzysztof Kozlowski wrote:
-> On 06/08/2021 14:07, Sam Protsenko wrote:
->> On Fri, 6 Aug 2021 at 10:49, Krzysztof Kozlowski
->> <krzysztof.kozlowski@canonical.com> wrote:
->>>
->>> On 06/08/2021 01:06, Sam Protsenko wrote:
->>>> On Sat, 31 Jul 2021 at 12:03, Krzysztof Kozlowski
->>>> <krzysztof.kozlowski@canonical.com> wrote:
->>>>
->>>>>>
->>>>>> This patch adds minimal SoC support. Particular board device tree files
->>>>>> can include exynos850.dtsi file to get SoC related nodes, and then
->>>>>> reference those nodes further as needed.
->>>>>>
->>>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>>>>> ---
->>>>>>  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++++++++
->>>>>>  arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
->>>>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
->>>>>
->>>>> Not buildable. Missing Makefile, missing DTS. Please submit with initial
->>>>> DTS, otherwise no one is able to verify it even compiles.
->>>>>
->>>>
->>>> This device is not available for purchase yet. I'll send the patch for
->>>> board dts once it's announced. I can do all the testing for now, if
->>>> you have any specific requests. Would it be possible for us to review
->>>> and apply only SoC support for now? Will send v2 soon...
->>>
->>> What you propose is equal to adding a driver (C source code) without
->>> ability to compile it. What's the point of having it in the kernel? It's
->>> unverifiable, unbuildable and unusable.
->>>
->>
->> Yes, I understand. That's adding code with no users, and it's not a
->> good practice.
->>
->>> We can review the DTSI however merging has to be with a DTS. Usually the
->>> SoC vendor adds first an evalkit (e.g. SMDK board). Maybe you have one
->>> for Exynos850? Otherwise if you cannot disclose the actual board, the
->>> DTSI will have to wait. You can submit drivers, though.
->>>
->>
->> Sure, let's go this way. I'll send v2 soon. Improving patches and
->> having Reviewed-by tag for those would good enough for me at this
->> point. I'll continue to prepare another Exynos850 related patches
->> until the actual board is announced, like proper clock driver, reset,
->> MMC, etc. Is it ok if I send those for a review too (so I can fix all
->> issues ahead)?
-> 
-> Sure, prepare all necessary drivers earlier. I suspect clocks will be a
-> real pain because of significant changes modeled in vendor kernel. I
-> remember Paweł Chmiel (+Cc) was doing something for these:
-> https://github.com/PabloPL/linux/tree/exynos7420
-> 
-> I mentioned before - you should also modify the chipid driver. Check
-> also other drivers in drivers/soc/samsung, although some are needed only
-> for suspend&resume.
-> 
+On Wed, Aug 4, 2021 at 11:03 PM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Wed, 4 Aug 2021 at 21:07, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Sat, Jul 31, 2021 at 9:50 PM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > A typical code pattern for pm_runtime_enable() call is to call it in the
+> > > _probe function and to call pm_runtime_disable() both from _probe error
+> > > path and from _remove function. For some drivers the whole remove
+> > > function would consist of the call to pm_remove_disable().
+> > >
+> > > Add helper function to replace this bolierplate piece of code. Calling
+> > > devm_pm_runtime_enable() removes the need for calling
+> > > pm_runtime_disable() both in the probe()'s error path and in the
+> > > remove() function.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/base/power/runtime.c | 17 +++++++++++++++++
+> > >  include/linux/pm_runtime.h   |  4 ++++
+> > >  2 files changed, 21 insertions(+)
+> > >
+> > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > > index 8a66eaf731e4..ec94049442b9 100644
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -1447,6 +1447,23 @@ void pm_runtime_enable(struct device *dev)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(pm_runtime_enable);
+> > >
+> > > +static void pm_runtime_disable_action(void *data)
+> > > +{
+> > > +       pm_runtime_disable(data);
+> > > +}
+> > > +
+> > > +/**
+> > > + * devm_pm_runtime_enable - devres-enabled version of pm_runtime_enable.
+> > > + * @dev: Device to handle.
+> > > + */
+> > > +int devm_pm_runtime_enable(struct device *dev)
+> > > +{
+> > > +       pm_runtime_enable(dev);
+> > > +
+> > > +       return devm_add_action_or_reset(dev, pm_runtime_disable_action, dev);
+> >
+> > When exactly is pm_runtime_disable_action() going to run by this rule?
+> >  When the device goes away or when the driver is unbound from it?
+>
+> When the driver is unbound (either because probe() returns an error or
+> because __device_release_driver() is being called).
+> This corresponds to a typical call to pm_runtime_disable() from the
+> probe()'s error path or in the remove() callback.
 
-You can also take a look at Exynos8895 efforts:
-https://github.com/ivoszbg/linux/commits/for-upstream/exynos8895
+OK, so
 
-Since knowledge, datasheets and efforts are quite spread all over, I
-keep track of some work here:
-https://exynos.wiki.kernel.org/community
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-
-Best regards,
-Krzysztof
+for the PM-runtime framework changes in this series (patches [1-2/3])
+and please feel free to route them in through whatever tree is most
+suitable (or let me know if you want me to pick them up).
