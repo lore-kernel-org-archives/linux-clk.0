@@ -2,80 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A31C432BE
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 20:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243C6C4338F
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Aug 2021 03:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15AE261181
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Aug 2021 20:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1F8860E52
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Aug 2021 03:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231997AbhHFUeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Aug 2021 16:34:07 -0400
-Received: from mail-io1-f50.google.com ([209.85.166.50]:36549 "EHLO
-        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244936AbhHFUeB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 16:34:01 -0400
-Received: by mail-io1-f50.google.com with SMTP id f11so13778409ioj.3;
-        Fri, 06 Aug 2021 13:33:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S7njTycsd1XL9PBVTCJA9Q/+rWiN/ju9cjzujGekEbU=;
-        b=PqofKHP6j6id8LSJ8TGtJl42UZzMTLUPFg0PGf2+tFGUAWv8qQ2TwLkB5v3c14SZ6X
-         fpVLIL3D8KuR5mZgo+GRzsqRDF6rIagjcWuofBqe5P6vgySme2f8LgHe1G1TrbMtiluT
-         gwm6N3S7QSS1sseCBbFgEPG01lCT3gYJy2jyOan69s5k1KKHFgeLyfYDNG33QBmXTCpw
-         ++PG/XqjGbTweN5euyRlHf30t191E5OWTvgUY4I6tavHMcolyN82CUSK5SA32CcAv8t+
-         hRtz1SVBzeNt/IBM+jVh+tNBgCb/8J2oEw9eChkC9ef36EIQBiYxbgkQmz2yhvrvhuE9
-         NrRA==
-X-Gm-Message-State: AOAM533QxrJ6xtgDBxFv4YmD2MncxStgYU5L5xLK3EmfWAoLbHmETElb
-        ytq2HK8VriPUXFYtroSYpQ==
-X-Google-Smtp-Source: ABdhPJy+9mDnPUP/HP78FvogBEPKf3tNkk5YNN1moTUm9PWfvvig2Z+9QKjZqD+dQTYPGza1p+KBsA==
-X-Received: by 2002:a6b:c906:: with SMTP id z6mr452309iof.7.1628282024853;
-        Fri, 06 Aug 2021 13:33:44 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id u12sm6294241iog.54.2021.08.06.13.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Aug 2021 13:33:44 -0700 (PDT)
-Received: (nullmailer pid 1747070 invoked by uid 1000);
-        Fri, 06 Aug 2021 20:33:43 -0000
-Date:   Fri, 6 Aug 2021 14:33:43 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Iskren Chernev <iskren.chernev@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, linux-clk@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        phone-devel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: clk: qcom: gcc-sm6115: Document
- SM6115 GCC
-Message-ID: <YQ2cp7Ex0EQsmu5A@robh.at.kernel.org>
-References: <20210805161107.1194521-1-iskren.chernev@gmail.com>
- <20210805161107.1194521-2-iskren.chernev@gmail.com>
+        id S230183AbhHGDGi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Aug 2021 23:06:38 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:43887 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230053AbhHGDGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Aug 2021 23:06:38 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id DAFAE580BAE;
+        Fri,  6 Aug 2021 23:06:20 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 06 Aug 2021 23:06:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=l
+        5p2iTVXgItyA1T83tXDocQvr6XRmME6ifZj532EGj0=; b=ljQo8afraSpQx/8id
+        7CfoqpVwr8D62kyoo+MmGoVRUnd7/sVr39no7ZD9FxDbScJUYMDGilPpIYuoeGRE
+        iViJVfbVuJKClJbc70CdAd0Pm4Q44wngl36n8hmh37pPVHmCYNkONNEEQ7ziQpTI
+        Fy9yEX42caoqcnF+WaK6B0Roead9Bah5qBw/eBadsFvdbwgNjMrC7ELdaAi4FMho
+        tkBEtqbhDgWIUqb6ncXXqWTVd2NkVAUxVZuX6r9u9+xpGcGAi/oLiAa9jx5d4szu
+        biGrYy2p3ZizaZ8nInGLezYBQQ3Q4ISWs+MX6SGqe8fP2pYeBUykmOYXfNev2wFI
+        9FHmA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=l5p2iTVXgItyA1T83tXDocQvr6XRmME6ifZj532EG
+        j0=; b=MAEjfhjWn1aASr/8ov+9UITytKgDUETYzwVTeyrVRxcghYJZVFked+5Xe
+        DPdIY+uNqUnb8vc+FkoeMalFSigI56uKsJneK1USC4coefv7enUjqiOyFGhPxl7d
+        apeOTAlJ5dIIQoBHXPwc1j6I6AFjJo3uNokf56XDguP7vAVP3l6JLqm90KrqWwyP
+        ptmBucuPiesKznlC2iBXkZAmwzcas8JIvha/3VA2gv0quYES1Cd09DIqba+p8IGf
+        GiD1Uh1nXiIbOZ+yiRaDsatg1A7Keap3+ZV0WqI3AquKY0nHZvZeFOmxuNpAq6+m
+        Tp1ThMWa4YcFEc9QmEMkKo6IB55xw==
+X-ME-Sender: <xms:q_gNYXcRaawms8kHh0Fhufa6Rg_lbEyhojb71ihthde-eDRrb1yzxQ>
+    <xme:q_gNYdN1F2Lg1rO_Me241_I9Ht2Ng7LokAo4dw_6ll_-x7np0wvFRlSKGxrCy-kzH
+    kuOtEDq-nI4bBoQkB0>
+X-ME-Received: <xmr:q_gNYQgVvWe-sUDHlTZgTw9w7iWEW1ZeG-bI_ko2LxWpOO35NeOKQRRxDzVfmdSMUlDxTUSKh08L6XB7Qpw4a1HmayXH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrjedvgdeifecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepuffvfhfhkffffgggjggtgfesthekre
+    dttdeftfenucfhrhhomheplfhirgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhg
+    sehflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeefheefudeugfeugeejtd
+    fhuedujeekvddvhfeludfhvdektdeileeikefghfetvdenucffohhmrghinheptddurdho
+    rhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjh
+    hirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:q_gNYY-QqqTmDgQMAnUiOh5h1mz-9gtQT3SStK--fIjPSwwq-Y2bOA>
+    <xmx:q_gNYTvLl9zeL7EGfx2USxvw7Fxk4rr9vLeUC1e18cTYilUhcqhUZg>
+    <xmx:q_gNYXEmg1J142dHKaUE_wPP8ilpddMI_uTDpVNVqWELobG5_IbvDg>
+    <xmx:rPgNYRLzUGI2CGhop4vWf8WG9tid9-nQmmjW6SgEsD80URuttonnJA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Aug 2021 23:06:15 -0400 (EDT)
+Subject: Re: [PATCH v4 0/9] MIPS: Migrate pistachio to generic kernel
+To:     linux-mips@vger.kernel.org
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+References: <20210723022543.4095-1-jiaxun.yang@flygoat.com>
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <1bb80cdf-f7d5-f99f-a4f3-635552df916b@flygoat.com>
+Date:   Sat, 7 Aug 2021 11:06:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210805161107.1194521-2-iskren.chernev@gmail.com>
+In-Reply-To: <20210723022543.4095-1-jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 05 Aug 2021 19:11:06 +0300, Iskren Chernev wrote:
-> Add device tree bindings for global clock controller on SM6115 and
-> SM4250 SoCs (pin and software compatible).
-> 
-> Signed-off-by: Iskren Chernev <iskren.chernev@gmail.com>
-> ---
->  .../bindings/clock/qcom,gcc-sm6115.yaml       |  72 +++++++
->  include/dt-bindings/clock/qcom,gcc-sm6115.h   | 201 ++++++++++++++++++
->  2 files changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm6115.h
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+ÔÚ 2021/7/23 ÉÏÎç10:25, Jiaxun Yang Ð´µÀ:
+> I'm lucky enough to get a Creator CI40 board from dusts.
+> This patchset move it to gerneic kernel to reduce maintenance burden.
+> It have been tested with SD Card boot.
+
+Hi Thomas,
+
+For the series, the pinctrl one have been applied by subsystem 
+maintainer and
+rests have been acked by subsystem maintainers, could you please apply them
+to MIPS tree?
+
+Thanks.
+
+- Jiaxun
+
+>
+> --
+> v2: Minor fixes
+> v3: Typo fixes and 0day testbot warning fix (Thanks to Sergei!)
+> v4: 01.org warning fix
+>
+> Jiaxun Yang (9):
+>    MIPS: generic: Allow generating FIT image for Marduk board
+>    MIPS: DTS: Pistachio add missing cpc and cdmm
+>    clk: pistachio: Make it selectable for generic MIPS kernel
+>    clocksource/drivers/pistachio: Make it selectable for MIPS
+>    phy: pistachio-usb: Depend on MIPS || COMPILE_TEST
+>    pinctrl: pistachio: Make it as an option
+>    MIPS: config: generic: Add config for Marduk board
+>    MIPS: Retire MACH_PISTACHIO
+>    MIPS: Make a alias for pistachio_defconfig
+>
+>   arch/mips/Kbuild.platforms                    |   1 -
+>   arch/mips/Kconfig                             |  30 --
+>   arch/mips/Makefile                            |   3 +
+>   arch/mips/boot/dts/Makefile                   |   2 +-
+>   arch/mips/boot/dts/img/Makefile               |   3 +-
+>   arch/mips/boot/dts/img/pistachio.dtsi         |  10 +
+>   arch/mips/configs/generic/board-marduk.config |  53 +++
+>   arch/mips/configs/pistachio_defconfig         | 316 ------------------
+>   arch/mips/generic/Kconfig                     |   6 +
+>   arch/mips/generic/Platform                    |   1 +
+>   arch/mips/generic/board-marduk.its.S          |  22 ++
+>   arch/mips/pistachio/Kconfig                   |  14 -
+>   arch/mips/pistachio/Makefile                  |   2 -
+>   arch/mips/pistachio/Platform                  |   6 -
+>   arch/mips/pistachio/init.c                    | 125 -------
+>   arch/mips/pistachio/irq.c                     |  24 --
+>   arch/mips/pistachio/time.c                    |  55 ---
+>   drivers/clk/Kconfig                           |   1 +
+>   drivers/clk/Makefile                          |   2 +-
+>   drivers/clk/pistachio/Kconfig                 |   8 +
+>   drivers/clocksource/Kconfig                   |   3 +-
+>   drivers/phy/Kconfig                           |   2 +-
+>   drivers/pinctrl/Kconfig                       |   5 +-
+>   23 files changed, 114 insertions(+), 580 deletions(-)
+>   create mode 100644 arch/mips/configs/generic/board-marduk.config
+>   delete mode 100644 arch/mips/configs/pistachio_defconfig
+>   create mode 100644 arch/mips/generic/board-marduk.its.S
+>   delete mode 100644 arch/mips/pistachio/Kconfig
+>   delete mode 100644 arch/mips/pistachio/Makefile
+>   delete mode 100644 arch/mips/pistachio/Platform
+>   delete mode 100644 arch/mips/pistachio/init.c
+>   delete mode 100644 arch/mips/pistachio/irq.c
+>   delete mode 100644 arch/mips/pistachio/time.c
+>   create mode 100644 drivers/clk/pistachio/Kconfig
+>
+
