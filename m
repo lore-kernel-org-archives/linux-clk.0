@@ -2,106 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CFDC432BE
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 08:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1184C4338F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 09:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2F760232
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 08:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C238B60EE7
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 09:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233944AbhHIIeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Aug 2021 04:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47734 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233995AbhHIIeW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Aug 2021 04:34:22 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3EF9C061798
-        for <linux-clk@vger.kernel.org>; Mon,  9 Aug 2021 01:34:01 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id b11so4130658wrx.6
-        for <linux-clk@vger.kernel.org>; Mon, 09 Aug 2021 01:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=o64k6URbjnsGLsLYFBqolTH4MtMcklgUE4Tf5PdPVug=;
-        b=s3ep9NCza0FhQHnz6E2j2n1lYCjrMfV+4RKP08lfeF8TJYttk+HzgCXUQGraF9oOM4
-         gdzLyVzsfDy8NAY9l9xc+xmMw2hWenipf4H6fyqioVUJJXvdUbtWtmr+AXxaa42nTcFP
-         lRgH1esBC58pkW26LImsnLtHEqJefeksvjR94W3srZpXq/sVjhXHr+oPyJkn8LcCoJw1
-         wXJ+NUCk2LYTQ9fjmcBB20kDXvJB3bimYxpqnMdn+BJv6ixcakvOkC6Nz9v7Ku9Z+5XF
-         2tzdH+GfiW9Lv2FWnkdPNEwmD1+9aNEa9BD1nblP3kbH6Pck+tO2R1uLUPjxO75j7cN8
-         uXog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=o64k6URbjnsGLsLYFBqolTH4MtMcklgUE4Tf5PdPVug=;
-        b=M/WKre4JNST9laxS8BBx9c61oXF85lPB7qC0QhWRloYdmXOkAPVezUGmRitDQTjquv
-         6ogWF7tRAeiq1ytL9Y2C3luCwpvYd5ru/pFdFMgH8KURlGEfKQupCrYKBKRb+HPeaMsE
-         rk0B9aUbNEr3XUlfyRowG1F6i0T7Lcev4BX3BOV2sxlI9VBe2qyCNctPrlR/7wSgDowJ
-         X+uqP0QdqSz5GdxIE2u62bkB4YWYqEia1zb10FcwDpmJDh2Memrdz360XfIaDYCwP6nL
-         O4XNbPI+Bp3cDlWX80cPM1B4qn5CH2tN+UCCW2jbHmFMugrstuhlwblrRR6ijEhkrHn7
-         tAAQ==
-X-Gm-Message-State: AOAM531lU/2MpAenyBtyx3vsVaRxMeIf/Vmfb46Hb0r2IoQfC0L7et0k
-        IHuk4oG/jOTH54hnMtYXGMtkxQ==
-X-Google-Smtp-Source: ABdhPJxZzeEU/zjbiAqjqFzQa1KsWybz2fuObNORpAwX7a2AmtB49mjZyfYM5kVRRpqySmJ0mEV2Xg==
-X-Received: by 2002:a5d:66d1:: with SMTP id k17mr24513987wrw.251.1628498039938;
-        Mon, 09 Aug 2021 01:33:59 -0700 (PDT)
-Received: from google.com ([95.146.142.85])
-        by smtp.gmail.com with ESMTPSA id e3sm18939963wrw.51.2021.08.09.01.33.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 01:33:59 -0700 (PDT)
-Date:   Mon, 9 Aug 2021 09:33:57 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        phone-devel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: db8500-prcmu: Handle missing FW variant
-Message-ID: <YRDodVD62RCS1jNR@google.com>
-References: <20210801233314.3150754-1-linus.walleij@linaro.org>
- <20210801233314.3150754-2-linus.walleij@linaro.org>
+        id S234276AbhHIJQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Aug 2021 05:16:26 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:39043 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234154AbhHIJQZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Aug 2021 05:16:25 -0400
+X-Greylist: delayed 366 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Aug 2021 05:16:24 EDT
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id D1O3mzM1v4SnAD1O6mlikF; Mon, 09 Aug 2021 11:16:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1628500563; bh=zeXxdLM8LzjWjZQIvOD7a0FLojdqnvKW9IdZzgJWrAE=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=FapdsSWgrEHvWVXcUaMD3fLqqLg/hvsZq5zGHbQ6h9GYNLDWLnL7UQg6autDQ3EDa
+         c9KOVGv7Jj3I9lqNCNjvkoMASuNgqtx5BTCRzLdS3zd8ZZfBOWkI5wIstJByDEiyeK
+         W4WHF41/bE4AfYMVB08J14Fokwn5rK7tXTGM5r1UefyCjW35YFCSLZZF0MqKyf++9f
+         +Gk0xxdVG12yjwX6Dlu40Hdu44C6fJKHXuhU+BZyjJMnWN44sjG4adPrVzUmuVB1rV
+         2iLqCnrFXrNYeH+dP7W1D41PVx3LMgpm9RsDGH0ecMQxJADmba723sJhqPbAuaue2q
+         ggyxDaFLgZWZA==
+Subject: Re: [PATCH v2 7/9] media: docs: add doc for the stm32 dma2d driver
+To:     dillon.minfei@gmail.com, mchehab@kernel.org,
+        mchehab+huawei@kernel.org, ezequiel@collabora.com,
+        gnurou@gmail.com, pihsun@chromium.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org
+Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1626341068-20253-1-git-send-email-dillon.minfei@gmail.com>
+ <1626341068-20253-18-git-send-email-dillon.minfei@gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <7131ee03-fc81-cb9b-665f-80e4ce8435ab@xs4all.nl>
+Date:   Mon, 9 Aug 2021 11:15:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <1626341068-20253-18-git-send-email-dillon.minfei@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210801233314.3150754-2-linus.walleij@linaro.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfJjZzB2AcxlqBOUwWHqo+yH9Eb+LcfXJCeRn5OWwp8nCYrdlYMKifMmC4EkG+ffRU7MQVVBJkTHcRYBIefuRsbR/v06kAj+qoKsR1Yk9azbC0u4s0VO3
+ szFefb8rEZl3GtO+BsoiKigu/A/vsezQYHEbGTEWeN+JFSeB55VFdakD0lbXbqqX7xZ2woNpfY/SnlREfmD1AihMgrcw05feLS7rZEH8GweBLJFZyRh7627x
+ zRCJOAdPjrt3nYBAo/PZcXiLT73kIfxa/2ad9gB/697IxNKtA2YTmlWTa5AFqxxNHudUm83nE+7oPB3mIpSD6AdZHmBrI3DxR8zBRhFAyaJ1pqyvuSIpzPdE
+ L8purSweoZn32sKjaflhXWbBS15YXyO2eHFJEQ8ZPXfKES1Wv5yWZpQduu7tij8+Ri8NWWnVmS+vZe6lEtAd2zNSBu5f+ijoqPE1z8NSAFC6qVyOrOtkhUwn
+ AzaP5ArBmDVtZh++6aXXemDmzGGDZydf+398v7JGwEd4sgbMoqnDfYktQHpgo5pN97sc5NNOlyKtZKyLM8wItAPpRo6l/ktkLAv9n/mXIfcBnE43cIscD04C
+ oGn93fHZZpE1DgcxPlwRUh5ADx+i3RZvXVahJMDrSbyACph/229gIaOAgfPXs3qmAU/dha1z6AQ5IUh8gI3jQZiv+ySBfjZEmHouf1lCL2WqrnXteWB2qt5W
+ XilwGk1qmW1kJWvFBx8OmCM+wWuoIVB+Y4rOzSEsIXZHkUNCe2c3zRzu0UJnvilAExL+SSwIb+i9TGTAKeQN+WLiUMawpbWpm1VQS13D/PQ1rtZtBQ4L9fPD
+ +oFoVBlxolO75yY0i9oUtdBxFoyFmnlWqYziIfLWYQAljxj54aeKjgDqlNSHlQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 02 Aug 2021, Linus Walleij wrote:
-
-> There was an "unknown" firmware variant turning up in the wild
-> causing problems in the clock driver. Add this missing variant
-> and clarify that varian 11 and 15 are Samsung variants, as this
-> is now very well known from released products.
+On 15/07/2021 11:24, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
 > 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: phone-devel@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> add stm32-uapi.rst for stm32's dma2d driver, explain the details of ioctl
+> V4L2_CID_DMA2D_R2M_MODE, V4L2_CID_DMA2D_R2M_COLOR.
+> 
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
 > ---
-> Clock maintainers: could you please ACK this so Lee can take
-> this into the MFD tree? The chances of merge collisions are
-> zero, this code changes very seldom.
-> ---
->  drivers/clk/ux500/u8500_of_clk.c | 3 ++-
->  drivers/mfd/db8500-prcmu.c       | 6 ++++--
->  include/linux/mfd/dbx500-prcmu.h | 3 ++-
->  3 files changed, 8 insertions(+), 4 deletions(-)
+> v2: introduce the stm32-uapi.rst to explain the detail of dma2d's ioctl.
+> 
+>  .../userspace-api/media/drivers/index.rst          |  1 +
+>  .../userspace-api/media/drivers/stm32-uapi.rst     | 22 ++++++++++++++++++++++
+>  2 files changed, 23 insertions(+)
+>  create mode 100644 Documentation/userspace-api/media/drivers/stm32-uapi.rst
+> 
+> diff --git a/Documentation/userspace-api/media/drivers/index.rst b/Documentation/userspace-api/media/drivers/index.rst
+> index 12e3c512d718..ce42915d48f4 100644
+> --- a/Documentation/userspace-api/media/drivers/index.rst
+> +++ b/Documentation/userspace-api/media/drivers/index.rst
+> @@ -38,4 +38,5 @@ For more details see the file COPYING in the source distribution of Linux.
+>  	max2175
+>  	meye-uapi
+>  	omap3isp-uapi
+> +	stm32-uapi
+>  	uvcvideo
+> diff --git a/Documentation/userspace-api/media/drivers/stm32-uapi.rst b/Documentation/userspace-api/media/drivers/stm32-uapi.rst
+> new file mode 100644
+> index 000000000000..d7a4f717387d
+> --- /dev/null
+> +++ b/Documentation/userspace-api/media/drivers/stm32-uapi.rst
+> @@ -0,0 +1,22 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +STM32 Chrom-Art 2D Graphics Accelerator unit (DMA2D) driver
+> +================================================
+> +
+> +The DMA2D driver implements the following driver-specific controls:
+> +
+> +``V4L2_CID_DMA2D_R2M_MODE``
 
-Applied, thanks.
+Please mention the control type as well.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> +-------------------------
+> +    Enable/Disable the Register-To-Memory mode, filling a part or the
+> +    whole of a destination image with a specific color.
+> +
+> +    1 for enable, 0 for disable.
+> +
+> +``V4L2_CID_DMA2D_R2M_COLOR``
+
+Ditto.
+
+> +-------------------------------
+> +    Set the color to fill a part or the whole of a destination image.
+> +    only used under Register-To-Memory mode, to set the DMA2D_OCOLR register
+> +    (RED, GREEN, BLUE) which is:
+
+Here you mention RGB only,
+
+> +
+> +    31 .. 24    23 .. 16  15 .. 8     7 .. 0
+> +    ALPHA[7:0]  RED[7:0]  GREEN[7:0]  BLUE[7:0]
+
+but here you also mention Alpha. So which is it?
+
+See also my review of patch 9/9.
+
+> 
+
+I'm getting some warnings building this doc:
+
+Documentation/media/userspace-api/drivers/stm32-uapi.rst:4: WARNING: Title underline too short.
+
+STM32 Chrom-Art 2D Graphics Accelerator unit (DMA2D) driver
+================================================
+Documentation/media/userspace-api/drivers/stm32-uapi.rst:9: WARNING: Title underline too short.
+
+``V4L2_CID_DMA2D_R2M_MODE``
+-------------------------
+
+Regards,
+
+	Hans
