@@ -2,110 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E54C19F31
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 14:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB36C432BE
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 14:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16BA160F35
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 14:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B295960C41
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 14:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234873AbhHIOAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Aug 2021 10:00:51 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52904
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234788AbhHIOAt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Aug 2021 10:00:49 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 1ED283F34C
-        for <linux-clk@vger.kernel.org>; Mon,  9 Aug 2021 14:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628517628;
-        bh=ogcKwTXTNYwj+j1SOoDVMuNAFMs2asYIwm4+FNw/esM=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=intbm6++GHyRvl/jNImpuCeR5EP4S0dzPseQahUW5DfI+xaQzoxVzvmDMZpRAmRHz
-         jspcJ2m/8+7x2PTydpS5QkWV3swog+tk+IhtcXZMUy3jxR0n4XjM+q8uViKZxMWGO7
-         XEohb+JExqd40v6IdReMSLPzbSOe92k7cPbaVqmX2YKx62tYXP2zcrDmOORo8k2tFB
-         Avwkrv251fB3vOW1QfXXZGqcO43SQxibEXHCxC6QeYt5T9JVglFQahcQJPXl4v0yaQ
-         L+GgQunGo0L6BnadxKsRV3N9JY2JDYr6K5AK4EOEn236Dfp1w6vy59seuZpEBZI8Og
-         KueGchOTYFSBA==
-Received: by mail-ed1-f71.google.com with SMTP id c16-20020aa7d6100000b02903bc4c2a387bso4450059edr.21
-        for <linux-clk@vger.kernel.org>; Mon, 09 Aug 2021 07:00:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ogcKwTXTNYwj+j1SOoDVMuNAFMs2asYIwm4+FNw/esM=;
-        b=bvrXEO6mYaVIDXR06CtospzsuYBrNMFXWzz8YYj/DXCO5Lx1Byyt1cV6Q9roR3JmOf
-         FSF13Ls3MhVWmxMP11Y++iSrpqXEISTEYvvHvXq1QTOO06/t+KONJJ3TjPiuPNL5UE9c
-         Z2iF4wANO8a3TXZugmi0mPkrvzPI7aVT2v9dIfhcB7Y3odfChNME78WfA1cv+XLcWYXm
-         Ck19yB7xfTimhlkT05lNvLfmVF1zvjc6xp1419lut0pshV7eOk+K8LHhWoCJbV5/iOyQ
-         20JFe3O8RSiiJTT1TuCDSGAvuhU5ZjIFfqQ19RRLu/hDd9sgllCkbTp4vUA2jhsgvwUs
-         MGsw==
-X-Gm-Message-State: AOAM5330Xtmb+aHQsOPTnTmktmschgbxI4URvICkUfndbrUHYAGSKB5E
-        lM6/XbylV9jYqMe6ozIy52vUwZ88AdnkIHD8icQW85tSa+rZuoXgGmawbXUxTtPhhUXpA//Rq58
-        CgXZ42pAzXySj5Tilnvi2GqrUciM9DLc25+t/Lw==
-X-Received: by 2002:a50:eb95:: with SMTP id y21mr3033507edr.5.1628517627880;
-        Mon, 09 Aug 2021 07:00:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzrg+ozBKK4x83aTava67CJhBK41FPyP3TvrzsZD3SsSwXCBJSszou+evSlMSrS/YsyQeeDcQ==
-X-Received: by 2002:a50:eb95:: with SMTP id y21mr3033487edr.5.1628517627750;
-        Mon, 09 Aug 2021 07:00:27 -0700 (PDT)
-Received: from localhost.localdomain ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id b17sm7909686edd.27.2021.08.09.07.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 07:00:27 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+        id S235334AbhHIOzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Aug 2021 10:55:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233412AbhHIOzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Aug 2021 10:55:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B17161019;
+        Mon,  9 Aug 2021 14:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628520895;
+        bh=PS8ZKE3pdHYqi+dT0eaCxhAkUEsUIJhdbc4pPLOtZm8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UvIHWsh1gGS57HMoC2UXCoLdvYBkwKh0kDEcz3nnxTXhob8u0bj/wudta5rwPZD90
+         HfTDPXYMPN0DslG6KJw8a0E22OsLj3nMO8pPbl3gY6QFm45jbXk/2Mrhg69aJZqZvK
+         z799WVFe+6uB0qb81AfhhMjKfAZWLeK7FeBDjuQfawMrULAgJ95PGz4Aiu1fZYd/LU
+         o/cRk+Sbweo1BZICtsXckAzxSZZUW6gi0awWQ/A8EGePkfGgA7iWCIfeY575aXUSbU
+         moIUY5FsxKqmOKkXKVOj0BDzXmtH7LbzEvBu1JahR9XmK0pOdxTLuiFUOxTLym84ej
+         /NCAAhcDJeBfQ==
+Received: by pali.im (Postfix)
+        id DF601286B; Mon,  9 Aug 2021 16:54:52 +0200 (CEST)
+From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] MAINTAINERS: clock: include S3C and S5P in Samsung SoC clock entry
-Date:   Mon,  9 Aug 2021 15:59:42 +0200
-Message-Id: <20210809135942.100744-4-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210809135942.100744-1-krzysztof.kozlowski@canonical.com>
-References: <20210809135942.100744-1-krzysztof.kozlowski@canonical.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 1/6] math64: New DIV_U64_ROUND_CLOSEST helper
+Date:   Mon,  9 Aug 2021 16:53:24 +0200
+Message-Id: <20210809145329.24177-2-pali@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210809145329.24177-1-pali@kernel.org>
+References: <20210624224909.6350-1-pali@kernel.org>
+ <20210809145329.24177-1-pali@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Cover the S3C and S5Pv210 clock controller binding headers by Samsung
-SoC clock controller drivers maintainer entry.
+Provide DIV_U64_ROUND_CLOSEST helper which uses div_u64 to perform
+division rounded to the closest integer using unsigned 64bit
+dividend and unsigned 32bit divisor.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/math64.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2dbacacac3f5..7846ce554b07 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16496,6 +16496,9 @@ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
- F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
-+F:	include/dt-bindings/clock/s3c*.h
-+F:	include/dt-bindings/clock/s5p*.h
-+F:	include/dt-bindings/clock/samsung,*.h
- F:	include/linux/clk/samsung.h
- F:	include/linux/platform_data/clk-s3c2410.h
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index 66deb1fdc2ef..1cc61d748e1f 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -281,6 +281,19 @@ u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
+ #define DIV64_U64_ROUND_CLOSEST(dividend, divisor)	\
+ 	({ u64 _tmp = (divisor); div64_u64((dividend) + _tmp / 2, _tmp); })
  
++/*
++ * DIV_U64_ROUND_CLOSEST - unsigned 64bit divide with 32bit divisor rounded to nearest integer
++ * @dividend: unsigned 64bit dividend
++ * @divisor: unsigned 32bit divisor
++ *
++ * Divide unsigned 64bit dividend by unsigned 32bit divisor
++ * and round to closest integer.
++ *
++ * Return: dividend / divisor rounded to nearest integer
++ */
++#define DIV_U64_ROUND_CLOSEST(dividend, divisor)	\
++	({ u32 _tmp = (divisor); div_u64((u64)(dividend) + _tmp / 2, _tmp); })
++
+ /*
+  * DIV_S64_ROUND_CLOSEST - signed 64bit divide with 32bit divisor rounded to nearest integer
+  * @dividend: signed 64bit dividend
 -- 
-2.30.2
+2.20.1
 
