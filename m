@@ -2,227 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7E9C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 00:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3726C432BE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 06:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7B0B61052
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 00:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A39386023B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 06:55:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235614AbhHJAyz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Aug 2021 20:54:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233500AbhHJAyz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Aug 2021 20:54:55 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5990C0613D3;
-        Mon,  9 Aug 2021 17:54:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=DKH9L/D5qWxaAYmJH5xbQWOuTOQkBWl8uns/CseNhGI=; b=rWSTU6LyG3Ax19GY5TRFGp3+EI
-        cK5Kj49eUFo/5agYJLdXh0kG9PjYd5ZnoFD/w8SBNowK5uYx/kDyizv25fS0eupVxxIBM8O55+ZIr
-        OPPe9941zxUFGzF4sXn5vKbKf08LawMRROeZ1vTchFMQQwSKiRGirfastgCKxmNxAciBlFwxHZTY6
-        m60cKzysbUNzPDHOo25a41W8hyzSjW2xxRYlYr5FbAHZrtyDaIfdWTdgl1zdBjpP8SXNdGtqsOs29
-        NbygccEBtX2L/DQr1HLoj+RMxbLjEwMiexOewXwKUkS2N0KzIVxFCS/7q/6KWDUYsqZye8y6JYdR1
-        HLOGQFvg==;
-Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mDG2K-002BdO-5f; Tue, 10 Aug 2021 00:54:32 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH] clk/at91: remove kernel-doc warnings in sama7g5.c
-Date:   Mon,  9 Aug 2021 17:54:31 -0700
-Message-Id: <20210810005431.22007-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        id S236223AbhHJG4S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Aug 2021 02:56:18 -0400
+Received: from mail-ua1-f41.google.com ([209.85.222.41]:37560 "EHLO
+        mail-ua1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231482AbhHJG4S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 02:56:18 -0400
+Received: by mail-ua1-f41.google.com with SMTP id 67so8173113uaq.4
+        for <linux-clk@vger.kernel.org>; Mon, 09 Aug 2021 23:55:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kud17ACtN9yfWM3KLuemFK9HgmdKIREvVGyesEjaD5o=;
+        b=co+xamDzd3zgXQGqFapzoQEZOI/MZNAxPNkL389glFDViw65Oh5QGw8Ri2TsctHugv
+         gan5qnrh4nYGHerIBCOv+0RbfLPz8fu4e9AsJTFdtcffLnWM2PuiFSGEc8da14zpGtNW
+         78MLe8A3n5ZF9AKpst7aXTRUW3aRgA+PBFt5WlvNUNlZfIqb9adNV79xmmk+Nv2GDbgt
+         KIDEETSV2NsTcvthqooUqEigPKhUYJcPKT6HCCs0e+FB9iF1cWcGAMz5zjf3lAPQ7BZa
+         ijYIyQGrgvD0sFvnvBLQvjkiO1aRM43w4D4bcjuB3qZaSFeMX/sB8/iyyXbSgueX15od
+         UT3A==
+X-Gm-Message-State: AOAM5318RPpC6qdhOLdml7PWDhFIPZcjbz4NlY6s2GXWGGCK5xtM4K2o
+        RF3oUnF6e/wPmoWakdRIepIJrWbaviq7PtUIgV5DcqfkaSc=
+X-Google-Smtp-Source: ABdhPJyykhBqVsRrWKOl0k/UPQBA0npL2upb+wU695x5+XBoFwMMq5WLAU106S9vmCvL1RG69UihXnAPW5/YYURDFjY=
+X-Received: by 2002:a9f:31ad:: with SMTP id v42mr7000574uad.58.1628578556367;
+ Mon, 09 Aug 2021 23:55:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210809223813.3766204-1-sean.anderson@seco.com> <20210809223813.3766204-3-sean.anderson@seco.com>
+In-Reply-To: <20210809223813.3766204-3-sean.anderson@seco.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 10 Aug 2021 08:55:44 +0200
+Message-ID: <CAMuHMdWegtz-mBp6q5Pqbu21Qne=OKaGyzbVNivONPf0x+X3-g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] clk: vc5: Add properties for configuring SD/OE behavior
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix multiple kernel-doc warnings in sama7g5.c. There are several
-enums and structs that were not identified as such.
-There are also several anonymous structs (that scripts/kernel-doc
-has problems with), so add struct names to them.
+Hi Sean,
 
-Fixes the following warnings:
+On Tue, Aug 10, 2021 at 12:38 AM Sean Anderson <sean.anderson@seco.com> wrote:
+> The SD/OE pin may be configured to enable output when high or low, and
+> to shutdown the device when high. This behavior is controller by the SH
+> and SP bits of the Primary Source and Shutdown Register (and to a lesser
+> extent the OS and OE bits). By default, both bits are 0 (unless set by
+> OTP memory), but they may need to be configured differently, depending
+> on the external circuitry controlling the SD/OE pin.
+>
+> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
 
-drivers/clk/at91/sama7g5.c:39: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * PLL clocks identifiers
-drivers/clk/at91/sama7g5.c:60: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * PLL type identifiers
-drivers/clk/at91/sama7g5.c:122: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * PLL clocks description
-drivers/clk/at91/sama7g5.c:289: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * Master clock (MCK[1..4]) description
-drivers/clk/at91/sama7g5.c:341: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * System clock description
-drivers/clk/at91/sama7g5.c:365: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * Peripheral clock description
-drivers/clk/at91/sama7g5.c:453: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * Generic clock description
-drivers/clk/at91/sama7g5.c:339: warning: Function parameter or member 'ep_chg_id' not described in 'master_clock'
+Thanks for your patch!
 
-Some kernel-doc warnings are still printed, but they are all due to
-problems in the kernel-doc script (if anyone is interested in playing
-with some Perl :). These warnings are:
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -886,6 +886,7 @@ static const struct of_device_id clk_vc5_of_match[];
+>
+>  static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  {
+> +       unsigned int oe, sd, src_mask = 0, src_val = 0;
+>         struct vc5_driver_data *vc5;
+>         struct clk_init_data init;
+>         const char *parent_names[2];
+> @@ -913,6 +914,29 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>                 return dev_err_probe(&client->dev, PTR_ERR(vc5->regmap),
+>                                      "failed to allocate register map\n");
+>
+> +       ret = of_property_read_u32(client->dev.of_node, "idt,shutdown", &sd);
+> +       if (!ret) {
+> +               src_mask |= VC5_PRIM_SRC_SHDN_EN_GBL_SHDN;
+> +               if (sd)
+> +                       src_val |= VC5_PRIM_SRC_SHDN_EN_GBL_SHDN;
+> +       } else if (ret != -EINVAL) {
+> +               return dev_err_probe(&client->dev, ret,
+> +                                    "could not read idt,shutdown\n");
+> +       }
+> +
+> +       ret = of_property_read_u32(client->dev.of_node,
+> +                                  "idt,output-enable-active", &oe);
+> +       if (!ret) {
+> +               src_mask |= VC5_PRIM_SRC_SHDN_SP;
+> +               if (oe)
+> +                       src_val |= VC5_PRIM_SRC_SHDN_SP;
+> +       } else if (ret != -EINVAL) {
+> +               return dev_err_probe(&client->dev, ret,
+> +                                    "could not read idt,output-enable-active\n");
+> +       }
+> +
+> +       regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, src_mask, src_val);
 
-sama7g5.c:287: warning: Function parameter or member '{' not described in 'sama7g5_plls'
-sama7g5.c:287: warning: Function parameter or member '' not described in 'sama7g5_plls'
-sama7g5.c:287: warning: Function parameter or member '}' not described in 'sama7g5_plls'
-sama7g5.c:339: warning: Function parameter or member 'sama7g5_mckx' not described in 'master_clock'
-sama7g5.c:339: warning: Function parameter or member '}' not described in 'master_clock'
-sama7g5.c:360: warning: Function parameter or member 'sama7g5_systemck' not described in 'system_clock'
-sama7g5.c:451: warning: Function parameter or member 'sama7g5_periphck' not described in 'periph_clock'
-sama7g5.c:451: warning: Function parameter or member '' not described in 'periph_clock'
-sama7g5.c:451: warning: Function parameter or member '}' not described in 'periph_clock'
-sama7g5.c:841: warning: Function parameter or member 'sama7g5_gck' not described in 'generic_clock'
-sama7g5.c:841: warning: Function parameter or member '}' not described in 'generic_clock'
+The regmap core doesn't seem to return early if src_mask is zero,
+so perhaps you want to avoid calling it if no bits have to be changed?
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- drivers/clk/at91/sama7g5.c |   27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+Regardless:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---- linux-next-20210809.orig/drivers/clk/at91/sama7g5.c
-+++ linux-next-20210809/drivers/clk/at91/sama7g5.c
-@@ -36,7 +36,7 @@ static DEFINE_SPINLOCK(pmc_mck0_lock);
- static DEFINE_SPINLOCK(pmc_mckX_lock);
- 
- /**
-- * PLL clocks identifiers
-+ * enum pll_ids - PLL clocks identifiers
-  * @PLL_ID_CPU:		CPU PLL identifier
-  * @PLL_ID_SYS:		System PLL identifier
-  * @PLL_ID_DDR:		DDR PLL identifier
-@@ -44,6 +44,7 @@ static DEFINE_SPINLOCK(pmc_mckX_lock);
-  * @PLL_ID_BAUD:	Baud PLL identifier
-  * @PLL_ID_AUDIO:	Audio PLL identifier
-  * @PLL_ID_ETH:		Ethernet PLL identifier
-+ * @PLL_ID_MAX:		Number of PLL_ID values (1 more than the last valid PLL_ID)
-  */
- enum pll_ids {
- 	PLL_ID_CPU,
-@@ -57,7 +58,7 @@ enum pll_ids {
- };
- 
- /**
-- * PLL type identifiers
-+ * enum pll_type - PLL type identifiers
-  * @PLL_TYPE_FRAC:	fractional PLL identifier
-  * @PLL_TYPE_DIV:	divider PLL identifier
-  */
-@@ -119,7 +120,7 @@ static const struct clk_pll_characterist
- };
- 
- /**
-- * PLL clocks description
-+ * struct sama7g5_plls - PLL clocks description
-  * @n:		clock name
-  * @p:		clock parent
-  * @l:		clock layout
-@@ -128,7 +129,7 @@ static const struct clk_pll_characterist
-  * @f:		clock flags
-  * @eid:	export index in sama7g5->chws[] array
-  */
--static const struct {
-+static const struct sama7g5_plls {
- 	const char *n;
- 	const char *p;
- 	const struct clk_pll_layout *l;
-@@ -286,17 +287,17 @@ static const struct {
- };
- 
- /**
-- * Master clock (MCK[1..4]) description
-+ * struct master_clock - Master clock (MCK[1..4]) description
-  * @n:			clock name
-  * @ep:			extra parents names array
-- * @ep_chg_chg_id:	index in parents array that specifies the changeable
-+ * @ep_chg_id:		index in parents array that specifies the changeable
-  *			parent
-  * @ep_count:		extra parents count
-  * @ep_mux_table:	mux table for extra parents
-  * @id:			clock id
-  * @c:			true if clock is critical and cannot be disabled
-  */
--static const struct {
-+static const struct master_clock {
- 	const char *n;
- 	const char *ep[4];
- 	int ep_chg_id;
-@@ -338,12 +339,12 @@ static const struct {
- };
- 
- /**
-- * System clock description
-+ * struct system_clock - System clock description
-  * @n:	clock name
-  * @p:	clock parent name
-  * @id: clock id
-  */
--static const struct {
-+static const struct system_clock {
- 	const char *n;
- 	const char *p;
- 	u8 id;
-@@ -362,14 +363,14 @@ static const struct {
- static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 5, 6, 7, 8, 9, 10, };
- 
- /**
-- * Peripheral clock description
-+ * struct periph_clock - Peripheral clock description
-  * @n:		clock name
-  * @p:		clock parent name
-  * @r:		clock range values
-  * @id:		clock id
-  * @chgp:	index in parent array of the changeable parent
-  */
--static const struct {
-+static const struct periph_clock {
- 	const char *n;
- 	const char *p;
- 	struct clk_range r;
-@@ -450,7 +451,7 @@ static const struct {
- };
- 
- /**
-- * Generic clock description
-+ * struct generic_clock - Generic clock description
-  * @n:			clock name
-  * @pp:			PLL parents
-  * @pp_mux_table:	PLL parents mux table
-@@ -459,7 +460,7 @@ static const struct {
-  * @pp_count:		PLL parents count
-  * @id:			clock id
-  */
--static const struct {
-+static const struct generic_clock {
- 	const char *n;
- 	const char *pp[8];
- 	const char pp_mux_table[8];
+> +
+>         /* Register clock input mux */
+>         memset(&init, 0, sizeof(init));
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
