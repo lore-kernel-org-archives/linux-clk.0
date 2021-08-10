@@ -2,211 +2,294 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C121FC4320A
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 15:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31929C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 18:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E08860F41
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 15:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C726056C
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 18:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242856AbhHJPPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Aug 2021 11:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
+        id S235928AbhHJSRZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Aug 2021 14:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242847AbhHJPPw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 11:15:52 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FE0AC0613C1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 08:15:30 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1mDTTL-0006X6-CS; Tue, 10 Aug 2021 17:15:19 +0200
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1mDTTK-0005xN-Ck; Tue, 10 Aug 2021 17:15:18 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: imx8m: fix clock tree update of TF-A managed clocks
-Date:   Tue, 10 Aug 2021 17:14:33 +0200
-Message-Id: <20210810151432.9228-1-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S238709AbhHJSO5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 14:14:57 -0400
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29396C03ACAD
+        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 10:46:37 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id 67so8934959uaq.4
+        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 10:46:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cbcNgFPSz0OzHBe1xln1Cx0UEPJ7cJriNsAq1wTtQnw=;
+        b=H+Vekug80X5FhOkWXXkYEuojkXWHJEiRBaYn563zxuzN1Johl2t/TYuXssgRh8OrKA
+         6mSCIsk+XTzfXs9+bKm3dJ9a+u3dhAWIYTd8voSBKku4TDM2TXLgnWnUn96JWaOMlRQm
+         QNwtrbA9dTDZzhnyndKrrKn1k5J6J/tXo35xkNkRWF1wUpYp8IAbqIG63yDi6zWtKtXf
+         m3/RGFU11f+6QV1/RFuLUWMeLuAxr/lGyU8zHS3llu5GRSovcF/CiipfG0E0i2vj0nuE
+         Z2FFcicxjAdG9Zqa27m2ouBgP6tPulIf1L9JuBTJXjYjV3AKkhTLyuoAZc9reO+U6OC1
+         XFZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cbcNgFPSz0OzHBe1xln1Cx0UEPJ7cJriNsAq1wTtQnw=;
+        b=JOd+E1fvh6E4wJTfmLNzzl1HpO7aQfZ/6t+xW6MqTAMG/pDGRAHbjMESdGbI/eCb6n
+         Ml+Z3w/Sbmxa4JxU6t9NX0kmtcIACRZQ3E48gXK1x3qLxuIhETMWxNrfTqBvFxy2CgmV
+         MMcwDmK6wY5XrV7UIBKuBgbOrnK/2p17kkX4Xyzl7tPIkR5NejI3lS9QPMoaSFQ7QzjD
+         odT703YXhb3EpRZ3tsQUPVAu+TB3zhlzCjpisCrywnR6g30a6ee3hy28twnh/7wY3KoX
+         nMlBAUY6g3BKvYXY0Ih/mHFGlxRPEMK7c4WPtZJd1Lje0FJx+VlbmXOPXU6bTSxtFLns
+         rWuA==
+X-Gm-Message-State: AOAM5301YJh6LD5eE/ngYxbFySqb28ukWN3os48XS+CZBEXG+Rc9Ef3p
+        l7xGeYN6lEr9bPBYY55CA0wUa2Z3Dn1aHrplqnXTnQ==
+X-Google-Smtp-Source: ABdhPJwrntD4ZxsH49yI3TNZvnHaWoX7fDRJkA8qmkk+sGGy7WRMINFZ6iBBiTt80dVk9SmeEN7vvmqPVvEMxcbPBD0=
+X-Received: by 2002:ab0:6392:: with SMTP id y18mr22388136uao.139.1628617596264;
+ Tue, 10 Aug 2021 10:46:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20210810093145.26153-1-krzysztof.kozlowski@canonical.com> <20210810093145.26153-7-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210810093145.26153-7-krzysztof.kozlowski@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 10 Aug 2021 20:46:24 +0300
+Message-ID: <CAPLW+4=tOpaNGs6vxwyVy7xaeX+w_jhtY2P2U8sZGvm6mdqh1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] dt-bindings: clock: samsung: convert Exynos AudSS
+ to dtschema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the i.MX8M*, the TF-A exposes a SiP (Silicon Provider) service
-for DDR frequency scaling. The imx8m-ddrc-devfreq driver calls the
-SiP and then does clk_set_parent on the DDR muxes to synchronize
-the clock tree.
+On Tue, 10 Aug 2021 at 12:32, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> Convert Samsung Exynos Audio SubSystem clock controller bindings to DT
+> schema format using json-schema.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
+>  .../clock/samsung,exynos-audss-clock.yaml     |  79 ++++++++++++++
+>  2 files changed, 79 insertions(+), 103 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> deleted file mode 100644
+> index 6030afb10b5c..000000000000
+> --- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> +++ /dev/null
+> @@ -1,103 +0,0 @@
+> -* Samsung Audio Subsystem Clock Controller
+> -
+> -The Samsung Audio Subsystem clock controller generates and supplies clocks
+> -to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
+> -binding described here is applicable to all SoCs in Exynos family.
+> -
+> -Required Properties:
+> -
+> -- compatible: should be one of the following:
+> -  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
+> -  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
+> -    SoCs.
+> -  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
+> -    SoCs.
+> -  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
+> -    SoCs.
+> -- reg: physical base address and length of the controller's register set.
+> -
+> -- #clock-cells: should be 1.
+> -
+> -- clocks:
+> -  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
+> -    is used if not specified.
+> -  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
+> -    is used if not specified.
+> -  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
+> -    specified.
+> -  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
+> -    not specified.
+> -  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
+> -    specified.
+> -
+> -- clock-names: Aliases for the above clocks. They should be "pll_ref",
+> -  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
+> -
+> -Optional Properties:
+> -
+> -  - power-domains: a phandle to respective power domain node as described by
+> -    generic PM domain bindings (see power/power_domain.txt for more
+> -    information).
+> -
+> -The following is the list of clocks generated by the controller. Each clock is
+> -assigned an identifier and client nodes use this identifier to specify the
+> -clock which they consume. Some of the clocks are available only on a particular
+> -Exynos4 SoC and this is specified where applicable.
+> -
+> -Provided clocks:
+> -
+> -Clock           ID      SoC (if specific)
+> ------------------------------------------------
+> -
+> -mout_audss      0
+> -mout_i2s        1
+> -dout_srp        2
+> -dout_aud_bus    3
+> -dout_i2s        4
+> -srp_clk         5
+> -i2s_bus         6
+> -sclk_i2s        7
+> -pcm_bus         8
+> -sclk_pcm        9
+> -adma            10      Exynos5420
+> -
+> -Example 1: An example of a clock controller node using the default input
+> -          clock names is listed below.
+> -
+> -clock_audss: audss-clock-controller@3810000 {
+> -       compatible = "samsung,exynos5250-audss-clock";
+> -       reg = <0x03810000 0x0C>;
+> -       #clock-cells = <1>;
+> -};
+> -
+> -Example 2: An example of a clock controller node with the input clocks
+> -           specified.
+> -
+> -clock_audss: audss-clock-controller@3810000 {
+> -       compatible = "samsung,exynos5250-audss-clock";
+> -       reg = <0x03810000 0x0C>;
+> -       #clock-cells = <1>;
+> -       clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
+> -               <&ext_i2s_clk>;
+> -       clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
+> -};
+> -
+> -Example 3: I2S controller node that consumes the clock generated by the clock
+> -           controller. Refer to the standard clock bindings for information
+> -           about 'clocks' and 'clock-names' property.
+> -
+> -i2s0: i2s@3830000 {
+> -       compatible = "samsung,i2s-v5";
+> -       reg = <0x03830000 0x100>;
+> -       dmas = <&pdma0 10
+> -               &pdma0 9
+> -               &pdma0 8>;
+> -       dma-names = "tx", "rx", "tx-sec";
+> -       clocks = <&clock_audss EXYNOS_I2S_BUS>,
+> -               <&clock_audss EXYNOS_I2S_BUS>,
+> -               <&clock_audss EXYNOS_SCLK_I2S>,
+> -               <&clock_audss EXYNOS_MOUT_AUDSS>,
+> -               <&clock_audss EXYNOS_MOUT_I2S>;
+> -       clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
+> -                     "mout_audss", "mout_i2s";
+> -};
 
-Since 936c383673b9 ("clk: imx: fix composite peripheral flags"),
-these TF-A managed muxes have SET_PARENT_GATE set, which results
-in imx8m-ddrc-devfreq's clk_set_parent after SiP failing with -EBUSY:
+Seems like some examples and "Provided clocks" table were dropped in
+in yaml binding. Also there is no description for example present in
+yaml file. Is that some redundant info and was dropped intentionally?
+I'm just worrying about losing some useful info during the conversion.
 
-	echo 25000000 > userspace/set_freq
-	imx8m-ddrc-devfreq 3d400000.memory-controller: failed to set
-		dram_apb parent: -16
-
-Fix this by adding a new i.MX composite flag for firmware managed
-clocks, which clears SET_PARENT_GATE.
-
-This is safe to do, because updating the Linux clock tree to reflect
-reality will always be glitch-free.
-
-Fixes: 936c383673b9 ("clk: imx: fix composite peripheral flags")
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-To: Abel Vesa <abel.vesa@nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Shawn Guo <shawnguo@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pengutronix Kernel Team <kernel@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-To: NXP Linux Team <linux-imx@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/imx/clk-composite-8m.c |  3 ++-
- drivers/clk/imx/clk-imx8mm.c       |  7 ++++---
- drivers/clk/imx/clk-imx8mn.c       |  7 ++++---
- drivers/clk/imx/clk-imx8mq.c       |  7 ++++---
- drivers/clk/imx/clk.h              | 16 ++++++++++++++--
- 5 files changed, 28 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index 2c309e3dc8e3..04e728538cef 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -216,7 +216,8 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
- 		div->width = PCG_PREDIV_WIDTH;
- 		divider_ops = &imx8m_clk_composite_divider_ops;
- 		mux_ops = &clk_mux_ops;
--		flags |= CLK_SET_PARENT_GATE;
-+		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
-+			flags |= CLK_SET_PARENT_GATE;
- 	}
- 
- 	div->lock = &imx_ccm_lock;
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index f1919fafb124..73cc9805ec59 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -470,10 +470,11 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * DRAM clocks are manipulated from TF-A outside clock framework.
--	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
-+	 * The fw_managed helper sets GET_RATE_NOCACHE and clears SET_PARENT_GATE
-+	 * as div value should always be read from hardware
- 	 */
--	hws[IMX8MM_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mm_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MM_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mm_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MM_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mm_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MM_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mm_dram_apb_sels, base + 0xa080);
- 
- 	/* IP */
- 	hws[IMX8MM_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mm_vpu_g1_sels, base + 0xa100);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 88f6630cd472..0a76f969b28b 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -453,10 +453,11 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * DRAM clocks are manipulated from TF-A outside clock framework.
--	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
-+	 * The fw_managed helper sets GET_RATE_NOCACHE and clears SET_PARENT_GATE
-+	 * as div value should always be read from hardware
- 	 */
--	hws[IMX8MN_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MN_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mn_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
- 
- 	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index c491bc9c61ce..83cc2b1c3294 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -449,11 +449,12 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * DRAM clocks are manipulated from TF-A outside clock framework.
--	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
-+	 * The fw_managed helper sets GET_RATE_NOCACHE and clears SET_PARENT_GATE
-+	 * as div value should always be read from hardware
- 	 */
- 	hws[IMX8MQ_CLK_DRAM_CORE] = imx_clk_hw_mux2_flags("dram_core_clk", base + 0x9800, 24, 1, imx8mq_dram_core_sels, ARRAY_SIZE(imx8mq_dram_core_sels), CLK_IS_CRITICAL);
--	hws[IMX8MQ_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mq_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MQ_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mq_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MQ_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mq_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MQ_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mq_dram_apb_sels, base + 0xa080);
- 
- 	/* IP */
- 	hws[IMX8MQ_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mq_vpu_g1_sels, base + 0xa100);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 7571603bee23..e144f983fd8c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -530,8 +530,9 @@ struct clk_hw *imx_clk_hw_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
- 
--#define IMX_COMPOSITE_CORE	BIT(0)
--#define IMX_COMPOSITE_BUS	BIT(1)
-+#define IMX_COMPOSITE_CORE		BIT(0)
-+#define IMX_COMPOSITE_BUS		BIT(1)
-+#define IMX_COMPOSITE_FW_MANAGED	BIT(2)
- 
- struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
- 					    const char * const *parent_names,
-@@ -567,6 +568,17 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
- 		ARRAY_SIZE(parent_names), reg, 0, \
- 		flags | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
- 
-+#define __imx8m_clk_hw_fw_managed_composite(name, parent_names, reg, flags) \
-+	imx8m_clk_hw_composite_flags(name, parent_names, \
-+		ARRAY_SIZE(parent_names), reg, IMX_COMPOSITE_FW_MANAGED, \
-+		flags | CLK_GET_RATE_NOCACHE | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
-+
-+#define imx8m_clk_hw_fw_managed_composite(name, parent_names, reg) \
-+	__imx8m_clk_hw_fw_managed_composite(name, parent_names, reg, 0)
-+
-+#define imx8m_clk_hw_fw_managed_composite_critical(name, parent_names, reg) \
-+	__imx8m_clk_hw_fw_managed_composite(name, parent_names, reg, CLK_IS_CRITICAL)
-+
- #define __imx8m_clk_composite(name, parent_names, reg, flags) \
- 	to_clk(__imx8m_clk_hw_composite(name, parent_names, reg, flags))
- 
--- 
-2.30.2
-
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+> new file mode 100644
+> index 000000000000..d60b29fa22e7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/samsung,exynos-audss-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos SoC Audio SubSystem clock controller
+> +
+> +maintainers:
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +  - Tomasz Figa <tomasz.figa@gmail.com>
+> +
+> +description: |
+> +  All available clocks are defined as preprocessor macros in
+> +  include/dt-bindings/clock/exynos-audss-clk.h header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos4210-audss-clock
+> +      - samsung,exynos5250-audss-clock
+> +      - samsung,exynos5410-audss-clock
+> +      - samsung,exynos5420-audss-clock
+> +
+> +  clocks:
+> +    minItems: 2
+> +    items:
+> +      - description:
+> +          Fixed rate PLL reference clock, parent of mout_audss. "fin_pll" is
+> +          used if not specified.
+> +      - description:
+> +          Input PLL to the AudioSS block, parent of mout_audss. "fout_epll" is
+> +          used if not specified.
+> +      - description:
+> +          Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if not
+> +          specified.
+> +      - description:
+> +          PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not specified.
+> +      - description:
+> +          External i2s clock, parent of mout_i2s. "cdclk0" is used if not
+> +          specified.
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    items:
+> +      - const: pll_ref
+> +      - const: pll_in
+> +      - const: sclk_audio
+> +      - const: sclk_pcm_in
+> +      - const: cdclk
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  power-domains: true
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +  - "#clock-cells"
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@3810000 {
+> +        compatible = "samsung,exynos5250-audss-clock";
+> +        reg = <0x03810000 0x0c>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>, <&ext_i2s_clk>;
+> +        clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
+> +    };
+> --
+> 2.30.2
+>
