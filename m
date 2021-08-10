@@ -2,138 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2D4C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 07:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE314C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 07:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7D56056C
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 07:26:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EF5260238
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 07:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233156AbhHJH0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Aug 2021 03:26:44 -0400
-Received: from mail-bn8nam08on2059.outbound.protection.outlook.com ([40.107.100.59]:30318
-        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232851AbhHJH0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Aug 2021 03:26:38 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XjtLZoCOf8GOHuoigmsUO1Gay1uWbZ4YyzKR26LQDSO2+bibRzGI6pRt8ISePbRUNdsCuxyfD+ldgtcG/C8MRjondxUYeL0rFm2PCtNksNKIs+eivSITFM1M0mzGr0r5/lhwE596Xexk3pxyRpZY/viuM7MdjJ5pkaKJn+JnZ6yWC1HwiquzSxH+EXjY1ae7lMmrRLr2zUTGwLh3VGrZkQ8y05vGwWoKrRXH8CVuDaStlQ3KVA5xpHMEKon8pCj96ZJk96NT2BY5XvR1fGfCb8UvmLf4w1e7+mhloyIZW+JMNy/Seyr1FQabh8UzBKeSXcWAAU6Tg6iElTo8l0KZQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xpXTjhb7XW9HKA33NAVueOtbzRSIAM+7Bv+PtxEvl5k=;
- b=SbrTvb0y0avKL/GMxHQCQOV2e+hQxETp7M8h8sRoMPPZRuk8ZRGJyUTytVARlzdMfLlmntvwlfBk5Vx5304gY1MKwX+PzrUMxA6SfG1V9Fr4R8lgcp0RZxHj0NzfvCBWtbF6dV7Ui7+ZgtyuVblV3qvpKBGgqJ24r+rm586sNurOnmc9erXtzowM2S1HjQdjuqYkG9cKc5yiYY+jvb57OFmi1BCgaXcsB6+pLip+HuBQKEbeSiPT22umNtwEL1g9wLJuDge3GogIVeKrhcdfz9nCe9elvocLfidWROMOFZnr/LHuHGSjIv7/4k8ov8Epck0DzlikiOnGyILu48y02Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xpXTjhb7XW9HKA33NAVueOtbzRSIAM+7Bv+PtxEvl5k=;
- b=bElz1J+8ieclX+6CvQPxYvTlx1DigMMjUCqsHkkl/mfjPxZOuYvI8x6OOOoMsj0rYyQxLhUTAJpCoDyfZU7SPXNLGsNowzK5UUyPcArEmwv3Lyesa0kBEFdcnIfU0E0pR3BkcyWODiuvnULjBj4vogvU3PSfmcnytvprGl4kzmQ=
-Received: from BN1PR13CA0028.namprd13.prod.outlook.com (2603:10b6:408:e2::33)
- by CY4PR02MB2534.namprd02.prod.outlook.com (2603:10b6:903:72::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.20; Tue, 10 Aug
- 2021 07:26:13 +0000
-Received: from BN1NAM02FT042.eop-nam02.prod.protection.outlook.com
- (2603:10b6:408:e2:cafe::b5) by BN1PR13CA0028.outlook.office365.com
- (2603:10b6:408:e2::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.4 via Frontend
- Transport; Tue, 10 Aug 2021 07:26:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- BN1NAM02FT042.mail.protection.outlook.com (10.13.2.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4394.16 via Frontend Transport; Tue, 10 Aug 2021 07:26:13 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 10 Aug 2021 00:25:50 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.2 via Frontend Transport; Tue, 10 Aug 2021 00:25:50 -0700
-Envelope-to: git@xilinx.com,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- shubhrajyoti.datta@gmail.com
-Received: from [10.140.6.59] (port=48216 helo=xhdshubhraj40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1mDM8y-0005zG-NW; Tue, 10 Aug 2021 00:25:49 -0700
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-clk@vger.kernel.org>, <git@xilinx.com>
-CC:     <devicetree@vger.kernel.org>, <shubhrajyoti.datta@gmail.com>,
-        "Shubhrajyoti Datta" <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v12 5/5] clk: clocking-wizard: Update the compatible
-Date:   Tue, 10 Aug 2021 12:55:33 +0530
-Message-ID: <20210810072533.27620-6-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210810072533.27620-1-shubhrajyoti.datta@xilinx.com>
-References: <20210810072533.27620-1-shubhrajyoti.datta@xilinx.com>
+        id S237687AbhHJH4F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Aug 2021 03:56:05 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46902 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237701AbhHJH4D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 03:56:03 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210810075540euoutp027e13bd756c60c1cdda09ad9a920260a6~Z4tP79Lvu2049120491euoutp02K
+        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 07:55:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210810075540euoutp027e13bd756c60c1cdda09ad9a920260a6~Z4tP79Lvu2049120491euoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1628582140;
+        bh=VeRFKSxzvKpp1y//P/JPPiQIsMJu74pFw5ZDgXW9bX0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=btjfF1BgUsFiyyXHBLyOionZUAUTvabtlxSdaV+8EINtdjk9HTrLg0ON0JXeglFWk
+         fLbL6KCAt5fkQutpMNU5AzCOs0s1bnI8ZmdBzfTEong/TNKyNgYXMdpxKZoqkNv9YA
+         XH/lp/BrY6NNv/XjdN74q5Wl+sE+R1HgzowXR6WQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210810075539eucas1p266514336f5ec6979029c4a641c527ff1~Z4tPU3EfV2486224862eucas1p2E;
+        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1D.10.56448.BF032116; Tue, 10
+        Aug 2021 08:55:39 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210810075539eucas1p2e444e70ef5d7acbd4af9ad0479e11a09~Z4tOsoygI2987429874eucas1p24;
+        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210810075539eusmtrp2fbf7493e9a3b0b0207fd97bc52baabfe~Z4tOradcE2391623916eusmtrp2N;
+        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
+X-AuditID: cbfec7f5-d53ff7000002dc80-de-611230fb30eb
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 88.64.31287.AF032116; Tue, 10
+        Aug 2021 08:55:38 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210810075537eusmtip12fdb1e043caa6df4382b8e946896443d~Z4tNQWFjt3253232532eusmtip1g;
+        Tue, 10 Aug 2021 07:55:37 +0000 (GMT)
+Subject: Re: [PATCH v2 7/8] clk: samsung: Add Exynos850 clock driver stub
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
+Date:   Tue, 10 Aug 2021 09:55:37 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 28b3f900-e145-4a64-5ac1-08d95bd02211
-X-MS-TrafficTypeDiagnostic: CY4PR02MB2534:
-X-Microsoft-Antispam-PRVS: <CY4PR02MB25347B1A77D607BEC4D63D77AAF79@CY4PR02MB2534.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:3276;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ezzYnUDnS7M8MesqYr4yLiV9JZ+Ha1eD2+zI/uB6q7D5kmvxj/5y2RRFWm8wX3Zsg9beoOtX8L0JjiuqcOxAZLrkWsLiKT33nRjSzACZPGLh0u0jkfBiNM5OHLt6B50KWDBRPa2v+7lPLjWkwNBAZ/DeYXyiwzWglikV21wgTKxEmLHH5ufyodBfPZB8proh5QokG1vhVRxQB46Fp+0UUW3zGHBRl3IW3Pgl8hwJWcZcPA8rBLsUeK5FwPzivprQsQB+yAWxc+o9cTq7oR18+TuCDA9h/SvQuybsT0oiZ/r1c11TqprTph9rz6FCG+wcMaLv9Ule1t6Cqa/ZGoeGp1lC5ogRgrw2eAc1Cho6BWZ7nrwIOqfeOhCbvzQ6NvbFg+BRq0fzl133i/AZqwzZ6/dbdIeP6vkCopN9Iow1JhAT3zprB53DVyqazKHRnZBCfIKSrMjG4dMlTNZIDY3bW40uCP0GC/V4KrRr8pU1Ursr1FKGLw3FoEYnICaBxZ+AtPexc8IorDVOtHLGPDR0hqlGsOm7173ev8MYrq/0j9+7E4XiHB2mGS/N/nX3XmFKNIn0yiwZ9NuPtFz0rujqJSOVv6DS+ZTTiI+EKUni2POYX1PEkSzxlMR3svdsrraksJDi5XHaqIbiv9Fx5YqBJaXGQc+s67W1irGlilNmP9TjUfBLekz9DyM6d4RgAzDf5LuK6n3UC/rRUbzw6fInfkrhtrZU7Cj8cVQRKhu3cr4=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(376002)(39860400002)(136003)(396003)(46966006)(36840700001)(36906005)(316002)(36756003)(110136005)(8936002)(9786002)(478600001)(8676002)(82740400003)(70586007)(83380400001)(54906003)(6666004)(426003)(4744005)(186003)(4326008)(82310400003)(2906002)(7636003)(7696005)(47076005)(6636002)(70206006)(356005)(15650500001)(5660300002)(44832011)(336012)(26005)(1076003)(2616005)(36860700001)(107886003)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2021 07:26:13.1204
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28b3f900-e145-4a64-5ac1-08d95bd02211
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT042.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2534
+In-Reply-To: <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjHeU/bc06LhUPpxmtVnJ0mc4sgkbCXyAhksh0TP2zTObtkuE7O
+        Chm3teJlY7GkKwHHzcsCFkiJInYNowNaWIt0QtAGYVayithxmQPDYKlA2kVcuYz2YMa3//M8
+        v/9zSR6SI6rAJWRW7klGmSvPluICbsed5849/r0i+d5vn+xE84arAK1cHiHQQ980D+n77vGQ
+        5poJR0/rt6JB/x7U6lnE0OWlGxhqmxzmoYWycR5q1y8B9JutDkc1TjuGBq+VE8ha189DQ3fT
+        0KKjgoO03X0E+n7RjaOV4VYumq5Yw+6OeQnkGizBkNG2BFI203MjWoLWqctx2qobI+g2YylO
+        jw7fxOlf6psJur3xHD1zwY/TFWYjoL1t0e8JPhYkZTDZWacYZWzyp4LMGZeTl28KP6PtiVCD
+        +k3nAZ+EVDxsMXbj54GAFFEGAOvvD2Fs4AOw/3EXhw28AF5ZXuW+sDS3ewi2cANAnWV83bIA
+        YMuzWSxARVIH4ZhNywtoMZUFn/bMcwMQh9KR8Ja5JdgKp+Jg+e0KENBCKhlW3SoNGrjULtg6
+        /zDY6CXqBBwdmMNZJgL2X5kKevnU+7D6L12Q4VBR0D2lX9fbYaenLrg3pFb4sLKkAWf3PgDv
+        P+gkWB0JZx3mdb0Vrlr1GGvQAFjW9TvBBlUATjgaAEvth6P3/l3rRK6N2A1Ntlg2nQp13kFu
+        IA2pMDjiiWCXCIMXO6o5bFoIS4pFLL0T+o3VGKsl8LupVW4VkOo2nKbbcI5uwzm6/+c2AK4R
+        RDEFqhwFo9qXy5yOUclzVAW5ipgTeTltYO1lB1Yc//wMDLMLMb0AI0EvgCRHKhZao0VykTBD
+        fvYrRpl3XFmQzah6wRaSK40S2izNx0WUQn6S+YJh8hnliypG8iVqjDS9Fh8a63ncaAkrC0uS
+        GW6T2tLtz7dNtlea7OciMtJlMiLUH77vj/TEQ0eKpJtkd7rfkmHEG8uRAxrx3xkG669pVw8X
+        N+2YqA5xvSk58CH+6CAq/vqnhHKZzSPuTpc0/hmameT+pMlyNmoy/xXzg2PhffOhS2LFzRr4
+        6sWYtGdvH7o+kVh7+kt1zWbncJH9xxC0I1rT61E1PkrY8nmSmHzZjX22XHiMEM/5Urb9UGSb
+        MqvFH9hT9c5Z95mWWu9R2pFjF0iPSvuS/YUmn8UbUli5v2t3gqZJIfFdmOF/lJoYP9TpNPa8
+        e2lX85N3xqexlG+kcZkdtdfzTmldlnHXpJSrypTHvc5RquT/AQsHbmohBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xu7q/DIQSDRr/m1l8WLGI0eLflBvs
+        Fte/PGe1mH/kHKtF8+L1bBbv5spYnPmta7Hx7Q8miyl/ljNZbHp8jdXiY889VovN8/8wWlze
+        NYfNYsb5fUwWZxb3slvsnHOS1eLiKVeLH8f7mC1a9x5ht5j64xabxb9rG1ksnvcBlZ26+5nd
+        4sqZDiaLVbv+MDpIery/0cruMauhl81j56y77B6bVnWyedy5tofNY//cNewem5fUe7yc+JvN
+        o2/LKkaPz5vkArii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMy
+        y1KL9O0S9DJeXjnPWrCev6L1oGAD41yeLkZODgkBE4k1m9+ydzFycQgJLGWU2Nl4nbGLkQMo
+        ISUxv0UJokZY4s+1LjYQW0jgPaNE0zc5EFtYwFPi7q5WVhBbRCBTYvL9FrA5zAILOCSWnN7N
+        CDH0OJPEsb5GRpAqNgFDid6jfWA2r4CdxIQDnWDdLAKqEhs/XGcCsUUFkiX6vkyAqhGUODnz
+        CQuIzSkQKDH9xSywGmYBdYk/8y4xQ9jiEreezIeKy0tsfzuHeQKj0Cwk7bOQtMxC0jILScsC
+        RpZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgQll27Gfm3cwznv1Ue8QIxMH4yFGCQ5mJRHe
+        nXJCiUK8KYmVValF+fFFpTmpxYcYTYH+mcgsJZqcD0xpeSXxhmYGpoYmZpYGppZmxkrivFvn
+        rokXEkhPLEnNTk0tSC2C6WPi4JRqYFr7zsH3y932v6077OK7Arb73Z1xa1//l7b40He6TLaL
+        wlfkzlD8tsLkOCsDj4ZWydrT6wqjpGu33I1la234uUDxyXH/fwffKjxOzk95wnRrf6n0mWDL
+        649sXf/f/7nnzA71W34XkpWD3DsTn24UZdeZXMdrqrhvqvrrbxV+Bl/7w+oad8ipLeKqt33+
+        40jM094VUay2KmpG8U1LE/MS524+qrvunuPUjN7YbZe7V4U2FjDYz+y8oPs/Zmp6iOgFP5Pv
+        E/0vvFR3+Pnu/8c3Dyc2cB/Mep0uV/WyY+etnFiBmgeWLPOFbX8tXi45SadHR9pmA/tmKznx
+        W/VzlVzvV301KZ1Ursp5+97WZX9dVJRYijMSDbWYi4oTAQ1zxqexAwAA
+X-CMS-MailID: 20210810075539eucas1p2e444e70ef5d7acbd4af9ad0479e11a09
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f
+References: <20210806152146.16107-1-semen.protsenko@linaro.org>
+        <20210806152146.16107-8-semen.protsenko@linaro.org>
+        <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
+        <CGME20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f@eucas1p1.samsung.com>
+        <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the compatible to indicate support for both 5.2 and 6.0
+On 09.08.2021 21:48, Sam Protsenko wrote:
+>>> +/* Will be extracted to bindings header once proper clk driver is implemented */
+>>> +#define OSCCLK               1
+>>> +#define DOUT_UART    2
+>>> +#define CLK_NR_CLKS  3
+>>> +
+>>> +/* Fixed rate clocks generated outside the SoC */
+>>> +static struct samsung_fixed_rate_clock exynos850_fixed_rate_ext_clks[] __initdata = {
+>>> +     FRATE(OSCCLK, "fin_pll", NULL, 0, 26000000),
+>>> +};
+>>> +
+>>> +/*
+>>> + * Model the UART clock as a fixed-rate clock for now, to make serial driver
+>>> + * work. This clock is already configured in the bootloader.
+>>> + */
+>>> +static const struct samsung_fixed_rate_clock exynos850_peri_clks[] __initconst = {
+>>> +     FRATE(DOUT_UART, "DOUT_UART", NULL, 0, 200000000),
+>>> +};
+>>> +
+>>> +static const struct of_device_id ext_clk_match[] __initconst = {
+>>> +     { .compatible = "samsung,exynos850-oscclk" },
+>>
+>> One more thing - I am not sure anymore if this is correct. AFAIR, we
+>> wanted to drop compatibles for external clocks.
+>>
+> I'll remove oscclk from the clock driver and device tree. It's not
+> needed right now anyway, as that driver is just a stub.
+> 
+> But I'd still like to know the proper way to define external clocks. I
+> can see that in exynos7.dtsi and exynos5433.dtsi there is just regular
+> fixed clock defined for "oscclk" (or "fin_pll"), and then that clock
+> is referenced in corresponding clock driver by its
+> 'clock-output-names' property. I guess that approach is the
+> recommended one?
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
-v11:
-new patch
-v12:
-No change
+Yes, we should use generic "fixed-clock" in DT to model the external
+root clock. Registering the external clock from within the CMU driver
+is a legacy method that predates generic "fixed-clock" and should be
+avoided.  
 
- drivers/clk/clk-xlnx-clock-wizard.c | 2 ++
- 1 file changed, 2 insertions(+)
+That said I think this temporary stub driver is not needed at all, 
+you could well define a fixed clock in DT and reference it in the UART 
+node, as Krzysztof suggested.
 
-diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-index 61c40e06e381..716fea83341a 100644
---- a/drivers/clk/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/clk-xlnx-clock-wizard.c
-@@ -621,6 +621,8 @@ static int clk_wzrd_remove(struct platform_device *pdev)
- 
- static const struct of_device_id clk_wzrd_ids[] = {
- 	{ .compatible = "xlnx,clocking-wizard" },
-+	{ .compatible = "xlnx,clocking-wizard-v5-2" },
-+	{ .compatible = "xlnx,clocking-wizard-v6-0" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
--- 
-2.17.1
-
+--
+Regards, 
+Sylwester
