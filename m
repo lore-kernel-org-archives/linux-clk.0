@@ -2,191 +2,227 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90588C432BE
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 22:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7E9C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 00:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75B2960EB5
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Aug 2021 22:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B0B61052
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 00:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236800AbhHIWjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Aug 2021 18:39:03 -0400
-Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:29414
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236798AbhHIWjC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Aug 2021 18:39:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nmLSzNia37xajwZuKiCCvlmR+IiiW+xWdV2Gewy7AKNwn4n7iTq2q7imgjoxPyKE3Vv0uEVH5rbJPbNLh6ApDstYC1DDttqmt4rQ924tZmK1Bd10+lqAvanRUVvIUD8dGEdqznMDRJqYwS6p04miuYZ5eBCQA5jS6HR085a/GkZv1oFGkePz0O+TAJFLwvM2RgqTVh1KbD65qCZYUWDNfRjzOLw/nhCfvlDbWn53CtULCTN1DdAyCF7LNNfn1XcJF8C+pSM0rTl/ZvfDmkOiFO8voXFtRbVtdjWqvGAV3i/el7dWrnoCQ+gbW9Y7cQ1x/wKKBDuYOiqjppfHv71sMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JK2nVz8yL1JNKob5c5s9SuUST/+bcVld7RdFnEIMdWA=;
- b=hjBRFL4vmw0H8JVDFDc21/9iuEhIqoBs413cro404eZXfTAxdH/wJJnseRPvZMG1mDbYgEIC36gHCwsY+gl4GrKUAOBpnaNoTSVrqOVamKSIqLBo0jB7h6+B3ww4lNI+CxpjU6UBf+qD+R9K1lqBjBLO7eZD6Xd5bWaGoYAaGk3G9VHXqbuWbcVt0CeHmbB1ZWWPbrKo84VpsfHugEQAEYv2II1tzxs7E2lUBCfM5/frCbwJTvvKe1f3xsUTsI8pJTXrbnjiZ3ytYxNdq/McE2OcnuUL91h7eMCYCwXwguSVB/gkgeG/ezbs508T3zO+ZiMB1T+WskcjAqhDTY5Kaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=secospa.onmicrosoft.com; s=selector2-secospa-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JK2nVz8yL1JNKob5c5s9SuUST/+bcVld7RdFnEIMdWA=;
- b=BMCfgRMAZ+GCHgCY9STNxGPyzvbCRFTkKCaDNVoMj4Cw8bL+d1qTDyA3A+h+KZ9LSPmziO+N0meIPI8aEzdH97CgnlavZC+zcYPnD6VafuV3XknFJEczmDmBfZ/KNgWEp1wUzCmoFcrqLBSGQNuPBkOQ9MTW4ox90Q7dAMnUWEA=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=seco.com;
-Received: from DB7PR03MB4523.eurprd03.prod.outlook.com (2603:10a6:10:19::27)
- by DBAPR03MB6390.eurprd03.prod.outlook.com (2603:10a6:10:17f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16; Mon, 9 Aug
- 2021 22:38:33 +0000
-Received: from DB7PR03MB4523.eurprd03.prod.outlook.com
- ([fe80::dc6c:815b:2062:d1f1]) by DB7PR03MB4523.eurprd03.prod.outlook.com
- ([fe80::dc6c:815b:2062:d1f1%7]) with mapi id 15.20.4394.023; Mon, 9 Aug 2021
- 22:38:33 +0000
-From:   Sean Anderson <sean.anderson@seco.com>
-To:     linux-clk@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Adam Ford <aford173@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        id S235614AbhHJAyz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Aug 2021 20:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233500AbhHJAyz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Aug 2021 20:54:55 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5990C0613D3;
+        Mon,  9 Aug 2021 17:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=DKH9L/D5qWxaAYmJH5xbQWOuTOQkBWl8uns/CseNhGI=; b=rWSTU6LyG3Ax19GY5TRFGp3+EI
+        cK5Kj49eUFo/5agYJLdXh0kG9PjYd5ZnoFD/w8SBNowK5uYx/kDyizv25fS0eupVxxIBM8O55+ZIr
+        OPPe9941zxUFGzF4sXn5vKbKf08LawMRROeZ1vTchFMQQwSKiRGirfastgCKxmNxAciBlFwxHZTY6
+        m60cKzysbUNzPDHOo25a41W8hyzSjW2xxRYlYr5FbAHZrtyDaIfdWTdgl1zdBjpP8SXNdGtqsOs29
+        NbygccEBtX2L/DQr1HLoj+RMxbLjEwMiexOewXwKUkS2N0KzIVxFCS/7q/6KWDUYsqZye8y6JYdR1
+        HLOGQFvg==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mDG2K-002BdO-5f; Tue, 10 Aug 2021 00:54:32 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v7 2/3] clk: vc5: Use dev_err_probe
-Date:   Mon,  9 Aug 2021 18:38:12 -0400
-Message-Id: <20210809223813.3766204-2-sean.anderson@seco.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210809223813.3766204-1-sean.anderson@seco.com>
-References: <20210809223813.3766204-1-sean.anderson@seco.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BLAPR03CA0076.namprd03.prod.outlook.com
- (2603:10b6:208:329::21) To DB7PR03MB4523.eurprd03.prod.outlook.com
- (2603:10a6:10:19::27)
+        Stephen Boyd <sboyd@kernel.org>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] clk/at91: remove kernel-doc warnings in sama7g5.c
+Date:   Mon,  9 Aug 2021 17:54:31 -0700
+Message-Id: <20210810005431.22007-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from plantagenet.inhand.com (50.195.82.171) by BLAPR03CA0076.namprd03.prod.outlook.com (2603:10b6:208:329::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17 via Frontend Transport; Mon, 9 Aug 2021 22:38:32 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6beb759f-476d-4d5b-07e3-08d95b866b23
-X-MS-TrafficTypeDiagnostic: DBAPR03MB6390:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DBAPR03MB6390438288C6373887F1A7C496F69@DBAPR03MB6390.eurprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:110;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vdcBJj0nANKh/QcGxkt8Y46D4jrmyWntjbdoDYeDnz6Zzt2Xyos3lnoVAHFLsZoL+jCwGf7cH67yTagf2ySD/9LspfgmfbDM/gIS5YZqsu/hj81ZZMLKL6ZNYkwBKfmrMBU5Z4nEbaVKYDLFxg96LfYAgMv08ZHvLmwBVt6bnEcdP+HQFl+IlpcYERXItvd8jigvYOvFwqxVE76UfUJj+Suo5sYlGJQ31meAtX8CW7VWI/9DDnE9mf6R6bIILje0FUmy6DlLpUp4+OeYIh3r3VTcLAC0LQIoH+kTizalgMOtldvluBtMga/OLUAwDqEYOJ3QXmg3GjYTBt+ABvFkYmgwVsjVObHKDUNcqCC4OfS+wVX1tonvHNEya/waGA4URekkkeH3umQ3jJSBv5g57PkWWBa9ejM8QAmDMl3xF1E83q7BA7MXxOhm0GYoN1CdOOR4k6rH/9GoHDiCIv+1/9Kz1W0KwNdmUzodme8E4oVyOVRjpgqlj9F0hmIDC/OSs2znAq7p8QdM2rr5i59DmbHaAfdYzi0koUhmhAM+2r7NiJRN2GF7k8zvkf+RNR10ifmJ4wMt5+3eTJKmptOzJRLzTsUn6ndXWcBQuCJSwcTFpzu2pFvg1v3K14fAXywzN8CNReBPypfaL1tRbJvbhIJzbnF4dbKVaZJzXqbKseXt71qeY2UYoG8eoJ099LAei4W8ut0E38qyxv3Od1+c+w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4523.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(366004)(396003)(376002)(39830400003)(38100700002)(8676002)(38350700002)(1076003)(44832011)(66946007)(54906003)(316002)(66476007)(83380400001)(66556008)(26005)(5660300002)(8936002)(478600001)(6506007)(6512007)(6486002)(36756003)(52116002)(186003)(86362001)(6666004)(4326008)(956004)(2906002)(6916009)(2616005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kLVNo5U+4EwIsKe863/evQsbCAd4lNcqo3rJLiNv7Vn9dZY0iFIbFb0wFQzR?=
- =?us-ascii?Q?+wlXV5SA/LbRio7JaCBlQ6jBGVLxJrYd2GD+T28HQVHJ8cSnAcbSdoU1msUB?=
- =?us-ascii?Q?gGWx94kSVtKyWArmQ5jxnIjXOO9e+YDr5HvsAVy9MrveFDkZvf+oSw3Zrydw?=
- =?us-ascii?Q?ndq+5wInOS5MPu+hkv22kPQem5+IPtYyYh2MX19pU4sWPF/Geu6pxLL2YeZp?=
- =?us-ascii?Q?9KqYMC7Rb8Esj6bxBdh8JQXi4w0ahhP/0cpLVxyY8pMRjly5rbUwiaUuamnB?=
- =?us-ascii?Q?LyOWy29ikw+RIrJEQ+jJEMeShL5X8ESVhRHtRa2SUy0g1Mnvad6d0zA4v0us?=
- =?us-ascii?Q?SprSFBP1QftU7NfyOnJmWLqXv74vaKAhcsqHY5JIlNf4JttKYp68J36TLD7z?=
- =?us-ascii?Q?MeNPgrzhfuIE7U5EI19SPOdHMqqGi4GvEmW1venKiOP8a22qlDF7KVrwUfyH?=
- =?us-ascii?Q?zPKYk78JfNgTeyUOSeK+txTzo7TtnXTQK9oM5LsICHvgsd1AMGVD+bVbMdKg?=
- =?us-ascii?Q?yibJED+Ofh7LHT9c7F8DdKHO3BASRlhpUz2VnZZ258+4H9bQmMJvIpd8clgA?=
- =?us-ascii?Q?C0K7bJA1lJtGemKOTGhwXVMkwsCBNPARkkZetTCVP2FA8KgPdZA9HGLBW2kH?=
- =?us-ascii?Q?cfBleTiAR0cscR5RD4EncEb5urZV4OKNhx/qKSYttZJmTRAFJB2bR/Q201ta?=
- =?us-ascii?Q?HgsthhkRKRcPr5jzxoNwNJ6EmS3A4dA9WV+Utq1exHuNtMzVOW3hmf1VtJEU?=
- =?us-ascii?Q?u35shDkiruVBaZiwdaziZBFxcI3dfU9OvqFlG8oov5hH0B+tdQex7op8kaPN?=
- =?us-ascii?Q?MLtse6lN5WhFi9N4N6zUnK6O7rw1A0FLMmHWJEC59lvoLMsUrIiWYq3yzA6I?=
- =?us-ascii?Q?mxdyO5UgGzkd9uicBs2HZ3FtgAlDYbEdizsyTdFnfKnvV9ZzbCGsmP9sZELu?=
- =?us-ascii?Q?lv+aY7tL5sam/dQ/wzF3lPD9g4OJi1+oJ4oScG3hyFqvW/N6pI/GH2yBmRXk?=
- =?us-ascii?Q?gak2kJyZuJLQ8IVVIpYW4/6LIbsKeCW6BuBAK5DWyGX8opFFGEO36TNCuudR?=
- =?us-ascii?Q?f3MdfTosL0I5a/LnJqCdoUZSldzMoVNTYBsy8g772N2dMsgpYkibIwg8nR1H?=
- =?us-ascii?Q?f2jk61FIkB9U9Vqtlj93Yv8UPhUcg697ly8aVe9cdIOMVv+K+oXJoI0p8Oyu?=
- =?us-ascii?Q?h65S1gyghehoidhvBa98WBSIZ04LPvDek2IJOd9oPPWflh3qih0hUgQu0yCb?=
- =?us-ascii?Q?fS851Ow4vebqMO48OxBsoVVSfpWVeEZLOBVSebXua/11bk4B0Mok39jzLuLz?=
- =?us-ascii?Q?/U68hy0+gXHG7sS5geQatL0+?=
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6beb759f-476d-4d5b-07e3-08d95b866b23
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4523.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2021 22:38:33.1828
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xH7wld4M8CI5eQv+n/xXaQIEjm7RFZNTWDpln/jmvJ2l8w1uRhmzPryn4qQTAHO1X/vpPLvGt1VlushQiZwieQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR03MB6390
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert uses of dev_err (+ return) to dev_err_probe.
+Fix multiple kernel-doc warnings in sama7g5.c. There are several
+enums and structs that were not identified as such.
+There are also several anonymous structs (that scripts/kernel-doc
+has problems with), so add struct names to them.
 
-Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+Fixes the following warnings:
+
+drivers/clk/at91/sama7g5.c:39: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * PLL clocks identifiers
+drivers/clk/at91/sama7g5.c:60: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * PLL type identifiers
+drivers/clk/at91/sama7g5.c:122: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * PLL clocks description
+drivers/clk/at91/sama7g5.c:289: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * Master clock (MCK[1..4]) description
+drivers/clk/at91/sama7g5.c:341: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * System clock description
+drivers/clk/at91/sama7g5.c:365: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * Peripheral clock description
+drivers/clk/at91/sama7g5.c:453: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * Generic clock description
+drivers/clk/at91/sama7g5.c:339: warning: Function parameter or member 'ep_chg_id' not described in 'master_clock'
+
+Some kernel-doc warnings are still printed, but they are all due to
+problems in the kernel-doc script (if anyone is interested in playing
+with some Perl :). These warnings are:
+
+sama7g5.c:287: warning: Function parameter or member '{' not described in 'sama7g5_plls'
+sama7g5.c:287: warning: Function parameter or member '' not described in 'sama7g5_plls'
+sama7g5.c:287: warning: Function parameter or member '}' not described in 'sama7g5_plls'
+sama7g5.c:339: warning: Function parameter or member 'sama7g5_mckx' not described in 'master_clock'
+sama7g5.c:339: warning: Function parameter or member '}' not described in 'master_clock'
+sama7g5.c:360: warning: Function parameter or member 'sama7g5_systemck' not described in 'system_clock'
+sama7g5.c:451: warning: Function parameter or member 'sama7g5_periphck' not described in 'periph_clock'
+sama7g5.c:451: warning: Function parameter or member '' not described in 'periph_clock'
+sama7g5.c:451: warning: Function parameter or member '}' not described in 'periph_clock'
+sama7g5.c:841: warning: Function parameter or member 'sama7g5_gck' not described in 'generic_clock'
+sama7g5.c:841: warning: Function parameter or member '}' not described in 'generic_clock'
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Jonathan Corbet <corbet@lwn.net>
 ---
+ drivers/clk/at91/sama7g5.c |   27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-(no changes since v5)
-
-Changes in v5:
-- Note in commit message that not all dev_errs converted return the
-  result of dev_err_probe
-
-Changes in v4:
-- New
-
- drivers/clk/clk-versaclock5.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 344cd6c61188..bfbb51191c8d 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -909,10 +909,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		return -EPROBE_DEFER;
+--- linux-next-20210809.orig/drivers/clk/at91/sama7g5.c
++++ linux-next-20210809/drivers/clk/at91/sama7g5.c
+@@ -36,7 +36,7 @@ static DEFINE_SPINLOCK(pmc_mck0_lock);
+ static DEFINE_SPINLOCK(pmc_mckX_lock);
  
- 	vc5->regmap = devm_regmap_init_i2c(client, &vc5_regmap_config);
--	if (IS_ERR(vc5->regmap)) {
--		dev_err(&client->dev, "failed to allocate register map\n");
--		return PTR_ERR(vc5->regmap);
--	}
-+	if (IS_ERR(vc5->regmap))
-+		return dev_err_probe(&client->dev, PTR_ERR(vc5->regmap),
-+				     "failed to allocate register map\n");
+ /**
+- * PLL clocks identifiers
++ * enum pll_ids - PLL clocks identifiers
+  * @PLL_ID_CPU:		CPU PLL identifier
+  * @PLL_ID_SYS:		System PLL identifier
+  * @PLL_ID_DDR:		DDR PLL identifier
+@@ -44,6 +44,7 @@ static DEFINE_SPINLOCK(pmc_mckX_lock);
+  * @PLL_ID_BAUD:	Baud PLL identifier
+  * @PLL_ID_AUDIO:	Audio PLL identifier
+  * @PLL_ID_ETH:		Ethernet PLL identifier
++ * @PLL_ID_MAX:		Number of PLL_ID values (1 more than the last valid PLL_ID)
+  */
+ enum pll_ids {
+ 	PLL_ID_CPU,
+@@ -57,7 +58,7 @@ enum pll_ids {
+ };
  
- 	/* Register clock input mux */
- 	memset(&init, 0, sizeof(init));
-@@ -936,10 +935,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		    __clk_get_name(vc5->pin_clkin);
- 	}
+ /**
+- * PLL type identifiers
++ * enum pll_type - PLL type identifiers
+  * @PLL_TYPE_FRAC:	fractional PLL identifier
+  * @PLL_TYPE_DIV:	divider PLL identifier
+  */
+@@ -119,7 +120,7 @@ static const struct clk_pll_characterist
+ };
  
--	if (!init.num_parents) {
--		dev_err(&client->dev, "no input clock specified!\n");
--		return -EINVAL;
--	}
-+	if (!init.num_parents)
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "no input clock specified!\n");
+ /**
+- * PLL clocks description
++ * struct sama7g5_plls - PLL clocks description
+  * @n:		clock name
+  * @p:		clock parent
+  * @l:		clock layout
+@@ -128,7 +129,7 @@ static const struct clk_pll_characterist
+  * @f:		clock flags
+  * @eid:	export index in sama7g5->chws[] array
+  */
+-static const struct {
++static const struct sama7g5_plls {
+ 	const char *n;
+ 	const char *p;
+ 	const struct clk_pll_layout *l;
+@@ -286,17 +287,17 @@ static const struct {
+ };
  
- 	/* Configure Optional Loading Capacitance for external XTAL */
- 	if (!(vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)) {
-@@ -1078,14 +1076,16 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ /**
+- * Master clock (MCK[1..4]) description
++ * struct master_clock - Master clock (MCK[1..4]) description
+  * @n:			clock name
+  * @ep:			extra parents names array
+- * @ep_chg_chg_id:	index in parents array that specifies the changeable
++ * @ep_chg_id:		index in parents array that specifies the changeable
+  *			parent
+  * @ep_count:		extra parents count
+  * @ep_mux_table:	mux table for extra parents
+  * @id:			clock id
+  * @c:			true if clock is critical and cannot be disabled
+  */
+-static const struct {
++static const struct master_clock {
+ 	const char *n;
+ 	const char *ep[4];
+ 	int ep_chg_id;
+@@ -338,12 +339,12 @@ static const struct {
+ };
  
- 	ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
- 	if (ret) {
--		dev_err(&client->dev, "unable to add clk provider\n");
-+		dev_err_probe(&client->dev, ret,
-+			      "unable to add clk provider\n");
- 		goto err_clk;
- 	}
+ /**
+- * System clock description
++ * struct system_clock - System clock description
+  * @n:	clock name
+  * @p:	clock parent name
+  * @id: clock id
+  */
+-static const struct {
++static const struct system_clock {
+ 	const char *n;
+ 	const char *p;
+ 	u8 id;
+@@ -362,14 +363,14 @@ static const struct {
+ static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 5, 6, 7, 8, 9, 10, };
  
- 	return 0;
+ /**
+- * Peripheral clock description
++ * struct periph_clock - Peripheral clock description
+  * @n:		clock name
+  * @p:		clock parent name
+  * @r:		clock range values
+  * @id:		clock id
+  * @chgp:	index in parent array of the changeable parent
+  */
+-static const struct {
++static const struct periph_clock {
+ 	const char *n;
+ 	const char *p;
+ 	struct clk_range r;
+@@ -450,7 +451,7 @@ static const struct {
+ };
  
- err_clk_register:
--	dev_err(&client->dev, "unable to register %s\n", init.name);
-+	dev_err_probe(&client->dev, ret,
-+		      "unable to register %s\n", init.name);
- 	kfree(init.name); /* clock framework made a copy of the name */
- err_clk:
- 	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
--- 
-2.25.1
-
+ /**
+- * Generic clock description
++ * struct generic_clock - Generic clock description
+  * @n:			clock name
+  * @pp:			PLL parents
+  * @pp_mux_table:	PLL parents mux table
+@@ -459,7 +460,7 @@ static const struct {
+  * @pp_count:		PLL parents count
+  * @id:			clock id
+  */
+-static const struct {
++static const struct generic_clock {
+ 	const char *n;
+ 	const char *pp[8];
+ 	const char pp_mux_table[8];
