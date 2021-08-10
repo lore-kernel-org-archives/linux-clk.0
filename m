@@ -4,62 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD448C432BE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 13:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF1CC432BE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 13:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95F1960F25
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 13:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19FA96101E
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Aug 2021 13:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236841AbhHJN1v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Aug 2021 09:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49470 "EHLO
+        id S239692AbhHJN2c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Aug 2021 09:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbhHJN1u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 09:27:50 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B80FFC0613D3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 06:27:28 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id m18so17803944ljo.1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 06:27:28 -0700 (PDT)
+        with ESMTP id S238788AbhHJN2b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Aug 2021 09:28:31 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F20AC06179A
+        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 06:28:09 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id g30so9255959lfv.4
+        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 06:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pF6V8VR884m9lXXeStRNQD2bGZpEx7NkDPcYVysjhp8=;
-        b=KacULvs7Gu39X4aVuaAJXdO3DXrjG4oS+2EpZc1lDyoaoWfuNfRTvT8zZISfFMYGmP
-         4uU03/er7SfPLLSJ+vvI4AtJ+VgSS5Qxdob/NDspowXDSBBd+NiZrccN6tZmOSw4zDkk
-         cL8mH3a18bdrhqwla80xiRVOROi5Uvu8w2etXNmB3aoWIi/goqFs9lbQqFImz7y1uVAq
-         d/iqcSXCqC9eB0w5AMhY/rnaPCijGtILa6CDw1JfR3o5n1E7Y7WIKM+/uHT7W47PWsuI
-         2doXFF/XI1xpTYPXIUWf2tBfkNH94xdg2sT0mCqENI9vRU9aKFz2UydyKT23owQSehU4
-         n5Aw==
+         :cc;
+        bh=txwmknRtly19dwG2TwLijdSUyS9aLwYWp1obTuXBfoc=;
+        b=uZbA+1J935R3usprafc8LRUQw8doPbVfcapR1X2WEhOvM+EX7M63d5ZsO0VAvsVNZS
+         xc3FivfT6ubgZbfMXKz52jSnsZIMXiSe+40kgwcbMhimzux+MtLWI03TsIxYPR8J+FXy
+         Fg5ItgR5ZgUAVtjsevhX75vxMeq6H4bInYp3SkK3AbY468I630NCUa9R16uQJpzFZaVl
+         wSQXu0x1FHzzpXqhzKbQ58q8eGA3P6T88AslMArgdP9Yv7k4KPId9rJKhKVQ0lnvZMgF
+         JJiyC3XFKOXLI7k7TQbwnJZ6QDbjb2mbVHMVLbZcReEvjhfrU1stahisnFI79GDgAQW9
+         +JTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pF6V8VR884m9lXXeStRNQD2bGZpEx7NkDPcYVysjhp8=;
-        b=fwCUR7wm64uTu860ZNMStaAIwchllxBW71yqOrf+hDx5C8dQskgwIXqwcGftaMTafh
-         8GBidLI4SZV8BrPt7Om2lRWpq0V5H+tFdmPL0YgT/1FRsEriK9oTwhdFy6sSxVur9nbC
-         m4WRSP6c9/K3lHn3MoPhzLNPdMHusNsSD+UljTFrT8/AC0GslWs2oeQ9IDoRMjGoVAwT
-         7Jq0SWX1QNJKsb4keiXNDMZP2Z9J6hxhWGv8JkkzAMTQrJCdu0UJejpxLJM09bprE0ft
-         RWgGTHW5DajzmPqw/bbdt8Pq/zILdmH7ybdS0WMMzSHsgYhfCBl0F8a7yKN66AfFOTR4
-         KRpw==
-X-Gm-Message-State: AOAM53235GYQReflBazy59ElMyUj1lETnezpUITJJBwZ8y1iFmO5U61l
-        vHIxNU4FkSYRe3K+6dJ8S+bEIoyjIA3sO7o1bYbmCw==
-X-Google-Smtp-Source: ABdhPJyvjj3KxX7v1w+P5zqdN+YPQt4DlGffAink3HMU1FfLlBQDLLhxd/EdjbMGVZ2Pui9bq3uJ5c93ohZxQv3mEto=
-X-Received: by 2002:a2e:a804:: with SMTP id l4mr12623209ljq.273.1628602047152;
- Tue, 10 Aug 2021 06:27:27 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=txwmknRtly19dwG2TwLijdSUyS9aLwYWp1obTuXBfoc=;
+        b=ifYKqZT130Njym5VXu25B13zvKSv+kuvy+KFdnVD1blRgG3+nIezj19E3+28GrnKoF
+         84AnXT0xs4j1wFpSWQpGIotOxPBisPeknNirS15Fdlr8U2JhCgzlQN1selSUtoLguhAm
+         WjYSJH2PTXDQfORoQi2owr1bcR5ztZUVrfToZRcBk7BCSx4SiysTTpjvAfbqUsDUER08
+         9Y9lY3ICaDq/sWcK0Ndv9gp1Zzm9kbqzBC2ffExIpOu9cCemfh71Clzt+N23UC+nfcv+
+         MjABpZJ8FefyGLxiWf0xFcZKIUkUYn/nv2JTtLPIQZipkWJeMRTvYVP2E/ckAdyVw8Ox
+         qDBA==
+X-Gm-Message-State: AOAM530I7Ck+Uk/oYLMra6T66GUVmtCHcYxOY1UtnIzBvq3gnxUh6jUF
+        MIouN2qBUJIAi0B+SNpJZfUHb9VDHj0R1dCCZMQ54Q==
+X-Google-Smtp-Source: ABdhPJwobs4y7d/rU3nBa6u5h3FCXzTiFu5hBR5q/ktt76N9parIbFxpmpXXOJKBBwsROkKpvYnYcohfRvGFRZM7pmY=
+X-Received: by 2002:ac2:5d4a:: with SMTP id w10mr22073687lfd.529.1628602087498;
+ Tue, 10 Aug 2021 06:28:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210627045631.2882-1-jiaxun.yang@flygoat.com>
- <20210627045631.2882-7-jiaxun.yang@flygoat.com> <CACRpkdZkvSg___ZxdE639SMbTs5rJbjHBq-HkTCuv0e645Rssg@mail.gmail.com>
- <c7de97c3-196b-6bc3-a8b1-d6c6e6ab583d@flygoat.com>
-In-Reply-To: <c7de97c3-196b-6bc3-a8b1-d6c6e6ab583d@flygoat.com>
+References: <20210723022543.4095-1-jiaxun.yang@flygoat.com> <20210723022543.4095-7-jiaxun.yang@flygoat.com>
+In-Reply-To: <20210723022543.4095-7-jiaxun.yang@flygoat.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Aug 2021 15:27:15 +0200
-Message-ID: <CACRpkdZjdNasty5g1K5nL+fztN+LPgwYog91bi-UvVH39TXMkg@mail.gmail.com>
-Subject: Re: [PATCH 6/9] pinctrl: pistachio: Make it as a option
+Date:   Tue, 10 Aug 2021 15:27:56 +0200
+Message-ID: <CACRpkdYVcCW2yD_Xva+cog7i5C=YokMw+52i7iq0Nj2vVbWacA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/9] pinctrl: pistachio: Make it as an option
 To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
 Cc:     linux-mips@vger.kernel.org,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
@@ -73,26 +71,18 @@ Cc:     linux-mips@vger.kernel.org,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jul 25, 2021 at 4:49 AM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote=
-:
-> =E5=9C=A8 2021/7/24 =E4=B8=8A=E5=8D=8812:13, Linus Walleij =E5=86=99=E9=
-=81=93:
-> > On Sun, Jun 27, 2021 at 6:57 AM Jiaxun Yang <jiaxun.yang@flygoat.com> w=
-rote:
-> >
-> >> So it will be avilable for generic MIPS kernel.
-> >>
-> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> > Is this solved, or should I apply this patch?
->
-> I guess so, btw I think it should go via MIPS tree to avoid troubles.
+On Fri, Jul 23, 2021 at 4:26 AM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
 
-OK feel free to merge this in the MIPS tree then:
+> So it will be avilable for generic MIPS kernel.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> --
+> v3: Depend on OF as well
+
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
