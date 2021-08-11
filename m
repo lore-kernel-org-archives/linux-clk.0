@@ -2,149 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A12C4320E
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 11:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C95C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 18:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC8CE60FC0
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 11:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E07E60EBC
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 18:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237330AbhHKLUl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Aug 2021 07:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237335AbhHKLUk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 07:20:40 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9025EC06179B
-        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 04:20:15 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id v3so1003406uau.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 04:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t0kEBolSkLS2sqce8sXfB33QiH70Nq/WEHar/RhDH00=;
-        b=EXu9onjXPrdieAXb4oXgi7XDK2Cs0n7NV6W1fs65ZqHGgYhojmH+np0TMd9X9TqyuL
-         mOnHJv7IMjvM9aW6URokLeKObx1Hr9sjULLeVyDoJV4IKgi8fwJ//B4u5gldK+Z5wFx9
-         BKtL5eL2UislHCHvFKd2LH1s/w/8kUDgOikyU9jhJ/2FvWAV5lYtV4zP5KAHH5VelCmZ
-         OILdkPwbA6BPx1xP6y3Vmt5x8OAnk13uX69egwyyuj2xCe/JXUzlmQ1/WZHG02cohJit
-         nyEOMegmP/pDz8Yx19iIhYRG2XssOk/biOMEYxoM2J5Xg5LaVzEzM6IeYbKxMX6BoUG0
-         DcBA==
+        id S230479AbhHKSxu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Aug 2021 14:53:50 -0400
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:41803 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230364AbhHKSxt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 14:53:49 -0400
+Received: by mail-pl1-f180.google.com with SMTP id e15so3875602plh.8;
+        Wed, 11 Aug 2021 11:53:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t0kEBolSkLS2sqce8sXfB33QiH70Nq/WEHar/RhDH00=;
-        b=qryMwWMe8nUPVT8/CBY+Lo2AaYnCkxkJAGoKE05zf3GGH1O7NOf+jDNdCWK5aJ4eZE
-         Muy5Wz3WjgH574upQ+UytdVEPCs8nDxoEJnvqj/Lm/55xShClcntoS3VKP2uKLTFWC88
-         hOhXm3Kw+3N8VsiY9avxIJLibMfCyIK4zvrykaa3MAoIJxhlfeXFau7OT9qnsn0QNzeO
-         /YlgREa0Eb4Uuzm6NP8KdfdmlnFdiz/1+4QjR9Xfa5hCY/nCN/9TNdNRsYUU8oIgLS2s
-         JZh/NBorggD8bLdc7XqB+9fPT+9w9nZ5btEcJHQS4YVdM08CRqRT9qzV3lDT5kuQNZPQ
-         /qfw==
-X-Gm-Message-State: AOAM533BS4NGZhHsHh1uHufg/z3osN4I9zphqa5PBotnuSWzXUuoNNyJ
-        xtp3p8HVE7fQII2TAUvVA4lxeUSW4dPfa35DWDDD8A==
-X-Google-Smtp-Source: ABdhPJzHREh3TtpeK5LboogIOTf9B16ur3hdtF1iwFqcdwjhPQLqbrAfGLqvXhyblELiy1U/5s3uTaTrZeYTfryBy8o=
-X-Received: by 2002:ab0:7014:: with SMTP id k20mr10843046ual.9.1628680814267;
- Wed, 11 Aug 2021 04:20:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210806152146.16107-1-semen.protsenko@linaro.org>
- <20210806152146.16107-8-semen.protsenko@linaro.org> <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
- <CGME20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f@eucas1p1.samsung.com>
- <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com> <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
-In-Reply-To: <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 11 Aug 2021 14:20:02 +0300
-Message-ID: <CAPLW+4mPrPSeukiJY6DmpEz0V=bjEYbjzLTnJ28T01yqoQY=mg@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] clk: samsung: Add Exynos850 clock driver stub
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=06qEygJLTx39dSgIqgtwE46EcOnHTjW1rAqvEK4oK0U=;
+        b=o/22w2xtrGZZ6EJABGZ8LPjpDidUHDLyaxuBZB19gCKopDGVk5kZ/nBdtzwNw8QF/K
+         TN1zhO4zREwV2ESIVV2nj9gKo3GbUtQwQI8mbdtK3Fb1TXVfzqE7cSvxwzo3jtfx2W/a
+         xIOhXEQ6dU+7PmVCgTNkMRG5BZYxz7yHYmI1yge9bWUSoIH2cAwW/RsLiETvsC3Qibqs
+         8yIUf/WxbMyg1cHUO6cItjnsa/vZibXZHXjlUpKY6nDER8bMas63qQcKhyJnNsfiJ6SI
+         7JXtNrGqbyrIbW+jCMHeKYhJjRnbEtKF+Brl498h391o5K6aG3+5k8Jc4xYQpoUTpirz
+         ZDrw==
+X-Gm-Message-State: AOAM531/0UsvCr/MuOpOMS6hcHO6CIk+uDcg1HfAh2YlE++UR7LZBl+e
+        c2ZvqelSJVeFYfEKCdqC1w==
+X-Google-Smtp-Source: ABdhPJwzpBJ1ynaRsE7+HKXnfeFz0YJ0Zr9leVRMDLimx0O+ThxMCysCraSCWxOuhZEfzKK92jq4YA==
+X-Received: by 2002:a17:90a:150d:: with SMTP id l13mr66203pja.93.1628708005765;
+        Wed, 11 Aug 2021 11:53:25 -0700 (PDT)
+Received: from robh.at.kernel.org ([208.184.162.215])
+        by smtp.gmail.com with ESMTPSA id u27sm262625pfg.83.2021.08.11.11.53.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 11:53:25 -0700 (PDT)
+Received: (nullmailer pid 89551 invoked by uid 1000);
+        Wed, 11 Aug 2021 18:53:20 -0000
+Date:   Wed, 11 Aug 2021 12:53:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yuji2.ishikawa@toshiba.co.jp, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        punit1.agrawal@toshiba.co.jp, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: Add DT bindings for PLL of
+ Toshiba Visconti TMPV770x SoC
+Message-ID: <YRQcoD6xhxCf2gy8@robh.at.kernel.org>
+References: <20210804092244.390376-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <20210804092244.390376-2-nobuhiro1.iwamatsu@toshiba.co.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210804092244.390376-2-nobuhiro1.iwamatsu@toshiba.co.jp>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 10 Aug 2021 at 10:55, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> On 09.08.2021 21:48, Sam Protsenko wrote:
-> >>> +/* Will be extracted to bindings header once proper clk driver is implemented */
-> >>> +#define OSCCLK               1
-> >>> +#define DOUT_UART    2
-> >>> +#define CLK_NR_CLKS  3
-> >>> +
-> >>> +/* Fixed rate clocks generated outside the SoC */
-> >>> +static struct samsung_fixed_rate_clock exynos850_fixed_rate_ext_clks[] __initdata = {
-> >>> +     FRATE(OSCCLK, "fin_pll", NULL, 0, 26000000),
-> >>> +};
-> >>> +
-> >>> +/*
-> >>> + * Model the UART clock as a fixed-rate clock for now, to make serial driver
-> >>> + * work. This clock is already configured in the bootloader.
-> >>> + */
-> >>> +static const struct samsung_fixed_rate_clock exynos850_peri_clks[] __initconst = {
-> >>> +     FRATE(DOUT_UART, "DOUT_UART", NULL, 0, 200000000),
-> >>> +};
-> >>> +
-> >>> +static const struct of_device_id ext_clk_match[] __initconst = {
-> >>> +     { .compatible = "samsung,exynos850-oscclk" },
-> >>
-> >> One more thing - I am not sure anymore if this is correct. AFAIR, we
-> >> wanted to drop compatibles for external clocks.
-> >>
-> > I'll remove oscclk from the clock driver and device tree. It's not
-> > needed right now anyway, as that driver is just a stub.
-> >
-> > But I'd still like to know the proper way to define external clocks. I
-> > can see that in exynos7.dtsi and exynos5433.dtsi there is just regular
-> > fixed clock defined for "oscclk" (or "fin_pll"), and then that clock
-> > is referenced in corresponding clock driver by its
-> > 'clock-output-names' property. I guess that approach is the
-> > recommended one?
->
-> Yes, we should use generic "fixed-clock" in DT to model the external
-> root clock. Registering the external clock from within the CMU driver
-> is a legacy method that predates generic "fixed-clock" and should be
-> avoided.
->
+On Wed, 04 Aug 2021 18:22:41 +0900, Nobuhiro Iwamatsu wrote:
+> Add device tree bindings for PLL of Toshiba Visconti TMPV770x SoC series.
+> 
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+>  .../clock/toshiba,tmpv770x-pipllct.yaml       | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
+> 
 
-Thanks for confirming this. I'll go with generic fixed clock in my
-clock patch series then.
-
-> That said I think this temporary stub driver is not needed at all,
-> you could well define a fixed clock in DT and reference it in the UART
-> node, as Krzysztof suggested.
->
-
-Ok, I'll remove the stub clock driver in v3. Using fixed clock in
-device tree for serial seems to work fine.
-
-> --
-> Regards,
-> Sylwester
+Reviewed-by: Rob Herring <robh@kernel.org>
