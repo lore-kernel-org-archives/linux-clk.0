@@ -2,122 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38139C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 10:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A12C4320E
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 11:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4DF60EE2
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 10:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC8CE60FC0
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 11:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231143AbhHKKzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Aug 2021 06:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34444 "EHLO
+        id S237330AbhHKLUl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Aug 2021 07:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237173AbhHKKzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 06:55:06 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FFE9C0613D3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 03:54:43 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id p38so4924996lfa.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 03:54:43 -0700 (PDT)
+        with ESMTP id S237335AbhHKLUk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 07:20:40 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9025EC06179B
+        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 04:20:15 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id v3so1003406uau.3
+        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 04:20:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=gCKI26Pw+LVd2MxOniW0A3sFMsr4KaDcRktx1wVvKNw=;
-        b=ogByPWZIziqeABD6epIlpgfBCRI2+C+j5yF5N6YGVRJs9KhwyyUV4/+EL07vDdKc0q
-         ZNbMEYwD/T7VSIudyaqjlV/aztsUCE4wUo72wcfRuE8+AVyer6CuG5uHbtUu+oEpyhmp
-         9PJWwGcFBqdlUabL2sCHI1ZFfzqjg6f8kyiLWJj/ZqLKm6GhM+INdQiIaN9RtodJYp1Q
-         iyIoBJlADA4B9r7sc6tRFSs9fQHos+hqSbOS98vH8gHJEQWtaKlWZ4iJYaLY/mB4eVlf
-         jDSHejszybU+evpABMtIGmLzRIWGUQXmEZPcJKUR515Oo7bC4hfinVcVvtEk3Hcuupxq
-         LYxQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t0kEBolSkLS2sqce8sXfB33QiH70Nq/WEHar/RhDH00=;
+        b=EXu9onjXPrdieAXb4oXgi7XDK2Cs0n7NV6W1fs65ZqHGgYhojmH+np0TMd9X9TqyuL
+         mOnHJv7IMjvM9aW6URokLeKObx1Hr9sjULLeVyDoJV4IKgi8fwJ//B4u5gldK+Z5wFx9
+         BKtL5eL2UislHCHvFKd2LH1s/w/8kUDgOikyU9jhJ/2FvWAV5lYtV4zP5KAHH5VelCmZ
+         OILdkPwbA6BPx1xP6y3Vmt5x8OAnk13uX69egwyyuj2xCe/JXUzlmQ1/WZHG02cohJit
+         nyEOMegmP/pDz8Yx19iIhYRG2XssOk/biOMEYxoM2J5Xg5LaVzEzM6IeYbKxMX6BoUG0
+         DcBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=gCKI26Pw+LVd2MxOniW0A3sFMsr4KaDcRktx1wVvKNw=;
-        b=qM6FoiPJwL4VIW+fo+dCWAq4b+YoA5nJLS65ggWCAJFD6gKz2h1Or5afj997tH7SjZ
-         QTB/f200R0QW/EYRay7+UViefinXpyo1Urspdiux6cZu9EVaiEv6FCMty3+q0OVeinNx
-         Tnv1nkGZoVCAvDwmTGnnOou+yX7YU8LqiVkOGr1J2vjNDcghwsLnaRYRAPJ1xyYK0I2b
-         lw106KrObWjk7f8xYoh4kNHGzVN+fu6KUOgRJm7bl8LttrLBnszMjUoGu6YTtDjmHobQ
-         BWFNLtEnRvGqai/8Xu3bmMscRNg5AftRt8pUrhma9rJRLAkUlrAk0HsMficwpDbiZFTy
-         6Urw==
-X-Gm-Message-State: AOAM530/F+O+pgTUQV7LnMh/T0szG4YMOEkLgJKS8fVwtWUqoOAUkvEx
-        qQYFpthRP7uC7t2klRQh74ST7A==
-X-Google-Smtp-Source: ABdhPJwNHQ8cQTb4g0nB+4cqAy4TcuF9GmaBNFqbV4DWBG51cdmyiNt+/qBeEpOw+hp92yV1+VLgIQ==
-X-Received: by 2002:a05:6512:2618:: with SMTP id bt24mr25701066lfb.180.1628679281724;
-        Wed, 11 Aug 2021 03:54:41 -0700 (PDT)
-Received: from localhost (h-46-59-88-219.A463.priv.bahnhof.se. [46.59.88.219])
-        by smtp.gmail.com with ESMTPSA id z8sm1509320ljn.11.2021.08.11.03.54.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 03:54:41 -0700 (PDT)
-Date:   Wed, 11 Aug 2021 12:54:40 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: Make CLK_R9A06G032 invisible
-Message-ID: <YROscAK0MQzx9DC/@oden.dyn.berto.se>
-References: <4f3d30c730c30546f702715ffc648922a8156703.1628672649.git.geert+renesas@glider.be>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t0kEBolSkLS2sqce8sXfB33QiH70Nq/WEHar/RhDH00=;
+        b=qryMwWMe8nUPVT8/CBY+Lo2AaYnCkxkJAGoKE05zf3GGH1O7NOf+jDNdCWK5aJ4eZE
+         Muy5Wz3WjgH574upQ+UytdVEPCs8nDxoEJnvqj/Lm/55xShClcntoS3VKP2uKLTFWC88
+         hOhXm3Kw+3N8VsiY9avxIJLibMfCyIK4zvrykaa3MAoIJxhlfeXFau7OT9qnsn0QNzeO
+         /YlgREa0Eb4Uuzm6NP8KdfdmlnFdiz/1+4QjR9Xfa5hCY/nCN/9TNdNRsYUU8oIgLS2s
+         JZh/NBorggD8bLdc7XqB+9fPT+9w9nZ5btEcJHQS4YVdM08CRqRT9qzV3lDT5kuQNZPQ
+         /qfw==
+X-Gm-Message-State: AOAM533BS4NGZhHsHh1uHufg/z3osN4I9zphqa5PBotnuSWzXUuoNNyJ
+        xtp3p8HVE7fQII2TAUvVA4lxeUSW4dPfa35DWDDD8A==
+X-Google-Smtp-Source: ABdhPJzHREh3TtpeK5LboogIOTf9B16ur3hdtF1iwFqcdwjhPQLqbrAfGLqvXhyblELiy1U/5s3uTaTrZeYTfryBy8o=
+X-Received: by 2002:ab0:7014:: with SMTP id k20mr10843046ual.9.1628680814267;
+ Wed, 11 Aug 2021 04:20:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4f3d30c730c30546f702715ffc648922a8156703.1628672649.git.geert+renesas@glider.be>
+References: <20210806152146.16107-1-semen.protsenko@linaro.org>
+ <20210806152146.16107-8-semen.protsenko@linaro.org> <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
+ <CGME20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f@eucas1p1.samsung.com>
+ <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com> <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
+In-Reply-To: <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 11 Aug 2021 14:20:02 +0300
+Message-ID: <CAPLW+4mPrPSeukiJY6DmpEz0V=bjEYbjzLTnJ28T01yqoQY=mg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] clk: samsung: Add Exynos850 clock driver stub
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Tue, 10 Aug 2021 at 10:55, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> On 09.08.2021 21:48, Sam Protsenko wrote:
+> >>> +/* Will be extracted to bindings header once proper clk driver is implemented */
+> >>> +#define OSCCLK               1
+> >>> +#define DOUT_UART    2
+> >>> +#define CLK_NR_CLKS  3
+> >>> +
+> >>> +/* Fixed rate clocks generated outside the SoC */
+> >>> +static struct samsung_fixed_rate_clock exynos850_fixed_rate_ext_clks[] __initdata = {
+> >>> +     FRATE(OSCCLK, "fin_pll", NULL, 0, 26000000),
+> >>> +};
+> >>> +
+> >>> +/*
+> >>> + * Model the UART clock as a fixed-rate clock for now, to make serial driver
+> >>> + * work. This clock is already configured in the bootloader.
+> >>> + */
+> >>> +static const struct samsung_fixed_rate_clock exynos850_peri_clks[] __initconst = {
+> >>> +     FRATE(DOUT_UART, "DOUT_UART", NULL, 0, 200000000),
+> >>> +};
+> >>> +
+> >>> +static const struct of_device_id ext_clk_match[] __initconst = {
+> >>> +     { .compatible = "samsung,exynos850-oscclk" },
+> >>
+> >> One more thing - I am not sure anymore if this is correct. AFAIR, we
+> >> wanted to drop compatibles for external clocks.
+> >>
+> > I'll remove oscclk from the clock driver and device tree. It's not
+> > needed right now anyway, as that driver is just a stub.
+> >
+> > But I'd still like to know the proper way to define external clocks. I
+> > can see that in exynos7.dtsi and exynos5433.dtsi there is just regular
+> > fixed clock defined for "oscclk" (or "fin_pll"), and then that clock
+> > is referenced in corresponding clock driver by its
+> > 'clock-output-names' property. I guess that approach is the
+> > recommended one?
+>
+> Yes, we should use generic "fixed-clock" in DT to model the external
+> root clock. Registering the external clock from within the CMU driver
+> is a legacy method that predates generic "fixed-clock" and should be
+> avoided.
+>
 
-Thanks for your work.
+Thanks for confirming this. I'll go with generic fixed clock in my
+clock patch series then.
 
-On 2021-08-11 11:06:40 +0200, Geert Uytterhoeven wrote:
-> When configuring a kernel including support for Renesas ARM/ARM64 Socs,
-> but excluding support for the RZ/N1D SoC, the user is always asked about
-> the RZ/N1D clock driver.  As this driver is already auto-selected when
-> building a kernel including support for the RZ/N1D SoC, there is no need
-> to make the CLK_R9A06G032 symbol visible, unless compile-testing.
-> 
-> Align the symbol description with the other symbols.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> That said I think this temporary stub driver is not needed at all,
+> you could well define a fixed clock in DT and reference it in the UART
+> node, as Krzysztof suggested.
+>
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Ok, I'll remove the stub clock driver in v3. Using fixed clock in
+device tree for serial seems to work fine.
 
-> ---
-> To be queued in renesas-clk for v5.15.
-> 
->  drivers/clk/renesas/Kconfig | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-> index 7b450650bcaee124..6d0280751bb16e89 100644
-> --- a/drivers/clk/renesas/Kconfig
-> +++ b/drivers/clk/renesas/Kconfig
-> @@ -153,9 +153,7 @@ config CLK_R8A779A0
->  	select CLK_RENESAS_CPG_MSSR
->  
->  config CLK_R9A06G032
-> -	bool "Renesas R9A06G032 clock driver"
-> -	help
-> -	  This is a driver for R9A06G032 clocks
-> +	bool "RZ/N1D clock support" if COMPILE_TEST
->  
->  config CLK_R9A07G044
->  	bool "RZ/G2L clock support" if COMPILE_TEST
-> -- 
-> 2.25.1
-> 
-
--- 
-Regards,
-Niklas Söderlund
+> --
+> Regards,
+> Sylwester
