@@ -2,152 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11FAC4320A
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 09:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74971C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 10:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFD4360527
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 09:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DE88601FD
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 10:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236632AbhHKJ4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Aug 2021 05:56:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236521AbhHKJ4s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 05:56:48 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B2BC061765;
-        Wed, 11 Aug 2021 02:56:25 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id u1so1540689wmm.0;
-        Wed, 11 Aug 2021 02:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ej3XkkVy2Mkdl4WbgSlULmvp3Q2tHnmIbB47E6hdIZ0=;
-        b=fwqyG3+dJBqCPhqiwk2VVMrx0xJEdQ7LH/kPOoVitCiJ3QdoqT+YHjKwK3qpS2SOiK
-         jUVa86CnhjCOLo3GJZvTLdfxWsOt0vlkLedcdr/uD3VPlucNmKfQm3nXJSEUhEyqL3LL
-         Hc4/u9ndl6bSv33LnMCVC+Ny/WS4fRSuAkgTgJncrBkEwPZvm37yfZtdQipxm4tRDgrb
-         vx5eoOnZ02tEJOuF7GwtN+i3PikXZDRWUvSno0j3jd3gB28IWcRk2PtYXkRVwhxQTd1X
-         Nu/hhki+icJ0T4ucgvnmlSTgz2vWVc5NpNYmiwFlhIW6/tw1KNmZHw0kID5iiS738sBt
-         cfLw==
+        id S237043AbhHKKUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Aug 2021 06:20:14 -0400
+Received: from mail-ua1-f48.google.com ([209.85.222.48]:43995 "EHLO
+        mail-ua1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237097AbhHKKTT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 06:19:19 -0400
+Received: by mail-ua1-f48.google.com with SMTP id 91so919363uas.10;
+        Wed, 11 Aug 2021 03:18:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ej3XkkVy2Mkdl4WbgSlULmvp3Q2tHnmIbB47E6hdIZ0=;
-        b=PwvbzTk0NUtlWbrzputDNm4YDFffKCrj2p9CCizCwmcEdVuOcfO4ouTaWDG+J3GyHo
-         FuMGCE0kvAivLz5Y0x+EdKt558zneV4EM/2nASPi30Yiah8B0vOUeZ0KzUC6H0/HDme4
-         +E5ZqJF0uIP31j0hJZCR4wDR+JTL8B37V90uwMAdTzUSDPtlio5V+vLhrVX4cMkyHwCt
-         dT6gQlN8t0T6aIoKF6tpybnGUm/HcuLw268vALNig7u2ccpF9HNyGlgiyHQUBEs2Bseg
-         /VUJNXqodNDJDc2PttGPLNQ7nLkKVnSfat7a0r8TtA9xNeMe6A2T2fQY/59GPMXL4gWt
-         13fA==
-X-Gm-Message-State: AOAM533Qx5Eq0iYDzLj8rkfq1R84NPe0vDvD3GZnv9jHjxjJZrlAf7DF
-        Dwf3MENjjN/uCbufXSWZMmY=
-X-Google-Smtp-Source: ABdhPJz4rdVV6mfWlnvmvbbrsBAMotmDoPu3ouCW/nwR46/V7lyOEhle42HlJwVEfMOu8BW8FMG7/w==
-X-Received: by 2002:a05:600c:20f:: with SMTP id 15mr16053783wmi.176.1628675783813;
-        Wed, 11 Aug 2021 02:56:23 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id k1sm26695067wrz.61.2021.08.11.02.56.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 02:56:21 -0700 (PDT)
-Date:   Wed, 11 Aug 2021 11:58:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] clk: tegra: Remove CLK_IS_CRITICAL flag from fuse
- clock
-Message-ID: <YROfVuevpA9DEWZ4@orome.fritz.box>
-References: <20210802221336.32016-1-digetx@gmail.com>
- <20210802221336.32016-5-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/Q8s4XNFeaTBVMJpdK2ZXWr71zWi9KOshVe6J/hLmG0=;
+        b=phTaiy//oEFyJpDd9dco2KNpWoRaf6dllK1C/t56K8/VTJKwbLvqLB4H4v9WRcnFMQ
+         9ZPfwllQAEc6qzTqGJvJYGG2ezObLJ9qTY61KMnqrZ1bF8OxWKHFcupJNyp/hXQdu7L4
+         spTSrPTB8sXCDpW+uyRkEmzewqgQwjlMVWRevD+f8q0CubCTJL1LMFLesFIZIomaaEIE
+         T2wYxSwU0OQJj+y03w6e4Xl1nUOGdDPCCcsJWVyXuXqPL3Iv2r00gmU+GSoOW6Pu2FKP
+         W7sIhyW6t9UC3j9DERTaO5DJzsCUWfoZPN8wy7cwVW9urakBUoseV6suLFnOGnl4h/t1
+         F3zQ==
+X-Gm-Message-State: AOAM533Mir6EId/aotn0ATx9l8QW68xaollG7X488ggBT13n2sIIY6IX
+        trzuoVmRbc0vPBKAXGDbV+iMMhcIibRHu07q1GE=
+X-Google-Smtp-Source: ABdhPJz9jKBmKIOVtcsOAAI+3GFI9FI+L+BCBb2dLvY/fKRWFwwvfQjHoHo1eIB1c5tUNSUe1NCXC4YYTH7yEtvtwxU=
+X-Received: by 2002:a9f:31ad:: with SMTP id v42mr11867333uad.58.1628677134985;
+ Wed, 11 Aug 2021 03:18:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ApKy06so4aP3qKHX"
-Content-Disposition: inline
-In-Reply-To: <20210802221336.32016-5-digetx@gmail.com>
-User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
+References: <20210727141749.17783-1-biju.das.jz@bp.renesas.com> <20210727141749.17783-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210727141749.17783-4-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 11 Aug 2021 12:18:43 +0200
+Message-ID: <CAMuHMdUyiarunEWaQPyR+R+7RbMBXm-xaE1HpuyTwCcNymVS2g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] drivers: clk: renesas: rzg2l-cpg: Add support to
+ handle coupled clocks
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Biju,
 
---ApKy06so4aP3qKHX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 27, 2021 at 4:18 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The AXI and CHI clocks use the same register bit for controlling clock
+> output. Add a new clock type for coupled clocks, which sets the
+> CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled, and
+> clears the bit only when both clocks are disabled.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Aug 03, 2021 at 01:13:36AM +0300, Dmitry Osipenko wrote:
-> FUSE driver now takes care of keeping the clock enabled when necessary.
-> Remove the CLK_IS_CRITICAL flag from the clock.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra-periph.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+Thanks for your patch!
 
-Mike, Stephen,
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -333,12 +333,16 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+>   * @hw: handle between common and hardware-specific interfaces
+>   * @off: register offset
+>   * @bit: ON/MON bit
+> + * @is_coupled: flag to indicate coupled clock
+> + * @on_cnt: ON count for coupled clocks
+>   * @priv: CPG/MSTP private data
+>   */
+>  struct mstp_clock {
+>         struct clk_hw hw;
+>         u16 off;
+>         u8 bit;
+> +       bool is_coupled;
+> +       u8 on_cnt;
 
-I've picked this up into the Tegra tree because it has a runtime
-dependency on the patches earlier in this series.
+While u8 is probably sufficient, you may want to use unsigned int,
+as there will be a gap anyway due to alignment rules.
 
-Thierry
+>         struct rzg2l_cpg_priv *priv;
+>  };
+>
+> @@ -392,11 +396,37 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+>
+>  static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+>  {
+> +       struct mstp_clock *clock = to_mod_clock(hw);
+> +       struct rzg2l_cpg_priv *priv = clock->priv;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&priv->rmw_lock, flags);
+> +       clock->on_cnt++;
+> +       if (clock->is_coupled && clock->on_cnt > 1) {
+> +               spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +               return 1;
+> +       }
+> +
+> +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
 
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
--tegra-periph.c
-> index 292d6269daf1..4dcf7f7cb8a0 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -777,11 +777,7 @@ static struct tegra_periph_init_data gate_clks[] =3D=
- {
->  	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
->  	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
->  	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET,=
- tegra_clk_kbc, 0),
-> -	/*
-> -	 * Critical for RAM re-repair operation, which must occur on resume
-> -	 * from LP1 system suspend and as part of CCPLEX cluster switching.
-> -	 */
-> -	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_C=
-RITICAL),
-> +	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
->  	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn=
-, 0),
->  	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
->  	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
-> --=20
-> 2.32.0
->=20
+I think you can avoid taking the spinlock and touching the counter
+if the is_coupled flag is not set.
 
---ApKy06so4aP3qKHX
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+>         return rzg2l_mod_clock_endisable(hw, true);
+>  }
 
------BEGIN PGP SIGNATURE-----
+However, I'm wondering how this can work?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmETn1YACgkQ3SOs138+
-s6GGbQ//VxRQd5VZsLWIVmenpbQW6n9uDX+prPqoihH5xRPIpy8rmV/2Kg+TVDCK
-dIBxN+3nrM6mtPPh6QB2bQWMODOE4lzILL1zhVRs+v1lHXkDfU++eF43gMz/Jcst
-DlDbmCvo65QywreoRZrN5mIuiDa8K7RMvGcIscMkCc3Znki8DYJL1MMbukDYUP2q
-9o0r59h/3HezmiDy7Jb+VOJn0k23Ht4HJaAljBfpJ9nK7lN7aZvMi06IEvXURD85
-baNKIy1GTXEFFZ+qOGcNCz5462Toh178Lt6Y9tFSqNapHvh3dD3ufclJ9ioDn1Ci
-ehY30Db5oF3FlCTPUgocRJRRoEBwezMFMy/kMNlEzFpdywIliqKtSxSeRtEAw0CR
-YzLKMUywX96B3KOf0pbDSWlZT/5vficui7aedknSb8JQN9qkNiiuJv+VH2y9UaO5
-/uv4RlLBZ78I3RpknHIlGjHZTxCkaxOB3lh8qV+LEFqVaktPeU+SPwW+hYWw9+5Y
-iDhvRGzM9BCC0OI2WfnHgPaGETDFiukVpK56cC8TTeECfc3M9dgBsLG5idzJGyOS
-mcF72OOdoYJEHTLsL0YT6IxDLr9boOU9N7tPRhH49zOsTKsyDBU9WTA+yuCaFlbY
-2bMHT91UAQqW2M51qEZMcsH3B2FeqjvaxpNjj/z8ybeuF7f4TzY=
-=dPAD
------END PGP SIGNATURE-----
+      DEF_COUPLED("eth0_axi", R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
+                              0x57c, 0),
+      DEF_COUPLED("eth0_chi", R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
+                              0x57c, 0),
 
---ApKy06so4aP3qKHX--
+This will create 2 independent clocks, each with their own mstp_clock
+structure that has the is_coupled flag set.  Hence each clock has
+its own counter. Shouldn't the counter be shared?
+Am I missing something?
+
+And what about rzg2l_mod_clock_is_enabled()?
+Shouldn't it reflect the soft state instead of the shared hardware
+state?
+
+>  static void rzg2l_mod_clock_disable(struct clk_hw *hw)
+>  {
+> +       struct mstp_clock *clock = to_mod_clock(hw);
+> +       struct rzg2l_cpg_priv *priv = clock->priv;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&priv->rmw_lock, flags);
+> +       clock->on_cnt--;
+> +       if (clock->is_coupled && clock->on_cnt) {
+> +               spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +               return;
+> +       }
+> +
+> +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +
+>         rzg2l_mod_clock_endisable(hw, false);
+>  }
+>
+> @@ -475,6 +505,7 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+>
+>         clock->off = mod->off;
+>         clock->bit = mod->bit;
+> +       clock->is_coupled = mod->is_coupled;
+>         clock->priv = priv;
+>         clock->hw.init = &init;
+>
+> diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+> index 5202c0512483..191c403aa52f 100644
+> --- a/drivers/clk/renesas/rzg2l-cpg.h
+> +++ b/drivers/clk/renesas/rzg2l-cpg.h
+> @@ -93,6 +93,7 @@ enum clk_types {
+>   * @parent: id of parent clock
+>   * @off: register offset
+>   * @bit: ON/MON bit
+> + * @is_coupled: flag to indicate coupled clock
+>   */
+>  struct rzg2l_mod_clk {
+>         const char *name;
+> @@ -100,17 +101,25 @@ struct rzg2l_mod_clk {
+>         unsigned int parent;
+>         u16 off;
+>         u8 bit;
+> +       bool is_coupled;
+>  };
+>
+> -#define DEF_MOD(_name, _id, _parent, _off, _bit)       \
+> +#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _is_coupled)     \
+>         { \
+>                 .name = _name, \
+>                 .id = MOD_CLK_BASE + (_id), \
+>                 .parent = (_parent), \
+>                 .off = (_off), \
+>                 .bit = (_bit), \
+> +               .is_coupled = (_is_coupled), \
+>         }
+>
+> +#define DEF_MOD(_name, _id, _parent, _off, _bit)       \
+> +       DEF_MOD_BASE(_name, _id, _parent, _off, _bit, false)
+> +
+> +#define DEF_COUPLED(_name, _id, _parent, _off, _bit)   \
+> +       DEF_MOD_BASE(_name, _id, _parent, _off, _bit, true)
+> +
+>  /**
+>   * struct rzg2l_reset - Reset definitions
+>   *
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
