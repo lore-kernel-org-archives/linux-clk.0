@@ -2,230 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D2EC4320A
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 06:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED10FC4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 07:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 294436056C
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 06:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D182760F38
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Aug 2021 07:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234781AbhHKGrM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Aug 2021 02:47:12 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:59740
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234879AbhHKGrM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 02:47:12 -0400
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 1F6563F051
-        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 06:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628664408;
-        bh=Kxcfgig03MExxX+JwfluOsjWYQpaWWiiVo+lWFIhADQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=P/LI2XjiaGae2I65j+DTithB5mybgXSQefo/W8jpIckD99M+TqMME6FMn9cr8kydA
-         egY/sEvMO7Vj8OOgBthFJW0yXcpfI5AiOColUV67mipBwAF2bsJxh2MF2mq7RgAuTB
-         zI6bSMITE/i1Xp8k4PqxAJj0jX8YlnURpHGHWGCU0fldnc6Jvcjw2r23V6Kf048jJX
-         0JeMQ952BeUMbwC/EO7R8xrK1Lg9YfB2Nb4YhgeL3mUyN3BTudufPuS7IfCieuA1H5
-         uivAsA0Mj+b53gZal7GtvdPCTBYbNL8NkdoirZrWaiVA/CaE6/LvcklYtbayfnlbMh
-         IAKR1wKwKyxlA==
-Received: by mail-ed1-f69.google.com with SMTP id u25-20020aa7d8990000b02903bb6a903d90so717421edq.17
-        for <linux-clk@vger.kernel.org>; Tue, 10 Aug 2021 23:46:48 -0700 (PDT)
+        id S233850AbhHKH5v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Aug 2021 03:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235359AbhHKH5u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Aug 2021 03:57:50 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3D3C061765
+        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 00:57:26 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id q11-20020a7bce8b0000b02902e6880d0accso3766288wmj.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Aug 2021 00:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qSEWeBg2Xdz/FSRxyq98HyVGJIOFHZHR7r9BtUhdcAI=;
+        b=0LYm7fHP1Ie1EAxXtJY5bDFk6j3uh+LjSxz44wmFh26wZK0Cfkoq/PfyKD5Wu191SU
+         nTLNhtsRLbjsHd/PdBSrhGSHc1chDez/ar80GI8XpO74G7J+vRbje+1nwqM87UwDBw8m
+         ekKJ+8ZRkW89bdu5rZZkFYanW3VjOWJgs9xHM4XtN6jO/nO/dr+5oN2c7TTe/la8hpdF
+         9psLh/s6SQy/hiPQ6nXeTT2rM/2k0EpmJhXgNPVsGJ6aNo0TR7q/lxpU+lkvs4lKyGH7
+         7XtlJyrH1+nvmvyiuzozjBH+Q9ctxItAPQ95wkVAivkl2AvOy4iyaAJ8YaHNnh96iWii
+         Mccg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Kxcfgig03MExxX+JwfluOsjWYQpaWWiiVo+lWFIhADQ=;
-        b=mHpo3IIke21qwtG3+rn7KAaxsptxl05vxcBdLylwcKQYX5HofE2JyV90SOFrLlHNwL
-         FxAKdBqILKiiFYaIxjUKn2UOd013TxwmEXlpRcO+C1NrsQebvxPvrAAnZAxn2Tdl45xz
-         gt2PQz2CXs9XJY0Eq2vWXR7Jnvbm3PZAy9Qr4RBZswui7eth4ysRABtPJy1XhfNL03is
-         wsJV5GIk7t98/PU3Qhs4VY5Yr67J8RXiMsULGOMHGgN/go9W+ckk/e62crvKvGl+t/GE
-         HDsPN5YYj1hooFAdQuHLqdjv9s2D38wFkmgMFCzgi555PMS3n21a8LD6xUfb1uI6u+Xd
-         W2Rg==
-X-Gm-Message-State: AOAM533fYw9E2seKKJhs5KDpH8zftjUOv0fQ+HMZcNA151VQzl23QAYv
-        RnjO5rOurZc8UxvaJMmEoicItqtk68u6CGsiZS6E3tHP1EMQwFxBflHYVxVIq57JOu0B3u1IRqe
-        cyRs980T+kegLnaHyecEepXs8oyQm2uD128ZBVw==
-X-Received: by 2002:a17:906:3486:: with SMTP id g6mr2191975ejb.71.1628664407874;
-        Tue, 10 Aug 2021 23:46:47 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzBEhnDDIKzRzSlos2OcWTaUXRBhbPyQFY/bOczJwuJqcDVlM+mwha6XxbcUtpn16t24qXmdw==
-X-Received: by 2002:a17:906:3486:: with SMTP id g6mr2191954ejb.71.1628664407588;
-        Tue, 10 Aug 2021 23:46:47 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id n15sm10695991edw.70.2021.08.10.23.46.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Aug 2021 23:46:47 -0700 (PDT)
-Subject: Re: [PATCH v2 6/8] dt-bindings: clock: samsung: convert Exynos AudSS
- to dtschema
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210810093145.26153-1-krzysztof.kozlowski@canonical.com>
- <20210810093145.26153-7-krzysztof.kozlowski@canonical.com>
- <CAPLW+4=tOpaNGs6vxwyVy7xaeX+w_jhtY2P2U8sZGvm6mdqh1Q@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <2f8ff138-4d34-619c-e137-099dc9251e25@canonical.com>
-Date:   Wed, 11 Aug 2021 08:46:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        bh=qSEWeBg2Xdz/FSRxyq98HyVGJIOFHZHR7r9BtUhdcAI=;
+        b=P5l4C4s/V+WvIg2Q28WXTQIITsPzBlVEETDX4jS3z1y9ZX8uDuevq+2TokTAEBBJ2I
+         UWs0Oj1hdlTTc4+S5mWIkEG62V8qtXA0VIGwpZkusNH5vs4JpDdcZDRk/TeALyDdvoOP
+         APZnB9LpevyIfNMshlaWo8QbY4NFZOSvFjAaUHCVdJfNcST57XGJP535gfVkNPfqhzwD
+         0rLRjoWUvVCtDQFUNG6zHxYLiFC/Alq+lNJ1So6KiaSC49coU6+oSzXUnX7V4yQx/cpu
+         CQvAWMqbwpSEvZGjtWsbf9hkCLerSVdMeJmcQGiY7UK9kHOIIJQh4nEkq/LGM1JL8yB8
+         6dAg==
+X-Gm-Message-State: AOAM53017dXN/gbvkGeXpyfFUVa7vf2gmdANRBuCuZBU+7CZpCs3oQh+
+        4oVQvrS2H036d2v5rVVV8PN39tMADT19kA==
+X-Google-Smtp-Source: ABdhPJxIvJ+cBoY1OEE3rQCbELbrtE5YO+qFjCu91ewyS3xSgeISvzqlVL4T2CzKzB9oJyDZYCD9AQ==
+X-Received: by 2002:a7b:c932:: with SMTP id h18mr25928364wml.152.1628668645456;
+        Wed, 11 Aug 2021 00:57:25 -0700 (PDT)
+Received: from blmsp.lan ([2a02:2454:3e6:c900::97e])
+        by smtp.gmail.com with ESMTPSA id h11sm18570644wrq.64.2021.08.11.00.57.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 00:57:25 -0700 (PDT)
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org,
+        Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH] clk: Fix *bulk_get* return value documentation
+Date:   Wed, 11 Aug 2021 09:57:19 +0200
+Message-Id: <20210811075719.1716886-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=tOpaNGs6vxwyVy7xaeX+w_jhtY2P2U8sZGvm6mdqh1Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/08/2021 19:46, Sam Protsenko wrote:
-> On Tue, 10 Aug 2021 at 12:32, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> Convert Samsung Exynos Audio SubSystem clock controller bindings to DT
->> schema format using json-schema.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->>  .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
->>  .../clock/samsung,exynos-audss-clock.yaml     |  79 ++++++++++++++
->>  2 files changed, 79 insertions(+), 103 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->> deleted file mode 100644
->> index 6030afb10b5c..000000000000
->> --- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->> +++ /dev/null
->> @@ -1,103 +0,0 @@
->> -* Samsung Audio Subsystem Clock Controller
->> -
->> -The Samsung Audio Subsystem clock controller generates and supplies clocks
->> -to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
->> -binding described here is applicable to all SoCs in Exynos family.
->> -
->> -Required Properties:
->> -
->> -- compatible: should be one of the following:
->> -  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
->> -  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
->> -    SoCs.
->> -  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
->> -    SoCs.
->> -  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
->> -    SoCs.
->> -- reg: physical base address and length of the controller's register set.
->> -
->> -- #clock-cells: should be 1.
->> -
->> -- clocks:
->> -  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
->> -    is used if not specified.
->> -  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
->> -    is used if not specified.
->> -  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
->> -    specified.
->> -  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
->> -    not specified.
->> -  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
->> -    specified.
->> -
->> -- clock-names: Aliases for the above clocks. They should be "pll_ref",
->> -  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
->> -
->> -Optional Properties:
->> -
->> -  - power-domains: a phandle to respective power domain node as described by
->> -    generic PM domain bindings (see power/power_domain.txt for more
->> -    information).
->> -
->> -The following is the list of clocks generated by the controller. Each clock is
->> -assigned an identifier and client nodes use this identifier to specify the
->> -clock which they consume. Some of the clocks are available only on a particular
->> -Exynos4 SoC and this is specified where applicable.
->> -
->> -Provided clocks:
->> -
->> -Clock           ID      SoC (if specific)
->> ------------------------------------------------
->> -
->> -mout_audss      0
->> -mout_i2s        1
->> -dout_srp        2
->> -dout_aud_bus    3
->> -dout_i2s        4
->> -srp_clk         5
->> -i2s_bus         6
->> -sclk_i2s        7
->> -pcm_bus         8
->> -sclk_pcm        9
->> -adma            10      Exynos5420
->> -
->> -Example 1: An example of a clock controller node using the default input
->> -          clock names is listed below.
->> -
->> -clock_audss: audss-clock-controller@3810000 {
->> -       compatible = "samsung,exynos5250-audss-clock";
->> -       reg = <0x03810000 0x0C>;
->> -       #clock-cells = <1>;
->> -};
->> -
->> -Example 2: An example of a clock controller node with the input clocks
->> -           specified.
->> -
->> -clock_audss: audss-clock-controller@3810000 {
->> -       compatible = "samsung,exynos5250-audss-clock";
->> -       reg = <0x03810000 0x0C>;
->> -       #clock-cells = <1>;
->> -       clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
->> -               <&ext_i2s_clk>;
->> -       clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
->> -};
->> -
->> -Example 3: I2S controller node that consumes the clock generated by the clock
->> -           controller. Refer to the standard clock bindings for information
->> -           about 'clocks' and 'clock-names' property.
->> -
->> -i2s0: i2s@3830000 {
->> -       compatible = "samsung,i2s-v5";
->> -       reg = <0x03830000 0x100>;
->> -       dmas = <&pdma0 10
->> -               &pdma0 9
->> -               &pdma0 8>;
->> -       dma-names = "tx", "rx", "tx-sec";
->> -       clocks = <&clock_audss EXYNOS_I2S_BUS>,
->> -               <&clock_audss EXYNOS_I2S_BUS>,
->> -               <&clock_audss EXYNOS_SCLK_I2S>,
->> -               <&clock_audss EXYNOS_MOUT_AUDSS>,
->> -               <&clock_audss EXYNOS_MOUT_I2S>;
->> -       clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
->> -                     "mout_audss", "mout_i2s";
->> -};
-> 
-> Seems like some examples and "Provided clocks" table were dropped in
-> in yaml binding. Also there is no description for example present in
-> yaml file. Is that some redundant info and was dropped intentionally?
-> I'm just worrying about losing some useful info during the conversion.
+Some of the bulk_get variants document that the return value is a valid
+IS_ERR() condition but it is not. These functions return an errno
+directly if an error occures.
 
-I don't see any point of having a clock consumer example in a clock
-provider binding.
+This patch fixes that documentation and documents that the return value
+is 0 or errno.
 
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+---
+ include/linux/clk.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 266e8de3cb51..56a741903963 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -340,7 +340,7 @@ struct clk *clk_get(struct device *dev, const char *id);
+  * that were obtained will be freed before returning to the caller.
+  *
+  * Returns 0 if all clocks specified in clk_bulk_data table are obtained
+- * successfully, or valid IS_ERR() condition containing errno.
++ * successfully, or an errno otherwise.
+  * The implementation uses @dev and @clk_bulk_data.id to determine the
+  * clock consumer, and thereby the clock producer.
+  * The clock returned is stored in each @clk_bulk_data.clk field.
+@@ -409,8 +409,8 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+  * NULL for given clk. It is assumed all clocks in clk_bulk_data are optional.
+  *
+  * Returns 0 if all clocks specified in clk_bulk_data table are obtained
+- * successfully or for any clk there was no clk provider available, otherwise
+- * returns valid IS_ERR() condition containing errno.
++ * successfully or for any clk there was no clk provider available, or an errno
++ * otherwise.
+  * The implementation uses @dev and @clk_bulk_data.id to determine the
+  * clock consumer, and thereby the clock producer.
+  * The clock returned is stored in each @clk_bulk_data.clk field.
+-- 
+2.32.0
+
