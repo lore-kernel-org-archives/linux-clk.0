@@ -2,108 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64274C4320E
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 14:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7C6C4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 17:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 444056104F
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 14:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D59D60FBF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 17:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237987AbhHLO0O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Aug 2021 10:26:14 -0400
-Received: from elvis.franken.de ([193.175.24.41]:57499 "EHLO elvis.franken.de"
+        id S233818AbhHLRBC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Aug 2021 13:01:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:13232 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233282AbhHLO0O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Aug 2021 10:26:14 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1mEBeQ-0002iE-00; Thu, 12 Aug 2021 16:25:42 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id DCCD2C07DD; Thu, 12 Aug 2021 16:09:34 +0200 (CEST)
-Date:   Thu, 12 Aug 2021 16:09:34 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     linux-mips@vger.kernel.org, mturquette@baylibre.com,
-        daniel.lezcano@linaro.org, linus.walleij@linaro.org,
-        vkoul@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/9] MIPS: Migrate pistachio to generic kernel
-Message-ID: <20210812140934.GA9924@alpha.franken.de>
-References: <20210723022543.4095-1-jiaxun.yang@flygoat.com>
+        id S233728AbhHLRBB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Aug 2021 13:01:01 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10074"; a="212287081"
+X-IronPort-AV: E=Sophos;i="5.84,316,1620716400"; 
+   d="scan'208";a="212287081"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2021 10:00:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,316,1620716400"; 
+   d="scan'208";a="446614409"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2021 10:00:29 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 2786B1E0; Thu, 12 Aug 2021 20:00:29 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Liu Ying <victor.liu@nxp.com>
+Subject: [PATCH v4 3/4] clk: fractional-divider: Introduce POWER_OF_TWO_PS flag
+Date:   Thu, 12 Aug 2021 20:00:24 +0300
+Message-Id: <20210812170025.67074-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
+References: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210723022543.4095-1-jiaxun.yang@flygoat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 10:25:34AM +0800, Jiaxun Yang wrote:
-> I'm lucky enough to get a Creator CI40 board from dusts.
-> This patchset move it to gerneic kernel to reduce maintenance burden.
-> It have been tested with SD Card boot.
-> 
-> --
-> v2: Minor fixes
-> v3: Typo fixes and 0day testbot warning fix (Thanks to Sergei!)
-> v4: 01.org warning fix
-> 
-> Jiaxun Yang (9):
->   MIPS: generic: Allow generating FIT image for Marduk board
->   MIPS: DTS: Pistachio add missing cpc and cdmm
->   clk: pistachio: Make it selectable for generic MIPS kernel
->   clocksource/drivers/pistachio: Make it selectable for MIPS
->   phy: pistachio-usb: Depend on MIPS || COMPILE_TEST
->   pinctrl: pistachio: Make it as an option
->   MIPS: config: generic: Add config for Marduk board
->   MIPS: Retire MACH_PISTACHIO
->   MIPS: Make a alias for pistachio_defconfig
-> 
->  arch/mips/Kbuild.platforms                    |   1 -
->  arch/mips/Kconfig                             |  30 --
->  arch/mips/Makefile                            |   3 +
->  arch/mips/boot/dts/Makefile                   |   2 +-
->  arch/mips/boot/dts/img/Makefile               |   3 +-
->  arch/mips/boot/dts/img/pistachio.dtsi         |  10 +
->  arch/mips/configs/generic/board-marduk.config |  53 +++
->  arch/mips/configs/pistachio_defconfig         | 316 ------------------
->  arch/mips/generic/Kconfig                     |   6 +
->  arch/mips/generic/Platform                    |   1 +
->  arch/mips/generic/board-marduk.its.S          |  22 ++
->  arch/mips/pistachio/Kconfig                   |  14 -
->  arch/mips/pistachio/Makefile                  |   2 -
->  arch/mips/pistachio/Platform                  |   6 -
->  arch/mips/pistachio/init.c                    | 125 -------
->  arch/mips/pistachio/irq.c                     |  24 --
->  arch/mips/pistachio/time.c                    |  55 ---
->  drivers/clk/Kconfig                           |   1 +
->  drivers/clk/Makefile                          |   2 +-
->  drivers/clk/pistachio/Kconfig                 |   8 +
->  drivers/clocksource/Kconfig                   |   3 +-
->  drivers/phy/Kconfig                           |   2 +-
->  drivers/pinctrl/Kconfig                       |   5 +-
->  23 files changed, 114 insertions(+), 580 deletions(-)
->  create mode 100644 arch/mips/configs/generic/board-marduk.config
->  delete mode 100644 arch/mips/configs/pistachio_defconfig
->  create mode 100644 arch/mips/generic/board-marduk.its.S
->  delete mode 100644 arch/mips/pistachio/Kconfig
->  delete mode 100644 arch/mips/pistachio/Makefile
->  delete mode 100644 arch/mips/pistachio/Platform
->  delete mode 100644 arch/mips/pistachio/init.c
->  delete mode 100644 arch/mips/pistachio/irq.c
->  delete mode 100644 arch/mips/pistachio/time.c
->  create mode 100644 drivers/clk/pistachio/Kconfig
+The newly introduced POWER_OF_TWO_PS flag, when set, makes the flow
+to skip the assumption that the caller will use an additional 2^scale
+prescaler to get the desired clock rate.
 
-series applied to mips-next.
+Reported-by: Liu Ying <victor.liu@nxp.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v4: rebased on top of latest CLK codebase
 
-Thomas.
+ drivers/acpi/acpi_lpss.c             |  4 ++--
+ drivers/clk/clk-fractional-divider.c | 10 ++++++----
+ drivers/mfd/intel-lpss.c             |  3 ++-
+ include/linux/clk-provider.h         | 11 +++++++++--
+ 4 files changed, 19 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 7f163074e4e4..30b1f511c2af 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -436,8 +436,8 @@ static int register_device_clock(struct acpi_device *adev,
+ 		if (!clk_name)
+ 			return -ENOMEM;
+ 		clk = clk_register_fractional_divider(NULL, clk_name, parent,
+-						      0, prv_base,
+-						      1, 15, 16, 15, 0, NULL);
++						      CLK_FRAC_DIVIDER_POWER_OF_TWO_PS,
++						      prv_base, 1, 15, 16, 15, 0, NULL);
+ 		parent = clk_name;
+ 
+ 		clk_name = kasprintf(GFP_KERNEL, "%s-update", devname);
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 535d299af646..6a3ed82fdae9 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -76,16 +76,18 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 						  unsigned long *m, unsigned long *n)
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+-	unsigned long scale;
+ 
+ 	/*
+ 	 * Get rate closer to *parent_rate to guarantee there is no overflow
+ 	 * for m and n. In the result it will be the nearest rate left shifted
+ 	 * by (scale - fd->nwidth) bits.
+ 	 */
+-	scale = fls_long(*parent_rate / rate - 1);
+-	if (scale > fd->nwidth)
+-		rate <<= scale - fd->nwidth;
++	if (fd->flags & CLK_FRAC_DIVIDER_POWER_OF_TWO_PS) {
++		unsigned long scale = fls_long(*parent_rate / rate - 1);
++
++		if (scale > fd->nwidth)
++			rate <<= scale - fd->nwidth;
++	}
+ 
+ 	rational_best_approximation(rate, *parent_rate,
+ 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
+index a9bf10bee796..0e15afc39f54 100644
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -301,7 +301,8 @@ static int intel_lpss_register_clock_divider(struct intel_lpss *lpss,
+ 
+ 	snprintf(name, sizeof(name), "%s-div", devname);
+ 	tmp = clk_register_fractional_divider(NULL, name, __clk_get_name(tmp),
+-					      0, lpss->priv, 1, 15, 16, 15, 0,
++					      CLK_FRAC_DIVIDER_POWER_OF_TWO_PS,
++					      lpss->priv, 1, 15, 16, 15, 0,
+ 					      NULL);
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index d8609aef2394..f59c875271a0 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1001,6 +1001,12 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+  * CLK_FRAC_DIVIDER_BIG_ENDIAN - By default little endian register accesses are
+  *	used for the divider register.  Setting this flag makes the register
+  *	accesses big endian.
++ * CLK_FRAC_DIVIDER_POWER_OF_TWO_PS - By default the resulting fraction might
++ *	be saturated and the caller will get quite far from the good enough
++ *	approximation. Instead the caller may require, by setting this flag,
++ *	to shift left by a few bits in case, when the asked one is quite small
++ *	to satisfy the desired range of denominator. It assumes that on the
++ *	caller's side the power-of-two capable prescaler exists.
+  */
+ struct clk_fractional_divider {
+ 	struct clk_hw	hw;
+@@ -1020,8 +1026,9 @@ struct clk_fractional_divider {
+ 
+ #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+ 
+-#define CLK_FRAC_DIVIDER_ZERO_BASED	BIT(0)
+-#define CLK_FRAC_DIVIDER_BIG_ENDIAN	BIT(1)
++#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
++#define CLK_FRAC_DIVIDER_BIG_ENDIAN		BIT(1)
++#define CLK_FRAC_DIVIDER_POWER_OF_TWO_PS	BIT(2)
+ 
+ struct clk *clk_register_fractional_divider(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.30.2
+
