@@ -2,156 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432BFC432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 07:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD39C432BE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 13:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD2061038
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 07:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 521D860724
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Aug 2021 13:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233780AbhHLHzE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Aug 2021 03:55:04 -0400
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:45679 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232631AbhHLHzD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Aug 2021 03:55:03 -0400
-Received: by mail-ot1-f43.google.com with SMTP id r17-20020a0568302371b0290504f3f418fbso6654380oth.12;
-        Thu, 12 Aug 2021 00:54:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bCu8UAxLtlKAFF4i1J2fDucS+c/HCmCh2Y70hZlzkM0=;
-        b=Q9S+srOZxoqrHNbGysclNwOH+eIP9d6KTwxaQb7KxLXza7gZLa07V9iHEglyKN+zJm
-         sR2rQ4EbUZ8N/ZrxQg3Dd95Db+jkLitgFRwzLiYOUIZ8jmb5b649JtORIpGtdtlXRb7u
-         WpHQLE5wJNLgS/nq9yLVE3JLhhuvCMeklJ4nUJa/GQt3rkyHUvGHG4dP9IBLXqMrTsNF
-         977cSyPi6t62HVxTMiXvxIbRo+eC838niZVzokUWINViUX4gPTaAPVMz0auXTKhb3Hkt
-         o2xvnV5jPfiX/X3E4RXn+lpQ/hGdPOLfko6x6Ux/LTJR7ga4Zyfw3fCaFj464WpFyO19
-         EjNg==
-X-Gm-Message-State: AOAM533Z/toV9BO5pfekFa+VqkWeqNlYwSotAcoWrzA2o5dqKkk3zOXs
-        ROKzWbzZWOc+4oifakhQ784zVlh0TiTtQZSNGNJgiFE+ao4=
-X-Google-Smtp-Source: ABdhPJzOua0FkxXzPUHmTp6di9ixA+zU92T2+LDPZ8w8qTKfFa8WOwaI0PP555hxuHuEZvhn3Cwf3+LLKdCBNZfHt2I=
-X-Received: by 2002:a05:6830:154c:: with SMTP id l12mr2438988otp.250.1628754878354;
- Thu, 12 Aug 2021 00:54:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210727141749.17783-1-biju.das.jz@bp.renesas.com>
- <20210727141749.17783-4-biju.das.jz@bp.renesas.com> <CAMuHMdUyiarunEWaQPyR+R+7RbMBXm-xaE1HpuyTwCcNymVS2g@mail.gmail.com>
- <OS0PR01MB5922E8535729D5AF997B33E986F99@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922E8535729D5AF997B33E986F99@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 12 Aug 2021 09:54:26 +0200
-Message-ID: <CAMuHMdUcvRzW0dsdsq7j2JWfu=64JzM9M=z=qvhUhDFwXHuwQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] drivers: clk: renesas: rzg2l-cpg: Add support to
- handle coupled clocks
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S231661AbhHLNqb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Aug 2021 09:46:31 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:53988 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232122AbhHLNqb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Aug 2021 09:46:31 -0400
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 907C0C27DD;
+        Thu, 12 Aug 2021 21:45:55 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P26933T140041694418688S1628775949795276_;
+        Thu, 12 Aug 2021 21:45:53 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <a812ed4f1cfa7afc4d456d575f0b57d1>
+X-RL-SENDER: jon.lin@rock-chips.com
+X-SENDER: jon.lin@rock-chips.com
+X-LOGIN-NAME: jon.lin@rock-chips.com
+X-FST-TO: linux-spi@vger.kernel.org
+X-RCPT-COUNT: 19
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Jon Lin <jon.lin@rock-chips.com>
+To:     linux-spi@vger.kernel.org
+Cc:     jon.lin@rock-chips.com, broonie@kernel.org, robh+dt@kernel.org,
+        heiko@sntech.de, jbx6244@gmail.com, hjc@rock-chips.com,
+        yifeng.zhao@rock-chips.com, sugar.zhang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
+        p.yadav@ti.com, macroalpha82@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v13 0/6] Add Rockchip SFC(serial flash controller) support
+Date:   Thu, 12 Aug 2021 21:45:40 +0800
+Message-Id: <20210812134546.31340-1-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
 
-On Thu, Aug 12, 2021 at 9:00 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH v2 3/4] drivers: clk: renesas: rzg2l-cpg: Add support
-> > to handle coupled clocks
-> > On Tue, Jul 27, 2021 at 4:18 PM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > The AXI and CHI clocks use the same register bit for controlling clock
-> > > output. Add a new clock type for coupled clocks, which sets the
-> > > CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled, and
-> > > clears the bit only when both clocks are disabled.
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > > @@ -333,12 +333,16 @@ rzg2l_cpg_register_core_clk(const struct
-> > cpg_core_clk *core,
-> > >   * @hw: handle between common and hardware-specific interfaces
-> > >   * @off: register offset
-> > >   * @bit: ON/MON bit
-> > > + * @is_coupled: flag to indicate coupled clock
-> > > + * @on_cnt: ON count for coupled clocks
-> > >   * @priv: CPG/MSTP private data
-> > >   */
-> > >  struct mstp_clock {
-> > >         struct clk_hw hw;
-> > >         u16 off;
-> > >         u8 bit;
-> > > +       bool is_coupled;
-> > > +       u8 on_cnt;
-> >
-> > While u8 is probably sufficient, you may want to use unsigned int, as
-> > there will be a gap anyway due to alignment rules.
-> >
-> > >         struct rzg2l_cpg_priv *priv;
-> > >  };
-> > >
-> > > @@ -392,11 +396,37 @@ static int rzg2l_mod_clock_endisable(struct
-> > > clk_hw *hw, bool enable)
-> > >
-> > >  static int rzg2l_mod_clock_enable(struct clk_hw *hw)  {
-> > > +       struct mstp_clock *clock = to_mod_clock(hw);
-> > > +       struct rzg2l_cpg_priv *priv = clock->priv;
-> > > +       unsigned long flags;
-> > > +
-> > > +       spin_lock_irqsave(&priv->rmw_lock, flags);
-> > > +       clock->on_cnt++;
-> > > +       if (clock->is_coupled && clock->on_cnt > 1) {
-> > > +               spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> > > +               return 1;
-> > > +       }
-> > > +
-> > > +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> >
-> > I think you can avoid taking the spinlock and touching the counter if the
-> > is_coupled flag is not set.
->
-> OK.
->
-> >
-> > > +
-> > >         return rzg2l_mod_clock_endisable(hw, true);  }
-> >
-> > However, I'm wondering how this can work?
-> >
-> >       DEF_COUPLED("eth0_axi", R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
-> >                               0x57c, 0),
-> >       DEF_COUPLED("eth0_chi", R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
-> >                               0x57c, 0),
-> >
-> > This will create 2 independent clocks, each with their own mstp_clock
-> > structure that has the is_coupled flag set.  Hence each clock has its own
-> > counter. Shouldn't the counter be shared?
-> > Am I missing something?
->
-> Oops. You are correct. I need to add this counter to priv instead of mstp_clocks.
 
-On second thought, a counter is overkill. A simple flag should be
-sufficient, as the clk core only calls .{en,dis}able() when the clock is
-{dis,en}enabled.
+Changes in v13:
+- Provide independent interfaces to obtain RX TX FIFO status respectively
+- Add more debug information
+- Depress DMA limitation
 
-Gr{oetje,eeting}s,
+Changes in v12:
+- Remove useless oneOf lable
+- Add sfc controller discription
+- Remove the limitation of SFC_MIN_SPEED_HZ
+- Add IRQ_NONE method for irq handler
+- Add SPI_MASTER_HALF_DUPLEX flags
+- Add sfc interrupt mask bits and status register initial progress
 
-                        Geert
+Changes in v11:
+- The tx is set to 1 for Odroid Go Advance device
+
+Changes in v10:
+- Fix dma transfer logic
+
+Changes in v9:
+- Separate DMA IRQ setting and wait_completion from DMA fifo transfer
+  function to make dma_status_poll be possible(Which I will implement
+  in u-boot)
+- Add SFC Kconfig detail comment
+
+Changes in v8:
+- Fix indent 4 to 2 in yaml
+
+Changes in v7:
+- Fix up the sclk_sfc parent error in rk3036
+- Unify to "rockchip,sfc" compatible id because all the feature update
+  will have a new IP version, so the driver is used for the SFC IP in
+  all SoCs
+- Change to use node "sfc" to name the SFC pinctrl group
+- Add subnode reg property check
+- Add rockchip_sfc_adjust_op_size to workaround in CMD + DUMMY case
+- Limit max_iosize to 32KB
+
+Changes in v6:
+- Add support in device trees for rv1126(Declared in series 5 but not
+  submitted)
+- Change to use "clk_sfc" "hclk_sfc" as clock lable, since it does not
+  affect interpretation and has been widely used
+- Support sfc tx_dual, tx_quad(Declared in series 5 but not submitted)
+- Simplify the code, such as remove "rockchip_sfc_register_all"(Declared
+  in series 5 but not submitted)
+- Support SFC ver4 ver5(Declared in series 5 but not submitted)
+- Add author Chris Morgan and Jon Lin to spi-rockchip-sfc.c
+- Change to use devm_spi_alloc_master and spi_unregister_master
+
+Changes in v5:
+- Add support in device trees for rv1126
+- Support sfc tx_dual, tx_quad
+- Simplify the code, such as remove "rockchip_sfc_register_all"
+- Support SFC ver4 ver5
+
+Changes in v4:
+- Changing patch back to an "RFC". An engineer from Rockchip
+  reached out to me to let me know they are working on this patch for
+  upstream, I am submitting this v4 for the community to see however
+  I expect Jon Lin (jon.lin@rock-chips.com) will submit new patches
+  soon and these are the ones we should pursue for mainlining. Jon's
+  patch series should include support for more hardware than this
+  series.
+- Clean up documentation more and ensure it is correct per
+  make dt_binding_check.
+- Add support in device trees for rk3036, rk3308, and rv1108.
+- Add ahb clock (hclk_sfc) support for rk3036.
+- Change rockchip_sfc_wait_fifo_ready() to use a switch statement.
+- Change IRQ code to only mark IRQ as handled if it handles the
+  specific IRQ (DMA transfer finish) it is supposed to handle.
+
+Changes in v3:
+- Changed the name of the clocks to sfc/ahb (from clk-sfc/clk-hsfc).
+- Changed the compatible string from rockchip,sfc to
+  rockchip,rk3036-sfc. A quick glance at the datasheets suggests this
+  driver should work for the PX30, RK180x, RK3036, RK312x, RK3308 and
+  RV1108 SoCs, and possibly more. However, I am currently only able
+  to test this on a PX30 (an RK3326). The technical reference manuals
+  appear to list the same registers for each device.
+- Corrected devicetree documentation for formatting and to note these
+  changes.
+- Replaced the maintainer with Heiko Stuebner and myself, as we will
+  take ownership of this going forward.
+- Noted that the device (per the reference manual) supports 4 CS, but
+  I am only able to test a single CS (CS 0).
+- Reordered patches to comply with upstream rules.
+
+Changes in v2:
+- Reimplemented driver using spi-mem subsystem.
+- Removed power management code as I couldn't get it working properly.
+- Added device tree bindings for Odroid Go Advance.
+
+Changes in v1:
+hanges made in this new series versus the v8 of the old series:
+- Added function to read spi-rx-bus-width from device tree, in the
+  event that the SPI chip supports 4x mode but only has 2 pins
+  wired (such as the Odroid Go Advance).
+- Changed device tree documentation from txt to yaml format.
+- Made "reset" message a dev_dbg from a dev_info.
+- Changed read and write fifo functions to remove redundant checks.
+- Changed the write and read from relaxed to non-relaxed when
+  starting the DMA transfer or reading the DMA IRQ.
+- Changed from dma_coerce_mask_and_coherent to just
+  dma_set_mask_and_coherent.
+- Changed name of get_if_type to rockchip_sfc_get_if_type.
+
+Chris Morgan (6):
+  dt-bindings: rockchip-sfc: Bindings for Rockchip serial flash
+    controller
+  spi: rockchip-sfc: add rockchip serial flash controller
+  arm64: dts: rockchip: Add SFC to PX30
+  arm: dts: rockchip: Add SFC to RV1108
+  arm64: dts: rockchip: Add SFC to RK3308
+  arm64: dts: rockchip: Enable SFC for Odroid Go Advance
+
+ .../devicetree/bindings/spi/rockchip-sfc.yaml |  91 +++
+ arch/arm/boot/dts/rv1108.dtsi                 |  37 +
+ arch/arm64/boot/dts/rockchip/px30.dtsi        |  38 +
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi      |  37 +
+ .../boot/dts/rockchip/rk3326-odroid-go2.dts   |  16 +
+ drivers/spi/Kconfig                           |  12 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-rockchip-sfc.c                | 694 ++++++++++++++++++
+ 8 files changed, 926 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+ create mode 100644 drivers/spi/spi-rockchip-sfc.c
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
