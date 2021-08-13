@@ -2,78 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449F1C4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 09:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C889C432BE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 10:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2832C610CF
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 09:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 080A560C40
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 10:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239258AbhHMJoB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Aug 2021 05:44:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50121 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239028AbhHMJoB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Aug 2021 05:44:01 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10074"; a="202726304"
-X-IronPort-AV: E=Sophos;i="5.84,318,1620716400"; 
-   d="scan'208";a="202726304"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2021 02:43:34 -0700
-X-IronPort-AV: E=Sophos;i="5.84,318,1620716400"; 
-   d="scan'208";a="470040425"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2021 02:43:29 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mETik-0091Jx-R2; Fri, 13 Aug 2021 12:43:22 +0300
-Date:   Fri, 13 Aug 2021 12:43:22 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 1/4] clk: fractional-divider: Export approximation
- algorithm to the CCF users
-Message-ID: <YRY+uoTrBjkdh4Zj@smile.fi.intel.com>
-References: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
- <162879819529.19113.6409882476721828944@swboyd.mtv.corp.google.com>
+        id S232931AbhHMK3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Aug 2021 06:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38226 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239951AbhHMK25 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Aug 2021 06:28:57 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9888C0617AD
+        for <linux-clk@vger.kernel.org>; Fri, 13 Aug 2021 03:28:17 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b151:f011:b544:c545])
+        by michel.telenet-ops.be with bizsmtp
+        id gyUG250041MlFFN06yUG82; Fri, 13 Aug 2021 12:28:16 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mEUQB-002Wu8-Tr; Fri, 13 Aug 2021 12:28:15 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mEUQB-007SeM-FT; Fri, 13 Aug 2021 12:28:15 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.15 (take two)
+Date:   Fri, 13 Aug 2021 12:28:14 +0200
+Message-Id: <cover.1628850207.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162879819529.19113.6409882476721828944@swboyd.mtv.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 12:56:35PM -0700, Stephen Boyd wrote:
-> Quoting Andy Shevchenko (2021-08-12 10:00:22)
-> > At least one user currently duplicates some functions that are provided
-> > by fractional divider module. Let's export approximation algorithm and
-> > replace the open-coded variant.
-> > 
-> > As a bonus the exported function will get better documentation in place.
-> Applied to clk-next
+	Hi Mike, Stephen,
 
-Thank you, Stephen!
+The following changes since commit d28b1e03dc8d1070538ca3ea3f4e6732109ddf42:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  clk: renesas: r9a07g044: Add entry for fixed clock P0_DIV2 (2021-07-26 14:15:23 +0200)
 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.15-tag2
+
+for you to fetch changes up to e8425dd55abb12881694875972465f40bb0fe41b:
+
+  clk: renesas: Make CLK_R9A06G032 invisible (2021-08-13 12:05:41 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.15 (take two)
+
+  - Make CLK_R9A06G032 invisible.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      clk: renesas: Make CLK_R9A06G032 invisible
+
+ drivers/clk/renesas/Kconfig | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
