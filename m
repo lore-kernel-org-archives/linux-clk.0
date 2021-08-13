@@ -2,120 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D69E9C4320E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 16:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188EBC4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 16:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B085F6103A
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 16:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1A3601FA
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Aug 2021 16:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241550AbhHMQDy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Aug 2021 12:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
+        id S232796AbhHMQUs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Aug 2021 12:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241531AbhHMQDx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Aug 2021 12:03:53 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C8AC061756
-        for <linux-clk@vger.kernel.org>; Fri, 13 Aug 2021 09:03:26 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 203-20020a1c00d40000b02902e6a4e244e4so7228547wma.4
-        for <linux-clk@vger.kernel.org>; Fri, 13 Aug 2021 09:03:26 -0700 (PDT)
+        with ESMTP id S231503AbhHMQUs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Aug 2021 12:20:48 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1509EC061756;
+        Fri, 13 Aug 2021 09:20:21 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id r6so14054356wrt.4;
+        Fri, 13 Aug 2021 09:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x0xWLTk86tzzRjkpfY1Nei5soG6C/jHVAXTF3VFx8as=;
-        b=oid8lx5rMiXxBC7FhshiK5zRVwBoupwa7etIGRHYqQP5Ghxv3EasyGjtRUp/q5Z46g
-         dPi4hgDi6lfE5M69WkGUYoB4UpHQjdbW7/b5w+LQt9p0RZAURATPXapoGxPpFNZGjzQ2
-         Va9LQd+pJxCIAWHKes5nlRutYkbGgOx43p5fIFbu9CspxwKZ0CrPNYFzCNlRiL+FJ93W
-         TklrGcoUss7pCNoyZU9yjb2EHpT0pnIOHwJ3YWr6JRwQpdEjkHA7IduQ3ogIp5ZS3EEF
-         TY52xmFQkxtmdRAbmlYH2KZXBZWX0m8UvuZV3/wRxjMEJMwUP5V9hqpzXnySsIbfOhVF
-         3TFg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EtTi82zv1W6qbA1UgdC/JzbU8TMXbWqcbjVmeC8xG5I=;
+        b=HmvF8SfOhclo7FEZpfVLUuS4axHlsQ9YGtRGyljlmK0QHDZB82HAIO/+d3Ni8KMcTq
+         qPiCitdIotYKU8kviggSfzjHh0dITYZ6KjEyFaHicHYzkOxWA3i1gPVgG0BGB3zgY47s
+         Yodtq+wg4CNOPoFx+30qxV1l1GwQ8+/245zGJdNqXnNWsApS4X1SHepn7XtJlnIyBGSW
+         OYkHcoUznr7MLga3ErGWxbUnpnCcan6ipdkanbTqjOaVHss+pcBZbNlobQDBr5p4H3C3
+         viqs0xxr202aj1XK1FkWfw8MwIgPez6WwUkNk+AYa5KlbD9FpfqNS3ohpWWS6fxbSnjR
+         5H7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=x0xWLTk86tzzRjkpfY1Nei5soG6C/jHVAXTF3VFx8as=;
-        b=Ur62dKP4fh+r6WSTDt6+9IQTgmMO1u3Do+KZ3zggR/WpVEuOAcykqnKPGbytVu7no7
-         wvdczvD+mn1+RuKgdiza2Pcnstx3PqdYM6gB1vZPGL7Bydfg+NMLw9e+i2AeaJ+mwLzy
-         hJvXPZ5nDzmQySMxJD4peYHtwpIKBj3h42Cp/TtRy6lqe58hPnMMrpiWfyeWbaefdwFC
-         Uo7dpl5y9kGzpoqkgz2RvIlspUsK5ZAZ/quOtR7jQ4nnoO4CpwxcKW3COHIvVa1xP/1A
-         2uzf+PzsO8WnhF0r2zk0upmh4yb05r5bLA2Hq4MJEAYGkgv0JFWcGww/DlFReeD98skt
-         swWA==
-X-Gm-Message-State: AOAM530IVTRC0KBnHxkfqQHJXYuz20MCd+gUCQCr3LFZBSebK+xeAPHz
-        84Mqiq7iRISvmialf/cW5ewGQA==
-X-Google-Smtp-Source: ABdhPJxcIJRrl7o4ZN0CYfus5qLWkxvFiJ5ZwqVc8qhAmA8Ox/ETKV+ybqsxewm9Za6B47x1WERQbA==
-X-Received: by 2002:a05:600c:2290:: with SMTP id 16mr3333448wmf.26.1628870603592;
-        Fri, 13 Aug 2021 09:03:23 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:5df3:d0eb:3945:640d? ([2a01:e34:ed2f:f020:5df3:d0eb:3945:640d])
-        by smtp.googlemail.com with ESMTPSA id i9sm2470529wre.36.2021.08.13.09.03.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 09:03:23 -0700 (PDT)
-Subject: Re: [PATCH v4 4/9] clocksource/drivers/pistachio: Make it selectable
- for MIPS
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org
-Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        linus.walleij@linaro.org, vkoul@kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org
-References: <20210723022543.4095-1-jiaxun.yang@flygoat.com>
- <20210723022543.4095-5-jiaxun.yang@flygoat.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <9db45153-d4d6-aab9-8cf8-12fdb76be249@linaro.org>
-Date:   Fri, 13 Aug 2021 18:03:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        bh=EtTi82zv1W6qbA1UgdC/JzbU8TMXbWqcbjVmeC8xG5I=;
+        b=eLfGQX3el7xMJuk3AqTDRJCR64XeOtvYqyuXkq2zkp58ZiFEGvN3883Oa03o/MDiFu
+         mcyHfUlKhYrYDlnwipAi0dH9xptvJAjcQyVIm8p9irE9V3LaraDHIzFIYvfle+qSGplc
+         SRGKd3fnZZ6iD6nVx/n7JAiN5m87k1K46cy4c7acZvH9WtSkO73iE5tzJWwMjEjxdDJB
+         ajHm/H5zKfSoFkxHRFthk/dGoRXP+v3ymNt7Xo02AJOXjs3EJiKwXHQ+p+m9IaybtsjP
+         mCOSq9fJMaEcnGxXhF+VGTfM8pW1BoUjkRxJ5LqBJZTba9/eefSJPdZ577A8mzZtT/k/
+         WFqA==
+X-Gm-Message-State: AOAM531o+UJDmnALrYXqAhqUEcROmlkimLzcI/DioBe8TZU5wS9Xqfth
+        301+achJteNl5Mh8pFCGWyU=
+X-Google-Smtp-Source: ABdhPJzoYyZgkSgAJgJxCrK72my9BHt/tEU/1t4x5U6mELtsJsNRyltJeqvvi/XEkoTM5BzZN/FDAQ==
+X-Received: by 2002:adf:e107:: with SMTP id t7mr4109796wrz.165.1628871619659;
+        Fri, 13 Aug 2021 09:20:19 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id b15sm2000158wrq.5.2021.08.13.09.20.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 09:20:18 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk/tegra: Changes for v5.15-rc1
+Date:   Fri, 13 Aug 2021 18:20:14 +0200
+Message-Id: <20210813162014.2820473-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.32.0
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210723022543.4095-5-jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/07/2021 04:25, Jiaxun Yang wrote:
-> So it will be avilable for generic MIPS kernel.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  drivers/clocksource/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 39aa21d01e05..58ad7af8c673 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -234,8 +234,9 @@ config CLKSRC_LPC32XX
->  	  Support for the LPC32XX clocksource.
->  
->  config CLKSRC_PISTACHIO
-> -	bool "Clocksource for Pistachio SoC" if COMPILE_TEST
-> +	bool "Clocksource for Pistachio SoC"
->  	depends on HAS_IOMEM
-> +	depends on MIPS || COMPILE_TEST
+Hi Mike, Stephen,
 
-The dependency on the platform is only required if the COMPILE_TEST
-fails on other platforms.
+The following changes since commit 59c6fceb2ecc382c3d20508a235b539bf23af1f0:
 
-The selection is done from arch/mips/Kconfig directly otherwise.
+  soc/tegra: fuse: Enable fuse clock on suspend for Tegra124 (2021-08-11 11:55:56 +0200)
 
->  	select TIMER_OF
->  	help
->  	  Enables the clocksource for the Pistachio SoC.
-> 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.15-clk
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+for you to fetch changes up to faa8605f9f92e36c724ecaf03b466cfe31b04b06:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock (2021-08-11 11:57:01 +0200)
+
+Note that this pulls in a couple of changes from the ARM SoC tree, which
+I haven't explicitly included in the diffstat below. If you prefer I can
+also send this again after v5.15-rc1 which will then already include the
+dependency. It's not a critical patch, merely a clean-up, really.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk/tegra: Changes for v5.15-rc1
+
+The FUSE driver has been updated to take manual control of the FUSE
+clock over suspend/resume cycles, so the CLK_IS_CRITICAL flag can now be
+dropped.
+
+----------------------------------------------------------------
+Dmitry Osipenko (1):
+      clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
+
+Thierry Reding (1):
+      Merge branch 'for-5.15/soc' into for-5.15/clk
+
+ drivers/clk/tegra/clk-tegra-periph.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
