@@ -2,92 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048AAC4338F
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Aug 2021 10:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CD8C4338F
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Aug 2021 14:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E08D7610C8
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Aug 2021 10:30:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 571CB60BD3
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Aug 2021 14:40:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237434AbhHOKbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Aug 2021 06:31:00 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:23514 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237053AbhHOKa7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Aug 2021 06:30:59 -0400
-X-IronPort-AV: E=Sophos;i="5.84,322,1620658800"; 
-   d="scan'208";a="90668562"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 15 Aug 2021 19:30:29 +0900
-Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6A0C24006DFB;
-        Sun, 15 Aug 2021 19:30:27 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 4/4] clk: renesas: r9a07g044: Add GbEthernet clock/reset
-Date:   Sun, 15 Aug 2021 11:30:14 +0100
-Message-Id: <20210815103014.21208-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210815103014.21208-1-biju.das.jz@bp.renesas.com>
-References: <20210815103014.21208-1-biju.das.jz@bp.renesas.com>
+        id S234707AbhHOOlY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Aug 2021 10:41:24 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50640 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232465AbhHOOlY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 15 Aug 2021 10:41:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=woQgBcJycESx1AeAnSauAxUXWqkWpB7nFh0pfKfcZmY=; b=m3+FpD8ujfk5GHSg7Vrz55uqww
+        4s14rKulOZvFjfWPA4JWlENJ0L5Fs+LFDMZ7rUq3qbiY983/75FiTGU7bfg/cG/gb1eJXuLxp5x0E
+        D/82H+apjLHtbJMHeE3CAw2OE5RNmGn5HTxHGWN9kXKx9RqUGFJo6D1x7LM/eOP5wcn4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1mFHJX-000FJa-3P; Sun, 15 Aug 2021 16:40:39 +0200
+Date:   Sun, 15 Aug 2021 16:40:39 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] clk: kirkwood: Fix a clocking boot regression
+Message-ID: <YRknZ0G6e7HfPZ0d@lunn.ch>
+References: <20210814235514.403426-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210814235514.403426-1-linus.walleij@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add ETH{0,1} clock/reset entries to CPG driver.
+On Sun, Aug 15, 2021 at 01:55:14AM +0200, Linus Walleij wrote:
+> Since a few kernel releases the Pogoplug 4 has crashed like this
+> during boot:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address 00000002
+> (...)
+> [<c04116ec>] (strlen) from [<c00ead80>] (kstrdup+0x1c/0x4c)
+> [<c00ead80>] (kstrdup) from [<c04591d8>] (__clk_register+0x44/0x37c)
+> [<c04591d8>] (__clk_register) from [<c04595ec>] (clk_hw_register+0x20/0x44)
+> [<c04595ec>] (clk_hw_register) from [<c045bfa8>] (__clk_hw_register_mux+0x198/0x1e4)
+> [<c045bfa8>] (__clk_hw_register_mux) from [<c045c050>] (clk_register_mux_table+0x5c/0x6c)
+> [<c045c050>] (clk_register_mux_table) from [<c0acf3e0>] (kirkwood_clk_muxing_setup.constprop.0+0x13c/0x1ac)
+> [<c0acf3e0>] (kirkwood_clk_muxing_setup.constprop.0) from [<c0aceae0>] (of_clk_init+0x12c/0x214)
+> [<c0aceae0>] (of_clk_init) from [<c0ab576c>] (time_init+0x20/0x2c)
+> [<c0ab576c>] (time_init) from [<c0ab3d18>] (start_kernel+0x3dc/0x56c)
+> [<c0ab3d18>] (start_kernel) from [<00000000>] (0x0)
+> Code: e3130020 1afffffb e12fff1e c08a1078 (e5d03000)
+> 
+> This is because the "powersave" mux clock 0 was provided in an unterminated
+> array, which is required by the loop in the driver:
+> 
+>         /* Count, allocate, and register clock muxes */
+>         for (n = 0; desc[n].name;)
+>                 n++;
+> 
+> Here n will go out of bounds and then call clk_register_mux() on random
+> memory contents after the mux clock.
+> 
+> Fix this by terminating the array with a blank entry.
+> 
+> Fixes: 105299381d87 ("cpufreq: kirkwood: use the powersave multiplexer")
+> Cc: stable@vger.kernel.org
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v2->v3:
- * Updated the commit header
-v1->v2:
- * Register axi/chi clock as coupled clocks
-v1:-
- * New patch
----
- drivers/clk/renesas/r9a07g044-cpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks Linus
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 90bbeb03308c..8956828d7fca 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -138,6 +138,14 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x578, 2),
- 	DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
- 				0x578, 3),
-+	DEF_COUPLED("eth0_axi",	R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
-+				0x57c, 0),
-+	DEF_COUPLED("eth0_chi",	R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
-+				0x57c, 0),
-+	DEF_COUPLED("eth1_axi",	R9A07G044_ETH1_CLK_AXI, R9A07G044_CLK_M0,
-+				0x57c, 1),
-+	DEF_COUPLED("eth1_chi",	R9A07G044_ETH1_CLK_CHI, R9A07G044_CLK_ZT,
-+				0x57c, 1),
- 	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
- 				0x580, 0),
- 	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
-@@ -182,6 +190,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
- 	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
- 	DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
-+	DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
-+	DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
- 	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
- 	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
- 	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
--- 
-2.17.1
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
+    Andrew
