@@ -2,109 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335A6C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 07:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DD3C4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 07:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17CCA60FA0
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 07:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F04FE60EBC
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 07:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238432AbhHQH1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Aug 2021 03:27:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238067AbhHQH1W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 03:27:22 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC925C061764
-        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 00:26:49 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id z9so27037749wrh.10
-        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 00:26:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DeSKEV4kzIYCFvMlyG0CcZpPIPk6C3caP7V/Uxgw/9k=;
-        b=eIdqLOZVL0OULfaNktsy49d15zGef7kYk5Nsaq5mcWm+4QJjKmvjms0mljsplVDwyv
-         b1QwVTESuN9vFQIXGgKcGFtJuQu+QVTC0vCQOpBHOlydYmWISc2TxqiZdbdJmaE8DKZY
-         DMjaDsvDb1vzIWum/cSNA+M71QNvMW8pJrZmzRHbcvUpTmUCRhRb6UBvpO5LgA9fAsga
-         dfKLBbJzl7CrVmzcEdaYOWcoeZuYp1d04TrMaxOtXMOrG5sHIu1wqL/ENHaa2YhvTGz9
-         KCD7U4L+l1oBtUt9sFbCtmbz3cRGu5FkkdlSQxmHKkZKfmUJHP6xjOTZn7DAdrGG41Jb
-         tauw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DeSKEV4kzIYCFvMlyG0CcZpPIPk6C3caP7V/Uxgw/9k=;
-        b=AGXX+l+Cwu7TqTzHIUFpaTfm9ZnwiWdPppTRSb2kbsaAVS8wJY60SvbZZC+fvozV4o
-         SOaMCkJfodV7Z7JjaCiPxjybNswaKwfes10JZoLBUw/5VTESFUJE45WC9Y7J2ilwNTvH
-         Bvl/7s585AvXM0/1kV/RR1tKQSeqtqFOkCCfU3ZP6kR1iUNi0/NnieUQLVNXlN6kaZmk
-         ZIn40StB3zYaTZcQgMEaLbGQMvIWxpMjWQOq/Jm9yy/zUP4H2RekqOgSSqq6nqQis3Qy
-         VMUi0imx9iEB015h2Evqkn9NUA0K1eaEXe9zS+8Fs+oxNl8NIEjbB40zRrOGwUAVmaQk
-         nNbw==
-X-Gm-Message-State: AOAM531J3ksOOeGJROFARGt1QJXLSKPF3q+ui5jo+8ompMpnatpl09tv
-        LWt5bfR5/GKEiew/Ur6cayPoIJxImZSv2A==
-X-Google-Smtp-Source: ABdhPJxpbtwzWAD4DHKJBWVTKhC3N9ycqOWMcg7VtGaTjC0n0r5Cn7CshtZhQlmoPTl82e1tVBmgng==
-X-Received: by 2002:adf:8287:: with SMTP id 7mr2228934wrc.360.1629185208510;
-        Tue, 17 Aug 2021 00:26:48 -0700 (PDT)
-Received: from blmsp ([2a02:2454:3e6:c900::97e])
-        by smtp.gmail.com with ESMTPSA id b12sm1576598wrx.72.2021.08.17.00.26.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 00:26:48 -0700 (PDT)
-Date:   Tue, 17 Aug 2021 09:26:47 +0200
-From:   Markus Schneider-Pargmann <msp@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Fix *bulk_get* return value documentation
-Message-ID: <20210817072647.55funsorbowf544b@blmsp>
-References: <20210811075719.1716886-1-msp@baylibre.com>
- <162879633884.19113.18202513608808069954@swboyd.mtv.corp.google.com>
+        id S234402AbhHQHqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Aug 2021 03:46:39 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:48458 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231500AbhHQHqj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 03:46:39 -0400
+X-UUID: 6cc2d3ce89ac4336b8ee718cb5ae1705-20210817
+X-UUID: 6cc2d3ce89ac4336b8ee718cb5ae1705-20210817
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 13340958; Tue, 17 Aug 2021 15:46:03 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 17 Aug 2021 15:46:02 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Tue, 17 Aug 2021 15:46:01 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 17 Aug 2021 15:46:01 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        "Sam Shih" <sam.shih@mediatek.com>
+Subject: [v2,00/12] Add basic SoC support for mediatek mt7986
+Date:   Tue, 17 Aug 2021 15:45:45 +0800
+Message-ID: <20210817074557.30953-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <162879633884.19113.18202513608808069954@swboyd.mtv.corp.google.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This patch adds basic SoC support for Mediatek's new 4-core SoC,
+MT7986, which is mainly for wifi-router application.
 
-On Thu, Aug 12, 2021 at 12:25:38PM -0700, Stephen Boyd wrote:
-> Quoting Markus Schneider-Pargmann (2021-08-11 00:57:19)
-> > Some of the bulk_get variants document that the return value is a valid
-> > IS_ERR() condition but it is not. These functions return an errno
-> > directly if an error occures.
-> > 
-> > This patch fixes that documentation and documents that the return value
-> > is 0 or errno.
-> > 
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > ---
-> >  include/linux/clk.h | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 266e8de3cb51..56a741903963 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -340,7 +340,7 @@ struct clk *clk_get(struct device *dev, const char *id);
-> >   * that were obtained will be freed before returning to the caller.
-> >   *
-> >   * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-> > - * successfully, or valid IS_ERR() condition containing errno.
-> > + * successfully, or an errno otherwise.
-> >   * The implementation uses @dev and @clk_bulk_data.id to determine the
-> >   * clock consumer, and thereby the clock producer.
-> >   * The clock returned is stored in each @clk_bulk_data.clk field.
-> 
-> While you're here can you also use the Return: syntax so it isn't
-> freeform and doc generation can split it out?
+---
+v2: updated mt7986 clock releated IDs, dt-binding, and driver
+    updated mt7986 clock releated dt-binding and driver
+    updated device tree of mt7986a and mt7986b
 
-thanks, good idea. Will do that.
+Sam Shih (12):
+  dt-bindings: clock: mediatek: document clk bindings for mediatek
+    mt7986 SoC
+  clk: mediatek: add mt7986 clock IDs
+  clk: mediatek: add mt7986 clock support
+  pinctrl: mediatek: moore: check if pin_desc is valid before use
+  dt-bindings: pinctrl: update bindings for MT7986 SoC
+  pinctrl: mediatek: add support for MT7986 SoC
+  dt-bindings: arm64: dts: mediatek: Add mt7986 series
+  dt-bindings: rng: mediatek: add mt7986 to mtk rng binding
+  dt-bindings: serial: Add compatible for Mediatek MT7986
+  dt-bindings: watchdog: Add compatible for Mediatek MT7986
+  arm64: dts: mediatek: add mt7986a support
+  arm64: dts: mediatek: add mt7986b support
 
-Best,
-Markus
+ .../devicetree/bindings/arm/mediatek.yaml     |    8 +
+ .../arm/mediatek/mediatek,apmixedsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt |    1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |    1 +
+ .../arm/mediatek/mediatek,sgmiisys.txt        |    2 +
+ .../arm/mediatek/mediatek,topckgen.txt        |    1 +
+ .../bindings/pinctrl/pinctrl-mt7622.txt       |  170 +++
+ .../devicetree/bindings/rng/mtk-rng.yaml      |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt   |    1 +
+ .../devicetree/bindings/watchdog/mtk-wdt.txt  |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |    2 +
+ arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts  |   49 +
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi     |  227 +++
+ arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts  |   21 +
+ arch/arm64/boot/dts/mediatek/mt7986b.dtsi     |  236 ++++
+ drivers/clk/mediatek/Kconfig                  |   17 +
+ drivers/clk/mediatek/Makefile                 |    4 +
+ drivers/clk/mediatek/clk-mt7986-apmixed.c     |   78 ++
+ drivers/clk/mediatek/clk-mt7986-eth.c         |  132 ++
+ drivers/clk/mediatek/clk-mt7986-infracfg.c    |  198 +++
+ drivers/clk/mediatek/clk-mt7986-topckgen.c    |  319 +++++
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-moore.c      |   18 +
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c     | 1217 +++++++++++++++++
+ include/dt-bindings/clock/mt7986-clk.h        |  169 +++
+ 26 files changed, 2882 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b-rfb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986b.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-apmixed.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-topckgen.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7986.c
+ create mode 100644 include/dt-bindings/clock/mt7986-clk.h
+
+-- 
+2.29.2
+
