@@ -2,108 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E09C4320A
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 12:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EB0C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 12:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9596102A
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 12:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2607460F5C
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 12:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236621AbhHQMXl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Aug 2021 08:23:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37282 "EHLO mail.kernel.org"
+        id S233824AbhHQMp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Aug 2021 08:45:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:36852 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234866AbhHQMXk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Aug 2021 08:23:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B1CB760FA0;
-        Tue, 17 Aug 2021 12:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629202987;
-        bh=c/PlC/W6yjxlV+Z7ZbF/hxgaIiNXDZlZo9QTekHzzto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nmskkW06SeXdvESPFwWJP4iQi/AfZfa0vEFy+cuAqLmy+f4I2uJuGlWiIG3+qOPHv
-         xnda4sK3SpsR15EDLFwOPVpUWOowLkNLIk9ImApHVFPfJnKz/lhdsh+HFZYj/NbRHm
-         eXuH3smkHCoqx0QNay+eOr+RUqsGi1/LD/ASV8gvs921fqWRRcXPMo3BLK5Ue/LMAY
-         E7aHmfxbASTmbJ0PGpnfzkpkFQY6yMi66OmBVe1qXWlxHCeHepAgYCfKYqlUOjbUyt
-         lxKqpcb5n/55Qq2tzaqx1B4Vg1bUnEx45zv+Fl9rzaJm69xqekfjJ82brq5dSoJIe+
-         WqipDMJt6MCZg==
-Date:   Tue, 17 Aug 2021 13:22:44 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S229539AbhHQMp6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Aug 2021 08:45:58 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10078"; a="214224082"
+X-IronPort-AV: E=Sophos;i="5.84,328,1620716400"; 
+   d="scan'208";a="214224082"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2021 05:45:25 -0700
+X-IronPort-AV: E=Sophos;i="5.84,328,1620716400"; 
+   d="scan'208";a="449256501"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2021 05:45:20 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mFySv-00Ak6X-9i; Tue, 17 Aug 2021 15:45:13 +0300
+Date:   Tue, 17 Aug 2021 15:45:13 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 22/34] spi: tegra20-slink: Add OPP support
-Message-ID: <20210817122244.GA4290@sirena.org.uk>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-23-digetx@gmail.com>
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/4] clk: fractional-divider: Export approximation
+ algorithm to the CCF users
+Message-ID: <YRuvWdI+M7JuKCPC@smile.fi.intel.com>
+References: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
+ <162879819529.19113.6409882476721828944@swboyd.mtv.corp.google.com>
+ <YRY+uoTrBjkdh4Zj@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210817012754.8710-23-digetx@gmail.com>
-X-Cookie: Custer committed Siouxicide.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YRY+uoTrBjkdh4Zj@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Aug 13, 2021 at 12:43:22PM +0300, Andy Shevchenko wrote:
+> On Thu, Aug 12, 2021 at 12:56:35PM -0700, Stephen Boyd wrote:
+> > Quoting Andy Shevchenko (2021-08-12 10:00:22)
+> > > At least one user currently duplicates some functions that are provided
+> > > by fractional divider module. Let's export approximation algorithm and
+> > > replace the open-coded variant.
+> > > 
+> > > As a bonus the exported function will get better documentation in place.
+> > Applied to clk-next
+> 
+> Thank you, Stephen!
 
---mP3DRpeJDSE+ciuQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When they are expected to be visible in Linux Next?
 
-On Tue, Aug 17, 2021 at 04:27:42AM +0300, Dmitry Osipenko wrote:
-> The SPI on Tegra belongs to the core power domain and we're going to
-> enable GENPD support for the core domain. Now SPI driver must use OPP
-> API for driving the controller's clock rate because OPP API takes care
-> of reconfiguring the domain's performance state in accordance to the
-> rate. Add OPP support to the driver.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Acked-by: Mark Brown <broonie@kernel.org>
 
-Is there a concrete dependency here or can I merge this separately?
-
---mP3DRpeJDSE+ciuQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmEbqhMACgkQJNaLcl1U
-h9Buggf/d4C5+YzSeq0C2NHs0zamK8fHfoeCb5Qf7DbvwC4xNpUEoKAl6kFe6XlO
-ngiyDsMKDiDDirVRL6usRQkhxcB9hYlR9qZPZwTumcSB8omPU2d8ibg0bZlq6+EW
-bQf4R3TRA5YOFtGXxUejMSdK0+MO4I0QbuU6o4zLT3dzFtq+nK1Oct7FNyhjNrK/
-ELy4bDfbSewMfEPDjMsi05Qg7I6ftQiO3ZAqdTAj+0bLpHvsChKGv474uEXEw6vv
-FICFNW+bUCUC/oS3NykjRlVmWPr6eACJDT33krIuaX8/G0mN5kVjAfVPnOK1OzG+
-Y+z6bEN/Dr6UAjhZRQbizQRM04sR+w==
-=JJo7
------END PGP SIGNATURE-----
-
---mP3DRpeJDSE+ciuQ--
