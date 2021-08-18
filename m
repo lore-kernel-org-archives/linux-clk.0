@@ -2,95 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20705C4320E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B94C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1F3861029
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23D7960F39
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:20:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237521AbhHRBSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Aug 2021 21:18:13 -0400
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:38763 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234975AbhHRBSL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 21:18:11 -0400
-Received: by mail-ot1-f52.google.com with SMTP id 108-20020a9d01750000b029050e5cc11ae3so793675otu.5;
-        Tue, 17 Aug 2021 18:17:37 -0700 (PDT)
+        id S234975AbhHRBUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Aug 2021 21:20:42 -0400
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:40618 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234828AbhHRBUm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 21:20:42 -0400
+Received: by mail-oi1-f176.google.com with SMTP id r5so2103218oiw.7;
+        Tue, 17 Aug 2021 18:20:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=eKtNQFzlTBGPaxfs2EmRb1riSIc24m2XgELeYM91Y4A=;
-        b=M+mwzdMrhScAez4uMyHWQO0Ykb8m9LspvDR1TUxc81QZHxJhCOBd5CTJSAtOUMiift
-         mlJGr/yXV4tSmHnwlqOUmgUYZqI6qWYdwrjyeArTIN3xwP/etluYlq44R7a1jOKd2iMU
-         E5cc8B3tL3uWoNRXHiDqpt7T6WHbrBn+NykIspsNchmNr7f5l8J9WDmEU3fSmZwx9c9a
-         Go1D6Cth/worurh0Tos4HGFb54IKQDaYCGoIxPESLl9biukXnxHeG9I7I10BQvd/Sg8Z
-         zhHPNrwhTne1rax/gRMiYp0RqRsu0e2rs4V4i3NjGCFfResYvrCnqiUlGnUVZL9u/tIC
-         DqIw==
-X-Gm-Message-State: AOAM530WoGOwQLHNvfZ149og19APDPIs+r7yTy9fhkRnMq3XJFL2Bc8x
-        PtW+W4LRs1vdCXzRPeGLXg==
-X-Google-Smtp-Source: ABdhPJwU/r4DfRsxBODbwZOAT7Fuj3KBuNK588MGjUDZF59lolTrMg3kNGSScZqTWBSlXRqF+y+4aw==
-X-Received: by 2002:a9d:a12:: with SMTP id 18mr4963065otg.252.1629249456779;
-        Tue, 17 Aug 2021 18:17:36 -0700 (PDT)
+        bh=+z3ILV1fVhurBfPQC3iXBEQ2csZiT8sJKpTVvArWqCg=;
+        b=dCT2B6uD0xRv59J/Bhamr4Bf30ixKL85hJFnjcCr8r3MpApieeKtMBar0itEWdMQfR
+         gHYJcxTRozmkIiRBxHf2kyKEchGiHUQgXDVNO6++lvaf9Dz3zqrTcMqS2lu+l23/alzN
+         Ie8BsHJRIg7IcG1g8JpW7tSO+Zx4gvOVCPyZh3NEDNtgdzf5C1J7DcPiTVSicTDuFt0H
+         cw9aUrbeuW07EYGYZg1MVcxVptagP6Cq5zeH07n7DXzo/TKco75xtBnSgIU3WrHRIL6S
+         3yKV2rBtEt+3w3kNZf+izqy9YYLsCyIoGiFt4XoZw+AKPI/YeEwutHsbFz5Ql/aLsKan
+         8U7A==
+X-Gm-Message-State: AOAM533Goho6oyANbJ/H91TQ/VZVoJQeUY2cHgj/TeUpDlHT72+FZ3HX
+        h+iEnWKbgcUGa+gTNnshug==
+X-Google-Smtp-Source: ABdhPJxQxcNn3z/Tx3n1n06qxWShd5xmbfoiTFU7Ma9Drddtx9IGPWVaSH8gdzWvG7uNbFGtcCC5rg==
+X-Received: by 2002:a54:4714:: with SMTP id k20mr4720831oik.103.1629249607974;
+        Tue, 17 Aug 2021 18:20:07 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p26sm752775ota.71.2021.08.17.18.17.34
+        by smtp.gmail.com with ESMTPSA id o68sm735648ota.33.2021.08.17.18.20.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 18:17:36 -0700 (PDT)
-Received: (nullmailer pid 1178148 invoked by uid 1000);
-        Wed, 18 Aug 2021 01:17:34 -0000
-Date:   Tue, 17 Aug 2021 20:17:34 -0500
+        Tue, 17 Aug 2021 18:20:07 -0700 (PDT)
+Received: (nullmailer pid 1182094 invoked by uid 1000);
+        Wed, 18 Aug 2021 01:20:05 -0000
+Date:   Tue, 17 Aug 2021 20:20:05 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     John Crispin <john@phrozen.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        devicetree@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
+        linux-watchdog@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-serial@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabien Parent <fparent@baylibre.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-spi@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel@lists.freedesktop.org, Stefan Agner <stefan@agner.ch>,
-        Nishanth Menon <nm@ti.com>, linux-staging@lists.linux.dev,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-usb@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-media@vger.kernel.org, Peter Chen <peter.chen@kernel.org>,
-        Lucas Stach <dev@lynxeye.de>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-pm@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v8 24/34] media: dt: bindings: tegra-vde: Document OPP
- and power domain
-Message-ID: <YRxfrvd2sR5ALeuX@robh.at.kernel.org>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-25-digetx@gmail.com>
+        linux-mediatek@lists.infradead.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, linux-clk@vger.kernel.org
+Subject: Re: [v2,01/12] dt-bindings: clock: mediatek: document clk bindings
+ for mediatek mt7986 SoC
+Message-ID: <YRxgRZ5VyXSPqY42@robh.at.kernel.org>
+References: <20210817074557.30953-1-sam.shih@mediatek.com>
+ <20210817074557.30953-2-sam.shih@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210817012754.8710-25-digetx@gmail.com>
+In-Reply-To: <20210817074557.30953-2-sam.shih@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 17 Aug 2021 04:27:44 +0300, Dmitry Osipenko wrote:
-> Document new OPP table and power domain properties of the video decoder
-> hardware.
+On Tue, 17 Aug 2021 15:45:46 +0800, Sam Shih wrote:
+> This patch adds the binding documentation for topckgen, apmixedsys,
+> infracfg, and ethernet subsystem clocks.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 > ---
->  .../devicetree/bindings/media/nvidia,tegra-vde.yaml  | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> v2: remove compatiable string 'mt7986-sgmiisys'
+> 
+> ---
+>  .../devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt    | 1 +
+>  .../devicetree/bindings/arm/mediatek/mediatek,ethsys.txt        | 1 +
+>  .../devicetree/bindings/arm/mediatek/mediatek,infracfg.txt      | 1 +
+>  .../devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt      | 2 ++
+>  .../devicetree/bindings/arm/mediatek/mediatek,topckgen.txt      | 1 +
+>  5 files changed, 6 insertions(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
