@@ -2,62 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE84C432BE
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 09:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4892BC19F33
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 09:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFB71610E6
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 09:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3178460F39
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 09:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbhHRJO6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 05:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60896 "EHLO
+        id S231454AbhHRJmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 05:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbhHRJOz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 05:14:55 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 993F9C0617A8
-        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 02:14:20 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id bo18so2289507pjb.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 02:14:20 -0700 (PDT)
+        with ESMTP id S232338AbhHRJmj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 05:42:39 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1F1C0617A8
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 02:42:03 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id s19so1353792vsl.11
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 02:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tDuCq4cpa/FhfVLg3d4eOXI0t92SH+lRUdr1ZBj+304=;
-        b=quAhTr+R/08xh/ignvyvF/El1dD/NQftWfiNTcAu87cJhuBhgI+As0zoEiydqeW6PP
-         Ex/zHp4EDoA27CiqypV1XRJjyjppnIr9cuHPeEqT4Jz0u4Gd7rGoODV0vOYF2r+fXVrC
-         O9YNeAY5lMNde/fcVIInzFs4EQNgUzhxxcNX6YMHjHSIPhU1rXEQOl9Aq3E25JLQ/9fv
-         VxP/TlWw72/n6skEH8miH2qbrmh27V7jR6dmqc1oF+jbwQP/bhXkGIrzGuJgVHwfQUpg
-         jLxJj1fuqBdXtzbuG0/ZFv6pjltmBS+1GsQZASCe+7q/ocD5Ye+29smqIZ7DN+BRR4O7
-         VT3w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kbdSCU3Rw09uivyYf1YKzhrdNkwTtywFq3z2eNcAoHU=;
+        b=kqUWzgUl/yiaXMoS2k9dhVzmvWVdRfo7Fo2KXwGPP2K5ZKcbfq4mKKs9fLOs8fk96x
+         ptk/PW2l+MORjgDTGKf9YKJffdNc1pkzifnQ3yMMmSj3Id6or6s1mOH4RD5LiDbhWJRI
+         ol1Z3YbHIv6bhJb7wFU0bti68QvEuV9zCxn5x80BVxIEcknLkLqXu0njTtyUvhPQ0gSW
+         KzGkOvTBoLGzarTvJDvnT+M4FVW2tzG1L1lXroB9VMemhLKPlypoT4WgQlmDdyLEkHoL
+         avQ5B2EbRBekdWSQILEJHijb8G0nZOKWFmqrMWiR04qbuKkEn8DBAAYOVrTAxrrtgcGi
+         fUDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tDuCq4cpa/FhfVLg3d4eOXI0t92SH+lRUdr1ZBj+304=;
-        b=W297oih2L43WMcEqyjZUan4/BhmI9+FGNrPseFmnqIbvkpmw8OYGukH65qazOt37iC
-         8gS3+15NTgKprqBUaykPW9P0GZ4dmD/F6fXCOdic/x8Xi94tGqroZeUvOOu5SqLujAYn
-         HlEg8HVbbFhrd5cjmtpXJW949XStXzeN6l3zjo9UWOw9WS2/QRcGBy+5bny9wnvXKGP5
-         dJPrLfwbsOvClmw76sOjo/ZQx70Cl+vU9ih9zHR/LefqTS6ZVqAJDskd/EPr44x8Hika
-         IQB5ftfke9HsFDeez3PEA9N05D6eUMJSWvXeGUXpt3QTRPntLLk269tBReI4kLU12f3U
-         lweQ==
-X-Gm-Message-State: AOAM532vwiNEkPcL5Fp+xObtzxHIdDHoIC0Q+P1kG0h32fiM0397H0WE
-        NxdlNRcO5lY0OzogGrBuOhZktQ==
-X-Google-Smtp-Source: ABdhPJz4yEie/eMLpBAmymSzx5jt3Od7muuoKSX0aK0QfqCy9SYA7S2Wvgljmd2wM1mkIsijUEW0lQ==
-X-Received: by 2002:a17:90a:d791:: with SMTP id z17mr8231461pju.203.1629278059957;
-        Wed, 18 Aug 2021 02:14:19 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id a8sm1540816pfo.79.2021.08.18.02.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 02:14:19 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 14:44:17 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kbdSCU3Rw09uivyYf1YKzhrdNkwTtywFq3z2eNcAoHU=;
+        b=bwp4eNdpvPzs6cQCxjquUmZIrDtd1gsYrIBcNUoPAKKZZ0Bvuns4n4hkDS8pTPQMQE
+         6NRKj6gl0XwN0CXPQwlIv3s0wT9jXuDPfDx3cYCvZcT2pTIaHL1HgOZLFJYQTsaniKNh
+         MMKjbCtOl7AgetZaFNk9eDQdC8yAlwim3iI+j7wYqKkoihb0iFV1g+3f99grJdP9wzY5
+         gQwtOFyHaczOZ+A0EOvkQDc2rC/h5TjFocsby/nz6Gpw8xELmHDpwfHH+R7RkqKOsdfn
+         0HsqLsbqLFWLRvAmTb6Tb7nAYPLjnU4yU/x4oP+eblgoATOa+IlVNufbW1VBLEZQkg/n
+         VCeA==
+X-Gm-Message-State: AOAM530fG0w/KLTkrj1BtcwFjNjFajVDBuKs5DwgXFf2yWgndnvhMIYv
+        5cmhadsvJBuwrMBQzhJEdJpqs6Hi2yMu+IOMRYtX7g==
+X-Google-Smtp-Source: ABdhPJz8iEC0DtBNEl/b/C36HfmefejpZ6mYBF4J4rSAfO4RoK/etFf85MFbc+601w1EL4Uj4rk9xHbR9GbyCxpBsGg=
+X-Received: by 2002:a67:f6d8:: with SMTP id v24mr6581141vso.48.1629279723051;
+ Wed, 18 Aug 2021 02:42:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210818035533.ieqkexltfvvf2p4n@vireshk-i7> <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
+ <20210818043131.7klajx6drvvkftoc@vireshk-i7> <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
+ <20210818045307.4brb6cafkh3adjth@vireshk-i7> <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
+ <20210818055849.ybfajzu75ecpdrbn@vireshk-i7> <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+ <20210818062723.dqamssfkf7lf7cf7@vireshk-i7> <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
+ <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
+In-Reply-To: <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 18 Aug 2021 11:41:26 +0200
+Message-ID: <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
+Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,7 +74,7 @@ Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Peter Chen <peter.chen@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         Richard Weinberger <richard@nod.at>,
@@ -89,57 +95,60 @@ Cc:     Dmitry Osipenko <digetx@gmail.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         DTML <devicetree@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
-References: <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
- <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
- <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-08-21, 10:29, Ulf Hansson wrote:
-> Me and Dmitry discussed adding a new genpd callback for this. I agreed
-> that it seems like a reasonable thing to add, if he insists.
-> 
-> The intent was to invoke the new callback from __genpd_dev_pm_attach()
-> when the device has been attached to its genpd. This allows the
-> callback, to invoke clk_get_rate() and then dev_pm_opp_set_rate(), to
-> update the vote according to the current state of the HW.
+On Wed, 18 Aug 2021 at 11:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 18-08-21, 10:29, Ulf Hansson wrote:
+> > Me and Dmitry discussed adding a new genpd callback for this. I agreed
+> > that it seems like a reasonable thing to add, if he insists.
+> >
+> > The intent was to invoke the new callback from __genpd_dev_pm_attach()
+> > when the device has been attached to its genpd. This allows the
+> > callback, to invoke clk_get_rate() and then dev_pm_opp_set_rate(), to
+> > update the vote according to the current state of the HW.
+>
+> I wouldn't call dev_pm_opp_set_rate() from there, since it means
+> configure and enable (both) for different resources, clk, regulator,
+> genpd, etc..
 
-I wouldn't call dev_pm_opp_set_rate() from there, since it means
-configure and enable (both) for different resources, clk, regulator,
-genpd, etc..
+Right, good point!
 
-What we need here is just configure. So something like this then:
+dev_pm_opp_set_rate() is best called from consumer drivers, as they
+need to be in control.
 
-- genpd->get_performance_state()
-  -> dev_pm_opp_get_current_opp() //New API
-  -> dev_pm_genpd_set_performance_state(dev, current_opp->pstate);
+>
+> What we need here is just configure. So something like this then:
+>
+> - genpd->get_performance_state()
+>   -> dev_pm_opp_get_current_opp() //New API
+>   -> dev_pm_genpd_set_performance_state(dev, current_opp->pstate);
+>
+> This can be done just once from probe() then.
 
-This can be done just once from probe() then.
+How would dev_pm_opp_get_current_opp() work? Do you have a suggestion?
 
-> I am not sure if/why that approach seemed insufficient?
-> 
-> Another option to solve the problem, I think, is simply to patch
-> drivers to let them call dev_pm_opp_set_rate() during ->probe(), this
-> should synchronize the HW state too.
+>
+> > I am not sure if/why that approach seemed insufficient?
+> >
+> > Another option to solve the problem, I think, is simply to patch
+> > drivers to let them call dev_pm_opp_set_rate() during ->probe(), this
+> > should synchronize the HW state too.
+>
+> Dmitry already mentioned that this will make the device start
+> consuming power, and he doesn't want that, else we need an explicit
+> disble call as well.
 
-Dmitry already mentioned that this will make the device start
-consuming power, and he doesn't want that, else we need an explicit
-disble call as well.
+I am sure I understand the problem. When a device is getting probed,
+it needs to consume power, how else can the corresponding driver
+successfully probe it?
 
--- 
-viresh
+>
+> --
+> viresh
+
+Kind regards
+Uffe
