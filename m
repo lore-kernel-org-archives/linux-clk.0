@@ -4,35 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B4BC4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5E2C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7CB610E5
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57185610D2
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233920AbhHRV0F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 17:26:05 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:44200 "EHLO gloria.sntech.de"
+        id S233971AbhHRVnY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 17:43:24 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:44348 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230435AbhHRV0E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Aug 2021 17:26:04 -0400
+        id S234009AbhHRVnY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Aug 2021 17:43:24 -0400
 Received: from [212.185.68.41] (helo=phil.client.m3-hotspots.de)
         by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <heiko@sntech.de>)
-        id 1mGT3t-0001S4-Ut; Wed, 18 Aug 2021 23:25:26 +0200
+        id 1mGTKf-0001Wh-RY; Wed, 18 Aug 2021 23:42:45 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Peter Geis <pgwipeout@gmail.com>, Johan Jonker <jbx6244@gmail.com>,
+To:     Johan Jonker <jbx6244@gmail.com>, Peter Geis <pgwipeout@gmail.com>,
         Rob Herring <robh@kernel.org>
 Cc:     Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: (subset) [PATCH v2 0/8] fixes and enablement for rk356x
-Date:   Wed, 18 Aug 2021 23:25:24 +0200
-Message-Id: <162932191989.2857998.7332944656635209644.b4-ty@sntech.de>
+Date:   Wed, 18 Aug 2021 23:42:44 +0200
+Message-Id: <162932289621.2860738.15310161824918921933.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210728180034.717953-1-pgwipeout@gmail.com>
 References: <20210728180034.717953-1-pgwipeout@gmail.com>
@@ -62,8 +62,17 @@ On Wed, 28 Jul 2021 14:00:26 -0400, Peter Geis wrote:
 
 Applied, thanks!
 
-[3/8] arm64: dts: rockchip: add rk356x gpio debounce clocks
-      commit: bf092ebe6e81fe7f7b710e749a3debfece193ff5
+[5/8] arm64: dts: rockchip: add rk3568 tsadc nodes
+      commit: 1a9563ba0a59b221156d80a3a77a43fdd144576c
+
+[I've moved the tsadc-pin pin setting to the second pinctrl
+ block meant to hand-crafted pin settings in rk3568-pinctrl.dtsi]
+
+
+[8/8] arm64: dts: rockchip: add thermal support to Quartz64 Model A
+      commit: d0e2e61b3cbaab474e2093ceb2073c4441bd36f8
+
+Looks like we're all done with that series now.
 
 Best regards,
 -- 
