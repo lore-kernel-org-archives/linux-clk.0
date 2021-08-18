@@ -2,149 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16618C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 05:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B398C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 05:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0CAC61051
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 05:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEF5F6108B
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 05:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237475AbhHRFWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 01:22:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34138 "EHLO
+        id S237726AbhHRFdO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 01:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236055AbhHRFWI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 01:22:08 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 807E1C061764;
-        Tue, 17 Aug 2021 22:21:34 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id h9so2789005ljq.8;
-        Tue, 17 Aug 2021 22:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yOpS1WKSzyXtmkcc56y1iDICg2EoTDsJHsY4fPaSb5w=;
-        b=czCBETSSjNQa96HeR8S2cXF9WItzalDZ+Bims31/WwUHmduqBSoEIrz2EHd1Rplnvm
-         FFwAvQOnG91Y+0pNG7gcjM8fuOK7PmDvtjcps1eXeHj5mFDM7T8Il2gc/dhcMiEnsq3U
-         dYqtv8hjrv5XQwoHcnwTEBGrRK1459O7Zm+K8cjotiTE0HUOwS7EWfdq/k1AdFePe/7T
-         qIjtoVkBbmE3Zl1qSkUzqZv9CvHixrI856MdhPDyYrJSZk10aF2YpSr+G4t557R0fLe2
-         gENb/8qw1Cif5pMMEHqGyMJt9OlS6t5IEPg7dmTF9mJyzzfy4L6tBS3Gp6x5EtTq9Otk
-         Id/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yOpS1WKSzyXtmkcc56y1iDICg2EoTDsJHsY4fPaSb5w=;
-        b=KyTN+66JReUiZ1nBMEpIdN+P9S79uEbMiu3M16czSgFJ05YwvKLskilB2QqFZVk62J
-         prZHpbsfHzIx5e87MhH/gACK7omP8L9NIP7VpxCLK3S0yThlJNzngWHTDQb3DnCwnCBz
-         Q7O+mvHisqBaIz/jNC3sDZqf72kjslbVVJWwiSMBcsS0kRMTbgNLsxcb6A1nloJlzmix
-         5sg5M2+xYysgiBpIxaqfyEu5CONXY3xQlNOp+9ZlD+EaoyKZjnLp/1unMczoaLYZuccj
-         RBb7l3o7A2E7Yliyg4mnTMLSM6KsbrW6LKSWxEjO/NWj5egYPIKIb/UDHDLUB7taJg1K
-         R1+g==
-X-Gm-Message-State: AOAM532uIzrUOlr8c26HbMOuf5JWdSxIDRVwco2Tvnd2Af/8PdpZ5Ji+
-        yuoCMn8yi7o3CporXX1hvtPIyyVZkV4=
-X-Google-Smtp-Source: ABdhPJz2ztpis7OKP5puANjPipNjZh3C0caocgaMorHlmoNO+0jB7HIjn/fYUFG6yGBcOjPS91/Jnw==
-X-Received: by 2002:a2e:8553:: with SMTP id u19mr1498129ljj.158.1629264092744;
-        Tue, 17 Aug 2021 22:21:32 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.googlemail.com with ESMTPSA id d9sm487076ljq.54.2021.08.17.22.21.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Aug 2021 22:21:32 -0700 (PDT)
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-2-digetx@gmail.com>
- <20210817075515.vyyv7z37e6jcrhsl@vireshk-i7>
- <710261d9-7ae3-5155-c0a2-f8aed2408d0b@gmail.com>
- <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
- <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
- <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
-Date:   Wed, 18 Aug 2021 08:21:30 +0300
+        with ESMTP id S236055AbhHRFdO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 01:33:14 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FB3C061764;
+        Tue, 17 Aug 2021 22:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=2zC73NgneGv8r0rNy+11rurbEC45FiruzWf40phAS6Y=; b=oIATTtM3ADQ3QTDvs0iGJBj4VU
+        j+ZymCDfVMRqOX0Bs6AApeQ7EgI53hzm7ByuFJlTTKgHFpP2I2gkQ0pUfNJDiTRFCPADbYVeSkksH
+        6MHbcOwDdQ1OZQ/EZ547mY1ihBLVAp3Tl91GXPKCBF0g95fNE6koik9sFJ11HN10uxIeuWGx7bYls
+        laq3Lgk7MI9HmzvrTZYGidU0JEqevxWCqg5wEXvdm9ZQGW5ZlikVdAofrvVj9nlAwLCdF3UmlhZMS
+        TRLmD9NrdkomJ/fpCa3A+J7LvC0pljdb4vj5EM4WqjaWOCzHndTQwZVDZUfH5vfnYjGj+QI4FhqAv
+        6QPncMcg==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mGEBp-004Fdw-Np; Wed, 18 Aug 2021 05:32:37 +0000
+Subject: Re: [PATCH] clk/at91: remove kernel-doc warnings in sama7g5.c
+To:     Claudiu.Beznea@microchip.com, linux-kernel@vger.kernel.org
+Cc:     lkp@intel.com, mturquette@baylibre.com, sboyd@kernel.org,
+        Eugen.Hristev@microchip.com, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        corbet@lwn.net
+References: <20210810005431.22007-1-rdunlap@infradead.org>
+ <1670a11e-98d8-1b55-34c0-3369aaa8a615@microchip.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <29f0b5d0-d9ab-6ef3-b280-ba3d64c8d828@infradead.org>
+Date:   Tue, 17 Aug 2021 22:32:37 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210818045307.4brb6cafkh3adjth@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1670a11e-98d8-1b55-34c0-3369aaa8a615@microchip.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.08.2021 07:53, Viresh Kumar пишет:
-> On 18-08-21, 07:37, Dmitry Osipenko wrote:
->> This will set voltage level without having an actively used hardware.
->> Take a 3d driver for example, if you set the rate on probe and
->> rpm-resume will never be called, then the voltage will be set high,
->> while hardware is kept suspended if userspace will never wake it up by
->> executing a 3d job.
+On 8/17/21 10:12 PM, Claudiu.Beznea@microchip.com wrote:
+> Hi Randy,
 > 
-> What exactly are we looking to achieve with this stuff ? Cache the
-> current performance state with genpd (based on the state bootloader's
-> has set) ?
+> On 10.08.2021 03:54, Randy Dunlap wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> Fix multiple kernel-doc warnings in sama7g5.c. There are several
+>> enums and structs that were not identified as such.
+>> There are also several anonymous structs (that scripts/kernel-doc
+>> has problems with), so add struct names to them.
+>>
+>> Fixes the following warnings:
+>>
+>> drivers/clk/at91/sama7g5.c:39: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * PLL clocks identifiers
+>> drivers/clk/at91/sama7g5.c:60: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * PLL type identifiers
+>> drivers/clk/at91/sama7g5.c:122: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * PLL clocks description
+>> drivers/clk/at91/sama7g5.c:289: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * Master clock (MCK[1..4]) description
+>> drivers/clk/at91/sama7g5.c:341: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * System clock description
+>> drivers/clk/at91/sama7g5.c:365: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * Peripheral clock description
+>> drivers/clk/at91/sama7g5.c:453: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>>   * Generic clock description
+>> drivers/clk/at91/sama7g5.c:339: warning: Function parameter or member 'ep_chg_id' not described in 'master_clock'
+>>
+>> Some kernel-doc warnings are still printed, but they are all due to
+>> problems in the kernel-doc script (if anyone is interested in playing
+>> with some Perl :). These warnings are:
+>>
+>> sama7g5.c:287: warning: Function parameter or member '{' not described in 'sama7g5_plls'
+>> sama7g5.c:287: warning: Function parameter or member '' not described in 'sama7g5_plls'
+>> sama7g5.c:287: warning: Function parameter or member '}' not described in 'sama7g5_plls'
+>> sama7g5.c:339: warning: Function parameter or member 'sama7g5_mckx' not described in 'master_clock'
+>> sama7g5.c:339: warning: Function parameter or member '}' not described in 'master_clock'
+>> sama7g5.c:360: warning: Function parameter or member 'sama7g5_systemck' not described in 'system_clock'
+>> sama7g5.c:451: warning: Function parameter or member 'sama7g5_periphck' not described in 'periph_clock'
+>> sama7g5.c:451: warning: Function parameter or member '' not described in 'periph_clock'
+>> sama7g5.c:451: warning: Function parameter or member '}' not described in 'periph_clock'
+>> sama7g5.c:841: warning: Function parameter or member 'sama7g5_gck' not described in 'generic_clock'
+>> sama7g5.c:841: warning: Function parameter or member '}' not described in 'generic_clock'
+> 
+> What about keeping only one '*' instead of '**' where necessary as these
+> data structures are only local to sama7g5.c file (according to
+> Documentation/doc-guide/kernel-doc.rst "Functions and data structures in
+> header files which are intended to be used by modules should also have
+> kernel-doc comments."). This way all the warnings will be gone.
 
-Yes, GENPD will cache the perf state across suspend/resume and initially
-cached value is out of sync with h/w.
+Sure, that works too.
+I'll send an updated patch.
 
-> Or anything else as well ?
+thanks.
+-- 
+~Randy
 
-Nothing else. But let me clarify it all again.
-
-Initially the performance state of all GENPDs is 0 for all devices.
-
-The clock rate is preinitialized for all devices to a some default rate
-by clk driver, or by bootloader or by assigned-clocks in DT.
-
-When device is rpm-resumed, the resume callback of a device driver
-enables the clock.
-
-Before clock is enabled, the voltage needs to be configured in
-accordance to the clk rate.
-
-So now we have a GENPD with pstate=0 on a first rpm-resume, which
-doesn't match the h/w configuration. Calling dev_pm_opp_sync() sets the
-pstate in accordance to the h/w config.
-
-In a previous v7 I proposed to preset the rpm_pstate of GENPD (perf
-level that is restored before device is rpm-resumed) from PD's
-attach_dev callback, but Ulf didn't like that because it requires to use
-and modify GENPD 'private' variables from a PD driver. We decided that
-will be better to make device drivers to explicitly sync the perf state,
-which I implemented in this v8.
