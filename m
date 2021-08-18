@@ -2,155 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399C2C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 15:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE562C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 16:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21591610CE
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 15:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E3C6610A6
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 16:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240107AbhHRP4F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 11:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
+        id S232380AbhHRQFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 12:05:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239944AbhHRP4A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 11:56:00 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7EDC061764;
-        Wed, 18 Aug 2021 08:55:25 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id c12so5966908ljr.5;
-        Wed, 18 Aug 2021 08:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FDEHOwK/tV+p4BwibJ2eZxjOpc4MiqVcjf+8RCPnl/I=;
-        b=H0RQfIKG86hjucXIS4WiNewr/HEa0soca6FW/SoC/rnEEopBHfFKy8EBd0pGQounk/
-         Oq9/0nUk373C3fZI609KQfoxLIlCX33VL4jD/UoSCTP1jNz94LT73hGlRg0OGe2pZPMl
-         Oibirrv4BUfG5Z6A9XvafJxus+f47S5hMtsDMR0PfSid8tbadkJELX8svkntbABSkpcD
-         RimCcpLAmvdux+9g7Wlco/fYko0MP+hTZL/CMoVJHvmpnxNhBGRdHEtQ4ME9XbOrtsOg
-         Ou9Bf0Prbo4kHm9SvJmQDHot8vFIRpjN5c2/oXbQGbbtlY4/TvTgQHm5WSs8SXzEzrL/
-         q0pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FDEHOwK/tV+p4BwibJ2eZxjOpc4MiqVcjf+8RCPnl/I=;
-        b=qIEojt5AjO1DBQW4Ighx74dbqHTjCmaXzeCd9DHsabHSFaQ7QFNlDy7v0t9NTINotE
-         O/cw3SEp+CX+9+nxE/YijQ41RRYCPe905VV/rK7Ck3n8BYlifB3437OCISKNawClcElg
-         2okE5kGBj33dZAxzxvPppTG+KPk5UzC5vnq05lbDa1edW/nUFIMTR9/XUCOYHaFWJTc+
-         wvU/T/GENQtiJiJDVA353iERXt8REkMzS3YvO4Av0LXRWcDt+xorNpYmWmQl1dWfs74b
-         +fdjlRTvn/HKOFpPeOjAuqnGnXVG+xJ9UmnDORXfBrqqOxD+BkWrDtamwErbGcmiqM1t
-         m+dg==
-X-Gm-Message-State: AOAM531nFi1Ww7pB1o+krdO6pafeLIX6mfj/OWLgg+TVbY/ZseZqEina
-        agLHafcpm+hTRIg9Xrr+0GTr1m2bo64=
-X-Google-Smtp-Source: ABdhPJwH2B3VgRzJIvI+pIkKDsVXz6Nb3IHX68qBDgW7hPMqkLurd3vlILu0yEDQld58r5qYiUr6VQ==
-X-Received: by 2002:a2e:300a:: with SMTP id w10mr8608460ljw.510.1629302124200;
-        Wed, 18 Aug 2021 08:55:24 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.googlemail.com with ESMTPSA id y8sm7917lfh.249.2021.08.18.08.55.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 08:55:23 -0700 (PDT)
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
- <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
- <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
-Date:   Wed, 18 Aug 2021 18:55:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        with ESMTP id S229768AbhHRQFp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 12:05:45 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D677C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 09:05:11 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mGO3s-0008WN-Ib; Wed, 18 Aug 2021 18:05:04 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mGO3p-00088y-QS; Wed, 18 Aug 2021 18:05:01 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mGO3p-0003yw-Pb; Wed, 18 Aug 2021 18:05:01 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH] clk: expand clk_ignore_unused mechanism to keep only a few clks on
+Date:   Wed, 18 Aug 2021 18:04:57 +0200
+Message-Id: <20210818160457.320598-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+X-Patch-Hashes: v=1; h=sha256; i=6fYG3N27aP3RxGkdjJx+eQpQfw+B/9UsoCC6yr5DVh4=; m=Wdwflwi90I4cCBeib1j1UNX47P0rpqfdzRni5sSiBLg=; p=kc1PwVF5dTn2HiF8Yhbu+eW52ORveCw6bmJWvdZ5dzA=; g=f4a36396aa3bbd06149d2f39257e07a5c4e8afbb
+X-Patch-Sig: m=pgp; i=u.kleine-koenig@pengutronix.de; s=0x0D2511F322BFAB1C1580266BE2DCDD9132669BD6; b=iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmEdL6YACgkQwfwUeK3K7An02wf+Jhw xQRBiTEgWzp681eUqbGP+vZXXAD8TX4H3XgFOVOi4VX07YO8G0bnSK5a3FTEQA6p1+kTViaJRJNjn 3QR0ep4V81Yt8ArYGbYsrgyBKytqSfe4ozfXefTv5dp0muwF5YoHVyOe+O4rN6ZvlVdKnt4oG0qfQ SScpQ8hG2ogWyQ5kpGw6xhIDuZ4tKI7g5fE0+FpchjN3Mx5j+1mTV1Pyhxxh0oZN2WDYojmFf0x4C wIdurkHHhsJ6C5lg1s4/gASxGKtqctjjNwJzSL74JHNn8WYSdwTnRT+Snb/Xb8QtomhErDDTenh1G Oj/DkFOcXQRA7B/YEsPUyIUt7eahpZw==
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.08.2021 12:41, Ulf Hansson пишет:
-> On Wed, 18 Aug 2021 at 11:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>
->> On 18-08-21, 10:29, Ulf Hansson wrote:
->>> Me and Dmitry discussed adding a new genpd callback for this. I agreed
->>> that it seems like a reasonable thing to add, if he insists.
+Allow to pass an integer n that results in only keeping n unused clocks
+enabled.
 
-Either way gives the equal result. The new callback allows to remove the
-boilerplate dev_pm_opp_set_rate(clk_get_rate() code from the rpm-resume
-of consumer devices, that's it.
+This helps to debug the problem if you only know that clk_ignore_unused
+helps but you have no clue yet which clock is the culprit.
 
->>> The intent was to invoke the new callback from __genpd_dev_pm_attach()
->>> when the device has been attached to its genpd. This allows the
->>> callback, to invoke clk_get_rate() and then dev_pm_opp_set_rate(), to
->>> update the vote according to the current state of the HW.
->>
->> I wouldn't call dev_pm_opp_set_rate() from there, since it means
->> configure and enable (both) for different resources, clk, regulator,
->> genpd, etc..
-> 
-> Right, good point!
-> 
-> dev_pm_opp_set_rate() is best called from consumer drivers, as they
-> need to be in control.
->> What we need here is just configure. So something like this then:
-The intent wasn't to use dev_pm_opp_set_rate() from
-__genpd_dev_pm_attach(), but to set genpd->rpm_pstate in accordance to
-the h/w configuration.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ Documentation/driver-api/clk.rst |  4 +++-
+ drivers/clk/clk.c                | 33 ++++++++++++++++++++++++--------
+ 2 files changed, 28 insertions(+), 9 deletions(-)
 
-On Tegra we have a chain of PDs and it's not trivial to convert the
-device's OPP into pstate because only the parent domain can translate
-the required OPP.
+diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
+index 3cad45d14187..65ae7c3e2b33 100644
+--- a/Documentation/driver-api/clk.rst
++++ b/Documentation/driver-api/clk.rst
+@@ -259,7 +259,9 @@ the disabling means that the driver will remain functional while the issues
+ are sorted out.
+ 
+ To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
+-kernel.
++kernel. If you pass "clk_ignore_unused=n" (where n is an integer) the first n
++found clocks are not disabled which can be useful for bisecting over the unused
++clks if you don't know yet which of them is reponsible for your problem.
+ 
+ Locking
+ =======
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65508eb89ec9..7189a56bb29f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1236,6 +1236,8 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+ 	clk_pm_runtime_put(core);
+ }
+ 
++static unsigned clk_unused_keep_on __initdata;
++
+ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+@@ -1266,12 +1268,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ 	 * back to .disable
+ 	 */
+ 	if (clk_core_is_enabled(core)) {
+-		trace_clk_disable(core);
+-		if (core->ops->disable_unused)
+-			core->ops->disable_unused(core->hw);
+-		else if (core->ops->disable)
+-			core->ops->disable(core->hw);
+-		trace_clk_disable_complete(core);
++		if (clk_unused_keep_on) {
++			pr_warn("Keep unused clk \"%s\" on\n", core->name);
++			clk_unused_keep_on -= 1;
++		} else {
++			trace_clk_disable(core);
++			if (core->ops->disable_unused)
++				core->ops->disable_unused(core->hw);
++			else if (core->ops->disable)
++				core->ops->disable(core->hw);
++			trace_clk_disable_complete(core);
++		}
+ 	}
+ 
+ unlock_out:
+@@ -1283,9 +1290,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ }
+ 
+ static bool clk_ignore_unused __initdata;
+-static int __init clk_ignore_unused_setup(char *__unused)
++static int __init clk_ignore_unused_setup(char *keep)
+ {
+-	clk_ignore_unused = true;
++	if (*keep == '=') {
++		int ret;
++
++		ret = kstrtouint(keep + 1, 0, &clk_unused_keep_on);
++		if (ret < 0)
++			pr_err("Warning: failed to parse clk_ignore_unused parameter, ignoring");
++	} else {
++		clk_ignore_unused = true;
++	}
+ 	return 1;
+ }
+ __setup("clk_ignore_unused", clk_ignore_unused_setup);
+@@ -1297,6 +1312,8 @@ static int __init clk_disable_unused(void)
+ 	if (clk_ignore_unused) {
+ 		pr_warn("clk: Not disabling unused clocks\n");
+ 		return 0;
++	} else if (clk_ignore_unused) {
++		pr_warn("clk: Not disabling %u unused clocks\n", clk_ignore_unused);
+ 	}
+ 
+ 	clk_prepare_lock();
+-- 
+2.30.2
 
-Viresh, please take a look at what I did in [1]. Maybe it could be done
-in another way.
-
-[1]
-https://patchwork.ozlabs.org/project/linux-tegra/patch/20210701232728.23591-3-digetx@gmail.com/
