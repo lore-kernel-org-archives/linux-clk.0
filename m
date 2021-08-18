@@ -2,181 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3550C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B4CC4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3C9760E76
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:53:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5461361051
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238425AbhHRGxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 02:53:45 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53100
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238046AbhHRGxo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 02:53:44 -0400
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id EE4474066B
-        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 06:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629269589;
-        bh=+VHxmC5l70aOpP0chSpMVVPtyabgSrUdWjrTOo5Mr8s=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=cm1aO3Sv09EM5j+EsUj92TALfn+Xeq/DorXtLwutCdNrZG18LANXhRi+L3/ft9XMF
-         6WeWI0q6RjNVp4Q6VRmXICNP6S4TTf3vLBd8wTQ0X8C19b5k+7NBLu5+Myb3B+Jnom
-         yG6tXSdxJhHK6dsE0GIPsYisUgQfC4bMqp9Px4lkbg2V4EwL4YLSc4MI9uTjzXzpgm
-         TAXFNw0RxRyJfnSitwczVPpf9BNSTzspOkwausE7OwF4vSeUcUdDQqnI4kKceUDB2v
-         673OfWBISVkgTkzVuWChyDP+qNkIV8NoZGqEZFx2AVgHyrMxx+57hXGmBYIcE0fBQS
-         zuGng4osyNIVQ==
-Received: by mail-ed1-f70.google.com with SMTP id a23-20020a50ff170000b02903b85a16b672so548767edu.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 23:53:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+VHxmC5l70aOpP0chSpMVVPtyabgSrUdWjrTOo5Mr8s=;
-        b=p7vGj2Gdw8wEXmU9cybirHVsHD5tawN9ysZ0QzX3On2glLURkFIA1vhoAO9TNWEYqv
-         AM90K7wCGeCmRnfNsSF4WhnzZxgfJKBNaW2rA6WHHUcV3kPa5qdEl+d9XdZpF+J2FjGP
-         aWtVCifLFrLnh1LVEDQlldQp1G1lVZ/+L4ZycPyiZUBKd+B6wyabhJWhlLyFhYBFtEWj
-         qxOgagiOj79TZ5HK/2zERCtahJR9ou/szTtdP7AQLKnZBKzBIcJkKRoEPqAqLEttKHjI
-         z6+ZP8snQjWQKzjxZeMbTXP9J9Dtym1ottHFNrU+7DSFua9OwapBv1rF0fzEsurPqkOm
-         e7wA==
-X-Gm-Message-State: AOAM530cywX7bH7LIWFgeKb/Lc436y2Ai77dP4fJgVNFyXqTpetG6iDz
-        nqaFLrxqyAceN7oppnhlNsZq7Y4K0M9XChyU+sH6Q+FVt+5tqG9xxE/VltUHO/y1kjnQoJeEfBf
-        j9BOmURsIe3pFdDDXK2oFyNRryCsr6EXoySnprg==
-X-Received: by 2002:a17:906:c091:: with SMTP id f17mr8342445ejz.134.1629269589690;
-        Tue, 17 Aug 2021 23:53:09 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy3+WDo899fNiEPzqXXLt1bnNf9Gf711soHWYYqOKByubyBSWsbjXdc6rj1N5EDH49lhNEsaA==
-X-Received: by 2002:a17:906:c091:: with SMTP id f17mr8342431ejz.134.1629269589552;
-        Tue, 17 Aug 2021 23:53:09 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id r19sm2047214edd.49.2021.08.17.23.53.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Aug 2021 23:53:09 -0700 (PDT)
-Subject: Re: [PATCH v2 3/8] dt-bindings: clock: samsung: convert Exynos542x to
- dtschema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sam Protsenko <semen.protsenko@linaro.org>
-References: <20210810093145.26153-1-krzysztof.kozlowski@canonical.com>
- <20210810093145.26153-4-krzysztof.kozlowski@canonical.com>
- <YRwaMWChKoasAFYh@robh.at.kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <4ac27c04-5ee5-b15c-29bd-fce841429522@canonical.com>
-Date:   Wed, 18 Aug 2021 08:53:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S238116AbhHRHAP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 03:00:15 -0400
+Received: from mail-dm6nam12on2070.outbound.protection.outlook.com ([40.107.243.70]:26848
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238103AbhHRHAO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Aug 2021 03:00:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ikPPrnCR7wnB1JbAC/zWxL21q1m/02sUn0zTUT90G1VPl/o2/0RcezHC/boiOyDVZaNVJ9DBpOFGapa5TKD0KYWxkbDqZAWiUjoAckdvSjWn93R7tPAVXDGRsGpwDeLQEUm/Og4qzAguip6OIF88EN48l24dWxWQDk4HEGwj00Kj7OkvnzhbGPUItj8gFPvyMgsAG5zMPtMMCM4XVWuzZ8BZVd+yTCWUAynnUWynqASfxx0LJyvXlk/7UDZpTs4/C6XoCLb5zuDJs/dA5YDNEklEC7wRgotzkkjo9vgfr+ctB5IAEiqXcKXvEYjY6HadSkJvg7FmgKhSE12F+qvacw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PK74OR+v+k/hVkGQrl3fOmwJoHK1+z83BaeWKhDDkGU=;
+ b=D1N9fZsLQLAhqicO3cxmvvppVh06iXcwxM5AIhQR+V0aI6z+niHjV6nZ2gl00yREa9bkwetCwzjusTjMAgJ6DRJRnN1CMQAauXm8Rm0gpbqVs9ruBuGI/HMuZDDjdp00E9BWwhIPL0yMJjLILFKX2OpRG3dlLfoOvfOL1eV+fgwKm5O+U/ma9d2afi8XYAoTaqaFEbxkdspyziv+pFJFuBC7HrPZ3Klr/IO6xoA1n1l6M+9R6O5reHdgsRp/eq+A0a0gfbYz5zxb8dEU6/JcKL6TL22R8184B/0UlqY8iZuS/1Gd+k+1ua6rMkq2wp0W8JgHC03TqSfKkSAeU++Xyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PK74OR+v+k/hVkGQrl3fOmwJoHK1+z83BaeWKhDDkGU=;
+ b=leJJwaQ+fZcNa9elm/OnGW5hbnqfl2qm+al4hSgaqYzdTnWnk1zLJ38tpSjRnW02TV+FHoAXzTyRDXxFejdDPjclE3oH9mhAsL2ovrwy5UJUtrAHfk08G3kbzxML9CTsJq5VJlkB3TQ20UGBmKp8QeaCpEUC9KmyMB4hpw4uffE=
+Received: from BN9P222CA0018.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::23)
+ by DM6PR02MB6780.namprd02.prod.outlook.com (2603:10b6:5:219::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.17; Wed, 18 Aug
+ 2021 06:59:35 +0000
+Received: from BN1NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:408:10c:cafe::1b) by BN9P222CA0018.outlook.office365.com
+ (2603:10b6:408:10c::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.17 via Frontend
+ Transport; Wed, 18 Aug 2021 06:59:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ BN1NAM02FT009.mail.protection.outlook.com (10.13.2.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4436.19 via Frontend Transport; Wed, 18 Aug 2021 06:59:35 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 17 Aug 2021 23:59:34 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Tue, 17 Aug 2021 23:59:34 -0700
+Envelope-to: linux-clk@vger.kernel.org,
+ sboyd@kernel.org,
+ mturquette@baylibre.com
+Received: from [10.140.6.59] (port=53032 helo=xhdshubhraj40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <shubhrajyoti.datta@xilinx.com>)
+        id 1mGFXx-000GPx-2k; Tue, 17 Aug 2021 23:59:33 -0700
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <michal.simek@xilinx.com>, <git-dev@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 0/3] clk: zynqmp: Misc fixes
+Date:   Wed, 18 Aug 2021 12:29:26 +0530
+Message-ID: <20210818065929.12835-1-shubhrajyoti.datta@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <YRwaMWChKoasAFYh@robh.at.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7c5c83c8-6b84-4ff2-9b99-08d96215bd1f
+X-MS-TrafficTypeDiagnostic: DM6PR02MB6780:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB6780AE22DE00016E444B73BFAAFF9@DM6PR02MB6780.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: X1rtIgJfMPgG9kFBc8hSRLOOYQC3IahEzj64nCWOt8nFHnpV6a2ifJxGSpaDW16EnC0K91IwejdnDtD7EHXN1Z0izhp3F5jbFjtfuIY+FvjnxtGActw3ZrtkEaNnvJTMiP2fwzLujLof/cGNlYXdacqn+E6nyvBFZJVvaMGlKaB1X/mCc1G6kQ8+wN/lpUI2K5W/Zn1ALWlkH9rpCGUjRMWlEDfv8oHSWBBXQal7WvbGaW37ceFbmsdsVooH4lrL5QjKFQ2Tv9hWKc3NTVk5v3KvkxeqVYA/abui4rKS2XmW/6K8k8jW+wK3d3pFe4Gxe3PC4ok0MAGE1G3x0HxrQ+2iYlPJEPFQD3XkE393h0UhiMNS0LAHPNzJMtESC9OE4UU66g2Q8a6cW8Kn0IIEJP5mjQcbDFCQ+yEkN73GQmItSzR3GSWnoIrASbpuk8a8VVghSUWmJ4TXbph/t1WBUUvraedbZ6/0azgJzTh2qTOm53V4PTsmt0uEgkMaDOv6PeQbbNz8BigmvyBPogKAhGxMB/0r90g5M8HiIy9e8ao8MYdHD7ECb8w1Tgh288Vb+9mQUB/9Wqi8xLCM5Raevf6I1UUq9gENg3t1P+Sx9QiT+r7oMZob5BGaK8RJfpclksetmOWRN2R3F6mhvGR6brMKlwzpmisD/2oAJJGXDFjXTH3+SiEia9POtZskQ0gVmTZuZjw5QTRZZplMDiZrX8kJE5JZOseNanW4K7ICUZg=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(39860400002)(136003)(46966006)(36840700001)(36906005)(70586007)(6666004)(70206006)(7696005)(54906003)(2616005)(336012)(426003)(316002)(83380400001)(44832011)(4326008)(186003)(9786002)(1076003)(26005)(8936002)(36756003)(478600001)(107886003)(356005)(5660300002)(7636003)(4744005)(82310400003)(82740400003)(2906002)(8676002)(6916009)(36860700001)(47076005)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2021 06:59:35.5107
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c5c83c8-6b84-4ff2-9b99-08d96215bd1f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT009.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6780
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/08/2021 22:21, Rob Herring wrote:
-> On Tue, Aug 10, 2021 at 11:31:40AM +0200, Krzysztof Kozlowski wrote:
->> Merge Exynos542x clock controller bindings to existing DT schema.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->>  .../bindings/clock/exynos5420-clock.txt       | 42 -------------------
->>  .../bindings/clock/samsung,exynos-clock.yaml  | 11 ++++-
->>  2 files changed, 10 insertions(+), 43 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> deleted file mode 100644
->> index 717a7b1531c7..000000000000
->> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> +++ /dev/null
->> @@ -1,42 +0,0 @@
->> -* Samsung Exynos5420 Clock Controller
->> -
->> -The Exynos5420 clock controller generates and supplies clock to various
->> -controllers within the Exynos5420 SoC and for the Exynos5800 SoC.
->> -
->> -Required Properties:
->> -
->> -- compatible: should be one of the following.
->> -  - "samsung,exynos5420-clock" - controller compatible with Exynos5420 SoC.
->> -  - "samsung,exynos5800-clock" - controller compatible with Exynos5800 SoC.
->> -
->> -- reg: physical base address of the controller and length of memory mapped
->> -  region.
->> -
->> -- #clock-cells: should be 1.
->> -
->> -Each clock is assigned an identifier and client nodes can use this identifier
->> -to specify the clock which they consume.
->> -
->> -All available clocks are defined as preprocessor macros in
->> -dt-bindings/clock/exynos5420.h header and can be used in device
->> -tree sources.
->> -
->> -Example 1: An example of a clock controller node is listed below.
->> -
->> -	clock: clock-controller@10010000 {
->> -		compatible = "samsung,exynos5420-clock";
->> -		reg = <0x10010000 0x30000>;
->> -		#clock-cells = <1>;
->> -	};
->> -
->> -Example 2: UART controller node that consumes the clock generated by the clock
->> -	   controller. Refer to the standard clock bindings for information
->> -	   about 'clocks' and 'clock-names' property.
->> -
->> -	serial@13820000 {
->> -		compatible = "samsung,exynos4210-uart";
->> -		reg = <0x13820000 0x100>;
->> -		interrupts = <0 54 0>;
->> -		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
->> -		clock-names = "uart", "clk_uart_baud0";
->> -	};
->> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
->> index cd6567bd8cc7..b0f58a1cf6cb 100644
->> --- a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
->> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
->> @@ -18,7 +18,16 @@ description: |
->>  
->>  properties:
->>    compatible:
->> -    const: samsung,exynos5250-clock
->> +    oneOf:
->> +      - enum:
->> +          - samsung,exynos5250-clock
->> +          - samsung,exynos5420-clock
->> +          - samsung,exynos5800-clock
->> +      - items:
->> +          - enum:
->> +              - samsung,exynos5420-clock
->> +              - samsung,exynos5800-clock
-> 
-> Is there a reason these are supported with or without 'syscon'?
-> 
 
-Yes, the syscon is optional and needed only by the Exynos5422 DMC driver
-(exynos5422-dmc.txt/samsung,exynos5422-dmc.yaml with
-samsung,exynos5422-dmc compatible). Without that driver, there is no
-need for syscon.
+The series fixes
+- Memory leak 
+- A stack-out-of-bounds in strncpy
+- Adds a check for return type
 
+Ian Nam (1):
+  clk: zynqmp: Fix stack-out-of-bounds in strncpy`
 
-Best regards,
-Krzysztof
+Shubhrajyoti Datta (2):
+  clk: zynqmp: Check the return type
+  clk: zynqmp: Fix a memory leak
+
+ drivers/clk/zynqmp/clk-mux-zynqmp.c |  2 +-
+ drivers/clk/zynqmp/clkc.c           | 11 ++++++++---
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
+
