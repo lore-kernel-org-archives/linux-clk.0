@@ -2,164 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC67C4320A
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 14:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC356C432BE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 14:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 428F9610A3
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 14:07:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3BEF61076
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 14:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238022AbhHROHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 10:07:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235121AbhHROHl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 10:07:41 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23442C061764;
-        Wed, 18 Aug 2021 07:07:06 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id x12so3693126wrr.11;
-        Wed, 18 Aug 2021 07:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i6nHV4Vzm5Umu6SJhmhoU8e3Ow8sOCfq6m4vf5vpOCg=;
-        b=ZJdtuwUuQvNaAbdr9Fz2fAvktw5J/+5+vjt8im/pkRZqyKjHlmqluk+dpJgPv/GFEk
-         rs7jlCk5NOlSnehipLU0nyzn/A/7FZS7QQCaIl7MSF6vAha+BX6LZBrQQREaflmjEitO
-         dlEahiAy8zC6MjFccmUrLBYvfs88a8jl/uHALh0tSc5Nn+N5OqlxOYEPLAvMwQAyowns
-         Ndkxrox4afb9mQcpEWWL0GiCRmTwzTOHCYxL6M4H8oWTYs7RmlUoqU0WistPX7vqT8pO
-         6Su4Nkctsrk6dlh0F8i2tqudBygnvEpqj+ChJ3xGjixCFrJ6bgmI3P/HGSPs7QQyovGr
-         4V5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i6nHV4Vzm5Umu6SJhmhoU8e3Ow8sOCfq6m4vf5vpOCg=;
-        b=ppTKTa/703CeAEI59hNnPTP/m+Te09QvsyLaeQh0wbfGD3ANAmhKMOlfhQXmALYSWs
-         DlxWkHbk1MN+JvtWh6lDqeUG7D+zicVKtvEX1pCIwk1UPaSTijlDGylYiZs+97zGeaHP
-         GCjLexRwAm6GmTygFxVYwAA11t6uWcWH2IJIhfgF1P6z35GqpeVkbJbJBtQPb8V8hsjl
-         eY7uj0ZgwV6BTFl3ObiJ+uUIQHDaGIICQBqNhZ1fPmAvqeR8gD3ar5rM4WdhRARzjA+u
-         HLroI4XkcBeKM3auSgk/dAaQlHG78hntBNSiuk+w+p+AWXJ1Ktcq0UKeoHR77GZdYob3
-         zv5Q==
-X-Gm-Message-State: AOAM531/qHmw0w9EyI5oh5UVYX8+7+9wnrwn4tterqWOKh2FChP7EGci
-        ixA7Jxc1TL0TXzc4XHUZtZQ=
-X-Google-Smtp-Source: ABdhPJyXq9/0R+WfXjdNLNbDmiuZklvSlQEBjFaDDAdAwgPSc6Y2VNRCrYkje8+AywzsdZxW8DAWow==
-X-Received: by 2002:a5d:500a:: with SMTP id e10mr11157882wrt.332.1629295624742;
-        Wed, 18 Aug 2021 07:07:04 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id e2sm6158851wrq.56.2021.08.18.07.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 07:07:03 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 16:07:02 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 07/34] clk: tegra: Support runtime PM and power domain
-Message-ID: <YR0UBi/ejy+oF4Hm@orome.fritz.box>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-8-digetx@gmail.com>
+        id S238670AbhHROLy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 10:11:54 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:10804 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237685AbhHROLv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 10:11:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1629295877; x=1660831877;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4VmM9ZNVHVnJYp/t04FpAX6jOEInODFD5vbJTml5Jyk=;
+  b=SnaBoBiqOeltLUFmYQSyE982+7PnnFLikxF5lmKrP4h3ACfxDhCQH+A7
+   XDzXoaw83W8czXN2V80A0IRMPyOeim8b2BWZ7JogrWPiRnCd+vyUSDmRM
+   L1gkOEltEC+IzhEW/hRiciG1Di2LV444jYhDIFtmJ6IQcv0YvObBSK8me
+   vmm9QfUo1+GSjES+WWkpeHIR4D11TLUL24JtztMCX5bXcYYd0+lA7Owxy
+   5CioSLhlro2A3g/sFy9pKJxsFRRBl9UDdGOHx+LmBdiiZI6bYbC9qeMYE
+   FE6xBM02iahx/JRl3AgpSv1xC2BIN2xVAybGozScdw1cXIk4hYGJasAo0
+   A==;
+IronPort-SDR: RnkTIISZZHYz3I4T5HPtI7gLHwAk7SOsTI4Md0EuAFXY0qCc0mUumggh18y5dOYnSftpoaVfA+
+ ATSJ8Kfnj0ZZelPTxmzRouDyCNzAunHmhpgNmaYo/Udxq2F8oiqxTklxYm1LckLaWI+wmWElMX
+ ZcDevNxDYi4OyZmXsKWcUpiP1L54wsE27MBO+gDu1sxOlinMZMHfdzPzl3on6EE5wGegk+m2BY
+ RX4+XpZijvLX3ih43yw9FZAuIXzYKDjagPjyTULuW11J+bVdyrbny3msXm7TGJyvzladst4dX+
+ 3LZpd2G0DxAN1Jzqm7k0ciS/
+X-IronPort-AV: E=Sophos;i="5.84,330,1620716400"; 
+   d="scan'208";a="132736037"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Aug 2021 07:11:16 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Wed, 18 Aug 2021 07:11:15 -0700
+Received: from daire-X570.school.villiers.net (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Wed, 18 Aug 2021 07:11:13 -0700
+From:   <daire.mcnamara@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <cyril.jean@microchip.com>, <conor.dooley@microchip.com>,
+        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>
+Subject: [PATCH v5 0/2 resend] CLK: microchip: Add clkcfg driver for Microchip PolarFire SoC
+Date:   Wed, 18 Aug 2021 15:11:00 +0100
+Message-ID: <20210818141102.36655-1-daire.mcnamara@microchip.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GjgnhAguwPYREA1d"
-Content-Disposition: inline
-In-Reply-To: <20210817012754.8710-8-digetx@gmail.com>
-User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Daire McNamara <daire.mcnamara@microchip.com>
 
---GjgnhAguwPYREA1d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Not too sure what happened here.  Just resending to get things moving
+again.
 
-On Tue, Aug 17, 2021 at 04:27:27AM +0300, Dmitry Osipenko wrote:
-[...]
-> +struct clk *tegra_clk_register(struct clk_hw *hw)
-> +{
-> +	struct platform_device *pdev;
-> +	struct device *dev = NULL;
-> +	struct device_node *np;
-> +	const char *dev_name;
-> +
-> +	np = tegra_clk_get_of_node(hw);
-> +
-> +	if (!of_device_is_available(np))
-> +		goto put_node;
-> +
-> +	dev_name = kasprintf(GFP_KERNEL, "tegra_clk_%s", hw->init->name);
-> +	if (!dev_name)
-> +		goto put_node;
-> +
-> +	pdev = of_platform_device_create(np, dev_name, NULL);
-> +	if (!pdev) {
-> +		pr_err("%s: failed to create device for %pOF\n", __func__, np);
-> +		kfree(dev_name);
-> +		goto put_node;
-> +	}
-> +
-> +	dev = &pdev->dev;
-> +	pm_runtime_enable(dev);
-> +put_node:
-> +	of_node_put(np);
-> +
-> +	return clk_register(dev, hw);
-> +}
+This patchset adds support for the Microchip PolarFire clkcfg
+hardware block.
 
-This looks wrong. Why do we need struct platform_device objects for each
-of these clocks? That's going to be a massive amount of platform devices
-and they will completely mess up sysfs.
+Major changes since v4:
+* Adjusted license for microchip,mpfs-clock.h to match microchip,mpfs.yaml
+* Corrected the number of clocks to 33 from 32
 
-Thierry
+Major changes since v3:
+* Patch reformatted so microchip,mpfs-clock.h is part of device-tree patch
 
---GjgnhAguwPYREA1d
-Content-Type: application/pgp-signature; name="signature.asc"
+Major changes since v2:
+* In mpfs_cfg_clk_set_rate, return immediately if divider_get_val
+    returns <0 
+* rebased to v5.12-rc1
 
------BEGIN PGP SIGNATURE-----
+Major changes since v1:
+ * Dependency on SOC_MICROCHIP_POLARFIRE
+ * All references to PFSOC/pfsoc changed to MPFS/mpfs
+ * Cleaned error handling in _probe
+ * Re-ordered code to place structs et al at top
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEdFAYACgkQ3SOs138+
-s6HeRQ/+On1vzXNiDk0hs4KISsGV+2p4XxyJVq/mvJWq4nwbzB0fnbltpnQGekNK
-rv9LKvLwpMpikV4RHOysHn4hnusz+I3P/SOJVq8nB5ctz7QEcklxJNgaKIyY3Nri
-JD8EiV936HB8R2Ecg5fEynk0MHmJ4+Pe1pFjfK/3i6l1Xx5Xy+jt/AwHXkTAJG6B
-LilpaYxjeYK0xLVY0uy/3TWmSNj7zmA9NLYadLedHWKAIrmfdhL4qEn0keHZPjeN
-wTRUkexp/mHpfwaNRpUvHM2sF6WuetFM6FrIIAEyVB4SSq3usTLtWtFWl3qca2Vi
-f/LKNT+GlKsS7vs6/bokHE5CtOc1bbILItuJCunjCSnOgElWzJ+WV2oAdBodcDr9
-AaDHCtN1kTr/1f0KYw3zKQHErq1Z9sRrTeETjAkYSE6agOOHm+eBIkPF38mdl7ZN
-eI5syiX8NwgIHv4jp1YR6lbvplx9XhD9Se4EcrgNSytiYYWfZMDEyH3dFTzCjzyT
-E5pNO8BuA8JHJWCUYtqjl+OccK0XhnR99XyHvsb1HM+jT0EqRjLc59PJlOwQeX2f
-KwOX9DhOQf+ZyRegAHSh4uNpR2fySasbnBT7RwyG17MKbeoTEqTOTJ5QZmMXSqDa
-kNchGN8JwMPpyDcw6adERGyrLYh0tFLdrM+1JjImnnDrLx9SuRo=
-=yj83
------END PGP SIGNATURE-----
+Daire McNamara (2):
+  dt-bindings: clk: microchip: Add Microchip PolarFire host binding
+  clk: microchip: Add driver for Microchip PolarFire SoC
 
---GjgnhAguwPYREA1d--
+ .../bindings/clock/microchip,mpfs.yaml        |  67 +++
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/microchip/Kconfig                 |   7 +
+ drivers/clk/microchip/Makefile                |   6 +-
+ drivers/clk/microchip/clk-mpfs.c              | 444 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  45 ++
+ 7 files changed, 569 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+ create mode 100644 drivers/clk/microchip/Kconfig
+ create mode 100644 drivers/clk/microchip/clk-mpfs.c
+ create mode 100644 include/dt-bindings/clock/microchip,mpfs-clock.h
+
+
+base-commit: 9f4ad9e425a1d3b6a34617b8ea226d56a119a717
+prerequisite-patch-id: 6f7f70120adfa8e938b97517f0c664e43e8745a0
+prerequisite-patch-id: 4ea37008d23838aa2e0658811fe15462f6cdbd87
+-- 
+2.25.1
+
