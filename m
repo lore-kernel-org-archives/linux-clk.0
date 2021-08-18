@@ -3,280 +3,179 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F204EC432BE
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 20:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60443C4320E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDEDD60EB9
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Aug 2021 20:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4585160F39
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232605AbhHQU0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Aug 2021 16:26:46 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:38404 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbhHQU0q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 16:26:46 -0400
-Received: by mail-ot1-f51.google.com with SMTP id 108-20020a9d01750000b029050e5cc11ae3so26393802otu.5;
-        Tue, 17 Aug 2021 13:26:12 -0700 (PDT)
+        id S236173AbhHRBPq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Aug 2021 21:15:46 -0400
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:35374 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232294AbhHRBPo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 21:15:44 -0400
+Received: by mail-ot1-f45.google.com with SMTP id f16-20020a056830205000b00519b99d3dcbso807650otp.2;
+        Tue, 17 Aug 2021 18:15:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Jwv4/AsABqqbZxTyNSClz3yIj4zaoG7ZZxQJMXVkY5M=;
-        b=mdpM0c46FFWboCwNsOASYbwX0i5LuedG4VqDAm2F74U2OzX7tExskSDLaSl+8xmzgo
-         p/YJPJbvWLFugiFKdhj3ghsEPuJexLa2mBowDaBzGscXL2ihAJZpdjt8EBOVx9xgN7P5
-         a9MvIx0kX63tn5nqkTr9RTSkLDvcQPCUB5oewd6NxRR1HFrTiqKLJJIJ8DGqcBr109Mb
-         S5cHhHkNMQfHN3bzSuBjOLUJwoEg3DH9Hf/9+Yo7PqKahYzp0ulSU9Dckzwx+70TOLlZ
-         9+3f1jUZnhONoTBi9n0GrzvI6kTVu09sjBzOF30JOY00/VDOQLVn9+aL9A1KqL9eykJd
-         o8eg==
-X-Gm-Message-State: AOAM532azfguz+NZJeBH8a69vVSOJkYA+MDaLSNQuoHRlc4bUiAE8Sr5
-        dTeMMuPu5ubOEX0wu2tmQA==
-X-Google-Smtp-Source: ABdhPJyc8IVEtDkOqCHSGdj045OkJ/ExCWQA+FZrC8VyI4LW6fvMBIPMnj0fMMioLTVH8rTBUrfG8Q==
-X-Received: by 2002:a9d:6359:: with SMTP id y25mr4043386otk.274.1629231972035;
-        Tue, 17 Aug 2021 13:26:12 -0700 (PDT)
+        bh=RM2dmchpI6KmQKuD+RgubJedkIA6WkX9t/jyVLdUt3Q=;
+        b=M/yPllpnPj3TZCZVEA18tJCv0QVZrZggPomFdRAhNbq9gQbXUAUdvRZNHsSF36y72M
+         0l1ky8wIehQvPxVmUQRU9qtc15Emjy/xV5oExxJN66WqBw0GJHEApsYlg5dBzBXk3NDs
+         KFowaVVlsWeFxBGveWZxOTvUPIF+0zd9DRshAjtDwKgO8jjOLAVmpE5HYZbxh/GHDsci
+         uxBh9TDdsVuK2eDptDSYiQZZ5W1mHQbxUiCcE/oCOvl8DOpn5zBIr/cT3C6WO+wsYlbs
+         FUhROK8iZ8pRq5hIUrvs+0glR2sNsSqhERk9gMQ5GLqjPqZYPpO2OsdkKD7smxvOolln
+         435A==
+X-Gm-Message-State: AOAM531fxHcv2v3ead0V9UchaMijLKVLlDYc6XB9tIO2P4CvC7scT/mX
+        I1AzhmDBH5bmBm25+PiehQ==
+X-Google-Smtp-Source: ABdhPJydb95sxSyCE8JTQ37Yp3+d+zCUT2I4Mgdlk82Qz5QqNFm3xA06SoTPwD6X93TSb4zbZLUInw==
+X-Received: by 2002:a05:6830:1f54:: with SMTP id u20mr4796930oth.320.1629249309809;
+        Tue, 17 Aug 2021 18:15:09 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f33sm402653otf.0.2021.08.17.13.26.10
+        by smtp.gmail.com with ESMTPSA id o7sm662196oih.34.2021.08.17.18.15.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 13:26:11 -0700 (PDT)
-Received: (nullmailer pid 781404 invoked by uid 1000);
-        Tue, 17 Aug 2021 20:26:10 -0000
-Date:   Tue, 17 Aug 2021 15:26:10 -0500
+        Tue, 17 Aug 2021 18:15:08 -0700 (PDT)
+Received: (nullmailer pid 1174643 invoked by uid 1000);
+        Wed, 18 Aug 2021 01:15:06 -0000
+Date:   Tue, 17 Aug 2021 20:15:06 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sam Protsenko <semen.protsenko@linaro.org>
-Subject: Re: [PATCH v2 6/8] dt-bindings: clock: samsung: convert Exynos AudSS
- to dtschema
-Message-ID: <YRwbYiS7VTd/NdS5@robh.at.kernel.org>
-References: <20210810093145.26153-1-krzysztof.kozlowski@canonical.com>
- <20210810093145.26153-7-krzysztof.kozlowski@canonical.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v8 06/34] dt-bindings: clock: tegra-car: Document new
+ tegra-clocks sub-node
+Message-ID: <YRxfGtWPXeSQXuHo@robh.at.kernel.org>
+References: <20210817012754.8710-1-digetx@gmail.com>
+ <20210817012754.8710-7-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210810093145.26153-7-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210817012754.8710-7-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 11:31:43AM +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Audio SubSystem clock controller bindings to DT
-> schema format using json-schema.
+On Tue, Aug 17, 2021 at 04:27:26AM +0300, Dmitry Osipenko wrote:
+> Document tegra-clocks sub-node which describes Tegra SoC clocks that
+> require a higher voltage of the core power domain in order to operate
+> properly on a higher clock rates.  Each node contains a phandle to OPP
+> table and power domain.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> The root PLLs and system clocks don't have any specific device dedicated
+> to them, clock controller is in charge of managing power for them.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
->  .../clock/samsung,exynos-audss-clock.yaml     |  79 ++++++++++++++
->  2 files changed, 79 insertions(+), 103 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+>  .../bindings/clock/nvidia,tegra20-car.yaml    | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-> deleted file mode 100644
-> index 6030afb10b5c..000000000000
-> --- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-> +++ /dev/null
-> @@ -1,103 +0,0 @@
-> -* Samsung Audio Subsystem Clock Controller
-> -
-> -The Samsung Audio Subsystem clock controller generates and supplies clocks
-> -to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
-> -binding described here is applicable to all SoCs in Exynos family.
-> -
-> -Required Properties:
-> -
-> -- compatible: should be one of the following:
-> -  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
-> -  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
-> -    SoCs.
-> -  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
-> -    SoCs.
-> -  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
-> -    SoCs.
-> -- reg: physical base address and length of the controller's register set.
-> -
-> -- #clock-cells: should be 1.
-> -
-> -- clocks:
-> -  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
-> -    is used if not specified.
-> -  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
-> -    is used if not specified.
-> -  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
-> -    specified.
-> -  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
-> -    not specified.
-> -  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
-> -    specified.
-> -
-> -- clock-names: Aliases for the above clocks. They should be "pll_ref",
-> -  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
-> -
-> -Optional Properties:
-> -
-> -  - power-domains: a phandle to respective power domain node as described by
-> -    generic PM domain bindings (see power/power_domain.txt for more
-> -    information).
-> -
-> -The following is the list of clocks generated by the controller. Each clock is
-> -assigned an identifier and client nodes use this identifier to specify the
-> -clock which they consume. Some of the clocks are available only on a particular
-> -Exynos4 SoC and this is specified where applicable.
-> -
-> -Provided clocks:
-> -
-> -Clock           ID      SoC (if specific)
-> ------------------------------------------------
-> -
-> -mout_audss      0
-> -mout_i2s        1
-> -dout_srp        2
-> -dout_aud_bus    3
-> -dout_i2s        4
-> -srp_clk         5
-> -i2s_bus         6
-> -sclk_i2s        7
-> -pcm_bus         8
-> -sclk_pcm        9
-> -adma            10      Exynos5420
-> -
-> -Example 1: An example of a clock controller node using the default input
-> -	   clock names is listed below.
-> -
-> -clock_audss: audss-clock-controller@3810000 {
-> -	compatible = "samsung,exynos5250-audss-clock";
-> -	reg = <0x03810000 0x0C>;
-> -	#clock-cells = <1>;
-> -};
-> -
-> -Example 2: An example of a clock controller node with the input clocks
-> -           specified.
-> -
-> -clock_audss: audss-clock-controller@3810000 {
-> -	compatible = "samsung,exynos5250-audss-clock";
-> -	reg = <0x03810000 0x0C>;
-> -	#clock-cells = <1>;
-> -	clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
-> -		<&ext_i2s_clk>;
-> -	clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
-> -};
-> -
-> -Example 3: I2S controller node that consumes the clock generated by the clock
-> -           controller. Refer to the standard clock bindings for information
-> -           about 'clocks' and 'clock-names' property.
-> -
-> -i2s0: i2s@3830000 {
-> -	compatible = "samsung,i2s-v5";
-> -	reg = <0x03830000 0x100>;
-> -	dmas = <&pdma0 10
-> -		&pdma0 9
-> -		&pdma0 8>;
-> -	dma-names = "tx", "rx", "tx-sec";
-> -	clocks = <&clock_audss EXYNOS_I2S_BUS>,
-> -		<&clock_audss EXYNOS_I2S_BUS>,
-> -		<&clock_audss EXYNOS_SCLK_I2S>,
-> -		<&clock_audss EXYNOS_MOUT_AUDSS>,
-> -		<&clock_audss EXYNOS_MOUT_I2S>;
-> -	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
-> -		      "mout_audss", "mout_i2s";
-> -};
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-> new file mode 100644
-> index 000000000000..d60b29fa22e7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/samsung,exynos-audss-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+> index 459d2a525393..7f5cd27e4ce0 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+> @@ -42,6 +42,48 @@ properties:
+>    "#reset-cells":
+>      const: 1
+>  
+> +  tegra-clocks:
+> +    description: child nodes are the output clocks from the CAR
+> +    type: object
 > +
-> +title: Samsung Exynos SoC Audio SubSystem clock controller
-> +
-> +maintainers:
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +  - Tomasz Figa <tomasz.figa@gmail.com>
-> +
-> +description: |
-> +  All available clocks are defined as preprocessor macros in
-> +  include/dt-bindings/clock/exynos-audss-clk.h header.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos4210-audss-clock
-> +      - samsung,exynos5250-audss-clock
-> +      - samsung,exynos5410-audss-clock
-> +      - samsung,exynos5420-audss-clock
-> +
-> +  clocks:
-> +    minItems: 2
-> +    items:
-> +      - description:
-> +          Fixed rate PLL reference clock, parent of mout_audss. "fin_pll" is
-> +          used if not specified.
-> +      - description:
-> +          Input PLL to the AudioSS block, parent of mout_audss. "fout_epll" is
-> +          used if not specified.
-> +      - description:
-> +          Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if not
-> +          specified.
-> +      - description:
-> +          PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not specified.
-> +      - description:
-> +          External i2s clock, parent of mout_i2s. "cdclk0" is used if not
-> +          specified.
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    items:
-> +      - const: pll_ref
-> +      - const: pll_in
-> +      - const: sclk_audio
-> +      - const: sclk_pcm_in
-> +      - const: cdclk
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  power-domains: true
+> +    patternProperties:
+> +      "^[a-z]+[0-9]+$":
+> +        type: object
+> +        properties:
+> +          compatible:
+> +            allOf:
+> +              - items:
+> +                  - enum:
+> +                      - nvidia,tegra20-sclk
+> +                      - nvidia,tegra30-sclk
+> +                      - nvidia,tegra30-pllc
+> +                      - nvidia,tegra30-plle
+> +                      - nvidia,tegra30-pllm
+> +              - const: nvidia,tegra-clock
 
-How many?
+You are saying the first string must be both one of the enums and 
+'nvidia,tegra-clock'. You don't get an error because your pattern 
+doesn't match 'sclk'.
 
 > +
-> +  reg:
-> +    maxItems: 1
+> +          operating-points-v2:
+> +            $ref: /schemas/types.yaml#/definitions/phandle
+> +            description:
+> +              Phandle to OPP table that contains frequencies, voltages and
+> +              opp-supported-hw property, which is a bitfield indicating
+> +              SoC process or speedo ID mask.
+
+Just 'operating-points-v2: true' is enough.
+
 > +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - "#clock-cells"
-> +  - reg
+> +          clocks:
+> +            items:
+> +              - description: node's clock
 > +
-> +additionalProperties: false
+> +          power-domains:
+> +            maxItems: 1
+> +            description: phandle to the core SoC power domain
 > +
-> +examples:
-> +  - |
-> +    clock-controller@3810000 {
-> +        compatible = "samsung,exynos5250-audss-clock";
-> +        reg = <0x03810000 0x0c>;
-> +        #clock-cells = <1>;
-> +        clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>, <&ext_i2s_clk>;
-> +        clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
-> +    };
+> +        required:
+> +          - compatible
+> +          - operating-points-v2
+> +          - clocks
+> +          - power-domains
+> +
+> +        additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -59,6 +101,15 @@ examples:
+>          reg = <0x60006000 0x1000>;
+>          #clock-cells = <1>;
+>          #reset-cells = <1>;
+> +
+> +        tegra-clocks {
+> +            sclk {
+> +                compatible = "nvidia,tegra20-sclk", "nvidia,tegra-clock";
+> +                operating-points-v2 = <&opp_table>;
+> +                clocks = <&tegra_car TEGRA20_CLK_SCLK>;
+> +                power-domains = <&domain>;
+> +            };
+> +        };
+>      };
+>  
+>      usb-controller@c5004000 {
 > -- 
-> 2.30.2
+> 2.32.0
 > 
 > 
