@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5E2C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E26C4320E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 22:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57185610D2
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 21:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B84CC6113B
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 22:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233971AbhHRVnY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 17:43:24 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:44348 "EHLO gloria.sntech.de"
+        id S234379AbhHRWPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 18:15:34 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:44644 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234009AbhHRVnY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Aug 2021 17:43:24 -0400
+        id S234106AbhHRWPd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Aug 2021 18:15:33 -0400
 Received: from [212.185.68.41] (helo=phil.client.m3-hotspots.de)
         by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <heiko@sntech.de>)
-        id 1mGTKf-0001Wh-RY; Wed, 18 Aug 2021 23:42:45 +0200
+        id 1mGTpj-0001gc-9s; Thu, 19 Aug 2021 00:14:51 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>, Peter Geis <pgwipeout@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/8] fixes and enablement for rk356x
-Date:   Wed, 18 Aug 2021 23:42:44 +0200
-Message-Id: <162932289621.2860738.15310161824918921933.b4-ty@sntech.de>
+To:     Jon Lin <jon.lin@rock-chips.com>, linux-spi@vger.kernel.org
+Cc:     Heiko Stuebner <heiko@sntech.de>, hjc@rock-chips.com,
+        linux-rockchip@lists.infradead.org, p.yadav@ti.com,
+        sboyd@kernel.org, macroalpha82@gmail.com,
+        linux-arm-kernel@lists.infradead.org, yifeng.zhao@rock-chips.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        broonie@kernel.org, linux-mtd@lists.infradead.org,
+        sugar.zhang@rock-chips.com, jbx6244@gmail.com, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: (subset) [PATCH v13 0/6] Add Rockchip SFC(serial flash controller) support
+Date:   Thu, 19 Aug 2021 00:14:48 +0200
+Message-Id: <162932487840.2867187.12225818198624183651.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210728180034.717953-1-pgwipeout@gmail.com>
-References: <20210728180034.717953-1-pgwipeout@gmail.com>
+In-Reply-To: <20210812134546.31340-1-jon.lin@rock-chips.com>
+References: <20210812134546.31340-1-jon.lin@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -43,36 +46,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 28 Jul 2021 14:00:26 -0400, Peter Geis wrote:
-> Good Morning,
+On Thu, 12 Aug 2021 21:45:40 +0800, Jon Lin wrote:
+> Changes in v13:
+> - Provide independent interfaces to obtain RX TX FIFO status respectively
+> - Add more debug information
+> - Depress DMA limitation
 > 
-> This series aims to fix some early issues with the rk356x and enable
-> nodes that are currently supported by the available drivers.
-> 
-> 1. fixes the mbi-alias, which points to the wrong location
-> 2. fixes the rockchip clk-pll to work without a grf node
-> 3. adds the gpio debounce clocks which are necessary for gpio to bind
-> 4. adds the common gmac1 node
-> 5. adds the tsadc nodes
-> 6. adjusts the gpll and ppll clocks to better support hardware
-> 7. enables the gmac1 on the Quartz64
-> 8. adds thermal support to the Quartz64
+> Changes in v12:
+> - Remove useless oneOf lable
+> - Add sfc controller discription
+> - Remove the limitation of SFC_MIN_SPEED_HZ
+> - Add IRQ_NONE method for irq handler
+> - Add SPI_MASTER_HALF_DUPLEX flags
+> - Add sfc interrupt mask bits and status register initial progress
 > 
 > [...]
 
 Applied, thanks!
 
-[5/8] arm64: dts: rockchip: add rk3568 tsadc nodes
-      commit: 1a9563ba0a59b221156d80a3a77a43fdd144576c
-
-[I've moved the tsadc-pin pin setting to the second pinctrl
- block meant to hand-crafted pin settings in rk3568-pinctrl.dtsi]
-
-
-[8/8] arm64: dts: rockchip: add thermal support to Quartz64 Model A
-      commit: d0e2e61b3cbaab474e2093ceb2073c4441bd36f8
-
-Looks like we're all done with that series now.
+[3/6] arm64: dts: rockchip: Add SFC to PX30
+      commit: c68defec1585819af54f011fa4d47892b38fb74a
+[4/6] arm: dts: rockchip: Add SFC to RV1108
+      commit: 9d508827c7939242e8ed6b06f66aa87d9f7ea832
+[5/6] arm64: dts: rockchip: Add SFC to RK3308
+      commit: ab438ba2dc6b7bd3dce8e3c8b0f131905cd133d9
+[6/6] arm64: dts: rockchip: Enable SFC for Odroid Go Advance
+      commit: f9576999b0aef399e7cb1065787032d42198c362
 
 Best regards,
 -- 
