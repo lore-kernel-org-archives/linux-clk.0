@@ -2,99 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE0AC4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D039C4320E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9EA460238
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:20:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E48960F5E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 01:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234828AbhHRBVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Aug 2021 21:21:07 -0400
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:44571 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232410AbhHRBVG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 21:21:06 -0400
-Received: by mail-ot1-f50.google.com with SMTP id l36-20020a0568302b24b0290517526ce5e3so760722otv.11;
-        Tue, 17 Aug 2021 18:20:32 -0700 (PDT)
+        id S235913AbhHRBiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Aug 2021 21:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234723AbhHRBiB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Aug 2021 21:38:01 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F81BC061764;
+        Tue, 17 Aug 2021 18:37:27 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id d4so1029316lfk.9;
+        Tue, 17 Aug 2021 18:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oqxDNn5HuSgDYxtU1DC9Dd6JFHUoPgcSzl8BngM0suw=;
+        b=tH07Ag8eiBTNGPOIyiICGem/XAlGbrx9wzA1AYXo5k0KS9zDRDkRtCVqSG5jFzW2VO
+         GjAu9tNgXKNtwAzjnF/jHaAKn3t9S2/BI/ubLCao4tYBfnPsNCQfKpg5NbRkjXPFfl89
+         o2AFA8APp2Hb5BZhl84unBgpnMCH8jZKxkejm1GjOdyNjXG4drZ4cuhx3rMCgcFD6NUP
+         PbFOcLMGACtfUZ2JeTEXxuvnXov1sCN/Toqiy/qwb8+yrYekuN1OEWngV0f+9HB2mVTI
+         IJdr97jZuur2MRVfVSk2iXaYSGLsNIixSiM5hkfvafyYXNZKmo6LxpEEX8DqogXnEx3D
+         VoRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SvKci2pGuG7ajQwJqFrJTn5mqUzF+JKynExPCCsdFYI=;
-        b=lX4ZiWBwjAeKqlK/nkbkIk4CHAGr1HZbhKE2hF+SXpBx6DYunb6cz8VL2ZwH90JJwW
-         5uC1Y7OeYOOyik4H8o11AcpZO6n3GsHqBjgXP8pSYBQ0GH+/86qBK90tkR44d++aLBFd
-         rH6bQ/IKnt6XxNitlXs3aABspCfPYYLe5Ft09gkLe1kXM3VN7p3kAA+0uEJEz+7n7zvL
-         l4lovIMH8fCkZd6s8wqvo+yWU0Rp5j3ftW9ZcliW4KHKceSkkVheI5z363vF3aQSiCU1
-         Tk9Gg/ojptwKGWHyDaY0dozzS4Cd5PVBjIdY394AReyrU48KGAYNXVaXaTH+deGApFK0
-         Si0w==
-X-Gm-Message-State: AOAM530ekd3Dp58+GjFXX8hWNwnA+1Z1FL9jPIKMItss71gOUBM7SIJo
-        BFbfC07UXBJg/EWJoE9VOg==
-X-Google-Smtp-Source: ABdhPJw+xR0Z6Q/+z2YaeF5ZyVo4tytqq09prFN4la6ON8Lt4wub10K9mhw5q6rk8gFvLBnMjoJ6XA==
-X-Received: by 2002:a9d:71c7:: with SMTP id z7mr5012000otj.194.1629249632592;
-        Tue, 17 Aug 2021 18:20:32 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d26sm781598oos.41.2021.08.17.18.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 18:20:32 -0700 (PDT)
-Received: (nullmailer pid 1182736 invoked by uid 1000);
-        Wed, 18 Aug 2021 01:20:30 -0000
-Date:   Tue, 17 Aug 2021 20:20:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-watchdog@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-serial@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        John Crispin <john@phrozen.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [v2,02/12] clk: mediatek: add mt7986 clock IDs
-Message-ID: <YRxgXso7qQcAqg6+@robh.at.kernel.org>
-References: <20210817074557.30953-1-sam.shih@mediatek.com>
- <20210817074557.30953-3-sam.shih@mediatek.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oqxDNn5HuSgDYxtU1DC9Dd6JFHUoPgcSzl8BngM0suw=;
+        b=NwQErHqH9Z/E1HnWwHnEJ7oGH4NgwuH3mVvp+CCB7rqTdT2tEYfxB9AkWhDahtHeqc
+         iSovX21xedEqIcoVsAWPujGQuFRzwA4SgOAKV17SSLshk6CpzpcJll4usdLinPsvPqzH
+         dt/qah85P47PhcrYLY/Docf0S+WqTEL+AtJbFIMx6l4aZZvT41QWErfBweYuMxZh+OXr
+         /IVSNMcZ4X2hupnYryQOV4Dg6zCtHDYMW4Q8A+2BZvtWnRd/zfpM6yblhd3ziEsaRkn0
+         XaxbN1+jQ7QIL3RUSEHzeC8GMK+XP02ZGi0s51AiIAgI/bwIMceh6RUfaf5ZeMDyf20W
+         +xgA==
+X-Gm-Message-State: AOAM533RRMXI80MzMLDhY3FxMSz2LVOz9fqoihcuHn+6Y7PDm3o/3ASH
+        nS7IyNLEEt38gFyVsG1jlU9Du0mRets=
+X-Google-Smtp-Source: ABdhPJzO8yX4UrQj2zwLBNG/ezqRBlNp4JuMFF5+U48En2dYUq2KE3FpodsT/MFV5XUcHXk+BK/l0g==
+X-Received: by 2002:a05:6512:3441:: with SMTP id j1mr4537443lfr.388.1629250645475;
+        Tue, 17 Aug 2021 18:37:25 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
+        by smtp.googlemail.com with ESMTPSA id d25sm409518lja.31.2021.08.17.18.37.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 18:37:24 -0700 (PDT)
+Subject: Re: [PATCH v8 09/34] dt-bindings: host1x: Document Memory Client
+ resets of Host1x, GR2D and GR3D
+To:     Rob Herring <robh@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210817012754.8710-1-digetx@gmail.com>
+ <20210817012754.8710-10-digetx@gmail.com>
+ <YRxfWJJ6+1GgVs33@robh.at.kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fa9a1fb7-8a87-de1a-e40a-fdc4f4d05d57@gmail.com>
+Date:   Wed, 18 Aug 2021 04:37:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210817074557.30953-3-sam.shih@mediatek.com>
+In-Reply-To: <YRxfWJJ6+1GgVs33@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 17 Aug 2021 15:45:47 +0800, Sam Shih wrote:
-> Add MT7986 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg, and ethernet subsystem clocks.
+18.08.2021 04:16, Rob Herring пишет:
+> On Tue, Aug 17, 2021 at 04:27:29AM +0300, Dmitry Osipenko wrote:
+>> Memory Client should be blocked before hardware reset is asserted in order
+>> to prevent memory corruption and hanging of memory controller.
+>>
+>> Document Memory Client resets of Host1x, GR2D and GR3D hardware units.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../bindings/display/tegra/nvidia,tegra20-host1x.txt          | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> index 62861a8fb5c6..07a08653798b 100644
+>> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> @@ -18,6 +18,7 @@ Required properties:
+>>  - resets: Must contain an entry for each entry in reset-names.
+>>    See ../reset/reset.txt for details.
+>>  - reset-names: Must include the following entries:
+>> +  - mc
+>>    - host1x
 > 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> 
-> ---
-> v2: changed to dual licience
->     applied the comment suggested by reviewers:
->     - removed 1:1 factor clock
->     - renamed factor clock for easier to understand
-> 
-> ---
->  include/dt-bindings/clock/mt7986-clk.h | 169 +++++++++++++++++++++++++
->  1 file changed, 169 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt7986-clk.h
-> 
+> New entries should be at the end. Order matters.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Indeed, order matters. In this case it matters by the hardware because
+memory reset must be asserted before the controller's reset. We rely on
+it in the code of the GENPD driver. Hence it's the intended order in
+this patch.
