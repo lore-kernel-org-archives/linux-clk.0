@@ -2,116 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF354C4320A
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 17:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412BDC4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 18:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8017610E8
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 17:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 279A6610FF
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 18:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbhHRRYl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 13:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbhHRRYk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 13:24:40 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE1EC061764;
-        Wed, 18 Aug 2021 10:24:05 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id y34so6154737lfa.8;
-        Wed, 18 Aug 2021 10:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GAv6SuF4eSj8Jq3W6VuB4wY+Y7DhAYK2C8cvnt48BwA=;
-        b=OfKnmZ3T9Qb8HI5W7GPWXDlieZS0O8KzL+vFnG3wV003wkNIM7zLIcbMPaZV9yYF1Y
-         cMOjm0MheLL2CRrIs8DC2K9N1eVCWCaDsVSSikNKN2DkxTSyD7OhYYBAImKT9/HMCkap
-         Gr9Y+wK7NSOmC8NjxIznaaozosxtoumPvLwtjwYFV2WhONfGechAcboi0jMsRkdmWexs
-         dJkGtU3UNsZlMMt0vkVQBATO80wkY01UPa7V13WGnrzYHtoeNT3GK6eR7oqd5xSSYvpt
-         UbvMRFNwmdAjvxcYwYj5Bn415TPmyl/Gw0zEoqGhTt7a1uBUd5w/QJWfR+p+qExVRY3y
-         fwYQ==
+        id S232479AbhHRS5u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 14:57:50 -0400
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:37454 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229558AbhHRS5t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 14:57:49 -0400
+Received: by mail-oi1-f171.google.com with SMTP id u10so4797664oiw.4;
+        Wed, 18 Aug 2021 11:57:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GAv6SuF4eSj8Jq3W6VuB4wY+Y7DhAYK2C8cvnt48BwA=;
-        b=EQnigRajDLSJu7faMMPZCLt6fD4Tl6/k0yPKZ6Vh0HBFc49XrCTTVHRdppWZZyxBz0
-         ojk2IHKAQUe0Rt2aMQ09/po6MKUZVXiCYm1O2zQSCTbjXJ/0LUx4hNRLoRrMfuAERC8v
-         2v92bIwmufPjbC9ps3FdFC7cvb1yHg2EhqmZvjFmpkgfefXHhy/IjCixbPSUI4gmkAeU
-         G0ap3/D1XMo+UYTf11FXHTydWs5fTJOUc+7+7+9SE93Q36qR1SU81ioFufRAMfGvwrYW
-         cK0MZuYmOKsx0kEIefulTd40ONkpcvc0JyVAXVbReXxaUSaHKXNAqmxAfzYpCcLeeMOG
-         jyag==
-X-Gm-Message-State: AOAM532MsgNXqOevSVwYEfi0KoLu+BC8wxkY2czvtFI101SVLLadbTy5
-        inbvDFi8JSf0pOL6T6n3hkQKK6BWJJI=
-X-Google-Smtp-Source: ABdhPJz2totLY2glZaQrN56jcVR6UJ865rvHiBaSqRD7LPq8+CU52UR+LaQb1/rmqGyWq/hbRnECbg==
-X-Received: by 2002:a05:6512:21d1:: with SMTP id d17mr7501000lft.588.1629307443410;
-        Wed, 18 Aug 2021 10:24:03 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.googlemail.com with ESMTPSA id 3sm47300ljq.136.2021.08.18.10.24.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 10:24:03 -0700 (PDT)
-Subject: Re: [PATCH v8 11/34] gpu: host1x: Add runtime PM and OPP support
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-12-digetx@gmail.com>
- <CAPDyKFrax-EYtO03W5QWM2tcWLWeMM8hHZCRYFcsenuiP2zObQ@mail.gmail.com>
- <YRvBkyfFCqthBIBV@orome.fritz.box>
- <CAPDyKFp+9Bv3EVSnV683ixNXzukJtmG_QrS5C1ZQqLxv9QJ-bQ@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e2ab73d3-c543-5c5d-5b51-6ff42446907c@gmail.com>
-Date:   Wed, 18 Aug 2021 20:24:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HgC/ybyqY3X3Vyc30SD07sx/L7/EMecf/ovzzZJ1g38=;
+        b=OgvIOA9O0e2T2/hoW0rspACg6u6+ipq2GHQP2ySF0zAo4ABB/ubj8XhDXiIXGSlJWW
+         o7f7Soy7tPEfBab7rHENNUi5Kta+LYr0SN4XPfqG7aYiALwaY4kSUwaceun5nvBfpsIA
+         WO6JId4leSRtX5S/644dfgHMDy52s2yqb6/X4Eb2TOrE0WZbo2lokZXjw7uvqJXnNEW0
+         YyCAVkdQ55EMQCvFvR2L3qSvTZ3E4p4KAE/5Jijv8tVIGxajAl45/yBQeao8cPgWFUl+
+         lRtPd26QuTXTqEobqACwn9ubRLytuMqwACOrUspbl7GqFyH62n3u8BygqHoKcvfczEZp
+         iZ9A==
+X-Gm-Message-State: AOAM533PV5hIQockP6/w3C/R6bBNcXgW4deS+EmkD/yE4U7C84Mo1pwL
+        aHD5XEX1EX2ks/LHtT4x0Q==
+X-Google-Smtp-Source: ABdhPJwzSPvubnhVgW47Y5Dwns3AygYxs7DpyYgSd9vAbHMUltIm1e+LYC477sfZZfHpSTiibsVoQg==
+X-Received: by 2002:aca:3246:: with SMTP id y67mr8191826oiy.67.1629313034235;
+        Wed, 18 Aug 2021 11:57:14 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f1sm178396otl.48.2021.08.18.11.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 11:57:13 -0700 (PDT)
+Received: (nullmailer pid 2913887 invoked by uid 1000);
+        Wed, 18 Aug 2021 18:57:11 -0000
+Date:   Wed, 18 Aug 2021 13:57:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     daire.mcnamara@microchip.com
+Cc:     palmer@dabbelt.com, mturquette@baylibre.com,
+        conor.dooley@microchip.com, david.abdurachmanov@gmail.com,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        cyril.jean@microchip.com, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 1/2 resend] dt-bindings: clk: microchip: Add Microchip
+ PolarFire host binding
+Message-ID: <YR1YB8wcZCWGYzWg@robh.at.kernel.org>
+References: <20210818141102.36655-1-daire.mcnamara@microchip.com>
+ <20210818141102.36655-2-daire.mcnamara@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFp+9Bv3EVSnV683ixNXzukJtmG_QrS5C1ZQqLxv9QJ-bQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210818141102.36655-2-daire.mcnamara@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.08.2021 11:35, Ulf Hansson пишет:
-> Thanks for clarifying! As I said, feel free to ignore my comments then.
+On Wed, 18 Aug 2021 15:11:01 +0100, daire.mcnamara@microchip.com wrote:
+> From: Daire McNamara <daire.mcnamara@microchip.com>
 > 
-> For this and the other patches in the series, I assume you only need
-> to care about whether the driver is a cross SoC driver and used on
-> other platforms than Tegra then.
+> Add device tree bindings for the Microchip PolarFire system
+> clock controller
+> 
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> ---
+>  .../bindings/clock/microchip,mpfs.yaml        | 67 +++++++++++++++++++
+>  .../dt-bindings/clock/microchip,mpfs-clock.h  | 45 +++++++++++++
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+>  create mode 100644 include/dt-bindings/clock/microchip,mpfs-clock.h
+> 
 
-Yes, and all drivers touched by this series are Tegra-only drivers.
+Reviewed-by: Rob Herring <robh@kernel.org>
