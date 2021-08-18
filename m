@@ -2,146 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8D9C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E97C4320A
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 050BD60FDA
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB9A60FE6
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 06:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238724AbhHRG2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 02:28:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239160AbhHRG2F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 02:28:05 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 504C2C0613A3
-        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 23:27:26 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id s11so1188756pgr.11
-        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 23:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ynpJGQ+aoMGoVR3/TzuLa6jhj83G7NCnezbFysKyDck=;
-        b=rkMxRzllxsu72p9VoE+F1Y2uNFqfHroY89seElO0F/IF9+njGBhH+JhTjiV6p10xBW
-         RZkVVmBoHTbmBO5qy0Cu5P7Yjfpn+Q0pDbpgd//DyVd9iIE8FToCC+snGEMZelh3paY/
-         +hPtSq0td+yzw80H6HXZomYGW6ujPphQgl+LDlsExLGmraR/J0ZHNe7yOVInyCFXmT/P
-         91wgqIKeFsyocJA7qECcUweDwMNTMng3I+m8yWPcUOWHp3ukJGcj7wwvK4fm1T2uIjDm
-         QM2rYu2cAoeXaM+8hLCXU5bhhQmCXVpZaudJg93f24DbqOKNah/15WaZUn/RqJ/MrtRh
-         mNtg==
+        id S238650AbhHRGuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Aug 2021 02:50:02 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:50266
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238425AbhHRGuB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Aug 2021 02:50:01 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id BAEEE40CD0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 06:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629269365;
+        bh=koyaZ5FIZxDdS33SITxLj7wHGHh/MSdOiD6GS5fpHeg=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=LxH8xivxknKbu4PGoNssjfpIhFmTTJS13p40vXmGzRWBM8fZhw6sjJJ3oQsC3RUOq
+         xQ5m3MjNoHlNhJAdVnea8HHideSZIFVb4Mgwjjc1uOoHuQeIAKLor5aqiZ5u7surzl
+         MSG0eQR9xo6hBnlKXLo3x07cAGB4DZqTLinqtwjLLqa0Xv+HGtmDnRG0SIa8Ln7UA+
+         6ITkLPfu+K6zc9F2O8ajLai2sVydqLk4SNqnYeK++s8/ARpuioYq/zVPC1M7SdYVcf
+         bfI91/PpBabdySBu6YuShmiUOyM0BpLCcLZEUHdwY8S99Iss0SEkLp8br90B2/XTlH
+         Zq7vAM6m8K7ag==
+Received: by mail-ed1-f70.google.com with SMTP id bx23-20020a0564020b5700b003bf2eb11718so515776edb.20
+        for <linux-clk@vger.kernel.org>; Tue, 17 Aug 2021 23:49:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ynpJGQ+aoMGoVR3/TzuLa6jhj83G7NCnezbFysKyDck=;
-        b=sci4dOArFWXDDy+EOYo/Euc9v9hwGxSAqpmsYUVL57yaSqAtNfiSBtV1S2XVfRgTFR
-         b33f+yRUbR+WSaObyeqvhvRXcDq6dJt4KVkS1lJaZQhNI2HpGkzN+vvvO64KSb1coHbx
-         JTMJyze7C16vjza0cq8Qgc4sgiyxlywN0f7vOJdPhvWZSdm4REuF+OcKxCsG00kfAvgw
-         eyV4cu6qI+Sv7Tk7TYgkZx2Q348TvcQAzvj0SlXlPoIn+/Qj8QmJBhDzK01oFM5n9qej
-         qK25ZuQuYewZepZv8lCFrvPwJM4tQwyicVP3ttciqkoCHSnriCZY/gDWmfbYdzwuTqWW
-         NdTg==
-X-Gm-Message-State: AOAM533g+xipUN0JwX7FHDFbYfiUVdWbE2p47SQCQfeML61BhotNTBj4
-        636JAnW6KFpzpoQd+5ycWJ+qfA==
-X-Google-Smtp-Source: ABdhPJyUhfdCbjMBESEOiqAS08eZgxAs7V5/0XRqW4UZTe3K4OmwyniXAPYZlVBrx4vmpFlW5lQzVA==
-X-Received: by 2002:a62:ea0f:0:b029:319:8eef:5ff1 with SMTP id t15-20020a62ea0f0000b02903198eef5ff1mr7706167pfh.74.1629268045601;
-        Tue, 17 Aug 2021 23:27:25 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id l12sm4457595pff.182.2021.08.17.23.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 23:27:24 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 11:57:23 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=koyaZ5FIZxDdS33SITxLj7wHGHh/MSdOiD6GS5fpHeg=;
+        b=SrfL5BOuw9iTfGCztk+UkbpWlH6spd3E+c9D1rWybAetn4+pC4AYWYAD+iITXAICWJ
+         TuDKNHpnqfEAJ1biVDUeRY+hgLetF+ktTbs4yH96VWxVAOoiDBLvG8ARujvbA8TmenTP
+         9rLnkJwjBjfFTi8LPyriJ4MOc6SB66uRXtyenLDBzd+gkD2NY8RbZYMwmYxjYezRpWrc
+         jG45a4C0DuyZQxtrHY9qCTJsae8bInhxPYNp5x01q64Ew3gu8LKx0cKq413EFRRrEfbQ
+         R5Ib0JBW3oA8ADsQi/MVAhtRhrexCiBKHhfijZRvgKfZ9ITEn6ewUB9QwJsHKCyV//WC
+         Krcw==
+X-Gm-Message-State: AOAM530zdcN7F1GWFqtk8CDW8vBaOl47/HpS/3uJWANXI5ocKbfx8OWs
+        QcLiQ9rIkbStTSvmeSj6TEKALlGrU60cq3LA/p9PBNi3MsgpYgT+U8ILfWpKGs3qG6VDdcUVBIV
+        Nl0/JMf951hMP/Je0gQG1PEVPPMfRDoiZpXrjzQ==
+X-Received: by 2002:a17:906:1f8e:: with SMTP id t14mr8154724ejr.313.1629269365316;
+        Tue, 17 Aug 2021 23:49:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzWhQFCV598TtTdTr1EoTmYGq5dI5oFgzC45QcBRmM+oIeH6pPwo+Is9DtzMEBVJyV2Y08tYw==
+X-Received: by 2002:a17:906:1f8e:: with SMTP id t14mr8154708ejr.313.1629269365121;
+        Tue, 17 Aug 2021 23:49:25 -0700 (PDT)
+Received: from [192.168.8.102] ([86.32.42.198])
+        by smtp.gmail.com with ESMTPSA id f20sm1580873ejz.30.2021.08.17.23.49.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 23:49:24 -0700 (PDT)
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: samsung: convert Exynos5250 to
+ dtschema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
-References: <20210817075515.vyyv7z37e6jcrhsl@vireshk-i7>
- <710261d9-7ae3-5155-c0a2-f8aed2408d0b@gmail.com>
- <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
- <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
- <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>
+References: <20210810093145.26153-1-krzysztof.kozlowski@canonical.com>
+ <20210810093145.26153-2-krzysztof.kozlowski@canonical.com>
+ <YRwZG1uerWt+NAQH@robh.at.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <c7311cd1-7e62-91d9-bbbd-cfc3c027da35@canonical.com>
+Date:   Wed, 18 Aug 2021 08:49:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <YRwZG1uerWt+NAQH@robh.at.kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-08-21, 09:22, Dmitry Osipenko wrote:
-> 18.08.2021 08:58, Viresh Kumar пишет:
-> > What about calling dev_pm_opp_set_rate(dev, clk_get_rate(dev)) here
-> > instead ? That will work, right ? The advantage is it works without
-> > any special routine to do so.
+On 17/08/2021 22:16, Rob Herring wrote:
+> On Tue, Aug 10, 2021 at 11:31:38AM +0200, Krzysztof Kozlowski wrote:
+>> Convert Samsung Exynos5250 clock controller bindings to DT schema format
+>> using json-schema.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  .../bindings/clock/exynos5250-clock.txt       | 41 ----------------
+>>  .../bindings/clock/samsung,exynos-clock.yaml  | 48 +++++++++++++++++++
+>>  MAINTAINERS                                   |  1 +
+>>  3 files changed, 49 insertions(+), 41 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>> deleted file mode 100644
+>> index aff266a12eeb..000000000000
+>> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>> +++ /dev/null
+>> @@ -1,41 +0,0 @@
+>> -* Samsung Exynos5250 Clock Controller
+>> -
+>> -The Exynos5250 clock controller generates and supplies clock to various
+>> -controllers within the Exynos5250 SoC.
+>> -
+>> -Required Properties:
+>> -
+>> -- compatible: should be one of the following.
+>> -  - "samsung,exynos5250-clock" - controller compatible with Exynos5250 SoC.
+>> -
+>> -- reg: physical base address of the controller and length of memory mapped
+>> -  region.
+>> -
+>> -- #clock-cells: should be 1.
+>> -
+>> -Each clock is assigned an identifier and client nodes can use this identifier
+>> -to specify the clock which they consume.
+>> -
+>> -All available clocks are defined as preprocessor macros in
+>> -dt-bindings/clock/exynos5250.h header and can be used in device
+>> -tree sources.
+>> -
+>> -Example 1: An example of a clock controller node is listed below.
+>> -
+>> -	clock: clock-controller@10010000 {
+>> -		compatible = "samsung,exynos5250-clock";
+>> -		reg = <0x10010000 0x30000>;
+>> -		#clock-cells = <1>;
+>> -	};
+>> -
+>> -Example 2: UART controller node that consumes the clock generated by the clock
+>> -	   controller. Refer to the standard clock bindings for information
+>> -	   about 'clocks' and 'clock-names' property.
+>> -
+>> -	serial@13820000 {
+>> -		compatible = "samsung,exynos4210-uart";
+>> -		reg = <0x13820000 0x100>;
+>> -		interrupts = <0 54 0>;
+>> -		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+>> -		clock-names = "uart", "clk_uart_baud0";
+>> -	};
+>> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+>> new file mode 100644
+>> index 000000000000..cd6567bd8cc7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+>> @@ -0,0 +1,48 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/samsung,exynos-clock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Samsung Exynos SoC clock controller
+>> +
+>> +maintainers:
+>> +  - Chanwoo Choi <cw00.choi@samsung.com>
+>> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> +  - Tomasz Figa <tomasz.figa@gmail.com>
+>> +
+>> +description: |
+>> +  All available clocks are defined as preprocessor macros in
+>> +  dt-bindings/clock/ headers.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: samsung,exynos5250-clock
+>> +
+>> +  assigned-clocks: true
+>> +  assigned-clock-parents: true
+>> +  assigned-clock-rates: true
 > 
-> It will work, but a dedicated helper is nicer.
+> These can be dropped. They are always allowed if 'clocks' is present.
 > 
-> > I also wonder looking at your gr3d.c changes, you set a set-opp
-> > helper, but the driver doesn't call set_opp_rate at all. Who calls it
-> > ?
+>> +  clocks: true
 > 
-> dev_pm_opp_sync() calls it from _set_opp().
-
-Okay, please use dev_pm_opp_set_rate() instead then. New helper just
-adds to the confusion and isn't doing anything special apart from
-doing clk_get_rate() for you.
-
-> > And if it is all about just syncing the genpd core, then can the genpd
-> > core do something like what clk framework does? i.e. allow a new
-> > optional genpd callback, get_performance_state() (just like
-> > set_performance_state()), which can be called initially by the core to
-> > get the performance to something other than zero. opp-set-rate is
-> > there to set the performance state and enable the stuff as well.
-> > That's why it looks incorrect in your case, where the function was
-> > only required to be called once, and you are ending up calling it on
-> > each resume. Limiting that with another local variable is bad as well.
+> This needs to define how many.
 > 
-> We discussed variant with get_performance_state() previously and Ulf
-> didn't like it either since it still requires to touch 'internals' of GENPD.
 
-Hmm, I wonder if that would be a problem since only genpd core is
-going to call that routine anyway.
+Right, thanks.
 
--- 
-viresh
+
+Best regards,
+Krzysztof
