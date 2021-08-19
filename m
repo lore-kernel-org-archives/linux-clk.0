@@ -2,132 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567B6C4338F
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 22:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E6C4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 22:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D06D610F9
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 22:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60AC76109E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 22:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236881AbhHSWVO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Aug 2021 18:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40296 "EHLO
+        id S232906AbhHSWdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 18:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236194AbhHSWVN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 18:21:13 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57A0C061575;
-        Thu, 19 Aug 2021 15:20:36 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id g13so16062749lfj.12;
-        Thu, 19 Aug 2021 15:20:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cSioMNug0d6kxUexh1FC9hTGrtcP9xpdjQR0XQQ6CYo=;
-        b=J3VpzNeE7GqDLaNcadrCTNd6cyZfYXW7ces/SuDyrw1d/28XcNn6N+DzEWmGnDD/tQ
-         SoLjonmdEv+K67l7YB0f4xQ305y80qihUAThFt01+KBxrDINvGkhPcmCvtlU5sHPBDbx
-         M71O17tNhqPr+OmAN9VOz+4Q7pIBIEyoj6SH0ySrJLRtzsTWwdbnVhskZKjVbRPHRaWm
-         +GaOVUAE0cvv6+nA+ln7XoB+9psFnKu9U3jrYuDGEC/pYeGQBmT2Xm3y538F/wiQgagE
-         srBA+yPJ+iPcl2RL23Y4diEfalcBHPDOPAb4qZl7q12ixhhyPtL63uHAQVl2E6t4EK21
-         t4gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cSioMNug0d6kxUexh1FC9hTGrtcP9xpdjQR0XQQ6CYo=;
-        b=lHxzn9lc2vVlM1OZ8wZi5g1psXJxvpAkA3WBosajap4jFbTwjWXmILHuVmpoAp4vPA
-         Sp3dKZ8eaElmuwyMrlkyFlgDMKx7Gh95Gg1DjiDrdh+o5HV1fEhT7S505eAKg2akZtLs
-         x44HIqhT4QgqhMVNBAoMKVnXwPYxen1IZcdSzrT9MU7D6CqMGX8JNWv9x5vgzS0TL1rY
-         MRX746nL8OO2ThvEoodLXOz5nl7+E4VyBVTaP1xLNcevXXK51ACaJSpFTb7JNGZdQQ86
-         Bx1ZbCKDKRnOvi3Qi0UeAzRd3ir8rUjWizV/dMWUhG2sASEKy7kAzDovv8mdRxEs0Deq
-         FCGQ==
-X-Gm-Message-State: AOAM533bDFERqpl9zvHycMIedaazLrzIwOFoM6T1LvaIYPBNM/CUcXMx
-        bBYnbc7eUeAfQ6XiVzm/b8MIzDSVGM8=
-X-Google-Smtp-Source: ABdhPJxJWs7Kxo/s8N+hb+4RWNHipznlH5BHUAb+HUpiZwCTMet2wXRVLZZrxtwaXHrGmtOIkJjuVA==
-X-Received: by 2002:a05:6512:38a1:: with SMTP id o1mr11689501lft.606.1629411634907;
-        Thu, 19 Aug 2021 15:20:34 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.googlemail.com with ESMTPSA id w14sm433095lfk.161.2021.08.19.15.20.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 15:20:34 -0700 (PDT)
-Subject: Re: [PATCH v8 06/34] dt-bindings: clock: tegra-car: Document new
- tegra-clocks sub-node
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        with ESMTP id S229532AbhHSWdQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 18:33:16 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86ADAC061575;
+        Thu, 19 Aug 2021 15:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=fgrMqdI59QDQirrUi1yV5QqI7hDGiY78fzkpEzX1ANk=; b=rwgecTFDRCR2CJJaEbr3hvgjhS
+        5Mm16be69xiTWuhlHJMH5sLCWWi/dL4Fg8G5NxBvEokbqZgtTCYYQmoeH/THojKksSHpnTIlJ9x8O
+        aMivYE6r9qMD8jptdsQbJ/8ZLrcD6ZrajM2bnjSuNDxpXgIwgBLBD2T4cMTv+gcmczDtf580ZRMvZ
+        3OZbmbSH9NTvrO9cbcXjZuYJP4sQU05DUzjNSRzCSjufZXMZakJR+Y+gihCdIr1k3H381meziEKNX
+        rEyYmAGJwgipcDIpTx4tdOo7FDsiEZTOW8TiLvQY2bTwbVhhR/bNOmoumAucrseZp9DT81dkl+sAD
+        7HYr8Nfw==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mGqaU-009eWu-Ew; Thu, 19 Aug 2021 22:32:38 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-7-digetx@gmail.com> <YR0SSz7KMh7TwaFW@orome.fritz.box>
- <eff5ef47-e6e0-3e03-cf1a-d931b0f2dc2a@gmail.com>
- <YR033zuYWWLCeYpM@orome.fritz.box>
- <a5b942cb-1611-9ae1-6e89-4b68fdaf03e3@gmail.com>
- <YR6HWMuYcF6NIepi@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <43f0c69a-c62d-5d36-ac59-8ce7513e9496@gmail.com>
-Date:   Fri, 20 Aug 2021 01:20:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] clk: at91: sama7g5: remove all kernel-doc & kernel-doc warnings
+Date:   Thu, 19 Aug 2021 15:32:37 -0700
+Message-Id: <20210819223237.20115-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <YR6HWMuYcF6NIepi@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-19.08.2021 19:31, Thierry Reding пишет:
->>>>> Also, I don't think the tegra- prefix is necessary here. The parent node
->>>>> is already identified as Tegra via the compatible string.
->>>>>
->>>>> In the case of CAR, I'd imagine something like:
->>>>>
->>>>> 	clocks {
->>>>> 		sclk {
->>>>> 			operating-points-v2 = <&opp_table>;
->>>>> 			power-domains = <&domain>;
->>>>> 		};
->>>>> 	};
->>>>>
->>>>> Now you've only got the bare minimum in here that you actually add. All
->>>>> the other data that you used to have is simply derived from the parent.
->>>> 'clocks' is already a generic keyword in DT. It's probably not okay to
->>>> redefine it.
->>> "clocks" is not a generic keyword. It's the name of a property and given
->>> that we're talking about the clock provider here, it doesn't need a
->>> clocks property of its own, so it should be fine to use that for the
->>> node.
->> I'm curious what Rob thinks about it. Rob, does this sound okay to you?
-> Another alternative would be to omit that level altogether and just make
-> sclk and siblings direct children of the CAR node.
+Remove all "/**" kernel-doc markers from sama7g5.c since they are
+all internal to this driver source file only.
+This eliminates 14 warnings that were reported by the kernel test robot.
 
-That can be done.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+v2: use /* instead of /** comments for internal documentation (as
+    suggested by Claudiu)
+
+ drivers/clk/at91/sama7g5.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+--- linux-next-20210819.orig/drivers/clk/at91/sama7g5.c
++++ linux-next-20210819/drivers/clk/at91/sama7g5.c
+@@ -35,7 +35,7 @@ static DEFINE_SPINLOCK(pmc_pll_lock);
+ static DEFINE_SPINLOCK(pmc_mck0_lock);
+ static DEFINE_SPINLOCK(pmc_mckX_lock);
+ 
+-/**
++/*
+  * PLL clocks identifiers
+  * @PLL_ID_CPU:		CPU PLL identifier
+  * @PLL_ID_SYS:		System PLL identifier
+@@ -56,7 +56,7 @@ enum pll_ids {
+ 	PLL_ID_MAX,
+ };
+ 
+-/**
++/*
+  * PLL type identifiers
+  * @PLL_TYPE_FRAC:	fractional PLL identifier
+  * @PLL_TYPE_DIV:	divider PLL identifier
+@@ -118,7 +118,7 @@ static const struct clk_pll_characterist
+ 	.output = pll_outputs,
+ };
+ 
+-/**
++/*
+  * PLL clocks description
+  * @n:		clock name
+  * @p:		clock parent
+@@ -285,7 +285,7 @@ static const struct {
+ 	},
+ };
+ 
+-/**
++/*
+  * Master clock (MCK[1..4]) description
+  * @n:			clock name
+  * @ep:			extra parents names array
+@@ -337,7 +337,7 @@ static const struct {
+ 	  .c = 1, },
+ };
+ 
+-/**
++/*
+  * System clock description
+  * @n:	clock name
+  * @p:	clock parent name
+@@ -361,7 +361,7 @@ static const struct {
+ /* Mux table for programmable clocks. */
+ static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 5, 6, 7, 8, 9, 10, };
+ 
+-/**
++/*
+  * Peripheral clock description
+  * @n:		clock name
+  * @p:		clock parent name
+@@ -449,7 +449,7 @@ static const struct {
+ 	{ .n = "uhphs_clk",	.p = "mck1", .id = 106, },
+ };
+ 
+-/**
++/*
+  * Generic clock description
+  * @n:			clock name
+  * @pp:			PLL parents
