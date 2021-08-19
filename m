@@ -2,308 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A22AC4338F
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 19:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9A0C4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 20:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49A5561053
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 19:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED86A610E5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 20:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbhHSTgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Aug 2021 15:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
+        id S233212AbhHSUVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 16:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbhHSTgh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 15:36:37 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF38C061575;
-        Thu, 19 Aug 2021 12:36:00 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id d4so15213001lfk.9;
-        Thu, 19 Aug 2021 12:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DULWQbyXgQID8PNJR65q3ui7SrWpcCN+90FL5qtDGW4=;
-        b=pavH6Or3hHtiPfMvi8hlpl/tg+4iNkFsKU223QQBDdOUdi6iU/UGWUvtDPrwHRvATY
-         T93cP1HXuc5W/zHN7xvpRXKJW7BinJL9sVNA6qZxjeijHdmFtCqxrxnpd+WkEHRtVU0B
-         Iyqua5rSNmWSDpSD3gZsArfjTWgs81iBNdQYXU+kNJ+OumOnoCaZh+LP24EMz52MwP27
-         4AWCJslbtOmcFHBYAOMwZEDrmTB/tzURM30c4z+24S3Lj2lVdIHxSFuPOnhXpzmvotQF
-         wvsrbFpOMxH2mR1ZpXZ7XMAP/i3UFW88iZgByQUfkdB9/YhjC/JuWWWMJqO4edcr+32D
-         1LbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DULWQbyXgQID8PNJR65q3ui7SrWpcCN+90FL5qtDGW4=;
-        b=MKJco/gKyQlbu/ORhfO2U9SK1IXfyN/MhtBN5/QYfhCOiA5aCduDu7NBgULnQUVQSp
-         FPA+/SshhskLooLR+AD3cjkXnoFEQOHCMi6nNAbSDwHYAvqdtnpDpi1kK5f+6ScAHis2
-         6xukc/xX/KPlKPeQvKo73x+r6fQr+4duAoA5dSBPn9+DCcIVS3WEy1SDIO0RshL3Khjc
-         mK9mZrRugMl1plgK+B2/HTfs15yVHNyisbn46c27hLqNfyQniDOjsQ76wsxQBFes1pSa
-         eo5ShN1OXVUdsHDVXgrcZIIb5Nqe6HwF0TWjKuuqwjR0JHEPEPcqanep3oshptvyjwRb
-         4oPg==
-X-Gm-Message-State: AOAM5300DGOdpjrsp9rYN9Kw41x6iJj9XLN8IfrljTRwBE8YAtJUIX7R
-        YT2lH5HBucA4vxxD4yEpMC1g+oEIFI0=
-X-Google-Smtp-Source: ABdhPJz8kaZlUqWZzmjPF+roXrLNhHc7Bu21Y9J69HyMCnrDHOaQ6jNYy2BIrPwa/yg8Go50EqboLQ==
-X-Received: by 2002:a05:6512:23aa:: with SMTP id c42mr11397932lfv.55.1629401759119;
-        Thu, 19 Aug 2021 12:35:59 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.googlemail.com with ESMTPSA id l24sm396141lfe.272.2021.08.19.12.35.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 12:35:58 -0700 (PDT)
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <20210818095044.e2ntsm45h5cddk7s@vireshk-i7>
- <CAPDyKFrFF00xGDWPCQnPwF0_QkG4TB2UqggpuBpp8LY_CMKP-A@mail.gmail.com>
- <0354acbe-d856-4040-f453-8e8164102045@gmail.com>
- <CAPDyKFoQdn1rm91iFNJwZwpSYcKJBjDLqtJB4KZAkhgY1Grm-Q@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <87073fc2-d7b3-98f4-0067-29430ea2adef@gmail.com>
-Date:   Thu, 19 Aug 2021 22:35:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        with ESMTP id S231683AbhHSUVa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 16:21:30 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7639C061575
+        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 13:20:53 -0700 (PDT)
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id EBE868032E;
+        Thu, 19 Aug 2021 22:20:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1629404451;
+        bh=WjJ++G/pBDOGVfUD3axdgR5VWf7Bk8K+OciLvf52Y8Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fuNOKAezeTwiRCGcVEq4HwFuTdGIxFasXBSozJruv01tB+T1qnOsHHcM5Be6al+W9
+         dOR/IL6dGmGvjSfB+ImYZ1etpeBr7BOCq/uEUJrQzEaxP+dWJ8KFnE/AxpwBD7MNMs
+         6x0ZJN4jV3wmP1Za6Si4fR6Hdz3coPg/qE9sowoOAUfYQslNr9UAYULV5uLkBgwB4T
+         gM1P3Rj6gnBfZoqV5FpJlumP19Cg0kEGsHFcQEtBp6eDOSToOEAHvWCtzojTMsV2TM
+         iQpZVW5GzzRP85Z4zl7cfujTwWBKOAb7fjCTwTYoXFylVFuz3WuXQuThmtuHZHi/hX
+         jiJPenR3NqxJA==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH] clk: imx8mn: Add M7 core clock
+Date:   Thu, 19 Aug 2021 22:20:36 +0200
+Message-Id: <20210819202036.2084782-1-marex@denx.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoQdn1rm91iFNJwZwpSYcKJBjDLqtJB4KZAkhgY1Grm-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-19.08.2021 16:07, Ulf Hansson пишет:
-> On Wed, 18 Aug 2021 at 17:43, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 18.08.2021 13:08, Ulf Hansson пишет:
->>> On Wed, 18 Aug 2021 at 11:50, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>>>
->>>> On 18-08-21, 11:41, Ulf Hansson wrote:
->>>>> On Wed, 18 Aug 2021 at 11:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>>>>> What we need here is just configure. So something like this then:
->>>>>>
->>>>>> - genpd->get_performance_state()
->>>>>>   -> dev_pm_opp_get_current_opp() //New API
->>>>>>   -> dev_pm_genpd_set_performance_state(dev, current_opp->pstate);
->>>>>>
->>>>>> This can be done just once from probe() then.
->>>>>
->>>>> How would dev_pm_opp_get_current_opp() work? Do you have a suggestion?
->>>>
->>>> The opp core already has a way of finding current OPP, that's what
->>>> Dmitry is trying to use here. It finds it using clk_get_rate(), if
->>>> that is zero, it picks the lowest freq possible.
->>>>
->>>>> I am sure I understand the problem. When a device is getting probed,
->>>>> it needs to consume power, how else can the corresponding driver
->>>>> successfully probe it?
->>>>
->>>> Dmitry can answer that better, but a device doesn't necessarily need
->>>> to consume energy in probe. It can consume bus clock, like APB we
->>>> have, but the more energy consuming stuff can be left disabled until
->>>> the time a user comes up. Probe will just end up registering the
->>>> driver and initializing it.
->>>
->>> That's perfectly fine, as then it's likely that it won't vote for an
->>> OPP, but can postpone that as well.
->>>
->>> Perhaps the problem is rather that the HW may already carry a non-zero
->>> vote made from a bootloader. If the consumer driver tries to clear
->>> that vote (calling dev_pm_opp_set_rate(dev, 0), for example), it would
->>> still not lead to any updates of the performance state in genpd,
->>> because genpd internally has initialized the performance-state to
->>> zero.
->>
->> We don't need to discover internal SoC devices because we use
->> device-tree on ARM. For most devices power isn't required at a probe
->> time because probe function doesn't touch h/w at all, thus devices are
->> left in suspended state after probe.
->>
->> We have three components comprising PM on Tegra:
->>
->> 1. Power gate
->> 2. Clock state
->> 3. Voltage state
->>
->> GENPD on/off represents the 'power gate'.
->>
->> Clock and reset are controlled by device drivers using clk and rst APIs.
->>
->> Voltage state is represented by GENPD's performance level.
->>
->> GENPD core assumes that at a first rpm-resume of a consumer device, its
->> genpd_performance=0. Not true for Tegra because h/w of the device is
->> preconfigured to a non-zero perf level initially, h/w may not support
->> zero level at all.
-> 
-> I think you may be misunderstanding genpd's behaviour around this, but
-> let me elaborate.
-> 
-> In genpd_runtime_resume(), we try to restore the performance state for
-> the device that genpd_runtime_suspend() *may* have dropped earlier.
-> That means, if genpd_runtime_resume() is called prior
-> genpd_runtime_suspend() for the first time, it means that
-> genpd_runtime_resume() will *not* restore a performance state, but
-> instead just leave the performance state as is for the device (see
-> genpd_restore_performance_state()).
-> 
-> In other words, a consumer driver may use the following sequence to
-> set an initial performance state for the device during ->probe():
-> 
-> ...
-> rate = clk_get_rate()
-> dev_pm_opp_set_rate(rate)
-> 
-> pm_runtime_enable()
-> pm_runtime_resume_and_get()
-> ...
-> 
-> Note that, it's the consumer driver's responsibility to manage device
-> specific resources, in its ->runtime_suspend|resume() callbacks.
-> Typically that means dealing with clock gating/ungating, for example.
-> 
-> In the other scenario where a consumer driver prefers to *not* call
-> pm_runtime_resume_and_get() in its ->probe(), because it doesn't need
-> to power on the device to complete probing, then we don't want to vote
-> for an OPP at all - and we also want the performance state for the
-> device in genpd to be set to zero. Correct?
+Add missing M7 core clock entry to the iMX8MN clock driver.
 
-Yes
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abel.vesa@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+---
+ drivers/clk/imx/clk-imx8mn.c             | 5 +++++
+ include/dt-bindings/clock/imx8mn-clock.h | 4 +++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-> Is this the main problem you are trying to solve, because I think this
-> doesn't work out of the box as of today?
-
-The main problem is that the restored performance state is zero for the
-first genpd_runtime_resume(), while it's not zero from the h/w perspective.
-
-> There is another concern though, but perhaps it's not a problem after
-> all. Viresh told us that dev_pm_opp_set_rate() may turn on resources
-> like clock/regulators. That could certainly be problematic, in
-> particular if the device and its genpd have OPP tables associated with
-> it and the consumer driver wants to follow the above sequence in
-> probe.
-
-dev_pm_opp_set_rate() won't enable clocks and regulators, but it may
-change the clock rate and voltage. This is also platform/driver specific
-because it's up to OPP user how to configure OPP table. On Tegra we only
-assign clock to OPP table, regulators are unused.
-
-> Viresh, can you please chime in here and elaborate on some of the
-> magic happening behind dev_pm_opp_set_rate() API - is there a problem
-> here or not?
-> 
->>
->> GENPD core assumes that consumer devices can work at any performance
->> level. Not true for Tegra because voltage needs to be set in accordance
->> to the clock rate before clock is enabled, otherwise h/w won't work
->> properly, perhaps clock may be unstable or h/w won't be latching.
-> 
-> Correct. Genpd relies on the callers to use the OPP framework if there
-> are constraints like you describe above.
-> 
-> That said, it's not forbidden for a consumer driver to call
-> dev_pm_genpd_set_performance_state() directly, but then it better
-> knows exactly what it's doing.
-> 
->>
->> Performance level should be set to 0 while device is suspended.
-> 
-> Do you mean system suspend or runtime suspend? Or both?
-
-Runtime suspend.
-
->> Performance level needs to be bumped on rpm-resume of a device in
->> accordance to h/w state before hardware is enabled.
-> 
-> Assuming there was a performance state set for the device when
-> genpd_runtime_suspend() was called, genpd_runtime_resume() will
-> restore that state according to the sequence you described.
-
-What do you think about adding API that will allow drivers to explicitly
-set the restored performance state of a power domain?
-
-Another option could be to change the GENPD core, making it to set the
-rpm_pstate when dev_pm_genpd_set_performance_state(dev) is invoked and
-device is rpm-suspended, instead of calling the
-genpd->set_performance_state callback.
-
-Then drivers will be able to sync the perf state at a probe time.
-
-What do you think?
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index a934c679e6ce..cc15ab9eacc9 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -435,7 +435,7 @@ static void genpd_restore_performance_state(struct
-device *dev,
- int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int
-state)
- {
- 	struct generic_pm_domain *genpd;
--	int ret;
-+	int ret = 0;
-
- 	genpd = dev_to_genpd_safe(dev);
- 	if (!genpd)
-@@ -446,7 +446,10 @@ int dev_pm_genpd_set_performance_state(struct
-device *dev, unsigned int state)
- 		return -EINVAL;
-
- 	genpd_lock(genpd);
--	ret = genpd_set_performance_state(dev, state);
-+	if (pm_runtime_suspended(dev))
-+		dev_gpd_data(dev)->rpm_pstate = state;
-+	else
-+		ret = genpd_set_performance_state(dev, state);
- 	genpd_unlock(genpd);
-
- 	return ret;
-
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 212708e9388e2..9dba4eb643ab9 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -40,6 +40,9 @@ static const char * const imx8mn_a53_sels[] = {"osc_24m", "arm_pll_out", "sys_pl
+ 
+ static const char * const imx8mn_a53_core_sels[] = {"arm_a53_div", "arm_pll_out", };
+ 
++static const char * const imx8mn_m7_sels[] = {"osc_24m", "sys_pll2_200m", "sys_pll2_250m", "vpu_pll_out",
++				       "sys_pll1_800m", "audio_pll1_out", "video_pll1_out", "sys_pll3_out", };
++
+ static const char * const imx8mn_gpu_core_sels[] = {"osc_24m", "gpu_pll_out", "sys_pll1_800m",
+ 						    "sys_pll3_out", "sys_pll2_1000m", "audio_pll1_out",
+ 						    "video_pll1_out", "audio_pll2_out", };
+@@ -421,6 +424,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_A53_SRC] = hws[IMX8MN_CLK_A53_DIV];
+ 	hws[IMX8MN_CLK_A53_CG] = hws[IMX8MN_CLK_A53_DIV];
+ 
++	hws[IMX8MN_CLK_M7_CORE] = imx8m_clk_hw_composite_core("arm_m7_core", imx8mn_m7_sels, base + 0x8080);
++
+ 	hws[IMX8MN_CLK_GPU_CORE] = imx8m_clk_hw_composite_core("gpu_core", imx8mn_gpu_core_sels, base + 0x8180);
+ 	hws[IMX8MN_CLK_GPU_SHADER] = imx8m_clk_hw_composite_core("gpu_shader", imx8mn_gpu_shader_sels, base + 0x8200);
+ 
+diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings/clock/imx8mn-clock.h
+index d24b627cb2e71..01e8bab1d767a 100644
+--- a/include/dt-bindings/clock/imx8mn-clock.h
++++ b/include/dt-bindings/clock/imx8mn-clock.h
+@@ -241,6 +241,8 @@
+ #define IMX8MN_CLK_CLKOUT2_DIV			219
+ #define IMX8MN_CLK_CLKOUT2			220
+ 
+-#define IMX8MN_CLK_END				221
++#define IMX8MN_CLK_M7_CORE			221
++
++#define IMX8MN_CLK_END				222
+ 
+ #endif
+-- 
+2.30.2
 
