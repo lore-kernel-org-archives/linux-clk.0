@@ -2,180 +2,241 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A42C432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 12:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A62C4320A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 13:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 721F7610A7
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 12:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E210861101
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 13:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239187AbhHSMOw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Aug 2021 08:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39758 "EHLO
+        id S238778AbhHSNIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 09:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238286AbhHSMOv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 08:14:51 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90313C061757
-        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 05:14:15 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mGgvx-0002bt-Cn; Thu, 19 Aug 2021 14:14:09 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mGgvv-0001HQ-GJ; Thu, 19 Aug 2021 14:14:07 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mGgvv-0006Rh-Ew; Thu, 19 Aug 2021 14:14:07 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH v2] clk: expand clk_ignore_unused mechanism to keep only a few clks on
-Date:   Thu, 19 Aug 2021 14:14:03 +0200
-Message-Id: <20210819121403.337833-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S237068AbhHSNIX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 09:08:23 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4167C061757
+        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 06:07:46 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id a201so3983916vsd.3
+        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 06:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1GCKu9c84zINYtTdflsWXKCWXkOZdKhJUWmHuvrkY+4=;
+        b=f+4CRpBzlKKi/DOaSNA/G+hiFrodgB7WwtvP6lDjHBbwMct5xJEnNRIBbwWd50HxVl
+         4zhiGfKdAN1zaQTNFhB6Vi8xqc4j40IY1vsyJhWmkAu9OGW99mwK9tXMUYa730kFsYI4
+         idKdGIien3FkWDSAe9a9bUwucupyJle2LRixnAHVpFbbr4u728pooiABojadky5czPhQ
+         T05rm31+E59u8E8W6WOHoHOIbfDCZtTsEcAVQYXP/NQkrFth/PCbSSe6c7z8JAzoaO1+
+         46BAA+NxWAouT+Gc5X4wCTy1dHtG/pP9SH4vbLZ8x03CSox6/vBN4JfPUqmpPE9U44nl
+         Iiow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1GCKu9c84zINYtTdflsWXKCWXkOZdKhJUWmHuvrkY+4=;
+        b=rD5lFCJmEZsyvW1rJXqLtLttx5yMW8bXgqtDkIIzrRzzusG1v0wnynLdqo+j2GYoF5
+         WyzC2/2ihOcw5idkEpzQkItZaj1ool/6siYFtDv7JMNJrqfgv4HEdA9CXrkQdrsa2zAA
+         qaR9mmEsjQXMax6Ou3ti6YgminY04MDCaxT+0Ju8Adgqn8oywIFnLprzWz0LHbjQ+DVs
+         Q4YYTek88ll9x3EtCzrhOsWcFDkF9/GTuubGtZOXxM6MAHXEFUFze1SD5HS7vAAhWQEm
+         9GW5Jc2MlD9r76GxoHQV7YbaaftEp5MUrrg+9vkyeBQPwlCYC8YpdDGJMeKf5Vn7jQ2J
+         B3EA==
+X-Gm-Message-State: AOAM532UmD4s2SzeKjV8Xwf/nIY2thYHJ9+dAC8+H9WYalENy4xtxkM7
+        N/0Akrqd5ZJpxnZu/zzX8rDSwQB5ol/Ve/FUCvNgiA==
+X-Google-Smtp-Source: ABdhPJyJROokpzMBNet191tDOwD7eE8PakuStZsC4TgI99eWakoC4SNznlH+uH6MVn3jKPVb3Va23L7NrWpzQmbz4ck=
+X-Received: by 2002:a67:3212:: with SMTP id y18mr12074668vsy.19.1629378466059;
+ Thu, 19 Aug 2021 06:07:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Patch-Hashes: v=1; h=sha256; i=6fYG3N27aP3RxGkdjJx+eQpQfw+B/9UsoCC6yr5DVh4=; m=Wdwflwi90I4cCBeib1j1UNX47P0rpqfdzRni5sSiBLg=; p=vPir/Sawi8uuYo9VY+GWzmSA1HL1je6WO+6o4I8d4PA=; g=f08ab05b2ac3fc5ced351f18cfbc3c1183a0aef1
-X-Patch-Sig: m=pgp; i=u.kleine-koenig@pengutronix.de; s=0x0D2511F322BFAB1C1580266BE2DCDD9132669BD6; b=iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmEeSwgACgkQwfwUeK3K7AmEzQf/Y8m yD2zegVDN26T1Vn50HPfUIS795Q9rD0B/9DmZqwQF2SIc6N/ksU5wLKtDMWX9HdaIFT4qZndlJL31 RUqkP8VXsQBYCjPOLcAn3COqucB5nFL7kb7rWNp8nbh/zp7E+Nklq7rzxtprpXSMcas3IotvTHiNt pQc/8E9PcLMuS2EAP6WRSS95bHfVzNWYaj5DPHnvzVsVSzzvequXRcmGiy7RdNb0dNWZrMLUVr3ew 0Gn2HQ+DOc+DTAljFNlJiWCBNWPashw+svvCu782rqWnFzwSOkPd1AH7/Cpi8vmvZPNju0pk22Vtq Bupbbv7sKWpm2oat5z9drmoxReQjL9g==
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20210818043131.7klajx6drvvkftoc@vireshk-i7> <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
+ <20210818045307.4brb6cafkh3adjth@vireshk-i7> <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
+ <20210818055849.ybfajzu75ecpdrbn@vireshk-i7> <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+ <20210818062723.dqamssfkf7lf7cf7@vireshk-i7> <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
+ <20210818091417.dvlnsxlgybdsn76x@vireshk-i7> <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
+ <20210818095044.e2ntsm45h5cddk7s@vireshk-i7> <CAPDyKFrFF00xGDWPCQnPwF0_QkG4TB2UqggpuBpp8LY_CMKP-A@mail.gmail.com>
+ <0354acbe-d856-4040-f453-8e8164102045@gmail.com>
+In-Reply-To: <0354acbe-d856-4040-f453-8e8164102045@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 19 Aug 2021 15:07:09 +0200
+Message-ID: <CAPDyKFoQdn1rm91iFNJwZwpSYcKJBjDLqtJB4KZAkhgY1Grm-Q@mail.gmail.com>
+Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow to pass an integer n that results in only keeping n unused clocks
-enabled.
+On Wed, 18 Aug 2021 at 17:43, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 18.08.2021 13:08, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, 18 Aug 2021 at 11:50, Viresh Kumar <viresh.kumar@linaro.org> wr=
+ote:
+> >>
+> >> On 18-08-21, 11:41, Ulf Hansson wrote:
+> >>> On Wed, 18 Aug 2021 at 11:14, Viresh Kumar <viresh.kumar@linaro.org> =
+wrote:
+> >>>> What we need here is just configure. So something like this then:
+> >>>>
+> >>>> - genpd->get_performance_state()
+> >>>>   -> dev_pm_opp_get_current_opp() //New API
+> >>>>   -> dev_pm_genpd_set_performance_state(dev, current_opp->pstate);
+> >>>>
+> >>>> This can be done just once from probe() then.
+> >>>
+> >>> How would dev_pm_opp_get_current_opp() work? Do you have a suggestion=
+?
+> >>
+> >> The opp core already has a way of finding current OPP, that's what
+> >> Dmitry is trying to use here. It finds it using clk_get_rate(), if
+> >> that is zero, it picks the lowest freq possible.
+> >>
+> >>> I am sure I understand the problem. When a device is getting probed,
+> >>> it needs to consume power, how else can the corresponding driver
+> >>> successfully probe it?
+> >>
+> >> Dmitry can answer that better, but a device doesn't necessarily need
+> >> to consume energy in probe. It can consume bus clock, like APB we
+> >> have, but the more energy consuming stuff can be left disabled until
+> >> the time a user comes up. Probe will just end up registering the
+> >> driver and initializing it.
+> >
+> > That's perfectly fine, as then it's likely that it won't vote for an
+> > OPP, but can postpone that as well.
+> >
+> > Perhaps the problem is rather that the HW may already carry a non-zero
+> > vote made from a bootloader. If the consumer driver tries to clear
+> > that vote (calling dev_pm_opp_set_rate(dev, 0), for example), it would
+> > still not lead to any updates of the performance state in genpd,
+> > because genpd internally has initialized the performance-state to
+> > zero.
+>
+> We don't need to discover internal SoC devices because we use
+> device-tree on ARM. For most devices power isn't required at a probe
+> time because probe function doesn't touch h/w at all, thus devices are
+> left in suspended state after probe.
+>
+> We have three components comprising PM on Tegra:
+>
+> 1. Power gate
+> 2. Clock state
+> 3. Voltage state
+>
+> GENPD on/off represents the 'power gate'.
+>
+> Clock and reset are controlled by device drivers using clk and rst APIs.
+>
+> Voltage state is represented by GENPD's performance level.
+>
+> GENPD core assumes that at a first rpm-resume of a consumer device, its
+> genpd_performance=3D0. Not true for Tegra because h/w of the device is
+> preconfigured to a non-zero perf level initially, h/w may not support
+> zero level at all.
 
-This helps to debug the problem if you only know that clk_ignore_unused
-helps but you have no clue yet which clock is the culprit.
+I think you may be misunderstanding genpd's behaviour around this, but
+let me elaborate.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
+In genpd_runtime_resume(), we try to restore the performance state for
+the device that genpd_runtime_suspend() *may* have dropped earlier.
+That means, if genpd_runtime_resume() is called prior
+genpd_runtime_suspend() for the first time, it means that
+genpd_runtime_resume() will *not* restore a performance state, but
+instead just leave the performance state as is for the device (see
+genpd_restore_performance_state()).
 
-Interdiff against (implicit) v1:
+In other words, a consumer driver may use the following sequence to
+set an initial performance state for the device during ->probe():
 
-  diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-  index 7189a56bb29f..afa9f9397ddb 100644
-  --- a/drivers/clk/clk.c
-  +++ b/drivers/clk/clk.c
-  @@ -1312,8 +1312,8 @@ static int __init clk_disable_unused(void)
-   	if (clk_ignore_unused) {
-   		pr_warn("clk: Not disabling unused clocks\n");
-   		return 0;
-  -	} else if (clk_ignore_unused) {
-  -		pr_warn("clk: Not disabling %u unused clocks\n", clk_ignore_unused);
-  +	} else if (clk_unused_keep_on) {
-  +		pr_warn("clk: Not disabling %u unused clocks\n", clk_unused_keep_on);
-   	}
-   
-   	clk_prepare_lock();
+...
+rate =3D clk_get_rate()
+dev_pm_opp_set_rate(rate)
 
-which fixes the debug output. Found by the kernel test robot; Thanks!
+pm_runtime_enable()
+pm_runtime_resume_and_get()
+...
 
-Best regards
-Uwe
+Note that, it's the consumer driver's responsibility to manage device
+specific resources, in its ->runtime_suspend|resume() callbacks.
+Typically that means dealing with clock gating/ungating, for example.
 
- Documentation/driver-api/clk.rst |  4 +++-
- drivers/clk/clk.c                | 33 ++++++++++++++++++++++++--------
- 2 files changed, 28 insertions(+), 9 deletions(-)
+In the other scenario where a consumer driver prefers to *not* call
+pm_runtime_resume_and_get() in its ->probe(), because it doesn't need
+to power on the device to complete probing, then we don't want to vote
+for an OPP at all - and we also want the performance state for the
+device in genpd to be set to zero. Correct?
 
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 3cad45d14187..65ae7c3e2b33 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -259,7 +259,9 @@ the disabling means that the driver will remain functional while the issues
- are sorted out.
- 
- To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
--kernel.
-+kernel. If you pass "clk_ignore_unused=n" (where n is an integer) the first n
-+found clocks are not disabled which can be useful for bisecting over the unused
-+clks if you don't know yet which of them is reponsible for your problem.
- 
- Locking
- =======
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 65508eb89ec9..afa9f9397ddb 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1236,6 +1236,8 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
- 	clk_pm_runtime_put(core);
- }
- 
-+static unsigned clk_unused_keep_on __initdata;
-+
- static void __init clk_disable_unused_subtree(struct clk_core *core)
- {
- 	struct clk_core *child;
-@@ -1266,12 +1268,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 	 * back to .disable
- 	 */
- 	if (clk_core_is_enabled(core)) {
--		trace_clk_disable(core);
--		if (core->ops->disable_unused)
--			core->ops->disable_unused(core->hw);
--		else if (core->ops->disable)
--			core->ops->disable(core->hw);
--		trace_clk_disable_complete(core);
-+		if (clk_unused_keep_on) {
-+			pr_warn("Keep unused clk \"%s\" on\n", core->name);
-+			clk_unused_keep_on -= 1;
-+		} else {
-+			trace_clk_disable(core);
-+			if (core->ops->disable_unused)
-+				core->ops->disable_unused(core->hw);
-+			else if (core->ops->disable)
-+				core->ops->disable(core->hw);
-+			trace_clk_disable_complete(core);
-+		}
- 	}
- 
- unlock_out:
-@@ -1283,9 +1290,17 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- }
- 
- static bool clk_ignore_unused __initdata;
--static int __init clk_ignore_unused_setup(char *__unused)
-+static int __init clk_ignore_unused_setup(char *keep)
- {
--	clk_ignore_unused = true;
-+	if (*keep == '=') {
-+		int ret;
-+
-+		ret = kstrtouint(keep + 1, 0, &clk_unused_keep_on);
-+		if (ret < 0)
-+			pr_err("Warning: failed to parse clk_ignore_unused parameter, ignoring");
-+	} else {
-+		clk_ignore_unused = true;
-+	}
- 	return 1;
- }
- __setup("clk_ignore_unused", clk_ignore_unused_setup);
-@@ -1297,6 +1312,8 @@ static int __init clk_disable_unused(void)
- 	if (clk_ignore_unused) {
- 		pr_warn("clk: Not disabling unused clocks\n");
- 		return 0;
-+	} else if (clk_unused_keep_on) {
-+		pr_warn("clk: Not disabling %u unused clocks\n", clk_unused_keep_on);
- 	}
- 
- 	clk_prepare_lock();
--- 
-2.30.2
+Is this the main problem you are trying to solve, because I think this
+doesn't work out of the box as of today?
 
+There is another concern though, but perhaps it's not a problem after
+all. Viresh told us that dev_pm_opp_set_rate() may turn on resources
+like clock/regulators. That could certainly be problematic, in
+particular if the device and its genpd have OPP tables associated with
+it and the consumer driver wants to follow the above sequence in
+probe.
+
+Viresh, can you please chime in here and elaborate on some of the
+magic happening behind dev_pm_opp_set_rate() API - is there a problem
+here or not?
+
+>
+> GENPD core assumes that consumer devices can work at any performance
+> level. Not true for Tegra because voltage needs to be set in accordance
+> to the clock rate before clock is enabled, otherwise h/w won't work
+> properly, perhaps clock may be unstable or h/w won't be latching.
+
+Correct. Genpd relies on the callers to use the OPP framework if there
+are constraints like you describe above.
+
+That said, it's not forbidden for a consumer driver to call
+dev_pm_genpd_set_performance_state() directly, but then it better
+knows exactly what it's doing.
+
+>
+> Performance level should be set to 0 while device is suspended.
+
+Do you mean system suspend or runtime suspend? Or both?
+
+> Performance level needs to be bumped on rpm-resume of a device in
+> accordance to h/w state before hardware is enabled.
+
+Assuming there was a performance state set for the device when
+genpd_runtime_suspend() was called, genpd_runtime_resume() will
+restore that state according to the sequence you described.
+
+Kind regards
+Uffe
