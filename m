@@ -2,77 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E26C4320E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 22:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123BAC4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 05:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B84CC6113B
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Aug 2021 22:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4D28610FA
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 05:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234379AbhHRWPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Aug 2021 18:15:34 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:44644 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234106AbhHRWPd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Aug 2021 18:15:33 -0400
-Received: from [212.185.68.41] (helo=phil.client.m3-hotspots.de)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1mGTpj-0001gc-9s; Thu, 19 Aug 2021 00:14:51 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Jon Lin <jon.lin@rock-chips.com>, linux-spi@vger.kernel.org
-Cc:     Heiko Stuebner <heiko@sntech.de>, hjc@rock-chips.com,
-        linux-rockchip@lists.infradead.org, p.yadav@ti.com,
-        sboyd@kernel.org, macroalpha82@gmail.com,
-        linux-arm-kernel@lists.infradead.org, yifeng.zhao@rock-chips.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        broonie@kernel.org, linux-mtd@lists.infradead.org,
-        sugar.zhang@rock-chips.com, jbx6244@gmail.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: (subset) [PATCH v13 0/6] Add Rockchip SFC(serial flash controller) support
-Date:   Thu, 19 Aug 2021 00:14:48 +0200
-Message-Id: <162932487840.2867187.12225818198624183651.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210812134546.31340-1-jon.lin@rock-chips.com>
-References: <20210812134546.31340-1-jon.lin@rock-chips.com>
+        id S229981AbhHSFaP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 01:30:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229868AbhHSFaP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 01:30:15 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B59C061756;
+        Wed, 18 Aug 2021 22:29:39 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id r9so10100369lfn.3;
+        Wed, 18 Aug 2021 22:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NkyQ99fSfjHhX/SIGvNhplWLTZKV19L1/kVLvts/VV8=;
+        b=OCGl5RWYQ4U424qw5IpvRjKffDKk9f3E9ILVxmtbXjdmTcZE1s8xrCxmDVYhOyNs3Q
+         wyq/MQSY/bhOs6Ezxmb5FnCzP8W6wkptZ6CRUodrhFG+zLrWkOKiMFOEHyu3rI7Di5XI
+         +1o/kJn/CEYtaaS2yfsvtgXcIPzrPnCh+vFk8JmKiRAJCmN2SJHY/PgivniAdOlYbMfO
+         o8vuTzd7NVXFH0EmHTLZVBqLwoREZ/DURnrTFRf/TFthYlCs+0HWqrOE6A+nBZDtFb9M
+         vh38idnrp408yKT7APUdwkVRAQLgI8ILjB7E5jSxO8/ax0ksoHur2VUg4Zt2MUMkIVTQ
+         743A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NkyQ99fSfjHhX/SIGvNhplWLTZKV19L1/kVLvts/VV8=;
+        b=H+VxuSURJpbSIGTtFy1gPG4Hp4Us825j1ZOL6joSCFrFYBp9h8LqFmFWX9RDWOZGdE
+         Pi6bKCo7vkv+dBfTMrbhofQeasJfrfQbg3e8UQzdsjpH20rJp3/2/dhzMaOEAW6L2F6N
+         FOExsDKV8oyintuBbsOL2SWT6uyWswbXPy0RRRKU2QgLR10H/0CpuWuURXUSEC/Rpfhv
+         zsud3ASmkO/5L8J5SPpwjyGWfIiSSDy4ljp7kajpkrz/Psps/6Ly0RgtlMD+PCEMfijZ
+         k/d3Q0fsTkM+fFZi2thrGEbpFVD7M8iGZAmiX7nqj5rNqhcvtw48KHamSWmdYiH+ZpgF
+         s8zA==
+X-Gm-Message-State: AOAM533iZ/I7tqUZ3VOWHlcoD37kSSeaIkCR9EyqTJtKKeNtYDRVDlHw
+        P7QhK97RJ5inO6RkQVlsrC0=
+X-Google-Smtp-Source: ABdhPJxQ8zfr6KrADfBGoHThIpvNI58GOifyv7ZdegN8ZzvixxWVRDRq9O1sdokhZOWlv4FQdEAOcA==
+X-Received: by 2002:ac2:4106:: with SMTP id b6mr8965460lfi.89.1629350977641;
+        Wed, 18 Aug 2021 22:29:37 -0700 (PDT)
+Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
+        by smtp.gmail.com with ESMTPSA id s13sm186464lfd.53.2021.08.18.22.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 22:29:37 -0700 (PDT)
+From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH] dt-bindings: clock: brcm,iproc-clocks: fix armpll properties
+Date:   Thu, 19 Aug 2021 07:29:18 +0200
+Message-Id: <20210819052918.6753-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 12 Aug 2021 21:45:40 +0800, Jon Lin wrote:
-> Changes in v13:
-> - Provide independent interfaces to obtain RX TX FIFO status respectively
-> - Add more debug information
-> - Depress DMA limitation
-> 
-> Changes in v12:
-> - Remove useless oneOf lable
-> - Add sfc controller discription
-> - Remove the limitation of SFC_MIN_SPEED_HZ
-> - Add IRQ_NONE method for irq handler
-> - Add SPI_MASTER_HALF_DUPLEX flags
-> - Add sfc interrupt mask bits and status register initial progress
-> 
-> [...]
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Applied, thanks!
+armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
+with no cells. Adjust binding props #clock-cells and clock-output-names
+to handle them.
 
-[3/6] arm64: dts: rockchip: Add SFC to PX30
-      commit: c68defec1585819af54f011fa4d47892b38fb74a
-[4/6] arm: dts: rockchip: Add SFC to RV1108
-      commit: 9d508827c7939242e8ed6b06f66aa87d9f7ea832
-[5/6] arm64: dts: rockchip: Add SFC to RK3308
-      commit: ab438ba2dc6b7bd3dce8e3c8b0f131905cd133d9
-[6/6] arm64: dts: rockchip: Enable SFC for Odroid Go Advance
-      commit: f9576999b0aef399e7cb1065787032d42198c362
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+ .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+index 1174c9aa9934..5ad147d265e6 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+@@ -61,13 +61,30 @@ properties:
+     maxItems: 1
+ 
+   '#clock-cells':
+-    const: 1
++    true
+ 
+   clock-output-names:
+     minItems: 1
+     maxItems: 45
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - brcm,cygnus-armpll
++              - brcm,nsp-armpll
++    then:
++      properties:
++        '#clock-cells':
++          const: 0
++    else:
++      properties:
++        '#clock-cells':
++          const: 1
++      required:
++        - clock-output-names
+   - if:
+       properties:
+         compatible:
+@@ -358,7 +375,6 @@ required:
+   - reg
+   - clocks
+   - '#clock-cells'
+-  - clock-output-names
+ 
+ additionalProperties: false
+ 
+@@ -392,3 +408,10 @@ examples:
+         clocks = <&osc2>;
+         clock-output-names = "keypad", "adc/touch", "pwm";
+     };
++  - |
++    arm_clk@0 {
++        #clock-cells = <0>;
++        compatible = "brcm,nsp-armpll";
++        clocks = <&osc>;
++        reg = <0x0 0x1000>;
++    };
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.26.2
+
