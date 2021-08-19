@@ -2,163 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28189C4320E
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC0AC4338F
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 082F861106
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD65461106
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:44:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230504AbhHSGSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Aug 2021 02:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbhHSGSF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 02:18:05 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DC2C061575
-        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id o10so3368178plg.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
-        b=n8Z7pceL3Q1hHrYhRGbE2Ft6ysYoV2T29GwsgsIk5zym7iZcje0CXVg1jI36aNnFP1
-         wEt31EiA2dUBQwlv5rK6Pb4jBRjUZnVnX9lq3yYWlZnsAiqoC84b2+sIg5qRcoOEikt2
-         Bl5OLXFHBLycojOK68FIhPW3b2fskqhF3vr/eyYOYKdL7QspG0UOJAgIVnJ/rUe4LZFr
-         9Mx+8O2v0d2rHrH3yazUPQGMQQQiYdzhDIVBgB1HMOdlKqueyQlS0Pa++oE7KDNseaKY
-         ZqQcskpZ4qIHBPun+Nz8BNcPrFRsCGUIgrdD9AWMNWaoX41LuxEow35zOBfD0rRFPHfn
-         o2nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
-        b=RC04hk4CGglAfr3qRyUpz5opBskwB+uHIcZp3Gn0Mzczi72kRwFkuvxNw7hFE82eop
-         onW0X1Q5LgBtMfwuXv2REOY8yarjST2NGPGbOn8WmuEhe+E/nCuXoitnVIzxE5/BX9cL
-         PSZPbrT6M6wKe+8Ut7+No/LJWGq51f5uwvM8Iv6pnbXrUlaociCvXohURmF3+uFOmFHb
-         D37Lek6osndPzhgqU+beXMQ9xm2CdC4xKPbuuk8WsAnTOiGWSulcgtBhQVqclBbQNCmj
-         wsVzxxYsolYQ8vSD6RAaelzHCDradoSsoYjtx1y5Zan39qPQVYrg1Q+CRbRbTQaEh38m
-         T6BQ==
-X-Gm-Message-State: AOAM531niUxVwYK7lYOTaiguhY+odNRlT0GjxbnfrDyzT0d+bQW6L0AV
-        8GZXpwWSTv5XujjWi3WfeC4FJg==
-X-Google-Smtp-Source: ABdhPJwi8ECnFjz7ftlBUkQP1U01xvcbaFwYmCvSxRCVadF/ZCBCreA9Xq0KVJGpteNV1tSqbtF8Eg==
-X-Received: by 2002:a17:90a:ce88:: with SMTP id g8mr13456163pju.116.1629353849006;
-        Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id r18sm2222724pgk.54.2021.08.18.23.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 23:16:53 -0700 (PDT)
-Date:   Thu, 19 Aug 2021 11:46:17 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
-References: <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
+        id S231404AbhHSGpK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 02:45:10 -0400
+Received: from out28-193.mail.aliyun.com ([115.124.28.193]:48218 "EHLO
+        out28-193.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230483AbhHSGpK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 02:45:10 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09123356|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0210625-0.000612203-0.978325;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047208;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.L2mzdyl_1629355470;
+Received: from 192.168.88.131(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.L2mzdyl_1629355470)
+          by smtp.aliyun-inc.com(10.147.41.121);
+          Thu, 19 Aug 2021 14:44:31 +0800
+Subject: Re: [PATCH v7 00/11] Add new clocks and fix bugs for Ingenic SoCs.
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        paul@crapouillou.net
+Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, sihui.liu@ingenic.com,
+        jun.jiang@ingenic.com, sernia.zhou@foxmail.com
+References: <1627119286-125821-1-git-send-email-zhouyanjie@wanyeetech.com>
+Message-ID: <892b4671-462d-d0da-a2d0-2c140b519b26@wanyeetech.com>
+Date:   Thu, 19 Aug 2021 14:44:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <1627119286-125821-1-git-send-email-zhouyanjie@wanyeetech.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-08-21, 18:55, Dmitry Osipenko wrote:
-> 18.08.2021 12:41, Ulf Hansson пишет:
-> 
-> Either way gives the equal result. The new callback allows to remove the
-> boilerplate dev_pm_opp_set_rate(clk_get_rate() code from the rpm-resume
-> of consumer devices, that's it.
+Hi,
 
-It may not be equal, as dev_pm_opp_set_rate() may do additional stuff,
-now or in a later implementation. Currently it only does
-regulator_enable() as a special case, but it can be clk_enable() as
-well. Also, this tries to solve the problem in a tricky/hacky way,
-while all you wanted was to make the genpd aware of what the
-performance state should be.
 
-Your driver can break tomorrow if we started to do more stuff from
-this API at another time.
+A gentle ping :)
 
-> > dev_pm_opp_set_rate() is best called from consumer drivers, as they
-> > need to be in control.
-> >> What we need here is just configure. So something like this then:
-> The intent wasn't to use dev_pm_opp_set_rate() from
-> __genpd_dev_pm_attach(), but to set genpd->rpm_pstate in accordance to
-> the h/w configuration.
 
-Right.
-
-> On Tegra we have a chain of PDs and it's not trivial to convert the
-> device's OPP into pstate because only the parent domain can translate
-> the required OPP.
-
-The driver should just be required to make a call, and OPP/genpd core
-should return it a value. This is already done today while setting the
-pstate for a device. The same frameworks must be able to supply a
-value to be used for the device.
-
-> Viresh, please take a look at what I did in [1]. Maybe it could be done
-> in another way.
-
-I looked into this and looked like too much trouble. The
-implementation needs to be simple. I am not sure I understand all the
-problems you faced while doing that, would be better to start with a
-simpler implementation of get_performance_state() kind of API for
-genpd, after the domain is attached and its OPP table is initialized.
-
-Note, that the OPP table isn't required to be fully initialized for
-the device at this point, we can parse the DT as well if needed be.
-
--- 
-viresh
+On 2021/7/24 下午5:34, 周琰杰 (Zhou Yanjie) wrote:
+> v4->v5:
+> 1.modify the CGU PLL correlation code to make it compatible with I2S PLL.
+> 2.Change X1000's I2S clock to CGU_CLK_PLL as Paul Cercueil's suggestion.
+> 3.Add documentation for JZ4775 and X2000 bindings.
+> 4.Add JZ4775 and X2000 clock bindings.
+> 5.Add CGU driver for JZ4775 and X2000.
+>
+> v5->v6:
+> Change the type of stable_bit from u8 to s8, because a negative value will
+> appear when the stable_bit bit does not exist.
+>
+> v6->v7:
+> 1.Add Rob Herring's Acked-by.
+> 2.Change to dual license.
+>
+> 周琰杰 (Zhou Yanjie) (11):
+>    clk: JZ4780: Add function for disable the second core.
+>    clk: Ingenic: Adjust cgu code to make it compatible with I2S PLL.
+>    dt-bindings: clock: Add missing clocks for Ingenic SoCs.
+>    clk: Ingenic: Fix problem of MAC clock in Ingenic X1000 and X1830.
+>    clk: Ingenic: Add missing clocks for Ingenic SoCs.
+>    clk: Ingenic: Clean up and reformat the code.
+>    dt-bindings: clock: Add documentation for JZ4775 and X2000 bindings.
+>    dt-bindings: clock: Add JZ4775 clock bindings.
+>    dt-bindings: clock: Add X2000 clock bindings.
+>    clk: Ingenic: Add CGU driver for JZ4775.
+>    clk: Ingenic: Add CGU driver for X2000.
+>
+>   .../devicetree/bindings/clock/ingenic,cgu.yaml     |   4 +
+>   drivers/clk/ingenic/Kconfig                        |  20 +
+>   drivers/clk/ingenic/Makefile                       |   2 +
+>   drivers/clk/ingenic/cgu.c                          | 118 ++-
+>   drivers/clk/ingenic/cgu.h                          |  10 +-
+>   drivers/clk/ingenic/jz4725b-cgu.c                  |  49 +-
+>   drivers/clk/ingenic/jz4740-cgu.c                   |  49 +-
+>   drivers/clk/ingenic/jz4760-cgu.c                   | 106 ++-
+>   drivers/clk/ingenic/jz4770-cgu.c                   |  83 +--
+>   drivers/clk/ingenic/jz4775-cgu.c                   | 572 +++++++++++++++
+>   drivers/clk/ingenic/jz4780-cgu.c                   | 149 ++--
+>   drivers/clk/ingenic/x1000-cgu.c                    | 210 ++++--
+>   drivers/clk/ingenic/x1830-cgu.c                    | 210 ++++--
+>   drivers/clk/ingenic/x2000-cgu.c                    | 790 +++++++++++++++++++++
+>   include/dt-bindings/clock/jz4775-cgu.h             |  59 ++
+>   include/dt-bindings/clock/x1000-cgu.h              |   5 +
+>   include/dt-bindings/clock/x1830-cgu.h              |   5 +
+>   include/dt-bindings/clock/x2000-cgu.h              |  89 +++
+>   18 files changed, 2210 insertions(+), 320 deletions(-)
+>   create mode 100644 drivers/clk/ingenic/jz4775-cgu.c
+>   create mode 100644 drivers/clk/ingenic/x2000-cgu.c
+>   create mode 100644 include/dt-bindings/clock/jz4775-cgu.h
+>   create mode 100644 include/dt-bindings/clock/x2000-cgu.h
+>
