@@ -2,146 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123BAC4338F
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 05:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28189C4320E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4D28610FA
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 05:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 082F861106
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbhHSFaP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Aug 2021 01:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        id S230504AbhHSGSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Aug 2021 02:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbhHSFaP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 01:30:15 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B59C061756;
-        Wed, 18 Aug 2021 22:29:39 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id r9so10100369lfn.3;
-        Wed, 18 Aug 2021 22:29:39 -0700 (PDT)
+        with ESMTP id S230292AbhHSGSF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Aug 2021 02:18:05 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DC2C061575
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id o10so3368178plg.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NkyQ99fSfjHhX/SIGvNhplWLTZKV19L1/kVLvts/VV8=;
-        b=OCGl5RWYQ4U424qw5IpvRjKffDKk9f3E9ILVxmtbXjdmTcZE1s8xrCxmDVYhOyNs3Q
-         wyq/MQSY/bhOs6Ezxmb5FnCzP8W6wkptZ6CRUodrhFG+zLrWkOKiMFOEHyu3rI7Di5XI
-         +1o/kJn/CEYtaaS2yfsvtgXcIPzrPnCh+vFk8JmKiRAJCmN2SJHY/PgivniAdOlYbMfO
-         o8vuTzd7NVXFH0EmHTLZVBqLwoREZ/DURnrTFRf/TFthYlCs+0HWqrOE6A+nBZDtFb9M
-         vh38idnrp408yKT7APUdwkVRAQLgI8ILjB7E5jSxO8/ax0ksoHur2VUg4Zt2MUMkIVTQ
-         743A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
+        b=n8Z7pceL3Q1hHrYhRGbE2Ft6ysYoV2T29GwsgsIk5zym7iZcje0CXVg1jI36aNnFP1
+         wEt31EiA2dUBQwlv5rK6Pb4jBRjUZnVnX9lq3yYWlZnsAiqoC84b2+sIg5qRcoOEikt2
+         Bl5OLXFHBLycojOK68FIhPW3b2fskqhF3vr/eyYOYKdL7QspG0UOJAgIVnJ/rUe4LZFr
+         9Mx+8O2v0d2rHrH3yazUPQGMQQQiYdzhDIVBgB1HMOdlKqueyQlS0Pa++oE7KDNseaKY
+         ZqQcskpZ4qIHBPun+Nz8BNcPrFRsCGUIgrdD9AWMNWaoX41LuxEow35zOBfD0rRFPHfn
+         o2nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NkyQ99fSfjHhX/SIGvNhplWLTZKV19L1/kVLvts/VV8=;
-        b=H+VxuSURJpbSIGTtFy1gPG4Hp4Us825j1ZOL6joSCFrFYBp9h8LqFmFWX9RDWOZGdE
-         Pi6bKCo7vkv+dBfTMrbhofQeasJfrfQbg3e8UQzdsjpH20rJp3/2/dhzMaOEAW6L2F6N
-         FOExsDKV8oyintuBbsOL2SWT6uyWswbXPy0RRRKU2QgLR10H/0CpuWuURXUSEC/Rpfhv
-         zsud3ASmkO/5L8J5SPpwjyGWfIiSSDy4ljp7kajpkrz/Psps/6Ly0RgtlMD+PCEMfijZ
-         k/d3Q0fsTkM+fFZi2thrGEbpFVD7M8iGZAmiX7nqj5rNqhcvtw48KHamSWmdYiH+ZpgF
-         s8zA==
-X-Gm-Message-State: AOAM533iZ/I7tqUZ3VOWHlcoD37kSSeaIkCR9EyqTJtKKeNtYDRVDlHw
-        P7QhK97RJ5inO6RkQVlsrC0=
-X-Google-Smtp-Source: ABdhPJxQ8zfr6KrADfBGoHThIpvNI58GOifyv7ZdegN8ZzvixxWVRDRq9O1sdokhZOWlv4FQdEAOcA==
-X-Received: by 2002:ac2:4106:: with SMTP id b6mr8965460lfi.89.1629350977641;
-        Wed, 18 Aug 2021 22:29:37 -0700 (PDT)
-Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.gmail.com with ESMTPSA id s13sm186464lfd.53.2021.08.18.22.29.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
+        b=RC04hk4CGglAfr3qRyUpz5opBskwB+uHIcZp3Gn0Mzczi72kRwFkuvxNw7hFE82eop
+         onW0X1Q5LgBtMfwuXv2REOY8yarjST2NGPGbOn8WmuEhe+E/nCuXoitnVIzxE5/BX9cL
+         PSZPbrT6M6wKe+8Ut7+No/LJWGq51f5uwvM8Iv6pnbXrUlaociCvXohURmF3+uFOmFHb
+         D37Lek6osndPzhgqU+beXMQ9xm2CdC4xKPbuuk8WsAnTOiGWSulcgtBhQVqclBbQNCmj
+         wsVzxxYsolYQ8vSD6RAaelzHCDradoSsoYjtx1y5Zan39qPQVYrg1Q+CRbRbTQaEh38m
+         T6BQ==
+X-Gm-Message-State: AOAM531niUxVwYK7lYOTaiguhY+odNRlT0GjxbnfrDyzT0d+bQW6L0AV
+        8GZXpwWSTv5XujjWi3WfeC4FJg==
+X-Google-Smtp-Source: ABdhPJwi8ECnFjz7ftlBUkQP1U01xvcbaFwYmCvSxRCVadF/ZCBCreA9Xq0KVJGpteNV1tSqbtF8Eg==
+X-Received: by 2002:a17:90a:ce88:: with SMTP id g8mr13456163pju.116.1629353849006;
+        Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
+Received: from localhost ([122.172.201.85])
+        by smtp.gmail.com with ESMTPSA id r18sm2222724pgk.54.2021.08.18.23.16.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 22:29:37 -0700 (PDT)
-From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Wed, 18 Aug 2021 23:16:53 -0700 (PDT)
+Date:   Thu, 19 Aug 2021 11:46:17 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH] dt-bindings: clock: brcm,iproc-clocks: fix armpll properties
-Date:   Thu, 19 Aug 2021 07:29:18 +0200
-Message-Id: <20210819052918.6753-1-zajec5@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
+Message-ID: <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
+References: <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
+ <20210818045307.4brb6cafkh3adjth@vireshk-i7>
+ <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
+ <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
+ <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+ <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
+ <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
+ <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
+ <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
+ <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+On 18-08-21, 18:55, Dmitry Osipenko wrote:
+> 18.08.2021 12:41, Ulf Hansson пишет:
+> 
+> Either way gives the equal result. The new callback allows to remove the
+> boilerplate dev_pm_opp_set_rate(clk_get_rate() code from the rpm-resume
+> of consumer devices, that's it.
 
-armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
-with no cells. Adjust binding props #clock-cells and clock-output-names
-to handle them.
+It may not be equal, as dev_pm_opp_set_rate() may do additional stuff,
+now or in a later implementation. Currently it only does
+regulator_enable() as a special case, but it can be clk_enable() as
+well. Also, this tries to solve the problem in a tricky/hacky way,
+while all you wanted was to make the genpd aware of what the
+performance state should be.
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
----
- .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Your driver can break tomorrow if we started to do more stuff from
+this API at another time.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-index 1174c9aa9934..5ad147d265e6 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-@@ -61,13 +61,30 @@ properties:
-     maxItems: 1
- 
-   '#clock-cells':
--    const: 1
-+    true
- 
-   clock-output-names:
-     minItems: 1
-     maxItems: 45
- 
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - brcm,cygnus-armpll
-+              - brcm,nsp-armpll
-+    then:
-+      properties:
-+        '#clock-cells':
-+          const: 0
-+    else:
-+      properties:
-+        '#clock-cells':
-+          const: 1
-+      required:
-+        - clock-output-names
-   - if:
-       properties:
-         compatible:
-@@ -358,7 +375,6 @@ required:
-   - reg
-   - clocks
-   - '#clock-cells'
--  - clock-output-names
- 
- additionalProperties: false
- 
-@@ -392,3 +408,10 @@ examples:
-         clocks = <&osc2>;
-         clock-output-names = "keypad", "adc/touch", "pwm";
-     };
-+  - |
-+    arm_clk@0 {
-+        #clock-cells = <0>;
-+        compatible = "brcm,nsp-armpll";
-+        clocks = <&osc>;
-+        reg = <0x0 0x1000>;
-+    };
+> > dev_pm_opp_set_rate() is best called from consumer drivers, as they
+> > need to be in control.
+> >> What we need here is just configure. So something like this then:
+> The intent wasn't to use dev_pm_opp_set_rate() from
+> __genpd_dev_pm_attach(), but to set genpd->rpm_pstate in accordance to
+> the h/w configuration.
+
+Right.
+
+> On Tegra we have a chain of PDs and it's not trivial to convert the
+> device's OPP into pstate because only the parent domain can translate
+> the required OPP.
+
+The driver should just be required to make a call, and OPP/genpd core
+should return it a value. This is already done today while setting the
+pstate for a device. The same frameworks must be able to supply a
+value to be used for the device.
+
+> Viresh, please take a look at what I did in [1]. Maybe it could be done
+> in another way.
+
+I looked into this and looked like too much trouble. The
+implementation needs to be simple. I am not sure I understand all the
+problems you faced while doing that, would be better to start with a
+simpler implementation of get_performance_state() kind of API for
+genpd, after the domain is attached and its OPP table is initialized.
+
+Note, that the OPP table isn't required to be fully initialized for
+the device at this point, we can parse the DT as well if needed be.
+
 -- 
-2.26.2
-
+viresh
