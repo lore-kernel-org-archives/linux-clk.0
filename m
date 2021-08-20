@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA6DC4320E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 11:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E57C4320E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 11:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E750E6108F
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 11:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FEC56108F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 11:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240501AbhHTLSj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Aug 2021 07:18:39 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:41106 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S239899AbhHTLSZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 07:18:25 -0400
-X-UUID: bfb0a7351f4d449aa6bc5dc360346221-20210820
-X-UUID: bfb0a7351f4d449aa6bc5dc360346221-20210820
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        id S240399AbhHTLSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Aug 2021 07:18:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44172 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S240395AbhHTLS3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 07:18:29 -0400
+X-UUID: f87cbab437dd41d08cdb101355b7e01b-20210820
+X-UUID: f87cbab437dd41d08cdb101355b7e01b-20210820
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 968657095; Fri, 20 Aug 2021 19:17:43 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1348654676; Fri, 20 Aug 2021 19:17:49 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 20 Aug 2021 19:17:42 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 20 Aug 2021 19:17:47 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 20 Aug 2021 19:17:41 +0800
+ Transport; Fri, 20 Aug 2021 19:17:47 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -42,9 +42,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v2 18/24] clk: mediatek: Add MT8195 vdosys1 clock support
-Date:   Fri, 20 Aug 2021 19:14:58 +0800
-Message-ID: <20210820111504.350-19-chun-jie.chen@mediatek.com>
+Subject: [v2 20/24] clk: mediatek: Add MT8195 vppsys0 clock support
+Date:   Fri, 20 Aug 2021 19:15:00 +0800
+Message-ID: <20210820111504.350-21-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210820111504.350-1-chun-jie.chen@mediatek.com>
 References: <20210820111504.350-1-chun-jie.chen@mediatek.com>
@@ -55,37 +55,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8195 vdosys1 clock controller which provides clock gate
-control for video system.
+Add MT8195 vppsys0 clock controller which provides clock gate
+controller for Video Processor Pipe.
 
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 ---
-Integrate with mtk-mmsys driver which will pupulate device by
-platform_device_register_data to start vdosys clock driver
----
  drivers/clk/mediatek/Makefile          |   2 +-
- drivers/clk/mediatek/clk-mt8195-vdo1.c | 140 +++++++++++++++++++++++++
- 2 files changed, 141 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mt8195-vdo1.c
+ drivers/clk/mediatek/clk-mt8195-vpp0.c | 110 +++++++++++++++++++++++++
+ 2 files changed, 111 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vpp0.c
 
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index d22731316b7c..3c8c8cdbd3ef 100644
+index 82ffcc4f2c52..8694f070e2d0 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
 @@ -82,6 +82,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o clk-mt8195-cam.o \
  					clk-mt8195-ccu.o clk-mt8195-img.o clk-mt8195-ipe.o clk-mt8195-mfg.o clk-mt8195-scp_adsp.o \
--					clk-mt8195-vdec.o clk-mt8195-vdo0.o
-+					clk-mt8195-vdec.o clk-mt8195-vdo0.o clk-mt8195-vdo1.o
+-					clk-mt8195-vdec.o clk-mt8195-vdo0.o clk-mt8195-vdo1.o clk-mt8195-venc.o
++					clk-mt8195-vdec.o clk-mt8195-vdo0.o clk-mt8195-vdo1.o clk-mt8195-venc.o clk-mt8195-vpp0.o
  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
+diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
 new file mode 100644
-index 000000000000..6ecff1e72443
+index 000000000000..736bf0948540
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -0,0 +1,140 @@
++++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
+@@ -0,0 +1,110 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +//
 +// Copyright (c) 2021 MediaTek Inc.
@@ -98,134 +95,104 @@ index 000000000000..6ecff1e72443
 +#include <linux/clk-provider.h>
 +#include <linux/platform_device.h>
 +
-+static const struct mtk_gate_regs vdo1_0_cg_regs = {
-+	.set_ofs = 0x104,
-+	.clr_ofs = 0x108,
-+	.sta_ofs = 0x100,
++static const struct mtk_gate_regs vpp0_0_cg_regs = {
++	.set_ofs = 0x24,
++	.clr_ofs = 0x28,
++	.sta_ofs = 0x20,
 +};
 +
-+static const struct mtk_gate_regs vdo1_1_cg_regs = {
-+	.set_ofs = 0x124,
-+	.clr_ofs = 0x128,
-+	.sta_ofs = 0x120,
++static const struct mtk_gate_regs vpp0_1_cg_regs = {
++	.set_ofs = 0x30,
++	.clr_ofs = 0x34,
++	.sta_ofs = 0x2c,
 +};
 +
-+static const struct mtk_gate_regs vdo1_2_cg_regs = {
-+	.set_ofs = 0x134,
-+	.clr_ofs = 0x138,
-+	.sta_ofs = 0x130,
++static const struct mtk_gate_regs vpp0_2_cg_regs = {
++	.set_ofs = 0x3c,
++	.clr_ofs = 0x40,
++	.sta_ofs = 0x38,
 +};
 +
-+static const struct mtk_gate_regs vdo1_3_cg_regs = {
-+	.set_ofs = 0x144,
-+	.clr_ofs = 0x148,
-+	.sta_ofs = 0x140,
++#define GATE_VPP0_0(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vpp0_0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++
++#define GATE_VPP0_1(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vpp0_1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++
++#define GATE_VPP0_2(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vpp0_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++
++static const struct mtk_gate vpp0_clks[] = {
++	/* VPP0_0 */
++	GATE_VPP0_0(CLK_VPP0_MDP_FG, "vpp0_mdp_fg", "top_vpp", 1),
++	GATE_VPP0_0(CLK_VPP0_STITCH, "vpp0_stitch", "top_vpp", 2),
++	GATE_VPP0_0(CLK_VPP0_PADDING, "vpp0_padding", "top_vpp", 7),
++	GATE_VPP0_0(CLK_VPP0_MDP_TCC, "vpp0_mdp_tcc", "top_vpp", 8),
++	GATE_VPP0_0(CLK_VPP0_WARP0_ASYNC_TX, "vpp0_warp0_async_tx", "top_vpp", 10),
++	GATE_VPP0_0(CLK_VPP0_WARP1_ASYNC_TX, "vpp0_warp1_async_tx", "top_vpp", 11),
++	GATE_VPP0_0(CLK_VPP0_MUTEX, "vpp0_mutex", "top_vpp", 13),
++	GATE_VPP0_0(CLK_VPP0_VPP02VPP1_RELAY, "vpp0_vpp02vpp1_relay", "top_vpp", 14),
++	GATE_VPP0_0(CLK_VPP0_VPP12VPP0_ASYNC, "vpp0_vpp12vpp0_async", "top_vpp", 15),
++	GATE_VPP0_0(CLK_VPP0_MMSYSRAM_TOP, "vpp0_mmsysram_top", "top_vpp", 16),
++	GATE_VPP0_0(CLK_VPP0_MDP_AAL, "vpp0_mdp_aal", "top_vpp", 17),
++	GATE_VPP0_0(CLK_VPP0_MDP_RSZ, "vpp0_mdp_rsz", "top_vpp", 18),
++	/* VPP0_1 */
++	GATE_VPP0_1(CLK_VPP0_SMI_COMMON, "vpp0_smi_common", "top_vpp", 0),
++	GATE_VPP0_1(CLK_VPP0_GALS_VDO0_LARB0, "vpp0_gals_vdo0_larb0", "top_vpp", 1),
++	GATE_VPP0_1(CLK_VPP0_GALS_VDO0_LARB1, "vpp0_gals_vdo0_larb1", "top_vpp", 2),
++	GATE_VPP0_1(CLK_VPP0_GALS_VENCSYS, "vpp0_gals_vencsys", "top_vpp", 3),
++	GATE_VPP0_1(CLK_VPP0_GALS_VENCSYS_CORE1, "vpp0_gals_vencsys_core1", "top_vpp", 4),
++	GATE_VPP0_1(CLK_VPP0_GALS_INFRA, "vpp0_gals_infra", "top_vpp", 5),
++	GATE_VPP0_1(CLK_VPP0_GALS_CAMSYS, "vpp0_gals_camsys", "top_vpp", 6),
++	GATE_VPP0_1(CLK_VPP0_GALS_VPP1_LARB5, "vpp0_gals_vpp1_larb5", "top_vpp", 7),
++	GATE_VPP0_1(CLK_VPP0_GALS_VPP1_LARB6, "vpp0_gals_vpp1_larb6", "top_vpp", 8),
++	GATE_VPP0_1(CLK_VPP0_SMI_REORDER, "vpp0_smi_reorder", "top_vpp", 9),
++	GATE_VPP0_1(CLK_VPP0_SMI_IOMMU, "vpp0_smi_iommu", "top_vpp", 10),
++	GATE_VPP0_1(CLK_VPP0_GALS_IMGSYS_CAMSYS, "vpp0_gals_imgsys_camsys", "top_vpp", 11),
++	GATE_VPP0_1(CLK_VPP0_MDP_RDMA, "vpp0_mdp_rdma", "top_vpp", 12),
++	GATE_VPP0_1(CLK_VPP0_MDP_WROT, "vpp0_mdp_wrot", "top_vpp", 13),
++	GATE_VPP0_1(CLK_VPP0_GALS_EMI0_EMI1, "vpp0_gals_emi0_emi1", "top_vpp", 16),
++	GATE_VPP0_1(CLK_VPP0_SMI_SUB_COMMON_REORDER, "vpp0_smi_sub_common_reorder", "top_vpp", 17),
++	GATE_VPP0_1(CLK_VPP0_SMI_RSI, "vpp0_smi_rsi", "top_vpp", 18),
++	GATE_VPP0_1(CLK_VPP0_SMI_COMMON_LARB4, "vpp0_smi_common_larb4", "top_vpp", 19),
++	GATE_VPP0_1(CLK_VPP0_GALS_VDEC_VDEC_CORE1, "vpp0_gals_vdec_vdec_core1", "top_vpp", 20),
++	GATE_VPP0_1(CLK_VPP0_GALS_VPP1_WPE, "vpp0_gals_vpp1_wpe", "top_vpp", 21),
++	GATE_VPP0_1(CLK_VPP0_GALS_VDO0_VDO1_VENCSYS_CORE1, "vpp0_gals_vdo0_vdo1_vencsys_core1",
++		    "top_vpp", 22),
++	GATE_VPP0_1(CLK_VPP0_FAKE_ENG, "vpp0_fake_eng", "top_vpp", 23),
++	GATE_VPP0_1(CLK_VPP0_MDP_HDR, "vpp0_mdp_hdr", "top_vpp", 24),
++	GATE_VPP0_1(CLK_VPP0_MDP_TDSHP, "vpp0_mdp_tdshp", "top_vpp", 25),
++	GATE_VPP0_1(CLK_VPP0_MDP_COLOR, "vpp0_mdp_color", "top_vpp", 26),
++	GATE_VPP0_1(CLK_VPP0_MDP_OVL, "vpp0_mdp_ovl", "top_vpp", 27),
++	/* VPP0_2 */
++	GATE_VPP0_2(CLK_VPP0_WARP0_RELAY, "vpp0_warp0_relay", "top_wpe_vpp", 0),
++	GATE_VPP0_2(CLK_VPP0_WARP0_MDP_DL_ASYNC, "vpp0_warp0_mdp_dl_async", "top_wpe_vpp", 1),
++	GATE_VPP0_2(CLK_VPP0_WARP1_RELAY, "vpp0_warp1_relay", "top_wpe_vpp", 2),
++	GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
 +};
 +
-+#define GATE_VDO1_0(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &vdo1_0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+#define GATE_VDO1_1(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &vdo1_1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+#define GATE_VDO1_2(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &vdo1_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+#define GATE_VDO1_3(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &vdo1_3_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate vdo1_clks[] = {
-+	/* VDO1_0 */
-+	GATE_VDO1_0(CLK_VDO1_SMI_LARB2, "vdo1_smi_larb2", "top_vpp", 0),
-+	GATE_VDO1_0(CLK_VDO1_SMI_LARB3, "vdo1_smi_larb3", "top_vpp", 1),
-+	GATE_VDO1_0(CLK_VDO1_GALS, "vdo1_gals", "top_vpp", 2),
-+	GATE_VDO1_0(CLK_VDO1_FAKE_ENG0, "vdo1_fake_eng0", "top_vpp", 3),
-+	GATE_VDO1_0(CLK_VDO1_FAKE_ENG, "vdo1_fake_eng", "top_vpp", 4),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA0, "vdo1_mdp_rdma0", "top_vpp", 5),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA1, "vdo1_mdp_rdma1", "top_vpp", 6),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA2, "vdo1_mdp_rdma2", "top_vpp", 7),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA3, "vdo1_mdp_rdma3", "top_vpp", 8),
-+	GATE_VDO1_0(CLK_VDO1_VPP_MERGE0, "vdo1_vpp_merge0", "top_vpp", 9),
-+	GATE_VDO1_0(CLK_VDO1_VPP_MERGE1, "vdo1_vpp_merge1", "top_vpp", 10),
-+	GATE_VDO1_0(CLK_VDO1_VPP_MERGE2, "vdo1_vpp_merge2", "top_vpp", 11),
-+	GATE_VDO1_0(CLK_VDO1_VPP_MERGE3, "vdo1_vpp_merge3", "top_vpp", 12),
-+	GATE_VDO1_0(CLK_VDO1_VPP_MERGE4, "vdo1_vpp_merge4", "top_vpp", 13),
-+	GATE_VDO1_0(CLK_VDO1_VPP2_TO_VDO1_DL_ASYNC, "vdo1_vpp2_to_vdo1_dl_async", "top_vpp", 14),
-+	GATE_VDO1_0(CLK_VDO1_VPP3_TO_VDO1_DL_ASYNC, "vdo1_vpp3_to_vdo1_dl_async", "top_vpp", 15),
-+	GATE_VDO1_0(CLK_VDO1_DISP_MUTEX, "vdo1_disp_mutex", "top_vpp", 16),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA4, "vdo1_mdp_rdma4", "top_vpp", 17),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA5, "vdo1_mdp_rdma5", "top_vpp", 18),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA6, "vdo1_mdp_rdma6", "top_vpp", 19),
-+	GATE_VDO1_0(CLK_VDO1_MDP_RDMA7, "vdo1_mdp_rdma7", "top_vpp", 20),
-+	GATE_VDO1_0(CLK_VDO1_DP_INTF0_MM, "vdo1_dp_intf0_mm", "top_vpp", 21),
-+	GATE_VDO1_0(CLK_VDO1_DPI0_MM, "vdo1_dpi0_mm", "top_vpp", 22),
-+	GATE_VDO1_0(CLK_VDO1_DPI1_MM, "vdo1_dpi1_mm", "top_vpp", 23),
-+	GATE_VDO1_0(CLK_VDO1_DISP_MONITOR, "vdo1_disp_monitor", "top_vpp", 24),
-+	GATE_VDO1_0(CLK_VDO1_MERGE0_DL_ASYNC, "vdo1_merge0_dl_async", "top_vpp", 25),
-+	GATE_VDO1_0(CLK_VDO1_MERGE1_DL_ASYNC, "vdo1_merge1_dl_async", "top_vpp", 26),
-+	GATE_VDO1_0(CLK_VDO1_MERGE2_DL_ASYNC, "vdo1_merge2_dl_async", "top_vpp", 27),
-+	GATE_VDO1_0(CLK_VDO1_MERGE3_DL_ASYNC, "vdo1_merge3_dl_async", "top_vpp", 28),
-+	GATE_VDO1_0(CLK_VDO1_MERGE4_DL_ASYNC, "vdo1_merge4_dl_async", "top_vpp", 29),
-+	GATE_VDO1_0(CLK_VDO1_VDO0_DSC_TO_VDO1_DL_ASYNC, "vdo1_vdo0_dsc_to_vdo1_dl_async",
-+		    "top_vpp", 30),
-+	GATE_VDO1_0(CLK_VDO1_VDO0_MERGE_TO_VDO1_DL_ASYNC, "vdo1_vdo0_merge_to_vdo1_dl_async",
-+		    "top_vpp", 31),
-+	/* VDO1_1 */
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_FE0, "vdo1_hdr_vdo_fe0", "top_vpp", 0),
-+	GATE_VDO1_1(CLK_VDO1_HDR_GFX_FE0, "vdo1_hdr_gfx_fe0", "top_vpp", 1),
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_BE, "vdo1_hdr_vdo_be", "top_vpp", 2),
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_FE1, "vdo1_hdr_vdo_fe1", "top_vpp", 16),
-+	GATE_VDO1_1(CLK_VDO1_HDR_GFX_FE1, "vdo1_hdr_gfx_fe1", "top_vpp", 17),
-+	GATE_VDO1_1(CLK_VDO1_DISP_MIXER, "vdo1_disp_mixer", "top_vpp", 18),
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_FE0_DL_ASYNC, "vdo1_hdr_vdo_fe0_dl_async", "top_vpp", 19),
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_FE1_DL_ASYNC, "vdo1_hdr_vdo_fe1_dl_async", "top_vpp", 20),
-+	GATE_VDO1_1(CLK_VDO1_HDR_GFX_FE0_DL_ASYNC, "vdo1_hdr_gfx_fe0_dl_async", "top_vpp", 21),
-+	GATE_VDO1_1(CLK_VDO1_HDR_GFX_FE1_DL_ASYNC, "vdo1_hdr_gfx_fe1_dl_async", "top_vpp", 22),
-+	GATE_VDO1_1(CLK_VDO1_HDR_VDO_BE_DL_ASYNC, "vdo1_hdr_vdo_be_dl_async", "top_vpp", 23),
-+	/* VDO1_2 */
-+	GATE_VDO1_2(CLK_VDO1_DPI0, "vdo1_dpi0", "top_vpp", 0),
-+	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI0, "vdo1_disp_monitor_dpi0", "top_vpp", 1),
-+	GATE_VDO1_2(CLK_VDO1_DPI1, "vdo1_dpi1", "top_vpp", 8),
-+	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI1, "vdo1_disp_monitor_dpi1", "top_vpp", 9),
-+	GATE_VDO1_2(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_vpp", 16),
-+	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPINTF, "vdo1_disp_monitor_dpintf", "top_vpp", 17),
-+	/* VDO1_3 */
-+	GATE_VDO1_3(CLK_VDO1_26M_SLOW, "vdo1_26m_slow", "clk26m", 8),
++static const struct mtk_clk_desc vpp0_desc = {
++	.clks = vpp0_clks,
++	.num_clks = ARRAY_SIZE(vpp0_clks),
 +};
 +
-+static int clk_mt8195_vdo1_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data;
-+	int r;
++static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
++	{
++		.compatible = "mediatek,mt8195-vppsys0",
++		.data = &vpp0_desc,
++	}, {
++		/* sentinel */
++	}
++};
 +
-+	clk_data = mtk_alloc_clk_data(CLK_VDO1_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	r = mtk_clk_register_gates(node, vdo1_clks, ARRAY_SIZE(vdo1_clks), clk_data);
-+	if (r)
-+		goto free_vdo1_data;
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		goto free_vdo1_data;
-+
-+	return r;
-+
-+free_vdo1_data:
-+	mtk_free_clk_data(clk_data);
-+	return r;
-+}
-+
-+static struct platform_driver clk_mt8195_vdo1_drv = {
-+	.probe = clk_mt8195_vdo1_probe,
++static struct platform_driver clk_mt8195_vpp0_drv = {
++	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8195-vdo1",
++		.name = "clk-mt8195-vpp0",
++		.of_match_table = of_match_clk_mt8195_vpp0,
 +	},
 +};
-+builtin_platform_driver(clk_mt8195_vdo1_drv);
++builtin_platform_driver(clk_mt8195_vpp0_drv);
 -- 
 2.18.0
 
