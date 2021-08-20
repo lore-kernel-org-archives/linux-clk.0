@@ -2,110 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FABAC4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 17:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED26C4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 17:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CCE761157
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 17:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7EDD610E6
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 17:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232673AbhHTRXT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Aug 2021 13:23:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232598AbhHTRXT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Aug 2021 13:23:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5341D61154;
-        Fri, 20 Aug 2021 17:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629480161;
-        bh=NtBbpRqS1/eYwYOxSrX1KDFfMTuxY8jViL2MBLXG2Ag=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bIh2j4rnKv4rLSL2S/xW+E95f5meZHEUMlJhw7ffG+4wWQjELyVecEyBc7fr0PeHD
-         1jwPDMM01WLqV2cUQgupVegZwFv622VKVHqnfWImWZlXCtvIkGky388p5sKRqY4w8g
-         6wL8mKaTox1a0v7Lv3CRgXSKM9E+gArd9XG7Dg7MFVJ5zR5L1Ec85tL221/y1adKDc
-         jvwZW6gwD71iJK4Z5nRas07sD/hhBdv0vMjssStMB2lFJXAp+WzIe+KV8bsOwpmLFz
-         FQB3CO/gs0hJAX+vuzzWH7PFqp9PrMu9ftVvhO8MiTxiac+edyy1hkq+4bTjOVTI8b
-         7lrzKaS25px/Q==
-Received: by pali.im (Postfix)
-        id 22CDAB8A; Fri, 20 Aug 2021 19:22:39 +0200 (CEST)
-Date:   Fri, 20 Aug 2021 19:22:38 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/6] serial: mvebu-uart: Support for higher baudrates
-Message-ID: <20210820172238.ekvo42s7oqxkeomt@pali>
-References: <20210624224909.6350-1-pali@kernel.org>
- <20210809145329.24177-1-pali@kernel.org>
+        id S234428AbhHTRuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Aug 2021 13:50:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41084 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234160AbhHTRuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 13:50:03 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 17KHnIMj003405;
+        Fri, 20 Aug 2021 12:49:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1629481758;
+        bh=8g5gWRCq88/BlPvTxGIh0QRE5pCHUL6wXTt7OaVUmGY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=nYhayd58YsoiTk3IlGeM38CwZYtaG4h3XX+f9F664KZJQF79DXNIRCX4VvNQ8+CMg
+         Ngd8rCnjHsAVRzipNeMFMbp9qPWZZgz5PYCiFOCrLDpMFoaFADxIudwPWWBJ+z2pLy
+         kFKoBDYq+JdNMApOwz6DtHYSygkMOg0vmAG9D5rI=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 17KHnIQV058919
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Aug 2021 12:49:18 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 20
+ Aug 2021 12:49:17 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Fri, 20 Aug 2021 12:49:17 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 17KHnHR8122874;
+        Fri, 20 Aug 2021 12:49:17 -0500
+Date:   Fri, 20 Aug 2021 12:49:17 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     jing yangyang <cgel.zte@gmail.com>
+CC:     Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        jing yangyang <jing.yangyang@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: Re: [PATCH linux-next] clk/keystone: fix application of sizeof to
+ pointer
+Message-ID: <20210820174917.4emwkb75i2yydm7c@expel>
+References: <84a6ba16686347099a3dab2e5161a930e792eb6e.1629198281.git.jing.yangyang@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210809145329.24177-1-pali@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <84a6ba16686347099a3dab2e5161a930e792eb6e.1629198281.git.jing.yangyang@zte.com.cn>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Monday 09 August 2021 16:53:23 Pali Rohár wrote:
-> This patch series add support for baudrates higher than 230400 on
-> Marvell Armada 37xx boards.
+On 19:20-20210819, jing yangyang wrote:
+> sizeof when applied to a pointer typed expression gives the size of
+> the pointer.
 > 
-> Please review these patches as they touch both Device Tree bindings and
-> mvebu-uart.c driver.
+> ./drivers/clk/keystone/sci-clk.c:398:8-14: ERROR application of sizeof to pointer
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: jing yangyang <jing.yangyang@zte.com.cn>
+> ---
+>  drivers/clk/keystone/sci-clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index 7e1b136..010a61a 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -395,7 +395,7 @@ static struct clk_hw *sci_clk_get(struct of_phandle_args *clkspec, void *data)
+>  	key.clk_id = clkspec->args[1];
+>  
+>  	clk = bsearch(&key, provider->clocks, provider->num_clocks,
+> -		      sizeof(clk), _cmp_sci_clk);
+> +		      sizeof(*clk), _cmp_sci_clk);
 
-Stephen, is this patch series OK now? Or is there any other issue?
+I am trying to understand this.. bsearch uses base + size to do
+iteration, provider is sci_clk_provider ->num_clocks is struct sci_clk
+** same as clk. iteration is done on provider->clocks .. not on *clk,
+am I missing something? or is it one of those testing patches?
 
-> Changes in v5:
-> * fixed yaml binding file
-> 
-> Changes in v4:
-> * converted armada3700-uart-clock documentation to YAML
-> * split documentation changes into two commits:
->   - first which adds clock documentation
->   - second which updates UART documentation
-> 
-> Changes in v3:
-> v3 is rebased on top of Linus master branch and all already applied patches
-> were dropped. There are no changes in patches itself since v2.
-> 
-> Pali Rohár (6):
->   math64: New DIV_U64_ROUND_CLOSEST helper
->   serial: mvebu-uart: implement UART clock driver for configuring UART
->     base clock
->   dt-bindings: mvebu-uart: document DT bindings for
->     marvell,armada-3700-uart-clock
->   dt-bindings: mvebu-uart: update information about UART clock
->   arm64: dts: marvell: armada-37xx: add device node for UART clock and
->     use it
->   serial: mvebu-uart: implement support for baudrates higher than 230400
-> 
->  .../bindings/clock/armada3700-uart-clock.yaml |  57 ++
->  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
->  .../arm64/boot/dts/marvell/armada-3720-db.dts |   4 +
->  .../dts/marvell/armada-3720-espressobin.dtsi  |   4 +
->  .../dts/marvell/armada-3720-turris-mox.dts    |   4 +
->  .../boot/dts/marvell/armada-3720-uDPU.dts     |   4 +
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  15 +-
->  drivers/tty/serial/Kconfig                    |   1 +
->  drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
->  include/linux/math64.h                        |  13 +
->  10 files changed, 682 insertions(+), 21 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> 
-> -- 
-> 2.20.1
-> 
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
