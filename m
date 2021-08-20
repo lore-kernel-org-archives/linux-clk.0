@@ -2,171 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DB2C4338F
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 05:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95BEC4320A
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCBD61056
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 05:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0106108E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238100AbhHTFTZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Aug 2021 01:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233925AbhHTFTX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 01:19:23 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EFA0C061757
-        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 22:18:46 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id k24so8043060pgh.8
-        for <linux-clk@vger.kernel.org>; Thu, 19 Aug 2021 22:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=chAct3ipnxxeeUzw3hiYvmSC99rC9KHQnQdo3Qo5wI0=;
-        b=PAK0FwHpNruccQOMJcEETGgiuehcBfGqSXwbOalixpfWmC8iUPHKv0ZRFhT4USGW3L
-         s3ikZix1CXYk8w3jX5LaxfyZfb40GBiPWSjG9bWn3gJp9a9Md0FR48UGizRgXzY9ODgl
-         10gDNc8YxX4abwwur3/2Ib4tR0HK4fxAVz95jdn0g5Bjm1f+zlmZUdf0J4uOmNCA+73o
-         QmFwB0uLKerpVDInoO9o15o02ie64XpCaCSsIImcFb/KjT6Us0KvUWI0KV441DGxP1Gb
-         Qjx6eoerfkbM7U/RrGe2d3xgWfRJJ6PVyX/2MvEkhvBiHXfKbkbdOk6b4KB2LrxPQeQV
-         fLzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=chAct3ipnxxeeUzw3hiYvmSC99rC9KHQnQdo3Qo5wI0=;
-        b=ss84Jyiwg4Q9KxzcMk2xpykU7t8vFDd3jFWpJFVsDCu+P93UeJoZUG4kwa2r0+FGD9
-         JUnuLWO3Y93Lb2iBFNbu7p7t+AIhlnUsoo9jU9aIrWg8e4LldxyZOHrvedgFTqJeZ+uI
-         XwXSiSvvk/4T1SM02Sns6bID+BBMR6fKtoJ+A3IgIFMrf3eRqKhvukLgdTY2d8qKnDsg
-         77W/fgzFMqkpG5ttDvZ3aLlNZbq7FTdVijiryLv0itDUUX5HH4XSq2uCeqZ+FJNR45ru
-         K6yar5ggBZhX50/kqtCYU8At7MtOFtOhzz3nQuKLiMD5IP3SuRZIgmn6FDQxDwedUW8D
-         uO8Q==
-X-Gm-Message-State: AOAM533zuuE/U61KwVNRH5hJouul6x+pg+2Ge7tOoHHA1XpCwZ9APVUL
-        k9NOyE5uL1H9HnYaaslmQno3xQ==
-X-Google-Smtp-Source: ABdhPJwH30rFrNGt2fTNK9Na7wrgKwgjGw7543RwntMIs+dfy9PTWNVMu53RFGAQHLSof48YBaglZA==
-X-Received: by 2002:a62:8283:0:b0:3e0:f3f3:839d with SMTP id w125-20020a628283000000b003e0f3f3839dmr17811980pfd.37.1629436725848;
-        Thu, 19 Aug 2021 22:18:45 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id i26sm5582209pfu.6.2021.08.19.22.18.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 22:18:45 -0700 (PDT)
-Date:   Fri, 20 Aug 2021 10:48:43 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210820051843.5mueqpnjbqt3zdzc@vireshk-i7>
-References: <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
- <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
- <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
+        id S238581AbhHTHB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Aug 2021 03:01:57 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:37072 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S235172AbhHTHB5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 03:01:57 -0400
+X-UUID: acfcbdcf3e5b4a30a64e3878c740b93e-20210820
+X-UUID: acfcbdcf3e5b4a30a64e3878c740b93e-20210820
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 557516772; Fri, 20 Aug 2021 15:01:17 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 20 Aug 2021 15:01:15 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 20 Aug 2021 15:01:16 +0800
+From:   <sean.wang@mediatek.com>
+To:     <sam.shih@mediatek.com>
+CC:     <robh+dt@kernel.org>, <sean.wang@kernel.org>,
+        <linus.walleij@linaro.org>, <matthias.bgg@gmail.com>,
+        <mpm@selenic.com>, <herbert@gondor.apana.org.au>,
+        <gregkh@linuxfoundation.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <hsinyi@chromium.org>,
+        <enric.balletbo@collabora.com>, <fparent@baylibre.com>,
+        <seiya.wang@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <john@phrozen.org>, <Ryder.Lee@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [v2, 04/12] pinctrl: mediatek: moore: check if pin_desc is valid before use
+Date:   Fri, 20 Aug 2021 15:01:13 +0800
+Message-ID: <1629442873-24655-1-git-send-email-sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <20210817074557.30953-5-sam.shih@mediatek.com--annotate>
+References: <20210817074557.30953-5-sam.shih@mediatek.com--annotate>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-08-21, 16:55, Ulf Hansson wrote:
-> Right, that sounds reasonable.
-> 
-> We already have pm_genpd_opp_to_performance_state() which translates
-> an OPP to a performance state. This function invokes the
-> ->opp_to_performance_state() for a genpd. Maybe we need to allow a
-> genpd to not have ->opp_to_performance_state() callback assigned
-> though, but continue up in the hierarchy to see if the parent has the
-> callback assigned, to make this work for Tegra?
-> 
-> Perhaps we should add an API dev_pm_genpd_opp_to_performance_state(),
-> allowing us to pass the device instead of the genpd. But that's a
-> minor thing.
+From: Sean Wang <sean.wang@mediatek.com>
 
-I am not concerned a lot about how it gets implemented, and am not
-sure as well, as I haven't looked into these details since sometime.
-Any reasonable thing will be accepted, as simple as that.
+>Certain SoC are missing the middle part gpios in consecutive pins, it's better to check if mtk_pin_desc is a valid pin for the extensibility
+>
+>Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+>
 
-> Finally, the precondition to use the above, is to first get a handle
-> to an OPP table. This is where I am struggling to find a generic
-> solution, because I guess that would be platform or even consumer
-> driver specific for how to do this. And at what point should we do
-> this?
 
-Hmm, I am not very clear with the whole picture at this point of time.
+>---
+>v2: applied the comment suggested by reviewers:
+>    - for the pins not ballout, we can fill .name in struct mtk_pin_desc
+>      as NULL and return -ENOTSUPP in gpio/pinconf ops.
 
-Dmitry, can you try to frame a sequence of events/calls/etc that will
-define what kind of devices we are looking at here, and how this can
-be made to work ?
+Thanks for take the suggestion and the improvement.
+Acked-by: Sean Wang <sean.wang@mediatek.com>
 
-> > > Viresh, please take a look at what I did in [1]. Maybe it could be done
-> > > in another way.
-> >
-> > I looked into this and looked like too much trouble. The
-> > implementation needs to be simple. I am not sure I understand all the
-> > problems you faced while doing that, would be better to start with a
-> > simpler implementation of get_performance_state() kind of API for
-> > genpd, after the domain is attached and its OPP table is initialized.
-> >
-> > Note, that the OPP table isn't required to be fully initialized for
-> > the device at this point, we can parse the DT as well if needed be.
-> 
-> Sure, but as I indicated above, you need some kind of input data to
-> figure out what OPP table to pick, before you can translate that into
-> a performance state. Is that always the clock rate, for example?
+>
+>---
+> drivers/pinctrl/mediatek/pinctrl-moore.c | 18 ++++++++++++++++++
+> 1 file changed, 18 insertions(+)
+>
+>diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+>index 3a4a23c40a71..ad3b67163973 100644
+>--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
+>+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+>@@ -60,6 +60,8 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>		int pin = grp->pins[i];
+>
+>		desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
+>+		if (!desc->name)
+>+			return -ENOTSUPP;
+>
+>		mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_MODE,
+>				 pin_modes[i]);
+>@@ -76,6 +78,8 @@ static int mtk_pinmux_gpio_request_enable(struct pinctrl_dev *pctldev,
+>	const struct mtk_pin_desc *desc;
+>
+>	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
+>+	if (!desc->name)
+>+		return -ENOTSUPP;
 
-Eventually it can be clock, bandwidth, or pstate of anther genpd, not
-sure what all we are looking for now. It should be just clock right
-now as far as I can imagine :)
-
-> Perhaps, we should start with adding a dev_pm_opp_get_from_rate() or
-> what do you think? Do you have other suggestions?
-
-We already have similar APIs, so that won't be a problem. We also have
-a mechanism inside the OPP core, frequency based, which is used to
-guess the current OPP. Maybe we can enhance and use that directly
-here.
-
--- 
-viresh
+<snip>
