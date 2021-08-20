@@ -2,104 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95BEC4320A
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F44DC4338F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE0106108E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2691160FF2
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Aug 2021 07:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238581AbhHTHB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Aug 2021 03:01:57 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:37072 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S235172AbhHTHB5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Aug 2021 03:01:57 -0400
-X-UUID: acfcbdcf3e5b4a30a64e3878c740b93e-20210820
-X-UUID: acfcbdcf3e5b4a30a64e3878c740b93e-20210820
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 557516772; Fri, 20 Aug 2021 15:01:17 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 20 Aug 2021 15:01:15 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 20 Aug 2021 15:01:16 +0800
-From:   <sean.wang@mediatek.com>
-To:     <sam.shih@mediatek.com>
-CC:     <robh+dt@kernel.org>, <sean.wang@kernel.org>,
-        <linus.walleij@linaro.org>, <matthias.bgg@gmail.com>,
-        <mpm@selenic.com>, <herbert@gondor.apana.org.au>,
-        <gregkh@linuxfoundation.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <hsinyi@chromium.org>,
-        <enric.balletbo@collabora.com>, <fparent@baylibre.com>,
-        <seiya.wang@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        id S238741AbhHTHjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Aug 2021 03:39:48 -0400
+Received: from mail-dm6nam11on2080.outbound.protection.outlook.com ([40.107.223.80]:31456
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233162AbhHTHjs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Aug 2021 03:39:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a3xOucc6TCQYVAOaXPLQ38+CzDnGHlJ1fCRo7Gam82XKogXneJCls+yAbsEtJhkMzvK0S+4Sj/ShLxBxCINQOEdmBtfYbokVSgIZNnI36738yb/8l8lOeJydNkVhBq9Uy77plZkCEG+3DJRNFRMHnd0OyA8jFio7H9UvVTOZr/ObXRyw7jTCvKdhtDvBXACi8rkYYqHIkHkmnDa/3J5/2yFr/K3t261JLODP2OWfkNc5bmWPDUveeccm0VCJnxCqsq4szpGmEhVLCxBUZ2RNQDZ98w5BF0G0O7ifpiT795ANOPxDZROwD0uNp7F97TM/RUaNB5f8/YYHEpuarEXUgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tjo0/SL9vyf7SpqA9DWXbOVw4KTC7SCqLQIc3lG3SRs=;
+ b=TddzQr7wq4GyYlw1XBnjkouosSokCMAoXRuoKTtNlNvxCttEYexs8JbuK+ffM55QiNqORKLw1OtEA9OVmnosBzBCm9oF9Re/bG0cZT+TC4t4xib1pgjp89/jslMrfM/cs8lyzH/H+stnv0nvYrCrQLvIIwubfmDL2dIy061TGeH/EhT81pTiqraO2p0X2BIDRHnAcGIcWzmlOFCGJMxrtHhL5MlS55+8G4t/8Od8Yq6Jmt2omY9Y1Dr2+jhf/j8iR6/VwcpwgVMq5pRujCVANXcEBosJHol8XsX9Dw0rKx4cy+oQ2mafnwf1XNAqS3ibJ/gfsi47uOf1e5ttrOBZow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tjo0/SL9vyf7SpqA9DWXbOVw4KTC7SCqLQIc3lG3SRs=;
+ b=Y5o3LtBPZFD1k4Vlb0wy8SpmObmMiChk+Umd/uVWwdiBWvLMwfEe9OZ8TiGng0wmP5emWDGAGwmNo7iZKkh8tB9BCUZxk4tthzXRMMbNgTDvq0UxQzHBZWG09KMdirewdyQCL0SRNJ9aPpHS8jUE8+hgBrtMZh3uN8PTmuQRFFM=
+Received: from BN9PR03CA0748.namprd03.prod.outlook.com (2603:10b6:408:110::33)
+ by BYAPR02MB4648.namprd02.prod.outlook.com (2603:10b6:a03:12::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.22; Fri, 20 Aug
+ 2021 07:39:08 +0000
+Received: from BN1NAM02FT064.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:408:110:cafe::c9) by BN9PR03CA0748.outlook.office365.com
+ (2603:10b6:408:110::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19 via Frontend
+ Transport; Fri, 20 Aug 2021 07:39:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ BN1NAM02FT064.mail.protection.outlook.com (10.13.2.170) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4436.19 via Frontend Transport; Fri, 20 Aug 2021 07:39:08 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Fri, 20 Aug 2021 00:39:05 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Fri, 20 Aug 2021 00:39:05 -0700
+Envelope-to: mturquette@baylibre.com,
+ sboyd@kernel.org,
+ linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Received: from [172.19.2.243] (port=34116 helo=xsjwillw50.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1mGz7J-000Ae4-1w; Fri, 20 Aug 2021 00:39:05 -0700
+From:   Rajan Vaja <rajan.vaja@xilinx.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <michal.simek@xilinx.com>
+CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <john@phrozen.org>, <Ryder.Lee@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: Re: [v2, 04/12] pinctrl: mediatek: moore: check if pin_desc is valid before use
-Date:   Fri, 20 Aug 2021 15:01:13 +0800
-Message-ID: <1629442873-24655-1-git-send-email-sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <20210817074557.30953-5-sam.shih@mediatek.com--annotate>
-References: <20210817074557.30953-5-sam.shih@mediatek.com--annotate>
+        <linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: [PATCH] clk: zynqmp: fix kernel doc
+Date:   Fri, 20 Aug 2021 00:38:33 -0700
+Message-ID: <1629445113-32649-1-git-send-email-rajan.vaja@xilinx.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 004ba7fd-e3cb-4961-ade3-08d963ad982b
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4648:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4648CC8592B612EC029ED44CB7C19@BYAPR02MB4648.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: I8mSg04UY0o79bNXuUKZeK35Ec1Bc+J+tzO21V3dXZgOEe7GPTzw0OWQMprYQ4+HFD4gqW0AXrxKIERVRrWKoNkyPndp5dz5ZYuDQJQ7XolWqm41WDkAmfNiG3XsxlKGzORGkfYDM992QbQIhIZCIRwcWDCFca6ZUHCdudheKX3WNrqMsKEE0bdvh1PbkaMtXvuPphTvVHRGqjNhovQ0fPmNGcS8EhXjAcWBA8M9zv0DRGaaJ9k77lxE0JgqnQ/rSNPTgj8UVnM12OwaQWf6X9XiwsxIYCsiOVMMnjbuCEVtLu9CP91nME6GjIbI3cmfv/JUVTdeD7v3sQ8ompLsA835WP6b3KE3NLlmEfOLs2bwGw53Jwt3DeUF73RSRgn9SdxJTIg26VerWrd4jrGSpif/U6/QUMAdv5kmdjvGtbEHNEPj2WDHvGqcwA/naLSWwcqBumBefNRmxHGc/D3tQREMGR6ZXp6/G5yTgkOjHWN1seObMp3jGi7bN1WGdtPNEnnW2ZmR7HDMsQZGbjJ8Mb1fBhwgmbgcItbredh+ZnIVYladG6xHmogWAxIFE2uyJMHTqIy8W2WODNXYjfdwkk6d3pwKfeoRerM54CcSODboiNnr14l7ArdXDEjid9LLtMdAKbnmkKimDbqi4+ZX1pIkkaknyZnoc4gTF1dykWSCBsZS66XCFpu4uzF+9b+OW8Qnit58pPKZ+dNaGU62gihGuxojLgui7IzYAkk+P1k=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(396003)(136003)(376002)(46966006)(36840700001)(8936002)(8676002)(478600001)(82740400003)(4326008)(6636002)(107886003)(316002)(9786002)(70206006)(70586007)(356005)(7696005)(2616005)(44832011)(7636003)(336012)(4744005)(36860700001)(54906003)(5660300002)(6666004)(36756003)(110136005)(82310400003)(47076005)(426003)(186003)(83380400001)(2906002)(26005)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2021 07:39:08.1797
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 004ba7fd-e3cb-4961-ade3-08d963ad982b
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT064.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4648
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+Add missing description of 'custom_type_flag' structure member.
 
->Certain SoC are missing the middle part gpios in consecutive pins, it's better to check if mtk_pin_desc is a valid pin for the extensibility
->
->Signed-off-by: Sam Shih <sam.shih@mediatek.com>
->
+Fixes: e605fa9c4a0c1218e5604b42bef59de0a3a4f813
+       ("clk: zynqmp: Add support for custom type flags")
 
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+---
+ drivers/clk/zynqmp/clk-zynqmp.h | 1 +
+ 1 file changed, 1 insertion(+)
 
->---
->v2: applied the comment suggested by reviewers:
->    - for the pins not ballout, we can fill .name in struct mtk_pin_desc
->      as NULL and return -ENOTSUPP in gpio/pinconf ops.
+diff --git a/drivers/clk/zynqmp/clk-zynqmp.h b/drivers/clk/zynqmp/clk-zynqmp.h
+index 84fa80a..a3cd2f8 100644
+--- a/drivers/clk/zynqmp/clk-zynqmp.h
++++ b/drivers/clk/zynqmp/clk-zynqmp.h
+@@ -56,6 +56,7 @@ enum topology_type {
+  * @type:	Type of topology
+  * @flag:	Topology flags
+  * @type_flag:	Topology type specific flag
++ * @custom_type_flag: Topology type specific custome flag
+  */
+ struct clock_topology {
+ 	u32 type;
+-- 
+2.7.4
 
-Thanks for take the suggestion and the improvement.
-Acked-by: Sean Wang <sean.wang@mediatek.com>
-
->
->---
-> drivers/pinctrl/mediatek/pinctrl-moore.c | 18 ++++++++++++++++++
-> 1 file changed, 18 insertions(+)
->
->diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
->index 3a4a23c40a71..ad3b67163973 100644
->--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
->+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
->@@ -60,6 +60,8 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
->		int pin = grp->pins[i];
->
->		desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
->+		if (!desc->name)
->+			return -ENOTSUPP;
->
->		mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_MODE,
->				 pin_modes[i]);
->@@ -76,6 +78,8 @@ static int mtk_pinmux_gpio_request_enable(struct pinctrl_dev *pctldev,
->	const struct mtk_pin_desc *desc;
->
->	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
->+	if (!desc->name)
->+		return -ENOTSUPP;
-
-<snip>
