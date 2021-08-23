@@ -2,122 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FB6C4338F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 05:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 623C3C4338F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 611A86126A
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 05:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4720561250
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234005AbhHWF4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 01:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52020 "EHLO
+        id S231997AbhHWGlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 02:41:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233584AbhHWF4L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 01:56:11 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CD1C061575;
-        Sun, 22 Aug 2021 22:55:29 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id e9so10345899vst.6;
-        Sun, 22 Aug 2021 22:55:29 -0700 (PDT)
+        with ESMTP id S231779AbhHWGlU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 02:41:20 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA387C061757
+        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:40:38 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id l18so22011086lji.12
+        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vMw/3kI8eARoe7WvfrrHdgvyGXgR3UzQdKK0JiaKTgE=;
-        b=IHsmwzfa7Hwqu2vy9ogbqC8qGaTJGPmBfVh5w7fUKbWv1sOQ3QdWqGCiVDRKeEAX25
-         gdaKP9hUZ+uh02j9cpAIOliAqSTwjb4bZLO0cGY9D5LZnfGQg4SlAmmp33U2YTFpbup+
-         hvL4xVqsOUkoiq0PFd12GgYvkzeX6kaTSUAmDHbiab865d4n9myeY+KtRoSK01p7U2yz
-         ADutriU1GxWiTIxLOqEZvFQ9+fUFASfnkjiwDtgPPxiJ9KWG9joRGzj7E6/8aMvsxK5V
-         42B6XBtFBR9p8p+ss9PaY8m/kGeXKwmQS16OCI55gXNwx6/3RF/YVPbMD24YrP7OpDPq
-         MdPw==
+        bh=dOSScg11+0lHrDw6MS1CV2sNd8OdE1zWDqg1qjqqW2Y=;
+        b=PYypPGwhJKWIPHwv0PNNxvgnPr8zgWPvGUeVW/uOkbS0Yv1LkNwjUiYPwyaBu+NxwW
+         dYV+82j3pW0jpoHiJeHbehsfiEC8JgTXafrSgSTiLwmlPR+F4eg9qpAJg72XDqbx9Mvc
+         gvHQPEr4y/JXHUQ4fJSKsQdp9nRZWGHp+2Lh0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vMw/3kI8eARoe7WvfrrHdgvyGXgR3UzQdKK0JiaKTgE=;
-        b=f8MKypQlTZkZwSR+s0xseCo51NV+8NXc4HAcnI5vGvqvFs0HexcsaF2dPPhpKfk8cK
-         gYkUxdrQfisKhRFNZr+a1WN7/wvzL3Ki0trR6WzgWrNnONhtqIS6EGq/Z7mB621pdOwX
-         zWeDSTxA+P1b/9KIBFVT8oAU06hItlgrN0WS2GzicaluNsP4ZwllbtUuPZ+9BQJCeXMs
-         JmlJvsK5EOmtbiua/V2MPVgedHMBHlJcqp8kjpKp/oo71YUJY0fj7W891PHtP5n7cF5a
-         kogc8lmGKwN5N7pmgPhWxpq1F4QYVbyNnriBoY22mxQ8DCDmcVyfvH5DzxoQcjlwmi6R
-         z/Aw==
-X-Gm-Message-State: AOAM5322HKGJhNDdQ/quktOric7qSZpLcGXszjNxqAbROwhvObyOBEjj
-        bG7drIo+Mn20j0oJ4lR1xslAZ2DM5V1tA5/fZGa1rIymc4DfGw==
-X-Google-Smtp-Source: ABdhPJxfs2GU9WEvQris9fst/H0J4EMs6+EYOpCY4cBcEgqriSTK6C8FNtsh9EJS5HlZ9eLHkL6g8XrVE348NKKGdso=
-X-Received: by 2002:a05:6102:2150:: with SMTP id h16mr5610908vsg.28.1629698127944;
- Sun, 22 Aug 2021 22:55:27 -0700 (PDT)
+        bh=dOSScg11+0lHrDw6MS1CV2sNd8OdE1zWDqg1qjqqW2Y=;
+        b=K0ScTL1SZhbQT6tsTtGuSicn8tIpe6Zj+OSlyFzG5Mj2qQick5okw7ZSblTTWHbdso
+         xsBLS6O3NKJqvYhtADnpAv3wmtXitj82OTELRS6QbkI1nXi+fRAWV4N0TQnMHCC9Sz4o
+         I4uyR8l0EAKNRuixrqukta+AUdo7l5wDSwsq5otM3m8UQ+hxkWAnUzBWNopYmljs9OIl
+         UalC98bwUKz1h1s26MuF8JPv2Cn0zwYf+i4N7q9szqpLNHM6G4XD2Pf47UvGaPHNShot
+         uCKvDCiESWoHnw346zsV9Ytp0XBF8Y1HrtC1GiMgSAUlmu1BJq9VHjHwJJznLAuonfOi
+         UfOg==
+X-Gm-Message-State: AOAM5320A3xnuvspfEX2tkIEfFOhdCaltyUaKYricPtgEhnb631PV0+Z
+        81oCx69ThvOVKmF3/jKUcJ2MdXzpufu2Mzxrf3t0JQ==
+X-Google-Smtp-Source: ABdhPJzCaNaaScS5j8xwc/H16iJK+VtsRDRaMiPRceRnRRAxbyhImqfGwZYwLIHLdB0yA9X834FjhBCHEBgVDLi4C9I=
+X-Received: by 2002:a2e:b0e2:: with SMTP id h2mr25865507ljl.23.1629700837011;
+ Sun, 22 Aug 2021 23:40:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210727055537.11785-1-sergio.paracuellos@gmail.com>
-In-Reply-To: <20210727055537.11785-1-sergio.paracuellos@gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 23 Aug 2021 07:55:16 +0200
-Message-ID: <CAMhs-H85uEWHZqTU0VXGXHUD9nt6n1dbZsWg2mMKa5RE1WzZaQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: ralink: avoid to set 'CLK_IS_CRITICAL' flag for gates
-To:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DENG Qingfang <dqfext@gmail.com>
+References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-5-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210820111504.350-5-chun-jie.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 23 Aug 2021 14:40:26 +0800
+Message-ID: <CAGXv+5G8WUW5ByA12ELrUvHVshwj2nm2wMLYZeFt82g4C7BXpw@mail.gmail.com>
+Subject: Re: [v2 04/24] clk: mediatek: Add API for clock resource recycle
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 27, 2021 at 7:55 AM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
+On Fri, Aug 20, 2021 at 7:18 PM Chun-Jie Chen
+<chun-jie.chen@mediatek.com> wrote:
 >
-> 'clk_init_data' for gates is setting up 'CLK_IS_CRITICAL'
-> flag for all of them. This was being doing because some
-> drivers of this SoC might not be ready to use the clock
-> and we don't wanted the kernel to disable them since default
-> behaviour without clock driver was to set all gate bits to
-> enabled state. After a bit more testing and checking driver
-> code it is safe to remove this flag and just let the kernel
-> to disable those gates that are not in use. No regressions
-> seems to appear.
+> In order to avoid resource leak when fail clock registartion appears,
+
+Typo. Please fix if you respin a new version.
+
+> so add the common interface to handle it.
 >
-> Fixes: 48df7a26f470 ("clk: ralink: add clock driver for mt7621 SoC")
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
->  drivers/clk/ralink/clk-mt7621.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 
-Hi Stephen,
-
-Are you ok with this?? It has been a while without response.
-
-Thanks in advance for your time.
-
-Sergio Paracuellos
-
->
-> diff --git a/drivers/clk/ralink/clk-mt7621.c b/drivers/clk/ralink/clk-mt7621.c
-> index 857da1e274be..a2c045390f00 100644
-> --- a/drivers/clk/ralink/clk-mt7621.c
-> +++ b/drivers/clk/ralink/clk-mt7621.c
-> @@ -131,14 +131,7 @@ static int mt7621_gate_ops_init(struct device *dev,
->                                 struct mt7621_gate *sclk)
->  {
->         struct clk_init_data init = {
-> -               /*
-> -                * Until now no clock driver existed so
-> -                * these SoC drivers are not prepared
-> -                * yet for the clock. We don't want kernel to
-> -                * disable anything so we add CLK_IS_CRITICAL
-> -                * flag here.
-> -                */
-> -               .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> +               .flags = CLK_SET_RATE_PARENT,
->                 .num_parents = 1,
->                 .parent_names = &sclk->parent_name,
->                 .ops = &mt7621_gate_ops,
-> --
-> 2.25.1
->
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
