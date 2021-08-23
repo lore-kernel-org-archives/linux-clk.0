@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AE2C4338F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1400C432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DCFF61284
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C606261284
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 06:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234715AbhHWGnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 02:43:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
+        id S234988AbhHWGya (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 02:54:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234212AbhHWGnh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 02:43:37 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0BBC061575
-        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:42:54 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id j12so15154482ljg.10
-        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:42:54 -0700 (PDT)
+        with ESMTP id S233201AbhHWGy3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 02:54:29 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5510AC061575
+        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:53:47 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id f10so21023479lfv.6
+        for <linux-clk@vger.kernel.org>; Sun, 22 Aug 2021 23:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FFJ5qArshzVHf3q7jRlOWQagxpfLOrv79VSjCdNEbCA=;
-        b=Zf7g29E3w/mMGEQGTHke0IP1vIqXBP/xGjiHyLab7RfdnbLe9ZNKiyevv6kO2oi89n
-         3wsWr3eIiIFkS8ODwd2HPqhiTr/XmNhM2RqeP8M7oo/E8+KI1mkd/dwW5x0YHqVVg7ii
-         Gbc8dt9O4AM7OBaotSD53oVjK7yj0Ezk2OaJg=
+        bh=ykVwd28+PpS9RdFtwLjN4T/dzr4Pp61Ec9sxPTtcctc=;
+        b=J1ffpX3IK1WLgUymbrNtz4fC5SSzlNQoHe9i5k3n9fPJ3OyXL1cEhKhqg7JTfQXsqb
+         gxIp9u/kV11VpBiYxcQ7TKGNkG5fheHOcrJHHRE/xv2ZKa13vPtCsMEnMhaT1ZyqP/gq
+         PVBK1Gbsn2A6HFPU7XC7ioqAN3pMiNhqFPrPw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FFJ5qArshzVHf3q7jRlOWQagxpfLOrv79VSjCdNEbCA=;
-        b=icmlt3P7ftKGl8iq/8YlUheGN9Lz2OLR3nI29fkWwGOTZhD8l03sjCbIDS5Wx21b5F
-         hhYcP3Ygbd3LhMrjLmPGEx6LmBTLNaSO+Tt+B11X1DPTKgnXo1i7PJU8G9Gw8U+m8iNJ
-         n2g2F7qUKl3MXguIG5msvf4jBWrKprNt9Jt5nCKGThW6KfBWvfqEZddkgeVL5zlVBQdn
-         EgWljIwNmVxFEVwniTQu7r0BgsiZ/wOdvntcWxVnE9k5kL4/xPiznbRYM7/pA6hbiBuC
-         ANfhybViRY8s+sLLbzR/42h3Wwk1cMPmnKXldjaenUtROiiyIWfJ77Jkt81LEHyBfH2W
-         17oA==
-X-Gm-Message-State: AOAM532gV32jGHHGEmh/ApGWi4gIxxjA7WsK6j/5/F819DlgWuXirR6a
-        KStQzM/2ZapXV9+dNv+jmNxIwdLvX7R/j8/1EiNV6w==
-X-Google-Smtp-Source: ABdhPJxTuOEDNkFKHBotXobJuIjH4Z7qG0KV3mS8Xf0E+WOygl2HTPZPkLpJ47L2eJAse8NeczQkwyQsSN8xFb81ERI=
-X-Received: by 2002:a05:651c:211a:: with SMTP id a26mr12902308ljq.305.1629700973307;
- Sun, 22 Aug 2021 23:42:53 -0700 (PDT)
+        bh=ykVwd28+PpS9RdFtwLjN4T/dzr4Pp61Ec9sxPTtcctc=;
+        b=bFpiCeVjeLC9TubyWTaaI0RoGjSrHQEFtFqOKhVwY7p9H1NlcgvKPlq+9GsAWjLBfz
+         Fj2FFzpL1MuJdkIlGmSbHmDcNyODbkIItBsEM9bLcliRt3Anij/sixh+2lqu5hc3hdrg
+         eo5RxRsa6r+xzslSgW9Z4rf+DXAwPogCm2bj4Otk9K5Yu7uP6qwHuOD4NTf6bg6Lio/F
+         rRVRU3BD4g2mMhIhd1zddE3WYj6PttJ2whNJKe5uA3EOzBOZFEnC2zsJspdcrAkTyfVY
+         a3QwMQZoG8aiVLw5FaJCpc0Nje6ZXkS2KaqBl6RP6sI9v1e6Xos96vgzD4lCQQBqzNcV
+         jb3w==
+X-Gm-Message-State: AOAM532YncEqszDt/T7dftC/rZhRfVHvhX4gCYas9UFWneNl3EyBNMQo
+        FD8PNBUOlJmwJlo8luwsBqG0UsPHZW+wbZh2BrCc4w==
+X-Google-Smtp-Source: ABdhPJxh0ZhiKQDi+P2hyKg41D5UpaAEP74ceBsTgaXwXWkhWXIx8uAAhgWwAorVWvx9v84bqXxUIka1tGuDnu6MVd8=
+X-Received: by 2002:a19:ca09:: with SMTP id a9mr8363402lfg.342.1629701625387;
+ Sun, 22 Aug 2021 23:53:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-6-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210820111504.350-6-chun-jie.chen@mediatek.com>
+References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-2-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210820111504.350-2-chun-jie.chen@mediatek.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 23 Aug 2021 14:42:42 +0800
-Message-ID: <CAGXv+5EReMTGS02SgVO_yrpChOiw++3rwfc0Jx66CBzuDHOXAQ@mail.gmail.com>
-Subject: Re: [v2 05/24] clk: mediatek: Fix resource leak in mtk_clk_simple_probe
+Date:   Mon, 23 Aug 2021 14:53:34 +0800
+Message-ID: <CAGXv+5FAEFD+dQsZzyZOzmwDDnwLZO3Z8wv8Z-=wVYdjjc3FYg@mail.gmail.com>
+Subject: Re: [v2 01/24] dt-bindings: ARM: Mediatek: Add new document bindings
+ of MT8195 clock
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -74,50 +75,129 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 7:19 PM Chun-Jie Chen
+Hi,
+
+On Fri, Aug 20, 2021 at 7:17 PM Chun-Jie Chen
 <chun-jie.chen@mediatek.com> wrote:
 >
-> Release clock data when clock driver probe fail to fix
-> possible resource leak.
+> This patch adds the new binding documentation for system clock
+> and functional clock on Mediatek MT8195.
 >
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+>  .../arm/mediatek/mediatek,mt8195-clock.yaml   | 254 ++++++++++++++++++
+>  .../mediatek/mediatek,mt8195-sys-clock.yaml   |  73 +++++
+>  2 files changed, 327 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> new file mode 100644
+> index 000000000000..17fcbb45d121
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> @@ -0,0 +1,254 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8195-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek Functional Clock Controller for MT8195
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The clock architecture in Mediatek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The devices except apusys_pll provide clock gate control in different IP blocks.
+> +  The apusys_pll provides Plls which generated from SoC 26m for AI Processing Unit.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8195-scp_adsp
+> +          - mediatek,mt8195-imp_iic_wrap_s
+> +          - mediatek,mt8195-imp_iic_wrap_w
+> +          - mediatek,mt8195-mfgcfg
+> +          - mediatek,mt8195-vppsys0
+> +          - mediatek,mt8195-wpesys
+> +          - mediatek,mt8195-wpesys_vpp0
+> +          - mediatek,mt8195-wpesys_vpp1
+> +          - mediatek,mt8195-vppsys1
+> +          - mediatek,mt8195-imgsys
+> +          - mediatek,mt8195-imgsys1_dip_top
+> +          - mediatek,mt8195-imgsys1_dip_nr
+> +          - mediatek,mt8195-imgsys1_wpe
+> +          - mediatek,mt8195-ipesys
+> +          - mediatek,mt8195-camsys
+> +          - mediatek,mt8195-camsys_rawa
+> +          - mediatek,mt8195-camsys_yuva
+> +          - mediatek,mt8195-camsys_rawb
+> +          - mediatek,mt8195-camsys_yuvb
+> +          - mediatek,mt8195-camsys_mraw
+> +          - mediatek,mt8195-ccusys
+> +          - mediatek,mt8195-vdecsys_soc
+> +          - mediatek,mt8195-vdecsys
+> +          - mediatek,mt8195-vdecsys_core1
+> +          - mediatek,mt8195-vencsys
+> +          - mediatek,mt8195-vencsys_core1
+> +          - mediatek,mt8195-apusys_pll
+
+The indentation is slightly off by 2 extra spaces.
+
+[...]
+
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..dbf33ea6cb9f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8195-sys-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek System Clock Controller for MT8195
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The clock architecture in Mediaek like below
+
+Typo.
+
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The apmixedsys provides most of PLLs which generated from SoC 26m.
+> +  The topckgen provides dividers and muxes which provide the clock source to other IP blocks.
+> +  The infracfg_ao and pericfg_ao provides clock gate in peripheral and infrastructure IP blocks.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8195-topckgen
+> +          - mediatek,mt8195-infracfg_ao
+> +          - mediatek,mt8195-apmixedsys
+> +          - mediatek,mt8195-pericfg_ao
+
+Indentation off here as well.
+
+Otherwise,
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
-> ---
->  drivers/clk/mediatek/clk-mtk.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-> index c3d385c0cfcb..74890759e98c 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -314,7 +314,15 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
->
->         r = mtk_clk_register_gates(node, mcd->clks, mcd->num_clks, clk_data);
-
-Note for future reference: there is no unregister counterpart for
-mtk_clk_register_*.
-
-
->         if (r)
-> -               return r;
-> +               goto free_data;
->
-> -       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +       if (r)
-> +               goto free_data;
-> +
-> +       return r;
-> +
-> +free_data:
-> +       mtk_free_clk_data(clk_data);
-> +       return r;
->  }
-> --
-> 2.18.0
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
