@@ -2,83 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67341C4338F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2ECBC432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E677613A5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D28C960E93
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232035AbhHWSZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 14:25:18 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:43717 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbhHWSZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 14:25:18 -0400
-Received: by mail-ot1-f49.google.com with SMTP id x10-20020a056830408a00b004f26cead745so38777297ott.10;
-        Mon, 23 Aug 2021 11:24:35 -0700 (PDT)
+        id S230289AbhHWSz2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 14:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230192AbhHWSz2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 14:55:28 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2937DC061575;
+        Mon, 23 Aug 2021 11:54:45 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id f10so25142951lfv.6;
+        Mon, 23 Aug 2021 11:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LLLBnniN0Lx+Mumrz5skT0TPVp1ZGUNcrTmYMEWefMQ=;
+        b=bRXypa0kMDufIBAltELnod4/f5LKxu08gHYATptf+EI6+VVuqGZtQc9IaQGjvFFCgq
+         vbFbH2SdazqvcCAMYk3J4GuHj0e5I7zku8Oa9NfAxUikDOx7zn3pX1WDsTh6UdD8qIGa
+         3eprpmmrxRJAoaM7Gu3ZdgZoGar9lSRCs5JDzMxdRNpVQ+gLcrYDdO8oxckRN909UcKX
+         YtPVujPIzOZGW53g9o6QT7ES0CxEZ1zsz/t/TQNQmOc6LtFG124QbMp5K98LUEYst25J
+         DiyXxjAzvYYQpznD15TTlrtQK87XzYXH/DXwNlvN8BApenm8QR23KvoRjr4Lypahasp2
+         +t8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9LVr7Ep9kqEYckDFYHzb6AN+kIKu8SgVX7aZO3k6n8Q=;
-        b=AK7v7ZsvKksNNasZpsuHYwhUp0codH0UjvUvEgR5pZF57WgQJ72I/mKajV510pQ0lW
-         2f4t9aTUnEsQ5ZCoOtiP0P1K8ONPrW0rBbZHTiKniLBeAt4ROP7cs1B6tdj9MxGaDh8T
-         22fhsyR/kuG7vppC1d993ngXE3ZeVKorLpbFxm/9Y3JTP9Cdv5YSOlndoji6dYDNR5th
-         y7dYIGSvIc1ANfcofJbRwURYuAi+zIwCOYwoghC5CIl+quna+P0lg14m5yugghun2CQU
-         ksPWx/PrBr7onBaKXm7KMbi8xJR+ZqHLF3mH3ng3RWAhbjkZkK6Gxbp2xTqeYiWcJXFP
-         3f3g==
-X-Gm-Message-State: AOAM533p+2/TD3skT8Yo1KuJiXJKzEdmE/7Zuc24etbuQCrp6TKWVarE
-        p6qtmsPA02evcIBC8bTh2w==
-X-Google-Smtp-Source: ABdhPJyY0P+WUkUmlfUESlAS+W72x+H1/jlqO4sbnjW7EVuaPu2IdLyeGjgxi2joYuUmznBunXSf2A==
-X-Received: by 2002:a05:6830:40c1:: with SMTP id h1mr8992262otu.10.1629743075189;
-        Mon, 23 Aug 2021 11:24:35 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m35sm3529657ooi.38.2021.08.23.11.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 11:24:34 -0700 (PDT)
-Received: (nullmailer pid 2469398 invoked by uid 1000);
-        Mon, 23 Aug 2021 18:24:33 -0000
-Date:   Mon, 23 Aug 2021 13:24:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LLLBnniN0Lx+Mumrz5skT0TPVp1ZGUNcrTmYMEWefMQ=;
+        b=tXflJOg0+VzMxn6y2k6Y1r5v87Nob0OemaHlYb+2euBDg7Rv0DSAexmmxngb03UawW
+         MIFRJsA+ejpCrUcXd/H1I9K2YjkjcNKjd+u0I+Ppt+JDaTqwhy3IOKI0UE3cKF8Rb8ch
+         Sgpgw4SLhVk2ay7U4SynA8ebW/BpCZx+HMq55ABfUqyQw0ic18DZQumST7RZbKLeCJSp
+         SrvvQrQCrfq2JOd+dvrK6+BpVJnYCfnxxdGag3k+HVHec7IiKwiaZUxdfwKY2tgrA8I7
+         7ew8FgaY2io+YFVaGlgqrpbGP6+I1DdVD2/Ji/Ur7/uO569pbt8gTGX9P3o6+pmvDXwG
+         Z6AQ==
+X-Gm-Message-State: AOAM531+Tf38LLd3cpfi6D2629+Hvmi6bBhDr4UuJNtPZxtrQoNIrTBQ
+        emb4iz6ou9Z/ZjY6r67AMCXtYBBWxxg=
+X-Google-Smtp-Source: ABdhPJzROMmO2gjb4vwtC02vW+yxH5GZycPshNAf3U2uJx1Cn7HyzCyTxuzs4nwkiF2FdwTHg0lTpw==
+X-Received: by 2002:a05:6512:3d22:: with SMTP id d34mr26136115lfv.326.1629744883418;
+        Mon, 23 Aug 2021 11:54:43 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
+        by smtp.googlemail.com with ESMTPSA id u18sm1664954lfo.280.2021.08.23.11.54.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Aug 2021 11:54:42 -0700 (PDT)
+Subject: Re: [PATCH v8 07/34] clk: tegra: Support runtime PM and power domain
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: brcm,iproc-clocks: fix armpll
- properties
-Message-ID: <YSPn4Y+Rgs83lg/g@robh.at.kernel.org>
-References: <20210819052918.6753-1-zajec5@gmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20210817012754.8710-8-digetx@gmail.com>
+ <YR0UBi/ejy+oF4Hm@orome.fritz.box>
+ <da7356cb-05ee-ba84-8a7c-6e69d853a805@gmail.com>
+ <YR04YHGEluqLIZeo@orome.fritz.box>
+ <ad99db08-4696-1636-5829-5260f93dc681@gmail.com>
+ <YR6Mvips3HAntDy0@orome.fritz.box>
+ <e17bbe8d-7c0f-fc3d-03c7-d75c54c24a43@gmail.com>
+ <YR+VDZzTihmpENp6@orome.fritz.box>
+ <CAPDyKFpJ+TK0w1GZEA7G=rtAjq5ipmVR4P0wy7uHiEGVWRk5yA@mail.gmail.com>
+ <89ea1694-be9e-7654-abeb-22de0ca5255a@gmail.com>
+ <YSOxnqiia+FqfOX6@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <acd25387-3d2b-460d-3280-eedd064b174b@gmail.com>
+Date:   Mon, 23 Aug 2021 21:54:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <YSOxnqiia+FqfOX6@orome.fritz.box>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210819052918.6753-1-zajec5@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 19 Aug 2021 07:29:18 +0200, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+23.08.2021 17:33, Thierry Reding пишет:
+> On Sat, Aug 21, 2021 at 08:45:54PM +0300, Dmitry Osipenko wrote:
+>> 20.08.2021 16:08, Ulf Hansson пишет:
+>> ...
+>>>> I suppose if there's really no good way of doing this other than
+>>>> providing a struct device, then so be it. I think the cleaned up sysfs
+>>>> shown in the summary above looks much better than what the original
+>>>> would've looked like.
+>>>>
+>>>> Perhaps an additional tweak to that would be to not create platform
+>>>> devices. Instead, just create struct device. Those really have
+>>>> everything you need (.of_node, and can be used with RPM and GENPD). As I
+>>>> mentioned earlier, platform device implies a CPU-memory-mapped bus,
+>>>> which this clearly isn't. It's kind of a separate "bus" if you want, so
+>>>> just using struct device directly seems more appropriate.
+>>>
+>>> Just a heads up. If you don't use a platform device or have a driver
+>>> associated with it for probing, you need to manage the attachment to
+>>> genpd yourself. That means calling one of the dev_pm_domain_attach*()
+>>> APIs, but that's perfectly fine, ofcourse.
+>>>
+>>>>
+>>>> We did something similar for XUSB pads, see drivers/phy/tegra/xusb.[ch]
+>>>> for an example of how that was done. I think you can do something
+>>>> similar here.
+>>
+>> We need a platform device because we have a platform device driver that
+>> must be bound to the device, otherwise PMC driver state won't be synced
+>> since it it's synced after all drivers of devices that reference PMC
+>> node in DT are probed.
 > 
-> armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
-> with no cells. Adjust binding props #clock-cells and clock-output-names
-> to handle them.
+> I think the causality is the wrong way around. It's more likely that you
+> added the platform driver because you have a platform device that you
+> want to bind against.
 > 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> ---
->  .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
+> You can have drivers bind to other types of devices, although it's a bit
+> more work than abusing platform devices for it.
 > 
+> There's the "auxiliary" bus that seems like it would be a somewhat
+> better fit (see Documentation/driver-api/auxiliary_bus.rst), though it
+> doesn't look like this fits the purpose exactly. I think a custom bus
+> (or perhaps something that could be deployed more broadly across CCF)
+> would be more appropriate.
+> 
+> Looking around, it seems like clk/imx and clk/samsung abuse the platform
+> bus in a similar way, so they would benefit from a "clk" bus as well.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+It may be nice to have a dedicated clk bus, but this is too much effort
+for nearly nothing in our case. It shouldn't be a problem to convert
+drivers to use clk bus once it will be implemented. It shouldn't be a
+part of this series, IMO.
