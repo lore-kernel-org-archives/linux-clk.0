@@ -2,319 +2,357 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C5EC19F34
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 10:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2046C4338F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 11:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E31526137D
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 10:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6793610D0
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 11:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236235AbhHWKrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 06:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34726 "EHLO
+        id S236445AbhHWLRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 07:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236171AbhHWKrl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 06:47:41 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01209C0613C1
-        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 03:46:56 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id s12so5495089ljg.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 03:46:56 -0700 (PDT)
+        with ESMTP id S236381AbhHWLRv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 07:17:51 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1A74C061575
+        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 04:17:08 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id j4so2288539lfg.9
+        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 04:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UmkfXGaYCdqSsvCrogHGEUgWw+TJ4SlfmjU5MN/PEBE=;
-        b=cjqU7CIQQYnl3N9VSH9OdTpbfhx84HH/grPgOc+tCGAo2Yn2hAV0cMn3z8HTaVOuhA
-         8Brg4z73NnaY2Z/CE8IaG11T82l0gL1ZP2mAHcCMwXtNviOz1cwQ7atSvkRP33js82FC
-         tL3OJS+qxvVYzF3TYhi7jJG99T8jOBJM8RSwrLmSS6vtDNlXueNOFv50Q4BmfSf/V2kW
-         jpK8t4qSsEu0v76ajcR4UzKY9YBd/hRYx4cCU6l6AsBCSBWNe3JTai52Wv7UVRmBdbxJ
-         Pg+Ik2kyI7qbtIeypuO3uLwLKp7JZuw0yQNYCSOl6O3FaQojbcATlzG1xxwJABfP9fIQ
-         rH8g==
+        bh=8iLaZTWeQJl6iGd266WbOlLff6luDbqFrxB/cAn80YQ=;
+        b=TcCgBTHb/Rs9nRpQG++G77unwTBKtjJ4Dp7AZlW7FIncIs94bCVvQ5U4sDTfvgf9Xt
+         KV9b4PeuzP5DeplauxcUhcDxI+g8ZQ5ax6ytlADE2+L1eWBrNdaOeAtgMjjwwoHQiosB
+         Sj4NtVNfk2tA4/djiKPnhoeM1poW2B29JjvWI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UmkfXGaYCdqSsvCrogHGEUgWw+TJ4SlfmjU5MN/PEBE=;
-        b=KACrgIfnNCNm6wKlnkA0TrWP1Am1JmlEfeSRlIBdbfwBo3xMvczQDBvSh6IxTvVq7n
-         vBTYL+FW2NLYLbKIfaf4fcTUx1XT/9R/SAvFvgyHxmksZPrPWEcB163pJepUOzyz01F0
-         wxkyTGUaCpRVy4K7Me3jRKKj8vQpdXxTV+8FgFRKI7VRgfKPWMhj682W8kb0vy4PnK9f
-         l2NOCslaE0ksBe+GJo7mR+ajpRp0eExvPqKXi2VsEjTZiruD45vzR0IPaCGTSfYiOR+p
-         x/2M70GLTwjzgxWOPVfvHdQPimm+UPzXwcsyq9yjDyxmvh0beBmKGH/+KP5qUbJIKvyL
-         +Erw==
-X-Gm-Message-State: AOAM533eWtqsnflJRRYoz86F0uWEp/Y4rvAjuZNRdWQkVJhh62DHMQer
-        HOYrh+TPDp4S7qJQm8Bv+85UL5fMKpRXkoVrGa1yhQ==
-X-Google-Smtp-Source: ABdhPJwROTbhLIghdJiFv3Mpx4km5TKucbukHEV5v0NDix1jHpH6ITt9xOVwuMgiEW0EE35GC/hK1ms310RYHiQipIA=
-X-Received: by 2002:a2e:a410:: with SMTP id p16mr25247179ljn.364.1629715615237;
- Mon, 23 Aug 2021 03:46:55 -0700 (PDT)
+        bh=8iLaZTWeQJl6iGd266WbOlLff6luDbqFrxB/cAn80YQ=;
+        b=NfewnY0sV1oHdpO/YZtQueBLw6ljfOG9zHN1tYJCu1kxaUBMh8ljNCAhiPEa2O9HiA
+         dgMsD0Jhwq4O8v0lrgUWmp5e19iE/jcAuurrdufyWQ1g5V+RAtiT39okOz0adA5TVBR4
+         DSoHvfLxXA9SgqryvbYMe0wkB8xEASaDz8+kxTfyr3BzXCzkbRuI4N2hOhgF6vKe9t1u
+         +WMue82Owmv3jTmjxEsU6OoPoL+MmQqcdCieQXvOfN/TwjUFEoPuW29G1yPNJQt+gpmu
+         mLhDVPt/w83FM9tN4sAoJkYKFva70FxYW++fylaqTf+SDGqT8KyCy3kos8Y4Pg4PIKGM
+         0F6Q==
+X-Gm-Message-State: AOAM531ahj+oLLq/E6NFBmqN9AQV6EjK8lW79dRdgBxc7ZfW6l7t6nlk
+        HpAScQMxKIQOxcgAaDf2jgApSzPuBNgstfsjBh28yg==
+X-Google-Smtp-Source: ABdhPJxMxt92OJ2YG0/F1XWWeVdd/8FS5KcGSQF5fZ9YbMu+oL61YlsJqouyFzi4LPLGPqg4hSE5facaGcpocjicWqg=
+X-Received: by 2002:a05:6512:3b98:: with SMTP id g24mr17084296lfv.276.1629717427045;
+ Mon, 23 Aug 2021 04:17:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210818043131.7klajx6drvvkftoc@vireshk-i7> <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7> <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7> <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7> <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7> <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <20210818095044.e2ntsm45h5cddk7s@vireshk-i7> <CAPDyKFrFF00xGDWPCQnPwF0_QkG4TB2UqggpuBpp8LY_CMKP-A@mail.gmail.com>
- <0354acbe-d856-4040-f453-8e8164102045@gmail.com> <CAPDyKFoQdn1rm91iFNJwZwpSYcKJBjDLqtJB4KZAkhgY1Grm-Q@mail.gmail.com>
- <87073fc2-d7b3-98f4-0067-29430ea2adef@gmail.com> <CAPDyKFqSsAk8a5CTNpRT2z4Wvf8BehJKDbVhUKfHc2Jzj7aTNA@mail.gmail.com>
- <9129a9f0-8c9b-d8e0-ddf5-c8820871fb7f@gmail.com>
-In-Reply-To: <9129a9f0-8c9b-d8e0-ddf5-c8820871fb7f@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 23 Aug 2021 12:46:19 +0200
-Message-ID: <CAPDyKFrWeQVNgxzmiLBXJ2gQW=iFf4aG16xvZ+ag1MkhXs9-BQ@mail.gmail.com>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
+References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-8-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210820111504.350-8-chun-jie.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 23 Aug 2021 19:16:56 +0800
+Message-ID: <CAGXv+5GaUBWV0tD4uP6Gx6Pg7BvF_Dzp5pdV73b_0MD1kYr03A@mail.gmail.com>
+Subject: Re: [v2 07/24] clk: mediatek: Add MT8195 topckgen clock support
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Aug 20, 2021 at 7:20 PM Chun-Jie Chen
+<chun-jie.chen@mediatek.com> wrote:
+>
+> Add MT8195 topckgen clock controller which provides muxes, dividers
+> to handle variety clock selection in other IP blocks.
+>
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+> The changes as follow:
+> 1. remove 1 on 1 divider
+> 2. merge parent source data in muxes
+> 3. add some comment if the clock is not model by CCF or has special flag
+> 4. remove _SEL suffix in clock name
+> ---
+>  drivers/clk/mediatek/Makefile              |    2 +-
+>  drivers/clk/mediatek/clk-mt8195-topckgen.c | 1298 ++++++++++++++++++++
+>  2 files changed, 1299 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8195-topckgen.c
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index d4157cfca865..a142342a0cea 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -80,6 +80,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_MSDC) += clk-mt8192-msdc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
+> -obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o
+> +obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
+> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+> new file mode 100644
+> index 000000000000..3cf113544f59
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+> @@ -0,0 +1,1298 @@
+
 [...]
 
-> >>>> We have three components comprising PM on Tegra:
-> >>>>
-> >>>> 1. Power gate
-> >>>> 2. Clock state
-> >>>> 3. Voltage state
-> >>>>
-> >>>> GENPD on/off represents the 'power gate'.
-> >>>>
-> >>>> Clock and reset are controlled by device drivers using clk and rst APIs.
-> >>>>
-> >>>> Voltage state is represented by GENPD's performance level.
-> >>>>
-> >>>> GENPD core assumes that at a first rpm-resume of a consumer device, its
-> >>>> genpd_performance=0. Not true for Tegra because h/w of the device is
-> >>>> preconfigured to a non-zero perf level initially, h/w may not support
-> >>>> zero level at all.
-> >>>
-> >>> I think you may be misunderstanding genpd's behaviour around this, but
-> >>> let me elaborate.
-> >>>
-> >>> In genpd_runtime_resume(), we try to restore the performance state for
-> >>> the device that genpd_runtime_suspend() *may* have dropped earlier.
-> >>> That means, if genpd_runtime_resume() is called prior
-> >>> genpd_runtime_suspend() for the first time, it means that
-> >>> genpd_runtime_resume() will *not* restore a performance state, but
-> >>> instead just leave the performance state as is for the device (see
-> >>> genpd_restore_performance_state()).
-> >>>
-> >>> In other words, a consumer driver may use the following sequence to
-> >>> set an initial performance state for the device during ->probe():
-> >>>
-> >>> ...
-> >>> rate = clk_get_rate()
-> >>> dev_pm_opp_set_rate(rate)
-> >>>
-> >>> pm_runtime_enable()
-> >>> pm_runtime_resume_and_get()
-> >>> ...
-> >>>
-> >>> Note that, it's the consumer driver's responsibility to manage device
-> >>> specific resources, in its ->runtime_suspend|resume() callbacks.
-> >>> Typically that means dealing with clock gating/ungating, for example.
-> >>>
-> >>> In the other scenario where a consumer driver prefers to *not* call
-> >>> pm_runtime_resume_and_get() in its ->probe(), because it doesn't need
-> >>> to power on the device to complete probing, then we don't want to vote
-> >>> for an OPP at all - and we also want the performance state for the
-> >>> device in genpd to be set to zero. Correct?
-> >>
-> >> Yes
-> >>
-> >>> Is this the main problem you are trying to solve, because I think this
-> >>> doesn't work out of the box as of today?
-> >>
-> >> The main problem is that the restored performance state is zero for the
-> >> first genpd_runtime_resume(), while it's not zero from the h/w perspective.
-> >
-> > This should not be a problem, but can be handled by the consumer driver.
-> >
-> > genpd_runtime_resume() calls genpd_restore_performance_state() to
-> > restore a performance state for the device. However, in the scenario
-> > you describe, "gpd_data->rpm_pstate" is zero, which makes
-> > genpd_restore_performance_state() to just leave the device's
-> > performance state as is - it will *not* restore the performance state
-> > to zero.
-> >
-> > To make the consumer driver deal with this, it would need to call
-> > dev_pm_opp_set_rate() from within its ->runtime_resume() callback.
-> >
-> >>
-> >>> There is another concern though, but perhaps it's not a problem after
-> >>> all. Viresh told us that dev_pm_opp_set_rate() may turn on resources
-> >>> like clock/regulators. That could certainly be problematic, in
-> >>> particular if the device and its genpd have OPP tables associated with
-> >>> it and the consumer driver wants to follow the above sequence in
-> >>> probe.
-> >>
-> >> dev_pm_opp_set_rate() won't enable clocks and regulators, but it may
-> >> change the clock rate and voltage. This is also platform/driver specific
-> >> because it's up to OPP user how to configure OPP table. On Tegra we only
-> >> assign clock to OPP table, regulators are unused.
-> >>
-> >>> Viresh, can you please chime in here and elaborate on some of the
-> >>> magic happening behind dev_pm_opp_set_rate() API - is there a problem
-> >>> here or not?
-> >>>
-> >>>>
-> >>>> GENPD core assumes that consumer devices can work at any performance
-> >>>> level. Not true for Tegra because voltage needs to be set in accordance
-> >>>> to the clock rate before clock is enabled, otherwise h/w won't work
-> >>>> properly, perhaps clock may be unstable or h/w won't be latching.
-> >>>
-> >>> Correct. Genpd relies on the callers to use the OPP framework if there
-> >>> are constraints like you describe above.
-> >>>
-> >>> That said, it's not forbidden for a consumer driver to call
-> >>> dev_pm_genpd_set_performance_state() directly, but then it better
-> >>> knows exactly what it's doing.
-> >>>
-> >>>>
-> >>>> Performance level should be set to 0 while device is suspended.
-> >>>
-> >>> Do you mean system suspend or runtime suspend? Or both?
-> >>
-> >> Runtime suspend.
-> >
-> > Alright. So that's already taken care of for us in genpd_runtime_suspend().
-> >
-> > Or perhaps you have discovered some problem with this?
-> >
-> >>
-> >>>> Performance level needs to be bumped on rpm-resume of a device in
-> >>>> accordance to h/w state before hardware is enabled.
-> >>>
-> >>> Assuming there was a performance state set for the device when
-> >>> genpd_runtime_suspend() was called, genpd_runtime_resume() will
-> >>> restore that state according to the sequence you described.
-> >>
-> >> What do you think about adding API that will allow drivers to explicitly
-> >> set the restored performance state of a power domain?
-> >>
-> >> Another option could be to change the GENPD core, making it to set the
-> >> rpm_pstate when dev_pm_genpd_set_performance_state(dev) is invoked and
-> >> device is rpm-suspended, instead of calling the
-> >> genpd->set_performance_state callback.
-> >>
-> >> Then drivers will be able to sync the perf state at a probe time.
-> >>
-> >> What do you think?
-> >
-> > I don't think it's needed, see my reply earlier above. However your
-> > change touches another problem though, see below.
-> >
-> >>
-> >> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> >> index a934c679e6ce..cc15ab9eacc9 100644
-> >> --- a/drivers/base/power/domain.c
-> >> +++ b/drivers/base/power/domain.c
-> >> @@ -435,7 +435,7 @@ static void genpd_restore_performance_state(struct
-> >> device *dev,
-> >>  int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int
-> >> state)
-> >>  {
-> >>         struct generic_pm_domain *genpd;
-> >> -       int ret;
-> >> +       int ret = 0;
-> >>
-> >>         genpd = dev_to_genpd_safe(dev);
-> >>         if (!genpd)
-> >> @@ -446,7 +446,10 @@ int dev_pm_genpd_set_performance_state(struct
-> >> device *dev, unsigned int state)
-> >>                 return -EINVAL;
-> >>
-> >>         genpd_lock(genpd);
-> >> -       ret = genpd_set_performance_state(dev, state);
-> >> +       if (pm_runtime_suspended(dev))
-> >> +               dev_gpd_data(dev)->rpm_pstate = state;
-> >> +       else
-> >> +               ret = genpd_set_performance_state(dev, state);
-> >>         genpd_unlock(genpd);
-> >
-> > This doesn't work for all cases. For example, when a consumer driver
-> > deploys runtime PM support in its ->probe() according to the below
-> > sequence:
-> >
-> > ...
-> > dev_pm_opp_set_rate(rate)
-> > pm_runtime_get_noresume()
-> > pm_runtime_set_active()
-> > pm_runtime_enable()
-> > ...
-> > pm_runtime_put()
-> > ...
-> >
-> > We need to call genpd_set_performance_state() independently of whether
-> > the device is runtime suspended or not.
->
-> I don't see where is the problem in yours example.
->
-> pm_runtime_suspended() = false while RPM is disabled. When device is
-> resumed, the rpm_pstate=0, so it won't change the pstate on resume.
+> +static const char * const dsp_parents[] = {
+> +       "clk26m",
+> +       "univpll_d6_d2",
+> +       "univpll_d4_d2",
+> +       "univpll_d5",
+> +       "univpll_d4",
+> +       "mmpll_d4",
+> +       "mainpll_d3",
+> +       "univpll_d3"
+> +};
+> +
+> +static const char * const dsp1_parents[] = {
+> +       "clk26m",
+> +       "univpll_d6_d2",
+> +       "mainpll_d4_d2",
+> +       "univpll_d5",
+> +       "mmpll_d5",
+> +       "univpll_d4",
+> +       "mainpll_d3",
+> +       "univpll_d3"
+> +};
+> +
+> +static const char * const dsp2_parents[] = {
+> +       "clk26m",
+> +       "univpll_d6_d2",
+> +       "univpll_d4_d2",
+> +       "mainpll_d4",
+> +       "univpll_d4",
+> +       "mmpll_d4",
+> +       "mainpll_d3",
+> +       "univpll_d3"
+> +};
+> +
+> +static const char * const dsp3_parents[] = {
+> +       "clk26m",
+> +       "univpll_d6_d2",
+> +       "univpll_d4_d2",
+> +       "univpll_d5",
+> +       "univpll_d4",
+> +       "mmpll_d4",
+> +       "mainpll_d3",
+> +       "univpll_d3"
+> +};
 
-Yes, you are certainly correct, my bad! I mixed it up with
-pm_runtime_status_suspended(), which only cares about the status.
+dsp3_parents looks like it matches dsp_parents. If so, please deduplicate.
 
-So, after a second thought, your suggestion sounds very much
-reasonable to me! I have also tried to consider all different
-scenarios, including the system suspend/resume path, but I think it
-should be fine.
+[...]
 
-I also think that a patch like the above should be considered as a
-fix, because it actually fixes a problem, according to what I said in
-my earlier reply, below.
+> +static const struct mtk_mux top_mtk_muxes[] = {
 
-Fixes : 5937c3ce2122 ("PM: domains: Drop/restore performance state
-votes for devices at runtime PM").
+[...]
 
->
-> > Although, it actually seems like good idea to update
-> > dev_gpd_data(dev)->rpm_pstate = state here, as to make sure
-> > genpd_runtime_resume() doesn't restore an old/invalid value that was
-> > saved while dropping the performance state vote for the device in
-> > genpd_runtime_suspend() earlier.
-> >
-> > Let me send a patch for this shortly, to close this window of a possible error.
->
-> It will also remove the need to resume device just to change the clock
-> rate, like I needed to do it in the PWM patch of this series.
+> +       /* CLK_CFG_29 */
+> +       MUX_GATE_CLR_SET_UPD(CLK_TOP_DVIO_DGI_REF, "top_dvio_dgi_ref",
+> +               dvio_dgi_ref_parents, 0x017C, 0x0180, 0x0184, 0, 3, 7, 0x010, 20),
+> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_ULPOSC, "top_ulposc",
+> +               ulposc_parents, 0x017C, 0x0180, 0x0184, 8, 2, 15, 0x010, 21, CLK_IS_CRITICAL),
+> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_ULPOSC_CORE, "top_ulposc_core",
+> +               ulposc_core_parents, 0x017C, 0x0180, 0x0184, 16, 2, 23, 0x010, 22, CLK_IS_CRITICAL),
+> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SRCK, "top_srck",
+> +               srck_parents, 0x017C, 0x0180, 0x0184, 24, 1, 31, 0x010, 23, CLK_IS_CRITICAL),
 
-Do you want to send the patch formally? Or do you prefer it if I do it?
+Any comments regarding the three critical clocks?
 
-Kind regards
-Uffe
+> +       /*
+> +        * the clocks in CLK_CFG_30 ~ 37 are backup clock source, no need to handled
+> +        * by Linux.
+> +        */
+> +};
+> +
+> +static struct mtk_composite top_muxes[] = {
+> +       /* CLK_MISC_CFG_3 */
+> +       MUX(CLK_TOP_MFG_CK_FAST_REF, "mfg_ck_fast_ref", mfg_fast_parents, 0x0250, 8, 1),
+> +};
+> +
+> +/*
+> + * apll12_div5 ~ 9 are not used in MT8195.
+> + */
+> +static const struct mtk_composite top_adj_divs[] = {
+> +       DIV_GATE(CLK_TOP_APLL12_DIV0, "apll12_div0", "top_i2si1_mck", 0x0320, 0, 0x0328, 8, 0),
+> +       DIV_GATE(CLK_TOP_APLL12_DIV1, "apll12_div1", "top_i2si2_mck", 0x0320, 1, 0x0328, 8, 8),
+> +       DIV_GATE(CLK_TOP_APLL12_DIV2, "apll12_div2", "top_i2so1_mck", 0x0320, 2, 0x0328, 8, 16),
+> +       DIV_GATE(CLK_TOP_APLL12_DIV3, "apll12_div3", "top_i2so2_mck", 0x0320, 3, 0x0328, 8, 24),
+> +       DIV_GATE(CLK_TOP_APLL12_DIV4, "apll12_div4", "top_aud_iec_clk", 0x0320, 4, 0x0334, 8, 0),
+
+The comment could be inlined here directly:
+
+          /* apll12_div5 ~ 9 are not used in MT8195 */
+
+> +       DIV_GATE(CLK_TOP_APLL12_DIV9, "apll12_div9", "top_dptx_mck", 0x0320, 9, 0x0338, 8, 8),
+> +};
+> +
+> +static const struct mtk_gate_regs top0_cg_regs = {
+> +       .set_ofs = 0x238,
+> +       .clr_ofs = 0x238,
+> +       .sta_ofs = 0x238,
+> +};
+> +
+> +static const struct mtk_gate_regs top1_cg_regs = {
+> +       .set_ofs = 0x250,
+> +       .clr_ofs = 0x250,
+> +       .sta_ofs = 0x250,
+> +};
+> +
+> +#define GATE_TOP0_FLAGS(_id, _name, _parent, _shift, _flag)            \
+> +       GATE_MTK_FLAGS(_id, _name, _parent, &top0_cg_regs, _shift,      \
+> +               &mtk_clk_gate_ops_no_setclr_inv, _flag)
+> +
+> +#define GATE_TOP0(_id, _name, _parent, _shift)                 \
+> +       GATE_TOP0_FLAGS(_id, _name, _parent, _shift, 0)
+> +
+> +#define GATE_TOP1(_id, _name, _parent, _shift)                 \
+> +       GATE_MTK(_id, _name, _parent, &top1_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+> +
+> +/*
+> + * cfg_axi_east, cfg_axi_east_north, cfg_axi_north and cfg_axi_south
+> + * are peripheral bus clock branches.
+> + */
+> +static const struct mtk_gate top_clks[] = {
+> +       /* TOP0 */
+> +       GATE_TOP0(CLK_TOP_CFG_VPP0, "cfg_vpp0", "top_vpp", 0),
+> +       GATE_TOP0(CLK_TOP_CFG_VPP1, "cfg_vpp1", "top_vpp", 1),
+> +       GATE_TOP0(CLK_TOP_CFG_VDO0, "cfg_vdo0", "top_vpp", 2),
+> +       GATE_TOP0(CLK_TOP_CFG_VDO1, "cfg_vdo1", "top_vpp", 3),
+> +       GATE_TOP0(CLK_TOP_CFG_UNIPLL_SES, "cfg_unipll_ses", "univpll_d2", 4),
+> +       GATE_TOP0(CLK_TOP_CFG_26M_VPP0, "cfg_26m_vpp0", "clk26m", 5),
+> +       GATE_TOP0(CLK_TOP_CFG_26M_VPP1, "cfg_26m_vpp1", "clk26m", 6),
+> +       GATE_TOP0(CLK_TOP_CFG_26M_AUD, "cfg_26m_aud", "clk26m", 9),
+> +       GATE_TOP0_FLAGS(CLK_TOP_CFG_AXI_EAST, "cfg_axi_east", "top_axi", 10, CLK_IS_CRITICAL),
+> +       GATE_TOP0_FLAGS(CLK_TOP_CFG_AXI_EAST_NORTH, "cfg_axi_east_north", "top_axi", 11,
+> +               CLK_IS_CRITICAL),
+> +       GATE_TOP0_FLAGS(CLK_TOP_CFG_AXI_NORTH, "cfg_axi_north", "top_axi", 12, CLK_IS_CRITICAL),
+> +       GATE_TOP0_FLAGS(CLK_TOP_CFG_AXI_SOUTH, "cfg_axi_south", "top_axi", 13, CLK_IS_CRITICAL),
+> +       GATE_TOP0(CLK_TOP_CFG_EXT_TEST, "cfg_ext_test", "msdcpll_d2", 15),
+> +       /* TOP1 */
+> +       GATE_TOP1(CLK_TOP_SSUSB_REF, "ssusb_ref", "clk26m", 0),
+> +       GATE_TOP1(CLK_TOP_SSUSB_PHY_REF, "ssusb_phy_ref", "clk26m", 1),
+> +       GATE_TOP1(CLK_TOP_SSUSB_P1_REF, "ssusb_p1_ref", "clk26m", 2),
+> +       GATE_TOP1(CLK_TOP_SSUSB_PHY_P1_REF, "ssusb_phy_p1_ref", "clk26m", 3),
+> +       GATE_TOP1(CLK_TOP_SSUSB_P2_REF, "ssusb_p2_ref", "clk26m", 4),
+> +       GATE_TOP1(CLK_TOP_SSUSB_PHY_P2_REF, "ssusb_phy_p2_ref", "clk26m", 5),
+> +       GATE_TOP1(CLK_TOP_SSUSB_P3_REF, "ssusb_p3_ref", "clk26m", 6),
+> +       GATE_TOP1(CLK_TOP_SSUSB_PHY_P3_REF, "ssusb_phy_p3_ref", "clk26m", 7),
+> +};
+> +
+> +static struct clk_onecell_data *top_clk_data;
+> +
+> +static void clk_mt8195_top_init_early(struct device_node *node)
+> +{
+> +       int i;
+> +
+> +       top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> +       if (!top_clk_data)
+> +               return;
+> +
+> +       for (i = 0; i < CLK_TOP_NR_CLK; i++)
+> +               top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
+> +
+> +       mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs), top_clk_data);
+
+It's still not clear to me why this is needed...
+
+> +
+> +       if (of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data)) {
+> +               mtk_free_clk_data(top_clk_data);
+> +               top_clk_data = NULL;
+> +       }
+> +}
+> +
+> +CLK_OF_DECLARE_DRIVER(mt8195_topckgen, "mediatek,mt8195-topckgen",
+> +                       clk_mt8195_top_init_early);
+> +
+> +static const struct of_device_id of_match_clk_mt8195_topck[] = {
+> +       { .compatible = "mediatek,mt8195-topckgen", },
+> +       {}
+> +};
+> +
+> +static int clk_mt8195_topck_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *node = pdev->dev.of_node;
+> +       int r;
+> +       void __iomem *base;
+> +
+> +       if (!top_clk_data)
+> +               return -EFAULT;
+
+-ENODEV is more appropriate. -EFAULT signals a bad address (access).
+
+See include/uapi/asm-generic/errno-base.h
+
+> +
+> +       base = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(base))
+> +               return PTR_ERR(base);
+> +
+> +       mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+> +                                       top_clk_data);
+> +       mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs), top_clk_data);
+
+And this second invocation will fail because the same clocks have already
+been registered. It seems like this invocation is enough to have "clk26m_d2"
+registered before all of its children.
+
+If so then CLK_OF_DECLARE_DRIVER is not necessary, that part could be
+dropped, and the clk_data initialization moved into this probe function.
+And `top_early_divs` could be merged with `top_divs`.
+
+> +       mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
+> +       mtk_clk_register_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), node,
+> +                                       &mt8195_clk_lock, top_clk_data);
+> +       mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base,
+> +                                       &mt8195_clk_lock, top_clk_data);
+> +       mtk_clk_register_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), base,
+> +                                       &mt8195_clk_lock, top_clk_data);
+
+Please align wrapped lines with the opening parenthesis.
+
+
+Regards
+ChenYu
+
+> +       r = mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks), top_clk_data);
+> +       if (r)
+> +               return r;
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
+> +}
+> +
+> +static struct platform_driver clk_mt8195_topck_drv = {
+> +       .probe = clk_mt8195_topck_probe,
+> +       .driver = {
+> +               .name = "clk-mt8195-topck",
+> +               .of_match_table = of_match_clk_mt8195_topck,
+> +       },
+> +};
+> +builtin_platform_driver(clk_mt8195_topck_drv);
+> --
+> 2.18.0
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
