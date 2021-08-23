@@ -2,172 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C716C4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67341C4338F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20EB4613D5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E677613A5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 18:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231781AbhHWPzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 11:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231734AbhHWPzO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 11:55:14 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3124DC061757;
-        Mon, 23 Aug 2021 08:54:31 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id i9so38834301lfg.10;
-        Mon, 23 Aug 2021 08:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7mncJ6pduW/52O6ekhmOFTY3dWeez/jgkRyR/0Vdsyw=;
-        b=GjDLwuw1u5t0huse+wcSUJvd9NlDsq9fLH5ifMhjoFLd/jX7arhT4V0b4pMg9fkZx0
-         SFoXhZrGpDe1zyz7PwMpqtrmGVNRg4uenD426vrzx09jDp5+gZwPaSOWi2CzEdhHZN72
-         biZ9w4cugGtwCB8oOkwmNR+z285tRdqilLSsiYBx3KMs+2gRQ2Qufwsaf9Kkn44cA20t
-         ytzwyZjnYP+KTq05NUlj+435IalTyox6/J6oSbEJjWcMz4NbsCi+r8m8O7scEsRH0iPC
-         mwCHAhLhpQqHYFd7f4axkEH/iwpXUU5wQP5pO5DMDqwE7H45GOLzvXAyvPw0J1h3bnVb
-         85LA==
+        id S232035AbhHWSZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 14:25:18 -0400
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:43717 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231716AbhHWSZS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 14:25:18 -0400
+Received: by mail-ot1-f49.google.com with SMTP id x10-20020a056830408a00b004f26cead745so38777297ott.10;
+        Mon, 23 Aug 2021 11:24:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7mncJ6pduW/52O6ekhmOFTY3dWeez/jgkRyR/0Vdsyw=;
-        b=IOpKGHvqrd6BLy/vZsEi4QxYtFeeOqNrn5QcSGeZ+5lN/MBYTkGTFqJBOV1k8ly3TM
-         Ojlwfw0HLUc6pT+M3WPK1klUJGn/nzf3dGrbJXhkkoSw8z2d9t1EXb/7S7VhLNsaYZQo
-         e+gfZ69TnaKu99jhOW+Yi8YO3PDNXWflArBxHkhLWHJJktQq/zo6CwEjbB6K/QeIdG46
-         UJMdkfNoGWuJ875iEGA/Twlwv0Ur9cMq2shAGdx4om9hlCR+4KAQLmLHWa7CClMpyoUE
-         BSpjbe32pK64XFoQ9qRh1Io9vewbflVYigrn+6J5eZx/SYiZd+8sUVveS9YHQXdwxCgg
-         EF2A==
-X-Gm-Message-State: AOAM531b3+f8AQBdQ/uobRHY/mYbnT6rZhH/BW/fwpuBAT8yUBQ6fi+k
-        w5w22/1vPJAThf4sjKZK+/fW7k7i+KU=
-X-Google-Smtp-Source: ABdhPJzNDGjnGQzIrcQXTM2iukhjwhqvC5wj3OdYqtfrrWEzlRV302pS9l5Dkjzi+NNxjkL6pb5dHg==
-X-Received: by 2002:a05:6512:3157:: with SMTP id s23mr24865578lfi.247.1629734069444;
-        Mon, 23 Aug 2021 08:54:29 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.googlemail.com with ESMTPSA id u2sm1482543lfr.79.2021.08.23.08.54.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Aug 2021 08:54:28 -0700 (PDT)
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=9LVr7Ep9kqEYckDFYHzb6AN+kIKu8SgVX7aZO3k6n8Q=;
+        b=AK7v7ZsvKksNNasZpsuHYwhUp0codH0UjvUvEgR5pZF57WgQJ72I/mKajV510pQ0lW
+         2f4t9aTUnEsQ5ZCoOtiP0P1K8ONPrW0rBbZHTiKniLBeAt4ROP7cs1B6tdj9MxGaDh8T
+         22fhsyR/kuG7vppC1d993ngXE3ZeVKorLpbFxm/9Y3JTP9Cdv5YSOlndoji6dYDNR5th
+         y7dYIGSvIc1ANfcofJbRwURYuAi+zIwCOYwoghC5CIl+quna+P0lg14m5yugghun2CQU
+         ksPWx/PrBr7onBaKXm7KMbi8xJR+ZqHLF3mH3ng3RWAhbjkZkK6Gxbp2xTqeYiWcJXFP
+         3f3g==
+X-Gm-Message-State: AOAM533p+2/TD3skT8Yo1KuJiXJKzEdmE/7Zuc24etbuQCrp6TKWVarE
+        p6qtmsPA02evcIBC8bTh2w==
+X-Google-Smtp-Source: ABdhPJyY0P+WUkUmlfUESlAS+W72x+H1/jlqO4sbnjW7EVuaPu2IdLyeGjgxi2joYuUmznBunXSf2A==
+X-Received: by 2002:a05:6830:40c1:: with SMTP id h1mr8992262otu.10.1629743075189;
+        Mon, 23 Aug 2021 11:24:35 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id m35sm3529657ooi.38.2021.08.23.11.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 11:24:34 -0700 (PDT)
+Received: (nullmailer pid 2469398 invoked by uid 1000);
+        Mon, 23 Aug 2021 18:24:33 -0000
+Date:   Mon, 23 Aug 2021 13:24:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <20210818095044.e2ntsm45h5cddk7s@vireshk-i7>
- <CAPDyKFrFF00xGDWPCQnPwF0_QkG4TB2UqggpuBpp8LY_CMKP-A@mail.gmail.com>
- <0354acbe-d856-4040-f453-8e8164102045@gmail.com>
- <CAPDyKFoQdn1rm91iFNJwZwpSYcKJBjDLqtJB4KZAkhgY1Grm-Q@mail.gmail.com>
- <87073fc2-d7b3-98f4-0067-29430ea2adef@gmail.com>
- <CAPDyKFqSsAk8a5CTNpRT2z4Wvf8BehJKDbVhUKfHc2Jzj7aTNA@mail.gmail.com>
- <9129a9f0-8c9b-d8e0-ddf5-c8820871fb7f@gmail.com>
- <CAPDyKFrWeQVNgxzmiLBXJ2gQW=iFf4aG16xvZ+ag1MkhXs9-BQ@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9a783eb3-786b-a3b2-7854-2be6954527db@gmail.com>
-Date:   Mon, 23 Aug 2021 18:54:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Scott Branden <sbranden@broadcom.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: brcm,iproc-clocks: fix armpll
+ properties
+Message-ID: <YSPn4Y+Rgs83lg/g@robh.at.kernel.org>
+References: <20210819052918.6753-1-zajec5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrWeQVNgxzmiLBXJ2gQW=iFf4aG16xvZ+ag1MkhXs9-BQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210819052918.6753-1-zajec5@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-23.08.2021 13:46, Ulf Hansson пишет:
->>> ...
->>> dev_pm_opp_set_rate(rate)
->>> pm_runtime_get_noresume()
->>> pm_runtime_set_active()
->>> pm_runtime_enable()
->>> ...
->>> pm_runtime_put()
->>> ...
->>>
->>> We need to call genpd_set_performance_state() independently of whether
->>> the device is runtime suspended or not.
->>
->> I don't see where is the problem in yours example.
->>
->> pm_runtime_suspended() = false while RPM is disabled. When device is
->> resumed, the rpm_pstate=0, so it won't change the pstate on resume.
+On Thu, 19 Aug 2021 07:29:18 +0200, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
 > 
-> Yes, you are certainly correct, my bad! I mixed it up with
-> pm_runtime_status_suspended(), which only cares about the status.
+> armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
+> with no cells. Adjust binding props #clock-cells and clock-output-names
+> to handle them.
 > 
-> So, after a second thought, your suggestion sounds very much
-> reasonable to me! I have also tried to consider all different
-> scenarios, including the system suspend/resume path, but I think it
-> should be fine.
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> ---
+>  .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
 
-It could be improved slightly to cover more cases.
-
-> I also think that a patch like the above should be considered as a
-> fix, because it actually fixes a problem, according to what I said in
-> my earlier reply, below.
-> 
-> Fixes : 5937c3ce2122 ("PM: domains: Drop/restore performance state
-> votes for devices at runtime PM").
-> 
->>
->>> Although, it actually seems like good idea to update
->>> dev_gpd_data(dev)->rpm_pstate = state here, as to make sure
->>> genpd_runtime_resume() doesn't restore an old/invalid value that was
->>> saved while dropping the performance state vote for the device in
->>> genpd_runtime_suspend() earlier.
->>>
->>> Let me send a patch for this shortly, to close this window of a possible error.
->>
->> It will also remove the need to resume device just to change the clock
->> rate, like I needed to do it in the PWM patch of this series.
-> 
-> Do you want to send the patch formally? Or do you prefer it if I do it?
-
-I'll send the patch.
+Reviewed-by: Rob Herring <robh@kernel.org>
