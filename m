@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C2CC43214
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEC7C4338F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E73861247
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BB80613D5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Aug 2021 15:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbhHWPBE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 11:01:04 -0400
-Received: from mail-vk1-f174.google.com ([209.85.221.174]:35347 "EHLO
-        mail-vk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbhHWPA0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 11:00:26 -0400
-Received: by mail-vk1-f174.google.com with SMTP id t11so4319331vkc.2;
-        Mon, 23 Aug 2021 07:59:39 -0700 (PDT)
+        id S229883AbhHWPXQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Aug 2021 11:23:16 -0400
+Received: from mail-vs1-f42.google.com ([209.85.217.42]:43981 "EHLO
+        mail-vs1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231179AbhHWPXQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 11:23:16 -0400
+Received: by mail-vs1-f42.google.com with SMTP id j186so11352033vsc.10;
+        Mon, 23 Aug 2021 08:22:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4bdsI7s+dNrQzHAEMPavVEuBzBOxcxEA4Amk4roI2gU=;
-        b=i05hINxrVSWkuDiRKWFn/E6JGm8W+P2KrTBB8VW/Yxb016SYY1ED1lVS1leix5zpRk
-         PqagyTz+Os7t46OIV41XXRwHeDuY2j1C89HDdfw7dOm7pvuhb9ZYUTURPRuZFxFDQvOi
-         /icW2WRmTI2JMLBraMKDkb2DBX8aAPUdbqqh/9+ck9Xjou2o57zIjhCwsPU1EaQJvYf9
-         6eedo0P3yo941gvjQAwKyL2cGTIfuPIHeMlDvOhmd7bkiKA3nEInzvAoaK+yPoIVZ8iS
-         hgtg1Yd72WaN1hz6AWuiy5+dW/uwI+sGqC0ml9+HQY55whiCOlk9avjMyJ9RWV1A4MCr
-         GrZw==
-X-Gm-Message-State: AOAM532p3fVSwPUA9QE+M0Pd+7UtF5qVKqAtH9tNg5AXDocFNg26zyPv
-        VxYiydmEVnfFZdB9r9KerTfmvvHeLuGKuS43XC0=
-X-Google-Smtp-Source: ABdhPJz8l/ZHoCciL7DPom2nBMezVME1sEwTR+wecbPFFfwyJXCMGGp4HZUhdtV5G38Q70ykeg63QZJ5/u3yuzw8E60=
-X-Received: by 2002:ac5:c85c:: with SMTP id g28mr22192038vkm.5.1629730779496;
- Mon, 23 Aug 2021 07:59:39 -0700 (PDT)
+        bh=7uFAXUurHTb46tTpF++y6mutbYzFbHdiUYDLIEz0BKo=;
+        b=Gwnu8LixVv2SfJfVNwFi2I8X1RuF3G4g7/k0fWV9Eh8PaUkvX6xCKyRIbSOgjsqhzk
+         nBR7nkBPz+xY+60zqCfEdh46d1qgA1H6tkpipza+zhFLmg9otLxDAMyxZ+gc4/ldC5HH
+         AZq+bA2eGmRJA622XWef9oHpwS3mlhK7hXAPGY8YZuKqM74XVaG8lpX51soQb+xDE3KS
+         xZ7Nryt2rT/GmjVJklhFR/S/6TDgaDSfEyIAdayq6oB6BEV0+a+wJJkQ2iLDKBqVdBa4
+         kP2Ir7PttggacUJSsOCl5JIHV1wY0gOPiikIlDOB4EdyoqlOJF29P2FOoLrQ/rF1Hdtl
+         pBTQ==
+X-Gm-Message-State: AOAM5327J+a+oWPLh4f3qnskMGR68hygVEETx1T/84IVV1QchyOYJu4s
+        F2p+jLyxtey8hEu4SwYB7upapIMDHnj3YzmVHrU=
+X-Google-Smtp-Source: ABdhPJwXolTmeGadVjsr109FX2r9DBKd2cwwpQ1tdHM9qVRhBs5Q6A11a6QCGdLqxpHgMBXCXediaxMoBb+uzRnlahI=
+X-Received: by 2002:a67:ce90:: with SMTP id c16mr2746931vse.7.1629732152915;
+ Mon, 23 Aug 2021 08:22:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210815103014.21208-1-biju.das.jz@bp.renesas.com> <20210815103014.21208-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210815103014.21208-5-biju.das.jz@bp.renesas.com>
+References: <20210815103014.21208-1-biju.das.jz@bp.renesas.com> <20210815103014.21208-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210815103014.21208-3-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 23 Aug 2021 16:59:28 +0200
-Message-ID: <CAMuHMdWbHt1nvRucB+NERs0bOMYPUBscTZYc=UdjqimySKJnDg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] clk: renesas: r9a07g044: Add GbEthernet clock/reset
+Date:   Mon, 23 Aug 2021 17:22:21 +0200
+Message-ID: <CAMuHMdV_GNfsh=7tsYG8bLd2fuEtqML5oBn2cD4Wq=0PZ4Xupg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] clk: renesas: r9a07g044: Add ethernet clock sources
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -57,7 +57,11 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sun, Aug 15, 2021 at 12:30 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add ETH{0,1} clock/reset entries to CPG driver.
+> Ethernet reference clock can be sourced from PLL5_FOUT3 or PLL6. Add
+> support for ethernet source clock selection using SEL_PLL_6_2 mux.
+>
+> This patch also renames the PLL5_DIV2 core clock to PLL5_2_DIV12 to match
+> with the register description as mentioned in RZ/G2L HW manual (Rev.0.50).
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
