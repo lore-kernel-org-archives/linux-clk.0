@@ -4,76 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0948C4338F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 15:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E127C4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 16:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98C2661357
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 15:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FFFF61183
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 16:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235683AbhHXPS0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Aug 2021 11:18:26 -0400
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:39510 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbhHXPS0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Aug 2021 11:18:26 -0400
-Received: by mail-ot1-f52.google.com with SMTP id m7-20020a9d4c87000000b0051875f56b95so46951670otf.6;
-        Tue, 24 Aug 2021 08:17:42 -0700 (PDT)
+        id S229960AbhHXQok (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Aug 2021 12:44:40 -0400
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:34649 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhHXQok (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Aug 2021 12:44:40 -0400
+Received: by mail-ot1-f53.google.com with SMTP id k12-20020a056830150c00b0051abe7f680bso42671410otp.1;
+        Tue, 24 Aug 2021 09:43:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xzCZ/DSiFpYX/pfQQrLjgsOGXJhpAq/f18GVHHyrKso=;
-        b=WJgog8Pc0RQGH3SBbAfxVG/yGISuoGmaOARg88M7UOe9WZcwa12+q8ORrmqEq4/hyk
-         J6zg+RGwKz7Rwq/N+k+f/TlUYjI96GZFqm6pdnBSyxcS+lRn74oTx0iy5k15rf9WhXIS
-         IqSRoAgdPpIzP4ODnfPpJQR3v1NcEtUoOqxv9fQr/y3rDmVugVok6DDNfDQvJUBNx8Aw
-         atbK5ccvXNhIoY+kbiT1oojFRG4iF05HFpf9fOxVTmDxRzvVSrpU11Edftr+KX24CSzW
-         6EX9OWzli5y4Nw2XILcs3CUsKQhxjizUV9cq2fBdJpyoACj77xY3v5R7Em/y6Oi9yEpy
-         wkfw==
-X-Gm-Message-State: AOAM531t70qgFdYxOvvW9/jVpa6/iyt2aQDW+iJho008NJwV3KrvKKkD
-        ZVvkpQJCX4CIzC3nR/28Aw==
-X-Google-Smtp-Source: ABdhPJwEpQ4jQKM+F7cNh3mpA5TGHYL1v0YAFfYdETQzN7PRWoBSPCQp/mS1+w6gaZfI+6Ace00BLA==
-X-Received: by 2002:a05:6808:19a:: with SMTP id w26mr3305105oic.80.1629818261783;
-        Tue, 24 Aug 2021 08:17:41 -0700 (PDT)
+        bh=JLSpZK5cObi0Pvz2oxVb8cWeqmhAa2jqkGYH8uir7C4=;
+        b=nVlQ+HOavD0gWt1Sd/QQlqLSYPJ3pPzZ1q7ZFGT3tWNqIa0vD0PPsmIESWvFHOHgs5
+         0vmSK1fYU8CQpF/D2Q/5xTgD1zHQqr3xU4wZH48D9O6uGGgAeSkgH0yKhOH0JZZ7q34d
+         T/BEKk388hxTZMULCPLxL1i1fjgiZLUVWnOG5xCJFe4nmpgan6glEXF5UVrS5X0MjzL9
+         QhAgapqriHMaVNbfKtC6jIguHwykaTtzG3AqvjzRwvMgeUDVA9sEqnYAdQN0AFBpEmQ5
+         iQv9ZtecovzitllXo478VNeHKtTCe0oRjBomjtBrpJmtXq40ivaFPaH/MLI1s5vCPXsk
+         pbXA==
+X-Gm-Message-State: AOAM533V6VHdvM3fN/hC9qfxiu2pojqeTVWM9pGSAyixFRpv45MglM0R
+        CF9Q9s1TJajn33RGAwfXXA==
+X-Google-Smtp-Source: ABdhPJyMyaer2mndL7j/YcixmYTBgCjWKE2+wwdLP9mQV2j5uvJRXnyhsNEjEqqIqMnEJ293Cnrkmg==
+X-Received: by 2002:a05:6808:690:: with SMTP id k16mr3471539oig.43.1629823435442;
+        Tue, 24 Aug 2021 09:43:55 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id w15sm4258088oiw.19.2021.08.24.08.17.40
+        by smtp.gmail.com with ESMTPSA id a23sm2380526otp.44.2021.08.24.09.43.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 08:17:41 -0700 (PDT)
-Received: (nullmailer pid 467053 invoked by uid 1000);
-        Tue, 24 Aug 2021 15:17:40 -0000
-Date:   Tue, 24 Aug 2021 10:17:40 -0500
+        Tue, 24 Aug 2021 09:43:54 -0700 (PDT)
+Received: (nullmailer pid 602014 invoked by uid 1000);
+        Tue, 24 Aug 2021 16:43:53 -0000
+Date:   Tue, 24 Aug 2021 11:43:53 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        srv_heupstream@mediatek.com,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [v2 02/24] clk: mediatek: Add dt-bindings of MT8195 clocks
-Message-ID: <YSUNlPq2jY6ZM09J@robh.at.kernel.org>
-References: <20210820111504.350-1-chun-jie.chen@mediatek.com>
- <20210820111504.350-3-chun-jie.chen@mediatek.com>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     angelogioacchino.delregno@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        marijn.suijten@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        jamipkettunen@somainline.org, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add RPMHCC bindings for SM6350
+Message-ID: <YSUhyQkXxT6Kl2oH@robh.at.kernel.org>
+References: <20210820203243.230157-1-konrad.dybcio@somainline.org>
+ <20210820203243.230157-2-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210820111504.350-3-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210820203243.230157-2-konrad.dybcio@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 20 Aug 2021 19:14:42 +0800, Chun-Jie Chen wrote:
-> Add MT8195 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg_ao, pericfg_ao and subsystem clocks.
+On Fri, 20 Aug 2021 22:32:42 +0200, Konrad Dybcio wrote:
+> Add bindings and update documentation for clock rpmh driver on SM6350.
 > 
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 > ---
->  include/dt-bindings/clock/mt8195-clk.h | 864 +++++++++++++++++++++++++
->  1 file changed, 864 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt8195-clk.h
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
