@@ -2,154 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6058C4320A
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 03:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0867BC4338F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 09:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B51A7610E8
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 03:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9B261360
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Aug 2021 09:29:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234591AbhHXDHa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Aug 2021 23:07:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235104AbhHXDFo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Aug 2021 23:05:44 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77DDC0612E7
-        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 20:04:24 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id mq3so13256804pjb.5
-        for <linux-clk@vger.kernel.org>; Mon, 23 Aug 2021 20:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ftVLBcz2CA6HVw5Sak06NSKiX7H+vKeynT4dia9GcmU=;
-        b=k+9ugNQMNP1T757zCmBjD0HZ4Cm6T3BE+v/X7Wxf65qXhZ4Y1Om/ZwreVVsFldU5ED
-         26Au5VziBd3fTRw9qajnc5Q1bzTZtCXlNbNzYEhhdrLy0j6q3RP41Bfsx2Vet4JiZwHE
-         HpssKarI+iW9nKfS+aZW4kug15wwleM1PIEsfGzs+E/ENGb7NoFhvlaUVQuCR3IWspbE
-         1jdc92yTGvHUY8w5qgAHpd6F4jZjsLSyz7OphX6zYHG1h8uepViMakkTUt9Apji0AqlD
-         h496UE7ulnKIyaYIIz+9WlMWKL7f+UCly0DgUoeMlhVK/OeculmtFoztQ69V1z3oNjW5
-         BaQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ftVLBcz2CA6HVw5Sak06NSKiX7H+vKeynT4dia9GcmU=;
-        b=gVmSQKEiiUNx8+H9gK4CMFUnYI1rXGNf4uMBeyJyVolCLtSszY8oGTSY67sKcUJ4ku
-         0ytqstOykXoAPQkdpUbilKZ1vAnRRevUMjqrbLzYKAHtv69uTL8jl8NW7RkaFkJHYHwD
-         UtlN4IpW6TQWFmngQvlf6Itrd+rVGH8Y4fqBWNeKPOo67ujbBvwysXN3fzlP8wNFXo5t
-         CTWFAHDwwkgHbS6sIeMLy9MfNOsOi72jFZZvkXhGvhru2wHm72O74TySd7MDbuumLjmI
-         x4reHIvlZvF1qUOR+dgxPJ+u4rMlhFo/c6I3sSp8NKMb39davveGsmLjIe8xzSfmj7lb
-         ow7g==
-X-Gm-Message-State: AOAM533M7lH+zJyKZeBhrELZm11P3RA5k/Mk1b9LXzw+QvErnlZC2SIr
-        D6jzdYDOvuSL6NpMZv3hGRk6mQ==
-X-Google-Smtp-Source: ABdhPJxgNZPrPk9tzmxpkCehrPdfFes88M8DqFhHlA/X7V8qZTGRmqZiqGy9NJMzzCPLtwobPdjSGw==
-X-Received: by 2002:a17:902:e547:b029:12c:563c:4a03 with SMTP id n7-20020a170902e547b029012c563c4a03mr30922945plf.46.1629774264209;
-        Mon, 23 Aug 2021 20:04:24 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id c12sm16184839pfl.56.2021.08.23.20.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 20:04:23 -0700 (PDT)
-Date:   Tue, 24 Aug 2021 08:34:21 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S235787AbhHXJaG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Aug 2021 05:30:06 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51962 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S235642AbhHXJaF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Aug 2021 05:30:05 -0400
+X-UUID: 7e43988e7f59449eaada16ee93508e5c-20210824
+X-UUID: 7e43988e7f59449eaada16ee93508e5c-20210824
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 19402614; Tue, 24 Aug 2021 17:29:17 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 24 Aug 2021 17:29:15 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 24 Aug 2021 17:29:15 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210824030421.3tjfjkx3c2silbnz@vireshk-i7>
-References: <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
- <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
- <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
- <20210820051843.5mueqpnjbqt3zdzc@vireshk-i7>
- <CAPDyKFo0rzHT4AhueWjyz9k2ZqUy8N6Od5pbr8sL_m0Jf2AwUg@mail.gmail.com>
- <085d1a2e-57b0-222e-c569-12f3c6bc8161@gmail.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [v3,04/12] pinctrl: mediatek: moore: check if pin_desc is valid before use
+Date:   Tue, 24 Aug 2021 17:29:03 +0800
+Message-ID: <20210824092904.25439-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <085d1a2e-57b0-222e-c569-12f3c6bc8161@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-08-21, 23:24, Dmitry Osipenko wrote:
-> It's not clear to me whether it will be okay to add a generic OPP syncing by clock rate or should it be a Tegra-specific helper. Viresh, what do you think about this generic OPP helper:
-> 
-> /**
->  * dev_pm_opp_sync_with_clk_rate() - Sync OPP state with clock rate
->  * @dev:	device for which we do this operation
->  *
->  * Sync OPP table state with the current clock rate of device.
->  *
->  * Return: 0 on success or a negative error value.
->  */
-> int dev_pm_opp_sync_with_clk_rate(struct device *dev)
-> {
-> 	struct opp_table *opp_table;
-> 	int ret = 0;
-> 
-> 	/* Device may not have OPP table */
-> 	opp_table = _find_opp_table(dev);
-> 	if (IS_ERR(opp_table))
-> 		return 0;
-> 
-> 	/* Device may not use clock */
-> 	if (IS_ERR(opp_table->clk))
-> 		goto put_table;
-> 
-> 	/* Device may have empty OPP table */
-> 	if (!_get_opp_count(opp_table))
-> 		goto put_table;
-> 
-> 	ret = dev_pm_opp_set_rate(dev, clk_get_rate(opp_table->clk));
-> put_table:
-> 	/* Drop reference taken by _find_opp_table() */
-> 	dev_pm_opp_put_opp_table(opp_table);
-> 
-> 	return ret;
-> }
-> EXPORT_SYMBOL_GPL(dev_pm_opp_sync_with_clk_rate);
+Certain SoC are missing the middle part gpios in consecutive pins,
+it's better to check if mtk_pin_desc is a valid pin for the extensibility
 
-I am not sure why you still need this, hope we were going another way
-? Anyway I will have a look at what you have posted now.
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Acked-by: Sean Wang <sean.wang@mediatek.com>
 
+---
+v3: added an Acked-by tag.
+v2: applied the comment suggested by reviewers:
+    - for the pins not ballout, we can fill .name in struct mtk_pin_desc
+      as NULL and return -ENOTSUPP in gpio/pinconf ops.
+---
+ drivers/pinctrl/mediatek/pinctrl-moore.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index 3a4a23c40a71..ad3b67163973 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -60,6 +60,8 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 		int pin = grp->pins[i];
+ 
+ 		desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
++		if (!desc->name)
++			return -ENOTSUPP;
+ 
+ 		mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_MODE,
+ 				 pin_modes[i]);
+@@ -76,6 +78,8 @@ static int mtk_pinmux_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	const struct mtk_pin_desc *desc;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_MODE,
+ 				hw->soc->gpio_m);
+@@ -89,6 +93,8 @@ static int mtk_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	const struct mtk_pin_desc *desc;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	/* hardware would take 0 as input direction */
+ 	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR, !input);
+@@ -103,6 +109,8 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
+ 	const struct mtk_pin_desc *desc;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+@@ -218,6 +226,8 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	int cfg, err = 0;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	for (cfg = 0; cfg < num_configs; cfg++) {
+ 		param = pinconf_to_config_param(configs[cfg]);
+@@ -435,6 +445,8 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+ 	int value, err;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DI, &value);
+ 	if (err)
+@@ -449,6 +461,10 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 	const struct mtk_pin_desc *desc;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
++	if (!desc->name) {
++		dev_err(hw->dev, "Failed to set gpio %d\n", gpio);
++		return;
++	}
+ 
+ 	mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DO, !!value);
+ }
+@@ -490,6 +506,8 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 	u32 debounce;
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
++	if (!desc->name)
++		return -ENOTSUPP;
+ 
+ 	if (!hw->eint ||
+ 	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
 -- 
-viresh
+2.29.2
+
