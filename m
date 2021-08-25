@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A80C25AE9
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9927C43216
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDCC61153
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D07610FD
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241978AbhHYPfo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 11:35:44 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:50191 "EHLO
+        id S242012AbhHYPfr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 11:35:47 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:58659 "EHLO
         mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241906AbhHYPfh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 11:35:37 -0400
+        with ESMTP id S241936AbhHYPfi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 11:35:38 -0400
 Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 5BC8EC6994;
-        Wed, 25 Aug 2021 15:26:42 +0000 (UTC)
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 13C57CDFD4;
+        Wed, 25 Aug 2021 15:26:50 +0000 (UTC)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id E8FC9C0018;
-        Wed, 25 Aug 2021 15:26:15 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2DFA3C0002;
+        Wed, 25 Aug 2021 15:26:26 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -41,9 +41,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 27/40] mfd: ti_am335x_tscadc: Move control register configuration
-Date:   Wed, 25 Aug 2021 17:25:05 +0200
-Message-Id: <20210825152518.379386-28-miquel.raynal@bootlin.com>
+Subject: [PATCH 32/40] iio: adc: ti_am335x_adc: Get rid of useless gotos
+Date:   Wed, 25 Aug 2021 17:25:10 +0200
+Message-Id: <20210825152518.379386-33-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210825152518.379386-1-miquel.raynal@bootlin.com>
 References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
@@ -54,40 +54,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The datasheet states that most of the configuration should be set in the
-control register in the first place, before actually enabling the
-hardware. So far only half of the configuration was made in the first
-step, which does not make really sense and would complicating the code
-when introducing support for the am437x hardware.
-
-Let's move that register write a bit below to enclose more configuration.
+Gotos jumping to a return statement are not really useful, drop them.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mfd/ti_am335x_tscadc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/adc/ti_am335x_adc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-index a40091830cea..1a30610dc65f 100644
---- a/drivers/mfd/ti_am335x_tscadc.c
-+++ b/drivers/mfd/ti_am335x_tscadc.c
-@@ -224,7 +224,6 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
- 	tscadc->ctrl = CNTRLREG_STEPID;
- 	if (tscadc->data->has_tsc) {
- 		tscadc->ctrl |= CNTRLREG_TSC_STEPCONFIGWRT;
--		regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);
- 		if (use_tsc) {
- 			tscadc->ctrl |= CNTRLREG_TSC_ENB;
- 			if (tscmag_wires == 5)
-@@ -235,6 +234,8 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
+index dd2200d2f214..00bbf557e86c 100644
+--- a/drivers/iio/adc/ti_am335x_adc.c
++++ b/drivers/iio/adc/ti_am335x_adc.c
+@@ -616,11 +616,11 @@ static int tiadc_probe(struct platform_device *pdev)
+ 						IRQF_SHARED,
+ 						&tiadc_buffer_setup_ops);
+ 	if (err)
+-		goto err_free_channels;
++		return err;
  
- 	}
+ 	err = iio_device_register(indio_dev);
+ 	if (err)
+-		goto err_buffer_unregister;
++		return err;
  
-+	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);
+ 	platform_set_drvdata(pdev, indio_dev);
+ 
+@@ -632,8 +632,7 @@ static int tiadc_probe(struct platform_device *pdev)
+ 
+ err_dma:
+ 	iio_device_unregister(indio_dev);
+-err_buffer_unregister:
+-err_free_channels:
 +
- 	tscadc_idle_config(tscadc);
+ 	return err;
+ }
  
- 	/* Enable the TSC module enable bit */
 -- 
 2.27.0
 
