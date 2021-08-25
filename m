@@ -2,166 +2,247 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A115C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE89C432BE
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 400C7610E5
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 677026113C
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231697AbhHYKtz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 06:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46290 "EHLO
+        id S240068AbhHYKxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 06:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229983AbhHYKtx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 06:49:53 -0400
-X-Greylist: delayed 541 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 Aug 2021 03:49:08 PDT
-Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DE1C061757
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 03:49:00 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 05D041F968;
-        Wed, 25 Aug 2021 12:39:58 +0200 (CEST)
-Subject: Re: [PATCH] clk: qcom: gcc-sdm660: Replace usage of parent_names
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-References: <20210824150606.678666-1-bjorn.andersson@linaro.org>
- <386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org>
- <YSV0/bFiPgY3fjPF@ripper>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Message-ID: <bc2fd17a-66f4-7f60-cdbd-e3548fa4f1a4@somainline.org>
-Date:   Wed, 25 Aug 2021 12:39:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        with ESMTP id S232199AbhHYKxc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 06:53:32 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF124C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 03:52:46 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id i9so51997979lfg.10
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 03:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M8ZTlVuGLHXgoiTAo2/0NwuUWDXOwrX4HkggDn02Vac=;
+        b=aCgNljcY8/Xln8fwoSHOQUBJeCC8ZIlTUcgWN/LWHuOvEwe9k5Pd+t0Ak1gcIydB64
+         KgbT9uiDtQOewa00cWbkjwsIT7ss+Va6T+oQEIhroO4jHjNmeOtmxE8vKREpH/PHDzWc
+         9tKg67poR0XIN7Z4imLpq69OGVdpYUHTEUaDA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M8ZTlVuGLHXgoiTAo2/0NwuUWDXOwrX4HkggDn02Vac=;
+        b=bHHtcvM9wx+7HcAM9Jt6nKguGgN9Eqej51jvyrujdjeUSMfEaOm/MbSXje1aA3xl89
+         dYZxyEnzMQ7YyrYVVaer1LEhGIzDfXil/YJObJj1r7WnmuXrrMKtSIQMKpOAgdNLDwBc
+         y84F4DQwhDgfdItpedrOdigejFThyOJT/SqqJaRd2Fjqqp8Mjzb46sVS2K6ruXIacB5E
+         Z0XqfP/5riUNWPGNlveSVmXIIAQqPxR3mfdBcCkMksHYXedvqNvFb4F0ypZtWIcNxYUG
+         F9RvmZVoYvgB0Y97sFmZ4/J4iLiMw/9c76GJyihnwr0Do0PpKOTLhyGP211K0+YcD0Eh
+         Zk2g==
+X-Gm-Message-State: AOAM530BHVueD+QjMyo9R80MGhpzYPupWGqvXCouMYZBNTe0Nbb8pM1k
+        qDic8vdjpVEFLY3MrbjVie4YHQ8CwPfcWVvUGv0jZQ==
+X-Google-Smtp-Source: ABdhPJwjWwOM7HRH5/TfprxKfxvhhWEmFWVYbMLH23J+6cOrkxMygmlZQONvEH8/6IWLCStxuBryaX9PFd/CtunzJNQ=
+X-Received: by 2002:ac2:4116:: with SMTP id b22mr33253712lfi.587.1629888765358;
+ Wed, 25 Aug 2021 03:52:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YSV0/bFiPgY3fjPF@ripper>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-18-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210820111504.350-18-chun-jie.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Wed, 25 Aug 2021 18:52:34 +0800
+Message-ID: <CAGXv+5FE3teHW+7+Sa+0Ec9_ey1eNr0Z40kgVqtzt8d8c-wXYg@mail.gmail.com>
+Subject: Re: [v2 17/24] clk: mediatek: Add MT8195 vdosys0 clock support
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 25/08/21 00:38, Bjorn Andersson ha scritto:
-> On Tue 24 Aug 13:46 PDT 2021, Marijn Suijten wrote:
-> 
->> Hi Bjorn,
->>
->> Thanks for this cleanup, that's needed and much appreciated!
->>
->> On 8/24/21 5:06 PM, Bjorn Andersson wrote:
->>> Using parent_data and parent_hws, instead of parent_names, does protect
->>> against some cases of incompletely defined clock trees. While it turns
->>> out that the bug being chased this time was totally unrelated, this
->>> patch converts the SDM660 GCC driver to avoid such issues.
->>>
->>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
->>
->> Tested-by: Marijn Suijten <marijn.suijten@somainline.org>
->>
->> On the Sony Xperia XA2 Ultra, bar the necessary change in the 14NM DSI PHY
->> driver commented below.
->>
->>> [..]
->>> -
->>> -static struct clk_fixed_factor xo = {
->>> -	.mult = 1,
->>> -	.div = 1,
->>> -	.hw.init = &(struct clk_init_data){
->>> -		.name = "xo",
->>> -		.parent_names = (const char *[]){ "xo_board" },
->>> -		.num_parents = 1,
->>> -		.ops = &clk_fixed_factor_ops,
->>> -	},
->>> -};
->>
->>
->> Removing the global "xo" clock makes it so that our 14nm DSI PHY does not
->> have a parent clock anymore, as the clock is called "xo_board" nowadays
->> ("xo" in the position of fw_name is, as you know, only local to this driver
->> because it is named that way in the clock-names property). We (SoMainline)
->> suffer the same DSI PHY hardcoding issue on many other boards and are at
->> this point investigating whether to provide &xo_board in DT like any other
->> sane driver.  Do you happen to know if work is already underway to tackle
->> this?
->>
-> 
-> As far as I can tell most other platforms doesn't define "xo" either.
-> E.g. according to debugfs dsi0vco_clk doesn't have a parent on sdm845...
-> 
-> Sounds like we should update the dsi phys to specify a fw_name and
-> update binding and dts to provide this...
-> 
-> 
-> Does this cause a noticeable regression or it's just that we have a
-> dangling clock?
-> 
+On Fri, Aug 20, 2021 at 7:30 PM Chun-Jie Chen
+<chun-jie.chen@mediatek.com> wrote:
+>
+> Add MT8195 vdosys0 clock controller which providers clock gate
+> control in video system.
+>
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+> Integrate with mtk-mmsys driver which will pupulate device by
+> platform_device_register_data to start vdosys clock driver
 
-Both, actually... but sincerely I would be more for updating the DSI PHY
-drivers instead of keeping a "mock" crystal clock in there (since we do
-always specify one in DT), also because, as Marijn pointed out and as I
-can also confirm, we're seeing the same situation on multiple platforms.
+This should be part of your commit log, with an explanation of why
+this design choice was made.
 
-That would allow us to solve the issue simply with DT, and would make us
-able to switch platforms one by one to the RPM/RPMh XO in a perfect future
-where we will be able to perform XO shutdown on selected platforms.
+Code looks good overall.
 
->>>    static struct clk_alpha_pll gpll0_early = {
->>>    	.offset = 0x0,
->>>    	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
->>> @@ -158,7 +35,9 @@ static struct clk_alpha_pll gpll0_early = {
->>>    		.enable_mask = BIT(0),
->>>    		.hw.init = &(struct clk_init_data){
->>>    			.name = "gpll0_early",
->>> -			.parent_names = (const char *[]){ "xo" },
->>> +			.parent_data = &(const struct clk_parent_data){
->>> +				.fw_name = "xo",
->>> +			},
->>
->>
->> I wish we could use .parent_names for a list of .fw_name's too
-> 
-> Afaict specifying "name" in struct clk_parent_data is the same as using
-> parent_names. But I'm not up to speed on the details of how to migrate
-> the dsi phys.
-> 
->>> [..]
->>> @@ -265,7 +270,7 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
->>>    	.freq_tbl = ftbl_blsp1_qup1_i2c_apps_clk_src,
->>>    	.clkr.hw.init = &(struct clk_init_data){
->>>    		.name = "blsp1_qup1_i2c_apps_clk_src",
->>> -		.parent_names = gcc_parent_names_xo_gpll0_gpll0_early_div,
->>> +		.parent_data = gcc_parent_data_xo_gpll0_gpll0_early_div,
->>>    		.num_parents = 3,
->>
->>
->> How about using ARRAY_SIZE(gcc_parent_data_xo_gpll0_gpll0_early_div) now?
->> Same for every other occurrence of this pattern.
->>
-> 
-> I omitted that because it felt unrelated to the change I was doing, but
-> it could certainly be done.
-> 
+ChenYu
 
-Totally fair and I totally agree.
 
-By the way,
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-
-> Regards,
-> Bjorn
-> 
-
+> ---
+>  drivers/clk/mediatek/Makefile          |   2 +-
+>  drivers/clk/mediatek/clk-mt8195-vdo0.c | 123 +++++++++++++++++++++++++
+>  2 files changed, 124 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8195-vdo0.c
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index ac269f6d39e3..d22731316b7c 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -82,6 +82,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o clk-mt8195-cam.o \
+>                                         clk-mt8195-ccu.o clk-mt8195-img.o clk-mt8195-ipe.o clk-mt8195-mfg.o clk-mt8195-scp_adsp.o \
+> -                                       clk-mt8195-vdec.o
+> +                                       clk-mt8195-vdec.o clk-mt8195-vdo0.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
+>  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
+> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c b/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> new file mode 100644
+> index 000000000000..5d8facac3a2b
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> @@ -0,0 +1,123 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Copyright (c) 2021 MediaTek Inc.
+> +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +#include "clk-gate.h"
+> +#include "clk-mtk.h"
+> +
+> +#include <dt-bindings/clock/mt8195-clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +
+> +static const struct mtk_gate_regs vdo0_0_cg_regs = {
+> +       .set_ofs = 0x104,
+> +       .clr_ofs = 0x108,
+> +       .sta_ofs = 0x100,
+> +};
+> +
+> +static const struct mtk_gate_regs vdo0_1_cg_regs = {
+> +       .set_ofs = 0x114,
+> +       .clr_ofs = 0x118,
+> +       .sta_ofs = 0x110,
+> +};
+> +
+> +static const struct mtk_gate_regs vdo0_2_cg_regs = {
+> +       .set_ofs = 0x124,
+> +       .clr_ofs = 0x128,
+> +       .sta_ofs = 0x120,
+> +};
+> +
+> +#define GATE_VDO0_0(_id, _name, _parent, _shift)                       \
+> +       GATE_MTK(_id, _name, _parent, &vdo0_0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+> +
+> +#define GATE_VDO0_1(_id, _name, _parent, _shift)                       \
+> +       GATE_MTK(_id, _name, _parent, &vdo0_1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+> +
+> +#define GATE_VDO0_2(_id, _name, _parent, _shift)                       \
+> +       GATE_MTK(_id, _name, _parent, &vdo0_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+> +
+> +static const struct mtk_gate vdo0_clks[] = {
+> +       /* VDO0_0 */
+> +       GATE_VDO0_0(CLK_VDO0_DISP_OVL0, "vdo0_disp_ovl0", "top_vpp", 0),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_COLOR0, "vdo0_disp_color0", "top_vpp", 2),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_COLOR1, "vdo0_disp_color1", "top_vpp", 3),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_CCORR0, "vdo0_disp_ccorr0", "top_vpp", 4),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_CCORR1, "vdo0_disp_ccorr1", "top_vpp", 5),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_AAL0, "vdo0_disp_aal0", "top_vpp", 6),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_AAL1, "vdo0_disp_aal1", "top_vpp", 7),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_GAMMA0, "vdo0_disp_gamma0", "top_vpp", 8),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_GAMMA1, "vdo0_disp_gamma1", "top_vpp", 9),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_DITHER0, "vdo0_disp_dither0", "top_vpp", 10),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_DITHER1, "vdo0_disp_dither1", "top_vpp", 11),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_OVL1, "vdo0_disp_ovl1", "top_vpp", 16),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_WDMA0, "vdo0_disp_wdma0", "top_vpp", 17),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_WDMA1, "vdo0_disp_wdma1", "top_vpp", 18),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_RDMA0, "vdo0_disp_rdma0", "top_vpp", 19),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_RDMA1, "vdo0_disp_rdma1", "top_vpp", 20),
+> +       GATE_VDO0_0(CLK_VDO0_DSI0, "vdo0_dsi0", "top_vpp", 21),
+> +       GATE_VDO0_0(CLK_VDO0_DSI1, "vdo0_dsi1", "top_vpp", 22),
+> +       GATE_VDO0_0(CLK_VDO0_DSC_WRAP0, "vdo0_dsc_wrap0", "top_vpp", 23),
+> +       GATE_VDO0_0(CLK_VDO0_VPP_MERGE0, "vdo0_vpp_merge0", "top_vpp", 24),
+> +       GATE_VDO0_0(CLK_VDO0_DP_INTF0, "vdo0_dp_intf0", "top_vpp", 25),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_MUTEX0, "vdo0_disp_mutex0", "top_vpp", 26),
+> +       GATE_VDO0_0(CLK_VDO0_DISP_IL_ROT0, "vdo0_disp_il_rot0", "top_vpp", 27),
+> +       GATE_VDO0_0(CLK_VDO0_APB_BUS, "vdo0_apb_bus", "top_vpp", 28),
+> +       GATE_VDO0_0(CLK_VDO0_FAKE_ENG0, "vdo0_fake_eng0", "top_vpp", 29),
+> +       GATE_VDO0_0(CLK_VDO0_FAKE_ENG1, "vdo0_fake_eng1", "top_vpp", 30),
+> +       /* VDO0_1 */
+> +       GATE_VDO0_1(CLK_VDO0_DL_ASYNC0, "vdo0_dl_async0", "top_vpp", 0),
+> +       GATE_VDO0_1(CLK_VDO0_DL_ASYNC1, "vdo0_dl_async1", "top_vpp", 1),
+> +       GATE_VDO0_1(CLK_VDO0_DL_ASYNC2, "vdo0_dl_async2", "top_vpp", 2),
+> +       GATE_VDO0_1(CLK_VDO0_DL_ASYNC3, "vdo0_dl_async3", "top_vpp", 3),
+> +       GATE_VDO0_1(CLK_VDO0_DL_ASYNC4, "vdo0_dl_async4", "top_vpp", 4),
+> +       GATE_VDO0_1(CLK_VDO0_DISP_MONITOR0, "vdo0_disp_monitor0", "top_vpp", 5),
+> +       GATE_VDO0_1(CLK_VDO0_DISP_MONITOR1, "vdo0_disp_monitor1", "top_vpp", 6),
+> +       GATE_VDO0_1(CLK_VDO0_DISP_MONITOR2, "vdo0_disp_monitor2", "top_vpp", 7),
+> +       GATE_VDO0_1(CLK_VDO0_DISP_MONITOR3, "vdo0_disp_monitor3", "top_vpp", 8),
+> +       GATE_VDO0_1(CLK_VDO0_DISP_MONITOR4, "vdo0_disp_monitor4", "top_vpp", 9),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_GALS, "vdo0_smi_gals", "top_vpp", 10),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_COMMON, "vdo0_smi_common", "top_vpp", 11),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_EMI, "vdo0_smi_emi", "top_vpp", 12),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_IOMMU, "vdo0_smi_iommu", "top_vpp", 13),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_LARB, "vdo0_smi_larb", "top_vpp", 14),
+> +       GATE_VDO0_1(CLK_VDO0_SMI_RSI, "vdo0_smi_rsi", "top_vpp", 15),
+> +       /* VDO0_2 */
+> +       GATE_VDO0_2(CLK_VDO0_DSI0_DSI, "vdo0_dsi0_dsi", "top_dsi_occ", 0),
+> +       GATE_VDO0_2(CLK_VDO0_DSI1_DSI, "vdo0_dsi1_dsi", "top_dsi_occ", 8),
+> +       GATE_VDO0_2(CLK_VDO0_DP_INTF0_DP_INTF, "vdo0_dp_intf0_dp_intf", "top_edp", 16),
+> +};
+> +
+> +static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *node = dev->parent->of_node;
+> +       struct clk_onecell_data *clk_data;
+> +       int r;
+> +
+> +       clk_data = mtk_alloc_clk_data(CLK_VDO0_NR_CLK);
+> +       if (!clk_data)
+> +               return -ENOMEM;
+> +
+> +       r = mtk_clk_register_gates(node, vdo0_clks, ARRAY_SIZE(vdo0_clks), clk_data);
+> +       if (r)
+> +               goto free_vdo0_data;
+> +
+> +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +       if (r)
+> +               goto free_vdo0_data;
+> +
+> +       return r;
+> +
+> +free_vdo0_data:
+> +       mtk_free_clk_data(clk_data);
+> +       return r;
+> +}
+> +
+> +static struct platform_driver clk_mt8195_vdo0_drv = {
+> +       .probe = clk_mt8195_vdo0_probe,
+> +       .driver = {
+> +               .name = "clk-mt8195-vdo0",
+> +       },
+> +};
+> +builtin_platform_driver(clk_mt8195_vdo0_drv);
+> --
+> 2.18.0
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
