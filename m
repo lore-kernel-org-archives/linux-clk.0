@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E536C4320A
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F8FC43214
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABE26101A
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 628BB610F8
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239489AbhHYNo0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 09:44:26 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35812
+        id S239716AbhHYNoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 09:44:30 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35850
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232377AbhHYNoT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 09:44:19 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        by vger.kernel.org with ESMTP id S239377AbhHYNoV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 09:44:21 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 816833F316
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 13:43:33 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A81F8407A5
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 13:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629899013;
-        bh=W6Oha4DZG34PoHCL6IOPjoBy8fsf6s2H9cR2PIHqu3o=;
+        s=20210705; t=1629899014;
+        bh=6Oi8aMYH49du136AxXJWUYSctxKNAWuugX+uDt3wf4I=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=DEb6d+tviN1+WZKjW4AcEIrmdITN0q7PjbfrRSLm+TJ4qgyqBLQqk0rF34/kWchcs
-         MPTiQ2ivypIFpFl6GYwggF97k/4UGkM9DiXhzQwu9zweZS13l9b4mJ9J/AvwCFCA8c
-         2aMaC2jIESrhckvZADcerY14j6Xmi1HSZ5i3I/vltGmdQ1g5m/JRiNRmUvfQpVNOZ2
-         s6yW3GioQBEr7vWEyLz0LKWpXy04oMKaAA69lHTsYDrj8LeopcnBG3n/UjnqTnnLTe
-         /LZWb2ninMMbRV8AortiYx1aWJ/ot6IORNEUjHMT+IIrWeoj6ovhbxf2z8PMiFRcex
-         XCA4HFp8tWbgw==
-Received: by mail-wm1-f72.google.com with SMTP id u1-20020a05600c210100b002e74fc5af71so2781480wml.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
+        b=vBgSi6loAHXTJT7ob5gdcCWRvJqw2Vu6uEGFmeOgYT3put8Hfts5NsEO5H3JFjqY8
+         bJ8cgZU9TW2fVyaWvjoewjPXAGJr3lmZ/1N8c8FLKTXUka6XZORgI2fWvyX/Zto54R
+         vy7J+xh5TvEyyxV50dWEM1B5fgfpiuQKhV/B6JZSqGSN+5hyqis+oYBlxhr/r9VVoO
+         vF669tFN5YTRjGrGxPn6mVQSd8ON11nVC5P628d2rczB+c0ePN/sgz6zdou/TS0Opv
+         nqA2HhLRQD4M0v6eLbSGJuE8x5v8BaNtvzT6ELQdQf+kuuo78h20wkkpUHaXUB9nB3
+         A+/6+8DlgLHVw==
+Received: by mail-wm1-f70.google.com with SMTP id c4-20020a1c9a04000000b002e864b7edd1so2079911wme.6
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W6Oha4DZG34PoHCL6IOPjoBy8fsf6s2H9cR2PIHqu3o=;
-        b=KIG79DkSFaL6OUXAo1b1pNLLJU2YzJLqN0Tyfj+EULVN30bWqm3VXhhEPHQXut2gwF
-         ud6xvuDNE77RHHsQ6R4c9H+VtYiqlpARHzyYY5yTJEXxM9wt/BGH9L7Ylb1iM+gHwT4B
-         q387M5j3ivmH9yI2DeZnh/oCMcJYPRnr3sBOgy90G5E5wmUfgvujDj5t0ofKkhSk2f1+
-         hoqhr6Xi+Mt7wfThVfx6ciPVgQn/zorVHBUeKbxIpwO79egjEDZYU/3DImrBJmOTfBDp
-         EyXvZn3Pj84pcdzi/rGHbnC7tYiagv+HT+T3mdFY0B/SbDoUuQ0wykWM8sEgq4TH0pT6
-         88WQ==
-X-Gm-Message-State: AOAM5300VUNF8eYonv+zUnrtxjxU8DgCmLv0XJF+5R1J07QwlAieiMfn
-        eFwa1G73rvWu2RRCRAAZLiFxosYb83+nZntsgOmeMedCHY5iDeGirzNckeM3sENtYcaUJFnAyfl
-        V+4mfYCCT49VTvzbEnHsHN5sjybHIt+c2onG8tA==
-X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr18442142wrt.59.1629899013205;
-        Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw3fagRQBIAglfR3n4QgXwSq1YOk/VrR/cjLAJnCPTJzswjxeHhZDVi/fKirZNqak5phsOaFQ==
-X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr18442112wrt.59.1629899013020;
-        Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
+        bh=6Oi8aMYH49du136AxXJWUYSctxKNAWuugX+uDt3wf4I=;
+        b=enENPN43b74VaadsCtt6ozgA0BRNJkthd5JkFkZraImO0uBs1hitdRiC9V0z3wOx0C
+         dmUOXQDdHJzPHpiOHSBKajWKa5Xk0n2ShKQzCHAmMd3duHyUl30e32R0xVkUvBlIlCwD
+         YLElC92Sve4oO9nz0uJZ4OU1W8hc7hR4tFRb1fUpBRcRu8GVza8N19hFvpjHwWI+nErz
+         pz44nU9ODnZ86QkotQl/15Nm6VJFR1Yp4oPye9a6JKYfAWQLklXuMFWKbXPi8EtZ/X/D
+         3XrJi2O0acreuq4Xl21AQG28v6aJA31UcL+rKNHh0rzvHd7jrLURumfCwoAJ4BiEhqzX
+         lBDg==
+X-Gm-Message-State: AOAM531rYb/qeIZTohqMo66Q5fC0yC2kHbFXdT106+vmKuHRgv9DJZR1
+        6kYFekOtbFw2brPksjrEPfx/3r2iq5STz/SK2l19zC+rvIBeRQ+MspXRbBuaRqMZveUpxUhqhVM
+        ukRUdwJcMhtRnI/ZW5k4mAXbmctEN5oW6Rd4CVA==
+X-Received: by 2002:a05:600c:4786:: with SMTP id k6mr6645063wmo.177.1629899014294;
+        Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz3omNkTbXHLeYkOP/1g8GWU/k3FQUTvU2cs0nMgnl6BM7NsaO0Xb3yuJb6pvrt7fcxdOgelg==
+X-Received: by 2002:a05:600c:4786:: with SMTP id k6mr6645038wmo.177.1629899014112;
+        Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
 Received: from localhost.localdomain ([79.98.113.172])
-        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.32
+        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 06:43:32 -0700 (PDT)
+        Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -73,9 +73,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sam Protsenko <semen.protsenko@linaro.org>
-Subject: [PATCH v3 6/8] dt-bindings: clock: samsung: convert Exynos AudSS to dtschema
-Date:   Wed, 25 Aug 2021 15:42:49 +0200
-Message-Id: <20210825134251.220098-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 7/8] dt-bindings: clock: samsung: convert S5Pv210 AudSS to dtschema
+Date:   Wed, 25 Aug 2021 15:42:50 +0200
+Message-Id: <20210825134251.220098-2-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
 References: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
@@ -85,140 +85,95 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung Exynos Audio SubSystem clock controller bindings to DT
+Convert Samsung S5Pv210 Audio SubSystem clock controller bindings to DT
 schema format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
- .../clock/samsung,exynos-audss-clock.yaml     |  80 ++++++++++++++
- 2 files changed, 80 insertions(+), 103 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+---
+
+Changes since v1:
+1. Include header to fix clock IDs error in example.
+---
+ .../bindings/clock/clk-s5pv210-audss.txt      | 53 -------------
+ .../clock/samsung,s5pv210-audss-clock.yaml    | 78 +++++++++++++++++++
+ 2 files changed, 78 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/clk-s5pv210-audss.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/clk-s5pv210-audss.txt b/Documentation/devicetree/bindings/clock/clk-s5pv210-audss.txt
 deleted file mode 100644
-index 6030afb10b5c..000000000000
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+index f6272dcd96f4..000000000000
+--- a/Documentation/devicetree/bindings/clock/clk-s5pv210-audss.txt
 +++ /dev/null
-@@ -1,103 +0,0 @@
+@@ -1,53 +0,0 @@
 -* Samsung Audio Subsystem Clock Controller
 -
 -The Samsung Audio Subsystem clock controller generates and supplies clocks
--to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
--binding described here is applicable to all SoCs in Exynos family.
+-to Audio Subsystem block available in the S5PV210 and compatible SoCs.
 -
 -Required Properties:
 -
--- compatible: should be one of the following:
--  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
--  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
--    SoCs.
--  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
--    SoCs.
--  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
--    SoCs.
+-- compatible: should be "samsung,s5pv210-audss-clock".
 -- reg: physical base address and length of the controller's register set.
 -
 -- #clock-cells: should be 1.
 -
 -- clocks:
--  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
--    is used if not specified.
--  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
--    is used if not specified.
--  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
--    specified.
--  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
--    not specified.
--  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
--    specified.
+-  - hclk: AHB bus clock of the Audio Subsystem.
+-  - xxti: Optional fixed rate PLL reference clock, parent of mout_audss. If
+-    not specified (i.e. xusbxti is used for PLL reference), it is fixed to
+-    a clock named "xxti".
+-  - fout_epll: Input PLL to the AudioSS block, parent of mout_audss.
+-  - iiscdclk0: Optional external i2s clock, parent of mout_i2s. If not
+-    specified, it is fixed to a clock named "iiscdclk0".
+-  - sclk_audio0: Audio bus clock, parent of mout_i2s.
 -
--- clock-names: Aliases for the above clocks. They should be "pll_ref",
--  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
+-- clock-names: Aliases for the above clocks. They should be "hclk",
+-  "xxti", "fout_epll", "iiscdclk0", and "sclk_audio0" respectively.
 -
--Optional Properties:
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/s5pv210-audss-clk.h header and can be used in device
+-tree sources.
 -
--  - power-domains: a phandle to respective power domain node as described by
--    generic PM domain bindings (see power/power_domain.txt for more
--    information).
+-Example: Clock controller node.
 -
--The following is the list of clocks generated by the controller. Each clock is
--assigned an identifier and client nodes use this identifier to specify the
--clock which they consume. Some of the clocks are available only on a particular
--Exynos4 SoC and this is specified where applicable.
+-	clk_audss: clock-controller@c0900000 {
+-		compatible = "samsung,s5pv210-audss-clock";
+-		reg = <0xc0900000 0x1000>;
+-		#clock-cells = <1>;
+-		clock-names = "hclk", "xxti",
+-				"fout_epll", "sclk_audio0";
+-		clocks = <&clocks DOUT_HCLKP>, <&xxti>,
+-				<&clocks FOUT_EPLL>, <&clocks SCLK_AUDIO0>;
+-	};
 -
--Provided clocks:
+-Example: I2S controller node that consumes the clock generated by the clock
+-	 controller. Refer to the standard clock bindings for information
+-         about 'clocks' and 'clock-names' property.
 -
--Clock           ID      SoC (if specific)
-------------------------------------------------
--
--mout_audss      0
--mout_i2s        1
--dout_srp        2
--dout_aud_bus    3
--dout_i2s        4
--srp_clk         5
--i2s_bus         6
--sclk_i2s        7
--pcm_bus         8
--sclk_pcm        9
--adma            10      Exynos5420
--
--Example 1: An example of a clock controller node using the default input
--	   clock names is listed below.
--
--clock_audss: audss-clock-controller@3810000 {
--	compatible = "samsung,exynos5250-audss-clock";
--	reg = <0x03810000 0x0C>;
--	#clock-cells = <1>;
--};
--
--Example 2: An example of a clock controller node with the input clocks
--           specified.
--
--clock_audss: audss-clock-controller@3810000 {
--	compatible = "samsung,exynos5250-audss-clock";
--	reg = <0x03810000 0x0C>;
--	#clock-cells = <1>;
--	clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
--		<&ext_i2s_clk>;
--	clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
--};
--
--Example 3: I2S controller node that consumes the clock generated by the clock
--           controller. Refer to the standard clock bindings for information
--           about 'clocks' and 'clock-names' property.
--
--i2s0: i2s@3830000 {
--	compatible = "samsung,i2s-v5";
--	reg = <0x03830000 0x100>;
--	dmas = <&pdma0 10
--		&pdma0 9
--		&pdma0 8>;
--	dma-names = "tx", "rx", "tx-sec";
--	clocks = <&clock_audss EXYNOS_I2S_BUS>,
--		<&clock_audss EXYNOS_I2S_BUS>,
--		<&clock_audss EXYNOS_SCLK_I2S>,
--		<&clock_audss EXYNOS_MOUT_AUDSS>,
--		<&clock_audss EXYNOS_MOUT_I2S>;
--	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
--		      "mout_audss", "mout_i2s";
--};
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+-	i2s0: i2s@3830000 {
+-		/* ... */
+-		clock-names = "iis", "i2s_opclk0",
+-				"i2s_opclk1";
+-		clocks = <&clk_audss CLK_I2S>, <&clk_audss CLK_I2S>,
+-				<&clk_audss CLK_DOUT_AUD_BUS>;
+-		/* ... */
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
 new file mode 100644
-index 000000000000..f14f1d39da36
+index 000000000000..ae8f8fc93233
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-@@ -0,0 +1,80 @@
++++ b/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
+@@ -0,0 +1,78 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/samsung,exynos-audss-clock.yaml#
++$id: http://devicetree.org/schemas/clock/samsung,s5pv210-audss-clock.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC Audio SubSystem clock controller
++title: Samsung S5Pv210 SoC Audio SubSystem clock controller
 +
 +maintainers:
 +  - Chanwoo Choi <cw00.choi@samsung.com>
@@ -228,42 +183,37 @@ index 000000000000..f14f1d39da36
 +
 +description: |
 +  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/exynos-audss-clk.h header.
++  include/dt-bindings/clock/s5pv210-audss.h header.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - samsung,exynos4210-audss-clock
-+      - samsung,exynos5250-audss-clock
-+      - samsung,exynos5410-audss-clock
-+      - samsung,exynos5420-audss-clock
++    const: samsung,s5pv210-audss-clock
 +
 +  clocks:
-+    minItems: 2
++    minItems: 4
 +    items:
 +      - description:
-+          Fixed rate PLL reference clock, parent of mout_audss. "fin_pll" is
-+          used if not specified.
++          AHB bus clock of the Audio Subsystem.
 +      - description:
-+          Input PLL to the AudioSS block, parent of mout_audss. "fout_epll" is
-+          used if not specified.
++          Optional fixed rate PLL reference clock, parent of mout_audss. If not
++          specified (i.e. xusbxti is used for PLL reference), it is fixed to a
++          clock named "xxti".
 +      - description:
-+          Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if not
-+          specified.
++          Input PLL to the AudioSS block, parent of mout_audss.
 +      - description:
-+          PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not specified.
++          Audio bus clock, parent of mout_i2s.
 +      - description:
-+          External i2s clock, parent of mout_i2s. "cdclk0" is used if not
-+          specified.
++          Optional external i2s clock, parent of mout_i2s. If not specified, it
++          is fixed to a clock named "iiscdclk0".
 +
 +  clock-names:
-+    minItems: 2
++    minItems: 4
 +    items:
-+      - const: pll_ref
-+      - const: pll_in
-+      - const: sclk_audio
-+      - const: sclk_pcm_in
-+      - const: cdclk
++      - const: hclk
++      - const: xxti
++      - const: fout_epll
++      - const: sclk_audio0
++      - const: iiscdclk0
 +
 +  "#clock-cells":
 +    const: 1
@@ -285,12 +235,15 @@ index 000000000000..f14f1d39da36
 +
 +examples:
 +  - |
-+    clock-controller@3810000 {
-+        compatible = "samsung,exynos5250-audss-clock";
-+        reg = <0x03810000 0x0c>;
++    #include <dt-bindings/clock/s5pv210.h>
++
++    clock-controller@c0900000 {
++        compatible = "samsung,s5pv210-audss-clock";
++        reg = <0xc0900000 0x1000>;
 +        #clock-cells = <1>;
-+        clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>, <&ext_i2s_clk>;
-+        clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
++        clock-names = "hclk", "xxti", "fout_epll", "sclk_audio0";
++        clocks = <&clocks DOUT_HCLKP>, <&xxti>, <&clocks FOUT_EPLL>,
++                 <&clocks SCLK_AUDIO0>;
 +    };
 -- 
 2.30.2
