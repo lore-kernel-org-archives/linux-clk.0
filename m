@@ -2,221 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C42C432BE
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAC0C4320E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3424610E8
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61516610F8
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbhHYR4T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 13:56:19 -0400
-Received: from relay04.th.seeweb.it ([5.144.164.165]:49623 "EHLO
-        relay04.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbhHYR4S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 13:56:18 -0400
-Received: from [10.0.20.3] (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id B8BA41F73F;
-        Wed, 25 Aug 2021 19:55:21 +0200 (CEST)
-Subject: Re: [PATCH] clk: qcom: gcc-sdm660: Replace usage of parent_names
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-References: <20210824150606.678666-1-bjorn.andersson@linaro.org>
- <386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org>
- <YSV0/bFiPgY3fjPF@ripper>
- <ed5d27eb-5a54-04c4-dbc4-63da80df1638@somainline.org>
- <YSZ7yQLasmTMWBaK@builder.lan>
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-Message-ID: <5eff6991-77c1-9d59-0f90-60923e3766dd@somainline.org>
-Date:   Wed, 25 Aug 2021 19:55:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S235327AbhHYSA0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 14:00:26 -0400
+Received: from mail-oo1-f44.google.com ([209.85.161.44]:41815 "EHLO
+        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230112AbhHYSAZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 14:00:25 -0400
+Received: by mail-oo1-f44.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso61901ooq.8;
+        Wed, 25 Aug 2021 10:59:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZrM5Epoo74sm/kt4wx9mo69TrpmEQ3qMo82ZHzdzhGo=;
+        b=fEnwNCwTN8dKXPFegHgqFQs9h5Mnu7rtMTszr/ONDdwYJfLioSSaItCTNC0JRM5Ihm
+         /szpLCj8gsb/ZFpPKnTvn6WV9wHVaRNLBU6JS5CBQGqNhyNSx+ZoElgOg5VXpsSAjviY
+         jFKhrh/Fap2WjmlnIXYdMlo9OoR/xrUSDVM0x0R8aSP7ivZbHRXdDYV0uksa7TV80d5X
+         WbG0X8kwgFcDqbBp002/jCojzZ81cMJWLzwOItBsFFIy4kWNffzO2hY+lriVNOgTK8AL
+         L9avh/IW1G/994lvdAzh5p98qkbzySBfnx59Q7DV4LBSXETrJM/ja22FuIqSRN9nd+WT
+         ZLsw==
+X-Gm-Message-State: AOAM530aQiGZp0E1MtM3JOJIaztmk3xUA2fik+IDoDQq8cvuCOJTf6YN
+        +I18LT+xwncd1tDRz9Q85w==
+X-Google-Smtp-Source: ABdhPJw7ri7y/07bKnMFJT3Wt2+BTJxAWa45zytD0FdTHGGzylw1Wx617wSCb5O/A+c+duS7VJ3hxw==
+X-Received: by 2002:a4a:e923:: with SMTP id a3mr35184661ooe.45.1629914379560;
+        Wed, 25 Aug 2021 10:59:39 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id u18sm101188ooi.40.2021.08.25.10.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Aug 2021 10:59:38 -0700 (PDT)
+Received: (nullmailer pid 3021286 invoked by uid 1000);
+        Wed, 25 Aug 2021 17:59:37 -0000
+Date:   Wed, 25 Aug 2021 12:59:37 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: samsung: convert Exynos5250
+ to dtschema
+Message-ID: <YSaFCcsNGp9Ut5fS@robh.at.kernel.org>
+References: <20210825134056.219884-1-krzysztof.kozlowski@canonical.com>
+ <20210825134056.219884-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <YSZ7yQLasmTMWBaK@builder.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210825134056.219884-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
-
-On 8/25/21 7:20 PM, Bjorn Andersson wrote:
-> On Wed 25 Aug 11:00 CDT 2021, Marijn Suijten wrote:
+On Wed, 25 Aug 2021 15:40:49 +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos5250 clock controller bindings to DT schema format
+> using json-schema.
 > 
->> Hi Bjorn,
->>
->> On 8/25/21 12:38 AM, Bjorn Andersson wrote:
->>> On Tue 24 Aug 13:46 PDT 2021, Marijn Suijten wrote:
->>>
->>>> Hi Bjorn,
->>>>
->>>> Thanks for this cleanup, that's needed and much appreciated!
->>>>
->>>> On 8/24/21 5:06 PM, Bjorn Andersson wrote:
->>>>> Using parent_data and parent_hws, instead of parent_names, does protect
->>>>> against some cases of incompletely defined clock trees. While it turns
->>>>> out that the bug being chased this time was totally unrelated, this
->>>>> patch converts the SDM660 GCC driver to avoid such issues.
->>>>>
->>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>
->>>>
->>>> Tested-by: Marijn Suijten <marijn.suijten@somainline.org>
->>>>
->>>> On the Sony Xperia XA2 Ultra, bar the necessary change in the 14NM DSI PHY
->>>> driver commented below.
->>>>
->>>>> [..]
->>>>> -
->>>>> -static struct clk_fixed_factor xo = {
->>>>> -	.mult = 1,
->>>>> -	.div = 1,
->>>>> -	.hw.init = &(struct clk_init_data){
->>>>> -		.name = "xo",
->>>>> -		.parent_names = (const char *[]){ "xo_board" },
->>>>> -		.num_parents = 1,
->>>>> -		.ops = &clk_fixed_factor_ops,
->>>>> -	},
->>>>> -};
->>>>
->>>>
->>>> Removing the global "xo" clock makes it so that our 14nm DSI PHY does not
->>>> have a parent clock anymore, as the clock is called "xo_board" nowadays
->>>> ("xo" in the position of fw_name is, as you know, only local to this driver
->>>> because it is named that way in the clock-names property). We (SoMainline)
->>>> suffer the same DSI PHY hardcoding issue on many other boards and are at
->>>> this point investigating whether to provide &xo_board in DT like any other
->>>> sane driver.  Do you happen to know if work is already underway to tackle
->>>> this?
->>>>
->>>
->>> As far as I can tell most other platforms doesn't define "xo" either.
->>> E.g. according to debugfs dsi0vco_clk doesn't have a parent on sdm845...
->>>
->>> Sounds like we should update the dsi phys to specify a fw_name and
->>> update binding and dts to provide this...
->>
->>
->> I'm all for using .fw_name there, and I hope we all agree that clock
->> dependencies based on global names should become a thing of the past; every
->> such inter-driver dependency should be clearly visible in the DT.  We
->> (SoMainline) can tackle this DSI side if no-one else is working on it yet.
->>
->>> Does this cause a noticeable regression or it's just that we have a
->>> dangling clock?
->>
->>
->> Unfortunately this regresses yes, starting with:
->>
->>      dsi0n1_postdiv_clk: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set
->>
->> And proceeding with more such errors on different clocks, clocks getting
->> stuck or failing to update, and the panel never showing anything at all.
->>
->> Should we fix DSI PHYs first and let this patch sit for a while, or keep the
->> implicit global "xo" clock just a little while longer until that's over
->> with?
->>
-> 
-> Thanks, should have read your email as well before replying to the
-> other.
-
-
-No biggie, Angelo was first to reply after all :)
-
-> I will respin this with "xo" intact, then once we've fixed up the DSI
-> code we can drop it.
-
-
-Sounds good, thanks!
-
-> But I still don't understand why we don't have this problem on e.g.
-> sdm845. I must be missing something...
-
-
-It is strange indeed.  On MSM89[57]6 (Sony Xperia Loire, 28nm DSI 
-PHY/PLL) we don't have this parent hooked up either because of the same 
-issue, and it's not a problem there either.  I bet it all comes down to 
-slight differences between the various DSI PHY/PLL implementations.
-
->> Either way, feel free to attach my:
->>
->> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
->>
->> After that.
->>
->>>>>     static struct clk_alpha_pll gpll0_early = {
->>>>>     	.offset = 0x0,
->>>>>     	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
->>>>> @@ -158,7 +35,9 @@ static struct clk_alpha_pll gpll0_early = {
->>>>>     		.enable_mask = BIT(0),
->>>>>     		.hw.init = &(struct clk_init_data){
->>>>>     			.name = "gpll0_early",
->>>>> -			.parent_names = (const char *[]){ "xo" },
->>>>> +			.parent_data = &(const struct clk_parent_data){
->>>>> +				.fw_name = "xo",
->>>>> +			},
->>>>
->>>>
->>>> I wish we could use .parent_names for a list of .fw_name's too
->>>
->>> Afaict specifying "name" in struct clk_parent_data is the same as using
->>> parent_names. But I'm not up to speed on the details of how to migrate
->>> the dsi phys.
->>
->>
->> Yes it is, both do _not_ look at clocks specified in DT before "falling
->> back" to global names (that only happens when both .name and .fw_name are
->> specified).  I'm sort of expressing the desire for .parent_fw_names here in
->> hopes of phasing out global clock names on DT platforms altogether.  We
->> definitely shouldn't rework .parent_names to support both, that only causes
->> confusion and an implicit fallback to global clocks when the DT is
->> under-specifying the required clocks is exactly what we're trying to avoid.
->>
->>>>> [..]
->>>>> @@ -265,7 +270,7 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
->>>>>     	.freq_tbl = ftbl_blsp1_qup1_i2c_apps_clk_src,
->>>>>     	.clkr.hw.init = &(struct clk_init_data){
->>>>>     		.name = "blsp1_qup1_i2c_apps_clk_src",
->>>>> -		.parent_names = gcc_parent_names_xo_gpll0_gpll0_early_div,
->>>>> +		.parent_data = gcc_parent_data_xo_gpll0_gpll0_early_div,
->>>>>     		.num_parents = 3,
->>>>
->>>>
->>>> How about using ARRAY_SIZE(gcc_parent_data_xo_gpll0_gpll0_early_div) now?
->>>> Same for every other occurrence of this pattern.
->>>>
->>>
->>> I omitted that because it felt unrelated to the change I was doing, but
->>> it could certainly be done.
->>
->>
->> Fair, if done at all it should end up in a separate (2/2) patch or I'll take
->> care of this in a followup.
->>
-> 
-> Sounds good, I'd be happy to give you a review on that patch :)
-
-
-I'll spin that patch as soon as v2 is merged (preventing 
-ordering/dependency issues?), feel free to CC me.
-
-> Regards,
-> Bjorn
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../bindings/clock/exynos5250-clock.txt       | 41 -----------------
+>  .../bindings/clock/samsung,exynos-clock.yaml  | 46 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 47 insertions(+), 41 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
 > 
 
-- Marijn
+Reviewed-by: Rob Herring <robh@kernel.org>
