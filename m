@@ -2,112 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,SUBJ_ALL_CAPS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AACC25AEB
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A264C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD60610FA
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 167FF61027
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 15:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240160AbhHYNob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 09:44:31 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35894
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232304AbhHYNo0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 09:44:26 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B6AB6407AB
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 13:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629899015;
-        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=iNOt7udhk/TcPcnXRCrcag/nIHDyPhszuqjBxBS3RNX8wpv3oITNBzzdD/MWu3OWQ
-         3kcVha4beXy8+ofCQ/llg66SFoyy2Zzk3NiLLpT315JXb1RVvPS98TgGG8AxMRy1jx
-         5JXijaN7p6JeBDyNbY9F+QcjutEO0F3QyGqaGFjU7nWPDEzqRntckCvOBxCqGAlNR5
-         skvFwgvlOUxzUiLdvWT60UCCiUCdHbB86+/pVzv0WHkMif4k2gFMw2DZ/FcYhubu3c
-         SE+7Y7mhdK3qRBLr+vFapYs1dauLrgbEWLqFD3WpzfsVgIzevRKuBlFgiVQMEX6OPE
-         JzQGcUezwD8Tw==
-Received: by mail-wm1-f69.google.com with SMTP id r125-20020a1c2b830000b0290197a4be97b7so1871185wmr.9
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
-        b=jupZoZncP9agHQqRF8c+c8Owy+/frZe3DlLiAlquppJHvYT5dDOA31XfG3KFsc56cp
-         Dl53s748+qmpWV+HsFHuGXE7WyfG1bY3wmTRvY3j8FDagOCj0dIu1cL4qK7Fg8B3a/Ir
-         OV0z1NvkTiLiHlMVvRndwdR8N2MirgZ2fPErmcLY+xMyZLvgkz9rmQagJsa44+gsOZOg
-         iSAl0wcgmzqwZrWRCSX0Gu+06YIuzCPEjUUxSTEG8IYY0oVecbm2DGA5i7/b0L/UjIHp
-         95iXzcOFKep365ZwbArm3ZwaSmPsrsmT+w6l2WwuaIIin3TbhqDEMN6rZGhF5tiIPv+s
-         6hzQ==
-X-Gm-Message-State: AOAM530/EA0imkRuYCUfpLi7wmKEpUVgDyT1obHmT0V1HZgelnOcfz7x
-        sypLLeyMgXomnv5EGLZ9NNYrTv5v7g0kw9WCTkZdFWVjE2LSB7WXIAUxBk5OwmKbVLhF8bYrr7Z
-        QJox0OppiWq53SJQeiyv+JzJByd2aUPgg4nloww==
-X-Received: by 2002:adf:e887:: with SMTP id d7mr24689372wrm.79.1629899015399;
-        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyuhNGgwvNYoo0GmQ6L5/SlgHG39BAbAF1TxdBcudJBAkgJcJdjgsnDBKXIrzEA7Y3mZjl6Iw==
-X-Received: by 2002:adf:e887:: with SMTP id d7mr24689355wrm.79.1629899015263;
-        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
-Received: from localhost.localdomain ([79.98.113.172])
-        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S240735AbhHYP3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 11:29:54 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:38983 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240109AbhHYP3x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 11:29:53 -0400
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 3C609C2DC3;
+        Wed, 25 Aug 2021 15:25:45 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 5B665C0002;
+        Wed, 25 Aug 2021 15:25:19 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>
-Subject: [PATCH v3 8/8] MAINTAINERS: clock: include S3C and S5P in Samsung SoC clock entry
-Date:   Wed, 25 Aug 2021 15:42:51 +0200
-Message-Id: <20210825134251.220098-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
-References: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
+        Lee Jones <lee.jones@linaro.org>, bcousson@baylibre.com,
+        Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "Ryan J . Barnett" <ryan.barnett@collins.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 00/40] TI AM437X ADC1
+Date:   Wed, 25 Aug 2021 17:24:38 +0200
+Message-Id: <20210825152518.379386-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Cover the S3C and S5Pv210 clock controller binding headers by Samsung
-SoC clock controller drivers maintainer entry.
+Hello,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+This is a (fairly big) series bringing support of AM437X ADC1.
+On TI AM33XX SoCs family there is an ADC that can also be connected to a
+touchscreen. This hardware has been extended and is present on certain
+SoCs from the AM437X family. In particular, the touchscreen has been
+replaced by a magnetic card reader. In both cases, the representation is
+an MFD device with two children:
+- on AM33XX: the touchscreen controller and the ADC
+- on AM437X: the magnetic card reader and the ADC
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a8e1e5d10d1f..eb4ada858826 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16496,6 +16496,9 @@ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
- F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
-+F:	include/dt-bindings/clock/s3c*.h
-+F:	include/dt-bindings/clock/s5p*.h
-+F:	include/dt-bindings/clock/samsung,*.h
- F:	include/linux/clk/samsung.h
- F:	include/linux/platform_data/clk-s3c2410.h
- 
+This series really targets small and atomic changes so that the overall
+review is eased, even though it leads to a lot of rather small patches.
+Here are the steps:
+* Supporting the missing clock
+* Translating a single text file containing the description for the
+  MFD, the touchscreen and the ADC into three independent yaml files.
+* Cleaning/preparing the MFD driver.
+* Supporting ADC1 in the MFD driver.
+* Cleaning/preparing of the ADC driver.
+* Supporting ADC1 in the ADC driver.
+* Updating various device trees.
+
+Here is the full series, I can split it if the various maintainers
+prefer. The clk patch can be merged alone, the MFD and the ADC changes
+unfortunately are interdependent so, reviewed, the MFD maintainers will
+have to create an immutable tag after applying so that ADC maintainers
+can merge it. For now, this is open for reviews :) !
+
+Thanks,
+Miquèl
+
+Miquel Raynal (40):
+  clk: ti: am43xx: Add clkctrl data for am43xx ADC1
+  dt-bindings: mfd: ti,am3359-tscadc: Add a yaml description for this
+    MFD
+  dt-bindings: touchscreen: ti,am3359-tsc: New yaml description
+  dt-bindings: iio: adc: ti,am3359-adc: New yaml description
+  dt-bindings: touchscreen: ti,am3359-tsc: Remove deprecated text file
+  dt-bindings: mfd: ti,am3359-tscadc: Describe am4372 MFD compatible
+  dt-bindings: iio: adc: ti,am3359-adc: Describe am4372 ADC compatible
+  mfd: ti_am335x_tscadc: Replace license text with SPDX tag
+  mfd: ti_am335x_tscadc: Fix style
+  mfd: ti_am335x_tscadc: Drop extra spacing when declaring stack
+    variables
+  mfd: ti_am335x_tscadc: Get rid of useless gotos
+  mfd: ti_am335x_tscadc: Move the driver structure allocation earlier
+  mfd: ti_am335x_tscadc: Reword the comment explaining the dividers
+  mfd: ti_am335x_tscadc: Don't search the tree for our clock
+  mfd: ti_am335x_tscadc: Simplify divisor calculation
+  mfd: ti_am335x_tscadc: Use driver data
+  mfd: ti_am335x_tscadc: Mimic the probe from resume()
+  mfd: ti_am335x_tscadc: Drop useless variables from the driver
+    structure
+  mfd: ti_am335x_tscadc: Always provide an idle configuration
+  mfd: ti_am335x_tscadc: Gather the ctrl register logic at one place
+  mfd: ti_am335x_tscadc: Rename the subsystem enable macro
+  mfd: ti_am335x_tscadc: Add TSC prefix in certain macros
+  mfd: ti_am335x_tscadc: Rename a variable
+  mfd: ti_am335x_tscadc: Fix an error message
+  mfd: ti_am335x_tscadc: Add a boolean to clarify the presence of a
+    touchscreen
+  mfd: ti_am335x_tscadc: Introduce has_tsc
+  mfd: ti_am335x_tscadc: Move control register configuration
+  mfd: ti_am335x_tscadc: Add ADC1/magnetic reader support
+  mfd: ti_am335x_tscadc: Support the correctly spelled DT property
+  iio: adc: ti_am335x_adc: Replace license text with SPDX tag
+  iio: adc: ti_am335x_adc: Fix style
+  iio: adc: ti_am335x_adc: Get rid of useless gotos
+  iio: adc: ti_am335x_adc: Gather the checks on the delays
+  iio: adc: ti_am335x_adc: Add a unit to the timeout delay
+  iio: adc: ti_am335x_adc: Wait the idle state to avoid stalls
+  iio: adc: ti_am335x_adc: Add the scale information
+  iio: adc: ti_am335x_adc: Add the am437x compatible
+  ARM: dts: am437x-cm-t43: Use a correctly spelled DT property
+  ARM: dts: am43xx: Describe the magnetic reader/ADC1 hardware module
+  ARM: dts: am437x-gp-evm: enable ADC1
+
+ .../bindings/iio/adc/ti,am3359-adc.yaml       |  83 +++++++
+ .../input/touchscreen/ti,am3359-tsc.yaml      |  89 +++++++
+ .../bindings/input/touchscreen/ti-tsc-adc.txt |  91 -------
+ .../bindings/mfd/ti,am3359-tscadc.yaml        |  80 ++++++
+ arch/arm/boot/dts/am437x-cm-t43.dts           |   2 +-
+ arch/arm/boot/dts/am437x-gp-evm.dts           |   8 +
+ arch/arm/boot/dts/am437x-l4.dtsi              |  31 ++-
+ arch/arm/boot/dts/am43xx-clocks.dtsi          |   7 +
+ drivers/clk/ti/clk-43xx.c                     |   1 +
+ drivers/iio/adc/ti_am335x_adc.c               | 217 +++++++++-------
+ drivers/mfd/ti_am335x_tscadc.c                | 232 ++++++++++--------
+ include/dt-bindings/clock/am4.h               |   1 +
+ include/linux/mfd/ti_am335x_tscadc.h          |  42 ++--
+ 13 files changed, 582 insertions(+), 302 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,am3359-adc.yaml
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,am3359-tscadc.yaml
+
 -- 
-2.30.2
+2.27.0
 
