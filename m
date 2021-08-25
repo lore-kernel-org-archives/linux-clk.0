@@ -2,179 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C62DC4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 11:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FA0C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E205661178
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 11:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D6760FD8
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 13:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbhHYLky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 07:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239643AbhHYLky (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 07:40:54 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326A3C0613CF
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 04:40:08 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id d16so43089309ljq.4
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 04:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EBZuV88pzuw+Utaj04PasP/41EJ4vd/yd+gwCxY9UrU=;
-        b=mZa9ODjFAlloFGduYEqaTO902w+oDyx3AX1SSokAkNLaVDfKLBrLXZbRbxaKd2VsNX
-         CLf9p8nVSdT4Bj8/5mV2PzNe9XR1Gd9xy9RYjvSk3UiHCLUGpRvJX4l3Vq259dcrtmhL
-         8/0MXnNb5kz9KLlqjOPN3SB33PNFiNdXspKaU=
+        id S241343AbhHYNmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 09:42:24 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35630
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240057AbhHYNmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 09:42:24 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AB7A93F316
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 13:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629898897;
+        bh=Lkb6PM27Kco3Iu1MuOjl/JgWnsvlf08P1Raoj+pvz3A=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=CK6eYYjDDhgFXAcW2aHpcqKMRSOBZ4UDyxcDjzJPLmtDAtocpeClzZKUA+Es9p7Du
+         /ZxfldsrScf0EO1zk0ieClaojgN9T4hE8qvyVtTmXdIcvWY6mmUV7ixWVJwc6kyDeE
+         vPe8K5QLMRCjEAdrQfVvuvPEzkVu5EuQczyfNJYq12wyS6t0+v+hF8xp2BtTFm8oZM
+         xnbCH4kcLx7oB0jSbV1LhRNY8HkIXx+3B5ZpTXW0wcXRIgKzTZRaLBE/y43r7+2twO
+         +CZKXrbGZ/zyTpyily/9r7VOnTQtNRFH8QRexTtgasguQ4g+1MtgP89BkHyvkLMDFx
+         eKtNmiaF+fMXw==
+Received: by mail-wr1-f69.google.com with SMTP id l1-20020adff481000000b00156e670a09dso6680200wro.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 06:41:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EBZuV88pzuw+Utaj04PasP/41EJ4vd/yd+gwCxY9UrU=;
-        b=hFTH3/tpRzBwKdfke/4+71QpoyUp1ORsa4tDI3U/6SnA1Zd6EwkjmJ2OhhOGIT2ylz
-         WCV+9WHXhBsahKnSk+9ZCf1jSPPPWSdOMaAEmeRJbqZg+AtN4n8wXMDMBR7o8DCfZz/6
-         vLvA6cf1XsKA83X0GJsEfAC5YWKuL5N52sspQEWJu4i9RJEFWxZopDNqedVYS10bGLhY
-         Onw9R1agOyIT+jMZNcB4H4+WoSS6dMbvIH3pAsc+xVjtMEGJqxoQKWoijjV+GkylqREG
-         L16P9GSm8L8e/Mbc8/tZCzFBySVTuDDAgJuP86wHgCUIEIYuVtcZT5xAqU3git9YIsOK
-         nQHw==
-X-Gm-Message-State: AOAM531SpySMUt/FF6m3npJGJgxyjZT2Fwl8Swr1em0sZm0yWi25mztX
-        f+wZN0R+Wt1Fghh12XlmHXrFeVfNV2PGp335Ll6IoA==
-X-Google-Smtp-Source: ABdhPJzCtvn8fAS4/q6M3YBoqbcAFrN7nTepCa+MUbbEZGiTzZRCqQ+Z7ipvuJp8aEquToQ/qlt7CrzkIDbTsII0zEs=
-X-Received: by 2002:a2e:8546:: with SMTP id u6mr24817270ljj.185.1629891605061;
- Wed, 25 Aug 2021 04:40:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-3-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210820111504.350-3-chun-jie.chen@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 25 Aug 2021 19:39:54 +0800
-Message-ID: <CAGXv+5Eb4ZiXZXURvoApSEk_myhNpEugOhr2DrzvkxGfDKJneg@mail.gmail.com>
-Subject: Re: [v2 02/24] clk: mediatek: Add dt-bindings of MT8195 clocks
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Lkb6PM27Kco3Iu1MuOjl/JgWnsvlf08P1Raoj+pvz3A=;
+        b=gAf5Gvt65/mB7Eh1QyZjcmDVkb6cUzg0G18qnuoQvvz5gjUBQPc+6PqlwThn1Hpjhn
+         vUxnGENN6+WsOiTOM1A40rIMxGMLTT9AmG5hZOh1nA+vu2rum4eAE4g9IINV9PxZCnfg
+         RN9o7ZKosUaKizAVn7AtwrKvxIEPJjuaf6ijQsgqINlrEJpJ/TQBw5D6kgxvI+iP04lf
+         5/JOeWirTAl5IHAmGSJVjRvZoI0J8inRtg2QYStRbmAORRa5vUSQX8x77X6/FPkujrHx
+         IAWwQQfoAyKJnvU4ZIz9jrY3VrNci4iVby9yehnBiZpP3Zb1mX8Jxda62LEBn5rbA5ZJ
+         rCZA==
+X-Gm-Message-State: AOAM5324UBv/j/PqG66bVWdrh+6Pk5SCPS9mm56wdXMhybjjyIZeIPNi
+        pHYqx9tL0G1uSTB0lJF8PsZ1Qt4v18mfa2ypkV0o9o3d44eSaunHK7vYipV6XIrRpXi5RCiESfu
+        uRxQtemsAX10+9XOr/v8IcQbyNd82um1enwSWow==
+X-Received: by 2002:a1c:44c5:: with SMTP id r188mr3291302wma.9.1629898897380;
+        Wed, 25 Aug 2021 06:41:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyyYRLtspcOY32ZHpe9nvY0ozhgHK+bBdMXVh9m1PO2zTa0PuTosOfEluJhLyloJQ/WFCYypA==
+X-Received: by 2002:a1c:44c5:: with SMTP id r188mr3291280wma.9.1629898897212;
+        Wed, 25 Aug 2021 06:41:37 -0700 (PDT)
+Received: from localhost.localdomain ([79.98.113.233])
+        by smtp.gmail.com with ESMTPSA id g5sm7185861wrq.80.2021.08.25.06.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Aug 2021 06:41:36 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>
+Subject: [PATCH v3 0/8] dt-bindings: clock: samsung: convert to dtschema
+Date:   Wed, 25 Aug 2021 15:40:48 +0200
+Message-Id: <20210825134056.219884-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 7:17 PM Chun-Jie Chen
-<chun-jie.chen@mediatek.com> wrote:
->
-> Add MT8195 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg_ao, pericfg_ao and subsystem clocks.
->
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> ---
->  include/dt-bindings/clock/mt8195-clk.h | 864 +++++++++++++++++++++++++
->  1 file changed, 864 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt8195-clk.h
->
-> diff --git a/include/dt-bindings/clock/mt8195-clk.h b/include/dt-bindings/clock/mt8195-clk.h
-> new file mode 100644
-> index 000000000000..95cf812a0b37
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/mt8195-clk.h
-> @@ -0,0 +1,864 @@
+Hi,
 
-[...]
+Changes since v2:
+1. Add reviews.
+2. Split Exynos4 ISP into separate schema.
+3. Add maxItems to clocks and power-domains (review feedback).
+4. Do not allow samsung,exynos5420-clock and samsung,exynos5800-clock
+   without syscon. These clock controllers should always use syscon
+   to allow DMC bindings access the registers.
+5. Drop assigned-clocks.
 
-> +/* WPESYS_VPP0 */
-> +
-> +#define CLK_WPE_VPP0_VECI              0
-> +#define CLK_WPE_VPP0_VEC2I             1
-> +#define CLK_WPE_VPP0_VEC3I             2
-> +#define CLK_WPE_VPP0_WPEO              3
-> +#define CLK_WPE_VPP0_MSKO              4
-> +#define CLK_WPE_VPP0_VGEN              5
-> +#define CLK_WPE_VPP0_EXT               6
-> +#define CLK_WPE_VPP0_VFC               7
-> +#define CLK_WPE_VPP0_CACH0_TOP         8
-> +#define CLK_WPE_VPP0_CACH0_DMA         9
-> +#define CLK_WPE_VPP0_CACH1_TOP         10
-> +#define CLK_WPE_VPP0_CACH1_DMA         11
-> +#define CLK_WPE_VPP0_CACH2_TOP         12
-> +#define CLK_WPE_VPP0_CACH2_DMA         13
-> +#define CLK_WPE_VPP0_CACH3_TOP         14
-> +#define CLK_WPE_VPP0_CACH3_DMA         15
-> +#define CLK_WPE_VPP0_PSP               16
-> +#define CLK_WPE_VPP0_PSP2              17
-> +#define CLK_WPE_VPP0_SYNC              18
-> +#define CLK_WPE_VPP0_C24               19
-> +#define CLK_WPE_VPP0_MDP_CROP          20
-> +#define CLK_WPE_VPP0_ISP_CROP          21
-> +#define CLK_WPE_VPP0_TOP               22
-> +#define CLK_WPE_VPP0_NR_CLK            23
-> +
-> +/* WPESYS_VPP1 */
-> +
-> +#define CLK_WPE_VPP1_VECI              0
-> +#define CLK_WPE_VPP1_VEC2I             1
-> +#define CLK_WPE_VPP1_VEC3I             2
-> +#define CLK_WPE_VPP1_WPEO              3
-> +#define CLK_WPE_VPP1_MSKO              4
-> +#define CLK_WPE_VPP1_VGEN              5
-> +#define CLK_WPE_VPP1_EXT               6
-> +#define CLK_WPE_VPP1_VFC               7
-> +#define CLK_WPE_VPP1_CACH0_TOP         8
-> +#define CLK_WPE_VPP1_CACH0_DMA         9
-> +#define CLK_WPE_VPP1_CACH1_TOP         10
-> +#define CLK_WPE_VPP1_CACH1_DMA         11
-> +#define CLK_WPE_VPP1_CACH2_TOP         12
-> +#define CLK_WPE_VPP1_CACH2_DMA         13
-> +#define CLK_WPE_VPP1_CACH3_TOP         14
-> +#define CLK_WPE_VPP1_CACH3_DMA         15
-> +#define CLK_WPE_VPP1_PSP               16
-> +#define CLK_WPE_VPP1_PSP2              17
-> +#define CLK_WPE_VPP1_SYNC              18
-> +#define CLK_WPE_VPP1_C24               19
-> +#define CLK_WPE_VPP1_MDP_CROP          20
-> +#define CLK_WPE_VPP1_ISP_CROP          21
-> +#define CLK_WPE_VPP1_TOP               22
-> +#define CLK_WPE_VPP1_NR_CLK            23
+Changes since v1:
+1. Patch 7/8: include header to fix clock IDs error in example.
+2. Combined patchset of separate v1 sets:
 
-If WPE_VPP0 and WPE_VPP1 end up being identical hardware, then there's
-no need to have two separate lists.
+https://lore.kernel.org/linux-samsung-soc/20210809120544.56596-1-krzysztof.kozlowski@canonical.com/T/#t
+https://lore.kernel.org/linux-samsung-soc/20210809130935.80565-1-krzysztof.kozlowski@canonical.com/T/#t
+https://lore.kernel.org/linux-samsung-soc/20210809135942.100744-1-krzysztof.kozlowski@canonical.com/T/#t
 
-[...]
+Best regards,
+Krzysztof
 
-> +/* VENCSYS */
-> +
-> +#define CLK_VENC_LARB                  0
-> +#define CLK_VENC_VENC                  1
-> +#define CLK_VENC_JPGENC                        2
-> +#define CLK_VENC_JPGDEC                        3
-> +#define CLK_VENC_JPGDEC_C1             4
-> +#define CLK_VENC_GALS                  5
-> +#define CLK_VENC_NR_CLK                        6
-> +
-> +/* VENCSYS_CORE1 */
-> +
-> +#define CLK_VENC_CORE1_LARB            0
-> +#define CLK_VENC_CORE1_VENC            1
-> +#define CLK_VENC_CORE1_JPGENC          2
-> +#define CLK_VENC_CORE1_JPGDEC          3
-> +#define CLK_VENC_CORE1_JPGDEC_C1       4
-> +#define CLK_VENC_CORE1_GALS            5
-> +#define CLK_VENC_CORE1_NR_CLK          6
+Krzysztof Kozlowski (8):
+  dt-bindings: clock: samsung: convert Exynos5250 to dtschema
+  dt-bindings: clock: samsung: add bindings for Exynos external clock
+  dt-bindings: clock: samsung: convert Exynos542x to dtschema
+  dt-bindings: clock: samsung: convert Exynos3250 to dtschema
+  dt-bindings: clock: samsung: convert Exynos4 to dtschema
+  dt-bindings: clock: samsung: convert Exynos AudSS to dtschema
+  dt-bindings: clock: samsung: convert S5Pv210 AudSS to dtschema
+  MAINTAINERS: clock: include S3C and S5P in Samsung SoC clock entry
 
-Same for VENC and VENC_CORE1.
+ .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
+ .../bindings/clock/clk-s5pv210-audss.txt      |  53 ---------
+ .../bindings/clock/exynos3250-clock.txt       |  57 ----------
+ .../bindings/clock/exynos4-clock.txt          |  86 ---------------
+ .../bindings/clock/exynos5250-clock.txt       |  41 -------
+ .../bindings/clock/exynos5420-clock.txt       |  42 -------
+ .../clock/samsung,exynos-audss-clock.yaml     |  80 ++++++++++++++
+ .../bindings/clock/samsung,exynos-clock.yaml  |  59 ++++++++++
+ .../clock/samsung,exynos-ext-clock.yaml       |  46 ++++++++
+ .../clock/samsung,exynos4412-isp-clock.yaml   |  64 +++++++++++
+ .../clock/samsung,s5pv210-audss-clock.yaml    |  78 +++++++++++++
+ MAINTAINERS                                   |   4 +
+ 12 files changed, 331 insertions(+), 382 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/clk-s5pv210-audss.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos4-clock.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-ext-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
 
+-- 
+2.30.2
 
-ChenYu
