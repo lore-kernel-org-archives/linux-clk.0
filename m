@@ -7,80 +7,81 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AC5C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77118C4338F
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2123461076
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52DBD6109F
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 17:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234980AbhHYRSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 13:18:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
+        id S233339AbhHYRU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 13:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233502AbhHYRSm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 13:18:42 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2445C0613CF
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 10:17:56 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id q39so292215oiw.12
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 10:17:56 -0700 (PDT)
+        with ESMTP id S232768AbhHYRU6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 13:20:58 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23870C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 10:20:12 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id r26so663598oij.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 10:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=M/sU0CU7x+4zcBgKHZ1x1BhVQLsUMGGMN8tY9Wv96W8=;
-        b=Mmg/23v9r01eEz7kGLuYbdxyrhadb91CE2h7h7fHk01+AnHWwYzaFp6PMvnOVJxxUX
-         Ko9wmTCiiU8wi4Vznv44yZtu5BFOrEitzGcYI451pUKshXXXyriE3ELAEeVbjhUolc9F
-         WixZpAckRRxXSfMl4SdG/QwNbSLSqhh7/jnIp5I2u9CqV/GPkbWiutr8WJqYjxNgiTLL
-         yKc3raE7Eal8CvCALzYXtm9sjS9a6A8m4XZRy7hyZHN5q7EIWiF16/V+zkpFTjMcUcOY
-         8cnYv1iAHL2AsXAxIGDhwFob0SVxKn5QsxrsbRxvfSKl/S3bERbaZekvRUEEwRb/JRN5
-         pgSw==
+        bh=cl05HjhOd4YjlawD0/p56yGpJ35axAZhOs6i5BBeFOs=;
+        b=IhrkRAxV6XDDOu79mzcgeT8qDfmZhTxIAlDLXuoWFuDqRpVvMC8ums2jYYy1Ml3qoX
+         ct5HuR+qX2hlJAXYF1i8rex/Cookm2QeZ2YlXq4inhKuCU5sg8/VwZ+WAPpU7gvoaBtc
+         pGJMDe9jzdg1xpnfp7JIjJAGeRLUCO+9zYzXcOUYSvnKE7fjNz6L4uwREIQBqm9vYr+z
+         emOZLJHeGMcc72/6iBByHcBzA/MfXf96iZk0i+hLEwWHAwlMq365V2DmRjxpAde1KbQT
+         tZbGTR+NwuF7GM+hk7AGBiTPGtujiqVI3S/xn7HIKxuQPFTo7tOMRZvc1PWrMkfzB2Cp
+         9hxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=M/sU0CU7x+4zcBgKHZ1x1BhVQLsUMGGMN8tY9Wv96W8=;
-        b=C4bHAv7MXvmP1V06+/nzARwE3R4tNMmvwEHoMMjZTRvxXKdrnU8qugkWjNmww7hKYI
-         BorHSv+ROfhFOcSrKAdoym3TgSvyx2r13Shsw2LbfEXtlOb3hop6uBBJYwzEmW8MMi7r
-         YsZJj/e+rSlShrgZCDrEEiP7iZXKA63Rm3CbgGvvfSkb/vGFWKy4Iz9Kzc3A8bMQyXAf
-         O+Eu0blqUXi7pS0jFLmJ2wkOCwfLPM5UF6xHOUDK+12NA7slIUHDENEQdhQJYIX67S3b
-         vtxxIhDV0bznOD7fiGJgMZVMMLxAyY4wZp8PuIz8ZVe0idE1E7wqtevwz9ZYaLtGfghA
-         9vzA==
-X-Gm-Message-State: AOAM530Cqm218a1p+PYji2hOwdcnPAMGx8U+nwC3aEcuFx5kXVheUy9/
-        K2nsE7goDTPH2WvJea+f5FFZCg==
-X-Google-Smtp-Source: ABdhPJzgMHbGXTHN17OnIlh1FgpR9m5QhY7tvBle8B1TJrt03iC696uUzuMmKIZVy0s0A3mHINzCPw==
-X-Received: by 2002:a05:6808:690:: with SMTP id k16mr7757663oig.43.1629911876258;
-        Wed, 25 Aug 2021 10:17:56 -0700 (PDT)
+        bh=cl05HjhOd4YjlawD0/p56yGpJ35axAZhOs6i5BBeFOs=;
+        b=SQYX9lfoA4QbJZuldBc/Fv7BbzuVIz7v7O2W0ASqLzrVu1RFf261sH44TCzwDia5ZT
+         FtEpwESNR+vwaW5FZahZOaEsuyprNHROYMFzERrodC0lCj9ortNA68/uan85RBJfwSFF
+         ShGnDBAddfCPbyazqHwhOSxGfEqNp46gf7pDJm85ZkFYfRyZNImGTpUgdh4+xoQ+7M+Z
+         qfcfTX12re3XNnM67AQBQCkupzLxTekJhEn9QbsHEihaIGSNAowR6dG/lZugSpfDG3D4
+         99R8c9TEcDxc1g1gV8MfGuCX5Im8DSZJcccyUkJIrGNSgQkhQAf2lHQ10OAyKM970N9x
+         B0ew==
+X-Gm-Message-State: AOAM533CSRHc/3jUGrOxCD76wevG/NPYeqZrUKMx527oVtEfzcV6NjjJ
+        7E5saRdofK1fAE4btAIMrzk/Qw==
+X-Google-Smtp-Source: ABdhPJz3tTVdfYPXKQ/Qw1UbGw+AufFf+Sce6P0LgePO8uCxsQ1RBzuS8Eq4iuiJIyT4uOvnd3kSBA==
+X-Received: by 2002:aca:bfc6:: with SMTP id p189mr7638738oif.167.1629912011375;
+        Wed, 25 Aug 2021 10:20:11 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r25sm95305oic.13.2021.08.25.10.17.55
+        by smtp.gmail.com with ESMTPSA id v5sm85699oos.17.2021.08.25.10.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 10:17:55 -0700 (PDT)
-Date:   Wed, 25 Aug 2021 12:17:54 -0500
+        Wed, 25 Aug 2021 10:20:11 -0700 (PDT)
+Date:   Wed, 25 Aug 2021 12:20:09 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        angelogioacchino.delregno@somainline.org
 Subject: Re: [PATCH] clk: qcom: gcc-sdm660: Replace usage of parent_names
-Message-ID: <YSZ7Qi93T4u8cKH/@builder.lan>
+Message-ID: <YSZ7yQLasmTMWBaK@builder.lan>
 References: <20210824150606.678666-1-bjorn.andersson@linaro.org>
  <386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org>
  <YSV0/bFiPgY3fjPF@ripper>
- <bc2fd17a-66f4-7f60-cdbd-e3548fa4f1a4@somainline.org>
+ <ed5d27eb-5a54-04c4-dbc4-63da80df1638@somainline.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bc2fd17a-66f4-7f60-cdbd-e3548fa4f1a4@somainline.org>
+In-Reply-To: <ed5d27eb-5a54-04c4-dbc4-63da80df1638@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 25 Aug 05:39 CDT 2021, AngeloGioacchino Del Regno wrote:
+On Wed 25 Aug 11:00 CDT 2021, Marijn Suijten wrote:
 
-> Il 25/08/21 00:38, Bjorn Andersson ha scritto:
+> Hi Bjorn,
+> 
+> On 8/25/21 12:38 AM, Bjorn Andersson wrote:
 > > On Tue 24 Aug 13:46 PDT 2021, Marijn Suijten wrote:
 > > 
 > > > Hi Bjorn,
@@ -130,30 +131,45 @@ On Wed 25 Aug 05:39 CDT 2021, AngeloGioacchino Del Regno wrote:
 > > 
 > > Sounds like we should update the dsi phys to specify a fw_name and
 > > update binding and dts to provide this...
-> > 
-> > 
+> 
+> 
+> I'm all for using .fw_name there, and I hope we all agree that clock
+> dependencies based on global names should become a thing of the past; every
+> such inter-driver dependency should be clearly visible in the DT.  We
+> (SoMainline) can tackle this DSI side if no-one else is working on it yet.
+> 
 > > Does this cause a noticeable regression or it's just that we have a
 > > dangling clock?
-> > 
 > 
-> Both, actually... but sincerely I would be more for updating the DSI PHY
-> drivers instead of keeping a "mock" crystal clock in there (since we do
-> always specify one in DT), also because, as Marijn pointed out and as I
-> can also confirm, we're seeing the same situation on multiple platforms.
 > 
-> That would allow us to solve the issue simply with DT, and would make us
-> able to switch platforms one by one to the RPM/RPMh XO in a perfect future
-> where we will be able to perform XO shutdown on selected platforms.
+> Unfortunately this regresses yes, starting with:
+> 
+>     dsi0n1_postdiv_clk: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set
+> 
+> And proceeding with more such errors on different clocks, clocks getting
+> stuck or failing to update, and the panel never showing anything at all.
+> 
+> Should we fix DSI PHYs first and let this patch sit for a while, or keep the
+> implicit global "xo" clock just a little while longer until that's over
+> with?
 > 
 
-Fixing the DSI PHY to properly acquire the reference clock using
-.fw_name is the right solution in the end. But afaict sdm845, sm8150 and
-sm8250 doesn't have a "xo" clock.
+Thanks, should have read your email as well before replying to the
+other.
 
-So that's why I'm wondering if there's a functional regression caused by
-this...and hence if I need to respin this patch with the clock
-remaining.
+I will respin this with "xo" intact, then once we've fixed up the DSI
+code we can drop it.
 
+
+But I still don't understand why we don't have this problem on e.g.
+sdm845. I must be missing something...
+
+> Either way, feel free to attach my:
+> 
+> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> 
+> After that.
+> 
 > > > >    static struct clk_alpha_pll gpll0_early = {
 > > > >    	.offset = 0x0,
 > > > >    	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
@@ -172,7 +188,16 @@ remaining.
 > > Afaict specifying "name" in struct clk_parent_data is the same as using
 > > parent_names. But I'm not up to speed on the details of how to migrate
 > > the dsi phys.
-> > 
+> 
+> 
+> Yes it is, both do _not_ look at clocks specified in DT before "falling
+> back" to global names (that only happens when both .name and .fw_name are
+> specified).  I'm sort of expressing the desire for .parent_fw_names here in
+> hopes of phasing out global clock names on DT platforms altogether.  We
+> definitely shouldn't rework .parent_names to support both, that only causes
+> confusion and an implicit fallback to global clocks when the DT is
+> under-specifying the required clocks is exactly what we're trying to avoid.
+> 
 > > > > [..]
 > > > > @@ -265,7 +270,7 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
 > > > >    	.freq_tbl = ftbl_blsp1_qup1_i2c_apps_clk_src,
@@ -189,13 +214,13 @@ remaining.
 > > 
 > > I omitted that because it felt unrelated to the change I was doing, but
 > > it could certainly be done.
-> > 
 > 
-> Totally fair and I totally agree.
 > 
-> By the way,
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Fair, if done at all it should end up in a separate (2/2) patch or I'll take
+> care of this in a followup.
 > 
 
-Thanks,
+Sounds good, I'd be happy to give you a review on that patch :)
+
+Regards,
 Bjorn
