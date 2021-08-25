@@ -2,84 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580E6C4338F
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 023C5C432BE
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF35611C9
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D64D261212
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Aug 2021 10:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240232AbhHYLAb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Aug 2021 07:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48902 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240176AbhHYLAa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Aug 2021 07:00:30 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211E9C061757
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 03:59:45 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id g13so52012258lfj.12
-        for <linux-clk@vger.kernel.org>; Wed, 25 Aug 2021 03:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6OhtRqxuCWyLk1aLabWzxilmd8Ou8PbDbdnIDNsifyg=;
-        b=UCe6OdgVEduJpDvUvnAB3x/x/zZNszEyU5ZHOrt4vlHiT818x2be4JzjZm1vnIunjQ
-         r1CtUT20ws08Uh6T6/kTMmgQLJGl7oTjRiLcRK6Mf1qYkU30h/xSAMX1K9Bcvswq8lPI
-         r6YRJ7p9V8s8NFEGw+nFTtgOeo8brw/PWIhKk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6OhtRqxuCWyLk1aLabWzxilmd8Ou8PbDbdnIDNsifyg=;
-        b=kVlwwi5mnO+EklVmLDwS+miS+tGyoy2P8eE1gmclZCGR2UNXDSjfQqet2B3HSJ3ojh
-         KsvtaJqdqW4RwjsQ8ZT0twqXlIBLfd7Gt3ZC/+E7aRDn+o3KjWx26ZCIiRB6ARu6qWeZ
-         qeWahWeG8QuKb6VVXqJWyhP/xgNteqJ5VyzVIhcMMU5m7gxPcjC441wLfnFQBHtTSGjU
-         M9CqVxll9AC0PGXYROJzy69lRM0/13WtiesZXLNtcqwYvSZXYSZY8p9pAPurRFdqirsE
-         RL4YX+yYQd8kIOi6tJzOwNI+DcJABByIStCNb/vHSqpn3hicdQIuMRSRkDfcK/UvAny7
-         CIig==
-X-Gm-Message-State: AOAM531kN6ARTGadR3fiAaN7LzoevE0TRs28SGmAV6PB2AYg4XQxeEwj
-        JURVhp0k8uj5RFJaXEk/LhIjEqUU5cLwrCrzaRf1YA==
-X-Google-Smtp-Source: ABdhPJyw9wcy/vAjWZ534fGWZnouFc2vvtw4pcR/SBh/M85HrKYrTsRz17gVQOJwNERGX7rH1TL7mUrMZyB/6EqcRRE=
-X-Received: by 2002:a05:6512:3b98:: with SMTP id g24mr24830249lfv.276.1629889183532;
- Wed, 25 Aug 2021 03:59:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-21-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210820111504.350-21-chun-jie.chen@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 25 Aug 2021 18:59:32 +0800
-Message-ID: <CAGXv+5GC=3E_Kzes1QKQtJykvGGugUUwjcO0EeDnmoDG0GHFvA@mail.gmail.com>
-Subject: Re: [v2 20/24] clk: mediatek: Add MT8195 vppsys0 clock support
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S239946AbhHYLAk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Aug 2021 07:00:40 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:36004 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240312AbhHYLAf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Aug 2021 07:00:35 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 173B31A2D09;
+        Wed, 25 Aug 2021 12:59:49 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 008CC1A0862;
+        Wed, 25 Aug 2021 12:59:49 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A76AD202A9;
+        Wed, 25 Aug 2021 12:59:48 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] clk: imx: Updates for v5.15
+Date:   Wed, 25 Aug 2021 13:59:33 +0300
+Message-Id: <1629889173-5042-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 7:33 PM Chun-Jie Chen
-<chun-jie.chen@mediatek.com> wrote:
->
-> Add MT8195 vppsys0 clock controller which provides clock gate
-> controller for Video Processor Pipe.
->
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-5.15
+
+for you to fetch changes up to 86842d255b45fc2103da1cd202f5064397ed41f8:
+
+  clk: imx8mn: Add M7 core clock (2021-08-24 16:09:07 +0300)
+
+----------------------------------------------------------------
+i.MX clock changes for 5.15:
+
+ - Fix CLKOUT clocks on i.MX8MM and i.MX8MN by using imx_clk_hw_mux2
+ - Switch from .round_rate to .determine_rate in clk-divider-gate
+ - Fix clock tree update for TF-A controlled clocks for all i.MX8M
+ - Add missing M7 core clock for i.MX8MN
+
+----------------------------------------------------------------
+Ahmad Fatoum (1):
+      clk: imx8m: fix clock tree update of TF-A managed clocks
+
+Lucas Stach (2):
+      clk: imx8mm: use correct mux type for clkout path
+      clk: imx8mn: use correct mux type for clkout path
+
+Marek Vasut (1):
+      clk: imx8mn: Add M7 core clock
+
+Martin Blumenstingl (1):
+      clk: imx: clk-divider-gate: Switch to clk_divider.determine_rate
+
+ drivers/clk/imx/clk-composite-8m.c       |  3 ++-
+ drivers/clk/imx/clk-divider-gate.c       | 10 +++++-----
+ drivers/clk/imx/clk-imx8mm.c             | 11 ++++++-----
+ drivers/clk/imx/clk-imx8mn.c             | 16 +++++++++++-----
+ drivers/clk/imx/clk-imx8mq.c             |  7 ++++---
+ drivers/clk/imx/clk.h                    | 16 ++++++++++++++--
+ include/dt-bindings/clock/imx8mn-clock.h |  4 +++-
+ 7 files changed, 45 insertions(+), 22 deletions(-)
