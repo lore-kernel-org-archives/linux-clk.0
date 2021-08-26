@@ -2,134 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCB8C4320E
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 15:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD14C432BE
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 17:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5304D61076
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 15:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E3B860F21
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 17:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242949AbhHZPVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Aug 2021 11:21:40 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:56496 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242928AbhHZPVj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Aug 2021 11:21:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1629991250; x=1632583250;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LfHR+esUZqjukvcNKRaf39fw5s9wBCQeVlt2BZrLEOk=;
-        b=t7fforA6zG/rrswdR4SY8onuqW6nrhnulxA8Uk+qTGZDqRqQ/y7UO0BTR62nqTyM
-        IU7c2iHRLMZ62dOsCUD7s7ig8+wXYwcnmnLODf/T+jJN1i4OqufyAKaSAhLhIx2X
-        FHJpBHsd3SOz2wBYAubd3S1MWeyIX3IvpKwISQvfOzk=;
-X-AuditID: c39127d2-777be70000001c5c-17-6127b1529c5c
-Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id EF.C0.07260.251B7216; Thu, 26 Aug 2021 17:20:50 +0200 (CEST)
-Received: from augenblix2.phytec.de ([172.16.0.56])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2021082617204983-1475685 ;
-          Thu, 26 Aug 2021 17:20:49 +0200 
-From:   Stefan Riedmueller <s.riedmueller@phytec.de>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: imx: imx6ul: Move csi_sel mux to correct base register
-Date:   Thu, 26 Aug 2021 17:20:48 +0200
-Message-Id: <20210826152049.4175381-1-s.riedmueller@phytec.de>
-X-Mailer: git-send-email 2.25.1
+        id S231801AbhHZRna (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Aug 2021 13:43:30 -0400
+Received: from mail-vs1-f42.google.com ([209.85.217.42]:37526 "EHLO
+        mail-vs1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231648AbhHZRn3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Aug 2021 13:43:29 -0400
+Received: by mail-vs1-f42.google.com with SMTP id i23so2643079vsj.4;
+        Thu, 26 Aug 2021 10:42:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EaP8H97USi1py9j5WZ3rX1EoctUz2y+NM+vfk1Qh8sQ=;
+        b=WA16IkGbhGkHtHso/FaDa7UVGrDRw2MMlOH46jvWjFd0pkylSy3oujAlgnp5VFU7P7
+         CtTmm9D4NcVO5xMf+t9Dfef1Yvr0IL+tFdGH3RLQsdchQGs0EFCnbGbpMNfKhy499wck
+         5A1rs1yNdNUslyI4AzWyIIKrR1Dr1UQlG/ckNwQlnRPizmjM6hu3OodI+Q6UYXPcoCRZ
+         wxNOzzH0hBXn1kIeDx4IG+OZLZ7mAn/98mNMegvG6lB3Gj6rLO7lxH74D8/dBkjYh+ho
+         USfHcATvLSnQF8z0GIZmx7qhYrBFO+uz35xOmK4O6o0XJ+mcEoR2ZaNZWn5iLjyAkYhD
+         8JZg==
+X-Gm-Message-State: AOAM530+w+z8SfSfSo1cz7g5KOIlv8S8haMQB1bg2OauAZ6DPhh+b/xt
+        RhfbYFFkQDkHBpqKiBixBSxAOGp11sa42uOgXrc=
+X-Google-Smtp-Source: ABdhPJxqA+Fj1ffZwFjnhSgRXx4HPY8vkWEkoAoUUlCZvNRj2BFGZoE7zC7jq/5wqaMiDJcveG3UIMN93bpAVcGCkAs=
+X-Received: by 2002:a67:cb0a:: with SMTP id b10mr3761633vsl.9.1629999761799;
+ Thu, 26 Aug 2021 10:42:41 -0700 (PDT)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 26.08.2021 17:20:50,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 26.08.2021 17:20:50
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: quoted-printable
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsWyRoCBSzdoo3qiQd8SPotll44yWjy86m+x
-        aupOFotNj6+xWnzsucdq0fVrJbPF5V1z2CwunnK1+Lt9E4vFv2sbWSxebBF34PZ4f6OV3WPn
-        rLvsHptWdbJ5bF5S77Hx3Q4mj/6/Bh6fN8kFsEdx2aSk5mSWpRbp2yVwZSx9uJy94JhYRU9b
-        B3MD40PhLkZODgkBE4mOPX+Zuhi5OIQEtjFKdO+8zA7hXGCUaOpazQZSxSZgJLFgWiNYlYjA
-        dkaJF933GUESzAIdTBLzZriB2MICARLb961lAbFZBFQlPt3dyQRi8wrYSXQ9P8IIsU5eYual
-        7+wQcUGJkzOfsIAMlRC4wijR3/CLBaJISOL04rPMEAu0JZYtfM08gZFvFpKeWUhSCxiZVjEK
-        5WYmZ6cWZWbrFWRUlqQm66WkbmIEhvPhieqXdjD2zfE4xMjEwXiIUYKDWUmEd8F3tUQh3pTE
-        yqrUovz4otKc1OJDjNIcLErivPd7mBKFBNITS1KzU1MLUotgskwcnFINjOoCYTrNe5Or3quv
-        u8K273U3l/ehbt1D6sdbtINXGVZOFDHc3iIUeu+nx292M5nA2Vu4eG2fGcokGZ7elFTv1lt+
-        tf3Avmrlpi/ThAseFJ1pylTIPKQlU3qI/bmlzoo9rfIv2S9nJv++97bpeOz7v+KKZ3ZyWWqk
-        pPMLzP928sSHF+84zvSaK7EUZyQaajEXFScCAOjCzutVAgAA
+References: <20210826141721.495067-1-aford173@gmail.com>
+In-Reply-To: <20210826141721.495067-1-aford173@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 26 Aug 2021 19:42:29 +0200
+Message-ID: <CAMuHMdV5iTg6yyM5E8OH6basnTxmvS9UrY2V+oxDrBe1kfhiOw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-usb2-clock-sel: Fix kernel NULL
+ pointer dereference
+To:     Adam Ford <aford173@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The csi=5Fsel mux register is located in the CCM register base and not the
-CCM=5FANALOG register base. So move it to the correct position in code.
+On Thu, Aug 26, 2021 at 4:17 PM Adam Ford <aford173@gmail.com> wrote:
+> The probe was manually passing NULL instead of dev to devm_clk_hw_register.
+> This caused a Unable to handle kernel NULL pointer dereference error.
+> Fix this by passing 'dev'.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Otherwise changing the parent of the csi clock can lead to a complete
-system failure due to the CCM=5FANALOG=5FPLL=5FSYS=5FTOG register being fal=
-sely
-modified.
+Fixes: a20a40a8bbc2cf4b ("clk: renesas: rcar-usb2-clock-sel: Fix error
+handling in .probe()")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also remove the SET=5FRATE=5FPARENT flag since one possible supply for the
-csi=5Fsel mux is the system PLL which we don't want to modify.
+Mike/Stephen: Can you please take this one directly, as we're
+already at rc7.
+Thanks!
 
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
----
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> --- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
+> +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+> @@ -187,7 +187,7 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+>         init.ops = &usb2_clock_sel_clock_ops;
+>         priv->hw.init = &init;
+>
+> -       ret = devm_clk_hw_register(NULL, &priv->hw);
+> +       ret = devm_clk_hw_register(dev, &priv->hw);
+>         if (ret)
+>                 goto pm_put;
+>
+> --
+> 2.25.1
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 5dbb6a937732..206e4c43f68f 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -161,7 +161,6 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct de=
-vice=5Fnode *ccm=5Fnode)
- 	hws[IMX6UL=5FPLL5=5FBYPASS] =3D imx=5Fclk=5Fhw=5Fmux=5Fflags("pll5=5Fbypa=
-ss", base + 0xa0, 16, 1, pll5=5Fbypass=5Fsels, ARRAY=5FSIZE(pll5=5Fbypass=
-=5Fsels), CLK=5FSET=5FRATE=5FPARENT);
- 	hws[IMX6UL=5FPLL6=5FBYPASS] =3D imx=5Fclk=5Fhw=5Fmux=5Fflags("pll6=5Fbypa=
-ss", base + 0xe0, 16, 1, pll6=5Fbypass=5Fsels, ARRAY=5FSIZE(pll6=5Fbypass=
-=5Fsels), CLK=5FSET=5FRATE=5FPARENT);
- 	hws[IMX6UL=5FPLL7=5FBYPASS] =3D imx=5Fclk=5Fhw=5Fmux=5Fflags("pll7=5Fbypa=
-ss", base + 0x20, 16, 1, pll7=5Fbypass=5Fsels, ARRAY=5FSIZE(pll7=5Fbypass=
-=5Fsels), CLK=5FSET=5FRATE=5FPARENT);
--	hws[IMX6UL=5FCLK=5FCSI=5FSEL] =3D imx=5Fclk=5Fhw=5Fmux=5Fflags("csi=5Fsel=
-", base + 0x3c, 9, 2, csi=5Fsels, ARRAY=5FSIZE(csi=5Fsels), CLK=5FSET=5FRAT=
-E=5FPARENT);
-=20
- 	/* Do not bypass PLLs initially */
- 	clk=5Fset=5Fparent(hws[IMX6UL=5FPLL1=5FBYPASS]->clk, hws[IMX6UL=5FCLK=5FP=
-LL1]->clk);
-@@ -270,6 +269,7 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct de=
-vice=5Fnode *ccm=5Fnode)
- 	hws[IMX6UL=5FCLK=5FECSPI=5FSEL]	  =3D imx=5Fclk=5Fhw=5Fmux("ecspi=5Fsel",=
-	base + 0x38, 18, 1, ecspi=5Fsels, ARRAY=5FSIZE(ecspi=5Fsels));
- 	hws[IMX6UL=5FCLK=5FLCDIF=5FPRE=5FSEL]	  =3D imx=5Fclk=5Fhw=5Fmux=5Fflags(=
-"lcdif=5Fpre=5Fsel", base + 0x38, 15, 3, lcdif=5Fpre=5Fsels, ARRAY=5FSIZE(l=
-cdif=5Fpre=5Fsels), CLK=5FSET=5FRATE=5FPARENT);
- 	hws[IMX6UL=5FCLK=5FLCDIF=5FSEL]	  =3D imx=5Fclk=5Fhw=5Fmux("lcdif=5Fsel",=
-	base + 0x38, 9, 3, lcdif=5Fsels, ARRAY=5FSIZE(lcdif=5Fsels));
-+	hws[IMX6UL=5FCLK=5FCSI=5FSEL]		  =3D imx=5Fclk=5Fhw=5Fmux("csi=5Fsel", ba=
-se + 0x3c, 9, 2, csi=5Fsels, ARRAY=5FSIZE(csi=5Fsels));
-=20
- 	hws[IMX6UL=5FCLK=5FLDB=5FDI0=5FDIV=5FSEL]  =3D imx=5Fclk=5Fhw=5Fmux("ldb=
-=5Fdi0", base + 0x20, 10, 1, ldb=5Fdi0=5Fdiv=5Fsels, ARRAY=5FSIZE(ldb=5Fdi0=
-=5Fdiv=5Fsels));
- 	hws[IMX6UL=5FCLK=5FLDB=5FDI1=5FDIV=5FSEL]  =3D imx=5Fclk=5Fhw=5Fmux("ldb=
-=5Fdi1", base + 0x20, 11, 1, ldb=5Fdi1=5Fdiv=5Fsels, ARRAY=5FSIZE(ldb=5Fdi1=
-=5Fdiv=5Fsels));
---=20
-2.25.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
