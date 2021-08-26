@@ -2,93 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BF2C432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 14:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E256FC432BE
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 15:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7605660F5C
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 14:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB7C861052
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 15:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234615AbhHZOSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Aug 2021 10:18:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbhHZOSW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Aug 2021 10:18:22 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B244BC061757
-        for <linux-clk@vger.kernel.org>; Thu, 26 Aug 2021 07:17:35 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id b10so3916872ioq.9
-        for <linux-clk@vger.kernel.org>; Thu, 26 Aug 2021 07:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yR0Q986hTr5u9uvjH/iJrbByc4I9teZ989KAuU/xvt0=;
-        b=Rk4Lmvc8Qln4S9c+rGHBmdp3zVYc7yuYUTbbZRwi1dL66Y+QeK964IOx/DPMvHoYu+
-         81CJncpaIBMkkrS6BUVJxGawclzFPTE7BROaHcF7vq0W5uj9q7TT5IR2BSuPbf0+G+O2
-         xSkBeB+WOToFgIeyVw9rkdhasQUYYeAaMLw7T6evl96XZb7dQg92GPmMpYDcuHVlYSEz
-         3Q6FZ8JKu39tCqNDFXlpGh4gcocjjZklKEJxOgEyC97WJhX4J+v0Bwl79nmCdnrOLiSz
-         Vk4U5CH2QbGviMm1hiOHo2l/t1VvuDyJPJeGx967YLPvv1NRiF8f9LoNz2sePt+fZprV
-         sR5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yR0Q986hTr5u9uvjH/iJrbByc4I9teZ989KAuU/xvt0=;
-        b=laatqdNzAXi3hT9tJAC9vKrkqd4k2/XnEmZx76ND6ushvOdJtRN+LPavmBjDaaKYbR
-         Fl2yoDDKZ7IZFOXhZAfU6R9xPXbV6Zah/BOE0KX1PMWW+sGl4ObtpXwcjF3TwbcO0GEI
-         Ya1qACjtnBJpDCoa093NcgnJdK6u71Ks12NgJUZI6bXU+TqZzUA0wJ9u/klDi5sqik0N
-         r2CziJxD1ABdn4921FbiS6JkVhTFMtz+Bdk6//QutRg2jOmlmKEsqi6PQYSFR/VK3J5r
-         piBubNivizaOoFweVMUDmq2IeiuSFh882obcQCkDuomVLh+E2OuR56ed6fZWbFZmaQlR
-         DOIA==
-X-Gm-Message-State: AOAM532qzRVyQZCiAKl6T0Zo14TYHNI1Ea4qrPjhui91FYIgfmlPcwfg
-        a0gKz95oZNzkIy8q0/8CVz6pa4kIpBirrw==
-X-Google-Smtp-Source: ABdhPJyR6JUkbkwq2lFqPjnTL2qaPcTyqNlO/pmqnVO7IDXr35X5W5zVMgWEDvU53JVoQia9NwR0RQ==
-X-Received: by 2002:a6b:fd05:: with SMTP id c5mr3162164ioi.102.1629987454620;
-        Thu, 26 Aug 2021 07:17:34 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id m1sm1828542ilf.24.2021.08.26.07.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Aug 2021 07:17:34 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     sboyd@kernel.org, geert+renesas@glider.be, mturquette@baylibre.com,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH] clk: renesas: rcar-usb2-clock-sel: Fix kernel NULL pointer dereference
-Date:   Thu, 26 Aug 2021 09:17:21 -0500
-Message-Id: <20210826141721.495067-1-aford173@gmail.com>
+        id S242943AbhHZPVj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Aug 2021 11:21:39 -0400
+Received: from mickerik.phytec.de ([195.145.39.210]:56490 "EHLO
+        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232291AbhHZPVi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Aug 2021 11:21:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+        q=dns/txt; i=@phytec.de; t=1629991250; x=1632583250;
+        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=duOsq4MHaTArCqJvE67LMUe9FgHH8uyGmRkCSJuLJN0=;
+        b=W8Q6PkhkYNakRdYJZdb1pYomZfJIL8ZlAvFzoNa/NTFXZ63wx3j8LtyXEyadzZUN
+        DIVMvxbql1xjTXAXFs2R99R0sPNjbEVWnX3GdB636t73SIE9K58aof6hIA+7GAP8
+        J9xb79HTqt9zPFC8qpQLUdS5FKdbwgoKDe2BlRsBpaM=;
+X-AuditID: c39127d2-c85d824000001c5c-18-6127b152e179
+Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
+        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id FF.C0.07260.251B7216; Thu, 26 Aug 2021 17:20:50 +0200 (CEST)
+Received: from augenblix2.phytec.de ([172.16.0.56])
+          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
+          with ESMTP id 2021082617205010-1475686 ;
+          Thu, 26 Aug 2021 17:20:50 +0200 
+From:   Stefan Riedmueller <s.riedmueller@phytec.de>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: imx: imx6ul: Fix csi clk gate register
+Date:   Thu, 26 Aug 2021 17:20:49 +0200
+Message-Id: <20210826152049.4175381-2-s.riedmueller@phytec.de>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210826152049.4175381-1-s.riedmueller@phytec.de>
+References: <20210826152049.4175381-1-s.riedmueller@phytec.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 26.08.2021 17:20:50,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 26.08.2021 17:20:50
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: quoted-printable
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWyRoCBSzdoo3qiwfpOfotll44yWjy86m+x
+        aupOFotNj6+xWnzsucdq0fVrJbPF5V1z2CwunnK1+Lt9E4vFv2sbWSxebBF34PZ4f6OV3WPn
+        rLvsHptWdbJ5bF5S77Hx3Q4mj/6/Bh6fN8kFsEdx2aSk5mSWpRbp2yVwZWy5/5Sp4JJAxYa1
+        21gbGCfydTFyckgImEjsbNjK2sXIxSEksI1RYk7bIkYI5wKjxPOpv5hBqtgEjCQWTGtkAkmI
+        CGxnlHjRfZ8RJMEs0MEkMW+GG4gtLOAgcXPZLDYQm0VAVeLg99tMIDavgJ3EmcXf2CDWyUvM
+        vPSdHcTmFLCX2DupAyjOAbTNTmL6uyCIckGJkzOfsIDskhC4wijR3/CLBaJXSOL04rPMEHu1
+        JZYtfM08gVFgFpKeWUhSCxiZVjEK5WYmZ6cWZWbrFWRUlqQm66WkbmIEBv/hieqXdjD2zfE4
+        xMjEwXiIUYKDWUmEd8F3tUQh3pTEyqrUovz4otKc1OJDjNIcLErivPd7mBKFBNITS1KzU1ML
+        UotgskwcnFINjO7NZlOrgFG4enXAh0cs3wNbNe4s3dL/frZ/xK/ar29k3IJmtWy5kBf0Wfp2
+        WNiktccK9n8SFn432/zkmxdbNNV3d13t/my0eu7DGfPrr32fqMoUyVKRsn3R/haNM/f+7fT4
+        IGkW7uB+mmFbpPEtFUXX7SXcUYvOMZ/TmNoi5tY5tbuqqPyZqBJLcUaioRZzUXEiAHeDBlFs
+        AgAA
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The probe was manually passing NULL instead of dev to devm_clk_hw_register.
-This caused a Unable to handle kernel NULL pointer dereference error.
-Fix this by passing 'dev'.
+According to the imx6ul Reference Manual the csi clk gate register is
+CCM=5FCCGR3 (offset 0x74) bit 0/1. For the imx6ull on the other hand the
+Reference Manual lists register CCM=5FCCGR2 (offset 0x70) bit 2/3 as the
+csi clk gate which is the current setting.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Tests have shown though that the correct csi clk gate register for the
+imx6ull is actually CCM=5FCCGR3 bit 0/1 as well. Thus set the correct
+register for both platforms.
 
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index 9fb79bd79435..684d8937965e 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -187,7 +187,7 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 	init.ops = &usb2_clock_sel_clock_ops;
- 	priv->hw.init = &init;
- 
--	ret = devm_clk_hw_register(NULL, &priv->hw);
-+	ret = devm_clk_hw_register(dev, &priv->hw);
- 	if (ret)
- 		goto pm_put;
- 
--- 
+Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
+---
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 206e4c43f68f..5dd222fab01b 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -380,7 +380,6 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct de=
+vice=5Fnode *ccm=5Fnode)
+ 		hws[IMX6ULL=5FCLK=5FESAI=5FIPG]	=3D imx=5Fclk=5Fhw=5Fgate2=5Fshared("esa=
+i=5Fipg",	"ahb",		base + 0x70,	0, &share=5Fcount=5Fesai);
+ 		hws[IMX6ULL=5FCLK=5FESAI=5FMEM]	=3D imx=5Fclk=5Fhw=5Fgate2=5Fshared("esa=
+i=5Fmem",	"ahb",		base + 0x70,	0, &share=5Fcount=5Fesai);
+ 	}
+-	hws[IMX6UL=5FCLK=5FCSI]		=3D imx=5Fclk=5Fhw=5Fgate2("csi",		"csi=5Fpodf",=
+		base + 0x70,	2);
+ 	hws[IMX6UL=5FCLK=5FI2C1]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c1",		"perclk",	b=
+ase + 0x70,	6);
+ 	hws[IMX6UL=5FCLK=5FI2C2]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c2",		"perclk",	b=
+ase + 0x70,	8);
+ 	hws[IMX6UL=5FCLK=5FI2C3]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c3",		"perclk",	b=
+ase + 0x70,	10);
+@@ -391,6 +390,7 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct de=
+vice=5Fnode *ccm=5Fnode)
+ 	hws[IMX6UL=5FCLK=5FPXP]		=3D imx=5Fclk=5Fhw=5Fgate2("pxp",		"axi",		base =
++ 0x70,	30);
+=20
+ 	/* CCGR3 */
++	hws[IMX6UL=5FCLK=5FCSI]		=3D imx=5Fclk=5Fhw=5Fgate2("csi",	"csi=5Fpodf",	=
+base + 0x74,	0);
+ 	hws[IMX6UL=5FCLK=5FUART5=5FIPG]	=3D imx=5Fclk=5Fhw=5Fgate2("uart5=5Fipg",=
+	"ipg",		base + 0x74,	2);
+ 	hws[IMX6UL=5FCLK=5FUART5=5FSERIAL]	=3D imx=5Fclk=5Fhw=5Fgate2("uart5=5Fse=
+rial",	"uart=5Fpodf",	base + 0x74,	2);
+ 	if (clk=5Fon=5Fimx6ul()) {
+--=20
 2.25.1
 
