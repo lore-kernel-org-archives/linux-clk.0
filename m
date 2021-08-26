@@ -4,69 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F31C432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 18:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DB3C4320E
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 18:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E83476103A
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 18:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2BA06103A
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 18:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231453AbhHZSsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Aug 2021 14:48:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34300 "EHLO mail.kernel.org"
+        id S243434AbhHZSzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Aug 2021 14:55:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230056AbhHZSsE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Aug 2021 14:48:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C641D61037;
-        Thu, 26 Aug 2021 18:47:16 +0000 (UTC)
+        id S243300AbhHZSzZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Aug 2021 14:55:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 55BFC61037;
+        Thu, 26 Aug 2021 18:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630003636;
-        bh=EL23t1MgNn5mJyuhMr3CMmMaRyOve01i2usCZcwV6W4=;
+        s=k20201202; t=1630004077;
+        bh=fyW/PNm/+sS5fgyydXfDRZ5DdiYow6xNkyUdeEK16Ec=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DS6tOSftw1CS5gZ8+vDqrQTJTQ2Q80zp8swMFssOMwPR4G6t+dAf7D+yTCy2Agbke
-         eIlNY4nWpYHzPettXYqcoAnonxUb13tYN8aZDVdqbgL7WI9bjgB/VouJxOSmjhmrHf
-         x47tzwx83ndqn4CPPJmBhbsclIX8/HEnfsMcLds/Ak7T6dKTndSdt2DeT14QD2TrVR
-         KMhnWiLM/AWKsVdYNjm4E4guPtLHqcYkDd4u15CESX7kLexvHR+XaNPf+bn/x6Mwrh
-         9yY9VDw0ZANSlGP+BE41vT8tTblfEmnH9XEZc0at/yGsU1VFsRROHtGzlmTLRRvwUm
-         GTZuWJvuAKmGg==
+        b=mll/iuoMgXdxjvdqVXrB5nlsJ0Xr0gGjC18zFF/w33zJTbV1u+sYRMNC+FnaWItHn
+         XkrQ1Xp8lIfs3sSKjlqpzkTncc3yVCrK2HakIc5BHAzlo5jpFntBoVROuznYvfoFOB
+         ptA/2rFlxW71hlNyjp46Snvb/odmbFInA+7IGPIlLWaV8ydEivTcHiRHjJjJTaVEsF
+         eISUVzisY4zEMKAuZ0RoLimyCceWVcoI5Xf5QYyy8YRQjCQGMI3rEJ5LdtOgQuXvPp
+         acBFp5UcNCXXlol4GNFIZhndv3BTYWRTofF3RSv+0hQ3/ChO9luwk3L9lw8HJ0wSxO
+         pTRdob6bpO1Jw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210825204517.1278130-1-bjorn.andersson@linaro.org>
-References: <20210825204517.1278130-1-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2] clk: qcom: gcc-sdm660: Replace usage of parent_names
+In-Reply-To: <Q6uB3NRxqtD8Prsmliv8ZdsTXGeviv7lb2jQ743jr1E@cp4-web-036.plabs.ch>
+References: <Q6uB3NRxqtD8Prsmliv8ZdsTXGeviv7lb2jQ743jr1E@cp4-web-036.plabs.ch>
+Subject: Re: [PATCH RESEND 1/2] dt-bindings: clock: add Qualcomm MSM8953 GCC driver bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        angelogioacchino.delregno@somainline.org,
-        Marijn Suijten <marijn.suijten@somainline.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 26 Aug 2021 11:47:15 -0700
-Message-ID: <163000363556.1317818.13808174908685575043@swboyd.mtv.corp.google.com>
+Cc:     agross@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Vladimir Lypak <junak.pub@gmail.com>,
+        Adam Skladowski <a_skl39@protonmail.com>,
+        Sireesh Kodali <sireeshkodali@protonmail.com>
+To:     Sireesh Kodali <sireeshkodali@protonmail.com>,
+        bjorn.andersson@linaro.org
+Date:   Thu, 26 Aug 2021 11:54:35 -0700
+Message-ID: <163000407599.1317818.2728164587461845498@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2021-08-25 13:45:17)
-> Using parent_data and parent_hws, instead of parent_names, does protect
-> against some cases of incompletely defined clock trees. While it turns
-> out that the bug being chased this time was totally unrelated, this
-> patch converts the SDM660 GCC driver to avoid such issues.
+Quoting Sireesh Kodali (2021-08-05 02:06:42)
+> From: Vladimir Lypak <junak.pub@gmail.com>
 >=20
-> The "xo" fixed_factor clock is unused within the gcc driver, but
-> referenced from the DSI PHY. So it's left in place until the DSI driver
-> is updated.
+> Add bindings and compatible to document MSM8953 GCC (Global Clock
+> Controller) driver.
 >=20
-> Tested-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somain=
-line.org>
-> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Vladimir Lypak <junak.pub@gmail.com>
+> Signed-off-by: Adam Skladowski <a_skl39@protonmail.com>
+> Signed-off-by: Sireesh Kodali <sireeshkodali@protonmail.com>
 > ---
 
-Applied to clk-next after moving back the arrays so the diff is smaller.
+Applied to clk-next
