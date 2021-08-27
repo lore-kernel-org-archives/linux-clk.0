@@ -2,125 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E249DC432BE
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 21:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BBBC432BE
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 06:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B454A60FC0
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Aug 2021 21:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C56E60FDA
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 06:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243685AbhHZV5S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Aug 2021 17:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243584AbhHZV5N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Aug 2021 17:57:13 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75C5C0613C1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Aug 2021 14:56:25 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id i9so9906855lfg.10
-        for <linux-clk@vger.kernel.org>; Thu, 26 Aug 2021 14:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ipkobGRVLZJc+vL0XXw9zFS+e6eRpUL7qQQ+kOwygyU=;
-        b=FMdO8v5MHJt9fZRvFRs16ZRKLMhXFG6unthmn/CwHJDhI+EvJjGtQRwHxeKJcBYynO
-         bHXAO3Y7DuRRCdpl6GR09PCHRNqCr8PS6aXGuCUFW+NomB789JkdQNOSoBEoovq/IFKm
-         FO/B+MKMh91ZnQwz15uNJrKkkYx3U+eaU98xj/AaKxmFnL3RpwOE5v8ldIpzH2A/8uoT
-         /qkn8XVoB8wR8of+COf1fIwUNmDqHkq8WRfKvU5iD5y7+DGOyq1BPwHYwiIlURXX4rv5
-         wp1WDO2uZd73xUvtzA8FztxK0g5Xw+oie0hM8EslYu5r8lwgQFuR9L+ZvQQoLTbEH7Q5
-         8ydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ipkobGRVLZJc+vL0XXw9zFS+e6eRpUL7qQQ+kOwygyU=;
-        b=UNyf8cvBO5v9CaAm++YQavzRDUzZbOjC7fBnH6VPBHkxX33KfZTciE3J56ph/vYTUX
-         7wrTFTza+OaDOL1gF6xToGzkyC1tZF1BJdOJi3e6acjPWNKBOWwbbSppGH+BRHnEE2CR
-         ucrxxopq28OSZL4Er4Vw/bWLPigDJJGOE+CxJJp5/b3lamMeyPDheyj7yGLbrl8ogUpA
-         g7MHT677kHOsFBSqXfKWIGCUxqEXa9Vt7wn0cJT/TqC8IjZ8+JCiIRVMzjtCxwgNbh6J
-         C3KScsI5tpfH5PxSQOugfq8vCxmb1EAdl1u1bIO4GToUEHr1KspLq4q/IgVwBjtOAHpX
-         zntg==
-X-Gm-Message-State: AOAM530hz6exogwBRkvkqore6nEs3g80/c2jykM1vYUDTMyZwlSppBV4
-        OmKOdPPGdpmcSxt7Ncn/2FjlwQ==
-X-Google-Smtp-Source: ABdhPJy/Kb42Fp9sNpU4Lp9seHJVgQxLZ0KFdpsDaoSfavQ64wBkXTpTfrEBfrnKdmcb2QpOF8qUag==
-X-Received: by 2002:a05:6512:224a:: with SMTP id i10mr4402655lfu.539.1630014984316;
-        Thu, 26 Aug 2021 14:56:24 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id d19sm416238lfv.74.2021.08.26.14.56.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Aug 2021 14:56:23 -0700 (PDT)
-Subject: Re: [PATCH v6 0/6] clk: qcom: use power-domain for sm8250's clock
- controllers
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20210727202004.712665-1-dmitry.baryshkov@linaro.org>
- <163000270629.1317818.2836576068466077505@swboyd.mtv.corp.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <42c3fa20-7ffa-255f-ca28-6f0aa2aa4a13@linaro.org>
-Date:   Fri, 27 Aug 2021 00:56:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S243114AbhH0Gn6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Aug 2021 02:43:58 -0400
+Received: from mickerik.phytec.de ([195.145.39.210]:45626 "EHLO
+        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242917AbhH0Gn5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Aug 2021 02:43:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+        q=dns/txt; i=@phytec.de; t=1630046587; x=1632638587;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hjdxX+9t/WsWnVXp1st6p2qOXsa0F3fVD972EzuGFqw=;
+        b=FTwVlm6iLtlTCD0DlTspN5OUnb31iq4zDL/4DuTyky3WScJUno0sA88rRuoVWJlc
+        I+CGkoOVWBzxr7psSB4pI/+D/yOHTdhKQ1Lcr1Y9QI0x57D8smmygc2y7t+j7/cX
+        PgTAMEqAYr2bMmAN/HmR3EdflB4hMf/Tcmx+lX6+1vk=;
+X-AuditID: c39127d2-783bf70000001c5c-8a-6128897bd396
+Received: from berlix.phytec.de (Berlix.phytec.de [172.16.0.117])
+        (using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 7A.47.07260.B7988216; Fri, 27 Aug 2021 08:43:07 +0200 (CEST)
+Received: from Berlix.phytec.de (172.16.0.117) by Berlix.phytec.de
+ (172.16.0.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Fri, 27 Aug
+ 2021 08:43:06 +0200
+Received: from Berlix.phytec.de ([fe80::c131:350d:c471:aafd]) by
+ berlix.phytec.de ([fe80::c131:350d:c471:aafd%3]) with mapi id 15.01.2308.008;
+ Fri, 27 Aug 2021 08:43:06 +0200
+From:   =?utf-8?B?U3RlZmFuIFJpZWRtw7xsbGVy?= <S.Riedmueller@phytec.de>
+To:     "festevam@gmail.com" <festevam@gmail.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "abel.vesa@nxp.com" <abel.vesa@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: imx: imx6ul: Fix csi clk gate register
+Thread-Topic: [PATCH 2/2] clk: imx: imx6ul: Fix csi clk gate register
+Thread-Index: AQHXmo30E+AoBfzZwEa6zUYT/fs/1KuGFlQAgACwngA=
+Date:   Fri, 27 Aug 2021 06:43:06 +0000
+Message-ID: <1f1b90c7d2dfa2e80f9a0a7c4bc20d99e7177389.camel@phytec.de>
+References: <20210826152049.4175381-1-s.riedmueller@phytec.de>
+         <20210826152049.4175381-2-s.riedmueller@phytec.de>
+         <CAOMZO5DR7awy7mxr3=qXiEmSG10MX15hc2MJCSajN+gW8=ryuw@mail.gmail.com>
+In-Reply-To: <CAOMZO5DR7awy7mxr3=qXiEmSG10MX15hc2MJCSajN+gW8=ryuw@mail.gmail.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.16.0.116]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FA95F5E2E272F34AA8D425CAA8169DBB@phytec.de>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <163000270629.1317818.2836576068466077505@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsWyRoChVLe6UyPR4Pk2AYtll44yWjy86m+x
+        aupOFotNj6+xWnzsucdq0fVrJbPF5V1z2CwunnK1+Lt9E4vFv2sbWSxebBF34PZ4f6OV3WPn
+        rLvsHptWdbJ5bF5S77Hx3Q4mj/6/Bh6fN8kFsEdx2aSk5mSWpRbp2yVwZUx+cJap4ItCxZVN
+        G5kbGDsUuhg5OSQETCQWzlrF1sXIxSEksJxJ4tmdzUwQzkNGic2/utkhnE2MEjPO97CDtLAJ
+        uEh8bvvGBmKLCOhKrDjRxQhiMwvMYJH4OoWji5GDQxioZs6UYogSV4nPk1cyQdhWEjsaD7GA
+        2CwCqhLLLmwCa+UVcJOY+WE9I8SuPYwSfVP7mUDmcAoESvxuiQGpYRSQlehseMcEsUpcYtOz
+        76wQHwhILNlznhnCFpV4+fgfVFxBoq2nE2wMs4CmxPpd+hCtFhL3Xj5jhrAVJaZ0P2SHOEFQ
+        4uTMJywTGMVnIdkwC6F7FpLuWUi6ZyHpXsDIuopRKDczOTu1KDNbryCjsiQ1WS8ldRMjMM4P
+        T1S/tIOxb47HIUYmDsZDjBIczEoivAu+qyUK8aYkVlalFuXHF5XmpBYfYpTmYFES573fw5Qo
+        JJCeWJKanZpakFoEk2Xi4JRqYDT+pRSd4yiwI+90rPv55S/5Huzd+26+XsqyJS7bzhveCo6/
+        FXkscXLqqu2nrm7azl+/xXJFtcDktb9Pnjc6s+9B9NTjnHc7PrOu+5Ld8VrI4a3wv4ArtxtF
+        /d43sOy8ZLZ9/hl5IYVP+29lrTrZqPo3c1+s85ynEU+X5bsyBXKWJNQf9fXYr3pViaU4I9FQ
+        i7moOBEAYf1HAOECAAA=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/08/2021 21:31, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2021-07-27 13:19:56)
->> On SM8250 both the display and video clock controllers are powered up by
->> the MMCX power domain. Handle this by linking clock controllers to the
->> proper power domain, and using runtime power management to enable and
->> disable the MMCX power domain.
->>
->> Dependencies:
->> - https://lore.kernel.org/linux-arm-msm/20210703005416.2668319-1-bjorn.andersson@linaro.org/
->>    (pending)
-> 
-> Does this patch series need to go through the qcom tree? Presumably the
-> dependency is going through qcom -> arm-soc
-
-It looks like Bjorn did not apply his patches in the for-5.15 series, so 
-we'd have to wait anyway. Probably I should rebase these patches instead 
-on Rajendra's required-opps patch (which is going in this window).
-
-> 
->>
->> Changes since v5:
->>   - Dropped devm_pm_runtime_enable callback to remove extra dependency
->>
->> Changes since v4:
->>   - Dropped pm_runtime handling from drivers/clk/qcom/common.c Moved the
->>     code into dispcc-sm8250.c and videocc-sm8250.c
->>
->> Changes since v3:
->>   - Wrap gdsc_enable/gdsc_disable into pm_runtime_get/put calls rather
->>     than calling pm_runtime_get in gdsc_enabled and _put in gdsc_disable
->>   - Squash gdsc patches together to remove possible dependencies between
->>     two patches.
->>
-
-
--- 
-With best wishes
-Dmitry
+SGkgRmFiaW8sDQoNCk9uIFRodSwgMjAyMS0wOC0yNiBhdCAxNzoxMCAtMDMwMCwgRmFiaW8gRXN0
+ZXZhbSB3cm90ZToNCj4gSGkgU3RlZmFuLA0KPiANCj4gT24gVGh1LCBBdWcgMjYsIDIwMjEgYXQg
+MTI6MjAgUE0gU3RlZmFuIFJpZWRtdWVsbGVyDQo+IDxzLnJpZWRtdWVsbGVyQHBoeXRlYy5kZT4g
+d3JvdGU6DQo+ID4gQWNjb3JkaW5nIHRvIHRoZSBpbXg2dWwgUmVmZXJlbmNlIE1hbnVhbCB0aGUg
+Y3NpIGNsayBnYXRlIHJlZ2lzdGVyIGlzDQo+ID4gQ0NNX0NDR1IzIChvZmZzZXQgMHg3NCkgYml0
+IDAvMS4gRm9yIHRoZSBpbXg2dWxsIG9uIHRoZSBvdGhlciBoYW5kIHRoZQ0KPiA+IFJlZmVyZW5j
+ZSBNYW51YWwgbGlzdHMgcmVnaXN0ZXIgQ0NNX0NDR1IyIChvZmZzZXQgMHg3MCkgYml0IDIvMyBh
+cyB0aGUNCj4gPiBjc2kgY2xrIGdhdGUgd2hpY2ggaXMgdGhlIGN1cnJlbnQgc2V0dGluZy4NCj4g
+PiANCj4gPiBUZXN0cyBoYXZlIHNob3duIHRob3VnaCB0aGF0IHRoZSBjb3JyZWN0IGNzaSBjbGsg
+Z2F0ZSByZWdpc3RlciBmb3IgdGhlDQo+ID4gaW14NnVsbCBpcyBhY3R1YWxseSBDQ01fQ0NHUjMg
+Yml0IDAvMSBhcyB3ZWxsLiBUaHVzIHNldCB0aGUgY29ycmVjdA0KPiA+IHJlZ2lzdGVyIGZvciBi
+b3RoIHBsYXRmb3Jtcy4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVmYW4gUmllZG11ZWxs
+ZXIgPHMucmllZG11ZWxsZXJAcGh5dGVjLmRlPg0KPiANCj4gSSB0ZXN0ZWQgdGhlIHNlcmllcyBv
+biBhbiBpbXg2dWxsLWV2ayB3aXRoIGFuIE9WNTY0MCBzZW5zb3I6DQo+IA0KPiBUZXN0ZWQtYnk6
+IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWlsLmNvbT4NCj4gDQo+IGJ1dCBpbiBteSBjYXNl
+LCBJIGRpZCBub3Qgc2VlIHRoZSBwcm9ibGVtIGV2ZW4gd2l0aG91dCB5b3VyIHBhdGNoLg0KPiAN
+Cj4gTW9zdCBsaWtlbHkgYmVjYXVzZSB0aGUgYm9vdGxvYWRlciB0dXJuZWQgb24gdGhlIENTSSBj
+bG9jay4NCg0KdGhhbmtzIGZvciB5b3VyIHRlc3RpbmcgYW5kIHJldmlldy4NCg0KWW91J3JlIHJp
+Z2h0LCB0aGUgY3NpIGNsb2NrIGlzIGVuYWJsZWQgYnkgZGVmYXVsdCBhbmQgdGh1cyB0aGUgaXNz
+dWUgb25seQ0KYXJpc2VzIHdoZW4geW91IHRyeSB0byBkaXNhYmxlIHRoZSBjbG9jayBlLmcuIHRv
+IHNhdmUgcG93ZXIgb24gYSBjb25uZWN0ZWQNCnNlbnNvci4NCg0KPiANCj4gPiAtLS0NCj4gPiAg
+ZHJpdmVycy9jbGsvaW14L2Nsay1pbXg2dWwuYyB8IDIgKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvY2xrL2lteC9jbGstaW14NnVsLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZ1bC5j
+DQo+ID4gaW5kZXggMjA2ZTRjNDNmNjhmLi41ZGQyMjJmYWIwMWIgMTAwNjQ0DQo+ID4gLS0tIGEv
+ZHJpdmVycy9jbGsvaW14L2Nsay1pbXg2dWwuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9j
+bGstaW14NnVsLmMNCj4gPiBAQCAtMzgwLDcgKzM4MCw2IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBp
+bXg2dWxfY2xvY2tzX2luaXQoc3RydWN0DQo+ID4gZGV2aWNlX25vZGUgKmNjbV9ub2RlKQ0KPiA+
+ICAgICAgICAgICAgICAgICBod3NbSU1YNlVMTF9DTEtfRVNBSV9JUEddICAgICAgID0NCj4gPiBp
+bXhfY2xrX2h3X2dhdGUyX3NoYXJlZCgiZXNhaV9pcGciLCAgICJhaGIiLCAgICAgICAgICBiYXNl
+ICsgMHg3MCwgICAgMCwNCj4gPiAmc2hhcmVfY291bnRfZXNhaSk7DQo+ID4gICAgICAgICAgICAg
+ICAgIGh3c1tJTVg2VUxMX0NMS19FU0FJX01FTV0gICAgICAgPQ0KPiA+IGlteF9jbGtfaHdfZ2F0
+ZTJfc2hhcmVkKCJlc2FpX21lbSIsICAgImFoYiIsICAgICAgICAgIGJhc2UgKyAweDcwLCAgICAw
+LA0KPiA+ICZzaGFyZV9jb3VudF9lc2FpKTsNCj4gPiAgICAgICAgIH0NCj4gPiAtICAgICAgIGh3
+c1tJTVg2VUxfQ0xLX0NTSV0gICAgICAgICAgICAgPQ0KPiA+IGlteF9jbGtfaHdfZ2F0ZTIoImNz
+aSIsICAgICAgICAgICAgICAgImNzaV9wb2RmIiwgICAgICAgICAgICAgYmFzZSArDQo+ID4gMHg3
+MCwgICAgMik7DQo+ID4gICAgICAgICBod3NbSU1YNlVMX0NMS19JMkMxXSAgICAgICAgICAgID0N
+Cj4gPiBpbXhfY2xrX2h3X2dhdGUyKCJpMmMxIiwgICAgICAgICAgICAgICJwZXJjbGsiLCAgICAg
+ICBiYXNlICsgMHg3MCwgICAgNik7DQo+ID4gICAgICAgICBod3NbSU1YNlVMX0NMS19JMkMyXSAg
+ICAgICAgICAgID0NCj4gPiBpbXhfY2xrX2h3X2dhdGUyKCJpMmMyIiwgICAgICAgICAgICAgICJw
+ZXJjbGsiLCAgICAgICBiYXNlICsgMHg3MCwgICAgOCk7DQo+ID4gICAgICAgICBod3NbSU1YNlVM
+X0NMS19JMkMzXSAgICAgICAgICAgID0NCj4gPiBpbXhfY2xrX2h3X2dhdGUyKCJpMmMzIiwgICAg
+ICAgICAgICAgICJwZXJjbGsiLCAgICAgICBiYXNlICsgMHg3MCwgICAgMTApOw0KPiA+IEBAIC0z
+OTEsNiArMzkwLDcgQEAgc3RhdGljIHZvaWQgX19pbml0IGlteDZ1bF9jbG9ja3NfaW5pdChzdHJ1
+Y3QNCj4gPiBkZXZpY2Vfbm9kZSAqY2NtX25vZGUpDQo+ID4gICAgICAgICBod3NbSU1YNlVMX0NM
+S19QWFBdICAgICAgICAgICAgID0NCj4gPiBpbXhfY2xrX2h3X2dhdGUyKCJweHAiLCAgICAgICAg
+ICAgICAgICJheGkiLCAgICAgICAgICBiYXNlICsgMHg3MCwgICAgMzApOw0KPiA+IA0KPiA+ICAg
+ICAgICAgLyogQ0NHUjMgKi8NCj4gDQo+IEl0IHdvdWxkIGJlIG5pY2UgdG8gcHV0IGEgY29tbWVu
+dCBoZXJlIGV4cGxhaW5pbmcgdGhlIGlteDZ1bGwNCj4gUmVmZXJlbmNlIE1hbnVhbCBtaXNtYXRj
+aC4NCg0KU3VyZSBJIHdpbGwgcHJlcGFyZSBzb21ldGhpbmcuDQoNCj4gDQo+IE1heWJlIEFiZWwg
+Y291bGQgaGVscCB0byBjaGVjayBpbnRlcm5hbGx5IGF0IE5YUD8NCg0KWWVzLCB0aGF0IHdvdWxk
+IGJlIG5pY2UhDQoNClJlZ2FyZHMsDQpTdGVmYW4NCg0KPiANCj4gPiArICAgICAgIGh3c1tJTVg2
+VUxfQ0xLX0NTSV0gICAgICAgICAgICAgPQ0KPiA+IGlteF9jbGtfaHdfZ2F0ZTIoImNzaSIsICAg
+ICAgICJjc2lfcG9kZiIsICAgICBiYXNlICsgMHg3NCwgICAgMCk7DQo+IA0KPiBUaGFua3MNCg==
