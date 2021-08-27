@@ -7,32 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53EFC41537
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D994EC4320E
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B724C60FE7
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFAD860FE6
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231493AbhH0MDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Aug 2021 08:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245056AbhH0MDV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Aug 2021 08:03:21 -0400
-Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CE4AC061757;
-        Fri, 27 Aug 2021 05:02:32 -0700 (PDT)
+        id S245060AbhH0MDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Aug 2021 08:03:22 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:37080 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231191AbhH0MDW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Aug 2021 08:03:22 -0400
 Received: from hq-00021.fritz.box (p57bc979a.dip0.t-ipconnect.de [87.188.151.154])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id B2757327D09;
-        Fri, 27 Aug 2021 11:54:27 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id E31AC327D07;
+        Fri, 27 Aug 2021 11:54:26 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     robh+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
         mturquette@baylibre.com, sboyd@kernel.org,
         Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v4 5/9] clk: cs2000-cp: Make aux output function controllable
-Date:   Fri, 27 Aug 2021 13:54:16 +0200
-Message-Id: <20210827115420.3052019-6-daniel@zonque.org>
+Subject: [PATCH v4 3/9] dt-bindings: clock: cs2000-cp: document cirrus,clock-skip flag
+Date:   Fri, 27 Aug 2021 13:54:14 +0200
+Message-Id: <20210827115420.3052019-4-daniel@zonque.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210827115420.3052019-1-daniel@zonque.org>
 References: <20210827115420.3052019-1-daniel@zonque.org>
@@ -42,48 +39,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The aux output pin can be configured to output either of the two clock
-inputs, the generated clock or the pll lock status. Allow access to
-this feature through a new optional device-tree property.
-
 Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/clk/clk-cs2000-cp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../devicetree/bindings/clock/cirrus,cs2000-cp.yaml         | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 92bc4aca0f95..db7290621cef 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -39,6 +39,8 @@
- /* DEVICE_CFG1 */
- #define RSEL(x)		(((x) & 0x3) << 3)
- #define RSEL_MASK	RSEL(0x3)
-+#define AUXOUTSRC(x)	(((x) & 0x3) << 1)
-+#define AUXOUTSRC_MASK	AUXOUTSRC(0x3)
- #define ENDEV1		(0x1)
+diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+index 79b90500f6ac..9047d8a24a08 100644
+--- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
++++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+@@ -48,6 +48,12 @@ properties:
+       - 3 # CS2000CP_AUX_OUTPUT_PLL_LOCK: pll lock status
+     default: 0
  
- /* DEVICE_CFG2 */
-@@ -421,12 +423,19 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
- 	struct clk_init_data init;
- 	const char *name = np->name;
- 	static const char *parent_names[CLK_MAX];
-+	u32 aux_out = 0;
- 	int ch = 0; /* it uses ch0 only at this point */
- 	int rate;
- 	int ret;
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-+	of_property_read_u32(np, "cirrus,aux-output-source", &aux_out);
-+	ret = cs2000_bset(priv, DEVICE_CFG1,
-+			  AUXOUTSRC_MASK, AUXOUTSRC(aux_out));
-+	if (ret < 0)
-+		return ret;
++  cirrus,clock-skip:
++    description:
++      This mode allows the PLL to maintain lock even when CLK_IN
++      has missing pulses for up to 20 ms.
++    $ref: /schemas/types.yaml#/definitions/flag
 +
- 	/*
- 	 * set default rate as 1/1.
- 	 * otherwise .set_rate which setup ratio
+ required:
+   - compatible
+   - reg
 -- 
 2.31.1
 
