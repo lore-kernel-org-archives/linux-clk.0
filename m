@@ -7,29 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F09C25AEB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53EFC41537
 	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7D3260FDA
+	by mail.kernel.org (Postfix) with ESMTP id B724C60FE7
 	for <linux-clk@archiver.kernel.org>; Fri, 27 Aug 2021 12:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245056AbhH0MDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Aug 2021 08:03:22 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:37076 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233461AbhH0MDV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S231493AbhH0MDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 27 Aug 2021 08:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245056AbhH0MDV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Aug 2021 08:03:21 -0400
+Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CE4AC061757;
+        Fri, 27 Aug 2021 05:02:32 -0700 (PDT)
 Received: from hq-00021.fritz.box (p57bc979a.dip0.t-ipconnect.de [87.188.151.154])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 242D0327CF9;
-        Fri, 27 Aug 2021 11:54:26 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id B2757327D09;
+        Fri, 27 Aug 2021 11:54:27 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     robh+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
         mturquette@baylibre.com, sboyd@kernel.org,
-        Daniel Mack <daniel@zonque.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 1/9] dt-bindings: clock: convert cs2000-cp bindings to yaml
-Date:   Fri, 27 Aug 2021 13:54:12 +0200
-Message-Id: <20210827115420.3052019-2-daniel@zonque.org>
+        Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v4 5/9] clk: cs2000-cp: Make aux output function controllable
+Date:   Fri, 27 Aug 2021 13:54:16 +0200
+Message-Id: <20210827115420.3052019-6-daniel@zonque.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210827115420.3052019-1-daniel@zonque.org>
 References: <20210827115420.3052019-1-daniel@zonque.org>
@@ -39,114 +42,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The original author of the file was added as maintainer.
+The aux output pin can be configured to output either of the two clock
+inputs, the generated clock or the pll lock status. Allow access to
+this feature through a new optional device-tree property.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/cirrus,cs2000-cp.yaml      | 63 +++++++++++++++++++
- .../devicetree/bindings/clock/cs2000-cp.txt   | 22 -------
- 2 files changed, 63 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
+ drivers/clk/clk-cs2000-cp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-new file mode 100644
-index 000000000000..379a8bab49ca
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/cirrus,cs2000-cp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 92bc4aca0f95..db7290621cef 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -39,6 +39,8 @@
+ /* DEVICE_CFG1 */
+ #define RSEL(x)		(((x) & 0x3) << 3)
+ #define RSEL_MASK	RSEL(0x3)
++#define AUXOUTSRC(x)	(((x) & 0x3) << 1)
++#define AUXOUTSRC_MASK	AUXOUTSRC(0x3)
+ #define ENDEV1		(0x1)
+ 
+ /* DEVICE_CFG2 */
+@@ -421,12 +423,19 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ 	struct clk_init_data init;
+ 	const char *name = np->name;
+ 	static const char *parent_names[CLK_MAX];
++	u32 aux_out = 0;
+ 	int ch = 0; /* it uses ch0 only at this point */
+ 	int rate;
+ 	int ret;
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
++	of_property_read_u32(np, "cirrus,aux-output-source", &aux_out);
++	ret = cs2000_bset(priv, DEVICE_CFG1,
++			  AUXOUTSRC_MASK, AUXOUTSRC(aux_out));
++	if (ret < 0)
++		return ret;
 +
-+title: Binding CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
-+
-+maintainers:
-+  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+
-+description: |
-+  The CS2000-CP is an extremely versatile system clocking device that
-+  utilizes a programmable phase lock loop.
-+
-+  Link: https://www.cirrus.com/products/cs2000/
-+
-+properties:
-+  compatible:
-+    enum:
-+      - cirrus,cs2000-cp
-+
-+  clocks:
-+    description:
-+      Common clock binding for CLK_IN, XTI/REF_CLK
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: clk_in
-+      - const: ref_clk
-+
-+  '#clock-cells':
-+    const: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c@0 {
-+      reg = <0x0 0x100>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      clock-controller@4f {
-+        #clock-cells = <0>;
-+        compatible = "cirrus,cs2000-cp";
-+        reg = <0x4f>;
-+        clocks = <&rcar_sound 0>, <&x12_clk>;
-+        clock-names = "clk_in", "ref_clk";
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-deleted file mode 100644
-index 54e6df0bee8a..000000000000
---- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-+++ /dev/null
-@@ -1,22 +0,0 @@
--CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
--
--Required properties:
--
--- compatible:		"cirrus,cs2000-cp"
--- reg:			The chip select number on the I2C bus
--- clocks:		common clock binding for CLK_IN, XTI/REF_CLK
--- clock-names:		CLK_IN : clk_in, XTI/REF_CLK : ref_clk
--- #clock-cells:		must be <0>
--
--Example:
--
--&i2c2 {
--	...
--	cs2000: clk_multiplier@4f {
--		#clock-cells = <0>;
--		compatible = "cirrus,cs2000-cp";
--		reg = <0x4f>;
--		clocks = <&rcar_sound 0>, <&x12_clk>;
--		clock-names = "clk_in", "ref_clk";
--	};
--};
+ 	/*
+ 	 * set default rate as 1/1.
+ 	 * otherwise .set_rate which setup ratio
 -- 
 2.31.1
 
