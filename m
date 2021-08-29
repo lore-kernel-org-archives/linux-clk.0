@@ -2,62 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E68C432BE
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 05:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCF2C432BE
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 06:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5AF60F3A
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 05:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4EA760F36
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 06:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbhH2F31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 01:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36644 "EHLO mail.kernel.org"
+        id S234585AbhH2Gmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 02:42:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229634AbhH2F30 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 29 Aug 2021 01:29:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 297AC60F36;
-        Sun, 29 Aug 2021 05:28:35 +0000 (UTC)
+        id S229889AbhH2Gmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Aug 2021 02:42:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 64C8D606A5;
+        Sun, 29 Aug 2021 06:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630214915;
-        bh=d9x09IXoGPv8OxxwYSFTT3FSxVPusg18qTaIMyUUiPc=;
+        s=k20201202; t=1630219313;
+        bh=sfhKMIVk0ywD2iXpGJajxBTAUEUFNiZdGB9ENiaUPfg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hmlhwSYPz4321xRyh9tQBvsJ1MOydibjEjWRHVwnKNzy9jrskG05C8gZrGAhfnxbf
-         dwS8GAkanizh1ArCWUi/rm+UMhDRkw0dwgc/+NG33CuxR5h0Ha1YCAH+7PoJYcJn3T
-         MrP/n2dad5mFGG5AfjSK+JE1g1HQacm5qTCOpmhcxP5MEyfd6FkeGBeGCCMbg65ogF
-         owyC+N5Z672/yHA6lBLnhtRWdEpNveLIeH3pZw+y3Of/emYJJZ61G2EMsRZPuG3STZ
-         gei1q6Rqk40K/VBxb8UwTKqwZ0odTFiTSPIQcteQWrZBkFjx/9rJ0YFn8bAL54YjHU
-         ocMIZ1ng6TDww==
+        b=AdSRDiBthPgqQtKsEFf/cEljkNpEafH2WV1j/kQG2Zf4pqpZ2s/HtjMyv3UmT7sA2
+         g7LcTC9WAm2QdL65tlJZW9Np7O0xf2gsxDMLdcTMbGz1xEzcbYqjce6zwxNg9GvxFq
+         x7xXcMz/d/nBjS+EbYJgathIw9sNV8alY7NQ57Lv/vGmxYlfIxfEX9eZXOpQsXyCcT
+         Ud++3eFTPgks7X/1J3JCB1sa5duxWOKIPWJ31X+ewiu86c4L/pCAx4T+I9XwAeUiIy
+         JeXERNICfJdrY4rb/TJUVduDTeq4tEgeWJuRazhRIyTFhu35etGU7xM6Z6p6EYMvM5
+         eHZqCy7IHrfkw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210707131213.3283509-1-codrin.ciubotariu@microchip.com>
-References: <20210707131213.3283509-1-codrin.ciubotariu@microchip.com>
-Subject: Re: [PATCH] clk: at91: clk-generated: Limit the requested rate to our range
+In-Reply-To: <6ecc4822-8112-43d4-1259-cd7dfe79d71c@microchip.com>
+References: <20210401122726.28528-1-claudiu.beznea@microchip.com> <6ecc4822-8112-43d4-1259-cd7dfe79d71c@microchip.com>
+Subject: Re: [PATCH v2 0/6] clk: at91: updates for power management and dvfs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        claudiu.beznea@microchip.com,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 28 Aug 2021 22:28:33 -0700
-Message-ID: <163021491397.2676726.7633391558529179439@swboyd.mtv.corp.google.com>
+Cc:     viresh.kumar@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        mturquette@baylibre.com
+Date:   Sat, 28 Aug 2021 23:41:52 -0700
+Message-ID: <163021931214.2676726.2951110502140668721@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Codrin Ciubotariu (2021-07-07 06:12:13)
-> On clk_generated_determine_rate(), the requested rate could be outside
-> of clk's range. Limit the rate to the clock's range to not return an
-> error.
+Quoting Claudiu.Beznea@microchip.com (2021-08-02 01:36:52)
+> On 01.04.2021 15:27, Claudiu Beznea wrote:
+> Hi Stephen,
 >=20
-> Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> ---
+> Please ignore the DVFS patch in this series
+> (clk: at91: clk-master: update for dvfs) as I have some updates to it. I'=
+ll
+> introduce them in the next version.
+>=20
 
-Applied to clk-next
+Can I apply the rest of them though?
