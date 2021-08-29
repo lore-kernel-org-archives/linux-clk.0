@@ -2,31 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EF5C43214
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 20:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A75C19F37
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 20:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C47ED60F55
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 20:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AD9360F46
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 20:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235849AbhH2UtW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 16:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35096 "EHLO
+        id S235919AbhH2UtX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 16:49:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234927AbhH2UtV (ORCPT
+        with ESMTP id S234667AbhH2UtV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Aug 2021 16:49:21 -0400
-Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46033C061756
-        for <linux-clk@vger.kernel.org>; Sun, 29 Aug 2021 13:48:26 -0700 (PDT)
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50522C0613D9
+        for <linux-clk@vger.kernel.org>; Sun, 29 Aug 2021 13:48:29 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 53D6E1FABE;
-        Sun, 29 Aug 2021 22:48:24 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 698101FBA5;
+        Sun, 29 Aug 2021 22:48:27 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
@@ -42,33 +43,61 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] sdm660 clock-controller cleanup
-Date:   Sun, 29 Aug 2021 22:48:18 +0200
-Message-Id: <20210829204822.289829-1-marijn.suijten@somainline.org>
+Subject: [PATCH 4/4] clk: qcom: gpucc-sdm660: Remove fallback to global clock names
+Date:   Sun, 29 Aug 2021 22:48:22 +0200
+Message-Id: <20210829204822.289829-5-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210829204822.289829-1-marijn.suijten@somainline.org>
+References: <20210829204822.289829-1-marijn.suijten@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following earlier cleanup in gcc to replace parent_names with
-parent_data to use pointers to internal clk_hws, this patchset removes
-more dependencies on global clock names through clk_parent_data's .name
-field, and uses ARRAY_SIZE to determine the number of parent clocks in
-the parent_data arrays instead of hardcoding it.
+The necessary clocks for this driver are already fully specified in
+sdm630 DT under the .fw_name, and do not need an implicit fallback to
+their global name.
 
-Marijn Suijten (4):
-  clk: qcom: gcc-sdm660: Use ARRAY_SIZE for num_parents
-  clk: qcom: gpucc-sdm660: Use ARRAY_SIZE for num_parents
-  clk: qcom: mmcc-sdm660: Use ARRAY_SIZE for num_parents
-  clk: qcom: gpucc-sdm660: Remove fallback to global clock names
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+---
+ drivers/clk/qcom/gpucc-sdm660.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
- drivers/clk/qcom/gcc-sdm660.c   | 80 ++++++++++++++++-----------------
- drivers/clk/qcom/gpucc-sdm660.c | 15 +++----
- drivers/clk/qcom/mmcc-sdm660.c  | 72 ++++++++++++++---------------
- 3 files changed, 83 insertions(+), 84 deletions(-)
-
+diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
+index bea73ae28b36..41bba96a08b3 100644
+--- a/drivers/clk/qcom/gpucc-sdm660.c
++++ b/drivers/clk/qcom/gpucc-sdm660.c
+@@ -44,8 +44,7 @@ static struct clk_branch gpucc_cxo_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpucc_cxo_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "xo",
+-				.name = "xo"
++				.fw_name = "xo"
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -101,7 +100,7 @@ static const struct clk_parent_data gpucc_parent_data_1[] = {
+ 	{ .hw = &gpucc_cxo_clk.clkr.hw },
+ 	{ .hw = &gpu_pll0_pll_out_main.clkr.hw },
+ 	{ .hw = &gpu_pll1_pll_out_main.clkr.hw },
+-	{ .fw_name = "gcc_gpu_gpll0_clk", .name = "gcc_gpu_gpll0_clk" },
++	{ .fw_name = "gcc_gpu_gpll0_clk" },
+ };
+ 
+ static struct clk_rcg2_gfx3d gfx3d_clk_src = {
+@@ -154,8 +153,8 @@ static const struct parent_map gpucc_parent_map_0[] = {
+ 
+ static const struct clk_parent_data gpucc_parent_data_0[] = {
+ 	{ .hw = &gpucc_cxo_clk.clkr.hw },
+-	{ .fw_name = "gcc_gpu_gpll0_clk", .name = "gcc_gpu_gpll0_clk" },
+-	{ .fw_name = "gcc_gpu_gpll0_div_clk", .name = "gcc_gpu_gpll0_div_clk" },
++	{ .fw_name = "gcc_gpu_gpll0_clk" },
++	{ .fw_name = "gcc_gpu_gpll0_div_clk" },
+ };
+ 
+ static const struct freq_tbl ftbl_rbbmtimer_clk_src[] = {
 -- 
 2.33.0
 
