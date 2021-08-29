@@ -2,123 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8396FC4320A
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 15:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65B3C4320A
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6559560F45
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 15:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB47B60E97
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:08:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235643AbhH2PzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 11:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232311AbhH2PzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Aug 2021 11:55:06 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812F4C061756
-        for <linux-clk@vger.kernel.org>; Sun, 29 Aug 2021 08:54:14 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id s16so5151192qvt.13
-        for <linux-clk@vger.kernel.org>; Sun, 29 Aug 2021 08:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2lFAxhd8GYho/4ODjYlv7uZMw/0eD5pCCmeHLl+hjPs=;
-        b=mhx9ENQXODT+mzzMPqmHKUrwyDP2qJQeuDuWMS01gHPl43XhTaDa7GIwT5EZrzsKlW
-         XYrJjSXdlg7yFUzDfgrCTeHHFsuK2dGZzpV4e6dDVB43n3znpV5NEOSV5Jb1W542jRuk
-         3Ofp66c2GUjahl/LYi4ixx1JYqgz/DPjN3n81ynmXWItJ02c662hvQlZJ1N7wNrBFO+d
-         LdaHQwaSptg/CV5S2SQ5h/HKx10wJDGKG7Ca5b+kZqHAA7E2f6cJi7/dwGX3PtU2JrjL
-         3R1ypHe5H4Nhg5SwUbFTCZPhLiX53TmhoEGWfqxj67tEbpLDIljuQerpXkUz8qslJ05v
-         IL0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2lFAxhd8GYho/4ODjYlv7uZMw/0eD5pCCmeHLl+hjPs=;
-        b=gs0Tch2zY2PtdJvDAkiLtuvAEXzTWTC/c8QPnBRd09+9Mm8qtUdrY5GH1xiwG9WebF
-         avwWXU1unhB7DVE2xGaJUkEeoIQ59TjvCEM8mTDvgdlnlvr6br05gWC/oVWz5XoYwz56
-         UPyyCvcLWnPDSK2HGkN684MjNiQ6OEb7GAZCKRckWRVEjcOHBF9uXUXNbjDST34O5NRi
-         qMrRvlmXpWNTQeX/NEfYoBJke3TVS0b1H6DpX3+La8O06td11qmQXBd7wWBhEYYBVasG
-         SYvZanvY6oMQ0kypj1QdlaBppsS3pww3ryiobEiEJjm2wy/XAw6oXL3uvaPQKvrEMCsS
-         Pm1w==
-X-Gm-Message-State: AOAM532a9VNq6Co8hClV5lZX6n1oUv/laeA08f6qyCaKPfOFotTLLrIA
-        U23fvnPSX9Cq/mC8ZrJ+cOwOJ2rvE7vg7wn0cRtfQw==
-X-Google-Smtp-Source: ABdhPJxe1bgF3xh2bIKzCa9HbcdEnoBohTsx5XK2a6WNzZeS4ponlbCpnvpXa1C9Dxt2513WX+SXZNaLMUhG2s0WPzc=
-X-Received: by 2002:a0c:cb8f:: with SMTP id p15mr19218569qvk.2.1630252453659;
- Sun, 29 Aug 2021 08:54:13 -0700 (PDT)
+        id S235841AbhH2SI4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 14:08:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232927AbhH2SI4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Aug 2021 14:08:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C1D7A60ED4;
+        Sun, 29 Aug 2021 18:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630260483;
+        bh=KPAQinMx3ezIBjmro4mBpyem8leoYO+pxREtXKJmt4I=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=maIvZJChiJDYIH9W1i4GksLuMPkh+03Jd0UPqtiGq80ybPVjiYM5x/vTCpGh57K4g
+         FZSJ4pIFOrwY5wFpSgrexUKpLAVfVjC2lLJ2cr9Bu7jOZYW4mpyA18MqwUH0MwNEBX
+         Fa50HbbAbnZOSPz0U3noALALNUFTI0i3urO6CDo56+9dfQz2l4AlJEpS4A7ZTkkv+k
+         Ug4WCt2o0cPlF2qKfftaW2oslxAdOuLoa494c18Z6IaD68HP/ELR9cAr8YEV0uc3lE
+         fbXqCFrVdk8ZVyXg0z4MEh71JpNxVdtW4Z0RdmV5tIZnDRo1Z2o7kNGY30enycwLTk
+         b13BuH8IXGvIg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210727202004.712665-1-dmitry.baryshkov@linaro.org>
- <163000270629.1317818.2836576068466077505@swboyd.mtv.corp.google.com>
- <42c3fa20-7ffa-255f-ca28-6f0aa2aa4a13@linaro.org> <163020909027.2218116.11109424225803296345@swboyd.mtv.corp.google.com>
-In-Reply-To: <163020909027.2218116.11109424225803296345@swboyd.mtv.corp.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sun, 29 Aug 2021 18:54:02 +0300
-Message-ID: <CAA8EJppo8Zze5ViYOWooHy=RR4ueXNeWiBFyKdtpUcm5Cs69ew@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] clk: qcom: use power-domain for sm8250's clock controllers
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <786ebd3c-0596-1090-760d-b75751fcb505@somainline.org>
+References: <20210609145523.467090-1-konrad.dybcio@somainline.org> <786ebd3c-0596-1090-760d-b75751fcb505@somainline.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Date:   Sun, 29 Aug 2021 11:08:02 -0700
+Message-ID: <163026048249.2676726.2106086525271489846@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 29 Aug 2021 at 06:51, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dmitry Baryshkov (2021-08-26 14:56:23)
-> > On 26/08/2021 21:31, Stephen Boyd wrote:
-> > > Quoting Dmitry Baryshkov (2021-07-27 13:19:56)
-> > >> On SM8250 both the display and video clock controllers are powered up by
-> > >> the MMCX power domain. Handle this by linking clock controllers to the
-> > >> proper power domain, and using runtime power management to enable and
-> > >> disable the MMCX power domain.
-> > >>
-> > >> Dependencies:
-> > >> - https://lore.kernel.org/linux-arm-msm/20210703005416.2668319-1-bjorn.andersson@linaro.org/
-> > >>    (pending)
-> > >
-> > > Does this patch series need to go through the qcom tree? Presumably the
-> > > dependency is going through qcom -> arm-soc
+Quoting Konrad Dybcio (2021-08-29 07:09:38)
+>=20
+> On 09.06.2021 16:55, Konrad Dybcio wrote:
+> > Add documentation for the MSM8994 GCC driver.
 > >
-> > It looks like Bjorn did not apply his patches in the for-5.15 series, so
-> > we'd have to wait anyway. Probably I should rebase these patches instead
-> > on Rajendra's required-opps patch (which is going in this window).
-> >
->
-> Ok. Thanks. I'll drop it from my queue for now.
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> > ---
+> >  .../bindings/clock/qcom,gcc-msm8994.yaml      | 72 +++++++++++++++++++
+> >  1 file changed, 72 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ms=
+m8994.yaml
+>=20
+>=20
+> Since the MMCC got merged, could this series also be reviewed?
+>=20
 
-Just for the reference. I've sent v7 of this patchset. After thinking
-more about power domains relationship, I think we have a hole in the
-abstraction here. Currently subdomains cause power domains to be
-powered up, but do not dictate the performance level the parent domain
-should be working in. While this does not look like an issue for the
-gdsc (and thus it can be easily solved by the Bjorn's patches, which
-enforce rpmhpd to be powered on to 'at least lowest possible'
-performance state, this might be not the case for the future links. I
-think at some point the pd_add_subdomain() interface should be
-extended with the ability to specify minimum required performance
-state when the link becomes on. Until that time I have changed code to
-enforce having clock controller in pm resume state when gdsc is
-enabled, thus CC itself votes on parent's (rpmhpd) performance state.
-
-
--- 
-With best wishes
-Dmitry
+I don't see it in my queue anymore. Resend?
