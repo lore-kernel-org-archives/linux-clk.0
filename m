@@ -2,85 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409CEC4320A
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 19:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CB3C432BE
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 19:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29D6960ED8
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 19:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D2260C41
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 19:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236033AbhH2The (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 15:37:34 -0400
-Received: from relay05.th.seeweb.it ([5.144.164.166]:48709 "EHLO
-        relay05.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235910AbhH2ThZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Aug 2021 15:37:25 -0400
-Received: from localhost.localdomain (83.6.166.149.neoplus.adsl.tpnet.pl [83.6.166.149])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id A6A3F3E83D;
-        Sun, 29 Aug 2021 21:36:30 +0200 (CEST)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     ~postmarketos/upstreaming@lists.sr.ht
-Cc:     martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        id S233976AbhH2Tsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 15:48:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231354AbhH2Tsm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Aug 2021 15:48:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8982760C41;
+        Sun, 29 Aug 2021 19:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630266469;
+        bh=Ksu2vYoflPDWXoUQE5SmdmZfKvHqGucVHmVRQOzB+mY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jCYcyzzb+5ZLzbEmhrVZqrJJPsqWKy0GpV2d5mT/2bQukmOmDq4Px7qzMAphIK4lZ
+         09STacznATYO40bVpfa1/1HlzhdbojL4yXau2kwrjwCWN38Pjjd08eSamBu4CgE+iE
+         F93sFuuVA/2doKqfKN+FyqTFofGuj2SvBkR+j1qd9EWsgdyq3L/AUb7qO7melhgHmN
+         42TwuC3JeqL8SFEV+6k/GstK/31DhBlQ60DA9m/RxB0hFsM5ThTYzDMWz7IiHPYU1y
+         L2lnyDrCkTK+YT/+G3MhjLL1bMBCblmLG3hGSAJLDAPEEISSIdDyoEAFzUX56B0HSK
+         QPzVS7rZSv0hw==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v2 6/9] clk: qcom: gcc-msm8994: Remove the inexistent GDSC_PCIE
-Date:   Sun, 29 Aug 2021 21:36:13 +0200
-Message-Id: <20210829193617.4105-6-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210829193617.4105-1-konrad.dybcio@somainline.org>
-References: <20210829193617.4105-1-konrad.dybcio@somainline.org>
+Subject: [GIT PULL] clk fixes for v5.14-rc7
+Date:   Sun, 29 Aug 2021 12:47:48 -0700
+Message-Id: <20210829194748.682333-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.33.0.259.gc128427fd7-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This GDSC is not present on msm8994.
+The following changes since commit 9711759a87a041705148161b937ec847048d882e:
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- drivers/clk/qcom/gcc-msm8994.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+  clk: qcom: gdsc: Ensure regulator init state matches GDSC state (2021-08-05 18:19:04 -0700)
 
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 98b2fd429629..2ed206ecb60d 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -2485,14 +2485,6 @@ static struct clk_branch gcc_prng_ahb_clk = {
- 	},
- };
- 
--static struct gdsc pcie_gdsc = {
--		.gdscr = 0x1e18,
--		.pd = {
--			.name = "pcie",
--		},
--		.pwrsts = PWRSTS_OFF_ON,
--};
--
- static struct gdsc pcie_0_gdsc = {
- 		.gdscr = 0x1ac4,
- 		.pd = {
-@@ -2682,7 +2674,8 @@ static struct clk_regmap *gcc_msm8994_clocks[] = {
- };
- 
- static struct gdsc *gcc_msm8994_gdscs[] = {
--	[PCIE_GDSC] = &pcie_gdsc,
-+	/* This GDSC does not exist, but ABI has to remain intact */
-+	[PCIE_GDSC] = NULL,
- 	[PCIE_0_GDSC] = &pcie_0_gdsc,
- 	[PCIE_1_GDSC] = &pcie_1_gdsc,
- 	[USB30_GDSC] = &usb30_gdsc,
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 1669a941f7c4844ae808cf441db51dde9e94db07:
+
+  clk: renesas: rcar-usb2-clock-sel: Fix kernel NULL pointer dereference (2021-08-28 21:29:36 -0700)
+
+----------------------------------------------------------------
+One hot fix for a NULL pointer deref in the Renesas usb clk driver
+
+----------------------------------------------------------------
+Adam Ford (1):
+      clk: renesas: rcar-usb2-clock-sel: Fix kernel NULL pointer dereference
+
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 -- 
-2.33.0
-
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
