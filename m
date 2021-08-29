@@ -2,90 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B55C432BE
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87CCC4320A
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6C3D60F44
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B052560F45
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 18:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhH2S1b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 14:27:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47658 "EHLO mail.kernel.org"
+        id S232897AbhH2SjT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 14:39:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235664AbhH2S1a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 29 Aug 2021 14:27:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F91460F3A;
-        Sun, 29 Aug 2021 18:26:38 +0000 (UTC)
+        id S231919AbhH2SjS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Aug 2021 14:39:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EBEB60E73;
+        Sun, 29 Aug 2021 18:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630261598;
-        bh=nKCTcBqz5WPjxEtG2krSvcfWV1osO03SdX1Dref/wBc=;
+        s=k20201202; t=1630262306;
+        bh=a+fDHlf5S7w5I7Kq1LzJ90Pr9i1mEOucSlmKNIBkhxY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gRNqnt/A1jEsAGOH5jlXpYyRf1qdZjXZ5zzARBSi99TYNUqCr2PEslLuEV3SEiU7y
-         VFPFY+LKrobIP+cGTAX/rqVD+qePRS43myF95JCJtV4b89qXjiYBewo3l4RkDR0G5z
-         mgYUFR93yNAMuBHsyADW+Kubp0jDkQg/uaf2GtVfbbCSPiNadoyP+3sP0Aq0VwUH2B
-         XqJAxHBxvEly9U48O/SL4nhFvw56dzqnC2C0w2/8FSy1mDaRj0w8Z9/6lKSUfViPeX
-         VmDEs4FMjC9/Qce6vGvc3a7v3pzwgrxIbwnaGYqGz1+wcU14HPh5WbLorAXVuZbm/I
-         C8rZufk6WKttQ==
+        b=JIMF6VCnq8UV9SR2Pg41OJPBQxtTTac5Ka0SMvW1qcRh3VKJICcbarbmSJ5gcDArI
+         gfuQ8/+E1hWfWJFzAO/xe15I7Dz/4JihMzuxJw9VSdvevjoEt2JFHs6rx4pP2Di/ta
+         K18YlJ/ySpHTrGh1b1ZF1dz22WzUq0ZVdfgCU4VLu312sxpMeGFZ4zLcUM0fVw/t9b
+         u0DqqNtt2L5HDrvSkA+X+33/2frpvZenzMx/U4H6plU1GpMQq5PbKpNVYKPu6rupdQ
+         IxdLGer687yFOd9EBEaelEqADZb/ozu3/xqqdg+SFMgtKUEqEOQ3I08omBpDofRM8w
+         tiNQlLcRlAkfw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210820111504.350-7-chun-jie.chen@mediatek.com>
-References: <20210820111504.350-1-chun-jie.chen@mediatek.com> <20210820111504.350-7-chun-jie.chen@mediatek.com>
-Subject: Re: [v2 06/24] clk: mediatek: Add MT8195 apmixedsys clock support
+In-Reply-To: <20210322215047.1062540-1-arnd@kernel.org>
+References: <20210322215047.1062540-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix old-style declaration
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 29 Aug 2021 11:26:36 -0700
-Message-ID: <163026159693.2676726.8564637566834797534@swboyd.mtv.corp.google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Sun, 29 Aug 2021 11:38:25 -0700
+Message-ID: <163026230526.2676726.10182158463483641713@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chun-Jie Chen (2021-08-20 04:14:46)
-> Add MT8195 apmixedsys clock controller which provides Plls
-> generated from SoC 26m and ssusb clock gate control.
+Quoting Arnd Bergmann (2021-03-22 14:50:41)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> With extra warnings enabled, gcc complains about a slightly odd
+> prototype:
+>=20
+> drivers/clk/tegra/clk-dfll.c:1380:1: error: 'inline' is not at beginning =
+of declaration [-Werror=3Dold-style-declaration]
+>  1380 | static void inline dfll_debug_init(struct tegra_dfll *td) { }
+>=20
+> Move the 'inline' keyword to the start of the line.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/mediatek/Kconfig                 |   8 +
->  drivers/clk/mediatek/Makefile                |   1 +
->  drivers/clk/mediatek/clk-mt8195-apmixedsys.c | 145 +++++++++++++++++++
->  3 files changed, 154 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8195-apmixedsys.c
->=20
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 576babd86f98..7ba1f4118e0d 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -580,6 +580,14 @@ config COMMON_CLK_MT8192_VENCSYS
->         help
->           This driver supports MediaTek MT8192 vencsys clocks.
-> =20
-> +config COMMON_CLK_MT8195
-> +        bool "Clock driver for MediaTek MT8195"
-> +        depends on ARM64 || COMPILE_TEST
-> +        select COMMON_CLK_MEDIATEK
-> +        default ARM64
 
-Please no. The default should presumably be ARCH_MEDIATEK, or just
-nothing at all.
-
-> +        help
-> +          This driver supports MediaTek MT8195 basic clocks.
-> +
->  config COMMON_CLK_MT8516
->         bool "Clock driver for MediaTek MT8516"
->         depends on ARCH_MEDIATEK || COMPILE_TEST
+Applied to clk-next
