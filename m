@@ -3,99 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC84C432BE
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 04:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F70C432BE
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 04:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 950DA60F23
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 04:11:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C71760F23
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Aug 2021 04:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbhH2EMe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Aug 2021 00:12:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38316 "EHLO mail.kernel.org"
+        id S229730AbhH2EPt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Aug 2021 00:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229534AbhH2EMe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 29 Aug 2021 00:12:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E117160E94;
-        Sun, 29 Aug 2021 04:11:42 +0000 (UTC)
+        id S229534AbhH2EPt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Aug 2021 00:15:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E981060E08;
+        Sun, 29 Aug 2021 04:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630210303;
-        bh=QLosJFKLxCjUmRbuQiHnZosizIxS9SJGkcBKO3FBan8=;
+        s=k20201202; t=1630210498;
+        bh=Qg4wsLXlDpD1zwmlBbHXRGxiCepR2RCY/C5RXovTJYE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=MZQeCsp7RrZDu2m24AZ/MdSdA2v/jLtm1HAt+l7D0sdq57ERxcA9lXqoqXHznp/Xw
-         /Rr3oHcuXRoJemEBsf9qI0kbAqgWKPJmqX8b5euugfX8a1S5bscqifB3A8ZqrGbtmX
-         IuF9GWJ3xEPlo8rZDv6VUxm2OJQ2Yn2bXwg9YG1attLbCv36x1SqvbpjUATaON9Rz9
-         rP1ePj7igogn/hv5SbTOYw1Hyst3QZWr0qu4LlrA2Mf59LBStGKL1ZhsRcTg6hwgl3
-         YtM0BmACTbQlY9gLS97yncCRR2VPbbu9YQwXSfz08U7ua6ODJ3WVdQNkNiGvXaOLMm
-         tJrz6PIvcCtFw==
+        b=F79Es4jWcaSofx0PWWTDpkY2/fviRSgxhnhtqTkbECFjzGoClSTyA+a9oEQ577Fp8
+         fZNx0nYTVEKngO+QSmLnLseUouai/6IK4LPYpnqaXUwsHtm5SiknPrQTeTGYpd3uLd
+         Ua2pJArM3EZn/jtl3OnrA91tQsO1RWYQSE4fDa8xfeHx7Mehi7PyK4ioiqzLcRf0Zw
+         yY8emlBZKjUfgAekSdJlix2KEC8hoV5kW9M3GskpDUGiqbNRYtfuVz7jZS/Z//EQ9Q
+         09fpczCiJOVZ8/G745i57GM4Jp7POE8mXodFz4zLXlWYspBhBeJVJR8s2tnxOuT+YB
+         aHCsx0S1WSJhw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210814235514.403426-1-linus.walleij@linaro.org>
-References: <20210814235514.403426-1-linus.walleij@linaro.org>
-Subject: Re: [PATCH] clk: kirkwood: Fix a clocking boot regression
+In-Reply-To: <20210813032429.14715-4-miles.chen@mediatek.com>
+References: <20210813032429.14715-1-miles.chen@mediatek.com> <20210813032429.14715-4-miles.chen@mediatek.com>
+Subject: Re: [RESEND PATCH 3/4] clk: mediatek: support COMMON_CLK_MT6779 module build
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Sat, 28 Aug 2021 21:11:41 -0700
-Message-ID: <163021030161.2676726.8456868938456366040@swboyd.mtv.corp.google.com>
+Cc:     Wendell Lin <wendell.lin@mediatek.com>,
+        Hanks Chen <hanks.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
+        Miles Chen <miles.chen@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Date:   Sat, 28 Aug 2021 21:14:56 -0700
+Message-ID: <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Linus Walleij (2021-08-14 16:55:14)
-> Since a few kernel releases the Pogoplug 4 has crashed like this
-> during boot:
->=20
-> Unable to handle kernel NULL pointer dereference at virtual address 00000=
-002
-> (...)
-> [<c04116ec>] (strlen) from [<c00ead80>] (kstrdup+0x1c/0x4c)
-> [<c00ead80>] (kstrdup) from [<c04591d8>] (__clk_register+0x44/0x37c)
-> [<c04591d8>] (__clk_register) from [<c04595ec>] (clk_hw_register+0x20/0x4=
-4)
-> [<c04595ec>] (clk_hw_register) from [<c045bfa8>] (__clk_hw_register_mux+0=
-x198/0x1e4)
-> [<c045bfa8>] (__clk_hw_register_mux) from [<c045c050>] (clk_register_mux_=
-table+0x5c/0x6c)
-> [<c045c050>] (clk_register_mux_table) from [<c0acf3e0>] (kirkwood_clk_mux=
-ing_setup.constprop.0+0x13c/0x1ac)
-> [<c0acf3e0>] (kirkwood_clk_muxing_setup.constprop.0) from [<c0aceae0>] (o=
-f_clk_init+0x12c/0x214)
-> [<c0aceae0>] (of_clk_init) from [<c0ab576c>] (time_init+0x20/0x2c)
-> [<c0ab576c>] (time_init) from [<c0ab3d18>] (start_kernel+0x3dc/0x56c)
-> [<c0ab3d18>] (start_kernel) from [<00000000>] (0x0)
-> Code: e3130020 1afffffb e12fff1e c08a1078 (e5d03000)
->=20
-> This is because the "powersave" mux clock 0 was provided in an unterminat=
-ed
-> array, which is required by the loop in the driver:
->=20
->         /* Count, allocate, and register clock muxes */
->         for (n =3D 0; desc[n].name;)
->                 n++;
->=20
-> Here n will go out of bounds and then call clk_register_mux() on random
-> memory contents after the mux clock.
->=20
-> Fix this by terminating the array with a blank entry.
->=20
-> Fixes: 105299381d87 ("cpufreq: kirkwood: use the powersave multiplexer")
-> Cc: stable@vger.kernel.org
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+Quoting Miles Chen (2021-08-12 20:24:28)
+> diff --git a/drivers/clk/mediatek/clk-mt6779-aud.c b/drivers/clk/mediatek=
+/clk-mt6779-aud.c
+> index 11b209f95e25..439c0bc94b73 100644
+> --- a/drivers/clk/mediatek/clk-mt6779-aud.c
+> +++ b/drivers/clk/mediatek/clk-mt6779-aud.c
+> @@ -4,6 +4,7 @@
+>   * Author: Wendell Lin <wendell.lin@mediatek.com>
+>   */
+> =20
+> +#include <linux/module.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> @@ -115,3 +116,4 @@ static struct platform_driver clk_mt6779_aud_drv =3D {
+>  };
+> =20
+>  builtin_platform_driver(clk_mt6779_aud_drv);
+> +MODULE_LICENSE("GPL");
 
-Applied to clk-next
+How does this work? builtin_platform_driver() means that it's not
+modular code. Shouldn't that be module_platform_driver()? Have you tried
+loading and unloading the module?
