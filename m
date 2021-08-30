@@ -2,100 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682E9C432BE
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCCCC4320A
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 22:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF0660F5B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02EBE60F5E
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 22:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbhH3SoD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 14:44:03 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50118 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229738AbhH3SoB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 14:44:01 -0400
-X-UUID: 3c38feffae8d4552b46d08b8f31ad6cd-20210831
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=crEFcIJTwJOrLYU5quGGhCcTCYZ9VLSPd8BGPPPojGA=;
-        b=BSuZvyQw78QfkmkEI6Rrv5Klossyk2XJHBT8hKa5VpcgLWC5/9MyWDcOLQbRsXNSbIeW98kBGIUReWu90oudjM/gpS83yOUH6NGqPEpHldJtqByCwiPnen9ajEAWAd+KKheb1eU7+qCCX3uq9dtf7IwOYlo9VE325CvvfrBf+Hg=;
-X-UUID: 3c38feffae8d4552b46d08b8f31ad6cd-20210831
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1083142343; Tue, 31 Aug 2021 02:43:05 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 31 Aug 2021 02:43:04 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 31 Aug 2021 02:43:04 +0800
-Message-ID: <1630348984.24981.2.camel@mtkswgap22>
-Subject: Re: [RESEND PATCH 3/4] clk: mediatek: support COMMON_CLK_MT6779
- module build
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        "Hanks Chen" <hanks.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Lee Jones <lee.jones@linaro.org>
-Date:   Tue, 31 Aug 2021 02:43:04 +0800
-In-Reply-To: <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
-References: <20210813032429.14715-1-miles.chen@mediatek.com>
-         <20210813032429.14715-4-miles.chen@mediatek.com>
-         <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S238513AbhH3WRJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 18:17:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238281AbhH3WRI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Aug 2021 18:17:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A516B60462;
+        Mon, 30 Aug 2021 22:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630361774;
+        bh=fQTfKaZiLXoQnkx1EXqsVQdQpppSFmhkr8OzjVUwZhc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=MpMZUPXfuhwJdFnuKUDrYy1cJu7+ziEUywHrLu/b5hwbJniwEnOlgqQwKen76YPdT
+         bIBgbzctj0EGFoX/3D4ZKqraQRN1YJyHSHH0abUwDCrNJgN9OD0hoRHEl8zDmDvn6P
+         V+kaXBLhzpzZj4pGNG3vP4IL+1DZD92sv+J8OC5ZKc5qLdg3yB1sgot3lTIjZEKPvw
+         Q9tqdbx9vsZI07eZG2FtZZZfd8QSvDo4iIa73cbS7vo6P7e6rnOWwhsuvf0OZow3Hl
+         ZiBtyjdfBOEeL8zVxCnXsPInzRqqAw/Asi194FGwGlT49lwjnbiZo/MZY6f/WyW9JP
+         AYD0QY46LIcMQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210830182445.167527-2-marijn.suijten@somainline.org>
+References: <20210830182445.167527-1-marijn.suijten@somainline.org> <20210830182445.167527-2-marijn.suijten@somainline.org>
+Subject: Re: [PATCH v2 1/2] drm/msm/dsi: Use "ref" fw clock instead of global name for VCO parent
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Stephen Boyd <swboyd@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
+Date:   Mon, 30 Aug 2021 15:16:13 -0700
+Message-ID: <163036177339.2676726.12271104951144475163@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gU2F0LCAyMDIxLTA4LTI4IGF0IDIxOjE0IC0wNzAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
-IFF1b3RpbmcgTWlsZXMgQ2hlbiAoMjAyMS0wOC0xMiAyMDoyNDoyOCkNCj4gPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS1hdWQuYyBiL2RyaXZlcnMvY2xrL21l
-ZGlhdGVrL2Nsay1tdDY3NzktYXVkLmMNCj4gPiBpbmRleCAxMWIyMDlmOTVlMjUuLjQzOWMwYmM5
-NGI3MyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LWF1
-ZC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS1hdWQuYw0KPiA+
-IEBAIC00LDYgKzQsNyBAQA0KPiA+ICAgKiBBdXRob3I6IFdlbmRlbGwgTGluIDx3ZW5kZWxsLmxp
-bkBtZWRpYXRlay5jb20+DQo+ID4gICAqLw0KPiA+ICANCj4gPiArI2luY2x1ZGUgPGxpbnV4L21v
-ZHVsZS5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+DQo+ID4gICNpbmNs
-dWRlIDxsaW51eC9vZi5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+
-IEBAIC0xMTUsMyArMTE2LDQgQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgY2xrX210
-Njc3OV9hdWRfZHJ2ID0gew0KPiA+ICB9Ow0KPiA+ICANCj4gPiAgYnVpbHRpbl9wbGF0Zm9ybV9k
-cml2ZXIoY2xrX210Njc3OV9hdWRfZHJ2KTsNCj4gPiArTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0K
-PiANCj4gSG93IGRvZXMgdGhpcyB3b3JrPyBidWlsdGluX3BsYXRmb3JtX2RyaXZlcigpIG1lYW5z
-IHRoYXQgaXQncyBub3QNCj4gbW9kdWxhciBjb2RlLiBTaG91bGRuJ3QgdGhhdCBiZSBtb2R1bGVf
-cGxhdGZvcm1fZHJpdmVyKCk/IEhhdmUgeW91IHRyaWVkDQo+IGxvYWRpbmcgYW5kIHVubG9hZGlu
-ZyB0aGUgbW9kdWxlPw0KDQpzb3JyeSBmb3IgbXkgbGF0ZSByZXNwb25zZS4gDQoNClRoYW5rcyBm
-b3IgcG9pbnRpbmcgdGhpcyBvdXQuIEkgaGF2ZSB0aGUgc2FtZSBxdWVzdGlvbiB3aGVuIEkgd2Fz
-DQpidWlsZGluZyB0aGlzIHBhdGNoLiBUaGF0IHRpbWUgSSBmb3VuZCBzb21lIGV4YW1wbGVzIHdo
-ZXJlDQp0aGV5IGFyZSB1c2luZyBidWlsdGluX3BsYXRmb3JtX2RyaXZlciBhbmQgY2FuIGJlIGJ1
-aWx0IGFzIA0Ka2VybmVsIG1vZHVsZXM6DQoNCmNvbmZpZyBDTEtfSU1YOFFYUCAodHJpc3RhdGUp
-ICYmIGRyaXZlcnMvY2xrL2lteC9jbGstaW14OHF4cC1scGNnLmMNCmNvbmZpZyBDTEtfUkszMzk5
-ICh0cmlzdGF0ZSkgJiYgZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXJrMzM5OS5jDQoNCm15IGxv
-YWQgdGVzdDoNCmxvYWQgdGhlc2UgbW9kdWxlc3MgYW5kIGRvICdsc21vZCcgb24gdjUuMTQtcmMx
-L210Njc3OSBlbnZpcm9ubWVudDoNCg0KY2xrX210Njc3OV9hdWQgMTYzODQgMCBbcGVybWFuZW50
-XSwgTGl2ZSAweGZmZmY4MDAwMDhmZDgwMDANCmNsa19tdDY3NzlfbWZnIDE2Mzg0IDAgW3Blcm1h
-bmVudF0sIExpdmUgMHhmZmZmODAwMDA4ZmQwMDAwDQpjbGtfbXQ2Nzc5X3ZlbmMgMTYzODQgMCBb
-cGVybWFuZW50XSwgTGl2ZSAweGZmZmY4MDAwMDhmYzgwMDANCmNsa19tdDY3NzlfdmRlYyAxNjM4
-NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZjMDAwMA0KY2xrX210Njc3OV9jYW0g
-MTYzODQgMCBbcGVybWFuZW50XSwgTGl2ZSAweGZmZmY4MDAwMDhmYjgwMDANCmNsa19tdDY3Nzlf
-aXBlIDE2Mzg0IDAgW3Blcm1hbmVudF0sIExpdmUgMHhmZmZmODAwMDA4ZmIwMDAwDQpjbGtfbXQ2
-Nzc5X2ltZyAxNjM4NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZhODAwMA0KY2xr
-X210Njc3OV9tbSAxNjM4NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZhMDAwMA0K
-DQpJIGRpZCBub3QgdGVzdCAndW5sb2FkJyBrZXJuZWwgbW9kdWxlcyBiZWNhdXNlIEkgZGlkIG5v
-dA0KZGVmaW5lIG1vZHVsZV9leGl0IGluIHRoaXMgcGF0Y2guDQoNCkJ1dCBhcyB5b3UgcG9pbnRl
-ZCBvdXQsIGl0IHNob3VsZCBiZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyKCkuDQpJIHdpbGwgdXNl
-IG1vZHVsZV9wbGF0Zm9ybV9kcml2ZXIoKSBpbiB0aGUgbmV4dCBwYXRjaC4NCg0KDQpNaWxlcw0K
+Quoting Marijn Suijten (2021-08-30 11:24:44)
+> All DSI PHY/PLL drivers were referencing their VCO parent clock by a
+> global name, most of which don't exist or have been renamed.  These
+> clock drivers seem to function fine without that except the 14nm driver
+> for the sdm6xx [1].
+>=20
+> At the same time all DTs provide a "ref" clock as per the requirements
+> of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
+> that clock to use without relying on a global clock name, so that all
+> dependencies are explicitly defined in DT (the firmware) in the end.
+>=20
+> Note that msm8974 is the only board not providing this clock, and
+> apq8064 was providing the wrong clock (19.2MHz cxo instead of 27MHz
+> pxo).  Both have been been addressed in separate patches that are
+> supposed to land well in advance of this patchset.
+>=20
+> Furthermore not all board-DTs provided this clock initially but that
+> deficiency has been addressed in followup patches (see the Fixes:
+> below).  Those commits seem to assume that the clock was used, while
+> nothing in history indicates that this "ref" clock was ever retrieved.
+>=20
+> [1]: https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8=
+a1be96@somainline.org/
+>=20
+> Fixes: 79e51645a1dd ("arm64: dts: qcom: msm8916: Set 'xo_board' as ref cl=
+ock of the DSI PHY")
+> Fixes: 6969d1d9c615 ("ARM: dts: qcom-apq8064: Set 'cxo_board' as ref cloc=
+k of the DSI PHY")
+> Fixes: 0c0e72705a33 ("arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of t=
+he DSI PHYs")
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 4 +++-
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 4 +++-
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 4 +++-
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 4 +++-
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 4 +++-
+>  5 files changed, 15 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm=
+/msm/dsi/phy/dsi_phy_10nm.c
+> index e46b10fc793a..3cbb1f1475e8 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+> @@ -562,7 +562,9 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll=
+_10nm, struct clk_hw **prov
+>         char clk_name[32], parent[32], vco_name[32];
+>         char parent2[32], parent3[32], parent4[32];
+>         struct clk_init_data vco_init =3D {
+> -               .parent_names =3D (const char *[]){ "xo" },
+> +               .parent_data =3D &(const struct clk_parent_data) {
+> +                       .fw_name =3D "ref",
 
+Please also add .name as the old parent_names value so that newer
+kernels can be used without having to use new DT.
+
+> +               },
+>                 .num_parents =3D 1,
+>                 .name =3D vco_name,
+>                 .flags =3D CLK_IGNORE_UNUSED,
