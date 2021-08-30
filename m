@@ -2,114 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7CCC43214
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682E9C432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82D896101B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AF0660F5B
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238713AbhH3SZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 14:25:52 -0400
-Received: from m-r2.th.seeweb.it ([5.144.164.171]:41715 "EHLO
-        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238756AbhH3SZw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 14:25:52 -0400
-Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 8115B3E83E;
-        Mon, 30 Aug 2021 20:24:56 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     phone-devel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Andy Gross <agross@kernel.org>,
+        id S229708AbhH3SoD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 14:44:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:50118 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229738AbhH3SoB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 14:44:01 -0400
+X-UUID: 3c38feffae8d4552b46d08b8f31ad6cd-20210831
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=crEFcIJTwJOrLYU5quGGhCcTCYZ9VLSPd8BGPPPojGA=;
+        b=BSuZvyQw78QfkmkEI6Rrv5Klossyk2XJHBT8hKa5VpcgLWC5/9MyWDcOLQbRsXNSbIeW98kBGIUReWu90oudjM/gpS83yOUH6NGqPEpHldJtqByCwiPnen9ajEAWAd+KKheb1eU7+qCCX3uq9dtf7IwOYlo9VE325CvvfrBf+Hg=;
+X-UUID: 3c38feffae8d4552b46d08b8f31ad6cd-20210831
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1083142343; Tue, 31 Aug 2021 02:43:05 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 31 Aug 2021 02:43:04 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 31 Aug 2021 02:43:04 +0800
+Message-ID: <1630348984.24981.2.camel@mtkswgap22>
+Subject: Re: [RESEND PATCH 3/4] clk: mediatek: support COMMON_CLK_MT6779
+ module build
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH v2 2/2] clk: qcom: gcc-sdm660: Remove transient global "xo" clock
-Date:   Mon, 30 Aug 2021 20:24:45 +0200
-Message-Id: <20210830182445.167527-3-marijn.suijten@somainline.org>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210830182445.167527-1-marijn.suijten@somainline.org>
-References: <20210830182445.167527-1-marijn.suijten@somainline.org>
+        Wendell Lin <wendell.lin@mediatek.com>,
+        "Hanks Chen" <hanks.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>
+Date:   Tue, 31 Aug 2021 02:43:04 +0800
+In-Reply-To: <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
+References: <20210813032429.14715-1-miles.chen@mediatek.com>
+         <20210813032429.14715-4-miles.chen@mediatek.com>
+         <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The DSI PHY/PLL was relying on a global "xo" clock to be found, but the
-real clock is named "xo_board" in the DT.  The standard nowadays is to
-never use global clock names anymore but require the firmware (DT) to
-provide every clock binding explicitly with .fw_name.  The DSI PLLs have
-since been converted to this mechanism (specifically 14nm for SDM660)
-and this transient clock can now be removed.
-
-This issue was originally discovered in:
-https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
-and prevented the removal of "xo" at that time.
-
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
----
- drivers/clk/qcom/gcc-sdm660.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-index 9b97425008ce..16fd16351f95 100644
---- a/drivers/clk/qcom/gcc-sdm660.c
-+++ b/drivers/clk/qcom/gcc-sdm660.c
-@@ -37,19 +37,6 @@ enum {
- 	P_GPLL1_EARLY_DIV,
- };
- 
--static struct clk_fixed_factor xo = {
--	.mult = 1,
--	.div = 1,
--	.hw.init = &(struct clk_init_data){
--		.name = "xo",
--		.parent_data = &(const struct clk_parent_data) {
--			.fw_name = "xo"
--		},
--		.num_parents = 1,
--		.ops = &clk_fixed_factor_ops,
--	},
--};
--
- static struct clk_alpha_pll gpll0_early = {
- 	.offset = 0x0,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-@@ -2281,7 +2268,6 @@ static struct gdsc pcie_0_gdsc = {
- };
- 
- static struct clk_hw *gcc_sdm660_hws[] = {
--	&xo.hw,
- 	&gpll0_early_div.hw,
- 	&gpll1_early_div.hw,
- };
--- 
-2.33.0
+T24gU2F0LCAyMDIxLTA4LTI4IGF0IDIxOjE0IC0wNzAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
+IFF1b3RpbmcgTWlsZXMgQ2hlbiAoMjAyMS0wOC0xMiAyMDoyNDoyOCkNCj4gPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS1hdWQuYyBiL2RyaXZlcnMvY2xrL21l
+ZGlhdGVrL2Nsay1tdDY3NzktYXVkLmMNCj4gPiBpbmRleCAxMWIyMDlmOTVlMjUuLjQzOWMwYmM5
+NGI3MyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LWF1
+ZC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS1hdWQuYw0KPiA+
+IEBAIC00LDYgKzQsNyBAQA0KPiA+ICAgKiBBdXRob3I6IFdlbmRlbGwgTGluIDx3ZW5kZWxsLmxp
+bkBtZWRpYXRlay5jb20+DQo+ID4gICAqLw0KPiA+ICANCj4gPiArI2luY2x1ZGUgPGxpbnV4L21v
+ZHVsZS5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+DQo+ID4gICNpbmNs
+dWRlIDxsaW51eC9vZi5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+
+IEBAIC0xMTUsMyArMTE2LDQgQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgY2xrX210
+Njc3OV9hdWRfZHJ2ID0gew0KPiA+ICB9Ow0KPiA+ICANCj4gPiAgYnVpbHRpbl9wbGF0Zm9ybV9k
+cml2ZXIoY2xrX210Njc3OV9hdWRfZHJ2KTsNCj4gPiArTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0K
+PiANCj4gSG93IGRvZXMgdGhpcyB3b3JrPyBidWlsdGluX3BsYXRmb3JtX2RyaXZlcigpIG1lYW5z
+IHRoYXQgaXQncyBub3QNCj4gbW9kdWxhciBjb2RlLiBTaG91bGRuJ3QgdGhhdCBiZSBtb2R1bGVf
+cGxhdGZvcm1fZHJpdmVyKCk/IEhhdmUgeW91IHRyaWVkDQo+IGxvYWRpbmcgYW5kIHVubG9hZGlu
+ZyB0aGUgbW9kdWxlPw0KDQpzb3JyeSBmb3IgbXkgbGF0ZSByZXNwb25zZS4gDQoNClRoYW5rcyBm
+b3IgcG9pbnRpbmcgdGhpcyBvdXQuIEkgaGF2ZSB0aGUgc2FtZSBxdWVzdGlvbiB3aGVuIEkgd2Fz
+DQpidWlsZGluZyB0aGlzIHBhdGNoLiBUaGF0IHRpbWUgSSBmb3VuZCBzb21lIGV4YW1wbGVzIHdo
+ZXJlDQp0aGV5IGFyZSB1c2luZyBidWlsdGluX3BsYXRmb3JtX2RyaXZlciBhbmQgY2FuIGJlIGJ1
+aWx0IGFzIA0Ka2VybmVsIG1vZHVsZXM6DQoNCmNvbmZpZyBDTEtfSU1YOFFYUCAodHJpc3RhdGUp
+ICYmIGRyaXZlcnMvY2xrL2lteC9jbGstaW14OHF4cC1scGNnLmMNCmNvbmZpZyBDTEtfUkszMzk5
+ICh0cmlzdGF0ZSkgJiYgZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXJrMzM5OS5jDQoNCm15IGxv
+YWQgdGVzdDoNCmxvYWQgdGhlc2UgbW9kdWxlc3MgYW5kIGRvICdsc21vZCcgb24gdjUuMTQtcmMx
+L210Njc3OSBlbnZpcm9ubWVudDoNCg0KY2xrX210Njc3OV9hdWQgMTYzODQgMCBbcGVybWFuZW50
+XSwgTGl2ZSAweGZmZmY4MDAwMDhmZDgwMDANCmNsa19tdDY3NzlfbWZnIDE2Mzg0IDAgW3Blcm1h
+bmVudF0sIExpdmUgMHhmZmZmODAwMDA4ZmQwMDAwDQpjbGtfbXQ2Nzc5X3ZlbmMgMTYzODQgMCBb
+cGVybWFuZW50XSwgTGl2ZSAweGZmZmY4MDAwMDhmYzgwMDANCmNsa19tdDY3NzlfdmRlYyAxNjM4
+NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZjMDAwMA0KY2xrX210Njc3OV9jYW0g
+MTYzODQgMCBbcGVybWFuZW50XSwgTGl2ZSAweGZmZmY4MDAwMDhmYjgwMDANCmNsa19tdDY3Nzlf
+aXBlIDE2Mzg0IDAgW3Blcm1hbmVudF0sIExpdmUgMHhmZmZmODAwMDA4ZmIwMDAwDQpjbGtfbXQ2
+Nzc5X2ltZyAxNjM4NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZhODAwMA0KY2xr
+X210Njc3OV9tbSAxNjM4NCAwIFtwZXJtYW5lbnRdLCBMaXZlIDB4ZmZmZjgwMDAwOGZhMDAwMA0K
+DQpJIGRpZCBub3QgdGVzdCAndW5sb2FkJyBrZXJuZWwgbW9kdWxlcyBiZWNhdXNlIEkgZGlkIG5v
+dA0KZGVmaW5lIG1vZHVsZV9leGl0IGluIHRoaXMgcGF0Y2guDQoNCkJ1dCBhcyB5b3UgcG9pbnRl
+ZCBvdXQsIGl0IHNob3VsZCBiZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyKCkuDQpJIHdpbGwgdXNl
+IG1vZHVsZV9wbGF0Zm9ybV9kcml2ZXIoKSBpbiB0aGUgbmV4dCBwYXRjaC4NCg0KDQpNaWxlcw0K
 
