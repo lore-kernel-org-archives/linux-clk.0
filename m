@@ -2,136 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24520C43214
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 12:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DABCC4320A
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC0360FA0
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 12:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C92460295
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235904AbhH3MuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 08:50:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236684AbhH3MuB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Aug 2021 08:50:01 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45AF260524;
-        Mon, 30 Aug 2021 12:49:02 +0000 (UTC)
-Date:   Mon, 30 Aug 2021 13:52:13 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, bcousson@baylibre.com,
-        Tony Lindgren <tony@atomide.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "Ryan J . Barnett" <ryan.barnett@collins.com>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 10/40] mfd: ti_am335x_tscadc: Drop extra spacing when
- declaring stack variables
-Message-ID: <20210830135213.3eeb93f8@jic23-huawei>
-In-Reply-To: <20210825152518.379386-11-miquel.raynal@bootlin.com>
-References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
-        <20210825152518.379386-11-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        id S236742AbhH3NWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 09:22:53 -0400
+Received: from mail-ua1-f43.google.com ([209.85.222.43]:34784 "EHLO
+        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236609AbhH3NWw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 09:22:52 -0400
+Received: by mail-ua1-f43.google.com with SMTP id l24so7792884uai.1;
+        Mon, 30 Aug 2021 06:21:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tulhgSVoxeTOojsoAsEpBrUnTXS8uw7hLO3RXtcVYJg=;
+        b=ODWBENU2Ua73I0i91NDU2ldHP2vYzLTX9diXHuscVDYSzwTy0MK5bMgtkwt4E5i1UL
+         62Q6p2kzegfwE/ILC9j8p5QVvOgHlMLZ9K+shebsu2QD19rtHAS4BU8e6a1BK9x0zxuK
+         9iBd03TMLW84B2Xxbd8Xml9mthZUYVKPfv9621WfCpYFeUYIO+wowYVqDELuTV1Srldq
+         J/I4pC+ALhhE7v7Bwmbon51NISIMT+geLYih698uyioE4OVlpBiX0cXTgNOnmLhXeiCr
+         i2LZfzavsCeFjHU2nh9Z37G5611SaBtM016aNcs4aCKvwezRR/Vdtt9NvMH4E6taX4AH
+         mP3A==
+X-Gm-Message-State: AOAM531z05uxFSU44LugpET2GMGW7i3i7BGqcOk8APSmS5YbpZ25tJ73
+        /GfhY4p/mVMbA4bIN6FvOHgCDesFSGRujTxSbiU=
+X-Google-Smtp-Source: ABdhPJzJ04o53AzwnlEMqTT60E0ti5rrv/o1UEgsXMdzMrbZzkRGozvnzAuD3EvEJdFkMkPvlkyV2iz+GaZwPUikkMA=
+X-Received: by 2002:a9f:35aa:: with SMTP id t39mr14181233uad.89.1630329718210;
+ Mon, 30 Aug 2021 06:21:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20210815103014.21208-1-biju.das.jz@bp.renesas.com>
+ <20210815103014.21208-4-biju.das.jz@bp.renesas.com> <CAMuHMdXj8xmJ0ySOJQ74AjkTDJUQwTJ93rYjyRPnJ1dwGfj1xg@mail.gmail.com>
+ <OS0PR01MB592221C0F7BBD92216EDA1B986C49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <OS0PR01MB592231527BC613A0BFCB200286CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB592231527BC613A0BFCB200286CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 30 Aug 2021 15:21:46 +0200
+Message-ID: <CAMuHMdVHwEb8ktTHeBjutZkBmS9j0Ud8NwN60hCK-xjgaWXDhQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] clk: renesas: rzg2l: Add support to handle coupled clocks
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Aug 2021 17:24:48 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Hi Biju,
 
-> Many variables will be updated (renamed, dropped, added) in the upcoming
-> changes, so let's simplify the style to avoid messing with spaces over
-> and over again.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-I agree with dropping the spaces, but not so much with reordering the elements.
-Whilst it obviously doesn't make any difference to padding etc, it does
-require more thought that I'd want to expend reviewing a patch like this
-to establish whether there was a semantic meaning to the original order that
-we are disrupting.
+On Mon, Aug 30, 2021 at 10:36 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: RE: [PATCH v3 3/4] clk: renesas: rzg2l: Add support to handle
+> > coupled clocks
+> > > On Sun, Aug 15, 2021 at 12:30 PM Biju Das <biju.das.jz@bp.renesas.com>
+> > > wrote:
+> > > > The AXI and CHI clocks use the same register bit for controlling
+> > > > clock output. Add a new clock type for coupled clocks, which sets
+> > > > the CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled,
+> > > > and clears the bit only when both clocks are disabled.
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > ---
+> > > > v2->v3:
+> > > >  * Reworked as per Geert's suggestion
+> > > >  * Added enabled flag to track the status of clock, if it is coupled
+> > > >    with another clock
+> > > >  * Introduced siblings pointer which points to the other coupled
+> > > >    clock
+> > > >  * coupled clock linking is done during module clk register.
+> > > >  * rzg2l_mod_clock_is_enabled function returns soft state of the
+> > > >    module clocks, if it is coupled with another clock
+> > > >  * Updated the commit header
 
-Jonathan
+> > > You forgot to initialize mstp_clock.enabled to match the current
+> > > hardware state.
+> >
+> > OK. will initialize mstp_clock.enabled to match the current hardware
+> > state.
+>
+> While working on this, I found a bug in clk driver with patch
+> ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+>
+> As per H/W manual(0.50), clock monitor status "1" means clock is supplied and
+> "0" means clock supply is stopped.
+>
+> But the "rzg2l_mod_clock_is_enabled" function returns inverted value instead.
 
+Oops...
 
-> ---
->  drivers/mfd/ti_am335x_tscadc.c | 28 +++++++++++++---------------
->  1 file changed, 13 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-> index 540c6dcef541..f0824732badf 100644
-> --- a/drivers/mfd/ti_am335x_tscadc.c
-> +++ b/drivers/mfd/ti_am335x_tscadc.c
-> @@ -113,18 +113,16 @@ static void tscadc_idle_config(struct ti_tscadc_dev *tscadc)
->  
->  static	int ti_tscadc_probe(struct platform_device *pdev)
->  {
-> -	struct ti_tscadc_dev	*tscadc;
-> -	struct resource		*res;
-> -	struct clk		*clk;
-> -	struct device_node	*node;
-> -	struct mfd_cell		*cell;
-> -	struct property         *prop;
-> -	const __be32            *cur;
-> -	u32			val;
-> -	int			err, ctrl;
-> -	int			clock_rate;
-> -	int			tsc_wires = 0, adc_channels = 0, total_channels;
-> -	int			readouts = 0;
-> +	struct ti_tscadc_dev *tscadc;
-> +	struct device_node *node;
-> +	struct property *prop;
-> +	struct mfd_cell *cell;
-> +	struct resource *res;
-> +	const __be32 *cur;
-> +	struct clk *clk;
-> +	u32 val;
-> +	int tsc_wires = 0, adc_channels = 0, readouts = 0;
-> +	int total_channels, clock_rate, ctrl, err;
->  
->  	if (!pdev->dev.of_node) {
->  		dev_err(&pdev->dev, "Could not find valid DT data.\n");
-> @@ -278,7 +276,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  
->  static int ti_tscadc_remove(struct platform_device *pdev)
->  {
-> -	struct ti_tscadc_dev	*tscadc = platform_get_drvdata(pdev);
-> +	struct ti_tscadc_dev *tscadc = platform_get_drvdata(pdev);
->  
->  	regmap_write(tscadc->regmap, REG_SE, 0x00);
->  
-> @@ -297,7 +295,7 @@ static int __maybe_unused ti_tscadc_can_wakeup(struct device *dev, void *data)
->  
->  static int __maybe_unused tscadc_suspend(struct device *dev)
->  {
-> -	struct ti_tscadc_dev	*tscadc = dev_get_drvdata(dev);
-> +	struct ti_tscadc_dev *tscadc = dev_get_drvdata(dev);
->  
->  	regmap_write(tscadc->regmap, REG_SE, 0x00);
->  	if (device_for_each_child(dev, NULL, ti_tscadc_can_wakeup)) {
-> @@ -315,7 +313,7 @@ static int __maybe_unused tscadc_suspend(struct device *dev)
->  
->  static int __maybe_unused tscadc_resume(struct device *dev)
->  {
-> -	struct ti_tscadc_dev	*tscadc = dev_get_drvdata(dev);
-> +	struct ti_tscadc_dev *tscadc = dev_get_drvdata(dev);
->  	u32 ctrl;
->  
->  	pm_runtime_get_sync(dev);
+> Due to this wrong status, The unused_clk_function never switch off the unused clocks,
+> before spawning before init.
+>
+> After fixing "rzg2l_mod_clock_is_enabled" function and found that board is not booting.
+> Reason is, unused_clk_function turns off IA_55 and dmac clocks.
+>
+> On further investigation, turning off IA55_CLK[1] and DMAC_ACLK[2]
+> leading GIC interrupts failure.
+>
+> I made IA55_CLK and DMAC_ACLK as critical clocks as even if, we disable the corresponding driver,
+> GIC interrupts should work and with that I am able to mount rootFS.
+>
+> So I guess fixing "rzg2l_mod_clock_is_enabled" and Adding critical clocks "IA55_CLK" and "DMAC_ACLK"
+> Should be a single patch??
 
+Depends on the order, if they are separate patches ;-)
+I think it makes sense to have two separate patches, and thus add
+the critical clocks first.
+
+> Then I tested DMA it was failing, as driver is not turning ON DMA_PCLK. So added PM
+> Routines to handle DMA clocks and with that DMA driver is working. This will be a separate
+> Patch for dmac driver.
+
+OK.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
