@@ -2,123 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47763C4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 14:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 917A7C43214
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28BB560E77
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 14:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B1D60FED
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 18:24:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237243AbhH3Ovg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 10:51:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234246AbhH3Ovg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Aug 2021 10:51:36 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S238530AbhH3SZp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 14:25:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238538AbhH3SZp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 14:25:45 -0400
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4941EC061575;
+        Mon, 30 Aug 2021 11:24:50 -0700 (PDT)
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C2366056B;
-        Mon, 30 Aug 2021 14:50:36 +0000 (UTC)
-Date:   Mon, 30 Aug 2021 15:53:48 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, bcousson@baylibre.com,
-        Tony Lindgren <tony@atomide.com>,
-        Tero Kristo <t-kristo@ti.com>,
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 0DEA13E7B2;
+        Mon, 30 Aug 2021 20:24:48 +0200 (CEST)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "Ryan J . Barnett" <ryan.barnett@collins.com>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 23/40] mfd: ti_am335x_tscadc: Rename a variable
-Message-ID: <20210830155348.528555ea@jic23-huawei>
-In-Reply-To: <20210825152518.379386-24-miquel.raynal@bootlin.com>
-References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
-        <20210825152518.379386-24-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH v2 0/2] Use "ref" clocks from firmware for DSI PLL VCO parent
+Date:   Mon, 30 Aug 2021 20:24:43 +0200
+Message-Id: <20210830182445.167527-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Aug 2021 17:25:01 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+All DSI PHY/PLL drivers were referencing their VCO parent clock by a
+global name, most of which don't exist or have been renamed.  These
+clock drivers seem to function fine without that except the 14nm driver
+for the sdm6xx [1].
 
-> We need to retrieve the number of wires used by the "secondary" device
-> (the touchscreen or the magnetic reader). Let's rename tsc_wires to
-> become tscmag_wires to clarify the fact that this variable can be used
-> in both situations.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Seems sensible.
+At the same time all DTs provide a "ref" clock as per the requirements
+of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
+that clock to use without relying on a global clock name, so that all
+dependencies are explicitly defined in DT (the firmware) in the end.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[1]: https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
 
-> ---
->  drivers/mfd/ti_am335x_tscadc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-> index 02477ce827d0..047426a74a2e 100644
-> --- a/drivers/mfd/ti_am335x_tscadc.c
-> +++ b/drivers/mfd/ti_am335x_tscadc.c
-> @@ -121,7 +121,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  	const __be32 *cur;
->  	struct clk *clk;
->  	u32 val;
-> -	int tsc_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
-> +	int tscmag_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
->  	int total_channels, err;
->  
->  	/* Allocate memory for device */
-> @@ -139,7 +139,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  	tscadc->data = of_device_get_match_data(&pdev->dev);
->  
->  	node = of_get_child_by_name(pdev->dev.of_node, "tsc");
-> -	of_property_read_u32(node, "ti,wires", &tsc_wires);
-> +	of_property_read_u32(node, "ti,wires", &tscmag_wires);
->  	of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
->  
->  	node = of_get_child_by_name(pdev->dev.of_node, "adc");
-> @@ -152,7 +152,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	total_channels = tsc_wires + adc_channels;
-> +	total_channels = tscmag_wires + adc_channels;
->  	if (total_channels > 8) {
->  		dev_err(&pdev->dev, "Number of i/p channels more than 8\n");
->  		return -EINVAL;
-> @@ -218,9 +218,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  	tscadc->ctrl = CNTRLREG_TSC_STEPCONFIGWRT | CNTRLREG_STEPID;
->  	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);
->  
-> -	if (tsc_wires > 0) {
-> +	if (tscmag_wires > 0) {
->  		tscadc->ctrl |= CNTRLREG_TSC_ENB;
-> -		if (tsc_wires == 5)
-> +		if (tscmag_wires == 5)
->  			tscadc->ctrl |= CNTRLREG_TSC_5WIRE;
->  		else
->  			tscadc->ctrl |= CNTRLREG_TSC_4WIRE;
-> @@ -232,7 +232,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->  	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl | CNTRLREG_SSENB);
->  
->  	/* TSC Cell */
-> -	if (tsc_wires > 0) {
-> +	if (tscmag_wires > 0) {
->  		cell = &tscadc->cells[cell_idx++];
->  		cell->name = tscadc->data->name_tscmag;
->  		cell->of_compatible = tscadc->data->compat_tscmag;
+Changes since v1:
+  - Dropped "arm: dts: qcom: apq8064: Use 27MHz PXO clock as DSI PLL
+    reference" which has made its way into 5.15-fixes in advance of this
+    patchset landing in 5.16.
+  - Added Fixes: tags for commits that added missing "ref" clocks to DT
+    while this firmware clock was never used (until this patchset).
+  - Documented missing/wrong and later-added clocks (by aforementioned
+    patches) in patch 1/2 more clearly.
+
+Dmitry:
+  I have not added the .name="xo" fallback to the 28nm-hpm driver for
+  the missing "ref" clock in msm8974 yet.  This patch is supposed to
+  make it in for 5.16 while the missing clock should be added in 5.15,
+  is that enough time?
+  If not I'll gladly respin a v3 with that fallback, but I hope everyone
+  can update their DT firmware before that time.  Likewise Bjorn
+  acknowledged that there is enough time for the same to happen on
+  apq8064.
+
+Marijn Suijten (2):
+  drm/msm/dsi: Use "ref" fw clock instead of global name for VCO parent
+  clk: qcom: gcc-sdm660: Remove transient global "xo" clock
+
+ drivers/clk/qcom/gcc-sdm660.c                   | 14 --------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  4 +++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  4 +++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      |  4 +++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  4 +++-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       |  4 +++-
+ 6 files changed, 15 insertions(+), 19 deletions(-)
+
+-- 
+2.33.0
 
