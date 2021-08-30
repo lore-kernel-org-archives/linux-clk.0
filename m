@@ -2,138 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DABCC4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB7EC432BE
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C92460295
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E295860F3A
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 13:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236742AbhH3NWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 09:22:53 -0400
-Received: from mail-ua1-f43.google.com ([209.85.222.43]:34784 "EHLO
-        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236609AbhH3NWw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 09:22:52 -0400
-Received: by mail-ua1-f43.google.com with SMTP id l24so7792884uai.1;
-        Mon, 30 Aug 2021 06:21:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tulhgSVoxeTOojsoAsEpBrUnTXS8uw7hLO3RXtcVYJg=;
-        b=ODWBENU2Ua73I0i91NDU2ldHP2vYzLTX9diXHuscVDYSzwTy0MK5bMgtkwt4E5i1UL
-         62Q6p2kzegfwE/ILC9j8p5QVvOgHlMLZ9K+shebsu2QD19rtHAS4BU8e6a1BK9x0zxuK
-         9iBd03TMLW84B2Xxbd8Xml9mthZUYVKPfv9621WfCpYFeUYIO+wowYVqDELuTV1Srldq
-         J/I4pC+ALhhE7v7Bwmbon51NISIMT+geLYih698uyioE4OVlpBiX0cXTgNOnmLhXeiCr
-         i2LZfzavsCeFjHU2nh9Z37G5611SaBtM016aNcs4aCKvwezRR/Vdtt9NvMH4E6taX4AH
-         mP3A==
-X-Gm-Message-State: AOAM531z05uxFSU44LugpET2GMGW7i3i7BGqcOk8APSmS5YbpZ25tJ73
-        /GfhY4p/mVMbA4bIN6FvOHgCDesFSGRujTxSbiU=
-X-Google-Smtp-Source: ABdhPJzJ04o53AzwnlEMqTT60E0ti5rrv/o1UEgsXMdzMrbZzkRGozvnzAuD3EvEJdFkMkPvlkyV2iz+GaZwPUikkMA=
-X-Received: by 2002:a9f:35aa:: with SMTP id t39mr14181233uad.89.1630329718210;
- Mon, 30 Aug 2021 06:21:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210815103014.21208-1-biju.das.jz@bp.renesas.com>
- <20210815103014.21208-4-biju.das.jz@bp.renesas.com> <CAMuHMdXj8xmJ0ySOJQ74AjkTDJUQwTJ93rYjyRPnJ1dwGfj1xg@mail.gmail.com>
- <OS0PR01MB592221C0F7BBD92216EDA1B986C49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <OS0PR01MB592231527BC613A0BFCB200286CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB592231527BC613A0BFCB200286CB9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 30 Aug 2021 15:21:46 +0200
-Message-ID: <CAMuHMdVHwEb8ktTHeBjutZkBmS9j0Ud8NwN60hCK-xjgaWXDhQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] clk: renesas: rzg2l: Add support to handle coupled clocks
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S236802AbhH3Ndy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 09:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236803AbhH3Ndx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Aug 2021 09:33:53 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FFA3603E7;
+        Mon, 30 Aug 2021 13:32:56 +0000 (UTC)
+Date:   Mon, 30 Aug 2021 14:36:10 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, bcousson@baylibre.com,
+        Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "Ryan J . Barnett" <ryan.barnett@collins.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/40] dt-bindings: touchscreen: ti,am3359-tsc: New yaml
+ description
+Message-ID: <20210830143610.5e11c3af@jic23-huawei>
+In-Reply-To: <20210825152518.379386-4-miquel.raynal@bootlin.com>
+References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
+        <20210825152518.379386-4-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On Wed, 25 Aug 2021 17:24:41 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-On Mon, Aug 30, 2021 at 10:36 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: RE: [PATCH v3 3/4] clk: renesas: rzg2l: Add support to handle
-> > coupled clocks
-> > > On Sun, Aug 15, 2021 at 12:30 PM Biju Das <biju.das.jz@bp.renesas.com>
-> > > wrote:
-> > > > The AXI and CHI clocks use the same register bit for controlling
-> > > > clock output. Add a new clock type for coupled clocks, which sets
-> > > > the CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled,
-> > > > and clears the bit only when both clocks are disabled.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > ---
-> > > > v2->v3:
-> > > >  * Reworked as per Geert's suggestion
-> > > >  * Added enabled flag to track the status of clock, if it is coupled
-> > > >    with another clock
-> > > >  * Introduced siblings pointer which points to the other coupled
-> > > >    clock
-> > > >  * coupled clock linking is done during module clk register.
-> > > >  * rzg2l_mod_clock_is_enabled function returns soft state of the
-> > > >    module clocks, if it is coupled with another clock
-> > > >  * Updated the commit header
+> This touchscreen controller is already described in a text file:
+> Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
+> 
+> After introducing a proper description of the MFD, this is the second
+> step. The file cannot be removed yet as it also contains an ADC
+> description.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .../input/touchscreen/ti,am3359-tsc.yaml      | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+> new file mode 100644
+> index 000000000000..2d4ce6d04f53
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/ti,am3359-tsc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI AM3359 Touchscreen controller
+> +
+> +maintainers:
+> +  - Miquel Raynal <miquel.raynal@bootlin.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,am3359-tsc
+> +
+> +  ti,wires:
+> +    description: Wires refer to application modes i.e. 4/5/8 wire touchscreen
+> +      support on the platform.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [4, 5, 8]
+> +
+> +  ti,x-plate-resistance:
+> +    description: X plate resistance
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  ti,coordinate-readouts:
+> +    description: The sequencer supports a total of 16 programmable steps. Each
+> +      step is used to read a single coordinate. A single readout is enough but
+> +      multiple reads can increase the quality. A value of 5 means, 5 reads for
+> +      X, 5 for Y and 2 for Z (always). This utilises 12 of the 16 software steps
+> +      available. The remaining 4 can be used by the ADC.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 6
+> +
+> +  ti,wire-config:
+> +    description: Different boards could have a different order for connecting
+> +      wires on touchscreen. We need to provide an 8-bit number where the
+> +      first four bits represent the analog lines and the next 4 bits represent
+> +      positive/negative terminal on that input line. Notations to represent the
+> +      input lines and terminals respectively are as follows, AIN0 = 0, AIN1 = 1
+> +      and so on untill AIN7 = 7. XP = 0, XN = 1, YP = 2, YN = 3.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 4
+> +    maxItems: 8
+> +
+> +  ti,charge-delay:
+> +    description: Length of touch screen charge delay step in terms of ADC clock
+> +      cycles. Charge delay value should be large in order to avoid false pen-up
+> +      events. This value effects the overall sampling speed, hence need to be
+> +      kept as low as possible, while avoiding false pen-up event. Start from a
+> +      lower value, say 0x400, and increase value until false pen-up events are
+> +      avoided. The pen-up detection happens immediately after the charge step,
+> +      so this does in fact function as a hardware knob for adjusting the amount
+> +      of "settling time".
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +required:
+> +  - compatible
+> +  - ti,wires
 
-> > > You forgot to initialize mstp_clock.enabled to match the current
-> > > hardware state.
-> >
-> > OK. will initialize mstp_clock.enabled to match the current hardware
-> > state.
->
-> While working on this, I found a bug in clk driver with patch
-> ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
->
-> As per H/W manual(0.50), clock monitor status "1" means clock is supplied and
-> "0" means clock supply is stopped.
->
-> But the "rzg2l_mod_clock_is_enabled" function returns inverted value instead.
+Are these all required?  Seems like the driver will work fine without some
+of them and isn't doing appropriate error checking for their presence..
 
-Oops...
+> +  - ti,x-plate-resistance
+> +  - ti,coordinate-readouts
+> +  - ti,wire-config
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    tscadc: tscadc@0 {
+> +        compatible = "ti,am3359-tscadc";
+> +        reg = <0x0 0x1000>;
+> +        interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&adc_tsc_fck>;
+> +        clock-names = "fck";
+> +        status = "disabled";
+> +        dmas = <&edma 53 0>, <&edma 57 0>;
+> +        dma-names = "fifo0", "fifo1";
+> +
+> +        tsc {
+> +            compatible = "ti,am3359-tsc";
+> +            ti,wires = <4>;
+> +            ti,x-plate-resistance = <200>;
+> +            ti,coordinate-readouts = <5>;
+> +            ti,wire-config = <0x00 0x11 0x22 0x33>;
+> +            ti,charge-delay = <0x400>;
+> +        };
+> +    };
 
-> Due to this wrong status, The unused_clk_function never switch off the unused clocks,
-> before spawning before init.
->
-> After fixing "rzg2l_mod_clock_is_enabled" function and found that board is not booting.
-> Reason is, unused_clk_function turns off IA_55 and dmac clocks.
->
-> On further investigation, turning off IA55_CLK[1] and DMAC_ACLK[2]
-> leading GIC interrupts failure.
->
-> I made IA55_CLK and DMAC_ACLK as critical clocks as even if, we disable the corresponding driver,
-> GIC interrupts should work and with that I am able to mount rootFS.
->
-> So I guess fixing "rzg2l_mod_clock_is_enabled" and Adding critical clocks "IA55_CLK" and "DMAC_ACLK"
-> Should be a single patch??
-
-Depends on the order, if they are separate patches ;-)
-I think it makes sense to have two separate patches, and thus add
-the critical clocks first.
-
-> Then I tested DMA it was failing, as driver is not turning ON DMA_PCLK. So added PM
-> Routines to handle DMA clocks and with that DMA driver is working. This will be a separate
-> Patch for dmac driver.
-
-OK.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
