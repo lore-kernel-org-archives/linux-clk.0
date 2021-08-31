@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2805FC4320E
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 16:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C81C4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 16:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10824610E5
+	by mail.kernel.org (Postfix) with ESMTP id DED8D61057
 	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 16:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240523AbhHaQnV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Aug 2021 12:43:21 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:58416 "EHLO
+        id S240551AbhHaQnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Aug 2021 12:43:22 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:58486 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S240334AbhHaQnM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Aug 2021 12:43:12 -0400
-X-UUID: a865064f0d914a93a1e7e60d817add79-20210901
-X-UUID: a865064f0d914a93a1e7e60d817add79-20210901
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        with ESMTP id S240457AbhHaQnN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Aug 2021 12:43:13 -0400
+X-UUID: fa68547cbaba4a59b40603cfac27e6bf-20210901
+X-UUID: fa68547cbaba4a59b40603cfac27e6bf-20210901
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 993845599; Wed, 01 Sep 2021 00:42:13 +0800
+        with ESMTP id 943461963; Wed, 01 Sep 2021 00:42:13 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
  15.0.1497.2; Wed, 1 Sep 2021 00:42:12 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
@@ -42,9 +42,9 @@ CC:     Wendell Lin <wendell.lin@mediatek.com>,
         <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
         Miles Chen <miles.chen@mediatek.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 4/4] clk: mediatek: use tristate for COMMON_CLK_MEDAITEK and COMMON_CLK_MT6779
-Date:   Wed, 1 Sep 2021 00:42:10 +0800
-Message-ID: <20210831164210.15455-5-miles.chen@mediatek.com>
+Subject: [PATCH v2 1/4] clk: composite: export clk_register_composite
+Date:   Wed, 1 Sep 2021 00:42:07 +0800
+Message-ID: <20210831164210.15455-2-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210831164210.15455-1-miles.chen@mediatek.com>
 References: <20210831164210.15455-1-miles.chen@mediatek.com>
@@ -55,8 +55,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now we have all necessary exported symbols, change
-COMMON_CLK_MEDAITEK and COMMON_CLK_MT6779* to tristate.
+To support module build of mediatek clk drivers,
+it is necessary to export clk_register_composite.
 
 Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Hanks Chen <hanks.chen@mediatek.com>
@@ -64,89 +64,21 @@ Cc: Wendell Lin <wendell.lin@mediatek.com>
 Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 ---
- drivers/clk/mediatek/Kconfig | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/clk/clk-composite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 886e2d9fced5..62ed2054a849 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -6,7 +6,7 @@ menu "Clock driver for MediaTek SoC"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 0506046a5f4b..c7b97fb0051b 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -362,6 +362,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 		return ERR_CAST(hw);
+ 	return hw->clk;
+ }
++EXPORT_SYMBOL_GPL(clk_register_composite);
  
- config COMMON_CLK_MEDIATEK
--	bool
-+	tristate
- 	select RESET_CONTROLLER
- 	help
- 	  MediaTek SoCs' clock support.
-@@ -204,7 +204,7 @@ config COMMON_CLK_MT6765_MIPI2BSYS
-          This driver supports MediaTek MT6765 mipi2bsys clocks.
- 
- config COMMON_CLK_MT6779
--	bool "Clock driver for MediaTek MT6779"
-+	tristate "Clock driver for MediaTek MT6779"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM64
-@@ -212,49 +212,49 @@ config COMMON_CLK_MT6779
- 	  This driver supports MediaTek MT6779 basic clocks.
- 
- config COMMON_CLK_MT6779_MMSYS
--	bool "Clock driver for MediaTek MT6779 mmsys"
-+	tristate "Clock driver for MediaTek MT6779 mmsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 mmsys clocks.
- 
- config COMMON_CLK_MT6779_IMGSYS
--	bool "Clock driver for MediaTek MT6779 imgsys"
-+	tristate "Clock driver for MediaTek MT6779 imgsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 imgsys clocks.
- 
- config COMMON_CLK_MT6779_IPESYS
--	bool "Clock driver for MediaTek MT6779 ipesys"
-+	tristate "Clock driver for MediaTek MT6779 ipesys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 ipesys clocks.
- 
- config COMMON_CLK_MT6779_CAMSYS
--	bool "Clock driver for MediaTek MT6779 camsys"
-+	tristate "Clock driver for MediaTek MT6779 camsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 camsys clocks.
- 
- config COMMON_CLK_MT6779_VDECSYS
--	bool "Clock driver for MediaTek MT6779 vdecsys"
-+	tristate "Clock driver for MediaTek MT6779 vdecsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 vdecsys clocks.
- 
- config COMMON_CLK_MT6779_VENCSYS
--	bool "Clock driver for MediaTek MT6779 vencsys"
-+	tristate "Clock driver for MediaTek MT6779 vencsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 vencsys clocks.
- 
- config COMMON_CLK_MT6779_MFGCFG
--	bool "Clock driver for MediaTek MT6779 mfgcfg"
-+	tristate "Clock driver for MediaTek MT6779 mfgcfg"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports MediaTek MT6779 mfgcfg clocks.
- 
- config COMMON_CLK_MT6779_AUDSYS
--	bool "Clock driver for Mediatek MT6779 audsys"
-+	tristate "Clock driver for Mediatek MT6779 audsys"
- 	depends on COMMON_CLK_MT6779
- 	help
- 	  This driver supports Mediatek MT6779 audsys clocks.
+ struct clk *clk_register_composite_pdata(struct device *dev, const char *name,
+ 			const struct clk_parent_data *parent_data,
 -- 
 2.18.0
 
