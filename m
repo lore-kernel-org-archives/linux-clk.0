@@ -2,114 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B3AC4320A
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 08:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A6CC4320E
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 10:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B46C61029
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 08:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1951461076
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 10:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240352AbhHaIgJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Aug 2021 04:36:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41228 "EHLO mail.kernel.org"
+        id S241035AbhHaKjp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Aug 2021 06:39:45 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:49262 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240347AbhHaIgH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 31 Aug 2021 04:36:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B910E6101C;
-        Tue, 31 Aug 2021 08:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630398912;
-        bh=Pns88gfzitfY2T3bP8utOQi67YcxT/YNMT+cCdTj+TM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XB3pD9Lnv0T1SincG1NLxCNS8lz7IJ/72EAasUGcnD6pcZZ1uk9uXWxjj7I/3cig6
-         v4yOmN96eaIwbgu8cyGbAPg22s0mAb4OM3lvOqGDyvyR2qKj2poc73gGXZiPbWO6j/
-         SRoAoqYx05phY2s0iZFV96E2Uq8doKLCQtox0pWYFxHWWFSYwPkIxF92e/jhvDgAN1
-         d4pVoGp2EKIt6Phgr6HHvsis7DYruqCjiWeskV/ndapZlYrAdqdBJBt/MJVAXw69/s
-         bsFIfajQZE/MtWPyeAJAb+qQAkLXbKamDm1RSpYel5NuejxTMa13kL6J6oG+FKtxpI
-         6ayyNnaZSckZg==
-Received: by pali.im (Postfix)
-        id 6B42EEF2; Tue, 31 Aug 2021 10:35:10 +0200 (CEST)
-Date:   Tue, 31 Aug 2021 10:35:10 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/6] serial: mvebu-uart: Support for higher baudrates
-Message-ID: <20210831083510.iiapfla7iy76fs3w@pali>
-References: <20210624224909.6350-1-pali@kernel.org>
- <20210809145329.24177-1-pali@kernel.org>
- <20210820172238.ekvo42s7oqxkeomt@pali>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210820172238.ekvo42s7oqxkeomt@pali>
-User-Agent: NeoMutt/20180716
+        id S241163AbhHaKiu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 31 Aug 2021 06:38:50 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1630406275; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=pwOyVsDSJZr2OlFw6nHHCdGFvhhwxrSHAgpVHaaW3kE=; b=xY6aIMizDvTsm7l0Q2DExq1sr4X0Hw7heROHAeQgt82DDoycKe12yzFEUsHmKp/RYYaW4TcP
+ hyR5rpXJrIhirMZGbk3QWhO8jbvW3BMAvN2b2cFtGusOwTqH9kwy+HSITSs4EJW7HPuL74Ju
+ IoLcQLxJ9I6Rd7uLGdMqN9V+eQw=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 612e06784cd9015037e578bb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 31 Aug 2021 10:37:44
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 36194C4360C; Tue, 31 Aug 2021 10:37:44 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8BC96C4338F;
+        Tue, 31 Aug 2021 10:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 8BC96C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 1/2] dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
+Date:   Tue, 31 Aug 2021 16:06:41 +0530
+Message-Id: <1630406202-3919-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Friday 20 August 2021 19:22:38 Pali Rohár wrote:
-> On Monday 09 August 2021 16:53:23 Pali Rohár wrote:
-> > This patch series add support for baudrates higher than 230400 on
-> > Marvell Armada 37xx boards.
-> > 
-> > Please review these patches as they touch both Device Tree bindings and
-> > mvebu-uart.c driver.
-> 
-> Stephen, is this patch series OK now? Or is there any other issue?
+The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
+properties that are needed in a device tree. Add the LPASS clock IDs for
+LPASS PIL client to request for the clocks.
 
-PING?
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml        | 69 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,lpass-sc7280.h      | 16 +++++
+ 2 files changed, 85 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sc7280.h
 
-> > Changes in v5:
-> > * fixed yaml binding file
-> > 
-> > Changes in v4:
-> > * converted armada3700-uart-clock documentation to YAML
-> > * split documentation changes into two commits:
-> >   - first which adds clock documentation
-> >   - second which updates UART documentation
-> > 
-> > Changes in v3:
-> > v3 is rebased on top of Linus master branch and all already applied patches
-> > were dropped. There are no changes in patches itself since v2.
-> > 
-> > Pali Rohár (6):
-> >   math64: New DIV_U64_ROUND_CLOSEST helper
-> >   serial: mvebu-uart: implement UART clock driver for configuring UART
-> >     base clock
-> >   dt-bindings: mvebu-uart: document DT bindings for
-> >     marvell,armada-3700-uart-clock
-> >   dt-bindings: mvebu-uart: update information about UART clock
-> >   arm64: dts: marvell: armada-37xx: add device node for UART clock and
-> >     use it
-> >   serial: mvebu-uart: implement support for baudrates higher than 230400
-> > 
-> >  .../bindings/clock/armada3700-uart-clock.yaml |  57 ++
-> >  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
-> >  .../arm64/boot/dts/marvell/armada-3720-db.dts |   4 +
-> >  .../dts/marvell/armada-3720-espressobin.dtsi  |   4 +
-> >  .../dts/marvell/armada-3720-turris-mox.dts    |   4 +
-> >  .../boot/dts/marvell/armada-3720-uDPU.dts     |   4 +
-> >  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  15 +-
-> >  drivers/tty/serial/Kconfig                    |   1 +
-> >  drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
-> >  include/linux/math64.h                        |  13 +
-> >  10 files changed, 682 insertions(+), 21 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > 
-> > -- 
-> > 2.20.1
-> > 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+new file mode 100644
+index 0000000..7b62763
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sc7280-lpasscc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm LPASS Core Clock Controller Binding for SC7280
++
++maintainers:
++  - Taniya Das <tdas@codeaurora.org>
++
++description: |
++  Qualcomm LPASS core clock control module which supports the clocks and
++  power domains on SC7280.
++
++  See also:
++  - dt-bindings/clock/qcom,lpass-sc7280.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,sc7280-lpasscc
++
++  clocks:
++    items:
++      - description: gcc_cfg_noc_lpass_clk from GCC
++
++  clock-names:
++    items:
++      - const: iface
++
++  '#clock-cells':
++    const: 1
++
++  reg:
++    minItems: 3
++    items:
++      - description: LPASS qdsp6ss register
++      - description: LPASS top-cc register
++      - description: LPASS cc register
++
++  reg-names:
++    items:
++      - const: qdsp6ss
++      - const: top_cc
++      - const: cc
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
++    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
++    clock-controller@3000000 {
++      compatible = "qcom,sc7280-lpasscc";
++      reg = <0x03000000 0x40>, <0x03c04000 0x4>, <0x03389000 0x24>;
++      reg-names = "qdsp6ss", "top_cc", "cc";
++      clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
++      clock-names = "iface";
++      #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,lpass-sc7280.h b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+new file mode 100644
+index 0000000..a259463
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
++#define _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
++
++#define LPASS_Q6SS_AHBM_CLK				0
++#define LPASS_Q6SS_AHBS_CLK				1
++#define LPASS_TOP_CC_LPI_Q6_AXIM_HS_CLK			2
++#define LPASS_QDSP6SS_XO_CLK				3
++#define LPASS_QDSP6SS_SLEEP_CLK				4
++#define LPASS_QDSP6SS_CORE_CLK				5
++
++#endif
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
