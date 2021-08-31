@@ -4,152 +4,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05386C4320A
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 23:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAB0C4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 02:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7A9B61004
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Aug 2021 23:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACEA6103E
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 02:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238962AbhH3XL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 19:11:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56924 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238883AbhH3XLZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 19:11:25 -0400
-Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [IPv6:2001:4b7a:2000:18::162])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FA4C06175F
-        for <linux-clk@vger.kernel.org>; Mon, 30 Aug 2021 16:10:30 -0700 (PDT)
-Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S239397AbhHaCP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Aug 2021 22:15:29 -0400
+Received: from mo-csw1516.securemx.jp ([210.130.202.155]:58600 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239376AbhHaCP2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 22:15:28 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 17V2EUa2022033; Tue, 31 Aug 2021 11:14:30 +0900
+X-Iguazu-Qid: 34trdvrI75kL3fQ1Yi
+X-Iguazu-QSIG: v=2; s=0; t=1630376070; q=34trdvrI75kL3fQ1Yi; m=enqtohIq2eRDuL61o6eYoKfPFuSw91zMK8OV2c3zi3A=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+        by relay.securemx.jp (mx-mr1510) id 17V2EUbk016230
+        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 31 Aug 2021 11:14:30 +0900
+Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id F3FBB1F738;
-        Tue, 31 Aug 2021 01:10:27 +0200 (CEST)
-Date:   Tue, 31 Aug 2021 01:10:26 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
+        by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 1866310009F;
+        Tue, 31 Aug 2021 11:14:30 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.toshiba.co.jp  with ESMTP id 17V2ETgh024714;
+        Tue, 31 Aug 2021 11:14:29 +0900
+Date:   Tue, 31 Aug 2021 11:14:28 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v2 1/2] drm/msm/dsi: Use "ref" fw clock instead of global
- name for VCO parent
-Message-ID: <YS1lYui5aXadgkEr@Marijn-Arch-PC.localdomain>
-References: <20210830182445.167527-1-marijn.suijten@somainline.org>
- <20210830182445.167527-2-marijn.suijten@somainline.org>
- <163036177339.2676726.12271104951144475163@swboyd.mtv.corp.google.com>
- <YS1fllEswGQEGWPc@Marijn-Arch-PC.localdomain>
- <163036399040.2676726.5816296584899284140@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, punit1.agrawal@toshiba.co.jp,
+        yuji2.ishikawa@toshiba.co.jp, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: Add DT bindings for PLL of
+ Toshiba Visconti TMPV770x SoC
+X-TSB-HOP: ON
+Message-ID: <20210831021428.rsjzi6vtv2q3wnkb@toshiba.co.jp>
+References: <20210804092244.390376-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <20210804092244.390376-2-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <163021379431.2676726.15668763072935534900@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163036399040.2676726.5816296584899284140@swboyd.mtv.corp.google.com>
+In-Reply-To: <163021379431.2676726.15668763072935534900@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-08-30 15:53:10, Stephen Boyd wrote:
-> Quoting Marijn Suijten (2021-08-30 15:45:42)
-> > Hi Stephen,
-> > 
-> > On 2021-08-30 15:16:13, Stephen Boyd wrote:
-> > > Quoting Marijn Suijten (2021-08-30 11:24:44)
-> > > > All DSI PHY/PLL drivers were referencing their VCO parent clock by a
-> > > > global name, most of which don't exist or have been renamed.  These
-> > > > clock drivers seem to function fine without that except the 14nm driver
-> > > > for the sdm6xx [1].
-> > > > 
-> > > > At the same time all DTs provide a "ref" clock as per the requirements
-> > > > of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
-> > > > that clock to use without relying on a global clock name, so that all
-> > > > dependencies are explicitly defined in DT (the firmware) in the end.
-> > > > 
-> > > > Note that msm8974 is the only board not providing this clock, and
-> > > > apq8064 was providing the wrong clock (19.2MHz cxo instead of 27MHz
-> > > > pxo).  Both have been been addressed in separate patches that are
-> > > > supposed to land well in advance of this patchset.
-> > > > 
-> > > > Furthermore not all board-DTs provided this clock initially but that
-> > > > deficiency has been addressed in followup patches (see the Fixes:
-> > > > below).  Those commits seem to assume that the clock was used, while
-> > > > nothing in history indicates that this "ref" clock was ever retrieved.
-> > > > 
-> > > > [1]: https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
-> > > > 
-> > > > Fixes: 79e51645a1dd ("arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY")
-> > > > Fixes: 6969d1d9c615 ("ARM: dts: qcom-apq8064: Set 'cxo_board' as ref clock of the DSI PHY")
-> > > > Fixes: 0c0e72705a33 ("arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of the DSI PHYs")
-> > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> > > > ---
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 4 +++-
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 4 +++-
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 4 +++-
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 4 +++-
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 4 +++-
-> > > >  5 files changed, 15 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> > > > index e46b10fc793a..3cbb1f1475e8 100644
-> > > > --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> > > > +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> > > > @@ -562,7 +562,9 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
-> > > >         char clk_name[32], parent[32], vco_name[32];
-> > > >         char parent2[32], parent3[32], parent4[32];
-> > > >         struct clk_init_data vco_init = {
-> > > > -               .parent_names = (const char *[]){ "xo" },
-> > > > +               .parent_data = &(const struct clk_parent_data) {
-> > > > +                       .fw_name = "ref",
-> > > 
-> > > Please also add .name as the old parent_names value so that newer
-> > > kernels can be used without having to use new DT.
-> > 
-> > We discussed that only msm8974 misses this "ref" clock at the time of
-> > writing.  Aforementioned Fixes: patches have all been merged about 3
-> > years ago, are those DTs still in use with a newer kernel?  I suppose
-> > this patch is only backported to kernels including those DT patches, is
-> > it reasonable to assume that at least that DT is in use there?
-> 
-> I have no idea.
-> 
-> > 
-> > Besides, not all clock trees provide this global "xo" or "bi_tcxo" clock
-> > in the first place.
-> > 
-> 
-> It doesn't hurt to also specify a .name to help migrate anything else
-> over. Unless you're confident it won't cause problems to rely on proper
-> DT being used?
+Hi,
 
-I'm 95% sure this shouldn't cause any problems given current DTs and
-their history, but that's probably not enough.  This might also impact
-DTs that have not yet been upstreamed, but afaik the general stance is
-to not care and actually serve as a fair hint/warning before new DTs
-make it to the list.
+Thanks for your review.
 
-If there is a protocol in place to deprecate, warn, and eventually
-remove this reliance on global clock names I'm more than happy to add
-.name as a temporary fallback, even if likely unneeded.  Otherwise we
-might never get rid of it.
+On Sat, Aug 28, 2021 at 10:09:54PM -0700, Stephen Boyd wrote:
+> Quoting Nobuhiro Iwamatsu (2021-08-04 02:22:41)
+> > Add device tree bindings for PLL of Toshiba Visconti TMPV770x SoC series.
+> > 
+> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > ---
+> >  .../clock/toshiba,tmpv770x-pipllct.yaml       | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
+> > new file mode 100644
+> > index 000000000000..7b7300ce96d6
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
+> > @@ -0,0 +1,57 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/toshiba,tmpv770x-pipllct.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Toshiba Visconti5 TMPV770X PLL Controller Device Tree Bindings
+> > +
+> > +maintainers:
+> > +  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > +
+> > +description:
+> > +  Toshia Visconti5 PLL controller which supports the PLLs on TMPV770X.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: toshiba,tmpv7708-pipllct
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    description: External reference clock (OSC2)
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - "#clock-cells"
+> > +  - clocks
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +
+> > +    osc2_clk: osc2-clk {
+> > +      compatible = "fixed-clock";
+> > +      clock-frequency = <20000000>;
+> > +      #clock-cells = <0>;
+> > +    };
+> > +
+> > +    soc {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        pipllct: clock-controller@24220000 {
+> > +            compatible = "toshiba,tmpv7708-pipllct";
+> 
+> The driver makes it look like this is actually part of a syscon node. Is
+> that right? It's not clear to me that this is a syscon. But then looking
+> at the binding it seems that one device has been split up into PLL and
+> "not PLL" parts sort of arbitrarily.
 
-- Marijn
+This is the driver that controls the PIPLLCT device that produces the
+PLL. This device only has the ability to generate his PLL, no other
+features.
+
+I have received similar comments in the driver patch from you, so I will
+check that as well.
+
+> 
+> > +            reg = <0 0x24220000 0 0x820>;
+> > +            #clock-cells = <1>;
+> > +            clocks = <&osc2_clk>;
+> > +        };
+> > +    };
+> > +...
+> 
+
+Best regards,
+  Nobuhiro
+
