@@ -2,154 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAB0C4320A
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 02:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B3AC4320A
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 08:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DACEA6103E
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 02:14:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B46C61029
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Aug 2021 08:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239397AbhHaCP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Aug 2021 22:15:29 -0400
-Received: from mo-csw1516.securemx.jp ([210.130.202.155]:58600 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239376AbhHaCP2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Aug 2021 22:15:28 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 17V2EUa2022033; Tue, 31 Aug 2021 11:14:30 +0900
-X-Iguazu-Qid: 34trdvrI75kL3fQ1Yi
-X-Iguazu-QSIG: v=2; s=0; t=1630376070; q=34trdvrI75kL3fQ1Yi; m=enqtohIq2eRDuL61o6eYoKfPFuSw91zMK8OV2c3zi3A=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-        by relay.securemx.jp (mx-mr1510) id 17V2EUbk016230
-        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 31 Aug 2021 11:14:30 +0900
-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 1866310009F;
-        Tue, 31 Aug 2021 11:14:30 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 17V2ETgh024714;
-        Tue, 31 Aug 2021 11:14:29 +0900
-Date:   Tue, 31 Aug 2021 11:14:28 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+        id S240352AbhHaIgJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Aug 2021 04:36:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240347AbhHaIgH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 31 Aug 2021 04:36:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B910E6101C;
+        Tue, 31 Aug 2021 08:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630398912;
+        bh=Pns88gfzitfY2T3bP8utOQi67YcxT/YNMT+cCdTj+TM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XB3pD9Lnv0T1SincG1NLxCNS8lz7IJ/72EAasUGcnD6pcZZ1uk9uXWxjj7I/3cig6
+         v4yOmN96eaIwbgu8cyGbAPg22s0mAb4OM3lvOqGDyvyR2qKj2poc73gGXZiPbWO6j/
+         SRoAoqYx05phY2s0iZFV96E2Uq8doKLCQtox0pWYFxHWWFSYwPkIxF92e/jhvDgAN1
+         d4pVoGp2EKIt6Phgr6HHvsis7DYruqCjiWeskV/ndapZlYrAdqdBJBt/MJVAXw69/s
+         bsFIfajQZE/MtWPyeAJAb+qQAkLXbKamDm1RSpYel5NuejxTMa13kL6J6oG+FKtxpI
+         6ayyNnaZSckZg==
+Received: by pali.im (Postfix)
+        id 6B42EEF2; Tue, 31 Aug 2021 10:35:10 +0200 (CEST)
+Date:   Tue, 31 Aug 2021 10:35:10 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, punit1.agrawal@toshiba.co.jp,
-        yuji2.ishikawa@toshiba.co.jp, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: Add DT bindings for PLL of
- Toshiba Visconti TMPV770x SoC
-X-TSB-HOP: ON
-Message-ID: <20210831021428.rsjzi6vtv2q3wnkb@toshiba.co.jp>
-References: <20210804092244.390376-1-nobuhiro1.iwamatsu@toshiba.co.jp>
- <20210804092244.390376-2-nobuhiro1.iwamatsu@toshiba.co.jp>
- <163021379431.2676726.15668763072935534900@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 0/6] serial: mvebu-uart: Support for higher baudrates
+Message-ID: <20210831083510.iiapfla7iy76fs3w@pali>
+References: <20210624224909.6350-1-pali@kernel.org>
+ <20210809145329.24177-1-pali@kernel.org>
+ <20210820172238.ekvo42s7oqxkeomt@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <163021379431.2676726.15668763072935534900@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210820172238.ekvo42s7oqxkeomt@pali>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-Thanks for your review.
-
-On Sat, Aug 28, 2021 at 10:09:54PM -0700, Stephen Boyd wrote:
-> Quoting Nobuhiro Iwamatsu (2021-08-04 02:22:41)
-> > Add device tree bindings for PLL of Toshiba Visconti TMPV770x SoC series.
+On Friday 20 August 2021 19:22:38 Pali Rohár wrote:
+> On Monday 09 August 2021 16:53:23 Pali Rohár wrote:
+> > This patch series add support for baudrates higher than 230400 on
+> > Marvell Armada 37xx boards.
 > > 
-> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > ---
-> >  .../clock/toshiba,tmpv770x-pipllct.yaml       | 57 +++++++++++++++++++
-> >  1 file changed, 57 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
+> > Please review these patches as they touch both Device Tree bindings and
+> > mvebu-uart.c driver.
+> 
+> Stephen, is this patch series OK now? Or is there any other issue?
+
+PING?
+
+> > Changes in v5:
+> > * fixed yaml binding file
 > > 
-> > diff --git a/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
-> > new file mode 100644
-> > index 000000000000..7b7300ce96d6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/toshiba,tmpv770x-pipllct.yaml
-> > @@ -0,0 +1,57 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/toshiba,tmpv770x-pipllct.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Toshiba Visconti5 TMPV770X PLL Controller Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > +
-> > +description:
-> > +  Toshia Visconti5 PLL controller which supports the PLLs on TMPV770X.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: toshiba,tmpv7708-pipllct
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    description: External reference clock (OSC2)
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#clock-cells"
-> > +  - clocks
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +
-> > +    osc2_clk: osc2-clk {
-> > +      compatible = "fixed-clock";
-> > +      clock-frequency = <20000000>;
-> > +      #clock-cells = <0>;
-> > +    };
-> > +
-> > +    soc {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        pipllct: clock-controller@24220000 {
-> > +            compatible = "toshiba,tmpv7708-pipllct";
-> 
-> The driver makes it look like this is actually part of a syscon node. Is
-> that right? It's not clear to me that this is a syscon. But then looking
-> at the binding it seems that one device has been split up into PLL and
-> "not PLL" parts sort of arbitrarily.
-
-This is the driver that controls the PIPLLCT device that produces the
-PLL. This device only has the ability to generate his PLL, no other
-features.
-
-I have received similar comments in the driver patch from you, so I will
-check that as well.
-
-> 
-> > +            reg = <0 0x24220000 0 0x820>;
-> > +            #clock-cells = <1>;
-> > +            clocks = <&osc2_clk>;
-> > +        };
-> > +    };
-> > +...
-> 
-
-Best regards,
-  Nobuhiro
-
+> > Changes in v4:
+> > * converted armada3700-uart-clock documentation to YAML
+> > * split documentation changes into two commits:
+> >   - first which adds clock documentation
+> >   - second which updates UART documentation
+> > 
+> > Changes in v3:
+> > v3 is rebased on top of Linus master branch and all already applied patches
+> > were dropped. There are no changes in patches itself since v2.
+> > 
+> > Pali Rohár (6):
+> >   math64: New DIV_U64_ROUND_CLOSEST helper
+> >   serial: mvebu-uart: implement UART clock driver for configuring UART
+> >     base clock
+> >   dt-bindings: mvebu-uart: document DT bindings for
+> >     marvell,armada-3700-uart-clock
+> >   dt-bindings: mvebu-uart: update information about UART clock
+> >   arm64: dts: marvell: armada-37xx: add device node for UART clock and
+> >     use it
+> >   serial: mvebu-uart: implement support for baudrates higher than 230400
+> > 
+> >  .../bindings/clock/armada3700-uart-clock.yaml |  57 ++
+> >  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+> >  .../arm64/boot/dts/marvell/armada-3720-db.dts |   4 +
+> >  .../dts/marvell/armada-3720-espressobin.dtsi  |   4 +
+> >  .../dts/marvell/armada-3720-turris-mox.dts    |   4 +
+> >  .../boot/dts/marvell/armada-3720-uDPU.dts     |   4 +
+> >  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  15 +-
+> >  drivers/tty/serial/Kconfig                    |   1 +
+> >  drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
+> >  include/linux/math64.h                        |  13 +
+> >  10 files changed, 682 insertions(+), 21 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> > 
+> > -- 
+> > 2.20.1
+> > 
