@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19A0C4320E
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E1DC43214
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8ED610A1
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995186108E
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242082AbhIAFk4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:40:56 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:48455 "EHLO
+        id S242105AbhIAFk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 01:40:59 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:50255 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231289AbhIAFky (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 01:40:54 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EE038580568;
-        Wed,  1 Sep 2021 01:39:57 -0400 (EDT)
+        by vger.kernel.org with ESMTP id S242046AbhIAFk5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 01:40:57 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 911A45805C3;
+        Wed,  1 Sep 2021 01:40:00 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Wed, 01 Sep 2021 01:39:57 -0400
+  by compute2.internal (MEProxy); Wed, 01 Sep 2021 01:40:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=xm7Y8fEf134No
-        HobrQ9IyVP5eZVPNtG57R+gyfqDAkc=; b=oBUtnAYl2+2Rs7fk7WmqGOp4/X/I3
-        yYLn/YDjlsYtXq6TARIViIGiXbDZEwN79+0stclM63Tzz8LMthK/V6W3tOVBQ0c5
-        zv+m2jbDVQPcZUIzVacv8LYMN7dPlcG80Qdz3teX1atoaE8hVeyOyxKEJ86aDz8i
-        OwKnVlG4kzwyUWPWb1FgoAeCqMgZF9FJ4JNTriJBrnUS3PbTFGXgwAcn14p85vce
-        HZ+B3YH9IaTiDNT6zdOEPuRbu8LRPQksz01BU0MmNKIlZq/ooPWpEIiVhzfS8xBT
-        fav61RCojVWyClLLgOwutQiP4fRV9lGTLu+HNen6tXWyHJGl6JYkR8M1g==
+        :mime-version:content-transfer-encoding; s=fm3; bh=AW1628GhGotzk
+        KH/YttaXfCJmdGOn33kQwWfNnzFq50=; b=nGipR7Dph/pipc/kQf2JrU8+ilLQT
+        jXi/e+flhRlG2lEpHK7GwU538Th5XnZx01WburK5hTt0Au7ILf89VX1SvcRstO8O
+        WpN7sQYS069HxziKPLicRBgcIYrPeqUzHoKRggNyXivIBCAEkCr9N+9R6PFVHSgl
+        wmaT2vP8Nz8IieSGAdqMWPcXYVsJeQX7P1JAYucjFv1LaxHAulJsAFDJ+fbLakK3
+        lVq/T2JoVjlUEX7M54oTz544cJ5pgP0fsfdLG8T/dvHeVDOvgJ9UA2/yWZEnZNhb
+        7zxAV2aUFggisKUZjoB26S0L2ChHjZnR+NIoCK6TC+dKdahl8r0c5H2Qg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=xm7Y8fEf134NoHobrQ9IyVP5eZVPNtG57R+gyfqDAkc=; b=H+BjWZNP
-        iApnlLx6xJnVvdHoL3AW2yelZ0jFvHXTB7OnplEa6LZIdUYUt7RIF925BC/OW+45
-        0Nu/halsRAEG5q4JGhCgtp33IIL5/yilzgPFe2vdIzwpV/vj408uyOl2lhEQGTLV
-        1rIlUO4mdtioMgd1OHeZj3Fbjxj/58+PYS1OcKfvjO6R+F4w8qQ5CWbUTG3SqVC1
-        4IRn/RxsAppJx3taZab2jSTd1C08we69lOMt64Tswunu5liauov0U7t/OiCCwgU/
-        +XL5rzY6bcZUPMeTK8D3K0GEf9f+lZewynxkTq+XCE6GmpdP4F4bcVzJ54sMZ4VE
-        PwnGG+8BR5ISjg==
-X-ME-Sender: <xms:LRIvYa0w3QH9tt-JKr4ltouB2wHGfeaT2BnKPQh30Q57QiRCb892YQ>
-    <xme:LRIvYdFDW7KPu0aZ_fDtj-C4huU1-GP_pWMNWG7qAvvLyRQ93kNHUnN8aF-DoowCn
-    3Vj0_SuffZ2ZPHmWQ>
-X-ME-Received: <xmr:LRIvYS7-1akVKJ-_mom6dgbKhvNpVtA8IxUEpbTSeegONVcT8YBSydEVFawUQUue7bNsBo7MebUhjwWHHvxQnJeGDGOuGPVNtRhTGzL-rZIXhNEt-mqHMy8FQIYTgm1fDf72Hw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvvddgleekucetufdoteggodetrfdotf
+        fm3; bh=AW1628GhGotzkKH/YttaXfCJmdGOn33kQwWfNnzFq50=; b=VRQ0urmm
+        Ez12LOISmZhfRTOwNMl3S95eNhoAUi10A3IGnE4hF8GP8ZIJ+8akBWZPMcKq5Cl2
+        lKuSJWAVeWtbMKzbYdqe9MjxtQ4XK24mUi8NvhdRmLj3xvarLeumvtUfVLFxi+Ba
+        KrG/k5uDQgIpGabKJGSJnqj+cMmZsn0CFcJpY1OjAr9/Cu0Cah37ZniAgHKOw2/6
+        fPl4ltmZoJh0H3NBsWrVZ4058sBozGoaqEQOd12qGY/aU+7ux6ZDXrqSN+C0OIWP
+        TeSWuSQFwQ9vyKN38zYPjVdgVl+Ax5e4gZxd8E9533qWYvtvf+ImAJ6ek58iEsOK
+        PFVdOPesQBr/VQ==
+X-ME-Sender: <xms:MBIvYfeY_KpVwSo0GJTRuRG7uO2IdpxvhfHxuIMQkEj0nb2UwQfyIg>
+    <xme:MBIvYVMnpTwe23Zb4Dz_vDyJGEWafBmfAViu6zBCxaLd_V5i3ZYN5juJ6kll4i4os
+    ASF_2IIcNxS9B8HMg>
+X-ME-Received: <xmr:MBIvYYioimVaeTvBPB6by95Q8B3Xsf09qyD3uPJT2L58HEvRA4n2S8rFx-H5lA6gVizMOx_lt48eGoVbejRCZQcresy01Vwhy3zJ9_kLi3etI4kU1GGa0x0C3L9_I3COGYTvAA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvvddgleejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
     lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
     frrghtthgvrhhnpeduhfejfedvhffgfeehtefghfeiiefgfeehgfdvvdevfeegjeehjedv
-    gfejheeuieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    gfejheeuieenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
     hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:LRIvYb35xQ3HDpdOW181ah3ngLavwweyFoHehcW9_JFnQ1DXACcVmg>
-    <xmx:LRIvYdHnKhjm8Lw8ymZaY3e8ugaHxKwIKvmjjmY2IlW3PfKnSu57ww>
-    <xmx:LRIvYU8WHUoHca20IyEeuhdzJqHxTnkm9Iac1vstxH_43eB_mmZ8_g>
-    <xmx:LRIvYV8Qz3N_acQYIgPMcvLSebBMAWlAB7d1gtu8C_C9q8gQfLBx7g>
+X-ME-Proxy: <xmx:MBIvYQ9et2HOPfDmswW5ho2UwgUvvhBGg7xmbYu3BuZEwwlEj2zHkg>
+    <xmx:MBIvYbtKrE0hV9_oH18NHF3cTLK2FkZeigTsMKHeP2drVDizhab-9w>
+    <xmx:MBIvYfFvymz3m5oEtmj4W-6p9NOpF-EtPQDal22XoSTndNu1ygQ_rQ>
+    <xmx:MBIvYckBd55RuOb99EWy3OlfhrN-yCPgekMo37us46uc3QfycuYHjg>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 1 Sep 2021 01:39:57 -0400 (EDT)
+ 1 Sep 2021 01:39:59 -0400 (EDT)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -71,9 +71,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
         Samuel Holland <samuel@sholland.org>
-Subject: [RFC PATCH 3/7] clk: sunxi-ng: mux: Add macro using CLK_HW_INIT_PARENTS_DATA
-Date:   Wed,  1 Sep 2021 00:39:47 -0500
-Message-Id: <20210901053951.60952-4-samuel@sholland.org>
+Subject: [RFC PATCH 7/7] [DO NOT MERGE] clk: sunxi-ng: Add support for T5
+Date:   Wed,  1 Sep 2021 00:39:51 -0500
+Message-Id: <20210901053951.60952-8-samuel@sholland.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210901053951.60952-1-samuel@sholland.org>
 References: <20210901053951.60952-1-samuel@sholland.org>
@@ -83,41 +83,88 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some muxes need the flexibility to specify a combination of internal
-parents (using .hw) and external parents (using .fw_name). Support
-this with a version of the SUNXI_CCU_MUX_WITH_GATE macro that uses
-CLK_HW_INIT_PARENTS_DATA to provide the parent information.
+The T5 RTC is similar to the H616 RTC (no rtc-32k mux, pll-32k as the
+second fanout input), except that it adds the ext-osc32k input.
+
+It also isn't a "sun50i" SoC, so it creates a bit of a naming problem...
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/sunxi-ng/sun50i-rtc-ccu.c | 40 +++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f165395effb5..5aa5a6f49bd8 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -73,6 +73,20 @@ struct ccu_mux {
- 	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
- 				      _reg, _shift, _width, 0, _flags)
+diff --git a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
+index 9603dc0d3d7b..fe6b21a24193 100644
+--- a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
++++ b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
+@@ -227,6 +227,15 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(osc32k_fanout_clk, "rtc-32k-fanout",
+ static SUNXI_CCU_M_FW_WITH_GATE(rtc_spi_clk, "rtc-spi", "ahb",
+ 				0x310, 0, 5, BIT(31), 0);
  
-+#define SUNXI_CCU_MUX_DATA_WITH_GATE(_struct, _name, _parents, _reg,	\
-+				     _shift, _width, _gate, _flags)	\
-+	struct ccu_mux _struct = {					\
-+		.enable	= _gate,					\
-+		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS_DATA(_name, \
-+								   _parents, \
-+								   &ccu_mux_ops, \
-+								   _flags), \
-+		}							\
-+	}
++static struct ccu_common *sun8i_t5_rtc_ccu_clks[] = {
++	&iosc_clk,
++	&iosc_32k_clk,
++	&ext_osc32k_gate_clk.common,
++	&osc32k_clk.common,
++	&osc24M_32k_clk.common,
++	&osc32k_fanout_clk.common,
++};
 +
- static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
+ static struct ccu_common *sun50i_h6_rtc_ccu_clks[] = {
+ 	&iosc_clk,
+ 	&iosc_32k_clk,
+@@ -256,6 +265,21 @@ static struct ccu_common *sun50i_r329_rtc_ccu_clks[] = {
+ 	&rtc_spi_clk.common,
+ };
+ 
++static struct clk_hw_onecell_data sun8i_t5_rtc_ccu_hw_clks = {
++	.num = CLK_NUMBER,
++	.hws = {
++		[CLK_OSC32K]		= &osc32k_clk.common.hw,
++		[CLK_OSC32K_FANOUT]	= &osc32k_fanout_clk.common.hw,
++		[CLK_IOSC]		= &iosc_clk.hw,
++
++		[CLK_IOSC_32K]		= &iosc_32k_clk.hw,
++		[CLK_EXT_OSC32K_GATE]	= &ext_osc32k_gate_clk.common.hw,
++		[CLK_OSC24M_32K]	= &osc24M_32k_clk.common.hw,
++		[CLK_RTC_32K]		= &rtc_32k_fixed_clk.hw,
++		[CLK_RTC_SPI]		= NULL,
++	},
++};
++
+ static struct clk_hw_onecell_data sun50i_h6_rtc_ccu_hw_clks = {
+ 	.num = CLK_NUMBER,
+ 	.hws = {
+@@ -301,6 +325,13 @@ static struct clk_hw_onecell_data sun50i_r329_rtc_ccu_hw_clks = {
+ 	},
+ };
+ 
++static const struct sunxi_ccu_desc sun8i_t5_rtc_ccu_desc = {
++	.ccu_clks	= sun8i_t5_rtc_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun8i_t5_rtc_ccu_clks),
++
++	.hw_clks	= &sun8i_t5_rtc_ccu_hw_clks,
++};
++
+ static const struct sunxi_ccu_desc sun50i_h6_rtc_ccu_desc = {
+ 	.ccu_clks	= sun50i_h6_rtc_ccu_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_rtc_ccu_clks),
+@@ -350,6 +381,15 @@ static void __init sunxi_rtc_ccu_init(struct device_node *node,
+ 	of_sunxi_ccu_probe(node, reg, desc);
+ }
+ 
++static void __init sun8i_t5_rtc_ccu_setup(struct device_node *node)
++{
++	have_iosc_calib = 1;
++
++	sunxi_rtc_ccu_init(node, &sun8i_t5_rtc_ccu_desc);
++}
++CLK_OF_DECLARE_DRIVER(sun8i_t5_rtc_ccu, "allwinner,sun8i-t5-rtc",
++		      sun8i_t5_rtc_ccu_setup);
++
+ static void __init sun50i_h6_rtc_ccu_setup(struct device_node *node)
  {
- 	struct ccu_common *common = hw_to_ccu_common(hw);
+ 	struct clk_init_data *init;
 -- 
 2.31.1
 
