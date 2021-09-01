@@ -2,103 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EB8C432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 16:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAD9C4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 19:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8BD610C8
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 16:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E374610A8
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 19:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244229AbhIAQKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 12:10:54 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:46508 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243950AbhIAQKx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 12:10:53 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B64E92255B;
-        Wed,  1 Sep 2021 16:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1630512595; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lhHDaTRo6QSIlk2kzI7mu6rbEdF/wT2v0tFyNBX3czM=;
-        b=ZftyB+6wqWnBN8SzmlyUBDpKFH4AstsbputI+srhsQcFYE4u5kua7985YspK5pKZrOOJq8
-        aIX7138G/DrJhwG/3HLjf56N08RHcLd4ZGq77x6xZylL48rCqU2t+799Ruqd7FkTLjhsrH
-        dK1dpjlL70Mh7RPhjeEgsS6Y+qGdhnk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1630512595;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lhHDaTRo6QSIlk2kzI7mu6rbEdF/wT2v0tFyNBX3czM=;
-        b=kcBSAp+UQ2B2gL0xbv2VXdKWWO0S705eqX/wlxPO0Oax/c8PyuguV/uaaGhKeQTvnoc+Bd
-        +ODx3tQw0QvQcrCw==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 6D71913AE1;
-        Wed,  1 Sep 2021 16:09:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id 4cBlGNOlL2EhDQAAGKfGzw
-        (envelope-from <jdelvare@suse.de>); Wed, 01 Sep 2021 16:09:55 +0000
-Date:   Wed, 1 Sep 2021 18:09:53 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 2/2] clk: versatile: hide clock drivers from non-ARM users
-Message-ID: <20210901180953.5bd2a994@endymion>
-In-Reply-To: <20210901180833.4558932d@endymion>
-References: <20210901180833.4558932d@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S238624AbhIAT1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 15:27:54 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57636 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231146AbhIAT1y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 15:27:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 181JQV31026608;
+        Wed, 1 Sep 2021 14:26:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1630524391;
+        bh=TRuE6KH2UxmRjPL0Ha46ANT3bo9HPWgsSgDp/PvBKzc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OXBmmCLjO6oE6W9zHxyjm/9XLP3rXatuwT6QPX2OSmM0On9ZbRhpKv5gqz54yQZZS
+         acnmgW4VsAWLhBQlDE5CTLNk4ydNWDdNpvdSPp1AjBPOLGFGwdktOmT3K1v9QOIRIw
+         zzfikghV581kQmywpLzluztlRdPRw76+wwN3J4Ns=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 181JQVOn060436
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Sep 2021 14:26:31 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 1
+ Sep 2021 14:26:30 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Wed, 1 Sep 2021 14:26:30 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 181JQQCx020864;
+        Wed, 1 Sep 2021 14:26:26 -0500
+Subject: Re: [PATCH 28/40] mfd: ti_am335x_tscadc: Add ADC1/magnetic reader
+ support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "Ryan J . Barnett" <ryan.barnett@collins.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Jason Reeder <jreeder@ti.com>
+References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
+ <20210825152518.379386-29-miquel.raynal@bootlin.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <732e002d-d732-5411-1be4-1ecafc993da5@ti.com>
+Date:   Wed, 1 Sep 2021 22:26:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20210825152518.379386-29-miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 419b3ab6987f ("clk: versatile: remove dependency on ARCH_*")
-made the whole menu of ARM reference clock drivers visible on all
-architectures. I can't see how this is an improvement for non-ARM
-users. Unless build-testing, there is no point on presenting
-ARM-only clock drivers on other architectures.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/versatile/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- linux-5.14.orig/drivers/clk/versatile/Kconfig	2021-09-01 17:28:15.853037684 +0200
-+++ linux-5.14/drivers/clk/versatile/Kconfig	2021-09-01 17:32:58.498817653 +0200
-@@ -2,6 +2,7 @@
- 
- menu "Clock driver for ARM Reference designs"
- 	depends on HAS_IOMEM
-+	depends on ARM || ARM64 || COMPILE_TEST
- 
- config CLK_ICST
- 	bool "Clock driver for ARM Reference designs ICST"
+On 25/08/2021 18:25, Miquel Raynal wrote:
+> Introduce a new compatible that has another set of driver data,
+> targeting am437x SoCs with a magnetic reader instead of the
+> touchscreen and a more featureful set of registers.
+> 
+> Co-developed-by: Jason Reeder <jreeder@ti.com>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Signed-off-by: Jason Reeder <jreeder@ti.com>
+> ---
+>   drivers/mfd/ti_am335x_tscadc.c       | 43 ++++++++++++++++++++++------
+>   include/linux/mfd/ti_am335x_tscadc.h |  9 +++++-
+>   2 files changed, 43 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+> index 1a30610dc65f..f4f6b9db4d2a 100644
+> --- a/drivers/mfd/ti_am335x_tscadc.c
+> +++ b/drivers/mfd/ti_am335x_tscadc.c
+> @@ -122,9 +122,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+>   	const __be32 *cur;
+>   	struct clk *clk;
+>   	u32 val;
+> -	bool use_tsc = false;
+> +	bool use_tsc = false, use_mag = false;
+>   	int tscmag_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
+> -	int total_channels, err;
+> +	int mag_tracks = 0, total_channels, err;
+>   
+>   	/* Allocate memory for device */
+>   	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
+> @@ -146,6 +146,12 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+>   		of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
+>   		if (tscmag_wires)
+>   			use_tsc = true;
+> +	} else {
+> +		node = of_get_child_by_name(pdev->dev.of_node, "mag");
+> +		of_property_read_u32(node, "ti,tracks", &mag_tracks);
+
+"ti,tracks" seems undocumented?
+
+[....]
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Best regards,
+grygorii
