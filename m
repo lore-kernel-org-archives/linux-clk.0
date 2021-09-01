@@ -6,63 +6,86 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE7EC432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFC0C4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F31BB61059
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4228361058
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241999AbhIAFdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:33:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33294 "EHLO mail.kernel.org"
+        id S241855AbhIAFgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 01:36:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241980AbhIAFdS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 Sep 2021 01:33:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BCB346101A;
-        Wed,  1 Sep 2021 05:32:21 +0000 (UTC)
+        id S233857AbhIAFgJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Sep 2021 01:36:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E2A761059;
+        Wed,  1 Sep 2021 05:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630474341;
-        bh=N2WVEhIn7g2xqwLHjd0/oieAY8b22yKtkcYybi7KwlY=;
+        s=k20201202; t=1630474513;
+        bh=T1FksYP7QPcFhgT46aKX7pcP5aYxOKXLzlqcQgGkZYk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=W+VmqvrMQZfk8rutotH03eYCURAchYuizk2DK9nQxPm+pg+z9Kk5zUR6IzSdMHlv2
-         XU5A8i272PxI5WC+5fIYqptS9g43rvC52wgkbzF9mDgvV0Pk/5Cluk0QKs0B0fMjIp
-         ACcRIncd9SjSso/34CiWix2MnxjY39LB/VZqHhuabJqpQilH0MiQG+nr4RW9Vm8jrP
-         do5V5Su8v9Ch8p50pGDf1CLqzcxRE9Zum/fWoo/8IqmlYN2U0WeYjzX+jwvv157vb/
-         0GhNNmFkw9KQDYbxMWXKfkrSlbND4atg8V1DdqAaE7AU3mz3VrY0GGNoW3/1PZ2D3C
-         T4j6ToIqvt8WQ==
+        b=aOwBZbY2FDZ46mFnNrSjBp6Tzsrei3zfbZIwQXR8vyecZ2F5Tkx14SM9omWvv19cN
+         zB4cTuGpneYQo9iVOOhvlbXsVpDCesrm4gxsqAtpsQdhHnKgrIBr50dGHIkjQoAV6H
+         pxGhZqXKwE8+88CS0S7kUi2Y2yw3hT6/TEsh91u3LNZoBY5au4U55bqTKqhOCVFwKU
+         kkR9iA3hMSmxce1Jq3CqvuVkhAnY8rQXTm2PXeLEK3jczzXcnkR9bS7MDPXCDQGrqQ
+         ekmiV99x9TUJj96wgfdAD7Av2a5Nx145Ts5Xun6NWilI99kacAvDLsgrJ6/lweI+VE
+         1DycHtlBXxjHw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1630348984.24981.2.camel@mtkswgap22>
-References: <20210813032429.14715-1-miles.chen@mediatek.com> <20210813032429.14715-4-miles.chen@mediatek.com> <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com> <1630348984.24981.2.camel@mtkswgap22>
-Subject: Re: [RESEND PATCH 3/4] clk: mediatek: support COMMON_CLK_MT6779 module build
+In-Reply-To: <YS1lYui5aXadgkEr@Marijn-Arch-PC.localdomain>
+References: <20210830182445.167527-1-marijn.suijten@somainline.org> <20210830182445.167527-2-marijn.suijten@somainline.org> <163036177339.2676726.12271104951144475163@swboyd.mtv.corp.google.com> <YS1fllEswGQEGWPc@Marijn-Arch-PC.localdomain> <163036399040.2676726.5816296584899284140@swboyd.mtv.corp.google.com> <YS1lYui5aXadgkEr@Marijn-Arch-PC.localdomain>
+Subject: Re: [PATCH v2 1/2] drm/msm/dsi: Use "ref" fw clock instead of global name for VCO parent
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
-        Lee Jones <lee.jones@linaro.org>
-To:     Miles Chen <miles.chen@mediatek.com>
-Date:   Tue, 31 Aug 2021 22:32:20 -0700
-Message-ID: <163047434049.42057.5688419707288938766@swboyd.mtv.corp.google.com>
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Stephen Boyd <swboyd@chromium.org>
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Date:   Tue, 31 Aug 2021 22:35:12 -0700
+Message-ID: <163047451225.42057.10341429266269552927@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miles Chen (2021-08-30 11:43:04)
+Quoting Marijn Suijten (2021-08-30 16:10:26)
 >=20
-> sorry for my late response.=20
+> I'm 95% sure this shouldn't cause any problems given current DTs and
+> their history, but that's probably not enough.  This might also impact
+> DTs that have not yet been upstreamed, but afaik the general stance is
+> to not care and actually serve as a fair hint/warning before new DTs
+> make it to the list.
 >=20
-> Thanks for pointing this out. I have the same question when I was
-> building this patch. That time I found some examples where
-> they are using builtin_platform_driver and can be built as=20
-> kernel modules:
->=20
-> config CLK_IMX8QXP (tristate) && drivers/clk/imx/clk-imx8qxp-lpcg.c
-> config CLK_RK3399 (tristate) && drivers/clk/rockchip/clk-rk3399.c
+> If there is a protocol in place to deprecate, warn, and eventually
+> remove this reliance on global clock names I'm more than happy to add
+> .name as a temporary fallback, even if likely unneeded.  Otherwise we
+> might never get rid of it.
 
-We should fix those drivers. Care to send a patch?
+I'm not aware of any protocol to deprecate, warn, and remove the
+fallback name. It's a fallback because it can't ever really be removed.
+
+Anyway, if you're not willing to add the .name then that's fine. We can
+deal with the problem easily by adding a .name in the future if someone
+complains that things aren't working. Sound like a plan? If so, it's
+probably good to add some sort of note in the commit text so that when
+the bisector lands on this patch they can realize that this
+intentionally broke them.
