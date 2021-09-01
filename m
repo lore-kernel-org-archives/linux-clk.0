@@ -2,107 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7226C432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 13:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8794C432BE
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 16:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 816E161056
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 13:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A29F261059
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 16:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244101AbhIAN4C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 09:56:02 -0400
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:42917 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbhIAN4C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 09:56:02 -0400
-Received: by mail-lf1-f45.google.com with SMTP id j4so6540460lfg.9;
-        Wed, 01 Sep 2021 06:55:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=1qbLir7t00tIXtsSOowis8wzBunbda5Sb7xAud87L5k=;
-        b=QJHFdFwOKDQb5JBqkff1XErqaxiXi7zRXZttRrX/7OAvy0XYZ2LAucXOd5lgdLY/w1
-         8rBqS6EVcmCe6bZaKZHoB5EoGydpr/IRejrfovqIb5KfBYJOtnV2YrpJd+mkif2HoE/t
-         2fV9su+Qgl4t3PxYYzKEHszG7SIvHxLU/utUkrRnaadWjzzXjcnqCmO4di1TCxtYHg7E
-         PwRo5bGKiqg6xISmLGtL9i1/37QCET1YuMbLd2h8WqKDjDyx8kthTYJn6UCjTR4oVPyh
-         3gYLzRVBgO8pjt1prsEaanaDfwcVcOKql4EbqWrK3VVON3NktYJvCuOF3DsNnT07CrXT
-         sHng==
-X-Gm-Message-State: AOAM531WtYQ/BSB9lQHz3FruOvJ4upSE0/tpCvQT5aS7+8zyS9Fk7nYX
-        bKR/il+SYdJrYDiLNgtwmwbDb0YtFbTOBA==
-X-Google-Smtp-Source: ABdhPJxnqaiKpaUsD1/Wf7HVOpnXIwDiz/oQkQPofTMkFyItLkXYwvqnNuFAr7cr4G3mnvYqWtGMmQ==
-X-Received: by 2002:a19:f015:: with SMTP id p21mr25478146lfc.32.1630504504031;
-        Wed, 01 Sep 2021 06:55:04 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id g21sm192581lfu.94.2021.09.01.06.55.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Sep 2021 06:55:03 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id l10so6587597lfg.4;
-        Wed, 01 Sep 2021 06:55:03 -0700 (PDT)
-X-Received: by 2002:a05:6512:3f89:: with SMTP id x9mr26306205lfa.233.1630504503566;
- Wed, 01 Sep 2021 06:55:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210901050526.45673-1-samuel@sholland.org> <20210901050526.45673-6-samuel@sholland.org>
-In-Reply-To: <20210901050526.45673-6-samuel@sholland.org>
-Reply-To: wens@csie.org
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 1 Sep 2021 21:54:52 +0800
-X-Gmail-Original-Message-ID: <CAGb2v668_prQ8zw9rX3=Xi9L73cqqo+KhUN_4m8OUzF0qhCH1A@mail.gmail.com>
-Message-ID: <CAGb2v668_prQ8zw9rX3=Xi9L73cqqo+KhUN_4m8OUzF0qhCH1A@mail.gmail.com>
-Subject: Re: [PATCH 5/8] clk: sunxi-ng: Export symbols used by CCU drivers
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        id S231201AbhIAQJc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 12:09:32 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:46364 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242527AbhIAQJc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 12:09:32 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C0D692255B;
+        Wed,  1 Sep 2021 16:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1630512514; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VvuVJN98m5AXxURIg422NWPf2DVo5XBVcLHNwb3tcqs=;
+        b=Dp6Gy+7S1bysEY1kiTmVZX6cNlXi02iyL27Dtpt6m90mhpGwLYLG2I/zQ3VoGjeXDPehhN
+        3GYXh6wCacNjw6VUcJlDFnkbnV2en6pfaPgHuha9N3FLFOwBtcgni/onkW6u72efakQgFr
+        1fs6qDT1o4KHpCTDHXs2Td+ziLP8uXA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1630512514;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VvuVJN98m5AXxURIg422NWPf2DVo5XBVcLHNwb3tcqs=;
+        b=w6YqQnLXg3xFWSqoy60XtvQkHR/pmqmqMzUFeaB5CVGUE2On7y+S6isfGMNGX7UKWQ4z1m
+        FgfMvsHwXrQFEECg==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 7895A13AE1;
+        Wed,  1 Sep 2021 16:08:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id KywdG4KlL2G/DAAAGKfGzw
+        (envelope-from <jdelvare@suse.de>); Wed, 01 Sep 2021 16:08:34 +0000
+Date:   Wed, 1 Sep 2021 18:08:33 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 1/2] clk: versatile: Rename ICST to CLK_ICST
+Message-ID: <20210901180833.4558932d@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 1, 2021 at 1:05 PM Samuel Holland <samuel@sholland.org> wrote:
->
-> For the individual drivers to be built as modules, the ops structs and
-> callback registration functions must be exported. None of the helper
-> functions are exported, because they are only referenced from the
-> corresponding ops structs. of_sunxi_ccu_probe is not exported, because
-> it is only used for built-in early OF clock providers.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->  drivers/clk/sunxi-ng/ccu_common.c | 2 ++
->  drivers/clk/sunxi-ng/ccu_div.c    | 1 +
->  drivers/clk/sunxi-ng/ccu_gate.c   | 1 +
->  drivers/clk/sunxi-ng/ccu_mp.c     | 2 ++
->  drivers/clk/sunxi-ng/ccu_mult.c   | 1 +
->  drivers/clk/sunxi-ng/ccu_mux.c    | 2 ++
->  drivers/clk/sunxi-ng/ccu_nk.c     | 1 +
->  drivers/clk/sunxi-ng/ccu_nkm.c    | 1 +
->  drivers/clk/sunxi-ng/ccu_nkmp.c   | 1 +
->  drivers/clk/sunxi-ng/ccu_nm.c     | 1 +
->  drivers/clk/sunxi-ng/ccu_phase.c  | 1 +
->  drivers/clk/sunxi-ng/ccu_reset.c  | 1 +
->  12 files changed, 15 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-> index 31af8b6b5286..3ab109582646 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.c
-> +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> @@ -83,6 +83,7 @@ int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb)
->         return clk_notifier_register(pll_nb->common->hw.clk,
->                                      &pll_nb->clk_nb);
->  }
-> +EXPORT_SYMBOL_GPL(ccu_pll_notifier_register);
+For consistency, prefix the ICST config option with CLK as all other
+clock source drivers have.
 
-These symbol names aren't exactly specific to sunxi. Maybe we could apply
-symbol namespaces?
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+---
+ arch/arm/mach-integrator/Kconfig |    2 +-
+ arch/arm/mach-realview/Kconfig   |    2 +-
+ arch/arm/mach-versatile/Kconfig  |    2 +-
+ arch/arm/mach-vexpress/Kconfig   |    2 +-
+ drivers/clk/versatile/Kconfig    |    2 +-
+ drivers/clk/versatile/Makefile   |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-ChenYu
+--- linux-5.14.orig/arch/arm/mach-integrator/Kconfig	2021-09-01 17:59:24.942741599 +0200
++++ linux-5.14/arch/arm/mach-integrator/Kconfig	2021-09-01 18:00:06.681274791 +0200
+@@ -6,7 +6,7 @@ menuconfig ARCH_INTEGRATOR
+ 	select CMA
+ 	select DMA_CMA
+ 	select HAVE_TCM
+-	select ICST
++	select CLK_ICST
+ 	select MFD_SYSCON
+ 	select PLAT_VERSATILE
+ 	select POWER_RESET
+--- linux-5.14.orig/arch/arm/mach-realview/Kconfig	2021-09-01 17:59:24.942741599 +0200
++++ linux-5.14/arch/arm/mach-realview/Kconfig	2021-09-01 18:00:06.681274791 +0200
+@@ -11,7 +11,7 @@ menuconfig ARCH_REALVIEW
+ 	select HAVE_ARM_TWD if SMP
+ 	select HAVE_PATA_PLATFORM
+ 	select HAVE_TCM
+-	select ICST
++	select CLK_ICST
+ 	select MACH_REALVIEW_EB if ARCH_MULTI_V5
+ 	select MFD_SYSCON
+ 	select PLAT_VERSATILE
+--- linux-5.14.orig/arch/arm/mach-versatile/Kconfig	2021-09-01 17:59:24.942741599 +0200
++++ linux-5.14/arch/arm/mach-versatile/Kconfig	2021-09-01 18:00:06.681274791 +0200
+@@ -7,7 +7,7 @@ config ARCH_VERSATILE
+ 	select ARM_VIC
+ 	select CLKSRC_VERSATILE
+ 	select CPU_ARM926T
+-	select ICST
++	select CLK_ICST
+ 	select MFD_SYSCON
+ 	select PLAT_VERSATILE
+ 	select POWER_RESET
+--- linux-5.14.orig/arch/arm/mach-vexpress/Kconfig	2021-09-01 17:59:24.942741599 +0200
++++ linux-5.14/arch/arm/mach-vexpress/Kconfig	2021-09-01 18:00:06.681274791 +0200
+@@ -11,7 +11,7 @@ menuconfig ARCH_VEXPRESS
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select HAVE_PATA_PLATFORM
+-	select ICST
++	select CLK_ICST
+ 	select NO_IOPORT_MAP
+ 	select PLAT_VERSATILE
+ 	select POWER_RESET
+--- linux-5.14.orig/drivers/clk/versatile/Kconfig	2021-09-01 17:59:24.942741599 +0200
++++ linux-5.14/drivers/clk/versatile/Kconfig	2021-09-01 18:05:25.939393462 +0200
+@@ -3,7 +3,7 @@
+ menu "Clock driver for ARM Reference designs"
+ 	depends on HAS_IOMEM
+ 
+-config ICST
++config CLK_ICST
+ 	bool "Clock driver for ARM Reference designs ICST"
+ 	select REGMAP_MMIO
+ 	help
+--- linux-5.14.orig/drivers/clk/versatile/Makefile	2021-08-30 00:04:50.000000000 +0200
++++ linux-5.14/drivers/clk/versatile/Makefile	2021-09-01 18:07:46.446233983 +0200
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ # Makefile for Versatile-specific clocks
+-obj-$(CONFIG_ICST)		+= icst.o clk-icst.o clk-versatile.o
++obj-$(CONFIG_CLK_ICST)		+= icst.o clk-icst.o clk-versatile.o
+ obj-$(CONFIG_INTEGRATOR_IMPD1)	+= clk-impd1.o
+ obj-$(CONFIG_CLK_SP810)		+= clk-sp810.o
+ obj-$(CONFIG_CLK_VEXPRESS_OSC)	+= clk-vexpress-osc.o
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
