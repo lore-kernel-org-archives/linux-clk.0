@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615ADC25AEB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFB9C25AED
 	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 09:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4558860F4B
+	by mail.kernel.org (Postfix) with ESMTP id D4A1C60F4B
 	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 09:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243560AbhIAJhh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S243704AbhIAJhh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 1 Sep 2021 05:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45804 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243704AbhIAJhg (ORCPT
+        with ESMTP id S243701AbhIAJhg (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 05:37:36 -0400
 Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BD9B6C061760;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A51EDC061575;
         Wed,  1 Sep 2021 02:36:39 -0700 (PDT)
 Received: from hq-00021.holoplot.net (unknown [194.162.236.226])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id DD6F532D177;
-        Wed,  1 Sep 2021 09:36:38 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 8605832D173;
+        Wed,  1 Sep 2021 09:36:37 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     robh+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
         mturquette@baylibre.com, sboyd@kernel.org,
-        Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v5 7/9] clk: cs2000-cp: make clock skip setting configurable
-Date:   Wed,  1 Sep 2021 11:36:29 +0200
-Message-Id: <20210901093631.1403278-8-daniel@zonque.org>
+        Daniel Mack <daniel@zonque.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 3/9] dt-bindings: clock: cs2000-cp: document cirrus,clock-skip flag
+Date:   Wed,  1 Sep 2021 11:36:25 +0200
+Message-Id: <20210901093631.1403278-4-daniel@zonque.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210901093631.1403278-1-daniel@zonque.org>
 References: <20210901093631.1403278-1-daniel@zonque.org>
@@ -42,45 +42,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock skip function of this chip is not necessarily desirable in
-all hardware appliances. This patch makes the feature configurable
-through a device-tree property.
-
 Signed-off-by: Daniel Mack <daniel@zonque.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/clk-cs2000-cp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/cirrus,cs2000-cp.yaml         | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index bd030e156d65..9f99e39b41f2 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -81,6 +81,7 @@ struct cs2000_priv {
+diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+index 79b90500f6ac..9047d8a24a08 100644
+--- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
++++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+@@ -48,6 +48,12 @@ properties:
+       - 3 # CS2000CP_AUX_OUTPUT_PLL_LOCK: pll lock status
+     default: 0
  
- 	bool dynamic_mode;
- 	bool lf_ratio;
-+	bool clk_skip;
- 
- 	/* suspend/resume */
- 	unsigned long saved_rate;
-@@ -133,7 +134,7 @@ static int cs2000_enable_dev_config(struct cs2000_priv *priv, bool enable)
- 		return ret;
- 
- 	ret = cs2000_bset(priv, FUNC_CFG1, CLKSKIPEN,
--			  enable ? CLKSKIPEN : 0);
-+			  (enable && priv->clk_skip) ? CLKSKIPEN : 0);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -464,6 +465,8 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
- 	if (ret < 0)
- 		return ret;
- 
-+	priv->clk_skip = of_property_read_bool(np, "cirrus,clock-skip");
++  cirrus,clock-skip:
++    description:
++      This mode allows the PLL to maintain lock even when CLK_IN
++      has missing pulses for up to 20 ms.
++    $ref: /schemas/types.yaml#/definitions/flag
 +
- 	ref_clk_rate = clk_get_rate(priv->ref_clk);
- 	ret = cs2000_ref_clk_bound_rate(priv, ref_clk_rate);
- 	if (ret < 0)
+ required:
+   - compatible
+   - reg
 -- 
 2.31.1
 
