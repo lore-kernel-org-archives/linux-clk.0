@@ -2,125 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAD9C4320A
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 19:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE02C432BE
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 22:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E374610A8
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 19:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B70C6108E
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 22:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238624AbhIAT1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 15:27:54 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57636 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbhIAT1y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 15:27:54 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 181JQV31026608;
-        Wed, 1 Sep 2021 14:26:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1630524391;
-        bh=TRuE6KH2UxmRjPL0Ha46ANT3bo9HPWgsSgDp/PvBKzc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=OXBmmCLjO6oE6W9zHxyjm/9XLP3rXatuwT6QPX2OSmM0On9ZbRhpKv5gqz54yQZZS
-         acnmgW4VsAWLhBQlDE5CTLNk4ydNWDdNpvdSPp1AjBPOLGFGwdktOmT3K1v9QOIRIw
-         zzfikghV581kQmywpLzluztlRdPRw76+wwN3J4Ns=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 181JQVOn060436
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 1 Sep 2021 14:26:31 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 1
- Sep 2021 14:26:30 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 1 Sep 2021 14:26:30 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 181JQQCx020864;
-        Wed, 1 Sep 2021 14:26:26 -0500
-Subject: Re: [PATCH 28/40] mfd: ti_am335x_tscadc: Add ADC1/magnetic reader
- support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        id S232709AbhIAWFS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 18:05:18 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:37564 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232025AbhIAWFS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 18:05:18 -0400
+X-UUID: f2d4b787ce034378bb80a742a64efce9-20210902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=dechZ3xSa+k6eciQYNq2w2jcJKlpQJ63PvPD4NTpepM=;
+        b=SQU1gIwhzcwrNYRwtiDrAsJ6ax2tYANm3kmm6W3ubEsDz1H9CQNhg4olDUjOPH+id3ekEyb88srRJ/+rzOQ4elzNt46XGCGeS6eQxGct5K/c0EK903nOzphlZFo7QUEG8PNLNK7zltSLNcudFsVEI4xZFWE+BhRC1yF2ikvk88E=;
+X-UUID: f2d4b787ce034378bb80a742a64efce9-20210902
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1029753929; Thu, 02 Sep 2021 06:04:18 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 2 Sep 2021 06:04:16 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 2 Sep 2021 06:04:16 +0800
+Message-ID: <67a7d4bccfc56c5960ca370bcbfb5ca6c9693f21.camel@mediatek.com>
+Subject: Re: [RESEND PATCH 3/4] clk: mediatek: support COMMON_CLK_MT6779
+ module build
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "Ryan J . Barnett" <ryan.barnett@collins.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Jason Reeder <jreeder@ti.com>
-References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
- <20210825152518.379386-29-miquel.raynal@bootlin.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <732e002d-d732-5411-1be4-1ecafc993da5@ti.com>
-Date:   Wed, 1 Sep 2021 22:26:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wendell Lin <wendell.lin@mediatek.com>,
+        "Hanks Chen" <hanks.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>
+Date:   Thu, 2 Sep 2021 06:04:16 +0800
+In-Reply-To: <163047434049.42057.5688419707288938766@swboyd.mtv.corp.google.com>
+References: <20210813032429.14715-1-miles.chen@mediatek.com>
+         <20210813032429.14715-4-miles.chen@mediatek.com>
+         <163021049667.2676726.10138202396240942833@swboyd.mtv.corp.google.com>
+         <1630348984.24981.2.camel@mtkswgap22>
+         <163047434049.42057.5688419707288938766@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-In-Reply-To: <20210825152518.379386-29-miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+T24gVHVlLCAyMDIxLTA4LTMxIGF0IDIyOjMyIC0wNzAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
+IFF1b3RpbmcgTWlsZXMgQ2hlbiAoMjAyMS0wOC0zMCAxMTo0MzowNCkNCj4gPiANCj4gPiBzb3Jy
+eSBmb3IgbXkgbGF0ZSByZXNwb25zZS4gDQo+ID4gDQo+ID4gVGhhbmtzIGZvciBwb2ludGluZyB0
+aGlzIG91dC4gSSBoYXZlIHRoZSBzYW1lIHF1ZXN0aW9uIHdoZW4gSSB3YXMNCj4gPiBidWlsZGlu
+ZyB0aGlzIHBhdGNoLiBUaGF0IHRpbWUgSSBmb3VuZCBzb21lIGV4YW1wbGVzIHdoZXJlDQo+ID4g
+dGhleSBhcmUgdXNpbmcgYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIgYW5kIGNhbiBiZSBidWlsdCBh
+cyANCj4gPiBrZXJuZWwgbW9kdWxlczoNCj4gPiANCj4gPiBjb25maWcgQ0xLX0lNWDhRWFAgKHRy
+aXN0YXRlKSAmJiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhxeHAtbHBjZy5jDQo+ID4gY29uZmln
+IENMS19SSzMzOTkgKHRyaXN0YXRlKSAmJiBkcml2ZXJzL2Nsay9yb2NrY2hpcC9jbGstcmszMzk5
+LmMNCj4gDQo+IFdlIHNob3VsZCBmaXggdGhvc2UgZHJpdmVycy4gQ2FyZSB0byBzZW5kIGEgcGF0
+Y2g/DQoNCk5vIHByb2JsZW0uIEkgd2lsbCBjaGVjayBkcnZpZXJzL2NsayBhbmQgc3VibWl0IGZp
+eCBwYXRjaGVzLg0KDQpNaWxlcw0K
 
-
-On 25/08/2021 18:25, Miquel Raynal wrote:
-> Introduce a new compatible that has another set of driver data,
-> targeting am437x SoCs with a magnetic reader instead of the
-> touchscreen and a more featureful set of registers.
-> 
-> Co-developed-by: Jason Reeder <jreeder@ti.com>
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Signed-off-by: Jason Reeder <jreeder@ti.com>
-> ---
->   drivers/mfd/ti_am335x_tscadc.c       | 43 ++++++++++++++++++++++------
->   include/linux/mfd/ti_am335x_tscadc.h |  9 +++++-
->   2 files changed, 43 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-> index 1a30610dc65f..f4f6b9db4d2a 100644
-> --- a/drivers/mfd/ti_am335x_tscadc.c
-> +++ b/drivers/mfd/ti_am335x_tscadc.c
-> @@ -122,9 +122,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->   	const __be32 *cur;
->   	struct clk *clk;
->   	u32 val;
-> -	bool use_tsc = false;
-> +	bool use_tsc = false, use_mag = false;
->   	int tscmag_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
-> -	int total_channels, err;
-> +	int mag_tracks = 0, total_channels, err;
->   
->   	/* Allocate memory for device */
->   	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
-> @@ -146,6 +146,12 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->   		of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
->   		if (tscmag_wires)
->   			use_tsc = true;
-> +	} else {
-> +		node = of_get_child_by_name(pdev->dev.of_node, "mag");
-> +		of_property_read_u32(node, "ti,tracks", &mag_tracks);
-
-"ti,tracks" seems undocumented?
-
-[....]
-
--- 
-Best regards,
-grygorii
