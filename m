@@ -2,68 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9D2C432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC313C4320A
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4145461090
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4A166108E
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:44:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242156AbhIAFlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:41:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39802 "EHLO mail.kernel.org"
+        id S231289AbhIAFpb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 01:45:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242126AbhIAFlS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 Sep 2021 01:41:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8DD1361090;
-        Wed,  1 Sep 2021 05:40:22 +0000 (UTC)
+        id S242085AbhIAFpa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Sep 2021 01:45:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4CA5061074;
+        Wed,  1 Sep 2021 05:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630474822;
-        bh=IvDkmizg58kyeyzMs8vObMqP+kT/IvEFz24k7Ro5FkY=;
+        s=k20201202; t=1630475074;
+        bh=pfiOdo50JoDcnklFSQnO//blNznZ0uOyTUfx1bKEbyI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=HE5A0kG1VeoXaAd/L4M1SlrkspDgLL1dqgcKugepYq0CLSQSqGp0CykXBPRezqCb+
-         7QlWciZRqaLM0ikXufDRIhPqMfH4XPxoUagSJ0+Gg4IPlAVQWES9uEQCq3NpJkbbs1
-         P94NSKZ3r3JrTVGKrKKyyyMJZEtozpzXvHsCSGsri9M04tIxs+3RIlyvnHeNimmbQf
-         2iMZoFwK75fIlluYTGK5sN7CW+eROyTUOOL4xy9sdm/nTo8YxwRMsQcwSttj1TAyt8
-         fwot77ER6tzXa+/MSWOXuO36mKLRHp8FM2yydBOEMPBPSpWypDSv1LihvICRiFDkd/
-         +/dz0+9xdOkCw==
+        b=gsdLpY1++BJLTD1ZukR/v/JguaVdddxuQYR56l06ui7S0K37Blt5UcyOeCu+tYaqw
+         9DGRBFyBfkLD+yS53HFtEg11BycIepav7qoLcl3sTn40wg42gB4nHNq+sJYAV7ldHK
+         gv826AoGmj3mfz6gBiiM4u9QzRBqp9WvdVz2IIjQG2Y03jn691mGJ77pxrPL7kcciA
+         hh+CWveyhuwSc6b1+M1DE6EVf3JF3+plGu+4WQhthaO0ik5uqHLbl+Q7eWYCQw6fF2
+         C9lpYjru6gi9pROa2sdrhHkwunc9psnULHou2vWRZkg0YYxhOH/2fMcSQlm2Ou7TBl
+         jM/v19aXR10Ow==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210831164210.15455-5-miles.chen@mediatek.com>
-References: <20210831164210.15455-1-miles.chen@mediatek.com> <20210831164210.15455-5-miles.chen@mediatek.com>
-Subject: Re: [PATCH v2 4/4] clk: mediatek: use tristate for COMMON_CLK_MEDAITEK and COMMON_CLK_MT6779
+In-Reply-To: <35d409b5-75d9-636e-e9c5-42d833b8e592@microchip.com>
+References: <20210401122726.28528-1-claudiu.beznea@microchip.com> <6ecc4822-8112-43d4-1259-cd7dfe79d71c@microchip.com> <163021931214.2676726.2951110502140668721@swboyd.mtv.corp.google.com> <35d409b5-75d9-636e-e9c5-42d833b8e592@microchip.com>
+Subject: Re: [PATCH v2 0/6] clk: at91: updates for power management and dvfs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Wendell Lin <wendell.lin@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
-        Miles Chen <miles.chen@mediatek.com>,
-        Lee Jones <lee.jones@linaro.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Date:   Tue, 31 Aug 2021 22:40:21 -0700
-Message-ID: <163047482135.42057.4815394359554916322@swboyd.mtv.corp.google.com>
+Cc:     viresh.kumar@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        mturquette@baylibre.com
+Date:   Tue, 31 Aug 2021 22:44:32 -0700
+Message-ID: <163047507296.42057.10597374695758699868@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miles Chen (2021-08-31 09:42:10)
-> Now we have all necessary exported symbols, change
-> COMMON_CLK_MEDAITEK and COMMON_CLK_MT6779* to tristate.
+Quoting Claudiu.Beznea@microchip.com (2021-08-29 22:46:13)
+> On 29.08.2021 09:41, Stephen Boyd wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the content is safe
+> >=20
+> > Quoting Claudiu.Beznea@microchip.com (2021-08-02 01:36:52)
+> >> On 01.04.2021 15:27, Claudiu Beznea wrote:
+> >> Hi Stephen,
+> >>
+> >> Please ignore the DVFS patch in this series
+> >> (clk: at91: clk-master: update for dvfs) as I have some updates to it.=
+ I'll
+> >> introduce them in the next version.
+> >>
+> >=20
+> > Can I apply the rest of them though?
+> >=20
+>=20
+> Yes, please! One note, at patch "clk: at91: clk-master: add register
+> definition for sama7g5's master clock", is that changes in header
+> (include/linux/clk/at91_pmc.h) were taken trough [1] via at91 tree because
+> the build was broken at some point for multi_v7_defconfig on linux-next.
 >=20
 
-Please squash this with the patch that makes them into modular drivers.
-
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Hanks Chen <hanks.chen@mediatek.com>
-> Cc: Wendell Lin <wendell.lin@mediatek.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Ok. Maybe it would be best to just resend the ones that you want me to
+apply then.
