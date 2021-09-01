@@ -2,67 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37826C432BE
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4D4C43214
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2B561090
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63D82610CD
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Sep 2021 05:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242113AbhIAFlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:41:03 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:39031 "EHLO
+        id S242051AbhIAFlF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Sep 2021 01:41:05 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:45991 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242080AbhIAFk4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 01:40:56 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id DCF18580595;
-        Wed,  1 Sep 2021 01:39:59 -0400 (EDT)
+        by vger.kernel.org with ESMTP id S242066AbhIAFkz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Sep 2021 01:40:55 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 99C7F58057C;
+        Wed,  1 Sep 2021 01:39:58 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 01 Sep 2021 01:39:59 -0400
+  by compute1.internal (MEProxy); Wed, 01 Sep 2021 01:39:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=tkzBfxZlRNpTX
-        Jf5+WB8ToGkN4WKFasuV+pjQzUK5zc=; b=lWKLfVv7IzNcDt25ljPma6Ip/fBjD
-        iFIOJFb7QU3qSs1Nj62zSjeSGxBL9VMzv4jQkPYKe0rwDBwrt1VM2kfYUC6GOdxm
-        KCG3SPFq+NuGW0fTWcee1dCF9k34wUo5kTSS7UprFXSnkq/f5Xoo3z6pq2+Eqknz
-        HT+P85tpUyVswc7F0x9nIdYhKg7JEfgGTwdwEY6OHbx0XJjYjE53SMwljCCsXZ3a
-        ssjZk5GWgzodtLae1Fc0jUvW3o/XBb4pwufTvfJOmLkXXrQ0PDcz/NXQdZcPtyV3
-        GAYxGCO8GMEIx2EXzwFZM2gVrAb8s8GxJdKLpOSXzI0qf7G/S1immTlpQ==
+        :mime-version:content-transfer-encoding; s=fm3; bh=W8MNz8Wllp4iR
+        U2Ej37s5iy4UZZCQpDauVNv3IqBNDM=; b=h5FpEQoFPYPGpMrAWuh5JY9Pn/fJR
+        PQ2vrvFR4E3HKWdsvMazeiq7QadJGwXn4LBUy4aFbyfamh/QS5KBpOdEquRXAVgQ
+        ZC7pX+DtO8KFDpDDkidF7yCkm9Krp0CXNCDKboQvvDOGdrPsqBabfqMePRu3I2bP
+        NmB1OKf631fNp12RMx+reKL+zQGGl4zTve1Q463NMAbvbOvO1OKCDEj2F9YrEnzG
+        ugbUPrWkdXSXUdzk0Njam4K8Eiyd3d04q8LXYG+CyAzLCiX76iP4dwgkl7DZPspt
+        QspPzUrQnU9K1MKr1BG+BjxSG0kUUqh0tSnvLPBB/lMT0VuoAMFzrGFsw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=tkzBfxZlRNpTXJf5+WB8ToGkN4WKFasuV+pjQzUK5zc=; b=ARKJVsY8
-        13bzyXhKxnhtyruw34WX9m6FKk3KS1t0exFioejy2r3gMENhOXXGvyX31l2igPou
-        EhaLzu3q8RJLNGVSN1q7UO7MuX/2EMipw7uL8Q+e/gZlKzUbBdKe5glLSUOeF4+Z
-        yAVK5J/G9dQuGzsp/BRoebVgbqYT11POC7lIjQk5qQcR+O4IbYEbDaPZshcSTnYg
-        C94i6y5nRjZOoTW8yXAabAr+dinSRozG2DVQFcdZmtncUpSXc5bqhJD2RemjjaEn
-        ooRW2fWJwKIA00GJjaT5+V6MiVDWh++JZsX2Suqu6Lg+WSZd8+q14qOcDtvjb0k1
-        p+n+6A3PMISFPA==
-X-ME-Sender: <xms:LxIvYWwskIxnjb-qMNzlLXzsgvZ0Ydovk3wCF69oxuRXHtZP5dDH_A>
-    <xme:LxIvYSQO0kSTg5oIO_xa8MEcx_fz_oLUidTABRwW3uMFKNkaxX_YylO61EdU_tYZM
-    xIwpBoHZU11Ai7a_w>
-X-ME-Received: <xmr:LxIvYYW1tD7Fv-ZgRtHuuCG0bH-whr_GO6t1foqXHcOVCELQYca6or1oq3iiDQji1T4XzNrqCA4iFO-yCyhMY1vxvQ-YcTjr0NScyqx9DgtvQwp9ccG3XL_6knWLNMvFnZSxCg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvvddgleejucetufdoteggodetrfdotf
+        fm3; bh=W8MNz8Wllp4iRU2Ej37s5iy4UZZCQpDauVNv3IqBNDM=; b=cFWHbCdp
+        wkvWgxAEkjIVOwiZz2e2CvtF3O6cdl9ig2KkKmunlIyzYkCPPOp+MKHvSLHjr7yG
+        H0YMMQfuzSB0s5HI9WIGisKU1VAa4AiyGHKwwXUYKMiUf6GqtgEg/IgHRb3YfPpi
+        vIgcId6UI6XX7uldSV7zl+6oLTbR0GBSXkRjX3BHT84CyHqm+diiLlsFFzLEjBiM
+        hzLTlYWLxZOu9JVaprpPmAd7e7HIkSr/Ou7icSolBukrew0xGF0Un5JL0LzCDZi3
+        wpWPdocrQyhvhvIFMoWI8fNe+FdZegoKze/Vyn8JZra1AncRvKsoAFE1RxksSFhO
+        ExUYTeJt0ghFog==
+X-ME-Sender: <xms:LhIvYZwMHbn0KY_80SvB7xrnYyGPu6uppfAi70H5IdX0BnGbMR-_PA>
+    <xme:LhIvYZSieBqt8QqpXlZNPHQ4_vsJrom3KCwKpzvXBPD0PoK6NgUqS42vKZtR6NQIE
+    Te2rXdnnYlKifLeBw>
+X-ME-Received: <xmr:LhIvYTWJPtcGyP8CuBpHZkUVyGwDPu4pVePGakUFkss2Hltr8rVAlZysVCmL2pUK9F2hOB95HAiNSkwLmYoM8ka1YqGDzR5y-lYv8kLGOzk6PvR9IPAO7cfm9acR2q_NOuW6Gg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvvddgleekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
     lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
     frrghtthgvrhhnpeduhfejfedvhffgfeehtefghfeiiefgfeehgfdvvdevfeegjeehjedv
-    gfejheeuieenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
+    gfejheeuieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
     hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:LxIvYcgzhv8nO05WBFnLmFkVJk-WSQbfPNYeuWCIzhbeWfmist-KGw>
-    <xmx:LxIvYYCATcfVi_DYxRQ0T9N0WYk7YY-cjySowwwqJ5F-osQewBtQ7w>
-    <xmx:LxIvYdJSWXQktJsHfW6fe18fiSxVyYyaqq20VgO0j0WA4qRIUYzUEg>
-    <xmx:LxIvYc4yFQBeh2Te_nOVfzHYU1Rh3p0-1P6N4FcPfUYetZ1mYz_uzA>
+X-ME-Proxy: <xmx:LhIvYbh1pYwNqg53bzAPuzQXjHxY5A8aWuuSaQAmP6dnRVGRCh7qfA>
+    <xmx:LhIvYbAzGtyZ04Sr5e0ESUheNrAeSEXx9Futof4ZdURQziDNeAC1tw>
+    <xmx:LhIvYUK-vghP_HcaVfQJW4_PB4OKE3kxcWot1SxY-mYKAXxz1_hipQ>
+    <xmx:LhIvYf4RNROpDtqyR9XNnL0_OvpZFFVv6d0KZNQNXOojLc-0nGUXoQ>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 1 Sep 2021 01:39:59 -0400 (EDT)
+ 1 Sep 2021 01:39:58 -0400 (EDT)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -72,9 +71,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
         Samuel Holland <samuel@sholland.org>
-Subject: [RFC PATCH 6/7] [DO NOT MERGE] clk: sunxi-ng: Add support for H6
-Date:   Wed,  1 Sep 2021 00:39:50 -0500
-Message-Id: <20210901053951.60952-7-samuel@sholland.org>
+Subject: [RFC PATCH 4/7] clk: sunxi-ng: mux: Allow muxes to have keys
+Date:   Wed,  1 Sep 2021 00:39:48 -0500
+Message-Id: <20210901053951.60952-5-samuel@sholland.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210901053951.60952-1-samuel@sholland.org>
 References: <20210901053951.60952-1-samuel@sholland.org>
@@ -84,125 +83,80 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-H6 has IOSC calibration and an ext-osc32k input.
-
-H6 has the osc32k mux and the rtc-32k mux, but no fanout mux.
+The muxes in the RTC can only be updated when setting a key field to a
+specific value. Add a feature flag to denote muxes with this property.
+Since so far the key value is always the same, it does not need to be
+provided separately for each mux.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/clk/sunxi-ng/sun50i-rtc-ccu.c | 49 +++++++++++++++++++++++++++
- drivers/rtc/rtc-sun6i.c               | 17 ----------
- 2 files changed, 49 insertions(+), 17 deletions(-)
+ drivers/clk/sunxi-ng/ccu_common.h |  1 +
+ drivers/clk/sunxi-ng/ccu_mux.c    |  7 +++++++
+ drivers/clk/sunxi-ng/ccu_mux.h    | 14 ++++++++++++++
+ 3 files changed, 22 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
-index 1dfa05c2f0e9..9603dc0d3d7b 100644
---- a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
-+++ b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
-@@ -227,6 +227,16 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(osc32k_fanout_clk, "rtc-32k-fanout",
- static SUNXI_CCU_M_FW_WITH_GATE(rtc_spi_clk, "rtc-spi", "ahb",
- 				0x310, 0, 5, BIT(31), 0);
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index 98a1834b58bb..fbf16c6b896d 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -17,6 +17,7 @@
+ #define CCU_FEATURE_LOCK_REG		BIT(5)
+ #define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
+ #define CCU_FEATURE_SIGMA_DELTA_MOD	BIT(7)
++#define CCU_FEATURE_KEY_FIELD		BIT(8)
  
-+static struct ccu_common *sun50i_h6_rtc_ccu_clks[] = {
-+	&iosc_clk,
-+	&iosc_32k_clk,
-+	&ext_osc32k_gate_clk.common,
-+	&osc32k_clk.common,
-+	&osc24M_32k_clk.common,
-+	&rtc_32k_mux_clk.common,
-+	&osc32k_fanout_clk.common,
-+};
-+
- static struct ccu_common *sun50i_h616_rtc_ccu_clks[] = {
- 	&iosc_clk,
- 	&iosc_32k_clk,
-@@ -246,6 +256,21 @@ static struct ccu_common *sun50i_r329_rtc_ccu_clks[] = {
- 	&rtc_spi_clk.common,
- };
+ /* MMC timing mode switch bit */
+ #define CCU_MMC_NEW_TIMING_MODE		BIT(30)
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 785803cd7e51..fb93cea3a502 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -12,6 +12,8 @@
+ #include "ccu_gate.h"
+ #include "ccu_mux.h"
  
-+static struct clk_hw_onecell_data sun50i_h6_rtc_ccu_hw_clks = {
-+	.num = CLK_NUMBER,
-+	.hws = {
-+		[CLK_OSC32K]		= &osc32k_clk.common.hw,
-+		[CLK_OSC32K_FANOUT]	= &osc32k_fanout_clk.common.hw,
-+		[CLK_IOSC]		= &iosc_clk.hw,
++#define CCU_MUX_KEY_VALUE		0x16aa0000
 +
-+		[CLK_IOSC_32K]		= &iosc_32k_clk.hw,
-+		[CLK_EXT_OSC32K_GATE]	= &ext_osc32k_gate_clk.common.hw,
-+		[CLK_OSC24M_32K]	= &osc24M_32k_clk.common.hw,
-+		[CLK_RTC_32K]		= &rtc_32k_mux_clk.common.hw,
-+		[CLK_RTC_SPI]		= NULL,
-+	},
-+};
-+
- static struct clk_hw_onecell_data sun50i_h616_rtc_ccu_hw_clks = {
- 	.num = CLK_NUMBER,
- 	.hws = {
-@@ -276,6 +301,13 @@ static struct clk_hw_onecell_data sun50i_r329_rtc_ccu_hw_clks = {
- 	},
- };
+ static u16 ccu_mux_get_prediv(struct ccu_common *common,
+ 			      struct ccu_mux_internal *cm,
+ 			      int parent_index)
+@@ -188,6 +190,11 @@ int ccu_mux_helper_set_parent(struct ccu_common *common,
+ 	spin_lock_irqsave(common->lock, flags);
  
-+static const struct sunxi_ccu_desc sun50i_h6_rtc_ccu_desc = {
-+	.ccu_clks	= sun50i_h6_rtc_ccu_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_rtc_ccu_clks),
+ 	reg = readl(common->base + common->reg);
 +
-+	.hw_clks	= &sun50i_h6_rtc_ccu_hw_clks,
-+};
++	/* The key field always reads as zero. */
++	if (common->features & CCU_FEATURE_KEY_FIELD)
++		reg |= CCU_MUX_KEY_VALUE;
 +
- static const struct sunxi_ccu_desc sun50i_h616_rtc_ccu_desc = {
- 	.ccu_clks	= sun50i_h616_rtc_ccu_clks,
- 	.num_ccu_clks	= ARRAY_SIZE(sun50i_h616_rtc_ccu_clks),
-@@ -318,6 +350,23 @@ static void __init sunxi_rtc_ccu_init(struct device_node *node,
- 	of_sunxi_ccu_probe(node, reg, desc);
- }
+ 	reg &= ~GENMASK(cm->width + cm->shift - 1, cm->shift);
+ 	writel(reg | (index << cm->shift), common->base + common->reg);
  
-+static void __init sun50i_h6_rtc_ccu_setup(struct device_node *node)
-+{
-+	struct clk_init_data *init;
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 5aa5a6f49bd8..6ca15e43f9c8 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -87,6 +87,20 @@ struct ccu_mux {
+ 		}							\
+ 	}
+ 
++#define SUNXI_CCU_MUX_HW_WITH_KEY(_struct, _name, _parents, _reg,	\
++				  _shift, _width, _flags)		\
++	struct ccu_mux _struct = {					\
++		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_KEY_FIELD,	\
++			.hw.init	= CLK_HW_INIT_PARENTS_HW(_name,	\
++								 _parents, \
++								 &ccu_mux_ops, \
++								 _flags), \
++		}							\
++	}
 +
-+	have_iosc_calib = 1;
-+
-+	/* Casting away the const from a pointer to a non-const anonymous object... */
-+	init = (struct clk_init_data *)osc32k_fanout_clk.common.hw.init;
-+
-+	/* Fanout only has one parent: osc32k. */
-+	init->num_parents = 1;
-+
-+	sunxi_rtc_ccu_init(node, &sun50i_h6_rtc_ccu_desc);
-+}
-+CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_ccu, "allwinner,sun50i-h6-rtc",
-+		      sun50i_h6_rtc_ccu_setup);
-+
- static void __init sun50i_h616_rtc_ccu_setup(struct device_node *node)
+ static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
  {
- 	have_iosc_calib = 1;
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index adec1b14a8de..f7cbbf57f112 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -363,23 +363,6 @@ CLK_OF_DECLARE_DRIVER(sun8i_h3_rtc_clk, "allwinner,sun8i-h3-rtc",
- CLK_OF_DECLARE_DRIVER(sun50i_h5_rtc_clk, "allwinner,sun50i-h5-rtc",
- 		      sun8i_h3_rtc_clk_init);
- 
--static const struct sun6i_rtc_clk_data sun50i_h6_rtc_data = {
--	.rc_osc_rate = 16000000,
--	.fixed_prescaler = 32,
--	.has_prescaler = 1,
--	.has_out_clk = 1,
--	.export_iosc = 1,
--	.has_losc_en = 1,
--	.has_auto_swt = 1,
--};
--
--static void __init sun50i_h6_rtc_clk_init(struct device_node *node)
--{
--	sun6i_rtc_clk_init(node, &sun50i_h6_rtc_data);
--}
--CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_clk, "allwinner,sun50i-h6-rtc",
--		      sun50i_h6_rtc_clk_init);
--
- /*
-  * The R40 user manual is self-conflicting on whether the prescaler is
-  * fixed or configurable. The clock diagram shows it as fixed, but there
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
 -- 
 2.31.1
 
