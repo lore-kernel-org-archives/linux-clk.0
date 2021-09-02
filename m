@@ -2,113 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D901C432BE
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 06:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCFCC43216
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 395EB610CD
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 06:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 312E9610D0
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241474AbhIBGsJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 02:48:09 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:48891 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242135AbhIBGsJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 02:48:09 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 361B224000C;
-        Thu,  2 Sep 2021 06:47:06 +0000 (UTC)
-Date:   Thu, 2 Sep 2021 08:47:06 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        id S233360AbhIBH26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 03:28:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243381AbhIBH25 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 03:28:57 -0400
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A76BC061575
+        for <linux-clk@vger.kernel.org>; Thu,  2 Sep 2021 00:27:59 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id DA8F03F35F;
+        Thu,  2 Sep 2021 09:27:49 +0200 (CEST)
+Subject: Re: [PATCH v2 1/2] drm/msm/dsi: Use "ref" fw clock instead of global
+ name for VCO parent
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        phone-devel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "Ryan J . Barnett" <ryan.barnett@collins.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Jason Reeder <jreeder@ti.com>
-Subject: Re: [PATCH 28/40] mfd: ti_am335x_tscadc: Add ADC1/magnetic reader
- support
-Message-ID: <20210902084706.7cd54453@xps13>
-In-Reply-To: <732e002d-d732-5411-1be4-1ecafc993da5@ti.com>
-References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
-        <20210825152518.379386-29-miquel.raynal@bootlin.com>
-        <732e002d-d732-5411-1be4-1ecafc993da5@ti.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Stephen Boyd <swboyd@chromium.org>
+References: <20210830182445.167527-1-marijn.suijten@somainline.org>
+ <20210830182445.167527-2-marijn.suijten@somainline.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Message-ID: <18b7fbaf-a284-660d-09d7-e1191166efb8@somainline.org>
+Date:   Thu, 2 Sep 2021 09:27:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20210830182445.167527-2-marijn.suijten@somainline.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Grygorii,
-
-Grygorii Strashko <grygorii.strashko@ti.com> wrote on Wed, 1 Sep 2021
-22:26:25 +0300:
-
-> On 25/08/2021 18:25, Miquel Raynal wrote:
-> > Introduce a new compatible that has another set of driver data,
-> > targeting am437x SoCs with a magnetic reader instead of the
-> > touchscreen and a more featureful set of registers.
-> > 
-> > Co-developed-by: Jason Reeder <jreeder@ti.com>
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Signed-off-by: Jason Reeder <jreeder@ti.com>
-> > ---
-> >   drivers/mfd/ti_am335x_tscadc.c       | 43 ++++++++++++++++++++++------
-> >   include/linux/mfd/ti_am335x_tscadc.h |  9 +++++-
-> >   2 files changed, 43 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-> > index 1a30610dc65f..f4f6b9db4d2a 100644
-> > --- a/drivers/mfd/ti_am335x_tscadc.c
-> > +++ b/drivers/mfd/ti_am335x_tscadc.c
-> > @@ -122,9 +122,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
-> >   	const __be32 *cur;
-> >   	struct clk *clk;
-> >   	u32 val;
-> > -	bool use_tsc = false;
-> > +	bool use_tsc = false, use_mag = false;
-> >   	int tscmag_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
-> > -	int total_channels, err;
-> > +	int mag_tracks = 0, total_channels, err;  
-> >   >   	/* Allocate memory for device */  
-> >   	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
-> > @@ -146,6 +146,12 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
-> >   		of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
-> >   		if (tscmag_wires)
-> >   			use_tsc = true;
-> > +	} else {
-> > +		node = of_get_child_by_name(pdev->dev.of_node, "mag");
-> > +		of_property_read_u32(node, "ti,tracks", &mag_tracks);  
+Il 30/08/21 20:24, Marijn Suijten ha scritto:
+> All DSI PHY/PLL drivers were referencing their VCO parent clock by a
+> global name, most of which don't exist or have been renamed.  These
+> clock drivers seem to function fine without that except the 14nm driver
+> for the sdm6xx [1].
 > 
-> "ti,tracks" seems undocumented?
+> At the same time all DTs provide a "ref" clock as per the requirements
+> of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
+> that clock to use without relying on a global clock name, so that all
+> dependencies are explicitly defined in DT (the firmware) in the end.
+> 
+> Note that msm8974 is the only board not providing this clock, and
+> apq8064 was providing the wrong clock (19.2MHz cxo instead of 27MHz
+> pxo).  Both have been been addressed in separate patches that are
+> supposed to land well in advance of this patchset.
+> 
+> Furthermore not all board-DTs provided this clock initially but that
+> deficiency has been addressed in followup patches (see the Fixes:
+> below).  Those commits seem to assume that the clock was used, while
+> nothing in history indicates that this "ref" clock was ever retrieved.
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
+> 
+> Fixes: 79e51645a1dd ("arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY")
+> Fixes: 6969d1d9c615 ("ARM: dts: qcom-apq8064: Set 'cxo_board' as ref clock of the DSI PHY")
+> Fixes: 0c0e72705a33 ("arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of the DSI PHYs")
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 
-Well that's true and almost on purpose, I am not focusing on the
-magnetic reader feature, it is not supported, I don't have one, I don't
-plan to add support for it. But in the driver I need to know how many
-"tracks" are unavailable for the ADC in order to implement the entire
-logic (this block comes from TI and the naming from Jason Reeder).
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 
-I am not comfortable writing a binding file for a device that I won't
-use, it's the best way to miss something and have stable broken
-bindings in the future. So I assumed it was not a big deal to have this
-property in the code, which may be updated/removed/enhanced later if
-needed without having to mess with the code too much. What do you think?
+> ---
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 4 +++-
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 4 +++-
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 4 +++-
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 4 +++-
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 4 +++-
+>   5 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+> index e46b10fc793a..3cbb1f1475e8 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+> @@ -562,7 +562,9 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+>   	char clk_name[32], parent[32], vco_name[32];
+>   	char parent2[32], parent3[32], parent4[32];
+>   	struct clk_init_data vco_init = {
+> -		.parent_names = (const char *[]){ "xo" },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "ref",
+> +		},
+>   		.num_parents = 1,
+>   		.name = vco_name,
+>   		.flags = CLK_IGNORE_UNUSED,
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> index bb31230721bd..406470265408 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> @@ -804,7 +804,9 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+>   {
+>   	char clk_name[32], parent[32], vco_name[32];
+>   	struct clk_init_data vco_init = {
+> -		.parent_names = (const char *[]){ "xo" },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "ref",
+> +		},
+>   		.num_parents = 1,
+>   		.name = vco_name,
+>   		.flags = CLK_IGNORE_UNUSED,
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> index 2da673a2add6..8ee9c9c0548d 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+> @@ -521,7 +521,9 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+>   {
+>   	char clk_name[32], parent1[32], parent2[32], vco_name[32];
+>   	struct clk_init_data vco_init = {
+> -		.parent_names = (const char *[]){ "xo" },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "ref",
+> +		},
+>   		.num_parents = 1,
+>   		.name = vco_name,
+>   		.flags = CLK_IGNORE_UNUSED,
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> index aaa37456f4ee..9662cb236468 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> @@ -385,7 +385,9 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+>   {
+>   	char *clk_name, *parent_name, *vco_name;
+>   	struct clk_init_data vco_init = {
+> -		.parent_names = (const char *[]){ "pxo" },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "ref",
+> +		},
+>   		.num_parents = 1,
+>   		.flags = CLK_IGNORE_UNUSED,
+>   		.ops = &clk_ops_dsi_pll_28nm_vco,
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+> index 7c23d4c47338..c77c30628cca 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+> @@ -590,7 +590,9 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
+>   	char clk_name[32], parent[32], vco_name[32];
+>   	char parent2[32], parent3[32], parent4[32];
+>   	struct clk_init_data vco_init = {
+> -		.parent_names = (const char *[]){ "bi_tcxo" },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "ref",
+> +		},
+>   		.num_parents = 1,
+>   		.name = vco_name,
+>   		.flags = CLK_IGNORE_UNUSED,
+> 
 
-Thanks,
-Miquèl
