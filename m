@@ -2,65 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB74C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 22:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7275C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 23:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B642D600EF
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 22:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C2736108E
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 23:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347861AbhIBWnk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:43:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347847AbhIBWnj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Sep 2021 18:43:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 56DB5600EF;
-        Thu,  2 Sep 2021 22:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630622560;
-        bh=6CbBptxF2W1kXcGhleonxjn/koKFdYLz2hWmp4lJJSQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=PqzlT5jtxXto6UjaB7qqr625xqVMus2OhqVR7XfSwRHiRMepYNtnwbQfQBnn4Mmof
-         yu+dmaFWJWtmgo15ZEXsHufs1XFX5ye+QbMbKHRHroc9WZm60U5DBoyqdJSIvb3XQh
-         BzrePjKSqXrBvy34DJc/h7mmXG0MhjjhnKqH7rBSQ/Vj2wJLeNAwPDIJkiXloJyg34
-         4X86fFWN+DdaAOUgV2lHfXbV3SDDdeGyL0d8+Ox5/2BwmkxxZeGM4nsr258iqnG9hE
-         7L5sLlEt59e6MetzR5i/YE1/d2KNw55qt1iWKgYYSx4sD11RnsF5eJfJmHuab/YccN
-         RihzmUAWrXFZQ==
-Subject: Re: [GIT PULL] clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210902190702.516457-1-sboyd@kernel.org>
-References: <20210902190702.516457-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210902190702.516457-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: 47505bf3a82166c3576155c229e941af922bf147
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 75d6e7d9ced83e937757e278c3ce1ccd6606a96a
-Message-Id: <163062256032.25965.9982101453040100032.pr-tracker-bot@kernel.org>
-Date:   Thu, 02 Sep 2021 22:42:40 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S232548AbhIBXDE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 19:03:04 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:39251 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232013AbhIBXDC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 19:03:02 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id BB964320094B;
+        Thu,  2 Sep 2021 19:02:02 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 02 Sep 2021 19:02:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=dMOJsy0kcae44XC/LGRiBL+H+K
+        kmGvDivPUnj3WmBgw=; b=dvPutcBJY4eJd8M7UK+vpFfytx5TbRf1kpv3ThMjf6
+        xoOsmnpUc3kFC2zMKU1g+i2hg5Qp1yl391esO5/sMl4H44Gl29MgyiyOL3/8t0BN
+        vabFn7u1YjZOpa4P6+0xAkNVON4hiYAdnq/VhH3cUcG0XSzxzCR1HvqZlaY/g34q
+        MKVof879q1XCO3dOO3mh19y7noDvDN7Sl0FgV4P0OCltQbyWLUEuzHsaTN3uh7aL
+        Me8ZE8IFh9vqjmzwqv+u20SwdSBmzBov6YNr4pMwJmFW/5iQo9goxR70rOhqAXsk
+        E3dlDKoysZZonZF6T96I3lF3mmlSUtTk/8brxIxpxHSQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=dMOJsy0kcae44XC/L
+        GRiBL+H+KkmGvDivPUnj3WmBgw=; b=vgK59s62AuIfb0qx6Gwm/dhLmOprhmhyP
+        YK9Dwmeq/g/LAUn+55AK5JieQyY8feGffRareN7YvBz/pC8/KNDWBlmWW9nbqugL
+        g2f/DdIjWlfDXR7e6CB8iLlcx8gQiFq0PwNTBxVusldY8bZsPdg3eVq86mPqh8J5
+        C4U3+EaKy/r+z4VoOwAv3Wqx/RkIq39zP+RIbBa04fBmcnj/XjsbMa8MB21pR6MM
+        j2dOdJGNbU5kUhJGCg5NAr1OL4iniEVF6o51lLNwF4owkLYQo+PRfvp5VNadck0M
+        3dAidDImdzGtNtMxD4cEYab3MjOvVvCyBnbfJMrhb435dmRtwresw==
+X-ME-Sender: <xms:6VcxYblyDtqaj5ANTOsBaXh3fNxpIb-EtqVRR8xv3AkakgX3Lrb2JA>
+    <xme:6VcxYe0qu0uf7Q6gxaYt33eNMDx-61CZJLxrQOQvbE7MOYwJlri5DugykBXF8Xs6-
+    B4DG3Kphsb0SQkUdA>
+X-ME-Received: <xmr:6VcxYRqNHne3-sRjrAFXzvN9h35uWJZN6y2hvFQNgjKzEsEWU9gXL2HXr7WYhfOAojTttC4eevHsZOMIkbY-6LAmeCT3Wx4UvdUnqpM4BZgNj4JTxU1C0D3sXTv8sSe2CLcPrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddviedgudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
+    htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
+    vedtveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:6VcxYTncog_H_QsHoc2nziLWQLL0Ob0mcDIlr4rqlAXL25kRpXnJPw>
+    <xmx:6VcxYZ2-Aqns-46q8DEvu3GUIaqbl0Af-xKmMFk-e7JqKfFg0Pc_ig>
+    <xmx:6VcxYSvTDs2EL3OtU6a01iHGytsDA1M5i7u7xiRk8UzeacypjW44sA>
+    <xmx:6lcxYSLwUmNNfU8H-FuRMgQU_JzjNbxtt6yFHgIJ_O8VPSvihdSrgQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 2 Sep 2021 19:02:01 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH] clk: sunxi-ng: Add machine dependency to A83T CCU
+Date:   Thu,  2 Sep 2021 18:02:00 -0500
+Message-Id: <20210902230200.29574-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Thu,  2 Sep 2021 12:07:02 -0700:
+The CCUs for all other 32-bit SoCs have a dependency on a specific
+MACH_SUNxI symbol. This effectively hides these drivers when building
+an ARCH=arm64 kernel. However, the A83T CCU still shows up because it
+is missing this dependency. Let's add it for consistency.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ drivers/clk/sunxi-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/75d6e7d9ced83e937757e278c3ce1ccd6606a96a
-
-Thank you!
-
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index cd46d8853876..e76e1676f0f0 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -71,6 +71,7 @@ config SUN8I_A33_CCU
+ config SUN8I_A83T_CCU
+ 	bool "Support for the Allwinner A83T CCU"
+ 	default MACH_SUN8I
++	depends on MACH_SUN8I || COMPILE_TEST
+ 
+ config SUN8I_H3_CCU
+ 	bool "Support for the Allwinner H3 CCU"
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.31.1
+
