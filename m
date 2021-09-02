@@ -2,107 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAE5C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 19:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2E7C43217
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 19:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2A7E61057
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 19:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B7F60FDC
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 19:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347257AbhIBTfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 15:35:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347356AbhIBTfv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Sep 2021 15:35:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 231B260F42;
-        Thu,  2 Sep 2021 19:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630611292;
-        bh=lkU0Lg08Q92PGe4kuQ+5cTptrzCavgcMALCXl/UW/aw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pHOYUBoPGg/0YvR6uixHYK6V+0HOgvvWB6/QWB4NXXBIkPvQRiRstlkBnZ37YUt8O
-         aW+qzwreY0wQXQGsIpHrpmL13pJDUflsG1vpgSG4Tu7XDBSmkIsY/G5ITmXU1GEBFo
-         4UmEBWepaeTqsjVpiDaAWwc4bH2oOduaFLbnAvhBGmnNr4lTWJ4HORaoF+xItUQrwO
-         m3YrNmP1UZ/WwRYTa6mu6TUYL8v7Lzgh81EYfDYzknYOpqdOz8usZ9ZCuPkff/kl4I
-         sr6sWIBqW9/77+RQFGSBw9DDDYcsx6ViHJFQ4sS24j4ET9V2ezV1u/fRWJ7S5QdbeT
-         1ho+CFS5gYaiw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YTDMHq3rLUrldNfB@Marijn-Arch-Book.localdomain>
-References: <20210830182445.167527-1-marijn.suijten@somainline.org> <20210830182445.167527-3-marijn.suijten@somainline.org> <163047455623.42057.15513441659841056105@swboyd.mtv.corp.google.com> <YS9Aa0tADAf5KMSl@Marijn-Arch-PC.localdomain> <163055439497.405991.16122720273000010218@swboyd.mtv.corp.google.com> <YTDMHq3rLUrldNfB@Marijn-Arch-Book.localdomain>
-Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sdm660: Remove transient global "xo" clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+        id S1347257AbhIBTny convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 15:43:54 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:48037 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230462AbhIBTnv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 15:43:51 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id E8C0E240002;
+        Thu,  2 Sep 2021 19:42:48 +0000 (UTC)
+Date:   Thu, 2 Sep 2021 21:42:47 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, bcousson@baylibre.com,
+        Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Thu, 02 Sep 2021 12:34:50 -0700
-Message-ID: <163061129079.405991.11763080753220412244@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "Ryan J . Barnett" <ryan.barnett@collins.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 20/40] mfd: ti_am335x_tscadc: Gather the ctrl register
+ logic at one place
+Message-ID: <20210902214247.13243c71@xps13>
+In-Reply-To: <20210830145608.09d7e685@jic23-huawei>
+References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
+        <20210825152518.379386-21-miquel.raynal@bootlin.com>
+        <20210830145608.09d7e685@jic23-huawei>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marijn Suijten (2021-09-02 06:05:34)
-> On 2021-09-01 20:46:34, Stephen Boyd wrote:
-> > Quoting Marijn Suijten (2021-09-01 01:57:15)
-> > > On 2021-08-31 22:35:56, Stephen Boyd wrote:
-> > > > Quoting Marijn Suijten (2021-08-30 11:24:45)
-> > > > > The DSI PHY/PLL was relying on a global "xo" clock to be found, b=
-ut the
-> > > > > real clock is named "xo_board" in the DT.  The standard nowadays =
-is to
-> > > > > never use global clock names anymore but require the firmware (DT=
-) to
-> > > > > provide every clock binding explicitly with .fw_name.  The DSI PL=
-Ls have
-> > > > > since been converted to this mechanism (specifically 14nm for SDM=
-660)
-> > > > > and this transient clock can now be removed.
-> > > > >=20
-> > > > > This issue was originally discovered in:
-> > > > > https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc8=
-3f8a1be96@somainline.org/
-> > > > > and prevented the removal of "xo" at that time.
-> > > > >=20
-> > > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> > > > > ---
-> > > >=20
-> > > > Presumably this wants to go with the first one.
-> > >=20
-> > > What are you referring to with "the first one"?  This patch can only =
-go
-> > > in after patch 1/2 of this series, unless you are suggesting to squash
-> > > it with Bjorns cleanup and making sure that lands after the fix in the
-> > > DSI?
-> >=20
-> > The first patch in this series.
->=20
-> Are you suggesting to squash this patch into the first patch in this
-> series?  Note that the first patch touches drm/msm/dsi, the second
-> (this) patch touches clk/qcom.
+Hi Jonathan,
 
-No.
+Jonathan Cameron <jic23@kernel.org> wrote on Mon, 30 Aug 2021 14:56:08
++0100:
+
+> On Wed, 25 Aug 2021 17:24:58 +0200
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> 
+> > Instead of deriving in the probe and in the resume path the value of the
+> > ctrl register, let's do it only once in the probe, save the value of
+> > this register in the driver's structure and use it from the resume
+> > callback.
+> > 
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>  
+> A few minor things inline.
+> 
+> J
+> 
+> > ---
+> >  drivers/mfd/ti_am335x_tscadc.c       | 31 ++++++++--------------------
+> >  include/linux/mfd/ti_am335x_tscadc.h |  2 +-
+> >  2 files changed, 10 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+> > index 7071344ad18e..d661e8ae66c9 100644
+> > --- a/drivers/mfd/ti_am335x_tscadc.c
+> > +++ b/drivers/mfd/ti_am335x_tscadc.c
+> > @@ -122,7 +122,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+> >  	struct clk *clk;
+> >  	u32 val;
+> >  	int tsc_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
+> > -	int total_channels, ctrl, err;
+> > +	int total_channels, err;
+> >  
+> >  	/* Allocate memory for device */
+> >  	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
+> > @@ -215,22 +215,21 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+> >  	regmap_write(tscadc->regmap, REG_CLKDIV, tscadc->clk_div);
+> >  
+> >  	/* Set the control register bits */
+> > -	ctrl = CNTRLREG_STEPCONFIGWRT |	CNTRLREG_STEPID;
+> > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
+> > +	tscadc->ctrl = CNTRLREG_STEPCONFIGWRT | CNTRLREG_STEPID;
+> > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);
+> >  
+> >  	if (tsc_wires > 0) {
+> > -		tscadc->tsc_wires = tsc_wires;
+> > +		tscadc->ctrl |= CNTRLREG_TSCENB;
+> >  		if (tsc_wires == 5)
+> > -			ctrl |= CNTRLREG_5WIRE | CNTRLREG_TSCENB;
+> > +			tscadc->ctrl |= CNTRLREG_5WIRE;
+> >  		else
+> > -			ctrl |= CNTRLREG_4WIRE | CNTRLREG_TSCENB;
+> > +			tscadc->ctrl |= CNTRLREG_4WIRE;
+> >  	}
+> >  
+> >  	tscadc_idle_config(tscadc);
+> >  
+> >  	/* Enable the TSC module enable bit */
+> > -	ctrl |= CNTRLREG_TSCSSENB;
+> > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
+> > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl | CNTRLREG_TSCSSENB);
+> >  
+> >  	/* TSC Cell */
+> >  	if (tsc_wires > 0) {
+> > @@ -305,25 +304,13 @@ static int __maybe_unused tscadc_suspend(struct device *dev)
+> >  static int __maybe_unused tscadc_resume(struct device *dev)
+> >  {
+> >  	struct ti_tscadc_dev *tscadc = dev_get_drvdata(dev);
+> > -	u32 ctrl;
+> >  
+> >  	pm_runtime_get_sync(dev);
+> >  
+> > -	/* context restore */
+> > -	ctrl = CNTRLREG_STEPCONFIGWRT |	CNTRLREG_STEPID;
+> > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
+> > -
+> > -	if (tscadc->tsc_wires > 0) {
+> > -		if (tscadc->tsc_wires == 5)
+> > -			ctrl |= CNTRLREG_5WIRE | CNTRLREG_TSCENB;
+> > -		else
+> > -			ctrl |= CNTRLREG_4WIRE | CNTRLREG_TSCENB;
+> > -	}
+> > -	ctrl |= CNTRLREG_TSCSSENB;
+> > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
+> > -
+> >  	regmap_write(tscadc->regmap, REG_CLKDIV, tscadc->clk_div);
+> > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);  
+> 
+> Patch description should mention why this ordering change is here.
+
+I actually moved the patch that reorders things earlier so that the
+reviewer is not bothered by the order changes later on.
+
+> 
+> >  	tscadc_idle_config(tscadc);
+> > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl | CNTRLREG_TSCSSENB);  
+> 
+> As the value of tscadc->ctrl is not the same as REG_CTRL this is a bit non obvious.
+> 
+> You might be better off keeping them in sync, but masking that bit out and then resetting
+> it as appropriate.
+
+I honestly find more readable doing:
+
+ctrl = flags;
+writel(ctrl);
+writel(ctrl | en_bit);
+
+than
+
+ctrl = flags;
+writel(ctrl & ~en_bit);
+writel(ctrl);
+
+because the second version emphasis the fact that we reset the en_bit
+(which is wrong, the point of this first write is to actually write all
+the configuration but not the en_bit yet) while the first version
+clearly shows that the second write includes an additional "enable bit".
+
+Thanks,
+Miquèl
