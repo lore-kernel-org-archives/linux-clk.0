@@ -2,124 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A919C43216
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5900DC432BE
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2439610CD
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BCB560F90
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233401AbhIBH3G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 03:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243453AbhIBH3F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 03:29:05 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73837C061575
-        for <linux-clk@vger.kernel.org>; Thu,  2 Sep 2021 00:28:07 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 2D5323F35F;
-        Thu,  2 Sep 2021 09:28:03 +0200 (CEST)
-Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sdm660: Remove transient global
- "xo" clock
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
-        phone-devel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S243655AbhIBH6T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 03:58:19 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:39244 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S243618AbhIBH6S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 03:58:18 -0400
+X-UUID: da09557aaa784b8da4159059abc99fd5-20210902
+X-UUID: da09557aaa784b8da4159059abc99fd5-20210902
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1699609375; Thu, 02 Sep 2021 15:57:16 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 2 Sep 2021 15:57:15 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 2 Sep 2021 15:57:15 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-References: <20210830182445.167527-1-marijn.suijten@somainline.org>
- <20210830182445.167527-3-marijn.suijten@somainline.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Message-ID: <8d2719c9-16e6-5915-5c40-98a76d87f042@somainline.org>
-Date:   Thu, 2 Sep 2021 09:28:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Heiko Stuebner <heiko@sntech.de>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH] clk: rockchip: use module_platform_driver_probe
+Date:   Thu, 2 Sep 2021 15:57:13 +0800
+Message-ID: <20210902075713.7563-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <20210830182445.167527-3-marijn.suijten@somainline.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 30/08/21 20:24, Marijn Suijten ha scritto:
-> The DSI PHY/PLL was relying on a global "xo" clock to be found, but the
-> real clock is named "xo_board" in the DT.  The standard nowadays is to
-> never use global clock names anymore but require the firmware (DT) to
-> provide every clock binding explicitly with .fw_name.  The DSI PLLs have
-> since been converted to this mechanism (specifically 14nm for SDM660)
-> and this transient clock can now be removed.
-> 
-> This issue was originally discovered in:
-> https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
-> and prevented the removal of "xo" at that time.
-> 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+Replace builtin_platform_driver_probe with module_platform_driver_probe
+because that rk3399 and rk3568 can be built as kernel modules.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 2 +-
+ drivers/clk/rockchip/clk-rk3568.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->   drivers/clk/qcom/gcc-sdm660.c | 14 --------------
->   1 file changed, 14 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-> index 9b97425008ce..16fd16351f95 100644
-> --- a/drivers/clk/qcom/gcc-sdm660.c
-> +++ b/drivers/clk/qcom/gcc-sdm660.c
-> @@ -37,19 +37,6 @@ enum {
->   	P_GPLL1_EARLY_DIV,
->   };
->   
-> -static struct clk_fixed_factor xo = {
-> -	.mult = 1,
-> -	.div = 1,
-> -	.hw.init = &(struct clk_init_data){
-> -		.name = "xo",
-> -		.parent_data = &(const struct clk_parent_data) {
-> -			.fw_name = "xo"
-> -		},
-> -		.num_parents = 1,
-> -		.ops = &clk_fixed_factor_ops,
-> -	},
-> -};
-> -
->   static struct clk_alpha_pll gpll0_early = {
->   	.offset = 0x0,
->   	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> @@ -2281,7 +2268,6 @@ static struct gdsc pcie_0_gdsc = {
->   };
->   
->   static struct clk_hw *gcc_sdm660_hws[] = {
-> -	&xo.hw,
->   	&gpll0_early_div.hw,
->   	&gpll1_early_div.hw,
->   };
-> 
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 62a4f2543960..a5169156f1d2 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1653,7 +1653,7 @@ static struct platform_driver clk_rk3399_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+-builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
++module_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
+ 
+ MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
+index 75ca855e720d..939e7079c334 100644
+--- a/drivers/clk/rockchip/clk-rk3568.c
++++ b/drivers/clk/rockchip/clk-rk3568.c
+@@ -1719,7 +1719,7 @@ static struct platform_driver clk_rk3568_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+-builtin_platform_driver_probe(clk_rk3568_driver, clk_rk3568_probe);
++module_platform_driver_probe(clk_rk3568_driver, clk_rk3568_probe);
+ 
+ MODULE_DESCRIPTION("Rockchip RK3568 Clock Driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.18.0
 
