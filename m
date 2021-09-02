@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5900DC432BE
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CF4C432BE
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 08:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCB560F90
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 07:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1A260F11
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 08:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243655AbhIBH6T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 03:58:19 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:39244 "EHLO
+        id S233465AbhIBIDN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 04:03:13 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:48372 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S243618AbhIBH6S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 03:58:18 -0400
-X-UUID: da09557aaa784b8da4159059abc99fd5-20210902
-X-UUID: da09557aaa784b8da4159059abc99fd5-20210902
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        with ESMTP id S233362AbhIBIDN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 04:03:13 -0400
+X-UUID: ad9677fad92543eab8de0177812a540f-20210902
+X-UUID: ad9677fad92543eab8de0177812a540f-20210902
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1699609375; Thu, 02 Sep 2021 15:57:16 +0800
+        with ESMTP id 56561524; Thu, 02 Sep 2021 16:02:12 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 2 Sep 2021 15:57:15 +0800
+ 15.0.1497.2; Thu, 2 Sep 2021 16:02:12 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 2 Sep 2021 15:57:15 +0800
+ Transport; Thu, 2 Sep 2021 16:02:12 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
 CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
         Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH] clk: rockchip: use module_platform_driver_probe
-Date:   Thu, 2 Sep 2021 15:57:13 +0800
-Message-ID: <20210902075713.7563-1-miles.chen@mediatek.com>
+Subject: [PATCH] clk: imx: use module_platform_driver
+Date:   Thu, 2 Sep 2021 16:02:11 +0800
+Message-ID: <20210902080211.7922-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -53,41 +57,41 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Replace builtin_platform_driver_probe with module_platform_driver_probe
-because that rk3399 and rk3568 can be built as kernel modules.
+because that CONFIG_CLK_IMX8QXP can be set to =m (kernel module).
 
 Cc: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 ---
- drivers/clk/rockchip/clk-rk3399.c | 2 +-
- drivers/clk/rockchip/clk-rk3568.c | 2 +-
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 2 +-
+ drivers/clk/imx/clk-imx8qxp.c      | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 62a4f2543960..a5169156f1d2 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1653,7 +1653,7 @@ static struct platform_driver clk_rk3399_driver = {
- 		.suppress_bind_attrs = true,
- 	},
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index d3e905cf867d..b23758083ce5 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -370,7 +370,7 @@ static struct platform_driver imx8qxp_lpcg_clk_driver = {
+ 	.probe = imx8qxp_lpcg_clk_probe,
  };
--builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
-+module_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
  
- MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
-index 75ca855e720d..939e7079c334 100644
---- a/drivers/clk/rockchip/clk-rk3568.c
-+++ b/drivers/clk/rockchip/clk-rk3568.c
-@@ -1719,7 +1719,7 @@ static struct platform_driver clk_rk3568_driver = {
- 		.suppress_bind_attrs = true,
+-builtin_platform_driver(imx8qxp_lpcg_clk_driver);
++module_platform_driver(imx8qxp_lpcg_clk_driver);
+ 
+ MODULE_AUTHOR("Aisheng Dong <aisheng.dong@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8QXP LPCG clock driver");
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index c53a688d8ccc..40a2efb1329b 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -308,7 +308,7 @@ static struct platform_driver imx8qxp_clk_driver = {
  	},
+ 	.probe = imx8qxp_clk_probe,
  };
--builtin_platform_driver_probe(clk_rk3568_driver, clk_rk3568_probe);
-+module_platform_driver_probe(clk_rk3568_driver, clk_rk3568_probe);
+-builtin_platform_driver(imx8qxp_clk_driver);
++module_platform_driver(imx8qxp_clk_driver);
  
- MODULE_DESCRIPTION("Rockchip RK3568 Clock Driver");
- MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Aisheng Dong <aisheng.dong@nxp.com>");
+ MODULE_DESCRIPTION("NXP i.MX8QXP clock driver");
 -- 
 2.18.0
 
