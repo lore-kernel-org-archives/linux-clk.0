@@ -2,145 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9C5C43214
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 09:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3A5C432BE
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 13:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 984216108B
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 09:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59D57610E7
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 13:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbhIBJ65 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 05:58:57 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34176 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231544AbhIBJ64 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 05:58:56 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 1829vZVF024830;
-        Thu, 2 Sep 2021 04:57:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1630576655;
-        bh=nEoymP6uiFiiUs51DwV54eLM+vIw5+7/A3ZrzYKIF2w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TLIJKYvgitFbshk0d29u9N5kCnhcT3+knLZvP3vYItsrYveDUKecS+YatT/pPvl05
-         hSQDAb3sz8jcT0Aaq8931DzYe0U6ZDIrcihspwTgFCor2dBWfIAWczmbhEgnuvArjb
-         /G07zugGFS/zX6BM+/7B1itjIVb0hQgWy3GX6Ex0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 1829vZL5107782
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 2 Sep 2021 04:57:35 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 2
- Sep 2021 04:57:34 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Thu, 2 Sep 2021 04:57:34 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 1829vU2G106438;
-        Thu, 2 Sep 2021 04:57:31 -0500
-Subject: Re: [PATCH 28/40] mfd: ti_am335x_tscadc: Add ADC1/magnetic reader
- support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        id S1344728AbhIBNGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Sep 2021 09:06:36 -0400
+Received: from m-r2.th.seeweb.it ([5.144.164.171]:48275 "EHLO
+        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244365AbhIBNGg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 09:06:36 -0400
+Received: from Marijn-Arch-Book.localdomain (D57D4C6E.static.ziggozakelijk.nl [213.125.76.110])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id CC4D03F215;
+        Thu,  2 Sep 2021 15:05:35 +0200 (CEST)
+Date:   Thu, 2 Sep 2021 15:05:34 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "Ryan J . Barnett" <ryan.barnett@collins.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Jason Reeder <jreeder@ti.com>
-References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
- <20210825152518.379386-29-miquel.raynal@bootlin.com>
- <732e002d-d732-5411-1be4-1ecafc993da5@ti.com> <20210902084706.7cd54453@xps13>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <2e1cb934-c85a-34ca-c701-0d845bf0680a@ti.com>
-Date:   Thu, 2 Sep 2021 12:57:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sdm660: Remove transient global
+ "xo" clock
+Message-ID: <YTDMHq3rLUrldNfB@Marijn-Arch-Book.localdomain>
+References: <20210830182445.167527-1-marijn.suijten@somainline.org>
+ <20210830182445.167527-3-marijn.suijten@somainline.org>
+ <163047455623.42057.15513441659841056105@swboyd.mtv.corp.google.com>
+ <YS9Aa0tADAf5KMSl@Marijn-Arch-PC.localdomain>
+ <163055439497.405991.16122720273000010218@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20210902084706.7cd54453@xps13>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163055439497.405991.16122720273000010218@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 02/09/2021 09:47, Miquel Raynal wrote:
-> Hi Grygorii,
+On 2021-09-01 20:46:34, Stephen Boyd wrote:
+> Quoting Marijn Suijten (2021-09-01 01:57:15)
+> > On 2021-08-31 22:35:56, Stephen Boyd wrote:
+> > > Quoting Marijn Suijten (2021-08-30 11:24:45)
+> > > > The DSI PHY/PLL was relying on a global "xo" clock to be found, but the
+> > > > real clock is named "xo_board" in the DT.  The standard nowadays is to
+> > > > never use global clock names anymore but require the firmware (DT) to
+> > > > provide every clock binding explicitly with .fw_name.  The DSI PLLs have
+> > > > since been converted to this mechanism (specifically 14nm for SDM660)
+> > > > and this transient clock can now be removed.
+> > > > 
+> > > > This issue was originally discovered in:
+> > > > https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
+> > > > and prevented the removal of "xo" at that time.
+> > > > 
+> > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > > > ---
+> > > 
+> > > Presumably this wants to go with the first one.
+> > 
+> > What are you referring to with "the first one"?  This patch can only go
+> > in after patch 1/2 of this series, unless you are suggesting to squash
+> > it with Bjorns cleanup and making sure that lands after the fix in the
+> > DSI?
 > 
-> Grygorii Strashko <grygorii.strashko@ti.com> wrote on Wed, 1 Sep 2021
-> 22:26:25 +0300:
-> 
->> On 25/08/2021 18:25, Miquel Raynal wrote:
->>> Introduce a new compatible that has another set of driver data,
->>> targeting am437x SoCs with a magnetic reader instead of the
->>> touchscreen and a more featureful set of registers.
->>>
->>> Co-developed-by: Jason Reeder <jreeder@ti.com>
->>> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
->>> Signed-off-by: Jason Reeder <jreeder@ti.com>
->>> ---
->>>    drivers/mfd/ti_am335x_tscadc.c       | 43 ++++++++++++++++++++++------
->>>    include/linux/mfd/ti_am335x_tscadc.h |  9 +++++-
->>>    2 files changed, 43 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
->>> index 1a30610dc65f..f4f6b9db4d2a 100644
->>> --- a/drivers/mfd/ti_am335x_tscadc.c
->>> +++ b/drivers/mfd/ti_am335x_tscadc.c
->>> @@ -122,9 +122,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->>>    	const __be32 *cur;
->>>    	struct clk *clk;
->>>    	u32 val;
->>> -	bool use_tsc = false;
->>> +	bool use_tsc = false, use_mag = false;
->>>    	int tscmag_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
->>> -	int total_channels, err;
->>> +	int mag_tracks = 0, total_channels, err;
->>>    >   	/* Allocate memory for device */
->>>    	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
->>> @@ -146,6 +146,12 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
->>>    		of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
->>>    		if (tscmag_wires)
->>>    			use_tsc = true;
->>> +	} else {
->>> +		node = of_get_child_by_name(pdev->dev.of_node, "mag");
->>> +		of_property_read_u32(node, "ti,tracks", &mag_tracks);
->>
->> "ti,tracks" seems undocumented?
-> 
-> Well that's true and almost on purpose, I am not focusing on the
-> magnetic reader feature, it is not supported, I don't have one, I don't
-> plan to add support for it. But in the driver I need to know how many
-> "tracks" are unavailable for the ADC in order to implement the entire
-> logic (this block comes from TI and the naming from Jason Reeder).
-> 
-> I am not comfortable writing a binding file for a device that I won't
-> use, it's the best way to miss something and have stable broken
-> bindings in the future. So I assumed it was not a big deal to have this
-> property in the code, which may be updated/removed/enhanced later if
-> needed without having to mess with the code too much. What do you think?
+> The first patch in this series.
 
-Sry, it's not ok.
-You need to (a) add binding or (b) w/a it in some way -
-like drop it and use const value instead, for example.
-
--- 
-Best regards,
-grygorii
+Are you suggesting to squash this patch into the first patch in this
+series?  Note that the first patch touches drm/msm/dsi, the second
+(this) patch touches clk/qcom.
