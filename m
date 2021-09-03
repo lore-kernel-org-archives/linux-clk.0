@@ -2,68 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF4DC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 15:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97867C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 15:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 467C760EC0
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 15:07:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC21610E5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 15:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235463AbhICPIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Sep 2021 11:08:20 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:41511 "EHLO
+        id S1349645AbhICPWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Sep 2021 11:22:17 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:50105 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229589AbhICPIT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 11:08:19 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6BFCB580AC3;
-        Fri,  3 Sep 2021 11:07:19 -0400 (EDT)
+        by vger.kernel.org with ESMTP id S1349655AbhICPWP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 11:22:15 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 5653A580AA5;
+        Fri,  3 Sep 2021 11:21:15 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 03 Sep 2021 11:07:19 -0400
+  by compute3.internal (MEProxy); Fri, 03 Sep 2021 11:21:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=z
-        5mHCFNJVJQnwxyX2kp+n3o7aK16eTMxU+sV+5V4RFk=; b=NyZ5IZM4jWZVqGE/L
-        7qIdkLFQmRUJc09UK8U9+gykMm+Qk8Kg/3ri27BGEdoAO2r91LapiN403sqA3mUf
-        mUHMd2KAseQpBBP68hLlz9ObG9SzX4kScWqLl8+QvSeGT0B/eAxua6H4AJUvTz7w
-        7z4t7uPZL6l8smsm3oGFIufhRR9DqF15GfLH5UZk/0y39wMhcoR6+C0t1ONHNQ9Z
-        VXEyOON2wz1yev0zAwJTYxC0zoov11UOiFTka2wZblBUfDBFPrfj/X4fetcGFsZo
-        fZamwOZ8FaDItHeFW2YPB5LoK965FSF7eVQZZSq/9vib8rBtk/3zm4DGK5D/VhNC
-        2ZNCA==
+        to:cc:references:from:subject:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=Y
+        0N7oM6dRDQR8Rmd/jesZW+rQHwZCpQ3qcTW6TwuJYs=; b=jPbVywF+6na90WQPo
+        qeKreZA40pfwqQygvLunDJbTNub1BiDqSbtwY0WNLj34gfncXZizSrlGIUYevdSG
+        gTIdmXmmD62EuN6uAR5EZaHzDOwLJ420w9D1vwVUYwwSZRk01hF/WhnpIZH5C8s3
+        r0KgF4yfA8rsiKQ7ctRGJ6UwwzkBkvJN8zuwZH+rv2GkbABr6NKQ9etp8M+UnTUl
+        YkfrjkDJpsZRcRi6SenR5GdE539P12xZv5UfCB4LOj3hj//AnzED4zVZ2MCQzZLt
+        xU4h0f+GzDH/FD1/4uFNcd0C41KjLLdZ8dgx9vxzSrsBSuj4yiC5TdbgswOauMDa
+        kyISw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=z5mHCFNJVJQnwxyX2kp+n3o7aK16eTMxU+sV+5V4R
-        Fk=; b=jHHOJzg5zlxvduOl6u57EdlTxDfil7hU4f4K/DbnGnHXBgvo9gNPaWAKd
-        IQRPx2vY11pDJBxugbk6QKP9vWW9pU35lljMpvTBCvRdNYOrNRZghjBNTJjjlQf3
-        rbDkosNty7b+d+35tijA/ToZr9gFM5R1tpmrMTDVlxQtn4mUHo/iVrHotKAgb5Bs
-        STgkcRopw2CSN4aKbWwwZPMXr4BmNxrAcBa0lp2QyIuGkkQPp2GOYi9feo6nLKKh
-        FmVtP4EOLAM7nag6kSxHSa2yAkr64W0K2zvO6DNFN+HD8gJAHS3mDw+2PxnC5VEM
-        gl25U/n2Akb5XSNW4PzreV0LRT4zA==
-X-ME-Sender: <xms:JjoyYXl8-sMdSABXTc0sB-aIfnl4rLRbz-WMeginmSGcnDeUsDVWEg>
-    <xme:JjoyYa3R_XLb2O7v3xTfBTelioQWUPnaWY9IcJM9gm77-bq_9eIjtA2sX8pqwIhII
-    WJilP3wpWw3yJb6lg>
-X-ME-Received: <xmr:JjoyYdoMUEkq_yMVpfDQOoJqqtyszwhSrz9zutcZ8-_pj7UAALdpLhS_57fymeKJ55ON6fvkGcaQzmnE_vMEv1TfP84Fit9KgRBhTdl2RAXrJbpZz5Qy9A6uxQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgkeefucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm3; bh=Y0N7oM6dRDQR8Rmd/jesZW+rQHwZCpQ3qcTW6TwuJ
+        Ys=; b=Bk6hzej+JtMyUT+mdvkAp7lojXdG0saAcMI+sUqDu/nfdXbCMJj6XGLKz
+        2uNxsYAFXt9qIpwmNVNyXgCCxQryjKXUxPmc0qAJK1Jepyu9cy4XJpKbjpBU+e/c
+        cNxUxgagRZN3Vymtku4IC879wDo7gEYQSNtse6uhgTtD4W/e0YuZFzjAimCEEr+J
+        fLHZr8QV0Cwp5H+Z8TqQyxIGV11f+Qc7laZJtKlUal6XzspVRvWvG7b7Iww+yRt1
+        lkQq1UGyNmq3DtWi89rdFfNMknSqcCX3d2rVg8APrhtJIM4jShHFwxNOAGD2vvWO
+        5aNwhrqlbwWOdHu8B1YZfT1bTuPGg==
+X-ME-Sender: <xms:aj0yYTASpcK6Z5JJgnhJiL43t56zvIG2ZFSzn35_0usk8Lj-pEUvbg>
+    <xme:aj0yYZj61donCp5HYD2FHQNa-ARcAmYLbFDdz7R_sWnJ5axMX9F5j28wULwskRsEL
+    24rl7Qf54leVjQ-5g>
+X-ME-Received: <xmr:aj0yYemawDcUOdQuZlpftXODzOvNK26V5Sb8ud6l0v7ILrndop8DeucCExP1GrJL9L113k_tj6DIQJduyNozg2w8JQOKx9qZ61mHVUk8-Gx2HohuwWAUByc-Gg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgkeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefheenucfhrhhomhepufgrmhhu
+    cujfgurhepvfhfhffukffffgggjggtgfesthekredttdefheenucfhrhhomhepufgrmhhu
     vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnheptedtkeeivdegteefleeuudehffdthfekheeujeevhfdtvdffjeel
-    uefhuefhveeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    ftrfgrthhtvghrnhepheejgefhudeffeetleeigefgheetveeiteeuffehhfffkeeuvdff
+    veffveetudefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
     homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:JjoyYfnAfEz28o-Tl_Ldg8LsByMgCWY_ZFhIzC-hpHZcH_HhLQHItw>
-    <xmx:JjoyYV2kTbZnwfPP3Q9K2iQdYAXWUraQk-4u_14Ro2QQZ0worY0F_A>
-    <xmx:JjoyYeslXQ3-1IKO10eP22UJvaX7M8JOrmnvrbcOpYDcAK9vZl_-uQ>
-    <xmx:JzoyYfwRGFPkanDkBGtvIQJG4Bj7F8y4a5DOePtbClvkEC-IdVAkag>
+X-ME-Proxy: <xmx:aj0yYVy33uk9Xri8RxyrHM5J6EpGm8ffk26KAT92SQiKeasXs0_5XQ>
+    <xmx:aj0yYYR-pLl2P3V9iHfOG_RBChXF_DPPL3jZA74WjH_iZDxck-SGsQ>
+    <xmx:aj0yYYYSS28xuysGQsnqbOyLouAQaJWTgYphrHiQaQGeHPIRjMN7yQ>
+    <xmx:az0yYR9nwNFVPx6DCtUsdokl6NQfq24biuHlvtIz1Q62xNN70GjPwA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Sep 2021 11:07:17 -0400 (EDT)
-Subject: Re: [RFC PATCH 6/7] [DO NOT MERGE] clk: sunxi-ng: Add support for H6
+ 3 Sep 2021 11:21:13 -0400 (EDT)
 To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -73,117 +72,79 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
 References: <20210901053951.60952-1-samuel@sholland.org>
- <20210901053951.60952-7-samuel@sholland.org>
- <20210903145120.lfb3dkq66m7fpfcv@gilmour>
+ <20210903145013.hn6dv7lfyvfys374@gilmour>
 From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <8aaa98ef-39ce-6d2c-2b0f-7633aacefe0a@sholland.org>
-Date:   Fri, 3 Sep 2021 10:07:16 -0500
+Subject: Re: [RFC PATCH 0/7] clk: sunxi-ng: Add a RTC CCU driver
+Message-ID: <4a187add-462b-dfe4-868a-fdab85258b8d@sholland.org>
+Date:   Fri, 3 Sep 2021 10:21:13 -0500
 User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <20210903145120.lfb3dkq66m7fpfcv@gilmour>
+In-Reply-To: <20210903145013.hn6dv7lfyvfys374@gilmour>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/3/21 9:51 AM, Maxime Ripard wrote:
-> On Wed, Sep 01, 2021 at 12:39:50AM -0500, Samuel Holland wrote:
->> H6 has IOSC calibration and an ext-osc32k input.
->>
->> H6 has the osc32k mux and the rtc-32k mux, but no fanout mux.
->>
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
->> ---
->>  drivers/clk/sunxi-ng/sun50i-rtc-ccu.c | 49 +++++++++++++++++++++++++++
->>  drivers/rtc/rtc-sun6i.c               | 17 ----------
->>  2 files changed, 49 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
->> index 1dfa05c2f0e9..9603dc0d3d7b 100644
->> --- a/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
->> +++ b/drivers/clk/sunxi-ng/sun50i-rtc-ccu.c
->> @@ -227,6 +227,16 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(osc32k_fanout_clk, "rtc-32k-fanout",
->>  static SUNXI_CCU_M_FW_WITH_GATE(rtc_spi_clk, "rtc-spi", "ahb",
->>  				0x310, 0, 5, BIT(31), 0);
->>  
->> +static struct ccu_common *sun50i_h6_rtc_ccu_clks[] = {
->> +	&iosc_clk,
->> +	&iosc_32k_clk,
->> +	&ext_osc32k_gate_clk.common,
->> +	&osc32k_clk.common,
->> +	&osc24M_32k_clk.common,
->> +	&rtc_32k_mux_clk.common,
->> +	&osc32k_fanout_clk.common,
->> +};
->> +
->>  static struct ccu_common *sun50i_h616_rtc_ccu_clks[] = {
->>  	&iosc_clk,
->>  	&iosc_32k_clk,
->> @@ -246,6 +256,21 @@ static struct ccu_common *sun50i_r329_rtc_ccu_clks[] = {
->>  	&rtc_spi_clk.common,
->>  };
->>  
->> +static struct clk_hw_onecell_data sun50i_h6_rtc_ccu_hw_clks = {
->> +	.num = CLK_NUMBER,
->> +	.hws = {
->> +		[CLK_OSC32K]		= &osc32k_clk.common.hw,
->> +		[CLK_OSC32K_FANOUT]	= &osc32k_fanout_clk.common.hw,
->> +		[CLK_IOSC]		= &iosc_clk.hw,
->> +
->> +		[CLK_IOSC_32K]		= &iosc_32k_clk.hw,
->> +		[CLK_EXT_OSC32K_GATE]	= &ext_osc32k_gate_clk.common.hw,
->> +		[CLK_OSC24M_32K]	= &osc24M_32k_clk.common.hw,
->> +		[CLK_RTC_32K]		= &rtc_32k_mux_clk.common.hw,
->> +		[CLK_RTC_SPI]		= NULL,
->> +	},
->> +};
->> +
->>  static struct clk_hw_onecell_data sun50i_h616_rtc_ccu_hw_clks = {
->>  	.num = CLK_NUMBER,
->>  	.hws = {
->> @@ -276,6 +301,13 @@ static struct clk_hw_onecell_data sun50i_r329_rtc_ccu_hw_clks = {
->>  	},
->>  };
->>  
->> +static const struct sunxi_ccu_desc sun50i_h6_rtc_ccu_desc = {
->> +	.ccu_clks	= sun50i_h6_rtc_ccu_clks,
->> +	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_rtc_ccu_clks),
->> +
->> +	.hw_clks	= &sun50i_h6_rtc_ccu_hw_clks,
->> +};
->> +
->>  static const struct sunxi_ccu_desc sun50i_h616_rtc_ccu_desc = {
->>  	.ccu_clks	= sun50i_h616_rtc_ccu_clks,
->>  	.num_ccu_clks	= ARRAY_SIZE(sun50i_h616_rtc_ccu_clks),
->> @@ -318,6 +350,23 @@ static void __init sunxi_rtc_ccu_init(struct device_node *node,
->>  	of_sunxi_ccu_probe(node, reg, desc);
->>  }
->>  
->> +static void __init sun50i_h6_rtc_ccu_setup(struct device_node *node)
->> +{
->> +	struct clk_init_data *init;
->> +
->> +	have_iosc_calib = 1;
->> +
->> +	/* Casting away the const from a pointer to a non-const anonymous object... */
->> +	init = (struct clk_init_data *)osc32k_fanout_clk.common.hw.init;
->> +
->> +	/* Fanout only has one parent: osc32k. */
->> +	init->num_parents = 1;
->> +
->> +	sunxi_rtc_ccu_init(node, &sun50i_h6_rtc_ccu_desc);
->> +}
+On 9/3/21 9:50 AM, Maxime Ripard wrote:
+> Hi,
 > 
-> Indeed, that's not great.
+> On Wed, Sep 01, 2021 at 12:39:44AM -0500, Samuel Holland wrote:
+>> This patch series adds a CCU driver for the RTC in the H616 and R329.
+>> The extra patches at the end of this series show how it would be
+>> explanded to additional hardware variants.
+>>
+>> The driver is intended to support the existing binding used for the H6,
+>> but also an updated binding which includes all RTC input clocks. I do
+>> not know how to best represent that binding -- that is a major reason
+>> why this series is an RFC.
+>>
+>> A future patch series could add functionality to the driver to manage
+>> IOSC calibration at boot and during suspend/resume.
+>>
+>> It may be possible to support all of these hardware variants in the
+>> existing RTC clock driver and avoid some duplicate code, but I'm
+>> concerned about the complexity there, without any of the CCU
+>> abstraction.
+>>
+>> This series is currently based on top of the other series I just sent
+>> (clk: sunxi-ng: Lifetime fixes and module support), but I can rebase it
+>> elsewhere.
 > 
-> Maybe we should just duplicate the sun50i_h6_rtc_ccu_desc (and
-> osc32k_fanout_clk) to cover both cases?
+> I'm generally ok with this, it makes sense to move it to sunxi-ng,
+> especially with that other series of yours.
+> 
+> My main concern about this is the split driver approach. We used to have
+> that before in the RTC too, but it was mostly due to the early clock
+> requirements. With your previous work, that requirement is not there
+> anymore and we can just register it as a device just like the other
+> clock providers.
 
-Right, I could split osc32k_fanout_clk like with rtc_32k_fixed_clk and
-rtc_32k_mux_clk. Then H6 would use osc32k_fanout_fixed_clk.
+That's a good point. Originally, I had this RTC CCU providing osc24M, so
+it did need to be an early provider. But with the current version, we
+could have the RTC platform driver call devm_sunxi_ccu_probe. That does
+seem cleaner.
+
+(Since it wasn't immediately obvious to me why this works: the only
+early provider remaining is the sun5i CCU, and it doesn't use the sun6i
+RTC driver.)
+
+> And since we can register all those clocks at device probe time, we
+> don't really need to split the driver in two (and especially in two
+> different places). The only obstacle to this after your previous series
+> is that we don't have of_sunxi_ccu_probe / devm_sunxi_ccu_probe
+> functions public, but that can easily be fixed by moving their
+> definition to include/linux/clk/sunxi-ng.h
+
+Where are you thinking the clock definitions would go? We don't export
+any of those structures (ccu_mux, ccu_common) or macros
+(SUNXI_CCU_GATE_DATA) in a public header either.
+
+Would you want to export those? That seems like a lot of churn. Or would
+we put the CCU descriptions in drivers/clk/sunxi-ng and export a
+function that the RTC driver can call? (Or some other idea?)
 
 Regards,
 Samuel
