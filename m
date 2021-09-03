@@ -2,103 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3C6C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 23:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DCCC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED087610A2
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Sep 2021 23:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7859461056
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347954AbhIBXEk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Sep 2021 19:04:40 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:54511 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347937AbhIBXEj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Sep 2021 19:04:39 -0400
+        id S234910AbhICItw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Sep 2021 04:49:52 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:56657 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234817AbhICItw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 04:49:52 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id DA9DD3200A07;
-        Thu,  2 Sep 2021 19:03:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 02 Sep 2021 19:03:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=rspByYKuMKIepMHyyNh663Mha1
-        e5KFmbBZesXve1h4E=; b=Y0cL7CLS5ViYIqVAo05a015lr+HQYQsd7VYzXNNKWa
-        13TZkpDQHih598d6KPLoKVum/DwLmsNGRapKyAVrBnhwDoNo+JEVw770Zj166qIB
-        U0OKv2Rt2xR1lSVhV7TjxPoRIa18Xuw9b09ytUuVwmOvbmDrAjeeB/lJqufaJOyb
-        ybXI8sybibSFVNXkQACgvAx9gfsoUo9j4G5ritP8Z1GYAJ3i0yNSOWFStkftCKNu
-        X8qhFUFjTgVojrNNK7lWzQv909GXhmuyzLRcTwuI++gv1nWWZtzX9ncT3y2S5INm
-        yRJI23pveKJ9b2mHw8qCzweArmNVuEM9m08CY0TBdPXQ==
+        by mailout.west.internal (Postfix) with ESMTP id 109CB320084E;
+        Fri,  3 Sep 2021 04:48:48 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 03 Sep 2021 04:48:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=hQ1nmr8FqIrbd7jINZ288GcuT/J
+        36KiVUNQgsJszPMw=; b=PHjrllx4NVqgM8Jlnh9b8LbrI0yOGsmdFY0e5PFVTT3
+        xUsPT1ETrtPdT/QDWMp6ZbK73MmjO47tLT5xtGMT7jGqGoskKxgtH466HHIacouO
+        9jT6o3LLkPN9B2Yj661uqlTldpwJBUNqxdFGRo7/wZwVw330zcT65bNGKkfPgiDy
+        ZK/dYL5vbc09dW4nvw6/ZMGsmo8toerRGlmwBuTnAACXywn2DH8Ew7NdQDHs6x5F
+        uHp3Ym9pC/2XPTYU3eRDNcIZEhgJ+u3VIMoZZ2vLCjyyUXJ+2oYQBgjEYKH1XY8e
+        fDJIpSFbsBjQizTXxWachS27+jdp5TmI11hEHtwkYew==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=rspByYKuMKIepMHyy
-        Nh663Mha1e5KFmbBZesXve1h4E=; b=CkF45+BL10r7keKriqqtoCKGjGVFBfZBb
-        qdl+9Ib3UQllupWcKAtr4yQKgw2i0boSqWvwgJjgS9H9OUyNPD2tjoJy29MtNGk1
-        UA6VHuYXnMKB7dnY1rCg19oK6LDK94iI0Z8ywRzqQAMFWgXZqxAblyfgsWGpnBHC
-        3ifLwumOB3XF6UPTbbeXtfe03cJhFOX8rNyr+Ow8lJOrPowjwleZFasIcJlEpc3i
-        Dg++0kDMXyYJq7U/kes5WkZcK1VTozFb5LQAmCvf2P35x7Oib+LxBoZzIOc+NMA/
-        29RyA7r6pVEaorlQygb41Tad5sCKwP4Xny87KKNYMBQPB2ga7Xftw==
-X-ME-Sender: <xms:SVgxYcFm20vkwbW6gMdojwYOz7k5g2cDhWP83A50KnTx09c0Lr2jfg>
-    <xme:SVgxYVVCnsqAMbzBj_ZkdoPipltGve0GX8Uy4gq4Fy5y76MkPtuKV5Ud3VGrVyxOg
-    352_8BwMr3gNgFDPw>
-X-ME-Received: <xmr:SVgxYWL0tkhYI8macrYRFtCVr3dsm8Ifoh7epl5jjuzPPpB3kLNOBIDQpiAWookF6J-wrY0rZRx8knry96mqtU7X6XlKSdO0oyID1gpxEsXpFJi3zizXWUiAJVpz4JzqIwgh6A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddviedgudekucetufdoteggodetrfdotf
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hQ1nmr
+        8FqIrbd7jINZ288GcuT/J36KiVUNQgsJszPMw=; b=iRffeU5WL7OKLXbVkxkq9F
+        i9NH4i8SlvY7ZMQW/T3X6u+b5G6ewerWIdW+5/D2MDJSPvQGbvIbj7z4VoamWltr
+        Y/Je+0DGvCJSHsoTBXusokpS9rht9USjmdPTrod6t5Xr9Fw9JD/C3vRoqV0uw2Gi
+        gVgUoHtT6QhyZAP+nAsqybmzKHY7MsJJc8UIgl3kY2Dqc5lV5zIuDSSX3ylit4Gv
+        cH3kL6SaAemZiXvYlHvvoN3xGNTMdQU6RdPXKSfFx5fBSsK1ASxz00t3m1g84d+x
+        +y+MokPoooBO+mqf6G2HCDWTU/gLFUrcraIL8W53kzMasUx3+x8iAY0t62+LUTQg
+        ==
+X-ME-Sender: <xms:b-ExYbnOD5s0DvCXfIGa3YrbEqtOmv_paincGAhXmhAA4F7WCES9cA>
+    <xme:b-ExYe1W94F4Eq9mMLgR6cVQJinS4OxF6VPztlacPSMZriObGD1fvH03WsAXeBXeq
+    u_uptTaH6RCTjjYqEw>
+X-ME-Received: <xmr:b-ExYRpJRS7EqtiCYSnl64N_Kds4KagIwJChAfwKS1SwC5F8xEfaolhl7Q40RhviFmb33KPv4lXmlozjiSmIqW0Xs3Fg9BiWlYg_>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgtdejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
-    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
-    htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
-    vedtveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:SVgxYeGFseDuPO56Agdscq92y1TtaNcuKvK-rVl4mli1RNHJnT0XWA>
-    <xmx:SVgxYSXrje8pi8NUOvIYTGy9Qc5_N3ZAC1fTHaqES62y1JY81vKyOw>
-    <xmx:SVgxYRP5st2ki9bEpabsK0VLPEQ6cof0Ma0TuRigoefvNKRR82anfg>
-    <xmx:S1gxYWq5c5iX9-rfuhttO7AuPCX7G5gPfL15kkEpeqjjQ6mqpPwSaw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 2 Sep 2021 19:03:37 -0400 (EDT)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:b-ExYTnoCChahLwAj2Lgdv9J3ocYOSTJYYCpf9a487cwGLk1G6ipcg>
+    <xmx:b-ExYZ3aPcvwkoZ_lcNLrxrwqyooUE2E5l4z_O510hfrDdWln69nOw>
+    <xmx:b-ExYSu_YUsx04U4wuGZtercfDzNSGFUf1Nzu4AgMJTdqXt5ztK3lg>
+    <xmx:cOExYWl2SCSMyPs5l0CR5IQAXvpHd00HgSLGWZreHgU3pLGUoSrS4A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Sep 2021 04:48:46 -0400 (EDT)
+Date:   Fri, 3 Sep 2021 10:48:44 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH] clk: sunxi-ng: mux: Remove unused 'reg' field
-Date:   Thu,  2 Sep 2021 18:03:36 -0500
-Message-Id: <20210902230336.29745-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.31.1
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: mux: Remove unused 'reg' field
+Message-ID: <20210903084844.fizlsjnfne3kcwz2@gilmour>
+References: <20210902230336.29745-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d7hw5q2u25hewzka"
+Content-Disposition: inline
+In-Reply-To: <20210902230336.29745-1-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver uses 'reg' from 'struct ccu_common' everywhere, so this
-duplicate field is unused and unnecessary. Remove it.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/clk/sunxi-ng/ccu_mux.h | 1 -
- 1 file changed, 1 deletion(-)
+--d7hw5q2u25hewzka
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f165395effb5..e31efc509b3d 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -40,7 +40,6 @@ struct ccu_mux_internal {
- 	_SUNXI_CCU_MUX_TABLE(_shift, _width, NULL)
- 
- struct ccu_mux {
--	u16			reg;
- 	u32			enable;
- 
- 	struct ccu_mux_internal	mux;
--- 
-2.31.1
+On Thu, Sep 02, 2021 at 06:03:36PM -0500, Samuel Holland wrote:
+> The driver uses 'reg' from 'struct ccu_common' everywhere, so this
+> duplicate field is unused and unnecessary. Remove it.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
+Applied, thanks
+Maxime
+
+--d7hw5q2u25hewzka
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYTHhbAAKCRDj7w1vZxhR
+xU8xAP0UchnkM21a+7FRcDf8V3tLLjiXwA9OuhHwustIVgcqcwEAoHWky7HFXUTg
+HXNooCq6avRrPF51PXqr90oqtOOTkgA=
+=h0s4
+-----END PGP SIGNATURE-----
+
+--d7hw5q2u25hewzka--
