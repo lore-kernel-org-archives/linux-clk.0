@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C6AC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 09:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E33FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 09:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 280246069E
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 09:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2424161051
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 09:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348593AbhICJK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Sep 2021 05:10:26 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:36997 "EHLO
+        id S1348651AbhICJLp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Sep 2021 05:11:45 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:39541 "EHLO
         wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242812AbhICJKW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 05:10:22 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id E5C08320084E;
-        Fri,  3 Sep 2021 05:09:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 03 Sep 2021 05:09:22 -0400
+        by vger.kernel.org with ESMTP id S242775AbhICJLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 05:11:44 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 5CD493200905;
+        Fri,  3 Sep 2021 05:10:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 03 Sep 2021 05:10:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=xO2AiuSIewvWYYBYy9ppnzbKpNq
-        Gz03TblUf1EuZ4Ug=; b=XT1lY8wkYnzR38phv7i1SyOAFv9ohtxxPlXCihKOkHs
-        fvMTBlx0eHQXdjCnRLfcwMEbroeOkSRo5UlkGG8xrjFrL9ux0//3c12PwWCTMaZy
-        qkOPTsoqgKqaKGRGvkR4K/V9GRHQ5M0nSQ8IfqgxG2tTO3oig7vKzbr7cNfN2Ec3
-        FYdjHDxxeBuMO9i2dsrVvefBQ9cD02eCb+AqPvtgvlEVEAm9x/v25frTdEJWpozN
-        6QWefZCpZBgkhS3hWKCyLH+80+AO98wAp8G8fRO5cc6vVa648T9UmcEFzXtX09Ek
-        oEveTqx/9QBgJmku+g7Foq6pSr3J2M836EYLIr3UPOA==
+        :content-type:in-reply-to; s=fm3; bh=ox+I/Ry1v/j82vqbJpoMct9xYn8
+        vhfN0iM0y0R/9Wa4=; b=VPZfi/EnygXML/q/kpH7FBvJeu9/C5QPnKNHhEnomws
+        sjlGDFlegXG2TQBPfh3/NkFuZEejkaktEnLBvFyIR87u9TZfRwSaeRegOlpFceNl
+        32s6LfM0wCntk6l65wCuFaPC2pFDSyHwkDQfcSGxDxu926aIlEzW84UIh/SlTgFr
+        O1L1zBdEIYAdgdXSUH1jBtsVLUfIEvYUYWhouQ1l7FGPvGmc/1BMSVTtBP886Srq
+        oiGyPVcHldqDk00Jrer29EEnMjO+BoRm4wI4VQyE+NqCTf+a33T9mlbTt1TlS1Sq
+        DD8/+Rt0ANQh7dwqIOUm371VtIbTeuC/GimUqh7zvHA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=xO2Aiu
-        SIewvWYYBYy9ppnzbKpNqGz03TblUf1EuZ4Ug=; b=fX0vxdJDTwZAQISatfNDYI
-        MH/S7hX/lBNdMKGbrn03QLvqkeVq+HxeBhRN0wWf8D9N66UmDkG7xYGfQHvVgoRu
-        Zy9pjXxfsyNOFJvl6EtnCl2r9A0ZcXFyQbStGGZYw/pzCdfZ0bLcJH9bjQlj2m82
-        Jb6l1Dq7BiBzTpACvgHea3f32ay/aDD4VQLfZ2oixA7YzbMswhdu4z9R1Z3gtHA1
-        tkEIV6Zj3fFaj7QNMmewMEkx52zJ/7vE/QSd0rXAP5ULZOcIvTViUu9de8RVo274
-        nbdFAlT6sR+6spdXoVkgEILW+RnezkD/APSaR33J95sWszMEPdvWBirt+Yak388Q
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ox+I/R
+        y1v/j82vqbJpoMct9xYn8vhfN0iM0y0R/9Wa4=; b=bvloNvgKdH/DDTrAB9De1r
+        wsZqy8CrKk8GNm/uTeL+27iyu48KHio0B6hJPz//np8BlZOElL1WhnLCpDk/ElWX
+        toWwilmaA4ZWeWZp1vv/lQFL9cQ2nI92zToc47r45I//VN3zMsppUY9cEdFIw7tE
+        snAJbIXsUKVJnva98ZQgE7qu0HzQC4CY6Zs6yGmXM9iEmNKd8S9ueVXZao5enLSq
+        wVtHmk3lxmI7n5t1ppKrUYE7LOh3U/PG9tZm+/deVZIHUCNPlezp/opg0gCgg4iz
+        w6ge/rJeWgazBjVkGpFBv7d4NhGOUHJANYyXPgDqnom/ehb7BHqSwJeaJFFF1iOA
         ==
-X-ME-Sender: <xms:QOYxYRDjKDnJMAOMDPrTyL5Yg4ull8u0jcNdXybtm7_s-ixIiGOohg>
-    <xme:QOYxYfgpH42R2n9AwpBrQKyZYOLSvNsAAXVKe11uJroN2HnRgkTcFd2YLQoC_g_0a
-    OzUJnJtESOg5Mp6K7k>
-X-ME-Received: <xmr:QOYxYckG-s2cbJdErNS5HUQGIuCaU5PF1Wcb7b7BZvBeZ2AXFJnauCB6TAimPxQcroLpAykJD9Xc4osWPzELx-5jZ6IjDAF6brNK>
+X-ME-Sender: <xms:kuYxYUl_KGhbwWP-J-5LnK9wzo4Su2ZG5hknQWEGoOmQh-eASeYB6A>
+    <xme:kuYxYT3k26iSM-BsPd7YFnKKLeWdwnipOIOxYg--H_qLAYOJNub3-sefFpoqQNxFa
+    98V0ohjbpOOI7ONriM>
+X-ME-Received: <xmr:kuYxYSpUS7qGPQrm5MmYCIKpzffgVz7p8T4OhYfy3MO9kQzIXTz5Dj-dvz4Bn_CNLoGkZ3jNLf9j0VW_Bo3JvGhDPsp2fsn0e-hH>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedguddvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedguddvucetufdoteggod
     htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
     gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:QOYxYbzlvCnbTjPj4VDSCYXWuDQj6HIjp8-BcYzXg8qtcZ3BmB6dBw>
-    <xmx:QOYxYWR9aIl764ZaGCemeG03wiUBp3QJpk2qQAPyAWqknIA6Dv08-w>
-    <xmx:QOYxYebXOzO6o-UuDuD2Q9MboxJCWIpWJj9qu_rBUWVQXL1NWYGcSA>
-    <xmx:QeYxYTQiBwr2w5BSCNtbmLAW5IxX8bnMQ9zRNs4yBS_NdXSR1rlQRw>
+X-ME-Proxy: <xmx:kuYxYQn-S0dh-ztN8x2oKEFnP-1n1lKz2uTzbut5CN1lSmL2aCSV3Q>
+    <xmx:kuYxYS0EJ9wWpOcRmqlWDB2RxYQUyWpNd21leJfnztL8SDfFi0gdvg>
+    <xmx:kuYxYXvRvyoRaN-EaFPSNyZx9Z5T42DYLnxHbJbTPNuhWDV1SUpusA>
+    <xmx:lOYxYbn3qtWt4Vq2Kyg0fgHeFk1imqyrjrbzRKGepwc7kc0HI9G4VA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Sep 2021 05:09:20 -0400 (EDT)
-Date:   Fri, 3 Sep 2021 11:09:18 +0200
+ 3 Sep 2021 05:10:42 -0400 (EDT)
+Date:   Fri, 3 Sep 2021 11:10:40 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Samuel Holland <samuel@sholland.org>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
@@ -71,47 +71,52 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] clk: sunxi-ng: Use a separate lock for each CCU
- instance
-Message-ID: <20210903090918.krvukxbwaicxyuxh@gilmour>
+Subject: Re: [PATCH 4/8] clk: sunxi-ng: Rename files to match Kconfig and
+ drivers
+Message-ID: <20210903091040.2bngsvhem2ftzhaz@gilmour>
 References: <20210901050526.45673-1-samuel@sholland.org>
- <20210901050526.45673-4-samuel@sholland.org>
+ <20210901050526.45673-5-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d76srkb255wqnmwl"
+        protocol="application/pgp-signature"; boundary="ejwkc5wmabu555zl"
 Content-Disposition: inline
-In-Reply-To: <20210901050526.45673-4-samuel@sholland.org>
+In-Reply-To: <20210901050526.45673-5-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---d76srkb255wqnmwl
+--ejwkc5wmabu555zl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 01, 2021 at 12:05:21AM -0500, Samuel Holland wrote:
-> Some platforms have more than one CCU driver loaded: the main CCU, the
-> PRCM, the display engine, and possibly others. All of these hardware
-> blocks have separate MMIO spaces, so there is no need to synchronize
-> between them.
+Hi,
+
+On Wed, Sep 01, 2021 at 12:05:22AM -0500, Samuel Holland wrote:
+> When the drivers are built as modules, the file name will become the
+> module name. Rename the files so everything matches: the Kconfig symbol,
+> the platform driver name (as seen in sysfs), and the module name.
 >=20
 > Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Applied the first three patches
+I'm not a big fan of big renames like this, it makes merging and
+backporting patches harder in the long term.
+
+I assume you did this to make the module autoloading work? If so, using
+MODULE_ALIAS would be less intrusive
 
 Maxime
 
---d76srkb255wqnmwl
+--ejwkc5wmabu555zl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYTHmPgAKCRDj7w1vZxhR
-xYNdAQCr9ixZ9YQw11Q1b8e9NxFK8M85Xyqlvyc9vXD5hXsTCgD9FffYNIOOpw7I
-tfMxsl4tlGQ+4ZQaNe7rQ+qs4DrfjQw=
-=8EAf
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYTHmkAAKCRDj7w1vZxhR
+xf4xAP90rWbPp24J+BEJxdB2On7UfpvhIiYfWFYBbYKAlJfsRQD7B8nA9clu2f1u
+JaR0qk9WskxjgGvi6R8jMVEelzBTsAg=
+=sai4
 -----END PGP SIGNATURE-----
 
---d76srkb255wqnmwl--
+--ejwkc5wmabu555zl--
