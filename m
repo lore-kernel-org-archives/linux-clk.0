@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DCCC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A545DC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7859461056
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80FEE610A2
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 08:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234910AbhICItw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Sep 2021 04:49:52 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:56657 "EHLO
+        id S1348480AbhICIyO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Sep 2021 04:54:14 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:49477 "EHLO
         wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234817AbhICItw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 04:49:52 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 109CB320084E;
-        Fri,  3 Sep 2021 04:48:48 -0400 (EDT)
+        by vger.kernel.org with ESMTP id S1348459AbhICIyI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Sep 2021 04:54:08 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id A8D5A3200927;
+        Fri,  3 Sep 2021 04:53:07 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 03 Sep 2021 04:48:49 -0400
+  by compute4.internal (MEProxy); Fri, 03 Sep 2021 04:53:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=hQ1nmr8FqIrbd7jINZ288GcuT/J
-        36KiVUNQgsJszPMw=; b=PHjrllx4NVqgM8Jlnh9b8LbrI0yOGsmdFY0e5PFVTT3
-        xUsPT1ETrtPdT/QDWMp6ZbK73MmjO47tLT5xtGMT7jGqGoskKxgtH466HHIacouO
-        9jT6o3LLkPN9B2Yj661uqlTldpwJBUNqxdFGRo7/wZwVw330zcT65bNGKkfPgiDy
-        ZK/dYL5vbc09dW4nvw6/ZMGsmo8toerRGlmwBuTnAACXywn2DH8Ew7NdQDHs6x5F
-        uHp3Ym9pC/2XPTYU3eRDNcIZEhgJ+u3VIMoZZ2vLCjyyUXJ+2oYQBgjEYKH1XY8e
-        fDJIpSFbsBjQizTXxWachS27+jdp5TmI11hEHtwkYew==
+        :content-type:in-reply-to; s=fm3; bh=u/IKps32O3lSSQc9bt8YjhkoT6+
+        nuErFJo1Os1aHNd0=; b=3m1JIbtbfNmOU94zNynH7Ao3U6w39BeK1KV3+JqnzaX
+        q/AJtlN4YAxkYxz3mRmX198NByW96sAftq7rd4Bq/CQ/usVmSg8mXLTLdn6Zp6sc
+        4d2mQ6PKo2PCMuekdo2pPuwbj18oF1/fDW8kghuzR/sAgdX9z1QHxrvero5ORGX1
+        2zPhFmdOI4YnruoZW8FZdPHdvTGkPIo9JSAIZqQXM2wapsoXadsTJMlKti1z+0FP
+        CQtAFYTX+YaoHw6gzABH8PShDexuC02Rl7rgNhI7qVdOyotyphLROJb+40Sn+s2y
+        D+CmNJi8ReLjR4OeXggyC91Cxo/N6niUOaZVTHkFYXQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hQ1nmr
-        8FqIrbd7jINZ288GcuT/J36KiVUNQgsJszPMw=; b=iRffeU5WL7OKLXbVkxkq9F
-        i9NH4i8SlvY7ZMQW/T3X6u+b5G6ewerWIdW+5/D2MDJSPvQGbvIbj7z4VoamWltr
-        Y/Je+0DGvCJSHsoTBXusokpS9rht9USjmdPTrod6t5Xr9Fw9JD/C3vRoqV0uw2Gi
-        gVgUoHtT6QhyZAP+nAsqybmzKHY7MsJJc8UIgl3kY2Dqc5lV5zIuDSSX3ylit4Gv
-        cH3kL6SaAemZiXvYlHvvoN3xGNTMdQU6RdPXKSfFx5fBSsK1ASxz00t3m1g84d+x
-        +y+MokPoooBO+mqf6G2HCDWTU/gLFUrcraIL8W53kzMasUx3+x8iAY0t62+LUTQg
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=u/IKps
+        32O3lSSQc9bt8YjhkoT6+nuErFJo1Os1aHNd0=; b=NnHagq2ejnMxL/9GLSPzoi
+        PYW0+dLNCTwDQN8KpN9rSgcU6ZtxwjdxY9hWfO1xqCGHLlkAqbt/WvkNJsfwbGUG
+        FIVItC/AVRkhLgzkJ5t/TIaFhHXcdhpyhPEouY4vyO6f12dXINS+GawZTN7JWtiI
+        LGO5dQaX0jMpIa9zeYClGdLVjclfogCNrTsqM0MTLTclUkUldoG+/Jc2rc+yaZ8t
+        kcGcly4zGWrBvZ18JYOl/C9qTX1j0E4nHH5vZMc7DN7f5b9CSasqXVTkllZRRRMQ
+        YWncTqKYWA8fPC4nOm0t8nZzgrwyd7gTD0FxbYGVrQEYkBspmN8ppmONa1qRBJyA
         ==
-X-ME-Sender: <xms:b-ExYbnOD5s0DvCXfIGa3YrbEqtOmv_paincGAhXmhAA4F7WCES9cA>
-    <xme:b-ExYe1W94F4Eq9mMLgR6cVQJinS4OxF6VPztlacPSMZriObGD1fvH03WsAXeBXeq
-    u_uptTaH6RCTjjYqEw>
-X-ME-Received: <xmr:b-ExYRpJRS7EqtiCYSnl64N_Kds4KagIwJChAfwKS1SwC5F8xEfaolhl7Q40RhviFmb33KPv4lXmlozjiSmIqW0Xs3Fg9BiWlYg_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgtdejucetufdoteggodetrfdotf
+X-ME-Sender: <xms:cuIxYaLzpXzuEkoldT2UY_3gm5Wbz9jsDetGQq8yw8VaGP79O3IAyw>
+    <xme:cuIxYSJk2oh9a22g4SNaxygxCZg0XO5kLj8_lfA1O9mWRGiiqKeVuOYINUgvSN3UH
+    lLbbCFbbirTY6WpcRs>
+X-ME-Received: <xmr:cuIxYauGqz281MxcptL_aWBrGfNZ5qGx2aD84aW7kFmkGvy5Ml663xV631V0mk7T5BjM0Lam-9HWgkqaty_MKjxaA3QK5rFWiUa3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgtdekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgtdejucetufdoteggod
     htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
     gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:b-ExYTnoCChahLwAj2Lgdv9J3ocYOSTJYYCpf9a487cwGLk1G6ipcg>
-    <xmx:b-ExYZ3aPcvwkoZ_lcNLrxrwqyooUE2E5l4z_O510hfrDdWln69nOw>
-    <xmx:b-ExYSu_YUsx04U4wuGZtercfDzNSGFUf1Nzu4AgMJTdqXt5ztK3lg>
-    <xmx:cOExYWl2SCSMyPs5l0CR5IQAXvpHd00HgSLGWZreHgU3pLGUoSrS4A>
+X-ME-Proxy: <xmx:cuIxYfZkjRH4bT-C0mY36JJ7GfJIgDetUb65pH0GQFHqDx__4toxaA>
+    <xmx:cuIxYRbF9CQR5TCGit6W90VuqbR_OfvzHfHceX-CQuUhx335WVNxTQ>
+    <xmx:cuIxYbBKeOp9kZ7jPnJ1xnVdBTxgsY74ghKy5TzPxY82lkGToEAy4A>
+    <xmx:c-IxYd46DYYK22amSCzvZpxP1GVax7W0rEo61f3kwHrnoBjTZayJLA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Sep 2021 04:48:46 -0400 (EDT)
-Date:   Fri, 3 Sep 2021 10:48:44 +0200
+ 3 Sep 2021 04:53:06 -0400 (EDT)
+Date:   Fri, 3 Sep 2021 10:53:05 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Samuel Holland <samuel@sholland.org>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
@@ -71,42 +71,44 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: mux: Remove unused 'reg' field
-Message-ID: <20210903084844.fizlsjnfne3kcwz2@gilmour>
-References: <20210902230336.29745-1-samuel@sholland.org>
+Subject: Re: [PATCH] clk: sunxi-ng: Add machine dependency to A83T CCU
+Message-ID: <20210903085305.g5q2cijivnvy4jvz@gilmour>
+References: <20210902230200.29574-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d7hw5q2u25hewzka"
+        protocol="application/pgp-signature"; boundary="qgfp4yybpmblzjim"
 Content-Disposition: inline
-In-Reply-To: <20210902230336.29745-1-samuel@sholland.org>
+In-Reply-To: <20210902230200.29574-1-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---d7hw5q2u25hewzka
+--qgfp4yybpmblzjim
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 02, 2021 at 06:03:36PM -0500, Samuel Holland wrote:
-> The driver uses 'reg' from 'struct ccu_common' everywhere, so this
-> duplicate field is unused and unnecessary. Remove it.
+On Thu, Sep 02, 2021 at 06:02:00PM -0500, Samuel Holland wrote:
+> The CCUs for all other 32-bit SoCs have a dependency on a specific
+> MACH_SUNxI symbol. This effectively hides these drivers when building
+> an ARCH=3Darm64 kernel. However, the A83T CCU still shows up because it
+> is missing this dependency. Let's add it for consistency.
 >=20
 > Signed-off-by: Samuel Holland <samuel@sholland.org>
 
 Applied, thanks
 Maxime
 
---d7hw5q2u25hewzka
+--qgfp4yybpmblzjim
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYTHhbAAKCRDj7w1vZxhR
-xU8xAP0UchnkM21a+7FRcDf8V3tLLjiXwA9OuhHwustIVgcqcwEAoHWky7HFXUTg
-HXNooCq6avRrPF51PXqr90oqtOOTkgA=
-=h0s4
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYTHicQAKCRDj7w1vZxhR
+xQuDAQCDW+JiMYF4GkNuyUdDcWcB959EY6pP5z5q7ImerlUJ7QEAgPRcNgMEYSqN
++yxQewQdA18/eZIu31NVrgXWk4UtOQ4=
+=YI+y
 -----END PGP SIGNATURE-----
 
---d7hw5q2u25hewzka--
+--qgfp4yybpmblzjim--
