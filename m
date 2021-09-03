@@ -4,53 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604D3C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 18:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC033C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 18:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3677B61051
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 18:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15DC60FDC
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Sep 2021 18:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235865AbhICSdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Sep 2021 14:33:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59326 "EHLO mail.kernel.org"
+        id S1348044AbhICSdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Sep 2021 14:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230421AbhICSdW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Sep 2021 14:33:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34B6060FC0;
-        Fri,  3 Sep 2021 18:32:22 +0000 (UTC)
+        id S1346181AbhICSdx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Sep 2021 14:33:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CF3960724;
+        Fri,  3 Sep 2021 18:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630693942;
-        bh=JW2bkfWhcCMn3dI/Qz+LQznqbuZnfNghAuFhbiBJqyk=;
+        s=k20201202; t=1630693973;
+        bh=l/p1Mt+6Buj3XpMkEakyWxymjCSxUxk4W1rvVC61s4Y=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DxvN1OYsrLl6FTJwLbZGgpiGw8M2rh7SFz8T2qsrYqJETwECnhNd28q5/FYOhOLMG
-         JiRcGjKuKG+kHK/Wb2pKsqhCLcsbKTVV6pYYop4ywgtCxi9GC8zc8iwh2vikAMYDAn
-         wudjYtnwbmdzYjQaq0AexMHFclZup/ZcO873BSHM9sC+KNO7OT9Rqul3V7Ya2q/EJ0
-         1vBVT5JI4xeMqkexTXQODbjhlLlaLrjo3JhzDNVgdADBIZi2i330j4nER0g0GWIQ6E
-         dUsUOv3RDGbnFkVZvYH6TOL77ImLdi/pVqDbiDkoXYfEON/irlhSiIEVnsEZTvUJ5v
-         owoDwdGCJiJiA==
+        b=f6KdmLDyoCj8nHr/oc0jQe6KrKWlhQDDVs0k69X/d/+YOu36J8pL16GkpIePEoFjj
+         u/qOlKoRY0cVmbGT9yvRyGYZ41rg40sccPGZ2ndVD27M4QscQf1FBeNRbzxgsf4a41
+         7csNMyf4kyuMlZDDj5FihxoxaX20rC1U+hBKVA9mEeAFZG8gbNpFnDdXlZtOz0SBk3
+         6y8mu6y19xaSgY0g2B1YQWPPhTsU+jMoMC1X7cQ9CNgBi3yaSh7LBwpDpVwUXeV3Pl
+         nR7/DtbxWjs0C7eetEn5gHwFCyrPf5kA7u48hBscwDwT/0bpUhaiarDMhCVKAKGXdR
+         kYsRB9HijTGhA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210903152615.31453-1-kabel@kernel.org>
-References: <20210903152615.31453-1-kabel@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clk: fixed-mmio-clock: Convert to YAML
+In-Reply-To: <20210902075713.7563-1-miles.chen@mediatek.com>
+References: <20210902075713.7563-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH] clk: rockchip: use module_platform_driver_probe
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jan Kotas <jank@cadence.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, Marek Behun <kabel@kernel.org>
-To:     Marek Behun <kabel@kernel.org>, linux-clk@vger.kernel.org
-Date:   Fri, 03 Sep 2021 11:32:20 -0700
-Message-ID: <163069394099.405991.703634222867535029@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
+        Miles Chen <miles.chen@mediatek.com>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Date:   Fri, 03 Sep 2021 11:32:52 -0700
+Message-ID: <163069397238.405991.15295469394989512619@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Behun (2021-09-03 08:26:15)
-> Convert the binding documentatoin for fixed-mmio-clock to YAML.
+Quoting Miles Chen (2021-09-02 00:57:13)
+> Replace builtin_platform_driver_probe with module_platform_driver_probe
+> because that rk3399 and rk3568 can be built as kernel modules.
 >=20
-> Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
-> ---
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Should it have a fixes tag?
