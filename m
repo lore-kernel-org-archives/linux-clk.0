@@ -2,93 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2CC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 16:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FE7C4321E
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 18:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66A3860F51
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 16:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AA1560FA0
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 18:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236679AbhIDQoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Sep 2021 12:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
+        id S237405AbhIDSbp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Sep 2021 14:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229899AbhIDQod (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Sep 2021 12:44:33 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E58AC061575;
-        Sat,  4 Sep 2021 09:43:32 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id s10so4629921lfr.11;
-        Sat, 04 Sep 2021 09:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wh1mYqXbigd70L6uyNc1nuoAq3q+tfDVrUyZbdPnbZg=;
-        b=iXLM08nMa44bOzPVU5aaFVmqvZKrs+Ybnrz+NmNg88DHQv5tvS8yqQWkjL80Wqry1T
-         ExBK71a+BdNdvsuJVFKy9eiahchEbwVZ4jrJxzuyxjjqOZwtW57wdrF1YEzTAli4ouNU
-         OVDw1gYu+lRFtE8FF0msbNC6OdV9SwrDM1zF1Iy6fiCD6jsnMr7saeojM17d3QdPPWML
-         ucxLHdZvULFpx/qqiBhryZ96yZNkS2CYPZVKXnIIhNxA3uj+cNXlbRaZEJIUYmY+9kPG
-         TMXNq+W5dKR4BeXQ3wEs+1Ix/WRRjN54hXoKEJ8A4w6vI1GR5R+QJd3wFhP8jgmHAvDp
-         B96A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wh1mYqXbigd70L6uyNc1nuoAq3q+tfDVrUyZbdPnbZg=;
-        b=QbAAUV2pqlZqSpxTWIl5CnY7O1pOoBmOgfzVi1PGZYvfqFNnqnMhsjmDV3NizRBFwX
-         zcMMxID3xpoNCNDjho2+FPP8exiu76a2ePUZVoNNP9wWvrvMnPTqvlus8oKXwukG2yv+
-         mPMaGtqebD94Tvp5MrI2uPk0VodCV/xS/A/PoZrT7uRhDqcU7+nctCqXLK/p/jn0Jb/k
-         0AjcxI1fgP+Gm/ODRefLwKt+wC4HhoBX24EVuJR7TNlHA/jZdnjZt2wPvDMtK31gN/oJ
-         TiLjRE0tMkVtSq8tsbPrgEyU2k6OyGr1ZQLcMBEMvlXsw1AHi87IpIgxp3MsBFOpymgD
-         36ww==
-X-Gm-Message-State: AOAM53278I/I0qXH7im7z3Zta6rDiuzjMGryI+RsihgnecS0U7q/1DFX
-        1FKoDTpDd39k0CrbUreTM5q5uK8Qy5qerK6He+w=
-X-Google-Smtp-Source: ABdhPJwZ+0KMEOizcDmymxx6a0MZNPjAp4tyydXooOiL8jAkWr0KSCGNISjKPFpo3S+RDol2iLdbQioP35eJnUnErmQ=
-X-Received: by 2002:a05:6512:108d:: with SMTP id j13mr3483211lfg.113.1630773810406;
- Sat, 04 Sep 2021 09:43:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210904152946.32042-1-miles.chen@mediatek.com>
-In-Reply-To: <20210904152946.32042-1-miles.chen@mediatek.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 4 Sep 2021 13:43:18 -0300
-Message-ID: <CAOMZO5AE4uGXk47uhWKLch8RDmUrvvw0zDPM+wxgz4uWJD6eGA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx: use module_platform_driver
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        with ESMTP id S234085AbhIDSbp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Sep 2021 14:31:45 -0400
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC39C061575
+        for <linux-clk@vger.kernel.org>; Sat,  4 Sep 2021 11:30:43 -0700 (PDT)
+Received: from localhost.localdomain (83.6.166.194.neoplus.adsl.tpnet.pl [83.6.166.194])
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id A47FC3EBA1;
+        Sat,  4 Sep 2021 20:30:38 +0200 (CEST)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
+Date:   Sat,  4 Sep 2021 20:30:05 +0200
+Message-Id: <20210904183014.43528-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miles,
+Add documentation for the MSM8994 GCC driver.
 
-On Sat, Sep 4, 2021 at 12:29 PM Miles Chen <miles.chen@mediatek.com> wrote:
->
-> Replace builtin_platform_driver_probe with module_platform_driver_probe
-> because CONFIG_CLK_IMX8QXP can be set to =m (kernel module).
->
-> Fixes: c2cccb6d0b33 ("clk: imx: add imx8qxp clk driver")
-> Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+Changes since v2:
 
-The correct Fixes tag would be:
+- Dropped second dt-binding part for the weird SD card clock configuration
+- Fix up many mistakes, including maintainers, license and order
+- I still have no idea why I get a pinctrl regex error.. need help here!
 
-Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock
-driver as module")
+ .../bindings/clock/qcom,gcc-msm8994.yaml      | 70 +++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
 
-Thanks
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+new file mode 100644
+index 000000000000..22e67b238bb6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
++
++maintainers:
++  - Konrad Dybcio <konrad.dybcio@somainline.org>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on MSM8994 and MSM8992.
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-msm8994.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,gcc-msm8992
++      - qcom,gcc-msm8994
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: xo
++      - const: sleep
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@300000 {
++      compatible = "qcom,gcc-msm8994";
++      reg = <0x00300000 0x90000>;
++      clocks = <&xo_board>, <&sleep_clk>;
++      clock-names = "xo", "sleep";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++
++...
+-- 
+2.33.0
+
