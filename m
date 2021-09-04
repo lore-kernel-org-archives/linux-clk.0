@@ -2,104 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A078C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 15:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2CC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 16:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D44C61057
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 15:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A3860F51
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Sep 2021 16:43:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236679AbhIDPax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Sep 2021 11:30:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33780 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230514AbhIDPax (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Sep 2021 11:30:53 -0400
-X-UUID: 077bbcf8511b42b4baf87eabcf2261d2-20210904
-X-UUID: 077bbcf8511b42b4baf87eabcf2261d2-20210904
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1130274364; Sat, 04 Sep 2021 23:29:49 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Sat, 4 Sep 2021 23:29:47 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Sat, 4 Sep 2021 23:29:47 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
+        id S236679AbhIDQoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Sep 2021 12:44:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229899AbhIDQod (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Sep 2021 12:44:33 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E58AC061575;
+        Sat,  4 Sep 2021 09:43:32 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id s10so4629921lfr.11;
+        Sat, 04 Sep 2021 09:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wh1mYqXbigd70L6uyNc1nuoAq3q+tfDVrUyZbdPnbZg=;
+        b=iXLM08nMa44bOzPVU5aaFVmqvZKrs+Ybnrz+NmNg88DHQv5tvS8yqQWkjL80Wqry1T
+         ExBK71a+BdNdvsuJVFKy9eiahchEbwVZ4jrJxzuyxjjqOZwtW57wdrF1YEzTAli4ouNU
+         OVDw1gYu+lRFtE8FF0msbNC6OdV9SwrDM1zF1Iy6fiCD6jsnMr7saeojM17d3QdPPWML
+         ucxLHdZvULFpx/qqiBhryZ96yZNkS2CYPZVKXnIIhNxA3uj+cNXlbRaZEJIUYmY+9kPG
+         TMXNq+W5dKR4BeXQ3wEs+1Ix/WRRjN54hXoKEJ8A4w6vI1GR5R+QJd3wFhP8jgmHAvDp
+         B96A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wh1mYqXbigd70L6uyNc1nuoAq3q+tfDVrUyZbdPnbZg=;
+        b=QbAAUV2pqlZqSpxTWIl5CnY7O1pOoBmOgfzVi1PGZYvfqFNnqnMhsjmDV3NizRBFwX
+         zcMMxID3xpoNCNDjho2+FPP8exiu76a2ePUZVoNNP9wWvrvMnPTqvlus8oKXwukG2yv+
+         mPMaGtqebD94Tvp5MrI2uPk0VodCV/xS/A/PoZrT7uRhDqcU7+nctCqXLK/p/jn0Jb/k
+         0AjcxI1fgP+Gm/ODRefLwKt+wC4HhoBX24EVuJR7TNlHA/jZdnjZt2wPvDMtK31gN/oJ
+         TiLjRE0tMkVtSq8tsbPrgEyU2k6OyGr1ZQLcMBEMvlXsw1AHi87IpIgxp3MsBFOpymgD
+         36ww==
+X-Gm-Message-State: AOAM53278I/I0qXH7im7z3Zta6rDiuzjMGryI+RsihgnecS0U7q/1DFX
+        1FKoDTpDd39k0CrbUreTM5q5uK8Qy5qerK6He+w=
+X-Google-Smtp-Source: ABdhPJwZ+0KMEOizcDmymxx6a0MZNPjAp4tyydXooOiL8jAkWr0KSCGNISjKPFpo3S+RDol2iLdbQioP35eJnUnErmQ=
+X-Received: by 2002:a05:6512:108d:: with SMTP id j13mr3483211lfg.113.1630773810406;
+ Sat, 04 Sep 2021 09:43:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210904152946.32042-1-miles.chen@mediatek.com>
+In-Reply-To: <20210904152946.32042-1-miles.chen@mediatek.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 4 Sep 2021 13:43:18 -0300
+Message-ID: <CAOMZO5AE4uGXk47uhWKLch8RDmUrvvw0zDPM+wxgz4uWJD6eGA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx: use module_platform_driver
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-CC:     <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH v2] clk: imx: use module_platform_driver
-Date:   Sat, 4 Sep 2021 23:29:46 +0800
-Message-ID: <20210904152946.32042-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Replace builtin_platform_driver_probe with module_platform_driver_probe
-because CONFIG_CLK_IMX8QXP can be set to =m (kernel module).
+Hi Miles,
 
-Fixes: c2cccb6d0b33 ("clk: imx: add imx8qxp clk driver")
-Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
-Cc: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+On Sat, Sep 4, 2021 at 12:29 PM Miles Chen <miles.chen@mediatek.com> wrote:
+>
+> Replace builtin_platform_driver_probe with module_platform_driver_probe
+> because CONFIG_CLK_IMX8QXP can be set to =m (kernel module).
+>
+> Fixes: c2cccb6d0b33 ("clk: imx: add imx8qxp clk driver")
+> Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
 
----
+The correct Fixes tag would be:
 
-Change since v1:
-Add Fixes tags
+Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock
+driver as module")
 
----
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 2 +-
- drivers/clk/imx/clk-imx8qxp.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index d3e905cf867d..b23758083ce5 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -370,7 +370,7 @@ static struct platform_driver imx8qxp_lpcg_clk_driver = {
- 	.probe = imx8qxp_lpcg_clk_probe,
- };
- 
--builtin_platform_driver(imx8qxp_lpcg_clk_driver);
-+module_platform_driver(imx8qxp_lpcg_clk_driver);
- 
- MODULE_AUTHOR("Aisheng Dong <aisheng.dong@nxp.com>");
- MODULE_DESCRIPTION("NXP i.MX8QXP LPCG clock driver");
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index c53a688d8ccc..40a2efb1329b 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -308,7 +308,7 @@ static struct platform_driver imx8qxp_clk_driver = {
- 	},
- 	.probe = imx8qxp_clk_probe,
- };
--builtin_platform_driver(imx8qxp_clk_driver);
-+module_platform_driver(imx8qxp_clk_driver);
- 
- MODULE_AUTHOR("Aisheng Dong <aisheng.dong@nxp.com>");
- MODULE_DESCRIPTION("NXP i.MX8QXP clock driver");
--- 
-2.18.0
-
+Thanks
