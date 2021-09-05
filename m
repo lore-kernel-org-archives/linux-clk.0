@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3A6C433F5
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Sep 2021 11:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0CAC433F5
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Sep 2021 11:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E49660F45
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Sep 2021 11:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54BF560F92
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Sep 2021 11:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237771AbhIELLK convert rfc822-to-8bit (ORCPT
+        id S237865AbhIEL4j convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Sep 2021 07:11:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38884 "EHLO mail.kernel.org"
+        Sun, 5 Sep 2021 07:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237534AbhIELLJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 5 Sep 2021 07:11:09 -0400
+        id S232168AbhIEL4g (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Sep 2021 07:56:36 -0400
 Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22F4260F22;
-        Sun,  5 Sep 2021 11:10:00 +0000 (UTC)
-Date:   Sun, 5 Sep 2021 12:13:23 +0100
+        by mail.kernel.org (Postfix) with ESMTPSA id 1366360FBF;
+        Sun,  5 Sep 2021 11:55:27 +0000 (UTC)
+Date:   Sun, 5 Sep 2021 12:58:50 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
@@ -40,14 +40,14 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH 20/40] mfd: ti_am335x_tscadc: Gather the ctrl register
- logic at one place
-Message-ID: <20210905121323.1cfa7dd9@jic23-huawei>
-In-Reply-To: <20210902214247.13243c71@xps13>
+Subject: Re: [PATCH 03/40] dt-bindings: touchscreen: ti,am3359-tsc: New yaml
+ description
+Message-ID: <20210905125850.1b4fe577@jic23-huawei>
+In-Reply-To: <20210902194536.1ffc92b2@xps13>
 References: <20210825152518.379386-1-miquel.raynal@bootlin.com>
-        <20210825152518.379386-21-miquel.raynal@bootlin.com>
-        <20210830145608.09d7e685@jic23-huawei>
-        <20210902214247.13243c71@xps13>
+        <20210825152518.379386-4-miquel.raynal@bootlin.com>
+        <20210830143610.5e11c3af@jic23-huawei>
+        <20210902194536.1ffc92b2@xps13>
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,135 +56,109 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2 Sep 2021 21:42:47 +0200
+On Thu, 2 Sep 2021 19:45:36 +0200
 Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
 > Hi Jonathan,
 > 
-> Jonathan Cameron <jic23@kernel.org> wrote on Mon, 30 Aug 2021 14:56:08
+> Jonathan Cameron <jic23@kernel.org> wrote on Mon, 30 Aug 2021 14:36:10
 > +0100:
 > 
-> > On Wed, 25 Aug 2021 17:24:58 +0200
+> > On Wed, 25 Aug 2021 17:24:41 +0200
 > > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 > >   
-> > > Instead of deriving in the probe and in the resume path the value of the
-> > > ctrl register, let's do it only once in the probe, save the value of
-> > > this register in the driver's structure and use it from the resume
-> > > callback.
+> > > This touchscreen controller is already described in a text file:
+> > > Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
 > > > 
-> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>    
-> > A few minor things inline.
-> > 
-> > J
-> >   
+> > > After introducing a proper description of the MFD, this is the second
+> > > step. The file cannot be removed yet as it also contains an ADC
+> > > description.
+> > > 
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 > > > ---
-> > >  drivers/mfd/ti_am335x_tscadc.c       | 31 ++++++++--------------------
-> > >  include/linux/mfd/ti_am335x_tscadc.h |  2 +-
-> > >  2 files changed, 10 insertions(+), 23 deletions(-)
+> > >  .../input/touchscreen/ti,am3359-tsc.yaml      | 89 +++++++++++++++++++
+> > >  1 file changed, 89 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
 > > > 
-> > > diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-> > > index 7071344ad18e..d661e8ae66c9 100644
-> > > --- a/drivers/mfd/ti_am335x_tscadc.c
-> > > +++ b/drivers/mfd/ti_am335x_tscadc.c
-> > > @@ -122,7 +122,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
-> > >  	struct clk *clk;
-> > >  	u32 val;
-> > >  	int tsc_wires = 0, adc_channels = 0, readouts = 0, cell_idx = 0;
-> > > -	int total_channels, ctrl, err;
-> > > +	int total_channels, err;
-> > >  
-> > >  	/* Allocate memory for device */
-> > >  	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
-> > > @@ -215,22 +215,21 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
-> > >  	regmap_write(tscadc->regmap, REG_CLKDIV, tscadc->clk_div);
-> > >  
-> > >  	/* Set the control register bits */
-> > > -	ctrl = CNTRLREG_STEPCONFIGWRT |	CNTRLREG_STEPID;
-> > > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
-> > > +	tscadc->ctrl = CNTRLREG_STEPCONFIGWRT | CNTRLREG_STEPID;
-> > > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);
-> > >  
-> > >  	if (tsc_wires > 0) {
-> > > -		tscadc->tsc_wires = tsc_wires;
-> > > +		tscadc->ctrl |= CNTRLREG_TSCENB;
-> > >  		if (tsc_wires == 5)
-> > > -			ctrl |= CNTRLREG_5WIRE | CNTRLREG_TSCENB;
-> > > +			tscadc->ctrl |= CNTRLREG_5WIRE;
-> > >  		else
-> > > -			ctrl |= CNTRLREG_4WIRE | CNTRLREG_TSCENB;
-> > > +			tscadc->ctrl |= CNTRLREG_4WIRE;
-> > >  	}
-> > >  
-> > >  	tscadc_idle_config(tscadc);
-> > >  
-> > >  	/* Enable the TSC module enable bit */
-> > > -	ctrl |= CNTRLREG_TSCSSENB;
-> > > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
-> > > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl | CNTRLREG_TSCSSENB);
-> > >  
-> > >  	/* TSC Cell */
-> > >  	if (tsc_wires > 0) {
-> > > @@ -305,25 +304,13 @@ static int __maybe_unused tscadc_suspend(struct device *dev)
-> > >  static int __maybe_unused tscadc_resume(struct device *dev)
-> > >  {
-> > >  	struct ti_tscadc_dev *tscadc = dev_get_drvdata(dev);
-> > > -	u32 ctrl;
-> > >  
-> > >  	pm_runtime_get_sync(dev);
-> > >  
-> > > -	/* context restore */
-> > > -	ctrl = CNTRLREG_STEPCONFIGWRT |	CNTRLREG_STEPID;
-> > > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
-> > > -
-> > > -	if (tscadc->tsc_wires > 0) {
-> > > -		if (tscadc->tsc_wires == 5)
-> > > -			ctrl |= CNTRLREG_5WIRE | CNTRLREG_TSCENB;
-> > > -		else
-> > > -			ctrl |= CNTRLREG_4WIRE | CNTRLREG_TSCENB;
-> > > -	}
-> > > -	ctrl |= CNTRLREG_TSCSSENB;
-> > > -	regmap_write(tscadc->regmap, REG_CTRL, ctrl);
-> > > -
-> > >  	regmap_write(tscadc->regmap, REG_CLKDIV, tscadc->clk_div);
-> > > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl);    
+> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+> > > new file mode 100644
+> > > index 000000000000..2d4ce6d04f53
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/ti,am3359-tsc.yaml
+> > > @@ -0,0 +1,89 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/input/touchscreen/ti,am3359-tsc.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: TI AM3359 Touchscreen controller
+> > > +
+> > > +maintainers:
+> > > +  - Miquel Raynal <miquel.raynal@bootlin.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: ti,am3359-tsc
+> > > +
+> > > +  ti,wires:
+> > > +    description: Wires refer to application modes i.e. 4/5/8 wire touchscreen
+> > > +      support on the platform.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [4, 5, 8]
+> > > +
+> > > +  ti,x-plate-resistance:
+> > > +    description: X plate resistance
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +  ti,coordinate-readouts:
+> > > +    description: The sequencer supports a total of 16 programmable steps. Each
+> > > +      step is used to read a single coordinate. A single readout is enough but
+> > > +      multiple reads can increase the quality. A value of 5 means, 5 reads for
+> > > +      X, 5 for Y and 2 for Z (always). This utilises 12 of the 16 software steps
+> > > +      available. The remaining 4 can be used by the ADC.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    minimum: 1
+> > > +    maximum: 6
+> > > +
+> > > +  ti,wire-config:
+> > > +    description: Different boards could have a different order for connecting
+> > > +      wires on touchscreen. We need to provide an 8-bit number where the
+> > > +      first four bits represent the analog lines and the next 4 bits represent
+> > > +      positive/negative terminal on that input line. Notations to represent the
+> > > +      input lines and terminals respectively are as follows, AIN0 = 0, AIN1 = 1
+> > > +      and so on untill AIN7 = 7. XP = 0, XN = 1, YP = 2, YN = 3.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > > +    minItems: 4
+> > > +    maxItems: 8
+> > > +
+> > > +  ti,charge-delay:
+> > > +    description: Length of touch screen charge delay step in terms of ADC clock
+> > > +      cycles. Charge delay value should be large in order to avoid false pen-up
+> > > +      events. This value effects the overall sampling speed, hence need to be
+> > > +      kept as low as possible, while avoiding false pen-up event. Start from a
+> > > +      lower value, say 0x400, and increase value until false pen-up events are
+> > > +      avoided. The pen-up detection happens immediately after the charge step,
+> > > +      so this does in fact function as a hardware knob for adjusting the amount
+> > > +      of "settling time".
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - ti,wires    
 > > 
-> > Patch description should mention why this ordering change is here.  
+> > Are these all required?  Seems like the driver will work fine without some
+> > of them and isn't doing appropriate error checking for their presence..  
 > 
-> I actually moved the patch that reorders things earlier so that the
-> reviewer is not bothered by the order changes later on.
-> 
-> >   
-> > >  	tscadc_idle_config(tscadc);
-> > > +	regmap_write(tscadc->regmap, REG_CTRL, tscadc->ctrl | CNTRLREG_TSCSSENB);    
-> > 
-> > As the value of tscadc->ctrl is not the same as REG_CTRL this is a bit non obvious.
-> > 
-> > You might be better off keeping them in sync, but masking that bit out and then resetting
-> > it as appropriate.  
-> 
-> I honestly find more readable doing:
-> 
-> ctrl = flags;
-> writel(ctrl);
-> writel(ctrl | en_bit);
-> 
-> than
-> 
-> ctrl = flags;
-> writel(ctrl & ~en_bit);
-> writel(ctrl);
-> 
-> because the second version emphasis the fact that we reset the en_bit
-> (which is wrong, the point of this first write is to actually write all
-> the configuration but not the en_bit yet) while the first version
-> clearly shows that the second write includes an additional "enable bit".
+> Well, I don't have a touchscreen so I can't actually verify that it
+> works without these properties. The logic here is to simply translate
+> the .txt file and the .txt file states that these properties are
+> mandatory. But of course if people have one and can test, it would be
+> good to either add the proper checks to the driver or drop these
+> properties from the required list. But as far as I am concerned, it is
+> too risky to do this kind of blind change in a binding file...
 
-Fair enough.  Perhaps it's worth throwing in a comment though if you happen
-to be respining to say tcsadc->ctrl isn't actually the contents of
-the register, but rather of 'most' of it.
-
-Jonathan
-
+Fair enough!
 > 
 > Thanks,
 > Miquèl
