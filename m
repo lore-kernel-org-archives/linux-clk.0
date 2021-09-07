@@ -2,148 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF42C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 16:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D701DC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 17:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A42B8610C9
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 16:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B263661100
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 17:43:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344912AbhIGQr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 12:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344807AbhIGQrz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 12:47:55 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34792C061575
-        for <linux-clk@vger.kernel.org>; Tue,  7 Sep 2021 09:46:49 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id u13-20020a17090abb0db0290177e1d9b3f7so1918842pjr.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Sep 2021 09:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6zxeKOcsz9PYV/EBnoSP2OdS5qZkC/DOANNRm4GawZs=;
-        b=EQY9LK0nlvbjdUDnGXYe/WMeXa86iXkGcxnQ5KO02Msq3CWuYqZAizkmwMyuJ2efAI
-         DCEZDEoJCZMjfKabsFLEeoSYk8j18WhslDWHa8IMJaSLQ6iLe+mJFpAdtRrb1WfeQY9+
-         ziEmjymz4N5LUDD7tEzIEkfCzmCGkDYFWxtn0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6zxeKOcsz9PYV/EBnoSP2OdS5qZkC/DOANNRm4GawZs=;
-        b=DNjyp3jy/J7WkWpn4fEkpZg3+dCOW5KQwJWSWmlw6/4pWGnAxQr/q0+6KDmSO4bVL4
-         oiyR/cixv6cd/ZZ6KBwaDR12bfNw9ky4OpphS8+GdeUiHZQlBoI9nxRXhfxdwSYaWKsL
-         iLnbS0/j/Dqs6/fBrJIp3iNbpru5W+cF1pNWg+wSUWN9Zyi3XpPN0vjiLFSJnamoqEZn
-         5XF5lpnk5vuBuZtzSGMJpLejQfwDa4wlnekF6MM7CxbbDUiYurf5gBA3PSEXnqjWG+RX
-         oP84QialdKrihBL3CDzmwpEux9gy2WuWzv24rmlulva99gl5FcC8oQkfnDBBm/Ri/6cq
-         aa8A==
-X-Gm-Message-State: AOAM531ihCv2gx5MBzqaAP56DkFJTdnfKDVZVHp9xqw8V5Iz33AEuH7L
-        yY63hyksfe0wLtA1SmlGyhwh6w==
-X-Google-Smtp-Source: ABdhPJzAMHxXX/5MzVpqqGR29iBTi/HayR0Rhqwnp/SejsqPflp4g9rejxSjXlgRIy9kau67KDbCZg==
-X-Received: by 2002:a17:90b:1bcc:: with SMTP id oa12mr5465114pjb.241.1631033208783;
-        Tue, 07 Sep 2021 09:46:48 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7662:6d8e:510:db67])
-        by smtp.gmail.com with UTF8SMTPSA id ml10sm3253767pjb.9.2021.09.07.09.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Sep 2021 09:46:48 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>,
+        id S233598AbhIGRog (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 13:44:36 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:50143 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229493AbhIGRog (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 13:44:36 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id AF3A45C01B7;
+        Tue,  7 Sep 2021 13:43:28 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 07 Sep 2021 13:43:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=z
+        krYxpxmyK+adj+hCKejbSyS7Z1m9laTt+mMUb/p9ww=; b=Z+oZusxgQLEjF/bo6
+        RYFNLbH9FEKQSvdBdAkAyzYUMDDO2sc6szJ/GT57HChLT3uS4AP/8auuK9Si98Yb
+        3csQazCMiS0v6Jrb7w+uTbYZvrW7k2oIn9SHkpUeZKCsO7LYb3+V+U49YbTCnJo+
+        BP1sZaYbuwqoCqm4NPQtdvr3cSz+W1oVYRIwaY3AfBRN8NvoVlHB5tHQEoiTmBVp
+        kHSlTd1ih2q7GptCZaCpy2X0yRrZF0kASmKomYYiPTBNEJPvpVaWLSRiWXA/Ko3t
+        Z3dxckVUgXrer+kwxZzZJC2cCo51tBfBYZ+LFPFhCON932KokLrh0N5Bs8ckBE1V
+        HwtHg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=zkrYxpxmyK+adj+hCKejbSyS7Z1m9laTt+mMUb/p9
+        ww=; b=AwhVB5Hrv+dwdXAbibD2+Ww2oMXujC+0Gah1GBo6AA+FaDJNZVRzoMwDD
+        mjnVOgbXf9+jGVsTeNDpjsE6hcKSdiKL8vRBtVehVWzn8hD7j5kfAPfEOxAuNy/9
+        Ras61q5EjnT4fzEfo5XsT9NCQ9C0JotPBrekyaEagKV4isA5uonExqZULONv5ThU
+        6OsjglmYfJZZh8df0oNMgiqk2bllRMnJyd2oao+X6vk2paG/+IgSs1FB4J3zoQaD
+        n95T8eVTx+3mzsIq0rTX+ouyOgFgLzBKwebW2dXZ2POK2LGJZ1f0sS4faWrf49Xz
+        GhK2JRwu+tnkQBScsdsTA1arkD3tQ==
+X-ME-Sender: <xms:vqQ3YQUe0nVECkjDpnGJfEWf-x58VfL3S2pPxhWuD4ZBAFwFlPHkpw>
+    <xme:vqQ3YUliATyesEcOz1VGwifiLCkI6Y4dDcFQGKus1f1faycnUTQuIDk8xIdHgiP--
+    JE4YY3Wge0zf_h-5ck>
+X-ME-Received: <xmr:vqQ3YUbHkKvE2cOQVfRRiZvrwM7An87m5b1x3_OLaR-LNclJUnM0m_Yzb9vxLfeunPiNhAkgH8SHqCBwQYg8u8m0Ps5sL_BtzGzw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudefhedgudduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepgfejtedtjefggfffvdetuedthedtheegheeuteekfeeghfdtteejkeel
+    udegvddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:vqQ3YfUoGc3Q71mZ90lqAP4mctSJssiKF4JLoTGsnAbwm6PNwFOPgw>
+    <xmx:vqQ3YalSomLBJ50F_fq4f_neAKYCAdnmUMy0ID83EZa-6iUmKaBuUg>
+    <xmx:vqQ3YUekExhWtZySiKuBnOqryGQZxj9ejuGiNt5zaG4qYx2cPL1c4g>
+    <xmx:wKQ3YcUQnBp7HDWhES8VCKOiHw2y9dIkvBKQTs3RuK8bQhoVcIJWZA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Sep 2021 13:43:26 -0400 (EDT)
+Date:   Tue, 7 Sep 2021 19:43:24 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Brian Norris <briannorris@chromium.org>
-Subject: [RESEND PATCH 2/2] arm64: dts: rockchip: add Coresight debug range for RK3399
-Date:   Tue,  7 Sep 2021 09:46:37 -0700
-Message-Id: <20210907094628.RESEND.2.Ibc87b4785709543c998cc852c1edaeb7a08edf5c@changeid>
-X-Mailer: git-send-email 2.33.0.153.gba50c8fa24-goog
-In-Reply-To: <20210907094628.RESEND.1.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid>
-References: <20210907094628.RESEND.1.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid>
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] clk: sunxi-ng: Rename files to match Kconfig and
+ drivers
+Message-ID: <20210907174324.lho3vdl2z6uealnf@gilmour>
+References: <20210901050526.45673-1-samuel@sholland.org>
+ <20210901050526.45673-5-samuel@sholland.org>
+ <20210903091040.2bngsvhem2ftzhaz@gilmour>
+ <1d269ff8-9219-cc0a-fda7-236bfd4b4510@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1d269ff8-9219-cc0a-fda7-236bfd4b4510@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Per Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt.
+Hi,
 
-This IP block can be used for sampling the PC of any given CPU, which is
-useful in certain panic scenarios where you can't get the CPU to stop
-cleanly (e.g., hard lockup).
+On Fri, Sep 03, 2021 at 03:57:14PM -0500, Samuel Holland wrote:
+> Hi Maxime,
+>=20
+> On 9/3/21 4:10 AM, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Wed, Sep 01, 2021 at 12:05:22AM -0500, Samuel Holland wrote:
+> >> When the drivers are built as modules, the file name will become the
+> >> module name. Rename the files so everything matches: the Kconfig symbo=
+l,
+> >> the platform driver name (as seen in sysfs), and the module name.
+> >>
+> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> >=20
+> > I'm not a big fan of big renames like this, it makes merging and
+> > backporting patches harder in the long term.
+>=20
+> I can split this into two commits, first the .c files and then the .h
+> files, so everything is a 100% rename, if that makes a difference.
+>=20
+> > I assume you did this to make the module autoloading work? If so, using
+> > MODULE_ALIAS would be less intrusive
+>=20
+> Autoloading should work anyway, since there is a module alias for the
+> compatible string. This change is more about the principle of least
+> surprise. The compatible is allwinner,sun50i-a64-ccu, the Kconfig symbol
+> is SUN50I_A64_CCU, the driver name (in /sys/bus/platform/drivers) is
+> sun50i_a64_ccu, but yet the module name is ccu-sun50i-a64???
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
+We can't really do much for the compatible, and it's the standard
+practice there anyway. However, it looks much more common for Kconfig to
+have a pattern like $FRAMEWORK_$SOC, so maybe we could just rename the
+Kconfig (and drivers name) to CCU_SUN50I_A64? It's not been exposed to
+the defconfig so far anyway, so we can change them without any real harm
 
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 48 ++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+> Once we allow building modules, the names are ABI, and this
+> inconsistency will bother me until the end of time :)
+>=20
+> If there is a way to completely rename the module without renaming the
+> files (not adding an alias), then that would be enough for me.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 3871c7fd83b0..c8c62637b600 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -433,6 +433,54 @@ usbdrd_dwc3_1: usb@fe900000 {
- 		};
- 	};
- 
-+	debug@fe430000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe430000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l0>;
-+	};
-+
-+	debug@fe432000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe432000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l1>;
-+	};
-+
-+	debug@fe434000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe434000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l2>;
-+	};
-+
-+	debug@fe436000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe436000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l3>;
-+	};
-+
-+	debug@fe610000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe610000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_B>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_b0>;
-+	};
-+
-+	debug@fe710000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe710000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_B>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_b1>;
-+	};
-+
- 	cdn_dp: dp@fec00000 {
- 		compatible = "rockchip,rk3399-cdn-dp";
- 		reg = <0x0 0xfec00000 0x0 0x100000>;
--- 
-2.33.0.153.gba50c8fa24-goog
+Otherwise, yeah, we can do what Stephen suggested
 
+Maxime
