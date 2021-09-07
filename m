@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E609C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E926BC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88EFA6109D
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1AA060F70
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243766AbhIGIxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 04:53:40 -0400
-Received: from mx20.baidu.com ([111.202.115.85]:35816 "EHLO baidu.com"
+        id S244339AbhIGIxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 04:53:45 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:35964 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S244377AbhIGIxh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Sep 2021 04:53:37 -0400
-Received: from BJHW-Mail-Ex15.internal.baidu.com (unknown [10.127.64.38])
-        by Forcepoint Email with ESMTPS id 3FB29BEB6C5AB70146E1;
-        Tue,  7 Sep 2021 16:52:27 +0800 (CST)
+        id S244400AbhIGIxm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Sep 2021 04:53:42 -0400
+Received: from BJHW-Mail-Ex12.internal.baidu.com (unknown [10.127.64.35])
+        by Forcepoint Email with ESMTPS id A06ECE442B7AAB127D14;
+        Tue,  7 Sep 2021 16:52:34 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BJHW-Mail-Ex15.internal.baidu.com (10.127.64.38) with Microsoft SMTP Server
+ BJHW-Mail-Ex12.internal.baidu.com (10.127.64.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Tue, 7 Sep 2021 16:52:27 +0800
+ 15.1.2308.14; Tue, 7 Sep 2021 16:52:34 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Tue, 7 Sep 2021 16:52:26 +0800
+ 15.1.2308.14; Tue, 7 Sep 2021 16:52:33 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
 CC:     Michael Turquette <mturquette@baylibre.com>,
@@ -40,16 +40,16 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: sunxi-ng: ccu-sun8i-de2: Make use of the helper function devm_platform_ioremap_resource()
-Date:   Tue, 7 Sep 2021 16:52:20 +0800
-Message-ID: <20210907085221.4713-1-caihuoqing@baidu.com>
+Subject: [PATCH] clk: sunxi-ng: ccu-sun8i-r40: Make use of the helper function devm_platform_ioremap_resource()
+Date:   Tue, 7 Sep 2021 16:52:27 +0800
+Message-ID: <20210907085228.4764-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [172.31.63.8]
 X-ClientProxiedBy: BC-Mail-Ex09.internal.baidu.com (172.31.51.49) To
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
-X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex15_2021-09-07 16:52:27:223
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex12_2021-09-07 16:52:34:658
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -60,24 +60,22 @@ separately
 
 Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 524f33275bc7..7a5ffae0f965 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -280,7 +280,6 @@ static const struct sunxi_ccu_desc sun50i_h5_de2_clk_desc = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 84153418453f..886906d151ea 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1307,14 +1307,12 @@ static struct regmap_config sun8i_r40_ccu_regmap_config = {
  
- static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
- 	struct clk *bus_clk, *mod_clk;
- 	struct reset_control *rstc;
+ 	struct regmap *regmap;
  	void __iomem *reg;
-@@ -291,8 +290,7 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
- 	if (!ccu_desc)
- 		return -EINVAL;
+ 	u32 val;
+ 	int ret;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	reg = devm_ioremap_resource(&pdev->dev, res);
