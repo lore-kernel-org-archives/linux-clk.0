@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A7AC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 782CDC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0017F610FE
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CCAE610FE
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 08:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243857AbhIGIx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 04:53:57 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:36228 "EHLO baidu.com"
+        id S244556AbhIGIyG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 04:54:06 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:36360 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S244341AbhIGIx4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Sep 2021 04:53:56 -0400
-Received: from BC-Mail-Ex15.internal.baidu.com (unknown [172.31.51.55])
-        by Forcepoint Email with ESMTPS id 5EEAF1CA0BB0ECBBD79C;
-        Tue,  7 Sep 2021 16:52:49 +0800 (CST)
+        id S244491AbhIGIyG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Sep 2021 04:54:06 -0400
+Received: from BC-Mail-Ex16.internal.baidu.com (unknown [172.31.51.56])
+        by Forcepoint Email with ESMTPS id C2893B6FE7BD9E7CFBBB;
+        Tue,  7 Sep 2021 16:52:56 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex15.internal.baidu.com (172.31.51.55) with Microsoft SMTP Server
+ BC-Mail-Ex16.internal.baidu.com (172.31.51.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Tue, 7 Sep 2021 16:52:49 +0800
+ 15.1.2242.12; Tue, 7 Sep 2021 16:52:56 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Tue, 7 Sep 2021 16:52:48 +0800
+ 15.1.2308.14; Tue, 7 Sep 2021 16:52:56 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
 CC:     Michael Turquette <mturquette@baylibre.com>,
@@ -40,9 +40,9 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: sunxi-ng: ccu-sun9i-a80-de: Make use of the helper function devm_platform_ioremap_resource()
-Date:   Tue, 7 Sep 2021 16:52:42 +0800
-Message-ID: <20210907085243.4866-1-caihuoqing@baidu.com>
+Subject: [PATCH] clk: sunxi-ng: ccu-sun9i-a80-usb: Make use of the helper function devm_platform_ioremap_resource()
+Date:   Tue, 7 Sep 2021 16:52:49 +0800
+Message-ID: <20210907085250.4917-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -59,20 +59,19 @@ separately
 
 Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-index 6616e8114f62..94552199d54d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-@@ -203,14 +203,12 @@ static const struct sunxi_ccu_desc sun9i_a80_de_clk_desc = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+index 4b4a507d04ed..adac159a5f63 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+@@ -92,13 +92,11 @@ static const struct sunxi_ccu_desc sun9i_a80_usb_clk_desc = {
  
- static int sun9i_a80_de_clk_probe(struct platform_device *pdev)
+ static int sun9i_a80_usb_clk_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
  	struct clk *bus_clk;
- 	struct reset_control *rstc;
  	void __iomem *reg;
  	int ret;
  
