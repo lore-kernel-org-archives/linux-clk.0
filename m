@@ -2,148 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B6CC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE151C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B76CD61101
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3E5B6112D
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235028AbhIGOfr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 10:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231362AbhIGOfq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 10:35:46 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C523C061575
-        for <linux-clk@vger.kernel.org>; Tue,  7 Sep 2021 07:34:40 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id s10so19905779lfr.11
-        for <linux-clk@vger.kernel.org>; Tue, 07 Sep 2021 07:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dCEk6hLFpYFZNzpm9UU+CTkqXyAjw51d6n8hDCnfs50=;
-        b=JOoH5mmNdxb7W0iZVCKlwCuDC6TSHto30Ls7RSjmB+2RApz8Yctqil2lCHtGeRrN9Y
-         Z7kbJ2j1g0FJCF81zx3/ZhGcZdZ2K1UVo++3Nvcy3r8goO5Q5aOkqHB99QVNBezpLH4O
-         58EcbrGI6BIeDMPS3FYP3PmYAcL1GDu4SoY8jjeTEeYN5ALWmIGuvs/jTUk1bPuvL8Lq
-         3L83lVga5gLM0i9nLyH9HTb5keyfdyTAh4V4RL9y3/zFzCxwPZAcrVSEcU/xHQhlcdCC
-         3eqRI8wqqkaSGP+Wef/2c/bEmw9Ce8apuVoJZ+7ROa0XmgGK+m+DSt/a3sQe2sPbPq6L
-         IZgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dCEk6hLFpYFZNzpm9UU+CTkqXyAjw51d6n8hDCnfs50=;
-        b=ntn1I6htDihhtKbLeufrefsYMTpxGgNId0gWpD94Wkjb8cGWDJh/4AsWkyCmc0184n
-         gLxeVYcXOyO1OzeOCW+vCRQBKFuVFAiM19u6cIRdJHxgCeTWA3XfhejtysS3KFyJyos+
-         /fp8u+tx+i25gO5RCvlobEgX425W/ACsD0Aj1g2fa1A/K8ueuIdz2mM0KqRVANoZ996b
-         xhKfe2lBOTH2eTkAp5Gpkyodw6LDimrKtaWJ9vKs9nhg/hPOohl17AwlV+MLscE0nmm+
-         1lFoeeBJx18RsNbtLB4nz6RU0pCQM21EObKpBHEGUiHn96TBZdh1+MbrElW5WGP3UsIv
-         XbuQ==
-X-Gm-Message-State: AOAM530DiJxdkAc7ltwmZ5iDwLIW8pOS0kSTjpRNoWDxo4/6aaAoSI3q
-        E6OsRzmc44woxQCKlQhic6TVbFpqCCwcdM9m0gc38MBQVpqh/A==
-X-Google-Smtp-Source: ABdhPJyqL+F+/YykfnoB9oEeLu/I1Xfp9XyG6yopHhm1QX7RHxXU6JKarEkVx5/eW4SnQdSHnokUbEnY1AMCVNzEnSY=
-X-Received: by 2002:a05:6512:6cd:: with SMTP id u13mr12905659lff.184.1631025278471;
- Tue, 07 Sep 2021 07:34:38 -0700 (PDT)
+        id S238967AbhIGOqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 10:46:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235028AbhIGOqD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Sep 2021 10:46:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D721610F8;
+        Tue,  7 Sep 2021 14:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631025897;
+        bh=pb6uQnkJOj7jZan0UZ5W50IT54400yv6W78lHUUCqDA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GuVHmRa9F+YxsE7/VqZYKEPDBHgnctH14+lDJxav5wg4mIWlsd4XSaT0FeBdXyY2E
+         Mqty3aIwOvW9OIjveu64e2UvY3NILsfErPO0daYvljrNmkPls+cmqnm+LzDIUSARCI
+         vz5RS0+z+Rk9fAwc85Q7JzaC+oPYJJ9N5QckUU+HzkGBY3zpFl/UrFcQvkYsQVhZDj
+         KQ7aczAbXcRK8GoMUgmaofQYXHnxTM3YaI95CoxIw+20VV6f/iq/+vtje+rvaKLNS9
+         yYx70IBlL6juOSsJSg/UYadyELkCfKl9pKE93kavxUbf3PSG4KT0WRhKHBnCcHsgbO
+         4cT0Y1d+YXqxw==
+Received: by mail-ed1-f46.google.com with SMTP id z19so14245098edi.9;
+        Tue, 07 Sep 2021 07:44:57 -0700 (PDT)
+X-Gm-Message-State: AOAM53393YKW31UvSuC2XXZCpV6IbRTWCfksOTL8gVaqkYcza7FgOGcu
+        SXwAb9Ua96BusGZYCXAQuKfrsH/nBZ838dmcpg==
+X-Google-Smtp-Source: ABdhPJz35+eT13PtjAMyE1Cn8up0MviN8dZ3s6bQ7mHM7z/iu5075VVR/KfUXFoatJy0IhBX3jK0MFw2F/aL12TBWMA=
+X-Received: by 2002:a50:ed09:: with SMTP id j9mr19082569eds.164.1631025895705;
+ Tue, 07 Sep 2021 07:44:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210727202004.712665-1-dmitry.baryshkov@linaro.org>
- <163000270629.1317818.2836576068466077505@swboyd.mtv.corp.google.com>
- <42c3fa20-7ffa-255f-ca28-6f0aa2aa4a13@linaro.org> <163020909027.2218116.11109424225803296345@swboyd.mtv.corp.google.com>
- <CAA8EJppo8Zze5ViYOWooHy=RR4ueXNeWiBFyKdtpUcm5Cs69ew@mail.gmail.com>
-In-Reply-To: <CAA8EJppo8Zze5ViYOWooHy=RR4ueXNeWiBFyKdtpUcm5Cs69ew@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 7 Sep 2021 16:34:02 +0200
-Message-ID: <CAPDyKFrv9HM9y1zgPj6x2K84cPuYXOqaQYqtvKZ51itPtt3ghw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] clk: qcom: use power-domain for sm8250's clock controllers
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
+References: <20210901053951.60952-1-samuel@sholland.org> <20210901053951.60952-2-samuel@sholland.org>
+ <YTDtelCx5If3J5cM@robh.at.kernel.org> <53d6d018-93bf-9bfc-e296-a232105306de@sholland.org>
+In-Reply-To: <53d6d018-93bf-9bfc-e296-a232105306de@sholland.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 7 Sep 2021 09:44:43 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
+Message-ID: <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] dt-bindings: rtc: sun6i: Add H616 and R329 compatibles
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 29 Aug 2021 at 17:54, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Fri, Sep 3, 2021 at 10:36 AM Samuel Holland <samuel@sholland.org> wrote:
 >
-> On Sun, 29 Aug 2021 at 06:51, Stephen Boyd <sboyd@kernel.org> wrote:
+> On 9/2/21 10:27 AM, Rob Herring wrote:
+> > On Wed, Sep 01, 2021 at 12:39:45AM -0500, Samuel Holland wrote:
+> >> For these new SoCs, start requiring a complete list of input clocks.
+> >>
+> >> For H616, this means bus, hosc, and pll-32k. For R329, this means ahb,
+> >> bus, and hosc; and optionally ext-osc32k.
+> >>
+> >> I'm not sure how to best represent this in the binding...
+> >>
+> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> >> ---
+> >>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 55 +++++++++++++++++--
+> >>  include/dt-bindings/clock/sun50i-rtc.h        | 12 ++++
+> >>  2 files changed, 61 insertions(+), 6 deletions(-)
+> >>  create mode 100644 include/dt-bindings/clock/sun50i-rtc.h
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> >> index beeb90e55727..3e085db1294f 100644
+> >> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> >> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> >> @@ -26,6 +26,8 @@ properties:
+> >>            - const: allwinner,sun50i-a64-rtc
+> >>            - const: allwinner,sun8i-h3-rtc
+> >>        - const: allwinner,sun50i-h6-rtc
+> >> +      - const: allwinner,sun50i-h616-rtc
+> >> +      - const: allwinner,sun50i-r329-rtc
 > >
-> > Quoting Dmitry Baryshkov (2021-08-26 14:56:23)
-> > > On 26/08/2021 21:31, Stephen Boyd wrote:
-> > > > Quoting Dmitry Baryshkov (2021-07-27 13:19:56)
-> > > >> On SM8250 both the display and video clock controllers are powered up by
-> > > >> the MMCX power domain. Handle this by linking clock controllers to the
-> > > >> proper power domain, and using runtime power management to enable and
-> > > >> disable the MMCX power domain.
-> > > >>
-> > > >> Dependencies:
-> > > >> - https://lore.kernel.org/linux-arm-msm/20210703005416.2668319-1-bjorn.andersson@linaro.org/
-> > > >>    (pending)
-> > > >
-> > > > Does this patch series need to go through the qcom tree? Presumably the
-> > > > dependency is going through qcom -> arm-soc
-> > >
-> > > It looks like Bjorn did not apply his patches in the for-5.15 series, so
-> > > we'd have to wait anyway. Probably I should rebase these patches instead
-> > > on Rajendra's required-opps patch (which is going in this window).
-> > >
+> > Can you please make all the single entry cases a single 'enum'.
 > >
-> > Ok. Thanks. I'll drop it from my queue for now.
+> >>
+> >>    reg:
+> >>      maxItems: 1
+> >> @@ -37,7 +39,24 @@ properties:
+> >>        - description: RTC Alarm 1
+> >>
+> >>    clocks:
+> >> -    maxItems: 1
+> >> +    minItems: 1
+> >> +    maxItems: 4
+> >> +
+> >> +  clock-names:
+> >> +    minItems: 1
+> >> +    maxItems: 4
+> >> +    items:
+> >> +      - anyOf:
+> >
+> > This says the first entry is any of these. What about the rest of them?
 >
-> Just for the reference. I've sent v7 of this patchset. After thinking
-> more about power domains relationship, I think we have a hole in the
-> abstraction here. Currently subdomains cause power domains to be
-> powered up, but do not dictate the performance level the parent domain
-> should be working in.
-
-That's not entirely true. In genpd_add_subdomain() we verify that if
-the child is powered on, the parent must already be powered on,
-otherwise we treat this a bad setup and return an error code.
-
-What seems to be missing though, is that if there is a performance
-state applied for the child domain, that should be propagated to the
-parent domain too. Right?
-
-> While this does not look like an issue for the
-> gdsc (and thus it can be easily solved by the Bjorn's patches, which
-> enforce rpmhpd to be powered on to 'at least lowest possible'
-> performance state, this might be not the case for the future links. I
-> think at some point the pd_add_subdomain() interface should be
-> extended with the ability to specify minimum required performance
-> state when the link becomes on.
-
-I guess that minimum performance state could be considered as a
-"required-opp" in the DT node for the power-domain provider, no?
-
-Another option would simply be to manage this solely in the
-platform/soc specific genpd provider. Would that work?
-
-> Until that time I have changed code to
-> enforce having clock controller in pm resume state when gdsc is
-> enabled, thus CC itself votes on parent's (rpmhpd) performance state.
+> Oh, right. The list below is the list of all possible clocks.
 >
+> >> +          - const: ahb
+> >> +            description: AHB parent for SPI bus clock
+> >
+> > The description should go in 'clocks'.
 >
-> --
-> With best wishes
-> Dmitry
+> Will do for v2.
+>
+> > The order should be defined as well with the first clock being the
+> > one that existed previously.
+>
+> The only way I know how to further refine the list is with
+> minItems/maxItems. My problem is that 1) some clocks are only valid for
+> certain SoCs, and 2) some clocks are optional, depending on how the
+> board is wired. So there is no single order where the "valid"
+> combinations are prefixes of the "possible" combinations of clocks.
+>
+> Or in other words, how can I say "clocks #1 and #2 from this list are
+> required, and #4 is optional, but #3 is not allowed"?
 
-Kind regards
-Uffe
+This says you have up to 4 clocks, but only defines the 1st 2:
+
+maxItems: 4
+items:
+  - description: 1st clock
+  - description: 2nd clock
+
+But I think you will be better off with just defining the range
+(minItems/maxItems) at the top level and then use if/then schemas.
+
+>
+> Some concrete examples, with the always-required clocks moved to the
+> beginning:
+>
+> H6:
+>  - bus: required
+>  - hosc: required
+>  - ahb: not allowed
+>  - ext-osc32k: optional
+>  - pll-32k: not allowed
+
+Is this really 2 different 32k clock inputs to the h/w block? Doesn't
+seem like it given both are never valid.
+
+>
+> H616:
+>  - bus: required
+>  - hosc: required
+>  - ahb: not allowed
+>  - ext-osc32k: not allowed
+>  - pll-32k: required
+>
+> R329:
+>  - bus: required
+>  - hosc: required
+>  - ahb: required
+>  - ext-osc32k: optional
+>  - pll-32k: not allowed
+>
+> Should I just move the entire clocks/clock-items properties to if/then
+> blocks based on the compatible?
+
+Probably so.
+
+Rob
