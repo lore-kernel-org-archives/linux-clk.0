@@ -2,178 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE151C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1180C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 15:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3E5B6112D
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 14:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF70A6108D
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 15:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238967AbhIGOqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 10:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235028AbhIGOqD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Sep 2021 10:46:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D721610F8;
-        Tue,  7 Sep 2021 14:44:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631025897;
-        bh=pb6uQnkJOj7jZan0UZ5W50IT54400yv6W78lHUUCqDA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GuVHmRa9F+YxsE7/VqZYKEPDBHgnctH14+lDJxav5wg4mIWlsd4XSaT0FeBdXyY2E
-         Mqty3aIwOvW9OIjveu64e2UvY3NILsfErPO0daYvljrNmkPls+cmqnm+LzDIUSARCI
-         vz5RS0+z+Rk9fAwc85Q7JzaC+oPYJJ9N5QckUU+HzkGBY3zpFl/UrFcQvkYsQVhZDj
-         KQ7aczAbXcRK8GoMUgmaofQYXHnxTM3YaI95CoxIw+20VV6f/iq/+vtje+rvaKLNS9
-         yYx70IBlL6juOSsJSg/UYadyELkCfKl9pKE93kavxUbf3PSG4KT0WRhKHBnCcHsgbO
-         4cT0Y1d+YXqxw==
-Received: by mail-ed1-f46.google.com with SMTP id z19so14245098edi.9;
-        Tue, 07 Sep 2021 07:44:57 -0700 (PDT)
-X-Gm-Message-State: AOAM53393YKW31UvSuC2XXZCpV6IbRTWCfksOTL8gVaqkYcza7FgOGcu
-        SXwAb9Ua96BusGZYCXAQuKfrsH/nBZ838dmcpg==
-X-Google-Smtp-Source: ABdhPJz35+eT13PtjAMyE1Cn8up0MviN8dZ3s6bQ7mHM7z/iu5075VVR/KfUXFoatJy0IhBX3jK0MFw2F/aL12TBWMA=
-X-Received: by 2002:a50:ed09:: with SMTP id j9mr19082569eds.164.1631025895705;
- Tue, 07 Sep 2021 07:44:55 -0700 (PDT)
+        id S1345371AbhIGPpX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 11:45:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235162AbhIGPpX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 11:45:23 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AE3C061575;
+        Tue,  7 Sep 2021 08:44:17 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id c19-20020a9d6153000000b0051829acbfc7so13267043otk.9;
+        Tue, 07 Sep 2021 08:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=H6L3JGLH5rzWIFpcToqlYPgU1lSCJF6lajc8EiNcH5s=;
+        b=XnS4Cm7v8XR+aHGINA1uvkxFSWCkDw+oO+6bpdhlUo3MOWq1Vz59tYc6dWrZhb6QSb
+         6hdIfSTPE9yMtXmXX7yjd2QNL+yg3bAn588y9RScXcUJiLY6kmpSSsYRKQOoRyVYSteg
+         vwKM28ORF3knKfXn/rIffbOsLlBof8XKcMTmfuoofQK8QzYzzkKCM6d8hYe8FoebUw1Y
+         x1E4seNlKq8cOD2l7RMe0ctODfe8D71BJH1Pze8SI2CNZe1DOUR1uTl6p34RAof2X8h2
+         jS8qYLcSMm+A3dVd9HbDg8WrelPqhyTzIndgJbPugafc1jcm4hUarTbeW30o2fyh6+Bn
+         B24w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=H6L3JGLH5rzWIFpcToqlYPgU1lSCJF6lajc8EiNcH5s=;
+        b=ht+iYSJGfzVhwKMSwp3xhH64UmWRK9dLH2D4sSifBdm25HoMYhaKEF7bDylwKgw3VC
+         UupGA4yBpJvxu2GXBZ5b50WH7cqYp9BH0KzVlDEH6fNCdgzUFT46xzj20Y3SJWO3tP/E
+         TdqstPHkCuLRae+qcAAH4qylSl9nasCYRlxSBkLgOhhjIT4yZpbwW03CeyNduU3rdW/z
+         yN0djBCBZbaZYBaDGBzEpT3sPeSTl00mgYFV2SImFwodYPR8YjzlYihjX5A/OFSPGxKL
+         nFoY6GvRs4y/96BIBl3o/65JSb5B8hvYkN74BlH9kRHfj1Qs5RnD850mtv8b8qB3hKso
+         FOSw==
+X-Gm-Message-State: AOAM5309QdZEsfRrMFviNGwGttHU51fVDYXp1DrvUN6Z7Ct2BTmmL6sE
+        Xu4GhcXizuhsBN0sGDAtX4w=
+X-Google-Smtp-Source: ABdhPJzQWrtZ5rNjyrci9hxGgUVQp8QtLOQj/fgldG88YmTsraBlmhtlI3LN4jj/zy5kYUqIwOjkOg==
+X-Received: by 2002:a05:6830:614:: with SMTP id w20mr16027388oti.145.1631029456288;
+        Tue, 07 Sep 2021 08:44:16 -0700 (PDT)
+Received: from wintermute.localdomain (cpe-76-183-134-35.tx.res.rr.com. [76.183.134.35])
+        by smtp.gmail.com with ESMTPSA id k24sm2452777otp.31.2021.09.07.08.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 08:44:15 -0700 (PDT)
+From:   Chris Morgan <macroalpha82@gmail.com>
+To:     andriy.shevchenko@linux.intel.com
+Cc:     abel.vesa@nxp.com, festevam@gmail.com, heiko@sntech.de,
+        kernel@pengutronix.de, lee.jones@linaro.org, lenb@kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        mturquette@baylibre.com, rafael.j.wysocki@intel.com,
+        rjw@rjwysocki.net, s.hauer@pengutronix.de, sboyd@kernel.org,
+        shawnguo@kernel.org, zhangqing@rock-chips.com,
+        Chris Morgan <macromorgan@hotmail.com>
+Subject: Re: [PATCH v4 1/4] clk: fractional-divider: Export approximation algorithm to the CCF users
+Date:   Tue,  7 Sep 2021 10:44:00 -0500
+Message-Id: <20210907154400.26656-1-macroalpha82@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
+References: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20210901053951.60952-1-samuel@sholland.org> <20210901053951.60952-2-samuel@sholland.org>
- <YTDtelCx5If3J5cM@robh.at.kernel.org> <53d6d018-93bf-9bfc-e296-a232105306de@sholland.org>
-In-Reply-To: <53d6d018-93bf-9bfc-e296-a232105306de@sholland.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 7 Sep 2021 09:44:43 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
-Message-ID: <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] dt-bindings: rtc: sun6i: Add H616 and R329 compatibles
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 3, 2021 at 10:36 AM Samuel Holland <samuel@sholland.org> wrote:
->
-> On 9/2/21 10:27 AM, Rob Herring wrote:
-> > On Wed, Sep 01, 2021 at 12:39:45AM -0500, Samuel Holland wrote:
-> >> For these new SoCs, start requiring a complete list of input clocks.
-> >>
-> >> For H616, this means bus, hosc, and pll-32k. For R329, this means ahb,
-> >> bus, and hosc; and optionally ext-osc32k.
-> >>
-> >> I'm not sure how to best represent this in the binding...
-> >>
-> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> >> ---
-> >>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 55 +++++++++++++++++--
-> >>  include/dt-bindings/clock/sun50i-rtc.h        | 12 ++++
-> >>  2 files changed, 61 insertions(+), 6 deletions(-)
-> >>  create mode 100644 include/dt-bindings/clock/sun50i-rtc.h
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
-> >> index beeb90e55727..3e085db1294f 100644
-> >> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
-> >> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
-> >> @@ -26,6 +26,8 @@ properties:
-> >>            - const: allwinner,sun50i-a64-rtc
-> >>            - const: allwinner,sun8i-h3-rtc
-> >>        - const: allwinner,sun50i-h6-rtc
-> >> +      - const: allwinner,sun50i-h616-rtc
-> >> +      - const: allwinner,sun50i-r329-rtc
-> >
-> > Can you please make all the single entry cases a single 'enum'.
-> >
-> >>
-> >>    reg:
-> >>      maxItems: 1
-> >> @@ -37,7 +39,24 @@ properties:
-> >>        - description: RTC Alarm 1
-> >>
-> >>    clocks:
-> >> -    maxItems: 1
-> >> +    minItems: 1
-> >> +    maxItems: 4
-> >> +
-> >> +  clock-names:
-> >> +    minItems: 1
-> >> +    maxItems: 4
-> >> +    items:
-> >> +      - anyOf:
-> >
-> > This says the first entry is any of these. What about the rest of them?
->
-> Oh, right. The list below is the list of all possible clocks.
->
-> >> +          - const: ahb
-> >> +            description: AHB parent for SPI bus clock
-> >
-> > The description should go in 'clocks'.
->
-> Will do for v2.
->
-> > The order should be defined as well with the first clock being the
-> > one that existed previously.
->
-> The only way I know how to further refine the list is with
-> minItems/maxItems. My problem is that 1) some clocks are only valid for
-> certain SoCs, and 2) some clocks are optional, depending on how the
-> board is wired. So there is no single order where the "valid"
-> combinations are prefixes of the "possible" combinations of clocks.
->
-> Or in other words, how can I say "clocks #1 and #2 from this list are
-> required, and #4 is optional, but #3 is not allowed"?
+From: Chris Morgan <macromorgan@hotmail.com>
 
-This says you have up to 4 clocks, but only defines the 1st 2:
+Unfortunately, I can confirm this breaks the DSI panel on the Rockchip
+PX30 (and possibly other SoCs). Tested on my Odroid Go Advance. When
+I revert 4e7cf74fa3b2 "clk: fractional-divider: Export approximation
+algorithm to the CCF users" and 928f9e268611 "clk: fractional-divider:
+Hide clk_fractional_divider_ops from wide audience" the panel begins
+working again as expected on the master branch.
 
-maxItems: 4
-items:
-  - description: 1st clock
-  - description: 2nd clock
+It looks like an assumption is made in the vop_crtc_mode_fixup()
+function in the rockchip_drm_vop.c that gets broken with this change.
+Specifically, the function says in the comments "When DRM gives us a
+mode, we should add 999 Hz to it.". I believe this is no longer true
+after this clk change, and when I remove the + 999 from the function
+the DSI panel works again. Note that I do not know the implications
+of removing this 999 aside from that it fixes the DSI panel on my
+PX30 after this change, so I don't know if it's a positive change
+or not.
 
-But I think you will be better off with just defining the range
-(minItems/maxItems) at the top level and then use if/then schemas.
-
->
-> Some concrete examples, with the always-required clocks moved to the
-> beginning:
->
-> H6:
->  - bus: required
->  - hosc: required
->  - ahb: not allowed
->  - ext-osc32k: optional
->  - pll-32k: not allowed
-
-Is this really 2 different 32k clock inputs to the h/w block? Doesn't
-seem like it given both are never valid.
-
->
-> H616:
->  - bus: required
->  - hosc: required
->  - ahb: not allowed
->  - ext-osc32k: not allowed
->  - pll-32k: required
->
-> R329:
->  - bus: required
->  - hosc: required
->  - ahb: required
->  - ext-osc32k: optional
->  - pll-32k: not allowed
->
-> Should I just move the entire clocks/clock-items properties to if/then
-> blocks based on the compatible?
-
-Probably so.
-
-Rob
+Thank you.
