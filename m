@@ -2,104 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24DFC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 18:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7297C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 18:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B197E61078
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 18:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C76461108
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Sep 2021 18:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345225AbhIGSH0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 14:07:26 -0400
-Received: from mga14.intel.com ([192.55.52.115]:21842 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233525AbhIGSHZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Sep 2021 14:07:25 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10100"; a="219966950"
-X-IronPort-AV: E=Sophos;i="5.85,274,1624345200"; 
-   d="scan'208";a="219966950"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2021 11:06:19 -0700
-X-IronPort-AV: E=Sophos;i="5.85,274,1624345200"; 
-   d="scan'208";a="478802532"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2021 11:06:13 -0700
-Received: from andy by smile with local (Exim 4.95-RC2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mNfU2-000zMm-0g;
-        Tue, 07 Sep 2021 21:06:10 +0300
-Date:   Tue, 7 Sep 2021 21:06:10 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Chris Morgan <macroalpha82@gmail.com>
-Cc:     abel.vesa@nxp.com, festevam@gmail.com, heiko@sntech.de,
-        kernel@pengutronix.de, lee.jones@linaro.org, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        mturquette@baylibre.com, rafael.j.wysocki@intel.com,
-        rjw@rjwysocki.net, s.hauer@pengutronix.de, sboyd@kernel.org,
-        shawnguo@kernel.org, zhangqing@rock-chips.com,
-        Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH v4 1/4] clk: fractional-divider: Export approximation
- algorithm to the CCF users
-Message-ID: <YTeqEilet1p4vTAU@smile.fi.intel.com>
-References: <20210812170025.67074-1-andriy.shevchenko@linux.intel.com>
- <20210907154400.26656-1-macroalpha82@gmail.com>
- <YTenPMOOepGo2ZU8@smile.fi.intel.com>
+        id S242544AbhIGS6r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 14:58:47 -0400
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:33362 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237636AbhIGS6q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 14:58:46 -0400
+Received: by mail-oi1-f169.google.com with SMTP id n27so252761oij.0;
+        Tue, 07 Sep 2021 11:57:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fVi6pes3fZQLzF+z2PRa1UMXoBWQHeJ7kqWgiCNEvBY=;
+        b=NcpBbLEM/NGH7TTwvCenNrsLHs/1It/VIq0UgR/Tfg+ALe7p+0XwPtvbx40bc96e5A
+         ujEwmODTzN9vZC+u81YsJzfXxoanA0oIrSp1bOufuV6G0yPqfq/Wna+KFOaejql9l7d4
+         himIXeDsk20ywCadrf4IEW1eRcbQeSLdK5eGaBtzZqPfchBH6o3tdvBvanw2JIu6+WYk
+         +Z4FUfNHocrOK9Etn+BC0NKe4iG57dDFjCQ+CU3oXaceY8LbU21lYaAoHTnO5ZTG+jHt
+         +qPg1KjhPRfo8PXr0jvXvKNdA6+vIT7Iiz8whMvx6FQpSDadzvNK7SFcSsMrknm8RS6V
+         aHrw==
+X-Gm-Message-State: AOAM533RNACt7CC46YFqHME07MDTx3+JFso3f02M5dpCWtOuH2uHHK8b
+        v6YRGiXlrKOuv7TWvvRqpw==
+X-Google-Smtp-Source: ABdhPJwMEOIJHBQtdq35ND4b2qQiYeBMY8emOgOgAikR5kMvFTpuabYZWx5rzGSriJYYItw+Lh1mqg==
+X-Received: by 2002:a05:6808:158d:: with SMTP id t13mr4007576oiw.27.1631041059963;
+        Tue, 07 Sep 2021 11:57:39 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id z18sm2305470oib.27.2021.09.07.11.57.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 11:57:39 -0700 (PDT)
+Received: (nullmailer pid 154595 invoked by uid 1000);
+        Tue, 07 Sep 2021 18:57:38 -0000
+Date:   Tue, 7 Sep 2021 13:57:38 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     kavyasree.kotagiri@microchip.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, UNGLinuxDriver@microchip.com,
+        Eugen.Hristev@microchip.com, Manohar.Puri@microchip.com
+Subject: Re: [PATCH 1/3] dt-bindings: clock: lan966x: Add binding includes
+ for lan966x SoC clock IDs
+Message-ID: <YTe2IhcupZFnypSZ@robh.at.kernel.org>
+References: <20210902092908.28264-1-kavyasree.kotagiri@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YTenPMOOepGo2ZU8@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210902092908.28264-1-kavyasree.kotagiri@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 07, 2021 at 08:54:04PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 07, 2021 at 10:44:00AM -0500, Chris Morgan wrote:
-> > From: Chris Morgan <macromorgan@hotmail.com>
-> > 
-> > Unfortunately, I can confirm this breaks the DSI panel on the Rockchip
-> > PX30 (and possibly other SoCs). Tested on my Odroid Go Advance. When
-> > I revert 4e7cf74fa3b2 "clk: fractional-divider: Export approximation
-> > algorithm to the CCF users" and 928f9e268611 "clk: fractional-divider:
-> > Hide clk_fractional_divider_ops from wide audience" the panel begins
-> > working again as expected on the master branch.
-> > 
-> > It looks like an assumption is made in the vop_crtc_mode_fixup()
-> > function in the rockchip_drm_vop.c that gets broken with this change.
-> > Specifically, the function says in the comments "When DRM gives us a
-> > mode, we should add 999 Hz to it.". I believe this is no longer true
-> > after this clk change, and when I remove the + 999 from the function
-> > the DSI panel works again. Note that I do not know the implications
-> > of removing this 999 aside from that it fixes the DSI panel on my
-> > PX30 after this change, so I don't know if it's a positive change
-> > or not.
-> > 
-> > Thank you.
+On Thu, Sep 02, 2021 at 02:59:08PM +0530, kavyasree.kotagiri@microchip.com wrote:
+> From: Kavyasree Kotagiri <Kavyasree.Kotagiri@microchip.com>
 > 
-> Thank you for the report!
+> LAN966X supports 14 clock outputs for its peripherals.
+> This include file is introduced to use identifiers for clocks.
 > 
-> I'll check this. Perhaps Heiko can help with testing as well on his side.
+> Signed-off-by: Kavya Sree Kotagiri <kavyasree.kotagiri@microchip.com>
+> ---
+>  include/dt-bindings/clock/microchip,lan966x.h | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+> 
+> diff --git a/include/dt-bindings/clock/microchip,lan966x.h b/include/dt-bindings/clock/microchip,lan966x.h
+> new file mode 100644
+> index 000000000000..97dd9d6480a8
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/microchip,lan966x.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
 
-On the first glance the mentioned patch may not be the culprit because it does
-not change the functional behaviour (if I'm not mistaken). What really changes
-it is the additional flag that removes the left-shift of the rate in the
-calculations.
+Dual license please.
 
-To me sounds like you found a proper solution to the issue and that +999 is
-a hack against the (blindly?) copied part of the algorithm used in fractional
-divider. Have you read the top comment in clk-fractional-divider.c? It should
-explain how it works after my series.
-
-In any case I'm not going to come to any conclusions right now and also want
-to hear from people who have better understanding of this hardware.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Where's the rest of the series? Lore only finds 1/3.
 
 
+> +/*
+> + * Copyright (c) 2021 Microchip Inc.
+> + *
+> + * Author: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_LAN966X_H
+> +#define _DT_BINDINGS_CLK_LAN966X_H
+> +
+> +#define GCK_ID_QSPI0		0
+> +#define GCK_ID_QSPI1		1
+> +#define GCK_ID_QSPI2		2
+> +#define GCK_ID_SDMMC0		3
+> +#define GCK_ID_PI		4
+> +#define GCK_ID_MCAN0		5
+> +#define GCK_ID_MCAN1		6
+> +#define GCK_ID_FLEXCOM0		7
+> +#define GCK_ID_FLEXCOM1		8
+> +#define GCK_ID_FLEXCOM2		9
+> +#define GCK_ID_FLEXCOM3		10
+> +#define GCK_ID_FLEXCOM4		11
+> +#define GCK_ID_TIMER		12
+> +#define GCK_ID_USB_REFCLK	13
+> +
+> +#define N_CLOCKS		14
+> +
+> +#endif
+> --
+> 2.17.1
+> 
+> 
