@@ -2,154 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACEBC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BF6C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 08:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C719610E9
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622D061166
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 08:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349531AbhIHHdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Sep 2021 03:33:40 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:58072 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347750AbhIHHdk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 8 Sep 2021 03:33:40 -0400
-Received: from ip5f5a6e92.dynamic.kabel-deutschland.de ([95.90.110.146] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1mNs4M-0005B3-8u; Wed, 08 Sep 2021 09:32:30 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Brian Norris <briannorris@chromium.org>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RESEND PATCH 1/2] clk: rockchip: rk3399: expose PCLK_COREDBG_{B,L}
-Date:   Wed, 08 Sep 2021 09:32:29 +0200
-Message-ID: <4746858.5FAZtBfuxM@diego>
-In-Reply-To: <CAGXv+5E1Kk3PYK1GBatfBVnaEVfGCLvb5P-dN9S05LawAfimjw@mail.gmail.com>
-References: <20210907094628.RESEND.1.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid> <CAGXv+5E1Kk3PYK1GBatfBVnaEVfGCLvb5P-dN9S05LawAfimjw@mail.gmail.com>
+        id S234820AbhIHIvx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Sep 2021 04:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348350AbhIHIvr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 04:51:47 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 241FBC0613C1
+        for <linux-clk@vger.kernel.org>; Wed,  8 Sep 2021 01:50:40 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id c10so1448001qko.11
+        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 01:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bLPU6JwzUvt2Ww93ncZhtHocO2yM5T3pJGHQ+IZpZfU=;
+        b=OZP730trRpvheHITclDnfyTURcdwmi3WpMyRMR9uvyEnDlM5gu4XtT9OOb946BL88y
+         aoobd6ZfdDXNAfaXRN2234HBTx2quqjElIzh8mvd6Avu28Pvtr0HH8TZoNluYy5aKZ1h
+         NTFki7ws8S+oMddEWszNl+Fm3hO+z/gyr2+d53BQLlFQIrtT/frz4FeMqnPDQ9rkhB9H
+         vV1LNwCsqvax8ptYH7oTGIUICD3WqGcPsRgjiPfomfvUxscjjrk8mwgvDQhO1Lrarpvc
+         WfA9sGwzkWT4IDARoC6V0daOPQD7FXHgQUphv7cBTpL1FnepBCKuGgTt6PGk0Jp3LExO
+         unJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bLPU6JwzUvt2Ww93ncZhtHocO2yM5T3pJGHQ+IZpZfU=;
+        b=rTCkDDPe+uHWYXG1H5OcgT0ZShNkFT/N6UUUvFm+RmMfVDt93gisMX7oclZpDp/Qw4
+         P817T/2jJuCu456IDa84aAT+wDvSKOVztDAWzGytyuP9E6AI7wxu/R2cELaloGuBnxQ2
+         EvxDmca6frruBNQBcvCot01rWFoaGi37c1nsxGsWNmftgvgXqs644KPlem5DQ55r2L6l
+         t5FwLe1mt3/MGfzVIWSdpwk04qrjE8FrD8m7F2/nOIScNyOG6QCF99QD4Gw3oHZuaSs/
+         vADsSG90V39XmXQJpNDYRFLwowyuheNFBngj6nZeF/Cd2j9h4ccG9gXJhYs3kl5u+4uU
+         idGA==
+X-Gm-Message-State: AOAM5322tQxYL6s0hLTNx8TsgY0z+PvXjbNoC0lmcUiFSCIutFUgIYze
+        H1qV5f9lLozX6W8hUPz/Hm4MV/8Ey0kguwm4nn72Gg==
+X-Google-Smtp-Source: ABdhPJw+8k/oeEzk9TVfggI6r5py/ts2bV4nIu0GfPNFNB6fEmyxhd2se0g23I3XJt0EjFVWLutNVQZqBr5vuxSg3fo=
+X-Received: by 2002:a37:541:: with SMTP id 62mr2254933qkf.478.1631091039128;
+ Wed, 08 Sep 2021 01:50:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20210727202004.712665-1-dmitry.baryshkov@linaro.org>
+ <163000270629.1317818.2836576068466077505@swboyd.mtv.corp.google.com>
+ <42c3fa20-7ffa-255f-ca28-6f0aa2aa4a13@linaro.org> <163020909027.2218116.11109424225803296345@swboyd.mtv.corp.google.com>
+ <CAA8EJppo8Zze5ViYOWooHy=RR4ueXNeWiBFyKdtpUcm5Cs69ew@mail.gmail.com> <CAPDyKFrv9HM9y1zgPj6x2K84cPuYXOqaQYqtvKZ51itPtt3ghw@mail.gmail.com>
+In-Reply-To: <CAPDyKFrv9HM9y1zgPj6x2K84cPuYXOqaQYqtvKZ51itPtt3ghw@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 8 Sep 2021 11:50:28 +0300
+Message-ID: <CAA8EJpokEq5JB63wYCpjssKt8neEpeW71pD9nUTjZ0Z_o6U=0A@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] clk: qcom: use power-domain for sm8250's clock controllers
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 8. September 2021, 07:00:52 CEST schrieb Chen-Yu Tsai:
-> On Wed, Sep 8, 2021 at 12:46 AM Brian Norris <briannorris@chromium.org> wrote:
+On Tue, 7 Sept 2021 at 17:34, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Sun, 29 Aug 2021 at 17:54, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
 > >
-> > We have DT IDs for PCLK_COREDBG_L and PCLK_COREDBG_B, but we don't
-> > actually expose them.
+> > On Sun, 29 Aug 2021 at 06:51, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Dmitry Baryshkov (2021-08-26 14:56:23)
+> > > > On 26/08/2021 21:31, Stephen Boyd wrote:
+> > > > > Quoting Dmitry Baryshkov (2021-07-27 13:19:56)
+> > > > >> On SM8250 both the display and video clock controllers are powered up by
+> > > > >> the MMCX power domain. Handle this by linking clock controllers to the
+> > > > >> proper power domain, and using runtime power management to enable and
+> > > > >> disable the MMCX power domain.
+> > > > >>
+> > > > >> Dependencies:
+> > > > >> - https://lore.kernel.org/linux-arm-msm/20210703005416.2668319-1-bjorn.andersson@linaro.org/
+> > > > >>    (pending)
+> > > > >
+> > > > > Does this patch series need to go through the qcom tree? Presumably the
+> > > > > dependency is going through qcom -> arm-soc
+> > > >
+> > > > It looks like Bjorn did not apply his patches in the for-5.15 series, so
+> > > > we'd have to wait anyway. Probably I should rebase these patches instead
+> > > > on Rajendra's required-opps patch (which is going in this window).
+> > > >
+> > >
+> > > Ok. Thanks. I'll drop it from my queue for now.
 > >
-> > In exposing these clocks (and attaching them to the coresight debug
-> > driver), the AMBA bus may start to disable them. Because no CPU driver
-> > owns these clocks (e.g., cpufreq-dt doesn't enable() them -- and even if
-> > it did, it's not early enough -- nor does arch/arm64/kernel/smp.c), the
-> > common clock framework then feels the need to disable the parents
-> > (including the CPU PLLs) -- which is no fun for anyone.
-> >
-> > Thus, mark the CPU clocks as critical as well.
-> 
-> I think this part should be done regardless, and could be a separate patch
-> added before exposing the COREDBG clks.
+> > Just for the reference. I've sent v7 of this patchset. After thinking
+> > more about power domains relationship, I think we have a hole in the
+> > abstraction here. Currently subdomains cause power domains to be
+> > powered up, but do not dictate the performance level the parent domain
+> > should be working in.
+>
+> That's not entirely true. In genpd_add_subdomain() we verify that if
+> the child is powered on, the parent must already be powered on,
+> otherwise we treat this a bad setup and return an error code.
+>
+> What seems to be missing though, is that if there is a performance
+> state applied for the child domain, that should be propagated to the
+> parent domain too. Right?
+>
+> > While this does not look like an issue for the
+> > gdsc (and thus it can be easily solved by the Bjorn's patches, which
+> > enforce rpmhpd to be powered on to 'at least lowest possible'
+> > performance state, this might be not the case for the future links. I
+> > think at some point the pd_add_subdomain() interface should be
+> > extended with the ability to specify minimum required performance
+> > state when the link becomes on.
+>
+> I guess that minimum performance state could be considered as a
+> "required-opp" in the DT node for the power-domain provider, no?
 
-yep ... especially as this is sort of hidden right now, with it not
-being part of the patch subject but only appearing as the last
-line of the patch message ;-)
+Yes, up to some point. But this enforces a particular driver code
+(that I've had to change from v6 to v7).
 
-So I'd also vote for a separate patch.
+In v6 the gdsc's power_on code would pm_runtime_get() the provider
+device, power on the domain and the pm_runtime_put() the provider
+device. Thus the gdsc genpd would be powered on (keeping parent
+domains in the on state), but the provider device itself would be
+runtime-suspended (neat idea by Bjorn). However this relied on changes
+in rpmhpd behaviour (which still did not make it to linux-next).
 
+In v7 we have to keep the provider device in resumed state while the
+gdsc genpd is powered on (to keep the required-opps vote in place).
 
-Heiko
+I suppose that 'child requires minimum parent's performance state'
+might become common property at some point, allowing us to drop this
+pm_runtime handling.
 
-> 
-> Either way,
-> 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> 
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> > Resending, because I missed the mailing lists on the first version.
+> Another option would simply be to manage this solely in the
+> platform/soc specific genpd provider. Would that work?
+
+Yes, I've had this in the very old iteration of mmcx fixup patchset
+(even before mmcx-regulator came into play). It ended up with quite an
+ugly piece of code.
+
+>
+> > Until that time I have changed code to
+> > enforce having clock controller in pm resume state when gdsc is
+> > enabled, thus CC itself votes on parent's (rpmhpd) performance state.
 > >
-> >  drivers/clk/rockchip/clk-rk3399.c | 15 +++++++++------
-> >  1 file changed, 9 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> > index 62a4f2543960..53ed5cca335b 100644
-> > --- a/drivers/clk/rockchip/clk-rk3399.c
-> > +++ b/drivers/clk/rockchip/clk-rk3399.c
-> > @@ -481,7 +481,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
-> >         COMPOSITE_NOMUX(0, "atclk_core_l", "armclkl", CLK_IGNORE_UNUSED,
-> >                         RK3399_CLKSEL_CON(1), 0, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
-> >                         RK3399_CLKGATE_CON(0), 5, GFLAGS),
-> > -       COMPOSITE_NOMUX(0, "pclk_dbg_core_l", "armclkl", CLK_IGNORE_UNUSED,
-> > +       COMPOSITE_NOMUX(PCLK_COREDBG_L, "pclk_dbg_core_l", "armclkl", CLK_IGNORE_UNUSED,
-> >                         RK3399_CLKSEL_CON(1), 8, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
-> >                         RK3399_CLKGATE_CON(0), 6, GFLAGS),
-> >
-> > @@ -531,7 +531,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
-> >         GATE(ACLK_GIC_ADB400_CORE_B_2_GIC, "aclk_core_adb400_core_b_2_gic", "armclkb", CLK_IGNORE_UNUSED,
-> >                         RK3399_CLKGATE_CON(14), 4, GFLAGS),
-> >
-> > -       DIV(0, "pclken_dbg_core_b", "pclk_dbg_core_b", CLK_IGNORE_UNUSED,
-> > +       DIV(PCLK_COREDBG_B, "pclken_dbg_core_b", "pclk_dbg_core_b", CLK_IGNORE_UNUSED,
-> >                         RK3399_CLKSEL_CON(3), 13, 2, DFLAGS | CLK_DIVIDER_READ_ONLY),
-> >
-> >         GATE(0, "pclk_dbg_cxcs_pd_core_b", "pclk_dbg_core_b", CLK_IGNORE_UNUSED,
-> > @@ -1514,7 +1514,10 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
-> >         "aclk_vio_noc",
-> >
-> >         /* ddrc */
-> > -       "sclk_ddrc"
-> > +       "sclk_ddrc",
-> > +
-> > +       "armclkl",
-> > +       "armclkb",
-> >  };
-> >
-> >  static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
-> > @@ -1549,9 +1552,6 @@ static void __init rk3399_clk_init(struct device_node *np)
-> >         rockchip_clk_register_branches(ctx, rk3399_clk_branches,
-> >                                   ARRAY_SIZE(rk3399_clk_branches));
-> >
-> > -       rockchip_clk_protect_critical(rk3399_cru_critical_clocks,
-> > -                                     ARRAY_SIZE(rk3399_cru_critical_clocks));
-> > -
-> >         rockchip_clk_register_armclk(ctx, ARMCLKL, "armclkl",
-> >                         mux_armclkl_p, ARRAY_SIZE(mux_armclkl_p),
-> >                         &rk3399_cpuclkl_data, rk3399_cpuclkl_rates,
-> > @@ -1562,6 +1562,9 @@ static void __init rk3399_clk_init(struct device_node *np)
-> >                         &rk3399_cpuclkb_data, rk3399_cpuclkb_rates,
-> >                         ARRAY_SIZE(rk3399_cpuclkb_rates));
-> >
-> > +       rockchip_clk_protect_critical(rk3399_cru_critical_clocks,
-> > +                                     ARRAY_SIZE(rk3399_cru_critical_clocks));
-> > +
-> 
-> Looking at the bigger picture, maybe it's time to convert CLK_IGNORE_UNUSED
-> and rockchip_clk_protect_critical() to CLK_IS_CRITICAL?
-> 
-> ChenYu
-> 
-> >         rockchip_register_softrst(np, 21, reg_base + RK3399_SOFTRST_CON(0),
-> >                                   ROCKCHIP_SOFTRST_HIWORD_MASK);
 > >
 > > --
-> > 2.33.0.153.gba50c8fa24-goog
-> >
-> 
+> > With best wishes
+> > Dmitry
+>
+> Kind regards
+> Uffe
 
 
 
-
+-- 
+With best wishes
+Dmitry
