@@ -2,97 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15350C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 13:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 902A1C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 14:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7CE56109F
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 13:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE3061163
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 14:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351755AbhIHNyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Sep 2021 09:54:46 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:46606 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231304AbhIHNyn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 09:54:43 -0400
-Received: by mail-ot1-f49.google.com with SMTP id v33-20020a0568300921b0290517cd06302dso3013631ott.13;
-        Wed, 08 Sep 2021 06:53:35 -0700 (PDT)
+        id S1349202AbhIHOaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Sep 2021 10:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233240AbhIHOaF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 10:30:05 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B89FC061575;
+        Wed,  8 Sep 2021 07:28:57 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id a10so2445231qka.12;
+        Wed, 08 Sep 2021 07:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9JsbZFov3ICA1qL8d4cvHPqqFkw1nktPj+U8ihCKcfQ=;
+        b=SMbyDKS0tyCPh3sRgkXSo8sy9lxXBeGPl4CSVFaL53so0tMM65EaAGcsprznttdtJ7
+         DI+acugQs/siaaFdiwgu/yOt8+EVQ6iuCoabLnNvlQ+9riCa10ZwsnRUH+aB0SDAMZ+H
+         c3RV5hMf8WgTTxNnG+fO7Poxr24lQl83hN3PbhUeHSPCPnDM4YsRpB1qgyRd6UUcEzt8
+         xS2dG11Dh0INd96NgYDK1ZxyexMpKawTxRIcNp4NK3IuBflG1aj6v5dOW0Trsz1wzl74
+         Y3Cyc6KsZdJ3bBJoWXVMfFYlFrr9NXg9xR4eBClJMiTu7pG7nBI4ilU7YANFYYCkXnv1
+         Yv9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=7NTl1uWn5/awXs/DGR3BA+sGi0+YNLli0mD4od7vqA8=;
-        b=YmQyE1bjIKuJPiWRNuEwreK20NGw0/wriwFdqvxrGaulvhSnaUST961dpx9UNGzTSq
-         iwsFu3yukepT7JiVaFXLLxxS1L/SOcS4kEt4gJ31+e6OSLGUfiRdLj7Rt0fRaxJ4DDvo
-         skjtHx6KL+3aLSxMx6bogxhVF5Re44dvovJWAmWv5xb2usBUvY5X9ZYdTdUGUPuydGFi
-         m37FQt0bNanjDUxxpH+9Azig4BL8MrdqOTTAuuNlPRtHt3UZZcD0GsqpgzySKv3GLFiD
-         cyOmFOkWeZxkaygsG8CBt47XCqBwsRqN0SJ7LjxiqWOEij6oO/d7tPHZaIndRTwqym2r
-         C92A==
-X-Gm-Message-State: AOAM5301EFPPUMUbQ0VoxlwcCicMUg5h4iZQTkjgnzPTQ3nhDYtfguoc
-        Um1I/Nc2VajAGlro3k0OVA==
-X-Google-Smtp-Source: ABdhPJwpaGH4DkGWSBPtpKhZZlAWlqBgp5WDm3d2MTr483rS75d6QIk2hGWuYvZj6UEBiy/FBjSsVw==
-X-Received: by 2002:a9d:4a84:: with SMTP id i4mr3109923otf.247.1631109214986;
-        Wed, 08 Sep 2021 06:53:34 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a13sm53450ooi.3.2021.09.08.06.53.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Sep 2021 06:53:34 -0700 (PDT)
-Received: (nullmailer pid 2031708 invoked by uid 1000);
-        Wed, 08 Sep 2021 13:53:33 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-Cc:     mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        Eugen.Hristev@microchip.com, UNGLinuxDriver@microchip.com,
-        Kavyasree.Kotagiri@microchip.com, Manohar.Puri@microchip.com,
-        devicetree@vger.kernel.org, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org
-In-Reply-To: <20210908114844.22131-4-kavyasree.kotagiri@microchip.com>
-References: <20210908114844.22131-1-kavyasree.kotagiri@microchip.com> <20210908114844.22131-4-kavyasree.kotagiri@microchip.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: lan966x: Add LAN966X Clock Controller
-Date:   Wed, 08 Sep 2021 08:53:33 -0500
-Message-Id: <1631109213.150695.2031707.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9JsbZFov3ICA1qL8d4cvHPqqFkw1nktPj+U8ihCKcfQ=;
+        b=O6K4/1K807C+/zm0KDbaFh+e4aUSh1kZLwdlFodpJ16TQzONHZzKWEtPWPMoIclEJ8
+         tRtEYoZx3HkXaH3QZoP/CuUgiNDiviYxHnwsp3VKbmn0VIzDmHUww5mtbVANe0xitHyD
+         4eLDAcBEX3ZCUwRQf6FusarhrG2vndubFOmHbNxbiunU3J04XGXMmcSnWfVzz3Rv23FX
+         kOVbQKK9zjfbEZaNfamJ9NjsAVe21+Uhggmxkn4HErcDAY3t8jPz6aNKvNL23nN/28EG
+         hXEGy68A1qCc+4wW1Q3MyoSKNsQEXAEGqHObBAYGImZ9NRhFiP5ZqEvUsTOp9PoFiMwJ
+         KEsg==
+X-Gm-Message-State: AOAM531XkRzYHHvyXFqhYajLJohJR1klkCy2yDkjMd/SmJ9v+x08Uc/k
+        +mA0yS9G0h2U7sm0cjrmeq/p16kvNo2tovtzq1kumx/8rzpS4w==
+X-Google-Smtp-Source: ABdhPJz7DVVpEboPjVkrCCtYZ1ubOXFqCKGb1qXMKbaXxuakwVKRtFqGap9yg+mofcTF7Y6L54OxbWlV1fP5g9RzsTg=
+X-Received: by 2002:a37:bfc6:: with SMTP id p189mr3874345qkf.33.1631111336296;
+ Wed, 08 Sep 2021 07:28:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210518175153.3176764-1-robimarko@gmail.com> <162483884998.3259633.3733659727822681631@swboyd.mtv.corp.google.com>
+In-Reply-To: <162483884998.3259633.3733659727822681631@swboyd.mtv.corp.google.com>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Wed, 8 Sep 2021 16:28:45 +0200
+Message-ID: <CAOX2RU7=z0BAyUSm8zNi9tbC98tMhe5fREh-=PKscV+aPyq1sg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: ipq8074: fix PCI-E clock oops
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        sivaprak@codeaurora.org, speriaka@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 08 Sep 2021 17:18:44 +0530, Kavyasree Kotagiri wrote:
-> This adds the DT bindings documentation for lan966x SoC
-> generic clock controller.
-> 
-> Signed-off-by: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-> ---
-> v1 -> v2:
-> - Updated example provided for clk controller DT node.
-> 
->  .../bindings/clock/microchip,lan966x-gck.yaml | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-> 
+On Mon, 28 Jun 2021 at 02:07, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Robert Marko (2021-05-18 10:51:53)
+> > Fix PCI-E clock related kernel oops that are causes by missing
+> > parent_names.
+> >
+> > Without the use of parent_names kernel will panic on
+> > clk_core_get_parent_by_index() due to a NULL pointer.
+> >
+> > Without this earlycon is needed to even catch the OOPS as it will reset
+> > the board before serial is initialized.
+>
+> Can you share the oops message here in the commit text?
+>
+> >
+> > Fixes: f0cfcf1ade20 ("clk: qcom: ipq8074: Add missing clocks for pcie")
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > ---
+> >  drivers/clk/qcom/gcc-ipq8074.c | 11 +++++------
+> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> > index 0c619ed35c82..8d8b1717a203 100644
+> > --- a/drivers/clk/qcom/gcc-ipq8074.c
+> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> > @@ -4357,8 +4357,7 @@ static struct clk_rcg2 pcie0_rchng_clk_src = {
+> >         .parent_map = gcc_xo_gpll0_map,
+> >         .clkr.hw.init = &(struct clk_init_data){
+> >                 .name = "pcie0_rchng_clk_src",
+> > -               .parent_hws = (const struct clk_hw *[]) {
+> > -                               &gpll0.clkr.hw },
+> > +               .parent_names = gcc_xo_gpll0,
+>
+> This seems to imply that we need to have two parents but we didn't
+> realize that was the case. Ouch! Please use a struct clk_parent_data
+> array and then use the firmware name for XO and the clk_hw pointer for
+> gpll0.
+>
+> >                 .num_parents = 2,
+> >                 .ops = &clk_rcg2_ops,
+> >         },
+> > @@ -4372,8 +4371,8 @@ static struct clk_branch gcc_pcie0_rchng_clk = {
+> >                 .enable_mask = BIT(1),
+> >                 .hw.init = &(struct clk_init_data){
+> >                         .name = "gcc_pcie0_rchng_clk",
+> > -                       .parent_hws = (const struct clk_hw *[]){
+> > -                               &pcie0_rchng_clk_src.clkr.hw,
+> > +                       .parent_names = (const char *[]){
+> > +                               "pcie0_rchng_clk_src",
+> >                         },
+> >                         .num_parents = 1,
+> >                         .flags = CLK_SET_RATE_PARENT,
+> > @@ -4390,8 +4389,8 @@ static struct clk_branch gcc_pcie0_axi_s_bridge_clk = {
+> >                 .enable_mask = BIT(0),
+> >                 .hw.init = &(struct clk_init_data){
+> >                         .name = "gcc_pcie0_axi_s_bridge_clk",
+> > -                       .parent_hws = (const struct clk_hw *[]){
+> > -                               &pcie0_axi_clk_src.clkr.hw,
+> > +                       .parent_names = (const char *[]){
+> > +                               "pcie0_axi_clk_src"
+>
+> These two hunks can be dropped.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Hi Stephen, sorry for the really late reply.
+Essentially it looks this is not necessary in the newer kernels,
+I tested again with 5.14 and newer and I don't have a panic anymore.
+I was hitting the issue with 5.10 kernel.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.example.dt.yaml: clock-controller@e00c00a8: clocks: [[1], [2], [3]] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1525807
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Regards,
+Robert
