@@ -2,159 +2,221 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB603C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 02:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEACC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 02:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD0B06115C
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 02:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F86361166
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 02:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347131AbhIHCKp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Sep 2021 22:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347125AbhIHCKo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 22:10:44 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C754C061757
-        for <linux-clk@vger.kernel.org>; Tue,  7 Sep 2021 19:09:37 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id g13-20020a17090a3c8d00b00196286963b9so367772pjc.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 Sep 2021 19:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7NYzM/JHWz+Fchf07XDZ5B5EQZtrwYGf0aZaNqlzyHc=;
-        b=nBbT/qUKGrTbqMibm0K8J4JkgO3JQakv4S3JxJCGj1nqvnkGXh60acFH6QHdOdOwFq
-         tl2JgUe/6Y+vT0gVbgAPKikswJIfV1buTiAh9B71JzG71J2uzX9Fw0nEgTWg8UVoIG45
-         yhBSM1GVQOrT1pzXmxmHoQoIOO4VjQHBMyjpIR022OjCNlKae5xRXVoYjr2E30tDhemA
-         updhzfS6gsPwWpWNjd0U8o7/bwuajJ99c2EVsY8tB7/yIUqM9K8gg0B/Zcnwkmj+s+KZ
-         ZJ375lKTAZRRNglanTHHEzVJ01JqWvMaOIEIulafVBU7vM11Fy7fwImFdym4PsIJ+2Wz
-         C5ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7NYzM/JHWz+Fchf07XDZ5B5EQZtrwYGf0aZaNqlzyHc=;
-        b=rNmkdAc1v5mW7WYrMnU9FGQ2ZPZFpsnWl8wrAV2d8JkRtOiwVe8KhJOhACEgbxGdW2
-         QNBDyEsik4VaSM1cwZin5IwbGkjbjWzOpXgblFV3tBN/3Cz7FPndO/3xb+mbb8k4u8k/
-         M5H+5kJ9c4+6NyuUm3L8wia3VROS+zgo6+sLvL96rJdHCbs3GWrZvGjGCv+qqy2UIS2l
-         pOCk+ZrG+h9hUlw/qTId2z3pOzMoSWbWjViRFCOxJol0Wob0UcE/7gw5n24JnOsfFdIx
-         moFDDXVLPMDmUauvxMlhtGuJj7bGQvY7IJpc+uVMNIGK57KvnP61rjEaIqDygnctQgUc
-         2Ycw==
-X-Gm-Message-State: AOAM532kI3RIDoZ1SVUelXJG75jeStslHFQAAlGMuBRGy1CEXSLz+wnN
-        0KcY4EV3yLo4O+gnsPey0rB7UKt1yf3SHg6QOGQ=
-X-Google-Smtp-Source: ABdhPJxdP4gTchzCo+ZAT1VvYKwNscoCzoB5wdo4DUOGVEojV9N2Jj5yp24CISY6jJFA1h2GQcsMKw==
-X-Received: by 2002:a17:902:c205:b0:138:c28f:a774 with SMTP id 5-20020a170902c20500b00138c28fa774mr939495pll.59.1631066976966;
-        Tue, 07 Sep 2021 19:09:36 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s ([202.155.204.36])
-        by smtp.gmail.com with ESMTPSA id d5sm331607pfd.142.2021.09.07.19.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Sep 2021 19:09:36 -0700 (PDT)
-Date:   Wed, 8 Sep 2021 10:09:31 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
+        id S1347534AbhIHC1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Sep 2021 22:27:30 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:34177 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347665AbhIHC11 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Sep 2021 22:27:27 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 7C98F2B0027C;
+        Tue,  7 Sep 2021 22:26:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 07 Sep 2021 22:26:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        to:cc:references:from:subject:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=e
+        KnyYOS2v782jSePg7xdkP7npAfnDnVRMX0yx7qLjeE=; b=ix6wRrcGWQmnPM2q5
+        jPwq1ukeQGIb2k9xJJSZyjp1c9TpGgLBHYfiQKRAUf7MPlnosKsFN7iqxxM3vBJF
+        Iab7ePyQsMDFabsabI+/KO0Kp7nhUk2j4GXmiNdWp0y8uPn6MGojc0WkCtX+GjSB
+        NCrq39LaFca5OqYUawOzAHNMIrDAs+ejZnP/nbCTLe8oKpo2dXI8MlEDa5s0aT7L
+        soUuZySCPHcF3qPLDi67IvfSJFYeh/sgRc8Hw1h7+tx/W62m0qCH9chSfxCpP/Og
+        PZnl3RZLUqSLPzehubcIdBQfFQTY0aqXOekm+P5b268l2LN7aNoMja1sJgbW9jj5
+        uOTbw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=eKnyYOS2v782jSePg7xdkP7npAfnDnVRMX0yx7qLj
+        eE=; b=i86/NE/TaKJwB4dmLA8GlS60zzbqRoHFIOh4swDBZ7yjGrvj0OcvMsSTj
+        WhZK3Lm/xPAtoXGBIaS7e3dcZbYXbMqpsW+xehauntd1IYsCTHH/0A9+BiN1HwNj
+        qkkDGCYKxKaIPk7mIXng1Lo44DggDC6OVewrPM+EiVd6Al704kYm4lqk6Yv7iAhq
+        aYKOu+nmjkB5N7bX+tZIiZajePRJmMyXUTH650HPlEA5jedxlbGH02depu+JcPsI
+        z5CngEzR8EEYB7mqTefyIFfADtCVZCJPTImG3+D1I9EImolsrb7vZNPtfDfq1WO9
+        O13md6cqo6RxcoS5y3HNeck5aNpBQ==
+X-ME-Sender: <xms:Rx84YRdhK0A5zQojiQIiPUsZ7gRMeVHU7A1NYtTsl5zAdzyiZx_UkQ>
+    <xme:Rx84YfMc3QZk7f98L_lKKgR5Jrrz1N4nbyPPm_JtdU1detyZop8FkdEene6la9vc6
+    9MOTrIY_H-8JRZO8g>
+X-ME-Received: <xmr:Rx84Yaj9i_WPCvIP3-SPqUrc0jVJQUq-eTA9-XH49mFKO_3AsMwuee_tBAockSP50aV-Uud7_EwCyJBbjsRgFT7C7grdN3nXBrPZVHlX7wCZp_Jkad9SyoG_kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudefiedgheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepvfhfhffukffffgggjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepvddttdejieduudfgffevteekffegffeguddtgfefkeduvedukeff
+    hedtfeevuedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:Rx84Ya9cQx7iRtuj6ysYroa66quK2rVA6kmgAZHua-4Gz1KPo8Bapw>
+    <xmx:Rx84Ydt0i9cjqQoeKmhyW7vcOA_u3BCO2vrDGBXyTpsesnb2z4asWg>
+    <xmx:Rx84YZEfKDYodQw-iPRmZKG5VGmMjI_BkuN9xwviB-_7SeHMrjEV6A>
+    <xmx:SB84YTIHNfI_YzmKdVPAPQlXK2mPQqyKPxQN0x90vos8Viy3jVWjg2kggIk>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Sep 2021 22:26:14 -0400 (EDT)
+To:     Rob Herring <robh@kernel.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 2/2] arm64: dts: rockchip: add Coresight debug
- range for RK3399
-Message-ID: <20210908020931.GB1538480@leoy-ThinkPad-X240s>
-References: <20210907094628.RESEND.1.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid>
- <20210907094628.RESEND.2.Ibc87b4785709543c998cc852c1edaeb7a08edf5c@changeid>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210901053951.60952-1-samuel@sholland.org>
+ <20210901053951.60952-2-samuel@sholland.org>
+ <YTDtelCx5If3J5cM@robh.at.kernel.org>
+ <53d6d018-93bf-9bfc-e296-a232105306de@sholland.org>
+ <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [RFC PATCH 1/7] dt-bindings: rtc: sun6i: Add H616 and R329
+ compatibles
+Message-ID: <80fb6869-4955-25a1-ed1c-118dbf61b206@sholland.org>
+Date:   Tue, 7 Sep 2021 21:26:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210907094628.RESEND.2.Ibc87b4785709543c998cc852c1edaeb7a08edf5c@changeid>
+In-Reply-To: <CAL_JsqKQ-9EWLPah2+q0=Y9viES1FSMS2_Mq6Kw-dMkN=rAhyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 07, 2021 at 09:46:37AM -0700, Brian Norris wrote:
-> Per Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt.
+On 9/7/21 9:44 AM, Rob Herring wrote:
+> On Fri, Sep 3, 2021 at 10:36 AM Samuel Holland <samuel@sholland.org> wrote:
+>>
+>> On 9/2/21 10:27 AM, Rob Herring wrote:
+>>> On Wed, Sep 01, 2021 at 12:39:45AM -0500, Samuel Holland wrote:
+>>>> For these new SoCs, start requiring a complete list of input clocks.
+>>>>
+>>>> For H616, this means bus, hosc, and pll-32k. For R329, this means ahb,
+>>>> bus, and hosc; and optionally ext-osc32k.
+>>>>
+>>>> I'm not sure how to best represent this in the binding...
+>>>>
+>>>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>>>> ---
+>>>>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 55 +++++++++++++++++--
+>>>>  include/dt-bindings/clock/sun50i-rtc.h        | 12 ++++
+>>>>  2 files changed, 61 insertions(+), 6 deletions(-)
+>>>>  create mode 100644 include/dt-bindings/clock/sun50i-rtc.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>>>> index beeb90e55727..3e085db1294f 100644
+>>>> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>>>> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>>>> @@ -26,6 +26,8 @@ properties:
+>>>>            - const: allwinner,sun50i-a64-rtc
+>>>>            - const: allwinner,sun8i-h3-rtc
+>>>>        - const: allwinner,sun50i-h6-rtc
+>>>> +      - const: allwinner,sun50i-h616-rtc
+>>>> +      - const: allwinner,sun50i-r329-rtc
+>>>
+>>> Can you please make all the single entry cases a single 'enum'.
+>>>
+>>>>
+>>>>    reg:
+>>>>      maxItems: 1
+>>>> @@ -37,7 +39,24 @@ properties:
+>>>>        - description: RTC Alarm 1
+>>>>
+>>>>    clocks:
+>>>> -    maxItems: 1
+>>>> +    minItems: 1
+>>>> +    maxItems: 4
+>>>> +
+>>>> +  clock-names:
+>>>> +    minItems: 1
+>>>> +    maxItems: 4
+>>>> +    items:
+>>>> +      - anyOf:
+>>>
+>>> This says the first entry is any of these. What about the rest of them?
+>>
+>> Oh, right. The list below is the list of all possible clocks.
+>>
+>>>> +          - const: ahb
+>>>> +            description: AHB parent for SPI bus clock
+>>>
+>>> The description should go in 'clocks'.
+>>
+>> Will do for v2.
+>>
+>>> The order should be defined as well with the first clock being the
+>>> one that existed previously.
+>>
+>> The only way I know how to further refine the list is with
+>> minItems/maxItems. My problem is that 1) some clocks are only valid for
+>> certain SoCs, and 2) some clocks are optional, depending on how the
+>> board is wired. So there is no single order where the "valid"
+>> combinations are prefixes of the "possible" combinations of clocks.
+>>
+>> Or in other words, how can I say "clocks #1 and #2 from this list are
+>> required, and #4 is optional, but #3 is not allowed"?
 > 
-> This IP block can be used for sampling the PC of any given CPU, which is
-> useful in certain panic scenarios where you can't get the CPU to stop
-> cleanly (e.g., hard lockup).
+> This says you have up to 4 clocks, but only defines the 1st 2:
 > 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> maxItems: 4
+> items:
+>   - description: 1st clock
+>   - description: 2nd clock
+> 
+> But I think you will be better off with just defining the range
+> (minItems/maxItems) at the top level and then use if/then schemas.
 
-Looks good to me, FWIW:
+Ah, thanks for the suggestions.
 
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
+>>
+>> Some concrete examples, with the always-required clocks moved to the
+>> beginning:
+>>
+>> H6:
+>>  - bus: required
+>>  - hosc: required
+>>  - ahb: not allowed
+>>  - ext-osc32k: optional
+>>  - pll-32k: not allowed
+> 
+> Is this really 2 different 32k clock inputs to the h/w block? Doesn't
+> seem like it given both are never valid.
 
-> ---
+Yes, there are two separate 32k inputs. Both are valid at the same time
+on some SoCs like T5 (patch 7), but not on any of those I listed here.
+
+Regards,
+Samuel
+
+>>
+>> H616:
+>>  - bus: required
+>>  - hosc: required
+>>  - ahb: not allowed
+>>  - ext-osc32k: not allowed
+>>  - pll-32k: required
+>>
+>> R329:
+>>  - bus: required
+>>  - hosc: required
+>>  - ahb: required
+>>  - ext-osc32k: optional
+>>  - pll-32k: not allowed
+>>
+>> Should I just move the entire clocks/clock-items properties to if/then
+>> blocks based on the compatible?
 > 
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 48 ++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
+> Probably so.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index 3871c7fd83b0..c8c62637b600 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -433,6 +433,54 @@ usbdrd_dwc3_1: usb@fe900000 {
->  		};
->  	};
->  
-> +	debug@fe430000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe430000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_L>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_l0>;
-> +	};
-> +
-> +	debug@fe432000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe432000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_L>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_l1>;
-> +	};
-> +
-> +	debug@fe434000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe434000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_L>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_l2>;
-> +	};
-> +
-> +	debug@fe436000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe436000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_L>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_l3>;
-> +	};
-> +
-> +	debug@fe610000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe610000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_B>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_b0>;
-> +	};
-> +
-> +	debug@fe710000 {
-> +		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-> +		reg = <0 0xfe710000 0 0x1000>;
-> +		clocks = <&cru PCLK_COREDBG_B>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu_b1>;
-> +	};
-> +
->  	cdn_dp: dp@fec00000 {
->  		compatible = "rockchip,rk3399-cdn-dp";
->  		reg = <0x0 0xfec00000 0x0 0x100000>;
-> -- 
-> 2.33.0.153.gba50c8fa24-goog
+> Rob
 > 
+
