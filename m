@@ -2,156 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F18C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 18:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646EAC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 19:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5F4561100
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 18:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43C5061175
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 19:44:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349677AbhIHSPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Sep 2021 14:15:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54940 "EHLO
+        id S1352215AbhIHTpm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Sep 2021 15:45:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349718AbhIHSPM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 14:15:12 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C6DC0613C1
-        for <linux-clk@vger.kernel.org>; Wed,  8 Sep 2021 11:14:04 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id q22so2799009pfu.0
-        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 11:14:04 -0700 (PDT)
+        with ESMTP id S1350977AbhIHTpl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 15:45:41 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D95FC061575
+        for <linux-clk@vger.kernel.org>; Wed,  8 Sep 2021 12:44:33 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id b7so4807890iob.4
+        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 12:44:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/7V7rRemEpda86gCcDXaw5uz6xMLDav/RoQNN2RSOuU=;
-        b=jbFgaVCKgsth2Y9eV65+J3eCvsvNnESvcC/38soujbnVAZbIves1S8586ELAEnx/ID
-         A5sxB4nM77/ls5NTbEsxSlx8qIWyPGI+vnIqe+DUiCNLmiPcXL5zS6ex55pZBLAJEuSt
-         3j3hlsVfGVIHw1ntIBzcRfPc+OpG472RPgryk=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pEG9NavySLWdy1upAVmaIf1dDuKJCYTqEzed8oQQGD8=;
+        b=CyIBEhnLQsXDqwARbirekG1YFjYcD7oCdYRow3tyboeFb2XGoxYLtD/l0BL7Bk6YuR
+         VEri7WBhM4wJhhos/70mFl1baUzbF7QxtuXIcXDif2oN5A4UNXoK2kAVr+j7VQxqYp0/
+         GOicdMMTXJOOZzusEjRQZxvyE8i5sPbVxqc0o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/7V7rRemEpda86gCcDXaw5uz6xMLDav/RoQNN2RSOuU=;
-        b=vU6uVUH/5vtASsuUDpRcKXCG1yhG1pUilnyK4Z3nJ9T/gHzRXxqOfaHgzyWt+1XkTh
-         HE2z9iIPRk2ClDyhW9jy9TIBj3IdNPIyWcB8/VYP5WLyR+bYgEZFd3wMkaz+KTnpU4Ea
-         JThwpsNStTbRAFdTGKE1gSDFVdgzra9Urye7zEBuQbd4/0wpFXf4qS/TjXKx18+weD42
-         waFyey/fbq5WCovGRK1mgrWdkgh3rAbTr9NtmmQNoD6mpHOtZELR1Yfm6Fa3pl5xQnZs
-         M/ZGgZL1Ah0+BA1Pkj0zHOqWJZr5UqtaqeAc+vaR+7ACCK9gBCgMClOr3sJ5NdVcEElm
-         pu9Q==
-X-Gm-Message-State: AOAM531HmISI8DAg2VQ+ZDx9c/AHC7P3qi0vm6m+jeXfE7KU+Nb/GVB8
-        DCOh8pd5MGjmmtwOjft9qkI4ZQ==
-X-Google-Smtp-Source: ABdhPJzS2hRYQ/VhBHUhz7s035X8SA+E503rKFk/O4ISrGfbPXO5LNPQ7UfPtBSGHGxa3j0HeaCRPQ==
-X-Received: by 2002:a63:d814:: with SMTP id b20mr5014888pgh.268.1631124844338;
-        Wed, 08 Sep 2021 11:14:04 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7556:e88d:6fba:e1d0])
-        by smtp.gmail.com with UTF8SMTPSA id k190sm3564254pgc.11.2021.09.08.11.14.02
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pEG9NavySLWdy1upAVmaIf1dDuKJCYTqEzed8oQQGD8=;
+        b=hIfsXslVI8UNZlr/CdUZhobfy2mDItC3CzfgQrbdRATxo1c8FdcFhKklGzRsU+0G/H
+         U5ww+QYc/v+guFHjChYKFKFlwzGqhBg9Z1j3SNvO/jDySq4kyAAXfhrbTEZ1ohNCx9cH
+         ELKuIs4eVkxDqtpPJf4zhKhEV5y1rnbOkYAlauS30LZ/CwWTFLsXAP97Mp0KDuYyhXI/
+         iQwXNUawqFTIrfoo1t5KJpH7jJwnfvJvnRm0VGLii90988sFRtQPAvijhrVr/ORXtSTz
+         oiaDJchDxT7WiBzMOzDK5XiPADeS6euzCuyLhADR5TklI5mi2V+xtgiNXFZd+/Hufx6c
+         AHbQ==
+X-Gm-Message-State: AOAM530jUdbKD5Bu+W0eO4AMxRlbvSphps7RkXsJPCVXqv+fRFmo0aWH
+        X4EXzxqqjkWxbP1VSjfGNsyk950Zff2Nlw==
+X-Google-Smtp-Source: ABdhPJzSE4mAw++WmXJVIroW6TOvKIFNvOfYiBYzFOw0z9hV2dKrDZI27Ab4wkIYow0zdD6MMoKsVA==
+X-Received: by 2002:a05:6638:1613:: with SMTP id x19mr5329310jas.77.1631130272399;
+        Wed, 08 Sep 2021 12:44:32 -0700 (PDT)
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com. [209.85.166.171])
+        by smtp.gmail.com with ESMTPSA id c25sm39897iom.9.2021.09.08.12.44.31
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 11:14:03 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: add Coresight debug range for RK3399
-Date:   Wed,  8 Sep 2021 11:13:40 -0700
-Message-Id: <20210908111337.v2.3.Ibc87b4785709543c998cc852c1edaeb7a08edf5c@changeid>
-X-Mailer: git-send-email 2.33.0.153.gba50c8fa24-goog
-In-Reply-To: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
-References: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
+        Wed, 08 Sep 2021 12:44:31 -0700 (PDT)
+Received: by mail-il1-f171.google.com with SMTP id j15so3578143ila.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 12:44:31 -0700 (PDT)
+X-Received: by 2002:a05:6e02:214e:: with SMTP id d14mr1096154ilv.142.1631130271165;
+ Wed, 08 Sep 2021 12:44:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
+In-Reply-To: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 8 Sep 2021 12:44:19 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wp=zqx4j=srryypAfpRusHQinuhXjmu4G_HuBo7+PN1g@mail.gmail.com>
+Message-ID: <CAD=FV=Wp=zqx4j=srryypAfpRusHQinuhXjmu4G_HuBo7+PN1g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: rockchip: rk3399: make CPU clocks critical
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Per Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt.
+Hi,
 
-This IP block can be used for sampling the PC of any given CPU, which is
-useful in certain panic scenarios where you can't get the CPU to stop
-cleanly (e.g., hard lockup).
+On Wed, Sep 8, 2021 at 11:14 AM Brian Norris <briannorris@chromium.org> wrote:
+>
+> The CPU clocks don't currently have any owner (e.g., cpufreq-dt doesn't
+> enable() them -- and even if it did, it's not early enough compared to
+> other consumers -- nor does arch/arm64/kernel/smp.c), and instead are
+> simply assumed to be "on" all the time.
+>
+> They are also parents of a few other clocks which haven't been
+> previously exposed for other devices to consume. If we want to expose
+> those clocks, then the common clock framework may eventually choose to
+> disable their parents (including the CPU PLLs) -- which is no fun for
+> anyone.
+>
+> Thus, mark the CPU clocks as critical, to prevent them from being
+> disabled implicitly.
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>
+> Changes in v2:
+>   - New, split from the patch that requires this change
+>
+>  drivers/clk/rockchip/clk-rk3399.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-
-Changes in v2:
-- Sort properly
-
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 48 ++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 3871c7fd83b0..c5fe2d440114 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -361,6 +361,54 @@ usb_host1_ohci: usb@fe3e0000 {
- 		status = "disabled";
- 	};
- 
-+	debug@fe430000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe430000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l0>;
-+	};
-+
-+	debug@fe432000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe432000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l1>;
-+	};
-+
-+	debug@fe434000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe434000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l2>;
-+	};
-+
-+	debug@fe436000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe436000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_L>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_l3>;
-+	};
-+
-+	debug@fe610000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe610000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_B>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_b0>;
-+	};
-+
-+	debug@fe710000 {
-+		compatible = "arm,coresight-cpu-debug", "arm,primecell";
-+		reg = <0 0xfe710000 0 0x1000>;
-+		clocks = <&cru PCLK_COREDBG_B>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu_b1>;
-+	};
-+
- 	usbdrd3_0: usb@fe800000 {
- 		compatible = "rockchip,rk3399-dwc3";
- 		#address-cells = <2>;
--- 
-2.33.0.153.gba50c8fa24-goog
-
