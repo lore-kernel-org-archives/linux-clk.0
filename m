@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7C5C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A170C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70C6861051
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62F2F61167
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 07:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350495AbhIHHbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Sep 2021 03:31:39 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:48461 "EHLO
+        id S1350396AbhIHHbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Sep 2021 03:31:47 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:52193 "EHLO
         out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350504AbhIHHbf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 03:31:35 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 23E335C0167;
-        Wed,  8 Sep 2021 03:30:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 08 Sep 2021 03:30:28 -0400
+        by vger.kernel.org with ESMTP id S1350661AbhIHHbp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 03:31:45 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 280F85C0167;
+        Wed,  8 Sep 2021 03:30:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 08 Sep 2021 03:30:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=yGCXYbluQX/ON2P4qhCwIlRzQxV
-        TSV/kB/bvO/GkOhg=; b=DnN6W5YfyId1zyJRpjFG+qd90Y/FLEyrBYhS39fa47J
-        ACIvW8HuiOhbn7XTq/KD/Ah9FK2GqAvyOAtgnubOXCL5BtHsj8COonTs60CKo2ru
-        KeucrNoFCfKVsK3Ly89tblXvX1ie/5DQ0qqWffEfnLvll04qiYWWxABv153gITPc
-        y2Z2NfJhqEDuGflc28a+h00kZXAjzpxoFTrUCS+2M95nNyIAQqce94F9UmzkLl+u
-        FpjRDLbRJ8X8GCyWaN4MaN3MgwZ3qNw79BbKd+IHx2YdBIWxKBIIUmFCwrtKQhIK
-        xBjTfg1476kgQBr1c3T8o/TngctRYCWn/pNGvtsYEAw==
+        :content-type:in-reply-to; s=fm3; bh=2v7mUfLtjnrnwxqUwfU7fsoEhJz
+        IGABS6QNS/r9Udho=; b=ifyDEUkv5qUVgjeMdIXjuKqKWnm53Oile1i79bSZfEQ
+        NDxqgijEerfNHtlJHAuhvGvcqgjNTlmzLwUlEd3A3kg6Hp5b9P9eHjZq4GszCLGw
+        PAfV4ayD67qymYuFbfPi/lDkbkckVncA12eW7G4H8gKIpu0Dqv/fjsSNL+OlxxIj
+        m/wiOdTX5GzaRxKk979IBoyHkm1H7LQGPlm4WhDTccCJpvo+nS0m0RU14p5elpdJ
+        pq8SCgqUdEzJ/QxdV8Of8/rHZMgO5kirIo/ZHXR4/pTiRgfIGeFWwZaHkn0oF2FE
+        X94sFOLIlU7bdYzPx2PCkEWoA54r9uL7A0IPdB9JNUg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=yGCXYb
-        luQX/ON2P4qhCwIlRzQxVTSV/kB/bvO/GkOhg=; b=T0L4OEJIuv0hwFq4wsD0Pn
-        pbglvEOYfLTzhgBOXXWvapdXomYc9fFwD00aFX6aOmdaB2Yx1CvQk48joFRTJ/2w
-        hr5rmIfT96Bl3c/c+P94AfPiX0Xuu27UjfWFcSZWNqJdzgRY4S7y7BPv2eap3bxz
-        WlJ2uN85kE3fEt5jKIjMx7jwNLsF+sAZpMLt/LMoiDZp7HVbp8DkUcRAB9ieUX5P
-        Q5Js18JuUbPt6I2Z+VB+l4PXs1YH8lx4SUplCSwxxT6y41zdAW1O0MMBMfSYO4f2
-        G9/vJgDmCXJXE0dO9XHfda+NMAGbkjHDH3fKoPCbABnaSaTqXJV7UAL6hvD6JGRw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=2v7mUf
+        LtjnrnwxqUwfU7fsoEhJzIGABS6QNS/r9Udho=; b=hBIQq7zWPWVZi2oriKH0wp
+        cHn3B0u1iXQ+okmSNOlTNazJhJFmDWDzGercJUTUmY/jLhKizGjmOxRzk+D1JCvp
+        9FpijpPe5qF0i7jZWmtVWW4qnI4IaoSUwH0WI7witX2Dh3caSi+wbrZmV5JF+r+c
+        GtjyhbN6BZTYtdkgEZfdkmxuFrSb1sfSJGUAiZXzytHzxpnKmGQgL8GVYJH/qNgS
+        /d2Z7n/vOJwJEoO7Ja+0Rkz8PRaB1vijZUYbbBVWfrEZHpnKNttcnSz5ULUQwdH6
+        BMB2PCNcC6FNYNAMZBOScB/ZaZxDxhAAmMvr36NqQ/Mc91M6F908LWBhYHUVM2Nw
         ==
-X-ME-Sender: <xms:kmY4YZy2ALfOPzMfs0OjRZOb15wgTZI9D-LcYKZvPqLBiIQnbmV2rA>
-    <xme:kmY4YZQEJHeq81BgJJ3H-rzJwu2vP3p4Byf-RKwBYYy6uXnNRVFZ5G4eRtgvw1Byc
-    L-A0jeM_WUVq4b2j4o>
-X-ME-Received: <xmr:kmY4YTVDQ55D_4mHS5OdcEyCWzzRaCQF1QOD8PZgzFkmWlchoeiq54fVeWEq0u3EeMaAcj_nalt4rEEWkWyeJsV6Jr_bpN1vxKjO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudefiedgudduiecutefuodetggdotefrod
+X-ME-Sender: <xms:nGY4YcQq1rrlH88kJewIllxqfbQKCaA8sr2Lbc0f_Fdppi2mbPRkvg>
+    <xme:nGY4YZxpQqQXVyNzDSTX7-Dzz_heCQTunZZWrTW2UhArNj_Ta5R-T8DQYhNEBvyfB
+    5z0xqxUrLeBw1k1LCc>
+X-ME-Received: <xmr:nGY4YZ13WTbzwJhdbRG29-lP-eQ6ow2N5VyoGp6h7HNixhgSiQsMTkj4UBGYbMA3TOp9X1ZebXevHYS_D238ODOJaH6J-bNNgZ9n>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudefiedguddujecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
     htthgvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheei
-    heegudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    heegudenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:kmY4YbinxAAXDjh-dp8NgddaUufxzmCRk2GzFem4TLmQL36w4BNsSw>
-    <xmx:kmY4YbB9Tmxmdzl79j0rRFxIqukO0NMZxQZXWTuFmt0d6Aln3wHscA>
-    <xmx:kmY4YUJAfqGoelmFE5GtXKxQ6NbXVJMhwy2p3SIdTwXEJhjAgCbaPg>
-    <xmx:lGY4YdDbpw0VlQ_X4X8w6x3ZRIJOx8SzgamLvDx3Gr90H3kh3i4PKg>
+X-ME-Proxy: <xmx:nGY4YQBoLjVbCcdIy97YxastIDIHAG47l_22_GmYbBuwMf5aN0VOAQ>
+    <xmx:nGY4YVgMdnKmoC8R_W7Pa63J0rt6nzHxt3DoxmGHiRrc1xP-7Tc-wQ>
+    <xmx:nGY4YcrtYP1mqSguA_cmHxeKID5AfJpbhFLUsIpW3jUe5wj3WS7FZg>
+    <xmx:nGY4YdiSyYboxkJzttoJrC1k2DF-P5-mT9VjpM6V2oLJ8-1omQHUyw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Sep 2021 03:30:26 -0400 (EDT)
-Date:   Wed, 8 Sep 2021 09:30:25 +0200
+ 8 Sep 2021 03:30:35 -0400 (EDT)
+Date:   Wed, 8 Sep 2021 09:30:34 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Cai Huoqing <caihuoqing@baidu.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -70,26 +70,26 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun8i-a83t: Make use of the helper
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun50i-h6: Make use of the helper
  function devm_platform_ioremap_resource()
-Message-ID: <20210908073025.eug3vu77rgm3l6fl@gilmour>
-References: <20210907085213.4662-1-caihuoqing@baidu.com>
+Message-ID: <20210908073034.k6alewngdw2rzmmv@gilmour>
+References: <20210907085206.4611-1-caihuoqing@baidu.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iec32v7lqakop55a"
+        protocol="application/pgp-signature"; boundary="xe3e5pjhnlhjlmpa"
 Content-Disposition: inline
-In-Reply-To: <20210907085213.4662-1-caihuoqing@baidu.com>
+In-Reply-To: <20210907085206.4611-1-caihuoqing@baidu.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---iec32v7lqakop55a
+--xe3e5pjhnlhjlmpa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 07, 2021 at 04:52:12PM +0800, Cai Huoqing wrote:
+On Tue, Sep 07, 2021 at 04:52:05PM +0800, Cai Huoqing wrote:
 > Use the devm_platform_ioremap_resource() helper instead of
 > calling platform_get_resource() and devm_ioremap_resource()
 > separately
@@ -99,15 +99,15 @@ On Tue, Sep 07, 2021 at 04:52:12PM +0800, Cai Huoqing wrote:
 Applied, thanks
 Maxime
 
---iec32v7lqakop55a
+--xe3e5pjhnlhjlmpa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYThmkQAKCRDj7w1vZxhR
-xaK6AP4oxCW46ajZao1g7PXC2f9tUD9Y5GLLa068wAOvGhK62gEA5ozGL9W3IFy8
-Oum2Rm1Ihx6z6wnbfRBUwqkmU0xSiQk=
-=NNtO
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYThmmgAKCRDj7w1vZxhR
+xfufAP4geomUT/CABAy4IjXHboLJnyZ1AyZnrEyR6zywFYUbEQEAluMg1Kmmlm0Z
+p3SEer9qlAqG9oDxLgMtg1vbNXq7rwM=
+=Hkmh
 -----END PGP SIGNATURE-----
 
---iec32v7lqakop55a--
+--xe3e5pjhnlhjlmpa--
