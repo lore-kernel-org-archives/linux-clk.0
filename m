@@ -2,104 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCC2C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 19:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39129C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Sep 2021 07:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69C6161179
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Sep 2021 19:45:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BDCE61101
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Sep 2021 07:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352156AbhIHTqV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Sep 2021 15:46:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352075AbhIHTqT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Sep 2021 15:46:19 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12AAC061757
-        for <linux-clk@vger.kernel.org>; Wed,  8 Sep 2021 12:45:10 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id l10so3548532ilh.8
-        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 12:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cY82i5QFt3f+oSOKzp91m6FG0+h9u8XPOeGXpy/rmp8=;
-        b=PwjzusCCcXmrdIWclxRAbuawGLVSB/EhOV0thKoYUYRN8m+k7eb0NyC+XejhuiM7E2
-         Lo8AkpNDdkwirrJNaeci63OOGFVyta6AEUcmcJjX72OKeVxDTK5zyN55XXQEu43RY1tS
-         P2AQ+ZQLsdhztPCSDW3x+zG6Y8pSL2z1eP9g4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cY82i5QFt3f+oSOKzp91m6FG0+h9u8XPOeGXpy/rmp8=;
-        b=24aVjrj7DTNJCFcGU5v8a4K4mArf+Bj1Lx/0V00IbG+xwbLMMLwo3D0q1wWRXXmXc+
-         S0PUniYNqfbJaNKK0ooOF5nagUnE9rF8uKVGzQ0/CgG+Jkbu/wzggIAMvFwVketjHBsf
-         2si1QTnBcl7M439sgzJez5vAcCpUlwZOQ61StmyQZwv7udoyQ3hIxy3DoNdJDyI4yo7k
-         skr1haV9NnpDzYyHjvOq0mcLMUbkhe3NYMVy4k/oGrd6DSfuZnCO+9UUD3Ywys11gv/i
-         ahIA0TqZRgYJzz9tP+uLrvPG/dWjHmisOXLObDnID67n21ckeBx74uXNZ6v8cliA1cND
-         ZZaA==
-X-Gm-Message-State: AOAM530aomA0Qitl06HM8uK7oxbs50xzcUeQfSpVGSCehiGjmxqoRBQC
-        ccNjobAo9h3DNQwGE7UNZKoVrx1mu0zlcQ==
-X-Google-Smtp-Source: ABdhPJx4l9LIVt0SGiXsyRJwBIynDU71C7zh59YIgTgugIb9z+yF2mcKzUGZaTUJs6zBOC7DoFlUdg==
-X-Received: by 2002:a92:da04:: with SMTP id z4mr1179890ilm.101.1631130310135;
-        Wed, 08 Sep 2021 12:45:10 -0700 (PDT)
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com. [209.85.166.181])
-        by smtp.gmail.com with ESMTPSA id m5sm23042ila.10.2021.09.08.12.45.08
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 12:45:09 -0700 (PDT)
-Received: by mail-il1-f181.google.com with SMTP id x10so3539389ilm.12
-        for <linux-clk@vger.kernel.org>; Wed, 08 Sep 2021 12:45:08 -0700 (PDT)
-X-Received: by 2002:a05:6e02:e02:: with SMTP id a2mr1190609ilk.180.1631130308475;
- Wed, 08 Sep 2021 12:45:08 -0700 (PDT)
+        id S1352687AbhIIHlN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 03:41:13 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:41911 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350893AbhIIHlN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Sep 2021 03:41:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1631173205; x=1662709205;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=JwXOYUD0HXBuNjK22OA3wKgiWWPyrSWEyqKe+FxiyRw=;
+  b=U84PgxSMItujl28Eq2txD57rg0X6tFma3VRVMkcnQ2qsp/vtgty3ntaH
+   JbNhhVC5Au3WYFboMCgAdD1/nytZSpvCIrij1L4AiqkIYgEsG6toB9+5B
+   rmd6uE3tq4gydHhk1Np8ZoISQrVdxN1RpDl6PyoAKAv05qxJFu3DMTt+r
+   4rvu1XlSmRGXqNUyO68i460vh+HxnFyCgysR7ROuimKif2Zj8p5ma/alm
+   ZJB0MNEWD4bGAx7Ga8KfIUw0iFnzprlGzb02ltrxVKkccP93zQUcmfdlr
+   milbO0jX5XknMSeqNo8DzSVYbtZQfO6MUlukhiC06GhMTF+472tDAIj/g
+   A==;
+IronPort-SDR: ggStyoJAzQaZ18R9r+g6qvxJMZqLc2TgdiO8OeTUo0xBd08KtIKL1LVH/VOgRHVi7roIKNPYvl
+ ho7cQd7Pu5jysm6j20sqr/1FW06Fzx2VFkp8gOqWAVMOPi8lKWEpCz4TE21bR04XTERgKUjSw0
+ //vPvIHkx+ctYwu0CKPptl0D3Ze9ABaauP3nbfZY47hum3BgV40hRjNWTgYccqe1Fv3DWOoxfE
+ cpA7PWfiYxJqXucZ7ZCQmTc2t+z+wBvUeQqfc9Vyqgz8FljL7/h02Thq4a2ad8HNVLztkXwzlg
+ 1Sgsdmhp319hnKcfu5TkcoxK
+X-IronPort-AV: E=Sophos;i="5.85,279,1624345200"; 
+   d="scan'208";a="135355301"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Sep 2021 00:40:04 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 9 Sep 2021 00:40:03 -0700
+Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 9 Sep 2021 00:39:59 -0700
+From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+To:     <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+        <Eugen.Hristev@microchip.com>, <Kavyasree.Kotagiri@microchip.com>,
+        <Manohar.Puri@microchip.com>
+Subject: [PATCH v3 0/3] Add driver for lan966x Generic Clock Controller
+Date:   Thu, 9 Sep 2021 13:09:44 +0530
+Message-ID: <20210909073947.17438-1-kavyasree.kotagiri@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
- <20210908111337.v2.2.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid>
-In-Reply-To: <20210908111337.v2.2.If29cd838efbcee4450a62b8d84a99b23c86e0a3f@changeid>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 8 Sep 2021 12:44:57 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Ua21T1S33nx9oFRLT8bhJFMazA_5Gd_+DQ+GYWm=q1Dw@mail.gmail.com>
-Message-ID: <CAD=FV=Ua21T1S33nx9oFRLT8bhJFMazA_5Gd_+DQ+GYWm=q1Dw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: rockchip: rk3399: expose PCLK_COREDBG_{B,L}
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+This patch series adds a device driver for Generic Clock Controller
+of lan966x SoC.
 
-On Wed, Sep 8, 2021 at 11:14 AM Brian Norris <briannorris@chromium.org> wrote:
->
-> We have DT IDs for PCLK_COREDBG_L and PCLK_COREDBG_B, but we don't
-> actually expose them.
->
-> Note that this requires the previous patch (making "armclkl" and
-> "armclkb" into "critical" clocks) to prevent these clocks from taking
-> down the CPU.
->
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
->
-> Changes in v2:
->   - Split "CPU clocks are critical" to a new patch, to make it more
->     obvious
->
->  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+v2 -> v3:
+- Fixed dt_binding_check errors.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+v1 -> v2:
+- Updated license in dt-bindings.
+- Updated example provided for clock controller node.
+
+Kavyasree Kotagiri (3):
+  dt-bindings: clock: lan966x: Add binding includes for lan966x SoC
+    clock IDs
+  clk: lan966x: Add lan966x SoC clock driver
+  dt-bindings: clock: lan966x: Add LAN966X Clock Controller
+
+ .../bindings/clock/microchip,lan966x-gck.yaml |  64 +++++
+ drivers/clk/clk-lan966x.c                     | 235 ++++++++++++++++++
+ include/dt-bindings/clock/microchip,lan966x.h |  28 +++
+ 3 files changed, 327 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+ create mode 100644 drivers/clk/clk-lan966x.c
+ create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+
+-- 
+2.17.1
+
