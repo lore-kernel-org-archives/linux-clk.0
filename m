@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59316C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA7FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4586060C40
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD9826115A
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233284AbhIJAqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43688 "EHLO mail.kernel.org"
+        id S241362AbhIJAqp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232664AbhIJATD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:19:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 265AD610E9;
-        Fri, 10 Sep 2021 00:17:49 +0000 (UTC)
+        id S233216AbhIJATh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:19:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 59194610E9;
+        Fri, 10 Sep 2021 00:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233070;
-        bh=LUd+G3+gj7ABxoZULKlb7MG8flMMf70NCfz1c3d0LQ0=;
+        s=k20201202; t=1631233107;
+        bh=oa4wwDdzBYZNqvMFtcmTxt5aqRk6L4HRjI4WQ6iUDVY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZI8ZlbzxGMSaEtpLoBa+m2moxHIEHI2934mBnb4KaGCeeH3thmGk3kaeMSl/h3yMw
-         jAQFc7xuEs3qAPLirKa7cgIKR6xiBvLx2oaXwK2i3/cBX1a5fShxCWmf6Ga+GrMaIv
-         V+e3RrOOdjPbOk0w3fEOcn0OwiCk6OisapNBn19iG/CBMD9W/BdpS8486wWuSGJ2w1
-         +z6yvHjk7klz8/eXYnUJRtZtoW0m6M5ZEi5PqzWXCZJLHsi3dhP+D9xeZzVzccxvIM
-         zK0QBPDjDT8CM5yX3KvezmVMnVj8Rmt+mbG9Paz+N+mVFKTivb1Nz+MQrhnrWqoPzN
-         v8xrV/p9kIVew==
+        b=i+7RvikcYR3U9VJGnBTMoa+KffFM6WM9bI2HntaHmJwGwhM7UtNXyDP6cdoUq7ZIz
+         GX5D5gEh9ypnkoQnl1mjijRTfv5p++riUFTQbGoZmdZVBvw7C7v3Kk4G53ejlf1w1u
+         /FJoWo8ZZhqoBM51FOkiZLSGXXGSm5TOKCo4ENai9e2a6EE0KvIi5HlFkEkEfl5rrg
+         tQpW0W8SszBG99KA3RL7va4rWs6Fj/eoxeq42PIuG2ZoHw5GnZkZhG2QoLmdJCuSSX
+         O7/18tzklAUFpVqHNc75ghkFUCgwcAe6C5uud2ahgTVqfZexMRfQ4bNV1x0abjavgG
+         f+ZK8adVeudiQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+Cc:     Jon Lin <jon.lin@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.14 80/99] dt-bindings: clock: brcm,iproc-clocks: fix armpll properties
-Date:   Thu,  9 Sep 2021 20:15:39 -0400
-Message-Id: <20210910001558.173296-80-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.13 04/88] clk: rockchip: rk3036: fix up the sclk_sfc parent error
+Date:   Thu,  9 Sep 2021 20:16:56 -0400
+Message-Id: <20210910001820.174272-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
-References: <20210910001558.173296-1-sashal@kernel.org>
+In-Reply-To: <20210910001820.174272-1-sashal@kernel.org>
+References: <20210910001820.174272-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -53,79 +54,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: Jon Lin <jon.lin@rock-chips.com>
 
-[ Upstream commit 6880d94f84262e721f7da6eaa41cd8fd5d87164c ]
+[ Upstream commit 0be3df186f870cbde56b223c1ad7892109c9c440 ]
 
-armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
-with no cells. Adjust binding props #clock-cells and clock-output-names
-to handle them.
+Choose the correct pll
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-Link: https://lore.kernel.org/r/20210819052918.6753-1-zajec5@gmail.com
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lore.kernel.org/r/20210713094456.23288-5-jon.lin@rock-chips.com
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3036.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-index 1174c9aa9934..5ad147d265e6 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
-@@ -61,13 +61,30 @@ properties:
-     maxItems: 1
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 91d56ad45817..1986856d94b2 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -121,6 +121,7 @@ PNAME(mux_pll_src_3plls_p)	= { "apll", "dpll", "gpll" };
+ PNAME(mux_timer_p)		= { "xin24m", "pclk_peri_src" };
  
-   '#clock-cells':
--    const: 1
-+    true
+ PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll", "usb480m" };
++PNAME(mux_pll_src_dmyapll_dpll_gpll_xin24_p)   = { "dummy_apll", "dpll", "gpll", "xin24m" };
  
-   clock-output-names:
-     minItems: 1
-     maxItems: 45
+ PNAME(mux_mmc_src_p)	= { "apll", "dpll", "gpll", "xin24m" };
+ PNAME(mux_i2s_pre_p)	= { "i2s_src", "i2s_frac", "ext_i2s", "xin12m" };
+@@ -340,7 +341,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS, 10, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 4, GFLAGS),
  
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - brcm,cygnus-armpll
-+              - brcm,nsp-armpll
-+    then:
-+      properties:
-+        '#clock-cells':
-+          const: 0
-+    else:
-+      properties:
-+        '#clock-cells':
-+          const: 1
-+      required:
-+        - clock-output-names
-   - if:
-       properties:
-         compatible:
-@@ -358,7 +375,6 @@ required:
-   - reg
-   - clocks
-   - '#clock-cells'
--  - clock-output-names
+-	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_pll_src_apll_dpll_gpll_usb480m_p, 0,
++	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_pll_src_dmyapll_dpll_gpll_xin24_p, 0,
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
  
- additionalProperties: false
- 
-@@ -392,3 +408,10 @@ examples:
-         clocks = <&osc2>;
-         clock-output-names = "keypad", "adc/touch", "pwm";
-     };
-+  - |
-+    arm_clk@0 {
-+        #clock-cells = <0>;
-+        compatible = "brcm,nsp-armpll";
-+        clocks = <&osc>;
-+        reg = <0x0 0x1000>;
-+    };
 -- 
 2.30.2
 
