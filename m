@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EEDC43219
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59316C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CEF36120A
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4586060C40
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbhIJASU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:18:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43636 "EHLO mail.kernel.org"
+        id S233284AbhIJAqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230404AbhIJARk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:17:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 391BF61167;
-        Fri, 10 Sep 2021 00:16:29 +0000 (UTC)
+        id S232664AbhIJATD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:19:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 265AD610E9;
+        Fri, 10 Sep 2021 00:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631232990;
-        bh=UeNb57tKzwWRAwXejt0MpMewHQPDGOuLS/1eXFaB9G0=;
+        s=k20201202; t=1631233070;
+        bh=LUd+G3+gj7ABxoZULKlb7MG8flMMf70NCfz1c3d0LQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qkDQB2OwdKarijDbcMDzsE50d0o9mq/cJHpO8DXWN3mmyyEgi6q9gE7wU+d1PrUZ9
-         k5Z2g6IMkoj8DeUO+6e4IlHNubfO2/eeJrU8m2xdTrH/38pBL9lw7o50XBvd+ii7T9
-         AxfYplWAACfUZ2gMU1R3KTgTZU1Fe6lAF8cnfrF0AvyjIyXlgsQW39VtFpObAw0uVP
-         obE5OaPdyF4zlx4Hgg8t+pYdvkvZaQ75RbX9CddUmZtwQZ6RTNgxZdJG5BNUdUinke
-         4tgjgHKRyJGfXbU7WUrlGlQMMn+9Da93EwPnaUpFbA13K8+pkB6WZVTaYn+eANST3h
-         IfOW48AE7xpRA==
+        b=ZI8ZlbzxGMSaEtpLoBa+m2moxHIEHI2934mBnb4KaGCeeH3thmGk3kaeMSl/h3yMw
+         jAQFc7xuEs3qAPLirKa7cgIKR6xiBvLx2oaXwK2i3/cBX1a5fShxCWmf6Ga+GrMaIv
+         V+e3RrOOdjPbOk0w3fEOcn0OwiCk6OisapNBn19iG/CBMD9W/BdpS8486wWuSGJ2w1
+         +z6yvHjk7klz8/eXYnUJRtZtoW0m6M5ZEi5PqzWXCZJLHsi3dhP+D9xeZzVzccxvIM
+         zK0QBPDjDT8CM5yX3KvezmVMnVj8Rmt+mbG9Paz+N+mVFKTivb1Nz+MQrhnrWqoPzN
+         v8xrV/p9kIVew==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.14 23/99] clk: mediatek: Fix asymmetrical PLL enable and disable control
-Date:   Thu,  9 Sep 2021 20:14:42 -0400
-Message-Id: <20210910001558.173296-23-sashal@kernel.org>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.14 80/99] dt-bindings: clock: brcm,iproc-clocks: fix armpll properties
+Date:   Thu,  9 Sep 2021 20:15:39 -0400
+Message-Id: <20210910001558.173296-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
 References: <20210910001558.173296-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -54,86 +53,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-[ Upstream commit 7cc4e1bbe300c5cf610ece8eca6c6751b8bc74db ]
+[ Upstream commit 6880d94f84262e721f7da6eaa41cd8fd5d87164c ]
 
-In fact, the en_mask is a combination of divider enable mask
-and pll enable bit(bit0).
-Before this patch, we enabled both divider mask and bit0 in prepare(),
-but only cleared the bit0 in unprepare().
-In the future, we hope en_mask will only be used as divider enable mask.
-The enable register(CON0) will be set in 2 steps:
-first is divider mask, and then bit0 during prepare(), and vice versa.
-But considering backward compatibility, at this stage we allow en_mask
-to be a combination or a pure divider enable mask.
-And then we will make en_mask a pure divider enable mask in another
-following patch series.
+armpll clocks (available on Cygnus and Northstar Plus) are simple clocks
+with no cells. Adjust binding props #clock-cells and clock-output-names
+to handle them.
 
-Reviewed-by: Ikjoon Jang <ikjn@chromium.org>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Link: https://lore.kernel.org/r/20210726105719.15793-7-chun-jie.chen@mediatek.com
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Link: https://lore.kernel.org/r/20210819052918.6753-1-zajec5@gmail.com
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mediatek/clk-pll.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ .../bindings/clock/brcm,iproc-clocks.yaml     | 27 +++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index f440f2cd0b69..11ed5d1d1c36 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -238,6 +238,7 @@ static int mtk_pll_prepare(struct clk_hw *hw)
- {
- 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
- 	u32 r;
-+	u32 div_en_mask;
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+index 1174c9aa9934..5ad147d265e6 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.yaml
+@@ -61,13 +61,30 @@ properties:
+     maxItems: 1
  
- 	r = readl(pll->pwr_addr) | CON0_PWR_ON;
- 	writel(r, pll->pwr_addr);
-@@ -247,10 +248,15 @@ static int mtk_pll_prepare(struct clk_hw *hw)
- 	writel(r, pll->pwr_addr);
- 	udelay(1);
+   '#clock-cells':
+-    const: 1
++    true
  
--	r = readl(pll->base_addr + REG_CON0);
--	r |= pll->data->en_mask;
-+	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
- 	writel(r, pll->base_addr + REG_CON0);
+   clock-output-names:
+     minItems: 1
+     maxItems: 45
  
-+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
-+	if (div_en_mask) {
-+		r = readl(pll->base_addr + REG_CON0) | div_en_mask;
-+		writel(r, pll->base_addr + REG_CON0);
-+	}
-+
- 	__mtk_pll_tuner_enable(pll);
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - brcm,cygnus-armpll
++              - brcm,nsp-armpll
++    then:
++      properties:
++        '#clock-cells':
++          const: 0
++    else:
++      properties:
++        '#clock-cells':
++          const: 1
++      required:
++        - clock-output-names
+   - if:
+       properties:
+         compatible:
+@@ -358,7 +375,6 @@ required:
+   - reg
+   - clocks
+   - '#clock-cells'
+-  - clock-output-names
  
- 	udelay(20);
-@@ -268,6 +274,7 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
- {
- 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
- 	u32 r;
-+	u32 div_en_mask;
+ additionalProperties: false
  
- 	if (pll->data->flags & HAVE_RST_BAR) {
- 		r = readl(pll->base_addr + REG_CON0);
-@@ -277,8 +284,13 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
- 
- 	__mtk_pll_tuner_disable(pll);
- 
--	r = readl(pll->base_addr + REG_CON0);
--	r &= ~CON0_BASE_EN;
-+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
-+	if (div_en_mask) {
-+		r = readl(pll->base_addr + REG_CON0) & ~div_en_mask;
-+		writel(r, pll->base_addr + REG_CON0);
-+	}
-+
-+	r = readl(pll->base_addr + REG_CON0) & ~CON0_BASE_EN;
- 	writel(r, pll->base_addr + REG_CON0);
- 
- 	r = readl(pll->pwr_addr) | CON0_ISO_EN;
+@@ -392,3 +408,10 @@ examples:
+         clocks = <&osc2>;
+         clock-output-names = "keypad", "adc/touch", "pwm";
+     };
++  - |
++    arm_clk@0 {
++        #clock-cells = <0>;
++        compatible = "brcm,nsp-armpll";
++        clocks = <&osc>;
++        reg = <0x0 0x1000>;
++    };
 -- 
 2.30.2
 
