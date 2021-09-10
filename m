@@ -4,42 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FABAC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27A0C28B21
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8E65611C3
+	by mail.kernel.org (Postfix) with ESMTP id C7BF261108
 	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242362AbhIJAqx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49002 "EHLO mail.kernel.org"
+        id S242341AbhIJAqw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234520AbhIJAXf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:23:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 23BC2611BF;
-        Fri, 10 Sep 2021 00:22:24 +0000 (UTC)
+        id S234230AbhIJAXD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:23:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 529BC60FC0;
+        Fri, 10 Sep 2021 00:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233344;
-        bh=GqVvT05583abG+0Qx/af1oRJAEOMJ06DGhSO6ySIx4g=;
+        s=k20201202; t=1631233313;
+        bh=UeNb57tKzwWRAwXejt0MpMewHQPDGOuLS/1eXFaB9G0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWXIGWoUp9+GVmgqirkqtoezW+15ZBdOPwtqlbfIQWi31J45Saifa5elP5l1H/bim
-         wFtTHO0RAYdCPJNxm+rgyReWM+II1AxE9ca0w4J65B6mU6YMFTY/pC5UH4hrahPBpZ
-         ERov0QbVGc11LH75RleAc0hX+ueWaT54VSvod/n6l2KbdQlZD0/pMVw6JzUD6dp3Bz
-         fsmGGKxSyJsiGxaEJvpkfdlo5WIg8QYLeIJ7dfUoN+tck6dbV7Xw3OsSX0HpCS5orw
-         er0rPy2QCSopDLIt+vH0EahTQpJoZ5k6ALKPzgGAM3L34zW9Z4P3Bcm084k8ECJiw8
-         o0moweVKtCLvw==
+        b=Be7FV/LRdlaKpPOY4dEg7T8ICCJTyzvPRIOebeWotm2yCGlOBNQvxj9v/2aOljTP3
+         w+bTmmXc3eugpFoYpe75e7HnCVMhcnXgyPnB/wiv22qPdZmbIzuj5irSeuHwdSwZb8
+         w2BR7/S78VsPg5h3q07K34gX/Obi7TsGRQmLzV7L9FugEwAKgsaL1MQXMZQ3BLDNvr
+         C3WDWNex6VVT+aoqmLTedKwD/YtGKDA3nLyyc5RLJmpq4t618UV1047tCcnhdx/OpY
+         i66pebWVUcPFeyWOyWA2hPMRRbCndduXDbR+8afSv6iERgSnrLtc0gvQ/tlTe8GTwo
+         Q5aSmfyDwsDaw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 31/37] clk: zynqmp: Fix a memory leak
-Date:   Thu,  9 Sep 2021 20:21:36 -0400
-Message-Id: <20210910002143.175731-31-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 07/37] clk: mediatek: Fix asymmetrical PLL enable and disable control
+Date:   Thu,  9 Sep 2021 20:21:12 -0400
+Message-Id: <20210910002143.175731-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210910002143.175731-1-sashal@kernel.org>
 References: <20210910002143.175731-1-sashal@kernel.org>
@@ -51,33 +54,86 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 
-[ Upstream commit e7296d16ef7be11a6001be9bd89906ef55ab2405 ]
+[ Upstream commit 7cc4e1bbe300c5cf610ece8eca6c6751b8bc74db ]
 
-Fix a memory leak of mux.
+In fact, the en_mask is a combination of divider enable mask
+and pll enable bit(bit0).
+Before this patch, we enabled both divider mask and bit0 in prepare(),
+but only cleared the bit0 in unprepare().
+In the future, we hope en_mask will only be used as divider enable mask.
+The enable register(CON0) will be set in 2 steps:
+first is divider mask, and then bit0 during prepare(), and vice versa.
+But considering backward compatibility, at this stage we allow en_mask
+to be a combination or a pure divider enable mask.
+And then we will make en_mask a pure divider enable mask in another
+following patch series.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Link: https://lore.kernel.org/r/20210818065929.12835-3-shubhrajyoti.datta@xilinx.com
+Reviewed-by: Ikjoon Jang <ikjn@chromium.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Link: https://lore.kernel.org/r/20210726105719.15793-7-chun-jie.chen@mediatek.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/zynqmp/clk-mux-zynqmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-pll.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
-index 0af8f74c5fa5..d6a00e4074e2 100644
---- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
-+++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
-@@ -132,7 +132,7 @@ struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
- 	hw = &mux->hw;
- 	ret = clk_hw_register(NULL, hw);
- 	if (ret) {
--		kfree(hw);
-+		kfree(mux);
- 		hw = ERR_PTR(ret);
- 	}
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index f440f2cd0b69..11ed5d1d1c36 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -238,6 +238,7 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+ {
+ 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+ 	u32 r;
++	u32 div_en_mask;
  
+ 	r = readl(pll->pwr_addr) | CON0_PWR_ON;
+ 	writel(r, pll->pwr_addr);
+@@ -247,10 +248,15 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+ 	writel(r, pll->pwr_addr);
+ 	udelay(1);
+ 
+-	r = readl(pll->base_addr + REG_CON0);
+-	r |= pll->data->en_mask;
++	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
+ 	writel(r, pll->base_addr + REG_CON0);
+ 
++	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
++	if (div_en_mask) {
++		r = readl(pll->base_addr + REG_CON0) | div_en_mask;
++		writel(r, pll->base_addr + REG_CON0);
++	}
++
+ 	__mtk_pll_tuner_enable(pll);
+ 
+ 	udelay(20);
+@@ -268,6 +274,7 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+ {
+ 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+ 	u32 r;
++	u32 div_en_mask;
+ 
+ 	if (pll->data->flags & HAVE_RST_BAR) {
+ 		r = readl(pll->base_addr + REG_CON0);
+@@ -277,8 +284,13 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+ 
+ 	__mtk_pll_tuner_disable(pll);
+ 
+-	r = readl(pll->base_addr + REG_CON0);
+-	r &= ~CON0_BASE_EN;
++	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
++	if (div_en_mask) {
++		r = readl(pll->base_addr + REG_CON0) & ~div_en_mask;
++		writel(r, pll->base_addr + REG_CON0);
++	}
++
++	r = readl(pll->base_addr + REG_CON0) & ~CON0_BASE_EN;
+ 	writel(r, pll->base_addr + REG_CON0);
+ 
+ 	r = readl(pll->pwr_addr) | CON0_ISO_EN;
 -- 
 2.30.2
 
