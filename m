@@ -7,45 +7,42 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA7FC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DCFC41535
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD9826115A
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12DA06115A
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241362AbhIJAqp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
+        id S233199AbhIJAqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233216AbhIJATh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:19:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 59194610E9;
-        Fri, 10 Sep 2021 00:18:26 +0000 (UTC)
+        id S232657AbhIJATD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:19:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BD15861186;
+        Fri, 10 Sep 2021 00:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233107;
-        bh=oa4wwDdzBYZNqvMFtcmTxt5aqRk6L4HRjI4WQ6iUDVY=;
+        s=k20201202; t=1631233068;
+        bh=7Wc3Q4Vf/QiCCyd/0l4lfoGgAJzafC/sVQpLEuQlXTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+7RvikcYR3U9VJGnBTMoa+KffFM6WM9bI2HntaHmJwGwhM7UtNXyDP6cdoUq7ZIz
-         GX5D5gEh9ypnkoQnl1mjijRTfv5p++riUFTQbGoZmdZVBvw7C7v3Kk4G53ejlf1w1u
-         /FJoWo8ZZhqoBM51FOkiZLSGXXGSm5TOKCo4ENai9e2a6EE0KvIi5HlFkEkEfl5rrg
-         tQpW0W8SszBG99KA3RL7va4rWs6Fj/eoxeq42PIuG2ZoHw5GnZkZhG2QoLmdJCuSSX
-         O7/18tzklAUFpVqHNc75ghkFUCgwcAe6C5uud2ahgTVqfZexMRfQ4bNV1x0abjavgG
-         f+ZK8adVeudiQ==
+        b=Xi/jn7GZ5PY92um7CkL66g29+mdDp8wIBzcwlsjoG993pMwTW1sgjMQdLfXIGkjmP
+         97QTOuIFVNPhLEBtI2M3OzNNw7l6y+WrRinVaz/RAd2s9JX2ce66PhZX32ctaYTLOJ
+         0uncBXglWVGEZAu2DbhQeR8pJ5IWjOZSKxVCN78lm5//isu/PLzLJ3Lw2XZvIew+//
+         pcA49ubzVyCRed+zjvC1wVbUbX7LxUcaiSgGI2yTgC/gCgklbMbBFJrlNkHg7aqjCs
+         6dnq76/3LW3WRBYsKoVgRJ4ulO60lFBTG+y25wLRzpcv/CxK6IyoekAigdyC1HbCwA
+         9f5zQ9TnE3H/w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Lin <jon.lin@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.13 04/88] clk: rockchip: rk3036: fix up the sclk_sfc parent error
-Date:   Thu,  9 Sep 2021 20:16:56 -0400
-Message-Id: <20210910001820.174272-4-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.14 79/99] clk: zynqmp: Fix a memory leak
+Date:   Thu,  9 Sep 2021 20:15:38 -0400
+Message-Id: <20210910001558.173296-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210910001820.174272-1-sashal@kernel.org>
-References: <20210910001820.174272-1-sashal@kernel.org>
+In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
+References: <20210910001558.173296-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -54,42 +51,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jon Lin <jon.lin@rock-chips.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-[ Upstream commit 0be3df186f870cbde56b223c1ad7892109c9c440 ]
+[ Upstream commit e7296d16ef7be11a6001be9bd89906ef55ab2405 ]
 
-Choose the correct pll
+Fix a memory leak of mux.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lore.kernel.org/r/20210713094456.23288-5-jon.lin@rock-chips.com
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Link: https://lore.kernel.org/r/20210818065929.12835-3-shubhrajyoti.datta@xilinx.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3036.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/zynqmp/clk-mux-zynqmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 91d56ad45817..1986856d94b2 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -121,6 +121,7 @@ PNAME(mux_pll_src_3plls_p)	= { "apll", "dpll", "gpll" };
- PNAME(mux_timer_p)		= { "xin24m", "pclk_peri_src" };
- 
- PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll", "usb480m" };
-+PNAME(mux_pll_src_dmyapll_dpll_gpll_xin24_p)   = { "dummy_apll", "dpll", "gpll", "xin24m" };
- 
- PNAME(mux_mmc_src_p)	= { "apll", "dpll", "gpll", "xin24m" };
- PNAME(mux_i2s_pre_p)	= { "i2s_src", "i2s_frac", "ext_i2s", "xin12m" };
-@@ -340,7 +341,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS, 10, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(10), 4, GFLAGS),
- 
--	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_pll_src_apll_dpll_gpll_usb480m_p, 0,
-+	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_pll_src_dmyapll_dpll_gpll_xin24_p, 0,
- 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 157d4a960bf4..17afce594f28 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -159,7 +159,7 @@ struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
+ 	hw = &mux->hw;
+ 	ret = clk_hw_register(NULL, hw);
+ 	if (ret) {
+-		kfree(hw);
++		kfree(mux);
+ 		hw = ERR_PTR(ret);
+ 	}
  
 -- 
 2.30.2
