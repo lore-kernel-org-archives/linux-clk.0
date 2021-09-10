@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB226C4167B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01255C4167E
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBF8C61179
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB11E61108
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242442AbhIJAq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S232525AbhIJAq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 9 Sep 2021 20:46:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49556 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234797AbhIJAYV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:24:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E26860FDA;
-        Fri, 10 Sep 2021 00:23:10 +0000 (UTC)
+        id S234854AbhIJAYu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:24:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7BD6F611BF;
+        Fri, 10 Sep 2021 00:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233391;
-        bh=W1W9y/9p0SOx2kGkEmxow82SYjxCXKtIlDxwA6pa9Hs=;
+        s=k20201202; t=1631233420;
+        bh=hHfun2QuFXBMbzhgZApLvyuprJpsbQfb7C8DV7W5Exw=;
         h=From:To:Cc:Subject:Date:From;
-        b=STzDfhRjK0HqTf0EdmT6kQKFB2eVthBtTJNdG7h1x47J1j8CHrNg1blpj3GGybz8e
-         ziIFOYDEioEAuwUQkiWwdsFFRvLnTg+25FDAS1j0/vralP8y4vBbaahqSygomQT/bw
-         GTLFo/KBF2H2uHqS/1rl5+GvVkPjCvNs8ZPhNby/Fos4jK+GT9R2zPH5tU6P+zSmBx
-         SUdTg6Fdlx3lPexkr28qdN30IzHSyUR5Y8rSz29bML8a/aT7UrYZK75UF0bgEgJotU
-         SbgmBGtMqRUIOCZckK23oaEBf0FOTxrRTgIS7R9bhhRZWaiNEHTkFfDCmf+Y2hscrF
-         9E/dyfRzTtjXQ==
+        b=ulKKKPa2lMCRDxTTKfp0A3jVohXS2PQBZHcamO4UIzl6cj7nCegXU4hZ2m3u94sEe
+         tCiburl82ZRYkug6YBitbz0fxsDL6xEd58V5p4jzAiYOAtB+C1x7KxU7T9pDjVUYtF
+         a0TbjcF4YRl5A/kOQkTESvoG25UPCxjS7w6gWNwPNRaWRgmovwE7EW+uyi0XWO9Efd
+         qdy67/VjoRqua99xyEIEQlm0w8PAUkF7hKEv4NfenjGbM6CEHh/X5IP6OsgOiKNyca
+         EzZbi1NdZQP71vz4xFx72Ktpl13TlKh3nbEU/XhvIYYakj7ojbnwPz1T5zViP5Y3Db
+         FNaWDxgRPgbCQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jon Lin <jon.lin@rock-chips.com>,
@@ -40,9 +40,9 @@ Cc:     Jon Lin <jon.lin@rock-chips.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 01/19] clk: rockchip: rk3036: fix up the sclk_sfc parent error
-Date:   Thu,  9 Sep 2021 20:22:51 -0400
-Message-Id: <20210910002309.176412-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/17] clk: rockchip: rk3036: fix up the sclk_sfc parent error
+Date:   Thu,  9 Sep 2021 20:23:22 -0400
+Message-Id: <20210910002338.176677-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 X-stable: review
@@ -69,7 +69,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index c3001980dbdc..ee3f6462620f 100644
+index dcde70f4c105..597cc9b781ea 100644
 --- a/drivers/clk/rockchip/clk-rk3036.c
 +++ b/drivers/clk/rockchip/clk-rk3036.c
 @@ -128,6 +128,7 @@ PNAME(mux_pll_src_3plls_p)	= { "apll", "dpll", "gpll" };
