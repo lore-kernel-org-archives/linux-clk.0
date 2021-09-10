@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD6CC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB226C4167B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8B946115A
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBF8C61179
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242383AbhIJAqy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49134 "EHLO mail.kernel.org"
+        id S242442AbhIJAq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234589AbhIJAXq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:23:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1E516604DC;
-        Fri, 10 Sep 2021 00:22:35 +0000 (UTC)
+        id S234797AbhIJAYV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:24:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E26860FDA;
+        Fri, 10 Sep 2021 00:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233356;
+        s=k20201202; t=1631233391;
         bh=W1W9y/9p0SOx2kGkEmxow82SYjxCXKtIlDxwA6pa9Hs=;
         h=From:To:Cc:Subject:Date:From;
-        b=MgzXHlifNV3avtliZGx1s+v9c/huoaKb1BIvr7IWeHABlB4Sd1+fxqtV/V8dmQFuz
-         FP5SP1dDMw2MmVE/FV+2PBdagJisXlckBz308NIOaTVed2sojvOWiL6zySIii9aC3F
-         SHMoeo99LS4yGo+qePX/P71OQMFfMejgGmmbsU+OVYoNi419rRfQHRn6iTF/Gx0bap
-         aHUWwpQFt6cmhj64KqhIyImh+hpoAMAd7NGExUWdovyA1uattXeZxa84FI1P8dGzoN
-         elSzcjMEl8thswmdX5loZtuOoOPeghJrSJ3ok3SmnR00kLZXZ1ddlshGWa4mCmj2IF
-         /hdYXNxsUEL5g==
+        b=STzDfhRjK0HqTf0EdmT6kQKFB2eVthBtTJNdG7h1x47J1j8CHrNg1blpj3GGybz8e
+         ziIFOYDEioEAuwUQkiWwdsFFRvLnTg+25FDAS1j0/vralP8y4vBbaahqSygomQT/bw
+         GTLFo/KBF2H2uHqS/1rl5+GvVkPjCvNs8ZPhNby/Fos4jK+GT9R2zPH5tU6P+zSmBx
+         SUdTg6Fdlx3lPexkr28qdN30IzHSyUR5Y8rSz29bML8a/aT7UrYZK75UF0bgEgJotU
+         SbgmBGtMqRUIOCZckK23oaEBf0FOTxrRTgIS7R9bhhRZWaiNEHTkFfDCmf+Y2hscrF
+         9E/dyfRzTtjXQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jon Lin <jon.lin@rock-chips.com>,
@@ -40,9 +40,9 @@ Cc:     Jon Lin <jon.lin@rock-chips.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 01/25] clk: rockchip: rk3036: fix up the sclk_sfc parent error
-Date:   Thu,  9 Sep 2021 20:22:09 -0400
-Message-Id: <20210910002234.176125-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/19] clk: rockchip: rk3036: fix up the sclk_sfc parent error
+Date:   Thu,  9 Sep 2021 20:22:51 -0400
+Message-Id: <20210910002309.176412-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 X-stable: review
