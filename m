@@ -5,29 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC88C41535
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C953C28B58
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64EF4611F2
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 358D161205
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235770AbhIKMPS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Sep 2021 08:15:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33712 "EHLO
+        id S235799AbhIKMPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Sep 2021 08:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235817AbhIKMPP (ORCPT
+        with ESMTP id S235836AbhIKMPP (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 08:15:15 -0400
 Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4621BC061574
-        for <linux-clk@vger.kernel.org>; Sat, 11 Sep 2021 05:14:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D986C061767;
+        Sat, 11 Sep 2021 05:14:03 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4D2973F432;
-        Sat, 11 Sep 2021 14:14:00 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 12B523F43B;
+        Sat, 11 Sep 2021 14:14:01 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
@@ -45,9 +45,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] dt-bindings: clocks: qcom,gcc-msm8998: Reflect actually referenced clks
-Date:   Sat, 11 Sep 2021 14:13:38 +0200
-Message-Id: <20210911121340.261920-7-marijn.suijten@somainline.org>
+Subject: [PATCH 7/8] clk: qcom: gpucc-msm8998: Remove unnecessary fallbacks to global clocks
+Date:   Sat, 11 Sep 2021 14:13:39 +0200
+Message-Id: <20210911121340.261920-8-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210911121340.261920-1-marijn.suijten@somainline.org>
 References: <20210911121340.261920-1-marijn.suijten@somainline.org>
@@ -57,70 +57,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some of these clocks are not referenced by the driver at all whereas
-aud_ref_clk and core_bi_pll_test_se are but were missing from the
-bindings.  These clocks are optional (and not currently provided
-anywhere) while "xo" and "sleep_clk" are mandatory.
+A previous patch removes the "xo" clock from the global namespace making
+it impossible to acquire by that ".name".  The device-tree for msm8998
+already provides the "xo" and "gpll0" clock since the addition of the
+gpucc node making it unnecessary to have this fallback at all.
 
-Note that none of these clocks were used beforehand as the driver
-referenced them by their global name.
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- .../bindings/clock/qcom,gcc-msm8998.yaml      | 26 ++++++-------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/clk/qcom/gpucc-msm8998.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-index a0bb713929b0..8151c0a05649 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-@@ -25,21 +25,17 @@ properties:
-     items:
-       - description: Board XO source
-       - description: Sleep clock source
--      - description: USB 3.0 phy pipe clock
--      - description: UFS phy rx symbol clock for pipe 0
--      - description: UFS phy rx symbol clock for pipe 1
--      - description: UFS phy tx symbol clock
--      - description: PCIE phy pipe clock
-+      - description: Audio reference clock (Optional clock)
-+      - description: PLL test clock source (Optional clock)
-+    minItems: 2
+diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
+index 3ac6fbfbd414..a925ac90018d 100644
+--- a/drivers/clk/qcom/gpucc-msm8998.c
++++ b/drivers/clk/qcom/gpucc-msm8998.c
+@@ -40,8 +40,7 @@ static struct clk_branch gpucc_cxo_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpucc_cxo_clk",
+ 			.parent_data = &(const struct clk_parent_data){
+-				.fw_name = "xo",
+-				.name = "xo"
++				.fw_name = "xo"
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_branch2_ops,
+@@ -99,7 +98,7 @@ static const struct parent_map gpu_xo_gpll0_map[] = {
  
-   clock-names:
-     items:
-       - const: xo
-       - const: sleep_clk
--      - const: usb3_pipe
--      - const: ufs_rx_symbol0
--      - const: ufs_rx_symbol1
--      - const: ufs_tx_symbol0
--      - const: pcie0_pipe
-+      - const: aud_ref_clk # Optional clock
-+      - const: core_bi_pll_test_se # Optional clock
-+    minItems: 2
+ static const struct clk_parent_data gpu_xo_gpll0[] = {
+ 	{ .hw = &gpucc_cxo_clk.clkr.hw },
+-	{ .fw_name = "gpll0", .name = "gpll0" },
++	{ .fw_name = "gpll0" },
+ };
  
-   '#clock-cells':
-     const: 1
-@@ -80,16 +76,10 @@ examples:
-       clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-                <&sleep>,
-                <0>,
--               <0>,
--               <0>,
--               <0>,
-                <0>;
-       clock-names = "xo",
-                     "sleep_clk",
--                    "usb3_pipe",
--                    "ufs_rx_symbol0",
--                    "ufs_rx_symbol1",
--                    "ufs_tx_symbol0",
--                    "pcie0_pipe";
-+                    "aud_ref_clk",
-+                    "core_bi_pll_test_se";
-     };
- ...
+ static const struct parent_map gpu_xo_gpupll0_map[] = {
 -- 
 2.33.0
 
