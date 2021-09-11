@@ -2,28 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07847C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 13:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA44CC433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 13:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5438611F2
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 13:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 945B4611CC
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 13:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237282AbhIKNWe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Sep 2021 09:22:34 -0400
-Received: from m-r1.th.seeweb.it ([5.144.164.170]:32771 "EHLO
-        m-r1.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237717AbhIKNUl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 09:20:41 -0400
+        id S237087AbhIKNW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Sep 2021 09:22:57 -0400
+Received: from relay04.th.seeweb.it ([5.144.164.165]:57071 "EHLO
+        relay04.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237244AbhIKNUq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 09:20:46 -0400
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 776401F50C;
-        Sat, 11 Sep 2021 15:19:23 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1218E1F50A;
+        Sat, 11 Sep 2021 15:19:31 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
@@ -48,56 +49,68 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org
-Subject: [PATCH v3 0/2] Use "ref" clocks from firmware for DSI PLL VCO parent
-Date:   Sat, 11 Sep 2021 15:19:19 +0200
-Message-Id: <20210911131922.387964-1-marijn.suijten@somainline.org>
+Subject: [PATCH v3 2/2] clk: qcom: gcc-sdm660: Remove transient global "xo" clock
+Date:   Sat, 11 Sep 2021 15:19:21 +0200
+Message-Id: <20210911131922.387964-3-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210911131922.387964-1-marijn.suijten@somainline.org>
+References: <20210911131922.387964-1-marijn.suijten@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All DSI PHY/PLL drivers were referencing their VCO parent clock by a
-global name, most of which don't exist or have been renamed.  These
-clock drivers seem to function fine without that except the 14nm driver
-for sdm6xx [1].
+The DSI PHY/PLL was relying on a global "xo" clock to be found, but the
+real clock is named "xo_board" in the DT.  The standard nowadays is to
+never use global clock names anymore but require the firmware (DT) to
+provide every clock binding explicitly with .fw_name.  The DSI PLLs have
+since been converted to this mechanism (specifically 14nm for SDM660)
+and this transient clock can now be removed.
 
-At the same time all DTs provide a "ref" clock as per the requirements
-of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
-that clock to use without relying on a global clock name, so that all
-dependencies are explicitly defined in DT (the firmware) in the end.
+This issue was originally discovered in:
+https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
+and prevented the removal of "xo" at that time.
 
-[1]: https://lore.kernel.org/linux-arm-msm/386db1a6-a1cd-3c7d-a88e-dc83f8a1be96@somainline.org/
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/gcc-sdm660.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-Changes since v2:
-  - Added Stephen's a-b and Angelo's r-bs;
-  - Added .name fallback in msm8974's dsi_phy_28nm for a more graceful
-    transition period;
-  - Documented possible breakage in 1/2 if firmware isn't updated in
-    parallel with the kernel.
-
-Changes since v1:
-  - Dropped "arm: dts: qcom: apq8064: Use 27MHz PXO clock as DSI PLL
-    reference" which has made its way into 5.15-fixes in advance of this
-    patchset landing in 5.16;
-  - Added Fixes: tags for commits that added missing "ref" clocks to DT
-    while this firmware clock was never used (until this patchset);
-  - Documented missing/wrong and later-added clocks (by aforementioned
-    patches) in patch 1/2 more clearly.
-
-Marijn Suijten (2):
-  drm/msm/dsi: Use "ref" fw clock instead of global name for VCO parent
-  clk: qcom: gcc-sdm660: Remove transient global "xo" clock
-
- drivers/clk/qcom/gcc-sdm660.c                   | 14 --------------
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  4 +++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  4 +++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      |  4 +++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  4 +++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       |  4 +++-
- 6 files changed, 15 insertions(+), 19 deletions(-)
-
---
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index 7fb5adf7fa01..429d12193146 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -37,19 +37,6 @@ enum {
+ 	P_GPLL1_EARLY_DIV,
+ };
+ 
+-static struct clk_fixed_factor xo = {
+-	.mult = 1,
+-	.div = 1,
+-	.hw.init = &(struct clk_init_data){
+-		.name = "xo",
+-		.parent_data = &(const struct clk_parent_data) {
+-			.fw_name = "xo"
+-		},
+-		.num_parents = 1,
+-		.ops = &clk_fixed_factor_ops,
+-	},
+-};
+-
+ static struct clk_alpha_pll gpll0_early = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+@@ -2280,7 +2267,6 @@ static struct gdsc pcie_0_gdsc = {
+ };
+ 
+ static struct clk_hw *gcc_sdm660_hws[] = {
+-	&xo.hw,
+ 	&gpll0_early_div.hw,
+ 	&gpll1_early_div.hw,
+ };
+-- 
 2.33.0
 
