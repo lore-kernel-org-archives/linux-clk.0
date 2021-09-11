@@ -2,31 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000E1C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 18:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C20CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 02:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D64AE61209
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Sep 2021 18:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32ECE60FE3
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 02:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233843AbhIJSqG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Sep 2021 14:46:06 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:59609 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233117AbhIJSn6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Sep 2021 14:43:58 -0400
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 30EC7240005;
-        Fri, 10 Sep 2021 18:42:44 +0000 (UTC)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+        id S235179AbhIKCeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Sep 2021 22:34:22 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:53763 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235128AbhIKCeV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Sep 2021 22:34:21 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 44C92580D36;
+        Fri, 10 Sep 2021 22:32:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 10 Sep 2021 22:32:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=9
+        wn7RP7Sux9NYgDDcEExp5Udsa+3BvnVWNaKgQ+xtco=; b=C54qrA6kMQY/5XFcT
+        HMkZjs6lh0FZRguVrhwIIxrnEospagqHftUvoYjDpwCm52GukttO6NgXCKLjCWd4
+        IPQ3HnUc0sspZBvEeG11N3NxPIxPAELxHPmDPkzwN3D+a7y2U4Ymnf6kKO0tEzpv
+        /T/jlT9JM4ZHHQMfm51jRmmRJM+2NUJGu+dVVMSR/EnecBMYkKm0Ot+TNRo2fmM3
+        8Ss6bNrbFwpdFdmjxPq8cgRIepxZ9WZcFZMurqPQFuOCLKhn7jkwsw3i+L/oBHvd
+        YQXYsWdsYjxJCqUVq1BUAVjMV41QYSVZ4zuYmE114hVUuAozGtptkODL8ggpSKn9
+        XLh9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=9wn7RP7Sux9NYgDDcEExp5Udsa+3BvnVWNaKgQ+xt
+        co=; b=qtYIC427B9zI8tzmC3wd15AoaBFHpEDOC4H603KsCIB0FiBofs4wkvwg7
+        uS9gkqjTxxsnurrBUh9uTLiFVU5y/AU2WqyvWkXFQhqXH9SSjNvCFrzXfYDv80zD
+        Dbjd2JwpGgoW3IfzTZd41DZ0DI+/8emaVG65seFbSczgiZoiO7LGDmtkP61nGiNO
+        q29dU+yrnOCwwDHmCcS1rC/Q004jB9wAxkp0Jvt6Aq4/6Pg9a5cQCOG0tJaXKWwm
+        piUEidBdJvly9SUKPlltO/LYrX7RUGfolQSptC905Qh01jToxPFZNY+rO2jnFMQS
+        5lAtst/0U/MIehzGvTp8tBGhbfKkA==
+X-ME-Sender: <xms:UhU8YdLgdDXoWKC5WM2HQdQzOWdceZhNFSM4ZDIHW6NksC96cac9SQ>
+    <xme:UhU8YZKBTmqsKcPVzbIpFt3Yxh47OT_TXobfh9KV4CulVI2nzLQsjQCI3W3wZXy7w
+    JGzunryDsbkl61_ow>
+X-ME-Received: <xmr:UhU8YVuvztFyxK92St4z7JM8euPi079MLna5__K8AbtHxfeDfOc6Zt95nHudd6fSdDF6DSaxsOn2at7cJ1owmDaQcN290xAoXC-DMGRMN1IRWRpVWg83Sp9V5A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudegvddgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepgfevffetleehffejueekvdekvdeitdehveegfeekheeuieeiueet
+    uefgtedtgeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:UhU8YebXU91bKJe0VzOMREaX9RL4z3XY_MEMKJXqUxxdu3mFSIg-dA>
+    <xmx:UhU8YUZV90hxitD4BKT3lUTXoRgZFq4zPto02grRmhBVZSp61WGIrw>
+    <xmx:UhU8YSDPWhl62RYdMbH_U3KEA4Rr7McORTS2QeDVX2eLVn4djGBtdw>
+    <xmx:VRU8YUMXGyMvhK50DVWRrnQwwYX_iPnsyiYrYSDrtx6K3yINWpvIZw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 10 Sep 2021 22:32:49 -0400 (EDT)
+Subject: Re: [PATCH 09/22] ARM: dts: sun8i: v3s: Add nodes for MIPI CSI-2
+ support
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,51 +74,146 @@ Cc:     Yong Deng <yong.deng@magewell.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Helen Koike <helen.koike@collabora.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 19/22] soc: sunxi: mbus: Add A31 ISP compatibles to the list
-Date:   Fri, 10 Sep 2021 20:41:44 +0200
-Message-Id: <20210910184147.336618-20-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
 References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
+ <20210910184147.336618-10-paul.kocialkowski@bootlin.com>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <483288cb-d9fa-4581-7986-d15c4aa27769@sholland.org>
+Date:   Fri, 10 Sep 2021 21:32:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210910184147.336618-10-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The A31 ISP sits on the mbus and requires the usual bus address
-adaptation. Add its compatibles to the list.
+On 9/10/21 1:41 PM, Paul Kocialkowski wrote:
+> MIPI CSI-2 is supported on the V3s with an A31-based MIPI CSI-2 bridge
+> controller. The controller uses a separate D-PHY, which is the same
+> that is otherwise used for MIPI DSI, but used in Rx mode.
+> 
+> On the V3s, the CSI0 controller is dedicated to MIPI CSI-2 as it does
+> not have access to any parallel interface pins.
+> 
+> Add all the necessary nodes (CSI0, MIPI CSI-2 bridge and D-PHY) to
+> support the MIPI CSI-2 interface.
+> 
+> Note that a fwnode graph link is created between CSI0 and MIPI CSI-2
+> even when no sensor is connected. This will result in a probe failure
+> for the controller as long as no sensor is connected but this is fine
+> since no other interface is available.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm/boot/dts/sun8i-v3s.dtsi | 72 ++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+> index a77b63362a1d..ec7fa6459547 100644
+> --- a/arch/arm/boot/dts/sun8i-v3s.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+> @@ -612,6 +612,34 @@ spi0: spi@1c68000 {
+>  			#size-cells = <0>;
+>  		};
+>  
+> +		csi0: camera@1cb0000 {
+> +			compatible = "allwinner,sun8i-v3s-csi";
+> +			reg = <0x01cb0000 0x1000>;
+> +			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_CSI1_SCLK>,
+> +				 <&ccu CLK_DRAM_CSI>;
+> +			clock-names = "bus", "mod", "ram";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			status = "disabled";
+> +
+> +			assigned-clocks = <&ccu CLK_CSI1_SCLK>;
+> +			assigned-clock-parents = <&ccu CLK_PLL_ISP>;
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					csi0_in_mipi_csi2: endpoint {
+> +						remote-endpoint = <&mipi_csi2_out_csi0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+>  		csi1: camera@1cb4000 {
+>  			compatible = "allwinner,sun8i-v3s-csi";
+>  			reg = <0x01cb4000 0x3000>;
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/soc/sunxi/sunxi_mbus.c | 2 ++
- 1 file changed, 2 insertions(+)
+All of the new nodes should be added above this one, to maintain unit
+address order.
 
-diff --git a/drivers/soc/sunxi/sunxi_mbus.c b/drivers/soc/sunxi/sunxi_mbus.c
-index d90e4a264b6f..7f0079ea30b1 100644
---- a/drivers/soc/sunxi/sunxi_mbus.c
-+++ b/drivers/soc/sunxi/sunxi_mbus.c
-@@ -37,6 +37,7 @@ static const char * const sunxi_mbus_devices[] = {
- 	"allwinner,sun5i-a13-video-engine",
- 	"allwinner,sun6i-a31-csi",
- 	"allwinner,sun6i-a31-display-backend",
-+	"allwinner,sun6i-a31-isp",
- 	"allwinner,sun7i-a20-csi0",
- 	"allwinner,sun7i-a20-display-backend",
- 	"allwinner,sun7i-a20-display-frontend",
-@@ -50,6 +51,7 @@ static const char * const sunxi_mbus_devices[] = {
- 	"allwinner,sun8i-h3-csi",
- 	"allwinner,sun8i-h3-video-engine",
- 	"allwinner,sun8i-v3s-csi",
-+	"allwinner,sun8i-v3s-isp",
- 	"allwinner,sun9i-a80-display-backend",
- 	"allwinner,sun50i-a64-csi",
- 	"allwinner,sun50i-a64-video-engine",
--- 
-2.32.0
+Regards,
+Samuel
+
+> @@ -637,5 +665,49 @@ gic: interrupt-controller@1c81000 {
+>  			#interrupt-cells = <3>;
+>  			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>  		};
+> +
+> +		mipi_csi2: csi@1cb1000 {
+> +			compatible = "allwinner,sun8i-v3s-mipi-csi2",
+> +				     "allwinner,sun6i-a31-mipi-csi2";
+> +			reg = <0x01cb1000 0x1000>;
+> +			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_CSI1_SCLK>;
+> +			clock-names = "bus", "mod";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			status = "disabled";
+> +
+> +			phys = <&dphy>;
+> +			phy-names = "dphy";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				mipi_csi2_in: port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				mipi_csi2_out: port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csi2_out_csi0: endpoint {
+> +						remote-endpoint = <&csi0_in_mipi_csi2>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		dphy: d-phy@1cb2000 {
+> +			compatible = "allwinner,sun6i-a31-mipi-dphy";
+> +			reg = <0x01cb2000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_MIPI_CSI>;
+> +			clock-names = "bus", "mod";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			allwinner,direction = "rx";
+> +			status = "disabled";
+> +			#phy-cells = <0>;
+> +		};
+>  	};
+>  };
+> 
 
