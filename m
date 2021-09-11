@@ -2,142 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D54C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 02:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E94C4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8B0561213
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 02:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0CD46121D
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:13:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235202AbhIKCzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Sep 2021 22:55:21 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:39497 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231864AbhIKCzV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Sep 2021 22:55:21 -0400
-Received: by mail-lf1-f43.google.com with SMTP id i25so4060745lfg.6;
-        Fri, 10 Sep 2021 19:54:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=HrzUj2kOKfp3nelOA5Rh3JYBH3kW210KP3kKzozo3hQ=;
-        b=kgm4E0OyVEQndM7D0SAxVtMvYCKl3CHDQ7rpkWckfK22kHk7v7+4tnKTsVR+tPWZP2
-         KlONujkQc9kEGaoWfjtSKq4BEM8Ov3hhgOphWEjaarAH1oQI7NbkSMkLve2Q0dwggrhu
-         twD3qfF6dhQp/Brk8MELjBKKg8jKsCGNZC3hEcfib12dIjajxQX90GG+Q9y/c8TLcXnU
-         uscfFwZky2GtEgNMiKyiWW5dmp1FfHJhp/sMBhd8yGLeyBRrFP0kQEpJPyeEFmW6vf0M
-         r4T3lAaumoMQIVcs1fwaXXuUQdWWSp//+JZ5JMZG9PsTB/jOw7VcpjU/S+AlElcTWbj9
-         e8EQ==
-X-Gm-Message-State: AOAM532huNCmXfLUgFuB64t7XySLZNABobOpnxKv8BX5+UIURc1VKLNO
-        0pbJfba4S0VEK+J9OrQ4hP0MdrY2/c3PFQ==
-X-Google-Smtp-Source: ABdhPJznoZHw/vwCHNuPc4k4BJNc28bbs1F15FpEepcfJrowI2o6C4Yzr+WbvxxpNh7xII40KyMj8g==
-X-Received: by 2002:a05:6512:6cd:: with SMTP id u13mr564262lff.184.1631328847818;
-        Fri, 10 Sep 2021 19:54:07 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id b28sm44043ljf.101.2021.09.10.19.54.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 19:54:07 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id s10so7999726lfr.11;
-        Fri, 10 Sep 2021 19:54:07 -0700 (PDT)
-X-Received: by 2002:ac2:482d:: with SMTP id 13mr583877lft.120.1631328846840;
- Fri, 10 Sep 2021 19:54:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com> <20210910184147.336618-14-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20210910184147.336618-14-paul.kocialkowski@bootlin.com>
-Reply-To: wens@csie.org
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 11 Sep 2021 10:53:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66OHJREEg1Djkk=VyY0yUr5JE8Fp+xsb40wCk6E56bH8A@mail.gmail.com>
-Message-ID: <CAGb2v66OHJREEg1Djkk=VyY0yUr5JE8Fp+xsb40wCk6E56bH8A@mail.gmail.com>
-Subject: Re: [PATCH NOT FOR MERGE 13/22] ARM: dts: sun8i: a83t: Add MIPI CSI-2
- controller node
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-staging@lists.linux.dev, Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        id S235556AbhIKMPK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Sep 2021 08:15:10 -0400
+Received: from relay06.th.seeweb.it ([5.144.164.167]:58561 "EHLO
+        relay06.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233559AbhIKMPK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 08:15:10 -0400
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4C96F3F350;
+        Sat, 11 Sep 2021 14:13:55 +0200 (CEST)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] msm8998 clock-controller cleanup
+Date:   Sat, 11 Sep 2021 14:13:32 +0200
+Message-Id: <20210911121340.261920-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Clean up the clock-controllers for msm8998 similar to sdm660 by:
+- Using parent_data/hws for internal relations;
+- Removing the "xo" fixed-factor clock that only existed for drivers
+  that rely on this global name (the DT only provides "xo_board");
+- Using ARRAY_SIZE for num_parents instead of hardcoding array length;
+- Removing unnecessary fallbacks to global names of parent clocks, these
+  are already specified in the DT;
+- Updating DT-bindings to reflect the clocks used by gcc.
 
-On Sat, Sep 11, 2021 at 2:42 AM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> MIPI CSI-2 is supported on the A83T with a dedicated controller that
-> covers both the protocol and D-PHY. It can be connected to the CSI
-> interface as a V4L2 subdev through the fwnode graph.
->
-> This is not done by default since connecting the bridge without a
-> subdev attached to it will cause a failure on the CSI driver.
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Note that this should land some time after [1] to give users time to
+update their firmware (DT) before updating the kernel.  Additionally [2]
+should make it in before DSI PLL nodes are added.
 
-I believe you tagged the wrong patch to not be merged? AFAICT it
-should be the next patch that hooks up OV8865, not this one.
+[1]: https://lore.kernel.org/linux-arm-msm/20210911120101.248476-1-marijn.suijten@somainline.org/
+[2]: https://lore.kernel.org/linux-arm-msm/20210830182445.167527-2-marijn.suijten@somainline.org/
 
-> ---
->  arch/arm/boot/dts/sun8i-a83t.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> index ac97eac91349..1fa51f7ef063 100644
-> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> @@ -1064,6 +1064,32 @@ csi: camera@1cb0000 {
->                         status = "disabled";
->                 };
->
-> +               mipi_csi2: csi@1cb1000 {
-> +                       compatible = "allwinner,sun8i-a83t-mipi-csi2";
-> +                       reg = <0x01cb1000 0x1000>;
-> +                       interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_CSI>,
-> +                                <&ccu CLK_CSI_SCLK>,
-> +                                <&ccu CLK_MIPI_CSI>,
-> +                                <&ccu CLK_CSI_MISC>;
-> +                       clock-names = "bus", "mod", "mipi", "misc";
-> +                       resets = <&ccu RST_BUS_CSI>;
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               mipi_csi2_in: port@0 {
-> +                                       reg = <0>;
-> +                               };
-> +
-> +                               mipi_csi2_out: port@1 {
-> +                                       reg = <1>;
-> +                               };
-> +                       };
-> +               };
-> +
->                 hdmi: hdmi@1ee0000 {
->                         compatible = "allwinner,sun8i-a83t-dw-hdmi";
->                         reg = <0x01ee0000 0x10000>;
-> --
-> 2.32.0
->
->
+Marijn Suijten (8):
+  clk: qcom: gcc-msm8998: Move parent names and mapping below GPLLs
+  clk: qcom: gcc-msm8998: Use parent_data/hws for internal clock
+    relations
+  clk: qcom: gcc-msm8998: Remove transient global "xo" clock
+  clk: qcom: gpucc-msm8998: Use ARRAY_SIZE for num_parents
+  clk: qcom: mmcc-msm8998: Use ARRAY_SIZE for num_parents
+  dt-bindings: clocks: qcom,gcc-msm8998: Reflect actually referenced
+    clks
+  clk: qcom: gpucc-msm8998: Remove unnecessary fallbacks to global
+    clocks
+  clk: qcom: mmcc-msm8998: Remove unnecessary fallbacks to global clocks
+
+ .../bindings/clock/qcom,gcc-msm8998.yaml      |  26 +-
+ drivers/clk/qcom/gcc-msm8998.c                | 705 ++++++++++--------
+ drivers/clk/qcom/gpucc-msm8998.c              |  13 +-
+ drivers/clk/qcom/mmcc-msm8998.c               | 183 +++--
+ 4 files changed, 475 insertions(+), 452 deletions(-)
+
+-- 
+2.33.0
+
