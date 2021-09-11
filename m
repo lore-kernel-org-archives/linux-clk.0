@@ -2,28 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E94C4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE6CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0CD46121D
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E4261209
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Sep 2021 12:14:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235556AbhIKMPK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Sep 2021 08:15:10 -0400
-Received: from relay06.th.seeweb.it ([5.144.164.167]:58561 "EHLO
-        relay06.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233559AbhIKMPK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 08:15:10 -0400
+        id S235771AbhIKMPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Sep 2021 08:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33686 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235757AbhIKMPL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Sep 2021 08:15:11 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289C6C061756;
+        Sat, 11 Sep 2021 05:13:58 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4C96F3F350;
-        Sat, 11 Sep 2021 14:13:55 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 1F2723F370;
+        Sat, 11 Sep 2021 14:13:56 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
@@ -41,51 +45,230 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] msm8998 clock-controller cleanup
-Date:   Sat, 11 Sep 2021 14:13:32 +0200
-Message-Id: <20210911121340.261920-1-marijn.suijten@somainline.org>
+Subject: [PATCH 1/8] clk: qcom: gcc-msm8998: Move parent names and mapping below GPLLs
+Date:   Sat, 11 Sep 2021 14:13:33 +0200
+Message-Id: <20210911121340.261920-2-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210911121340.261920-1-marijn.suijten@somainline.org>
+References: <20210911121340.261920-1-marijn.suijten@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clean up the clock-controllers for msm8998 similar to sdm660 by:
-- Using parent_data/hws for internal relations;
-- Removing the "xo" fixed-factor clock that only existed for drivers
-  that rely on this global name (the DT only provides "xo_board");
-- Using ARRAY_SIZE for num_parents instead of hardcoding array length;
-- Removing unnecessary fallbacks to global names of parent clocks, these
-  are already specified in the DT;
-- Updating DT-bindings to reflect the clocks used by gcc.
+Prepare for a future patch where we use .hw pointers to these GPLL
+clocks in the parent mapping instead of name references.  This requires
+the GPLL clocks to be decared before parent_data arrays.
 
-Note that this should land some time after [1] to give users time to
-update their firmware (DT) before updating the kernel.  Additionally [2]
-should make it in before DSI PLL nodes are added.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+---
+ drivers/clk/qcom/gcc-msm8998.c | 184 ++++++++++++++++-----------------
+ 1 file changed, 92 insertions(+), 92 deletions(-)
 
-[1]: https://lore.kernel.org/linux-arm-msm/20210911120101.248476-1-marijn.suijten@somainline.org/
-[2]: https://lore.kernel.org/linux-arm-msm/20210830182445.167527-2-marijn.suijten@somainline.org/
-
-Marijn Suijten (8):
-  clk: qcom: gcc-msm8998: Move parent names and mapping below GPLLs
-  clk: qcom: gcc-msm8998: Use parent_data/hws for internal clock
-    relations
-  clk: qcom: gcc-msm8998: Remove transient global "xo" clock
-  clk: qcom: gpucc-msm8998: Use ARRAY_SIZE for num_parents
-  clk: qcom: mmcc-msm8998: Use ARRAY_SIZE for num_parents
-  dt-bindings: clocks: qcom,gcc-msm8998: Reflect actually referenced
-    clks
-  clk: qcom: gpucc-msm8998: Remove unnecessary fallbacks to global
-    clocks
-  clk: qcom: mmcc-msm8998: Remove unnecessary fallbacks to global clocks
-
- .../bindings/clock/qcom,gcc-msm8998.yaml      |  26 +-
- drivers/clk/qcom/gcc-msm8998.c                | 705 ++++++++++--------
- drivers/clk/qcom/gpucc-msm8998.c              |  13 +-
- drivers/clk/qcom/mmcc-msm8998.c               | 183 +++--
- 4 files changed, 475 insertions(+), 452 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 050c91af888e..a67fb9af9e0b 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -25,98 +25,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+ 
+-enum {
+-	P_AUD_REF_CLK,
+-	P_CORE_BI_PLL_TEST_SE,
+-	P_GPLL0_OUT_MAIN,
+-	P_GPLL4_OUT_MAIN,
+-	P_PLL0_EARLY_DIV_CLK_SRC,
+-	P_SLEEP_CLK,
+-	P_XO,
+-};
+-
+-static const struct parent_map gcc_parent_map_0[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL0_OUT_MAIN, 1 },
+-	{ P_PLL0_EARLY_DIV_CLK_SRC, 6 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_0[] = {
+-	"xo",
+-	"gpll0_out_main",
+-	"gpll0_out_main",
+-	"core_bi_pll_test_se",
+-};
+-
+-static const struct parent_map gcc_parent_map_1[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL0_OUT_MAIN, 1 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_1[] = {
+-	"xo",
+-	"gpll0_out_main",
+-	"core_bi_pll_test_se",
+-};
+-
+-static const struct parent_map gcc_parent_map_2[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL0_OUT_MAIN, 1 },
+-	{ P_SLEEP_CLK, 5 },
+-	{ P_PLL0_EARLY_DIV_CLK_SRC, 6 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_2[] = {
+-	"xo",
+-	"gpll0_out_main",
+-	"core_pi_sleep_clk",
+-	"gpll0_out_main",
+-	"core_bi_pll_test_se",
+-};
+-
+-static const struct parent_map gcc_parent_map_3[] = {
+-	{ P_XO, 0 },
+-	{ P_SLEEP_CLK, 5 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_3[] = {
+-	"xo",
+-	"core_pi_sleep_clk",
+-	"core_bi_pll_test_se",
+-};
+-
+-static const struct parent_map gcc_parent_map_4[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL0_OUT_MAIN, 1 },
+-	{ P_GPLL4_OUT_MAIN, 5 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_4[] = {
+-	"xo",
+-	"gpll0_out_main",
+-	"gpll4_out_main",
+-	"core_bi_pll_test_se",
+-};
+-
+-static const struct parent_map gcc_parent_map_5[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL0_OUT_MAIN, 1 },
+-	{ P_AUD_REF_CLK, 2 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+-};
+-
+-static const char * const gcc_parent_names_5[] = {
+-	"xo",
+-	"gpll0_out_main",
+-	"aud_ref_clk",
+-	"core_bi_pll_test_se",
+-};
+-
+ static struct clk_fixed_factor xo = {
+ 	.mult = 1,
+ 	.div = 1,
+@@ -438,6 +346,98 @@ static struct clk_alpha_pll_postdiv gpll4_out_test = {
+ 	},
+ };
+ 
++enum {
++	P_AUD_REF_CLK,
++	P_CORE_BI_PLL_TEST_SE,
++	P_GPLL0_OUT_MAIN,
++	P_GPLL4_OUT_MAIN,
++	P_PLL0_EARLY_DIV_CLK_SRC,
++	P_SLEEP_CLK,
++	P_XO,
++};
++
++static const struct parent_map gcc_parent_map_0[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_PLL0_EARLY_DIV_CLK_SRC, 6 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_0[] = {
++	"xo",
++	"gpll0_out_main",
++	"gpll0_out_main",
++	"core_bi_pll_test_se",
++};
++
++static const struct parent_map gcc_parent_map_1[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_1[] = {
++	"xo",
++	"gpll0_out_main",
++	"core_bi_pll_test_se",
++};
++
++static const struct parent_map gcc_parent_map_2[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_SLEEP_CLK, 5 },
++	{ P_PLL0_EARLY_DIV_CLK_SRC, 6 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_2[] = {
++	"xo",
++	"gpll0_out_main",
++	"core_pi_sleep_clk",
++	"gpll0_out_main",
++	"core_bi_pll_test_se",
++};
++
++static const struct parent_map gcc_parent_map_3[] = {
++	{ P_XO, 0 },
++	{ P_SLEEP_CLK, 5 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_3[] = {
++	"xo",
++	"core_pi_sleep_clk",
++	"core_bi_pll_test_se",
++};
++
++static const struct parent_map gcc_parent_map_4[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_GPLL4_OUT_MAIN, 5 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_4[] = {
++	"xo",
++	"gpll0_out_main",
++	"gpll4_out_main",
++	"core_bi_pll_test_se",
++};
++
++static const struct parent_map gcc_parent_map_5[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_AUD_REF_CLK, 2 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_5[] = {
++	"xo",
++	"gpll0_out_main",
++	"aud_ref_clk",
++	"core_bi_pll_test_se",
++};
++
+ static const struct freq_tbl ftbl_blsp1_qup1_i2c_apps_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+ 	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
 -- 
 2.33.0
 
