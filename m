@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14377C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 002ADC43219
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDC6561052
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF88D60E8B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237123AbhILUMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Sep 2021 16:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53984 "EHLO
+        id S237219AbhILUMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Sep 2021 16:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236828AbhILULu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Sep 2021 16:11:50 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6559FC06175F;
-        Sun, 12 Sep 2021 13:10:11 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id q26so11306212wrc.7;
-        Sun, 12 Sep 2021 13:10:11 -0700 (PDT)
+        with ESMTP id S236312AbhILUMQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Sep 2021 16:12:16 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDFA3C061796;
+        Sun, 12 Sep 2021 13:10:25 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id x6so11279142wrv.13;
+        Sun, 12 Sep 2021 13:10:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=798UaN2O7BsVLG2b7m1c5jRBaYmhXVVyGNLo4voHgAg=;
-        b=MeT9W24Jr2f9RvjUC5EbBHXQOyy115v+4M/+W1kU/o08i4o+XtIkF3zaTkNILlsp3n
-         QZ2vhRuQXCvwm1YePWgyHa3xQfnXKyksuI6Oeu9eTPhdhHhWOFCW3QPI3nmBrkq1f6ff
-         JbG1uaz8WrgNCEHiPIAkUsNaBI/Ui2bxy2QuvcKSNJjxqh7yAe1S3IjEok4s4epX8HXN
-         y+e8MqPONDOga34MZsm9+g8TIov9EiuV889Gpmb+rsWKXS5rk1ZJHZM0VpUkd/iuTVIn
-         DdvPqlVezTjnVrgbYvjCurd9bHHM5//w4NKpvYVBWyJ4Gq40Ow8SphSrrZbPfgX3gT/a
-         PFtQ==
+        bh=i9QYtupMPLyzQnqOhwfXP4oUoMqt4gxj3ewFZ5B73Ts=;
+        b=likXWSDZ1v4Sks8GU89iHowLqcUIMbRx2wPVX1eQxhP6OFsM0KOWZ9FJZhC5u81DH3
+         Xwm7v1MdGjoALtI6tmFDtN9SbW8Kim3JApNeY1SY7TKt6OC3vh3EBVSiwtbK2CClM+Ch
+         FhxtDJVGkWKHaFxatJVQimK5oi2xZwnonEV9O9Hrp+ECsZvXzfCdLC8zgVxxOYSRih5G
+         12j0KRIHdXQWild9q2nxvAMdxgj+OwpAwzhwLSe1w/X5a7wf6YfGu84X+25CvvWmqTUf
+         QalIstKqSUiPtJtPgkLrvVVp7FeQ0qN5uKfG0LxgAwDZYuXuoEfCI6CAeaviK7SONxJF
+         jWzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=798UaN2O7BsVLG2b7m1c5jRBaYmhXVVyGNLo4voHgAg=;
-        b=miktXNJNzDAGx7KsftoaSEbNeeI5M7KastoqBvTDUatKpMLWA53L+Kz84er5ZcJ3Ra
-         791G9rAvwpyxawUwCeTGesAJbp1St2TrbiPeXyv/SchrMKIfrl2ZNNBN//5aTb3N6UxO
-         q2YDMCOR89x6MJm1mLb5Z5hZQJ7VX0WgX9rRVNcAltcyLiMi/f424qM992RHZBZi+73V
-         jcsjuqpvh9JIZhlYYVo8dXpWvMyHqhLOlHeTgmvpzjV1hDXFTezTqxz0H0tjbd6iFjv5
-         Ut6GaaNTg9wV3HsHijA/kI7Qb8PjrCfisSj3u4SqCdkQ+qBzYu2E6BkLIkUrQbXCAsbK
-         ko2A==
-X-Gm-Message-State: AOAM5336MQOwcTZ6dmqcn8fOLXkj8C1hM0sj0l+cti+QYXIlHCrqEW5s
-        QQmXMBFK2ZdU40nd+736IR8=
-X-Google-Smtp-Source: ABdhPJzu7MzyAyEOUCRr750amNJVBtVQ2utB+Xjt8OlkPvZv2p6LYKW9k094ppdCb1q26Tn+61kFew==
-X-Received: by 2002:a5d:49ce:: with SMTP id t14mr8787352wrs.183.1631477410012;
-        Sun, 12 Sep 2021 13:10:10 -0700 (PDT)
+        bh=i9QYtupMPLyzQnqOhwfXP4oUoMqt4gxj3ewFZ5B73Ts=;
+        b=s8MQ+V7WhAZ7/+6giwUX/2JVnbAHlrbYlyiBGNpxCgdluxYnSuzI7bfC+QmK5mvKdQ
+         lW45IiOnKrZ6KP88mrFqYdY1SKstjBo0UDeXr/U8XtyQDw5PKO0oKDSrEIWn4OxIz7IO
+         0c1Cku5PLBdFzsroFbeJ9IcsBe6d120Q653MIcWL39qjEC2tlVlbbU2F8X8i/bEhCi91
+         7H/59EcUlwk1ruVtf/hxwA5AdNWT6obNGrGKAxOrR+9zVeec704WDk0eJj0I+5D54QvD
+         QOG5bPa1C4k1wAzrCVAmXxcvWH0zFpHclvuxHMfFFMaAvzZGGrphJ7iD6BXU8NKAbRiv
+         Gsow==
+X-Gm-Message-State: AOAM530aKx0CMBgomw2iqjL8DLGZq48873guY99N2RYSGk7QukZT+d0h
+        b5FyX1x/T/x+yVS/4ll6JDY=
+X-Google-Smtp-Source: ABdhPJwCmjRwTNEp+XF6+uJ6s3Fjckg+MJaBPqelfkfezkcz9fDISHUtIGjPc0rD/uibc9ZFzImTJA==
+X-Received: by 2002:a05:6000:124b:: with SMTP id j11mr9073974wrx.147.1631477424444;
+        Sun, 12 Sep 2021 13:10:24 -0700 (PDT)
 Received: from localhost.localdomain (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.gmail.com with ESMTPSA id v10sm5463476wrg.15.2021.09.12.13.10.07
+        by smtp.gmail.com with ESMTPSA id v10sm5463476wrg.15.2021.09.12.13.10.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Sep 2021 13:10:09 -0700 (PDT)
+        Sun, 12 Sep 2021 13:10:24 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -84,9 +84,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v11 15/34] drm/tegra: vic: Support system suspend
-Date:   Sun, 12 Sep 2021 23:08:13 +0300
-Message-Id: <20210912200832.12312-16-digetx@gmail.com>
+Subject: [PATCH v11 21/34] spi: tegra20-slink: Add OPP support
+Date:   Sun, 12 Sep 2021 23:08:19 +0300
+Message-Id: <20210912200832.12312-22-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210912200832.12312-1-digetx@gmail.com>
 References: <20210912200832.12312-1-digetx@gmail.com>
@@ -96,36 +96,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hardware must be stopped before system is suspended. Add suspend-resume
-callbacks.
+The SPI on Tegra belongs to the core power domain and we're going to
+enable GENPD support for the core domain. Now SPI driver must use OPP
+API for driving the controller's clock rate because OPP API takes care
+of reconfiguring the domain's performance state in accordance to the
+rate. Add OPP support to the driver.
 
+Acked-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/vic.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/spi/spi-tegra20-slink.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index c02010ff2b7f..359dd77f8b85 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -315,6 +315,8 @@ static int vic_runtime_suspend(struct device *dev)
- 	struct vic *vic = dev_get_drvdata(dev);
- 	int err;
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 8ce840c7ecc8..1a92978d2120 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -18,12 +18,15 @@
+ #include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_opp.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/reset.h>
+ #include <linux/spi/spi.h>
  
-+	host1x_channel_stop(vic->channel);
++#include <soc/tegra/common.h>
 +
- 	err = reset_control_assert(vic->rst);
- 	if (err < 0)
- 		return err;
-@@ -517,6 +519,8 @@ static int vic_remove(struct platform_device *pdev)
+ #define SLINK_COMMAND			0x000
+ #define SLINK_BIT_LENGTH(x)		(((x) & 0x1f) << 0)
+ #define SLINK_WORD_SIZE(x)		(((x) & 0x1f) << 5)
+@@ -680,7 +683,7 @@ static int tegra_slink_start_transfer_one(struct spi_device *spi,
+ 	bits_per_word = t->bits_per_word;
+ 	speed = t->speed_hz;
+ 	if (speed != tspi->cur_speed) {
+-		clk_set_rate(tspi->clk, speed * 4);
++		dev_pm_opp_set_rate(tspi->dev, speed * 4);
+ 		tspi->cur_speed = speed;
+ 	}
  
- static const struct dev_pm_ops vic_pm_ops = {
- 	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
- };
+@@ -1082,6 +1085,11 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	init_completion(&tspi->xfer_completion);
  
- struct platform_driver tegra_vic_driver = {
+ 	pm_runtime_enable(&pdev->dev);
++
++	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
++	if (ret)
++		goto exit_pm_disable;
++
+ 	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
 -- 
 2.32.0
 
