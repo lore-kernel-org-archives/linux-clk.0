@@ -2,130 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21171C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 16:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B73C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 17:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF0E260F6C
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 16:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C92610CB
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 17:05:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232274AbhIMQQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 12:16:32 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53961 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242055AbhIMQQV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 12:16:21 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210913161504euoutp026332c6f25b0678e0f3b8459d55d9d71c~kbc-SO5LW2255222552euoutp02r
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 16:15:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210913161504euoutp026332c6f25b0678e0f3b8459d55d9d71c~kbc-SO5LW2255222552euoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631549704;
-        bh=DPUui0cw24+wtr9YGuON7HIayRcOqnwG7XV+SGOnE6U=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=nYgE/EpcRilKBOgqmpHTnVbWNo5bE6pUbmZmG0f0JPSfTUvb4uFx/t3j7k4gjvLJ3
-         l048L8wLHsOTnlET16nTfkQsLfIR6wZpymZjTlZq5D8D/03H3MVMdnuDTYiB5pyWl5
-         ai8tzwxrZ5rtkuK926zJFNZsnapY21JVLj8/JVcE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210913161503eucas1p126a25a1dd47d8f06f29364b04166cc8e~kbc_3Pr0U1077510775eucas1p1v;
-        Mon, 13 Sep 2021 16:15:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 14.F7.45756.7097F316; Mon, 13
-        Sep 2021 17:15:03 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210913161503eucas1p2e285ddaddd93d45cf40a2df7045b163e~kbc_Uplc82983229832eucas1p2Q;
-        Mon, 13 Sep 2021 16:15:03 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210913161503eusmtrp2a91ddad727cf0107bbe87ac449f9912d~kbc_T5adA1192511925eusmtrp2E;
-        Mon, 13 Sep 2021 16:15:03 +0000 (GMT)
-X-AuditID: cbfec7f2-7bdff7000002b2bc-9c-613f7907c83f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.C1.20981.7097F316; Mon, 13
-        Sep 2021 17:15:03 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210913161502eusmtip12062f872dbb1751cd33fdca276613fee~kbc9vnPJC2726027260eusmtip1G;
-        Mon, 13 Sep 2021 16:15:02 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: s5pv210-audss: Make use of the helper
- function devm_platform_ioremap_resource()
-To:     Cai Huoqing <caihuoqing@baidu.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <ec73d979-e3dc-8fd9-9af1-d7c0fee9c108@samsung.com>
-Date:   Mon, 13 Sep 2021 18:15:02 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
+        id S241381AbhIMRGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 13:06:16 -0400
+Received: from mail-eopbgr1410094.outbound.protection.outlook.com ([40.107.141.94]:15904
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238027AbhIMRGP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Sep 2021 13:06:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MsiRK8kRozAD6q6TUHJMvID8b8ufAFN+mQGoO/5cosLknDhRxpDo2QeZ3G4RGwIj2xxc/Q1R7QMlOoqgybIBo3TYV2iIHdbJond6IvTDjVcfk6v8JRT7r7lQOiNsRlxWg32Gmh5/njHxx3e4OoNwuRGDF7dqgZJAd7QyJImLmOIpONV5qpKk5wn0UzUUNczsSZ4DvlqaWAcXcYiomkYr1PGd2r4SSGEEk81xVReEc/hUNZIw50XuI9V79MHzI9huJVFrOnRuMiNfD7YiwnZGKyZYgNstH1a8m/xelqjEAow19a/1aieIrOJAKuFCCHbHt/4ure77S5EirNLFpPX9TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=0ChRrwYgK99nKbbMb9OzP8kw7UstQYcVLsJfOuBAbEo=;
+ b=Rh5vVcrcJ/BOxkW1a4vN2LC0ObA9oIZmGgIgM8dapbO5ph5nhIrvoY/Mh9NqNoNuebUjqSmW2Rz1mmFc4HdoR3KTbpFyoiy6wfPX2fyr6YxUAUzGa155hCE8btBTSpOYa/b0w13ac7Lvb/Cr5jNr0pn0pOWCdRn0cVDId2EUaXk4bFD2d7xvElG/Ih9OMH8bVFERTVaebZdLkVU1cxyAtGBafmN73VaKz88IKvInqUEFMur8VtU6WEgC9fOaj8IGO1WRhXv2yEShwumnb/BojxrO9lKfqA+P7422fjAbSUBQ11Nyj3TrQszGpciQy6Tt9zMS2SNxEgreIg3D6vJaRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0ChRrwYgK99nKbbMb9OzP8kw7UstQYcVLsJfOuBAbEo=;
+ b=McYcCyEnA8YATrqeTMGcwTlrZQ0SaL24+Ap1IjTa5cLCXXZKtqKk670Cq+k85iXSVLUa795QBpkU7yyz2T596QP9C7Cn7pNOscirdavrMwOWcmn1JfKy0nqcsS47nH8QdDr8wm/4a4XZiudPOPlVLb53yF1vacXUNuIB0DXQ22w=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=renesas.com;
+Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com (2603:1096:604:5b::23)
+ by OS3PR01MB5928.jpnprd01.prod.outlook.com (2603:1096:604:c3::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.14; Mon, 13 Sep
+ 2021 17:04:56 +0000
+Received: from OSAPR01MB3892.jpnprd01.prod.outlook.com
+ ([fe80::f:1671:816e:bfbe]) by OSAPR01MB3892.jpnprd01.prod.outlook.com
+ ([fe80::f:1671:816e:bfbe%5]) with mapi id 15.20.4500.019; Mon, 13 Sep 2021
+ 17:04:56 +0000
+From:   Alex Helms <alexander.helms.jy@renesas.com>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        geert+renesas@glider.be, alexander.helms.jy@renesas.com,
+        david.cater.jc@renesas.com, michal.simek@xilinx.com
+Subject: [PATCH v6 0/2] Renesas 8T49N241 device driver
+Date:   Mon, 13 Sep 2021 10:04:34 -0700
+Message-Id: <20210913170436.243-1-alexander.helms.jy@renesas.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0094.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::9) To OSAPR01MB3892.jpnprd01.prod.outlook.com
+ (2603:1096:604:5b::23)
 MIME-Version: 1.0
-In-Reply-To: <20210907085122.4305-1-caihuoqing@baidu.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djPc7rslfaJBsdX6FusufeXzeL6l+es
-        Fhvf/mCy2PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhb/rm1ksVi16w+jA5fHl6XNzB7vb7Sy
-        e8xq6GXz2DnrLrvHplWdbB6bl9R79G1ZxejxeZNcAEcUl01Kak5mWWqRvl0CV8aVhQ+YCl4w
-        Vcy+85qlgXE9UxcjJ4eEgInEv2erGLsYuTiEBFYwSsxZdYgVwvnCKLH+2S82COczo8SFr1MY
-        YVpuND+CSixnlOg4PgOq/yOjRNeFqWBVwgIlEmdPz2MFsUUE1CSmTJrODlLELPCASeLW6idg
-        29kEDCV6j/YBNXBw8ArYSXyYnQcSZhFQldjyfQnYHFGBZIlpf5uYQWxeAUGJkzOfsIDYnAKW
-        Em8nXQYbwywgLnHryXwoW15i+9s5zCC7JAS6OSU2PHjKBDJfQsBF4udbbYgPhCVeHd/CDmHL
-        SPzfCdILUt/MKNGz+zY7hDOBUeL+8QVQP1tL3DkHCgwOoA2aEut36UOEHSU6d79ghZjPJ3Hj
-        rSDEDXwSk7ZNZ4YI80p0tAlBVKtI/F41HRruUhLdT/6zTGBUmoXks1lIvpmF5JtZCHsXMLKs
-        YhRPLS3OTU8tNsxLLdcrTswtLs1L10vOz93ECExep/8d/7SDce6rj3qHGJk4GA8xSnAwK4nw
-        bntjmyjEm5JYWZValB9fVJqTWnyIUZqDRUmcd9XsNfFCAumJJanZqakFqUUwWSYOTqkGpoBa
-        mZa5V/0EvToSNQ/VSFZF3E+5vPTP9qzPyzUefUp5+nWuxwrbp0tSl1nO8tVcxRdgvjhaomzy
-        ze5P/58En1n3VXeTtF9cWO2Mhmc1Kyue+O+Z9iHd4uXq4zz2t/YL+2xNXn/ZXyC0zjhF7vyq
-        d1LHEwTPfhD9EWPJ+urQusOHFtdtmW16V2Xb8SdKe1543i12KCtLv3y2VJHdK/bviuR908J1
-        p9lcNXx7VfjSV6nc8u8pSzy7rJ/fWW1x4bwNV/z3s1Mm74lhUTrtbbfqp8KlvPW5EXrbFj5n
-        /DaH23v/LMFNP9+n/LDRmK/zeGHAd3nR+xxn80sX1my32qN+Ma/qnJO9x6GPnzmZ5aLO8r9W
-        YinOSDTUYi4qTgQAiFIdec0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xu7rslfaJBvM381msufeXzeL6l+es
-        Fhvf/mCy2PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhb/rm1ksVi16w+jA5fHl6XNzB7vb7Sy
-        e8xq6GXz2DnrLrvHplWdbB6bl9R79G1ZxejxeZNcAEeUnk1RfmlJqkJGfnGJrVK0oYWRnqGl
-        hZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaVhQ+YCl4wVcy+85qlgXE9UxcjJ4eEgInE
-        jeZHbF2MXBxCAksZJU7372XsYuQASkhJzG9RgqgRlvhzrQuq5j2jxO25r1hAEsICJRJnT89j
-        BbFFBNQkpkyazg5SxCzwgEliyq8z7BAdPYwSB86eA6tiEzCU6D3aB7aBV8BO4sPsPJAwi4Cq
-        xJbvSxhBbFGBZIm3r7+DXccrIChxcuYTsGWcApYSbyddBoszC6hL/Jl3iRnCFpe49WQ+VFxe
-        YvvbOcwTGIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiM1m3H
-        fm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeLe9sU0U4k1JrKxKLcqPLyrNSS0+xGgK9M9EZinR5Hxg
-        usgriTc0MzA1NDGzNDC1NDNWEuc1ObImXkggPbEkNTs1tSC1CKaPiYNTqoFJIEjr+7XPj9uN
-        hQz8nzQGlmffto0WnZciqRW91PXb2bJvFT8FcxUY2091JC7SrP79eWvu/5xX2k4XN/3an9Xi
-        /PeF53lFg2c12at2/a096MMnGmkY9n2r1q2KBRwRi69u70q67nDve+uG9zfTdluyT9RourHC
-        f7bfi5cvRHmZTAVWZB4Q0Xq+Z1PR2Y07r3zLc3ZhMFuaf95dYq/ajMf9nIYa05739H9feSX6
-        Sk2Y0waurcmzTuj4JLFGuL4wkJgfu6hzXfi5sjkPmL74njB9UFEiJfVRep7i/n37Z9+adPXM
-        CXnJh4KlTVHsnSxms58/jow9fuUo4/INuW+/TyxfJ7CWQ5Vnf5Jufvh1f4kqJZbijERDLeai
-        4kQA7uIroV8DAAA=
-X-CMS-MailID: 20210913161503eucas1p2e285ddaddd93d45cf40a2df7045b163e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210907085132eucas1p27810ad1f87867d1944b1c1b2c4b4abef
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210907085132eucas1p27810ad1f87867d1944b1c1b2c4b4abef
-References: <CGME20210907085132eucas1p27810ad1f87867d1944b1c1b2c4b4abef@eucas1p2.samsung.com>
-        <20210907085122.4305-1-caihuoqing@baidu.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from az-ahelms.na.ads.idt.com (192.48.119.236) by SJ0PR13CA0094.namprd13.prod.outlook.com (2603:10b6:a03:2c5::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.8 via Frontend Transport; Mon, 13 Sep 2021 17:04:53 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b7ad0130-7a70-4b09-51cf-08d976d89c7f
+X-MS-TrafficTypeDiagnostic: OS3PR01MB5928:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <OS3PR01MB5928CE9634B119C2809FC3A5C8D99@OS3PR01MB5928.jpnprd01.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:873;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QjfzN97+gcU69imuHTbo553hGGVTZyXEEwVno6MnfHZZtnioHBZBdrRHXcMYEJ0wzYzqcJGjXKyqJFgDewSPquI59q0uN9EUWYDeDS81epnW1ZrdgzOmePbuDM8TnUCNw8hGjBz8RxyCv9P09YJZRymYxZ1836iywXWZ5tQp24qSi5NzigD6EjHMNpmoT07FLKQTqKnp1/d5xgWbGwYgPxhUSZzsuRyoUo81E786mRr1AXHxdNzIP3MkrOJWtbws5Y++9VgT9NJbUsbjcbKtVklUUo6wLpe0MHWY6qF0WtkTSLMxBvqe8FV2O/9JA/PhxQ3exDdr+ITELdaT4PnOVg9pQpX9cSfvHlUKhCN0YL7L9eqp6EwcxOywvdlb6GaGmkTgQ7KcAQrRl6UuaMjFMAwfvKjsXQZiclHa50qAk50LOQYvfz9avJV6ujRLj/7+hsk5PIn1Q6lmIyDl1OuiipqONw8JzAubvQ7QbOzFRVyj30ptYoepO+T02clUZJX98i3Wmc1Lqd3jwbgYciv3xk7mSo8ZGwqi2OOh6jk3+eydmgaq8uFPEvPnmUCfffRa4ftszApkCcBF8nDEWJTNc7zGtquiaVSjCgxoSZsQD+uRgLky7dKh5m61FiaGzB/dE7UNTyapXFIFK24/OeCmNaZekZOyPeVA980DqzssnfCGYAc9QSMkTI9exR7Fer4mFVxEaN55iucE0/hZLYoyEg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB3892.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(396003)(366004)(136003)(86362001)(38100700002)(316002)(2906002)(8936002)(66946007)(6666004)(8676002)(36756003)(1076003)(83380400001)(38350700002)(66556008)(66476007)(478600001)(186003)(4326008)(26005)(5660300002)(2616005)(52116002)(103116003)(956004)(6512007)(6486002)(6506007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bm2BcZLY2wrwb4BVLwx0QWu4lf0zG0kXvk7sX0Y/oVJgAXSLyEIR7G79w+Aw?=
+ =?us-ascii?Q?CSwI1vQCHzSWtXOPV+r3gvmYUXjPZJ0mijZY3Zj9qgOk0bpgPliladep+e8y?=
+ =?us-ascii?Q?4pVIJjRGnkJ2ZMw/JAA/WF3oszlGcPYF7Y7YLdTvVFFlRo7VPjTQ1jpzTgSQ?=
+ =?us-ascii?Q?ee17GtcRjgEYxXi0NFOKf+tgmrSdQPyJPqw25JiHeMxmEM+8IRdyTwLASk4q?=
+ =?us-ascii?Q?F1d/fAqoG1nnOmX0FzXo/ba8QkXOc9AqH86tnPursiWxQYslEKaM0Bx0U2EP?=
+ =?us-ascii?Q?fPo0fU3LZAFqD8zyiTJ42m4Ouu24gVQN1Zy2hwRGid044j/BysZibs5w/5l8?=
+ =?us-ascii?Q?7GQC6LZiw050mzp3fYvBoRqaV+g97No7K16/mOmfq7LcfBCqGUh/HNc79i2X?=
+ =?us-ascii?Q?dmoakFE6bqZJasiZ2KzLouNzE4KIGuF6ayfZD6EDaJfl+6v4H2+2Xq6SXxr8?=
+ =?us-ascii?Q?AVUTO4crAXREjBfzetMfKEkBtxNwPxEUOLkeebcb9qPXYeUnxutqy/LwCTkZ?=
+ =?us-ascii?Q?M76GXTEwjw43wWPVjBW0LVLoe2zhspM55/CVmS7E+Mmdof/0vmrKSASDANd6?=
+ =?us-ascii?Q?JwRH338tjl4p3yjzmIGwD3XMVpEVWg4I4+SIG7xoSxHd4DmqhC65ALM+IW70?=
+ =?us-ascii?Q?vnF/AOm/8QJWH0vhQhf9VNJtm5LQbyha0RikZNAx24aRPdmBtj2yvCjsew+T?=
+ =?us-ascii?Q?EhJOg7gA0m7ophOdbJWJwK4ZszUHB14JejB4d3YLguxCYNpUtep1v7mk+X57?=
+ =?us-ascii?Q?WolQA6LNQyi9CkeAwtzrs/sW6TlkMk/sCQZTXdG2oWg5onh7bboDQYLqwBwV?=
+ =?us-ascii?Q?q7eulyKnOvrwlbMs2rkRdT1NFjVtlqu54oLMLuLi2ayrfJ8O6zvHkcwZG8UF?=
+ =?us-ascii?Q?MWAcOCO13slBbXBILpVhJNr2svGM9aTzzM8hFyoL0IAXKV0LTnJwTQMq6xOR?=
+ =?us-ascii?Q?MgqnvWCdjIdGGPI7FhqW9sDMxIctfQiJ8vSrRI6WEtctbBF82xzUYifJeKYD?=
+ =?us-ascii?Q?dykU3I8Tk0x9+FWIKx30WuQgPgUVLP0BLd1yH2gjfZ17V3ImWWfQ0MTQ3aYA?=
+ =?us-ascii?Q?Ydf4BetG73Gn++WTdYbUvrOsX83p3gKEzWjS3GxroWnt6BwVwIxUEKXaqzuu?=
+ =?us-ascii?Q?SKafsDs1wva0lqhQxa7ggfITVRh98Ez9c7m/ArfbacxqWp/AdUY38kgoHS0F?=
+ =?us-ascii?Q?WKs0wOxbzOTW+8CkULEUJaHZ0FXwqe44Bg9NZeJPea1l0rcXmydr8/pLfwYZ?=
+ =?us-ascii?Q?rbosLcaJfwS1GcQWUK2cdCuydKtAEs6mT3pV8LZOELmP25YZT70BYOjD2Ong?=
+ =?us-ascii?Q?JaGL0j97hxaawfgx3DwhxI1O?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7ad0130-7a70-4b09-51cf-08d976d89c7f
+X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB3892.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2021 17:04:56.2897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2rQA94qNLGtUcpR7dEZqQfVy+ferUCdephVP03dHaXb/aNM8lDSwat0JmNdo3T217uAju3zawzkkRRuurPaEZ6M77AZuBRFZJfE8ahg/4AE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5928
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07.09.2021 10:51, Cai Huoqing wrote:
-> Use the devm_platform_ioremap_resource() helper instead of
-> calling platform_get_resource() and devm_ioremap_resource()
-> separately
+A common clock framework device driver for the Renesas 8T49N241 universal
+frequency translator.
 
-Thanks for the patch, I have applied it with summary line shortened to
-"clk: samsung: s5pv210-audss: Make use of devm_platform_ioremap_resource()".
+Changes in v6:
+ * Rebase on v5.15-rc1
+ * Ensure Rob's Reviewed-by tag is included
+Changes in v5:
+ * Rebase on v5.14-rc2
+ * Move driver files from clk/renesas to clk
+Changes in v4:
+ * Add vendor prefix to dt binding compatible property
+ * Remove clock-names description in dt binding
+ * Remove redundant 'input-' prefix on clock names
+ * Clarify the settings property in dt binding, add data type
+ * Fix define spacing
+Changes in v3:
+ * Clarify settings property in device tree bindings schema is optional
+Changes in v2:
+ * Correct missing semicolon in 8t49n24x-core.c
 
+Alex Helms (2):
+  dt-bindings: Add binding for Renesas 8T49N241
+  clk: Add ccf driver for Renesas 8T49N241
+
+ .../bindings/clock/renesas,8t49n241.yaml      | 190 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/clk/8t49n24x-core.c                   | 836 ++++++++++++++++++
+ drivers/clk/8t49n24x-core.h                   | 250 ++++++
+ drivers/clk/8t49n24x.c                        | 572 ++++++++++++
+ drivers/clk/Kconfig                           |  21 +
+ drivers/clk/Makefile                          |   2 +
+ 7 files changed, 1878 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+ create mode 100644 drivers/clk/8t49n24x-core.c
+ create mode 100644 drivers/clk/8t49n24x-core.h
+ create mode 100644 drivers/clk/8t49n24x.c
+
+
+base-commit: 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f
 -- 
-Regards,
-Sylwester
+2.30.2
+
