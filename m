@@ -2,189 +2,215 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7069C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 05:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32D4C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 07:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76DFB60F9B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 05:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5DEA60FBF
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 07:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbhIMFdH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 01:33:07 -0400
-Received: from mail-eopbgr1310097.outbound.protection.outlook.com ([40.107.131.97]:63264
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229563AbhIMFdG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 13 Sep 2021 01:33:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CTWU32DIje7Gm/aYaCOgll3r/n2whkz8SVgf5jf6l6nw8rriZVdRqMFNdB8Adh/7tXRQOL6uP51Zw0n81M4FtCIeiwzUeWKjFzUUiSmazhr3G3jsDPY41ZCakqihcOm9ZmOUXDzNiN6SQ0GreoVrZ7lOj0wIYTDqUXismlmW4DPjnSKh8u8YNESjMCkdVg7QZqJ2TBc8RGQJ/GHH20kyzuTruX8i23HSJwPsuLM7iG3IiQA8Sz2e00cAQbDnsuzPeCxOhW7lWQUdcX2sjXThs5hsnzcSQ9TvoLrA/NprxhGVdHzYmHISfAoBZzqzDHGowubRDTpQNYhj2Py5sPl4DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=CXicEieTN2vduieaLtrMOicPqmFp7xIpd0cfQVanOBU=;
- b=h5YidjIDqMnSRsUYBlAse6Pv53BNoyec/tosy4ecyok9dr4l42Ha/12uOW3FAepMF/ybQdMKBjsfj4Yqh0LTF9/GVm3pRr3CO3tHgy4MbmBmsEfXBbq3QuyTh6/WTfo2QlF6tzhvuoY9lIa/zniNNRaw9xKrA33mXuDP5tooCymKRfmUbiM/zuQX30bQe7o8QYtnnuc0fmD1dcUQPLw4QsmwiQq6DQr82BLRZjSnDLNIe5ydYH1PljX+rC2YYVdbQOUMxB2MzoUJqCopfsx5w07OgbyxuhVL5Piwbjr0DdA828Infjvngnz0nn8VQ4JpMs4zlS9TByfgcIoPDwWH4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CXicEieTN2vduieaLtrMOicPqmFp7xIpd0cfQVanOBU=;
- b=P52rTAIH13so+fDvuUazwu20wApalIwTis2FdIOvtKWyvAMWW1CxmE1kzbIFOXqdqQ8K6vmfKLFtAzxj/NzpcPZ0PE2VgfM9aGtcaj4WDXiPc5Qka+KYSbnUPtRBPQemUUB9TwmepmHaxsnzN0bJ1bLCdAbm0ZQ7wBji1NqIhO6PJmWVMfN4ImNMTF+nVuioritZ63HcAUJgK3+9HNtUM7EPnW6oRwWmGoh7LR/qMLJmTXf0+4NfJiU61th91UhiGe6+qo5LEkjI1kHyZviyRNpd6Sd3RLodgqgnL7BMz3+9alJJJaWwEJG3Pjf8QTr/pXViyf126AlOBHGxzVd2rw==
-Received: from HK0PR06MB3380.apcprd06.prod.outlook.com (2603:1096:203:82::18)
- by HK0PR06MB3377.apcprd06.prod.outlook.com (2603:1096:203:8b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.17; Mon, 13 Sep
- 2021 05:31:46 +0000
-Received: from HK0PR06MB3380.apcprd06.prod.outlook.com
- ([fe80::df9:c3a4:7589:e812]) by HK0PR06MB3380.apcprd06.prod.outlook.com
- ([fe80::df9:c3a4:7589:e812%3]) with mapi id 15.20.4500.018; Mon, 13 Sep 2021
- 05:31:46 +0000
-From:   Ryan Chen <ryan_chen@aspeedtech.com>
-To:     "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCHv2] clk:aspeed:Fix AST2600 hpll calculate formula
-Thread-Topic: [PATCHv2] clk:aspeed:Fix AST2600 hpll calculate formula
-Thread-Index: AQHXpJKMhkZfnItOBUy/UXzlogoQrauhdqeAgAAAnqA=
-Date:   Mon, 13 Sep 2021 05:31:46 +0000
-Message-ID: <HK0PR06MB33806C10EB8B3F87FE144F8DF2D99@HK0PR06MB3380.apcprd06.prod.outlook.com>
-References: <20210908091845.4230-1-ryan_chen@aspeedtech.com>
- <4571c9ae-0287-4f70-2adb-9c227e706736@microchip.com>
-In-Reply-To: <4571c9ae-0287-4f70-2adb-9c227e706736@microchip.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: microchip.com; dkim=none (message not signed)
- header.d=none;microchip.com; dmarc=none action=none
- header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 19d9feb8-00e9-4de9-c5ed-08d97677c750
-x-ms-traffictypediagnostic: HK0PR06MB3377:
-x-microsoft-antispam-prvs: <HK0PR06MB33773D92B4B8D8CF0EC7A708F2D99@HK0PR06MB3377.apcprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:293;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2BkEr59aT+0z549h+81ljE4UiIr/Kl9Kp22IM9h+FuoieXVATlV8K6GGQOZAsE6MmlVGyMPV7Fnsm8gep59zw1iqBjTv/aXXDNdn3jvk7Jbm++tBd3B19uINU0v14m7LCAVyzn+Hgl+rH4yiQKEzh90pPTTdRLRutXWGyDIjt7zmiLfyvJqJmFnq9qjMmcwYI/OmypewBRESrJJ3U5VaE6Enyp8aAUhhowfbXIBvRpZ/agS/TanaCocx/GstP+ekd5HLg36hCOlLrqdeCsTIo0qXTbWBhnKMX2IjMcGHJbpMMNdb72/nWkhttDHXI9JI3ZpNFEQ2InY6T/di8lEf/E0CTZzaY0I28gV7EAbDM/X9NxhssFmNlepKA4jgiXVRquYZRg2KiZC5Z55RVcnEAh140RlD37a65G6IQfANfvEsBfkrlk1bdRRcNbVmduyD21+LIvh6e/mEJEYVpWSlmpEwCN2RgKyeQiz78tAnfuM6px2mQ8Du5SfINHnQTgTTznBM1kybPdwdO5jGubXntHb67nwndDNdTXD1eaJnYYvwZIf4eLKiwIFKMrmgXLsFIz38wuE74gl8NhXlWoyBhrmzn4vUoIa4AJd/D+/LN4rFfeRedTtCkoxNk+fu3bx4c5eQhFyVze0jbhEPl+1idyoAYVGPWenybv3JVvy+hanEbXTplgDod2aL8Kj/ooVMslZcrgQ4CJktSvBTYH4KkA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR06MB3380.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39840400004)(366004)(376002)(346002)(396003)(9686003)(316002)(26005)(64756008)(110136005)(6506007)(66946007)(52536014)(7696005)(8936002)(66556008)(76116006)(71200400001)(66476007)(478600001)(5660300002)(2906002)(122000001)(86362001)(8676002)(66446008)(53546011)(38100700002)(55016002)(83380400001)(33656002)(38070700005)(186003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MlZPNmJnUGpmUWdiMDJ2RE93R0UzazB6WHNSNWlUQ0VKY0FZYzZsMzVHK25j?=
- =?utf-8?B?QTc4cDVlbjRybTB3aFp0dWh0eG1ZQTJwQkNKNTk0SmFqbXZlWDhnYm5FMTVx?=
- =?utf-8?B?M1lQT1BXbFRGNHJwTDQ3NUdvVTZtTHc2bDhBeHUvaHpKS0dkZDFxM1hMNHdu?=
- =?utf-8?B?UUF3R1JSZm5UeG5ZT08vazJWTG40REZ6KzhKWUZtT3F2S2lmb3hWblVrRUdI?=
- =?utf-8?B?T1MwWjQ5M2tNREFkRnB2WkNrRmxwQlZiRUVzd2tsdVV3dVA5ZWU2aVRrdDF5?=
- =?utf-8?B?WVNvNzhDREcvUVJvb0Job1NkQnNYWUN0d0ZsQlZEZmNHZW5VK1lvSktDSXkz?=
- =?utf-8?B?WkxmK0x3bWtuTWpnZHpuRFpCU1ZrK2JldVlZRnhlTXgzMXVXSU9wUnM3RmIx?=
- =?utf-8?B?cklmVkFaMTBXNjF5dU9iK044NDIybS9wSFFhMFljK0dvc3RRdUtwUVY5RVFq?=
- =?utf-8?B?TjdlUW1JZURqc1pScFIrSzY3YlJGNVE5UzRkWHBpOHMxV1FidFJoTythcTdI?=
- =?utf-8?B?UzVSaXZzaTlKakx6N09xNUxaY1dONDlQTUp3NkhYd1JVQUgvUFZPbmVXK0hD?=
- =?utf-8?B?TzI5UUEvNzhGYlgxUS9WVWxwbS9YZjRyM2I3a0gzMXloSVc5eUwrYThKejlw?=
- =?utf-8?B?bzBLZGN1QjQ1L21IdGtTZkg4ZUUyaFdrb25jUGZ4dElHNnJxdkRhbG5vc21B?=
- =?utf-8?B?Q2c5M3Y1S2c1R3hwbUM0OG9nZGUyWjFPVHJacThROE1DREVZeTRaTmRHM3NJ?=
- =?utf-8?B?UUJCeGYwUGF1cHhVR1BXRC9GUE1KYzNlUVlad3RxZkFpRXFXQ2M5RnRiNzkz?=
- =?utf-8?B?djVYUm5NaGI4Zmd4L1FjdWFXRGVrM1JkZEQ3aXJQNm80K2RTWStRVWRGVTlU?=
- =?utf-8?B?R1pyNjZpTWxnNTlxNENzUEZGMGVjNkMxZXJwTytDR1F4ZUE5UFlDZEdlOUdM?=
- =?utf-8?B?QUxycHp1K0pBbzc3aXNhakc0NElzL2ZtT3JrTTRYVGdtRVVsNXJJTGttbkxU?=
- =?utf-8?B?Q0Q2OWtXb3AxL1BnR05sL2U5UjhOMWVkYTVUSzVkd1RQNkVxQjdxdCs0QVVq?=
- =?utf-8?B?QXVHcDFMc09EQUl2bjZzbTdTU0srTFhjSG9Sa0c4SW4vRzBHdUFKL0dJMDMx?=
- =?utf-8?B?T0hMWGlsZDFwYmJDeGxBTDcyVFpramR0Q0laZXpKUCtsL2RtRjNOL3kyYVI3?=
- =?utf-8?B?VzRrMk5DMUNYV1p1RGUrV2lyWFMyTTFDb0dpV0lHMU9OUURMeHhST0dkd0N4?=
- =?utf-8?B?cm84ZW56VWFUMnRYNDlGUVBwREdmOGFkNUFXUUQyM1N2SmRoaUFxVDdXbWJO?=
- =?utf-8?B?eUFJV2gvSVNhMjlaMnVYS2lmZzNSNW1VN1JKQis2NGxlK1dOeXZMM1JCaERH?=
- =?utf-8?B?L3RSazRUSGRmU0s2SmpvNWhrMXk5V202N3dhYTY4YVBGUWZtQWhEcnEwOVNk?=
- =?utf-8?B?Y01Rd1UwZ0RJSlcwYXdHZnJlSlNsZXRRSXRQamxtV2Y0WlBmcy85cmcreW5n?=
- =?utf-8?B?SXJTMDVjWkp2d0w2VHpBTDdKdVVGeE14aDY1czh1S1dncFpJVzVFZzlKUVMx?=
- =?utf-8?B?WkVOMkFwaUxubWdCOHdRS2EzRGpBalFpSThMS1FxOWpXR0pieHdHOE96V3JY?=
- =?utf-8?B?TmY5NTA0Z2FoNEJVNXc2dG9PY0Y2TjZsRWZGM01KV1BKS2RTblhtL0xLNmZ0?=
- =?utf-8?B?MGRaOTVPSDlWcVB3ZUljZ2RtYmYydXZ6MUQxNFpVMER1K3lYdjFYSnhXMFVO?=
- =?utf-8?Q?59Tcsy5I87yNLFVbQ34xL2ThwPQ9BjYUusGfYp4?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S237568AbhIMHpw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 03:45:52 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:45969 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237599AbhIMHpv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 03:45:51 -0400
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 6AD0F100018;
+        Mon, 13 Sep 2021 07:44:23 +0000 (UTC)
+Date:   Mon, 13 Sep 2021 09:44:22 +0200
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 09/22] ARM: dts: sun8i: v3s: Add nodes for MIPI CSI-2
+ support
+Message-ID: <YT8BVo61qL1jq/er@aptenodytes>
+References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
+ <20210910184147.336618-10-paul.kocialkowski@bootlin.com>
+ <483288cb-d9fa-4581-7986-d15c4aa27769@sholland.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HK0PR06MB3380.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19d9feb8-00e9-4de9-c5ed-08d97677c750
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2021 05:31:46.4642
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uvZi2bmynDB8B25ukhyHBQBJ3T7p3ByNF0XZbXDjimnkBcj0hVjYi02SaRciVAls7Wov+jYGBhpbPwfVO22/LEXDC2eF/EVhfleRtCKZ+6g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR06MB3377
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="QZVQzP+VTAJydr5U"
+Content-Disposition: inline
+In-Reply-To: <483288cb-d9fa-4581-7986-d15c4aa27769@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDbGF1ZGl1LkJlem5lYUBtaWNy
-b2NoaXAuY29tIDxDbGF1ZGl1LkJlem5lYUBtaWNyb2NoaXAuY29tPg0KPiBTZW50OiBNb25kYXks
-IFNlcHRlbWJlciAxMywgMjAyMSAxOjI2IFBNDQo+IFRvOiBSeWFuIENoZW4gPHJ5YW5fY2hlbkBh
-c3BlZWR0ZWNoLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBzYm95ZEBrZXJuZWwu
-b3JnOyBqb2VsQGptcy5pZC5hdTsgYW5kcmV3QGFqLmlkLmF1OyBsaW51eC1jbGtAdmdlci5rZXJu
-ZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0h2Ml0gY2xrOmFzcGVlZDpGaXggQVNUMjYwMCBocGxsIGNhbGN1bGF0ZSBmb3JtdWxhDQo+
-IA0KPiBPbiAwOC4wOS4yMDIxIDEyOjE4LCBSeWFuIENoZW4gd3JvdGU6DQo+ID4gRVhURVJOQUwg
-RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Ug
-a25vdw0KPiA+IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gPg0KPiA+IEFTVDI2MDAgSFBMTCBjYWxj
-dWxhdGUgZm9ybXVsYSBbU0NVMjAwXSBIUExMIE51bWVyYXRvcihNKTogaGF2ZSBmaXhlZA0KPiA+
-IHZhbHVlIGRlcGVuZCBvbiBTQ1Ugc3RyYXAuDQo+ID4gTSA9IFNDVTUwMFsxMF0gPyAweDVGIDog
-U0NVNTAwWzhdID8gMHhCRiA6IFNDVTIwMFsxMjowXQ0KPiA+DQo+ID4gaWYgU0NVNTAwWzEwXSA9
-IDEsIE09MHg1Ri4NCj4gPiBlbHNlIGlmIFNDVTUwMFsxMF09MCAmIFNDVTUwMFs4XT0xLCBNPTB4
-QkYuDQo+ID4gb3RoZXJzIChTQ1U1MTBbMTBdPTAgYW5kIFNDVTUxMFs4XT0wKQ0KPiA+IGRlcGVu
-ZCBvbiBTQ1UyMDBbMTI6MF0gKGRlZmF1bHQgMHg4RikgcmVnaXN0ZXIgc2V0dGluZy4NCj4gPg0K
-PiA+IEhQTEwgRGVudW1lcmF0b3IgKE4pID0gIFNDVTIwMFsxODoxM10gKGRlZmF1bHQgMHgyKQ0K
-PiA+IEhQTEwgRGl2aWRlciAoUCkgICAgICAgICA9ICAgICAgU0NVMjAwWzIyOjE5XSAoZGVmYXVs
-dCAweDApDQo+ID4NCj4gPiBGaXhlczogZDNkMDRmNmMzMzBhICgiY2xrOiBBZGQgc3VwcG9ydCBm
-b3IgQVNUMjYwMCBTb0MiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IFJ5YW4gQ2hlbiA8cnlhbl9jaGVu
-QGFzcGVlZHRlY2guY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Nsay9jbGstYXN0MjYwMC5j
-IHwgMjkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQs
-IDI4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2Nsay9jbGstYXN0MjYwMC5jIGIvZHJpdmVycy9jbGsvY2xrLWFzdDI2MDAuYw0KPiA+
-IGluZGV4IDA4NWQwYTE4YjJiNi4uNWQ4YzQ2YmNmMjM3IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
-cnMvY2xrL2Nsay1hc3QyNjAwLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGstYXN0MjYwMC5j
-DQo+ID4gQEAgLTE2OSw2ICsxNjksMzMgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtfZGl2X3Rh
-YmxlDQo+ID4gYXN0MjYwMF9kaXZfdGFibGVbXSA9IHsgIH07DQo+ID4NCj4gPiAgLyogRm9yIGhw
-bGwvZHBsbC9lcGxsL21wbGwgKi8NCj4gPiArc3RhdGljIHN0cnVjdCBjbGtfaHcgKmFzdDI2MDBf
-Y2FsY19ocGxsKGNvbnN0IGNoYXIgKm5hbWUsIHUzMiB2YWwpIHsNCj4gPiArICAgICAgIHVuc2ln
-bmVkIGludCBtdWx0LCBkaXY7DQo+ID4gKyAgICAgICB1MzIgaHdzdHJhcCA9IHJlYWRsKHNjdV9n
-Nl9iYXNlICsgQVNQRUVEX0c2X1NUUkFQMSk7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKHZhbCAm
-IEJJVCgyNCkpIHsNCj4gPiArICAgICAgICAgICAgICAgLyogUGFzcyB0aHJvdWdoIG1vZGUgKi8N
-Cj4gPiArICAgICAgICAgICAgICAgbXVsdCA9IGRpdiA9IDE7DQo+ID4gKyAgICAgICB9IGVsc2Ug
-ew0KPiA+ICsgICAgICAgICAgICAgICAvKiBGID0gMjVNaHogKiBbKE0gKyAyKSAvIChuICsgMSld
-IC8gKHAgKyAxKSAqLw0KPiA+ICsgICAgICAgICAgICAgICB1MzIgbSA9IHZhbCAgJiAweDFmZmY7
-DQo+ID4gKyAgICAgICAgICAgICAgIHUzMiBuID0gKHZhbCA+PiAxMykgJiAweDNmOw0KPiA+ICsg
-ICAgICAgICAgICAgICB1MzIgcCA9ICh2YWwgPj4gMTkpICYgMHhmOw0KPiA+ICsNCj4gPiArICAg
-ICAgICAgICAgICAgaWYgKGh3c3RyYXAgJiBCSVQoMTApKQ0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIG0gPSAweDVGOw0KPiA+ICsgICAgICAgICAgICAgICBlbHNlIHsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICBpZiAoaHdzdHJhcCAmIEJJVCg4KSkNCj4gDQo+IFlvdSBtYXkgd3Jp
-dGUgaXQgZGlyZWN0bHk6DQo+IAkJICBlbHNlIGlmIChod3N0cmFwICYgQklUKDgpKQ0KPiANCkhl
-bGxvLA0KCUxpa2UgSSBjb21taXQgbWVzc2FnZSBNID0gU0NVNTAwWzEwXSA/IDB4NUYgOiBTQ1U1
-MDBbOF0gPyAweEJGIDogU0NVMjAwWzEyOjBdDQoJaXQgbmVlZCBrZWVwIGZyb20gcmVnaXN0ZXIg
-cmVhZCwgaWYgQklUKDgpL0JJVCgxMCkgbm90IDEuDQoJDQoNCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIG0gPSAweEJGOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAg
-ICAgICAgICAgICAgIG11bHQgPSAobSArIDEpIC8gKG4gKyAxKTsNCj4gPiArICAgICAgICAgICAg
-ICAgZGl2ID0gKHAgKyAxKTsNCj4gPiArICAgICAgIH0NCj4gPiArICAgICAgIHJldHVybiBjbGtf
-aHdfcmVnaXN0ZXJfZml4ZWRfZmFjdG9yKE5VTEwsIG5hbWUsICJjbGtpbiIsIDAsDQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgbXVsdCwgZGl2KTsNCj4gPiArfTsNCj4gPiArDQo+ID4gIHN0
-YXRpYyBzdHJ1Y3QgY2xrX2h3ICphc3QyNjAwX2NhbGNfcGxsKGNvbnN0IGNoYXIgKm5hbWUsIHUz
-MiB2YWwpICB7DQo+ID4gICAgICAgICB1bnNpZ25lZCBpbnQgbXVsdCwgZGl2Ow0KPiA+IEBAIC03
-MTYsNyArNzQzLDcgQEAgc3RhdGljIHZvaWQgX19pbml0IGFzcGVlZF9nNl9jYyhzdHJ1Y3QgcmVn
-bWFwDQo+ICptYXApDQo+ID4gICAgICAgICAgKiBhbmQgd2UgYXNzdW1lIHRoYXQgaXQgaXMgZW5h
-YmxlZA0KPiA+ICAgICAgICAgICovDQo+ID4gICAgICAgICByZWdtYXBfcmVhZChtYXAsIEFTUEVF
-RF9IUExMX1BBUkFNLCAmdmFsKTsNCj4gPiAtICAgICAgIGFzcGVlZF9nNl9jbGtfZGF0YS0+aHdz
-W0FTUEVFRF9DTEtfSFBMTF0gPQ0KPiBhc3QyNjAwX2NhbGNfcGxsKCJocGxsIiwgdmFsKTsNCj4g
-PiArICAgICAgIGFzcGVlZF9nNl9jbGtfZGF0YS0+aHdzW0FTUEVFRF9DTEtfSFBMTF0gPQ0KPiA+
-ICsgYXN0MjYwMF9jYWxjX2hwbGwoImhwbGwiLCB2YWwpOw0KPiA+DQo+ID4gICAgICAgICByZWdt
-YXBfcmVhZChtYXAsIEFTUEVFRF9NUExMX1BBUkFNLCAmdmFsKTsNCj4gPiAgICAgICAgIGFzcGVl
-ZF9nNl9jbGtfZGF0YS0+aHdzW0FTUEVFRF9DTEtfTVBMTF0gPQ0KPiA+IGFzdDI2MDBfY2FsY19w
-bGwoIm1wbGwiLCB2YWwpOw0KPiA+IC0tDQo+ID4gMi4xNy4xDQo+ID4NCg0K
+
+--QZVQzP+VTAJydr5U
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Samuel,
+
+On Fri 10 Sep 21, 21:32, Samuel Holland wrote:
+> On 9/10/21 1:41 PM, Paul Kocialkowski wrote:
+> > MIPI CSI-2 is supported on the V3s with an A31-based MIPI CSI-2 bridge
+> > controller. The controller uses a separate D-PHY, which is the same
+> > that is otherwise used for MIPI DSI, but used in Rx mode.
+> >=20
+> > On the V3s, the CSI0 controller is dedicated to MIPI CSI-2 as it does
+> > not have access to any parallel interface pins.
+> >=20
+> > Add all the necessary nodes (CSI0, MIPI CSI-2 bridge and D-PHY) to
+> > support the MIPI CSI-2 interface.
+> >=20
+> > Note that a fwnode graph link is created between CSI0 and MIPI CSI-2
+> > even when no sensor is connected. This will result in a probe failure
+> > for the controller as long as no sensor is connected but this is fine
+> > since no other interface is available.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  arch/arm/boot/dts/sun8i-v3s.dtsi | 72 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 72 insertions(+)
+> >=20
+> > diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i=
+-v3s.dtsi
+> > index a77b63362a1d..ec7fa6459547 100644
+> > --- a/arch/arm/boot/dts/sun8i-v3s.dtsi
+> > +++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+> > @@ -612,6 +612,34 @@ spi0: spi@1c68000 {
+> >  			#size-cells =3D <0>;
+> >  		};
+> > =20
+> > +		csi0: camera@1cb0000 {
+> > +			compatible =3D "allwinner,sun8i-v3s-csi";
+> > +			reg =3D <0x01cb0000 0x1000>;
+> > +			interrupts =3D <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks =3D <&ccu CLK_BUS_CSI>,
+> > +				 <&ccu CLK_CSI1_SCLK>,
+> > +				 <&ccu CLK_DRAM_CSI>;
+> > +			clock-names =3D "bus", "mod", "ram";
+> > +			resets =3D <&ccu RST_BUS_CSI>;
+> > +			status =3D "disabled";
+> > +
+> > +			assigned-clocks =3D <&ccu CLK_CSI1_SCLK>;
+> > +			assigned-clock-parents =3D <&ccu CLK_PLL_ISP>;
+> > +
+> > +			ports {
+> > +				#address-cells =3D <1>;
+> > +				#size-cells =3D <0>;
+> > +
+> > +				port@1 {
+> > +					reg =3D <1>;
+> > +
+> > +					csi0_in_mipi_csi2: endpoint {
+> > +						remote-endpoint =3D <&mipi_csi2_out_csi0>;
+> > +					};
+> > +				};
+> > +			};
+> > +		};
+> > +
+> >  		csi1: camera@1cb4000 {
+> >  			compatible =3D "allwinner,sun8i-v3s-csi";
+> >  			reg =3D <0x01cb4000 0x3000>;
+>=20
+> All of the new nodes should be added above this one, to maintain unit
+> address order.
+
+Good catch, this was an overlook on my side.
+
+Thanks,
+
+Paul
+
+> Regards,
+> Samuel
+>=20
+> > @@ -637,5 +665,49 @@ gic: interrupt-controller@1c81000 {
+> >  			#interrupt-cells =3D <3>;
+> >  			interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_=
+HIGH)>;
+> >  		};
+> > +
+> > +		mipi_csi2: csi@1cb1000 {
+> > +			compatible =3D "allwinner,sun8i-v3s-mipi-csi2",
+> > +				     "allwinner,sun6i-a31-mipi-csi2";
+> > +			reg =3D <0x01cb1000 0x1000>;
+> > +			interrupts =3D <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks =3D <&ccu CLK_BUS_CSI>,
+> > +				 <&ccu CLK_CSI1_SCLK>;
+> > +			clock-names =3D "bus", "mod";
+> > +			resets =3D <&ccu RST_BUS_CSI>;
+> > +			status =3D "disabled";
+> > +
+> > +			phys =3D <&dphy>;
+> > +			phy-names =3D "dphy";
+> > +
+> > +			ports {
+> > +				#address-cells =3D <1>;
+> > +				#size-cells =3D <0>;
+> > +
+> > +				mipi_csi2_in: port@0 {
+> > +					reg =3D <0>;
+> > +				};
+> > +
+> > +				mipi_csi2_out: port@1 {
+> > +					reg =3D <1>;
+> > +
+> > +					mipi_csi2_out_csi0: endpoint {
+> > +						remote-endpoint =3D <&csi0_in_mipi_csi2>;
+> > +					};
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		dphy: d-phy@1cb2000 {
+> > +			compatible =3D "allwinner,sun6i-a31-mipi-dphy";
+> > +			reg =3D <0x01cb2000 0x1000>;
+> > +			clocks =3D <&ccu CLK_BUS_CSI>,
+> > +				 <&ccu CLK_MIPI_CSI>;
+> > +			clock-names =3D "bus", "mod";
+> > +			resets =3D <&ccu RST_BUS_CSI>;
+> > +			allwinner,direction =3D "rx";
+> > +			status =3D "disabled";
+> > +			#phy-cells =3D <0>;
+> > +		};
+> >  	};
+> >  };
+> >=20
+>=20
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--QZVQzP+VTAJydr5U
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmE/AVYACgkQ3cLmz3+f
+v9EFwAgAlLhO92v/X6G6gs1EKL/Ve3k5WVgSYDcp38cxhVkn9TYIx+u97xSfyDLC
+P5PABn2O8tERf6e7U1NBmqr64vSzvziaRmeLo6co6sdLEJuNvk4wrp3/9U7+dp/Q
+9Pp/tPxadAO4SKID7BW5UKTEzWqzGlsGJf/6p83oKzwWtBCTBXTfK0PjkmESPFy8
+kTX1gqi9/Pe0oiWH0PRZJIZzPYDP8PpRNPQNxhPlXivuSnDLFwNAhaSXrMvqOnl2
+/Y+tpSRPXTKGPqjIAzRn3G2fTveiHMw0fTLwVgcZqqNIK4dACeQLJYNdSxjTMORZ
+J1xWZQdStHkESCp9DRxlxV8TLbiItg==
+=95oz
+-----END PGP SIGNATURE-----
+
+--QZVQzP+VTAJydr5U--
