@@ -2,118 +2,301 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B749C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480BCC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 264A761056
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F0EB61029
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238952AbhIMKIA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 06:08:00 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:55353 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238965AbhIMKH6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 06:07:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1631527603; x=1663063603;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ugfxFKb5skliMN99vpU9+w+62Hn+8o39JeEtRKHHXbw=;
-  b=V3gysUEc1AV/Tc3Bjg1UMeeqRYAbMV92okYh5RfhX/tPBr2a9RXukzgQ
-   PewWj2X8jngsyih+lFFa/g7qKHnx/wcYTHA59z6AeMAAWioix9X4WPOk0
-   05iKXfR0hhURbU4sRoDHDrMtp4FBepRdWeylsk+WuqaUqSknBdYsGG8Am
-   LvJfz7MCxQ9KZAaEmm7CKrydwlj+mKMxqJ/NzWD4jiybSEVL4rAi3ZAeL
-   8FX82sZtqIVLQZ9W23aaMghBjtz+W31nbjYDPR2bG0Xvx7UR0apr2cbqB
-   NEyjmnJc2C5XvMM/ALCLdXT4eOGRoJTRCXYOMUAFl6o91srkVStP5a5q7
-   A==;
-IronPort-SDR: coCM3j+jIc2nvhoVSF9r50HqBsHWaQOAEqVfSdU0hFdXGURWTjXQQ4/RT1UqUY5dy2zP5c4aWk
- ylpyoaP3WT5tdZU+HcS7DNcdxI/n2eHwFHWgkjHiuWYPkLPi0TjMc7n4TRKQHkmYlw+2wFMN4I
- 2smAGg77WJjcNmLuv8CTvrJrqX9pMmFf37C2QoQBBl1mE8A9CSgR9WZIsdfFR6uwsYKcxQyLBj
- geoA5KRcx6gm/KNTYu1Q7Pk5SdS4Fm7YDkfAn46kRKuRfSSFO8+CyNsSDRR7AqG03LcGAJ3foh
- t/4yxFvY1tKWtBCCU7OF+1MR
-X-IronPort-AV: E=Sophos;i="5.85,288,1624345200"; 
-   d="scan'208";a="131593959"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Sep 2021 03:06:41 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 13 Sep 2021 03:06:41 -0700
-Received: from [10.171.246.60] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Mon, 13 Sep 2021 03:06:39 -0700
-Subject: Re: [PATCH] clk: at91: check pmc node status before registering
- syscore ops
-To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-        "Michael Turquette" <mturquette@baylibre.com>,
+        id S239169AbhIMKi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 06:38:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235467AbhIMKi4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 06:38:56 -0400
+X-Greylist: delayed 68 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Sep 2021 03:37:39 PDT
+Received: from lb2-smtp-cloud7.xs4all.net (lb2-smtp-cloud7.xs4all.net [IPv6:2001:888:0:108::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A3EC061574;
+        Mon, 13 Sep 2021 03:37:39 -0700 (PDT)
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id PjK4mY9mDpQdWPjK6m2WBC; Mon, 13 Sep 2021 12:36:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1631529389; bh=ts0p47VDy1RuNtn8qktl3hYi7SGUCH+xhpXXyzEAqtw=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=uT8KXGzgjksultoKLa6we++Z5zQLHWwzxQ1lEaWts3V+Qt0LNNuLFKu25NrWVtuZo
+         1LjgM6hHryuY3vq86+RddrMjTRLIOGkgo4SfsdiOrUr48cKtu+vNfkx0MjBiwNcpfO
+         x6kplKvSIXRoXxHHPc0inP48WEZxdSkXCSqJm8OA8GgCSgu+LIvqbVnp4QM5ZYTn7J
+         6MU68wd2j4SMjAOYTSWc5DvNC5MeX1A8pf+1CWNkki8e9D88yU+UdZUnskF6jcxZTb
+         x7hQZjC3/LvQLv9qw4W/mb7PL04dcOPrwcCuvqA4xG8KRGj+HQy9zMnX4rlqCMTzEn
+         tPbVQ1sl7yM4Q==
+Subject: Re: [PATCH v11 22/34] media: dt: bindings: tegra-vde: Convert to
+ schema
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210913082633.110168-1-clement.leger@bootlin.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <531a3155-42a8-d31b-a611-80c1c56a93e3@microchip.com>
-Date:   Mon, 13 Sep 2021 12:06:38 +0200
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210912200832.12312-1-digetx@gmail.com>
+ <20210912200832.12312-23-digetx@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <0feef7a8-932e-0190-1043-bba7912f9599@xs4all.nl>
+Date:   Mon, 13 Sep 2021 12:36:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210913082633.110168-1-clement.leger@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20210912200832.12312-23-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfBdOdOXcUGbOy8OWfAC0zxt/5ZR1EjxHBJ5gYl1f4tGuUDl47qC7VjDg1mAM1PInADc627yzwRlN776HivHd3rTukcU69b8xPC7ACa9E2OCKz91uYxVL
+ 3pdE4kFomOEJlyK5XDfxdXtkeeBC6mOcEhqdqQwH4Zws8gqXIk0y1SM6A/xR4dq6DXJT7ktzTegdDG2vf69Bf1Inc0nSWgZcbClZjXwBh/6PUzQQyvzHLfsA
+ MRCg1hz61XV+l3VOAjxTdsKpAIGBo5kKouuEEKeKcN1jvS8Y8nT2StkOml2QcAp89m6Wk/ljTRQJt50Pf/R0Xpa6GKRLtA+x9Yq2QyyozRGaEmdryuHf2IDp
+ Q6SW4rvA5uBRNutfkivCZXigSZU5qHJ5kw750tkFQIIHV4Q1Hgy7BxRlCWLDxS8PfBn9Lp7H+asKVWAphKn3QHcek/YltS/ABCs0FsZ/YxLaK0+MXtijtE8N
+ 7IoOEhoYPPSuxCJVYRY2UIX6BUYkHxG05T8QxzP2/1OIQgwJfCAP+XbzTGzEjP6pVMvZubLc12lsVJWCTiZdTLStuvHC7VjW/9q0/DSNdZjEcJSwFcQ+5dyU
+ 0eKCP9Dh5LYZT7DIAVFey8OVjpZ9uaftPAxLqk1JoPg7m9mI9PoDMKZdyopexXSAEkA+hIx7xrEvoftuPWB7pcPk0PvijwpFW0auOy3J3kPh/369Sb87TZNZ
+ aPAjyWc0MbC3Mh70ruxm3cUiNK/HT/bmjvtwWG3dOkjR32K9siusAxDnRz9cS4EDVOuoyYuZ13/BO7ElqRAuOx5q0R3emXQu2tGq4Lm3cJIySdIAPOeQHKlC
+ Pt/2uJZ1rD/V8hREozP5HWMpb/VDmz2UKrzSUl/oM93MrtwwA5OReojHDK/jBj047YRvvi048iAM+C77MmGajROkXVOkz5zTgmTdgFpLyczCfSLozwWsOB8/
+ /WmY+e3vD4ivhhMDYTMT1pKxMCf5o0J9NBATSWpd+8gyniN4r86bss3nC+zossl+DEmHbl9DW37wvlJaoD0uAuclOEZkulWi/mTtMePBwtj9f2qDzfpZ1kJ1
+ GMs/9dNnpONv9MRYquVtr/jvyP+/QyoAuPUWqaA14jfh9yQKudX8GRbJ7H3I9R9OnMQUMzEV8DF73tiZK/ez+BpOXxl4QyeKAgjItyGL2Mgf5aO2W51MBFUA
+ vcBqz+fImYuWTCXG/ganwWyK78mkW/C/g6Kw1BNFDg8+AQek3w9LKWRqiiYlFGaouizKDG4jvgu0tfNQQRQWEAI27rJZnQmS9XbIySYi3JeHzJsYHbI/eq12
+ HB9rl2aipViGOkt0q/AYjTyawB5Sw+66uJO0J7XD9CgnHeRUD9T11P5quyCclU6iI5roRQOJt9rwOjTWp5qC2bm5CYZMtQ4P/nzrPZDQSkLzGV+KgPC0vZzo
+ 2tBxqWDknYbfj2P6g7YMu8cpLcqf0WxFjGnH8w==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/09/2021 at 10:26, Clément Léger wrote:
-> Currently, at91 pmc driver always register the syscore_ops whatever
-> the status of the pmc node that has been found. When set as secure
-> and disabled, the pmc should not be accessed or this will generate
-> abort exceptions.
-> To avoid this, add a check on node availability before registering
-> the syscore operations.
+On 12/09/2021 22:08, Dmitry Osipenko wrote:
+> Convert NVIDIA Tegra video decoder binding to schema.
 > 
-> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Yes, indeed,
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-Thanks, best regards,
-   Nicolas
+Regards,
+
+	Hans
 
 > ---
->   drivers/clk/at91/pmc.c | 5 +++++
->   1 file changed, 5 insertions(+)
+>  .../bindings/media/nvidia,tegra-vde.txt       |  64 -----------
+>  .../bindings/media/nvidia,tegra-vde.yaml      | 107 ++++++++++++++++++
+>  2 files changed, 107 insertions(+), 64 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
 > 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 20ee9dccee78..b40035b011d0 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -267,6 +267,11 @@ static int __init pmc_register_ops(void)
->          if (!np)
->                  return -ENODEV;
-> 
-> +       if (!of_device_is_available(np)) {
-> +               of_node_put(np);
-> +               return -ENODEV;
-> +       }
+> diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+> deleted file mode 100644
+> index 602169b8aa19..000000000000
+> --- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+> +++ /dev/null
+> @@ -1,64 +0,0 @@
+> -NVIDIA Tegra Video Decoder Engine
+> -
+> -Required properties:
+> -- compatible : Must contain one of the following values:
+> -   - "nvidia,tegra20-vde"
+> -   - "nvidia,tegra30-vde"
+> -   - "nvidia,tegra114-vde"
+> -   - "nvidia,tegra124-vde"
+> -   - "nvidia,tegra132-vde"
+> -- reg : Must contain an entry for each entry in reg-names.
+> -- reg-names : Must include the following entries:
+> -  - sxe
+> -  - bsev
+> -  - mbe
+> -  - ppe
+> -  - mce
+> -  - tfe
+> -  - ppb
+> -  - vdma
+> -  - frameid
+> -- iram : Must contain phandle to the mmio-sram device node that represents
+> -         IRAM region used by VDE.
+> -- interrupts : Must contain an entry for each entry in interrupt-names.
+> -- interrupt-names : Must include the following entries:
+> -  - sync-token
+> -  - bsev
+> -  - sxe
+> -- clocks : Must include the following entries:
+> -  - vde
+> -- resets : Must contain an entry for each entry in reset-names.
+> -- reset-names : Should include the following entries:
+> -  - vde
+> -
+> -Optional properties:
+> -- resets : Must contain an entry for each entry in reset-names.
+> -- reset-names : Must include the following entries:
+> -  - mc
+> -- iommus: Must contain phandle to the IOMMU device node.
+> -
+> -Example:
+> -
+> -video-codec@6001a000 {
+> -	compatible = "nvidia,tegra20-vde";
+> -	reg = <0x6001a000 0x1000 /* Syntax Engine */
+> -	       0x6001b000 0x1000 /* Video Bitstream Engine */
+> -	       0x6001c000  0x100 /* Macroblock Engine */
+> -	       0x6001c200  0x100 /* Post-processing Engine */
+> -	       0x6001c400  0x100 /* Motion Compensation Engine */
+> -	       0x6001c600  0x100 /* Transform Engine */
+> -	       0x6001c800  0x100 /* Pixel prediction block */
+> -	       0x6001ca00  0x100 /* Video DMA */
+> -	       0x6001d800  0x300 /* Video frame controls */>;
+> -	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
+> -		    "tfe", "ppb", "vdma", "frameid";
+> -	iram = <&vde_pool>; /* IRAM region */
+> -	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
+> -		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
+> -		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
+> -	interrupt-names = "sync-token", "bsev", "sxe";
+> -	clocks = <&tegra_car TEGRA20_CLK_VDE>;
+> -	reset-names = "vde", "mc";
+> -	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
+> -	iommus = <&mc TEGRA_SWGROUP_VDE>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+> new file mode 100644
+> index 000000000000..3b6c1f031e04
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/nvidia,tegra-vde.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->          pmcreg = device_node_to_regmap(np);
->          of_node_put(np);
->          if (IS_ERR(pmcreg))
-> --
-> 2.33.0
+> +title: NVIDIA Tegra Video Decoder Engine
+> +
+> +maintainers:
+> +  - Dmitry Osipenko <digetx@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra132-vde
+> +              - nvidia,tegra124-vde
+> +              - nvidia,tegra114-vde
+> +              - nvidia,tegra30-vde
+> +          - enum:
+> +              - nvidia,tegra20-vde
+> +      - items:
+> +          - const: nvidia,tegra20-vde
+> +
+> +  reg:
+> +    maxItems: 9
+> +
+> +  reg-names:
+> +    items:
+> +      - const: sxe
+> +      - const: bsev
+> +      - const: mbe
+> +      - const: ppe
+> +      - const: mce
+> +      - const: tfe
+> +      - const: ppb
+> +      - const: vdma
+> +      - const: frameid
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    items:
+> +      - const: vde
+> +      - const: mc
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: sync-token
+> +      - const: bsev
+> +      - const: sxe
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  iram:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle of the SRAM MMIO node.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - resets
+> +  - reset-names
+> +  - interrupts
+> +  - interrupt-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    video-codec@6001a000 {
+> +      compatible = "nvidia,tegra20-vde";
+> +      reg = <0x6001a000 0x1000>, /* Syntax Engine */
+> +            <0x6001b000 0x1000>, /* Video Bitstream Engine */
+> +            <0x6001c000  0x100>, /* Macroblock Engine */
+> +            <0x6001c200  0x100>, /* Post-processing Engine */
+> +            <0x6001c400  0x100>, /* Motion Compensation Engine */
+> +            <0x6001c600  0x100>, /* Transform Engine */
+> +            <0x6001c800  0x100>, /* Pixel prediction block */
+> +            <0x6001ca00  0x100>, /* Video DMA */
+> +            <0x6001d800  0x300>; /* Video frame controls */
+> +      reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
+> +                  "tfe", "ppb", "vdma", "frameid";
+> +      iram = <&iram>; /* IRAM MMIO region */
+> +      interrupts = <0  9 4>, /* Sync token */
+> +                   <0 10 4>, /* BSE-V */
+> +                   <0 12 4>; /* SXE */
+> +      interrupt-names = "sync-token", "bsev", "sxe";
+> +      clocks = <&clk 61>;
+> +      reset-names = "vde", "mc";
+> +      resets = <&rst 61>, <&mem 13>;
+> +      iommus = <&mem 15>;
+> +    };
 > 
 
-
--- 
-Nicolas Ferre
