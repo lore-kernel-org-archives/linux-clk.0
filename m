@@ -2,127 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AEEC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B749C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB9A160F6D
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 264A761056
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 10:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238264AbhIMIzM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 04:55:12 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:62893 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237801AbhIMIzL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 04:55:11 -0400
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 5001B40003;
-        Mon, 13 Sep 2021 08:53:52 +0000 (UTC)
-Date:   Mon, 13 Sep 2021 10:53:51 +0200
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 01/22] clk: sunxi-ng: v3s: Make the ISP PLL clock public
-Message-ID: <YT8RnzVqLebtPMD+@aptenodytes>
-References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
- <20210910184147.336618-2-paul.kocialkowski@bootlin.com>
- <20210913075417.ampb2jt4quftpqzj@gilmour>
+        id S238952AbhIMKIA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 06:08:00 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:55353 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238965AbhIMKH6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 06:07:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1631527603; x=1663063603;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=ugfxFKb5skliMN99vpU9+w+62Hn+8o39JeEtRKHHXbw=;
+  b=V3gysUEc1AV/Tc3Bjg1UMeeqRYAbMV92okYh5RfhX/tPBr2a9RXukzgQ
+   PewWj2X8jngsyih+lFFa/g7qKHnx/wcYTHA59z6AeMAAWioix9X4WPOk0
+   05iKXfR0hhURbU4sRoDHDrMtp4FBepRdWeylsk+WuqaUqSknBdYsGG8Am
+   LvJfz7MCxQ9KZAaEmm7CKrydwlj+mKMxqJ/NzWD4jiybSEVL4rAi3ZAeL
+   8FX82sZtqIVLQZ9W23aaMghBjtz+W31nbjYDPR2bG0Xvx7UR0apr2cbqB
+   NEyjmnJc2C5XvMM/ALCLdXT4eOGRoJTRCXYOMUAFl6o91srkVStP5a5q7
+   A==;
+IronPort-SDR: coCM3j+jIc2nvhoVSF9r50HqBsHWaQOAEqVfSdU0hFdXGURWTjXQQ4/RT1UqUY5dy2zP5c4aWk
+ ylpyoaP3WT5tdZU+HcS7DNcdxI/n2eHwFHWgkjHiuWYPkLPi0TjMc7n4TRKQHkmYlw+2wFMN4I
+ 2smAGg77WJjcNmLuv8CTvrJrqX9pMmFf37C2QoQBBl1mE8A9CSgR9WZIsdfFR6uwsYKcxQyLBj
+ geoA5KRcx6gm/KNTYu1Q7Pk5SdS4Fm7YDkfAn46kRKuRfSSFO8+CyNsSDRR7AqG03LcGAJ3foh
+ t/4yxFvY1tKWtBCCU7OF+1MR
+X-IronPort-AV: E=Sophos;i="5.85,288,1624345200"; 
+   d="scan'208";a="131593959"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Sep 2021 03:06:41 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Mon, 13 Sep 2021 03:06:41 -0700
+Received: from [10.171.246.60] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Mon, 13 Sep 2021 03:06:39 -0700
+Subject: Re: [PATCH] clk: at91: check pmc node status before registering
+ syscore ops
+To:     =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210913082633.110168-1-clement.leger@bootlin.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <531a3155-42a8-d31b-a611-80c1c56a93e3@microchip.com>
+Date:   Mon, 13 Sep 2021 12:06:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jDKl5hLx33khB+zy"
-Content-Disposition: inline
-In-Reply-To: <20210913075417.ampb2jt4quftpqzj@gilmour>
+In-Reply-To: <20210913082633.110168-1-clement.leger@bootlin.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 13/09/2021 at 10:26, Clément Léger wrote:
+> Currently, at91 pmc driver always register the syscore_ops whatever
+> the status of the pmc node that has been found. When set as secure
+> and disabled, the pmc should not be accessed or this will generate
+> abort exceptions.
+> To avoid this, add a check on node availability before registering
+> the syscore operations.
+> 
+> Signed-off-by: Clément Léger <clement.leger@bootlin.com>
 
---jDKl5hLx33khB+zy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, indeed,
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Hi,
+Thanks, best regards,
+   Nicolas
 
-On Mon 13 Sep 21, 09:54, Maxime Ripard wrote:
-> On Fri, Sep 10, 2021 at 08:41:26PM +0200, Paul Kocialkowski wrote:
-> > In order to reparent the CSI module clock to the ISP PLL via
-> > device-tree, export the ISP PLL clock declaration in the public
-> > device-tree header.
->=20
-> You use clk_set_rate_exclusive in the ISP driver on the module clock so
-> it should prevent what you're mentioning from happening.
+> ---
+>   drivers/clk/at91/pmc.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 20ee9dccee78..b40035b011d0 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -267,6 +267,11 @@ static int __init pmc_register_ops(void)
+>          if (!np)
+>                  return -ENODEV;
+> 
+> +       if (!of_device_is_available(np)) {
+> +               of_node_put(np);
+> +               return -ENODEV;
+> +       }
+> +
+>          pmcreg = device_node_to_regmap(np);
+>          of_node_put(np);
+>          if (IS_ERR(pmcreg))
+> --
+> 2.33.0
+> 
 
-It does, but then it breaks display support entirely (because the DRM
-driver doesn't use clk_set_rate_exclusive).
 
-The bottomline is that using the same PLL for both display and camera
-easily results in conflicts.
-
-> If it doesn't, then clk_set_rate_exclusive has a bug and should be
-> fixed.
->=20
-> Either way, using assigned-clock-parents is not a good solution here
-> either, it only makes sure that this is the case when probe is run.
-
-I'm not sure what could provide better guarantees. There is a clock
-parenting API (in the clock framework) which may, but this implies
-providing the parent clock to the driver which seems way out of line
-since this is a platform-specific matter that should certainly not
-be handled by the driver.
-
-I also tried hardcoding the reparenting bit in the CCU driver, but
-this felt less clean than doing it in device-tree.
-
-What do you think?
-
-> > Details regarding why the CSI module clock is best parented to the ISP
-> > PLL are provided in the related commit.
->=20
-> This is relevant to this commit too and "the related commit" is far too
-> blurry when you consider the entire Linux git history.
-
-Fair enough!
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---jDKl5hLx33khB+zy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmE/EZ8ACgkQ3cLmz3+f
-v9GAXgf/WonaK8RTTtsz/x2Qh5N5DUQf8yAr5T68Jmx1Vo0uTy0bCi81Er1mcels
-4i6fI+7VeDZT5eopMWHisHVtgCj0u9mACqHgNnH6izOCei7WU1I9NANeIqDDZeow
-QVK16HSwIMpe5Be5UTu/tloyf8WGxcmEXTLyAhYSW3wynlegWFx7qe0GpSby7SCW
-moBvtsHEQ9k3FlvvRtwnZEuUWuBFf5eWN/o0dHy69BL92MYCA0D4lDg0phCrZzru
-ru41/xE+7fKLDTcOUCoVoKQX4Sh23iymP7dzk+YDbXjN8httuTe0HjZiC89sMDX/
-NMsXWS3qM/Owy4KyJP7K4dfSLylwQQ==
-=Rhfu
------END PGP SIGNATURE-----
-
---jDKl5hLx33khB+zy--
+-- 
+Nicolas Ferre
