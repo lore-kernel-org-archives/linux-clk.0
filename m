@@ -2,121 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADE9C43217
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580B1C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 04:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63A0561056
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Sep 2021 20:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33DEE60F11
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 04:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236427AbhILUOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Sep 2021 16:14:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54230 "EHLO
+        id S230196AbhIMEyS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 00:54:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237033AbhILUM0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Sep 2021 16:12:26 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D45C061768;
-        Sun, 12 Sep 2021 13:10:43 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id u15so5265442wru.6;
-        Sun, 12 Sep 2021 13:10:43 -0700 (PDT)
+        with ESMTP id S230042AbhIMEyS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 00:54:18 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E60AC061760
+        for <linux-clk@vger.kernel.org>; Sun, 12 Sep 2021 21:53:03 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id l11so18369264lfe.1
+        for <linux-clk@vger.kernel.org>; Sun, 12 Sep 2021 21:53:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=H6ifLJNQpWHL/aW6APbCXiXF4Xey3uNJjXkEDYLDpf0=;
-        b=ZfKwSrRJYOUFhAoytmkutWh0G4OM3EDXtdlI9nE+QFtPei+2E4JdDl9Wka9E5pH3YS
-         04uPK1Tw8S/mpSJek9+01/hZUOudukqiP1FHYcqijmNUw3d/ou4/LVcqog6TND7k1ctk
-         nhrCXGQ6H7XuuSz39ea5BGGnr4/poWAHAjMjQDsmYxL4FiyE8A3sMYfTHP3veVbXO+uo
-         d9x7efPI4RBayLlBeljU0f1eSkDX3OfNSksY6kDtJWGRBn8yGTD1egqNKbd5IoFywF9B
-         P5raiK7sTUwh7OkLsuO0sINvzimEE1qvWRuqPCO+jbWgCSh5d3Bgwic9fGMsNaWhx7YO
-         E6qg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4GP94oI8tMu6AWKPmeh+Mi99FWEewPUjupFIyk9Vgy8=;
+        b=dy5jiiVGzeuUU3o2/KUgrSZ5nU4dGqicgHDbYfCkZ+dTO+28QM6vPMBSnfZB9xA0vR
+         JsrU7k163qDyuxipvfEBNOaVwCopH6Us6ZtfnezWtK6Nov6EHU1jzPll20Y6SymwwAVO
+         /qH/doGQpsWz0mI2+fGUQJ75Vw/WLAHwY8piw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=H6ifLJNQpWHL/aW6APbCXiXF4Xey3uNJjXkEDYLDpf0=;
-        b=opNkQv4GL2p4rKmnVZxndhirt5HO86rNkyFFU8EoP0AbTk0l5F01AMpzQngTp/zXVw
-         qWjHfbroQ1EHk9Vfj7XZq/MCERRnfzlYum5hMlKL4cRfOKW89tjshOAhB+ZGxCDr5h2H
-         avyWy5S7CaattDMPBopUrs1fHwEp3FQPvF9Jgk+aPCsFaglcDrpcMs8vXGO0sQGeuSDS
-         H7aDnvCzUPAHR4fv0cCNQrmJesfGH5Mmy2TXCQPGUBhqhUc+T9Hlzzr01wq/+hPxr3/Z
-         MToAeVIp1W3RgDx97Ausl6cuSAYjQrQYb9r918sXzAbTBgX5/CwXmIt2O9GXduyPun0q
-         EY1A==
-X-Gm-Message-State: AOAM532qQHFfYQdST0F/ztPoBYgyqGuNYTbJTUnfTjT2ZkXJMFcbRlcm
-        b1ucJmsMnn51PD0uE9RtUaY=
-X-Google-Smtp-Source: ABdhPJy5R0R2cYZ9ytbAqF/pKeienf/EwQwWGSDMVrYLML+XPPmZs/giSU/21wa5JsLrvKFXP2DpUQ==
-X-Received: by 2002:adf:8170:: with SMTP id 103mr9108790wrm.167.1631477442191;
-        Sun, 12 Sep 2021 13:10:42 -0700 (PDT)
-Received: from localhost.localdomain (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.gmail.com with ESMTPSA id v10sm5463476wrg.15.2021.09.12.13.10.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Sep 2021 13:10:41 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v11 28/34] soc/tegra: pmc: Change name of core power domain
-Date:   Sun, 12 Sep 2021 23:08:26 +0300
-Message-Id: <20210912200832.12312-29-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210912200832.12312-1-digetx@gmail.com>
-References: <20210912200832.12312-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4GP94oI8tMu6AWKPmeh+Mi99FWEewPUjupFIyk9Vgy8=;
+        b=h6TosxZ/yKEHYVFHsTKnjrFEU1dv7bQ2ofB+0QEcSHw5Y/EHx8oh5eRy2IiVbs+sgg
+         PfQUX6GPrxZsfa2lG+GrKzdYh5ToQm3ZoJf0DF4Sr750pi2bMm++yRDOu2GuUpA0Ygng
+         wo4TfWa4tHIoZsvfARH2nuEpudf+IGjmV0ksbgZE/4jM6VJiUTUepD8tyNswAwBwgaRA
+         zoht1InyU9EvkGnhp9dCQaGWQFW4Fq3Lgly/YcT9zKMKdhHVLkrGKfu45oIHvbZW6cxR
+         hT3p+bt35kfI368zNOGsJgTHxgMm0yXpRkBmbzDg0YgXzLplss/n8MPZveL2QBB8iJja
+         5dow==
+X-Gm-Message-State: AOAM531lKSVL907dhfuRFLsCbSnXW+/6Ag2FGSL/7CpgpPwQLibOG9Qz
+        Ik1yjNA46oVt7JWUJcDwCecJL0BkaX3hPsfpUjHItw==
+X-Google-Smtp-Source: ABdhPJz/3Qrvat1JZ3K+cjHFjhNfQ1Dn3Xyi3uZH6ast4XQTlgibkT6qLsGdMg9yDmhhz9D5dLFRiduzFLzRZJkmR20=
+X-Received: by 2002:a05:6512:c16:: with SMTP id z22mr8054334lfu.482.1631508781305;
+ Sun, 12 Sep 2021 21:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
+ <CAD=FV=Wp=zqx4j=srryypAfpRusHQinuhXjmu4G_HuBo7+PN1g@mail.gmail.com>
+In-Reply-To: <CAD=FV=Wp=zqx4j=srryypAfpRusHQinuhXjmu4G_HuBo7+PN1g@mail.gmail.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Mon, 13 Sep 2021 12:52:50 +0800
+Message-ID: <CAGXv+5H-NJnUQ3WCdbdw9yz9FPHCHK7siLW2YsCfjiruj6B5pA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: rockchip: rk3399: make CPU clocks critical
+To:     Brian Norris <briannorris@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CORE power domain uses name of device-tree node, which is inconsistent with
-the names of PMC domains. Set the name to "core" to make it consistent.
+On Thu, Sep 9, 2021 at 3:44 AM Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Wed, Sep 8, 2021 at 11:14 AM Brian Norris <briannorris@chromium.org> wrote:
+> >
+> > The CPU clocks don't currently have any owner (e.g., cpufreq-dt doesn't
+> > enable() them -- and even if it did, it's not early enough compared to
+> > other consumers -- nor does arch/arm64/kernel/smp.c), and instead are
+> > simply assumed to be "on" all the time.
+> >
+> > They are also parents of a few other clocks which haven't been
+> > previously exposed for other devices to consume. If we want to expose
+> > those clocks, then the common clock framework may eventually choose to
+> > disable their parents (including the CPU PLLs) -- which is no fun for
+> > anyone.
+> >
+> > Thus, mark the CPU clocks as critical, to prevent them from being
+> > disabled implicitly.
+> >
+> > Signed-off-by: Brian Norris <briannorris@chromium.org>
+> > ---
+> >
+> > Changes in v2:
+> >   - New, split from the patch that requires this change
+> >
+> >  drivers/clk/rockchip/clk-rk3399.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index fb8faf7b226a..5e1fc873bf8f 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1353,7 +1353,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
- 	if (!genpd)
- 		return -ENOMEM;
- 
--	genpd->name = np->name;
-+	genpd->name = "core";
- 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
- 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
- 
--- 
-2.32.0
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
