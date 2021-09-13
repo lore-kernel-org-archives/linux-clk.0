@@ -7,110 +7,149 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E2BC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B907CC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC4460FE6
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9790F6101C
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 08:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238465AbhIMIty (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 04:49:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:54617 "EHLO
+        id S236022AbhIMIvu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 04:51:50 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:60139 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238476AbhIMItu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 04:49:50 -0400
+        with ESMTP id S238121AbhIMIvt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 04:51:49 -0400
 Received: from stretch.efe.local ([79.233.161.113]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MatmF-1mw1eH10It-00cPMW; Mon, 13 Sep 2021 10:48:30 +0200
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MxHLs-1nA65U3agq-00xXQG; Mon, 13 Sep 2021 10:50:28 +0200
 From:   Jens Renner <renner@efe-gmbh.de>
 To:     linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, renner@efe-gmbh.de
-Subject: [PATCH] clk: si5351: Update datasheet references
-Date:   Mon, 13 Sep 2021 09:48:23 +0200
-Message-Id: <20210913074823.115212-1-renner@efe-gmbh.de>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        sebastian.hesselbarth@gmail.com, renner@efe-gmbh.de
+Subject: [PATCH] clk: si5351: update multisynth limits
+Date:   Mon, 13 Sep 2021 10:50:18 +0200
+Message-Id: <20210913085018.116591-1-renner@efe-gmbh.de>
 X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:wzqlxJi40j2sKko4YJ9Lg847UXl2YS2B5uKzZqhTKTtfmXs+wNj
- 7Mb8mkXVVSGr5uD0WE6ZntvvveFZYf1Jo8gzYYMXKKyjXOhCbyJmxMLoGVjaQflTmqk6J4K
- 8BToJI6i0p9UoStWj8yRh+JqE33RJjvTQrwi9FifyqgU6ZqjCl27IOvlCW/ABOhV8sw/ok9
- Rystt16Wv0kL/DE49/nVg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9Cu8QfukTn8=:6c382jIQTVlxkRP0+MiA3m
- RCmS9UmbHO86Ejvk+cpfsqlRBkHlm8yDG6E9CzbvJq41KzeJZD0k00pHtvAyMKTNdEiXbVqiY
- Tuq4LZQTeHrpR+FmzKRTpboZDszYrh+mgXpyIG0Vcsnbv97p25ZHg2GqNUCimquBbp5agsuKc
- 9p2jFcGXBtcwqq5iTjl/ANJoIL2aWUaEh/4eKagwBXQpaYv61nPPBOAoB1v2jVP+hxDImT+Ob
- qPdzP7B+db8XkAmcTzhm7GcTe0iKeLpUp1jxIOCUu5FR0h0UA28qR69j4NK1VomJXsDbsDDxV
- 2AdB/e3TLiwGzUPy9P1yPM/rhHKsPYcL6LfbolFwbZnkCdlaq6XosmNlrYPNtYZPM46ooQ51l
- h7oZklUDNiPTg/PLo0PfbMDaQNIAmrHS5eP0G9bsjaXbhun+lGBowR+fCjEZGSaokn6PU0Bio
- J3TSBxWF15OREBKOGEzubtaVKuNxLlbnhji+Z4rBam7jQrRiL5HbANg4AtfQpkXwMj7704iUZ
- UCJniqcQNDHrq50x9TqEciPhm17tOksHoLCJAnmdg5MPecMC5A7BtRGEDHGtGJELXvjDUw7Uj
- LjNec50kho0vJtwXXVXs1oKL/xGDfW8krFq77SW3hdHHIxkDXfvLrFQdh73UtGxP0N/N7rEcp
- 72zR2GH7JxO+8xVItZOPlGLeXB6yf5H235HE1sSUsO+d52iTwKLCp1IlglU+P5++irlKaz+qE
- JD+ZTcF/A4DjjlONhHerPdCSlBPdcp/JHArnkg==
+X-Provags-ID: V03:K1:5AyDpDJt23SAQ7LPt7glz1uGSlyR2cVDOj1jW0K9A6TwW+v753f
+ tsM58oh31W9djKVcxsjVTY4cqIVu08s1LEBM1lBTdgy96iIyoxh/Wtl2ZiJWyqxIfaQcyu5
+ 8luUR7Lg4tUwRNt27ebOvKOWLXQA00TvYJ/GO4Zs3wg1WXusMSjV/CIOc2ga/ZEws3QFtTv
+ uaPIZpZo/1Fp/5/3YAcKg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tHLt6Pxvgj0=:AHNrOFu1Xg9l/qjH97ZlmE
+ NUv/0oAy3f6Ju/C3Eb+zeVNwljzydk3Za02QAnVfcrWgJ9k21r737XKXoQnbXR/3Q3Jn6cxaY
+ Ve3dJBtR6KPWXbp7/ner1xi53yJskETB8iQhqVdozL42jwm0QWQYT8WaSJHy2QlHmkiBSoe08
+ gqnUnlG4rJj2THnskRGqajTReQRqFHhCkZCh8o0OWiQvR9FTLdz2MNZ8PGYF8v5i0sa7+EPsi
+ xy2/NClUrUY+8N1WzHRivmplkhIRHW33+qXsz32FLI/GjlXGwBc6JswX3R3VGjbbfFd/F7udz
+ Q6bpresmStlt17/HUW7907Qn4SDhb2IGC8UaHIxGDtfSb5M/tjETAbtSg1S7Olr5Ong33hxCp
+ hvFAbb+h0RotrOrzRcDymrCyqBKXSYZ2CQygdX4O/Z3w4ZFnMToBokRQ2WaNPN1llMrxWAV+J
+ E8HATojgR0U3juZmrD1QpFUA47nEGnMwFQ3SpRhDJCFkVfMQZNUHMS5+TOGFgnuJzFcp+5a8k
+ S4X94DhQLr1hzV3pKdxUYwmH3/L/MKW7MpkdOhcMZv9nr4qYmKxR3N+eFCM3a5avisfZ++tV5
+ rsT8H62O6P7+1E0N4zxG19oEX/dXUdb6R4H8tOyJlLBi/XjMW0Kyg/UgUeeNuUWPKCxtb7UTA
+ xeHllKpRGo+1msJABDflR7uKXeeFIwf7InJ1n+f1i15VdyrwnAOnemp1oa7Tq19TC5mRJsGQh
+ mlZkY0xlCFASvUq3yfCQ/T/Vy5UW0JNvg1GRkg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Silicon Labs is now part of Skyworks Inc. so update the URLs to the
-datasheet and application note.
+The revised datasheet (rev. 1.0 and later) specifies new limits for the
+multisynth dividers that lead to an extended clock output frequency
+range of 2.5 kHz - 200 MHz [1].
+
+[1] https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public
+/data-sheets/Si5351-B.pdf
 
 Signed-off-by: Jens Renner <renner@efe-gmbh.de>
 ---
- Documentation/devicetree/bindings/clock/silabs,si5351.txt | 2 +-
- drivers/clk/clk-si5351.c                                  | 8 ++++----
- drivers/clk/clk-si5351.h                                  | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk-si5351.c | 15 ++++++++-------
+ drivers/clk/clk-si5351.h |  8 ++++----
+ 2 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-index 8fe6f80afade..bfda6af76bee 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-@@ -2,7 +2,7 @@ Binding for Silicon Labs Si5351a/b/c programmable i2c clock generator.
- 
- Reference
- [1] Si5351A/B/C Data Sheet
--    https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
-+    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
- 
- The Si5351a/b/c are programmable i2c clock generators with up to 8 output
- clocks. Si5351a also has a reduced pin-count package (MSOP10) where only
 diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 57e4597cdf4c..93fa8c9e11be 100644
+index 57e4597cdf4c..56bc59f91d20 100644
 --- a/drivers/clk/clk-si5351.c
 +++ b/drivers/clk/clk-si5351.c
-@@ -1,15 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * clk-si5351.c: Silicon Laboratories Si5351A/B/C I2C Clock Generator
-+ * clk-si5351.c: Skyworks / Silicon Labs Si5351A/B/C I2C Clock Generator
+@@ -556,7 +556,7 @@ static const struct clk_ops si5351_pll_ops = {
+  * MS[6,7] are integer (P1) divide only, P1 = divide value,
+  * P2 and P3 are not applicable
   *
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Rabeeh Khoury <rabeeh@solid-run.com>
+- * for 150MHz < fOUT <= 160MHz:
++ * for 150MHz < fOUT <= 200MHz:
   *
-  * References:
-  * [1] "Si5351A/B/C Data Sheet"
-- *     https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
-- * [2] "Manually Generating an Si5351 Register Map"
-- *     https://www.silabs.com/Support%20Documents/TechnicalDocs/AN619.pdf
-+ *     https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
-+ * [2] "AN619: Manually Generating an Si5351 Register Map"
-+ *     https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/application-notes/AN619.pdf
+  * MSx_P1 = 0, MSx_P2 = 0, MSx_P3 = 1, MSx_INT = 1, MSx_DIVBY4 = 11b
   */
+@@ -653,7 +653,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (hwdata->num >= 6 && rate > SI5351_MULTISYNTH67_MAX_FREQ)
+ 		rate = SI5351_MULTISYNTH67_MAX_FREQ;
  
- #include <linux/module.h>
+-	/* multisync frequency is 1MHz .. 160MHz */
++	/* multisync frequency is 300kHz .. 200MHz */
+ 	if (rate > SI5351_MULTISYNTH_MAX_FREQ)
+ 		rate = SI5351_MULTISYNTH_MAX_FREQ;
+ 	if (rate < SI5351_MULTISYNTH_MIN_FREQ)
+@@ -681,8 +681,8 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 		*parent_rate = a * rate;
+ 	} else if (hwdata->num >= 6) {
+-		/* determine the closest integer divider */
+-		a = DIV_ROUND_CLOSEST(*parent_rate, rate);
++		/* determine the closest even integer divider */
++		a = DIV_ROUND_CLOSEST(*parent_rate/2, rate) * 2;
+ 		if (a < SI5351_MULTISYNTH_A_MIN)
+ 			a = SI5351_MULTISYNTH_A_MIN;
+ 		if (a > SI5351_MULTISYNTH67_A_MAX)
+@@ -715,7 +715,8 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 		b = 0;
+ 		c = 1;
+-		if (rfrac)
++		/* Smallest divider in fractional mode must be > 8 (AN619)! */
++		if (rfrac && (a >= 8))
+ 			rational_best_approximation(rfrac, denom,
+ 			    SI5351_MULTISYNTH_B_MAX, SI5351_MULTISYNTH_C_MAX,
+ 			    &b, &c);
+@@ -1039,11 +1040,11 @@ static long si5351_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		container_of(hw, struct si5351_hw_data, hw);
+ 	unsigned char rdiv;
+ 
+-	/* clkout6/7 can only handle output freqencies < 150MHz */
++	/* clkout6/7 can only handle output frequencies < 150MHz */
+ 	if (hwdata->num >= 6 && rate > SI5351_CLKOUT67_MAX_FREQ)
+ 		rate = SI5351_CLKOUT67_MAX_FREQ;
+ 
+-	/* clkout freqency is 8kHz - 160MHz */
++	/* clkout frequency is 2.5kHz - 200MHz */
+ 	if (rate > SI5351_CLKOUT_MAX_FREQ)
+ 		rate = SI5351_CLKOUT_MAX_FREQ;
+ 	if (rate < SI5351_CLKOUT_MIN_FREQ)
 diff --git a/drivers/clk/clk-si5351.h b/drivers/clk/clk-si5351.h
-index 73dc8effc519..e9e2bfdaaedf 100644
+index 73dc8effc519..f799dc6ea8a1 100644
 --- a/drivers/clk/clk-si5351.h
 +++ b/drivers/clk/clk-si5351.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-or-later */
- /*
-- * clk-si5351.h: Silicon Laboratories Si5351A/B/C I2C Clock Generator
-+ * clk-si5351.h: Skyworks / Silicon Labs Si5351A/B/C I2C Clock Generator
-  *
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Rabeeh Khoury <rabeeh@solid-run.com>
+@@ -13,11 +13,11 @@
+ 
+ #define SI5351_PLL_VCO_MIN			600000000
+ #define SI5351_PLL_VCO_MAX			900000000
+-#define SI5351_MULTISYNTH_MIN_FREQ		1000000
++#define SI5351_MULTISYNTH_MIN_FREQ		300000
+ #define SI5351_MULTISYNTH_DIVBY4_FREQ		150000000
+-#define SI5351_MULTISYNTH_MAX_FREQ		160000000
++#define SI5351_MULTISYNTH_MAX_FREQ		200000000
+ #define SI5351_MULTISYNTH67_MAX_FREQ		SI5351_MULTISYNTH_DIVBY4_FREQ
+-#define SI5351_CLKOUT_MIN_FREQ			8000
++#define SI5351_CLKOUT_MIN_FREQ			2500
+ #define SI5351_CLKOUT_MAX_FREQ			SI5351_MULTISYNTH_MAX_FREQ
+ #define SI5351_CLKOUT67_MAX_FREQ		SI5351_MULTISYNTH67_MAX_FREQ
+ 
+@@ -26,7 +26,7 @@
+ #define SI5351_PLL_B_MAX			(SI5351_PLL_C_MAX-1)
+ #define SI5351_PLL_C_MAX			1048575
+ #define SI5351_MULTISYNTH_A_MIN			6
+-#define SI5351_MULTISYNTH_A_MAX			1800
++#define SI5351_MULTISYNTH_A_MAX			2048
+ #define SI5351_MULTISYNTH67_A_MAX		254
+ #define SI5351_MULTISYNTH_B_MAX			(SI5351_MULTISYNTH_C_MAX-1)
+ #define SI5351_MULTISYNTH_C_MAX			1048575
 -- 
 2.33.0
 
