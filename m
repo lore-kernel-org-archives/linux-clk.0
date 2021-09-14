@@ -2,137 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0683C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 09:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2711DC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 11:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4E061155
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 09:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E320160F6C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 11:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231523AbhINJgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 05:36:55 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:52971 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231467AbhINJgt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 05:36:49 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id C7EF62B012CF;
-        Tue, 14 Sep 2021 05:35:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 14 Sep 2021 05:35:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=KZiZWdvJgbm8A
-        O9dULU9dYb4KpiNbFD2SCZXSHEueLQ=; b=ajC70K3lqeOyYZmSGxc4Lt6XcQohF
-        vEeMGVa582IsocEEMobTkI3uc8XYsxtH4wOHznN+SZeFDn/T9H3NH7vUc3tnOQln
-        9StAP8PkUcMgJ9MKX5hPwBvaBx1EeIdae/9sg1zisOvutrqJ5D9eWhivq/Q/9+qj
-        ZnA9KOEJoPldXjEITevNfz3t2pQaWwp+Y+3+qDqPqtJa2borAKPw+RtmjxwrG5ET
-        aiPDbhsFEsYRaAPERU68NiBhYlI8ZkGq8BO679I7nGzTSEyymW2a45lm/bBLNIQx
-        s7R4TEScqxATE3xecZ/MgMCy37cy1clEJKc7qo2TUW0gnRKOENs7PWVzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=KZiZWdvJgbm8AO9dULU9dYb4KpiNbFD2SCZXSHEueLQ=; b=Riu3p86K
-        KWS3saB5R0tzxx+3YXDroSZYqfXkHITrlTH4CLHxt+wFndfqFJe5r8w/UPmiyYI1
-        26vvnpSm1rysNhL0esg4EALs0xfMLj7FqhY/yHGkQiSCfNEzAoM7rpDYAgsQt7JM
-        52U68i75oG124puVtSof+dR68oIOwHKHoDPQ1XIvtyHN+PLaLGzv73HIwAoohK4m
-        p2rW8WW1XD0QcfPOV3Bx9CVK3AbTK9EVGe2iSxn37MTgEoDDcnvMMKTM5hlCvM7G
-        eBe4pTjBCysPQeykOcfX01+nOtdfeDyKw/VDs5yLmmGZilBdxOw3pWN0o5lBjk7g
-        tGk/ePK+XKK5Ig==
-X-ME-Sender: <xms:4mxAYeoEoX8ftxADMukZawuupQUOb8Ruityvyx9NJleXOS0VUwO_wQ>
-    <xme:4mxAYcpvp73chl79V2EUKbbXQeA0SPuZ-NmuqwqE1cuMyX7UtehoxQZTzS0NaTF88
-    oAtnFaHNWtzjeNL7Vk>
-X-ME-Received: <xmr:4mxAYTNtUmCyM5MDgcOSpZehkdRyIcFmrT8y2csXfOKcVENjI0U4P-HxPt48h5A0hg9bv-6SbnkW3uqtkQl4a3fOBZpOKe6UqZix>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudegledgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:4mxAYd68GztJGyZDn412B-rtsxy_7qrKkGkJ9rCKrwkuKx9-SqauuQ>
-    <xmx:4mxAYd6iavMZuXWCEYJIoJ6YS5bFMB6VeytozvEmB-3PQ896J1KAgA>
-    <xmx:4mxAYdhoSZx0FsX9geo33a_YXjpjArIc6_zdDTriHtXCoS1Xq5NZww>
-    <xmx:4mxAYRrnpdEEynnxTJ3fmIk_WxAgJT3NDKhmP35PhagtIb4XTXm019f9Ta4>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Sep 2021 05:35:29 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Dom Cobley <popcornmix@gmail.com>
-Subject: [PATCH v2 3/3] drm/vc4: hvs: Convert to the new clock request API
-Date:   Tue, 14 Sep 2021 11:35:15 +0200
-Message-Id: <20210914093515.260031-4-maxime@cerno.tech>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210914093515.260031-1-maxime@cerno.tech>
-References: <20210914093515.260031-1-maxime@cerno.tech>
+        id S231828AbhINLND (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 07:13:03 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53008 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231691AbhINLND (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 07:13:03 -0400
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E3C042A5;
+        Tue, 14 Sep 2021 13:11:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1631617904;
+        bh=UVN9Czt4d3zRJH4FreSTQyVzvDmfnJhgwAWZq7jgpak=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ir49+m105z1jz+jtGji8tsAqWQZ8kgxHOFeV7vW3ytIHrvOU2IzjHw58VO4/UNxu+
+         lIOsD8oGDBYhTPM01llE3XGSal0gIdRzQ6loCzgMS4e37f+38xDpUvlMovjblgVpDW
+         A3sCb3MMKNHeEYv1m+wh50lSeuiIqwZI6gF1G9ME=
+Date:   Tue, 14 Sep 2021 14:11:18 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-staging@lists.linux.dev, Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 20/22] staging: media: Add support for the Allwinner A31
+ ISP
+Message-ID: <YUCDVm4OA3C3Re09@pendragon.ideasonboard.com>
+References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
+ <20210910184147.336618-21-paul.kocialkowski@bootlin.com>
+ <20210913083135.v7q7joux2xckat62@gilmour>
+ <YUBUUQxBaGUkjzMP@aptenodytes>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YUBUUQxBaGUkjzMP@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dom Cobley <popcornmix@gmail.com>
+Hi Paul,
 
-The new clock request API allows us to increase the rate of the
-core clock as required during mode set while decreasing it when
-we're done, resulting in a better power-efficiency.
+On Tue, Sep 14, 2021 at 09:50:41AM +0200, Paul Kocialkowski wrote:
+> On Mon 13 Sep 21, 10:31, Maxime Ripard wrote:
+> > On Fri, Sep 10, 2021 at 08:41:45PM +0200, Paul Kocialkowski wrote:
+> > > Some Allwinner platforms come with an Image Signal Processor, which
+> > > supports various features in order to enhance and transform data
+> > > received by image sensors into good-looking pictures. In most cases,
+> > > the data is raw bayer, which gets internally converted to RGB and
+> > > finally YUV, which is what the hardware produces.
+> > > 
+> > > This driver supports ISPs that are similar to the A31 ISP, which was
+> > > the first standalone ISP found in Allwinner platforms. Simpler ISP
+> > > blocks were found in the A10 and A20, where they are tied to a CSI
+> > > controller. Newer generations of Allwinner SoCs (starting with the
+> > > H6, H616, etc) come with a new camera subsystem and revised ISP.
+> > > Even though these previous and next-generation ISPs are somewhat
+> > > similar to the A31 ISP, they have enough significant differences to
+> > > be out of the scope of this driver.
+> > > 
+> > > While the ISP supports many features, including 3A and many
+> > > enhancement blocks, this implementation is limited to the following:
+> > > - V3s (V3/S3) platform support;
+> > > - Bayer media bus formats as input;
+> > > - Semi-planar YUV (NV12/NV21) as output;
+> > > - Debayering with per-component gain and offset configuration;
+> > > - 2D noise filtering with configurable coefficients.
+> > > 
+> > > Since many features are missing from the associated uAPI, the driver
+> > > is aimed to integrate staging until all features are properly
+> > > described.
+> > 
+> > We can add new features/interfaces to a !staging driver. Why do you
+> > think staging is required?
+> 
+> This is true for the driver but not so much for the uAPI, so it seems that
+> the uAPI must be added to staging in some way. Then I'm not sure it makes sense
+> to have a !staging driver that depends on a staging uAPI.
+> 
+> Besides that, I added it to staging because that's the process that was
+> followed by rkisp1, which is a very similar case.
 
-Signed-off-by: Dom Cobley <popcornmix@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_kms.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Maxime is right in the sense that uAPI can always be extended, but it
+has to be done in a backward-compatible manner, and staging is sometimes
+considered as not being covered by the ABI stability requirements of the
+kernel. Not everybody agrees on this, but there are clear cases where
+userspace really can't expect staging ABIs to be stable (for instance
+when the driver doesn't even compile).
 
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index f0b3e4cf5bce..3550ae9f782e 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -341,6 +341,7 @@ static void vc4_atomic_commit_tail(struct drm_atomic_state *state)
- 	struct drm_crtc_state *new_crtc_state;
- 	struct drm_crtc *crtc;
- 	struct vc4_hvs_state *old_hvs_state;
-+	struct clk_request *core_req;
- 	int i;
- 
- 	for_each_new_crtc_in_state(state, crtc, new_crtc_state, i) {
-@@ -354,7 +355,7 @@ static void vc4_atomic_commit_tail(struct drm_atomic_state *state)
- 	}
- 
- 	if (vc4->hvs->hvs5)
--		clk_set_min_rate(hvs->core_clk, 500000000);
-+		core_req = clk_request_start(hvs->core_clk, 500000000);
- 
- 	old_hvs_state = vc4_hvs_get_old_global_state(state);
- 	if (!old_hvs_state)
-@@ -399,7 +400,7 @@ static void vc4_atomic_commit_tail(struct drm_atomic_state *state)
- 	drm_atomic_helper_cleanup_planes(dev, state);
- 
- 	if (vc4->hvs->hvs5)
--		clk_set_min_rate(hvs->core_clk, 0);
-+		clk_request_done(core_req);
- }
- 
- static int vc4_atomic_commit_setup(struct drm_atomic_state *state)
+I think there's value in having the driver in staging to facilitate
+development until we consider the ABI stable, but I'm not entirely sure
+if there should be another step taken to mark this ABI is not being
+ready yet.
+
+> > > On the technical side, it uses the v4l2 and media controller APIs,
+> > > with a video node for capture, a processor subdev and a video node
+> > > for parameters submission. A specific uAPI structure and associated
+> > > v4l2 meta format are used to configure parameters of the supported
+> > > modules.
+> > 
+> > This meta format needs to be documented
+> 
+> You're right, there should probably be a pixfmt-meta-sun6i-isp.rst
+> documentation file. I guess it should live along in the staging driver
+> directory for now and be destaged later.
+
+Can documentation in staging be compiled ? If not I think it can go to
+Documentation/
+
 -- 
-2.31.1
+Regards,
 
+Laurent Pinchart
