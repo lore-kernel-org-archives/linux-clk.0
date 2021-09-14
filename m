@@ -2,58 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6C0C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83475C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15C2661212
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64163610EA
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238362AbhINC5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 22:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47196 "EHLO
+        id S238756AbhINDWU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 23:22:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238148AbhINC53 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 22:57:29 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E79DC061768
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 19:56:10 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id r2so11309949pgl.10
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 19:56:10 -0700 (PDT)
+        with ESMTP id S238366AbhINDWG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 23:22:06 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B252C061762
+        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:20:49 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id n4so7223516plh.9
+        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:20:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6z4EVDIxvmSYs4cCpIBDRML2cVV3ycANQaXgrnvaHVA=;
-        b=n8Mu9j7bCyeMTYGI9pIjxvy3odYQeclkpbaZrvt1JTSq5xfTLG3GC7LmDlu8Zk0X6N
-         2ldtcBmjJzh4MgEHX6IVA1IIrLkNT9uULW0uC4K6rdSocHsmdVWJj+9jxGqZt8iQ90H2
-         3MKF/Tk5NVIN44zkuntaSbrwEGBdzUHjS8vu8SofW/a8I8ctAwBHiLCSzj5JCF7SCoDm
-         DH2s5ASdoiaYM7+/A95a+D1XFP5dfKXw5RSWAtdsKce7Bjfj6S4Eevtka3OGH5hP5Otb
-         3WvMJUH+noKd+kFXyjxm6szqFVM4u5XQRcnYZqp9eSOuDwihYUGXXDYT3yvVOiJeglLw
-         xRTw==
+        h=from:to:cc:subject:date:message-id;
+        bh=evU0I9HnPhgr5ohWZx9jr9eeUj1gyXGQSZ1qih7ewsQ=;
+        b=vFkKjmn9myJ/WwjipewJfdVMZf/gzpnDh21+ca0Et4u9BXQ7MJtB2v8U1dFXgo4G2k
+         blhyZzgesJNZy3/f4iSyo4xA0UETFLbTEp9fnWCbSwO0V9qdB0QTT7eDtyU9XgxITDgh
+         q96znINhWc7XoE6oGNYtpfl6pkn/Zsy2L+Jfktx1mqt7eZp9a1ohfIjv2Rh6qDO/hjO/
+         vWW0sWbRikGHilXi/PBLgnwAbEp8BezQ/nBO46VycSuxCxzK70cvJs0EmK5mlG/1S+J7
+         SEVDCnr/oRUG85mkrNZ2yIKHCLZWsylMNUg7uAA0jmGSQE4eDJh7vkivnkWapPAU/sCT
+         WEbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6z4EVDIxvmSYs4cCpIBDRML2cVV3ycANQaXgrnvaHVA=;
-        b=d1doiNGlEANDV/F8J1cNc85nA+D7ChnmTfHx0KjgzM29w1dH+byKWFMtZBzc03VN/n
-         pTmRLLYrQ34h+LnLM5ilXviiMmp6076NKByN9X2GbDnnEtxm5A3em3YlMSvcqu3z9fVC
-         nCgamFpuSXoB80ZJmTy/n/tasFyUSbv6lJDECEzdRcZAKuZJScPtR1hbI5XgSBJAfUGu
-         TXXJYUtICcvRide+dVhnXJcTdKuOz4Yf8GvTBFIdoZRAu9UCiFBtLBZbY9W+gT62oDww
-         Fh4zevs+eTxHyNGip+4PyOgDQU9c94H9CEDyGJtWAhsJq3aIs9tQVVQgRtaEOJzOL/pI
-         cq+w==
-X-Gm-Message-State: AOAM532yyQvJ4pXU4Hu5jhKSOW33//sulWV2KCw7XqzAPfDCr8xCaaBN
-        LAG/sM9Q/aMyFSznEefjIKCWsg==
-X-Google-Smtp-Source: ABdhPJzC3x+I0MEv0MGE/RAvJa/uIw5x37Owv5ZIgE6dUGPKxVP9w7cNqh2CPbQ7lES7DKTzv4a1Fw==
-X-Received: by 2002:a05:6a00:1396:b0:40d:bb7c:92d0 with SMTP id t22-20020a056a00139600b0040dbb7c92d0mr2620143pfg.38.1631588169776;
-        Mon, 13 Sep 2021 19:56:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=evU0I9HnPhgr5ohWZx9jr9eeUj1gyXGQSZ1qih7ewsQ=;
+        b=LhhRdfawRRf+zjtR9M3ZJF1ACo+zL+PR/h5ws1hHD+dlyPOD09VXsyT9IODHlCMhgU
+         Q/V3pNZwal9F7wqgI0389cq8eIYbmxD6yI7X86KjgFrBS/ot0z+cNqOLNDgCysf9m3zD
+         dSuMV4AZfTOiMtR22TRVGXAib5eRLGle/V5GrGdDOvk/4OfB9NqSRJNfo6JKi99IW5wE
+         sGixRtB8xxtIycOrrJq0g4cMjq9I9EiIMAB9Y2gOVv1SakkyWc7piid1ZJU0HGianknF
+         56djeajgRfwpffr7s3P19miMuXohSlIX06MDsZCiaD/CdudH5zBzK9KcPJ+KyvdoJzgq
+         l5Gg==
+X-Gm-Message-State: AOAM530YX2D7o1N0hpOjqvsqZfKqQe9uJK2jfRAFfv3fhcUHbOjWUetU
+        mWF54FjsefNrJ6k9L1B/tJnRaQ==
+X-Google-Smtp-Source: ABdhPJxIyQS1srZp9DOkaJINQH22lKR3XD3oL6MRF2rFo6uIbf1esGRLezTtlN36pPLaf73feW+VpQ==
+X-Received: by 2002:a17:90b:814:: with SMTP id bk20mr3048004pjb.108.1631589648946;
+        Mon, 13 Sep 2021 20:20:48 -0700 (PDT)
 Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id r13sm9622654pgl.90.2021.09.13.19.56.07
+        by smtp.gmail.com with ESMTPSA id t68sm9714498pgc.59.2021.09.13.20.20.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 19:56:09 -0700 (PDT)
+        Mon, 13 Sep 2021 20:20:48 -0700 (PDT)
 From:   Shawn Guo <shawn.guo@linaro.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -62,131 +61,30 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH 3/3] clk: qcom: smd-rpm: Add QCM2290 RPM clock support
-Date:   Tue, 14 Sep 2021 10:55:54 +0800
-Message-Id: <20210914025554.5686-4-shawn.guo@linaro.org>
+Subject: [PATCH 0/2] Add QCM2290 Global Clock Controller driver
+Date:   Tue, 14 Sep 2021 11:20:39 +0800
+Message-Id: <20210914032041.6547-1-shawn.guo@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210914025554.5686-1-shawn.guo@linaro.org>
-References: <20210914025554.5686-1-shawn.guo@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for RPM-managed clocks on the QCM2290 platform.
+The series adds QCM2290 Global Clock Controller driver support.
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/clk/qcom/clk-smd-rpm.c         | 59 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h |  6 +++
- include/linux/soc/qcom/smd-rpm.h       |  2 +
- 3 files changed, 67 insertions(+)
+Shawn Guo (2):
+  dt-bindings: clk: qcom: Add QCM2290 Global Clock Controller bindings
+  clk: qcom: Add Global Clock Controller driver for QCM2290
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 2380e45b6247..428830d800f6 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -1070,6 +1070,64 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6115 = {
- 	.num_clks = ARRAY_SIZE(sm6115_clks),
- };
- 
-+/* QCM2290 */
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, ln_bb_clk2, ln_bb_clk2_a, 0x2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6);
-+
-+DEFINE_CLK_SMD_RPM(qcm2290, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
-+DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
-+DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk,
-+		   QCOM_SMD_RPM_MEM_CLK, 1);
-+DEFINE_CLK_SMD_RPM(qcm2290, bimc_gpu_clk, bimc_gpu_a_clk,
-+		   QCOM_SMD_RPM_MEM_CLK, 2);
-+
-+static struct clk_smd_rpm *qcm2290_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
-+	[RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK] = &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
-+	[RPM_SMD_LN_BB_CLK2] = &qcm2290_ln_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &qcm2290_ln_bb_clk2_a,
-+	[RPM_SMD_RF_CLK3] = &qcm2290_rf_clk3,
-+	[RPM_SMD_RF_CLK3_A] = &qcm2290_rf_clk3_a,
-+	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
-+	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
-+	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
-+	[RPM_SMD_QUP_A_CLK] = &sm6125_qup_a_clk,
-+	[RPM_SMD_MMRT_CLK] = &sm6125_mmrt_clk,
-+	[RPM_SMD_MMRT_A_CLK] = &sm6125_mmrt_a_clk,
-+	[RPM_SMD_MMNRT_CLK] = &sm6125_mmnrt_clk,
-+	[RPM_SMD_MMNRT_A_CLK] = &sm6125_mmnrt_a_clk,
-+	[RPM_SMD_SNOC_PERIPH_CLK] = &sm6125_snoc_periph_clk,
-+	[RPM_SMD_SNOC_PERIPH_A_CLK] = &sm6125_snoc_periph_a_clk,
-+	[RPM_SMD_SNOC_LPASS_CLK] = &sm6125_snoc_lpass_clk,
-+	[RPM_SMD_SNOC_LPASS_A_CLK] = &sm6125_snoc_lpass_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8992_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8992_ce1_a_clk,
-+	[RPM_SMD_QPIC_CLK] = &qcm2290_qpic_clk,
-+	[RPM_SMD_QPIC_CLK_A] = &qcm2290_qpic_a_clk,
-+	[RPM_SMD_HWKM_CLK] = &qcm2290_hwkm_clk,
-+	[RPM_SMD_HWKM_A_CLK] = &qcm2290_hwkm_a_clk,
-+	[RPM_SMD_PKA_CLK] = &qcm2290_pka_clk,
-+	[RPM_SMD_PKA_A_CLK] = &qcm2290_pka_a_clk,
-+	[RPM_SMD_BIMC_GPU_CLK] = &qcm2290_bimc_gpu_clk,
-+	[RPM_SMD_BIMC_GPU_A_CLK] = &qcm2290_bimc_gpu_a_clk,
-+	[RPM_SMD_CPUSS_GNOC_CLK] = &qcm2290_cpuss_gnoc_clk,
-+	[RPM_SMD_CPUSS_GNOC_A_CLK] = &qcm2290_cpuss_gnoc_a_clk,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_qcm2290 = {
-+	.clks = qcm2290_clks,
-+	.num_clks = ARRAY_SIZE(qcm2290_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-mdm9607", .data = &rpm_clk_mdm9607 },
- 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
-@@ -1082,6 +1140,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8994", .data = &rpm_clk_msm8994 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
- 	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
-+	{ .compatible = "qcom,rpmcc-qcm2290", .data = &rpm_clk_qcm2290 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ .compatible = "qcom,rpmcc-sdm660",  .data = &rpm_clk_sdm660  },
- 	{ .compatible = "qcom,rpmcc-sm6115",  .data = &rpm_clk_sm6115  },
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index aa834d516234..fb624ff39273 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -159,5 +159,11 @@
- #define RPM_SMD_SNOC_PERIPH_A_CLK		113
- #define RPM_SMD_SNOC_LPASS_CLK			114
- #define RPM_SMD_SNOC_LPASS_A_CLK		115
-+#define RPM_SMD_HWKM_CLK			116
-+#define RPM_SMD_HWKM_A_CLK			117
-+#define RPM_SMD_PKA_CLK				118
-+#define RPM_SMD_PKA_A_CLK			119
-+#define RPM_SMD_CPUSS_GNOC_CLK			120
-+#define RPM_SMD_CPUSS_GNOC_A_CLK		121
- 
- #endif
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index 60e66fc9b6bf..860dd8cdf9f3 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -38,6 +38,8 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_IPA_CLK	0x617069
- #define QCOM_SMD_RPM_CE_CLK	0x6563
- #define QCOM_SMD_RPM_AGGR_CLK	0x72676761
-+#define QCOM_SMD_RPM_HWKM_CLK	0x6d6b7768
-+#define QCOM_SMD_RPM_PKA_CLK	0x616b70
- 
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
+ .../bindings/clock/qcom,gcc-qcm2290.yaml      |   72 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-qcm2290.c                | 3007 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-qcm2290.h  |  178 +
+ 5 files changed, 3265 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qcm2290.yaml
+ create mode 100644 drivers/clk/qcom/gcc-qcm2290.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-qcm2290.h
+
 -- 
 2.17.1
 
