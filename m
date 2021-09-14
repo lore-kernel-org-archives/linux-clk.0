@@ -2,120 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926DBC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 16:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ABAC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 17:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C27B60F25
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 16:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F4D610F9
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 17:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229584AbhINQX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 12:23:58 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:43791 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbhINQX5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 12:23:57 -0400
-Received: by mail-ot1-f51.google.com with SMTP id x10-20020a056830408a00b004f26cead745so19261565ott.10;
-        Tue, 14 Sep 2021 09:22:40 -0700 (PDT)
+        id S230207AbhINR4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 13:56:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229785AbhINR4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 13:56:46 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F54C061574;
+        Tue, 14 Sep 2021 10:55:28 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id i3so179106wmq.3;
+        Tue, 14 Sep 2021 10:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=o4N33InZazxjk2fm8q6vK8YiuSMIHI0rSm1Fto78HVY=;
+        b=Kq6HIns1wxIDQW7wVZGqtPs8Lakk8I2+OcNr4+nPCS8f/mzDXYIWAZxRV8SyM5sUl7
+         KThkCXKwt+hQ2dt63JusPyHaXkRQd/hdG4E/7waUU3CQ460zJKlwL3YYywxYlkQSRipj
+         eG2H/DFdMmgjEnu0ITT0qTmWNjC1TP+FcblWcm4/CiJFBebBVfahFriCoBHSbFSzGGpp
+         r60UtLtehM2QgVDXIgJQAsaNl1kpDPQVKHEzz5aPcMNQXZFOFRb3y3urst5VCx1aRF0k
+         xPfk6JJjY1uTSynF5d8puaV6rOVlAbsQrnhbUZJe+Dh5ke4Fj9YQTYDCZwnlEX32XaFZ
+         YnDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ELcDPKJa1WqjIjHIohEd4xcW4UCoHGlmNfR9X3tKCTg=;
-        b=RbIsV306p6VJp7xCtWsLY/hX1h/VweRtmmkb4uMQqm3/8QE1JAwQITGzBLX4BT0Tgm
-         vx8n02vR4k+Fu6bR3nlDb2qJqvVlWJ5Ye4IxXpItzgIDNZJWcW3FY8XLmTbiPwScbgWq
-         aW/FhJ9J+kmWwMzML6ZQvDLzFHq1N8ZiYkRFvCkKYQXpr4GbHLJeiOj9ShRArb/LHT5t
-         H9CILK8silz/V7JJtcQ8ojGCbZjAIRkcNtejOrGgmRZsAmKjFbf+Wp36l6kV5rCksssl
-         kTUUqnzhfQRMguROpmSK3tRuSvenZ/3dYRvBccrqRj4D8QJ20iMfeANMVFDPTzOdkjUT
-         f5nQ==
-X-Gm-Message-State: AOAM532xVsus8UsIDN+WZWGxu7uOGEFmBy+hL+xhhkW3NQzabPzHnBEu
-        jZF59mj/Pt3G5KOfIFj6tw==
-X-Google-Smtp-Source: ABdhPJx9tiukj074D2L64vCKyJvg7rExXu5ryDjVuvb6hck/1tQT1ViBfr9195nKNOWbxgUtyPokxA==
-X-Received: by 2002:a9d:36d:: with SMTP id 100mr15545952otv.237.1631636559607;
-        Tue, 14 Sep 2021 09:22:39 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id r20sm2704219oot.16.2021.09.14.09.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 09:22:37 -0700 (PDT)
-Received: (nullmailer pid 3503731 invoked by uid 1000);
-        Tue, 14 Sep 2021 16:22:36 -0000
-Date:   Tue, 14 Sep 2021 11:22:36 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: leds: Convert register-bit-led
- binding to DT schema
-Message-ID: <YUDMTGdFOOn2eZET@robh.at.kernel.org>
-References: <20210913192816.1225025-1-robh@kernel.org>
- <20210913192816.1225025-2-robh@kernel.org>
- <CACRpkdZX6_rBEpScxSjmiBQr_cCY9mSipm-a5B8nFRLJVBqXaw@mail.gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=o4N33InZazxjk2fm8q6vK8YiuSMIHI0rSm1Fto78HVY=;
+        b=PIfq5osUmHw/9xCG6+QgWbwEjpBMUIS8oQskvVn9JaY5M88iV5rgb9smHvxnv1zj0v
+         zHKoyE7kI0tuPpj8OfDEfJob8tMq6oPUHo3OsugGEN4nAGApxeLEmehEAzTeeBD3OXRd
+         NNZkzFmVFiY1YrtUqe7bMOGeKxkOQB3pkNAsxpjdRRa2KEsiA8ZizgNmKkhIWAk2G9Ve
+         yeHtevV9fuNh2gGDrXvf18qBOMdt2TF8FY0chUheXb2Hu1aVeeng8eyy6eHGExWqn1zc
+         n2UFYkU6boJrTjbZiiEkv4EcUBJm/tcrbyns5Cfog3oQ7my7C1lNFHj+kNr7Olbn9etZ
+         bzhA==
+X-Gm-Message-State: AOAM531yEr8nuyGmZL4QLjrC+5DCW+zvknrunfut/juPG3PifT9p6Fco
+        H2/nRUD376Pc8sK+gMShyLs=
+X-Google-Smtp-Source: ABdhPJzUGxuis/ruDJdd5qDR8TPtVsMGxpsuKrk+eTnAx/luvB3WM899gSd766IT/oCv1KftVjMfMQ==
+X-Received: by 2002:a05:600c:3203:: with SMTP id r3mr371006wmp.175.1631642126910;
+        Tue, 14 Sep 2021 10:55:26 -0700 (PDT)
+Received: from [192.168.0.16] ([37.223.140.66])
+        by smtp.gmail.com with ESMTPSA id u16sm1982308wmc.41.2021.09.14.10.55.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Sep 2021 10:55:26 -0700 (PDT)
+Message-ID: <016b501b-a4bf-c74d-9f7f-8145800ca6e0@gmail.com>
+Date:   Tue, 14 Sep 2021 19:55:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZX6_rBEpScxSjmiBQr_cCY9mSipm-a5B8nFRLJVBqXaw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.0.3
+Subject: Re: [RESEND,v2,8/9] arm64: dts: mediatek: add mt7986a support
+Content-Language: en-US
+To:     Sam Shih <sam.shih@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     John Crispin <john@phrozen.org>, Ryder Lee <Ryder.Lee@mediatek.com>
+References: <20210914085137.31761-1-sam.shih@mediatek.com>
+ <20210914085137.31761-9-sam.shih@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20210914085137.31761-9-sam.shih@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 12:41:31AM +0200, Linus Walleij wrote:
-> On Mon, Sep 13, 2021 at 9:28 PM Rob Herring <robh@kernel.org> wrote:
-> 
-> > Convert the register-bit-led binding to DT schema format.
-> >
-> > As the example just repeats nearly identical nodes, trim it down to a
-> > few nodes and use some documented values for 'linux,default-trigger'.
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: linux-leds@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> 
-> Thanks for doing this!
-> 
-> > v2:
-> >  - Drop undocumented linux,default-trigger values
-> 
-> Will this lead to warnings? People tend to want to use these.
 
-Yes. The list for linux,default-trigger was purposely limited rather 
-than just throw in all the occurrences we could find. It's kind of a 
-mess with similar or overlapping names.
 
-There's other and better ways to do this now. There's the 'function' 
-property and you can link to another device. 
-
+On 14/09/2021 10:51, Sam Shih wrote:
+> Add basic chip support for Mediatek mt7986a, include
+> uart nodes with correct clocks, rng node with correct clock,
+> and watchdog node and mt7986a pinctrl node.
 > 
-> (Possibly we could actually create operating-system independent
-> triggers that make sense on any system. But it's another can
-> of worms we don't need to open today.)
+> Add cpu node, timer node, gic node, psci and reserved-memory node
+> for ARM Trusted Firmware,
 > 
-> > +    enum:
-> > +      [ 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
-> > +        0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000,
-> > +        0x100000, 0x200000, 0x400000, 0x800000, 0x1000000, 0x2000000, 0x4000000,
-> > +        0x8000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 ]
+> Add clock controller nodes, include 40M clock source, topckgen, infracfg,
+> apmixedsys and ethernet subsystem.
 > 
-> That's an interesting looking enum :D
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 > 
-> But I can't think of anything better, so:
+> ---
+> v2: modified clock and uart node due to clock driver updated
+> ---
+>   arch/arm64/boot/dts/mediatek/Makefile        |   1 +
+>   arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts |  49 ++++
+>   arch/arm64/boot/dts/mediatek/mt7986a.dtsi    | 227 +++++++++++++++++++
+>   3 files changed, 277 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 4f68ebed2e31..e6c3a73b9e4a 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm-hana.dtb
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts b/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+> new file mode 100644
+> index 000000000000..a58347c09ab2
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+> @@ -0,0 +1,49 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2021 MediaTek Inc.
+> + * Author: Sam.Shih <sam.shih@mediatek.com>
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt7986a.dtsi"
+> +
+> +/ {
+> +	model = "MediaTek MT7986a RFB";
+> +	compatible = "mediatek,mt7986a-rfb";
+> +	chosen {
+> +		bootargs = "console=ttyS0,115200n1 loglevel=8  \
+> +				earlycon=uart8250,mmio32,0x11002000";
 
-We could define our own type, but I can't say I recall the need for this 
-elsewhere.
+We should be able to achieve this by using the stdout-path instead.
 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Thanks.
-
-Rob
+Regards,
+Matthias
