@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD8BC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFEF3C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53319610A2
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0E360F58
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 03:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239170AbhIND4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 23:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60756 "EHLO
+        id S239271AbhIND6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 23:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239028AbhINDz7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 23:55:59 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7329C061762
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:54:42 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id i4so8590753lfv.4
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:54:42 -0700 (PDT)
+        with ESMTP id S239257AbhIND6l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 23:58:41 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35882C061762
+        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:57:24 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id r3so21199119ljc.4
+        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 20:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=V3UGDU81U9TWNu+b+RTtkfUp8lpGdcxhRFiSbeAytI0=;
-        b=CqVgi5LN+VU9Lng3wgwCbs8J7/30XsJBr33Rnghx1IM/UnhrmUqVsI0nK8UMkkTr7v
-         ArllR5WC8kHE946ELuMIy4wldZrau3NxjIQLzgxEzl0dU5ttCX4IxMT0v9pYDvtRd4gI
-         gnuXV3F+191DgI51Qf07etXbbLodoicx8aIQc=
+        bh=Icmlo36/WeDJHtaQFlCSDhUmVMRzwC9n0IjehX7KX8s=;
+        b=Q+Stt1KegkfalX84XgzXINRwOGd0RpR+6QUTPx0SZHBmm4C5qOIaMMChUxb/bvCa/q
+         N+DnQnqm6E/I1cAep4msngrWAuY/dX3dTkfMWmKokV1THByzRpZo7loo3t9Et69P1DBW
+         dYZRLPWhY699/X9g0RM5J+LuCSKCWqELM3ITE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=V3UGDU81U9TWNu+b+RTtkfUp8lpGdcxhRFiSbeAytI0=;
-        b=B0P4WuWW597J+trLBdK6vSx2Pk69HHoXsy8gPza1AQgYOQ0fqsQUrTPf+K6Uhfkw9X
-         ar0PFpt5LhcYAl39+0NGsdiyxn0lDu0Z9HXB5rK4LEDxFK5iYLezrVVANAZHLQRJPZFW
-         LX2hmuJKt5F4WsA1NDXdhcCmURFyG7wPelwCUviYLIbsQGQSRzTdEJsr22tpnj1hd+FS
-         jDBLrtKaXmb8R3NJc+UKi1+xPoC3OivaQhVCEIYdaPcP4pAptQH38Iz5Y02mN+4c/1Me
-         R123+cVfcqUUNy5Ai6iSv2YYcXHqgVyy4Aqe2flaX5dItqD3vuKaADoxWv0+rE6QrPDY
-         CKlg==
-X-Gm-Message-State: AOAM5333ksQPqK2MbJlAhfZP2FCYo6DUHOZ7g6QCXfw8aYnhLsvnyRhw
-        cBd/k988ZXFrxklIYEZYDlpyu4sbNxw0WlxzgOFM0w==
-X-Google-Smtp-Source: ABdhPJz06wxSNftrXxbf9gQccwFZoT4p6vzzDgTrPH3HmQOLPaulrUefmGD48EIhURQIzkD+/6vrYZupUg2JBcfAYEQ=
-X-Received: by 2002:a19:c3d3:: with SMTP id t202mr9045097lff.678.1631591681299;
- Mon, 13 Sep 2021 20:54:41 -0700 (PDT)
+        bh=Icmlo36/WeDJHtaQFlCSDhUmVMRzwC9n0IjehX7KX8s=;
+        b=gRsblQpMKmFT+TvhYTfTEdoYq0VFB+6t/BJ8ejS/BcXFD2Fn9hFuMnpFg1VF8VtNl1
+         XMbj/zD1sSY+unRGiK2z349H91SHAMg6jTPCUsAAPNL7gzzczW5Tyjvud+0DFTWNudET
+         lwNcPVSqr2FAU83p6hhB3JxKbpNHpXb69YKi7sQXduwUBCBo/XgvMaqTeiSUQE5NJMgB
+         /lCQpN4lQeYuWmRxLrQOdTPFZogOSLmpmIUrGpz8XDcGroC0GNklTY8pP2c8bQC2FhvY
+         5iy1qRRAeiQ7J+oHTJKPLc56frQUwp2fTBnTUiZ/LCNq9h1fGLeWBW3YjKkrbKr+KxEw
+         gqZw==
+X-Gm-Message-State: AOAM532nwi0oIoYfITZGEdF5RYO0lKeigFApGWFY1USXsjxqsgB5AFow
+        fBCa0g8ty+dQbCQTatWUGppwlxIMYPxzeOyvHo/a+g==
+X-Google-Smtp-Source: ABdhPJwVMLw+Xt7TAjoKUbHM819dKKR5E2dhZV4AvzPSxkF4HY0R4Bdi6S4aV7q+wxGbdhSIIgrROZ0tkvu1zHQV7/k=
+X-Received: by 2002:a2e:b52d:: with SMTP id z13mr13262840ljm.376.1631591842613;
+ Mon, 13 Sep 2021 20:57:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210914021633.26377-1-chun-jie.chen@mediatek.com> <20210914021633.26377-8-chun-jie.chen@mediatek.com>
-In-Reply-To: <20210914021633.26377-8-chun-jie.chen@mediatek.com>
+References: <20210914021633.26377-1-chun-jie.chen@mediatek.com> <20210914021633.26377-10-chun-jie.chen@mediatek.com>
+In-Reply-To: <20210914021633.26377-10-chun-jie.chen@mediatek.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 14 Sep 2021 11:54:30 +0800
-Message-ID: <CAGXv+5FcTbaR2yXK3OB+iTgYy1OUpDt2FKQw7bA3nGdk4jKxZg@mail.gmail.com>
-Subject: Re: [v3 07/24] clk: mediatek: Add MT8195 topckgen clock support
+Date:   Tue, 14 Sep 2021 11:57:11 +0800
+Message-ID: <CAGXv+5EeaodgMroPF==9ov3nNKNHs1WWHk3DqNWDRmb=Du+-Bg@mail.gmail.com>
+Subject: Re: [v3 09/24] clk: mediatek: Add MT8195 infrastructure clock support
 To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -78,8 +78,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Sep 14, 2021 at 10:17 AM Chun-Jie Chen
 <chun-jie.chen@mediatek.com> wrote:
 >
-> Add MT8195 topckgen clock controller which provides muxes, dividers
-> to handle variety clock selection in other IP blocks.
+> Add MT8195 infrastructure clock controller which provides
+> clock gate control for basic IP like pwm, uart, spi and so on.
 >
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 
