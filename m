@@ -2,112 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F77C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 23:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066D6C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91BA1610CC
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Sep 2021 23:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A7160F6D
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350087AbhIMXCG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Sep 2021 19:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350060AbhIMXCB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 19:02:01 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B496EC08EBB0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 15:41:43 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id bq5so24318340lfb.9
-        for <linux-clk@vger.kernel.org>; Mon, 13 Sep 2021 15:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=upRGSvfI0tAPjnVdV7FbBFHnENJLudrtgzcATKEHgT4=;
-        b=h6B7gVAlebvZcb1esp+vXodBjuwKJessM+ghgQHzsD2ni5g1VZIhBt1OuMZdSxFiJT
-         KrcE06Nx4XN6B3hE3DaVjvWQngWHvaeDrVMR/JIdFGDUrJm4iDsrsiCjudkDODl+IMdQ
-         wL0xPxFV8pVGbKQmUGZ0y+TxSddLlmi0VmiMbEOFpsnde5Y/PILjYRzpS8lQKDjXk1ln
-         XKztWgHmLeuhiforjNPCPqP34n2dvpb4gTsJpBthdvpYPmyORkm/9SqXVnqCAZoZxlEe
-         Imxgmf2pxNyKrAC2n7j3AgkieIgK2PiKv8OUYPM1HiDNJ0+WM1e0RHxKerKfc7VYorp2
-         kDiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=upRGSvfI0tAPjnVdV7FbBFHnENJLudrtgzcATKEHgT4=;
-        b=C+KthDI1jDrrTsio0vmtzYDpsglsGHis/8i22HyxSi8Bfhkt3pE0TxCIDJMGswBh8q
-         SetTq49KpNrNDZwigwiZgKru1l6kSRsKeUjHmppB5MwVCKyjKiweL5tDOMa61tFoc+Q9
-         HHfJnOoz1pkCy6k6aHBngRWUJvoQyroKJB7S5mvE+PQCMZMu+QvberUqDEFdTn8aGbd0
-         ZqYyXnL7wjdb6arXM7TUDpS/797J2mcCqP2M/AbTf6ZMjn59Tru8myfAFfjyRdFpB0as
-         wILUIhjFds28Yf35rrsxNeZakguDSkp154c2E/+IqT+suZlo3cImhR8hnsYtJA0/BvX5
-         1Lvw==
-X-Gm-Message-State: AOAM530SDJUHo/8UIeRlF5jwrdjj8iyBG7keKrZkbBs185fp4jMwrSjR
-        ogCUNMg4sNKvElEVKWkabMYkwI4R1DBfUyMOTyGrOg==
-X-Google-Smtp-Source: ABdhPJyClz/wdZ2qN3qY1qOBTysf44ukjyOseGX9SIs771urlmNDjXsAudAHpy1eyUkJpyeI9gvh48oOwTuyy7n4LA4=
-X-Received: by 2002:a05:6512:12c4:: with SMTP id p4mr11067299lfg.72.1631572901904;
- Mon, 13 Sep 2021 15:41:41 -0700 (PDT)
+        id S231248AbhINCSF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Sep 2021 22:18:05 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:33164 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229754AbhINCSF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 22:18:05 -0400
+X-UUID: 1f51c357e7d84e9597453061b0f0bcca-20210914
+X-UUID: 1f51c357e7d84e9597453061b0f0bcca-20210914
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1673174197; Tue, 14 Sep 2021 10:16:44 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 14 Sep 2021 10:16:43 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 14 Sep 2021 10:16:43 +0800
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [v3 00/24] Mediatek MT8195 clock support
+Date:   Tue, 14 Sep 2021 10:16:09 +0800
+Message-ID: <20210914021633.26377-1-chun-jie.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <20210913192816.1225025-1-robh@kernel.org> <20210913192816.1225025-2-robh@kernel.org>
-In-Reply-To: <20210913192816.1225025-2-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 14 Sep 2021 00:41:31 +0200
-Message-ID: <CACRpkdZX6_rBEpScxSjmiBQr_cCY9mSipm-a5B8nFRLJVBqXaw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: leds: Convert register-bit-led
- binding to DT schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 9:28 PM Rob Herring <robh@kernel.org> wrote:
+this patch series is based on 5.15-rc1.
 
-> Convert the register-bit-led binding to DT schema format.
->
-> As the example just repeats nearly identical nodes, trim it down to a
-> few nodes and use some documented values for 'linux,default-trigger'.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+changes since v2:
+- fix line wrap in Makefile
+- update commit message in vdosys clock provider
+- refine description of special clock
+- refine kconfig
+- merge CLK_OF_DECLARE_DRIVER to builtin_platform_driver (topck)
 
-Thanks for doing this!
+changes since v1:
+- fix resource leak if error condition happens
+- refine clock name to match datasheet
+- remove redundant data in mux parent source
+- seperate clock driver based on IP architecture
+- change to dual licence
+- refine dt-binding file
+- remove audio clock driver (handled in [4])
+- integrate vdosys0 and vdosys1 clock registration with mmsys in [2] and [3]
 
-> v2:
->  - Drop undocumented linux,default-trigger values
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=521127
+[2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=531695
+[3] https://patchwork.kernel.org/project/linux-mediatek/list/?series=519617
+[4] https://patchwork.kernel.org/project/linux-mediatek/list/?series=528369
 
-Will this lead to warnings? People tend to want to use these.
+Chun-Jie Chen (24):
+  dt-bindings: ARM: Mediatek: Add new document bindings of MT8195 clock
+  clk: mediatek: Add dt-bindings of MT8195 clocks
+  clk: mediatek: Fix corner case of tuner_en_reg
+  clk: mediatek: Add API for clock resource recycle
+  clk: mediatek: Fix resource leak in mtk_clk_simple_probe
+  clk: mediatek: Add MT8195 apmixedsys clock support
+  clk: mediatek: Add MT8195 topckgen clock support
+  clk: mediatek: Add MT8195 peripheral clock support
+  clk: mediatek: Add MT8195 infrastructure clock support
+  clk: mediatek: Add MT8195 camsys clock support
+  clk: mediatek: Add MT8195 ccusys clock support
+  clk: mediatek: Add MT8195 imgsys clock support
+  clk: mediatek: Add MT8195 ipesys clock support
+  clk: mediatek: Add MT8195 mfgcfg clock support
+  clk: mediatek: Add MT8195 scp adsp clock support
+  clk: mediatek: Add MT8195 vdecsys clock support
+  clk: mediatek: Add MT8195 vdosys0 clock support
+  clk: mediatek: Add MT8195 vdosys1 clock support
+  clk: mediatek: Add MT8195 vencsys clock support
+  clk: mediatek: Add MT8195 vppsys0 clock support
+  clk: mediatek: Add MT8195 vppsys1 clock support
+  clk: mediatek: Add MT8195 wpesys clock support
+  clk: mediatek: Add MT8195 imp i2c wrapper clock support
+  clk: mediatek: Add MT8195 apusys clock support
 
-(Possibly we could actually create operating-system independent
-triggers that make sense on any system. But it's another can
-of worms we don't need to open today.)
+ .../arm/mediatek/mediatek,mt8195-clock.yaml   |  254 ++++
+ .../mediatek/mediatek,mt8195-sys-clock.yaml   |   73 +
+ drivers/clk/mediatek/Kconfig                  |    8 +
+ drivers/clk/mediatek/Makefile                 |    8 +
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c  |  145 ++
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c  |   92 ++
+ drivers/clk/mediatek/clk-mt8195-cam.c         |  142 ++
+ drivers/clk/mediatek/clk-mt8195-ccu.c         |   50 +
+ drivers/clk/mediatek/clk-mt8195-img.c         |   96 ++
+ .../clk/mediatek/clk-mt8195-imp_iic_wrap.c    |   68 +
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c    |  206 +++
+ drivers/clk/mediatek/clk-mt8195-ipe.c         |   51 +
+ drivers/clk/mediatek/clk-mt8195-mfg.c         |   47 +
+ drivers/clk/mediatek/clk-mt8195-peri_ao.c     |   62 +
+ drivers/clk/mediatek/clk-mt8195-scp_adsp.c    |   47 +
+ drivers/clk/mediatek/clk-mt8195-topckgen.c    | 1273 +++++++++++++++++
+ drivers/clk/mediatek/clk-mt8195-vdec.c        |  104 ++
+ drivers/clk/mediatek/clk-mt8195-vdo0.c        |  123 ++
+ drivers/clk/mediatek/clk-mt8195-vdo1.c        |  140 ++
+ drivers/clk/mediatek/clk-mt8195-venc.c        |   69 +
+ drivers/clk/mediatek/clk-mt8195-vpp0.c        |  110 ++
+ drivers/clk/mediatek/clk-mt8195-vpp1.c        |  108 ++
+ drivers/clk/mediatek/clk-mt8195-wpe.c         |  143 ++
+ drivers/clk/mediatek/clk-mtk.c                |   21 +-
+ drivers/clk/mediatek/clk-mtk.h                |    1 +
+ drivers/clk/mediatek/clk-pll.c                |    2 +-
+ include/dt-bindings/clock/mt8195-clk.h        |  864 +++++++++++
+ 27 files changed, 4304 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-apusys_pll.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-ccu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-infra_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-ipe.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-peri_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-scp_adsp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vdo0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vdo1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vpp0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-vpp1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-wpe.c
+ create mode 100644 include/dt-bindings/clock/mt8195-clk.h
 
-> +    enum:
-> +      [ 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
-> +        0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000,
-> +        0x100000, 0x200000, 0x400000, 0x800000, 0x1000000, 0x2000000, 0x4000000,
-> +        0x8000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 ]
+-- 
+2.18.0
 
-That's an interesting looking enum :D
-
-But I can't think of anything better, so:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
