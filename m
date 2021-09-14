@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35D5C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AB1C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF3AE61157
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F9D661157
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 02:17:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238335AbhINCSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S238122AbhINCSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 13 Sep 2021 22:18:52 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:34186 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S238094AbhINCSh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 22:18:37 -0400
-X-UUID: 8c7b4279b1554c1c8326403641d7922c-20210914
-X-UUID: 8c7b4279b1554c1c8326403641d7922c-20210914
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51474 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S238120AbhINCSk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Sep 2021 22:18:40 -0400
+X-UUID: 50bab942fbc94c678521ae82cc540e71-20210914
+X-UUID: 50bab942fbc94c678521ae82cc540e71-20210914
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2104417156; Tue, 14 Sep 2021 10:17:15 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1605051188; Tue, 14 Sep 2021 10:17:21 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 14 Sep 2021 10:17:14 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 14 Sep 2021 10:17:19 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 14 Sep 2021 10:17:14 +0800
+ Transport; Tue, 14 Sep 2021 10:17:19 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -42,9 +42,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v3 11/24] clk: mediatek: Add MT8195 ccusys clock support
-Date:   Tue, 14 Sep 2021 10:16:20 +0800
-Message-ID: <20210914021633.26377-12-chun-jie.chen@mediatek.com>
+Subject: [v3 13/24] clk: mediatek: Add MT8195 ipesys clock support
+Date:   Tue, 14 Sep 2021 10:16:22 +0800
+Message-ID: <20210914021633.26377-14-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20210914021633.26377-1-chun-jie.chen@mediatek.com>
 References: <20210914021633.26377-1-chun-jie.chen@mediatek.com>
@@ -55,35 +55,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8195 ccusys clock controller which provides clock gate
-control in Camera Computing Unit.
+Add MT8195 ipesys clock controller which provides clock gate
+control for Image Process Engine.
 
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Makefile         |  2 +-
- drivers/clk/mediatek/clk-mt8195-ccu.c | 50 +++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mt8195-ccu.c
+ drivers/clk/mediatek/Makefile         |  3 +-
+ drivers/clk/mediatek/clk-mt8195-ipe.c | 51 +++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8195-ipe.c
 
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index e9bee5cca9c4..3ba2a4f0a99c 100644
+index 4d864cde87af..e9008dce7b2f 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
-@@ -82,6 +82,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
+@@ -82,6 +82,7 @@ obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
  obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
  obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o \
  				   clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o \
--				   clk-mt8195-cam.o
-+				   clk-mt8195-cam.o clk-mt8195-ccu.o
+-				   clk-mt8195-cam.o clk-mt8195-ccu.o clk-mt8195-img.o
++				   clk-mt8195-cam.o clk-mt8195-ccu.o clk-mt8195-img.o \
++				   clk-mt8195-ipe.o
  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8195-ccu.c b/drivers/clk/mediatek/clk-mt8195-ccu.c
+diff --git a/drivers/clk/mediatek/clk-mt8195-ipe.c b/drivers/clk/mediatek/clk-mt8195-ipe.c
 new file mode 100644
-index 000000000000..f846f1d73605
+index 000000000000..fc1d42b6ac84
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8195-ccu.c
-@@ -0,0 +1,50 @@
++++ b/drivers/clk/mediatek/clk-mt8195-ipe.c
+@@ -0,0 +1,51 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// Copyright (c) 2021 MediaTek Inc.
@@ -96,44 +96,45 @@ index 000000000000..f846f1d73605
 +#include <linux/clk-provider.h>
 +#include <linux/platform_device.h>
 +
-+static const struct mtk_gate_regs ccu_cg_regs = {
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x8,
++static const struct mtk_gate_regs ipe_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x0,
 +	.sta_ofs = 0x0,
 +};
 +
-+#define GATE_CCU(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &ccu_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++#define GATE_IPE(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &ipe_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
 +
-+static const struct mtk_gate ccu_clks[] = {
-+	GATE_CCU(CLK_CCU_LARB18, "ccu_larb18", "top_ccu", 0),
-+	GATE_CCU(CLK_CCU_AHB, "ccu_ahb", "top_ccu", 1),
-+	GATE_CCU(CLK_CCU_CCU0, "ccu_ccu0", "top_ccu", 2),
-+	GATE_CCU(CLK_CCU_CCU1, "ccu_ccu1", "top_ccu", 3),
++static const struct mtk_gate ipe_clks[] = {
++	GATE_IPE(CLK_IPE_DPE, "ipe_dpe", "top_ipe", 0),
++	GATE_IPE(CLK_IPE_FDVT, "ipe_fdvt", "top_ipe", 1),
++	GATE_IPE(CLK_IPE_ME, "ipe_me", "top_ipe", 2),
++	GATE_IPE(CLK_IPE_TOP, "ipe_top", "top_ipe", 3),
++	GATE_IPE(CLK_IPE_SMI_LARB12, "ipe_smi_larb12", "top_ipe", 4),
 +};
 +
-+static const struct mtk_clk_desc ccu_desc = {
-+	.clks = ccu_clks,
-+	.num_clks = ARRAY_SIZE(ccu_clks),
++static const struct mtk_clk_desc ipe_desc = {
++	.clks = ipe_clks,
++	.num_clks = ARRAY_SIZE(ipe_clks),
 +};
 +
-+static const struct of_device_id of_match_clk_mt8195_ccu[] = {
++static const struct of_device_id of_match_clk_mt8195_ipe[] = {
 +	{
-+		.compatible = "mediatek,mt8195-ccusys",
-+		.data = &ccu_desc,
++		.compatible = "mediatek,mt8195-ipesys",
++		.data = &ipe_desc,
 +	}, {
 +		/* sentinel */
 +	}
 +};
 +
-+static struct platform_driver clk_mt8195_ccu_drv = {
++static struct platform_driver clk_mt8195_ipe_drv = {
 +	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8195-ccu",
-+		.of_match_table = of_match_clk_mt8195_ccu,
++		.name = "clk-mt8195-ipe",
++		.of_match_table = of_match_clk_mt8195_ipe,
 +	},
 +};
-+builtin_platform_driver(clk_mt8195_ccu_drv);
++builtin_platform_driver(clk_mt8195_ipe_drv);
 -- 
 2.18.0
 
