@@ -2,102 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F34C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A5CC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB4F161213
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE46061213
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233603AbhINVgx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 17:36:53 -0400
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:37755 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232047AbhINVgx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 17:36:53 -0400
-Received: by mail-ot1-f42.google.com with SMTP id i3-20020a056830210300b0051af5666070so597138otc.4;
-        Tue, 14 Sep 2021 14:35:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=nV9xXSrBUTmCzf5AiBkL6FDLbv6dEG3GHOqZwFkkyGw=;
-        b=0FSH7vO/CiYKfFUKQCtw65wJmeEnSFxiem01S3pXZXxCktDkcLClrfuGPL9ptzDKK4
-         4g9zLsDL/YhroSlItOVstKS3H2h+BGo5FvR/SHLwypSNhnq0rm5ItazFAnd3o5NmVj2X
-         VwE7FdUm1WlJVP29gfW2r6mnG0Q7KcC+4fXdBVfq6ZMECfG0qbf2RTou2p0zvcXkQi0O
-         6Compn7RoOBUR236eOR6COoOmNDk9v3cxj5ZcYsLvVa3zcAhwKRa1c/TwMQ5onB7ZBmS
-         1poaGwqGhK554CxyhTFOvOOphQW2D/uGQdF04sQD1rAKiYpJaaGYU/EOZLp/k/eMAEVr
-         ddfQ==
-X-Gm-Message-State: AOAM532vtz8wJJrc3geVKqvzXoww3ZirJHzHeQrQYLvJ+XHyOAG2bcMI
-        UyDmUGgpFTj1FT8LjbYOBA==
-X-Google-Smtp-Source: ABdhPJyaI54mbxvyEqPJ8hb3jhXyeZejVuYhsxqlt4be67wj2aws/2/5Mlq8Sb+XvAJVlxqMGN3YIg==
-X-Received: by 2002:a9d:7289:: with SMTP id t9mr16704656otj.273.1631655335239;
-        Tue, 14 Sep 2021 14:35:35 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id v11sm2916500oto.22.2021.09.14.14.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 14:35:34 -0700 (PDT)
-Received: (nullmailer pid 4008885 invoked by uid 1000);
-        Tue, 14 Sep 2021 21:35:33 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Tom Gall <tom.gall@linaro.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+        id S234893AbhINViv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 17:38:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235132AbhINViv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 17:38:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8002F60E8B;
+        Tue, 14 Sep 2021 21:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631655453;
+        bh=WwzSLsTMjLJiR94GNvIekUWoK6QUTkUJXToMsNRnYmE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FZhtAJ9myg/0wiPkb3zHvrKcbgiBMTAl4JOt2rntYmFAZ+FZvu6GLYsIWidR8JaVH
+         8lBpG9GDsmsV6gFw5QwSjJJpTSKJ+uUp4AuxpPNs1V4iXDPPGbDBjiqNcyy3kRqHc8
+         iuUwWhRynHCyRumpuS6f7MulxT9raRYHr9J7Iz2cXrzJkk2mwt5c/Q4R0woJd5dsow
+         YBZ3ktNohnwYvM7X9LuPnwPb95f5/R1UjD3QNfZ6HE6s7K3qktdDacmpvfwd897VkH
+         y6KlO7hWWsy1qdfnfHvTqrMf8ZVT81zzb3JEYWtOtTdCRhExVBu0R7U7WUhcyEHe8H
+         W5MPNGS92uSZA==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210904183014.43528-1-konrad.dybcio@somainline.org>
+References: <20210904183014.43528-1-konrad.dybcio@somainline.org>
+Subject: Re: [PATCH v3 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        =?utf-8?q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20210914155607.14122-6-semen.protsenko@linaro.org>
-References: <20210914155607.14122-1-semen.protsenko@linaro.org> <20210914155607.14122-6-semen.protsenko@linaro.org>
-Subject: Re: [PATCH 5/6] dt-bindings: clock: Document Exynos850 CMU bindings
-Date:   Tue, 14 Sep 2021 16:35:33 -0500
-Message-Id: <1631655333.292425.4008884.nullmailer@robh.at.kernel.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Date:   Tue, 14 Sep 2021 14:37:32 -0700
+Message-ID: <163165545224.763609.14645730018738716104@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Sep 2021 18:56:06 +0300, Sam Protsenko wrote:
-> Provide dt-schema documentation for Exynos850 SoC clock controller.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Quoting Konrad Dybcio (2021-09-04 11:30:05)
+> Add documentation for the MSM8994 GCC driver.
+>=20
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 > ---
->  .../clock/samsung,exynos850-clock.yaml        | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> 
+> Changes since v2:
+>=20
+> - Dropped second dt-binding part for the weird SD card clock configuration
+> - Fix up many mistakes, including maintainers, license and order
+> - I still have no idea why I get a pinctrl regex error.. need help here!
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The compatible fro gcc-msm8994 seems to already be documented in
 
-yamllint warnings/errors:
+Documentation/devicetree/bindings/clock/qcom,gcc.yaml
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/samsung,exynos850-clock.example.dt.yaml:0:0: /example-2/serial@13820000: failed to match any schema with compatible: ['samsung,exynos850-uart']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1528063
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+so it needs to be removed from there and only specified in this 8994
+specific binding.
