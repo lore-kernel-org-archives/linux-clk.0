@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D2BC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF85FC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47B4B61178
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B67D0610D1
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 21:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233567AbhINVO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 17:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59562 "EHLO mail.kernel.org"
+        id S234066AbhINVOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 17:14:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233927AbhINVO1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Sep 2021 17:14:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C1E9B610D1;
-        Tue, 14 Sep 2021 21:13:09 +0000 (UTC)
+        id S231472AbhINVOf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 17:14:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7126761178;
+        Tue, 14 Sep 2021 21:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631653989;
-        bh=HwYpxQ7sN5n2PdiyK4p8MenarwP3iXMeNHSZvB3qwTE=;
+        s=k20201202; t=1631653997;
+        bh=8YpUXXkntHsFUlG1VmXFXFQjihnNZ2eNBEyEKdGEgR8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PIZ0M48sn7IloX1B83xjJSzuxXyCHE7WMSgonvXeSZond9u+JSZvSIvviVAYrfnT/
-         AX7i0qfN3ropTTlT8wXNBG3+Zcqgu8dD+hT0PL6UGIYIDa0wV/UkDYuMdtv67EJVFR
-         uCX/P1ckOdI9RHueUF3w9DUy1h17Oz0X37VD5KtMx25DFUS9fyH7rt1ksID8sg/fpy
-         hYxvqqleS6c9XnJ+S1753zTE1joUfEhdh/Ewp/+wim0OrqLNBgOb+ehyZ8YvJ1tEGI
-         Itnid96IsJv5yTBTyXyu7NyDni1DVNhqx9NJPdvNaCTs65SrV39Dw9ue4So1jORfkA
-         rZJy6DGqGduOQ==
+        b=oyQ49IgI//jXZhFBjNMYL96J++4By0RTfEHokMtk3gma11+SQd56FOUquV/o1b1Ia
+         s0oLRGuXwPVK+odmDtmoAM6afbaFJ2CUbjhaER3OKS38jQ6mPmNlAy1wZk00CPQDdH
+         Su1BBA+ca5ZFXsGunpNUe6tjm/TGwTL2MgtGdZnmTqSLpEiZ3lahZ227bJLG23VRp4
+         zP6WR4za/cvQsZYSFKQpktguFuyCYi4QYAiQM3XoVzKtN4SpdoW41yMfpaPlSYYLNr
+         Vznzl1YejK0TEw/ZcgXQTjpmcTbWdnLgXjbeeIMOWHULCKqbwBGPB9ktbymOF04Vw6
+         qb64PUYuakX9Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210829204822.289829-3-marijn.suijten@somainline.org>
-References: <20210829204822.289829-1-marijn.suijten@somainline.org> <20210829204822.289829-3-marijn.suijten@somainline.org>
-Subject: Re: [PATCH 2/4] clk: qcom: gpucc-sdm660: Use ARRAY_SIZE for num_parents
+In-Reply-To: <20210829204822.289829-4-marijn.suijten@somainline.org>
+References: <20210829204822.289829-1-marijn.suijten@somainline.org> <20210829204822.289829-4-marijn.suijten@somainline.org>
+Subject: Re: [PATCH 3/4] clk: qcom: mmcc-sdm660: Use ARRAY_SIZE for num_parents
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
@@ -52,14 +52,14 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-kernel@vger.kernel.org
 To:     Marijn Suijten <marijn.suijten@somainline.org>,
         phone-devel@vger.kernel.org
-Date:   Tue, 14 Sep 2021 14:13:08 -0700
-Message-ID: <163165398865.763609.4450929296020429904@swboyd.mtv.corp.google.com>
+Date:   Tue, 14 Sep 2021 14:13:16 -0700
+Message-ID: <163165399631.763609.18187387046127614027@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marijn Suijten (2021-08-29 13:48:20)
+Quoting Marijn Suijten (2021-08-29 13:48:21)
 > Where possible, use ARRAY_SIZE to determine the number of parents in
 > clk_parent_data, instead of hardcoding it.
 >=20
