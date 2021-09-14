@@ -2,113 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76687C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 13:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3460BC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 14:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CAA461108
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 13:52:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5B960EE3
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 14:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233329AbhINNyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 09:54:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233319AbhINNyO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Sep 2021 09:54:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A3DB61107;
-        Tue, 14 Sep 2021 13:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631627577;
-        bh=BpjP19V1GArx35KplyxcS37xjhXHSaC39kHOiHZJM7I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ilOvo0fbU/Cd2di+m1iZcwJ9EuMRdLFoQa58d4eGEYAEX6TpEvHx9XIJfwkDw55Ff
-         CSm6YzYsZiNo7GG3qze7OVv2xZF2MxNGSMtxTJ3xnSL0+QX+kgjwwT2T6FuUbYViFy
-         Sot2TI1Uo1LEp1sQVvnWXnSwbF21ca4rEHC6KGFGUWMRkaZqQiWfJz1cmju8Fi+9YC
-         dlox4kSn+dTRSasQtodrl97Unrii9wFoLSBYej20ILHU1c8M3yNEfj6wWfPlyKwK/f
-         kCTWWVclQPzl9gWcM3maVJD6KdzBMZVcOFeQRKdqi5/mK7179vzlIb2ZxDK82sGjjQ
-         cD9/Y+YKZ1a7w==
-Date:   Tue, 14 Sep 2021 14:52:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ludovic.Desroches@microchip.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>, o.rempel@pengutronix.de,
-        andy.shevchenko@gmail.com, aardelean@deviqon.com,
-        linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jonathan.Cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
-        a.zummo@towertech.it, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, wsa@kernel.org,
-        thierry.reding@gmail.com, kernel@pengutronix.de,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        Claudiu.Beznea@microchip.com
-Subject: Re: About clk maintainership [Was: Re: [PULL] Add variants of
- devm_clk_get for prepared and enabled clocks enabled clocks]
-Message-ID: <20210914135217.GD4434@sirena.org.uk>
-References: <20210728204033.GF22278@shell.armlinux.org.uk>
- <162771727997.714452.2303764341103276867@swboyd.mtv.corp.google.com>
- <20210731120004.i3affxw7upl5y4c5@pengutronix.de>
- <20210802094810.GJ22278@shell.armlinux.org.uk>
- <20210802152755.ibisunvibmwhiyry@pengutronix.de>
- <20210802163824.GK22278@shell.armlinux.org.uk>
- <162797831443.714452.3551045763456936564@swboyd.mtv.corp.google.com>
- <20210803104012.wf2buscbukxufesl@pengutronix.de>
- <162820957661.19113.17221558053361108175@swboyd.mtv.corp.google.com>
- <20210914132256.5ucytcfmk3sjn2vi@pengutronix.de>
+        id S233438AbhINOVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 10:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233300AbhINOU7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 10:20:59 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 391B3C061762
+        for <linux-clk@vger.kernel.org>; Tue, 14 Sep 2021 07:19:42 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id i4so12053701lfv.4
+        for <linux-clk@vger.kernel.org>; Tue, 14 Sep 2021 07:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O3O9pavUsvQaLCKu2O/WDZy+zRAT00QZp8f3df/2+6A=;
+        b=wtfNHMPFTgr2cSQCGaxAiqSluRILESAr0akFI2FMy2CE5T5/m00/8Tt9QvoGG9jZlG
+         GbUOksYsG43MpfPEhF+ONVxgXCjjDsF8LFMgkhAr4orncRFcpYX3/talgQH0NppPFPGi
+         NWh1hW6dFU+tMYZnSDN5CA5/E3iZV3CJf6Q5bXqwX3Oi28Hi6Wxri+DiTzck028maU4g
+         UTHtiVzb2YyDs68NmeQcJNRPZP5Rj2OH9E9F6lZ5sut7g02tNbQlj3VZW7Fu0OwD4Lwq
+         SBf5bL6cCMSlWyZKml66kHd/W+kCI+ROceAodq/pCBuZ/4Xk535IDZf4m5fd/4FA0Iv3
+         IXEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O3O9pavUsvQaLCKu2O/WDZy+zRAT00QZp8f3df/2+6A=;
+        b=nePMS4dL6k4n33t7ClQ/LSWwCCWLv7GH5VLsQecASNmbLcKm20zc1+Wrhc7DBWjN9Q
+         DU3eWCE/g0MmTNy/tRfzzV77eJ8IOSpP3npE0KChLcTVxgr4G8JIXAs2CQEI1uH4S6ni
+         vFN4cL8v2+/z7pyXQxk2tXmTcpuTvm2X5p1EcHrKeZYPj/LWu1SKJDdDjcIrNBDiHneD
+         qELPKBm1el8jnJGi8LYr4HBa2toVKias2gDfi47OA71Aks9AsI7O3lsoHqXAwvq5fYee
+         SuRUR4EpYSLgJJM8d7JbPWJEw1DQSjnvQCty3SjNQMWVolwKdCLzW3+0sWkmTQIKB9cW
+         8fRw==
+X-Gm-Message-State: AOAM531Bcx4I9imR2e+MCftbDz88jIu2B8TMDXIlstjtfDhcDQupo4ms
+        U1q7ao9WGnajMYwkKS7tY1DvNA==
+X-Google-Smtp-Source: ABdhPJyHiPdnmDcScme8ggB6SkefTDo8MUhZKW5sX1Hp/YsLNMy6sUP5QRMrbmWMSX/bANnfJnU+SA==
+X-Received: by 2002:a05:6512:2e8:: with SMTP id m8mr7230911lfq.172.1631629180511;
+        Tue, 14 Sep 2021 07:19:40 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id b17sm1345309ljj.35.2021.09.14.07.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 07:19:40 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: Add clk_set_parent debugfs node
+Date:   Tue, 14 Sep 2021 17:19:39 +0300
+Message-Id: <20210914141939.26410-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zS7rBR6csb6tI2e1"
-Content-Disposition: inline
-In-Reply-To: <20210914132256.5ucytcfmk3sjn2vi@pengutronix.de>
-X-Cookie: This space intentionally left blank.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Useful for testing mux clocks. One can write the index of the parent to
+set into clk_set_parent node, starting from 0. Example
 
---zS7rBR6csb6tI2e1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    # cat clk_possible_parrents
+      dout_shared0_div4 dout_shared1_div4
+    # cat clk_parent
+      dout_shared0_div4
+    # echo 1 > clk_set_parent
+    # cat clk_parent
+      dout_shared1_div4
 
-On Tue, Sep 14, 2021 at 03:22:56PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Thu, Aug 05, 2021 at 05:26:16PM -0700, Stephen Boyd wrote:
+Define CLOCK_ALLOW_WRITE_DEBUGFS in drivers/clk/clk.c in order to use
+this feature.
 
-> > This proves why this topic is always contentious. It's too easy to
-> > blindly convert drivers to get the clk and leave it enabled forever and
-> > then they never use power management. The janitors win and nobody else.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/clk/clk.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-> If the janitors win and nobody else looses anything, this is fine for
-> me. And if in the future someone turns up who cares enough to improve
-> the converted drivers to a more efficient clock usage, they will
-> probably not stop their efforts just because then the driver uses
-> devm_clk_get_enabled.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65508eb89ec9..3e5456580db9 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3214,6 +3214,30 @@ static int current_parent_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(current_parent);
+ 
++#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
++static int clk_set_parent_set(void *data, u64 val)
++{
++	struct clk_core *core = data, *parent;
++	int ret;
++
++	if (val >= core->num_parents)
++		return -EINVAL;
++
++	parent = clk_core_get_parent_by_index(core, val);
++	if (IS_ERR_OR_NULL(parent))
++		return PTR_ERR(parent);
++
++	clk_prepare_lock();
++	ret = clk_core_set_parent_nolock(core, parent);
++	clk_prepare_unlock();
++
++	return ret;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(clk_set_parent_fops, NULL, clk_set_parent_set,
++			 "%llu\n");
++#endif
++
+ static int clk_duty_cycle_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *core = s->private;
+@@ -3285,9 +3309,14 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 		debugfs_create_file("clk_parent", 0444, root, core,
+ 				    &current_parent_fops);
+ 
+-	if (core->num_parents > 1)
++	if (core->num_parents > 1) {
+ 		debugfs_create_file("clk_possible_parents", 0444, root, core,
+ 				    &possible_parents_fops);
++#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
++		debugfs_create_file("clk_set_parent", 0200, root, core,
++				    &clk_set_parent_fops);
++#endif
++	}
+ 
+ 	if (core->ops->debug_init)
+ 		core->ops->debug_init(core->hw, core->dentry);
+-- 
+2.30.2
 
-The patterns that concern me are people either blindly converting to
-devm without checking for other usage and causing problems as a result
-(some of the janitorial stuff is done very mechanically) or thinking
-it's important to keep devm_ used (or not thinking through the
-interaction) and trying to do that while doing something more active.
-
---zS7rBR6csb6tI2e1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFAqRAACgkQJNaLcl1U
-h9AgDQf9FaB8NN9SPJzY87JQf0rdn7s4PizKVF0601355cdJqe1ogFgZalaw7hLc
-hxn4RRKTRGv8Yxrjt3am15H5/DUZillCg/bkxDlq2/Vdi3VmRSjlqdKANc/+WMj6
-nADV3B/yorQB1Mcy49EvaL4Y9vhYTeF+kwj7z8ijkCt/zregcfuuhZ8xiSveKGaa
-sfsKJlJvSbjbKEp3CPtFj+dqRpKUb55+FKR1z/tH6XKZf1dtYP3ORTCbQxk3DEE4
-ROe3jakuTEWrrbh8sPtplaviMX8fuLKs2qBP70r3/EGtpoAQDbBgj6fhUJud3vcy
-b9UCVUtYXiOVzuAC6+7b4iuXNbjzvQ==
-=zaar
------END PGP SIGNATURE-----
-
---zS7rBR6csb6tI2e1--
