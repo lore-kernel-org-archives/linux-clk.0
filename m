@@ -2,88 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E6EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 22:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12909C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 22:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0B06108F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 22:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2083610A6
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Sep 2021 22:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232377AbhINWB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 18:01:28 -0400
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:39664 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbhINWB2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 18:01:28 -0400
-Received: by mail-ot1-f47.google.com with SMTP id m7-20020a9d4c87000000b0051875f56b95so677713otf.6;
-        Tue, 14 Sep 2021 15:00:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1+WLR65qTBoUub6/pKXyNbktbZPgOslN8+Xmkk6CTLc=;
-        b=gMkWFAvg+xfgzjR8+jNqi9dOrIDkdO7DIbrN+3/Ciqrf2rz1AraSCeqnecO8mhk3zd
-         LJMSecY4h/4r1waRd5VVxCTj/L0VyqvNdbAtASKVFRLFHADhHapHyOcxaE0SNVzJxFM7
-         8/yvac59177znNpEun7teaoM62vZaozJsW2qTuBpDBIvys55dZSRePtW8AIgnivg3lDz
-         /pq6qM+O62EB5sjNHNMOvZq0qT8ZuE8aZM/Fq/L1eB3eJh1FUbfyG7v67fehuG4vXJLb
-         1yk0C4T1tfL7UoggCoDz2Pw6xyhXklzbGk307InjVw7v97B5W5+iGWTOXMtdbD44GR7t
-         9BOw==
-X-Gm-Message-State: AOAM533uMD9a34XGNHBi0AjPVPCwN1B5ArDl31/mDxfdbGp/fa9eVFoK
-        k3C0NDsFkPmSvsHyxoVH1g==
-X-Google-Smtp-Source: ABdhPJz1pOO1WsaRumXrQshfHtdpfhL6MTWP4mSSbUpKyygYT9dlE16+Hwncpuov78gSO5mXYexJIQ==
-X-Received: by 2002:a05:6830:78c:: with SMTP id w12mr16229945ots.196.1631656810214;
-        Tue, 14 Sep 2021 15:00:10 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id k23sm2943388ood.12.2021.09.14.15.00.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 15:00:09 -0700 (PDT)
-Received: (nullmailer pid 4040654 invoked by uid 1000);
-        Tue, 14 Sep 2021 22:00:08 -0000
-Date:   Tue, 14 Sep 2021 17:00:08 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] clk: versatile: clk-icst: Support 'reg' in
- addition to 'vco-offset' for register address
-Message-ID: <YUEbaEzKT+cCYk9z@robh.at.kernel.org>
-References: <20210913192816.1225025-1-robh@kernel.org>
- <20210913192816.1225025-6-robh@kernel.org>
- <163164958886.763609.7483570624844319215@swboyd.mtv.corp.google.com>
+        id S232349AbhINWEV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 18:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231559AbhINWEU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 18:04:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B27936108F;
+        Tue, 14 Sep 2021 22:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631656982;
+        bh=oigmEST1EHQL5Om5LvHyBc0X19sT+8476VYDnxPswWs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hAYqoc22cxkB8K5SjRZZVsaMGXnNvakxTsd9vpallnn7G5aq49zEKLHBHRBgHCcCM
+         V0mVpAbvUJpq3pfJhAfZ8KHF4G/Uft1WF/ifLvHnxlVn45OmpNurkU9h6tpKJfJA+8
+         bZpaR2OxRGc2i+h4LEVW1tENDZ+5mmad5yBXyDS8ZzogmI2qn07/aWboOebCHs4MPd
+         kEgwvxbEBUJRBT27vQ6okoGN81N73uEfH2yBSedAPghJnfed6PxJtOLESXecb1YSF0
+         /6f2Vg+6y1x9upyclij0ym81crZShm6MauK0lcS0qNlcWbfIb2W8AyMUNHwa9zR5uQ
+         myDBPCE8Ev2tA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163164958886.763609.7483570624844319215@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210913082633.110168-1-clement.leger@bootlin.com>
+References: <20210913082633.110168-1-clement.leger@bootlin.com>
+Subject: Re: [PATCH] clk: at91: check pmc node status before registering syscore ops
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Clement Leger <clement.leger@bootlin.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Date:   Tue, 14 Sep 2021 15:03:01 -0700
+Message-ID: <163165698139.763609.11633047159530535523@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 12:59:48PM -0700, Stephen Boyd wrote:
-> Quoting Rob Herring (2021-09-13 12:28:13)
-> > The ICST binding now also supports 'reg' in addition to 'vco-offset' for
-> > the VCO register address. Add support to the driver to get the VCO
-> > address from 'reg'.
-> > 
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> 
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> 
-> I don't think this driver is changing much so you can take it through DT
-> tree if you prefer.
+Quoting Clement Leger (2021-09-13 01:26:33)
+> Currently, at91 pmc driver always register the syscore_ops whatever
+> the status of the pmc node that has been found. When set as secure
+> and disabled, the pmc should not be accessed or this will generate
+> abort exceptions.
+> To avoid this, add a check on node availability before registering
+> the syscore operations.
+>=20
+> Signed-off-by: Clement Leger <clement.leger@bootlin.com>
 
-clk tree is fine. :)
-
-Rob
+Any Fixes tag?
