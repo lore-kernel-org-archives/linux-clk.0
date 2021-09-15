@@ -2,203 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A28EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 08:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9079AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 09:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7A6E61244
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 08:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6789561246
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 09:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237145AbhIOJBA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Sep 2021 05:01:00 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54296
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237165AbhIOJAy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 05:00:54 -0400
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 577CF3FDC7
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 08:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631696368;
-        bh=39NyD7eSdjWRLG7akJoaBQq2vkbMMaThM/SwbRfMg/Y=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=DMiwzSqYW3AUg3oJEXVZANFWDVp5furaICTstN6E6aPxWTXiynPcTRYl+PlGbzCFl
-         1u3fluTHY/KZlAN+pBly5G9jQ1Jn18g7jdC+Lo4NHhqAcay7AF17xnsP7+7QRWyIXS
-         0Xi4aQ2MXD0qPp4SeQCkYWznJq1+oA3x/R0tGas8MxsUM+98sieIXijXYCZJ3/Q+my
-         aK/RvX1ZgETnxy8VVo1PESmp9N8S7Zg4MDCiOyWannL8P7RlbzspNaE5OPOBJq20B+
-         sO3QRWI/lqTIRQ+l6KkF1mi9aaEcvuwppF4e3jCpPrukF2ir5dw1ce/6h6N+96mnMT
-         L0ItJ4P5xw+3Q==
-Received: by mail-ej1-f72.google.com with SMTP id bx10-20020a170906a1ca00b005c341820edeso1147599ejb.10
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 01:59:28 -0700 (PDT)
+        id S231610AbhIOJLX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Sep 2021 05:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229785AbhIOJLW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 05:11:22 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBF8C061574;
+        Wed, 15 Sep 2021 02:10:04 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id s11so2037489pgr.11;
+        Wed, 15 Sep 2021 02:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tXiY4oUE6y/D3jNqbB7LZ6RtNWi0+dj+GmUj1LoLdtc=;
+        b=TJtqZ7w6XRvxtAW2EHVJ+4/Hav8w1IwyD33rx0TewNnaiapybXnt9DdjU7f88Eciz6
+         WSXPIbrZfwFaXGuaiLjQ6CR7FALdYN+4w2fNYAgaAue3+MsRZGPbWo4c62acGiCPzBq2
+         d3LLOzYvdTMKGFMq9PLzt7gZSg6gYhHR+SmvkNWnIcIDt9GaNyyzpc//2Kqxv7ol5rVk
+         kQkRlAprm+HqsFJp0Ck3IOSxwRGd7LhWFtoyJNLglyePA6xL0/GImKDE8h4Fm7R0IXeh
+         /fFmcgS5HFOFRB9aQXUOtfBuXuLMn+qifzhaJXqlwWc9TiK30/V9lU1HG0RY4qYSEvdP
+         rr8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=39NyD7eSdjWRLG7akJoaBQq2vkbMMaThM/SwbRfMg/Y=;
-        b=jRqRlbEN5qa7lO+y5rbwxXsMZ2BxGauamG0IQWVDdrByN5QUE4Y+bMjWMASNWbEgjs
-         eHCLZbh+8pUJnd/8cRKMwzY4BruhPrplB4W2TxN8ZVieI7AKunPq2QqjXNRIXE0oku5p
-         AiEDzHaPLF7enbqeZFHsN7lxMrn5TGKEt2dIA9Zr8/WTdY8rwSlpO6MqrvYQw41nvxX3
-         ZjFMzjqiPCPFhFjeVG9AXboCbDDpm+UcRwVM1f316P8uuekSsK/E6i3R0yBJE/G0NpYh
-         kkRWaUW1HuMt8qWQO8esGsMsVrMxIHzuP5vuC08vbCegQipeykKyXf13UCA+A8tjRGM0
-         8KSg==
-X-Gm-Message-State: AOAM530MDA4U62N90UdG5v069FjsCVYaAA5ftgXlHeQvY2W4NFijqQlf
-        fplSF7iDJyVPYpXQ1AYP3pgzYfpTYwkeEezrj2i7zzBjQojUx6FNXrK/ahgKWODU4byMFiED3as
-        JEXGBGoPWKxlg+wonI3YwaccHrlW3gIQz0BAp/w==
-X-Received: by 2002:a17:906:f15:: with SMTP id z21mr23428826eji.177.1631696368016;
-        Wed, 15 Sep 2021 01:59:28 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJymRnBWWR852OpGubXgrdOU89q9lNXSyAJz+ZILaji+sCwYZwgAvCN0PKGDsBRUEBEUCnD23A==
-X-Received: by 2002:a17:906:f15:: with SMTP id z21mr23428808eji.177.1631696367855;
-        Wed, 15 Sep 2021 01:59:27 -0700 (PDT)
-Received: from [192.168.3.211] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id f24sm6703253edc.40.2021.09.15.01.59.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 01:59:27 -0700 (PDT)
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <20210914155607.14122-7-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 6/6] clk: samsung: Introduce Exynos850 clock driver
-Message-ID: <3da75dbe-2f98-39db-c455-46adead7097b@canonical.com>
-Date:   Wed, 15 Sep 2021 10:59:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        bh=tXiY4oUE6y/D3jNqbB7LZ6RtNWi0+dj+GmUj1LoLdtc=;
+        b=ddc51YtZQg1MT49+mLzFlnR/QQU7LDm7GGcCWYKnX87oGRbwh97QM3IkL8bKELEltl
+         mhETIlvKmyvIflWAzF/Z2oHnC6B091tfXLCGVcJI0fAaq6vDv+Zn9FLzo4AirC34yInq
+         jM8C/YfhJUTokACuQ4OSWwBI8nezg+xVvIdKbfPimZredJ2sBvDRGM/asH44uw0wha3j
+         /XNUoEOH6bJ1PtYn7r/GaFtlRyOwwMmLQklMKowJ2oCbRuLJC/e2GTOWHW1XUb+p2wAR
+         bGEjtgyOkz4ZRnuwpwCI0udgf6/hHxlhLXO3rZ3CltaXG7fjV1keWqBtxtVvdnPllMqS
+         SNxg==
+X-Gm-Message-State: AOAM533NS/c0INmBIM/JJuogwhmTBSmtvvenxPqc7uOC0o6RxXNZNIlA
+        h/xij8Y+0cKCgtgWRzmYDg0=
+X-Google-Smtp-Source: ABdhPJy0x1E1+xoEGSGgXFbrFIE4Y+hVmjKAMPOnXw8UkzdsuAHTEujkaspygCap75x2qQuhLYLj4Q==
+X-Received: by 2002:a63:374e:: with SMTP id g14mr19484205pgn.170.1631697003795;
+        Wed, 15 Sep 2021 02:10:03 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id j6sm13597080pgh.17.2021.09.15.02.09.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 02:10:03 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/3] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+Date:   Wed, 15 Sep 2021 17:09:43 +0800
+Message-Id: <20210915090945.250621-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210914155607.14122-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/09/2021 17:56, Sam Protsenko wrote:
-> This is the initial implementation adding only basic clocks like UART,
-> MMC, I2C and corresponding parent clocks. Design is influenced by
-> Exynos7 and Exynos5433 clock drivers.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  drivers/clk/samsung/Makefile        |   1 +
->  drivers/clk/samsung/clk-exynos850.c | 700 ++++++++++++++++++++++++++++
->  2 files changed, 701 insertions(+)
->  create mode 100644 drivers/clk/samsung/clk-exynos850.c
-> 
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 028b2e27a37e..c46cf11e4d0b 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
->  obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
->  obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
->  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
-> diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-> new file mode 100644
-> index 000000000000..1028caa2102e
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos850.c
-> @@ -0,0 +1,700 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2021 Linaro Ltd.
-> + * Author: Sam Protsenko <semen.protsenko@linaro.org>
-> + *
-> + * Common Clock Framework support for Exynos850 SoC.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +
-> +#include <dt-bindings/clock/exynos850.h>
-> +
-> +#include "clk.h"
-> +
-> +/* Gate register bits */
-> +#define GATE_MANUAL		BIT(20)
-> +#define GATE_ENABLE_HWACG	BIT(28)
-> +
-> +/* Gate register offsets range */
-> +#define GATE_OFF_START		0x2000
-> +#define GATE_OFF_END		0x2fff
-> +
-> +/**
-> + * exynos850_init_clocks - Set clocks initial configuration
-> + * @np:			CMU device tree node with "reg" property (CMU addr)
-> + * @reg_offs:		Register offsets array for clocks to init
-> + * @reg_offs_len:	Number of register offsets in reg_offs array
-> + *
-> + * Set manual control mode for all gate clocks.
-> + */
-> +static void __init exynos850_init_clocks(struct device_node *np,
-> +		const unsigned long *reg_offs, size_t reg_offs_len)
-> +{
-> +	const __be32 *regaddr_p;
-> +	u64 regaddr;
-> +	u32 base;
-> +	size_t i;
-> +
-> +	/* Get the base address ("reg" property in dts) */
-> +	regaddr_p = of_get_address(np, 0, NULL, NULL);
-> +	if (!regaddr_p)
-> +		panic("%s: failed to get reg regaddr\n", __func__);
-> +
-> +	regaddr = of_translate_address(np, regaddr_p);
-> +	if (regaddr == OF_BAD_ADDR || !regaddr)
-> +		panic("%s: bad reg regaddr\n", __func__);
-> +
-> +	base = (u32)regaddr;
-> +
-> +	for (i = 0; i < reg_offs_len; ++i) {
-> +		void __iomem *reg;
-> +		u32 val;
-> +
-> +		/* Modify only gate clock registers */
-> +		if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OFF_END)
-> +			continue;
-> +
-> +		reg = ioremap(base + reg_offs[i], 4);
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-You first translate the address to CPU physical address and then apply
-offset. This should be equivalent to one of_iomap() of entire range and
-iterate starting from the base pointer.  IOW, I don't get why you have
-to map each register instead of mapping entire SFR/IO range?
+Add a new bindings to describe ums512 clock compatible strings.
 
-> +		val = ioread32(reg);
-> +		val |= GATE_MANUAL;
-> +		val &= ~GATE_ENABLE_HWACG;
-> +		iowrite32(val, reg);
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ .../bindings/clock/sprd,ums512-clk.yaml       | 106 ++++++++++++++++++
+ 1 file changed, 106 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 
-All other drivers use readl/writel, so how about keeping it consistent?
+diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+new file mode 100644
+index 000000000000..7e51b49b931c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2019-2021 Unisoc Inc.
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: UMS512 Clock Control Unit Device Tree Bindings
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  "#clock-cells":
++    const: 1
++
++  compatible:
++    enum:
++      - sprd,ums512-apahb-gate
++      - sprd,ums512-ap-clk
++      - sprd,ums512-aonapb-clk
++      - sprd,ums512-pmu-gate
++      - sprd,ums512-g0-pll
++      - sprd,ums512-g2-pll
++      - sprd,ums512-g3-pll
++      - sprd,ums512-gc-pll
++      - sprd,ums512-aon-gate
++      - sprd,ums512-audcpapb-gate
++      - sprd,ums512-audcpahb-gate
++      - sprd,ums512-gpu-clk
++      - sprd,ums512-mm-clk
++      - sprd,ums512-mm-gate-clk
++      - sprd,ums512-apapb-gate
++
++  clocks:
++    minItems: 1
++    maxItems: 4
++    description: |
++      The input parent clock(s) phandle for this clock, only list fixed
++      clocks which are declared in devicetree.
++
++  clock-names:
++    minItems: 1
++    maxItems: 4
++    items:
++      - const: ext-26m
++      - const: ext-32k
++      - const: ext-4m
++      - const: rco-100m
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - '#clock-cells'
++
++if:
++  properties:
++    compatible:
++      enum:
++      - sprd,ums512-ap-clk
++      - sprd,ums512-aonapb-clk
++      - sprd,ums512-mm-clk
++then:
++  required:
++    - reg
++
++else:
++  description: |
++    Other UMS512 clock nodes should be the child of a syscon node in
++    which compatible string should be:
++            "sprd,ums512-glbregs", "syscon", "simple-mfd"
++
++    The 'reg' property for the clock node is also required if there is a sub
++    range of registers for the clocks.
++
++additionalProperties: false
++
++examples:
++  - |
++    ap_clk: clock-controller@20200000 {
++      compatible = "sprd,ums512-ap-clk";
++      reg = <0x20200000 0x1000>;
++      clocks = <&ext_26m>;
++      clock-names = "ext-26m";
++      #clock-cells = <1>;
++    };
++
++  - |
++    ap_apb_regs: syscon@71000000 {
++      compatible = "sprd,ums512-glbregs", "syscon", "simple-mfd";
++      reg = <0x71000000 0x3000>;
++      #address-cells = <1>;
++      #size-cells = <1>;
++      ranges = <0 0x71000000 0x3000>;
++
++      apahb_gate: apahb-gate@0 {
++        compatible = "sprd,ums512-apahb-gate";
++        reg = <0x0 0x2000>;
++        #clock-cells = <1>;
++      };
++    };
++...
+-- 
+2.25.1
 
-Rest looks good but I did not verify the numbers :)
-
-Best regards,
-Krzysztof
