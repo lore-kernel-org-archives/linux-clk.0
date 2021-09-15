@@ -2,58 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C1CC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BE7C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5848261211
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AFE861211
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230525AbhIOBgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 21:36:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230087AbhIOBgU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Sep 2021 21:36:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 99DC761211;
-        Wed, 15 Sep 2021 01:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631669701;
-        bh=v78W32mYUHd1ukan1CzYJdfUJipkYSM5016W5PGlIr4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CGWdZdLNKjKaUsdHF+R3OIXaT/jKBWz5AEsJRW7nZSnv8hnT5n10P4A6US/W0fSpI
-         kc9h12iPdLC1OgrGXJIv9AxVAiRW3VB+On3vpT1LyOAQm6+BVjpsPcJSLUbc7B+04j
-         VMhf64gifuUgA+97DZwkyYzJ5vxJxN39PKB9RTvhNoNwFpxWSu+bwB3dh9FTUX+he5
-         KepS+2I8Yf7fhD5/9KsRUdES4rL8f8Hx3r5oMqJWfKAemoHELeWnyKzjkIfxHXsUxO
-         3DDaJozPvI+qMti64QXojmvzwTOKrVBucQ8Q1mX/V4UoObp3edSdnx9Xd+t0UUuxr2
-         AP6GyPbsedykw==
-Content-Type: text/plain; charset="utf-8"
+        id S232715AbhIOBuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 21:50:46 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:58632 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230401AbhIOBup (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 21:50:45 -0400
+X-UUID: 0bcc3c457ae1430d9735380ce54e8007-20210915
+X-UUID: 0bcc3c457ae1430d9735380ce54e8007-20210915
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 546422078; Wed, 15 Sep 2021 09:49:22 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 15 Sep 2021 09:49:21 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 15 Sep 2021 09:49:21 +0800
+Message-ID: <214844bdf9ccb3e37fe2c8815b6c4dfc6ecff253.camel@mediatek.com>
+Subject: Re: [PATCH v3 0/4] clk: mediatek: modularize COMMON_CLK_MT6779
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Wendell Lin <wendell.lin@mediatek.com>,
+        Hanks Chen <hanks.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Date:   Wed, 15 Sep 2021 09:49:21 +0800
+In-Reply-To: <163166901247.763609.17762427178197245692@swboyd.mtv.corp.google.com>
+References: <20210901222526.31065-1-miles.chen@mediatek.com>
+         <163166901247.763609.17762427178197245692@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <163166856812.763609.13128310400246778720@swboyd.mtv.corp.google.com>
-References: <20210913132102.883361-1-dinguyen@kernel.org> <163166856812.763609.13128310400246778720@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: socfpga: agilex: fix duplicate s2f_user0_clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, stable@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Date:   Tue, 14 Sep 2021 18:35:00 -0700
-Message-ID: <163166970028.763609.7710436848359965088@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2021-09-14 18:16:08)
-> Quoting Dinh Nguyen (2021-09-13 06:21:02)
-> > Remove the duplicate s2f_user0_clk.
->=20
-> To fix what in particular? The patch is tagged for stable so I can only
-> imagine there's some badness that would be good to fix?
->=20
+On Tue, 2021-09-14 at 18:23 -0700, Stephen Boyd wrote:
+> Quoting Miles Chen (2021-09-01 15:25:23)
+> > This patch set makes COMMON_CLK_MEDIATEK and COMMON_CLK_MT6779*
+> > be able to built as kernel modules. Necessary symbols are exported
+> > in this patch.
+> > 
+> 
+> The subject says 4 patches but there's really only three.
 
-Ah this is the patch that was missing. Please squash the two together
-and resend with more info.
+yes, there should be only 3 patches. sorry for the incorrect "0/4"
+cover letter.
+
+Miles
+
