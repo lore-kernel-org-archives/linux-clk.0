@@ -2,70 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-24.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BE7C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F4AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFE861211
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C2661245
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbhIOBuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 21:50:46 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:58632 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230401AbhIOBup (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 21:50:45 -0400
-X-UUID: 0bcc3c457ae1430d9735380ce54e8007-20210915
-X-UUID: 0bcc3c457ae1430d9735380ce54e8007-20210915
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 546422078; Wed, 15 Sep 2021 09:49:22 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 15 Sep 2021 09:49:21 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 15 Sep 2021 09:49:21 +0800
-Message-ID: <214844bdf9ccb3e37fe2c8815b6c4dfc6ecff253.camel@mediatek.com>
-Subject: Re: [PATCH v3 0/4] clk: mediatek: modularize COMMON_CLK_MT6779
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Wendell Lin <wendell.lin@mediatek.com>,
+        id S229498AbhIOB5A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 21:57:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233232AbhIOB47 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 21:56:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7748E61214;
+        Wed, 15 Sep 2021 01:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631670941;
+        bh=U0FpOLu57zGumfxCfqMsFNk0eDDobWRALMMSgQeZdDY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nklhtqNKA4HLPMOXg7Uq2UdUAVLWBK4tY5yhXPCKm8kDX1fqOOOCyrLN1ZVI1N/sV
+         yLTOnBV3L+uoRl6A8yX7/8j3tKGoOGObyuqcimNEEwj8LzVYx58yCdwoEg7y3q3kzt
+         EtvktubffzITOUXmHsBI7ysGHkgt4kMj61x82n4p9Rbqm3caGsKRzq5LhxVa5nnZts
+         +/EmwymC9C3TRr/zrBqRJjUKyPUu5FzEGAZZ0i5boayWDtH8au/h7vcAx2/CUnvC5s
+         V1FymYk/Oz8MaZgqIsQSlIYp7V7ZS63A2qYOwAv4ZUBCUO//2HXaPCd4T8Q9oFXpdm
+         75ywt44JBFNFQ==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Hanks Chen <hanks.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
-Date:   Wed, 15 Sep 2021 09:49:21 +0800
-In-Reply-To: <163166901247.763609.17762427178197245692@swboyd.mtv.corp.google.com>
-References: <20210901222526.31065-1-miles.chen@mediatek.com>
-         <163166901247.763609.17762427178197245692@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH] clk: mediatek: Export clk_ops structures to modules
+Date:   Tue, 14 Sep 2021 18:55:40 -0700
+Message-Id: <20210915015540.1732014-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2021-09-14 at 18:23 -0700, Stephen Boyd wrote:
-> Quoting Miles Chen (2021-09-01 15:25:23)
-> > This patch set makes COMMON_CLK_MEDIATEK and COMMON_CLK_MT6779*
-> > be able to built as kernel modules. Necessary symbols are exported
-> > in this patch.
-> > 
-> 
-> The subject says 4 patches but there's really only three.
+modpost complains once these drivers become modules.
 
-yes, there should be only 3 patches. sorry for the incorrect "0/4"
-cover letter.
+ ERROR: modpost: "mtk_mux_gate_clr_set_upd_ops" [drivers/clk/mediatek/clk-mt6779.ko] undefined!
 
-Miles
+Let's just export them.
+
+Cc: Hanks Chen <hanks.chen@mediatek.com>
+Cc: Wendell Lin <wendell.lin@mediatek.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Miles Chen <miles.chen@mediatek.com>
+Fixes: 32b028fb1d09 ("clk: mediatek: support COMMON_CLK_MEDIATEK module build")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/mediatek/clk-mux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+index 6b8a274e2c01..6d3a50eb7d6f 100644
+--- a/drivers/clk/mediatek/clk-mux.c
++++ b/drivers/clk/mediatek/clk-mux.c
+@@ -121,6 +121,7 @@ const struct clk_ops mtk_mux_clr_set_upd_ops = {
+ 	.get_parent = mtk_clk_mux_get_parent,
+ 	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
+ };
++EXPORT_SYMBOL_GPL(mtk_mux_clr_set_upd_ops);
+ 
+ const struct clk_ops mtk_mux_gate_clr_set_upd_ops  = {
+ 	.enable = mtk_clk_mux_enable_setclr,
+@@ -129,6 +130,7 @@ const struct clk_ops mtk_mux_gate_clr_set_upd_ops  = {
+ 	.get_parent = mtk_clk_mux_get_parent,
+ 	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
+ };
++EXPORT_SYMBOL_GPL(mtk_mux_gate_clr_set_upd_ops);
+ 
+ static struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+ 				 struct regmap *regmap,
+
+base-commit: f09b9460a5e448dac8fb4f645828c0668144f9e6
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
