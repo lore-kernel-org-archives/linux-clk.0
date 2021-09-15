@@ -2,66 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E47C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D233CC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C184761216
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B143961209
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbhIOBSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 21:18:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55622 "EHLO mail.kernel.org"
+        id S230017AbhIOBUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 21:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230016AbhIOBSs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Sep 2021 21:18:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CAC4861164;
-        Wed, 15 Sep 2021 01:17:30 +0000 (UTC)
+        id S229586AbhIOBUQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 21:20:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BDECF61164;
+        Wed, 15 Sep 2021 01:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631668650;
-        bh=l+NumUB63WbtzsGXu6pyRmmSG7XUlP1lW29+cN38ZvM=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=PrYGRL1SREgen1aObM0sj5ZfYFpGL18JWflZ9aCg0DIhHTulC22kCFvCV+3CzHt9g
-         1/AJ0w3GxHPE7pZVuPZspNCVF2WD36mO+D5LpHwQneVtoRx4r7OZ9YiCfAs64XMJlp
-         uymGShsaisX/96GDb6QAQ5jjIDb7GF7w5QJXQfXSmAAU/Gwv7zxyDdqV+tCbKjuHA1
-         3tWeTA/+Pws27OowMhsp3TX88VoMmIQJQsgFd+yPJFroez52F/DOdbHO4icRHGoOnn
-         7o3QzYlNng3/ZrO0t48jkTvhALmB4twMX8RD4PXv0lZ6codsjt4OVqIbOlUHIJznrb
-         lKEjeiabngboQ==
+        s=k20201202; t=1631668738;
+        bh=Ep7dpwNLvWS/XSOlcbh/76uwD/xBXYbFTdnOF2nbAHE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=PKUOEW6wT/1yVl4eQr0trslcLrVYiOAwkLQvF1Hk4XMUyPP5l6jO1yADfLLBm53+W
+         L9xm492IlQJSn62/2wYb5IkUWTqB0iYB4uZSeGY/AAoem9oHXlBFtVdWW9tlwSP+fl
+         OvIWqBgI5ZRPPCCskG59UXON7BB1Nl3uhV9bmqKVk2VntXVj7y2RW3pklj/7VVp2u5
+         lr/N/Q4KaOUbe+3q6vb04yU1ZTvQH1sKSfp4q4Ez4k1IDg9rZgLbczmjldhKhPFdb6
+         1/+DMAdkJ8UQbbFmB9MXcQcQw4kEXw8KhrJLc08Y5/SwaTqdpaCUIjEYxQCkzaaMHd
+         uHqDVkMAz+WLA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <HK0PR06MB33806C10EB8B3F87FE144F8DF2D99@HK0PR06MB3380.apcprd06.prod.outlook.com>
-References: <20210908091845.4230-1-ryan_chen@aspeedtech.com> <4571c9ae-0287-4f70-2adb-9c227e706736@microchip.com> <HK0PR06MB33806C10EB8B3F87FE144F8DF2D99@HK0PR06MB3380.apcprd06.prod.outlook.com>
-Subject: RE: [PATCHv2] clk:aspeed:Fix AST2600 hpll calculate formula
+In-Reply-To: <20210903152615.31453-1-kabel@kernel.org>
+References: <20210903152615.31453-1-kabel@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clk: fixed-mmio-clock: Convert to YAML
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Claudiu.Beznea@microchip.com, Ryan Chen <ryan_chen@aspeedtech.com>,
-        andrew@aj.id.au, joel@jms.id.au, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com
-Date:   Tue, 14 Sep 2021 18:17:29 -0700
-Message-ID: <163166864956.763609.8140689140101809508@swboyd.mtv.corp.google.com>
+Cc:     Jan Kotas <jank@cadence.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org,
+        Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>
+To:     Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org
+Date:   Tue, 14 Sep 2021 18:18:57 -0700
+Message-ID: <163166873752.763609.1498318431763013146@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ryan Chen (2021-09-12 22:31:46)
-> > > +               if (hwstrap & BIT(10))
-> > > +                       m =3D 0x5F;
-> > > +               else {
-> > > +                       if (hwstrap & BIT(8))
-> >=20
-> > You may write it directly:
-> >                 else if (hwstrap & BIT(8))
-> >=20
-> Hello,
->         Like I commit message M =3D SCU500[10] ? 0x5F : SCU500[8] ? 0xBF =
-: SCU200[12:0]
->         it need keep from register read, if BIT(8)/BIT(10) not 1.
->        =20
+Quoting Marek Beh=C3=BAn (2021-09-03 08:26:15)
+> Convert the binding documentatoin for fixed-mmio-clock to YAML.
+>=20
+> Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
+> ---
 
-I don't get it. The review comment was that the else { if (...) can be
-collapsed into an else if (..) What does commit message have to do with
-it?
+Applied to clk-next
