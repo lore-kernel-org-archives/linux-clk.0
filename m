@@ -2,116 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC2C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 02:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00CEC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 03:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E22DA60F6F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 02:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A27E76115B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 03:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbhIOCzt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 22:55:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42340 "EHLO
+        id S231847AbhIODI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 23:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbhIOCzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 22:55:49 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46098C061574
-        for <linux-clk@vger.kernel.org>; Tue, 14 Sep 2021 19:54:31 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id s20so2272971oiw.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Sep 2021 19:54:31 -0700 (PDT)
+        with ESMTP id S235259AbhIODIx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Sep 2021 23:08:53 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD426C061574;
+        Tue, 14 Sep 2021 20:07:31 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id p4so1977490qki.3;
+        Tue, 14 Sep 2021 20:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BZeoBKUFa4ew4uv0EZ30vPzxQarHfe3j0m8mhnfs+zw=;
-        b=JcqNRZTiVw3QdMoQVVGBc+8k5VQThZIIlM6OMkWDZXKT/CwqCvnHfe3/HAV3ZctsOs
-         W8K7MhJVU/xzn6g8TJpc1/xHNhR5YEbhZVrmh60VRZkUwRXGZMOb3peAv3hyUVreL9qG
-         S4xHC8SbOocObLCSheCrObrrZz7VgGeomQn4aqYIRmzXVZDO12+thgbz19R9uU8YVvzo
-         HxuEPlelMKe1sw6m+KQP/ElHXWNhakdgniKAo7i27ZQhjY5RQ3DukB9GdtQnjA4o3xxU
-         KKxbgBeP/RXg22B7l9P7f1bwjW6cuidiiCu3hd3tkMnloWIQ4LsjI7gFgRPSvZFmGCkO
-         Kz4g==
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lzGNTe0N1omRaVLKHYnbdAwVLZaGW4vyfSP4Y4f6x7w=;
+        b=CVDF7i2VGhoEck1p4Fx5yvFrH6R7YTq+jdWrAO2fCpOvlC6lWZZSKP9BLr9fnCIrSu
+         FSHiKvqMv4zALE0C2zPAKfnYyxT5U2T/pfLiVPpIy/9NWRPk7j60vG0IeV7Dnk0pgHvH
+         oCg5ljKyHBiFQbf8ALrngZFvwIKTtLL5QYrL4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BZeoBKUFa4ew4uv0EZ30vPzxQarHfe3j0m8mhnfs+zw=;
-        b=QXQ10xRayQt2INCZriPnyOE+Ltje02ww3tM7IQD2AfAYD8QVXWOUTw8rCx30yjlbNM
-         ZmeJuRSCtlT6A7f3mYFr1u06aPS54FU1+rHiieu1+HGN0s+bxN2PBgqJ+Qfuf3akLdxY
-         Uu8edoDb165sChbXKLdGcUE0rjRAKES9eFVizoQPweK1STRPp2WB4X3s76jJnEpgApYd
-         +l2jkr3oaFiwBdJMyOSHTvTjo9xOzFMpzak24jXyXvZq3M+fSB28w88C8QFuCiqsjTrs
-         YVR7XE39YU/hWJdMTuGGgcx8NGz/77cGKkwzpolKs6k04owReYT0J4nUxcC5QcXQ5z1T
-         XTng==
-X-Gm-Message-State: AOAM532Cj4GaULVtPny2nsVOki4WjpCLaf9y5olY15WZ1gQOm7g6Ajn5
-        mnx1rB532cdu5Lp/m5STZpdKDA==
-X-Google-Smtp-Source: ABdhPJzbdhz88XinGhshynrR89pS2iPgi7Zypps5yKSPbFugPDtM4QDa/rKa8jNWUlN/gUKSY5bC9g==
-X-Received: by 2002:aca:6041:: with SMTP id u62mr3737643oib.82.1631674470457;
-        Tue, 14 Sep 2021 19:54:30 -0700 (PDT)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k21sm3037906ots.53.2021.09.14.19.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 19:54:30 -0700 (PDT)
-Date:   Tue, 14 Sep 2021 19:55:21 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: smd-rpm: Add rate hooks for
- clk_smd_rpm_branch_ops
-Message-ID: <YUFgmdhYK/p2v1LS@ripper>
-References: <20210914025554.5686-1-shawn.guo@linaro.org>
- <20210914025554.5686-2-shawn.guo@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lzGNTe0N1omRaVLKHYnbdAwVLZaGW4vyfSP4Y4f6x7w=;
+        b=lm3PqaxmF+pVQ3HVVHPrv5VztHreOU3fkbd+Gyc+2TwCQDBYzjuhgdRys9MpAaQAy3
+         WaRhO+0RnoFYt6La/XZeCdEASYptO3in84lzuZDClxDT0wfyBwh0YGZWU/FXEgsTYif3
+         uq4wSRi/zpZIFxijtMrbduYmsHPvzYjKaQOVMEWmjWOk6FesFbqBPa5HOEtW4H621swT
+         C6GSFqNX5D9d4H0vP9rwD6C7jjAbWwblTGaf+VXBaorW/nF2eIZ7fK56TJ4KTrpgIdPC
+         BVNwojAM2J2jtkdPOFh5812k1SKdJBTgtez/ZQxfVRPxtmbeDOW5o8XM4b84tpqQO7vf
+         igcQ==
+X-Gm-Message-State: AOAM530qqjGm8P2RAAAp1sE2uJO53hv+20Wb8FTq11mNAPCFf1NgYVnR
+        um7YiB2LELRxVTLTMDl8NiW7amCmVFDN2tZX1tM=
+X-Google-Smtp-Source: ABdhPJx4kp7o4gJWXZYceApw0+pTlgsuD5T3QXuEgB02qyltrnDN5eU/3k+mJgjXkPbLnNrygxP8xCwr+MhkqEOJ24o=
+X-Received: by 2002:a37:67d7:: with SMTP id b206mr7986446qkc.395.1631675250410;
+ Tue, 14 Sep 2021 20:07:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210914025554.5686-2-shawn.guo@linaro.org>
+References: <20210908091845.4230-1-ryan_chen@aspeedtech.com>
+ <4571c9ae-0287-4f70-2adb-9c227e706736@microchip.com> <HK0PR06MB33806C10EB8B3F87FE144F8DF2D99@HK0PR06MB3380.apcprd06.prod.outlook.com>
+ <163166864956.763609.8140689140101809508@swboyd.mtv.corp.google.com> <HK0PR06MB33801C3DADFD87363C09BFAFF2DB9@HK0PR06MB3380.apcprd06.prod.outlook.com>
+In-Reply-To: <HK0PR06MB33801C3DADFD87363C09BFAFF2DB9@HK0PR06MB3380.apcprd06.prod.outlook.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 15 Sep 2021 03:07:18 +0000
+Message-ID: <CACPK8XfN9YxTveoOVUFoJjq1_R_8mdvDQnF+DOVvkNaosnKN0g@mail.gmail.com>
+Subject: Re: [PATCHv2] clk:aspeed:Fix AST2600 hpll calculate formula
+To:     Ryan Chen <ryan_chen@aspeedtech.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 13 Sep 19:55 PDT 2021, Shawn Guo wrote:
+On Wed, 15 Sept 2021 at 02:52, Ryan Chen <ryan_chen@aspeedtech.com> wrote:
+>
+> > -----Original Message-----
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > Sent: Wednesday, September 15, 2021 9:17 AM
+> > To: Claudiu.Beznea@microchip.com; Ryan Chen
+> > <ryan_chen@aspeedtech.com>; andrew@aj.id.au; joel@jms.id.au;
+> > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > mturquette@baylibre.com
+> > Subject: RE: [PATCHv2] clk:aspeed:Fix AST2600 hpll calculate formula
+> >
+> > Quoting Ryan Chen (2021-09-12 22:31:46)
+> > > > > +               if (hwstrap & BIT(10))
+> > > > > +                       m = 0x5F;
+> > > > > +               else {
+> > > > > +                       if (hwstrap & BIT(8))
+> > > >
+> > > > You may write it directly:
+> > > >                 else if (hwstrap & BIT(8))
+> > > >
+> > > Hello,
+> > >         Like I commit message M = SCU500[10] ? 0x5F : SCU500[8] ? 0xBF :
+> > SCU200[12:0]
+> > >         it need keep from register read, if BIT(8)/BIT(10) not 1.
+> > >
+> >
+> > I don't get it. The review comment was that the else { if (...) can be collapsed
+> > into an else if (..) What does commit message have to do with it?
+> Sorry for confuse.
+> Or do you mean like following modification?
+>
+>                if (hwstrap & BIT(10))
+>                        m = 0x5F;
+>                else if (hwstrap & BIT(8))
+>                        m = 0xBF;
 
-> On QCM2290 platform, the clock xo_board runs at 38400000, while the
-> child clock bi_tcxo needs to run at 19200000.  That said,
-> clk_smd_rpm_branch_ops needs the capability of setting rate. Add rate
-> hooks into clk_smd_rpm_branch_ops to make it possible.
-> 
+Yep!
 
-Most platforms has a crystal oscillator ticking at 38.4MHz feeding the
-PMIC (represented by the rpmcc and its "xo" parent) and out comes the
-bi_tcxo with a fixed 19.2MHz rate.
-
-Is there a problem with the way sdm660_bi_tcxo is defined in this
-regard?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index 66d7807ee38e..2380e45b6247 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -416,6 +416,9 @@ static const struct clk_ops clk_smd_rpm_ops = {
->  static const struct clk_ops clk_smd_rpm_branch_ops = {
->  	.prepare	= clk_smd_rpm_prepare,
->  	.unprepare	= clk_smd_rpm_unprepare,
-> +	.set_rate	= clk_smd_rpm_set_rate,
-> +	.round_rate	= clk_smd_rpm_round_rate,
-> +	.recalc_rate	= clk_smd_rpm_recalc_rate,
->  };
->  
->  DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-> -- 
-> 2.17.1
-> 
+Take a look at my review of v1. I wrote it out there.
