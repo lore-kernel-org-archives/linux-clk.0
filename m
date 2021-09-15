@@ -2,181 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED262C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 19:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200E4C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 22:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2B86105A
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 19:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03BB660E08
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 22:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231562AbhIOTxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Sep 2021 15:53:20 -0400
-Received: from mga05.intel.com ([192.55.52.43]:19949 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229732AbhIOTxT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Sep 2021 15:53:19 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10108"; a="307963041"
-X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
-   d="scan'208";a="307963041"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 12:52:00 -0700
-X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
-   d="scan'208";a="482468324"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 12:51:55 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 42E0920656; Wed, 15 Sep 2021 22:51:53 +0300 (EEST)
-Date:   Wed, 15 Sep 2021 22:51:53 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-staging@lists.linux.dev, Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 15/22] media: sunxi: Remove the sun6i-csi driver
- implementation
-Message-ID: <YUJO2cG/46vOkuBe@paasikivi.fi.intel.com>
-References: <20210910184147.336618-1-paul.kocialkowski@bootlin.com>
- <20210910184147.336618-16-paul.kocialkowski@bootlin.com>
- <20210913081707.3pjcfuwan46pbdep@gilmour>
- <YUBXiSrQjccLoa8b@aptenodytes>
+        id S232542AbhIOWC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Sep 2021 18:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232593AbhIOWCX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 18:02:23 -0400
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A38C061766
+        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 15:01:03 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id k10so4201531vsp.12
+        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 15:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zGSJw2mijcD917fI6iH/7Zmw4K7gJ7WwhrleRMcWjCU=;
+        b=LBVx6jNrGw1ARumMNWN8gjXgHRgv4QoeCFG8s+d30GDiNRCUhBeoZQEOGM7at5+ZxA
+         YlEDaKkfE5T7wQapssiYzPc+0mfn6SZ/qKsDr+6dxxaaxJDNlXqE2cQyCaf8JsOeBJtt
+         2DydeWngGgU1+3u/dMVj1mSx/JrPW/muOAaZpp14KzYOlfAwXayfBekr8wcM9P0lSs7e
+         MC3kq/lnoI/L08K+K39Zbzny5g3GEjc5zqitkcDi5qmEajO+XqcXSXqoq59PE1cGB1G3
+         7FT/N/gdr8LyRl0DqThGvCtJx3a/TTWQd2V9//rJqXUrkyyHVUq41e/kEEuFibfVoKuy
+         ocWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zGSJw2mijcD917fI6iH/7Zmw4K7gJ7WwhrleRMcWjCU=;
+        b=0eULARo2Irql5C3HzOkln8wsRNFS2zrehVtUuzk+kXkiP2fh/J0iLKFN3ZeAKxfLcB
+         lSyQ1xeRKpA5IP096qvzu4mSR7K2P5xq9hT+DdRBaftICOY9xsOcTotzlXBgkMkhy7jZ
+         tPvgS0JlCbHeWnOFtdyhl7JMazi9JS62haXXTP+3ZFblMkLKJDC4d7uCwXtk/2+Q6ve1
+         24rzS0Zp2kEYO2+EUHrRNGBRwW9VXPW4eJtLkOVaJtv8Yibo82GRUoJVwzUu7oaKp1nx
+         5Vl9qUc4rtyCaEvoQ8bU8bp6tns4eeUAxyHuAG9arslBnR9xIOmuC2ZHKjCkjprzOsQb
+         uomQ==
+X-Gm-Message-State: AOAM533lbIbsgRSbANi4fpU28Uf9B26SvglauxIRlvZWNygT5Jp/bl9z
+        PV/om7QIm0PoKYWuP8RAM1ZXAIa+ZENtVzrDqQs/Dg==
+X-Google-Smtp-Source: ABdhPJyOr8yGWQEsGudvQrYqjyuQgXeLh226eqUsm3m0MrCX91sh9IJVmTTEPi2a0+PjKOMEygDNsAmyA5u+GuSIjMo=
+X-Received: by 2002:a67:d589:: with SMTP id m9mr2041213vsj.30.1631743262794;
+ Wed, 15 Sep 2021 15:01:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUBXiSrQjccLoa8b@aptenodytes>
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <20210914155607.14122-7-semen.protsenko@linaro.org> <1428bfc4-520f-9af3-5255-b17308881243@gmail.com>
+In-Reply-To: <1428bfc4-520f-9af3-5255-b17308881243@gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 16 Sep 2021 01:00:51 +0300
+Message-ID: <CAPLW+4k8ZihQtnpYGULcS1uOP+9tvFi_yo27GadP3aa8KNC7aQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] clk: samsung: Introduce Exynos850 clock driver
+To:     Chanwoo Choi <cwchoi00@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul, Maxime,
+On Wed, 15 Sept 2021 at 21:05, Chanwoo Choi <cwchoi00@gmail.com> wrote:
+>
+> Hi Sam,
+>
+> On 21. 9. 15. =EC=98=A4=EC=A0=84 12:56, Sam Protsenko wrote:
+> > This is the initial implementation adding only basic clocks like UART,
+> > MMC, I2C and corresponding parent clocks. Design is influenced by
+> > Exynos7 and Exynos5433 clock drivers.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >   drivers/clk/samsung/Makefile        |   1 +
+> >   drivers/clk/samsung/clk-exynos850.c | 700 +++++++++++++++++++++++++++=
++
+> >   2 files changed, 701 insertions(+)
+> >   create mode 100644 drivers/clk/samsung/clk-exynos850.c
+> >
+> > diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefil=
+e
+> > index 028b2e27a37e..c46cf11e4d0b 100644
+> > --- a/drivers/clk/samsung/Makefile
+> > +++ b/drivers/clk/samsung/Makefile
+> > @@ -17,6 +17,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       +=3D clk-=
+exynos5433.o
+> >   obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) +=3D clk-exynos-audss.o
+> >   obj-$(CONFIG_EXYNOS_CLKOUT) +=3D clk-exynos-clkout.o
+> >   obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       +=3D clk-exynos7.o
+> > +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos850.o
+> >   obj-$(CONFIG_S3C2410_COMMON_CLK)+=3D clk-s3c2410.o
+> >   obj-$(CONFIG_S3C2410_COMMON_DCLK)+=3D clk-s3c2410-dclk.o
+> >   obj-$(CONFIG_S3C2412_COMMON_CLK)+=3D clk-s3c2412.o
+> > diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/=
+clk-exynos850.c
+> > new file mode 100644
+> > index 000000000000..1028caa2102e
+> > --- /dev/null
+> > +++ b/drivers/clk/samsung/clk-exynos850.c
+> > @@ -0,0 +1,700 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2021 Linaro Ltd.
+> > + * Author: Sam Protsenko <semen.protsenko@linaro.org>
+> > + *
+> > + * Common Clock Framework support for Exynos850 SoC.
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +
+> > +#include <dt-bindings/clock/exynos850.h>
+> > +
+> > +#include "clk.h"
+> > +
+> > +/* Gate register bits */
+> > +#define GATE_MANUAL          BIT(20)
+> > +#define GATE_ENABLE_HWACG    BIT(28)
+> > +
+> > +/* Gate register offsets range */
+> > +#define GATE_OFF_START               0x2000
+> > +#define GATE_OFF_END         0x2fff
+> > +
+> > +/**
+> > + * exynos850_init_clocks - Set clocks initial configuration
+> > + * @np:                      CMU device tree node with "reg" property =
+(CMU addr)
+> > + * @reg_offs:                Register offsets array for clocks to init
+> > + * @reg_offs_len:    Number of register offsets in reg_offs array
+> > + *
+> > + * Set manual control mode for all gate clocks.
+> > + */
+> > +static void __init exynos850_init_clocks(struct device_node *np,
+> > +             const unsigned long *reg_offs, size_t reg_offs_len)
+> > +{
+> > +     const __be32 *regaddr_p;
+> > +     u64 regaddr;
+> > +     u32 base;
+> > +     size_t i;
+> > +
+> > +     /* Get the base address ("reg" property in dts) */
+> > +     regaddr_p =3D of_get_address(np, 0, NULL, NULL);
+> > +     if (!regaddr_p)
+> > +             panic("%s: failed to get reg regaddr\n", __func__);
+> > +
+> > +     regaddr =3D of_translate_address(np, regaddr_p);
+> > +     if (regaddr =3D=3D OF_BAD_ADDR || !regaddr)
+> > +             panic("%s: bad reg regaddr\n", __func__);
+> > +
+> > +     base =3D (u32)regaddr;
+> > +
+> > +     for (i =3D 0; i < reg_offs_len; ++i) {
+> > +             void __iomem *reg;
+> > +             u32 val;
+> > +
+> > +             /* Modify only gate clock registers */
+> > +             if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OF=
+F_END)
+> > +                     continue; > +
+> > +             reg =3D ioremap(base + reg_offs[i], 4);
+> > +             val =3D ioread32(reg);
+> > +             val |=3D GATE_MANUAL;
+> > +             val &=3D ~GATE_ENABLE_HWACG;
+> > +             iowrite32(val, reg);
+> > +             iounmap(reg);
+>
+> I understand your intention for disabling HWACG.
+> But, it is not good to execute ioreamp/iounmap for each clock gate
+> register. I think that we need to consider the more pretty method
+> to initialize the clock register before clock registration.
+>
+> [snip]
+>
 
-On Tue, Sep 14, 2021 at 10:04:25AM +0200, Paul Kocialkowski wrote:
-> Hi,
-> 
-> On Mon 13 Sep 21, 10:17, Maxime Ripard wrote:
-> > On Fri, Sep 10, 2021 at 08:41:40PM +0200, Paul Kocialkowski wrote:
-> > > As described in the commit adding support for the new sun6i-csi driver,
-> > > a complete rewrite was necessary to support the Allwinner A31 ISP as
-> > > well as fix a number of issues with the current implementation.
-> > > 
-> > > Farewell and thanks for all the pixels!
-> > > 
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > 
-> > For completeness, this is what the other commit log mentions:
-> > 
-> > > While adapting the sun6i-csi driver for MIPI CSI-2 support was
-> > > possible, it became clear that adding support for the ISP required
-> > > very heavy changes to the driver which were quite hard to break down
-> > > into a series of subsequent changes.
-> > 
-> > > The first major difficulty comes from the lack of v4l2 subdev that
-> > > acts a bridge, separate from the video node representing the DMA
-> > > engine. To support the ISP, only parts of the hardware must be
-> > > configured (excluding aspects related to the DMA output), which made
-> > > the separation a hard requirement.
-> > 
-> > > Another significant difficulty was the specific dance that is required
-> > > to have both the ISP and CSI device be part of the same media device.
-> > > Because the ISP and CSI are two different hardware blocks, they have
-> > > two distinct drivers that will each try to register their own v4l2
-> > > and media devices, resulting in two distinct pipelines. When the ISP
-> > > is in use, we actually want the CSI driver to register with the ISP's
-> > > v4l2 and media devices while keeping the ability to register its own
-> > > when the ISP is not in use. This is done by:
-> > > 1. Having the CSI driver check whether the ISP is available, using
-> > >    sun6i_csi_isp_detect();
-> > > 2. If not, it can register when its own async subdevs are ready, using
-> > >    sun6i_csi_v4l2_complete();
-> > > 3. If so, it will register its bridge as an async subdev which will
-> > >    be picked-up by the ISP driver (from the fwnode graph link);
-> > > 4. When the subdev becomes bound to the ISP's v4l2 device, we can
-> > >    then access that device (and the associated media device) to
-> > >    complete registration of the capture video node, using
-> > >    sun6i_csi_isp_complete();
-> > > Besides the logic rework, other issues were identified and resolved:
-> > > - The sync mechanism for buffer flipping was based on the frame done
-> > >   interrupt, which is too late (next frame is already being processed).
-> > >   This lead to requiring 3 buffers to start and writing two addresses
-> > >   when starting. Using vsync as a sync point seems to be the correct
-> > >   approach and allows using only two buffers without tearing;
-> > > - Using devm_regmap_init_mmio_clk was incorrect since the reset also
-> > >   comes into play;
-> > > - Some register definitions were inverted compared to their actual
-> > >   effect (which was inherited from the Allwinner documentation and
-> > >   code): comments were added where relevant;
-> > > - The deprecated v4l2_async_notifier_parse_fwnode_endpoints() helper
-> > >   is no longer used by the driver;
-> > 
-> > With that being said, NAK.
-> > 
-> > Having heavy changes to a driver is completely fine, and is kind of
-> > expected really with such a big change. Breaking all possibility of
-> > bisection and throwing away years of stabilization and maintenance
-> > isn't.
-> > 
-> > And all those small bug fixes you mention at the end are just that:
-> > small bug fixes that can be done on the current driver just fine too.
-> 
-> I understand that this looks like we're trashing all the work that was
-> done previously by removing the current driver and adding the new one
-> but the logic for deciding what to write into registers was carefully
-> preserved from the original driver to make sure that the works of
-> stabilization and maintenance are not lost.
-> 
-> However I would understand that my good promise on this is not enough,
-> so perhaps I could provide a combinatory verification that the same set
-> of mbus/pixel formats end up with the same thing being written into
-> registers.
-> 
-> In addition I understand that it will be necessary to split the changes
-> up into small commits to clarify the transition path between the two
-> drivers. So I will do my best to split things up.
-> 
-> Does that seem like an agreeable plan or do you see other things that
-> would be blockers?
+Hi guys,
 
-Please do refactor the patches into reviewable chunks that make sense on
-their own. I'd see the result being the same driver but with additional
-patches fixing bugs, doing some or more refactoring and adding new
-functionality. Please use -C100 -M100 if there's a need to rename files,
-and preferrably do so in separate patches.
+Thanks for the quick review! I'll address all your comments once I get
+back from vacation (in two weeks), and will send v2.
 
-See e.g. patches to the smiapp driver that turned it into a CCS driver:
-
-	git log 2db8166f739e75c1269d7e8afe8da68e70098810..b24cc2a18c50e4e315abc76a86b26b4c49652f79~ -- drivers/media/i2c/smiapp
-	git log drivers/media/i2c/ccs
-
-Usually bugfixes are best put first.
-
-> 
-> My initial thought was that it would be much easier to review the driver as a
-> rewrite, but I'm not too surprised I was wrong. To be honest it was nearly
-> impossible to actually have the initial development happen as sequential steps
-> and I preferred to allocate my time on other tasks than splitting the changes
-> into these sequential steps.
-
-This isn't really unusual when you're changing an existing driver:
-sometimes you have to implement what you want to achieve in whole, and only
-then figure out how to split it into something that can be reviewed. Often
-the end result will look different than what you arrived with on the first
-time.
-
--- 
-Kind regards,
-
-Sakari Ailus
+> --
+> Best Regards,
+> Samsung Electronics
+> Chanwoo Choi
