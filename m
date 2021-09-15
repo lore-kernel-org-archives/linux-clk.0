@@ -2,272 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667DCC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 17:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0547BC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 18:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3887361101
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 17:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00CB611C6
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 18:05:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbhIORp0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Sep 2021 13:45:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
+        id S230423AbhIOSGZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Sep 2021 14:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230439AbhIORp0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 13:45:26 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044D3C061766
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 10:44:06 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id i8-20020a056830402800b0051afc3e373aso4635247ots.5
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 10:44:06 -0700 (PDT)
+        with ESMTP id S229906AbhIOSGY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 14:06:24 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA204C061574;
+        Wed, 15 Sep 2021 11:05:05 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id w19-20020a17090aaf9300b00191e6d10a19so2830197pjq.1;
+        Wed, 15 Sep 2021 11:05:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wonPalCaX9F+KZ2w00RyDLy7np4dOZ17CrNdnuNESbA=;
-        b=mNCvYC2WClusDkPNwnmFtjCDCfn06nSK2llI5Ef1Ia9EHmBKJWFCkWyTZLUOc+G8tG
-         6pf43nPo6gQAem+fL5U9WJ625jkwjlKE48QqZDKE4W7n0GNPw1HdoCEolCfb9CrG1HNJ
-         OQNbP/dI8KTpv9ucV8ns+U0UHTsUxxoUs1XeY88mf52kaoJIPlzbFZ8lZcW8pOezeMGt
-         6ZFI+MjD9pFnchRJmy6A+IpABaSgHrzDGraq4tdjyryKCE/DUTFRkrOFFWrrgSPqZgHm
-         2uUFj39tFYiUMAmExkiXlX0EkMNNYDUhC1oxMiwWkpsru1MQHUEUJF39RNGhDybagNfb
-         7Xsg==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DxE8EI6WhqiyghdGlGjkLAEFX1mqHtojnuLJrvbLYKs=;
+        b=SCThavKcAesRoxHcT4VLWrVNAE4P9Yljq3SVUCs6QXcKvhheMJ0hzl8hqdq+Co4f/5
+         RvAczMnJr0dT8Yp0UCn8Ic86iroFVaVfDBNUJMszN4SmpR7n6tg2NL40U8zReRuVfnFp
+         MJ30mtSI0B6J7Q2CqGqzbnawBQRzzDcrQDZOLd3oaA2K2+se7wgYXTqTx5QMba1CsVSe
+         iIR6mG9fwvOMdQNXhQQFkfLJKsiqSAF1UrGNK/sm2e/l/iyz84MRcvq0OFvKhJ57PMYX
+         NHIk+fQnanS/PKzyHeAIbdi0g3omTjq/8JhWVEIwmtQy2YrhtKQqvIA4soITxUXZ97HC
+         p3lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wonPalCaX9F+KZ2w00RyDLy7np4dOZ17CrNdnuNESbA=;
-        b=4/ttfCRIJUgNiFEuZBDMFsBsjLQVxyTZI01ZIHIuaxeVrS4sV0JzD8b/2Qis8X4zes
-         2sckWKV4STxQXtkrieUn5obu07oJwj5S75mEJUKfvMhCuDRMql8ox5Mzo3l7h39ZOXC8
-         h7VoJrDk4NjeCtleEzhqRm+XpEEsSwaB0J47Y+ITQwqpJh4Wo7+dwhKDrWIqQt3S6TG5
-         KDl4jR+PiSrMh8U4niWZ2FHdZYxfqdUUJ+beGToIr6wXQCp5BpsJ4YExkd/tYihGJ5Vo
-         z4hFEdH5w3AstgbcAGLuF424A4NpqNPawsbYgBI386f3qMR1CkPgrR1D/s+IWGRs3zGz
-         STMA==
-X-Gm-Message-State: AOAM533p9Wd1jC73L3WakdSsRVU1lydwKygIKodXLYxBNY5QEFNGiWEe
-        i5hFixXGkfHilhFOUOHUf8txnQ==
-X-Google-Smtp-Source: ABdhPJwduwJaaSf18cVPub1E76Ic7TyCUAoDWoKdRIviHZi19eKVOUFLbADTd+O5CNE6j3YNYRqilQ==
-X-Received: by 2002:a9d:4003:: with SMTP id m3mr1072678ote.62.1631727846158;
-        Wed, 15 Sep 2021 10:44:06 -0700 (PDT)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id x22sm178067oox.26.2021.09.15.10.44.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 10:44:05 -0700 (PDT)
-Date:   Wed, 15 Sep 2021 10:44:56 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: smd-rpm: Add rate hooks for
- clk_smd_rpm_branch_ops
-Message-ID: <YUIxGH17+AjVluCM@ripper>
-References: <20210914025554.5686-1-shawn.guo@linaro.org>
- <20210914025554.5686-2-shawn.guo@linaro.org>
- <163165658855.763609.14080313241484048687@swboyd.mtv.corp.google.com>
- <20210915150526.GE25255@dragon>
- <YUIr/002dfXxDWDY@ripper>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DxE8EI6WhqiyghdGlGjkLAEFX1mqHtojnuLJrvbLYKs=;
+        b=rsTzJhaxVAgtqn9fxXTgFE5OGlnXxAKADrQ/7lHUlx+by/jrI8BAsKHOafaAu+tdgO
+         qQaGwlCwYavsfoD6LOl5c10OxUCUZnD/+3iSpOQ+3x1bwkjRB0cePx9uvnXJv6gf5Ucb
+         7r0L3zbIBM7krbHSr4sESeWfgCjAG7YH1H4kwes0gHUa6duJzI/XjFLK6VrbD5k855UD
+         S+mrIvLf3E/PF+voRngHvoLvVNb+6DOhv3+nM3qSXeA6fraTUHtWKoM3L1deIdX1xXBK
+         KpiidAi+HN/hFzbdGgaOb8grkuSQwVrAtf4fYYL7SGhmYKkgNMDj43JnuKGP7G+rkouI
+         oeUQ==
+X-Gm-Message-State: AOAM530nOk6g6aPFRCu+HsqS1GgOxqzENJ6ll/LV7snm2fMrELZJJyhS
+        v8fakcwti+le5dY+ivCbg4DLRUpnBBg=
+X-Google-Smtp-Source: ABdhPJzk0QV2W1kV2rLTWkY5sgEyWUoGS23+UUZBhU1p3YQXgoAtQNGtBcT/GaO5JQf4CqP9Pa4CoQ==
+X-Received: by 2002:a17:90b:1e02:: with SMTP id pg2mr10072635pjb.114.1631729104802;
+        Wed, 15 Sep 2021 11:05:04 -0700 (PDT)
+Received: from [172.30.1.2] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id g4sm328064pjt.56.2021.09.15.11.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 11:05:04 -0700 (PDT)
+Subject: Re: [PATCH 6/6] clk: samsung: Introduce Exynos850 clock driver
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <20210914155607.14122-7-semen.protsenko@linaro.org>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <1428bfc4-520f-9af3-5255-b17308881243@gmail.com>
+Date:   Thu, 16 Sep 2021 03:04:57 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUIr/002dfXxDWDY@ripper>
+In-Reply-To: <20210914155607.14122-7-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 15 Sep 10:23 PDT 2021, Bjorn Andersson wrote:
+Hi Sam,
 
-> On Wed 15 Sep 08:05 PDT 2021, Shawn Guo wrote:
+On 21. 9. 15. 오전 12:56, Sam Protsenko wrote:
+> This is the initial implementation adding only basic clocks like UART,
+> MMC, I2C and corresponding parent clocks. Design is influenced by
+> Exynos7 and Exynos5433 clock drivers.
 > 
-> > On Tue, Sep 14, 2021 at 02:56:28PM -0700, Stephen Boyd wrote:
-> > > Quoting Shawn Guo (2021-09-13 19:55:52)
-> > > > On QCM2290 platform, the clock xo_board runs at 38400000, while the
-> > > > child clock bi_tcxo needs to run at 19200000.  That said,
-> > > > clk_smd_rpm_branch_ops needs the capability of setting rate. Add rate
-> > > > hooks into clk_smd_rpm_branch_ops to make it possible.
-> > > 
-> > > This doesn't sound right. The branch is a simple on/off. If xo_board is
-> > > 38.4MHz, then there is an internal divider in the SoC that makes bi_tcxo
-> > > (i.e. the root of the entire clk tree) be 19.2MHz. We don't model the
-> > > divider, I guess because it isn't very important to. Instead, we tack on
-> > > a divider field and implement recalc_rate op. See clk-rpmh.c in the qcom
-> > > directory for this.
-> > 
-> > Thanks for the comment, Stephen!  To be honest, I copied the
-> > implementation from vendor kernel, and wasn't really sure if it's
-> > correct or the best.
-> > 
-> > So here is what I get based on your suggestion.  Let's me know if
-> > it's how you wanted it to be.  Thanks!
-> > 
-> > Shawn
-> > 
-> > ----8<---------
-> > 
-> > From 23dda79fee412738f046b89bdd20ef95a24c35cc Mon Sep 17 00:00:00 2001
-> > From: Shawn Guo <shawn.guo@linaro.org>
-> > Date: Wed, 15 Sep 2021 22:00:32 +0800
-> > Subject: [PATCH] clk: qcom: smd-rpm: Add a divider field for branch clock
-> > 
-> > Similar to clk-rpmh, clk-smd-rpm has the same need to handle the case
-> > where an internal divider is there between xo_board and bi_tcxo.  The
-> > change is made in the a back compatible way below.
-> > 
-> >  - Add div field to struct clk_smd_rpm, and have
-> >    __DEFINE_CLK_SMD_RPM_BRANCH() assign it.
-> > 
-> >  - Update all existing __DEFINE_CLK_SMD_RPM_BRANCH() wrappers to pass a
-> >    zero div.
-> > 
-> >  - Add DEFINE_CLK_SMD_RPM_BRANCH_DIV() which doesn't take rate argument
-> >    but div.
-> > 
-> >  - Update clk_smd_rpm_recalc_rate() to handle div and add it as
-> >    .recalc_rate of clk_smd_rpm_branch_ops.
-> > 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>   drivers/clk/samsung/Makefile        |   1 +
+>   drivers/clk/samsung/clk-exynos850.c | 700 ++++++++++++++++++++++++++++
+>   2 files changed, 701 insertions(+)
+>   create mode 100644 drivers/clk/samsung/clk-exynos850.c
 > 
-> This looks good to me.
-> 
-> And the confirmed that the xo_board in sdm630.dtsi (and hence SDM660) is
-> wrong, it should be 38.4MHz as well.
-> 
-> Unfortunately adding the appropriate divider to the sdm660 bcxo would
-> break existing .dtsi (but we can probably convince the community that it
-> would be ok, if we do it now).
-> 
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 028b2e27a37e..c46cf11e4d0b 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -17,6 +17,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+>   obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
+>   obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
+>   obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
+>   obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>   obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>   obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
+> new file mode 100644
+> index 000000000000..1028caa2102e
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-exynos850.c
+> @@ -0,0 +1,700 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2021 Linaro Ltd.
+> + * Author: Sam Protsenko <semen.protsenko@linaro.org>
+> + *
+> + * Common Clock Framework support for Exynos850 SoC.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +
+> +#include <dt-bindings/clock/exynos850.h>
+> +
+> +#include "clk.h"
+> +
+> +/* Gate register bits */
+> +#define GATE_MANUAL		BIT(20)
+> +#define GATE_ENABLE_HWACG	BIT(28)
+> +
+> +/* Gate register offsets range */
+> +#define GATE_OFF_START		0x2000
+> +#define GATE_OFF_END		0x2fff
+> +
+> +/**
+> + * exynos850_init_clocks - Set clocks initial configuration
+> + * @np:			CMU device tree node with "reg" property (CMU addr)
+> + * @reg_offs:		Register offsets array for clocks to init
+> + * @reg_offs_len:	Number of register offsets in reg_offs array
+> + *
+> + * Set manual control mode for all gate clocks.
+> + */
+> +static void __init exynos850_init_clocks(struct device_node *np,
+> +		const unsigned long *reg_offs, size_t reg_offs_len)
+> +{
+> +	const __be32 *regaddr_p;
+> +	u64 regaddr;
+> +	u32 base;
+> +	size_t i;
+> +
+> +	/* Get the base address ("reg" property in dts) */
+> +	regaddr_p = of_get_address(np, 0, NULL, NULL);
+> +	if (!regaddr_p)
+> +		panic("%s: failed to get reg regaddr\n", __func__);
+> +
+> +	regaddr = of_translate_address(np, regaddr_p);
+> +	if (regaddr == OF_BAD_ADDR || !regaddr)
+> +		panic("%s: bad reg regaddr\n", __func__);
+> +
+> +	base = (u32)regaddr;
+> +
+> +	for (i = 0; i < reg_offs_len; ++i) {
+> +		void __iomem *reg;
+> +		u32 val;
+> +
+> +		/* Modify only gate clock registers */
+> +		if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OFF_END)
+> +			continue; > +
+> +		reg = ioremap(base + reg_offs[i], 4);
+> +		val = ioread32(reg);
+> +		val |= GATE_MANUAL;
+> +		val &= ~GATE_ENABLE_HWACG;
+> +		iowrite32(val, reg);
+> +		iounmap(reg);
 
-And as I sent that and was going to close the editor...
+I understand your intention for disabling HWACG.
+But, it is not good to execute ioreamp/iounmap for each clock gate
+register. I think that we need to consider the more pretty method
+to initialize the clock register before clock registration.
 
-In contrast to clk-rpmh we already have a "rate" defined for each
-clock in clk-smd-rpm, it's just that we don't let anyone know what it is
-for branches.
+[snip]
 
-But with your change of defining recalc_rate() for the branches we would
-return 19.2MHz for the tcxo - without specifying a divider.
-
-So your patch can be reduced to simply specifying recalc_rate() - i.e.
-the last line in your patch.
-
-I tested this on my sdm660 board, by updating xo_board and ensuring that
-all nodes referring to "xo" refers to rpmcc tcxo intead and it boots
-just fine. And it's backwards compatible with existing DT!
-
-
-
-However, as we specify recalc_rate(), we'd start reporting that all the
-buffered XO clocks are ticking at 1kHz, so I suspect that there might be
-things that doesn't work. This is done so that rate/1000 becomes 0 or 1
-for the branches.
-
-But that will happen with the patch as you have given it as well, until
-we've defined all the divs.
-
-In other words, I don't think we should introduce the div, but rather
-just rely on the "rate". And for the buffered clocks we need to correct
-the rate - while ensuring that we pass a binary enable/rate to the
-interface.
-
-Regards,
-Bjorn
-
-> Regards,
-> Bjorn
-> 
-> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > ---
-> >  drivers/clk/qcom/clk-smd-rpm.c | 23 ++++++++++++++++-------
-> >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> > index 66d7807ee38e..66ef0d3795fd 100644
-> > --- a/drivers/clk/qcom/clk-smd-rpm.c
-> > +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> > @@ -66,13 +66,14 @@
-> >  	}
-> >  
-> >  #define __DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id,    \
-> > -				    stat_id, r, key)			      \
-> > +				    stat_id, r, key, _div)		      \
-> >  	static struct clk_smd_rpm _platform##_##_active;		      \
-> >  	static struct clk_smd_rpm _platform##_##_name = {		      \
-> >  		.rpm_res_type = (type),					      \
-> >  		.rpm_clk_id = (r_id),					      \
-> >  		.rpm_status_id = (stat_id),				      \
-> >  		.rpm_key = (key),					      \
-> > +		.div = (_div),						      \
-> >  		.branch = true,						      \
-> >  		.peer = &_platform##_##_active,				      \
-> >  		.rate = (r),						      \
-> > @@ -92,6 +93,7 @@
-> >  		.rpm_status_id = (stat_id),				      \
-> >  		.active_only = true,					      \
-> >  		.rpm_key = (key),					      \
-> > +		.div = (_div),						      \
-> >  		.branch = true,						      \
-> >  		.peer = &_platform##_##_name,				      \
-> >  		.rate = (r),						      \
-> > @@ -112,7 +114,12 @@
-> >  
-> >  #define DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id, r)   \
-> >  		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
-> > -		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE)
-> > +		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE, 0)
-> > +
-> > +#define DEFINE_CLK_SMD_RPM_BRANCH_DIV(_platform, _name, _active, type, r_id,  \
-> > +				      _div)				      \
-> > +		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
-> > +		r_id, 0, 0, QCOM_RPM_SMD_KEY_ENABLE, _div)
-> >  
-> >  #define DEFINE_CLK_SMD_RPM_QDSS(_platform, _name, _active, type, r_id)	      \
-> >  		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
-> > @@ -121,12 +128,12 @@
-> >  #define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id)	      \
-> >  		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-> >  		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-> > -		QCOM_RPM_KEY_SOFTWARE_ENABLE)
-> > +		QCOM_RPM_KEY_SOFTWARE_ENABLE, 0)
-> >  
-> >  #define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active, r_id) \
-> >  		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-> >  		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-> > -		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
-> > +		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY, 0)
-> >  
-> >  #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
-> >  
-> > @@ -140,6 +147,7 @@ struct clk_smd_rpm {
-> >  	bool branch;
-> >  	struct clk_smd_rpm *peer;
-> >  	struct clk_hw hw;
-> > +	u8 div;
-> >  	unsigned long rate;
-> >  	struct qcom_smd_rpm *rpm;
-> >  };
-> > @@ -370,10 +378,10 @@ static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
-> >  
-> >  	/*
-> >  	 * RPM handles rate rounding and we don't have a way to
-> > -	 * know what the rate will be, so just return whatever
-> > -	 * rate was set.
-> > +	 * know what the rate will be, so just return divided parent
-> > +	 * rate or whatever rate was set.
-> >  	 */
-> > -	return r->rate;
-> > +	return r->div ? parent_rate / r->div : r->rate;
-> >  }
-> >  
-> >  static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
-> > @@ -416,6 +424,7 @@ static const struct clk_ops clk_smd_rpm_ops = {
-> >  static const struct clk_ops clk_smd_rpm_branch_ops = {
-> >  	.prepare	= clk_smd_rpm_prepare,
-> >  	.unprepare	= clk_smd_rpm_unprepare,
-> > +	.recalc_rate	= clk_smd_rpm_recalc_rate,
-> >  };
-> >  
-> >  DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-> > -- 
-> > 2.17.1
-> > 
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
