@@ -2,101 +2,261 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5866CC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 15:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CD8C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 15:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26745611C6
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 15:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FA16128A
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 15:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234169AbhIOPOD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Sep 2021 11:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
+        id S238332AbhIOQBF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Sep 2021 12:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbhIOPOD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 11:14:03 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EF3C061764
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 08:12:44 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id t1so3042051pgv.3
-        for <linux-clk@vger.kernel.org>; Wed, 15 Sep 2021 08:12:44 -0700 (PDT)
+        with ESMTP id S238257AbhIOQBC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Sep 2021 12:01:02 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6E6C061574;
+        Wed, 15 Sep 2021 08:59:43 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id g14so3119819pfm.1;
+        Wed, 15 Sep 2021 08:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wsSC3ElljOcNuAZkoNqFxs8B8LwK8+PsifC2X+pKq7Y=;
-        b=zHdY0vpXi3Pehr90PDksje3KtwyZby9zVYvErd1f3eV5Pa9SrhfiiLDYEiY78DN8yp
-         e+495euySl52T9t+V2t4jh8/xuSmCkhO4oBtKFUoZ0obPPedm3f4F9cTiTzk+XpcVyFV
-         TsOUUcNlJxeXnsA5+TvASjwcGHl1k2GevSoClqzJcupRErVWzaXoMB0sL+rktxgLL8gH
-         LfZ6yYjipI18Z4+FkklOwqTJP+adgJPBLx9WQhMza19gSgVJhIuLnYf0m6YaZk+J5OFA
-         F1ybeX/Ylw1Ahvmf2uw/50ayrfzkakqMLGceTESq3nqCaWU1WarJwdJfmN9qZOofXSJ8
-         ieVQ==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OkiiGHbQZwoirzVbd8s1wT3AXOTUQoT8rTgbKgTYjH4=;
+        b=i6EO+HrgwbvJsQQ2YpEuIGI4TcPgkJrKnEjI6rVzmv43sG7iAOiMxSi8VMiO7XfNxa
+         xpZLDsFfVQU/Lzfp9ltItNYsiGW6PA2gvJNHY1/7YqNnfNiauIxwd551577USgAzG5vu
+         h2KMGwriNN3SUmjFDXLuTdMYh+iYfbi8Py8eRbAut0j9y8gZwtU4EflVGllx8zeLeMTv
+         B6DiJ9HjgSFfdv4UdIyMy0fLisYWx5BR9r2GKjokxyzeOjeG/YrL0qtET75pbxoB+XfD
+         vDxCwfDEnPDlzKQUrYloEwtQCcTPT1mec32x40Gmc1scCqBPD6iIJSfymnvo3ilAL0d6
+         ZWIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wsSC3ElljOcNuAZkoNqFxs8B8LwK8+PsifC2X+pKq7Y=;
-        b=fnFZqagSuk+513FeT/ZwiBmY0UenRXCjANooxgtOLaxQxk544gTLD3IcRNzMqUyxu/
-         Omw2rcbbTD7tYtKtenSOl4bpS7nbV7oGSFT7Nq2IJVJCVJOEbCtYHU4soY4N8DzzhGy2
-         k64WNtWhyjX0R8AsvoLn9S48zBN+PiDEZ9zDnBYviKL+ERM2i/XLQH+KTvTwOT2Onyuc
-         a7KhQ/nJKaqDHj/e1nMwaAexYnInj2U7HfKhlF0Sl/lxUj9baKHL8FUqop/+PKnEvWq4
-         iLupzN1DsfhVInWvij1Ay2AHjWLAsKB2QqLFBjeZWNUliP6YkyEeEciLKkYAkePt/cX2
-         hqhw==
-X-Gm-Message-State: AOAM530cagm1pdCXtcehqe54OV8rbed5qiyLA1Jabgj56D5DDVRyybKz
-        Ycv6jGSUti/4F38UzGssJ4Muug==
-X-Google-Smtp-Source: ABdhPJyGqBLjcp/KUd3ds6sWYN6mT2/YPk+mfHPuNRq4EgjEc+zEcs0+PCVfueU9CI7jAVkKj02vEw==
-X-Received: by 2002:a62:1c85:0:b0:440:3583:9fda with SMTP id c127-20020a621c85000000b0044035839fdamr455092pfc.0.1631718763504;
-        Wed, 15 Sep 2021 08:12:43 -0700 (PDT)
-Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id u10sm92513pjf.46.2021.09.15.08.12.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Sep 2021 08:12:42 -0700 (PDT)
-Date:   Wed, 15 Sep 2021 23:12:37 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: smd-rpm: Add rate hooks for
- clk_smd_rpm_branch_ops
-Message-ID: <20210915151236.GF25255@dragon>
-References: <20210914025554.5686-1-shawn.guo@linaro.org>
- <20210914025554.5686-2-shawn.guo@linaro.org>
- <YUFgmdhYK/p2v1LS@ripper>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OkiiGHbQZwoirzVbd8s1wT3AXOTUQoT8rTgbKgTYjH4=;
+        b=M9OH8exjNYo20Z9YEUZyj9WAmNfWuJf1mtPg9A6PWaOHCnVoKwLraMAIOFQhwcj08C
+         6+wI9rDTZMSq1mJToF09uVd2TeSXhJerbtCgmpPl47b2YToaMD3E4X9Asd/NKSbT7Vq2
+         D1NGB7ggQcclagtg5ZZbAs/p1yGDIbNMAlyaYMcUN56ePUK0998fAEm8ER0Qif//xAcj
+         0EQrBELJvovHbaTWM6L/muyzT845xGUV7zYG4uFpTz+VABV8ghJrz9PaQFnrIz8rQW6s
+         fMs7I3YEpCnHNGVKfYv2FijUt7Ao0NgKDdjHc2SMg6KAZ1p7zeBUanBcDqhHki7ub9Zy
+         Ta3g==
+X-Gm-Message-State: AOAM531Igiqhl99QYfupE9w9pLQMyG0pUaHvYQtSBtqY5JzmX+fEpzMx
+        Cu6CIfoXOMCkw/9yaA/U8j4BzI1P92M=
+X-Google-Smtp-Source: ABdhPJzTCnp9h5O3IHeMY3Inj2+Eq4maNRLbgxyOToF3HlhlL29u6LufFYNlHAqNrKXM2EsrSj63KA==
+X-Received: by 2002:a63:841:: with SMTP id 62mr445090pgi.354.1631721582877;
+        Wed, 15 Sep 2021 08:59:42 -0700 (PDT)
+Received: from [172.30.1.2] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id j6sm385502pgq.0.2021.09.15.08.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 08:59:41 -0700 (PDT)
+Subject: Re: [PATCH 2/6] clk: samsung: clk-pll: Implement pll0822x PLL type
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <20210914155607.14122-3-semen.protsenko@linaro.org>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <faa9a9b7-919a-5b99-f99a-9550cc3d1260@gmail.com>
+Date:   Thu, 16 Sep 2021 00:59:35 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUFgmdhYK/p2v1LS@ripper>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20210914155607.14122-3-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 07:55:21PM -0700, Bjorn Andersson wrote:
-> On Mon 13 Sep 19:55 PDT 2021, Shawn Guo wrote:
+On 21. 9. 15. 오전 12:56, Sam Protsenko wrote:
+> pll0822x PLL is used in Exynos850 SoC for top-level integer PLLs. The
+> code was derived from very similar pll35xx type, with next differences:
 > 
-> > On QCM2290 platform, the clock xo_board runs at 38400000, while the
-> > child clock bi_tcxo needs to run at 19200000.  That said,
-> > clk_smd_rpm_branch_ops needs the capability of setting rate. Add rate
-> > hooks into clk_smd_rpm_branch_ops to make it possible.
-> > 
+> 1. Lock time for pll0822x is 150*P_DIV, when for pll35xx it's 270*P_DIV
+> 2. It's not suggested in Exynos850 TRM that S_DIV change doesn't require
+>     performing PLL lock procedure (which is done in pll35xx
+>     implementation)
 > 
-> Most platforms has a crystal oscillator ticking at 38.4MHz feeding the
-> PMIC (represented by the rpmcc and its "xo" parent) and out comes the
-> bi_tcxo with a fixed 19.2MHz rate.
+> When defining pll0822x type, CON3 register offset should be provided as
+> a "con" parameter of PLL() macro, like this:
+> 
+>      PLL(pll_0822x, 0, "fout_shared0_pll", "oscclk",
+>          PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+>          exynos850_shared0_pll_rates),
+> 
+> To define PLL rates table, one can use PLL_35XX_RATE() macro, e.g.:
+> 
+>      PLL_35XX_RATE(26 * MHZ, 1600 * MHZ, 800, 13, 0)
+> 
+> as it's completely appropriate for pl0822x type and there is no sense in
+> duplicating that.
+> 
+> If bit #1 (MANUAL_PLL_CTRL) is not set in CON1 register, it won't be
+> possible to set new rate, with next error showing in kernel log:
+> 
+>      Could not lock PLL fout_shared1_pll
+> 
+> That can happen for example if bootloader clears that bit beforehand.
+> PLL driver doesn't account for that, so if MANUAL_PLL_CTRL bit was
+> cleared, it's assumed it was done for a reason and it shouldn't be
+> possible to change that PLL's rate at all.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>   drivers/clk/samsung/clk-pll.c | 91 +++++++++++++++++++++++++++++++++++
+>   drivers/clk/samsung/clk-pll.h |  1 +
+>   2 files changed, 92 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5873a9354b50..03131b149c0b 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -415,6 +415,89 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+>   	.recalc_rate = samsung_pll36xx_recalc_rate,
+>   };
+>   
+> +/*
+> + * PLL0822x Clock Type
+> + */
+> +/* Maximum lock time can be 150 * PDIV cycles */
+> +#define PLL0822X_LOCK_FACTOR		(150)
+> +
+> +#define PLL0822X_MDIV_MASK		(0x3FF)
+> +#define PLL0822X_PDIV_MASK		(0x3F)
+> +#define PLL0822X_SDIV_MASK		(0x7)
+> +#define PLL0822X_MDIV_SHIFT		(16)
+> +#define PLL0822X_PDIV_SHIFT		(8)
+> +#define PLL0822X_SDIV_SHIFT		(0)
+> +#define PLL0822X_LOCK_STAT_SHIFT	(29)
+> +#define PLL0822X_ENABLE_SHIFT		(31)
+> +
+> +static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+> +						  unsigned long parent_rate)
+> +{
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 mdiv, pdiv, sdiv, pll_con3;
+> +	u64 fvco = parent_rate;
+> +
+> +	pll_con3 = readl_relaxed(pll->con_reg);
+> +	mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
+> +	pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
+> +	sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
+> +
+> +	fvco *= mdiv;
+> +	do_div(fvco, (pdiv << sdiv));
+> +
+> +	return (unsigned long)fvco;
+> +}
+> +
+> +static int samsung_pll0822x_set_rate(struct clk_hw *hw, unsigned long drate,
+> +				     unsigned long prate)
+> +{
+> +	const struct samsung_pll_rate_table *rate;
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 pll_con3;
+> +
+> +	/* Get required rate settings from table */
+> +	rate = samsung_get_pll_settings(pll, drate);
+> +	if (!rate) {
+> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
+> +			drate, clk_hw_get_name(hw));
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Change PLL PMS values */
+> +	pll_con3 = readl_relaxed(pll->con_reg);
+> +	pll_con3 &= ~((PLL0822X_MDIV_MASK << PLL0822X_MDIV_SHIFT) |
+> +			(PLL0822X_PDIV_MASK << PLL0822X_PDIV_SHIFT) |
+> +			(PLL0822X_SDIV_MASK << PLL0822X_SDIV_SHIFT));
+> +	pll_con3 |= (rate->mdiv << PLL0822X_MDIV_SHIFT) |
+> +			(rate->pdiv << PLL0822X_PDIV_SHIFT) |
+> +			(rate->sdiv << PLL0822X_SDIV_SHIFT);
+> +
+> +	/* Set PLL lock time */
+> +	writel_relaxed(rate->pdiv * PLL0822X_LOCK_FACTOR,
+> +			pll->lock_reg);
+> +
+> +	/* Write PMS values */
+> +	writel_relaxed(pll_con3, pll->con_reg);
+> +
+> +	/* Wait for PLL lock if the PLL is enabled */
+> +	if (pll_con3 & BIT(pll->enable_offs))
+> +		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops samsung_pll0822x_clk_ops = {
+> +	.recalc_rate = samsung_pll0822x_recalc_rate,
+> +	.round_rate = samsung_pll_round_rate,
+> +	.set_rate = samsung_pll0822x_set_rate,
+> +	.enable = samsung_pll3xxx_enable,
+> +	.disable = samsung_pll3xxx_disable,
+> +};
+> +
+> +static const struct clk_ops samsung_pll0822x_clk_min_ops = {
+> +	.recalc_rate = samsung_pll0822x_recalc_rate,
+> +};
+> +
+>   /*
+>    * PLL45xx Clock Type
+>    */
+> @@ -1296,6 +1379,14 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>   		else
+>   			init.ops = &samsung_pll35xx_clk_ops;
+>   		break;
+> +	case pll_0822x:
+> +		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+> +		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+> +		if (!pll->rate_table)
+> +			init.ops = &samsung_pll0822x_clk_min_ops;
+> +		else
+> +			init.ops = &samsung_pll0822x_clk_ops;
+> +		break;
+>   	case pll_4500:
+>   		init.ops = &samsung_pll45xx_clk_min_ops;
+>   		break;
+> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> index 79e41c226b90..213e94a97f23 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -36,6 +36,7 @@ enum samsung_pll_type {
+>   	pll_1451x,
+>   	pll_1452x,
+>   	pll_1460x,
+> +	pll_0822x,
+>   };
+>   
+>   #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+> 
 
-Yeah, but all those platforms are running clk-rpmh driver, I think.
+Even if I have not Exynos850 TRM, it looks good to me. Thanks.
 
-> Is there a problem with the way sdm660_bi_tcxo is defined in this
-> regard?
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-There is no problem if xo clock is 19.2MHz, but for platforms with
-38.4MHz xo, bi_tcxo will be seen as 38.4MHz in clock tree, while we
-expect it to be 19.2MHz.
-
-Shawn
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
