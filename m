@@ -7,54 +7,73 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA2EC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2511BC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83C216124C
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2FA561245
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Sep 2021 01:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230372AbhIOBGP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Sep 2021 21:06:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47088 "EHLO mail.kernel.org"
+        id S229716AbhIOBLw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Sep 2021 21:11:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236165AbhIOBEK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Sep 2021 21:04:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F332961185;
-        Wed, 15 Sep 2021 01:02:51 +0000 (UTC)
+        id S229586AbhIOBLv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Sep 2021 21:11:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BC5B36115B;
+        Wed, 15 Sep 2021 01:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631667772;
-        bh=UWjF+mQ5Odh6NCL2qtOl3dnDIvMn3mEjAub/aO8kUSk=;
+        s=k20201202; t=1631668233;
+        bh=6JjqhFhlD78+2xi13oa2w4fKo5XUiX8v6a7aF8Sbnuc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hQTdWKMW8YcyG7atleoro2tj8jOZkdF2AY01e60r3Wqc4BdUCkpruWbYHqrTikDPW
-         C1BDUZB9kr/RnnrddWi4Yz7E8GfWchYRGIMkT7Nc9Wg1IGk7rP/TZ7trjU4aPj5mhp
-         KfKST8CsXWCX/Rd2A7vdrXfFbScEqmTQPo4DDHNE2Oh8Kp9w39wYumc7sMv/q1uCK+
-         Yq/vtqXa/AUqyQKImKXC071HOtBKxWgDCRX9IMe0cuFVZojM9ZIXWqzP40uUn0Lx+d
-         1C61Kc7gMW622mAJ7lTBxAn1z1kdQDAnZ//FTm/lIxq5ngmmew1wrkGjOiEGf/F1ON
-         2a011hNyafv7A==
+        b=I4zAEYrKvyfyQepeY2ePCU/E0JWsPjabYtUu2X8Pja1+0R8qzfQbAvBtz9CdP+4St
+         OeSE24ICZi3Qf4MGkfsc4+8cnRmAGnm5xCR26XLP4G4vnG3kIi1BJC2W7g+AFC8Xvf
+         eSW6QG3DGFyux0TTz5sjWbsHzcoOIGpVTYPRv6BbVzw1KKi+8iXAT0ZVkpALiTjgjN
+         EEbkd+4ebWFh9qEAh5pnd2vplC1CbUmHxslpwHoyOC5EIxl31mLhdDPbJCsOf0ruTd
+         XGo+gdJ31UykBq4ucij09iEM5G7Ao/nwYhJ1HN30ybySokewrugFXXuLhpX7mK5WHO
+         BvIZ8qMs59n/Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1631521490-17171-9-git-send-email-abel.vesa@nxp.com>
-References: <1631521490-17171-1-git-send-email-abel.vesa@nxp.com> <1631521490-17171-9-git-send-email-abel.vesa@nxp.com>
-Subject: Re: [PATCH 8/8] clk: imx: Rework imx_clk_hw_pll14xx wrapper
+In-Reply-To: <YUEbaEzKT+cCYk9z@robh.at.kernel.org>
+References: <20210913192816.1225025-1-robh@kernel.org> <20210913192816.1225025-6-robh@kernel.org> <163164958886.763609.7483570624844319215@swboyd.mtv.corp.google.com> <YUEbaEzKT+cCYk9z@robh.at.kernel.org>
+Subject: Re: [PATCH v2 5/8] clk: versatile: clk-icst: Support 'reg' in addition to 'vco-offset' for register address
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Date:   Tue, 14 Sep 2021 18:02:50 -0700
-Message-ID: <163166777081.763609.7415868964928309045@swboyd.mtv.corp.google.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+To:     Rob Herring <robh@kernel.org>
+Date:   Tue, 14 Sep 2021 18:10:32 -0700
+Message-ID: <163166823242.763609.3525207812474759296@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2021-09-13 01:24:50)
-> It looks much cleaner to just have a macro compared to having
-> a function that passes NULL as dev to the lower-level
-> imx_dev_clk_hw_pll14xx.
+Quoting Rob Herring (2021-09-14 15:00:08)
+> On Tue, Sep 14, 2021 at 12:59:48PM -0700, Stephen Boyd wrote:
+> > Quoting Rob Herring (2021-09-13 12:28:13)
+> > > The ICST binding now also supports 'reg' in addition to 'vco-offset' =
+for
+> > > the VCO register address. Add support to the driver to get the VCO
+> > > address from 'reg'.
+> > >=20
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: linux-arm-kernel@lists.infradead.org
+> > > Cc: linux-clk@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> >=20
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >=20
+> > I don't think this driver is changing much so you can take it through DT
+> > tree if you prefer.
 >=20
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
+> clk tree is fine. :)
+>=20
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Alright alright
