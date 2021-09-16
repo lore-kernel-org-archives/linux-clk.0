@@ -3,74 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97460C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 12:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A23C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 12:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 812866008E
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 12:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AC9C60F5B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 12:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239478AbhIPMXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Sep 2021 08:23:30 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:40583 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239479AbhIPMX3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Sep 2021 08:23:29 -0400
-Received: by mail-io1-f54.google.com with SMTP id z1so7631686ioh.7;
-        Thu, 16 Sep 2021 05:22:08 -0700 (PDT)
+        id S239456AbhIPMXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Sep 2021 08:23:32 -0400
+Received: from mail-il1-f178.google.com ([209.85.166.178]:44636 "EHLO
+        mail-il1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239479AbhIPMXb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Sep 2021 08:23:31 -0400
+Received: by mail-il1-f178.google.com with SMTP id x2so6354521ila.11;
+        Thu, 16 Sep 2021 05:22:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=v3euXLp738T6azy0GiFk2D3abOLmLgbiKaC1a4iOzp8=;
-        b=BvdE0TWV/9oTOE8C7VeAJdtt00XvLFBJdbTUXAlT/GNMUBN6N6lererFd4lMIAozVw
-         6oRXbR2KEDb63MnK2yimxdRcKQsGgembibUriooOAA/7FEFlWkOfceTj8rQKbWtiDBIx
-         JSoG8hEHQKFGkT8sNd7FFrQLQEA0yLBot848jptTUXjEEjXGyxzNFbpYpdYxwGVk/TpK
-         CGk6mpHJNHUQPTkTVhhKjpUvH4wDecpF/L/5ZI4m9ufNUR/E5JYT3adlJaEBwFz9GIWa
-         HFWWJsf2PfLKrENAv1m68oj+GZLFl5CkVGNkUkJBpgBE4dvtHx74+2BfIhrnrjaI7m4w
-         yjYA==
-X-Gm-Message-State: AOAM530JLT05tOYrvLKpOzXDxNl0sWEnCHPA28600qkrEO2/XhZrHYZo
-        aZQDV6/ZiKJLmzy6/DDzpg==
-X-Google-Smtp-Source: ABdhPJzmbQl+zrU9lv/3dovKA4P564DnLW2Yj00HM0HTXfMPkKhnL/7Rbc4MNmugR9La+k/sr1wM1A==
-X-Received: by 2002:a05:6602:22d4:: with SMTP id e20mr4056514ioe.203.1631794928568;
-        Thu, 16 Sep 2021 05:22:08 -0700 (PDT)
+        bh=IFftwoDUAHs9Nz4h9MoROct44Y+LsTp6P6HEC2g+7PI=;
+        b=KQw0ou/RCLOyURHpSJzxKWGZ8+Se1gLOa6Jhsj96RLHeaeK8BCp1RGZUWS/U+UTgPl
+         xRa/Bk/LcEnGiElly0qs5XAkyTW2iVGPESObHZx0H9Ci+8K7pmYfH2VfOYS4/kkJWatW
+         xz9mWztp8Rghrb0TyPe9/1NZ8f//hhnG+sWWUG4NBodv0PpyXtYZdKaWg7rufaKnJj4W
+         7QVKkVRQmU4dKfNo7EaRAqFmY7EAQxqfPaeVR7PnqZK0NRXp31/+izn2vbYc5Q1xfHtW
+         xc3bPtn6NnjqH9ZPRKefXl2bQDbPWOsUwR9KvIDiDzWaDjE+ql2jyb3hVXlBq6+pa+n7
+         eZZA==
+X-Gm-Message-State: AOAM5339Wd3dJAfV0JJ6tYnA9DoPM0oOu5pSwyQ6fchJVS5xurwIY98l
+        9E0VcJzhcdsMyk2vMwtbuA==
+X-Google-Smtp-Source: ABdhPJyM21Lfun7gEMOg6IfXLhT7D1Exg4DZsflUvLg259E9u2BpDENkfoIlSfCgxYHOA6gj7Pq+6g==
+X-Received: by 2002:a05:6e02:1a0e:: with SMTP id s14mr3658426ild.47.1631794930759;
+        Thu, 16 Sep 2021 05:22:10 -0700 (PDT)
 Received: from robh.at.kernel.org (96-84-70-89-static.hfc.comcastbusiness.net. [96.84.70.89])
-        by smtp.gmail.com with ESMTPSA id t25sm1566474ioh.51.2021.09.16.05.22.06
+        by smtp.gmail.com with ESMTPSA id g19sm1799388ilb.84.2021.09.16.05.22.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Sep 2021 05:22:07 -0700 (PDT)
-Received: (nullmailer pid 1119420 invoked by uid 1000);
+        Thu, 16 Sep 2021 05:22:10 -0700 (PDT)
+Received: (nullmailer pid 1119422 invoked by uid 1000);
         Thu, 16 Sep 2021 12:21:53 -0000
 From:   Rob Herring <robh@kernel.org>
 To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-In-Reply-To: <20210916084714.311048-2-zhang.lyra@gmail.com>
-References: <20210916084714.311048-1-zhang.lyra@gmail.com> <20210916084714.311048-2-zhang.lyra@gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: sprd: Add bindings for ums512 global registers
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20210916084714.311048-3-zhang.lyra@gmail.com>
+References: <20210916084714.311048-1-zhang.lyra@gmail.com> <20210916084714.311048-3-zhang.lyra@gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
 Date:   Thu, 16 Sep 2021 07:21:53 -0500
-Message-Id: <1631794913.500942.1119419.nullmailer@robh.at.kernel.org>
+Message-Id: <1631794913.511855.1119421.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Sep 2021 16:47:11 +0800, Chunyan Zhang wrote:
+On Thu, 16 Sep 2021 16:47:12 +0800, Chunyan Zhang wrote:
 > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > 
-> Add bindings for Unisoc system global register which provide register map
-> for clocks.
+> Add a new bindings to describe ums512 clock compatible strings.
 > 
 > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > ---
->  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+>  .../bindings/clock/sprd,ums512-clk.yaml       | 106 ++++++++++++++++++
+>  1 file changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 > 
 
 My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
@@ -79,18 +77,11 @@ on your patch (DT_CHECKER_FLAGS is new in v5.13):
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-Unknown file referenced: [Errno 2] No such file or directory: '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-xargs: dt-doc-validate: exited with status 255; aborting
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
-Unknown file referenced: [Errno 2] No such file or directory: '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml] Error 255
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+Documentation/devicetree/bindings/clock/sprd,ums512-clk.example.dt.yaml:0:0: /example-1/syscon@71000000: failed to match any schema with compatible: ['sprd,ums512-glbregs', 'syscon', 'simple-mfd']
 
 doc reference errors (make refcheckdocs):
-Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml: Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 
-See https://patchwork.ozlabs.org/patch/1528691
+See https://patchwork.ozlabs.org/patch/1528692
 
 This check can fail if there are any dependencies. The base for a patch
 series is generally the most recent rc1.
