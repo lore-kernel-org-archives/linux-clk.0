@@ -2,71 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E97C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B30C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC64611CA
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CFB6120D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235005AbhIPWtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Sep 2021 18:49:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38210 "EHLO mail.kernel.org"
+        id S241298AbhIPWx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Sep 2021 18:53:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234289AbhIPWtD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Sep 2021 18:49:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D086611CA;
-        Thu, 16 Sep 2021 22:47:39 +0000 (UTC)
+        id S241276AbhIPWx5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Sep 2021 18:53:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 83BCF611CA;
+        Thu, 16 Sep 2021 22:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631832462;
-        bh=e/tOVBZ2IgDrbEjaw0v9QkM1LOtgcU5zikPIdAMfJug=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BQyxKY6iowvs1WcnsZuzWmN6exo7pf+KhiwdlL+3bLxuxGQzNqJ9rZpkPVyMWwMtF
-         nZk8i1PKCb1c+4b+5i9xHXW2/I7digL16MKJ2/xZ+Rd974NDJxSgB60wrH+MT+xSug
-         JQhlGqeyGo1iFTHf63La2gDxptqRzgjckd0tfau6R80V9uNbwq5Xr52u0KN9w0Ippv
-         2J3OULMNgww9tXnD1eysLnlfxqS1iz0tbm9OdSjageY2x3wLXDdJglncbeIc5nGNOw
-         OXvpxGlCTwlLAqp1FUpT88s6oP2UZCFbPongO9equifOvoi5Ytw9Pj9r3Dx7/WuvTI
-         j7VBy3VrPC27g==
-Subject: Re: [PATCH] clk: socfpga: agilex: fix duplicate s2f_user0_clk
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20210913132102.883361-1-dinguyen@kernel.org>
- <163166856812.763609.13128310400246778720@swboyd.mtv.corp.google.com>
- <163166970028.763609.7710436848359965088@swboyd.mtv.corp.google.com>
+        s=k20201202; t=1631832756;
+        bh=qpV5znjV3wJfX6/pMYW3i3FIPdKrsfGHXQP0EVz8wSs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Cw4IBSDePFx49L2Fz6fTgWPUJ4plkBw0Mco/dQN2mUiA1ZOxVFt7j07hxnKlDQGt1
+         kTyen0CSLk4uRLjVIAkpAHTQBk03pJ9zPU3EjLWFT2qKHZGb4xxba8ZSRtSs7UVR47
+         8ZKX5I5AeLnZ8lYSDlCjYydn/IX+tgP29mKkdmLGmeKNZDTrk2LBSEMDLnXhe8ZCrm
+         DvUV6JotBd1STna/hZyWrSXDFE6pw0S9eq4yZwsVjYpWK3sKPpLSiA9c2ihY3Xj2Ax
+         dAi4TEFCsMReXRpdE/5KMW0D22OIeksmZHky/qC0xRjz9Aba1wrlma99HCD7IkLQtX
+         +GFT4ahhKUq2g==
 From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <8298ec4f-913d-e00f-0d3e-c88e141563ef@kernel.org>
-Date:   Thu, 16 Sep 2021 17:47:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+To:     sboyd@kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCHv2] clk: socfpga: agilex: fix duplicate s2f_user0_clk
+Date:   Thu, 16 Sep 2021 17:51:26 -0500
+Message-Id: <20210916225126.1427700-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <163166970028.763609.7710436848359965088@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Remove the duplicate s2f_user0_clk and the unused s2f_usr0_mux define.
 
+Fixes: f817c132db67 ("clk: socfpga: agilex: fix up s2f_user0_clk
+representation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-agilex.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-On 9/14/21 8:35 PM, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2021-09-14 18:16:08)
->> Quoting Dinh Nguyen (2021-09-13 06:21:02)
->>> Remove the duplicate s2f_user0_clk.
->>
->> To fix what in particular? The patch is tagged for stable so I can only
->> imagine there's some badness that would be good to fix?
->>
-> 
-> Ah this is the patch that was missing. Please squash the two together
-> and resend with more info.
-> 
+diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+index 242e94c0cf8a..bf8cd928c228 100644
+--- a/drivers/clk/socfpga/clk-agilex.c
++++ b/drivers/clk/socfpga/clk-agilex.c
+@@ -165,13 +165,6 @@ static const struct clk_parent_data mpu_mux[] = {
+ 	  .name = "boot_clk", },
+ };
+ 
+-static const struct clk_parent_data s2f_usr0_mux[] = {
+-	{ .fw_name = "f2s-free-clk",
+-	  .name = "f2s-free-clk", },
+-	{ .fw_name = "boot_clk",
+-	  .name = "boot_clk", },
+-};
+-
+ static const struct clk_parent_data emac_mux[] = {
+ 	{ .fw_name = "emaca_free_clk",
+ 	  .name = "emaca_free_clk", },
+@@ -312,8 +305,6 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
+ 	  4, 0x44, 28, 1, 0, 0, 0},
+ 	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0, 0x24,
+ 	  5, 0, 0, 0, 0x30, 1, 0},
+-	{ AGILEX_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x24,
+-	  6, 0, 0, 0, 0, 0, 0},
+ 	{ AGILEX_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
+ 	  0, 0, 0, 0, 0x94, 26, 0},
+ 	{ AGILEX_EMAC1_CLK, "emac1_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
+-- 
+2.25.1
 
-Sorry about that. Will do.
-
-Dinh
