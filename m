@@ -2,100 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D72EC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 19:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E97C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D615160F6C
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 19:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC64611CA
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 22:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234007AbhIPTuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Sep 2021 15:50:37 -0400
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:44940 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233659AbhIPTuh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Sep 2021 15:50:37 -0400
-Received: by mail-ot1-f53.google.com with SMTP id y63-20020a9d22c5000000b005453f95356cso2874995ota.11;
-        Thu, 16 Sep 2021 12:49:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0KsoWtKkhaXMiBJDC0/XxZwnXXQWFGw8B4mYJMIPHr0=;
-        b=SpxCjz1AW/J5PsTvzRCCmPvXqxsy2xGpwFm86c/Vd9vbTwvcR4iNTA4o8ZoXZVqMXO
-         XLxJNJ//imPrevRkKbeFs4T4DJDbFeMGJRxVnlCpnJlIjvtHlSy4T+bmF8ZP+XlLUAky
-         Drb5qdsWDgZf2P7EcB6PrmhGjm9KJcI+gaqIKgWS79+WfTfJjibFkBD61FawGjUuoRDj
-         6aYq8H+Uhc6PsYQnbtYW8DYp+uh3LoMJXnwTZWMfvL1qwpkdLuzMncu+u3CkCfPEhBjP
-         DisHrTMNBbYs4idMLZJ/E5wgURRcMU1VnpdlvcmYkc20Ve8BhWhP8atlAEr9RjFfz3+5
-         63Gw==
-X-Gm-Message-State: AOAM5302EB0H4T3gp1DNrZ8N/gvT83IHzyspEArfQWIAOnIjztPuyXVK
-        DKUiIZhQcg85kvcCUc880g==
-X-Google-Smtp-Source: ABdhPJxEEp/Qsw3alHt8zhmxwHRpVnbr0IilY/Bi03MDyZNTmeQPJrTz7p+nPBP14eKxCi6oX/vdRA==
-X-Received: by 2002:a9d:70cc:: with SMTP id w12mr6143201otj.306.1631821755916;
-        Thu, 16 Sep 2021 12:49:15 -0700 (PDT)
-Received: from robh.at.kernel.org (107-211-252-53.lightspeed.cicril.sbcglobal.net. [107.211.252.53])
-        by smtp.gmail.com with ESMTPSA id z7sm948074oti.65.2021.09.16.12.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Sep 2021 12:49:15 -0700 (PDT)
-Received: (nullmailer pid 1377102 invoked by uid 1000);
-        Thu, 16 Sep 2021 19:49:11 -0000
-Date:   Thu, 16 Sep 2021 14:49:11 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Lucas Stach <dev@lynxeye.de>, linux-mmc@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Nishanth Menon <nm@ti.com>, linux-pwm@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-mtd@lists.infradead.org, Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        devicetree@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        linux-spi@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v11 08/34] dt-bindings: host1x: Document Memory Client
- resets of Host1x, GR2D and GR3D
-Message-ID: <YUOftwuVt7EqtA5I@robh.at.kernel.org>
-References: <20210912200832.12312-1-digetx@gmail.com>
- <20210912200832.12312-9-digetx@gmail.com>
+        id S235005AbhIPWtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Sep 2021 18:49:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234289AbhIPWtD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Sep 2021 18:49:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D086611CA;
+        Thu, 16 Sep 2021 22:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631832462;
+        bh=e/tOVBZ2IgDrbEjaw0v9QkM1LOtgcU5zikPIdAMfJug=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BQyxKY6iowvs1WcnsZuzWmN6exo7pf+KhiwdlL+3bLxuxGQzNqJ9rZpkPVyMWwMtF
+         nZk8i1PKCb1c+4b+5i9xHXW2/I7digL16MKJ2/xZ+Rd974NDJxSgB60wrH+MT+xSug
+         JQhlGqeyGo1iFTHf63La2gDxptqRzgjckd0tfau6R80V9uNbwq5Xr52u0KN9w0Ippv
+         2J3OULMNgww9tXnD1eysLnlfxqS1iz0tbm9OdSjageY2x3wLXDdJglncbeIc5nGNOw
+         OXvpxGlCTwlLAqp1FUpT88s6oP2UZCFbPongO9equifOvoi5Ytw9Pj9r3Dx7/WuvTI
+         j7VBy3VrPC27g==
+Subject: Re: [PATCH] clk: socfpga: agilex: fix duplicate s2f_user0_clk
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20210913132102.883361-1-dinguyen@kernel.org>
+ <163166856812.763609.13128310400246778720@swboyd.mtv.corp.google.com>
+ <163166970028.763609.7710436848359965088@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <8298ec4f-913d-e00f-0d3e-c88e141563ef@kernel.org>
+Date:   Thu, 16 Sep 2021 17:47:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210912200832.12312-9-digetx@gmail.com>
+In-Reply-To: <163166970028.763609.7710436848359965088@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 12 Sep 2021 23:08:06 +0300, Dmitry Osipenko wrote:
-> Memory Client should be blocked before hardware reset is asserted in order
-> to prevent memory corruption and hanging of memory controller.
+
+
+On 9/14/21 8:35 PM, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2021-09-14 18:16:08)
+>> Quoting Dinh Nguyen (2021-09-13 06:21:02)
+>>> Remove the duplicate s2f_user0_clk.
+>>
+>> To fix what in particular? The patch is tagged for stable so I can only
+>> imagine there's some badness that would be good to fix?
+>>
 > 
-> Document Memory Client resets of Host1x, GR2D and GR3D hardware units.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/display/tegra/nvidia,tegra20-host1x.txt          | 4 ++++
->  1 file changed, 4 insertions(+)
+> Ah this is the patch that was missing. Please squash the two together
+> and resend with more info.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Sorry about that. Will do.
+
+Dinh
