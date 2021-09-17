@@ -2,88 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FB6C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 23:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5548EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 03:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F20C060F12
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Sep 2021 23:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 332BA611C8
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 03:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235315AbhIPXDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Sep 2021 19:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52812 "EHLO
+        id S233106AbhIQDGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Sep 2021 23:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbhIPXDR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Sep 2021 19:03:17 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934E5C061574
-        for <linux-clk@vger.kernel.org>; Thu, 16 Sep 2021 16:01:56 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id b15so6302373lfe.7
-        for <linux-clk@vger.kernel.org>; Thu, 16 Sep 2021 16:01:56 -0700 (PDT)
+        with ESMTP id S231556AbhIQDGO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Sep 2021 23:06:14 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D42C061574
+        for <linux-clk@vger.kernel.org>; Thu, 16 Sep 2021 20:04:52 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id t4so5266409plo.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Sep 2021 20:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I88O2deracsP2nTJbAcwQpMBgM3SyRj1NZl/AuHPqak=;
-        b=ZMSObsnM1clY/elkkkLTkonZpqSGvnAEgyzh69XBaV5Ytk1mHX/uuDdNobVlRjtQtL
-         igL3USQ0VpnCXglBmOUzzykgidBULa9cD+WrE9HTNdJavsd9yp4HQJXOb5JaGVOM4ij3
-         BNpBzyld9n2orw+o1n80yFnSI7TrblDwxmt8TLZdXflO5zDQdcdvRDrpsya+KNn+vy8Q
-         FRUIWexMv/jIRL8Na+wnwLWC0FAwFozGT67mzLnwTDnVh3h4us6aBnvjHhtbCxnHFRcD
-         hRWIM0YS0q5gR6n7CaaWSr180gMyhjdK3W61CjjjCxxcuysYi1ekb67d7ydiH23cW1DO
-         AJlw==
+        h=from:to:cc:subject:date:message-id;
+        bh=xfWLMEnzqQR6BIE1mrFkeIl5FyjRfgu7/fKn/trtwfw=;
+        b=VbCmsAOiAPn/MfnVJTvWqSXqMPyS5YLX+2NNDlGtOSM+864NXmsBuBGRoUtfxlKpCl
+         hZtw9GZiF2oXMLLL8Z1JrGU/hiMBjiNFDat2cvixKGNzHU+XWlna3gytdnT1isVWnAdZ
+         mJGf9DUb6w+RMt2k5X4zLGqEz57baAW7WqNYnCO6ORi1wi3eZqMDyxpp+qNbzchojMN8
+         OUzf39rX8NNVrAdBEGEtS8ac6LTxx2UqJwOP0um6+GfBg4tj9KdY5JC5EPIEynQQ03Sv
+         thtL1sfZ+bu8qlqVZ6i71WLbBiPv5lJipdaIBwnmIcR2M6qNRuKln+B2bVMP53YDw/39
+         thUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I88O2deracsP2nTJbAcwQpMBgM3SyRj1NZl/AuHPqak=;
-        b=Zpp+dW26wU5KfeKIOXGPLQbZlOXvehfofQFuEgUofzGUm46AdbeN2drnDIBcCkgM5i
-         JjvFq0AvWRwmK4ksPK1GZr312FRnQK9LT04AIXgn22cvjH/Bj+V1khbJv8Pmoenw+IOf
-         OgMQJC4Xe3gIU8KNhYx7AJ6sbO8W6tRNP6YiiwahoCxAPZkY0/LALjymH6cqIfKCAX9U
-         y2GXcZXpKdiNHHIleinIEXBkuCJZ8aYnXXbkPW3xV/XDZUIhiStJUFxG2238/kXkE4ZK
-         /cEX7aMcyF+os7IQSG/z541VVUu+C5dlt5yYj2rcPFHnpOGQWWDC7VaWP3T5VldSkQP4
-         eGdg==
-X-Gm-Message-State: AOAM530TNbX9I07TrUoVf+CL0o1CFskLRcFHsOWgOy3lGkm5Yhk8AlPg
-        j+cMxATcggAe4hyA5FmvxGt5IRFN0kekI2pm7jIrRkJAUgc=
-X-Google-Smtp-Source: ABdhPJxaV33dFEr7zQd1FCcuaaBfT6tD0HqRUZETwVe6Ki/itQonTiG67ObxZiU3xUIoSq19Yk0dAZtf75buwai8fFQ=
-X-Received: by 2002:a2e:b5a7:: with SMTP id f7mr6960198ljn.19.1631833315011;
- Thu, 16 Sep 2021 16:01:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210901180833.4558932d@endymion> <20210901180953.5bd2a994@endymion>
-In-Reply-To: <20210901180953.5bd2a994@endymion>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 17 Sep 2021 01:01:44 +0200
-Message-ID: <CACRpkdbOxM9K-YCq82Rkqq7HSZkMAWb7ixT7ZR9CMtMrPHti6w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: versatile: hide clock drivers from non-ARM users
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xfWLMEnzqQR6BIE1mrFkeIl5FyjRfgu7/fKn/trtwfw=;
+        b=NucuW6jouM5rmTx35VhixTFxcfjgLULK6RAwUEXHk+UF4m5wFZ1Z7FL5eEAtrkhaz6
+         0b178QZRMetfCgQKPhRDmp34zA1djORzWavjseiajeiPImPbxARGBIjG3YgoxVC96Obv
+         EMMvgLbIYyAMt1acx8rLmw4hYIptIi/pFzjgV6BczRrldnCTPIs1bYzovtrvYYE1h2po
+         lGE8Fhc/NWRaWVrihcp+XCu/z2DZYcP83sDM0bnS+4E+J1b11xon7SHR0Q2fLOJcWPj3
+         6oMJ8QMFMroeoBuYjnnWyJSBCk6ybjzyyAVmoqXPbKqUpGJpOOqQxQOoMF0nE/sx2gDg
+         85fw==
+X-Gm-Message-State: AOAM532HaFg/myt2AkKyzqT3rUdbBz+QsKN4dmJGhR4oEdnoeAq0XtHC
+        3hx3PfZwphYJgqKwiVO8Rf07W5QTMwIvnA==
+X-Google-Smtp-Source: ABdhPJwVZGAnX+2ysP6GEehgG9kVZxzPc74SiVh/9WTG2vVLMNsyjMPOSFfGOArdlV++viZcnGY50g==
+X-Received: by 2002:a17:90a:de0b:: with SMTP id m11mr18599261pjv.39.1631847891465;
+        Thu, 16 Sep 2021 20:04:51 -0700 (PDT)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id q2sm9133930pjo.27.2021.09.16.20.04.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Sep 2021 20:04:50 -0700 (PDT)
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 0/3] Add QCM2290 RPM clocks support
+Date:   Fri, 17 Sep 2021 11:04:31 +0800
+Message-Id: <20210917030434.19859-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 1, 2021 at 6:09 PM Jean Delvare <jdelvare@suse.de> wrote:
+The series adds RPM clocks support for QCM2290.
 
-> Commit 419b3ab6987f ("clk: versatile: remove dependency on ARCH_*")
-> made the whole menu of ARM reference clock drivers visible on all
-> architectures. I can't see how this is an improvement for non-ARM
-> users. Unless build-testing, there is no point on presenting
-> ARM-only clock drivers on other architectures.
->
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Peter Collingbourne <pcc@google.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
+Changes for v2:
+- Use `rate` field of clk_smd_rpm to report branch clock rate, so that
+  only .recalc_rate hook needs to be added into clk_smd_rpm_branch_ops.
 
-OK then:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Shawn Guo (3):
+  clk: qcom: smd-rpm: Add .recalc_rate hook for clk_smd_rpm_branch_ops
+  dt-bindings: clk: qcom,rpmcc: Document QCM2290 compatible
+  clk: qcom: smd-rpm: Add QCM2290 RPM clock support
 
-Yours,
-Linus Walleij
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |   1 +
+ drivers/clk/qcom/clk-smd-rpm.c                | 135 +++++++++++++-----
+ include/dt-bindings/clock/qcom,rpmcc.h        |   6 +
+ include/linux/soc/qcom/smd-rpm.h              |   2 +
+ 4 files changed, 111 insertions(+), 33 deletions(-)
+
+-- 
+2.17.1
+
