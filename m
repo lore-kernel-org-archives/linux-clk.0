@@ -2,211 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B43C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 08:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4226C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 09:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 328396113A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 08:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8DE611CA
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 09:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233962AbhIQImt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Sep 2021 04:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S232579AbhIQJOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Sep 2021 05:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233688AbhIQIms (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Sep 2021 04:42:48 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB26C061574;
-        Fri, 17 Sep 2021 01:41:26 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id o66so10340053oib.11;
-        Fri, 17 Sep 2021 01:41:26 -0700 (PDT)
+        with ESMTP id S238261AbhIQJOQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Sep 2021 05:14:16 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D9B9C061766;
+        Fri, 17 Sep 2021 02:12:54 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id m21-20020a17090a859500b00197688449c4so6963535pjn.0;
+        Fri, 17 Sep 2021 02:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CeZGDq8ylzh0OWJzXB6+CtfSipSUr15SxgokLFW4ZVI=;
-        b=WaymPEyRLqNpvKq6QKWcZQuFRxGbIlHlFC5742NkQMVBtfx60uoTSYM5jlUNRoD7oW
-         q9amg37w+jLi3kcMqCyQyv+Kc49G5ljBNfEyWm9QPiSpEeS7EHAUBJoAz5zMRAeQ88CO
-         9qYON5/tbRVZcuU3DFs8MBdSWOt+XoMmtOU9VxwfOl3lVDdjPW00E0aOW0acpOxw7CeY
-         Eny41KXEeNuwqzPk+bYvyWd3gvewUOuuv/FpLZ3rSslqJBejf+lBRLj3hSn/yrkxqQSz
-         bMufkCWsZE3THwurq28MEqJI4KYNfzSQdnqVM5B4aHnXSkoZKZebJqcpV8s330Z8q4Kd
-         l8Eg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O1bx5uHHL6FlfRq6JP+/w3u8MNp6sfgydH0tgxJOMHo=;
+        b=nORhe60bUPzqB5JFOh+AJ1PWv4zBImjnTbBncLzVM6tTimzBs9PDNwlfJZCMww0IwH
+         TMrVxXUP1SsMqDb84c2hjrLQGILlThiplOb+8fAsAQC40u/b7zeeJJu00UmNAlPpNf+2
+         IVydlH+/jaY2m4H2UbtVc8grUYR8loiCk3jALFglz3Ut2exYUHEM/MT03dzq5JSLYL4s
+         r4o4+pm8+JWoTuegYLPvkE3PhlO8xXp6oTXgtyP/XzhrGIlxC4MmX6ymBqcE3Gsv09p9
+         l4zxdkWTEewq2PUJE5hSSXG/QLcDyNKO1FqwDPMr0W04fRwFHFPZ8x+emylNHBRdpQIm
+         Dn7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CeZGDq8ylzh0OWJzXB6+CtfSipSUr15SxgokLFW4ZVI=;
-        b=lde1zudQVN1rFj0d/B18LCvQDqFlzngOs9aFtSlRY3s6q/XRbK/Z0LnZy76TwNF8F8
-         VT07hJ/n8lEYm+X1yIqP1rCNs3DckvHVeemREo8blgggf6bXAwajvd9GlTI+1Im20/HC
-         RrdhkYPPg83HQj33s8rfM3qpYAzw4kW9nU1THlw0oUGsEdL2wq7AYaVbIMmiTdhyvbsO
-         ms66FUCtgS02+3HYpNC2wWMMVsczExWW3VE3rH2ALDlBrr7tMghkIRfA0jt67k3T2Te6
-         O2KV/WLGBXA3zth4uYcL96d+BgmlVlwNa8ju5bniRaIXwlVHT6Cl+Zf54Wjl1wzJ/Ox3
-         8oRA==
-X-Gm-Message-State: AOAM532AiRhdM1miwA36n3bXYIKcUM8fJwjKqQnsl8md0kfl6fXxLu+v
-        bYynPqxvjiV9oiXGlCmIVCzl5rUThWZOBgGOODs=
-X-Google-Smtp-Source: ABdhPJz7V7FeVpl5yX3RqCVrs3KwlTNT4jU+AaBexgzmZmDAnC7p+czNAUHGaQAgpSSO8kbpBYA/y8BafRDFGo/48Hc=
-X-Received: by 2002:aca:1717:: with SMTP id j23mr3076167oii.43.1631868085306;
- Fri, 17 Sep 2021 01:41:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O1bx5uHHL6FlfRq6JP+/w3u8MNp6sfgydH0tgxJOMHo=;
+        b=sdI9xP2xvkx4vL7FaOzZyjA7ClKiBeODWvsdMNRzZnBEFGQqAUY6k03C07LhMjrLia
+         BMrq7ghO9iSSdzCL82gMx+GSdWEcwFMLC0VwGHIArs7uOzfP8OlP2OZxmyY7PYBg9XTn
+         4wqACOA8mw5iBIQYKsz5KpYs3v+UuIdQWYBy3u+ooByZv50BLsdPcIvJfaLGoR3ZDaFs
+         vMPvp2H09l46Y24JGqU9zG9FEbDTyeZGo4vlqldNwaDSGVLJDKIaBx93Kkdph8o7g8FF
+         8m2JCgx6E7LoBjPBh8Yg5iBTGm38A6pHVwMvvLXMV7cYcyNx5UslmdvXDcvflN8hxAbv
+         PW2A==
+X-Gm-Message-State: AOAM532+QUxwhw7IgqQKTb4Ro8g7xbPlRTrrlPFrf7FPgQ70khweDIAn
+        cQaH76AovrNsw/8MxqycdJw=
+X-Google-Smtp-Source: ABdhPJx6zNVayeQJBv7jSiAMoD9Z6H6ldSBP8MdTQGW6ETgLPaNDnST4Jy6apaRTJxCgvJUBOlLXvA==
+X-Received: by 2002:a17:90a:352:: with SMTP id 18mr11120223pjf.116.1631869974138;
+        Fri, 17 Sep 2021 02:12:54 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id h4sm5981757pjc.28.2021.09.17.02.12.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 02:12:53 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: lv.ruyi@zte.com.cn
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, lv.ruyi@zte.com.cn,
+        chun-jie.chen@mediatek.com, wenst@chromium.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] clk: mediatek: remove duplicate include
+Date:   Fri, 17 Sep 2021 09:12:47 +0000
+Message-Id: <20210917091247.231305-1-lv.ruyi@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210916084714.311048-1-zhang.lyra@gmail.com> <20210916084714.311048-3-zhang.lyra@gmail.com>
- <YUNUyolr6ksEoZI3@robh.at.kernel.org>
-In-Reply-To: <YUNUyolr6ksEoZI3@robh.at.kernel.org>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Fri, 17 Sep 2021 16:40:49 +0800
-Message-ID: <CAAfSe-vYMUb8wGUJG7Fzehjkj8gAq1QOdgCdsTvcNyMuVeEW8g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Sept 2021 at 22:29, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Sep 16, 2021 at 04:47:12PM +0800, Chunyan Zhang wrote:
-> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >
-> > Add a new bindings to describe ums512 clock compatible strings.
-> >
-> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > ---
-> >  .../bindings/clock/sprd,ums512-clk.yaml       | 106 ++++++++++++++++++
-> >  1 file changed, 106 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > new file mode 100644
-> > index 000000000000..be3c37180279
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > @@ -0,0 +1,106 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# Copyright 2019-2021 Unisoc Inc.
-> > +%YAML 1.2
-> > +---
-> > +$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
-> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > +
-> > +title: UMS512 Clock Control Unit Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Orson Zhai <orsonzhai@gmail.com>
-> > +  - Baolin Wang <baolin.wang7@gmail.com>
-> > +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> > +
-> > +properties:
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  compatible:
-> > +    enum:
-> > +      - sprd,ums512-apahb-gate
-> > +      - sprd,ums512-ap-clk
-> > +      - sprd,ums512-aonapb-clk
-> > +      - sprd,ums512-pmu-gate
-> > +      - sprd,ums512-g0-pll
-> > +      - sprd,ums512-g2-pll
-> > +      - sprd,ums512-g3-pll
-> > +      - sprd,ums512-gc-pll
-> > +      - sprd,ums512-aon-gate
-> > +      - sprd,ums512-audcpapb-gate
-> > +      - sprd,ums512-audcpahb-gate
-> > +      - sprd,ums512-gpu-clk
-> > +      - sprd,ums512-mm-clk
-> > +      - sprd,ums512-mm-gate-clk
-> > +      - sprd,ums512-apapb-gate
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 4
-> > +    description: |
-> > +      The input parent clock(s) phandle for this clock, only list fixed
-> > +      clocks which are declared in devicetree.
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 4
-> > +    items:
-> > +      - const: ext-26m
-> > +      - const: ext-32k
-> > +      - const: ext-4m
-> > +      - const: rco-100m
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - '#clock-cells'
-> > +
-> > +if:
-> > +  properties:
-> > +    compatible:
-> > +      enum:
-> > +        - sprd,ums512-ap-clk
-> > +        - sprd,ums512-aonapb-clk
-> > +        - sprd,ums512-mm-clk
-> > +then:
-> > +  required:
-> > +    - reg
-> > +
-> > +else:
-> > +  description: |
-> > +    Other UMS512 clock nodes should be the child of a syscon node in
-> > +    which compatible string should be:
-> > +            "sprd,ums512-glbregs", "syscon", "simple-mfd"
-> > +
-> > +    The 'reg' property for the clock node is also required if there is a sub
-> > +    range of registers for the clocks.
->
-> In which cases is this not true?
+From: Lv Ruyi <lv.ruyi@zte.com.cn>
 
-Seems not needed, I will remove 'reg' property for this kind of cases.
+Remove all but the first include of dt-bindings/clock/mt8195-clk.h
+from clk-mt8195-imp_iic_wrap.c,and maintain alphabetic order in the
+include list.
 
->
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    ap_clk: clock-controller@20200000 {
-> > +      compatible = "sprd,ums512-ap-clk";
-> > +      reg = <0x20200000 0x1000>;
-> > +      clocks = <&ext_26m>;
-> > +      clock-names = "ext-26m";
-> > +      #clock-cells = <1>;
-> > +    };
-> > +
-> > +  - |
-> > +    ap_apb_regs: syscon@71000000 {
-> > +      compatible = "sprd,ums512-glbregs", "syscon", "simple-mfd";
-> > +      reg = <0x71000000 0x3000>;
-> > +      #address-cells = <1>;
-> > +      #size-cells = <1>;
-> > +      ranges = <0 0x71000000 0x3000>;
-> > +
-> > +      apahb_gate: clock-controller@0 {
-> > +        compatible = "sprd,ums512-apahb-gate";
-> > +        reg = <0x0 0x2000>;
-> > +        #clock-cells = <1>;
-> > +      };
->
-> We have this example in the MFD schema, so drop it here.
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
+---
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Ok.
+diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+index 0e2ac0a30aa0..261610509e39 100644
+--- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+@@ -3,13 +3,12 @@
+ // Copyright (c) 2021 MediaTek Inc.
+ // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+ 
+-#include "clk-gate.h"
+-#include "clk-mtk.h"
+-
+-#include <dt-bindings/clock/mt8195-clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ 
++#include "clk-gate.h"
++#include "clk-mtk.h"
++
+ #include <dt-bindings/clock/mt8195-clk.h>
+ 
+ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
+-- 
+2.25.1
 
-Thanks for your review and comments,
-Chunyan
