@@ -7,143 +7,69 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74D1C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 06:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263D7C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 07:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0B061260
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 06:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F161F61019
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 07:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238756AbhIRG4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Sep 2021 02:56:44 -0400
-Received: from mx22.baidu.com ([220.181.50.185]:48438 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238665AbhIRG4l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 18 Sep 2021 02:56:41 -0400
-Received: from BC-Mail-Ex05.internal.baidu.com (unknown [172.31.51.45])
-        by Forcepoint Email with ESMTPS id 77B19B1AE45D7A697128;
-        Sat, 18 Sep 2021 14:55:16 +0800 (CST)
-Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex05.internal.baidu.com (172.31.51.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Sat, 18 Sep 2021 14:55:16 +0800
-Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
- BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Sat, 18 Sep 2021 14:55:15 +0800
-From:   Cai Huoqing <caihuoqing@baidu.com>
-To:     <caihuoqing@baidu.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: hisilicon: Kconfig: Add configuration menu for Hisilicon clock driver
-Date:   Sat, 18 Sep 2021 14:55:09 +0800
-Message-ID: <20210918065510.18699-1-caihuoqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+        id S243204AbhIRHeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Sep 2021 03:34:18 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:16225 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231351AbhIRHeI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Sep 2021 03:34:08 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4HBMvb2jfCz1DH4k;
+        Sat, 18 Sep 2021 15:31:39 +0800 (CST)
+Received: from dggpeml500017.china.huawei.com (7.185.36.243) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Sat, 18 Sep 2021 15:32:43 +0800
+Received: from huawei.com (10.175.103.91) by dggpeml500017.china.huawei.com
+ (7.185.36.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Sat, 18 Sep
+ 2021 15:32:43 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC:     <p.zabel@pengutronix.de>, <mturquette@baylibre.com>
+Subject: [PATCH] clk: sunxi: sun9i-mmc: check return value after calling platform_get_resource()
+Date:   Sat, 18 Sep 2021 15:37:52 +0800
+Message-ID: <20210918073752.105959-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.31.63.8]
-X-ClientProxiedBy: BC-Mail-Ex10.internal.baidu.com (172.31.51.50) To
- BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500017.china.huawei.com (7.185.36.243)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adding a configuration menu to hold many Hisilicon clock drivers
-helps to make the menu display more concise.
+It will cause null-ptr-deref if platform_get_resource() returns NULL,
+we need check the return value.
 
-Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- drivers/clk/hisilicon/Kconfig | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index c1ec75aa4ccd..6f7742dc52c2 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -1,7 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+menu "Clock driver support for Hisilicon"
-+	depends on ARCH_HISI || COMPILE_TEST
-+
- config COMMON_CLK_HI3516CV300
- 	tristate "HI3516CV300 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	select RESET_HISI
- 	default ARCH_HISI
- 	help
-@@ -9,7 +11,6 @@ config COMMON_CLK_HI3516CV300
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index 542b31d6e96d..636bcf2439ef 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -109,6 +109,8 @@ static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
+ 	spin_lock_init(&data->lock);
  
- config COMMON_CLK_HI3519
- 	tristate "Hi3519 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	select RESET_HISI
- 	default ARCH_HISI
- 	help
-@@ -17,7 +18,6 @@ config COMMON_CLK_HI3519
- 
- config COMMON_CLK_HI3559A
- 	bool "Hi3559A Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	select RESET_HISI
- 	default ARCH_HISI
- 	help
-@@ -25,21 +25,18 @@ config COMMON_CLK_HI3559A
- 
- config COMMON_CLK_HI3660
- 	bool "Hi3660 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	default ARCH_HISI
- 	help
- 	  Build the clock driver for hi3660.
- 
- config COMMON_CLK_HI3670
- 	bool "Hi3670 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	default ARCH_HISI
- 	help
- 	  Build the clock driver for hi3670.
- 
- config COMMON_CLK_HI3798CV200
- 	tristate "Hi3798CV200 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	select RESET_HISI
- 	default ARCH_HISI
- 	help
-@@ -47,21 +44,19 @@ config COMMON_CLK_HI3798CV200
- 
- config COMMON_CLK_HI6220
- 	bool "Hi6220 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	default ARCH_HISI
- 	help
- 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
- 
- config RESET_HISI
- 	bool "HiSilicon Reset Controller Driver"
--	depends on ARCH_HISI || COMPILE_TEST
- 	select RESET_CONTROLLER
- 	help
- 	  Build reset controller driver for HiSilicon device chipsets.
- 
- config STUB_CLK_HI6220
- 	bool "Hi6220 Stub Clock Driver" if EXPERT
--	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
-+	depends on COMMON_CLK_HI6220
- 	depends on MAILBOX
- 	default COMMON_CLK_HI6220
- 	help
-@@ -69,8 +64,10 @@ config STUB_CLK_HI6220
- 
- config STUB_CLK_HI3660
- 	bool "Hi3660 Stub Clock Driver" if EXPERT
--	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
-+	depends on COMMON_CLK_HI3660
- 	depends on MAILBOX
- 	default COMMON_CLK_HI3660
- 	help
- 	  Build the Hisilicon Hi3660 stub clock driver.
-+
-+endmenu
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!r)
++		return -EINVAL;
+ 	/* one clock/reset pair per word */
+ 	count = DIV_ROUND_UP((resource_size(r)), SUN9I_MMC_WIDTH);
+ 	data->membase = devm_ioremap_resource(&pdev->dev, r);
 -- 
 2.25.1
 
