@@ -3,95 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FD2C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 23:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E08BC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 04:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2376A60E97
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Sep 2021 23:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AA2B61251
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Sep 2021 04:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234275AbhIQXqp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Sep 2021 19:46:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49522 "EHLO
+        id S231718AbhIREwx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Sep 2021 00:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230330AbhIQXqo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Sep 2021 19:46:44 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA6FC061757
-        for <linux-clk@vger.kernel.org>; Fri, 17 Sep 2021 16:45:21 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id z24so13088474lfu.13
-        for <linux-clk@vger.kernel.org>; Fri, 17 Sep 2021 16:45:21 -0700 (PDT)
+        with ESMTP id S229963AbhIREwx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Sep 2021 00:52:53 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DAECC061574;
+        Fri, 17 Sep 2021 21:51:30 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id k23-20020a17090a591700b001976d2db364so8835701pji.2;
+        Fri, 17 Sep 2021 21:51:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Adpjj8eb9qPefLqJjlRRH4Z+UTglNnbz6imJOtpowtE=;
-        b=Stu4Yvcx+jZlQ6bo4SsaVgSClupIVtykd85F8zGJwqrRts+FNZKGCFRHGGl/XECWkG
-         F9ceDrRBFlGqgZoQ6Ro8gV1Ip44OxLU7jAJ8prtT6k4BUAx+NwH/Xp81ioV+o3QUYC52
-         LPzi4M8ehhgEOcyl4/4wqcrQZjedLbviqQKZ6MNPcNbSLRaetIZMhcsL9Zvh/JyttAtG
-         gcfm4hdIKFBeRTjVl6zUTB8mzTG55FQ+hsNogyDh7ZK9ME8jFvqcND6CLG1i7ZEDogID
-         xrxJQhuQvKImxHbaGmUJWoahxq6WwUdESY32n6tpsr7dznrHmSaWcdXRxdNh+oRIo2kq
-         L02A==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WNZGMzb9nyB3MBMeK+QJjWLcTHItRnQ+7G/+BEDduNE=;
+        b=Bo2jvmWsFr1hFGLC/xPMcs2O1qJ2I6XbQkEh52guZiJqM4FfbS0OYR51O/D5RdvxPl
+         wMHz2rE+M5hyFwW+MiCZquf72SAg4oPpZzFKDLzW80WrZe+mi6umYwDILiuz2EhvYheQ
+         tDQu53wRf9kFG4S2a0Te+9pZKZjF4Jchs9ash+KDemOPgzNa7noFMP/mOz4UPHxhPVS8
+         46apqtJVWkeD6Tt3uoKAkX7sbkLTt2J4aY+oJBECFxMKwt++WDXS6yQXC3rhpADmYiSh
+         TKDeqDADk8+Xo5LMtyc2aRgchvN7lMEGmVS8FMPdxTE6RuqUhFct6TvKxuqQ31GeRrnU
+         4KgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Adpjj8eb9qPefLqJjlRRH4Z+UTglNnbz6imJOtpowtE=;
-        b=GGlH0FcxOOdVyxkRYWYlQIN4BKlrfPep1NNcBsKlx5Z7Ix/FmIViNqPfASgUgJZvaq
-         oRQyRkuM3wCVzfwI1LOlxARp2iwS2xKiKn+7OW7o3GXRQHhkFSsl8kSz36flA4pQnV85
-         isJeKWbNNarJTTKbtcnPtPu602Lewv99a1GT6nIyHcz1qqYPNk6AfttX+l4JFaVuyHWu
-         NOfdgGyPBz9ytPFJ0HB1R72c/MLUD5hCCR0fdeMrb9oQ4UlA62N9FBIUWWp4Fyd5rVjR
-         WbZxANroq1XIGCpi+FXaGITVlVuG+WmhjV0B2sIwoyWk+H2NvWPQtZDEu9mLoORfattl
-         kUTw==
-X-Gm-Message-State: AOAM530ybKqw/YvaeMR9J0A6CQ06Fn/CgKYxhkcbFYFm3zkkN7k1cFqm
-        Mt/NNLNIi2kib6qNG3Oy+DlivcUpgShbBvGlywBgTw==
-X-Google-Smtp-Source: ABdhPJySPdlC4kFGb/uPqpNRVO7RsaaNmYQ7Dsfc4dTO/WXhWAE1PedasJyvgTCKrCA5g+mA2q9H0CQsy0ibTumhe7A=
-X-Received: by 2002:ac2:4651:: with SMTP id s17mr5137396lfo.584.1631922319876;
- Fri, 17 Sep 2021 16:45:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WNZGMzb9nyB3MBMeK+QJjWLcTHItRnQ+7G/+BEDduNE=;
+        b=K3vbbO1W365RAdcvQ/p4TXen0r3pqHH79yk7YBCQ8P5Itmst8s1DPU5GFFB6ALpAd9
+         /zFNtZg1aIRlHN86QBxvzhPKhWNwmT63wlYUD7lBEdcY7y5P4s9lDEA7CrI3/DCOMmrx
+         ujGZrLeujmwEzn6Gl73DQ/eETZnOIU3QfoDHhsSkELfMpT8LMbvLXu2mDGE6/nJNl+X/
+         QvhfvmDIeACkHfdx74KuyS2x6GzZrzwnMBkEN4acXXps4bQZ7K/WNDkrKVzx/GjTe5uD
+         afr1olaEtrjYKWZsRIbeuHgYYfFpISiVXIyic+z+/2TOcSFJTegJN3nwjlhYVGoGdqKp
+         TeLA==
+X-Gm-Message-State: AOAM533eHElnd2A4YRayjOOu7qt2u3bYIYDEjpEzWtLGmhlVbvK127vE
+        zChU/+tujwxZ6QieiyiWyII=
+X-Google-Smtp-Source: ABdhPJwVwe1tdbys8AUd/o80ED7iL8hOIFvgcH5y6yHMv0ePGFoWjh/646L9AUpCkLngtPyTuD3lPw==
+X-Received: by 2002:a17:90b:791:: with SMTP id l17mr16434601pjz.155.1631940689460;
+        Fri, 17 Sep 2021 21:51:29 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id p5sm7663101pfp.218.2021.09.17.21.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 21:51:28 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/4] Add Unisoc's UMS512 clock support
+Date:   Sat, 18 Sep 2021 12:51:10 +0800
+Message-Id: <20210918045114.387005-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210913192816.1225025-1-robh@kernel.org> <20210913192816.1225025-5-robh@kernel.org>
-In-Reply-To: <20210913192816.1225025-5-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 18 Sep 2021 01:45:09 +0200
-Message-ID: <CACRpkdb5ZOyaoVg74ByFDqv9Da-=zaBwD_4uTnd7ZTe875dY3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] dt-bindings: clock: arm,syscon-icst: Use 'reg'
- instead of 'vco-offset' for VCO register address
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 9:28 PM Rob Herring <robh@kernel.org> wrote:
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-> 'reg' is the standard property for defining register banks/addresses. Add
-> it to use for the VCO register address and deprecate 'vco-offset'. This
-> will also allow for using standard node names with unit-addresses.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Changes since v2:
+* Fixed bindings check errors;
+* Addressed Rob's comments;
+* Added an example of syscon which doesn't include "#address-cells",
+ "#size-cells", "ranges" properties, so removed these three
+  properties from "required".
 
-Yeah this is better, dunno why I did it like that. I guess
-it was the Wild West of DT bindings back then.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Changes since v1:
+* Fixed errors founded on sprd,ums512-clk.yaml;
+* Added a new bindings file for global register which would provide register map for clocks.
 
-Yours,
-Linus Walleij
+Chunyan Zhang (2):
+  dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+  dt-bindings: mfd: sprd: Add bindings for ums512 global registers
+
+Xiongpeng Wu (2):
+  clk: sprd: Add dt-bindings include file for UMS512
+  clk: sprd: Add Unisoc's UMS512 clock driver
+
+ .../bindings/clock/sprd,ums512-clk.yaml       |   88 +
+ .../bindings/mfd/sprd,ums512-glbreg.yaml      |   68 +
+ drivers/clk/sprd/Kconfig                      |    8 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/ums512-clk.c                 | 2197 +++++++++++++++++
+ include/dt-bindings/clock/sprd,ums512-clk.h   |  396 +++
+ 6 files changed, 2758 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+ create mode 100644 drivers/clk/sprd/ums512-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,ums512-clk.h
+
+-- 
+2.25.1
+
