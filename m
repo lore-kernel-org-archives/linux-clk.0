@@ -2,120 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-25.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	HK_RANDOM_FROM,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F413AC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E75C43217
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E310160F43
+	by mail.kernel.org (Postfix) with ESMTP id 2C2206044F
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242095AbhIUCnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S242091AbhIUCnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 20 Sep 2021 22:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40810 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349437AbhIUC0g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Sep 2021 22:26:36 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35954C1E327D
-        for <linux-clk@vger.kernel.org>; Mon, 20 Sep 2021 12:04:36 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id t28-20020a63461c000000b00252078b83e4so16003241pga.15
-        for <linux-clk@vger.kernel.org>; Mon, 20 Sep 2021 12:04:36 -0700 (PDT)
+        with ESMTP id S241808AbhIUCDP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Sep 2021 22:03:15 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C666EC14093A;
+        Mon, 20 Sep 2021 11:12:48 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id x27so71302679lfu.5;
+        Mon, 20 Sep 2021 11:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=1U1dAkNma+fdm4jSudwakO8vMm1r2kh0beegFJljEIo=;
-        b=TsHSnvzBbN84En7oW+PCc/zCFk/EPvWEaZq3R1414WOF/Lxq87g7OGRzKBHv1TXrEv
-         DnOEaQs30DS/YggJ9M5f2Bxr6hCk6cr8OHjuawahsXa3C8m/XumaVTwCS+HDzWDxwjoq
-         qhDO+FXCI6890cJfK227EBAhEmryB1vMgIhniqlQ6moP2UMDhqnALwM+GfNmkHe9t50A
-         m2SHFLSFPlLr2mtr99EItwUsHR96QBKFNiQzORKb7ioLjWDnO1hoar2F9Ezj+aL0Mogf
-         l8Dfu6cR7c5kTvkVTjyBRsrZLeAd010VW19y91ZT+dIV6hFh62OxcrN2I7k8ekicrUBe
-         gByg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GkvxncHOY8DvHcvIZZ5ALhHomt+6uxaaFq6TQ6h+fMg=;
+        b=p3McJnvyBc+CTcDTD8UtxLeB2ZXB1zXQiJojH/qHQI+5HqAHT37cHQz005HKHfdxVE
+         O5NPRwSrWiPereIDxUCOlhMdGlhZ1mf5cKF6a2SFkX0vxia9sRMKTSQ5gLydM1CMcS8F
+         yJw1gWENo6zp4qFCQUhO1jkWZP4JGVldQtT7fsQt24tKafP7JwYkg5/+Au7n/iwRqbfk
+         EuiFM19Q+j0iN6hsP/f4GwFJ00a22XMJbRWlCcRFuLP2I1whhD+CsjkKEKF76UnaUrDe
+         UsdKa49Zh7Pzc+Km5NQ8khTlBHR3FdVXomkQqXK8J3Ut/ULtGWLfqg/yT5JCMzG/FuTB
+         YfCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=1U1dAkNma+fdm4jSudwakO8vMm1r2kh0beegFJljEIo=;
-        b=RMYC6U1al0zD4fFuJvSFC7E43YWLDmXioTbd0+LZ27/TFbFPCL+BkBPqx9gxEVv+Wl
-         Zl3aQjYNF/FyUx1r23h29NxqcwGcA65vjnvHRL/Ii/DTwjidbheqjrjFlD0zE1AQcTUX
-         CQ5mUERKQvNkMG7IKSWFcj00U+VaYtJHHSkZ6KqR6eg6rbd543DeCIaMcP56m7dMh8wW
-         RGPj8e15bFxR7ViY0hBPznkG1EAGXP/gOR2pbeH41ZPIMr+0GLkbxGv2cvdyHiRaw9j7
-         4Om5CUz/Vw4ZDHHkh7CK+AhvHfXWTuS1C1dmk8IPgASsvmqaqCsiTzBI15iVNyVjzsCA
-         vbyg==
-X-Gm-Message-State: AOAM532OnXTU2tUT8O4NtL5gWo2i6N/0V8rWNR8l006U32XYsBVwLBwk
-        lt/stitQnG3NrfqxAgRBqqD3hAq2DJ5MTq/PIF4=
-X-Google-Smtp-Source: ABdhPJwgy8dNNqo0W9D+WwgAi9NSG0PA3TseGreGWU8Y0X9DDCX1gdgvL88O56C484HZUhvjjZWM2GLGCjv/Xb7H9XA=
-X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a05:6a00:16ca:b0:413:d3f7:646f with
- SMTP id l10-20020a056a0016ca00b00413d3f7646fmr26187055pfc.7.1632164675704;
- Mon, 20 Sep 2021 12:04:35 -0700 (PDT)
-Date:   Mon, 20 Sep 2021 19:03:46 +0000
-In-Reply-To: <20210920190350.3860821-1-willmcvicker@google.com>
-Message-Id: <20210920190350.3860821-2-willmcvicker@google.com>
-Mime-Version: 1.0
-References: <20210920190350.3860821-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.33.0.464.g1972c5931b-goog
-Subject: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default config logic
-From:   Will McVicker <willmcvicker@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Will McVicker <willmcvicker@google.com>,
-        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GkvxncHOY8DvHcvIZZ5ALhHomt+6uxaaFq6TQ6h+fMg=;
+        b=DhaJZvRjq9X49yGdue0UwJVnZSnGZ/IHHoGUglQolhdMvbtR20VYXEpZNnj+w9Zuvj
+         J9JwszJJKGbTG3sCyZxwpiKcAnOuYww3YSr1q9Yybi5DEhIuxcnPRItB9juNgoEUUSYB
+         zNdmEZ/1mnrsLlxSFSy9CVvxf0wv1EApX/CqAoIy5u8zLJjvrSIkGY9gZqetFloO7vcQ
+         P8fKU//mUoPYQAn6fuHECGMmlmcaLv3r+d0d1e4IUOKyZZyUlBwaUcTd5gCcDQmH/mLn
+         XvXdx+8S70tXPRInr0rc8OMihtS9Dpyff/vc5T5+Z4dpi+mxND5+lYd1bkfwYDaZGRDK
+         PQ2A==
+X-Gm-Message-State: AOAM532xZgwt3zGt8Cojmfcvmer1tgymaQMiCMFyue8B72dfCsMsJlhO
+        zNvrXCux2JX8aD8BowCTYHo=
+X-Google-Smtp-Source: ABdhPJwlgGKO3aMXePQ47tKK8EPh05YbuveS/dXOiz7N8s1w1kaCmMJkGRQCBT7OqTJwUfNNaaLf2w==
+X-Received: by 2002:a2e:9f4f:: with SMTP id v15mr5075723ljk.468.1632161566073;
+        Mon, 20 Sep 2021 11:12:46 -0700 (PDT)
+Received: from localhost.localdomain (46-138-151-206.dynamic.spd-mgts.ru. [46.138.151.206])
+        by smtp.gmail.com with ESMTPSA id u3sm1775677lju.107.2021.09.20.11.12.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 11:12:45 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Subject: [PATCH v12 35/35] ARM: tegra20/30: Disable unused host1x hardware
+Date:   Mon, 20 Sep 2021 21:11:45 +0300
+Message-Id: <20210920181145.19543-36-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210920181145.19543-1-digetx@gmail.com>
+References: <20210920181145.19543-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
-to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
-"default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
-or modularize this driver.
+MPE, VI, EPP and ISP were never used and we don't have drivers for them.
+Since these modules are enabled by default in a device-tree, a device is
+created for them, blocking voltage scaling because there is no driver to
+bind, and thus, state of PMC driver is never synced. Disable them.
 
-I verified the .config is identical with and without this change.
-
-Signed-off-by: Will McVicker <willmcvicker@google.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm64/Kconfig.platforms | 1 -
- drivers/clk/samsung/Kconfig  | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20.dtsi | 4 ++++
+ arch/arm/boot/dts/tegra30.dtsi | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index b0ce18d4cc98..3a66ed43088d 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -91,7 +91,6 @@ config ARCH_BRCMSTB
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index eb6e5518fb5f..05788c9cddc1 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -59,6 +59,7 @@ mpe@54040000 {
+ 			reset-names = "mpe";
+ 			operating-points-v2 = <&mpe_dvfs_opp_table>;
+ 			power-domains = <&pd_mpe>;
++			status = "disabled";
+ 		};
  
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
--	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_CHIPID
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 0441c4f73ac9..f3e189a06b03 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -2,6 +2,7 @@
- # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
- config COMMON_CLK_SAMSUNG
- 	bool "Samsung Exynos clock controller support" if COMPILE_TEST
-+	default y if ARCH_EXYNOS
- 	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
- 	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
- 	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
+ 		vi@54080000 {
+@@ -70,6 +71,7 @@ vi@54080000 {
+ 			reset-names = "vi";
+ 			operating-points-v2 = <&vi_dvfs_opp_table>;
+ 			power-domains = <&pd_venc>;
++			status = "disabled";
+ 		};
+ 
+ 		epp@540c0000 {
+@@ -81,6 +83,7 @@ epp@540c0000 {
+ 			reset-names = "epp";
+ 			operating-points-v2 = <&epp_dvfs_opp_table>;
+ 			power-domains = <&pd_core>;
++			status = "disabled";
+ 		};
+ 
+ 		isp@54100000 {
+@@ -91,6 +94,7 @@ isp@54100000 {
+ 			resets = <&tegra_car 23>;
+ 			reset-names = "isp";
+ 			power-domains = <&pd_venc>;
++			status = "disabled";
+ 		};
+ 
+ 		gr2d@54140000 {
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 09cb1ab75312..f9613384a487 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -145,6 +145,8 @@ mpe@54040000 {
+ 			power-domains = <&pd_mpe>;
+ 
+ 			iommus = <&mc TEGRA_SWGROUP_MPE>;
++
++			status = "disabled";
+ 		};
+ 
+ 		vi@54080000 {
+@@ -158,6 +160,8 @@ vi@54080000 {
+ 			power-domains = <&pd_venc>;
+ 
+ 			iommus = <&mc TEGRA_SWGROUP_VI>;
++
++			status = "disabled";
+ 		};
+ 
+ 		epp@540c0000 {
+@@ -171,6 +175,8 @@ epp@540c0000 {
+ 			power-domains = <&pd_heg>;
+ 
+ 			iommus = <&mc TEGRA_SWGROUP_EPP>;
++
++			status = "disabled";
+ 		};
+ 
+ 		isp@54100000 {
+@@ -183,6 +189,8 @@ isp@54100000 {
+ 			power-domains = <&pd_venc>;
+ 
+ 			iommus = <&mc TEGRA_SWGROUP_ISP>;
++
++			status = "disabled";
+ 		};
+ 
+ 		gr2d@54140000 {
 -- 
-2.33.0.464.g1972c5931b-goog
+2.32.0
 
