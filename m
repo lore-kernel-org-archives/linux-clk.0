@@ -2,170 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F394DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Sep 2021 12:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484B6C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Sep 2021 14:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD926610A8
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Sep 2021 12:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACDF61077
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Sep 2021 14:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234515AbhITMoK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Sep 2021 08:44:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34836 "EHLO mail.kernel.org"
+        id S229926AbhITOaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Sep 2021 10:30:24 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:55144 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234162AbhITMoK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:44:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D905660F43;
-        Mon, 20 Sep 2021 12:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632141763;
-        bh=LJd326Onj4XtLEwt35NMphBK1paSjnbTcGe5Aoy65Mg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DeJ1xOEstl5+CzNf5BKwpkGnrbneFDGVk5At3W8ysipTWc8z+u9S1YNrQkNsV0TMQ
-         oZ2q5CrK92h44aq6/Lm8db0Pyk9wuAVYuYAyl4gqBhUhT7xS+bkHpq8COsHw33o8QK
-         aYO3l9R/XW5AnHhK+zuDV4Q2vX9D2C70wTOeDgE8aBWqXcgiWn5bl+GDG851KP00Gb
-         ndatDskBGCB87CDK8SsejrzEgTsvRw9MJxVpOHynCqsSWAIj++R/8ff6P1fcfPXMwn
-         GCrw8K7/eFZOxlJxz8aSwLaYfYesetfUVro0ijMII/5EQ/Lb3fuNHpe0+bcI012RSv
-         kBjlThj7ZBJyQ==
-Received: by mail-ed1-f41.google.com with SMTP id bx4so16080361edb.4;
-        Mon, 20 Sep 2021 05:42:43 -0700 (PDT)
-X-Gm-Message-State: AOAM532XEH6RvcE1qnczsi2PchEXyvXf8DkRbTvqX80OxfMKxJY2rYrB
-        roTmHAPhdq5gmtxGWX8Yr11sWsxegHBjvHlifg==
-X-Google-Smtp-Source: ABdhPJxe0pzq32S+O6qzUtsUF2LFq6WiPntxr4KAmr/C6XTVEYsfFTdYU9uZ2o/8Mg9Se/FqIR+u8ERaaUAWpNgzCo0=
-X-Received: by 2002:a17:906:7217:: with SMTP id m23mr27972643ejk.466.1632141762450;
- Mon, 20 Sep 2021 05:42:42 -0700 (PDT)
+        id S237796AbhITOaW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Sep 2021 10:30:22 -0400
+Received: from wf0416.dip.tu-dresden.de ([141.76.181.160] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1mSKHq-0005O5-1O; Mon, 20 Sep 2021 16:28:50 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Brian Norris <briannorris@chromium.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: rockchip: rk3399: make CPU clocks critical
+Date:   Mon, 20 Sep 2021 16:28:38 +0200
+Message-Id: <163214478703.1547258.2785345284675906680.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
+References: <20210908111337.v2.1.I006bb36063555079b1a88f01d20e38d7e4705ae0@changeid>
 MIME-Version: 1.0
-References: <20210916084714.311048-1-zhang.lyra@gmail.com> <20210916084714.311048-3-zhang.lyra@gmail.com>
- <YUNUyolr6ksEoZI3@robh.at.kernel.org> <CAAfSe-vYMUb8wGUJG7Fzehjkj8gAq1QOdgCdsTvcNyMuVeEW8g@mail.gmail.com>
-In-Reply-To: <CAAfSe-vYMUb8wGUJG7Fzehjkj8gAq1QOdgCdsTvcNyMuVeEW8g@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 20 Sep 2021 07:42:30 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKmznCOk+qHFccnG1b5xuoNHY2vmqyv=WAjB9d=0AW70Q@mail.gmail.com>
-Message-ID: <CAL_JsqKmznCOk+qHFccnG1b5xuoNHY2vmqyv=WAjB9d=0AW70Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 3:41 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> On Thu, 16 Sept 2021 at 22:29, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Thu, Sep 16, 2021 at 04:47:12PM +0800, Chunyan Zhang wrote:
-> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > >
-> > > Add a new bindings to describe ums512 clock compatible strings.
-> > >
-> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > ---
-> > >  .../bindings/clock/sprd,ums512-clk.yaml       | 106 ++++++++++++++++++
-> > >  1 file changed, 106 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > > new file mode 100644
-> > > index 000000000000..be3c37180279
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > > @@ -0,0 +1,106 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +# Copyright 2019-2021 Unisoc Inc.
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
-> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > > +
-> > > +title: UMS512 Clock Control Unit Device Tree Bindings
-> > > +
-> > > +maintainers:
-> > > +  - Orson Zhai <orsonzhai@gmail.com>
-> > > +  - Baolin Wang <baolin.wang7@gmail.com>
-> > > +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> > > +
-> > > +properties:
-> > > +  "#clock-cells":
-> > > +    const: 1
-> > > +
-> > > +  compatible:
-> > > +    enum:
-> > > +      - sprd,ums512-apahb-gate
-> > > +      - sprd,ums512-ap-clk
-> > > +      - sprd,ums512-aonapb-clk
-> > > +      - sprd,ums512-pmu-gate
-> > > +      - sprd,ums512-g0-pll
-> > > +      - sprd,ums512-g2-pll
-> > > +      - sprd,ums512-g3-pll
-> > > +      - sprd,ums512-gc-pll
-> > > +      - sprd,ums512-aon-gate
-> > > +      - sprd,ums512-audcpapb-gate
-> > > +      - sprd,ums512-audcpahb-gate
-> > > +      - sprd,ums512-gpu-clk
-> > > +      - sprd,ums512-mm-clk
-> > > +      - sprd,ums512-mm-gate-clk
-> > > +      - sprd,ums512-apapb-gate
-> > > +
-> > > +  clocks:
-> > > +    minItems: 1
-> > > +    maxItems: 4
-> > > +    description: |
-> > > +      The input parent clock(s) phandle for this clock, only list fixed
-> > > +      clocks which are declared in devicetree.
-> > > +
-> > > +  clock-names:
-> > > +    minItems: 1
-> > > +    maxItems: 4
-> > > +    items:
-> > > +      - const: ext-26m
-> > > +      - const: ext-32k
-> > > +      - const: ext-4m
-> > > +      - const: rco-100m
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - '#clock-cells'
-> > > +
-> > > +if:
-> > > +  properties:
-> > > +    compatible:
-> > > +      enum:
-> > > +        - sprd,ums512-ap-clk
-> > > +        - sprd,ums512-aonapb-clk
-> > > +        - sprd,ums512-mm-clk
-> > > +then:
-> > > +  required:
-> > > +    - reg
-> > > +
-> > > +else:
-> > > +  description: |
-> > > +    Other UMS512 clock nodes should be the child of a syscon node in
-> > > +    which compatible string should be:
-> > > +            "sprd,ums512-glbregs", "syscon", "simple-mfd"
-> > > +
-> > > +    The 'reg' property for the clock node is also required if there is a sub
-> > > +    range of registers for the clocks.
-> >
-> > In which cases is this not true?
->
-> Seems not needed, I will remove 'reg' property for this kind of cases.
+On Wed, 8 Sep 2021 11:13:38 -0700, Brian Norris wrote:
+> The CPU clocks don't currently have any owner (e.g., cpufreq-dt doesn't
+> enable() them -- and even if it did, it's not early enough compared to
+> other consumers -- nor does arch/arm64/kernel/smp.c), and instead are
+> simply assumed to be "on" all the time.
+> 
+> They are also parents of a few other clocks which haven't been
+> previously exposed for other devices to consume. If we want to expose
+> those clocks, then the common clock framework may eventually choose to
+> disable their parents (including the CPU PLLs) -- which is no fun for
+> anyone.
+> 
+> [...]
 
-Wrong direction. Please keep 'reg'. My question is why can't you
-always have it? That is the preference.
+Applied, thanks!
 
-Rob
+[1/3] clk: rockchip: rk3399: make CPU clocks critical
+      commit: ef087b7ecf8aaeb08a17ae825f10cd94e116616e
+[2/3] clk: rockchip: rk3399: expose PCLK_COREDBG_{B,L}
+      commit: bd2c1f664ea647d8f66fbe083f9256511d4f2b9a
+[3/3] arm64: dts: rockchip: add Coresight debug range for RK3399
+      commit: 75dccea503b8e176ad044175e891d7bb291b6ba0
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
