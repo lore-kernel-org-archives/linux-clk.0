@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CD9C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9F3C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B87A61242
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFEC961242
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 02:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242074AbhIUCmz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Sep 2021 22:42:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
+        id S243452AbhIUCm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Sep 2021 22:42:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234535AbhIUCDB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Sep 2021 22:03:01 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D147C14090C;
-        Mon, 20 Sep 2021 11:12:22 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id p29so70464482lfa.11;
-        Mon, 20 Sep 2021 11:12:22 -0700 (PDT)
+        with ESMTP id S237920AbhIUCDD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Sep 2021 22:03:03 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BE6C140913;
+        Mon, 20 Sep 2021 11:12:23 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id m3so68772861lfu.2;
+        Mon, 20 Sep 2021 11:12:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7l87AQCg+9YN7Ynq6M+cEyBEDSi0ioOxwMZ9EVF2Htg=;
-        b=dvnbNPgp82wb0bAoAS9y2SOa6WuzHZP5I9AY9c86EiOymiPhdQiBpcIPvyqAlPPrDi
-         PJRaoL5wBVCLspAObd7hVoC3J6hWx1AesOCO9Yg3u7dC5HYjfS8PfoUIPuzW2W0vU1df
-         er9yacZOYh10mUoenpeHY0N8g88iwZtE3eMVLvRdR4jV+1NyeWZ1FKOYJ2Ey5AD6d/h7
-         9e/Y3h/n0sSxAEu5f4/Tt4c922j/FI+KO+CL0ZjiZUiZ6ZQaDIzd/DNDJmKodGAEaGfp
-         d25SMDQLsxOYVIuNttQhUaw4ENLf4cdeSue8rrFTzlBMefwJVaAcyWIgZzRw6jx7HepN
-         Bc8g==
+        bh=kMziebaAeLQX+HJyIYKw3fi1qml9OJEejLLtUc1VAqA=;
+        b=Ss2xyv7r3CJzoqIgOFTsxcC6lv34A9WC+sgV9LT6ZdVr+X2r9+QufDqiqBX782HwRA
+         b5tl3N5DVugpO6EtZTsfjMVlL2M3QxkLreFny8u6Ph1ZN87mm7oCbn5aKXGYJ3E897xF
+         sh0nhMxDIHpHsj0MO9Sh2AfKA6UzgHYL1FH8RNnbTONNM/BkVSf3h2ybnXECY0J+ulBQ
+         dQk+R5rXTwLQSpVLF+PXKry3lP9JSmb7Uz7ahwB+TFobAnsxZBn6SQmNxfNz0XCcatdt
+         U2pzfc3kCecAYMHekub96FzOE7Mx1Cc2GfwxQwV41Mxnvp2wPPVCYrW7mqxC23Xkvx0B
+         JBCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7l87AQCg+9YN7Ynq6M+cEyBEDSi0ioOxwMZ9EVF2Htg=;
-        b=XYz200Cx3IcrCLNjEsKLiNzTf8PknNxLtz8qit9hH5KgpLFeS6FD1dPz6yaq+phpV3
-         bWK9UJhbcWglyJGtH4KXy6Pkqj/+NNTrlkn+EoJbUR+1W9uSuk4b8Ri89SKaS+OUlOnX
-         VUSAPbPDDn9boLqMrCjS/XaTdfbggFXTTZ/BQXNJKz/VangQQm9PjxkW150xpXUNBezi
-         Zrk+mySCO/KPFw4dUW9HikIxVghnr9btIdpqfnLTEwhumkxXaMt30HAgb1oFq/Zsynej
-         v/n3u40Qq/gWfqbXbIcrG8L37nZ8U7VlMP7xmvEgE7/MWtLEp2xQ10D7lZy0OPybeYm0
-         iU0g==
-X-Gm-Message-State: AOAM531b/RpKLqivWLKfdB1byHXgNaBy9YBhGC70Qo87mFGUaTclZKHM
-        I60Ligbauy63x/prw7sWgZyAhyao8ac=
-X-Google-Smtp-Source: ABdhPJyRuWfX7Y+Ks61i0CejCbyFOrBqqaSq6bqqoKIdB37MaT7vKzBwmearRypozF807T+fnLVCTw==
-X-Received: by 2002:ac2:5e75:: with SMTP id a21mr19512190lfr.557.1632161536516;
-        Mon, 20 Sep 2021 11:12:16 -0700 (PDT)
+        bh=kMziebaAeLQX+HJyIYKw3fi1qml9OJEejLLtUc1VAqA=;
+        b=Thjhc/7Yh+K5yXYfvIlyKG4tGukQks1juoZWJZmrPqm49KPCh/I18Vj1RLe3K7OLGd
+         g72Vz/BiibvkCO6ZTpnvq7G10xHxvo/irBwbywt9oxfSsZwG5ySKCWtsjqef5qNsejaa
+         6B7roz7owkCet2DWRZSBJl54sP/gNGVlJqoCv6hePQS6yTt15WGcQQV6unq5hrTBqYLU
+         FTsuOQpOg/dTeAijbozNbgx63GFdaQ3Gh8bIhmw6knDDZqAQoFAMQszdwhFDlM7Z/On2
+         sVMsKq3LYtrYPn3lyKfEQT5gUOfbGN+oxiNMRZeAdiKKuXuj6EvSX/zqUcYUzS1xvPVD
+         ZBRQ==
+X-Gm-Message-State: AOAM531vTU3E0rUfG1M0N+L2e8qXDDPurkWKhAL7UT5KcqCJSCTH670x
+        R3E3MY+K8DMsFUG5A+ChFvY=
+X-Google-Smtp-Source: ABdhPJxo++5RejsG+AFOJsQ43vAIRIdeTCG3wzxp8hK+y+/URZRYFAd3WgCwXGPXRjkX5+WEcHyRNg==
+X-Received: by 2002:a2e:b051:: with SMTP id d17mr11734763ljl.470.1632161540669;
+        Mon, 20 Sep 2021 11:12:20 -0700 (PDT)
 Received: from localhost.localdomain (46-138-151-206.dynamic.spd-mgts.ru. [46.138.151.206])
-        by smtp.gmail.com with ESMTPSA id u3sm1775677lju.107.2021.09.20.11.12.15
+        by smtp.gmail.com with ESMTPSA id u3sm1775677lju.107.2021.09.20.11.12.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 11:12:16 -0700 (PDT)
+        Mon, 20 Sep 2021 11:12:20 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -83,9 +83,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         David Heidelberg <david@ixit.cz>
-Subject: [PATCH v12 14/35] drm/tegra: gr3d: Support generic power domain and runtime PM
-Date:   Mon, 20 Sep 2021 21:11:24 +0300
-Message-Id: <20210920181145.19543-15-digetx@gmail.com>
+Subject: [PATCH v12 17/35] bus: tegra-gmi: Add runtime PM and OPP support
+Date:   Mon, 20 Sep 2021 21:11:27 +0300
+Message-Id: <20210920181145.19543-18-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210920181145.19543-1-digetx@gmail.com>
 References: <20210920181145.19543-1-digetx@gmail.com>
@@ -95,533 +95,130 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add runtime power management and support generic power domains.
+The GMI bus on Tegra belongs to the core power domain and we're going to
+enable GENPD support for the core domain. Now GMI must be resumed using
+runtime PM API in order to initialize the GMI power state. Add runtime PM
+and OPP support to the GMI driver.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/gr3d.c | 388 ++++++++++++++++++++++++++++++-----
- 1 file changed, 332 insertions(+), 56 deletions(-)
+ drivers/bus/tegra-gmi.c | 52 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 24442ade0da3..5879402ae55e 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -5,32 +5,47 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/host1x.h>
- #include <linux/iommu.h>
+diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+index a6570789f7af..72ef8a8c236b 100644
+--- a/drivers/bus/tegra-gmi.c
++++ b/drivers/bus/tegra-gmi.c
+@@ -13,8 +13,11 @@
+ #include <linux/io.h>
  #include <linux/module.h>
  #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_opp.h>
 +#include <linux/pm_runtime.h>
  #include <linux/reset.h>
  
 +#include <soc/tegra/common.h>
- #include <soc/tegra/pmc.h>
- 
- #include "drm.h"
- #include "gem.h"
- #include "gr3d.h"
- 
-+enum {
-+	RST_MC,
-+	RST_GR3D,
-+	RST_MC2,
-+	RST_GR3D2,
-+	RST_GR3D_MAX,
-+};
 +
- struct gr3d_soc {
- 	unsigned int version;
-+	unsigned int num_clocks;
-+	unsigned int num_resets;
- };
- 
- struct gr3d {
- 	struct tegra_drm_client client;
- 	struct host1x_channel *channel;
--	struct clk *clk_secondary;
--	struct clk *clk;
--	struct reset_control *rst_secondary;
--	struct reset_control *rst;
- 
- 	const struct gr3d_soc *soc;
-+	struct clk_bulk_data *clocks;
-+	unsigned int nclocks;
-+	struct reset_control_bulk_data resets[RST_GR3D_MAX];
-+	unsigned int nresets;
- 
- 	DECLARE_BITMAP(addr_regs, GR3D_NUM_REGS);
- };
-@@ -109,16 +124,24 @@ static int gr3d_open_channel(struct tegra_drm_client *client,
- 			     struct tegra_drm_context *context)
+ #define TEGRA_GMI_CONFIG		0x00
+ #define TEGRA_GMI_CONFIG_GO		BIT(31)
+ #define TEGRA_GMI_BUS_WIDTH_32BIT	BIT(30)
+@@ -54,9 +57,9 @@ static int tegra_gmi_enable(struct tegra_gmi *gmi)
  {
- 	struct gr3d *gr3d = to_gr3d(client);
-+	int err;
- 
- 	context->channel = host1x_channel_get(gr3d->channel);
- 	if (!context->channel)
- 		return -ENOMEM;
- 
-+	err = pm_runtime_resume_and_get(client->base.dev);
-+	if (err) {
-+		host1x_channel_put(context->channel);
-+		return err;
-+	}
-+
- 	return 0;
- }
- 
- static void gr3d_close_channel(struct tegra_drm_context *context)
- {
-+	pm_runtime_put_sync(context->client->base.dev);
- 	host1x_channel_put(context->channel);
- }
- 
-@@ -155,14 +178,20 @@ static const struct tegra_drm_client_ops gr3d_ops = {
- 
- static const struct gr3d_soc tegra20_gr3d_soc = {
- 	.version = 0x20,
-+	.num_clocks = 1,
-+	.num_resets = 2,
- };
- 
- static const struct gr3d_soc tegra30_gr3d_soc = {
- 	.version = 0x30,
-+	.num_clocks = 2,
-+	.num_resets = 4,
- };
- 
- static const struct gr3d_soc tegra114_gr3d_soc = {
- 	.version = 0x35,
-+	.num_clocks = 1,
-+	.num_resets = 2,
- };
- 
- static const struct of_device_id tegra_gr3d_match[] = {
-@@ -278,69 +307,240 @@ static const u32 gr3d_addr_regs[] = {
- 	GR3D_GLOBAL_SAMP23SURFADDR(15),
- };
- 
--static int gr3d_probe(struct platform_device *pdev)
-+static int gr3d_power_up_legacy_domain(struct device *dev, const char *name,
-+				       unsigned int id)
- {
--	struct device_node *np = pdev->dev.of_node;
--	struct host1x_syncpt **syncpts;
--	struct gr3d *gr3d;
-+	struct gr3d *gr3d = dev_get_drvdata(dev);
-+	struct reset_control *reset;
-+	struct clk *clk;
- 	unsigned int i;
  	int err;
  
--	gr3d = devm_kzalloc(&pdev->dev, sizeof(*gr3d), GFP_KERNEL);
--	if (!gr3d)
--		return -ENOMEM;
--
--	gr3d->soc = of_device_get_match_data(&pdev->dev);
-+	/*
-+	 * Tegra20 device-tree doesn't specify 3d clock name and there is only
-+	 * one clock for Tegra20. Tegra30+ device-trees always specified names
-+	 * for the clocks.
-+	 */
-+	if (gr3d->nclocks == 1) {
-+		if (id == TEGRA_POWERGATE_3D1)
-+			return 0;
-+
-+		clk = gr3d->clocks[0].clk;
-+	} else {
-+		for (i = 0; i < gr3d->nclocks; i++) {
-+			if (WARN_ON(!gr3d->clocks[i].id))
-+				continue;
-+
-+			if (!strcmp(gr3d->clocks[i].id, name)) {
-+				clk = gr3d->clocks[i].clk;
-+				break;
-+			}
-+		}
- 
--	syncpts = devm_kzalloc(&pdev->dev, sizeof(*syncpts), GFP_KERNEL);
--	if (!syncpts)
--		return -ENOMEM;
-+		if (WARN_ON(i == gr3d->nclocks))
-+			return -EINVAL;
-+	}
- 
--	gr3d->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(gr3d->clk)) {
--		dev_err(&pdev->dev, "cannot get clock\n");
--		return PTR_ERR(gr3d->clk);
-+	/*
-+	 * We use array of resets, which includes MC resets, and MC
-+	 * reset shouldn't be asserted while hardware is gated because
-+	 * MC flushing will fail for gated hardware. Hence for legacy
-+	 * PD we request the individual reset separately.
-+	 */
-+	reset = reset_control_get_exclusive_released(dev, name);
-+	if (IS_ERR(reset))
-+		return PTR_ERR(reset);
-+
-+	err = reset_control_acquire(reset);
+-	err = clk_prepare_enable(gmi->clk);
+-	if (err < 0) {
+-		dev_err(gmi->dev, "failed to enable clock: %d\n", err);
++	err = pm_runtime_resume_and_get(gmi->dev);
 +	if (err) {
-+		dev_err(dev, "failed to acquire %s reset: %d\n", name, err);
-+	} else {
-+		err = tegra_powergate_sequence_power_up(id, clk, reset);
-+		reset_control_release(reset);
- 	}
- 
--	gr3d->rst = devm_reset_control_get(&pdev->dev, "3d");
--	if (IS_ERR(gr3d->rst)) {
--		dev_err(&pdev->dev, "cannot get reset\n");
--		return PTR_ERR(gr3d->rst);
-+	reset_control_put(reset);
-+	if (err)
-+		return err;
-+
-+	/*
-+	 * tegra_powergate_sequence_power_up() leaves clocks enabled
-+	 * while GENPD not, hence keep clock-enable balanced.
-+	 */
-+	clk_disable_unprepare(clk);
-+
-+	return 0;
-+}
-+
-+static void gr3d_del_link(void *link)
-+{
-+	device_link_del(link);
-+}
-+
-+static int gr3d_init_power(struct device *dev, struct gr3d *gr3d)
-+{
-+	static const char * const opp_genpd_names[] = { "3d0", "3d1", NULL };
-+	const u32 link_flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
-+	struct device **opp_virt_devs, *pd_dev;
-+	struct device_link *link;
-+	unsigned int i;
-+	int err;
-+
-+	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-+					 "#power-domain-cells");
-+	if (err < 0) {
-+		if (err != -ENOENT)
-+			return err;
-+
-+		/*
-+		 * Older device-trees don't use GENPD. In this case we should
-+		 * toggle power domain manually.
-+		 */
-+		err = gr3d_power_up_legacy_domain(dev, "3d",
-+						  TEGRA_POWERGATE_3D);
-+		if (err)
-+			return err;
-+
-+		err = gr3d_power_up_legacy_domain(dev, "3d2",
-+						  TEGRA_POWERGATE_3D1);
-+		if (err)
-+			return err;
-+
-+		return 0;
- 	}
- 
--	if (of_device_is_compatible(np, "nvidia,tegra30-gr3d")) {
--		gr3d->clk_secondary = devm_clk_get(&pdev->dev, "3d2");
--		if (IS_ERR(gr3d->clk_secondary)) {
--			dev_err(&pdev->dev, "cannot get secondary clock\n");
--			return PTR_ERR(gr3d->clk_secondary);
-+	/*
-+	 * The PM domain core automatically attaches a single power domain,
-+	 * otherwise it skips attaching completely. We have a single domain
-+	 * on Tegra20 and two domains on Tegra30+.
-+	 */
-+	if (dev->pm_domain)
-+		return 0;
-+
-+	err = devm_pm_opp_attach_genpd(dev, opp_genpd_names, &opp_virt_devs);
-+	if (err)
-+		return err;
-+
-+	for (i = 0; opp_genpd_names[i]; i++) {
-+		pd_dev = opp_virt_devs[i];
-+		if (!pd_dev) {
-+			dev_err(dev, "failed to get %s power domain\n",
-+				opp_genpd_names[i]);
-+			return -EINVAL;
- 		}
- 
--		gr3d->rst_secondary = devm_reset_control_get(&pdev->dev,
--								"3d2");
--		if (IS_ERR(gr3d->rst_secondary)) {
--			dev_err(&pdev->dev, "cannot get secondary reset\n");
--			return PTR_ERR(gr3d->rst_secondary);
-+		link = device_link_add(dev, pd_dev, link_flags);
-+		if (!link) {
-+			dev_err(dev, "failed to link to %s\n", dev_name(pd_dev));
-+			return -EINVAL;
- 		}
-+
-+		err = devm_add_action_or_reset(dev, gr3d_del_link, link);
-+		if (err)
-+			return err;
- 	}
- 
--	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_3D, gr3d->clk,
--						gr3d->rst);
-+	return 0;
-+}
-+
-+static int gr3d_set_opp(struct dev_pm_set_opp_data *data)
-+{
-+	struct gr3d *gr3d = dev_get_drvdata(data->dev);
-+	unsigned int i;
-+	int err;
-+
-+	for (i = 0; i < gr3d->nclocks; i++) {
-+		err = clk_set_rate(gr3d->clocks[i].clk, data->new_opp.rate);
-+		if (err) {
-+			dev_err(data->dev, "failed to set %s rate to %lu: %d\n",
-+				gr3d->clocks[i].id, data->new_opp.rate, err);
-+			goto restore;
-+		}
-+	}
-+
-+	return 0;
-+
-+restore:
-+	while (i--)
-+		clk_set_rate(gr3d->clocks[i].clk, data->old_opp.rate);
-+
-+	return err;
-+}
-+
-+static int gr3d_get_clocks(struct device *dev, struct gr3d *gr3d)
-+{
-+	int err;
-+
-+	err = devm_clk_bulk_get_all(dev, &gr3d->clocks);
- 	if (err < 0) {
--		dev_err(&pdev->dev, "failed to power up 3D unit\n");
-+		dev_err(dev, "failed to get clock: %d\n", err);
++		pm_runtime_disable(gmi->dev);
  		return err;
  	}
-+	gr3d->nclocks = err;
  
--	if (gr3d->clk_secondary) {
--		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_3D1,
--							gr3d->clk_secondary,
--							gr3d->rst_secondary);
--		if (err < 0) {
--			dev_err(&pdev->dev,
--				"failed to power up secondary 3D unit\n");
--			return err;
--		}
-+	if (gr3d->nclocks != gr3d->soc->num_clocks) {
-+		dev_err(dev, "invalid number of clocks: %u\n", gr3d->nclocks);
-+		return -ENOENT;
+@@ -83,7 +86,8 @@ static void tegra_gmi_disable(struct tegra_gmi *gmi)
+ 	writel(config, gmi->base + TEGRA_GMI_CONFIG);
+ 
+ 	reset_control_assert(gmi->rst);
+-	clk_disable_unprepare(gmi->clk);
++
++	pm_runtime_put(gmi->dev);
+ }
+ 
+ static int tegra_gmi_parse_dt(struct tegra_gmi *gmi)
+@@ -213,6 +217,7 @@ static int tegra_gmi_probe(struct platform_device *pdev)
+ 	if (!gmi)
+ 		return -ENOMEM;
+ 
++	platform_set_drvdata(pdev, gmi);
+ 	gmi->dev = dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -232,6 +237,14 @@ static int tegra_gmi_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gmi->rst);
  	}
  
-+	return 0;
-+}
-+
-+static int gr3d_get_resets(struct device *dev, struct gr3d *gr3d)
-+{
-+	int err;
-+
-+	gr3d->resets[RST_MC].id = "mc";
-+	gr3d->resets[RST_MC2].id = "mc2";
-+	gr3d->resets[RST_GR3D].id = "3d";
-+	gr3d->resets[RST_GR3D2].id = "3d2";
-+	gr3d->nresets = gr3d->soc->num_resets;
-+
-+	err = devm_reset_control_bulk_get_optional_exclusive_released(
-+				dev, gr3d->nresets, gr3d->resets);
-+	if (err) {
-+		dev_err(dev, "failed to get reset: %d\n", err);
-+		return err;
-+	}
-+
-+	if (WARN_ON(!gr3d->resets[RST_GR3D].rstc) ||
-+	    WARN_ON(!gr3d->resets[RST_GR3D2].rstc && gr3d->nresets == 4))
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
-+static int gr3d_probe(struct platform_device *pdev)
-+{
-+	struct host1x_syncpt **syncpts;
-+	struct gr3d *gr3d;
-+	unsigned int i;
-+	int err;
-+
-+	gr3d = devm_kzalloc(&pdev->dev, sizeof(*gr3d), GFP_KERNEL);
-+	if (!gr3d)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, gr3d);
-+
-+	gr3d->soc = of_device_get_match_data(&pdev->dev);
-+
-+	syncpts = devm_kzalloc(&pdev->dev, sizeof(*syncpts), GFP_KERNEL);
-+	if (!syncpts)
-+		return -ENOMEM;
-+
-+	err = gr3d_get_clocks(&pdev->dev, gr3d);
++	err = devm_pm_runtime_enable(gmi->dev);
 +	if (err)
 +		return err;
-+
-+	err = gr3d_get_resets(&pdev->dev, gr3d);
-+	if (err)
-+		return err;
-+
-+	err = gr3d_init_power(&pdev->dev, gr3d);
-+	if (err)
-+		return err;
-+
- 	INIT_LIST_HEAD(&gr3d->client.base.list);
- 	gr3d->client.base.ops = &gr3d_client_ops;
- 	gr3d->client.base.dev = &pdev->dev;
-@@ -352,20 +552,36 @@ static int gr3d_probe(struct platform_device *pdev)
- 	gr3d->client.version = gr3d->soc->version;
- 	gr3d->client.ops = &gr3d_ops;
- 
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 200);
-+
-+	err = devm_pm_opp_register_set_opp_helper(&pdev->dev, gr3d_set_opp);
-+	if (err)
-+		goto disable_rpm;
 +
 +	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
 +	if (err)
-+		goto disable_rpm;
++		return err;
 +
- 	err = host1x_client_register(&gr3d->client.base);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
- 			err);
--		return err;
-+		goto disable_rpm;
- 	}
- 
- 	/* initialize address register map */
- 	for (i = 0; i < ARRAY_SIZE(gr3d_addr_regs); i++)
- 		set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
- 
--	platform_set_drvdata(pdev, gr3d);
--
- 	return 0;
-+
-+disable_rpm:
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return err;
- }
- 
- static int gr3d_remove(struct platform_device *pdev)
-@@ -380,23 +596,83 @@ static int gr3d_remove(struct platform_device *pdev)
+ 	err = tegra_gmi_parse_dt(gmi);
+ 	if (err)
+ 		return err;
+@@ -247,8 +260,6 @@ static int tegra_gmi_probe(struct platform_device *pdev)
  		return err;
  	}
  
--	if (gr3d->clk_secondary) {
--		reset_control_assert(gr3d->rst_secondary);
--		tegra_powergate_power_off(TEGRA_POWERGATE_3D1);
--		clk_disable_unprepare(gr3d->clk_secondary);
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused gr3d_runtime_suspend(struct device *dev)
-+{
-+	struct gr3d *gr3d = dev_get_drvdata(dev);
-+	int err;
-+
-+	host1x_channel_stop(gr3d->channel);
-+
-+	err = reset_control_bulk_assert(gr3d->nresets, gr3d->resets);
-+	if (err) {
-+		dev_err(dev, "failed to assert reset: %d\n", err);
-+		return err;
-+	}
-+
-+	usleep_range(10, 20);
-+
-+	/*
-+	 * Older device-trees don't specify MC resets and power-gating can't
-+	 * be done safely in that case. Hence we will keep the power ungated
-+	 * for older DTBs. For newer DTBs, GENPD will perform the power-gating.
-+	 */
-+
-+	clk_bulk_disable_unprepare(gr3d->nclocks, gr3d->clocks);
-+	reset_control_bulk_release(gr3d->nresets, gr3d->resets);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused gr3d_runtime_resume(struct device *dev)
-+{
-+	struct gr3d *gr3d = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = reset_control_bulk_acquire(gr3d->nresets, gr3d->resets);
-+	if (err) {
-+		dev_err(dev, "failed to acquire reset: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_bulk_prepare_enable(gr3d->nclocks, gr3d->clocks);
-+	if (err) {
-+		dev_err(dev, "failed to enable clock: %d\n", err);
-+		goto release_reset;
- 	}
- 
--	reset_control_assert(gr3d->rst);
--	tegra_powergate_power_off(TEGRA_POWERGATE_3D);
--	clk_disable_unprepare(gr3d->clk);
-+	err = reset_control_bulk_deassert(gr3d->nresets, gr3d->resets);
-+	if (err) {
-+		dev_err(dev, "failed to deassert reset: %d\n", err);
-+		goto disable_clk;
-+	}
- 
+-	platform_set_drvdata(pdev, gmi);
+-
  	return 0;
-+
-+disable_clk:
-+	clk_bulk_disable_unprepare(gr3d->nclocks, gr3d->clocks);
-+release_reset:
-+	reset_control_bulk_release(gr3d->nresets, gr3d->resets);
-+
-+	return err;
  }
  
-+static const struct dev_pm_ops tegra_gr3d_pm = {
-+	SET_RUNTIME_PM_OPS(gr3d_runtime_suspend, gr3d_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
+@@ -262,6 +273,34 @@ static int tegra_gmi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused tegra_gmi_runtime_resume(struct device *dev)
++{
++	struct tegra_gmi *gmi = dev_get_drvdata(dev);
++	int err;
++
++	err = clk_prepare_enable(gmi->clk);
++	if (err < 0) {
++		dev_err(gmi->dev, "failed to enable clock: %d\n", err);
++		return err;
++	}
++
++	return 0;
++}
++
++static int __maybe_unused tegra_gmi_runtime_suspend(struct device *dev)
++{
++	struct tegra_gmi *gmi = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(gmi->clk);
++
++	return 0;
++}
++
++static const struct dev_pm_ops tegra_gmi_pm = {
++	SET_RUNTIME_PM_OPS(tegra_gmi_runtime_suspend, tegra_gmi_runtime_resume,
++			   NULL)
 +};
 +
- struct platform_driver tegra_gr3d_driver = {
+ static const struct of_device_id tegra_gmi_id_table[] = {
+ 	{ .compatible = "nvidia,tegra20-gmi", },
+ 	{ .compatible = "nvidia,tegra30-gmi", },
+@@ -275,6 +314,7 @@ static struct platform_driver tegra_gmi_driver = {
  	.driver = {
- 		.name = "tegra-gr3d",
- 		.of_match_table = tegra_gr3d_match,
-+		.pm = &tegra_gr3d_pm,
+ 		.name		= "tegra-gmi",
+ 		.of_match_table	= tegra_gmi_id_table,
++		.pm = &tegra_gmi_pm,
  	},
- 	.probe = gr3d_probe,
- 	.remove = gr3d_remove,
+ };
+ module_platform_driver(tegra_gmi_driver);
 -- 
 2.32.0
 
