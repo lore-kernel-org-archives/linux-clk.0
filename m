@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E84DC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 08:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 710B8C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 08:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 797336124C
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 08:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C691611BD
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Sep 2021 08:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhIUI1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Sep 2021 04:27:13 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34680
+        id S231240AbhIUIhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Sep 2021 04:37:23 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:35026
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230508AbhIUI1M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Sep 2021 04:27:12 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        by vger.kernel.org with ESMTP id S231217AbhIUIhW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Sep 2021 04:37:22 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AF8DA3FE01
-        for <linux-clk@vger.kernel.org>; Tue, 21 Sep 2021 08:25:43 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9344740257
+        for <linux-clk@vger.kernel.org>; Tue, 21 Sep 2021 08:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632212743;
-        bh=PakN2wbGs/med/D4ZWenpx5EeuVdG2xsZUFyxVDNDpM=;
+        s=20210705; t=1632213353;
+        bh=lQRT6EGGve1EBnMNNxr8uMFKa9VogaceuvltbqBrtr8=;
         h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=LAk0vPfckMMSyktNld/vuvQX+8a5g4UIMfl1CqaBK7GK0XnoJvq3JrEICNr5naYig
-         j4heNgKMAZ5c3BFGl+sLwp9UYQnCTeOtgeodsCAq0eFju4pv+ZajDTEx/Jl9bhZ/+Z
-         /AaEJ5wUnutJfAt6hoyfU8OqzbZZ+s8tq15BdbRIlrfasRhoJk6VLwS498fdM1Hbq2
-         Kc2EMhZRTRg8a0mwr4AejWXLamww2eMmvEghwAT48ZUbg0wZDzV2XUH4OUjhf07avb
-         q41LjW5jFh7/cUEw+GfJVoNggp9oW7PToPaqgLVlsoxJcUPyEgKETPpVOSrdhkcZeE
-         KPPQwECZV5+sQ==
-Received: by mail-wr1-f69.google.com with SMTP id x7-20020a5d6507000000b0015dada209b1so8147930wru.15
-        for <linux-clk@vger.kernel.org>; Tue, 21 Sep 2021 01:25:43 -0700 (PDT)
+        b=V5Ar01ZNphCZj8Na1gOBq7Qvw566jlPqmlah2+FMP6sGwGjQQBIBAddnPWWDOui/V
+         jYoUBr+jqXfxAVibGMdUt3HHRK7nFKnTEEMtuywYzYIBmzUVqXa83I+QIr82LgGQEH
+         XlSHAhSjfnXahYcxD90phiJzgzXCwvKZR/6YGtyG2fuYNN3HKiWGsAr2WThTCh19Z3
+         TGQc3agt+Nstl9FcYiNoqlbRXDWZ0iFX2MzQiblboKfIb/NrjrQernd2eej3URKiLU
+         S/6u0gakPtlyYpj5ZbPNKCEYEnB0ncYo3Fayst6tM676U8lyRv+zsimf8czavu1WHL
+         6CjnrpVPIFmtA==
+Received: by mail-wr1-f71.google.com with SMTP id f7-20020a5d50c7000000b0015e288741a4so8198111wrt.9
+        for <linux-clk@vger.kernel.org>; Tue, 21 Sep 2021 01:35:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PakN2wbGs/med/D4ZWenpx5EeuVdG2xsZUFyxVDNDpM=;
-        b=zE5qkbsDbzoWe2NHfEhQBVfv/YhOKzmYWf1SgCluQDqvjKIS78vJdA4iO7C+el7Q7G
-         zWtsdYLn8nctKaR7teONU2JJpnIoNUosvrYf7CufayKgMRUhOOlAK/tdebAAKVLLaZYW
-         9lCnIz3OGBywMA39mPpGNMylbD9B3NZWbgrHw4fnS9puK1NsiaxBoORt1KDo+XJ3E888
-         iE0VOn5S0DNXCDUWtmCe611SaprThLjdkw1BSKnKR5998MaN6gkZbQnGYWEcel53cFSb
-         corgufIieF3FuCm2LERIV2SwNMgEjG+LwB3wdQToUfOdutZCkhYr5TOn4JLtEO4s1VeO
-         6qzQ==
-X-Gm-Message-State: AOAM530RsB54gRxSTvt/7lz71SSptqrvPgvKcTe6L8SSPf07/G1DBT3p
-        nd1rS3D5NNqgik6DTIUbTddPZ9W1GTAbtffZHIUHqP9e9kcLzIveHkt/Hr8H4aOyiDg3CGPw1CJ
-        3b7HMkKr2/2sbwGlyk0wvw713IgzOXNxO6XZ39g==
-X-Received: by 2002:a1c:210a:: with SMTP id h10mr3268401wmh.117.1632212743167;
-        Tue, 21 Sep 2021 01:25:43 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwp0rPHyWd368/Ze8iF9YfFlWr90/JCakDv7rQLGftI6ArWqIbwE51Hrm/RKPh1ClGVqMawxw==
-X-Received: by 2002:a1c:210a:: with SMTP id h10mr3268385wmh.117.1632212742951;
-        Tue, 21 Sep 2021 01:25:42 -0700 (PDT)
+        bh=lQRT6EGGve1EBnMNNxr8uMFKa9VogaceuvltbqBrtr8=;
+        b=ysFX8ioXC6Zk6UpMtix5aQ2OGoxWHv2MGCb1ua9sPfJIF/92EscXqBzbN3otfbVxqX
+         +udjMhemysDeNjKUv0p/Azp9QvJew8sPDSZ38/a3tSqbfoGXmR3PoFk3kIIJcwSVVjDZ
+         BigtMDh/z+W/LHbow4E4fVJADeSlTYDl8glQmwj9r78OgLr+uRXbUeMrh22O11RFlp0J
+         WJr2Fz8GAE6l9xJhGH41Ci0qQElowEGjIXQDcpwSxdITa3lomTPfJ3AMHp+yoVuM9Vno
+         NsmVn0tT62S05COHmhbEiwnc9/k46zJ7O07VuoXHJ9aDSNTYAAtvJKEsiBrTWQZPg223
+         Dkfw==
+X-Gm-Message-State: AOAM532c8aJV9smuhn+/PHWlERBElWOcoOloY510zohJoSQk/9ed/eLy
+        LIiqxmCmF2LwiDWlLyG71T/pGMX+wal9P5TvnA0cu7zn4VLAzkp7AJWThQcrEfUtS5qRP3I1juS
+        AA1uYcetcDqOeaXg0bTnxAiPn/WcwgM0a0EQaPA==
+X-Received: by 2002:a7b:c142:: with SMTP id z2mr3357168wmi.10.1632213352915;
+        Tue, 21 Sep 2021 01:35:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxDvUrXflYulapeJv6L1lTo5OVRdOzoWqHitDx/QOp0/pTxHCrxTBBq7VpLs3ZVu4Jpt3sotw==
+X-Received: by 2002:a7b:c142:: with SMTP id z2mr3357151wmi.10.1632213352769;
+        Tue, 21 Sep 2021 01:35:52 -0700 (PDT)
 Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id g2sm5599447wrb.20.2021.09.21.01.25.41
+        by smtp.gmail.com with ESMTPSA id c185sm2235289wma.8.2021.09.21.01.35.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Sep 2021 01:25:42 -0700 (PDT)
-To:     Lee Jones <lee.jones@linaro.org>
+        Tue, 21 Sep 2021 01:35:52 -0700 (PDT)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Will McVicker <willmcvicker@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -71,24 +71,25 @@ Cc:     Will McVicker <willmcvicker@google.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
+        Lee Jones <lee.jones@linaro.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 References: <20210920190350.3860821-1-willmcvicker@google.com>
- <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com>
- <YUmTwZPqrCfRMekd@google.com>
+ <20210920190350.3860821-2-willmcvicker@google.com>
+ <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
+ <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
-Message-ID: <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com>
-Date:   Tue, 21 Sep 2021 10:25:41 +0200
+Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
+ config logic
+Message-ID: <2c8a79f7-711a-b075-745f-ea77b82a1117@canonical.com>
+Date:   Tue, 21 Sep 2021 10:35:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <YUmTwZPqrCfRMekd@google.com>
+In-Reply-To: <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -96,84 +97,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/09/2021 10:11, Lee Jones wrote:
-> On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
-> 
+On 21/09/2021 09:50, Geert Uytterhoeven wrote:
+> On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >> On 20/09/2021 21:03, Will McVicker wrote:
->>> This patch series tries to address the issue of ARCH_EXYNOS force selecting
->>> a handful of drivers without allowing the vendor to override any of the
->>> default configs. This takes away from the flexibilty of compiling a generic
->>> kernel with exynos kernel modules. For example, it doesn't allow vendors to
->>> modularize these drivers out of the core kernel in order to share a generic
->>> kernel image across multiple devices that require device-specific kernel
->>> modules.
+>>> COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
+>>> to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
+>>> "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
+>>> or modularize this driver.
 >>
->> You do not address the issue in these patches. The problem you describe
->> is that drivers are not modules and you are not changing them into modules.
+>> The clock drivers are essential, you cannot disable them for a generic
+>> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
 > 
-> The wording is unfortunate.  The reason for this change doesn't have
-> much to do with kernel modules.
-> 
-> Let's go back in time 18 months or so when Greg KH submitted this [0]
-> patch, which you Acked.  Greg was trying to solve the problem of not
-> having to enable ARCH_EXYNOS on kernels which are designed to be
-> platform agnostic (sometimes called Generic Kernels).  For some reason
-> SERIAL_SAMSUNG is the only symbol with these dependencies, so the
-> solution seemed simple and straight forward at the time.
-> 
-> However, For sound reasons Geert NACKed the patch.
-> 
-> Quoting from [1] he says:
-> 
->   "A generic kernel will include Samsung SoC support, hence
->   PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
+> Obviously it's not gonna work if the clock driver is not enabled
+> at all.  But does it work if you make the clock driver modular, and
+> put it with all other essential driver modules in initramfs?  Debugging
+> would be hard, as the serial console driver also relies on clocks
+> and PM Domains etc.
 
-Yes, it's correct reasoning. There is also one more use-case -
-non-upstreamed (out of tree) platform which wants to use Exynos-specific
-drivers. Something like was happening with Apple M1 except that it got
-upstreamed and we do not care much about out-of-tree.
+The kernel could boot without clock drivers (default settings from
+bootloader), probe clocks from initramfs and proceed with rootfs from
+eMMC/SD/net.
+
+In theory.
+
+However I have no reports that it ever worked. If there is such working
+upstream configuration, I don't mind here. Just please explain this in
+the commit msg.
 
 > 
-> However, since the entry for ARCH_EXYNOS *insists* on building-in a
-> bunch of other symbols (via 'select') which will be unused in most
-> cases, this is not a currently acceptable approach for many Generic
-> Kernels due to size constraints.
-
-In the mainline kernel there is no such use case. If you want to have
-Exynos-whatever-driver (e.g. SERIAL_SAMSUNG or S3C RTC), you should
-select ARCH_EXYNOS because otherwise it does not make any sense. Zero
-sense. Such kernel won't work.
-
-It makes sense only if there is some other work, hidden here, where
-someone might want to have SERIAL_SAMSUNG or S3C RTC without
-ARCH_EXYNOS. Although GKI is not that work because GKI kernel will
-select ARCH_EXYNOS. It must select ARCH_EXYNOS if it wants to support
-Exynos platforms.
-
-Therefore I expect first to bring this "some other work, hidden here" to
-broader audience, so we can review its use case.
-
+> If not, this patch should be NAKed, until it works with a modular
+> clock driver.
 > 
-> What this patch does is migrates those symbols from being 'select'ed
-> (always built-in with no recourse) to 'default y'.  Where the former
-> cannot be over-ridden, but the latter can be via a vendor's
-> defconfig/fragment.
-
-It cannot be overridden by vendor fragment because options are not
-visible. You cannot change them.
-
-The patch does nothing in this regard (making them selectable/possible
-to disable), which is why I complained.
-
+> If yes, perhaps another line should be added (_before_ the other line)?
 > 
-> I doubt many (any?) of these symbols can be converted to kernel
-> modules anyway, as they are required very early on in the boot
-> sequence.
+>   + default m if ARCH_EXYNOS && MODULES
+>     default y if ARCH_EXYNOS
+> 
+> However, many developers may want MODULES=y, but not want to bother
+> with an initramfs.  So perhaps we need a new symbol
+> MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
+> driver default to m if that is enabled?
 
-True, some could, some not. Also some platforms are set up via
-bootloader, so actually could "survive" till module is loaded from some
-initrd.
+Yeah, that's indeed a problem to solve. For most users (and distros)
+building kernel for Exynos this should be built-in by default.
 
+Anyway, the option is non-selectable so it cannot be converted to "m" or
+disabled. And this is claimed in the commit msg:
+"provide flexibilty for vendors to disable or modularize this driver."
+
+The commit does not achieve it.
 
 Best regards,
 Krzysztof
