@@ -2,132 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE36C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9421C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 15:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80780611B0
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81DB8610A1
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 15:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236016AbhIVM4N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 08:56:13 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:34485 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236001AbhIVM4N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 08:56:13 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 61D722B015E3;
-        Wed, 22 Sep 2021 08:54:42 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 22 Sep 2021 08:54:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=/i2wIOW8fG63Q
-        +xqJpbK2PRWLCguAPaHH1zfAMA+Z2g=; b=et5KajvVXSLjYc0w39FhVvyrcYBuf
-        2CpC9e58Ine7wjkWb9o2lPvQlsnxhsy4naoRM3rX3VuGF03V7rW9P5+uKV9bf7X8
-        ZvgRwxuYEX10jEX1i60jDIxX40sLdXyQNdqHWGacnv8k9An4coIPmM4QlFVSjnU4
-        khWug5WBYCzBDYeWCoY1eSPUkCqooB2Qry2mBzaK9LZRI14TfFxLDBpPmHjJIFP9
-        xwwbulmQhQwLnXAMiavnnGlmPThsEdOBFMm4qw3xGHzuJmfkBdHUtMco2Fd7SgSv
-        jNnteCch2lfmS7DW5ZP0W0C1YOTfapVkKDTnwzFcHl4yvpWc5Vu5LeM+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=/i2wIOW8fG63Q+xqJpbK2PRWLCguAPaHH1zfAMA+Z2g=; b=qWbANZJB
-        KvPmz172JXRBJQPkJJVfpzxMpMlcz7++0tcme5yY/YSV95ixoA+xfI29zqFGyiZR
-        l523IzmZ2Y/XvLF7N8bGjqfa6OD25aywEKAYC+UHRQ8iGAQ7uAdJUzOm+44Yy1ab
-        o7+SWyJDXbEDQslvCs82e27yy+0+zAciYwU0EDlnZS9OwM2SZ9IQlOFWdZdUfl1V
-        seDAEA2U5OULoaGZ2EQfJrSvSjdaVWRkBHt9jPtGKZVTGWdL1iiRZPZKqIX4lVzs
-        nsLaOnFcMRqKRwF+h63P9OcLlw1NoobBwO3wf4uuI+Z017RHC9FbzSAcMpXDfYDt
-        X2i10U+t95/8aQ==
-X-ME-Sender: <xms:kSdLYZEQ3SVJ8O34hb6YC_ET0KVdJeciYlj-2byBobo6B_EXgiOt1w>
-    <xme:kSdLYeVvpAdgZF67zP5tfHGQ7ug0veEhlkrcorlhUhAvJZ4vYi3mEt3rjV82it5_G
-    Pw9e-HoySGi7WRdDbs>
-X-ME-Received: <xmr:kSdLYbK6B7LwnIfB6rUNYCTMoBiUVO3FfRMSO5OpJsP6jZdUjKBzeP7jitjoAydVQW122jFqLuRtbNggaP3XXcmJe3CArXd4m0xc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeijedgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:kSdLYfHVAXwiJmA4WQ_Hx6KzOOEGDJyJbPYaYTPnoSCk37DQDSBH7A>
-    <xmx:kSdLYfVhbufLj8LwBt8RX0aO_xCICKolc52w3Z5kJ5ZuSptlkbJvxg>
-    <xmx:kSdLYaNvxPr4Fbs8aciGTO1wuSAEumJn_q23oI1PjfmWfUrpDmpQCQ>
-    <xmx:kidLYcXlfe3YE53RWmhBMORG91ZS-jL4zzhRYRxSbMRv61KpL9IfkWHugfs>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Sep 2021 08:54:41 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
+        id S236304AbhIVPRz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 11:17:55 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56421 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233737AbhIVPRy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 11:17:54 -0400
+Received: (Authenticated sender: gregory.clement@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B80F9E0006;
+        Wed, 22 Sep 2021 15:16:22 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH 5/5] drm/vc4: hdmi: Make sure the controller is powered in detect
-Date:   Wed, 22 Sep 2021 14:54:19 +0200
-Message-Id: <20210922125419.4125779-6-maxime@cerno.tech>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210922125419.4125779-1-maxime@cerno.tech>
-References: <20210922125419.4125779-1-maxime@cerno.tech>
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCH v5 5/6] arm64: dts: marvell: armada-37xx: add
+ device node for UART clock and use it
+In-Reply-To: <20210922105433.11744-6-pali@kernel.org>
+References: <20210922105433.11744-1-pali@kernel.org>
+ <20210922105433.11744-6-pali@kernel.org>
+Date:   Wed, 22 Sep 2021 17:16:22 +0200
+Message-ID: <87o88k63p5.fsf@BL-laptop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the HPD GPIO is not available and drm_probe_ddc fails, we end up
-reading the HDMI_HOTPLUG register, but the controller might be powered
-off resulting in a CPU hang. Make sure we have the power domain and the
-HSM clock powered during the detect cycle to prevent the hang from
-happening.
+Hello Pali,
 
-Fixes: 4f6e3d66ac52 ("drm/vc4: Add runtime PM support to the HDMI encoder driver")
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> This change defines DT node for UART clock "marvell,armada-3700-uart-clock"
+> and use this UART clock as a base clock for all UART devices.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 630b84ab73a2..8e6d7e1af200 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -168,6 +168,8 @@ vc4_hdmi_connector_detect(struct drm_connector *connector, bool force)
- 	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
- 	bool connected = false;
- 
-+	WARN_ON(pm_runtime_resume_and_get(&vc4_hdmi->pdev->dev));
-+
- 	if (vc4_hdmi->hpd_gpio &&
- 	    gpiod_get_value_cansleep(vc4_hdmi->hpd_gpio)) {
- 		connected = true;
-@@ -188,10 +190,12 @@ vc4_hdmi_connector_detect(struct drm_connector *connector, bool force)
- 			}
- 		}
- 
-+		pm_runtime_put(&vc4_hdmi->pdev->dev);
- 		return connector_status_connected;
- 	}
- 
- 	cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
-+	pm_runtime_put(&vc4_hdmi->pdev->dev);
- 	return connector_status_disconnected;
- }
- 
+Sorry to not have pointed this earlier but I found something a little
+unusual, see below:
+
+>
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+>  arch/arm64/boot/dts/marvell/armada-3720-db.dts    |  4 ++++
+>  .../boot/dts/marvell/armada-3720-espressobin.dtsi |  4 ++++
+>  .../boot/dts/marvell/armada-3720-turris-mox.dts   |  4 ++++
+>  arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts  |  4 ++++
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi      | 15 +++++++++++++--
+>  5 files changed, 29 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> index 3e5789f37206..accf014a6a1e 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> @@ -191,6 +191,10 @@
+>  	};
+>  };
+>  
+> +&uartclk {
+> +	status = "okay";
+
+I found unusual to have to enable the clock at device tree level.
+Usually the clock driver is always loaded and then the clock is really
+enabled or disabled through the clock framework.
+
+[...]
+
+> diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> index 9acc5d2b5a00..5bc61c9615f5 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> @@ -132,10 +132,21 @@
+>  				reg = <0x11500 0x40>;
+>  			};
+>  
+> +			uartclk: uartclk@12000 {
+> +				compatible = "marvell,armada-3700-uart-clock";
+> +				reg = <0x12010 0x4>, <0x12210 0x4>;
+> +				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
+> +					<&tbg 3>, <&xtalclk>;
+> +				clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S",
+> +					"TBG-B-S", "xtal";
+> +				#clock-cells = <1>;
+
+I think you could remove the following line and thanks to this there
+won't be any change in the dts of the board:
+> +				status = "disabled";
+> +			};
+> +
+
+Gregory
+
+
+>  			uart0: serial@12000 {
+>  				compatible = "marvell,armada-3700-uart";
+>  				reg = <0x12000 0x18>;
+> -				clocks = <&xtalclk>;
+> +				clocks = <&uartclk 0>;
+>  				interrupts =
+>  				<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+>  				<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -147,7 +158,7 @@
+>  			uart1: serial@12200 {
+>  				compatible = "marvell,armada-3700-uart-ext";
+>  				reg = <0x12200 0x30>;
+> -				clocks = <&xtalclk>;
+> +				clocks = <&uartclk 1>;
+>  				interrupts =
+>  				<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+>  				<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
+> -- 
+> 2.20.1
+>
+
 -- 
-2.31.1
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
