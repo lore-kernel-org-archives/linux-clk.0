@@ -2,127 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5190C43219
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517E9C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA4E16124C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 363E66120E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235096AbhIVKeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 06:34:18 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:49536 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235123AbhIVKeO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 06:34:14 -0400
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 18MAB9Ko012569;
-        Wed, 22 Sep 2021 18:11:09 +0800 (GMT-8)
-        (envelope-from chin-ting_kuo@aspeedtech.com)
-Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 22 Sep
- 2021 18:31:27 +0800
-From:   Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-To:     <robh+dt@kernel.org>, <joel@jms.id.au>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <adrian.hunter@intel.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <andrew@aj.id.au>
-CC:     <BMC-SW@aspeedtech.com>, <steven_lee@aspeedtech.com>
-Subject: [PATCH 07/10] arm: dts: aspeed: Adjust clock phase parameter
-Date:   Wed, 22 Sep 2021 18:31:13 +0800
-Message-ID: <20210922103116.30652-8-chin-ting_kuo@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
-References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
+        id S235151AbhIVK6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 06:58:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235123AbhIVK6D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Sep 2021 06:58:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8A3CA60ED7;
+        Wed, 22 Sep 2021 10:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632308193;
+        bh=AU3eAVQ3E4tohBMshWxiOAyUqFg6wmmF2TEuQwxk1K4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uWaFnuBdoPKXKXfJE6p9k4asTcMuvae5MoYmInpwI5sELfZf0ouMwAJyXZ5c/cUr1
+         ztE9MezqTEsMJQHIyorJLO/OaEkyJacWUZgOjbK6mM2NGoW46/+ZE48//2aCkOtXdi
+         43OJEe/UrXcFIU23mgKcBW5TqVNlLUQOwcTKjegWwKdfIa3cs5ka5YzBBpcNzNuazK
+         i+KxODgWFB0ePNaPOYrTmk7vzStZJLjKjx3XMqqgaXFK+K2jPjXNiBgoxD0Hp/YxJ2
+         yhIsKYMhSvFG4kRhOWHuVDVD0YHSYaUfmvyaXMvdlpi16gg6601S+2t3ORX+sXKg7+
+         OXPK/8V7j2x2Q==
+Received: by pali.im (Postfix)
+        id 0F95E79F; Wed, 22 Sep 2021 12:56:31 +0200 (CEST)
+From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH v5 0/6] serial: mvebu-uart: Support for higher baudrates
+Date:   Wed, 22 Sep 2021 12:54:27 +0200
+Message-Id: <20210922105433.11744-1-pali@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.10.9]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 18MAB9Ko012569
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Change clock phase degree for AST2600 EVB.
-These parameter has been verified with 100MHz
-clock frequency for eMMC and SD controllers.
+Per Greg's request I'm resending this patch series, please review it:
+https://lore.kernel.org/linux-serial/YUmMli6LA%2F7Ew3hD@kroah.com/
 
-Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
----
- arch/arm/boot/dts/aspeed-ast2600-evb-a1.dts | 8 ++++++++
- arch/arm/boot/dts/aspeed-ast2600-evb.dts    | 9 ++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
+This patch series add support for baudrates higher than 230400 on
+Marvell Armada 37xx boards.
 
-diff --git a/arch/arm/boot/dts/aspeed-ast2600-evb-a1.dts b/arch/arm/boot/dts/aspeed-ast2600-evb-a1.dts
-index dd7148060c4a..2d83617dc436 100644
---- a/arch/arm/boot/dts/aspeed-ast2600-evb-a1.dts
-+++ b/arch/arm/boot/dts/aspeed-ast2600-evb-a1.dts
-@@ -13,3 +13,11 @@
- };
- 
- /delete-node/ &sdc;
-+
-+&emmc_controller {
-+	max-tap-delay = <706>;
-+};
-+
-+&emmc {
-+	clk-phase-mmc-hs200 = <0 13>, <1 103>;
-+};
-diff --git a/arch/arm/boot/dts/aspeed-ast2600-evb.dts b/arch/arm/boot/dts/aspeed-ast2600-evb.dts
-index 4551dba499c2..f728b9d9b4cf 100644
---- a/arch/arm/boot/dts/aspeed-ast2600-evb.dts
-+++ b/arch/arm/boot/dts/aspeed-ast2600-evb.dts
-@@ -143,13 +143,15 @@
- 
- &emmc_controller {
- 	status = "okay";
-+	/* Measured value with *handwave* environmentals and static loading */
-+	max-tap-delay = <736>;
- };
- 
- &emmc {
- 	non-removable;
- 	bus-width = <4>;
- 	max-frequency = <100000000>;
--	clk-phase-mmc-hs200 = <9>, <225>;
-+	clk-phase-mmc-hs200 = <0 27>, <1 95>;
- };
- 
- &rtc {
-@@ -260,6 +262,7 @@
- 
- &sdc {
- 	status = "okay";
-+	max-tap-delay = <9000>;
- };
- 
- /*
-@@ -287,7 +290,7 @@
- 	sdhci,wp-inverted;
- 	vmmc-supply = <&vcc_sdhci0>;
- 	vqmmc-supply = <&vccq_sdhci0>;
--	clk-phase-sd-hs = <7>, <200>;
-+	clk-phase-uhs-sdr50 = <0 130>, <0 238>;
- };
- 
- &sdhci1 {
-@@ -300,5 +303,5 @@
- 	sdhci,wp-inverted;
- 	vmmc-supply = <&vcc_sdhci1>;
- 	vqmmc-supply = <&vccq_sdhci1>;
--	clk-phase-sd-hs = <7>, <200>;
-+	clk-phase-uhs-sdr50 = <0 130>, <0 130>;
- };
+Pali Rohár (6):
+  math64: New DIV_U64_ROUND_CLOSEST helper
+  serial: mvebu-uart: implement UART clock driver for configuring UART
+    base clock
+  dt-bindings: mvebu-uart: document DT bindings for
+    marvell,armada-3700-uart-clock
+  dt-bindings: mvebu-uart: update information about UART clock
+  arm64: dts: marvell: armada-37xx: add device node for UART clock and
+    use it
+  serial: mvebu-uart: implement support for baudrates higher than 230400
+
+ .../bindings/clock/armada3700-uart-clock.yaml |  57 ++
+ .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+ .../arm64/boot/dts/marvell/armada-3720-db.dts |   4 +
+ .../dts/marvell/armada-3720-espressobin.dtsi  |   4 +
+ .../dts/marvell/armada-3720-turris-mox.dts    |   4 +
+ .../boot/dts/marvell/armada-3720-uDPU.dts     |   4 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  15 +-
+ drivers/tty/serial/Kconfig                    |   1 +
+ drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
+ include/linux/math64.h                        |  13 +
+ 10 files changed, 682 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+
 -- 
-2.17.1
+2.20.1
 
