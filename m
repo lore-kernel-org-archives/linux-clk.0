@@ -2,84 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E237BC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 11:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DAFC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C772760E09
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 11:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 559016120D
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235653AbhIVLhz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 07:37:55 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:63002 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235678AbhIVLhw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 07:37:52 -0400
-X-IronPort-AV: E=Sophos;i="5.85,313,1624287600"; 
-   d="scan'208";a="94703527"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Sep 2021 20:36:20 +0900
-Received: from localhost.localdomain (unknown [10.226.92.203])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4EDCF400C745;
-        Wed, 22 Sep 2021 20:36:18 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/2] clk: renesas: rzg2l: Fix clk status function
-Date:   Wed, 22 Sep 2021 12:24:05 +0100
-Message-Id: <20210922112405.26413-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210922112405.26413-1-biju.das.jz@bp.renesas.com>
-References: <20210922112405.26413-1-biju.das.jz@bp.renesas.com>
+        id S236001AbhIVM4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 08:56:00 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:37493 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236045AbhIVMz7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 08:55:59 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id C8B0F2B015E6;
+        Wed, 22 Sep 2021 08:54:28 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 22 Sep 2021 08:54:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=mct8oUUoPQCmb
+        XzWWfTX5bHQO1PQnsAmowWUCVA6sbM=; b=kPF2S1eZC/yeq7ngJhq+C5+2SGDMc
+        6g4R1BAPfpAat8lECFY5Qkoq65WHuTO4E9HX6wzqtzj7+ox3OBgqrBqJ/T3b8A5e
+        YF/1b8e9aNnEFQ8TqltOXD3/V9EowkY0/51V3bT0fLv3S6kreDMiWHYPiP1nZw9L
+        RLwvioBr+1SE8H3YchGUGW3p6JO1Cgm2Fog8Y3OIAiy6zb6zWHXEmp8L16CNAQBh
+        vk/zMEcmZ9yO50LS4ngIOh1Zm0A9cliUHFPRn26rG0ndnhGpf3oTfHq7V7SR4i1M
+        BfmrwlDPXF6Ue84DaTvUMHbS3+54opSA4lpCNoksBRbmnW+QBbCqCsU8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=mct8oUUoPQCmbXzWWfTX5bHQO1PQnsAmowWUCVA6sbM=; b=DN6t97Tw
+        jSFK2L1Ng+NOpe/Ux3Nfrhg911RsZFPi5WMrMM948WsA/MdHOePn22GLZtktEoN5
+        yp/6eDN3XI3krIVZFZKEHxnOw+PaE7b7+pe4oZ5QJ/kG+ki1w8sMytUUE1cQGxGf
+        Wau11+mkxauchihXfXmrq9t+ARPJ8vr4ScdI5aJ0nMx9PMlDtPOaouycXxJpzPxH
+        /8QtimTVWDikFMxhNvFE0iilOKSll7dm7BxzwGiE+32/e2xf5fc3Gf7lqvpCObj/
+        8beVmUwFb0na+XbUrFkZnnSbQJmISEzrkjDynGnYwfUcZKifY+aLzZWYHtImHaui
+        gM8setN182W/YQ==
+X-ME-Sender: <xms:gydLYbJfKG5YIs4ub2ANPUB1ECWWplxkW-k_QemQvNifJ0R7XO7wgQ>
+    <xme:gydLYfLGOAkK0-tead8GIIKt-u35oyzuYpEQhnyU96xTM5E3DjPwVSvLEZLVIEVXy
+    eJMLOGOFDVranKCpyc>
+X-ME-Received: <xmr:gydLYTt5YipiCNfAWqU1NQIcNraAqY8OWAMrS20rhFyGrG8ntiB-MkqxT-IEVMtLKWBZ4ouxI1lvjlVrwWXKAohEDCiM1vsqURGi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeijedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
+    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:gydLYUYMILbU8rDdoUjdQ_3fh4YooZzU3ULe6uenHYbv1Kx-pedyig>
+    <xmx:gydLYSbid5cavjWv3Eto5WQXwG8BkiNh8zJeZ11kg5Hb4X_WBkQyKQ>
+    <xmx:gydLYYAKKCOafC_ZuImQPne6AQ3JbMP9fsO2d-nKm5h73-DOIz2Rfg>
+    <xmx:hCdLYeSX0zvW2wCE17U9kzpeebV63gud8HJvhbtWjKpiinYibQ0Ut-pXwWI>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Sep 2021 08:54:27 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Stapelberg <michael@stapelberg.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 1/5] clk: bcm-2835: Pick the closest clock rate
+Date:   Wed, 22 Sep 2021 14:54:15 +0200
+Message-Id: <20210922125419.4125779-2-maxime@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210922125419.4125779-1-maxime@cerno.tech>
+References: <20210922125419.4125779-1-maxime@cerno.tech>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As per RZ/G2L HW(Rev.0.50) manual, clock monitor register value
-0 means clock is not supplied and 1 means clock is supplied.
-This patch fixes the issue by removing the inverted logic.
+The driver currently tries to pick the closest rate that is lower than
+the rate being requested.
 
-Fixing the above, triggered following 2 issues
+This causes an issue with clk_set_min_rate() since it actively checks
+for the rounded rate to be above the minimum that was just set.
 
-1) GIC interrupts don't work if we disable IA55_CLK and DMAC_ACLK.
-   Fixed this issue by adding these clocks as critical clocks.
+Let's change the logic a bit to pick the closest rate to the requested
+rate, no matter if it's actually higher or lower.
 
-2) DMA is not working, since the DMA driver is not turning on DMAC_PCLK.
-   So will provide a fix in the DMA driver to turn on DMA_PCLK.
-
-Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 6d18b8adbe67 ("clk: bcm2835: Support for clock parent selection")
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
-v1->v2:
- * Incorporated Sergei's review comment by removing Parens.
----
- drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+ drivers/clk/bcm/clk-bcm2835.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 089b6cb64c1f..270c530e8017 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -453,7 +453,7 @@ static int rzg2l_mod_clock_is_enabled(struct clk_hw *hw)
- 
- 	value = readl(priv->base + CLK_MON_R(clock->off));
- 
--	return !(value & bitmask);
-+	return value & bitmask;
- }
- 
- static const struct clk_ops rzg2l_mod_clock_ops = {
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index a254512965eb..bf97b2b2a63f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1216,7 +1216,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
+ 							  &div, &prate,
+ 							  &avgrate);
+-		if (rate > best_rate && rate <= req->rate) {
++		if (abs(req->rate - rate) < abs(req->rate - best_rate)) {
+ 			best_parent = parent;
+ 			best_prate = prate;
+ 			best_rate = rate;
 -- 
-2.17.1
+2.31.1
 
