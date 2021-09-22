@@ -2,194 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A56C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 03:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DAFC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 07:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 414BF61184
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 03:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D97C561178
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 07:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbhIVDem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Sep 2021 23:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbhIVDem (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Sep 2021 23:34:42 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44630C061574;
-        Tue, 21 Sep 2021 20:33:13 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id 67-20020a9d0449000000b00546e5a8062aso1548089otc.9;
-        Tue, 21 Sep 2021 20:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M9/VqydJPaYn+KOsQ3ofv9BvxBUh6olGmsxG6Mgl2mg=;
-        b=FJWQK1VWOnsPvkZYXz2bF5UdFYSr+MIVkUU3hZtxh2JWJh5nw5GavUirzAqU/6LiPV
-         87/RccVmsQSM/M3dAHmpX4zQIt2Y6vH4no3XraBLoZxKDuvANK7xz2A5zD4ZERwlCd2K
-         1qZVOQGh8v7bIuMLS5VO9t0qRsfy7KXMHG1m7u6YAcP3dyNUQa8B4pxeRiSPQRnVOLHA
-         krxpbra56nvjGaaaaZlbzBC0f+LThuGvR8alQF9GE9FlhvAg48IUBxiqENHl3FsAOyDj
-         BTv2axcbKfoKD77Db9EmZ1HPdjJr4rKuvVElA1jSf+jLPmmPcqXPJYpLweISAeiqaqg1
-         MAmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M9/VqydJPaYn+KOsQ3ofv9BvxBUh6olGmsxG6Mgl2mg=;
-        b=ISvhMW/XkzfsVw1k4BKou7XQHQDaDZ3T5ZY908hOdpNnfRm3ShGzL/ReO6SwKMCzaO
-         v6kVulMEuUzsGyjhP1lQbGjXj3gijAFnzCu7OSvzlHaIUCR7FeQfjsj1HE/TtSm4MJQD
-         MOEppDnhaV0j1j9kwrVXSJokgRT+eGs5O9EP8u+NsQRf4oKIPgeMADKcmBXXcv1ZNSFZ
-         x0c8YF9HN5Hp47XvntXg4N29ptSV9AmR5TedyGLprj6E7jG2tCVZZ37CdQ7SBnRHyq1y
-         YG/OqYvU2ijqN7/34tVv90vGsRJQmEecrocfXnR2RJ7C4bfr3OiTdJznkc98PrwrllJs
-         gAMg==
-X-Gm-Message-State: AOAM532jXsYMhj7hrbCHHi51yY7EK6PPH4BrbnJqYRWJ5gHdMbwiUWmZ
-        gLU4Nt0iz2kn+0lNRXeXBwRDNfOykAO57QCRDts=
-X-Google-Smtp-Source: ABdhPJxMwlE4S9+wL2//e0l5NUrJwLNFSPjga5R7+6TkCsiM1UoIb2AdeOpiyF2KIbCKJJ23FzP2b7aehusQnnGmftk=
-X-Received: by 2002:a9d:4e08:: with SMTP id p8mr29174385otf.152.1632281592646;
- Tue, 21 Sep 2021 20:33:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210916084714.311048-1-zhang.lyra@gmail.com> <20210916084714.311048-3-zhang.lyra@gmail.com>
- <YUNUyolr6ksEoZI3@robh.at.kernel.org> <CAAfSe-vYMUb8wGUJG7Fzehjkj8gAq1QOdgCdsTvcNyMuVeEW8g@mail.gmail.com>
- <CAL_JsqKmznCOk+qHFccnG1b5xuoNHY2vmqyv=WAjB9d=0AW70Q@mail.gmail.com>
-In-Reply-To: <CAL_JsqKmznCOk+qHFccnG1b5xuoNHY2vmqyv=WAjB9d=0AW70Q@mail.gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Wed, 22 Sep 2021 11:32:36 +0800
-Message-ID: <CAAfSe-sruhCCZopyserimaTYnxGmXv87nkd+T4v1uzbjCz1C7A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S233371AbhIVHwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 03:52:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:6244 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233283AbhIVHwW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 03:52:22 -0400
+X-IronPort-AV: E=Sophos;i="5.85,313,1624287600"; 
+   d="scan'208";a="94679288"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Sep 2021 16:50:51 +0900
+Received: from localhost.localdomain (unknown [10.226.92.203])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 64D2840C37E2;
+        Wed, 22 Sep 2021 16:50:49 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 1/2] clk: renesas: r9a07g044: Add IA55_CLK and DMAC_ACLK
+Date:   Wed, 22 Sep 2021 08:38:33 +0100
+Message-Id: <20210922073834.21304-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Sept 2021 at 20:42, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Sep 17, 2021 at 3:41 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> >
-> > On Thu, 16 Sept 2021 at 22:29, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Thu, Sep 16, 2021 at 04:47:12PM +0800, Chunyan Zhang wrote:
-> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > >
-> > > > Add a new bindings to describe ums512 clock compatible strings.
-> > > >
-> > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > > ---
-> > > >  .../bindings/clock/sprd,ums512-clk.yaml       | 106 ++++++++++++++++++
-> > > >  1 file changed, 106 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..be3c37180279
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> > > > @@ -0,0 +1,106 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +# Copyright 2019-2021 Unisoc Inc.
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
-> > > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > > > +
-> > > > +title: UMS512 Clock Control Unit Device Tree Bindings
-> > > > +
-> > > > +maintainers:
-> > > > +  - Orson Zhai <orsonzhai@gmail.com>
-> > > > +  - Baolin Wang <baolin.wang7@gmail.com>
-> > > > +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> > > > +
-> > > > +properties:
-> > > > +  "#clock-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - sprd,ums512-apahb-gate
-> > > > +      - sprd,ums512-ap-clk
-> > > > +      - sprd,ums512-aonapb-clk
-> > > > +      - sprd,ums512-pmu-gate
-> > > > +      - sprd,ums512-g0-pll
-> > > > +      - sprd,ums512-g2-pll
-> > > > +      - sprd,ums512-g3-pll
-> > > > +      - sprd,ums512-gc-pll
-> > > > +      - sprd,ums512-aon-gate
-> > > > +      - sprd,ums512-audcpapb-gate
-> > > > +      - sprd,ums512-audcpahb-gate
-> > > > +      - sprd,ums512-gpu-clk
-> > > > +      - sprd,ums512-mm-clk
-> > > > +      - sprd,ums512-mm-gate-clk
-> > > > +      - sprd,ums512-apapb-gate
-> > > > +
-> > > > +  clocks:
-> > > > +    minItems: 1
-> > > > +    maxItems: 4
-> > > > +    description: |
-> > > > +      The input parent clock(s) phandle for this clock, only list fixed
-> > > > +      clocks which are declared in devicetree.
-> > > > +
-> > > > +  clock-names:
-> > > > +    minItems: 1
-> > > > +    maxItems: 4
-> > > > +    items:
-> > > > +      - const: ext-26m
-> > > > +      - const: ext-32k
-> > > > +      - const: ext-4m
-> > > > +      - const: rco-100m
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - '#clock-cells'
-> > > > +
-> > > > +if:
-> > > > +  properties:
-> > > > +    compatible:
-> > > > +      enum:
-> > > > +        - sprd,ums512-ap-clk
-> > > > +        - sprd,ums512-aonapb-clk
-> > > > +        - sprd,ums512-mm-clk
-> > > > +then:
-> > > > +  required:
-> > > > +    - reg
-> > > > +
-> > > > +else:
-> > > > +  description: |
-> > > > +    Other UMS512 clock nodes should be the child of a syscon node in
-> > > > +    which compatible string should be:
-> > > > +            "sprd,ums512-glbregs", "syscon", "simple-mfd"
-> > > > +
-> > > > +    The 'reg' property for the clock node is also required if there is a sub
-> > > > +    range of registers for the clocks.
-> > >
-> > > In which cases is this not true?
-> >
-> > Seems not needed, I will remove 'reg' property for this kind of cases.
->
-> Wrong direction. Please keep 'reg'. My question is why can't you
-> always have it? That is the preference.
+Add IA55_CLK and DMAC_ACLK as critical clocks.
 
-Ok. I will address. BTW, do we need 'reg' even though the driver
-doesn't read this property? Does that because DT should reflect
-hardware topology?
+Previously it worked ok, because of a bug in clock status function
+and the following patch in this series fixes the original bug.
 
-Thanks for the comments,
-Chunyan
+Fixes: c3e67ad6f5a2 ("dt-bindings: clock: r9a07g044-cpg: Update clock/reset definitions")
+Fixes: eb829e549ba6 ("clk: renesas: r9a07g044: Add DMAC clocks/resets")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
-> Rob
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 4c94b94c4125..1490446985e2 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -186,6 +186,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 
+ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_GIC600_GICCLK,
++	MOD_CLK_BASE + R9A07G044_IA55_CLK,
++	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+-- 
+2.17.1
+
