@@ -2,105 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9199C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 08:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4362C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 09:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 918FF61184
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 08:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B617361360
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 09:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233526AbhIVIRZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 04:17:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53512 "EHLO
+        id S234233AbhIVJML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 05:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233654AbhIVIRY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 04:17:24 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABCDC061756
-        for <linux-clk@vger.kernel.org>; Wed, 22 Sep 2021 01:15:55 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mSxPy-0004LS-OD; Wed, 22 Sep 2021 10:15:50 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mSxPx-0003Il-Cp; Wed, 22 Sep 2021 10:15:49 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mSxPx-0004zO-Bo; Wed, 22 Sep 2021 10:15:49 +0200
-Date:   Wed, 22 Sep 2021 10:15:49 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S234190AbhIVJMF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 05:12:05 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA80EC061574;
+        Wed, 22 Sep 2021 02:10:35 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id t10so9130783lfd.8;
+        Wed, 22 Sep 2021 02:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S/YR+XRwyO3QADZhUdz5X4kkZ9xbXMRBTNajmncpK4U=;
+        b=gc91weU0adqC0Nyv3tpavWWftPdxdadaWChvF7gt6iW+7Vn8fta0QuBHVaSopLl96g
+         eoMUrx7AcPFh+mLGooymj/4u7TJwaQ1FPLVFNx9EBxOzym4tIxIMEgU6V51vQjPASdOZ
+         zWRgBLYt4SVXu+RT5dsD5w8ghpm23bMYYux6JjDdaUz4cxQPpwAa9l5XXqJAQwO94w1t
+         8xyxsjUb3hao5StjnjxD5GrO8hSnyR2no/pNyu5XEJvqYq2aGbILr37zuwAzKE9Jq615
+         if0bSIYQI+A3MWpsiEJ181aw+4j8+dYAN8IrbfXTwZiMAhqHNiWJzUpBSnTWMPeMrerd
+         DuZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=S/YR+XRwyO3QADZhUdz5X4kkZ9xbXMRBTNajmncpK4U=;
+        b=2n2eDXVyVaVR6mt+no4O1AixwWLr5A0jiVGgMAiMrMbr7rCmSGJaidXbDL1+NuCVqW
+         0Gqn0TgbYPwYx0eJATqi/lEd/FTCnVUIwTYp36n+wykf4VFFnl08dG1q13s1fDv9G9//
+         8GdJ/187Pzdutro6uLd8q7/vK9o2/1HyRM6zxhxdHj0TohFgNuPmFbiszXhOp7b0IMj9
+         Qz5ZyNU1AIDGdUsj/TQyfJ6zNN/9m2vu0IOeufalU2r1D3GCFOUrB8a13nWJ2dTJqLnL
+         wEn+bRv6vspskazXtje5qah/2vDjaZ2nTBbm+DH4mDUzZnzXo3/6tQAcP/8VPo/MgtLf
+         57sw==
+X-Gm-Message-State: AOAM533M4N/lKEoJXHLCY+ZQ125/kafI+hck61ljFNK14h/3yUQJRGb4
+        i5BVOyBCJBpacGEZICC3QoI=
+X-Google-Smtp-Source: ABdhPJwMnrv5n9XcAzOpivCCB78f95eIEm4/VdzFbHMXG95gkJ7v6iOl6s34lAAqqZ6XC7ZXksNJxw==
+X-Received: by 2002:a2e:1659:: with SMTP id 25mr12832351ljw.217.1632301834206;
+        Wed, 22 Sep 2021 02:10:34 -0700 (PDT)
+Received: from [192.168.1.100] ([178.176.79.80])
+        by smtp.gmail.com with ESMTPSA id z8sm127224lfs.177.2021.09.22.02.10.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Sep 2021 02:10:33 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clk: renesas: rzg2l: Fix clk status function
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2] clk: expand clk_ignore_unused mechanism to keep only
- a few clks on
-Message-ID: <20210922081549.kit3lsek7lh6w6ji@pengutronix.de>
-References: <20210819121403.337833-1-u.kleine-koenig@pengutronix.de>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+References: <20210922073834.21304-1-biju.das.jz@bp.renesas.com>
+ <20210922073834.21304-2-biju.das.jz@bp.renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Organization: Brain-dead Software
+Message-ID: <38363f36-5da3-af67-c803-42b277a6f4ec@gmail.com>
+Date:   Wed, 22 Sep 2021 12:10:24 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="s34zflirz6cxjcg5"
-Content-Disposition: inline
-In-Reply-To: <20210819121403.337833-1-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20210922073834.21304-2-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello!
 
---s34zflirz6cxjcg5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22.09.2021 10:38, Biju Das wrote:
 
-Hello,
+> As per RZ/G2L HW(Rev.0.50) manual, clock monitor register value
+> 0 means clock is not supplied and 1 means clock is supplied.
+> This patch fixes the issue by removing the inverted logic.
+> 
+> Fixing the above, triggered following 2 issues
+> 
+> 1) GIC interrupts don't work if we disable IA55_CLK and DMAC_ACLK.
+>     Fixed this issue by adding these clocks as critical clocks.
+> 
+> 2) DMA is not working, since the DMA driver is not turning on DMAC_PCLK.
+>     So will provide a fix in the DMA driver to turn on DMA_PCLK.
+> 
+> Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>   drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+> index 3b3b2c3347f3..3e32a858b852 100644
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -391,7 +391,7 @@ static int rzg2l_mod_clock_is_enabled(struct clk_hw *hw)
+>   
+>   	value = readl(priv->base + CLK_MON_R(clock->off));
+>   
+> -	return !(value & bitmask);
+> +	return (value & bitmask);
 
-On Thu, Aug 19, 2021 at 02:14:03PM +0200, Uwe Kleine-K=F6nig wrote:
-> Allow to pass an integer n that results in only keeping n unused clocks
-> enabled.
->=20
-> This helps to debug the problem if you only know that clk_ignore_unused
-> helps but you have no clue yet which clock is the culprit.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+    Parens not needed anymore...
 
-I consider this patch really helpful, it helped me to debug a clk issue
-without having to recompile the kernel for each bisection step.
+[...]
 
-On #kernelnewbies I got some positive feedback for it (1629304050 < j_ey>
-ukleinek: nice clk_ignore_unused patch, I added a pr_err there recently
-to print the clocks that were being disabled).
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---s34zflirz6cxjcg5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmFK5jIACgkQwfwUeK3K
-7AmWkgf+OQ5olI3IcVW3vwjRRsrEmQwZZ1Ilbn01AT2WFD6UWAOcVtdum/Jdlld6
-R9Ib02OtzJTN415x4FZGQtignm13aAUgwONe7BEW3vroacDL7lX8O9l3VaSxbfi9
-EkXTWR24KW+HOKYivj5B6eLG4sboBfKfwYakMwlapH6T1Mkm6XsfPH+v1Kuo+f8Z
-iPrgfGbQyFhpoy6IOlnhLZaT6UtYERYZeb2F+gHogJtc6E7ct3lu6ZdO7AP1ZDgw
-Y9fQU4fKgkUNTgK7fx4WI37kQRfoRNfgoYef6Jnqgwn9CXx4vjFSzrz6yHL4n2ye
-phJ7tHaFEIyKle92crPC5CyhA5IVvQ==
-=O65D
------END PGP SIGNATURE-----
-
---s34zflirz6cxjcg5--
+MBR, Sergei
