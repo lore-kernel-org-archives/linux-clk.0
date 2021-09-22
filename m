@@ -3,87 +3,160 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA43FC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 20:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 732C7C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 20:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A27F46112F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 20:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5459F611C4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 20:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237640AbhIVULD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 16:11:03 -0400
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:43973 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237827AbhIVUKs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 16:10:48 -0400
-Received: by mail-ot1-f43.google.com with SMTP id x33-20020a9d37a4000000b0054733a85462so5209379otb.10;
-        Wed, 22 Sep 2021 13:09:18 -0700 (PDT)
+        id S237364AbhIVUMi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 16:12:38 -0400
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:35547 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237325AbhIVUMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 16:12:38 -0400
+Received: by mail-oi1-f177.google.com with SMTP id r26so6313668oij.2;
+        Wed, 22 Sep 2021 13:11:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=pUPWyXoY1FFQGPeAEFJhwFml9k4ZL9Ko+mO59V12D5s=;
-        b=jfv5DdEwJV7ie4AUR+8ErgACLKGWsgGgo8I0ECIMTzeqRA98+801rocN/wW+IvduA4
-         nuZNfi8p7HIMwZQDCa9jZ2ohqpyZLALfAub6AA6MMMGXEjFggbTGLSFgceSr8PaTwz6i
-         g9kk5rz0EFMkgzDIxygiRzWjgGnNOHlEfntmYOUEKoY7OZ1aC4hFzcb01tYzioJrEfdz
-         4lMWHpwnCUPvHbLKcNnHnhGgRiTSFQiX9znBzFFge6A6Bv/N1emJ1SqWjwmb1Rzqd9tr
-         a5ngkVf/uz1tzMmChvNXFwtVHR2ExiM6g+PZZLF9vg34mRFbK91nKe+L0QkjM7juDwAv
-         sEXw==
-X-Gm-Message-State: AOAM531xSREJTm/qdIMs6KJhpOBl1mBu8hZR2gSn0eQcIRyjhs6OP6zz
-        nT1XRKx30UMpeEfZgzfq4zx3wJodyw==
-X-Google-Smtp-Source: ABdhPJwNckKrDizr4psAkZM1ddrjLG9ro1gxOCvwLYUKF4EC0taK1/yfd3L89soniFuxJNQVuLVpdQ==
-X-Received: by 2002:a05:6830:11c7:: with SMTP id v7mr836218otq.355.1632341357913;
-        Wed, 22 Sep 2021 13:09:17 -0700 (PDT)
+        bh=oh1GCZM5dUTph3yDqFQtj2T4C/Cn9j3K4e4lsvOCfK8=;
+        b=rLJPVkIYXx7D2MzJengMVKBnR5sBMOQGaZva0KzPjVW3zT0SjrebU9YAEFTR0F6X9B
+         wcFe26h5XXVSMQGmDo3G+3s4UXYF76NIe/LWPYDqjDXD9T+YhYnvKJDBuXKGet0ge9Yi
+         OAqev3lqdvWgfuq4784Ve9px5QrtAO2PLpGDocRCI31cHlvJTFxfMQCORyTIb8U4kkiR
+         K2EKXj3uAudh0aZyxq/D77eISP25A0/K54TGI6JXyW+aRsQ9vkcvnEpt00w5ZObIBWLs
+         Tw0zNpRXWtRdySeBXoQ4mhIoO0A0ZMBKmDskJ8yTtiQv/s8+Sqo50/TvQCtXgNqordCj
+         nAKA==
+X-Gm-Message-State: AOAM530Mud5ZHwzVadeLvUudc9s+1EWVRI8P5wUhoptxHNj9RNTYSSJc
+        UfWU6Wk0IyZVBcLVgG25qQ==
+X-Google-Smtp-Source: ABdhPJxB04SrAr3My4MhjbJhQuOo63xON3evPknQzkXmjb1Lubg7ZrL6tNv4aaW7+wLfUENPGGPcuA==
+X-Received: by 2002:aca:1215:: with SMTP id 21mr9845091ois.141.1632341467793;
+        Wed, 22 Sep 2021 13:11:07 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id j10sm783344oog.13.2021.09.22.13.09.16
+        by smtp.gmail.com with ESMTPSA id p21sm762115oip.28.2021.09.22.13.11.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 13:09:17 -0700 (PDT)
-Received: (nullmailer pid 1207807 invoked by uid 1000);
-        Wed, 22 Sep 2021 20:09:16 -0000
-Date:   Wed, 22 Sep 2021 15:09:16 -0500
+        Wed, 22 Sep 2021 13:11:07 -0700 (PDT)
+Received: (nullmailer pid 1210651 invoked by uid 1000);
+        Wed, 22 Sep 2021 20:11:06 -0000
+Date:   Wed, 22 Sep 2021 15:11:06 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        UNGLinuxDriver@microchip.com, Eugen.Hristev@microchip.com,
-        Kavyasree.Kotagiri@microchip.com, Manohar.Puri@microchip.com,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        devicetree@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: clock: lan966x: Add binding includes
- for lan966x SoC clock IDs
-Message-ID: <YUuNbFd43jJ4Yaaw@robh.at.kernel.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, UNGLinuxDriver@microchip.com,
+        Eugen.Hristev@microchip.com, Manohar.Puri@microchip.com
+Subject: Re: [PATCH v5 2/3] dt-bindings: clock: lan966x: Add LAN966X Clock
+ Controller
+Message-ID: <YUuN2o1G1ETkf/Zx@robh.at.kernel.org>
 References: <20210917135142.9689-1-kavyasree.kotagiri@microchip.com>
- <20210917135142.9689-2-kavyasree.kotagiri@microchip.com>
+ <20210917135142.9689-3-kavyasree.kotagiri@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210917135142.9689-2-kavyasree.kotagiri@microchip.com>
+In-Reply-To: <20210917135142.9689-3-kavyasree.kotagiri@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 17 Sep 2021 19:21:40 +0530, Kavyasree Kotagiri wrote:
-> LAN966X supports 14 clock outputs for its peripherals.
-> This include file is introduced to use identifiers for clocks.
+On Fri, Sep 17, 2021 at 07:21:41PM +0530, Kavyasree Kotagiri wrote:
+> This adds the DT bindings documentation for lan966x SoC
+> generic clock controller.
 > 
 > Signed-off-by: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
 > ---
 > v4 -> v5:
-> - No changes.
+> - In v4 dt-bindings, missed adding "clock-names" in required
+>   properties and example. So, added them.
 > 
 > v3 -> v4:
-> - No changes.
+> - Updated "clocks" description.
+> - Added "clock-names".
 > 
 > v2 -> v3:
-> - No changes.
+> - Fixed dt_binding_check errors.
 > 
 > v1 -> v2:
-> - Updated license.
+> - Updated example provided for clk controller DT node.
 > 
->  include/dt-bindings/clock/microchip,lan966x.h | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+>  .../bindings/clock/microchip,lan966x-gck.yaml | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> new file mode 100644
+> index 000000000000..e6b4ed3b0c88
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/microchip,lan966x-gck.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip LAN966X Generic Clock Controller
+> +
+> +maintainers:
+> +  - Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+> +
+> +description: |
+> +  The LAN966X Generic clock controller contains 3 PLLs - cpu_clk,
+> +  ddr_clk and sys_clk. This clock controller generates and supplies
+> +  clock to various peripherals within the SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: microchip,lan966x-gck
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: CPU clock source
+> +      - description: DDR clock source
+> +      - description: System clock source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: cpu_clk
+> +      - const: ddr_clk
+> +      - const: sys_clk
 
-Acked-by: Rob Herring <robh@kernel.org>
+'_clk' is redundant. Drop.
+
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clks: clock-controller@e00c00a8 {
+> +        compatible = "microchip,lan966x-gck";
+> +        #clock-cells = <1>;
+> +        clocks = <&cpu_clk>, <&ddr_clk>, <&sys_clk>;
+> +        clock-names = "cpu_clk", "ddr_clk", "sys_clk";
+> +        reg = <0xe00c00a8 0x38>;
+> +    };
+> +...
+> -- 
+> 2.17.1
+> 
+> 
