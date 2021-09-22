@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A91BC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2C2C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04FBF61178
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0ECC61181
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 12:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236026AbhIVM4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 08:56:03 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:33219 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236016AbhIVM4C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 08:56:02 -0400
+        id S236016AbhIVM4I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 08:56:08 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:40193 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236064AbhIVM4H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 08:56:07 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 210B82B015E3;
-        Wed, 22 Sep 2021 08:54:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 22 Sep 2021 08:54:33 -0400
+        by mailnew.nyi.internal (Postfix) with ESMTP id C2BB2580460;
+        Wed, 22 Sep 2021 08:54:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 22 Sep 2021 08:54:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=+VQJ1qYl9kyaC
-        FZ/5gVwTnLYe2FgtAOmnjOeyAZZK+U=; b=Vz4YqM9th7Z8btkrBP/p7azTBzutJ
-        bH7yQ3YzfvBNRxLVCXOd9b3s2BkYCVpu29PdjIoU67yAZZ3cI6phfAoj+e0CU/Ry
-        bMtX3SNSqHZOQPqYkOtsGXCUwk75+S28L9xajb0y7SNZ+yUiKG26cTgyWSw7P1fL
-        Un5tASKgvUMDxqyx0AFGtK+DqIHD/BmqyRt24jYsRHZv41AXrMa39jR/LqACjWGG
-        u7VVbXfidXMvHWhnvCQ6x39hMjmMiqNe8UP2K+mpjdYbikCL7M6SHXslscagSYmW
-        /YB8p9GtD1A9K9zSv6GdGaSx+Qocq4fO3oTV8ANl9L6ZTO+l279FXOLSw==
+        :mime-version:content-transfer-encoding; s=fm3; bh=4e/P9dQE+b90j
+        QHmfImUYpGrWO8DGPe+LWkJUYv0Syw=; b=xbhnSNp5VUssGFsGthY3KwxtjkejP
+        iTroEfJAsRysfHcmp4ShTRd1lEU3DD3Za8LgTNdOcSlmY/3d0Zl+gyppTZQ8N+h5
+        8z4M5bqm7WuecVC9zsUPFU0NATPF5+LURdlzDNCEPDTV6bA/SvJFjmt87HlAvScE
+        2iuOpjMHQEc5nE0MSd3QeZSvKK6qDCIzSDtQEfmmDsG19gdrSzyovEnG9b+64wwe
+        mbglJLG1gWITR8yw1u+8T+XvXMqMV+rj/NQYF1Y0O+2KZAdk6t7mIrQzJFjVLQWQ
+        Llx1ErzMwYvHd1EOT0TNS764rYTs2tItwM0/hKSk84J7mYDBnDiTbz5mw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=+VQJ1qYl9kyaCFZ/5gVwTnLYe2FgtAOmnjOeyAZZK+U=; b=pZjKibEi
-        QOIqeSrzP8z6t+kE8XdxfwcfXw57igiwFN+rJL0tQdBAXMzodGKso4Yvd9UwKWDt
-        nHECACDZctEY5y/Ks1Hy5tIrX4xZotYwSX0e7gQIVYXOLe5HfuvxAZ6xK7spwng8
-        MoY8NN3KcQm5LBra3+xz2bj5cJYAqp6XJatmGqXiUuIHN1Elfhbl467paYLLh84B
-        3J92k6DWuPWJpx/joXR1ZqlPCLzBx2AxRKQi1B0PcMboEB2kHCfClSjrZKBxgdHs
-        bdxT08N3QBKf1YKNgI6afBcQp1PLjcV0UQdK0fe4bWohq68FkezzcCXm59rBCIbN
-        kEIJwLykZ8XVuA==
-X-ME-Sender: <xms:hydLYecHkgfOioo_8gFdXpMvMWfAGaLOmi5kLzOFoLa9-gz7dVNlbQ>
-    <xme:hydLYYMDMU8vTQmDe73jCd9gkVZfX7IQNzV_fmdgA2MNy1m8tOl1s6UrkGLNAYj9x
-    n0W7jiEv8She6jzLbg>
-X-ME-Received: <xmr:hydLYfiIKo-TjozSy4Y6grx9fMKCsq5XsVxh3cc__WpK5R4y_-VXak0RPOhK9mLKo-vi2OOBETt-KdMkq08uPgPoKN2i9GnZsLn6>
+        fm3; bh=4e/P9dQE+b90jQHmfImUYpGrWO8DGPe+LWkJUYv0Syw=; b=ocnNNTxe
+        zCyItCVcjJj9253OhYSTnswwP8TW2lJiz9LzfcLcQmteqewqlLk9jP3NoqPhUGyH
+        UY3BgHKASmEenb7Uek/jQtoTxHicLFoTTV7X2L9a0PCCCohZvW5ts8lCNQWTRy0u
+        T7CdmWokwHohjpeiGenYNt/vqXt1PiPdux8ZcUvsMhbZz7BJYgi25m361e3ul6+o
+        B1A5zP+ZXOg7utysPXTP3muhHXI36oavBeYTG206/ujstoWGqdZoBzgrD6iLRe0A
+        frluPW+HyNrohhoLL/+19ZenXKTPmBAtE1HyX2wyMUR0znFCvuPwiYTjnTUKaQA4
+        ajUAawHrpvBlMQ==
+X-ME-Sender: <xms:iidLYZibLEmm925tMAZmKEQtDyf7X0N3Aealojls8ba2lplDHcLLDA>
+    <xme:iidLYeDr3sMJD_T-nnD6wEIwT4F_kSsm_ygPbWx1br8mpkASFnnsnV9wQhsNXUj2U
+    7g7puWFzZdnxdZRBek>
+X-ME-Received: <xmr:iidLYZEGtleakq2t_HCMuSFu1138zS4WpoyXWgYawgRabypd5Vkr2bwQwItDIF0-Vof5Ek0MBPkO3BYZ1jOSifCRLgfZHMW6F2ns>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeijedgheeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -56,12 +56,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeijedgheeiucetufdoteggod
     htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
     hedvnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:hydLYb-NrsVYVZA2ezEVm3eQKq0RH9CdpCNGZhUzEw0Hj6vx2LXiqw>
-    <xmx:hydLYau4A4lkt803rvi9TN_wu70iE1xJfiToI51scIZoGHm-m98VxA>
-    <xmx:hydLYSHfCbcq0jMD3UaqvTfuJkqkeWW311cROXn78H6wp1fj-WgPJw>
-    <xmx:hydLYbGDvJEj1WcPZNu761UIaO-sbM32gVm_NvbS93xOTNlnMLEFZ2FSjnQ>
+X-ME-Proxy: <xmx:iidLYeR99vL4tj-I7BHfwMIF0vgUFkljCJcTCvve2CydravAtXxUWw>
+    <xmx:iidLYWw2gupWhga9Kuh0TgvbE68xAfqH5XneyByopxZkjLbeheIUag>
+    <xmx:iidLYU7QzCooqHXd6bDIfxnVV2-m_9HmVZEJoWN7j8SgGDBUaXafMA>
+    <xmx:iydLYRp-f0e5e8rnXni46WctErVGx2jL3Zmi0eBRc8gRv5IqYYUrKA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Sep 2021 08:54:31 -0400 (EDT)
+ 22 Sep 2021 08:54:34 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -76,9 +76,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Florian Fainelli <f.fainelli@gmail.com>,
         Michael Stapelberg <michael@stapelberg.ch>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 2/5] clk: bcm-2835: Remove rounding up the dividers
-Date:   Wed, 22 Sep 2021 14:54:16 +0200
-Message-Id: <20210922125419.4125779-3-maxime@cerno.tech>
+Subject: [PATCH 3/5] drm/vc4: hdmi: Set a default HSM rate
+Date:   Wed, 22 Sep 2021 14:54:17 +0200
+Message-Id: <20210922125419.4125779-4-maxime@cerno.tech>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210922125419.4125779-1-maxime@cerno.tech>
 References: <20210922125419.4125779-1-maxime@cerno.tech>
@@ -88,69 +88,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver, once it found a divider, tries to round it up by increasing
-the least significant bit of the fractional part by one when the
-round_up argument is set and there's a remainder.
+When the firmware doesn't setup the HSM rate (such as when booting
+without an HDMI cable plugged in), its rate is 0 and thus any register
+access results in a CPU stall, even though HSM is enabled.
 
-However, since it increases the divider it will actually reduce the
-clock rate below what we were asking for, leading to issues with
-clk_set_min_rate() that will complain that our rounded clock rate is
-below the minimum of the rate.
+Let's enforce a minimum rate at boot to avoid this issue.
 
-Since the dividers are fairly precise already, let's remove that part so
-that we can have clk_set_min_rate() working.
-
-This is effectively a revert of 9c95b32ca093 ("clk: bcm2835: add a round
-up ability to the clock divisor").
-
-Fixes: 9c95b32ca093 ("clk: bcm2835: add a round up ability to the clock divisor")
+Fixes: 4f6e3d66ac52 ("drm/vc4: Add runtime PM support to the HDMI encoder driver")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index bf97b2b2a63f..3667b4d731e7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -932,8 +932,7 @@ static int bcm2835_clock_is_on(struct clk_hw *hw)
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index b4b4653fe301..74222b12f8c8 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -94,6 +94,7 @@
+ # define VC4_HD_M_SW_RST			BIT(2)
+ # define VC4_HD_M_ENABLE			BIT(0)
  
- static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 				    unsigned long rate,
--				    unsigned long parent_rate,
--				    bool round_up)
-+				    unsigned long parent_rate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	const struct bcm2835_clock_data *data = clock->data;
-@@ -945,10 +944,6 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
++#define HSM_MIN_CLOCK_FREQ	120000000
+ #define CEC_CLOCK_FREQ 40000
  
- 	rem = do_div(temp, rate);
- 	div = temp;
--
--	/* Round up and mask off the unused bits */
--	if (round_up && ((div & unused_frac_mask) != 0 || rem != 0))
--		div += unused_frac_mask + 1;
- 	div &= ~unused_frac_mask;
+ #define HDMI_14_MAX_TMDS_CLK   (340 * 1000 * 1000)
+@@ -2169,6 +2170,19 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 			vc4_hdmi->disable_4kp60 = true;
+ 	}
  
- 	/* different clamping limits apply for a mash clock */
-@@ -1079,7 +1074,7 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate);
- 	u32 ctl;
- 
- 	spin_lock(&cprman->regs_lock);
-@@ -1130,7 +1125,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 
- 	if (!(BIT(parent_idx) & data->set_rate_parent)) {
- 		*prate = clk_hw_get_rate(parent);
--		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
-+		*div = bcm2835_clock_choose_div(hw, rate, *prate);
- 
- 		*avgrate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
++	/*
++	 * If we boot without any cable connected to the HDMI connector,
++	 * the firmware will skip the HSM initialization and leave it
++	 * with a rate of 0, resulting in a bus lockup when we're
++	 * accessing the registers even if it's enabled.
++	 *
++	 * Let's put a sensible default at runtime_resume so that we
++	 * don't end up in this situation.
++	 */
++	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, HSM_MIN_CLOCK_FREQ);
++	if (ret)
++		goto err_put_ddc;
++
+ 	if (vc4_hdmi->variant->reset)
+ 		vc4_hdmi->variant->reset(vc4_hdmi);
  
 -- 
 2.31.1
