@@ -2,136 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9421C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 15:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B30C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 16:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81DB8610A1
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 15:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F186A6109E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 16:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236304AbhIVPRz convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 11:17:55 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56421 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233737AbhIVPRy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 11:17:54 -0400
-Received: (Authenticated sender: gregory.clement@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B80F9E0006;
-        Wed, 22 Sep 2021 15:16:22 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH v5 5/6] arm64: dts: marvell: armada-37xx: add
- device node for UART clock and use it
-In-Reply-To: <20210922105433.11744-6-pali@kernel.org>
-References: <20210922105433.11744-1-pali@kernel.org>
- <20210922105433.11744-6-pali@kernel.org>
-Date:   Wed, 22 Sep 2021 17:16:22 +0200
-Message-ID: <87o88k63p5.fsf@BL-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        id S231764AbhIVQFY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 12:05:24 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:15645 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231712AbhIVQFY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 12:05:24 -0400
+X-IronPort-AV: E=Sophos;i="5.85,314,1624287600"; 
+   d="scan'208";a="94720416"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 23 Sep 2021 01:03:52 +0900
+Received: from localhost.localdomain (unknown [10.226.92.203])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1704C4003EB6;
+        Thu, 23 Sep 2021 01:03:48 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/4] Add GbEthernet Clock support
+Date:   Wed, 22 Sep 2021 16:51:41 +0100
+Message-Id: <20210922155145.28156-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Pali,
+This patch series aims to add GbEthernet clock support.
+GbEthernet clock support involves handing mux clock support
+for HP clock and coupled clock for axi/chi module clocks which
+shares same bit for controlling the clock output.
 
-> This change defines DT node for UART clock "marvell,armada-3700-uart-clock"
-> and use this UART clock as a base clock for all UART devices.
+This patch series depend upon [1]
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20210922112405.26413-2-biju.das.jz@bp.renesas.com/
 
-Sorry to not have pointed this earlier but I found something a little
-unusual, see below:
+v3->v4:
+ * Renamed PLL5_2_DIV12 and PLL6_2_DIV2 to PLL5_250 and PLL6_250.
+ * Added locking, in case both clocks are changed concurrently
+ * initialized mstp_clock.enabled to match the current hardware state.
+v2->v3:
+ * Rebased to latest renesas-clk
+ * Updated commit header for all patches
+ * Replaced CLK_PLL5_2 with PLL5_FOUT3
+ * Removed CLK_PLL6_2 and pll6_2 as the clk is sourced from PLL6
+ * Added enabled flag to track the status of clock, if it is coupled
+   with another clock
+ * Introduced siblings pointer which points to the other coupled
+   clock
+ * coupled clock linking is done during module clk register.
+ * rzg2l_mod_clock_is_enabled function returns soft state of the
+   module clocks, if it is coupled with another clock
+v1->v2:
+ * No change. Separated clock patches from driver patch series as per [1]
+ [1]
+  https://www.spinics.net/lists/linux-renesas-soc/msg59067.html
+v1:-
+ * New patch
 
->
-> Signed-off-by: Pali Rohár <pali@kernel.org>
-> ---
->  arch/arm64/boot/dts/marvell/armada-3720-db.dts    |  4 ++++
->  .../boot/dts/marvell/armada-3720-espressobin.dtsi |  4 ++++
->  .../boot/dts/marvell/armada-3720-turris-mox.dts   |  4 ++++
->  arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts  |  4 ++++
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi      | 15 +++++++++++++--
->  5 files changed, 29 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> index 3e5789f37206..accf014a6a1e 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> @@ -191,6 +191,10 @@
->  	};
->  };
->  
-> +&uartclk {
-> +	status = "okay";
+Biju Das (4):
+  clk: renesas: rzg2l: Add support to handle MUX clocks
+  clk: renesas: r9a07g044: Add ethernet clock sources
+  clk: renesas: rzg2l: Add support to handle coupled clocks
+  clk: renesas: r9a07g044: Add GbEthernet clock/reset
 
-I found unusual to have to enable the clock at device tree level.
-Usually the clock driver is always loaded and then the clock is really
-enabled or disabled through the clock framework.
-
-[...]
-
-> diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> index 9acc5d2b5a00..5bc61c9615f5 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> @@ -132,10 +132,21 @@
->  				reg = <0x11500 0x40>;
->  			};
->  
-> +			uartclk: uartclk@12000 {
-> +				compatible = "marvell,armada-3700-uart-clock";
-> +				reg = <0x12010 0x4>, <0x12210 0x4>;
-> +				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
-> +					<&tbg 3>, <&xtalclk>;
-> +				clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S",
-> +					"TBG-B-S", "xtal";
-> +				#clock-cells = <1>;
-
-I think you could remove the following line and thanks to this there
-won't be any change in the dts of the board:
-> +				status = "disabled";
-> +			};
-> +
-
-Gregory
-
-
->  			uart0: serial@12000 {
->  				compatible = "marvell,armada-3700-uart";
->  				reg = <0x12000 0x18>;
-> -				clocks = <&xtalclk>;
-> +				clocks = <&uartclk 0>;
->  				interrupts =
->  				<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
->  				<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> @@ -147,7 +158,7 @@
->  			uart1: serial@12200 {
->  				compatible = "marvell,armada-3700-uart-ext";
->  				reg = <0x12200 0x30>;
-> -				clocks = <&xtalclk>;
-> +				clocks = <&uartclk 1>;
->  				interrupts =
->  				<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
->  				<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
-> -- 
-> 2.20.1
->
+ drivers/clk/renesas/r9a07g044-cpg.c | 29 ++++++++-
+ drivers/clk/renesas/rzg2l-cpg.c     | 96 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     | 26 +++++++-
+ 3 files changed, 149 insertions(+), 2 deletions(-)
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.17.1
+
