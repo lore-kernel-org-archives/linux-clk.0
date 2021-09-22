@@ -2,105 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5B2C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 09:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D91AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20A096126A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 09:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65DED60F41
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Sep 2021 10:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234308AbhIVJqP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Sep 2021 05:46:15 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:57802 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234233AbhIVJqO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Sep 2021 05:46:14 -0400
-Received: from [192.168.178.106] (p57bc9a45.dip0.t-ipconnect.de [87.188.154.69])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 5EDCC3ADF23;
-        Wed, 22 Sep 2021 09:44:43 +0000 (UTC)
-Subject: Re: [PATCH v5 0/9] clk: cs2000-cp: add dynamic mode and more features
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     robh+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-References: <20210901093631.1403278-1-daniel@zonque.org>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <72d37dde-f50a-df89-57c7-243e7f287680@zonque.org>
-Date:   Wed, 22 Sep 2021 11:44:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S234825AbhIVKdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Sep 2021 06:33:37 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:56756 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234935AbhIVKde (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Sep 2021 06:33:34 -0400
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 18MAB7N1012563;
+        Wed, 22 Sep 2021 18:11:07 +0800 (GMT-8)
+        (envelope-from chin-ting_kuo@aspeedtech.com)
+Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 22 Sep
+ 2021 18:31:25 +0800
+From:   Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+To:     <robh+dt@kernel.org>, <joel@jms.id.au>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <adrian.hunter@intel.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <andrew@aj.id.au>
+CC:     <BMC-SW@aspeedtech.com>, <steven_lee@aspeedtech.com>
+Subject: [PATCH 01/10] clk: aspeed: ast2600: Porting sdhci clock source
+Date:   Wed, 22 Sep 2021 18:31:07 +0800
+Message-ID: <20210922103116.30652-2-chin-ting_kuo@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
+References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
 MIME-Version: 1.0
-In-Reply-To: <20210901093631.1403278-1-daniel@zonque.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.10.9]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 18MAB7N1012563
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mike, Stephen,
+- There are two clock sources used to generate
+  SD/SDIO clock, APLL clock and HCLK (200MHz).
+  User can select which clock source should be used
+  by configuring SCU310[8].
+- The SD/SDIO clock divider selection table SCU310[30:28]
+  is different between AST2600-A1 and AST2600-A2/A3.
+  For AST2600-A1, 200MHz SD/SDIO clock cannot be
+  gotten by the dividers in SCU310[30:28] if APLL
+  is not the multiple of 200MHz and HCLK is 200MHz.
+  For AST2600-A2/A3, a new divider, "1", is added and
+  200MHz SD/SDIO clock can be obtained by adopting HCLK
+  as clock source and setting SCU310[30:28] to 3b'111.
 
-Is there a chance to get this series reviewed and potentially queued for
-5.16?
+Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+---
+ drivers/clk/clk-ast2600.c | 69 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 8 deletions(-)
 
-We have clearance for the devicetree side, and the functional changes of
-the driver are all guarded by new feature flags, so my patches shouldn't
-break existing setups.
-
-
-Thanks a lot,
-Daniel
-
-
-On 9/1/21 11:36 AM, Daniel Mack wrote:
-> This patch series adds support for dynamic mode, configurable clock
-> skip settings and a tranisition to regmap.
-> 
-> The most significant change is the additional support for dynamic mode.
-> Currently, the driver only supports static mode in which the (currently
-> mandatory) CLK_IN clock input is not used by the hardware.
-> 
-> Unlike v3 of this series, the patch stack now maintains full
-> compatibility with existing bindings. Rather than infering the mode of
-> operation through the presence of an optional clock, the driver now
-> parses a new DT property to enable the dynamic mode.
-> 
-> Thanks,
-> Daniel
-> 
-> Changelog:
-> 
-> v4 -> v5:
-> 	* Fixed a regression for static mode configurations
-> 	* Added Rob's Acked-by signatures
-> 
-> v3 -> v4:
-> 	* Introduced cirrus,dynamic-mode in favor of making CLK_IN
-> 	  optional
-> 
-> 
-> Daniel Mack (9):
->   dt-bindings: clock: convert cs2000-cp bindings to yaml
->   dt-bindings: clock: cs2000-cp: document aux-output-source
->   dt-bindings: clock: cs2000-cp: document cirrus,clock-skip flag
->   dt-bindings: clock: cs2000-cp: document cirrus,dynamic-mode
->   clk: cs2000-cp: Make aux output function controllable
->   clk: cs2000-cp: add support for dynamic mode
->   clk: cs2000-cp: make clock skip setting configurable
->   clk: cs2000-cp: freeze config during register fiddling
->   clk: cs2000-cp: convert driver to regmap
-> 
->  .../bindings/clock/cirrus,cs2000-cp.yaml      |  91 +++++++
->  .../devicetree/bindings/clock/cs2000-cp.txt   |  22 --
->  drivers/clk/Kconfig                           |   1 +
->  drivers/clk/clk-cs2000-cp.c                   | 240 +++++++++++-------
->  include/dt-bindings/clock/cirrus,cs2000-cp.h  |  14 +
->  5 files changed, 261 insertions(+), 107 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
->  create mode 100644 include/dt-bindings/clock/cirrus,cs2000-cp.h
-> 
+diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+index bc3be5f3eae1..a6778c18274a 100644
+--- a/drivers/clk/clk-ast2600.c
++++ b/drivers/clk/clk-ast2600.c
+@@ -168,6 +168,30 @@ static const struct clk_div_table ast2600_div_table[] = {
+ 	{ 0 }
+ };
+ 
++static const struct clk_div_table ast2600_sd_div_a1_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
++static const struct clk_div_table ast2600_sd_div_a2_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 1 },
++	{ 0 }
++};
++
+ /* For hpll/dpll/epll/mpll */
+ static struct clk_hw *ast2600_calc_pll(const char *name, u32 val)
+ {
+@@ -424,6 +448,11 @@ static const char *const emmc_extclk_parent_names[] = {
+ 	"mpll",
+ };
+ 
++static const char *const sd_extclk_parent_names[] = {
++	"hclk",
++	"apll",
++};
++
+ static const char * const vclk_parent_names[] = {
+ 	"dpll",
+ 	"d1pll",
+@@ -523,18 +552,42 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hw);
+ 	aspeed_g6_clk_data->hws[ASPEED_CLK_EMMC] = hw;
+ 
+-	/* SD/SDIO clock divider and gate */
+-	hw = clk_hw_register_gate(dev, "sd_extclk_gate", "hpll", 0,
+-			scu_g6_base + ASPEED_G6_CLK_SELECTION4, 31, 0,
+-			&aspeed_g6_clk_lock);
++	clk_hw_register_fixed_rate(NULL, "hclk", NULL, 0, 200000000);
++
++	regmap_read(map, 0x310, &val);
++	hw = clk_hw_register_mux(dev, "sd_extclk_mux",
++				 sd_extclk_parent_names,
++				 ARRAY_SIZE(sd_extclk_parent_names), 0,
++				 scu_g6_base + ASPEED_G6_CLK_SELECTION4, 8, 1,
++				 0, &aspeed_g6_clk_lock);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+-	hw = clk_hw_register_divider_table(dev, "sd_extclk", "sd_extclk_gate",
+-			0, scu_g6_base + ASPEED_G6_CLK_SELECTION4, 28, 3, 0,
+-			ast2600_div_table,
+-			&aspeed_g6_clk_lock);
++
++	hw = clk_hw_register_gate(dev, "sd_extclk_gate", "sd_extclk_mux",
++				  0, scu_g6_base + ASPEED_G6_CLK_SELECTION4,
++				  31, 0, &aspeed_g6_clk_lock);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
++
++	regmap_read(map, 0x14, &val);
++	/* AST2600-A2/A3 clock divisor is different from AST2600-A1 */
++	if (((val & GENMASK(23, 16)) >> 16) >= 2) {
++		/* AST2600-A2/A3 */
++		hw = clk_hw_register_divider_table(dev, "sd_extclk", "sd_extclk_gate",
++					0, scu_g6_base + ASPEED_G6_CLK_SELECTION4, 28, 3, 0,
++					ast2600_sd_div_a2_table,
++					&aspeed_g6_clk_lock);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++	} else {
++		/* AST2600-A1 */
++		hw = clk_hw_register_divider_table(dev, "sd_extclk", "sd_extclk_gate",
++					0, scu_g6_base + ASPEED_G6_CLK_SELECTION4, 28, 3, 0,
++					ast2600_sd_div_a1_table,
++					&aspeed_g6_clk_lock);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++	}
+ 	aspeed_g6_clk_data->hws[ASPEED_CLK_SDIO] = hw;
+ 
+ 	/* MAC1/2 RMII 50MHz RCLK */
+-- 
+2.17.1
 
