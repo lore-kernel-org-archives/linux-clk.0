@@ -2,184 +2,248 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE97C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAAFC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1E6B6115A
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 917206124B
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231380AbhIWNYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 09:24:37 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:39289 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241188AbhIWNYg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 09:24:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1632403385; x=1663939385;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=80RzUi07GT1G11QEPX6EUNpdrXm6tSoSzHt8n8dv1P4=;
-  b=avzxV7uimXRkFMFPl4x0MLAkJUnH8YUc+0JqIqRcHaUJ0wiugLrzX8zZ
-   L8SknK/6aiRIwz7rpXxzPxyy5CJDkGcN26XrfDhuouD4pxsrDY/AElwYm
-   XaAfUJfrMKV8GlER11+xO/UNz43uMmLnBrzOUWA5l7R33Bsr2LZPuOchR
-   KShVYAgvAjsyIQmIH2RgYv2BZk3/tAuYy1M7X34VKfvzDvnBAGnB/Yt5v
-   5Tsd4EtoVoK6YFmAS1rg5YiKxFrrADk1FglquZp6j/qrb4SToU5C4xo2Y
-   y4PUhRI6r61GDRcyUDp7bwMCIcqa3IWXhbofd4kNa7VCf57logAQyvO5U
-   w==;
-IronPort-SDR: ZlrEHHfY9X+BtmvVPEd5juDqZ41FllpdqIat64mCi2m7XFF8LQVJl5YFlUx39ui4gF1Ids031n
- 3LlRDpmA19LFFqLAxQ7jXiiVE9y4ah6EBTpOnDr7uC9gvyZ24JNZf50tqBvUA3XKaOIcQJlUqX
- xJXyUNSGCTf9HcvkEMvV9Azy8oBNur4H3IG9A08vNor1Irlh+NultFmjEs+nI6wrWSUPyP2Lx3
- qWNyvWXId8aGawgflQr3aINkUEEbTik+uHRUUV8WK0vTk1lAgWzc/xnMk1Ydvr8wSd2Gmp2VBV
- yur+8trWW3NOV8bJLpDs7mgm
-X-IronPort-AV: E=Sophos;i="5.85,316,1624345200"; 
-   d="scan'208";a="145305650"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Sep 2021 06:23:04 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 23 Sep 2021 06:23:04 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14 via Frontend
- Transport; Thu, 23 Sep 2021 06:23:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oGqx7on8k4GHR/G6FF/Eut2m2ClkxkDu58W1cVuwwqoMmiiKoPr7d0yc8bQKC7YYOmRDFcGR+FoVufNwh4ndDPXBLSqoN08G9YCqZU1E+xoyK94O9BcGFTbEcza+BU1c/NT9UmciCc7e5ZQUWHd3lcJfDQQrnRIC0DA6P4TrEuoMKSPBf7Yi9ilHNli0Bfncmyx8EEP5B57wuvWMqib1m7tKKM8vEffFugrA5OwSktPzO1pHg1GhCNbUQfL9aBnFwtPovEQeiFoAq2kuuvDIn4yMQs6MeG7GCVseKXHMAHQBQJWK7C4e7h5X0tWlKfIZzXIQgFjW1E/CmaGyY3tSaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=80RzUi07GT1G11QEPX6EUNpdrXm6tSoSzHt8n8dv1P4=;
- b=AIs2PO1129Dk7pSi/MNMdQ22bDbh4jroogOeVzUFRzB04x810eoHWYwxsLBQtrEtF+YnCCp/46CoQ11pagVxwtbcZY6Jk+oAgQD3m2lMWfbUZBpzrZlkrLKOIgOGPS0XPUGnO1FTRFAiUQx05KenTdJkwj5lXlw4yiZikbnLc8DfUPlcxLkyh3oylr9ab7AmKs1CaB2iz/p0IGwmeNNkBRqVHA36K4yG+2YLUOpeFw+aL6Dz8UrCHKu4vaJ4fURjxjh2yHkmG1qu0eO4QYoCEJNZXMtSjQi8wvV3CrOqxzg06ExuqzkFZwvv49TxPyojUdGL2qCAI9BIX1+dGMpDMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=80RzUi07GT1G11QEPX6EUNpdrXm6tSoSzHt8n8dv1P4=;
- b=bqmv1JrcOyH/+M2ob7XnlI7uvoN36qfCBr2aw5cySenhIJVmjbsr9u6vp4z8WLGC2kKXB5U77xbb6RYeHldvFXATS/4zawKS5/XKNDIDjTDg8vh4RsBSOFYPAAFNIGWJcp4Z4/ZIntrAMp6Z+OIoytMGSodaOt/Rr8/ag+kNCgk=
-Received: from PH0PR11MB4775.namprd11.prod.outlook.com (2603:10b6:510:34::22)
- by PH0PR11MB4968.namprd11.prod.outlook.com (2603:10b6:510:39::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.15; Thu, 23 Sep
- 2021 13:23:03 +0000
-Received: from PH0PR11MB4775.namprd11.prod.outlook.com
- ([fe80::6981:5132:c754:1b63]) by PH0PR11MB4775.namprd11.prod.outlook.com
- ([fe80::6981:5132:c754:1b63%5]) with mapi id 15.20.4544.015; Thu, 23 Sep 2021
- 13:23:03 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 01/17] clk: at91: re-factor clocks suspend/resume
-Thread-Topic: [PATCH v4 01/17] clk: at91: re-factor clocks suspend/resume
-Thread-Index: AQHXsH4jN8RQ6/Kng0OFCk83wLpv2w==
-Date:   Thu, 23 Sep 2021 13:23:03 +0000
-Message-ID: <ed0c9f6b-0e45-a792-4f5c-9944b067d9d5@microchip.com>
-References: <20210923132046.1860549-1-claudiu.beznea@microchip.com>
- <20210923132046.1860549-2-claudiu.beznea@microchip.com>
-In-Reply-To: <20210923132046.1860549-2-claudiu.beznea@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+        id S232316AbhIWN3U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 09:29:20 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:40901 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231380AbhIWN3U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 09:29:20 -0400
+Received: by mail-wr1-f42.google.com with SMTP id t28so3821860wra.7;
+        Thu, 23 Sep 2021 06:27:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/wLuOTGOM2923erGAXxPQ9YurX8bSLtQ7+eKGtfZWYs=;
+        b=YKhmK3HcG+Bs+P8lY25OI+CSW1hq2GLyozXvd1c90e4WD7DaiDtVPyPC0QwzLgQqLD
+         HC+S/gxfK9WNmeFwo9KAFu6onf0hRctAmZvWh7vWs4lzERQMTrV4pA6+84RcXe7t45D5
+         0PV/UOlJw7dAOOCGSA4a+EBJCpF/s5VQoKCdepuXt5JcfX8eJ+om1w4P2ZAHShq159C+
+         3K00LQaQr0ClDoUnA9RBoioRosDzFHBQBeTMcusvZDiNRTZ7CGERblo6A2NrVCESvfxE
+         xf0q6woy4WeWlTVs7SEzV+4twTo0+uDzVToMuxneykROThNLhk2OM/Jvn4RNwVCkhOlP
+         uF3w==
+X-Gm-Message-State: AOAM532m2Ye5DBL3A8S2EEDUYEDMzD7MXJY0UgDB/ev4fGinT8AoLjDg
+        YJDWSrG2VKY9nZijnwEzZGA1QrQeo32n4g==
+X-Google-Smtp-Source: ABdhPJxzbpr0WNXSLMFzPeFPqNvzQRU/+GHoYsE1TmQ7rQ7ma/BL93UnfJOiMlt4n1Z+t5zWQUQkAg==
+X-Received: by 2002:adf:f486:: with SMTP id l6mr4929948wro.375.1632403666666;
+        Thu, 23 Sep 2021 06:27:46 -0700 (PDT)
+Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.googlemail.com with ESMTPSA id u1sm2570543wmc.29.2021.09.23.06.27.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Sep 2021 06:27:45 -0700 (PDT)
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Will McVicker <willmcvicker@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20210920190350.3860821-1-willmcvicker@google.com>
+ <20210920190350.3860821-2-willmcvicker@google.com>
+ <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
+ <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
+ <2c8a79f7-711a-b075-745f-ea77b82a1117@canonical.com>
+ <CABYd82bzKh=QQHyk-kPXekzCKx+Uy-z2TY5qAQQNfuew=h=O-w@mail.gmail.com>
+ <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
+ <YUx5uhKW/Jy2r3lv@google.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
+ config logic
+Message-ID: <30a1d0f3-a17c-bf87-2519-542063a7a663@kernel.org>
+Date:   Thu, 23 Sep 2021 15:27:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
-authentication-results: baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4e3ce2b4-714a-4797-8078-08d97e9545ba
-x-ms-traffictypediagnostic: PH0PR11MB4968:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <PH0PR11MB496885247AB919CB3B214B7C87A39@PH0PR11MB4968.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: iEcUKAvNGOBf0RdG/+FsmB8+qpB1DHYrSp/wyeG9W9SaHvSsJjeq4eGIglUlby2bg0N44wofgRlrj6autcQxPmIRNE5Kgi6DCqKvWopU3niPsnCDPJkMSD+7CmXljP3XJBt/nOQMB0KrUZeXgvLQXTBuxgftC4vi4k+POIgpvkQb/wS+8+wXf1jAYQ6QE3RamEcq/tqxusifaCtki1LU7Q5YNvon8rIdCZtdCam5j3r/RHCXiHjma2YYIsL33rj9eWwXrU1nOfeTx/7sYziJgGQTEAPHfEQnwVCzD9wyJw+FmaU02t/h39OWQDMCL1iHpgjqc5S6BK/ZZk6Bi1G3YAkPeGciR3dgA8eUk+vZN+2TKTwx8q/OmfhGJR5rQ39iiUSbbWkNlW1IJX7w8abAnhubucM6zbzFzBD/nPgnWHiWLaYO9osmMgjz09rjFxsv8UMR9ZHRWlGh2XUmIoBfvpt9g2jgChCdLsYBc1LaAM1mnsUbzo3NXVGSnx4DN+H5hQgFsBxPym85VbUdn1Dw6o9bqLQqhBvepN6e5OqcvzvAAIXVZt3NyMFiozL/rlTciMCgdxOB9RcAuUuaAXRFJvQGHcaV2bwUtf/B++xwP1uxSxVqqmt/jXmLL6+F2v0BObaZ9YpcWaoYJthsuNkNSi6G+5Ilgd+CLR8RljpyOe2hdj3K8j8EzcQp1hVtPrlF4pVKcKZKYSN72AnO/gLoq/gczhLUnOut3oalh9uOPo1tdkWWMSjlmR19/fVNpUayftNyS9AKQxRU3epaWF9My8j2JrATXenfSwBpR/9RNEq0kLP2U9Fdd5iDIul0er1XbYkypoiEmxpxrwbaFO+RzXIesoIlmIFFGI73mGDSQcQ=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4775.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(38070700005)(6636002)(8676002)(316002)(6512007)(8936002)(5660300002)(86362001)(110136005)(54906003)(71200400001)(2616005)(4326008)(91956017)(15650500001)(122000001)(76116006)(83380400001)(64756008)(66556008)(38100700002)(2906002)(31696002)(966005)(186003)(31686004)(66446008)(66946007)(66476007)(26005)(6506007)(53546011)(36756003)(6486002)(508600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OUI0aE9UQmt2MnlJa01wNkd0QXUxVVZpR3poWmRnMXIzVUJFN1VCaCtidzFx?=
- =?utf-8?B?QXdvZTd6Ykk0enY0Nmk2NlNjcmhYY0ZRNytqNUJTRC9DL3MreHdubmEvUzJh?=
- =?utf-8?B?YWNlQWpIdUozd29SRndkUFd5YUg1aklpTm9sMFAzdHE0b3NKQ1pXMVAyQ1hL?=
- =?utf-8?B?L002RG9ZV1NQMlE3c1JobEtIRXAwZ3dpKzAzQWVWWlVWWnB6KzJQdkVjNDds?=
- =?utf-8?B?dU5YN3ZSbFBhcEpOK0EySjRtZnczQkUzTm44TDVvZFcyZ3ZuOGlXR2VRYmRu?=
- =?utf-8?B?VmtmNHJvV1FNZy9COWhCN1lZa0h5ZTZrb20rQTdjQ3pIT29uR29XSTJTMXp0?=
- =?utf-8?B?d3l3ZFVGYlQ4cUdLY1JkakJYUUZuT0c5RldES3NlSDRwUW1BdGJrVjNjUEhF?=
- =?utf-8?B?em5hakFWUFF3QnRIcEJaNmxKUVV5cGdxRHFzcG05VGE2MUs5bjYyMW5oQlM5?=
- =?utf-8?B?dG1EdXF3U3IvMUl1SFBxSmROejR1Q3Y2NGs5dmxjNjc3Yk1YN3pHNVd4aTFI?=
- =?utf-8?B?QmR4Vy9xZzk3ZE1yYi82UEcrNEt5Um5za2xPQVpLUkR1S3M1WnpYbWNNN0lP?=
- =?utf-8?B?VkxTT1ZIbTBFcjlYWHZ3bmMzZDIxSmh3ci9CSkNnRTh6LzVYUXlCbnpKNnlF?=
- =?utf-8?B?TDBpTzZFVm52K3pBdmYyb2tYQXdwYWxidmcxbEdQdFgxWXB5WlZUemVhZGx1?=
- =?utf-8?B?RU9BRWJHSTVvMmFzSlJUQTNSRlNGclJVU0JweU5hTDdmR3RxbDVyM3RNc2NK?=
- =?utf-8?B?K3VydUNkNnpVaFhpU0FvRjErV0ZOV2pFY0llNnRNOTZmUWhyRDhtVUh3akl0?=
- =?utf-8?B?WW1xR25Ra2Q1VTE3bS9PMXgzQXcxYXFQOTV6ZTF1L2YxOGJQU01mbFBZdi9R?=
- =?utf-8?B?ZlliL0F3REp4SEkzK2QvS3k4Ui9YcGUyNWIybFRaYUx0SWVCdy9PV0FyeGcz?=
- =?utf-8?B?TjZRMlVMZ0NaTk9wb0lpSU8zOGRRUG9wQlhVZ0RtNWMvSUdBa1lmMjdHWWpq?=
- =?utf-8?B?ZzhmdHhWMnd3R3hpMXhyOUhLMGVsOFc1WVBESUtCayszVHkrYlJIRVU1ZXBv?=
- =?utf-8?B?WGNpc2RNak5rNzJxMHNyUGtiLzNaMTQ5bE5WTWJhMllUR3lRTER5TXlSTXg5?=
- =?utf-8?B?SWZQMjJmemxIbVBNS21yY3FxdjIxMUFOZW5kajFwd0NqWkowZlR0T1lEUkxz?=
- =?utf-8?B?NERkWmExT1JTYndTdEE1U21IaGVlZGpTRTBMd2l3RmxKbGQ2UUdlTHJwbUFn?=
- =?utf-8?B?cUErZDNNa0thQWVSUkZEMTI0R1ZEMS85ZzY4dUdjMEI3WDgyeFdPNWg5U2Zr?=
- =?utf-8?B?UEFPbVB0Q0xhbTU1WUszb3ZyUENGZXJrUHI1UWxpZWgrZWRIcGg3ZFNzdm84?=
- =?utf-8?B?dDRWd05GdnV6eHFuenBMRXdYcG9PN2plVkFIUDkzMklFYktlaG1NQ2QxVHQ2?=
- =?utf-8?B?UDhzNVpzR3NYKzJYbUdub1pHSFBMN3hUSHY1UEpESnpHNTZHcWJteEJuZUl2?=
- =?utf-8?B?U1VTUkh3bnJqVFpXZFhsWkNrRHVJR1A1Q0M0L0tqS1NVVVlNSkl0LzBLRlM5?=
- =?utf-8?B?aUkyOVllTnJidXpNeStMYnR5ZXJjemYzUE1Xcyt0ZmQzWklvbDBXSGN1NzNK?=
- =?utf-8?B?N3p1ZW1lQTBPb0dNTWN0VFFzNFJmWGJZSTRGcWVBTmQ3MlJvOE5KUURFaENi?=
- =?utf-8?B?ZTBDYXFDMTJ6UGtHai9LK05UTktrMmFTRzBrVlFtSkRRZmNrMUE0eGpNSFJk?=
- =?utf-8?Q?IBbY1r8ObetgCdEnV8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7501C4B510408C4EA5E09AD2FC580E27@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4775.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e3ce2b4-714a-4797-8078-08d97e9545ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2021 13:23:03.3578
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6McTPbwc7xp99xQkpKK2jdvL8p0Nx5UErpvjkVOC2ALNOMNlzp1/ydDo2V0DbbHkInyX2zcrJAxgo52s7OjVT7kuMkNZ0A3Wr24fuhnyBj0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4968
+In-Reply-To: <YUx5uhKW/Jy2r3lv@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMjMuMDkuMjAyMSAxNjoyMCwgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+IFNBTUE1RDIgYW5k
-IFNBTUE3RzUgaGF2ZSBhIHNwZWNpYWwgcG93ZXIgc2F2aW5nIG1vZGUgKGJhY2t1cCBtb2RlKSB3
-aGVyZQ0KPiBtb3N0IG9mIHRoZSBTb0MncyBjb21wb25lbnRzIGFyZSBwb3dlcmVkIG9mZiAoaW5j
-bHVkaW5nIFBNQykuIFJlc3VtaW5nDQo+IGZyb20gdGhpcyBtb2RlIGlzIGRvbmUgd2l0aCB0aGUg
-aGVscCBvZiBib290bG9hZGVyLiBQZXJpcGhlcmFscyBhcmUgbm90DQo+IGF3YXJlIG9mIHRoZSBw
-b3dlciBzYXZpbmcgbW9kZSB0aHVzIG1vc3Qgb2YgdGhlbSBhcmUgZGlzYWJsaW5nIGNsb2NrcyBp
-bg0KPiBwcm9wZXIgc3VzcGVuZCBBUEkgYW5kIHJlLWVuYWJsZSB0aGVtIGluIHJlc3VtZSBBUEkg
-d2l0aG91dCB0YWtpbmcgaW50bw0KPiBhY2NvdW50IHRoZSBwcmV2aW91c2x5IHNldHVwIHJhdGUu
-IE1vcmVvdmVyIHNvbWUgb2YgdGhlIHBlcmlwaGVyYWxzIGFyZQ0KPiBhY3RpbmcgYXMgd2FrZXVw
-IHNvdXJjZXMgYW5kIGFyZSBub3QgZGlzYWJsaW5nIHRoZSBjbG9ja3MgaW4gdGhpcw0KPiBzY2Vu
-YXJpbywgd2hlbiBzdXNwZW5kaW5nLiBTaW5jZSBiYWNrdXAgbW9kZSBjdXRzIHRoZSBwb3dlciBm
-b3INCj4gcGVyaXBoZXJhbHMsIGluIHJlc3VtZSBwYXJ0IHRoZXNlIGNsb2NrcyBuZWVkcyB0byBi
-ZSByZS1jb25maWd1cmVkLg0KPiANCj4gVGhlIGluaXRpYWwgUE1DIHN1c3BlbmQvcmVzdW1lIGNv
-ZGUgd2FzIGRlc2lnbmVkIG9ubHkgZm9yIFNBTUE1RDIncyBQTUMNCj4gKGFzIGl0IHdhcyB0aGUg
-b25seSBvbmUgc3VwcG9ydGluZyBiYWNrdXAgbW9kZSkuIFNBTUE3RyBzdXBwb3J0cyBhbHNvDQo+
-IGJhY2t1cCBtb2RlIGFuZCBpdHMgUE1DIGlzIGRpZmZlcmVudCAoZmV3IG5ldyBmdW5jdGlvbmFs
-aXRpZXMsIGRpZmZlcmVudA0KPiByZWdpc3RlcnMgb2Zmc2V0cywgZGlmZmVyZW50IG9mZnNldHMg
-aW4gcmVnaXN0ZXJzIGZvciBlYWNoDQo+IGZ1bmN0aW9uYWxpdGllcykuIFRvIGFkZHJlc3MgYm90
-aCBTQU1BNUQyIGFuZCBTQU1BN0c1IFBNQyBhZGQNCj4gLnNhdmVfY29udGV4dCgpLy5yZXN1bWVf
-Y29udGV4dCgpIHN1cHBvcnQgdG8gZWFjaCBjbG9ja3MgZHJpdmVyIGFuZCBjYWxsDQo+IHRoaXMg
-ZnJvbSBQTUMgZHJpdmVyLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2xhdWRpdSBCZXpuZWEgPGNs
-YXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQo+IC0tLQ0KDQpJIGZvcmdvdCB0byBtZW50aW9u
-IHRoYXQgdGhpcyBwYXRjaCBhcHBsaWVzIGdvb2Qgb24gdG9wIG9mIHBhdGNoIGF0IFsxXS4NCg0K
-VGhhbmsgeW91LA0KQ2xhdWRpdSBCZXpuZWENCg0KWzFdDQpodHRwczovL2xvcmUua2VybmVsLm9y
-Zy9sa21sLzIwMjEwOTEzMDgyNjMzLjExMDE2OC0xLWNsZW1lbnQubGVnZXJAYm9vdGxpbi5jb20v
-DQo=
+On 23/09/2021 14:57, Lee Jones wrote:
+> On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
+> 
+>> On 21/09/2021 19:58, Will McVicker wrote:
+>>> On Tue, Sep 21, 2021 at 1:35 AM Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@canonical.com> wrote:
+>>>>
+>>>> On 21/09/2021 09:50, Geert Uytterhoeven wrote:
+>>>>> On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>> On 20/09/2021 21:03, Will McVicker wrote:
+>>>>>>> COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
+>>>>>>> to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
+>>>>>>> "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
+>>>>>>> or modularize this driver.
+>>>>>>
+>>>>>> The clock drivers are essential, you cannot disable them for a generic
+>>>>>> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
+>>>>>
+>>>>> Obviously it's not gonna work if the clock driver is not enabled
+>>>>> at all.  But does it work if you make the clock driver modular, and
+>>>>> put it with all other essential driver modules in initramfs?  Debugging
+>>>>> would be hard, as the serial console driver also relies on clocks
+>>>>> and PM Domains etc.
+>>>>
+>>>> The kernel could boot without clock drivers (default settings from
+>>>> bootloader), probe clocks from initramfs and proceed with rootfs from
+>>>> eMMC/SD/net.
+>>>>
+>>>> In theory.
+>>>>
+>>>> However I have no reports that it ever worked. If there is such working
+>>>> upstream configuration, I don't mind here. Just please explain this in
+>>>> the commit msg.
+>>>>
+>>>>>
+>>>>> If not, this patch should be NAKed, until it works with a modular
+>>>>> clock driver.
+>>>>>
+>>>>> If yes, perhaps another line should be added (_before_ the other line)?
+>>>>>
+>>>>>   + default m if ARCH_EXYNOS && MODULES
+>>>>>     default y if ARCH_EXYNOS
+>>>>>
+>>>>> However, many developers may want MODULES=y, but not want to bother
+>>>>> with an initramfs.  So perhaps we need a new symbol
+>>>>> MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
+>>>>> driver default to m if that is enabled?
+>>>>
+>>>> Yeah, that's indeed a problem to solve. For most users (and distros)
+>>>> building kernel for Exynos this should be built-in by default.
+>>>>
+>>>> Anyway, the option is non-selectable so it cannot be converted to "m" or
+>>>> disabled. And this is claimed in the commit msg:
+>>>> "provide flexibilty for vendors to disable or modularize this driver."
+>>>>
+>>>> The commit does not achieve it.
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> Thanks for the reviews! As Lee has explained in his replies, the
+>>> intent of this series is to provide config flexibility to create a
+>>> defconfig that allows us to move out SoC specific drivers in order to
+>>> create a generic kernel that can be used across multiple devices with
+>>> different SoCs.
+>>
+>> That's quite generic statement... or let me put it that way - we already
+>> have this ability to create a generic kernel supporting different SoCs.
+>> Exynos and other ARMv7 and ARMv8 platforms are multiplatform.
+>>
+>> Task is done.
+> 
+> multi_v7_defconfig and ARMv8's defconfig are bloated monoliths which
+> provide limited flexibility.  Good for testing and messing around -
+> not much good for real products.
+
+I am not saying about defconfigs. I am saying that ARMv8 platform is
+multiplatform so we already solved the problem Will mentioned. :)
+
+> 
+>> Please be more specific about use case and describe what exactly in
+>> current upstream multiplatform kernel is missing, what is not
+>> multiplatform enough.
+> 
+> The use-case is GKI.  A realistic middle-ground between fully open
+> source and real-world usage of the Linux kernel in a competitive
+> technical arena.  GKI aims to be as close to Mainline as possible,
+> whilst allowing hardware vendors to supply their own software
+> containing their perceived competitive edge and/or supporting
+> not-yet-released hardware platforms.
+
+<grumpy mode>
+Therefore the use case is to not contribute anything upstream around
+ARCH_EXYNOS but use it in millions of devices downstream with hundreds
+of out-of-tree modules. The use case is to make life easy for the vendor
+and out-of-tree code, not for the upstream. Instead of promoting
+upstreaming, or leaning towards usptream in some balanced way, the use
+case is to entirely go to out-of-tree.
+
+I am not thinking here about edge or not-yet-released platforms but
+"ancient" in terms of current SoC business, e.g. 3-5 years old.
+</grumpy mode>
+
+> 
+> If you end up over-constraining the ability to configure the kernel in
+> useful/meaningful ways, that makes one of the main (best intention)
+> aims of GKI, (i.e. to have an upstream first ethos in order to be as
+> close to upstream as possible) much more difficult.
+
+GKI encourages core kernel changes to be upstreamed but it is
+effectively the nail in the coffin of upstreaming vendor SoC changes.
+There is simply no incentive for less-cooperative vendor to upstream
+it's modules (except usual benefits like code quality and user support
+which are not important for less-cooperative vendors).
+
+The kernel should be configured mainly towards mainline platforms. Not
+the other way around. This of course does not stop it for supporting
+out-of-tree code, but I guess you also know that what's out-of-tree, it
+does not exist. :)
+
+> 
+> I put in a lot of effort to ensure GKI doesn't end up as just another
+> fork of the Linux kernel.  So far, so good, but flexibility and
+> understanding is key.
+> 
+>>> I'm sorry I added confusion by mentioning
+>>> modularization. All of these drivers that I am modifying in this
+>>> series can be modularized which is an ongoing effort, but is not
+>>> addressed here and I don't believe that modularizing them should be a
+>>> requirement before supporting enabling/disabling them.
+>>
+>> Since the disabling the driver for a kernel supporting Exynos does not
+>> make any sense, then making it at least modular unfortunately it is a
+>> requirement.
+> 
+> I can go with that.
+> 
+>>> I will update the series with my patch that refactors the Samsung SoC
+>>> drivers menuconfig to make these visible as well.
+>>
+>> I would first recommend to really describe your use case because my
+>> questions about this are still unanswered.
+> 
+> Hopefully my replies have helped somewhat.
+> 
+> Happy to discuss further if required.
+> 
+> If all else fails, feel free to ping me on IRC (lag).
+
+Thanks Lee, you described the use case. In general I like it and support
+it, except for what I wrote in the other mail.
+
+Vendor does not contribute much therefore there is no balance in
+upstreaming. Since none of other vendor's platforms are supported, I am
+looking only at what is supported. From that perspective - the change
+proposed by Will and previous guys, does not have much sense.
+
+My perspective probably would change a lot if vendor did contribute some
+of its non-edge platforms (3-5 years old)... especially that unlike few
+community guys (e.g. PostmarketOS), vendor has shit-tons of money and
+the hardware manuals. :)
+
+Instead of pushing this change, please let's give some incentive to the
+vendor for upstreaming anything.
+
+Best regards,
+Krzysztof
