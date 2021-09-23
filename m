@@ -2,217 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A526C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9DFC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE5E61152
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8681261050
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241132AbhIWM7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 08:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240787AbhIWM7G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 08:59:06 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCF8C061574
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:57:34 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id d21so16821991wra.12
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=IFhO86zUCGeR+R0X9HVERqTznoNeBD84llm7FMDDqNs=;
-        b=aCI79VzTHBk0a6kt1kOIvS16kB6nPZXPZOmG/HGbBVrN7PuuR8bn148nWKg2/KHoMY
-         g98qg7Yxi+xv2TGfww0sdIiDmDtnEvgJjLo4wTfFK5/egbhiNCgeyauYrKoyDKK5VCsl
-         2eaFEdJSdgNsKntpCCPjxrWn1yS4uSBOx8pcn335bHUP9s1Up4N2OXxgfejgicgfKM4E
-         YIVVXcUKZWS8paAStrOs4HldG/v2qly8OzZV9URbqfbMcKxBz80nafYfKKfMntjEygCM
-         tMn8+LOMclBlAiy4a/geGdjnuUnzdqQt5xajRKAW/o1UK6OrCyycQIHf/vDGVtWuuUf5
-         fSBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IFhO86zUCGeR+R0X9HVERqTznoNeBD84llm7FMDDqNs=;
-        b=ClwHW3NqV8ii5c2aPtnIIY4PTFX3MP/4kdSnvdruudatSDkfHSCsW4zDUv02/o4Mca
-         vv9w0AXYf4C6skmfKBc8qwHWw9IFmx28BLnWYqvXqPkinEL5V4x17f7tq+USy2PBROdl
-         MHxjJH66eRYEMapWm023kzBh/0lNmLdjsl4Sxg5tweOI++iDqYBDfb3hwsW+HKSqhzNa
-         BKLzKXfxW6aInwrRik+gr2pAk6tYWuS6G9NX3r6Qwbvb1nRi+0QmVRthRY8TAB4ad13d
-         fLm2/YX+jD+cKpuryCn3COwTtqIZOXI9B2N8nij4KdgvteHS9X8zK1Rym2cux3VzN5Qw
-         J7rQ==
-X-Gm-Message-State: AOAM531GQhtZQHPXb4peIpDl4MLDazcTFQewpPYywuNuQbXDzMnrxR8D
-        zJa16jx1CzAnYXVpOvdHy5BP7Q==
-X-Google-Smtp-Source: ABdhPJzQKziCrP9k7CIpXN9PnCt6ZFzrhJV04VjcgNhAK65kzUVlIusnHrcjdn2rR7bC7xaKs5IE6Q==
-X-Received: by 2002:a05:600c:225a:: with SMTP id a26mr4490670wmm.57.1632401852963;
-        Thu, 23 Sep 2021 05:57:32 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id o17sm5204049wrj.96.2021.09.23.05.57.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 05:57:32 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 13:57:30 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Will McVicker <willmcvicker@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
- config logic
-Message-ID: <YUx5uhKW/Jy2r3lv@google.com>
-References: <20210920190350.3860821-1-willmcvicker@google.com>
- <20210920190350.3860821-2-willmcvicker@google.com>
- <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
- <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
- <2c8a79f7-711a-b075-745f-ea77b82a1117@canonical.com>
- <CABYd82bzKh=QQHyk-kPXekzCKx+Uy-z2TY5qAQQNfuew=h=O-w@mail.gmail.com>
- <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
+        id S241233AbhIWNWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 09:22:35 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:42888 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234515AbhIWNWe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 09:22:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1632403262; x=1663939262;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9N1lv2IZqeZ+Ad8n/m48CMIMqK900tNEnc8eqaH81QM=;
+  b=LwZCdlKc9c6Cps7af6fKKg+HPTy/qLJ2+TI9hhr4rUb9DcZHGco974WW
+   Wx/SHdRzVLysdQdip639PMaSqvI1whRvNZl++a1Q0/JpEkGlF3vWNz7PX
+   7ArFxCpAGttGp4PY34ejQaGvEJnp5PwQTzYtWl0bNulfoGoz7Swg8wtj9
+   H7W4f0k/A0TqwnUZC7mEe61DkutU/htuclzuHbJcy0K92UrTLedy/Vjwb
+   J5GfjUzHDHPeVfnjlMy3xY5bVoF413eaEKnwWG4jJK8jW2dtkozjFVuwe
+   kPvXPYi1F5op/eRtPvxnN7PSrF2Z45u8uf+KNbm+8DW/MA2BsbjgoupMa
+   Q==;
+IronPort-SDR: Y9MSNGID6mjqjXUqisMujfSgKNM6xlMtrzZbMeeBVkOydtff8CGRjh+DsB2ZjKWjiouD3rcMBS
+ 5qISmD+sZIQlHn1bzfwJ3zQR5NGPu1/syDb40pZpKsRQ/Ls38C11EGx/KWMSa6kKItrD6x/zw8
+ zjpsX6f57/nJd69+UBHDhzGAAu3IT2zcSCCaw0jI4eBJi+aDlppnEsx0ZtsOQTf6folmqGMe9B
+ FKuaafLS097YDwuWKUjSwaF+0MblYoF11CoBi+1dP5iXfqrI4FQuuLjLHeV4riMJCFuGHY+MVt
+ u90765eAYUumChUzcskYYvJ7
+X-IronPort-AV: E=Sophos;i="5.85,316,1624345200"; 
+   d="scan'208";a="137664761"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Sep 2021 06:21:01 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 23 Sep 2021 06:21:01 -0700
+Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 23 Sep 2021 06:20:59 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v4 00/17] clk: at91: updates for power management and dvfs
+Date:   Thu, 23 Sep 2021 16:20:29 +0300
+Message-ID: <20210923132046.1860549-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
+Hi,
 
-> On 21/09/2021 19:58, Will McVicker wrote:
-> > On Tue, Sep 21, 2021 at 1:35 AM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >>
-> >> On 21/09/2021 09:50, Geert Uytterhoeven wrote:
-> >>> On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>>> On 20/09/2021 21:03, Will McVicker wrote:
-> >>>>> COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
-> >>>>> to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
-> >>>>> "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
-> >>>>> or modularize this driver.
-> >>>>
-> >>>> The clock drivers are essential, you cannot disable them for a generic
-> >>>> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
-> >>>
-> >>> Obviously it's not gonna work if the clock driver is not enabled
-> >>> at all.  But does it work if you make the clock driver modular, and
-> >>> put it with all other essential driver modules in initramfs?  Debugging
-> >>> would be hard, as the serial console driver also relies on clocks
-> >>> and PM Domains etc.
-> >>
-> >> The kernel could boot without clock drivers (default settings from
-> >> bootloader), probe clocks from initramfs and proceed with rootfs from
-> >> eMMC/SD/net.
-> >>
-> >> In theory.
-> >>
-> >> However I have no reports that it ever worked. If there is such working
-> >> upstream configuration, I don't mind here. Just please explain this in
-> >> the commit msg.
-> >>
-> >>>
-> >>> If not, this patch should be NAKed, until it works with a modular
-> >>> clock driver.
-> >>>
-> >>> If yes, perhaps another line should be added (_before_ the other line)?
-> >>>
-> >>>   + default m if ARCH_EXYNOS && MODULES
-> >>>     default y if ARCH_EXYNOS
-> >>>
-> >>> However, many developers may want MODULES=y, but not want to bother
-> >>> with an initramfs.  So perhaps we need a new symbol
-> >>> MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
-> >>> driver default to m if that is enabled?
-> >>
-> >> Yeah, that's indeed a problem to solve. For most users (and distros)
-> >> building kernel for Exynos this should be built-in by default.
-> >>
-> >> Anyway, the option is non-selectable so it cannot be converted to "m" or
-> >> disabled. And this is claimed in the commit msg:
-> >> "provide flexibilty for vendors to disable or modularize this driver."
-> >>
-> >> The commit does not achieve it.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> > 
-> > Thanks for the reviews! As Lee has explained in his replies, the
-> > intent of this series is to provide config flexibility to create a
-> > defconfig that allows us to move out SoC specific drivers in order to
-> > create a generic kernel that can be used across multiple devices with
-> > different SoCs.
-> 
-> That's quite generic statement... or let me put it that way - we already
-> have this ability to create a generic kernel supporting different SoCs.
-> Exynos and other ARMv7 and ARMv8 platforms are multiplatform.
-> 
-> Task is done.
+This series addresses the clock power management for SAMA7G5 and also
+updates the master clock driver and sam9x60-pll driver to accommodate
+the requests at [1] and avoid overclocking of CPU and MCK0 domains while
+changing the frequency via DVFS.
 
-multi_v7_defconfig and ARMv8's defconfig are bloated monoliths which
-provide limited flexibility.  Good for testing and messing around -
-not much good for real products.
+The power management part is implemented by adding
+save_context()/restore_context() on each clock driver (patch 1/17). Since
+the PM part is necessary only for backup mode (supported on SAMA5D2 and
+SAMA7G5) the pmc.c has been adapted to call the
+save_context()/restore_context() only on switches to/from backup mode
+(patch 2/17).
 
-> Please be more specific about use case and describe what exactly in
-> current upstream multiplatform kernel is missing, what is not
-> multiplatform enough.
+Patch 3/17 adds the securam clock on SAMA7G5. This is necessary for
+backup mode of SAMA7G5.
 
-The use-case is GKI.  A realistic middle-ground between fully open
-source and real-world usage of the Linux kernel in a competitive
-technical arena.  GKI aims to be as close to Mainline as possible,
-whilst allowing hardware vendors to supply their own software
-containing their perceived competitive edge and/or supporting
-not-yet-released hardware platforms.
+Patch 4/17 adapt SAMA7G5 MCK1..4 driver to use the defines at
+include/linux/clk/at91_pmc.h introduced in commit ec03f18cc222
+("clk: at91: add register definition for sama7g5's master clock").
 
-If you end up over-constraining the ability to configure the kernel in
-useful/meaningful ways, that makes one of the main (best intention)
-aims of GKI, (i.e. to have an upstream first ethos in order to be as
-close to upstream as possible) much more difficult.
+Patch 5/17 improves a bit readabiblity in some places of master clock
+driver.
 
-I put in a lot of effort to ensure GKI doesn't end up as just another
-fork of the Linux kernel.  So far, so good, but flexibility and
-understanding is key.
+Patch 6/17 enable the suspend/resume for clocks also for SAMA7G5.
 
-> > I'm sorry I added confusion by mentioning
-> > modularization. All of these drivers that I am modifying in this
-> > series can be modularized which is an ongoing effort, but is not
-> > addressed here and I don't believe that modularizing them should be a
-> > requirement before supporting enabling/disabling them.
-> 
-> Since the disabling the driver for a kernel supporting Exynos does not
-> make any sense, then making it at least modular unfortunately it is a
-> requirement.
+Patches 7-10/17 adds fixes in master clock driver and sam9x60-pll driver.
 
-I can go with that.
+Patches 11-12/17 address DVFS by adding notifiers for master clock driver
+and sam9x60-pll driver to avoid overclocking for CPU domain and MCK0
+domain.
 
-> > I will update the series with my patch that refactors the Samsung SoC
-> > drivers menuconfig to make these visible as well.
-> 
-> I would first recommend to really describe your use case because my
-> questions about this are still unanswered.
+Patch 13/17 removes the master clock prescaler from Linux clock tree
+as it has been discovered a hardware bug on it and it may not lock
+on some scenario although its output clock is stable.
 
-Hopefully my replies have helped somewhat.
+Patch 14/17 decreases the low limit of MCK0 as it can go even to 32KHz.
 
-Happy to discuss further if required.
+Patch 15/17 uses clk_core_get_rate_recalc() in clk_rate_get().
 
-If all else fails, feel free to ping me on IRC (lag).
+Patches 16-17/17 adds minor cleanups on clk.c
+
+Stephen,
+
+I added everything in one series and didn't send at 1st the non-DVFS
+patches (as you suggested in [2]) as at the time of proposal patch 4/17
+here depended on commit ec03f18cc222 ("clk: at91: add register definition
+for sama7g5's master clock") which wasn't present on your tree at that
+time.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
+[2] https://lore.kernel.org/lkml/163047507296.42057.10597374695758699868@swboyd.mtv.corp.google.com/ 
+
+Changes in v4:
+- removed opp dependencies along with get_cpu_device() in patch 11/17 as
+  those functionalities are not available at the initialization time for
+  clocks instantiated with CLK_OF_DECLARE
+
+Changes in v3:
+- minor fixes in patch 1/7 (e.g. use regmap_read() + checks + update +
+  regmap_write() sequence instead of regmap_read() + checks +
+  regmap_update_bits()
+- patch 4/17 has been updated after commit ec03f18cc222
+  ("clk: at91: add register definition for sama7g5's master clock")
+- patch 6-10/17, 14-17/17 are newly introduced
+- notifier for sam9x60 div pll was introduced (patch 11/17) and
+  notifier logic for master clock div has been changed (patch 12/17)
+  to use safe divider on PRE_RATE_CHANGE events and update clock to highest
+  possible rate on POST_RATE_CHANGE events
+- master clock prescaler has been removed from Linux clock tree for
+  SAMA7G5
+
+Changes in v2:
+- addressed code review comments
+- collected tags
+
+
+Claudiu Beznea (17):
+  clk: at91: re-factor clocks suspend/resume
+  clk: at91: pmc: execute suspend/resume only for backup mode
+  clk: at91: sama7g5: add securam's peripheral clock
+  clk: at91: clk-master: add register definition for sama7g5's master
+    clock
+  clk: at91: clk-master: improve readability by using local variables
+  clk: at91: pmc: add sama7g5 to the list of available pmcs
+  clk: at91: sam9x60-pll: use DIV_ROUND_CLOSEST_ULL
+  clk: at91: clk-master: check if div or pres is zero
+  clk: at91: clk-master: mask mckr against layout->mask
+  clk: at91: clk-master: fix prescaler logic
+  clk: at91: clk-sam9x60-pll: add notifier for div part of PLL
+  clk: at91: clk-master: add notifier for divider
+  clk: at91: sama7g5: remove prescaler part of master clock
+  clk: at91: sama7g5: set low limit for mck0 at 32KHz
+  clk: use clk_core_get_rate_recalc() in clk_rate_get()
+  clk: remove extra empty line
+  clk: do not initialize ret
+
+ drivers/clk/at91/at91rm9200.c       |   2 +-
+ drivers/clk/at91/at91sam9260.c      |   2 +-
+ drivers/clk/at91/at91sam9g45.c      |   2 +-
+ drivers/clk/at91/at91sam9n12.c      |   2 +-
+ drivers/clk/at91/at91sam9rl.c       |   2 +-
+ drivers/clk/at91/at91sam9x5.c       |   2 +-
+ drivers/clk/at91/clk-generated.c    |  46 ++-
+ drivers/clk/at91/clk-main.c         |  66 ++++
+ drivers/clk/at91/clk-master.c       | 463 ++++++++++++++++++++++------
+ drivers/clk/at91/clk-peripheral.c   |  40 ++-
+ drivers/clk/at91/clk-pll.c          |  39 +++
+ drivers/clk/at91/clk-programmable.c |  29 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  | 174 +++++++++--
+ drivers/clk/at91/clk-system.c       |  20 ++
+ drivers/clk/at91/clk-usb.c          |  27 ++
+ drivers/clk/at91/clk-utmi.c         |  39 +++
+ drivers/clk/at91/dt-compat.c        |   2 +-
+ drivers/clk/at91/pmc.c              | 183 +++--------
+ drivers/clk/at91/pmc.h              |  29 +-
+ drivers/clk/at91/sam9x60.c          |   6 +-
+ drivers/clk/at91/sama5d2.c          |   2 +-
+ drivers/clk/at91/sama5d3.c          |   2 +-
+ drivers/clk/at91/sama5d4.c          |   2 +-
+ drivers/clk/at91/sama7g5.c          |  29 +-
+ drivers/clk/clk.c                   |   5 +-
+ 25 files changed, 899 insertions(+), 316 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.25.1
+
