@@ -2,189 +2,217 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B5FC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A526C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C60F261248
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:28:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE5E61152
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 12:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbhIWM37 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 08:29:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47328 "EHLO
+        id S241132AbhIWM7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 08:59:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240911AbhIWM36 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 08:29:58 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D53C061756
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:28:27 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id u15so16682632wru.6
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:28:27 -0700 (PDT)
+        with ESMTP id S240787AbhIWM7G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 08:59:06 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCF8C061574
+        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:57:34 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id d21so16821991wra.12
+        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 05:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=3X/0Bz3TcQZxyw6b50mGF0nqME1lbTMZ6NdXCIyuzXo=;
-        b=jSZNqAHs+OjD/7w3jZCNY3F1xVfRXKrlg2nd4C82G4Afbdry99c7o8Zyo61gLwj+kM
-         I9ulEN9uDswy/Ta8BGKoHv/PkcQuy/uIJBpy7kleDMCMC58z3hMPtndDViwVVe77y4JL
-         Z32fp18nIFftHY8DaDBEUqQMgeofzKiFUXx+yf97nmoKGPjyZaFsMx5FIB+zRJf/hYrw
-         K4Nj5CL9sgg2scb70wQ4rR/z5h1FBkxDEFtHwqGI5UejKvpPM+Ds1378MzVbil+0QFLV
-         Y6bk+UojhWTiy72vBt3Rh1sHx4enwF2wphEINo7zUhT+NvLpUJ0mrhr3OqDu/uC0zlXw
-         S6QA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=IFhO86zUCGeR+R0X9HVERqTznoNeBD84llm7FMDDqNs=;
+        b=aCI79VzTHBk0a6kt1kOIvS16kB6nPZXPZOmG/HGbBVrN7PuuR8bn148nWKg2/KHoMY
+         g98qg7Yxi+xv2TGfww0sdIiDmDtnEvgJjLo4wTfFK5/egbhiNCgeyauYrKoyDKK5VCsl
+         2eaFEdJSdgNsKntpCCPjxrWn1yS4uSBOx8pcn335bHUP9s1Up4N2OXxgfejgicgfKM4E
+         YIVVXcUKZWS8paAStrOs4HldG/v2qly8OzZV9URbqfbMcKxBz80nafYfKKfMntjEygCM
+         tMn8+LOMclBlAiy4a/geGdjnuUnzdqQt5xajRKAW/o1UK6OrCyycQIHf/vDGVtWuuUf5
+         fSBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=3X/0Bz3TcQZxyw6b50mGF0nqME1lbTMZ6NdXCIyuzXo=;
-        b=zba+c2KDiAuh4oWl8yNRvslDDuq/HRpLI00g3vA4S1u0sfrEkZhxbyC6NtIjcGFb74
-         gyjXIaLDqITxUzJs1uK6wMMP5gzDYpLtmJHYPq/lhrO+I5Cp5GEmJsIzawAedcee5iDX
-         aPWuKzw7iaz7IxBa2JY5a9Dp2hcwsmaLRZLl+E+sncOhRHgmgtrfnpEhF2zSLlf+iLgk
-         51HTEvz7tDqVFcccC5ZtM1r5ctvcYx4Ie7RHfpWUpr3lRD8pep4ehKjLy+qKcMViKgJ8
-         44reasaFvY5pcbX0y4OAEYBLhQnrOCIBktvZNOBbg0kf4z4tvK/t/bW3+imFSM+dIOXN
-         5L0Q==
-X-Gm-Message-State: AOAM531AtwBp4ZQB6QeXbLkxASTaHMTe/mrwOUb/S8Y5fTu2YjRNT8bs
-        Aum6wu24ravQL+D1Yxy8Hf9qRQ==
-X-Google-Smtp-Source: ABdhPJyB4cN2SQ746UTsS+Xi6Z7GvzTowSRdy7xGGerq+PyWppLS9px3PcMBGb8R1+fOpatPI35AOw==
-X-Received: by 2002:adf:f3ce:: with SMTP id g14mr4678787wrp.95.1632400105910;
-        Thu, 23 Sep 2021 05:28:25 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q7sm5249401wru.56.2021.09.23.05.28.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=IFhO86zUCGeR+R0X9HVERqTznoNeBD84llm7FMDDqNs=;
+        b=ClwHW3NqV8ii5c2aPtnIIY4PTFX3MP/4kdSnvdruudatSDkfHSCsW4zDUv02/o4Mca
+         vv9w0AXYf4C6skmfKBc8qwHWw9IFmx28BLnWYqvXqPkinEL5V4x17f7tq+USy2PBROdl
+         MHxjJH66eRYEMapWm023kzBh/0lNmLdjsl4Sxg5tweOI++iDqYBDfb3hwsW+HKSqhzNa
+         BKLzKXfxW6aInwrRik+gr2pAk6tYWuS6G9NX3r6Qwbvb1nRi+0QmVRthRY8TAB4ad13d
+         fLm2/YX+jD+cKpuryCn3COwTtqIZOXI9B2N8nij4KdgvteHS9X8zK1Rym2cux3VzN5Qw
+         J7rQ==
+X-Gm-Message-State: AOAM531GQhtZQHPXb4peIpDl4MLDazcTFQewpPYywuNuQbXDzMnrxR8D
+        zJa16jx1CzAnYXVpOvdHy5BP7Q==
+X-Google-Smtp-Source: ABdhPJzQKziCrP9k7CIpXN9PnCt6ZFzrhJV04VjcgNhAK65kzUVlIusnHrcjdn2rR7bC7xaKs5IE6Q==
+X-Received: by 2002:a05:600c:225a:: with SMTP id a26mr4490670wmm.57.1632401852963;
+        Thu, 23 Sep 2021 05:57:32 -0700 (PDT)
+Received: from google.com ([95.148.6.233])
+        by smtp.gmail.com with ESMTPSA id o17sm5204049wrj.96.2021.09.23.05.57.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 05:28:25 -0700 (PDT)
-References: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.6.6; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, narmstrong@baylibre.com
-Subject: Re: [PATCH 0/6] clk: meson8b: video clock tree fixes and making it
- mutable
-Date:   Thu, 23 Sep 2021 14:28:12 +0200
-In-reply-to: <20210713232510.3057750-1-martin.blumenstingl@googlemail.com>
-Message-ID: <1jbl4jscgn.fsf@starbuckisacylon.baylibre.com>
+        Thu, 23 Sep 2021 05:57:32 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 13:57:30 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Will McVicker <willmcvicker@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
+ config logic
+Message-ID: <YUx5uhKW/Jy2r3lv@google.com>
+References: <20210920190350.3860821-1-willmcvicker@google.com>
+ <20210920190350.3860821-2-willmcvicker@google.com>
+ <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
+ <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
+ <2c8a79f7-711a-b075-745f-ea77b82a1117@canonical.com>
+ <CABYd82bzKh=QQHyk-kPXekzCKx+Uy-z2TY5qAQQNfuew=h=O-w@mail.gmail.com>
+ <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
 
-On Wed 14 Jul 2021 at 01:25, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+> On 21/09/2021 19:58, Will McVicker wrote:
+> > On Tue, Sep 21, 2021 at 1:35 AM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@canonical.com> wrote:
+> >>
+> >> On 21/09/2021 09:50, Geert Uytterhoeven wrote:
+> >>> On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>>> On 20/09/2021 21:03, Will McVicker wrote:
+> >>>>> COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
+> >>>>> to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
+> >>>>> "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
+> >>>>> or modularize this driver.
+> >>>>
+> >>>> The clock drivers are essential, you cannot disable them for a generic
+> >>>> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
+> >>>
+> >>> Obviously it's not gonna work if the clock driver is not enabled
+> >>> at all.  But does it work if you make the clock driver modular, and
+> >>> put it with all other essential driver modules in initramfs?  Debugging
+> >>> would be hard, as the serial console driver also relies on clocks
+> >>> and PM Domains etc.
+> >>
+> >> The kernel could boot without clock drivers (default settings from
+> >> bootloader), probe clocks from initramfs and proceed with rootfs from
+> >> eMMC/SD/net.
+> >>
+> >> In theory.
+> >>
+> >> However I have no reports that it ever worked. If there is such working
+> >> upstream configuration, I don't mind here. Just please explain this in
+> >> the commit msg.
+> >>
+> >>>
+> >>> If not, this patch should be NAKed, until it works with a modular
+> >>> clock driver.
+> >>>
+> >>> If yes, perhaps another line should be added (_before_ the other line)?
+> >>>
+> >>>   + default m if ARCH_EXYNOS && MODULES
+> >>>     default y if ARCH_EXYNOS
+> >>>
+> >>> However, many developers may want MODULES=y, but not want to bother
+> >>> with an initramfs.  So perhaps we need a new symbol
+> >>> MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
+> >>> driver default to m if that is enabled?
+> >>
+> >> Yeah, that's indeed a problem to solve. For most users (and distros)
+> >> building kernel for Exynos this should be built-in by default.
+> >>
+> >> Anyway, the option is non-selectable so it cannot be converted to "m" or
+> >> disabled. And this is claimed in the commit msg:
+> >> "provide flexibilty for vendors to disable or modularize this driver."
+> >>
+> >> The commit does not achieve it.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> > 
+> > Thanks for the reviews! As Lee has explained in his replies, the
+> > intent of this series is to provide config flexibility to create a
+> > defconfig that allows us to move out SoC specific drivers in order to
+> > create a generic kernel that can be used across multiple devices with
+> > different SoCs.
+> 
+> That's quite generic statement... or let me put it that way - we already
+> have this ability to create a generic kernel supporting different SoCs.
+> Exynos and other ARMv7 and ARMv8 platforms are multiplatform.
+> 
+> Task is done.
 
-> The first two patches in this series are small fixes before we can
-> actually make the video clock tree mutable. One patch adds
-> CLK_SET_RATE_NO_REPARENT for better rate control and the other adds
-> a missing clock gate.
->
-> The third and fourth patch are targeting the HDMI PLL. Add the known
-> working M/N combinations. Also this PLL has some special "doubling"
-> setting, which is calculated like this:
->   OUTPUT = (IN * M / N + FRAC) * 2
-> Since not all register bits are known we use a copy of the 2970/2975MHz
-> magic register values from the vendor driver.
->
-> The fifth patch makes the clocks in the video clock tree mutable. The
-> final patch in this series exports the clocks needed for rate control.
->
-> For reference, this is the .dts definition for the Meson8b VPU. The
-> code for the VPU driver is unfortunately not ready for upstreaming yet.
-> However, I have tested with all resolutions my monitor supports and the
-> clock settings are all applied correctly.
->     vpu: vpu@100000 {
->       compatible = "amlogic,meson8b-vpu";
->
->       reg = <0x100000 0x10000>;
->       reg-names = "vpu";
->
->       interrupts = <GIC_SPI 3 IRQ_TYPE_EDGE_RISING>;
->
->       amlogic,canvas = <&canvas>;
->       amlogic,hhi-sysctrl = <&hhi>;
->
->       /*
->        * The VCLK{,2}_IN path always needs to derived from
->        * the CLKID_VID_PLL_FINAL_DIV so other clocks like
->        * MPLL1 are not used (MPLL1 is reserved for audio
->        * purposes).
->        */
->       assigned-clocks = <&clkc CLKID_VCLK_IN_SEL>,
->                         <&clkc CLKID_VCLK2_IN_SEL>;
->       assigned-clock-parents = <&clkc CLKID_VID_PLL_FINAL_DIV>,
->                                <&clkc CLKID_VID_PLL_FINAL_DIV>;
->
->       clocks = <&clkc CLKID_VPU_INTR>,
->                <&clkc CLKID_HDMI_INTR_SYNC>,
->                <&clkc CLKID_GCLK_VENCI_INT>,
->                <&clkc CLKID_HDMI_PLL_HDMI_OUT>,
->                <&clkc CLKID_HDMI_TX_PIXEL>,
->                <&clkc CLKID_CTS_ENCP>,
->                <&clkc CLKID_CTS_ENCI>,
->                <&clkc CLKID_CTS_ENCT>,
->                <&clkc CLKID_CTS_ENCL>,
->                <&clkc CLKID_CTS_VDAC0>;
->       clock-names = "vpu_intr",
->                     "hdmi_intr_sync",
->                     "venci_int",
->                     "tmds",
->                     "hdmi_tx_pixel",
->                     "cts_encp",
->                     "cts_enci",
->                     "cts_enct",
->                     "cts_encl",
->                     "cts_vdac0";
->
->       resets = <&clkc CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE>,
->                <&clkc CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST>,
->                <&clkc CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_PRE>,
->                <&clkc CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_POST>;
->       reset-names = "vid_pll_pre",
->                     "vid_pll_post",
->                     "vid_pll_soft_pre",
->                     "vid_pll_soft_post";
->
->       power-domains = <&pwrc PWRC_MESON8_VPU_ID>;
->
->       nvmem-cells = <&cvbs_trimming>;
->       nvmem-cell-names = "cvbs_trimming";
->
->       #address-cells = <1>;
->       #size-cells = <0>;
->
->       #sound-dai-cells = <0>;
->       sound-name-prefix = "HDMITX";
->
->       /* CVBS VDAC output port */
->       cvbs_vdac_port: port@0 {
->         reg = <0>;
->       };
->
->       /* HDMI-TX output port */
->       hdmi_tx_port: port@1 {
->         reg = <1>;
->
->         hdmi_tx_out: endpoint {
->           remote-endpoint = <&hdmi_tx_in>;
->         };
->       };
->     };
->
->
-> Martin Blumenstingl (6):
->   clk: meson: meson8b: Use CLK_SET_RATE_NO_REPARENT for vclk{,2}_in_sel
->   clk: meson: meson8b: Add the vid_pll_lvds_en gate clock
->   clk: meson: meson8b: Add the HDMI PLL M/N parameters
->   clk: meson: meson8b: Initialize the HDMI PLL registers
->   clk: meson: meson8b: Make the video clock trees mutable
->   clk: meson: meson8b: Export the video clocks
->
->  drivers/clk/meson/meson8b.c              | 163 +++++++++++++++++------
->  drivers/clk/meson/meson8b.h              |  26 ++--
->  include/dt-bindings/clock/meson8b-clkc.h |  10 ++
->  3 files changed, 143 insertions(+), 56 deletions(-)
+multi_v7_defconfig and ARMv8's defconfig are bloated monoliths which
+provide limited flexibility.  Good for testing and messing around -
+not much good for real products.
 
-Applied, Thx
+> Please be more specific about use case and describe what exactly in
+> current upstream multiplatform kernel is missing, what is not
+> multiplatform enough.
+
+The use-case is GKI.  A realistic middle-ground between fully open
+source and real-world usage of the Linux kernel in a competitive
+technical arena.  GKI aims to be as close to Mainline as possible,
+whilst allowing hardware vendors to supply their own software
+containing their perceived competitive edge and/or supporting
+not-yet-released hardware platforms.
+
+If you end up over-constraining the ability to configure the kernel in
+useful/meaningful ways, that makes one of the main (best intention)
+aims of GKI, (i.e. to have an upstream first ethos in order to be as
+close to upstream as possible) much more difficult.
+
+I put in a lot of effort to ensure GKI doesn't end up as just another
+fork of the Linux kernel.  So far, so good, but flexibility and
+understanding is key.
+
+> > I'm sorry I added confusion by mentioning
+> > modularization. All of these drivers that I am modifying in this
+> > series can be modularized which is an ongoing effort, but is not
+> > addressed here and I don't believe that modularizing them should be a
+> > requirement before supporting enabling/disabling them.
+> 
+> Since the disabling the driver for a kernel supporting Exynos does not
+> make any sense, then making it at least modular unfortunately it is a
+> requirement.
+
+I can go with that.
+
+> > I will update the series with my patch that refactors the Samsung SoC
+> > drivers menuconfig to make these visible as well.
+> 
+> I would first recommend to really describe your use case because my
+> questions about this are still unanswered.
+
+Hopefully my replies have helped somewhat.
+
+Happy to discuss further if required.
+
+If all else fails, feel free to ping me on IRC (lag).
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
