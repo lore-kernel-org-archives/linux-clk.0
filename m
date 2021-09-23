@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE26C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAC7C433EF
 	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CEC661241
+	by mail.kernel.org (Postfix) with ESMTP id BDEB861241
 	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 13:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241268AbhIWNW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 09:22:58 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:42910 "EHLO
+        id S241278AbhIWNW7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 09:22:59 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:64403 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241272AbhIWNWt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 09:22:49 -0400
+        with ESMTP id S241277AbhIWNWu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 09:22:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1632403278; x=1663939278;
+  t=1632403279; x=1663939279;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=b5FJhovyOTtqbY6WdesSmAErjuu4q8fe8jGDarYU7kM=;
-  b=ViyAbTOjWzdWCJ4NYNJom+7dQePADWPlqtRhP/zfS/qftvL0YjBhWY9R
-   v1fDf+Ie97j2Yisbot+fKqwxw2YfvTN1TLG0iCF5/DuYtX8R9IUo2dt6Z
-   1lfaiiMMVr6yhOc6jS103CmpNDgaS4/mscCuEM0URe7zTNbxmv8+nv4wM
-   +2T1QJji1hNV3XyS3bWPkhmMUYvysoM/Y3KJ2JSo+2HK3LqTCMnmktcpM
-   Wpdh/p8d7cahCiqnK4JD3qWnK+UCDxIwsKxmnmp6ztcTJt+8ESZ/9+D6f
-   R5xuFIgqxcUS1A1qIDFBRe0o0cFYFjWQMhbrjsdEA+sOXDYhJ9b03hQuq
-   Q==;
-IronPort-SDR: aUNIoPko/XvWxIRTuTOBZ3Hoc3z93fhoSZj4TdmpWCzuxP2xbJmYZtbBAskMvTuHWNc31uknAc
- wbym5S0CoblBAlYCiRofwL38vhNCASD59R9zcdunnhaQqLgnX4tYQ1Koyi8K+O7X2VJsHjjQNE
- 8v+W3XoUT/eMbalotcq17y4mzdU+t04Cy2BzIUdUUdIFhScZz4T2qj8kXTa6XNQzXS4+aImX8e
- iPs1P9bpmRLvYKLPsc4Pfy7odMfUf3ZdqKGOPNvfqwCa6S+m+hmu3mKzMVxP7CG4XoHUHXO/VD
- smrnnhdFCDDUheET1tz4spM5
+  bh=bbgvOX8odhhcgQRbsWErZdBKALu82PPpkMqqT+eQSGM=;
+  b=Mr9cO3NKfaC2whcrrYPNnGNUsbTlVQ6+J+8IT1HrYrFpB6D7ZZq/d4IY
+   ZUDQW2Xd++lxRnI0raCuMRufyQzxqCz57QkV8XFGJEw6ep860zB3n3cC7
+   n1SaiteISoBN0La5n5yEQzDUZblVjYGiPNDpaXrveDS3DRqgieuzt+AB7
+   T/WeIlLiU2ZTNfLe5S0k2+I0Ns8EtzLQgpnZZ0HjDHsFC6wZQzWrgUyGN
+   PJoLD9J8R+rdC4GW5KkczOleyz7GSLdUC3pTxzwFoLOCZTLMSKTmTLi1W
+   LuZGZXXu+MIfJDGwCAolPP0WZmOEejz9+C7JKDqtbrM9JVDNIb6O2ZHLG
+   g==;
+IronPort-SDR: o+trM+tlELZt7qoaLRH51vpi3MyEJppw7qodEHiu3lzjCCzLoRvbOlryYXAnPXZx79JR//fjzZ
+ ia2CwFaVReOPa00H4Q9pEbSgK6bIprJ40+7pt50NYW3LGZLH8owsjWYQmG/xChyPU7eZY6F+iP
+ r5oT0vNiM33o2EGsqKhztRcDYRqepdcEe0x74YZblDYX0lsGtnwv33JpGTVa5U+Oh5j7OrG20N
+ pqA9vGtXq/MEBLh6I7u/E2To4AZu6a5n9/9e0qonZUu5LgjeGPdN/If3u8Kkjmgbw8g5YBvZ2h
+ Yf6GGg781tl9FfeL2ITAkwun
 X-IronPort-AV: E=Sophos;i="5.85,316,1624345200"; 
-   d="scan'208";a="137664810"
+   d="scan'208";a="145305443"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Sep 2021 06:21:17 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Sep 2021 06:21:18 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 23 Sep 2021 06:21:13 -0700
+ 15.1.2176.14; Thu, 23 Sep 2021 06:21:18 -0700
 Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Thu, 23 Sep 2021 06:21:11 -0700
+ 15.1.2176.14 via Frontend Transport; Thu, 23 Sep 2021 06:21:16 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -56,9 +56,9 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v4 05/17] clk: at91: clk-master: improve readability by using local variables
-Date:   Thu, 23 Sep 2021 16:20:34 +0300
-Message-ID: <20210923132046.1860549-6-claudiu.beznea@microchip.com>
+Subject: [PATCH v4 07/17] clk: at91: sam9x60-pll: use DIV_ROUND_CLOSEST_ULL
+Date:   Thu, 23 Sep 2021 16:20:36 +0300
+Message-ID: <20210923132046.1860549-8-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210923132046.1860549-1-claudiu.beznea@microchip.com>
 References: <20210923132046.1860549-1-claudiu.beznea@microchip.com>
@@ -69,39 +69,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Improve readability in clk_sama7g5_master_set() by using local
-variables.
+Use DIV_ROUND_CLOSEST_ULL() to avoid any inconsistency b/w the rate
+computed in sam9x60_frac_pll_recalc_rate() and the one computed in
+sam9x60_frac_pll_compute_mul_frac().
 
-Suggested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Fixes: 43b1bb4a9b3e1 ("clk: at91: clk-sam9x60-pll: re-factor to support plls with multiple outputs")
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/at91/clk-master.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/at91/clk-sam9x60-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 88f7af1bfff6..9a2c8e64cacf 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -680,6 +680,8 @@ static void clk_sama7g5_master_set(struct clk_master *master,
- 	unsigned long flags;
- 	unsigned int val, cparent;
- 	unsigned int enable = status ? AT91_PMC_MCR_V2_EN : 0;
-+	unsigned int parent = master->parent << PMC_MCR_CSS_SHIFT;
-+	unsigned int div = master->div << MASTER_DIV_SHIFT;
+diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+index 7020d3bf6e13..a73d7c96ce1d 100644
+--- a/drivers/clk/at91/clk-sam9x60-pll.c
++++ b/drivers/clk/at91/clk-sam9x60-pll.c
+@@ -73,8 +73,8 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
+ 	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
+ 	struct sam9x60_frac *frac = to_sam9x60_frac(core);
  
- 	spin_lock_irqsave(master->lock, flags);
+-	return (parent_rate * (frac->mul + 1) +
+-		((u64)parent_rate * frac->frac >> 22));
++	return parent_rate * (frac->mul + 1) +
++		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
+ }
  
-@@ -689,9 +691,7 @@ static void clk_sama7g5_master_set(struct clk_master *master,
- 	regmap_update_bits(master->regmap, AT91_PMC_MCR_V2,
- 			   enable | AT91_PMC_MCR_V2_CSS | AT91_PMC_MCR_V2_DIV |
- 			   AT91_PMC_MCR_V2_CMD | AT91_PMC_MCR_V2_ID_MSK,
--			   enable | (master->parent << PMC_MCR_CSS_SHIFT) |
--			   (master->div << MASTER_DIV_SHIFT) |
--			   AT91_PMC_MCR_V2_CMD |
-+			   enable | parent | div | AT91_PMC_MCR_V2_CMD |
- 			   AT91_PMC_MCR_V2_ID(master->id));
- 
- 	cparent = (val & AT91_PMC_MCR_V2_CSS) >> PMC_MCR_CSS_SHIFT;
+ static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
 -- 
 2.25.1
 
