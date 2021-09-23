@@ -7,68 +7,76 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5517CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3430C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 387396124C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8186C6124C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbhIWJPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 05:15:34 -0400
-Received: from mail-vk1-f170.google.com ([209.85.221.170]:35619 "EHLO
-        mail-vk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239801AbhIWJPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 05:15:33 -0400
-Received: by mail-vk1-f170.google.com with SMTP id x207so2320179vke.2;
-        Thu, 23 Sep 2021 02:14:02 -0700 (PDT)
+        id S240234AbhIWJvf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 05:51:35 -0400
+Received: from mail-vs1-f51.google.com ([209.85.217.51]:35682 "EHLO
+        mail-vs1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240220AbhIWJve (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 05:51:34 -0400
+Received: by mail-vs1-f51.google.com with SMTP id f18so5935996vsp.2;
+        Thu, 23 Sep 2021 02:50:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=N8Y5RGfhMXkz6CFprn5sYICY7H7gqXWGsHvuUWQjn2s=;
-        b=ur9Y8up5PVICRVWy5TJl/Ps0zY57s0Yct6ATJboSDOcweaJRHX8al2hH9FgwNxSg5B
-         iBrwHQGMuDOLS9iZVgZyfC7kUxjQmkovY0/xk3yG9oPfcA4JWXefp6N9se75aAB3Tlio
-         Xi95m6hRQ1Rrh/jMgQrnmMUrB3q+OloI8Wjv03xF+wRU4Gvcvljj7FjL7YeyPLodBPto
-         JV28bG09LkpUkXdXLVqyn+zj2l4+YC+JNCmS2p04hEwyZgiBKoHXY+I3VX2wlMdwhJ22
-         ZcyHZ8SppIeyid/KNpb3tePBitrlm6Z21zX/MhcRxhRxbT8ZYgjok5/IM3VLJaNbA3a4
-         PScg==
-X-Gm-Message-State: AOAM533Vjj6841rSZ+3HZzyfJ/OSoxbAvhm+PTFBJhCmSgvgH1cTSuho
-        l1wWVSva+qHAC2fMalYEsK6Jn5Htj1HNNCY0M8t1n8WtOHo=
-X-Google-Smtp-Source: ABdhPJz9LWhHl5jNMvedYUlpGY6A4Sni9dnP9b8rYiXU04lUQVatj2FNhmWhh/Qr9QBuM143xHT50/9050f6eT0JYso=
-X-Received: by 2002:a1f:1841:: with SMTP id 62mr2269385vky.26.1632388442213;
- Thu, 23 Sep 2021 02:14:02 -0700 (PDT)
+        bh=nx4BEiyhea77H9mPMjM3vQX/tvU8/t/qrKRNMVmCHfw=;
+        b=tqdNMiT295EVVy19PDWVnS+bBt4d7Jg/d/stVROca7WKWv4pKvtsDSh20+1DDPguwB
+         m23UUb5NgmRxxV/AF5zF7VIuTVK+vDtZtC6/ySh0nFXY+TIRmU19hAk0jsdkGzvGvrRd
+         Nrm3wxlb7iXijYdjK3m3O6sLkDGEhzlBHegY5O11fzLg17bYyk6GrG1kBz58FFn3KpCJ
+         u6Z5Pklcqs+1xcOFDHOi5O+uergKh2zcRpFIGOSAdsO9V+OTAtFzwBx4vq5JtF7rfw/A
+         cXdiF9jVMvnXSzxFYmiqnntmJSlSmn8Q8zCeuFTSdHdYZgTALMQ6B+4NyxCbKg0Oy+zP
+         +2Iw==
+X-Gm-Message-State: AOAM530p7H+LWpu6Z7l5omApF6Y3sHkPK7H2ZeVTB1JCcyb8AgXSGtVo
+        U2kSH0EiNdHVsBp8PPCh3g72AelUHPrtLZMxvOw=
+X-Google-Smtp-Source: ABdhPJwulXv7V2ZQB9Y3KmEQOubAutrTGeDwiglQnT4FHOuk9kx9i6dxiQjG5JE19HF07NYYZ1XHoaFcUbPmhnbuRbg=
+X-Received: by 2002:a67:cb0a:: with SMTP id b10mr3248945vsl.9.1632390603128;
+ Thu, 23 Sep 2021 02:50:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210922112405.26413-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210922112405.26413-1-biju.das.jz@bp.renesas.com>
+References: <20210922155145.28156-1-biju.das.jz@bp.renesas.com> <20210922155145.28156-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210922155145.28156-4-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 23 Sep 2021 11:13:51 +0200
-Message-ID: <CAMuHMdXGyC0ksEd6ksOMbDD+um9Zv35uZ5NXtwTfvOx3hsELwA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: r9a07g044: Add IA55_CLK and DMAC_ACLK
+Date:   Thu, 23 Sep 2021 11:49:51 +0200
+Message-ID: <CAMuHMdXEsn3Yi+QsAp-QTzAaf_23YZ5gxeme0nrxKiZWZ_Mq2g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] clk: renesas: rzg2l: Add support to handle coupled clocks
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 1:36 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add IA55_CLK and DMAC_ACLK as critical clocks.
+Hi Biju,
+
+On Wed, Sep 22, 2021 at 6:04 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The AXI and CHI clocks use the same register bit for controlling clock
+> output. Add a new clock type for coupled clocks, which sets the
+> CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled, and
+> clears the bit only when both clocks are disabled.
 >
-> Previously it worked ok, because of a bug in clock status function
-> and the following patch in this series fixes the original bug.
->
-> Fixes: c3e67ad6f5a2 ("dt-bindings: clock: r9a07g044-cpg: Update clock/reset definitions")
-> Fixes: eb829e549ba6 ("clk: renesas: r9a07g044: Add DMAC clocks/resets")
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v3->v4:
+>  * Added locking, in case both clocks are changed concurrently
+>  * initialized mstp_clock.enabled to match the current hardware state.
+
+Thanks for the update!
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue as a fix in renesas-clk-for-v5.15.
+i.e. will queue in renesas-clk-for-v5.16, together with the other patches
+in this series.
 
 Gr{oetje,eeting}s,
 
