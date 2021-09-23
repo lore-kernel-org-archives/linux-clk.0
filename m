@@ -2,154 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09E0C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 07:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CCCC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87DDD61164
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 07:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABACB61216
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 09:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239358AbhIWHH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 03:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239550AbhIWHH1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 03:07:27 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EDAC061574
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 00:05:56 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id w19so8334173oik.10
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 00:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stapelberg.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IthV7tE5yfFcxnSKvKQkyd8eIFf4X2+/XnbxnjKj63A=;
-        b=Ti5PxVpEJ43IsCs3soMxypjPHP8YvDGzovtrxlfJoqYfMSobbR/y5JdJukiM/KKvXX
-         J07UmFZMjmOIc2MzXUWdBI52WJGqwrBxeoTPxsM3Vk6hc3jn7qZWrkHl2Xs8vzzFbMh5
-         8uE00Z0RLEQWMuRC1x+V3/QIJcoSpe0g2cTvvsyIZYC2EMgJ/pwIT2u5iD3ZF1N8f6DH
-         quIfq69aE1jXpKsnt7NJU7RV78k7UJXTfBsf8hNnCHj6jArP4Sdei971mmMjPpLqUCCS
-         orlLyN0v3pFuxPTqQi2sjvw32m+5LArmmeyR5MmweQADTFHBVh0EqfJLwrVJSVIeQFqN
-         9HCQ==
+        id S239807AbhIWJOk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 05:14:40 -0400
+Received: from mail-ua1-f47.google.com ([209.85.222.47]:47099 "EHLO
+        mail-ua1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239801AbhIWJOj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 05:14:39 -0400
+Received: by mail-ua1-f47.google.com with SMTP id 109so3769364uag.13;
+        Thu, 23 Sep 2021 02:13:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IthV7tE5yfFcxnSKvKQkyd8eIFf4X2+/XnbxnjKj63A=;
-        b=KBNwQ/5PGxT9OjfaogTKHIZnAW9oFP3MbQiQNdWETcFNhOISHLjNO6GViLY9x4ak6N
-         GFDNp/YekTENBbkmgXkEWvfUvl3Iz9T6HCqbHq8hy/UI2shs2yeMS0atoIzlm03DHEkf
-         +FfmU40BWanBK+zgkiVNS6s42irzDD+ACyhbMmgOQUQh9nYtocSANg8BWCg9zXJG62Oe
-         8aqm5HOhX1GO1YdEMVnV9uIKjk7jSUXzXdpRB0qzYKc13e9MyHndXeGbRi2uMBute+b0
-         EUGAMqixTwhZG96Bjst6SVFOrxATT/H1euWSGFgH5Xj6mflrvTJTVgl/nEDSn13U+mU2
-         3CqA==
-X-Gm-Message-State: AOAM5304lUm2RrWt6ldFqhc8k5Qv2wYVEO9zfBcoNXes7AICbEsqU9g1
-        0UY87fsc5K95grxQ/fA6pwE4one2SAxePOPBIAtArw==
-X-Google-Smtp-Source: ABdhPJziUkXCfKg1abMsQJVrmNpsTMA3+ywisLcmJYhVcH4rGHtvpHWAEag5v5Tq1ibv0luPVijjEvBObRJ/fojrVgw=
-X-Received: by 2002:aca:ab51:: with SMTP id u78mr11733036oie.177.1632380755894;
- Thu, 23 Sep 2021 00:05:55 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=wpjIy0HdF7CHRJIcx9urIAF0b1h12wjunf3TIpTAizY=;
+        b=qdN7IaO7cDFwPp3s8Fe9NbLOy+H76FNmbmc5aoXEYWkjBdeqvhNM2ZHvPO6pF2ZSgd
+         SNpcVW9S3Nr1BFdwlQAOKOUoxbpXfwybdU5PUPizIHSkPVwBBbFgcEYlvelK6+mtf/vP
+         hP4HPBmCfpAbR+usrDT2GyYbO5XYObH5VKZlv6aKtrDwTaVL1zyqit1RVhFEbYzQwWAA
+         bnIte7Oghh4bFWgWzLqS4IF7dgVEHhLbdPV1GDH1KkKPSNYYqNuaBs4LuEoRDGXV8GCd
+         sW0zFpZmtLRShHd774dNkvPypGGpAf94QenZ7YtOaXXV/N51CVi+ib/qqW+D1+rAwjXX
+         vpqw==
+X-Gm-Message-State: AOAM532uz6RG4Pf7Puf0XP0BSac3shUlpQNiMsermu//xDmKw1Tbrk8z
+        G7Jk2lR3xhh8+nNj5koGLkFXe/swaC5FeEQ9J8A=
+X-Google-Smtp-Source: ABdhPJyYrq2Jf8yZoJZiv8ofIuwPQ33TPHYg3C7v2mm9d/dru19huLThHuLgpLPK5NupmpOH5nfbqkNsbFbAcRT1nGM=
+X-Received: by 2002:ab0:538a:: with SMTP id k10mr3366674uaa.14.1632388388237;
+ Thu, 23 Sep 2021 02:13:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210922125419.4125779-1-maxime@cerno.tech> <CANnVG6kFC7q_dDDp4rRZsJz=paHKy2STn9127LE=JJOf2kW2TA@mail.gmail.com>
-In-Reply-To: <CANnVG6kFC7q_dDDp4rRZsJz=paHKy2STn9127LE=JJOf2kW2TA@mail.gmail.com>
-From:   Michael Stapelberg <michael@stapelberg.ch>
-Date:   Thu, 23 Sep 2021 09:05:40 +0200
-Message-ID: <CANnVG6mEL+Lzir=K7zBTWVV5zXsdokWCHvsTkM2McGHTO3HEfQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] drm/vc4: hdmi: Remove CPU hangs, take 2
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20210922112405.26413-1-biju.das.jz@bp.renesas.com> <20210922112405.26413-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210922112405.26413-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 23 Sep 2021 11:12:57 +0200
+Message-ID: <CAMuHMdUb95EO2Fpsw74uQVXRFqcXWwz78TpypPJf1hnUd3Rssg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: rzg2l: Fix clk status function
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I can confirm that this patch series (applied to linux commit
-58e2cf5d794616b84f591d4d1276c8953278ce24) works for me =E2=80=94 my Raspber=
-ry
-Pi 3 still boots fine (without HDMI connected).
+On Wed, Sep 22, 2021 at 1:36 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> As per RZ/G2L HW(Rev.0.50) manual, clock monitor register value
+> 0 means clock is not supplied and 1 means clock is supplied.
+> This patch fixes the issue by removing the inverted logic.
+>
+> Fixing the above, triggered following 2 issues
+>
+> 1) GIC interrupts don't work if we disable IA55_CLK and DMAC_ACLK.
+>    Fixed this issue by adding these clocks as critical clocks.
+>
+> 2) DMA is not working, since the DMA driver is not turning on DMAC_PCLK.
+>    So will provide a fix in the DMA driver to turn on DMA_PCLK.
+>
+> Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue as a fix in renesas-clk-for-v5.15.
 
+Gr{oetje,eeting}s,
 
-On Wed, 22 Sept 2021 at 23:18, Michael Stapelberg <michael@stapelberg.ch> w=
-rote:
->
->
-> On Wed, 22 Sept 2021 at 14:54, Maxime Ripard <maxime@cerno.tech> wrote:
->>
->> Hi,
->>
->> Here's another attempt at fixing the complete CPU stall while retrieving=
- the
->> HDMI connector status when the connector is disabled.
->>
->> This was fixed already, but eventually got reverted by Linus due to the =
-same
->> symptom happening in another situation. This was likely (but not confirm=
-ed by
->> the reporter) due to the kernel being booted without an HDMI display con=
-nected,
->> in which case the firmware won't initialise the HDMI State Machine clock=
-.
->
->
-> Sorry for the lack of confirmation: yes, this problem was encountered whe=
-n no HDMI display was connected.
->
-> I=E2=80=99ll try testing your patch series tomorrow.
->
-> Thanks for taking care of this!
->
->>
->>
->> This is fixed by patch 3. However, further changes in the clock drivers =
-were
->> needed for clk_set_min_rate to be used, which are patches 1 and 2.
->>
->> Finally, patches 4 and 5 are the original patches that were reverted. Pa=
-tch 4
->> got a small modification to move the clk_set_min_rate() call before the =
-HSM
->> clock is enabled.
->>
->> Let me know what you think,
->> Maxime
->>
->> Maxime Ripard (5):
->>   clk: bcm-2835: Pick the closest clock rate
->>   clk: bcm-2835: Remove rounding up the dividers
->>   drm/vc4: hdmi: Set a default HSM rate
->>   drm/vc4: hdmi: Move the HSM clock enable to runtime_pm
->>   drm/vc4: hdmi: Make sure the controller is powered in detect
->>
->>  drivers/clk/bcm/clk-bcm2835.c  | 13 ++---
->>  drivers/gpu/drm/vc4/vc4_hdmi.c | 90 ++++++++++++++++++++++++----------
->>  2 files changed, 68 insertions(+), 35 deletions(-)
->>
->> --
->> 2.31.1
->>
->
->
-> --
-> Best regards,
-> Michael
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---=20
-Best regards,
-Michael
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
