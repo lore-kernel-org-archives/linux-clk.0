@@ -2,288 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A087C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 14:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0057C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 16:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E265260F43
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 14:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA89560EB2
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Sep 2021 16:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241615AbhIWOUZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Sep 2021 10:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
+        id S242077AbhIWQ2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Sep 2021 12:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241568AbhIWOUY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 10:20:24 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF64C061756
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 07:18:53 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id w17so17587115wrv.10
-        for <linux-clk@vger.kernel.org>; Thu, 23 Sep 2021 07:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lWN31N47pSgIJgUdRSmzMjOL76R+VFH6kctnLUaWXmg=;
-        b=PV60LmYi6FsftDoBB4JrVLkvcwz+mfC0CUyAL8Yh2RpQCRSSCz04xYCTHE7c+A+lG+
-         tOK3nqqezmNBrSWOGIAH0nAka/koxA8J9sKj0OnyhRPFZNX2GxUNiGNmEkAAgpZ91a00
-         jcEQPuhGn4D3KQbwJ2dbwb0L5KdKTA05Sdaa3aA5hlc2/0GK9L2cORawYWR+X6+LjAKB
-         T9UiSCJ2lwVxfON+Ad7esFVGGntuRfZtAMrLyl0Yr5UqqufEUmQEoCNj78hDrWb4OYRx
-         8znM4Yr2mGIl/fp5D8Q0ErEDV7dDA+MV66PlHkmGAMk9FP7dTERvY+Gx3zSLCakawiNb
-         Tz2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lWN31N47pSgIJgUdRSmzMjOL76R+VFH6kctnLUaWXmg=;
-        b=KrYeKmwxWBgZACzIy1iOmJ+n36bbDUMoLNuIQc4JIXWdfVgZd50yERkb50FrLqesq9
-         YUrEEtyEIUiKaVhka/jWn3VmM4Q5uFWtaK0+JD2tmJ4mdgq4WQDrd6no8EwGZC+R3RsZ
-         i4u+7HOuzL/6EJbB0yXAO5O3u3fXxwriEtuxakgSrDFOYt4rr+egsub3oCUF5t+xa6rN
-         Auq7gE/GFuj5Ef5HWaAeAk9vD1c1fFVHR2rJ1U/tnvp8geyPFKVm31NeWBHdACrWEMT9
-         pHymqTron2r7NhHX3IQiH8t6FWDi2MjUL8F6JWtgt2smyY/MLjOjAu7oXzQzWMr+f+yv
-         abEg==
-X-Gm-Message-State: AOAM532KIIptaQQq4wsHpglQw+2vLAYq70wCv/SNKSykS/72CnGXBE7u
-        /BSBHit1lPXA8dUS9cT9OUCEaoNx5xpznQ==
-X-Google-Smtp-Source: ABdhPJxsWmEt/VdNJNMR40tDtaz4Yjgl9qWWb63ntwgx9lQD4x2yQuSr/sQhCix2pTnbjHkic8fD1g==
-X-Received: by 2002:a05:6000:105:: with SMTP id o5mr5354920wrx.413.1632406731493;
-        Thu, 23 Sep 2021 07:18:51 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id s15sm5595832wrb.22.2021.09.23.07.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 07:18:51 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 15:18:49 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Will McVicker <willmcvicker@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        with ESMTP id S242020AbhIWQ2Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Sep 2021 12:28:25 -0400
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F126C061574;
+        Thu, 23 Sep 2021 09:26:53 -0700 (PDT)
+Received: from localhost.localdomain (83.6.166.81.neoplus.adsl.tpnet.pl [83.6.166.81])
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 0658E3EBC4;
+        Thu, 23 Sep 2021 18:26:50 +0200 (CEST)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
- config logic
-Message-ID: <YUyMyVezyjfv1Hs7@google.com>
-References: <20210920190350.3860821-1-willmcvicker@google.com>
- <20210920190350.3860821-2-willmcvicker@google.com>
- <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
- <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
- <2c8a79f7-711a-b075-745f-ea77b82a1117@canonical.com>
- <CABYd82bzKh=QQHyk-kPXekzCKx+Uy-z2TY5qAQQNfuew=h=O-w@mail.gmail.com>
- <001cd621-53d1-fe22-0eaa-d13137827297@canonical.com>
- <YUx5uhKW/Jy2r3lv@google.com>
- <30a1d0f3-a17c-bf87-2519-542063a7a663@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC driver
+Date:   Thu, 23 Sep 2021 18:26:34 +0200
+Message-Id: <20210923162645.23257-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <30a1d0f3-a17c-bf87-2519-542063a7a663@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 23 Sep 2021, Krzysztof Kozlowski wrote:
+Add documentation for the MSM8994 GCC driver. While at it, retire its
+compatible from the old, everyone-get-in-here file.
 
-> On 23/09/2021 14:57, Lee Jones wrote:
-> > On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
-> > 
-> >> On 21/09/2021 19:58, Will McVicker wrote:
-> >>> On Tue, Sep 21, 2021 at 1:35 AM Krzysztof Kozlowski
-> >>> <krzysztof.kozlowski@canonical.com> wrote:
-> >>>>
-> >>>> On 21/09/2021 09:50, Geert Uytterhoeven wrote:
-> >>>>> On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>>>>> On 20/09/2021 21:03, Will McVicker wrote:
-> >>>>>>> COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
-> >>>>>>> to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
-> >>>>>>> "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
-> >>>>>>> or modularize this driver.
-> >>>>>>
-> >>>>>> The clock drivers are essential, you cannot disable them for a generic
-> >>>>>> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
-> >>>>>
-> >>>>> Obviously it's not gonna work if the clock driver is not enabled
-> >>>>> at all.  But does it work if you make the clock driver modular, and
-> >>>>> put it with all other essential driver modules in initramfs?  Debugging
-> >>>>> would be hard, as the serial console driver also relies on clocks
-> >>>>> and PM Domains etc.
-> >>>>
-> >>>> The kernel could boot without clock drivers (default settings from
-> >>>> bootloader), probe clocks from initramfs and proceed with rootfs from
-> >>>> eMMC/SD/net.
-> >>>>
-> >>>> In theory.
-> >>>>
-> >>>> However I have no reports that it ever worked. If there is such working
-> >>>> upstream configuration, I don't mind here. Just please explain this in
-> >>>> the commit msg.
-> >>>>
-> >>>>>
-> >>>>> If not, this patch should be NAKed, until it works with a modular
-> >>>>> clock driver.
-> >>>>>
-> >>>>> If yes, perhaps another line should be added (_before_ the other line)?
-> >>>>>
-> >>>>>   + default m if ARCH_EXYNOS && MODULES
-> >>>>>     default y if ARCH_EXYNOS
-> >>>>>
-> >>>>> However, many developers may want MODULES=y, but not want to bother
-> >>>>> with an initramfs.  So perhaps we need a new symbol
-> >>>>> MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
-> >>>>> driver default to m if that is enabled?
-> >>>>
-> >>>> Yeah, that's indeed a problem to solve. For most users (and distros)
-> >>>> building kernel for Exynos this should be built-in by default.
-> >>>>
-> >>>> Anyway, the option is non-selectable so it cannot be converted to "m" or
-> >>>> disabled. And this is claimed in the commit msg:
-> >>>> "provide flexibilty for vendors to disable or modularize this driver."
-> >>>>
-> >>>> The commit does not achieve it.
-> >>>>
-> >>>> Best regards,
-> >>>> Krzysztof
-> >>>
-> >>> Thanks for the reviews! As Lee has explained in his replies, the
-> >>> intent of this series is to provide config flexibility to create a
-> >>> defconfig that allows us to move out SoC specific drivers in order to
-> >>> create a generic kernel that can be used across multiple devices with
-> >>> different SoCs.
-> >>
-> >> That's quite generic statement... or let me put it that way - we already
-> >> have this ability to create a generic kernel supporting different SoCs.
-> >> Exynos and other ARMv7 and ARMv8 platforms are multiplatform.
-> >>
-> >> Task is done.
-> > 
-> > multi_v7_defconfig and ARMv8's defconfig are bloated monoliths which
-> > provide limited flexibility.  Good for testing and messing around -
-> > not much good for real products.
-> 
-> I am not saying about defconfigs. I am saying that ARMv8 platform is
-> multiplatform so we already solved the problem Will mentioned. :)
-> 
-> > 
-> >> Please be more specific about use case and describe what exactly in
-> >> current upstream multiplatform kernel is missing, what is not
-> >> multiplatform enough.
-> > 
-> > The use-case is GKI.  A realistic middle-ground between fully open
-> > source and real-world usage of the Linux kernel in a competitive
-> > technical arena.  GKI aims to be as close to Mainline as possible,
-> > whilst allowing hardware vendors to supply their own software
-> > containing their perceived competitive edge and/or supporting
-> > not-yet-released hardware platforms.
-> 
-> <grumpy mode>
-> Therefore the use case is to not contribute anything upstream around
-> ARCH_EXYNOS but use it in millions of devices downstream with hundreds
-> of out-of-tree modules. The use case is to make life easy for the vendor
-> and out-of-tree code, not for the upstream. Instead of promoting
-> upstreaming, or leaning towards usptream in some balanced way, the use
-> case is to entirely go to out-of-tree.
-> 
-> I am not thinking here about edge or not-yet-released platforms but
-> "ancient" in terms of current SoC business, e.g. 3-5 years old.
-> </grumpy mode>
-> 
-> > 
-> > If you end up over-constraining the ability to configure the kernel in
-> > useful/meaningful ways, that makes one of the main (best intention)
-> > aims of GKI, (i.e. to have an upstream first ethos in order to be as
-> > close to upstream as possible) much more difficult.
-> 
-> GKI encourages core kernel changes to be upstreamed but it is
-> effectively the nail in the coffin of upstreaming vendor SoC changes.
-> There is simply no incentive for less-cooperative vendor to upstream
-> it's modules (except usual benefits like code quality and user support
-> which are not important for less-cooperative vendors).
-> 
-> The kernel should be configured mainly towards mainline platforms. Not
-> the other way around. This of course does not stop it for supporting
-> out-of-tree code, but I guess you also know that what's out-of-tree, it
-> does not exist. :)
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+Changes since v3:
+- Don't document the compatible twice
 
-I'm not sure you've thought the above points through. :)
+ .../bindings/clock/qcom,gcc-msm8994.yaml      | 70 +++++++++++++++++++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 -
+ 2 files changed, 70 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
 
-How is that any of this different to Mainline?
-
-So long as you have the headers for the kernel you wish to compile
-against, you can create all the new modules you like in both cases.
-
-> > I put in a lot of effort to ensure GKI doesn't end up as just another
-> > fork of the Linux kernel.  So far, so good, but flexibility and
-> > understanding is key.
-> > 
-> >>> I'm sorry I added confusion by mentioning
-> >>> modularization. All of these drivers that I am modifying in this
-> >>> series can be modularized which is an ongoing effort, but is not
-> >>> addressed here and I don't believe that modularizing them should be a
-> >>> requirement before supporting enabling/disabling them.
-> >>
-> >> Since the disabling the driver for a kernel supporting Exynos does not
-> >> make any sense, then making it at least modular unfortunately it is a
-> >> requirement.
-> > 
-> > I can go with that.
-> > 
-> >>> I will update the series with my patch that refactors the Samsung SoC
-> >>> drivers menuconfig to make these visible as well.
-> >>
-> >> I would first recommend to really describe your use case because my
-> >> questions about this are still unanswered.
-> > 
-> > Hopefully my replies have helped somewhat.
-> > 
-> > Happy to discuss further if required.
-> > 
-> > If all else fails, feel free to ping me on IRC (lag).
-> 
-> Thanks Lee, you described the use case. In general I like it and support
-> it, except for what I wrote in the other mail.
-> 
-> Vendor does not contribute much therefore there is no balance in
-> upstreaming. Since none of other vendor's platforms are supported, I am
-> looking only at what is supported. From that perspective - the change
-> proposed by Will and previous guys, does not have much sense.
-> 
-> My perspective probably would change a lot if vendor did contribute some
-> of its non-edge platforms (3-5 years old)... especially that unlike few
-> community guys (e.g. PostmarketOS), vendor has shit-tons of money and
-> the hardware manuals. :)
-
-But no incentive to upstream code old (dead) platforms that they no
-longer make money from.  We're not talking about kind-hearted
-individuals here.  These are business entities.
-
-What is the business incentive to put hundreds of thousands of dollars
-into something with no RoI?
-
-> Instead of pushing this change, please let's give some incentive to the
-> vendor for upstreaming anything.
-
-Again, you're being specific.  We would also like/need to make the
-same kinds of changes to other vendor configurations.  One's which do
-contribute significantly at their own cost.
-
-The technical reasoning cannot be different because you do or don't
-like the way the company operates.  Try to detach a little from
-your feelings during discussions which should be purely technical.
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+new file mode 100644
+index 000000000000..22e67b238bb6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
++
++maintainers:
++  - Konrad Dybcio <konrad.dybcio@somainline.org>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on MSM8994 and MSM8992.
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-msm8994.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,gcc-msm8992
++      - qcom,gcc-msm8994
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: xo
++      - const: sleep
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@300000 {
++      compatible = "qcom,gcc-msm8994";
++      reg = <0x00300000 0x90000>;
++      clocks = <&xo_board>, <&sleep_clk>;
++      clock-names = "xo", "sleep";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index 8453eeddf30e..138e0745647f 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -28,7 +28,6 @@ description: |
+   - dt-bindings/reset/qcom,gcc-msm8660.h
+   - dt-bindings/clock/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+   - dt-bindings/reset/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+-  - dt-bindings/clock/qcom,gcc-msm8994.h
+   - dt-bindings/clock/qcom,gcc-mdm9607.h
+   - dt-bindings/clock/qcom,gcc-mdm9615.h
+   - dt-bindings/reset/qcom,gcc-mdm9615.h
+@@ -50,7 +49,6 @@ properties:
+       - qcom,gcc-msm8974
+       - qcom,gcc-msm8974pro
+       - qcom,gcc-msm8974pro-ac
+-      - qcom,gcc-msm8994
+       - qcom,gcc-mdm9615
+       - qcom,gcc-sdm630
+       - qcom,gcc-sdm660
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.33.0
+
