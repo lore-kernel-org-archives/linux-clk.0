@@ -1,145 +1,96 @@
 Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CAAC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4F9C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 18:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7938061090
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B9B761269
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 18:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234851AbhIXOBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Sep 2021 10:01:19 -0400
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:34728 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346576AbhIXOA6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 10:00:58 -0400
-Received: by mail-ot1-f43.google.com with SMTP id g62-20020a9d2dc4000000b0054752cfbc59so7550139otb.1;
-        Fri, 24 Sep 2021 06:59:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=WcWh55mrnHlrmpS4bF3C6RTmMv+GgWp8tjxqVJlKmm8=;
-        b=h2myBCc2FwFUN06kisWSp/YQ0aVRvz+hEb5xr9ECMZuoxMh92+MKS5mJP3gDL66i3l
-         Bs8LQR/BrxNedoDcR/ztIG49Zw564F1W7vfgO7HEl/J7W1VIDZtQn//0FGsPLljrTAzY
-         doITC9ItLvksSN64wEl7A5Vvs4Ei5U7BN4lvoxGQVXVGDNKh+UedE6+lmgt8KL7e8TXB
-         EAQnSIhA54GDUAm5jNqY4O4SR4S7NqPHVO7AGf8WuuTMEBig8T8sK12JSr3rsaoWUtgT
-         rMyw3T0c5sg6w+WvYBK2dKtW1lWkXZun2rYn047Y6OqNR+0DLL8sWGL4GSfXd8HkVwFY
-         iPkw==
-X-Gm-Message-State: AOAM532ZChB0NhmEBJYrXQ8JZkdkyRgvaOovQ7y7o6we6eVXHZ8u9fC3
-        IXYbvcFqfopwKGdR8sn++g==
-X-Google-Smtp-Source: ABdhPJwu5vf62gkghKqrJp812TiqZCJ5L14q4YY1lFn4pkmkXKCEkfSFSlIERBrP2Win5Yi3GNO6Sw==
-X-Received: by 2002:a9d:4a83:: with SMTP id i3mr4246791otf.385.1632491964290;
-        Fri, 24 Sep 2021 06:59:24 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id d26sm2075540oij.49.2021.09.24.06.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 06:59:23 -0700 (PDT)
-Received: (nullmailer pid 1195979 invoked by uid 1000);
-        Fri, 24 Sep 2021 13:59:21 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
-        Ryder.Lee@mediatek.com, fparent@baylibre.com,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        seiya.wang@mediatek.com, sean.wang@kernel.org, robh+dt@kernel.org,
-        enric.balletbo@collabora.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, wim@linux-watchdog.org,
-        linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
-        mturquette@baylibre.com, linux-watchdog@vger.kernel.org,
-        linux-serial@vger.kernel.org, mpm@selenic.com, linux@roeck-us.net,
-        john@phrozen.org, sboyd@kernel.org, hsinyi@chromium.org,
-        linus.walleij@linaro.org
-In-Reply-To: <20210924114459.28664-1-sam.shih@mediatek.com>
-References: <9aa66a93-4d0c-176e-ea35-b5aa33751d51@gmail.com> <20210924114459.28664-1-sam.shih@mediatek.com>
-Subject: Re: [v4,5/9] dt-bindings: pinctrl: update bindings for MT7986 SoC
-Date:   Fri, 24 Sep 2021 08:59:21 -0500
-Message-Id: <1632491961.645727.1195978.nullmailer@robh.at.kernel.org>
+        id S1345570AbhIXSdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Sep 2021 14:33:40 -0400
+Received: from relay02.th.seeweb.it ([5.144.164.163]:41263 "EHLO
+        relay02.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343927AbhIXSdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 14:33:39 -0400
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 2237B20204;
+        Fri, 24 Sep 2021 20:32:04 +0200 (CEST)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Global Clock Controller driver for MSM8976/56
+Date:   Fri, 24 Sep 2021 20:31:53 +0200
+Message-Id: <20210924183155.344239-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 24 Sep 2021 19:44:59 +0800, Sam Shih wrote:
-> This updates bindings for MT7986 pinctrl driver. The
-> difference of pinctrl between mt7986a and mt7986b is that pin-41 to pin-65
-> do not exist on mt7986b
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> 
-> ---
-> v4 : used yaml format instead of txt format document
-> v3 : make mt7986 pinctrl bindings as a separate file
-> v2 : deleted the redundant description of mt7986a/mt7986b
-> ---
->  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 350 ++++++++++++++++++
->  1 file changed, 350 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-> 
+This is the Global Clock Controller (GCC) driver for MSM8956, MSM8976
+and APQ variants and it has been tested on two Sony phones featuring the
+Qualcomm MSM8956 SoC.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+In addition to GCC this driver is also responsible for providing MDSS
+and GFX3D clocks which reside in the same register space.
 
-yamllint warnings/errors:
+SoMainline is dedicated to getting their long-awaited msm8976 support,
+including the Xperia X, X Compact and if feasible also the Xperia Touch
+projector (APQ8056) slowly but steadily upstreamed.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: 'pin_group_table' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'patternProperties', 'properties', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select']
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
-	'type' is a required property
-		hint: A vendor boolean property can use "type: boolean"
-	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
-		'enum' is a required property
-		'const' is a required property
-		hint: A vendor string property with exact values has an implicit type
-		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
-		'$ref' is a required property
-		'allOf' is a required property
-		hint: A vendor property needs a $ref to types.yaml
-		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
-	'type' is a required property
-		hint: A vendor boolean property can use "type: boolean"
-	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
-		'enum' is a required property
-		'const' is a required property
-		hint: A vendor string property with exact values has an implicit type
-		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
-		'$ref' is a required property
-		'allOf' is a required property
-		hint: A vendor property needs a $ref to types.yaml
-		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: ignoring, error in schema: 
-warning: no schema found in file: ./Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-Error: Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:37.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+Changes in v3:
+- Rebased on v5.14;
+- Various minor cleanups (lowercase hex, const where appropriate,
+  removal of unused enum constants);
+- Fixed XOR confusion in probe;
+- All remnants of global clock name dependencies are removed, all
+  inter-driver dependencies must be fully specified in DT;
+- Added proper dt-bindings yaml validation, listing the required clocks;
+- Moved dt-bindings header to the dt-bindings patch.
 
-doc reference errors (make refcheckdocs):
+Changes in v2:
+- Rebased onto linux-next 20191015
+- Fixed platform driver name (qcom,gcc-8976 => gcc-msm8976)
+- Splitted changes to dt-bindings to a separate commit
 
-See https://patchwork.ozlabs.org/patch/1532240
+AngeloGioacchino Del Regno (1):
+  clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Marijn Suijten (1):
+  dt-bindings: clk: qcom: Document MSM8976 Global Clock & Reset
+    Controller
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+ .../bindings/clock/qcom,gcc-msm8976.yaml      |   90 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-msm8976.c                | 4154 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8976.h  |  240 +
+ 5 files changed, 4493 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+ create mode 100644 drivers/clk/qcom/gcc-msm8976.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8976.h
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+-- 
+2.33.0
 
