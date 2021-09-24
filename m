@@ -2,162 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82CAC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CAAC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF8206103B
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7938061090
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346652AbhIXNik (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Sep 2021 09:38:40 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59976
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346764AbhIXNid (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 09:38:33 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6D37940827
-        for <linux-clk@vger.kernel.org>; Fri, 24 Sep 2021 13:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632490619;
-        bh=90LQqsSK32tSFh91aPRZL+TZq8U0f1YD/IqlXackaD4=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=DBzeGI4+DiY/y7wrEPo4VqyOc6XVnodZlGnpyFWVC/LOVLPEA9dClr6DOFtBN4Evq
-         IbvJ22NMJu7zvMYqn8h2o6i+m+mifRhYLIRy4GBIroueEp1hmUwFxyhJi2QWXml4lN
-         +XMK8QgTxjHSDXaw+SHbb/bEbcJsdXZa/VcFutX/EmOktl+rfUQNaxQR+NA46GBndP
-         k8FeTQBsHjB4VcHC1bo6vhGTAXTRJtCwcA191SXU8CyblfNEgaFAeMWdOX+Wz3c3cm
-         2Ni6SuBmu/lv9upvzDqnFTl0Z44p+8HB8sHnNjG/AamVPQ/wFnXP2Y067d3K9RMM4k
-         b+iPyf/czzIpA==
-Received: by mail-wr1-f70.google.com with SMTP id r9-20020a5d4989000000b0015d0fbb8823so8065524wrq.18
-        for <linux-clk@vger.kernel.org>; Fri, 24 Sep 2021 06:36:59 -0700 (PDT)
+        id S234851AbhIXOBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Sep 2021 10:01:19 -0400
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:34728 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346576AbhIXOA6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 10:00:58 -0400
+Received: by mail-ot1-f43.google.com with SMTP id g62-20020a9d2dc4000000b0054752cfbc59so7550139otb.1;
+        Fri, 24 Sep 2021 06:59:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=90LQqsSK32tSFh91aPRZL+TZq8U0f1YD/IqlXackaD4=;
-        b=FiB9Yclk+oydtnj5/2DzdIHYhEw3cwO9L0nBI0t1bj8OwqsysNjIOwvKZ29mxEamba
-         zTuosNJkQ6v0WphJf3EH9kxFEDfyKtwLHEqv9Neoer+fGZhFJQNWZCljOVqKZrwSqhpV
-         LQwu7Chw0Pi2BRj+qkgzPf21gxqg4UYvdIHfkLsDoBIJ79sxlSIw5qVuitX7Wlvty8jv
-         vALpgkgbjpN1x4mamu4gmGgydp5sWeFA8dKl8AgKHP3sRWwZTtZ9hQsEAbt9mMbKZbto
-         5a7/1UgQv2PBMCUABUA7mMCUG/zYjYKJqHX9K2q7r0ab10g5Y1OucGmTboRZiQx6D7Fi
-         41DQ==
-X-Gm-Message-State: AOAM533NDybto4laoR3Nagrk17M+e9nV1HW6fNg0lPNdvwJkDJaYPufV
-        DUG9LVzfMgMAgWmJx2qffNrXN7LYwLGze+16rrtW7EAnFhBofUpBQKBGX9juQCSOxOtq731BOfO
-        Wjie+tWyu4ciV93iLpe6Tt3njEqoMrWxEp5qLpg==
-X-Received: by 2002:a05:600c:4106:: with SMTP id j6mr2248097wmi.99.1632490618455;
-        Fri, 24 Sep 2021 06:36:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzOzWcfCKTUfPBl8cAWjFiXGRe8fe974eq3o4JN39+VEZHWSXwMJ+8CTcRTSWPLHrokroGXgw==
-X-Received: by 2002:a05:600c:4106:: with SMTP id j6mr2248085wmi.99.1632490618319;
-        Fri, 24 Sep 2021 06:36:58 -0700 (PDT)
-Received: from localhost.localdomain (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id j19sm8122245wra.92.2021.09.24.06.36.57
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=WcWh55mrnHlrmpS4bF3C6RTmMv+GgWp8tjxqVJlKmm8=;
+        b=h2myBCc2FwFUN06kisWSp/YQ0aVRvz+hEb5xr9ECMZuoxMh92+MKS5mJP3gDL66i3l
+         Bs8LQR/BrxNedoDcR/ztIG49Zw564F1W7vfgO7HEl/J7W1VIDZtQn//0FGsPLljrTAzY
+         doITC9ItLvksSN64wEl7A5Vvs4Ei5U7BN4lvoxGQVXVGDNKh+UedE6+lmgt8KL7e8TXB
+         EAQnSIhA54GDUAm5jNqY4O4SR4S7NqPHVO7AGf8WuuTMEBig8T8sK12JSr3rsaoWUtgT
+         rMyw3T0c5sg6w+WvYBK2dKtW1lWkXZun2rYn047Y6OqNR+0DLL8sWGL4GSfXd8HkVwFY
+         iPkw==
+X-Gm-Message-State: AOAM532ZChB0NhmEBJYrXQ8JZkdkyRgvaOovQ7y7o6we6eVXHZ8u9fC3
+        IXYbvcFqfopwKGdR8sn++g==
+X-Google-Smtp-Source: ABdhPJwu5vf62gkghKqrJp812TiqZCJ5L14q4YY1lFn4pkmkXKCEkfSFSlIERBrP2Win5Yi3GNO6Sw==
+X-Received: by 2002:a9d:4a83:: with SMTP id i3mr4246791otf.385.1632491964290;
+        Fri, 24 Sep 2021 06:59:24 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id d26sm2075540oij.49.2021.09.24.06.59.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 06:36:57 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: samsung: describe drivers in KConfig
-Date:   Fri, 24 Sep 2021 15:36:24 +0200
-Message-Id: <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 24 Sep 2021 06:59:23 -0700 (PDT)
+Received: (nullmailer pid 1195979 invoked by uid 1000);
+        Fri, 24 Sep 2021 13:59:21 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
+        Ryder.Lee@mediatek.com, fparent@baylibre.com,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        seiya.wang@mediatek.com, sean.wang@kernel.org, robh+dt@kernel.org,
+        enric.balletbo@collabora.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, wim@linux-watchdog.org,
+        linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
+        mturquette@baylibre.com, linux-watchdog@vger.kernel.org,
+        linux-serial@vger.kernel.org, mpm@selenic.com, linux@roeck-us.net,
+        john@phrozen.org, sboyd@kernel.org, hsinyi@chromium.org,
+        linus.walleij@linaro.org
+In-Reply-To: <20210924114459.28664-1-sam.shih@mediatek.com>
+References: <9aa66a93-4d0c-176e-ea35-b5aa33751d51@gmail.com> <20210924114459.28664-1-sam.shih@mediatek.com>
+Subject: Re: [v4,5/9] dt-bindings: pinctrl: update bindings for MT7986 SoC
+Date:   Fri, 24 Sep 2021 08:59:21 -0500
+Message-Id: <1632491961.645727.1195978.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe better which driver applies to which SoC, to make configuring
-kernel for Samsung SoC easier.
+On Fri, 24 Sep 2021 19:44:59 +0800, Sam Shih wrote:
+> This updates bindings for MT7986 pinctrl driver. The
+> difference of pinctrl between mt7986a and mt7986b is that pin-41 to pin-65
+> do not exist on mt7986b
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> 
+> ---
+> v4 : used yaml format instead of txt format document
+> v3 : make mt7986 pinctrl bindings as a separate file
+> v2 : deleted the redundant description of mt7986a/mt7986b
+> ---
+>  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 350 ++++++++++++++++++
+>  1 file changed, 350 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- drivers/clk/samsung/Kconfig | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 0441c4f73ac9..0e18d6ff2916 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -67,7 +67,8 @@ config EXYNOS_5420_COMMON_CLK
- 	depends on COMMON_CLK_SAMSUNG
- 	help
- 	  Support for the clock controller present on the Samsung
--	  Exynos5420 SoCs. Choose Y here only if you build for this SoC.
-+	  Exynos5420/Exynos5422/Exynos5800 SoCs. Choose Y here only if you
-+	  build for this SoC.
- 
- config EXYNOS_ARM64_COMMON_CLK
- 	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
-@@ -79,38 +80,47 @@ config EXYNOS_AUDSS_CLK_CON
- 	default y if ARCH_EXYNOS
- 	help
- 	  Support for the Audio Subsystem CLKCON clock controller present
--	  on some Exynos SoC variants. Choose M or Y here if you want to
--	  use audio devices such as I2S, PCM, etc.
-+	  on some Samsung Exynos SoC variants. Choose M or Y here if you want
-+	  to use audio devices such as I2S, PCM, etc.
- 
- config EXYNOS_CLKOUT
- 	tristate "Samsung Exynos clock output driver"
- 	depends on COMMON_CLK_SAMSUNG
- 	default y if ARCH_EXYNOS
- 	help
--	  Support for the clock output (XCLKOUT) present on some of Exynos SoC
--	  variants. Usually the XCLKOUT is used to monitor the status of the
--	  certains clocks from SoC, but it could also be tied to other devices
--	  as an input clock.
-+	  Support for the clock output (XCLKOUT) present on some of Samsung
-+	  Exynos SoC variants. Usually the XCLKOUT is used to monitor the
-+	  status of the certains clocks from SoC, but it could also be tied to
-+	  other devices as an input clock.
- 
- # For S3C24XX platforms, select following symbols:
- config S3C2410_COMMON_CLK
- 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 	help
--	  Build the s3c2410 clock driver based on the common clock framework.
-+	  Support for the clock controller present on the Samsung
-+	  S3C2410/S3C2440/S3C2442 SoCs. Choose Y here only if you build for
-+	  this SoC.
- 
- config S3C2410_COMMON_DCLK
- 	bool
- 	select COMMON_CLK_SAMSUNG
- 	select REGMAP_MMIO
- 	help
--	  Temporary symbol to build the dclk driver based on the common clock
--	  framework.
-+	  Support for the dclk clock controller present on the Samsung
-+	  S3C2410/S3C2412/S3C2440/S3C2443 SoCs. Choose Y here only if you build
-+	  for this SoC.
- 
- config S3C2412_COMMON_CLK
- 	bool "Samsung S3C2412 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
-+	help
-+	  Support for the clock controller present on the Samsung S3C2412 SoCs.
-+	  Choose Y here only if you build for this SoC.
- 
- config S3C2443_COMMON_CLK
- 	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
-+	help
-+	  Support for the clock controller present on the Samsung
-+	  S3C2416/S3C2443 SoCs. Choose Y here only if you build for this SoC.
--- 
-2.30.2
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: 'pin_group_table' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'patternProperties', 'properties', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select']
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
+	'type' is a required property
+		hint: A vendor boolean property can use "type: boolean"
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
+		'enum' is a required property
+		'const' is a required property
+		hint: A vendor string property with exact values has an implicit type
+		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-up-adv: 'oneOf' conditional failed, one must be fixed:
+		'$ref' is a required property
+		'allOf' is a required property
+		hint: A vendor property needs a $ref to types.yaml
+		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
+	'type' is a required property
+		hint: A vendor boolean property can use "type: boolean"
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
+		'enum' is a required property
+		'const' is a required property
+		hint: A vendor string property with exact values has an implicit type
+		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: patternProperties:-[0-9]+$:patternProperties:conf:properties:mediatek,pull-down-adv: 'oneOf' conditional failed, one must be fixed:
+		'$ref' is a required property
+		'allOf' is a required property
+		hint: A vendor property needs a $ref to types.yaml
+		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml: ignoring, error in schema: 
+warning: no schema found in file: ./Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+Error: Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:37.27-28 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1441: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1532240
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
