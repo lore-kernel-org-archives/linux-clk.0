@@ -2,139 +2,391 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE61CC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 07:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEB4C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 11:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87EF46124C
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 07:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF69561164
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Sep 2021 11:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244166AbhIXHmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Sep 2021 03:42:25 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33871 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244428AbhIXHmV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 03:42:21 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BB54D58108A;
-        Fri, 24 Sep 2021 03:40:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 24 Sep 2021 03:40:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=K3QOPik4vRo2PwF4S+8r6PvTMNG
-        R4DNlcHp3C4PMAhE=; b=M8hnKTD50ReAPzl0RlF/ztAW4kotH682kO97BICtjBG
-        fJp7GBylbLlEN3GvzlAcyNv/oy3L/jP+ojNx/eG+wmTLOOxY6VSXSJ8KqcPOTkRZ
-        RDJGlvOcc2EHY1MjnaiR6+CMihq5pSWv8dInwJ6i3yGdGpkCBv91RgTQf2zsWWA6
-        hvh0Zbm2Xw+QSggEVX9uC1EJ8Mw0d0fm+T4LZZAsmBgUwmPo+ORDQb7MzgprxaP9
-        geQBiW8obyrbRHmQH0AlZcBbN3+4S70jClXmmPxd2eYRQaUDbhj9r3grTMiTWgJr
-        m8469NC+UPGuNsumoWcxgR5E5tDeYnbNjrZ6Bhynq8w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=K3QOPi
-        k4vRo2PwF4S+8r6PvTMNGR4DNlcHp3C4PMAhE=; b=Her9lJ199ZKS6moX4znHgd
-        P7t5m7vSo/Ks9ZAJD3g8dveBxBd9EulVPJemuOIr1PpbJd7RKvSpALZ7EpK3bHlu
-        iTj+Ma+fC8WdbK6hk6i/qREQFjHTmWScIaZfWhI+mBEuh1keuEYpsFD9uaShwXj9
-        1DULJ1aj7EgmB/LLdhMOhrR08oNWK4Xka5vnsYBfKaN2p4F5yQcxq2gDS7bG7feI
-        FtRK5RRPXlDoyHTpl6mv21WlY/bfe8RY8A4jlcnxLphFCJCr8S5z2uwpM4bhoQ4j
-        0k3vbU9B9Kx1lXLiGyvMRCfB9eGtWCbXxoDT/Ixf/hq7Wrt3oiFHc7MEkbrMG+Fg
-        ==
-X-ME-Sender: <xms:_oBNYeNFVozi6hW1WOQU9kH3ifPnkkG5d2BXTlPxMiHGIWXUI423ZA>
-    <xme:_oBNYc_Pv9JZTGt3en9wytnhBbMJG8hykTKDQxpObmaHZuurWho7WPZhQ1eMklrFl
-    aJe4mgqEg6mMPsvN60>
-X-ME-Received: <xmr:_oBNYVTNkxw7BfqDMr1ajVQ1WycEJjlOyIM2elRXOWNCHwIYJ4ESHbPsTFAnc8gAi2NtFxKLpNL0xmCmQGDP2pzz9kUEoxFErLEv>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejtddguddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheei
-    heegudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:_oBNYetQu1vCOlhHqNCP6oToqCX2v77e4sdOSPkA-RREKDChf-5vzQ>
-    <xmx:_oBNYWdaXPidBfFybdeNWLRRn8yIEeNR4ozFBRFY9N8Tn2z86EVAcw>
-    <xmx:_oBNYS2kZeKUkfzbsq7_ld3Z5d1vDdNkxa0R1p_qNtHJR2_Wto4xWA>
-    <xmx:_4BNYS0cEco2t84_FJP8Aa_Qu5viUat7MnsyXaGweBO8DNEqm7t9iA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Sep 2021 03:40:46 -0400 (EDT)
-Date:   Fri, 24 Sep 2021 09:40:44 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/5] drm/vc4: hdmi: Remove CPU hangs, take 2
-Message-ID: <20210924074044.e24kbxr7lhdtb3eg@gilmour>
-References: <20210922125419.4125779-1-maxime@cerno.tech>
+        id S245246AbhIXLWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Sep 2021 07:22:06 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42618 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S245092AbhIXLWC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Sep 2021 07:22:02 -0400
+X-UUID: 9070012a59ae4a318f958232e274e1bf-20210924
+X-UUID: 9070012a59ae4a318f958232e274e1bf-20210924
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 150204854; Fri, 24 Sep 2021 19:20:27 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Fri, 24 Sep 2021 19:20:26 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 24 Sep 2021 19:20:25 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     <matthias.bgg@gmail.com>
+CC:     <Ryder.Lee@mediatek.com>, <devicetree@vger.kernel.org>,
+        <enric.balletbo@collabora.com>, <fparent@baylibre.com>,
+        <gregkh@linuxfoundation.org>, <herbert@gondor.apana.org.au>,
+        <hsinyi@chromium.org>, <john@phrozen.org>,
+        <linus.walleij@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-serial@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <linux@roeck-us.net>, <mpm@selenic.com>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>, <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <sean.wang@kernel.org>, <seiya.wang@mediatek.com>,
+        <wim@linux-watchdog.org>
+Subject: [v3,8/9] arm64: dts: mediatek: add mt7986a support
+Date:   Fri, 24 Sep 2021 19:20:17 +0800
+Message-ID: <20210924112017.14107-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <016b501b-a4bf-c74d-9f7f-8145800ca6e0@gmail.com>
+References: <016b501b-a4bf-c74d-9f7f-8145800ca6e0@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k62r2q7dvrx6knrx"
-Content-Disposition: inline
-In-Reply-To: <20210922125419.4125779-1-maxime@cerno.tech>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add basic chip support for Mediatek mt7986a, include
+uart nodes with correct clocks, rng node with correct clock,
+and watchdog node and mt7986a pinctrl node.
 
---k62r2q7dvrx6knrx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add cpu node, timer node, gic node, psci and reserved-memory node
+for ARM Trusted Firmware,
 
-Hi,
+Add clock controller nodes, include 40M clock source, topckgen, infracfg,
+apmixedsys and ethernet subsystem.
 
-On Wed, Sep 22, 2021 at 02:54:14PM +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> Here's another attempt at fixing the complete CPU stall while retrieving =
-the
-> HDMI connector status when the connector is disabled.
->=20
-> This was fixed already, but eventually got reverted by Linus due to the s=
-ame
-> symptom happening in another situation. This was likely (but not confirme=
-d by
-> the reporter) due to the kernel being booted without an HDMI display conn=
-ected,
-> in which case the firmware won't initialise the HDMI State Machine clock.
->=20
-> This is fixed by patch 3. However, further changes in the clock drivers w=
-ere
-> needed for clk_set_min_rate to be used, which are patches 1 and 2.
->=20
-> Finally, patches 4 and 5 are the original patches that were reverted. Pat=
-ch 4
-> got a small modification to move the clk_set_min_rate() call before the H=
-SM
-> clock is enabled.
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+---
+v3: used the stdout-path instead of console=ttyS0
+v2: modified clock and uart node due to clock driver updated
+---
+ arch/arm64/boot/dts/mediatek/Makefile        |   1 +
+ arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts |  54 +++++
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi    | 227 +++++++++++++++++++
+ 3 files changed, 282 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a.dtsi
 
-If we merge the clock patches and DRM patches separately we're going to
-break bisectability. I guess the easiest approach would be to merge the
-clk patches through DRM. Does that work for everyone?
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 4f68ebed2e31..e6c3a73b9e4a 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm-hana.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts b/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+new file mode 100644
+index 000000000000..e210d03ba70a
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7986a-rfb.dts
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2021 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ */
++
++/dts-v1/;
++#include "mt7986a.dtsi"
++
++/ {
++	model = "MediaTek MT7986a RFB";
++	compatible = "mediatek,mt7986a-rfb";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++		bootargs = "earlycon=uart8250,mmio32,0x11002000 swiotlb=512";
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>;
++	status = "okay";
++};
++
++&pio {
++	uart1_pins: uart1-pins-42-to-45 {
++		mux {
++			function = "uart";
++			groups = "uart1";
++		};
++	};
++
++	uart2_pins: uart1-pins-46-to-49 {
++		mux {
++			function = "uart";
++			groups = "uart2";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a.dtsi b/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+new file mode 100644
+index 000000000000..dfe3e7101031
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+@@ -0,0 +1,227 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2021 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/mt7986-clk.h>
++
++/ {
++	compatible = "mediatek,mt7986a";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	clk40m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <40000000>;
++		clock-output-names = "clkxtal";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x0>;
++			#cooling-cells = <2>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x1>;
++			#cooling-cells = <2>;
++		};
++
++		cpu2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x2>;
++			#cooling-cells = <2>;
++		};
++
++		cpu3: cpu@3 {
++			device_type = "cpu";
++			enable-method = "psci";
++			compatible = "arm,cortex-a53";
++			reg = <0x3>;
++			#cooling-cells = <2>;
++		};
++	};
++
++	psci {
++		compatible  = "arm,psci-0.2";
++		method      = "smc";
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		/* 192 KiB reserved for ARM Trusted Firmware (BL31) */
++		secmon_reserved: secmon@43000000 {
++			reg = <0 0x43000000 0 0x30000>;
++			no-map;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		clock-frequency = <13000000>;
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++	};
++
++	soc {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		compatible = "simple-bus";
++		ranges;
++
++		gic: interrupt-controller@c000000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			interrupt-parent = <&gic>;
++			interrupt-controller;
++			reg = <0 0x0c000000 0 0x40000>,
++			      <0 0x0c080000 0 0x200000>;
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		infracfg: infracfg@10001000 {
++			compatible = "mediatek,mt7986-infracfg", "syscon";
++			reg = <0 0x10001000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		topckgen: topckgen@1001b000 {
++			compatible = "mediatek,mt7986-topckgen", "syscon";
++			reg = <0 0x1001B000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		watchdog: watchdog@1001c000 {
++			compatible = "mediatek,mt7986-wdt",
++				     "mediatek,mt6589-wdt";
++			reg = <0 0x1001c000 0 0x1000>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			#reset-cells = <1>;
++			status = "disabled";
++		};
++
++		apmixedsys: apmixedsys@1001e000 {
++			compatible = "mediatek,mt7986-apmixedsys";
++			reg = <0 0x1001E000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		pio: pinctrl@1001f000 {
++			compatible = "mediatek,mt7986a-pinctrl";
++			reg = <0 0x1001f000 0 0x1000>,
++			      <0 0x11c30000 0 0x1000>,
++			      <0 0x11c40000 0 0x1000>,
++			      <0 0x11e20000 0 0x1000>,
++			      <0 0x11e30000 0 0x1000>,
++			      <0 0x11f00000 0 0x1000>,
++			      <0 0x11f10000 0 0x1000>,
++			      <0 0x1000b000 0 0x1000>;
++			reg-names = "gpio_base", "iocfg_rt_base", "iocfg_rb_base",
++				    "iocfg_lt_base", "iocfg_lb_base", "iocfg_tr_base",
++				    "iocfg_tl_base", "eint";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pio 0 0 100>;
++			interrupt-controller;
++			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-parent = <&gic>;
++			#interrupt-cells = <2>;
++		};
++
++		sgmiisys0: syscon@10060000 {
++			compatible = "mediatek,mt7986-sgmiisys_0",
++				     "syscon";
++			reg = <0 0x10060000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		sgmiisys1: syscon@10070000 {
++			compatible = "mediatek,mt7986-sgmiisys_1",
++				     "syscon";
++			reg = <0 0x10070000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		trng: trng@1020f000 {
++			compatible = "mediatek,mt7986-rng",
++				     "mediatek,mt7623-rng";
++			reg = <0 0x1020f000 0 0x100>;
++			clocks = <&infracfg CLK_INFRA_TRNG_CK>;
++			clock-names = "rng";
++			status = "disabled";
++		};
++
++		uart0: serial@11002000 {
++			compatible = "mediatek,mt7986-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11002000 0 0x400>;
++			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&infracfg CLK_INFRA_UART0_SEL>,
++				 <&infracfg CLK_INFRA_UART0_CK>;
++			clock-names = "baud", "bus";
++			assigned-clocks = <&topckgen CLK_TOP_UART_SEL>,
++					  <&infracfg CLK_INFRA_UART0_SEL>;
++			assigned-clock-parents = <&topckgen CLK_TOP_XTAL>,
++						 <&topckgen CLK_TOP_UART_SEL>;
++			status = "disabled";
++		};
++
++		uart1: serial@11003000 {
++			compatible = "mediatek,mt7986-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11003000 0 0x400>;
++			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&infracfg CLK_INFRA_UART1_SEL>,
++				 <&infracfg CLK_INFRA_UART1_CK>;
++			clock-names = "baud", "bus";
++			assigned-clocks = <&infracfg CLK_INFRA_UART1_SEL>;
++			assigned-clock-parents = <&topckgen CLK_TOP_F26M_SEL>;
++			status = "disabled";
++		};
++
++		uart2: serial@11004000 {
++			compatible = "mediatek,mt7986-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11004000 0 0x400>;
++			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&infracfg CLK_INFRA_UART2_SEL>,
++				 <&infracfg CLK_INFRA_UART2_CK>;
++			clock-names = "baud", "bus";
++			assigned-clocks = <&infracfg CLK_INFRA_UART2_SEL>;
++			assigned-clock-parents = <&topckgen CLK_TOP_F26M_SEL>;
++			status = "disabled";
++		};
++
++		ethsys: syscon@15000000 {
++			 #address-cells = <1>;
++			 #size-cells = <1>;
++			 compatible = "mediatek,mt7986-ethsys",
++				      "syscon";
++			 reg = <0 0x15000000 0 0x1000>;
++			 #clock-cells = <1>;
++			 #reset-cells = <1>;
++		};
++
++	};
++
++};
+-- 
+2.29.2
 
-Maxime
-
---k62r2q7dvrx6knrx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYU2A/AAKCRDj7w1vZxhR
-xSzSAP45QmM9fnpXAlV7Z4FF/GWq+5uBTj+BJgYc/Sp1CRU8NgEApgY92jEO2DOp
-O0tfsNiRmZTEEVL196/9ZqmSvH9nWA8=
-=aOPg
------END PGP SIGNATURE-----
-
---k62r2q7dvrx6knrx--
