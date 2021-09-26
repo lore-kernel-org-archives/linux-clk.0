@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF92C433FE
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3666C4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEA8B60E76
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6F7611C2
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbhIZWo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Sep 2021 18:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43352 "EHLO
+        id S232259AbhIZWpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Sep 2021 18:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232090AbhIZWo2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Sep 2021 18:44:28 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0740FC061570;
-        Sun, 26 Sep 2021 15:42:51 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id y26so29088804lfa.11;
-        Sun, 26 Sep 2021 15:42:50 -0700 (PDT)
+        with ESMTP id S232254AbhIZWoe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Sep 2021 18:44:34 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227ACC06176F;
+        Sun, 26 Sep 2021 15:42:57 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id z24so69313364lfu.13;
+        Sun, 26 Sep 2021 15:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sOB+CC4oKPUtnAgAVkVlulPbe4zQ1YRgefv90mYIpNk=;
-        b=iGoHMkqDer+IUBfR/bgRrz+jeKIMNsmuhWevyrWar8vyZ4ifaG+5gq5Wps+fwEJ3yV
-         DlLdtKAupURsnA1tOm6n1V60owrMvYFXEePQ9T5+tjSh8Pd5jrCVIfKjmq8q+HtjcB8K
-         7lz6fnZFGMtalSY62wT7bgFeqUSyfbJv0jqxRfa3/0jKRAXrweLfa4PUcGGW567GqPVR
-         upDg4noq5AHZjEW6xka3N+/+mJvYzCfinhRgO+X2BSM1fc/aS40eUiU/DEglgRI/Zij2
-         y+0CETDbYVbj2PdJ5oyQ6DSucoaeyqGg/VoKO8+GMz920vrjtNy2cySRtoYW/9IubR8m
-         Rt7g==
+        bh=jkm6XIjMcFvBv/Q8SMVuuUrOs216TrQ7UEhmgPQFIpc=;
+        b=SHxTucNWPFKt5awnTcKFilyfHzzToTizn2CZHO8A4OcDAp+cCP1/j398MjE0YVP4fY
+         9wO/xO+NEvv0chnef0cD2lgXgWQn9i3mkrgxJDUth+tIpF9nS4Nfc/D/BTUQbgLaIraw
+         XGoBfLM50xiPb27dfyaBS1BBj9cjFJioyHKffcHH84ZdcGd23mSQ4gs95XV4czk4BzGc
+         kcHkq7YGdF687ddXj8fi33DtZnUsKylTBAz9t2E07grnPE3HqxhYpsUlKLYh+BBUcEIZ
+         61bgxwTy30bMwB7VsmMfVMAcFHXphs+CoR5oE88oUzf2/Q1NYHdf2UVlbCvyhPeY50zL
+         qNLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sOB+CC4oKPUtnAgAVkVlulPbe4zQ1YRgefv90mYIpNk=;
-        b=RVrjHHzX4q2tyC/qIbZijaAyLkBmPP9hg1XzpNXWjOWFdCAnqyuE6RKRHFUR/qs9y/
-         1GIKKHEablZdnT1PzlZu0M7g2TP+jl1zxlNIvJnPQFX16w16m2I/XfrFnIozUv8Ov0s/
-         0JvI46pnGAa6OSfvgKx+hYdelXn8gs85V0k/Z0+TOELy0GMuOCw7FKOE+cCz6WvpHjTt
-         ymRcZXaC4d10Yw/uHweyEiRpegmDHCdZdtuR4QMcvBSrtr+UCmPHVzTEEdozV1pKUr70
-         IDfOwbWljJf8fmFRfz3hdBqaLO/yWGXPjabjDiVImNNcE+NZgRnsW2hD8tFQ4jyIhx4m
-         Ufcw==
-X-Gm-Message-State: AOAM533Kqwvxjx+pV8RXD+VdvVVND6+dojQ5PBjE2mD//59oe917Bq/x
-        8166pdpcqndmUtKDuxKIdRY=
-X-Google-Smtp-Source: ABdhPJx0w1PFtjA7Yi1dSVztqbfiLXdbMHVLCX1H56meCtnqHSRCTRUENK0WQeyY2xoU/ADROpJy4Q==
-X-Received: by 2002:a2e:9b98:: with SMTP id z24mr8364213lji.339.1632696169455;
-        Sun, 26 Sep 2021 15:42:49 -0700 (PDT)
+        bh=jkm6XIjMcFvBv/Q8SMVuuUrOs216TrQ7UEhmgPQFIpc=;
+        b=LX+kTdBfvaA2LjTmPR8bkOelVmuwCEHQQZcS6Mkt4a4G+OHTl5AhXnw5Wh9hYdAwGl
+         GbkDNEJVd5RUU4ZGduhnY/j9XyABMWeNsnK0xYL5HeVbucocEUE4mHB/CaaQHhJUPLOg
+         2bHMUbE+lJkMv2VEAz2PKXTkplTUScIHKBIRf2AOM1/PiewcLXGUxkZ5KAvqbr6lnOJI
+         l/I0daE3Cs8RB7JLZKWLVk6vKJR7ou+CIVzvsIjNu8S1jSxUJWtLPheaDo7n3sgyysoI
+         K+w7Wqp5lRpsqhlFMBaR+CwFGIa0mk62O3qZQoizD5wAS5BGvn3jdOUhCFbcDtRw2pSX
+         kGqw==
+X-Gm-Message-State: AOAM530vwMs+spDIAn7XaSCmQxGKoKUDTafsYykiA/M9434MLc4QN+HS
+        TheGNxN972Dz2xyEJvTtNYo=
+X-Google-Smtp-Source: ABdhPJwvUm6MjdrRh5hgoX9T7ABa4JG88RKRaIjoh6nBitfFf5bf70xYPhAj6dzaMj8FlyWk378Ljw==
+X-Received: by 2002:ac2:555d:: with SMTP id l29mr20600704lfk.638.1632696175552;
+        Sun, 26 Sep 2021 15:42:55 -0700 (PDT)
 Received: from localhost.localdomain (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.48
+        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Sep 2021 15:42:49 -0700 (PDT)
+        Sun, 26 Sep 2021 15:42:55 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         David Heidelberg <david@ixit.cz>
-Subject: [PATCH v13 20/35] mtd: rawnand: tegra: Add runtime PM and OPP support
-Date:   Mon, 27 Sep 2021 01:40:43 +0300
-Message-Id: <20210926224058.1252-21-digetx@gmail.com>
+Subject: [PATCH v13 25/35] soc/tegra: fuse: Reset hardware
+Date:   Mon, 27 Sep 2021 01:40:48 +0300
+Message-Id: <20210926224058.1252-26-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210926224058.1252-1-digetx@gmail.com>
 References: <20210926224058.1252-1-digetx@gmail.com>
@@ -88,140 +88,70 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The NAND on Tegra belongs to the core power domain and we're going to
-enable GENPD support for the core domain. Now NAND must be resumed using
-runtime PM API in order to initialize the NAND power state. Add runtime PM
-and OPP support to the NAND driver.
+The FUSE controller is enabled at a boot time. Reset it in order to put
+hardware and clock into clean and disabled state.
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mtd/nand/raw/tegra_nand.c | 55 ++++++++++++++++++++++++++-----
- 1 file changed, 47 insertions(+), 8 deletions(-)
+ drivers/soc/tegra/fuse/fuse-tegra.c | 25 +++++++++++++++++++++++++
+ drivers/soc/tegra/fuse/fuse.h       |  1 +
+ 2 files changed, 26 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index 32431bbe69b8..098fcc9cb9df 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -17,8 +17,11 @@
- #include <linux/mtd/rawnand.h>
- #include <linux/of.h>
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index f2151815db58..cc032729a143 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -14,6 +14,7 @@
+ #include <linux/of_address.h>
  #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
  
-+#include <soc/tegra/common.h>
-+
- #define COMMAND					0x00
- #define   COMMAND_GO				BIT(31)
- #define   COMMAND_CLE				BIT(30)
-@@ -1151,6 +1154,7 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ctrl->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, ctrl);
- 	nand_controller_init(&ctrl->controller);
- 	ctrl->controller.ops = &tegra_nand_controller_ops;
- 
-@@ -1166,14 +1170,22 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 	if (IS_ERR(ctrl->clk))
- 		return PTR_ERR(ctrl->clk);
- 
--	err = clk_prepare_enable(ctrl->clk);
-+	err = devm_pm_runtime_enable(&pdev->dev);
-+	if (err)
-+		return err;
-+
-+	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-+	if (err)
-+		return err;
-+
-+	err = pm_runtime_resume_and_get(&pdev->dev);
- 	if (err)
- 		return err;
- 
- 	err = reset_control_reset(rst);
- 	if (err) {
- 		dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
--		goto err_disable_clk;
-+		goto err_put_pm;
+@@ -243,6 +244,30 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 		goto restore;
  	}
  
- 	writel_relaxed(HWSTATUS_CMD_DEFAULT, ctrl->regs + HWSTATUS_CMD);
-@@ -1188,21 +1200,19 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 			       dev_name(&pdev->dev), ctrl);
- 	if (err) {
- 		dev_err(ctrl->dev, "Failed to get IRQ: %d\n", err);
--		goto err_disable_clk;
-+		goto err_put_pm;
- 	}
- 
- 	writel_relaxed(DMA_MST_CTRL_IS_DONE, ctrl->regs + DMA_MST_CTRL);
- 
- 	err = tegra_nand_chips_init(ctrl->dev, ctrl);
- 	if (err)
--		goto err_disable_clk;
--
--	platform_set_drvdata(pdev, ctrl);
-+		goto err_put_pm;
- 
- 	return 0;
- 
--err_disable_clk:
--	clk_disable_unprepare(ctrl->clk);
-+err_put_pm:
-+	pm_runtime_put(ctrl->dev);
- 	return err;
- }
- 
-@@ -1219,11 +1229,39 @@ static int tegra_nand_remove(struct platform_device *pdev)
- 
- 	nand_cleanup(chip);
- 
-+	pm_runtime_put(ctrl->dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tegra_nand_runtime_resume(struct device *dev)
-+{
-+	struct tegra_nand_controller *ctrl = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = clk_prepare_enable(ctrl->clk);
-+	if (err) {
-+		dev_err(dev, "Failed to enable clock: %d\n", err);
-+		return err;
++	fuse->rst = devm_reset_control_get_optional(&pdev->dev, "fuse");
++	if (IS_ERR(fuse->rst)) {
++		err = PTR_ERR(fuse->rst);
++		dev_err(&pdev->dev, "failed to get FUSE reset: %pe\n",
++			fuse->rst);
++		goto restore;
 +	}
 +
-+	return 0;
-+}
++	/*
++	 * FUSE clock is enabled at a boot time, hence this resume/suspend
++	 * disables the clock besides the h/w resetting.
++	 */
++	err = pm_runtime_resume_and_get(&pdev->dev);
++	if (err)
++		goto restore;
 +
-+static int __maybe_unused tegra_nand_runtime_suspend(struct device *dev)
-+{
-+	struct tegra_nand_controller *ctrl = dev_get_drvdata(dev);
++	err = reset_control_reset(fuse->rst);
++	pm_runtime_put(&pdev->dev);
 +
- 	clk_disable_unprepare(ctrl->clk);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to reset FUSE: %d\n", err);
++		goto restore;
++	}
++
+ 	/* release the early I/O memory mapping */
+ 	iounmap(base);
  
- 	return 0;
- }
+diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
+index de58feba0435..1b719d85bd04 100644
+--- a/drivers/soc/tegra/fuse/fuse.h
++++ b/drivers/soc/tegra/fuse/fuse.h
+@@ -43,6 +43,7 @@ struct tegra_fuse {
+ 	void __iomem *base;
+ 	phys_addr_t phys;
+ 	struct clk *clk;
++	struct reset_control *rst;
  
-+static const struct dev_pm_ops tegra_nand_pm = {
-+	SET_RUNTIME_PM_OPS(tegra_nand_runtime_suspend, tegra_nand_runtime_resume,
-+			   NULL)
-+};
-+
- static const struct of_device_id tegra_nand_of_match[] = {
- 	{ .compatible = "nvidia,tegra20-nand" },
- 	{ /* sentinel */ }
-@@ -1234,6 +1272,7 @@ static struct platform_driver tegra_nand_driver = {
- 	.driver = {
- 		.name = "tegra-nand",
- 		.of_match_table = tegra_nand_of_match,
-+		.pm = &tegra_nand_pm,
- 	},
- 	.probe = tegra_nand_probe,
- 	.remove = tegra_nand_remove,
+ 	u32 (*read_early)(struct tegra_fuse *fuse, unsigned int offset);
+ 	u32 (*read)(struct tegra_fuse *fuse, unsigned int offset);
 -- 
 2.32.0
 
