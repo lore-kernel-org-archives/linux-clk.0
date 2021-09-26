@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308ABC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1F2C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF166112E
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D92ED60F91
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Sep 2021 22:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232382AbhIZWoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Sep 2021 18:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43426 "EHLO
+        id S232174AbhIZWoz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Sep 2021 18:44:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232135AbhIZWo3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Sep 2021 18:44:29 -0400
+        with ESMTP id S232196AbhIZWoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Sep 2021 18:44:32 -0400
 Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D52C061774;
-        Sun, 26 Sep 2021 15:42:52 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id z24so69312604lfu.13;
-        Sun, 26 Sep 2021 15:42:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9961FC061740;
+        Sun, 26 Sep 2021 15:42:54 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id y28so68075171lfb.0;
+        Sun, 26 Sep 2021 15:42:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Xyfv+bs1PqRnjMFL4Pq5e7XkvADOaeyFEUXpxII4rIo=;
-        b=izvFqpS38K4FCvT7p/zbvtPiyuSbxhHUIKmFwiK3flubJCAqcxp4mNup9FVUVBz10D
-         BaZc9dN4ud4sqdRa9IoE73Rp8graQE+SahQXeY7IOPhoiS+N7m/KkaLm5SMLR/4w0aPj
-         fg0tSmIcoWmarUWnmFwz5LastPqVxXfW5RPHers47MYDvxqf9Dfl+4Dzr9cGHY8HAHvi
-         m1pK+t0poPBYPw4Zax6XbCAaoqMfiQU1/4WQ2Ay9/Kl6f34wy3fZuLPXoagHgox/5bTL
-         A3v8DwV12vmHFdpkQGfAGPyI+CZr5nITAm+9lMD11iMI6Zznv2S5aOtjHIE18/Dsuru5
-         Ijuw==
+        bh=Vwz1Flib1olsdeaukDInX/oFq46RrVNNMLIcTSXb7Po=;
+        b=n17OwVdrkj7Y4L1R9tjfVhXv+cgwadphs0AjRe5Y0i2moNAviWCc+UoOV07BeJQNSw
+         wtNY9+e9OLovtBu/NaoV3b5ooNZVDcG+xZ9tuQhutTYA+Rcl9FT2OvtbQRwy5ibph0FC
+         XuaB/RuBlOniAOKdvOW4l8FBlbQ7RL3sWHx6C/WSRC5PfRXKQkHL1wZoEQWQRjAfQOsB
+         cVfvlnyQutOOdWgZVAlF4MA3szcxGtJ8RwvIdSZ5HS/vTVW7clZt8u8GSq32GGlVZuJw
+         wS42eP0Zwlm9VrzTyg7rShqDmtQKB6aelU/z5CIf7SIxV37CVsl423DdH5TtCapRhcMz
+         LqNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Xyfv+bs1PqRnjMFL4Pq5e7XkvADOaeyFEUXpxII4rIo=;
-        b=JOMPOTioMgHsut/89CCbUfT+T6mCbP43Ha9ccJCJ0jQ6k+VTNpc5DqYQFLAzFqwzTh
-         VuiO4xEgylcENnZPV9tsTCuQPxGjEzbUaHhpC6IGgj/lwYhmhOIcLyQmBqqyWUt8+WnQ
-         a+M4rhnD8Kc6q6H25e6oAGKD3HNvTjFUWvdWL2O0QQAs8WKg87IuXIwonrFdkDCiUOFP
-         ai1Iq+ZMhgjG5M3R7mIQ2w4sraXbw1DhoAX12D2J01n0DsNf5xFhWz3CyONuuLt3sVef
-         a8ePXDI4aUDJq4qYDtnN2weFxyj0eiNau5fijPxMHVDQCeyaFbRZBgCNB2tQubDqDXfd
-         HGIw==
-X-Gm-Message-State: AOAM532ohePFWDE7VwmHRBLATBj4GN/CmQU7BIELen530cqUHSq3VQQe
-        U1ekrcje5wp+bgGYMQgP/74=
-X-Google-Smtp-Source: ABdhPJwFcgY1e/EpRbZGqJyBjJ81B0If7emAzTEomlL5PaZAh/GdNeqs2BhIjIoVoXBk8gQvMR+6HA==
-X-Received: by 2002:a2e:5005:: with SMTP id e5mr24744959ljb.471.1632696170675;
-        Sun, 26 Sep 2021 15:42:50 -0700 (PDT)
+        bh=Vwz1Flib1olsdeaukDInX/oFq46RrVNNMLIcTSXb7Po=;
+        b=ben211D8H+HIQaRJAeAmgtxVSUl/umg0rNE9haXg2brWPhu/Jx618Bq84a2qeNrM6/
+         rGWSgtl8BP1z0l8kUSuiqq8bETl5QWxoS7tUsoufQdUYjfs/r/uwsrtDBozCRHLhj+XK
+         GtseiurB5MzfYTJUJOsEnOy5OPEIa5ro0PK6v24WUKeK8Bj/Ubc3zSHydHLIXdamJK3B
+         rey2JwjnBP1Nr/nzwGAzHxhSf0dW4cTeo/PjmTkbiJsFfnx98J7HAXfnpiNRGiYfQz24
+         Uu9kp2nrpAP6AZX/9pvR9hpTSYC+iwM9030/zyWu6B7uEfFAtNbBWb5moxOENRwQ03T7
+         XN4Q==
+X-Gm-Message-State: AOAM531+JRcanPAzfdZwwaW2jzXMV7J2Ww27KuY+ihuRKDvNSdBxnfuO
+        pj3Xg7OzBKSzczjlle24ycU=
+X-Google-Smtp-Source: ABdhPJyAW8fEFRtMs4lMIldQGDgrGCV7P13WNKC2dzvx+S/aHC5HbOsIUdN3yZj6Iybbiic2V/vFHg==
+X-Received: by 2002:a05:6512:3caa:: with SMTP id h42mr21438411lfv.349.1632696173061;
+        Sun, 26 Sep 2021 15:42:53 -0700 (PDT)
 Received: from localhost.localdomain (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.49
+        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Sep 2021 15:42:50 -0700 (PDT)
+        Sun, 26 Sep 2021 15:42:52 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         David Heidelberg <david@ixit.cz>
-Subject: [PATCH v13 21/35] spi: tegra20-slink: Add OPP support
-Date:   Mon, 27 Sep 2021 01:40:44 +0300
-Message-Id: <20210926224058.1252-22-digetx@gmail.com>
+Subject: [PATCH v13 23/35] media: dt: bindings: tegra-vde: Document OPP and power domain
+Date:   Mon, 27 Sep 2021 01:40:46 +0300
+Message-Id: <20210926224058.1252-24-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210926224058.1252-1-digetx@gmail.com>
 References: <20210926224058.1252-1-digetx@gmail.com>
@@ -88,59 +88,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SPI on Tegra belongs to the core power domain and we're going to
-enable GENPD support for the core domain. Now SPI driver must use OPP
-API for driving the controller's clock rate because OPP API takes care
-of reconfiguring the domain's performance state in accordance to the
-rate. Add OPP support to the driver.
+Document new OPP table and power domain properties of the video decoder
+hardware.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/spi/spi-tegra20-slink.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/media/nvidia,tegra-vde.yaml  | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 3226c4e1c7c0..eea1853010e8 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -18,12 +18,15 @@
- #include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
- #include <linux/pm_runtime.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/reset.h>
- #include <linux/spi/spi.h>
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+index 3b6c1f031e04..0b7d4d815707 100644
+--- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+@@ -68,6 +68,16 @@ properties:
+     description:
+       Phandle of the SRAM MMIO node.
  
-+#include <soc/tegra/common.h>
++  operating-points-v2:
++    description:
++      Should contain freqs and voltages and opp-supported-hw property,
++      which is a bitfield indicating SoC speedo or process ID mask.
 +
- #define SLINK_COMMAND			0x000
- #define SLINK_BIT_LENGTH(x)		(((x) & 0x1f) << 0)
- #define SLINK_WORD_SIZE(x)		(((x) & 0x1f) << 5)
-@@ -680,7 +683,7 @@ static int tegra_slink_start_transfer_one(struct spi_device *spi,
- 	bits_per_word = t->bits_per_word;
- 	speed = t->speed_hz;
- 	if (speed != tspi->cur_speed) {
--		clk_set_rate(tspi->clk, speed * 4);
-+		dev_pm_opp_set_rate(tspi->dev, speed * 4);
- 		tspi->cur_speed = speed;
- 	}
- 
-@@ -1082,6 +1085,11 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	init_completion(&tspi->xfer_completion);
- 
- 	pm_runtime_enable(&pdev->dev);
++  power-domains:
++    maxItems: 1
++    description:
++      Phandle to the SoC core power domain.
 +
-+	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-+	if (ret)
-+		goto exit_pm_disable;
-+
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
+ required:
+   - compatible
+   - reg
+@@ -104,4 +114,6 @@ examples:
+       reset-names = "vde", "mc";
+       resets = <&rst 61>, <&mem 13>;
+       iommus = <&mem 15>;
++      operating-points-v2 = <&dvfs_opp_table>;
++      power-domains = <&domain>;
+     };
 -- 
 2.32.0
 
