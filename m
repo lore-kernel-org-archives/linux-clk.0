@@ -2,132 +2,265 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37448C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 07:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C22C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F22DD60F43
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 07:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 711F160F70
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233245AbhI0Hah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 03:30:37 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:60692 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233185AbhI0Hag (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 03:30:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1632727738; x=1635319738;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HCXR0qaq8e2WGlSq+apDDiCnECGqMM9ONRMb9OHWyE8=;
-        b=EFZI6yU8fDNleeadxVJsal1GoHz1iM+wUzVoTeziZ6Tkv4V0vRWr5xs1k52HvjdY
-        1Pi+lRLjnBdl9uxtd56vR60liquXoFFXF36wk4LGhKOdmbzTmMpoeoEbwtCuvims
-        dhCsSEinpQW9oEbpDTSNJd/brIY950P4JG1chw5qi8E=;
-X-AuditID: c39127d2-c275470000001d24-d9-615172bafc72
-Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id A9.B9.07460.AB271516; Mon, 27 Sep 2021 09:28:58 +0200 (CEST)
-Received: from augenblix2.phytec.de ([172.16.0.56])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2021092709285769-1755087 ;
-          Mon, 27 Sep 2021 09:28:57 +0200 
-From:   Stefan Riedmueller <s.riedmueller@phytec.de>
-To:     Abel Vesa <abel.vesa@nxp.com>,
+        id S233367AbhI0IJz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Sep 2021 04:09:55 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:34786
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233350AbhI0IJy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 04:09:54 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8084A4079D
+        for <linux-clk@vger.kernel.org>; Mon, 27 Sep 2021 08:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632730096;
+        bh=q5WJ36pkYt6Zs2G3Lb2ExKY5tf1guh4Epvr/TI1D0B8=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=NZYEXU2yJ9fRRMH0gfM2IgwOtmR0GGl8UsRGPXsnv7d+7F2XReRE0JmJAEV5/Rs4D
+         6NvGaDSDhRzqdfL/s4B/uv/8QACz380Nppd+e0MYvHTZ7+DEuxUwkmfaeKFxsX0iuj
+         /o+SN3kY40dWqWfnASWYmFhZJ9RcvsYl2OsXAnepbMktdyMu3/iR25v5yFDgYyIi6n
+         qInPO8H0VUt+3Re0bitBmvveBtPZS7GbAJ4tjwr/68T1ZJbGdRUQSt/VY/gj0VQ1uj
+         G5LEtJGzXk1uEuyiHlU5XNoEuxUmjb1ohjfctKtv4h3q13aUPp/yXz5UaP1xXb+l/4
+         lzGa0G9J9df2w==
+Received: by mail-lf1-f72.google.com with SMTP id h27-20020a0565123c9b00b003fca9e11144so13935195lfv.19
+        for <linux-clk@vger.kernel.org>; Mon, 27 Sep 2021 01:08:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=q5WJ36pkYt6Zs2G3Lb2ExKY5tf1guh4Epvr/TI1D0B8=;
+        b=Bpadh9ue0XUNWPPRICB8+eRmuFyDT739U9lxh2TndjOJGVrk3EwOB6TsmHXhSAGDFa
+         JkJw62700PNB7Tq8b44b9Q1ie8+uejrPH+ujyEIrdh1lVstRfqY1lTnoWq1X4ZhEkLk+
+         31UqczneXXnzR4bj7VZaFKv6tvRVFC1OwWSZVuuCumrhBguKN8/ihGBf7iq4Amhuke7b
+         7pLfXa71+FOWk343ViILjVeOy7bEanFZHJXB94PEK3f9MTCUzH8I3NxZWtSBLEAgKSZB
+         TvMXgQMQVhqQRHH7wMosbGZmluzgXiBVOJNKRwsyR8ygXc7j0d1sEyb0m0BAXJrpaCVP
+         uXYw==
+X-Gm-Message-State: AOAM5300bb9CcHbuOty9At1QWCB5Tcc9/5BHfstCykylknc9XbwYbrj1
+        jY7vYHBlBJL74dNQzuY9FAiSbm54AjazbHZmIDjEiI+xXZawxdtq3C8SzsB1onUmJLrv1AjPr20
+        GgZw1LyHi3RgG2No7Hhg4JoGEOhSss104D2+EFg==
+X-Received: by 2002:a05:6512:b29:: with SMTP id w41mr23823302lfu.508.1632730095611;
+        Mon, 27 Sep 2021 01:08:15 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzO9D+MFvfo7QqvZbpj2VJouLw+R/EGuIqlkcKPx+aer2ePkAwgx+q+94o9gCaoeKkhveY6Ww==
+X-Received: by 2002:a05:6512:b29:: with SMTP id w41mr23822816lfu.508.1632730087936;
+        Mon, 27 Sep 2021 01:08:07 -0700 (PDT)
+Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id 8sm1905053ljf.39.2021.09.27.01.08.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Sep 2021 01:08:07 -0700 (PDT)
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Will McVicker <willmcvicker@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: imx: imx6ul: Fix csi clk gate register
-Date:   Mon, 27 Sep 2021 09:28:57 +0200
-Message-Id: <20210927072857.3940880-2-s.riedmueller@phytec.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210927072857.3940880-1-s.riedmueller@phytec.de>
-References: <20210927072857.3940880-1-s.riedmueller@phytec.de>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20210920190350.3860821-1-willmcvicker@google.com>
+ <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com>
+ <YUmTwZPqrCfRMekd@google.com>
+ <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com>
+ <CAGETcx9wp3cbsehODj=oAd658hF6KNL5Qiy2nVc=7Bxqxxwimw@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
+Message-ID: <5ec72235-add4-d6dd-f89f-ca3941c9878e@canonical.com>
+Date:   Mon, 27 Sep 2021 10:08:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 27.09.2021 09:28:57,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 27.09.2021 09:28:57
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: quoted-printable
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWyRoCBS3dXUWCiwcIbjBbLLh1ltHh41d9i
-        1dSdLBabHl9jtfjYc4/VouvXSmaLy7vmsFlcPOVq8Xf7JhaLf9c2sli82CLuwO3x/kYru8fO
-        WXfZPTat6mTz2Lyk3mPjux1MHv1/DTw+b5ILYI/isklJzcksSy3St0vgyrh4Xbhgg3DFs4Xf
-        2BsYFwt0MXJySAiYSPzdtou5i5GLQ0hgG6PEzEtfmCCcC4wSF9rusIJUsQkYSSyY1giWEBHY
-        zijxovs+I4jDLNDBJPF2xTpGkCphAWeJk/vbgGZxcLAIqEoseiUDEuYVsJN4M2U6C8Q6eaAN
-        39lBbE4Be4kDyxqYQGwhoJqeXfNYIeoFJU7OfMICMl9C4AqjxN07F9kgmoUkTi8+ywxiMwto
-        Syxb+Jp5AqPALCQ9s5CkFjAyrWIUys1Mzk4tyszWK8ioLElN1ktJ3cQIDP7DE9Uv7WDsm+Nx
-        iJGJg/EQowQHs5IIbzCLf6IQb0piZVVqUX58UWlOavEhRmkOFiVx3vs9TIlCAumJJanZqakF
-        qUUwWSYOTqkGxpXqx/PmXi5Ya7vuIL/pbo4jsdO63++0id38+cG5EFvhnAvTHqXlpEvoPXwR
-        PC+5YuOHI7ovFVQvNImlpT3Ze+pQVFZJztLZXEtLtpSLzTX1/3bT067yqefLzcfDOLWP77Bq
-        TJGf8fHs7N+f9zZsPH2r7HxT1ZErAsrXM477Ki2fpHLCUfHrMgslluKMREMt5qLiRACFwSRq
-        bAIAAA==
+In-Reply-To: <CAGETcx9wp3cbsehODj=oAd658hF6KNL5Qiy2nVc=7Bxqxxwimw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the imx6ul Reference Manual the csi clk gate register is
-CCM=5FCCGR3 (offset 0x74) bit 0/1. For the imx6ull on the other hand the
-Reference Manual lists register CCM=5FCCGR2 (offset 0x70) bit 2/3 as the
-csi clk gate which is the current setting.
+On 25/09/2021 04:17, Saravana Kannan wrote:
+> On Tue, Sep 21, 2021 at 1:25 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 21/09/2021 10:11, Lee Jones wrote:
+>>> On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
+>>>
+>>>> On 20/09/2021 21:03, Will McVicker wrote:
+>>>>> This patch series tries to address the issue of ARCH_EXYNOS force selecting
+>>>>> a handful of drivers without allowing the vendor to override any of the
+>>>>> default configs. This takes away from the flexibilty of compiling a generic
+>>>>> kernel with exynos kernel modules. For example, it doesn't allow vendors to
+>>>>> modularize these drivers out of the core kernel in order to share a generic
+>>>>> kernel image across multiple devices that require device-specific kernel
+>>>>> modules.
+>>>>
+>>>> You do not address the issue in these patches. The problem you describe
+>>>> is that drivers are not modules and you are not changing them into modules.
+>>>
+>>> The wording is unfortunate.  The reason for this change doesn't have
+>>> much to do with kernel modules.
+>>>
+>>> Let's go back in time 18 months or so when Greg KH submitted this [0]
+>>> patch, which you Acked.  Greg was trying to solve the problem of not
+>>> having to enable ARCH_EXYNOS on kernels which are designed to be
+>>> platform agnostic (sometimes called Generic Kernels).  For some reason
+>>> SERIAL_SAMSUNG is the only symbol with these dependencies, so the
+>>> solution seemed simple and straight forward at the time.
+>>>
+>>> However, For sound reasons Geert NACKed the patch.
+>>>
+>>> Quoting from [1] he says:
+>>>
+>>>   "A generic kernel will include Samsung SoC support, hence
+>>>   PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
+>>
+>> Yes, it's correct reasoning. There is also one more use-case -
+>> non-upstreamed (out of tree) platform which wants to use Exynos-specific
+>> drivers. Something like was happening with Apple M1 except that it got
+>> upstreamed and we do not care much about out-of-tree.
+>>
+>>>
+>>> However, since the entry for ARCH_EXYNOS *insists* on building-in a
+>>> bunch of other symbols (via 'select') which will be unused in most
+>>> cases, this is not a currently acceptable approach for many Generic
+>>> Kernels due to size constraints.
+>>
+>> In the mainline kernel there is no such use case. If you want to have
+>> Exynos-whatever-driver (e.g. SERIAL_SAMSUNG or S3C RTC), you should
+>> select ARCH_EXYNOS because otherwise it does not make any sense. Zero
+>> sense. Such kernel won't work.
+>>
+>> It makes sense only if there is some other work, hidden here, where
+>> someone might want to have SERIAL_SAMSUNG or S3C RTC without
+>> ARCH_EXYNOS. Although GKI is not that work because GKI kernel will
+>> select ARCH_EXYNOS. It must select ARCH_EXYNOS if it wants to support
+>> Exynos platforms.
+>>
+>> Therefore I expect first to bring this "some other work, hidden here" to
+>> broader audience, so we can review its use case.
+>>
+>>>
+>>> What this patch does is migrates those symbols from being 'select'ed
+>>> (always built-in with no recourse) to 'default y'.  Where the former
+>>> cannot be over-ridden, but the latter can be via a vendor's
+>>> defconfig/fragment.
+>>
+>> It cannot be overridden by vendor fragment because options are not
+>> visible. You cannot change them.
+>>
+>> The patch does nothing in this regard (making them selectable/possible
+>> to disable), which is why I complained.
+>>
+>>>
+>>> I doubt many (any?) of these symbols can be converted to kernel
+>>> modules anyway, as they are required very early on in the boot
+>>> sequence.
+>>
+>> True, some could, some not. Also some platforms are set up via
+>> bootloader, so actually could "survive" till module is loaded from some
+>> initrd.
+> 
+> Hi Krzysztof,
+> 
+> I was trying to chime in, but the discussion got spread out across all
+> the patches. Since the cover letter seems to have everyone, I thought
+> I'd reply here. Hope you don't mind. I'll try to respond/chime in on
+> the various topics that were raised across the patches.
+> 
+> Yes, the next patch series would To/Cc folks correctly. William simply
+> forgot to use the --to-cover and --cc-cover options when using git
+> send-email.
+> 
+> I agree with you that it doesn't make sense to have ARCH_EXYNOS
+> enabled but to have all the clock drivers exynos compiled out. Then
+> one obviously can't boot an exynos platform using that kernel.
 
-Tests have shown though that the correct csi clk gate register for the
-imx6ull is actually CCM=5FCCGR3 bit 0/1 as well. Thus set the correct
-register for both platforms.
+If downstream kernel does not use any upstream platforms (e.g.
+Exynos5433 or Exynos7) and has its own drivers for everything, then
+downstream does not even need ARCH_EXYNOS. Just disable it.
 
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
-Tested-by: Fabio Estevam <festevam@gmail.com>
----
-Changes in v2:
- - Added comment about ref manual mismatch
- - Added Tested-by from Fabio
----
- drivers/clk/imx/clk-imx6ul.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> I think
+> William is going to send out a new patch series with a few drivers
+> modularized. That'll ensure all the common exynos clock code is
+> modularized and we have a few examples of exynos clock modules.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 206e4c43f68f..520b100bff4b 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -380,7 +380,6 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct de=
-vice=5Fnode *ccm=5Fnode)
- 		hws[IMX6ULL=5FCLK=5FESAI=5FIPG]	=3D imx=5Fclk=5Fhw=5Fgate2=5Fshared("esa=
-i=5Fipg",	"ahb",		base + 0x70,	0, &share=5Fcount=5Fesai);
- 		hws[IMX6ULL=5FCLK=5FESAI=5FMEM]	=3D imx=5Fclk=5Fhw=5Fgate2=5Fshared("esa=
-i=5Fmem",	"ahb",		base + 0x70,	0, &share=5Fcount=5Fesai);
- 	}
--	hws[IMX6UL=5FCLK=5FCSI]		=3D imx=5Fclk=5Fhw=5Fgate2("csi",		"csi=5Fpodf",=
-		base + 0x70,	2);
- 	hws[IMX6UL=5FCLK=5FI2C1]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c1",		"perclk",	b=
-ase + 0x70,	6);
- 	hws[IMX6UL=5FCLK=5FI2C2]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c2",		"perclk",	b=
-ase + 0x70,	8);
- 	hws[IMX6UL=5FCLK=5FI2C3]		=3D imx=5Fclk=5Fhw=5Fgate2("i2c3",		"perclk",	b=
-ase + 0x70,	10);
-@@ -391,6 +390,12 @@ static void =5F=5Finit imx6ul=5Fclocks=5Finit(struct d=
-evice=5Fnode *ccm=5Fnode)
- 	hws[IMX6UL=5FCLK=5FPXP]		=3D imx=5Fclk=5Fhw=5Fgate2("pxp",		"axi",		base =
-+ 0x70,	30);
-=20
- 	/* CCGR3 */
-+	/*
-+	 * Although the imx6ull reference manual lists CCGR2 as the csi clk
-+	 * gate register, tests have shown that it is actually the CCGR3
-+	 * register bit 0/1, same as for the imx6ul.
-+	 */
-+	hws[IMX6UL=5FCLK=5FCSI]		=3D imx=5Fclk=5Fhw=5Fgate2("csi",	"csi=5Fpodf",	=
-base + 0x74,	0);
- 	hws[IMX6UL=5FCLK=5FUART5=5FIPG]	=3D imx=5Fclk=5Fhw=5Fgate2("uart5=5Fipg",=
-	"ipg",		base + 0x74,	2);
- 	hws[IMX6UL=5FCLK=5FUART5=5FSERIAL]	=3D imx=5Fclk=5Fhw=5Fgate2("uart5=5Fse=
-rial",	"uart=5Fpodf",	base + 0x74,	2);
- 	if (clk=5Fon=5Fimx6ul()) {
---=20
-2.25.1
+If it works on supported Exynos platforms: awesome!
+If it does not work: not that good. I understand that downstream or
+vendor do not want to mainline their SoC drivers and SoC support. Either
+because HW is too new (do not disclose it) or it is too old (lost
+interest). It's their right, they do not have to work with mainline on
+this. However changing mainline kernel in such a case to affect it so
+you can use your non-upstreamed drivers is wrong.
 
+Affecting upstream platforms just because vendor/downstream does not
+want to mainline some code is unacceptable. Please upstream your drivers
+and DTS.
+
+Everyone else are working like this. NXP, Renesas, Xilinx, TI, Rockchip,
+AllWinner. Samsung or Google is not special to receive an exception for
+this.
+
+> 
+> Speaking of modules, a fully modularized generic ARM64 kernel where
+> everything is modularized out and we only load the necessary modules
+> is a great goal. And this is where I can chime in the most since I
+> wrote fw_devlink and tested this out. Such a kernel is not
+> hypothetical. IIRC hikey960 can already do this. There's an upstream
+> amlogic(?) board that can do this (Kevin Hilman has done that). A more
+> complex/recent/powerful, but downstream example is the Pixel 5 -- it
+> has a fully modular kernel. 320+ modules! Including interrupt
+> controllers, timers, pinctrl and clocks.
+
+Awesome! I am in, if it works. :)
+
+> I can assure you any of the framework code related to pulling off
+> booting a fully modular ARM64 kernel is already upstreamed
+> (fw_devlink, irq framework changes, etc) or sent upstream (timer -- by
+> a SoC vendor, etc) and being worked on. As for fw_devlink, I've
+> extended it way past what GKI or Android would need. It would have
+> been super trivial if all I wanted to do was support Android devices.
+> I've also upstreamed changes that improve module loading time for all
+> ARM64 modules. All of this and more upstream work came out of GKI and
+> our push to be upstream first -- so I think it's reasonable to say the
+> GKI effort helps and cares to get more work upstreamed.
+
+Except UFS driver and recent Linaro work on Exynos850, none of these
+apply to the vendor discussed here.
+
+> Speaking of GKI, let's not speak of it. It really doesn't matter.
+> Android is just yet another distribution (albeit a very popular one).
+> The part that's relevant to upstream/all the other distributions is
+> the fully modular generic ARM64 kernel and that's what we should focus
+> on.
+> 
+> In that context, I think William's attempts are reasonable and I think
+> he'll be glad to fix up any technical issues that people point out. So
+> hopefully we can focus on that?
+
+Yes, we can focus on that. In technical issues, I do not agree to
+affecting negatively supported platforms just because downstream/vendor
+does not want to send upstream its drivers.
+
+Please upstream your drivers. By "your" I mean all the drivers which you
+want to enable after disabling ARCH_EXYNOS mainline drivers.
+
+Best regards,
+Krzysztof
