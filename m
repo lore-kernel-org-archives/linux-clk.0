@@ -2,121 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A295C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 20:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC12BC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 20:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31A5961156
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 20:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C597A60F41
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 20:58:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236744AbhI0UrH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 16:47:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236741AbhI0UrF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Sep 2021 16:47:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B8174610A2;
-        Mon, 27 Sep 2021 20:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632775526;
-        bh=KjKkP19ege6f7VD3cv62K8iH7hKJgu0j2zznaeGU89A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NwJ8GGLI/f5JOrrlzS4GyDp88W5sx14FMD53GLS2cHlkAaJQxkj8dJQVOpCQvsIr2
-         uurN5SXoFxRm4iYGeX6vvRmBVCDlF1CDMGUhcRieAiz1tRi/G41ZtOReWq2hJc9dJ1
-         IEllt/gEo4qrOJFqTDlJR9GN3fVlI5KEjRQnYg3V0wQjaOyJjWK2WxphTucnuxYrKB
-         89FT+EPW8SSW2zr7/BIOpAnAxk3VP+KGfdLvdg1bqPWkMEpAIO/9N+7d3J9hI9nehn
-         XkoKhgb1icLEK7mhAGPxtw4BCSRr/x4JDO8tSvBTMAiWt9ofNJbf3D/jZesjghTIv3
-         b3ysjJohdc1Yg==
-Received: by pali.im (Postfix)
-        id 3E182C83; Mon, 27 Sep 2021 22:45:24 +0200 (CEST)
-Date:   Mon, 27 Sep 2021 22:45:24 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RESEND PATCH v5 3/6] dt-bindings: mvebu-uart: document DT
- bindings for marvell,armada-3700-uart-clock
-Message-ID: <20210927204524.giaormuph3vcy4ls@pali>
-References: <20210922105433.11744-1-pali@kernel.org>
- <20210922105433.11744-4-pali@kernel.org>
- <CAL_JsqKS1rjEeM558d2n6Uk1+tCazASoGJ-kDS144PsH8-Akwg@mail.gmail.com>
+        id S236794AbhI0U7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Sep 2021 16:59:46 -0400
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:39884 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236723AbhI0U7p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 16:59:45 -0400
+Received: by mail-ot1-f42.google.com with SMTP id j11-20020a9d190b000000b00546fac94456so26204858ota.6;
+        Mon, 27 Sep 2021 13:58:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=T+oO+q9uTHene+6MJpbDZGG/hGqpkwIsiNpAYh7tp2c=;
+        b=3gRfuHIF5rYdO630b9QRBQKYc7UbIdn8+b/oKNy3AwSUaZTFe5FCRa4a/8Xz2vufQI
+         5fsQcg4qAMwZkvg0F6vk5OwPN4wY/lC+VrNGxhvrNMUOl+KimZOWJK2WvPUgkDbcLu3A
+         IVPcLG2DmhMHYJM0OpdY6vgzHzD5v7qUeNyV5NfEJJUxsEY09V3bPQbrCUbtGBBuOBNs
+         dQxjbvEOL4MxmZGCWmm5cakS+1OwSNg4th8nDgwENhT5X4tusz25ngjweT8Jb2mf16lR
+         h44Bk6g2T6IILYSxv+e5nXToJVDWQixrZCGOU/16UkaCvVqG9wfv6PycmM47zwzbac3h
+         a1Og==
+X-Gm-Message-State: AOAM531Xiblw6/kr5/HEDkA8XxolPfiuF5tk+X3uKCMZ552lJfcqHFfc
+        ++j68T0jW239NnqBd2n3qg==
+X-Google-Smtp-Source: ABdhPJwbTL4lMi71JS4MYcb+wMczLubUBwcUPuBKqhkh2PAL1O98pWcD9XnrRWcNmRiJFE813CDSZA==
+X-Received: by 2002:a9d:4e91:: with SMTP id v17mr1830005otk.297.1632776287237;
+        Mon, 27 Sep 2021 13:58:07 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id r19sm4355739otg.37.2021.09.27.13.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 13:58:06 -0700 (PDT)
+Received: (nullmailer pid 3861865 invoked by uid 1000);
+        Mon, 27 Sep 2021 20:58:05 -0000
+Date:   Mon, 27 Sep 2021 15:58:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     jamipkettunen@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        martin.botka@somainline.org, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        marijn.suijten@somainline.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994
+ GCC driver
+Message-ID: <YVIwXXAE7HvXZxNt@robh.at.kernel.org>
+References: <20210923162645.23257-1-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKS1rjEeM558d2n6Uk1+tCazASoGJ-kDS144PsH8-Akwg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20210923162645.23257-1-konrad.dybcio@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Monday 27 September 2021 15:17:59 Rob Herring wrote:
-> On Wed, Sep 22, 2021 at 5:56 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > This change adds DT bindings documentation for device nodes with compatible
-> > string "marvell,armada-3700-uart-clock".
+On Thu, 23 Sep 2021 18:26:34 +0200, Konrad Dybcio wrote:
+> Add documentation for the MSM8994 GCC driver. While at it, retire its
+> compatible from the old, everyone-get-in-here file.
 > 
-> Please resend to the DT list so that checks run and this gets reviewed
-> in a timely manner.
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> ---
+> Changes since v3:
+> - Don't document the compatible twice
 > 
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  .../bindings/clock/armada3700-uart-clock.yaml | 57 +++++++++++++++++++
-> >  1 file changed, 57 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > new file mode 100644
-> > index 000000000000..5bdb23e0ba3e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > @@ -0,0 +1,57 @@
-> > +# SPDX-License-Identifier: GPL-2.0
+>  .../bindings/clock/qcom,gcc-msm8994.yaml      | 70 +++++++++++++++++++
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 -
+>  2 files changed, 70 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
 > 
-> Dual license. checkpatch will tell you which ones.
 
-Did not tell me :-(
-
-$ ./scripts/checkpatch.pl -f Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-Traceback (most recent call last):
-  File "scripts/spdxcheck.py", line 6, in <module>
-    from ply import lex, yacc
-ModuleNotFoundError: No module named 'ply'
-total: 0 errors, 0 warnings, 57 lines checked
-
-Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml has no obvious style problems and is ready for submission.
-
-Huh, Perl needs Python?? Anyway...
-
-$ sudo apt install python3-ply
-...
-
-$ ./scripts/checkpatch.pl -f Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-Traceback (most recent call last):
-  File "scripts/spdxcheck.py", line 10, in <module>
-    import git
-ModuleNotFoundError: No module named 'git'
-total: 0 errors, 0 warnings, 57 lines checked
-
-Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml has no obvious style problems and is ready for submission.
-
-Second attempt...
-
-$ sudo apt install python3-git
-...
-
-$ ./scripts/checkpatch.pl -f Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-total: 0 errors, 0 warnings, 57 lines checked
-
-Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml has no obvious style problems and is ready for submission.
-
-And no error :-(
+Reviewed-by: Rob Herring <robh@kernel.org>
