@@ -2,70 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967CAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 09:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79923C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 12:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7105461166
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 09:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D6561074
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 12:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233675AbhI0Jp5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 05:45:57 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:38268 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233587AbhI0Jp4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Sep 2021 05:45:56 -0400
-Received: from user91-192-32-221.grape.cz ([91.192.32.221] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1mUnBK-0002Dm-5k; Mon, 27 Sep 2021 11:44:18 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 5.16
-Date:   Mon, 27 Sep 2021 11:44:16 +0200
-Message-ID: <4726255.Mh6RI2rZIc@phil>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S234223AbhI0MZA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Sep 2021 08:25:00 -0400
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:38909 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234181AbhI0MY7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 08:24:59 -0400
+Received: by mail-ot1-f47.google.com with SMTP id c6-20020a9d2786000000b005471981d559so24141917otb.5;
+        Mon, 27 Sep 2021 05:23:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=M1JxjeIOmKat6HvCouZk2WyJoVDL3ELYlgAx1y+djF4=;
+        b=7Dr0bB4vGoaJvaSBAUBkx9KtKsSxZfB/vn4GVTjzd3CfOSl5Iwqp/Hh5IuMRBL06d+
+         uTcMftoEpr91DfDdp7SVYLnnLLM484w+tDj9V8zrObYSZwSIAsKw0IdSgq5/f0N3BX7l
+         S0/O0Y5/luYHWHqCj8v/e5FNzpbY65175L0QUhY/C5JCjyUU5yFFadzqjtfHuryQahIm
+         7/AcyukH2XgWHg6HqoUFRMjWGKv2st+fUmTng2WHuP2G2WogBgV/QzYqMcKs+orklLg7
+         BuLlDGHtxxhlhnm0wzUxNExE9ymhzOboEXHr35l4Gy1tYNa4/iJzHoPV6ZcQROWKergD
+         VHDQ==
+X-Gm-Message-State: AOAM532DbWgQuNY4xsZ7Yz305Qgr2HmuLmISGFgBArR3tWazJEkdyZR8
+        /88d6n4zDBKM8r/I0B/VXw==
+X-Google-Smtp-Source: ABdhPJxPboMBJ7atlf4V2758iIymolXl+RlULWf5ZVJnB5v+aaNUyKh+KewyhDhEFZ50jt9f77a3wA==
+X-Received: by 2002:a9d:27a4:: with SMTP id c33mr17216398otb.283.1632745401264;
+        Mon, 27 Sep 2021 05:23:21 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id o126sm3844592oig.21.2021.09.27.05.23.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 05:23:20 -0700 (PDT)
+Received: (nullmailer pid 3097152 invoked by uid 1000);
+        Mon, 27 Sep 2021 12:23:19 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     herbert@gondor.apana.org.au, linux-serial@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux@roeck-us.net,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, hsinyi@chromium.org,
+        mpm@selenic.com, seiya.wang@mediatek.com,
+        enric.balletbo@collabora.com, fparent@baylibre.com,
+        john@phrozen.org, sboyd@kernel.org, devicetree@vger.kernel.org,
+        linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, linux-watchdog@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
+        wim@linux-watchdog.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, sean.wang@kernel.org,
+        Ryder.Lee@mediatek.com
+In-Reply-To: <20210927023419.17994-1-sam.shih@mediatek.com>
+References: <1632491961.645727.1195978.nullmailer@robh.at.kernel.org> <20210927023419.17994-1-sam.shih@mediatek.com>
+Subject: Re: [v5,5/9] dt-bindings: pinctrl: update bindings for MT7986 SoC
+Date:   Mon, 27 Sep 2021 07:23:19 -0500
+Message-Id: <1632745399.256353.3097151.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+On Mon, 27 Sep 2021 10:34:19 +0800, Sam Shih wrote:
+> This updates bindings for MT7986 pinctrl driver. The
+> difference of pinctrl between mt7986a and mt7986b is that pin-41 to pin-65
+> do not exist on mt7986b
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> 
+> ---
+> v5 : fixed yamllint warnings/errors
+> v4 : used yaml format instead of txt format document
+> v3 : make mt7986 pinctrl bindings as a separate file
+> v2 : deleted the redundant description of mt7986a/mt7986b
+> ---
+>  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 353 ++++++++++++++++++
+>  1 file changed, 353 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+> 
 
-please find below some Rockchip clock changes for 5.16
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Please pull, thanks
-Heiko
+yamllint warnings/errors:
 
-The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:25.13-32.43: Warning (reg_format): /example-0/soc/pinctrl@1001f000:reg: property has invalid length (128 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:23.33-58.13: Warning (avoid_default_addr_size): /example-0/soc/pinctrl@1001f000: Relying on default #address-cells value
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dts:23.33-58.13: Warning (avoid_default_addr_size): /example-0/soc/pinctrl@1001f000: Relying on default #size-cells value
+Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: Warning (unique_unit_address): Failed prerequisite 'avoid_default_addr_size'
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dt.yaml: pinctrl@1001f000: 'gpio-ranges' does not match any of the regexes: '-[0-9]+$', 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
 
-  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+doc reference errors (make refcheckdocs):
 
-are available in the Git repository at:
+See https://patchwork.ozlabs.org/patch/1533169
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.16-rockchip-clk-1
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-for you to fetch changes up to 1da80da028fe5accb866c0d6899a292ed86bef45:
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-  clk: rockchip: use module_platform_driver_probe (2021-09-21 00:44:53 +0200)
+pip3 install dtschema --upgrade
 
-----------------------------------------------------------------
-Move to use module_platform_probe and enable usage
-of Coresight-related clocks on rk3399.
-
-----------------------------------------------------------------
-Brian Norris (2):
-      clk: rockchip: rk3399: make CPU clocks critical
-      clk: rockchip: rk3399: expose PCLK_COREDBG_{B,L}
-
-Miles Chen (1):
-      clk: rockchip: use module_platform_driver_probe
-
- drivers/clk/rockchip/clk-rk3399.c | 17 ++++++++++-------
- drivers/clk/rockchip/clk-rk3568.c |  2 +-
- 2 files changed, 11 insertions(+), 8 deletions(-)
-
-
+Please check and re-submit.
 
