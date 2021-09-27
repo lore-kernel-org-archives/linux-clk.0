@@ -2,181 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5462C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA888C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7BFC60FC2
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9179E6103B
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 08:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233461AbhI0ISC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 04:18:02 -0400
-Received: from mail-vs1-f44.google.com ([209.85.217.44]:39675 "EHLO
-        mail-vs1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbhI0ISB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 04:18:01 -0400
-Received: by mail-vs1-f44.google.com with SMTP id o124so17216921vsc.6;
-        Mon, 27 Sep 2021 01:16:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SkSrzLRRCEtxglHN45gEJ7vXlzyQxRYfqeN16r5ttK4=;
-        b=tr22dtcOrPUT3g3Wso1F0wIXAiNu7OW9SSWLYCTMKrw72s5vdeUiH/NNRf5oEPFp0P
-         kciBsU83ZOCV5ohiAI47527heH+hfj24gx4C0nVtbjeYCpa3TsxYczUrWxNS3/qV3tem
-         bYqBXevzKB9qAC1qVgmTdHpPiMBZ94aeBN1GZi71HXRuNK52E6gqhT6epqIacI51TILh
-         uAwwBBaa6MUtUIWgQrqOsYjLMtrdIgYvnURxifUFR2hXvYVbZY/x5mDHx0KsfVQbkdXU
-         ie+4sE1gBZ8bhOEQZE7bIo6H0xFSDqTm5pzZzGUI7Gx4BMiULrZauQZMExubgUeXuw/X
-         XRJw==
-X-Gm-Message-State: AOAM532UaGaMJlwisUGjGBUdle94qYgZURttlF+5b1SFZVuhGWqLY45u
-        SQSKbVPFjK8TaADgDMS1PKmvP9Ss36Trw57joRQ=
-X-Google-Smtp-Source: ABdhPJzv+gOnCHWhqnX2nJzuiw1pLZl/hx3RKpCY4M1PiufwAVsP/5GrZDWA7t+AXtENLrLjDr1hsNiQGU9BRWcB52I=
-X-Received: by 2002:a67:cc1c:: with SMTP id q28mr17238153vsl.37.1632730583484;
- Mon, 27 Sep 2021 01:16:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210920190350.3860821-1-willmcvicker@google.com>
- <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com> <YUmTwZPqrCfRMekd@google.com>
- <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com> <CAGETcx9wp3cbsehODj=oAd658hF6KNL5Qiy2nVc=7Bxqxxwimw@mail.gmail.com>
- <5ec72235-add4-d6dd-f89f-ca3941c9878e@canonical.com>
-In-Reply-To: <5ec72235-add4-d6dd-f89f-ca3941c9878e@canonical.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 27 Sep 2021 10:16:12 +0200
-Message-ID: <CAMuHMdXU=BKJugMXggyZYBUd+fB7CSd8F5iCWqcBw894OZCZHQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S233449AbhI0IgP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Sep 2021 04:36:15 -0400
+Received: from mail-vi1eur05on2072.outbound.protection.outlook.com ([40.107.21.72]:11297
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233418AbhI0IgO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Sep 2021 04:36:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KQs3KD9dDbwWNTluldrz+GwV48QnpEGNPc7hBXv5uTsNtZQczFd+71EV0B78u+ql1DU+SnCS7F0/AJZs6e5Ykc5QBF5vx+UPJ/Z9UjD2rXGfGl7K8cfwEsLxQ+4d4vilD42fJPGT9QztnAwZgu2dB2n1eLpjloUPS/+n5gpgQqO6Vbm45QtYt3Vg4HziYT5z6d1nj4pwuuBkc6UE4shGErbFqggMrN0soE6UE2mdxIkvYGBkMOrEglLzWI+AWJPE0r3YVvsDiTSc9SOOXvVrpzMyBFxK9GK5GzKlCJ9nIDNp2xi0QKkrLFaqr/ETR7RT09S2O8akmAEJ6P7pRe12tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=FTugsmArcZOdGJUtQj+2REjNkRpLqPJrHqXQmRkrXzE=;
+ b=YzYhgGXOJl4grn5L6eJ3xw1rqJhlQrupygQqE8NZDuYIAj5w9DqBg7VX9JnweNJmliJZFGWPCNEQ95EC6sPVrqS1ecVas21teMQB8+YEw3oUJRNVjc8Up+QL+SM4YT2sweCvrPxr5gGeTseTeTLlFYBnbs8MzRPhjotD79K0ocNA9l7dc2on7oABCfDlsYoLMw/m/qoODgL9fbHpDV5EUibCmmwTXTv0ny1KMTTulgdJv07ekrKof+vP5vGyoYwG7/M+cKBX6bJSqJ/6sfPinxj2MN59rw5UspMhKZZQDPlE50aEb+XoarzhYqstu+86Slzyh9UntlwfUtYE8l+5ZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FTugsmArcZOdGJUtQj+2REjNkRpLqPJrHqXQmRkrXzE=;
+ b=mA16RxVA3QKU/cfBmcIOC8CC2mZEMJVh5egzAG+ZOO5kkt9lz+yCQhNeLFwTu2s1+g1QB0AvVzZwxYs5tTDzujdOUNihUiwESIKOKwHY3s8vGXcgB27T6KCSzravL1vk70AUWAvfgAaBAlWhljCJ1VDDPiLPttSm10h5gG2c20k=
+Authentication-Results: phytec.de; dkim=none (message not signed)
+ header.d=none;phytec.de; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com (2603:10a6:800:57::8)
+ by VI1PR0402MB3901.eurprd04.prod.outlook.com (2603:10a6:803:18::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Mon, 27 Sep
+ 2021 08:34:34 +0000
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::485a:4462:94c2:5edb]) by VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::485a:4462:94c2:5edb%10]) with mapi id 15.20.4544.021; Mon, 27 Sep
+ 2021 08:34:34 +0000
+Date:   Mon, 27 Sep 2021 11:34:31 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stefan Riedmueller <s.riedmueller@phytec.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: imx: imx6ul: Move csi_sel mux to correct
+ base register
+Message-ID: <YVGCFwN3G4drKxcX@ryzen>
+References: <20210927072857.3940880-1-s.riedmueller@phytec.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210927072857.3940880-1-s.riedmueller@phytec.de>
+X-ClientProxiedBy: VI1PR0302CA0015.eurprd03.prod.outlook.com
+ (2603:10a6:800:e9::25) To VI1PR0401MB2559.eurprd04.prod.outlook.com
+ (2603:10a6:800:57::8)
+MIME-Version: 1.0
+Received: from ryzen (86.121.85.242) by VI1PR0302CA0015.eurprd03.prod.outlook.com (2603:10a6:800:e9::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend Transport; Mon, 27 Sep 2021 08:34:33 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 39b67c10-6cff-4a7a-4b7b-08d98191a1f5
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3901:
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB390178DDA09C343F258873B5F6A79@VI1PR0402MB3901.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ruKly5ef61oTmwaO85BT5iR2t2K2J2JfT15DubQfvcfWpEAP3IKWaeL2cXlKyWeTQD8YRQptjrTzT2xJP0pVYtzT0JIKvPOXfojPnEjlaGFh+1JHq5jjrmu5TZ8NKoViFUnUK9lsMpMbq6V1pWOHf42Q4IlRw6Rwssv72ChfI75tBM9tKVXE83MPv4llhggyLV2k5hMg/e3Blbb5xcpEXydAT4lZzAPR/grtj8dCgnqajPtbf+Uhfc3j8y0kQRu6N4gqDRz6/MbF7HyzxKliAAJPsCg9uzHZprYcHN1cVz41a9lOmp6CKZH6LLLrUrkw3xLAQppT/bNcoQAf2xhyXLoDAdEioWR9rY4tS6G/Sv2Pzaa64wedsdqFH6Ua3u+VQsiv1wwNYQfBFVVGO3j7oMy5RoAZP2weORNUN/5XGZyy0NMxM8IgZc9qwuemFcfR+zxFObRj1Lymd9UplEDerYs0EJZ3RtUEorAZ21r9aiGLDW+B/y+yp+T3n75nYCVda14LUC8Ek3ccr3njDx3kkx0LHe3Hey5oQtTqivNPupWc8ccabDQNn4TVTZ5KQFwBdOOhu7WoGDvDfhHO1AaPHkdHgvmRUDjE62VsO9/20vbIeWED3b9yYeQmxRyVI1B8s1/NDVmAPqKscKIYQwu2LXNjOE78B+j86X+hmkDZC+aYYlUBtGLztpVN7XFN6ChE27sGdH8M/hYfKN7bEXBIazzmIocZPQ5vBlYFJFtcOUc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0401MB2559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(6916009)(33716001)(66476007)(7416002)(316002)(86362001)(38100700002)(38350700002)(6496006)(508600001)(66946007)(54906003)(2906002)(26005)(66556008)(186003)(53546011)(55016002)(8936002)(44832011)(5660300002)(8676002)(9686003)(83380400001)(956004)(52116002)(9576002)(4326008)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YXWG8i8fSYD+GlRHcggKN3i8NvL1+GQ8BF2wmfyKiv+smovIQrFdyQv68at4?=
+ =?us-ascii?Q?NIBhUkt6y8bwbiL6inLWR5uF5QNu1R4DeIfkksnlnkYPauYD58JslG9g1UiO?=
+ =?us-ascii?Q?Uz4vDgK11cnOH8uLn3v+ehQHWPuE/aJY0igMxFZJ4FjaQg1yv4ZQrUq4OvdY?=
+ =?us-ascii?Q?xpGtG981OQw6apycK75dKZORjapIcVLIPTW+yb6vW0XKFATCoRzlMsRXhgjl?=
+ =?us-ascii?Q?KajPUk7AtCIQ2dnSCmI86NNnNVL56qJwwEL4M7TKmfKMA/WUQgGsmqAIeBYu?=
+ =?us-ascii?Q?X61jLCnXKrYqN1AUjsGpkFzd/v9n2ZJXGCNkDzygtzmUpP1+aT+s7TF2xvhO?=
+ =?us-ascii?Q?y/kzypCBFpnksOnZS6siRapFRdpK4sCh8womht0yq0rWnKEvLhhtG4qOgjw8?=
+ =?us-ascii?Q?J0t82avP7C9sSr/sLGmJN8+SBPeylKnXcCtlEMfhguk5o8Wv+Qljp9Jd2Vxy?=
+ =?us-ascii?Q?2fCR+1TXsHbSSzUGS3MO5cECzxxGBDDcDzDNy5TpuMUYJOoYdXNJ6f9blVn7?=
+ =?us-ascii?Q?RXTcvFTMMv3a/qSXaYKIDWZN+h6wKXZYCWBdIQ5/iTdaVcJKuOngfvgK1s3T?=
+ =?us-ascii?Q?jfRdMaeJ0ZTGbqgubiq9VIY7YePw6dcAoqh73CXabe3PVws6MG7KHRiG8lMq?=
+ =?us-ascii?Q?lRZfetcfOjFxZ6P1vdJCooaOCxy91mXyQSWZ/X8t8LZx6wrt2d8OrKzVupqE?=
+ =?us-ascii?Q?HKsxtVcgZWLpo7BQbjJE4Y8W62f/mFplrQSiZYNAVb04OmdYD3c0FbYPxnyF?=
+ =?us-ascii?Q?UGeWq0VYmYqj4KjKY7sHHZ5SOr9PdQIVi/XXW1Xc+BxrbJ8EALs3uSYN0EqQ?=
+ =?us-ascii?Q?G/ywgoNyQoIvf72TQANVJ68GZEb1Ji63yJhYvy7U+mPsPAonN+UOrGePznfx?=
+ =?us-ascii?Q?kKFYT64s/esUDUIGiSKgewgK7K0d94+fwEt8mMZO85cyA0d/NA06n3xfFxqJ?=
+ =?us-ascii?Q?K1hK0GU94Baq0IlelAYLjYrr02qNBzSs8xQQy0vW7YiBx6tk0VI2TZ+p/9V9?=
+ =?us-ascii?Q?rr6MuIPfUtV8cu3mFIljjmD9CDA3jiZR+JDvOhCM4XZ7PrycBKn2OZBQXeib?=
+ =?us-ascii?Q?bZLT5XLvei4yaarzgcLtH12jZtrgFMWVTgcnDKvY6bVNTXIhrYsCY11Kv4Kq?=
+ =?us-ascii?Q?6cxRzDszTb7Gh6C7DbS6NgszT2mvTa+WQ35eiO2pj8PZ4HqZ2ysDzptjvFnF?=
+ =?us-ascii?Q?m+EMxAJ7U9DGN/5IrdgDtxqvdHWfIlPaYDyaA2MjlK7vuUU7n8Ojef15B6O3?=
+ =?us-ascii?Q?jkCJv6toAQ/8MT+LcCr3wud3jRgZoCyU5328m4U3XsrBszmPqsn7QKkgQUbi?=
+ =?us-ascii?Q?6qjTQOv20J0zR6ifslB5wfx4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39b67c10-6cff-4a7a-4b7b-08d98191a1f5
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0401MB2559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2021 08:34:33.9463
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jlag7NE28jAEPSlqVOisgKFI9jgAzYo0qHlWVhZFELRm3OmmYHp+zDDF5Axq2DVwqteGYSGa+IbspCOEjbF8eA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3901
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+On 21-09-27 09:28:56, Stefan Riedmueller wrote:
+> The csi_sel mux register is located in the CCM register base and not the
+> CCM_ANALOG register base. So move it to the correct position in code.
+> 
+> Otherwise changing the parent of the csi clock can lead to a complete
+> system failure due to the CCM_ANALOG_PLL_SYS_TOG register being falsely
+> modified.
+> 
+> Also remove the SET_RATE_PARENT flag since one possible supply for the
+> csi_sel mux is the system PLL which we don't want to modify.
+> 
+> Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
 
-On Mon, Sep 27, 2021 at 10:08 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
-> On 25/09/2021 04:17, Saravana Kannan wrote:
-> > On Tue, Sep 21, 2021 at 1:25 AM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >> On 21/09/2021 10:11, Lee Jones wrote:
-> >>> On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
-> >>>> On 20/09/2021 21:03, Will McVicker wrote:
-> >>>>> This patch series tries to address the issue of ARCH_EXYNOS force selecting
-> >>>>> a handful of drivers without allowing the vendor to override any of the
-> >>>>> default configs. This takes away from the flexibilty of compiling a generic
-> >>>>> kernel with exynos kernel modules. For example, it doesn't allow vendors to
-> >>>>> modularize these drivers out of the core kernel in order to share a generic
-> >>>>> kernel image across multiple devices that require device-specific kernel
-> >>>>> modules.
-> >>>>
-> >>>> You do not address the issue in these patches. The problem you describe
-> >>>> is that drivers are not modules and you are not changing them into modules.
-> >>>
-> >>> The wording is unfortunate.  The reason for this change doesn't have
-> >>> much to do with kernel modules.
-> >>>
-> >>> Let's go back in time 18 months or so when Greg KH submitted this [0]
-> >>> patch, which you Acked.  Greg was trying to solve the problem of not
-> >>> having to enable ARCH_EXYNOS on kernels which are designed to be
-> >>> platform agnostic (sometimes called Generic Kernels).  For some reason
-> >>> SERIAL_SAMSUNG is the only symbol with these dependencies, so the
-> >>> solution seemed simple and straight forward at the time.
-> >>>
-> >>> However, For sound reasons Geert NACKed the patch.
-> >>>
-> >>> Quoting from [1] he says:
-> >>>
-> >>>   "A generic kernel will include Samsung SoC support, hence
-> >>>   PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
-> >>
-> >> Yes, it's correct reasoning. There is also one more use-case -
-> >> non-upstreamed (out of tree) platform which wants to use Exynos-specific
-> >> drivers. Something like was happening with Apple M1 except that it got
-> >> upstreamed and we do not care much about out-of-tree.
-> >>
-> >>> However, since the entry for ARCH_EXYNOS *insists* on building-in a
-> >>> bunch of other symbols (via 'select') which will be unused in most
-> >>> cases, this is not a currently acceptable approach for many Generic
-> >>> Kernels due to size constraints.
-> >>
-> >> In the mainline kernel there is no such use case. If you want to have
-> >> Exynos-whatever-driver (e.g. SERIAL_SAMSUNG or S3C RTC), you should
-> >> select ARCH_EXYNOS because otherwise it does not make any sense. Zero
-> >> sense. Such kernel won't work.
-> >>
-> >> It makes sense only if there is some other work, hidden here, where
-> >> someone might want to have SERIAL_SAMSUNG or S3C RTC without
-> >> ARCH_EXYNOS. Although GKI is not that work because GKI kernel will
-> >> select ARCH_EXYNOS. It must select ARCH_EXYNOS if it wants to support
-> >> Exynos platforms.
-> >>
-> >> Therefore I expect first to bring this "some other work, hidden here" to
-> >> broader audience, so we can review its use case.
-> >>
-> >>> What this patch does is migrates those symbols from being 'select'ed
-> >>> (always built-in with no recourse) to 'default y'.  Where the former
-> >>> cannot be over-ridden, but the latter can be via a vendor's
-> >>> defconfig/fragment.
-> >>
-> >> It cannot be overridden by vendor fragment because options are not
-> >> visible. You cannot change them.
-> >>
-> >> The patch does nothing in this regard (making them selectable/possible
-> >> to disable), which is why I complained.
-> >>
-> >>> I doubt many (any?) of these symbols can be converted to kernel
-> >>> modules anyway, as they are required very early on in the boot
-> >>> sequence.
-> >>
-> >> True, some could, some not. Also some platforms are set up via
-> >> bootloader, so actually could "survive" till module is loaded from some
-> >> initrd.
-> >
-> > I was trying to chime in, but the discussion got spread out across all
-> > the patches. Since the cover letter seems to have everyone, I thought
-> > I'd reply here. Hope you don't mind. I'll try to respond/chime in on
-> > the various topics that were raised across the patches.
-> >
-> > Yes, the next patch series would To/Cc folks correctly. William simply
-> > forgot to use the --to-cover and --cc-cover options when using git
-> > send-email.
-> >
-> > I agree with you that it doesn't make sense to have ARCH_EXYNOS
-> > enabled but to have all the clock drivers exynos compiled out. Then
-> > one obviously can't boot an exynos platform using that kernel.
->
-> If downstream kernel does not use any upstream platforms (e.g.
-> Exynos5433 or Exynos7) and has its own drivers for everything, then
-> downstream does not even need ARCH_EXYNOS. Just disable it.
+For both patches:
 
-I guess that's how they got to "[PATCH 1/2] tty: serial: samsung_tty:
-build it for any platform"...
-https://lore.kernel.org/lkml/20200220102628.3371996-1-gregkh@linuxfoundation.org/
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+> No changes in v2.
+> ---
+>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index 5dbb6a937732..206e4c43f68f 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -161,7 +161,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	hws[IMX6UL_PLL5_BYPASS] = imx_clk_hw_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_PLL6_BYPASS] = imx_clk_hw_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_PLL7_BYPASS] = imx_clk_hw_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
+> -	hws[IMX6UL_CLK_CSI_SEL] = imx_clk_hw_mux_flags("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels), CLK_SET_RATE_PARENT);
+>  
+>  	/* Do not bypass PLLs initially */
+>  	clk_set_parent(hws[IMX6UL_PLL1_BYPASS]->clk, hws[IMX6UL_CLK_PLL1]->clk);
+> @@ -270,6 +269,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	hws[IMX6UL_CLK_ECSPI_SEL]	  = imx_clk_hw_mux("ecspi_sel",	base + 0x38, 18, 1, ecspi_sels, ARRAY_SIZE(ecspi_sels));
+>  	hws[IMX6UL_CLK_LCDIF_PRE_SEL]	  = imx_clk_hw_mux_flags("lcdif_pre_sel", base + 0x38, 15, 3, lcdif_pre_sels, ARRAY_SIZE(lcdif_pre_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_CLK_LCDIF_SEL]	  = imx_clk_hw_mux("lcdif_sel",	base + 0x38, 9, 3, lcdif_sels, ARRAY_SIZE(lcdif_sels));
+> +	hws[IMX6UL_CLK_CSI_SEL]		  = imx_clk_hw_mux("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels));
+>  
+>  	hws[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_hw_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
+>  	hws[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_hw_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
+> -- 
+> 2.25.1
+> 
