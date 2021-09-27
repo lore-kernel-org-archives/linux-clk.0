@@ -2,93 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA750C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 18:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71352C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 19:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 779AB60FD7
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 18:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47AAC60FED
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Sep 2021 19:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234468AbhI0TAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 15:00:52 -0400
-Received: from mail-oi1-f175.google.com ([209.85.167.175]:42515 "EHLO
-        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235745AbhI0TAw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 15:00:52 -0400
-Received: by mail-oi1-f175.google.com with SMTP id x124so26857337oix.9;
-        Mon, 27 Sep 2021 11:59:14 -0700 (PDT)
+        id S235878AbhI0TuK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Sep 2021 15:50:10 -0400
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:46741 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235711AbhI0TuI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Sep 2021 15:50:08 -0400
+Received: by mail-oi1-f182.google.com with SMTP id s69so26996821oie.13;
+        Mon, 27 Sep 2021 12:48:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=eV+PRo6a2MRz/DpkFNL4n5kAGNJtpr9EpyO3zFy3ARk=;
-        b=JvGBmHO1v82cyGWfwYDSeTFralz1O2RFM3ucncP3Qs252oT8lQ9qpgE7Zv5se5lF6k
-         5D7OfG44y+kLhbZkngH8dQg8V4yhXlXmQPLLTEpCYov9mV+r+dGxLIMTFg+xaYJnIUWV
-         7ssNC9EtZ01uOwL0Zzvi7ybOxd0sY75imno1i0LX91/qqvqM+hz0edomUFlVVRwkotet
-         Xkhk69w6CtOesQkfxoOiNCW8nwJTHnKEcvSieimRkYRPEGJ2TIAzhHSlhVRO8PZLKBJi
-         IfHxr+xIdYdoNSaG0i/pWQeTxw6CJU72XZ5JK4BBrrr59qD9AwNoSurn2qtB6EViWmVN
-         wcCA==
-X-Gm-Message-State: AOAM532VvaJt9VLE0+cBFHC9pGZTtCjlNncvQ9CAaR2fuRKFw5RlJGLc
-        KBOkbGB5uT8+Sa+Q0nP86w==
-X-Google-Smtp-Source: ABdhPJwMJelZ7z1gOyM6KU2hxuI5UxVhhaZKlukjtCf2pvupYDr2rXhjepC7YZIdsEs7BDBH3vdEvw==
-X-Received: by 2002:aca:604:: with SMTP id 4mr520177oig.8.1632769152914;
-        Mon, 27 Sep 2021 11:59:12 -0700 (PDT)
+        bh=AuxQQJbmAE0wiMu8TirI3HoWUSXRi8ZVxX3PpApnFpo=;
+        b=W4nTIH82Rw6OuskxfvgZwK8XgpLwK8kq8wWpEf6GhiyuTK+Es+8IwE0K2MgWPpgFHq
+         lL8Gji3YwKhI/SWyeZKPi0r6LTTojrhVAud+Ooq50VlRK8gPjLZYutM04w85UMRDCCrO
+         LXNN9CCOlkMUpwbhX5x2sAsJzqx2Zo++Z9jpDUxuQakeR/jt1pkbwTV813fzEgXRha/z
+         Yl6Y5CF/TXcHWdxX9THE70GmNtpVGvOiTGr76YMY13mL15est8VEAKkLqqPc/3KtK+/8
+         Su7qs/+l+CgIemhH7/OH9fQQIqH04p4sNKwGYU96BSQXOvvwQNbrqxP+p4VYeaKwWwvk
+         J9hg==
+X-Gm-Message-State: AOAM530wm1MpeQmQfv9BaTyew6zOLXFzmDA9eyDdOwHeTsZI0RpmoD73
+        Lq+MEK+czb/oRI7nKhZRoBBAjbc3Lw==
+X-Google-Smtp-Source: ABdhPJzwmRdrLzZJ/rSFTm3SzH5EAk/9FKnL+MykIjYhuIQqKRHRYbhGK84jXFVSn7CrCrXr+hhUCQ==
+X-Received: by 2002:a54:4688:: with SMTP id k8mr688267oic.70.1632772110031;
+        Mon, 27 Sep 2021 12:48:30 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id p64sm4054025oih.29.2021.09.27.11.59.11
+        by smtp.gmail.com with ESMTPSA id bg36sm1253267oib.2.2021.09.27.12.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 11:59:12 -0700 (PDT)
-Received: (nullmailer pid 3666744 invoked by uid 1000);
-        Mon, 27 Sep 2021 18:59:11 -0000
-Date:   Mon, 27 Sep 2021 13:59:11 -0500
+        Mon, 27 Sep 2021 12:48:29 -0700 (PDT)
+Received: (nullmailer pid 3765977 invoked by uid 1000);
+        Mon, 27 Sep 2021 19:48:28 -0000
+Date:   Mon, 27 Sep 2021 14:48:28 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-Cc:     joel@jms.id.au, mturquette@baylibre.com, sboyd@kernel.org,
-        adrian.hunter@intel.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        andrew@aj.id.au, BMC-SW@aspeedtech.com, steven_lee@aspeedtech.com
-Subject: Re: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
- string
-Message-ID: <YVIUf7/4ukMcrOb9@robh.at.kernel.org>
-References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
- <20210922103116.30652-11-chin-ting_kuo@aspeedtech.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Orson Zhai <orsonzhai@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
+        linux-clk@vger.kernel.org,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
+Message-ID: <YVIgDNbesvIC4SE1@robh.at.kernel.org>
+References: <20210923064137.60722-1-zhang.lyra@gmail.com>
+ <20210923064137.60722-2-zhang.lyra@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210922103116.30652-11-chin-ting_kuo@aspeedtech.com>
+In-Reply-To: <20210923064137.60722-2-zhang.lyra@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 06:31:16PM +0800, Chin-Ting Kuo wrote:
-> Add "aspeed,ast2600-emmc" compatible string for the sake of
-> distinguishing between SD and eMMC device.
-
-Why?
-
-Is the h/w block different? We already have properties to handle some of 
-the eMMC specifics. Also, you can have a child node for the eMMC device 
-if you need that.
-
+On Thu, 23 Sep 2021 14:41:34 +0800, Chunyan Zhang wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > 
-> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+> Add a new bindings to describe ums512 clock compatible strings.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > ---
->  Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/clock/sprd,ums512-clk.yaml       | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> index 5bb66849df65..41105cd104c6 100644
-> --- a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> @@ -52,6 +52,7 @@ patternProperties:
->            - aspeed,ast2400-sdhci
->            - aspeed,ast2500-sdhci
->            - aspeed,ast2600-sdhci
-> +          - aspeed,ast2600-emmc
->        reg:
->          maxItems: 1
->          description: The SDHCI registers
-> -- 
-> 2.17.1
-> 
-> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
