@@ -2,142 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074E4C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13ABC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7EA061159
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F55611F2
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240745AbhI1NHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 09:07:35 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:38501 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235776AbhI1NHf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:07:35 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 1C1EA2B014E5;
-        Tue, 28 Sep 2021 09:05:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 28 Sep 2021 09:05:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=OewulyQkxW7M0HdZfGu1vzBRMLg
-        C/FBIB7nFILSJNYc=; b=YzUS/n4QrmsRtFH8dVdSrSbPhtANfIbNxMeUMVaZM2/
-        0itGncvKcLfwnxJOllCwdSGpnmUn/+z8DGYLhEEfhVXRfYBKYGnJnMRBmAzg/2n0
-        KF8nUzjA+7/+NnNWjkzT0xM1nW+hmIVBg2gKvj3tGMqAeNUzra6Lv4Kr733wLPgS
-        0GUePN9KqtL93D5QCoDTXZVvY2WGdmoC8YKZvOnUBh74as8YFHUtX0coe43yeyjS
-        ldL+J00SHt5DlesyTJ1tKrT2Idm4QMtIUsnBWOhTNmtqFldVmHZAqTwoTFUlqvMP
-        GXm5u7aVNVC8nm3TUKDz6XTV6d10qwNrUWWOi0FZj2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Oewuly
-        QkxW7M0HdZfGu1vzBRMLgC/FBIB7nFILSJNYc=; b=CvmXZ7YudxXN2pIWWPdzTC
-        Yw5ZeD8IfMcr5V2OrxCC/Twv3q0/SsGhlOGfCTx1phOce7HBPEKY78kUZ0gx08Ze
-        4v3jsdalLxqbr0TivQ2hc2cA+hp7fzD2k798eLxPAmsnf7k6V9fjADUWVKZX4oCK
-        uUkRd2XkE9FpxTKhmLyHSIgVGFGCm5iYz32rXqVL8GcY+MESwWGiN2e+Ygr8drKn
-        FSoMgS8TOP0AZibgc64jdaVT6LFc1SjxQ1/0oZ0hYQvXKHTZp7yXPIiilPLKoINX
-        OBUfzAnl3kzbVxevaqomtJdYqUKMKhRE2VmUdRMy9vpBZfc2+ZBPOWoBhBDIcjXA
-        ==
-X-ME-Sender: <xms:LxNTYSl7KMtc11fHWJ303RiHmX3TAYr_CGlGQrTpwU6DZLSswd6OFQ>
-    <xme:LxNTYZ1ipT5xxnH-CIWAl3DOzEevx0z5v_pA5kSLFJ5lHKBWxkB_dKn78XPKZtqJn
-    TbkCwGeYA0Qs1jQ6cw>
-X-ME-Received: <xmr:LxNTYQpjIEkSVJBoSXF5OHMENBeoXteDX1mVZBy7hdAxdMiY2_5lBAbiuMRU4tttMBOC-z5HHi7MKfbSyl_nGz5sLQvX0QCDcs9iOqUM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudektddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:LxNTYWmT4Hl1-NXlskgLlDLrEzXrIXvve0M_YtkuSCBKDO_NOT-ltQ>
-    <xmx:LxNTYQ3eHtgkcV0BTfF3_ZLlCtNb8axK052KbtRNhu4kLfrut1A2cw>
-    <xmx:LxNTYdvVhjsAHYZZWIfbVzyLxIFWy-LG27zzOSwdScr4THPEEa7eFw>
-    <xmx:LxNTYVsVunCt157HDSUKmEeH1vYUOvdsAUPnZRjBWsBKX4XyMwcNUchkLUU>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Sep 2021 09:05:51 -0400 (EDT)
-Date:   Tue, 28 Sep 2021 15:05:49 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/5] drm/vc4: hdmi: Remove CPU hangs, take 2
-Message-ID: <20210928130549.wi6hvvcvqahzfkw5@gilmour>
-References: <20210922125419.4125779-1-maxime@cerno.tech>
- <20210924074044.e24kbxr7lhdtb3eg@gilmour>
+        id S241122AbhI1Nzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 09:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241120AbhI1Nzl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:55:41 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8C2C061745
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 06:54:01 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:9d6a:ba71:99b4:9160])
+        by xavier.telenet-ops.be with bizsmtp
+        id zRtz2500V4bPoua01Rtzvm; Tue, 28 Sep 2021 15:53:59 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mVDYV-000LJI-Cl; Tue, 28 Sep 2021 15:53:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mVDYU-00AEzr-Lz; Tue, 28 Sep 2021 15:53:58 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Fixes for v5.15
+Date:   Tue, 28 Sep 2021 15:53:52 +0200
+Message-Id: <cover.1632836915.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tkxdn235uef745fa"
-Content-Disposition: inline
-In-Reply-To: <20210924074044.e24kbxr7lhdtb3eg@gilmour>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+	Hi Mike, Stephen,
 
---tkxdn235uef745fa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
 
-On Fri, Sep 24, 2021 at 09:40:44AM +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> On Wed, Sep 22, 2021 at 02:54:14PM +0200, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > Here's another attempt at fixing the complete CPU stall while retrievin=
-g the
-> > HDMI connector status when the connector is disabled.
-> >=20
-> > This was fixed already, but eventually got reverted by Linus due to the=
- same
-> > symptom happening in another situation. This was likely (but not confir=
-med by
-> > the reporter) due to the kernel being booted without an HDMI display co=
-nnected,
-> > in which case the firmware won't initialise the HDMI State Machine cloc=
-k.
-> >=20
-> > This is fixed by patch 3. However, further changes in the clock drivers=
- were
-> > needed for clk_set_min_rate to be used, which are patches 1 and 2.
-> >=20
-> > Finally, patches 4 and 5 are the original patches that were reverted. P=
-atch 4
-> > got a small modification to move the clk_set_min_rate() call before the=
- HSM
-> > clock is enabled.
->=20
-> If we merge the clock patches and DRM patches separately we're going to
-> break bisectability. I guess the easiest approach would be to merge the
-> clk patches through DRM. Does that work for everyone?
+  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
 
-Anyone? I can ask around for reviews on DRM, but I'd really like some
-reviews on the clock patches here..
+are available in the Git repository at:
 
-Maxime
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.15-tag3
 
+for you to fetch changes up to fa2a30f8e0aa9304919750b116a9e9e322465299:
 
---tkxdn235uef745fa
-Content-Type: application/pgp-signature; name="signature.asc"
+  clk: renesas: rzg2l: Fix clk status function (2021-09-24 15:11:05 +0200)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+clk: renesas: Fixes for v5.15
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYVMTLQAKCRDj7w1vZxhR
-xcvsAQDxKhsDP22GD43Lx/O+AaKX9Che1s2gN5v6ULUQwlNDCQD9GRoiomNxCpu1
-kBfejcbPla1BuEPCa+nLgompl7GSJw4=
-=c5UX
------END PGP SIGNATURE-----
+  - Fix inverted logic in RZ/G2L .is_enabled() function.
 
---tkxdn235uef745fa--
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (2):
+      clk: renesas: r9a07g044: Mark IA55_CLK and DMAC_ACLK critical
+      clk: renesas: rzg2l: Fix clk status function
+
+ drivers/clk/renesas/r9a07g044-cpg.c | 2 ++
+ drivers/clk/renesas/rzg2l-cpg.c     | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
