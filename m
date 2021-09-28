@@ -2,192 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05E3C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 17:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94925C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 20:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E22261357
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 17:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B9A2611EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 20:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241897AbhI1R7E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 13:59:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43190 "EHLO mail.kernel.org"
+        id S242120AbhI1UKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 16:10:00 -0400
+Received: from www.zeus03.de ([194.117.254.33]:60718 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241884AbhI1R7B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Sep 2021 13:59:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C9BC6135A;
-        Tue, 28 Sep 2021 17:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632851841;
-        bh=IitLXklH5pgGwr/QxPgyows3Ty/G/eCRW21HC4763yA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IcngGpWRpGd+pEp0EoEj8AWUcEw4iLr4bdM8zMoEu1dEl9BiF1zn4Lv3iiwuZLr6M
-         L/zvOGm5g6EO2DB0rPEimsRHoZ9LfMNPMS+6hILAVqCKgFmLpkOQcaTkPzgNxmwxOY
-         nhZF/phcOVg6ryvwhFgLpWeJAsNM6Sup6M0Qv8RgoG/xKInbOJuCtrdgU7itcNaYNF
-         VUaIKJ+BLaRexubuQEiwBn2uXXPV0DlKMhh/w/9kW5wHRg6SVzDxrKDy6/+f2KAZaW
-         kHftLdkcEP84jtDxvCjOsyEiu0LGYQGmkHcD8NDANSNUmZgu0s6jpO9x1YKn76GCFZ
-         tqBiFcPRFASSA==
-Received: by mail-ed1-f52.google.com with SMTP id v10so82374804edj.10;
-        Tue, 28 Sep 2021 10:57:21 -0700 (PDT)
-X-Gm-Message-State: AOAM531zB5dABm2mlBlvF6cpqUs/EHmusix4dCefjkrwOmhAom2gxOBp
-        xgXP2xDzKNCdQmN5EETVn72pu+kA7wnLEY6jGw==
-X-Google-Smtp-Source: ABdhPJxGg63yaAfVj6Hw2Ha6WrM0OzBtt3Hp0wo5IT3s8Xlx+9+izUEL1EukP7tKL0Tfo42roHR06T16AhTyWVT0aYM=
-X-Received: by 2002:a50:d887:: with SMTP id p7mr9357826edj.164.1632851840048;
- Tue, 28 Sep 2021 10:57:20 -0700 (PDT)
+        id S242640AbhI1UJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Sep 2021 16:09:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=VllxzAoyPmRjUQMfdLtFMrZRpCf
+        R1IvoyEt2gW9BBPI=; b=KluvlGPO0rkUqddabSS692WlmoosKAE5pg1c4GJ+2ZM
+        LAEl5iN+54xlb4vPzEB5SEgbeLI2xOk7RpbGGRrnqOcI+brEHXoV87qIV2h2Vvqi
+        jyO4QLT07iWuuAJxDbRGfmeN5RKextvwJ92KR89sm2M0tApcW0b/OcPbM17H8PVM
+        =
+Received: (qmail 1377167 invoked from network); 28 Sep 2021 22:08:15 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Sep 2021 22:08:15 +0200
+X-UD-Smtp-Session: l3s3148p1@PVLdxRPNcNIgAwDPXxnDADNsFyRXxb9N
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/9] clk/mmc: renesas_sdhi: refactor SDnH to be a seperate clock
+Date:   Tue, 28 Sep 2021 22:07:55 +0200
+Message-Id: <20210928200804.50922-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210922105433.11744-1-pali@kernel.org> <20210922105433.11744-4-pali@kernel.org>
- <CAL_JsqKS1rjEeM558d2n6Uk1+tCazASoGJ-kDS144PsH8-Akwg@mail.gmail.com> <20210927203423.o7aulgj7osaaksxr@pali>
-In-Reply-To: <20210927203423.o7aulgj7osaaksxr@pali>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 28 Sep 2021 12:57:08 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ9UU8Q6LNha35uM6ie5-T1pd-FNSMuaf9ZBghU+KBfPA@mail.gmail.com>
-Message-ID: <CAL_JsqJ9UU8Q6LNha35uM6ie5-T1pd-FNSMuaf9ZBghU+KBfPA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v5 3/6] dt-bindings: mvebu-uart: document DT
- bindings for marvell,armada-3700-uart-clock
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 3:34 PM Pali Roh=C3=A1r <pali@kernel.org> wrote:
->
-> On Monday 27 September 2021 15:17:59 Rob Herring wrote:
-> > On Wed, Sep 22, 2021 at 5:56 AM Pali Roh=C3=A1r <pali@kernel.org> wrote=
-:
-> > >
-> > > This change adds DT bindings documentation for device nodes with comp=
-atible
-> > > string "marvell,armada-3700-uart-clock".
-> >
-> > Please resend to the DT list so that checks run and this gets reviewed
-> > in a timely manner.
->
-> OK
->
-> > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> > > ---
-> > >  .../bindings/clock/armada3700-uart-clock.yaml | 57 +++++++++++++++++=
-++
-> > >  1 file changed, 57 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/armada370=
-0-uart-clock.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/armada3700-uart-=
-clock.yaml b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.=
-yaml
-> > > new file mode 100644
-> > > index 000000000000..5bdb23e0ba3e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.y=
-aml
-> > > @@ -0,0 +1,57 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> >
-> > Dual license. checkpatch will tell you which ones.
->
-> OK
->
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/marvell,armada-3700-uart-cl=
-ock#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +title: Marvell Armada 3720 UART clocks
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: marvell,armada-3700-uart-clock
-> > > +
-> > > +  reg:
-> > > +    items:
-> > > +      - description: UART Clock Control Register
-> > > +      - description: UART 2 Baud Rate Divisor Register
-> > > +
-> > > +  clocks:
-> > > +    description: |
-> > > +      List of parent clocks suitable for UART from following set:
-> > > +        "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal"
-> > > +      UART clock can use one from this set and when more are provide=
-d
-> > > +      then kernel would choose and configure the most suitable one.
-> > > +      It is suggest to specify at least one TBG clock to achieve
-> > > +      baudrates above 230400 and also to specify clock which bootloa=
-der
-> > > +      used for UART (most probably xtal) for smooth boot log on UART=
-.
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: TBG-A-P
-> > > +      - const: TBG-B-P
-> > > +      - const: TBG-A-S
-> > > +      - const: TBG-B-S
-> > > +      - const: xtal
-> > > +    minItems: 1
-> > > +    maxItems: 5
-> >
-> > Don't need maxItems equal to length of 'items'.
->
-> OK
->
-> > > +
-> > > +  '#clock-cells':
-> > > +    const: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - '#clock-cells'
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    uartclk: uartclk@12000 {
-> >
-> > clock-controller@12010
-> >
-> > > +      compatible =3D "marvell,armada-3700-uart-clock";
-> > > +      reg =3D <0x12010 0x4>, <0x12210 0x4>;
-> >
-> > However, looks like this is part of some other block.
->
-> Yes, it is part of UART block.
->
-> Explanation is in commit message of patch 2/6.
->
-> And also discussed here:
-> https://lore.kernel.org/linux-serial/20210812200804.i4kbcs6ut27mapd3@pali=
-/
->
-> > The whole block
-> > needs a binding (or at least the parent and whatever sub-functions you
-> > know about).
->
-> Whole UART block has already binding. Clock driver just needs access to
-> these clock bits of these two registers which are in UART block. HW
-> designers decided that clock which drives UART2 has configuration in
-> UART1 address space. As explained in commit message of patch 2/6 there
-> is no easy way how to deal with it in DTS backward compatible way. So
-> clock and UART driver shares mutex for accessing these two shared
-> registers, and these two registers are defined in all 3 DT nodes: UART1,
-> UART2 and UART-clock.
+We wanted this for a long time, so finally here is the first RFC to
+refactor SDHI clocks so that SDnH is a seperate clock. In general, the
+new code looks much clearer to me, plus it is 80 lines shorter.
 
-That's awful. I guess I don't have a better suggestion.
+One downside is that patch 4 looks messy. When switching from old to new
+handling in the clock driver, I see no alternative to switch the MMC
+driver in the same patch. clk_set_rate just has to work. However, the
+MMC part is small, so I hope we can deal with it as an exception this
+time. Please read the patch description for details.
 
-Rob
+Another thing to discuss is the gating of SDn and SDnH. Documentation
+says that SDnH should be gated/ungated depending on the selected
+frequency, not depending on the number of users. I tried to handle this
+via RuntimePM but its need to balance enable/disable calls added quite
+some complexity to my prototype, and it was far from working. So, I
+switched strategies and included the gating to the divider table. So,
+for every divider, SDnH is correctly gated/ungated. SDn should be always
+on, so this is handled there as well. If we want to save power, I think
+we can still use RuntimePM to disable all clocks, as long as we make
+sure the frequencies are set again when resuming. However, this all is
+not a regression because RuntimePM currently does not work for SDHI
+anyhow.
+
+The third thing to discuss is probably the DT bindings. I just added DT
+updates for R-Car H3 ES2.0 and M3-N, but will happily add the others
+once we agreed on the bindings.
+
+These patches have been tested on R-Car H3 ES2.0, M3N, and V3U. More
+testing is needed on Gen2 to make sure no regressions happen. The base
+branch is <renesas-devel-2021-09-28-v5.15-rc3>. A branch can be found
+here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/separate-sdhn
+
+Hopefully I haven't forgotten something important, but I think this is
+it for now.
+
+Looking forward to comments and testing.
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+Wolfram Sang (9):
+  clk: renesas: gen3-cpg: add dummy SDnH clock
+  clk: renesas: add SDnH clock to Gen3 SoCs
+  clk: renesas: r8a779a0: add SDnH clock to V3U
+  clk: renesas: gen3: switch to new SD clock handling
+  clk: renesas: gen3-cpg: remove outdated SD_SKIP_FIRST
+  dt-bindings: mmc: renesas,sdhi: add optional SDnH clock
+  arm64: dts: r8a77951: add SDnH clocks
+  arm64: dts: r8a77965: add SDnH clocks
+  mmc: renesas_sdhi: parse DT for SDnH
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |   3 +-
+ arch/arm64/boot/dts/renesas/r8a77951.dtsi     |  12 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi     |  12 +-
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c       |  12 +-
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c       |  12 +-
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c       |   9 +-
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c       |  12 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c        |  12 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c        |  12 +-
+ drivers/clk/renesas/r8a77965-cpg-mssr.c       |  12 +-
+ drivers/clk/renesas/r8a77980-cpg-mssr.c       |   3 +-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c       |   9 +-
+ drivers/clk/renesas/r8a77995-cpg-mssr.c       |   3 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       |  17 +-
+ drivers/clk/renesas/rcar-cpg-lib.c            | 211 +++---------------
+ drivers/clk/renesas/rcar-cpg-lib.h            |   7 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c           |  24 +-
+ drivers/clk/renesas/rcar-gen3-cpg.h           |   4 +
+ drivers/mmc/host/renesas_sdhi.h               |   1 +
+ drivers/mmc/host/renesas_sdhi_core.c          |  36 ++-
+ 20 files changed, 170 insertions(+), 253 deletions(-)
+
+-- 
+2.30.2
+
