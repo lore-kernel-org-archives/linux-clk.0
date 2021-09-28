@@ -2,264 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64963C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A84AC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED386127C
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D476113E
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239936AbhI1Iwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 04:52:36 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53494
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239793AbhI1IwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 04:52:12 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4416F40265
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 08:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632819016;
-        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=rvuAxQLbNhId7yW/E3zmIp8gS3uhwWq88vVidv7/rPvSZVOY003vi+MypE5ljDeCH
-         ARWJCAySJGTV5AGeS67gwoyTHYj8AOgHBo2/0NTK04Kzzwac5EHDKh503n6RTY06lx
-         SU5cnnmF6YCgeLa2d4RjZHWLKIBXHrYV2kvoKHwciYSWBDlZHYhGSl9m919jewxxf7
-         HmiXkGMcEjR+M5Z84mJl++XcRfwSXx0EN95ksIQKn8IjdBcM9hYulKGZP76rqI6dlx
-         imhQeK2TfDbUTnn18wfmn7/Gs38wCp3HxkqfSQ52Gxb+jplVhgmA61ELdKv5vv8duG
-         tDwMhLsd8NjxA==
-Received: by mail-lf1-f72.google.com with SMTP id x33-20020a0565123fa100b003fcfd99073dso1127215lfa.6
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 01:50:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
-        b=ka1Lq2mybX70YeS4kgMgOK4NNI+cQZqoAxLNQKy0K99+uLZnjUazZlr4RUEkzzilFl
-         kJwhwfy1R7EEfoMpvfJRHn3dT7PMKtTFsK1/Qki5MeFYDUMp4FYA4eoaY4aJb5siPebF
-         5wSqIW/L3of796dnUt6oFAUtZ5mlIapX3T+/Z+mZsyq/y6J7ABUOy9UXHCFFnHv/7gdf
-         HPRoeGFikhJfypFPpGzYXYLP0I4kbPpYxLC03XvV9PuO2dl8X1aF0NKbKAk6LM2hyV4i
-         Ea05PTjp/Dut0I44CGo+ei5f6GlTHevlS1BHYGSUbI21IQy2nZ3XQPb1tjmWbPOwyqqq
-         W0Uw==
-X-Gm-Message-State: AOAM533RUEEHKKabbsyLWgBi2bDXS7TzeVDXC7JhgJo3ws1GHFlBo1um
-        Z/6TAt0h6Ys6h/pHvckWAvHxEWiz2zJy0eyTr00XCwDriH7WPtHHoyi7Zk0alTyPUDORdLGLfFZ
-        au2Fm9s1g9tjK0LS5aCGdmoEizssP8fFRxjv4Jw==
-X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729613lje.135.1632819013560;
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwXNIsIC74EHEhcaaIOoTj5Amse61yM2/pmnchBnUI0iS1c3lanOpAQelzFzUvbyrrH5gtK6Q==
-X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729585lje.135.1632819013368;
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h13sm1848419lfl.205.2021.09.28.01.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S239810AbhI1JIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 05:08:09 -0400
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:42333 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239623AbhI1JII (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 05:08:08 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id B00A02B01605;
+        Tue, 28 Sep 2021 05:06:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 28 Sep 2021 05:06:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=3
+        +KWQOmitGlx5dS7qikRhiEwaMwGqnlRLiJbVG/4vB8=; b=dhwTA5T8yWAPFeHs1
+        qwbkgrHqohaW/mbsotgt1VPB7urO3mWKXpAD8yxlrbk/bJICddts8vEpBzr8BmP2
+        +mViREf0WVmwrnT6pbmpPlXavHOTrjW2lkXS6NR/MOaWtdTdY+4KcXTI9smdVEVf
+        LHCdc7z4n9KmakPnRJ4+EWYSwmdjLDZh7JnUjDEnG3qxNb/CZeNg9sx3sJbvFvgg
+        jboNPluRGcMVRwWevjesxhSCmAUeuLjrKQzLMjB/bzNYWJ/2doPUIfkGioiOHA5R
+        2TYnexm7bsa7glZbeNumPuan3VTGhzGQejb4K53nyBHkPYzURhxTSFf1NbaYd17n
+        Xv+7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=3+KWQOmitGlx5dS7qikRhiEwaMwGqnlRLiJbVG/4v
+        B8=; b=wu2VOcyAxjXpLYAo505J3eaVGTZoQccNmueq7IUlW00Kwk3NC8Nu5z9fV
+        k8fOyRW4/eznPeyw0XuJn3teesPS4xl9KgPaQAd61lwRaQFEZWuZ6M2FepiMeCAu
+        eYs0YjZwnVo8G11B6CJGRaNQtR77L7odeEfbiRQG4tuRpSUIcLxc+fsBlh4xXdVk
+        K84/3CUEVdPnq4RnZP8jrYBAOpCkDwNADs81G8uGTwNjQtV+oZKUsGta3edljmOg
+        Tld2Wym2VRvS6/Ul89GvaCHCB1wNWJMpjCHriO+S0+tNLkAT1/rxcWrH4tm4VVDV
+        FNiOwp9uUpT/fOao3tPfPcZFBEs7A==
+X-ME-Sender: <xms:E9tSYTeKFMnsgkCrQ1twBNMq3gxMcIggnWTwgLaTkednGlhIBVI9IQ>
+    <xme:E9tSYZNflnaFuUjIqV-6eh2pdVmT3Qe13I1CYtuE64bdjY3XsuqHneW1zrzmGCQGB
+    IxyNyO2wpayOVFxPck>
+X-ME-Received: <xmr:E9tSYcgbySTrWhz414tVgEzNxhE7q9CvW88EbIZnB6vobE_45CxhUGpxXdHbwC2vmBzZNW3rbzmnIroCRouRwSTvgfWb_FZCgfxH9Dxk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudektddgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpefgjeettdejgffgffdvteeutdehtdehgeehueetkeefgefhtdetjeekledu
+    gedvudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:E9tSYU_w2akdumQCi5yQHjVcKFX48JWRqnpKnAvhTsSzGtFzCquYUQ>
+    <xmx:E9tSYfsPymaoY6lyY0lk7FoCxQvZzisPc3K3mZqA1YQH_StmeRksBg>
+    <xmx:E9tSYTHsrjTmI8jQ5QAK37RhTJXSA2uGCn2xnKe0QcTlR6LlKkF6OQ>
+    <xmx:FNtSYdLCF3X69qnIoHXDtWvqtq6F-3JBsyDODXIYgKDU5ReqwE3f8PkjGZY>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Sep 2021 05:06:27 -0400 (EDT)
+Date:   Tue, 28 Sep 2021 11:06:25 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 12/12] ARM: dts: exynos: use spaces instead of tabs around '='
-Date:   Tue, 28 Sep 2021 10:49:49 +0200
-Message-Id: <20210928084949.27939-13-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/7] clk: sunxi-ng: Add a RTC CCU driver
+Message-ID: <20210928090625.rq3atiaejaq5kcbx@gilmour>
+References: <20210901053951.60952-1-samuel@sholland.org>
+ <20210903145013.hn6dv7lfyvfys374@gilmour>
+ <4a187add-462b-dfe4-868a-fdab85258b8d@sholland.org>
+ <20210909084538.jeqltc7b3rtqvu4h@gilmour>
+ <c910527d-e2d7-31ca-efd9-1915db62d85d@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c910527d-e2d7-31ca-efd9-1915db62d85d@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use spaces in Origen boards instead of tabs around '=' for simple
-property assignments, to match coding style.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts | 24 ++++++++++++------------
- arch/arm/boot/dts/exynos4412-origen.dts | 14 +++++++-------
- 2 files changed, 19 insertions(+), 19 deletions(-)
+On Tue, Sep 28, 2021 at 02:46:39AM -0500, Samuel Holland wrote:
+> On 9/9/21 3:45 AM, Maxime Ripard wrote:
+> > On Fri, Sep 03, 2021 at 10:21:13AM -0500, Samuel Holland wrote:
+> >> On 9/3/21 9:50 AM, Maxime Ripard wrote:
+> >>> Hi,
+> >>>
+> >>> On Wed, Sep 01, 2021 at 12:39:44AM -0500, Samuel Holland wrote:
+> >>>> This patch series adds a CCU driver for the RTC in the H616 and R329.
+> >>>> The extra patches at the end of this series show how it would be
+> >>>> explanded to additional hardware variants.
+> >>>>
+> >>>> The driver is intended to support the existing binding used for the =
+H6,
+> >>>> but also an updated binding which includes all RTC input clocks. I do
+> >>>> not know how to best represent that binding -- that is a major reason
+> >>>> why this series is an RFC.
+> >>>>
+> >>>> A future patch series could add functionality to the driver to manage
+> >>>> IOSC calibration at boot and during suspend/resume.
+> >>>>
+> >>>> It may be possible to support all of these hardware variants in the
+> >>>> existing RTC clock driver and avoid some duplicate code, but I'm
+> >>>> concerned about the complexity there, without any of the CCU
+> >>>> abstraction.
+> >>>>
+> >>>> This series is currently based on top of the other series I just sent
+> >>>> (clk: sunxi-ng: Lifetime fixes and module support), but I can rebase=
+ it
+> >>>> elsewhere.
+> >>>
+> >>> I'm generally ok with this, it makes sense to move it to sunxi-ng,
+> >>> especially with that other series of yours.
+> >>>
+> >>> My main concern about this is the split driver approach. We used to h=
+ave
+> >>> that before in the RTC too, but it was mostly due to the early clock
+> >>> requirements. With your previous work, that requirement is not there
+> >>> anymore and we can just register it as a device just like the other
+> >>> clock providers.
+> >>
+> >> That's a good point. Originally, I had this RTC CCU providing osc24M, =
+so
+> >> it did need to be an early provider. But with the current version, we
+> >> could have the RTC platform driver call devm_sunxi_ccu_probe. That does
+> >> seem cleaner.
+> >>
+> >> (Since it wasn't immediately obvious to me why this works: the only
+> >> early provider remaining is the sun5i CCU, and it doesn't use the sun6i
+> >> RTC driver.)
+> >>
+> >>> And since we can register all those clocks at device probe time, we
+> >>> don't really need to split the driver in two (and especially in two
+> >>> different places). The only obstacle to this after your previous seri=
+es
+> >>> is that we don't have of_sunxi_ccu_probe / devm_sunxi_ccu_probe
+> >>> functions public, but that can easily be fixed by moving their
+> >>> definition to include/linux/clk/sunxi-ng.h
+> >>
+> >> Where are you thinking the clock definitions would go? We don't export
+> >> any of those structures (ccu_mux, ccu_common) or macros
+> >> (SUNXI_CCU_GATE_DATA) in a public header either.
+> >=20
+> > Ah, right...
+> >=20
+> >> Would you want to export those? That seems like a lot of churn. Or wou=
+ld
+> >> we put the CCU descriptions in drivers/clk/sunxi-ng and export a
+> >> function that the RTC driver can call? (Or some other idea?)
+> >=20
+> > I guess we could export it. There's some fairly big headers in
+> > include/linux/clk already (tegra and ti), it's not uAPI and we do have
+> > reasons to do so, so I guess it's fine.
+> >=20
+> > I'd like to avoid having two drivers for the same device if possible,
+> > especially in two separate places. This creates some confusion since the
+> > general expectation is that there's only one driver per device. There's
+> > also the fact that this could lead to subtle bugs since the probe order
+> > is the link order (or module loading).
+>=20
+> I don't think there can be two "struct device"s for a single OF node.
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 1c5394152561..435fda60e86d 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -206,74 +206,74 @@ ldo3_reg: LDO3 {
- 			ldo4_reg: LDO4 {
- 				regulator-name = "VDD_RTC_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo6_reg: LDO6 {
- 				regulator-name = "VMIPI_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo7_reg: LDO7 {
- 				regulator-name = "VDD_AUD_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			ldo8_reg: LDO8 {
- 				regulator-name = "VADC_3.3V";
- 				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt	= <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 			};
- 
- 			ldo9_reg: LDO9 {
- 				regulator-name = "DVDD_SWB_2.8V";
- 				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt	= <2800000>;
-+				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo10_reg: LDO10 {
- 				regulator-name = "VDD_PLL_1.1V";
- 				regulator-min-microvolt = <1100000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo11_reg: LDO11 {
- 				regulator-name = "VDD_AUD_3V";
- 				regulator-min-microvolt = <3000000>;
--				regulator-max-microvolt	= <3000000>;
-+				regulator-max-microvolt = <3000000>;
- 			};
- 
- 			ldo14_reg: LDO14 {
- 				regulator-name = "AVDD18_SWB_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo17_reg: LDO17 {
- 				regulator-name = "VDD_SWB_3.3V";
- 				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt	= <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo21_reg: LDO21 {
- 				regulator-name = "VDD_MIF_1.2V";
- 				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt	= <1200000>;
-+				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 			};
- 
- 			buck1_reg: BUCK1 {
- 				regulator-name = "VDD_ARM_1.2V";
- 				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt	= <1350000>;
-+				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 			};
-@@ -281,7 +281,7 @@ buck1_reg: BUCK1 {
- 			buck2_reg: BUCK2 {
- 				regulator-name = "VDD_INT_1.1V";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 			};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 5479ef09f9f3..e6aec5facabf 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -382,7 +382,7 @@ ldo28_reg: LDO28 {
- 			buck1_reg: BUCK1 {
- 				regulator-name = "VDD_MIF";
- 				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -391,7 +391,7 @@ buck1_reg: BUCK1 {
- 			buck2_reg: BUCK2 {
- 				regulator-name = "VDD_ARM";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1350000>;
-+				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -400,7 +400,7 @@ buck2_reg: BUCK2 {
- 			buck3_reg: BUCK3 {
- 				regulator-name = "VDD_INT";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1200000>;
-+				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -409,7 +409,7 @@ buck3_reg: BUCK3 {
- 			buck4_reg: BUCK4 {
- 				regulator-name = "VDD_G3D";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -418,7 +418,7 @@ buck4_reg: BUCK4 {
- 			buck5_reg: BUCK5 {
- 				regulator-name = "VDD_M12";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -427,7 +427,7 @@ buck5_reg: BUCK5 {
- 			buck6_reg: BUCK6 {
- 				regulator-name = "VDD12_5M";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -436,7 +436,7 @@ buck6_reg: BUCK6 {
- 			buck9_reg: BUCK9 {
- 				regulator-name = "VDDF28_EMMC";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <3000000>;
-+				regulator-max-microvolt = <3000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
--- 
-2.30.2
+That's not what I meant, there's indeed a single of_node for a single
+struct device. If we dig a bit into the core framework, the most likely
+scenario is that we would register both the RTC and clock driver at
+module_init, and with the device already created with its of_node set
+during the initial DT parsing.
 
+We register our platform driver using module_platform_driver, which
+expands to calling driver_register() at module_init(), setting the
+driver bus to the platform_bus in the process (in
+__platform_driver_register()).
+
+After some sanity check, driver_register() calls bus_add_driver(), which
+will call driver_attach() if drivers_autoprobe is set (which is the
+default, set into bus_register()).
+
+driver_attach() will, for each device on the platform bus, call
+__driver_attach(). If there's a match between that device and our driver
+(which is evaluated by platform_match() in our case), we'll call our
+driver probe with that device through driver_probe_device(),
+__driver_probe_device() and finally really_probe().
+
+However, at no point in time there's any check about whether that device
+has already been bound to a driver, nor does it create a new device for
+each driver. So this means that, if you have two drivers that match the
+same device (like our clock and RTC drivers), you'll have both probe
+being called with the same device, and the probe order will be defined
+by the link order. Worse, they would share the same driver_data, with
+each driver not being aware of the other. This is incredibly fragile,
+and hard to notice since it goes against the usual expectations.
+
+> So if the CCU part is in drivers/clk/sunxi-ng, the CCU "probe"
+> function would have to be called from the RTC driver.
+
+No, it would be called by the core directly if there's a compatible to
+match.
+
+> Since there has to be cooperation anyway, I don't think there would be
+> any ordering problems.
+
+My initial point was that, with a direct function call, it's both
+deterministic and obvious.
+
+> > And synchronizing access to registers between those two drivers will be
+> > hard, while we could just share the same spin lock between the RTC and
+> > clock drivers if they are instanciated in the same place.
+>=20
+> While the RTC driver currently shares a spinlock between the clock part
+> and the RTC part, there isn't actually any overlap in register usage
+> between the two. So there doesn't need to be any synchronization.
+
+I know, but this was more of a social problem than a technical one. Each
+contributor and reviewer in the future will have to know or remember
+that it's there, and make sure that it's still the case after any change
+they make or review.
+
+This is again a fairly fragile assumption.
+
+Maxime
