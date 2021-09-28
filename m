@@ -2,102 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5FEC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 22:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF368C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 531B661391
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 22:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F7C60E94
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243079AbhI1WaU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 18:30:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243072AbhI1WaU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Sep 2021 18:30:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A502613A0;
-        Tue, 28 Sep 2021 22:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632868120;
-        bh=CpoB/AQaiB5lLCqB8ho11PEAW2+8Qw4aT/GKC1JnWBs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NWHhMqyqu5ZeEo7veyI0DPB8sfx/QCj+Q6/4ri8A+3eKcgUBjZ2OSX1rCewPb226Y
-         IzDq987TbzOv2e1SuaxsSPVI4471heZdrf3Yu1oJHcUukxwQXqv7v2Z/Via9w5kfG8
-         c2D3Pt6Tk9p/qwZDK1kSi6Fdr9/FpF0CZrmHLDeE1xI9neyG3KgK2rAwo3Mf/A/x6q
-         jpMcuhdfzW2xeHYcHLMWmHHnJ+2fFXEF/aeZTtLIfn+Reb0S8q4/fru1L3wKcvo2kN
-         sRB6UvFq1i2+o/tmhodQdcJFeA8cfLTvsQ3H5hSAomDnY5QVoiR4xnXE0EA+l9EOz5
-         S0Amq1sMI7KzA==
-Received: by mail-ed1-f54.google.com with SMTP id v18so842755edc.11;
-        Tue, 28 Sep 2021 15:28:40 -0700 (PDT)
-X-Gm-Message-State: AOAM5327P3KjnrP/IK8jq45xlur3TnDrPhzuwsJ0xoOo5QnogXUEPdzr
-        lN0roiMtVTtQ9lnsQdXRULlu+siTz53qGyw92Q==
-X-Google-Smtp-Source: ABdhPJwf3T2vDvRzn1kn4EttNExbUJlEkqp3unlYwOfhx9E5xNV/zF/ODC8gDrpuUojJrEloyRNMxi7elthKPR3Tgus=
-X-Received: by 2002:a50:d903:: with SMTP id t3mr10809492edj.70.1632868118869;
- Tue, 28 Sep 2021 15:28:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
- <20210922103116.30652-11-chin-ting_kuo@aspeedtech.com> <YVIUf7/4ukMcrOb9@robh.at.kernel.org>
- <HK0PR06MB2786DAAA2D6E58EA2E2FCB6BB2A89@HK0PR06MB2786.apcprd06.prod.outlook.com>
-In-Reply-To: <HK0PR06MB2786DAAA2D6E58EA2E2FCB6BB2A89@HK0PR06MB2786.apcprd06.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 28 Sep 2021 17:28:27 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+TZFXrvfJTjofVcnT6jJat-3SvWj+jAq0QST8ndfeUMA@mail.gmail.com>
-Message-ID: <CAL_Jsq+TZFXrvfJTjofVcnT6jJat-3SvWj+jAq0QST8ndfeUMA@mail.gmail.com>
-Subject: Re: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible string
-To:     Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-Cc:     "joel@jms.id.au" <joel@jms.id.au>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        BMC-SW <BMC-SW@aspeedtech.com>,
-        Steven Lee <steven_lee@aspeedtech.com>
+        id S243311AbhI1X6d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 19:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243235AbhI1X6c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 19:58:32 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68666C06174E
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:56:52 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id x16-20020a25b910000000b005b6b7f2f91cso1163544ybj.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=n/4ji2XuxpZN636ga4YIidKk8OUAj8FasKFOyipQUCs=;
+        b=I824tzwXK4ArJM33zKh8o41jaDjDUrDwRpvfINUp1+mgEb5E+73AhhO7xB2aGXDHYN
+         RHFI+0EmQVLvawHS6MK/NJHIx+ksKZm/NBOoZt8qYkipjxv6FREv0V8BlNPi0UNotPyK
+         jelAwquik+M3dN82rRK9qNJqatBYNi95BqfB0ZaJ909diQpb9I9WE1xpoydt7Wl9HOJS
+         tLnkvR02vXmMUpakGUA7yNLzrY9JxZ9np72xou6mg+LWNetAWUilreJ7GSbotmzIVX54
+         iA+Jv0m/Qj8ED6rqsfyEEwsXDa60y5SPuILXh7bmGelUhv84dRGMz+K3X7RJKgOVyjQ1
+         H6Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=n/4ji2XuxpZN636ga4YIidKk8OUAj8FasKFOyipQUCs=;
+        b=KzoE6aXpZLkK9Xb8PtbfyMI52a92Nrp+CUZUYN81BgX4WG/ET/JdAIJ+rTsraEscrj
+         a4Jyad+DgR6pMRXxUDOTgbfyjwQzUNO3euhuTJ97Yrjntbh6+PEacVSrgYn/uMMRJtFQ
+         YLuXk4h0y7a7Oop491NzNPlVpGb+3dP6AC8gYi2cdfdg+4eiRpen53PgsCbhsBbuSyvg
+         G9tpuKp9/uPlP1+8mOlfbbuobKtWyLqDmiowtcXMPt1fAk+Aj/D9k9dD89Ksdcvbn0d5
+         0nr0VRn5gzhXHWNg0QlA7wJvLp4Xoty/zooBN/kFOXAnh8UJ79Ob2eljtgwQX2H4g/Is
+         1BJQ==
+X-Gm-Message-State: AOAM530V2O/+7ylf2nay0gyEgQo8ahbLXLSrklC3oBaxeBQAo2cM9XV1
+        cEt2dax6RKcAWydUO1urVhTvWKuY7uEccRxqT/E=
+X-Google-Smtp-Source: ABdhPJwiBWkFSrRZjL9CwMHS4p+dCQodZ0zYKtZ+o0uIxNB3pJVtsnCdQl0dwzC+XK2dm4Dr78SZgIrssykhmy8RZNc=
+X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
+ (user=willmcvicker job=sendgmr) by 2002:a25:2e07:: with SMTP id
+ u7mr9785709ybu.1.1632873411609; Tue, 28 Sep 2021 16:56:51 -0700 (PDT)
+Date:   Tue, 28 Sep 2021 23:56:17 +0000
+Message-Id: <20210928235635.1348330-1-willmcvicker@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.685.g46640cef36-goog
+Subject: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+From:   Will McVicker <willmcvicker@google.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 9:51 PM Chin-Ting Kuo
-<chin-ting_kuo@aspeedtech.com> wrote:
->
-> Hi Rob,
->
-> > -----Original Message-----
-> > From: Rob Herring <robh@kernel.org>
-> > Sent: Tuesday, September 28, 2021 2:59 AM
-> > To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-> > Subject: Re: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
-> > string
-> >
-> > On Wed, Sep 22, 2021 at 06:31:16PM +0800, Chin-Ting Kuo wrote:
-> > > Add "aspeed,ast2600-emmc" compatible string for the sake of
-> > > distinguishing between SD and eMMC device.
-> >
-> > Why?
-> >
-> > Is the h/w block different? We already have properties to handle some of the
-> > eMMC specifics. Also, you can have a child node for the eMMC device if you
-> > need that.
->
-> There are two SD/SDIO controllers in a AST2600 SoC.
-> One is for SD card and the other is for eMMC.
-> Although both of them are embedded in the same SoC, the design of delay cell and
-> the manufacture process are different. The delay phase is definitely different and, thus,
-> we need a flag, compatible, to distinguish the device, SD or eMMC.
->
-> Without "aspeed,ast2600-emmc" compatible, of course, eMMC device can work with original
-> sdhci driver and device tree setting. But, for ultra-speed or HS200 case, AST2600 SoC needs some
-> phase delay which (maximum) value is different between SD and eMMC device.
+This is v2 of the series of patches that modularizes a number of core
+ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
+modularized all of the drivers that are removed from the ARCH_EXYNOS
+series of "select XXX". This includes setting the following configs as
+tristate:
 
-This is quite common as tweaking the timing is also need per board.
-Look at what other bindings have done. A property is more appropriate
-here.
+ * COMMON_CLK_SAMSUNG
+ * EXYNOS_ARM64_COMMON_CLK
+ * PINCTRL_SAMSUNG
+ * PINCTRL_EXYNOS
+ * EXYNOS_PMU_ARM64
+ * EXYNOS_PM_DOMAINS
 
-Rob
+Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
+which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
+The reason for these new configs is because we are not able to easily
+modularize the ARMv7 PMU driver due to built-in arch dependencies on
+pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
+the ARM and ARM64 portions into two separate configs.
+
+Overall, these drivers didn't require much refactoring and converted to
+modules relatively easily. However, due to my lack of exynos hardware, I
+was not able to boot test these changes. I'm mostly concerned about the
+CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
+requesting help for testing these changes on the respective hardware.
+
+Lastly, this series is based off of [1] since there are dependencies on
+EXYNOS_CHIPID from that series..
+
+[1] https://lore.kernel.org/lkml/20210919093114.35987-1-krzysztof.kozlowski@canonical.com/
+
+* From v1:
+  - Fixed modifying hidden configs
+  - Modularized all the drivers that were touched
+  - Removed HAVE_S3C_RTC
+  - Updated all Samsung ARCH_XXX configs as suggested from reviews
+  - Rebased on top of 5.15-rc3 and pulled in [1]
+
+Will McVicker (12):
+  arm64: don't have ARCH_EXYNOS select EXYNOS_CHIPID
+  timekeeping: add API for getting timekeeping_suspended
+  clk: samsung: add support for CPU clocks
+  clk: samsung: exynos5433: update apollo and atlas clock probing
+  clk: export __clk_lookup
+  clk: samsung: modularize exynos arm64 clk drivers
+  clk: samsung: set exynos arm64 clk driver as tristate
+  pinctrl: samsung: modularize the ARM and ARM64 pinctrls
+  pinctrl: samsung: set PINCTRL_EXYNOS and PINCTRL_SAMSUNG as tristate
+  soc: samsung: pmu: modularize the Exynos ARMv8 PMU driver
+  soc: samsung: pm_domains: modularize EXYNOS_PM_DOMAINS
+  ARM: rtc: remove HAVE_S3C_RTC in favor of direct dependencies
+
+ arch/arm/Kconfig                              |   1 -
+ arch/arm/mach-exynos/Kconfig                  |   6 +-
+ arch/arm/mach-s3c/Kconfig.s3c64xx             |   1 -
+ arch/arm/mach-s5pv210/Kconfig                 |   3 -
+ arch/arm64/Kconfig.platforms                  |   6 -
+ drivers/clk/clk.c                             |   1 +
+ drivers/clk/samsung/Kconfig                   |   5 +-
+ drivers/clk/samsung/Makefile                  |   3 +-
+ drivers/clk/samsung/clk-cpu.c                 |  28 +-
+ drivers/clk/samsung/clk-cpu.h                 |   2 +-
+ drivers/clk/samsung/clk-exynos5433.c          | 465 ++++++++----------
+ drivers/clk/samsung/clk-exynos7.c             | 177 +++----
+ drivers/clk/samsung/clk-pll.c                 |   6 +-
+ drivers/clk/samsung/clk.c                     |  35 +-
+ drivers/clk/samsung/clk.h                     |  50 +-
+ drivers/pinctrl/samsung/Kconfig               |   5 +-
+ drivers/pinctrl/samsung/Makefile              |  13 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c  | 102 ++--
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  73 +--
+ drivers/pinctrl/samsung/pinctrl-exynos.c      |  17 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  11 +-
+ drivers/rtc/Kconfig                           |  10 +-
+ drivers/soc/samsung/Kconfig                   |  18 +-
+ drivers/soc/samsung/Makefile                  |   8 +-
+ drivers/soc/samsung/exynos-pmu.c              |  13 +-
+ drivers/soc/samsung/exynos-pmu.h              |   2 +-
+ drivers/soc/samsung/pm_domains.c              |  12 +-
+ include/linux/soc/samsung/exynos-pmu.h        |   2 +-
+ include/linux/timekeeping.h                   |   1 +
+ kernel/time/timekeeping.c                     |  11 +
+ 30 files changed, 553 insertions(+), 534 deletions(-)
+
+-- 
+2.33.0.685.g46640cef36-goog
+
