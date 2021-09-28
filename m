@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28742C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64963C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 111CF61058
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ED386127C
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239789AbhI1Iwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 04:52:35 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53616
+        id S239936AbhI1Iwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 04:52:36 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53494
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239792AbhI1IwM (ORCPT
+        by vger.kernel.org with ESMTP id S239793AbhI1IwM (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 04:52:12 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 91C3F40319
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 08:50:11 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4416F40265
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 08:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632819011;
-        bh=MrRtMKWESY45De0HF10TbNHiqJiU4JWtrfj4T60+/KM=;
+        s=20210705; t=1632819016;
+        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=ndER0NAr0UN+YQHUTT2ns733/eJLlpx4hh5yjodfw+hgXyETeClSYKznf4KJ2p4pf
-         D52xjHq1U7JzKDcK1PCskxIbfzRJrlnC9X6oaHD6c6d5d2VKqTSUcPrkRA9HZ/ZrsK
-         SBqn+bVfxdNwD2eZKDPxGlLxsjDeatDfhYNH8xiveDJpXIm/VAjJYO9IQmmuB1ECEL
-         mlDzNk6BUlT9rAt4aVYxyl+z6s69QmQLC1O2/ZL0zfepLNSMaUvipY84xrf6oEpRgQ
-         LyEasZneHj6pW9X++t/ppSLTAmRy/nYq5yndLW3eMEnewnPAKvbnbzOKd8ZB+vjR0r
-         mpiVVpr58LOHA==
-Received: by mail-lf1-f71.google.com with SMTP id t187-20020a19c3c4000000b003fc1361fb20so18671744lff.0
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 01:50:11 -0700 (PDT)
+        b=rvuAxQLbNhId7yW/E3zmIp8gS3uhwWq88vVidv7/rPvSZVOY003vi+MypE5ljDeCH
+         ARWJCAySJGTV5AGeS67gwoyTHYj8AOgHBo2/0NTK04Kzzwac5EHDKh503n6RTY06lx
+         SU5cnnmF6YCgeLa2d4RjZHWLKIBXHrYV2kvoKHwciYSWBDlZHYhGSl9m919jewxxf7
+         HmiXkGMcEjR+M5Z84mJl++XcRfwSXx0EN95ksIQKn8IjdBcM9hYulKGZP76rqI6dlx
+         imhQeK2TfDbUTnn18wfmn7/Gs38wCp3HxkqfSQ52Gxb+jplVhgmA61ELdKv5vv8duG
+         tDwMhLsd8NjxA==
+Received: by mail-lf1-f72.google.com with SMTP id x33-20020a0565123fa100b003fcfd99073dso1127215lfa.6
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 01:50:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MrRtMKWESY45De0HF10TbNHiqJiU4JWtrfj4T60+/KM=;
-        b=k++ePEe2LB1LCBVOykIqGv+Yu6QoOmYFg5t0kKe5Cz1yTayPpgfAEQ7Hg/352DJ40O
-         8pkFRbm6bbPVu+ETAoM7if0J4PpqI5hg6pM7Y071wbB8IAA+JmYoR0UooqO4HcpvgfkB
-         yhY6jmkiUZ0XZhzeuy+AZmvjRBWgEi1QX1t+H8GFC1FW9viimmxRlsQvUqF0VEekKzya
-         OwMR94dK4rUwybz6PAyK8fzsv4tIIkeeZXWeHz0kmxWJ4euPE3TAMs4iRs0v4gjcwwM8
-         APPLgCCDwr9Do7zhu95dUrVJNZjA0UZW/hOCNrTyjVG99BxG01erF/nX3ovGH2C8GBJZ
-         KrZg==
-X-Gm-Message-State: AOAM533SbwZa6V2n6UAP1J+suQTtIQHCgBGX9StFYs4Hn28FlGDX4Rxk
-        d2msxPL3lijxioEKS0Uk9WpPYGMFflMesdvlqfxWa01zrteHY+9ONeHMZgFmRUFi1YQl3LS1svn
-        mwtpdEU0QewkxIruMZ4fQOiYLKltbaT29kl4VnA==
-X-Received: by 2002:a05:651c:1124:: with SMTP id e4mr4530582ljo.261.1632819010965;
-        Tue, 28 Sep 2021 01:50:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxeT9hh5MikDORvgeeNHLdkoBlQ51tYUHQvGyxCDV/oLrmwZnjOgz8Pgq3riPZog98Bec4NGQ==
-X-Received: by 2002:a05:651c:1124:: with SMTP id e4mr4530572ljo.261.1632819010805;
-        Tue, 28 Sep 2021 01:50:10 -0700 (PDT)
+        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
+        b=ka1Lq2mybX70YeS4kgMgOK4NNI+cQZqoAxLNQKy0K99+uLZnjUazZlr4RUEkzzilFl
+         kJwhwfy1R7EEfoMpvfJRHn3dT7PMKtTFsK1/Qki5MeFYDUMp4FYA4eoaY4aJb5siPebF
+         5wSqIW/L3of796dnUt6oFAUtZ5mlIapX3T+/Z+mZsyq/y6J7ABUOy9UXHCFFnHv/7gdf
+         HPRoeGFikhJfypFPpGzYXYLP0I4kbPpYxLC03XvV9PuO2dl8X1aF0NKbKAk6LM2hyV4i
+         Ea05PTjp/Dut0I44CGo+ei5f6GlTHevlS1BHYGSUbI21IQy2nZ3XQPb1tjmWbPOwyqqq
+         W0Uw==
+X-Gm-Message-State: AOAM533RUEEHKKabbsyLWgBi2bDXS7TzeVDXC7JhgJo3ws1GHFlBo1um
+        Z/6TAt0h6Ys6h/pHvckWAvHxEWiz2zJy0eyTr00XCwDriH7WPtHHoyi7Zk0alTyPUDORdLGLfFZ
+        au2Fm9s1g9tjK0LS5aCGdmoEizssP8fFRxjv4Jw==
+X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729613lje.135.1632819013560;
+        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwXNIsIC74EHEhcaaIOoTj5Amse61yM2/pmnchBnUI0iS1c3lanOpAQelzFzUvbyrrH5gtK6Q==
+X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729585lje.135.1632819013368;
+        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
 Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h13sm1848419lfl.205.2021.09.28.01.50.09
+        by smtp.gmail.com with ESMTPSA id h13sm1848419lfl.205.2021.09.28.01.50.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Sep 2021 01:50:10 -0700 (PDT)
+        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -73,9 +73,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 10/12] mfd: dt-bindings: samsung,s5m8767: document buck and LDO supplies
-Date:   Tue, 28 Sep 2021 10:49:47 +0200
-Message-Id: <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 12/12] ARM: dts: exynos: use spaces instead of tabs around '='
+Date:   Tue, 28 Sep 2021 10:49:49 +0200
+Message-Id: <20210928084949.27939-13-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
 References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
@@ -85,63 +85,181 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the properties with regulator supplies for bucks and LDOs.  At
-least one board uses it (Exynos5250 Arndale).
+Use spaces in Origen boards instead of tabs around '=' for simple
+property assignments, to match coding style.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ arch/arm/boot/dts/exynos4210-origen.dts | 24 ++++++++++++------------
+ arch/arm/boot/dts/exynos4412-origen.dts | 14 +++++++-------
+ 2 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-index 35018346f68b..e97a94cab4e8 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-@@ -96,6 +96,44 @@ properties:
-     description: |
-       GPIO specifiers for three host gpio's used for dvs.
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index 1c5394152561..435fda60e86d 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -206,74 +206,74 @@ ldo3_reg: LDO3 {
+ 			ldo4_reg: LDO4 {
+ 				regulator-name = "VDD_RTC_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt	= <1800000>;
++				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
  
-+  vinb1-supply:
-+    description: Power supply for buck1
-+  vinb2-supply:
-+    description: Power supply for buck1
-+  vinb3-supply:
-+    description: Power supply for buck1
-+  vinb4-supply:
-+    description: Power supply for buck1
-+  vinb5-supply:
-+    description: Power supply for buck1
-+  vinb6-supply:
-+    description: Power supply for buck1
-+  vinb7-supply:
-+    description: Power supply for buck1
-+  vinb8-supply:
-+    description: Power supply for buck1
-+  vinb9-supply:
-+    description: Power supply for buck1
-+
-+  vinl1-supply:
-+    description: Power supply for LDO3, LDO10, LDO26, LDO27
-+  vinl2-supply:
-+    description: Power supply for LDO13, LDO16, LDO25, LDO28
-+  vinl3-supply:
-+    description: Power supply for LDO11, LDO14
-+  vinl4-supply:
-+    description: Power supply for LDO4, LDO9
-+  vinl5-supply:
-+    description: Power supply for LDO12, LDO17, LDO19, LDO23
-+  vinl6-supply:
-+    description: Power supply for LDO18, LDO20, LDO21, LDO24
-+  vinl7-supply:
-+    description: Power supply for LDO5, LDO22
-+  vinl8-supply:
-+    description: Power supply for LDO1, LDO6, LDO7, LDO8, LDO15
-+  vinl9-supply:
-+    description: Power supply for LDO2
-+
-   wakeup-source: true
+ 			ldo6_reg: LDO6 {
+ 				regulator-name = "VMIPI_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt	= <1800000>;
++				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
  
- required:
+ 			ldo7_reg: LDO7 {
+ 				regulator-name = "VDD_AUD_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt	= <1800000>;
++				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+ 			ldo8_reg: LDO8 {
+ 				regulator-name = "VADC_3.3V";
+ 				regulator-min-microvolt = <3300000>;
+-				regulator-max-microvolt	= <3300000>;
++				regulator-max-microvolt = <3300000>;
+ 			};
+ 
+ 			ldo9_reg: LDO9 {
+ 				regulator-name = "DVDD_SWB_2.8V";
+ 				regulator-min-microvolt = <2800000>;
+-				regulator-max-microvolt	= <2800000>;
++				regulator-max-microvolt = <2800000>;
+ 				regulator-always-on;
+ 			};
+ 
+ 			ldo10_reg: LDO10 {
+ 				regulator-name = "VDD_PLL_1.1V";
+ 				regulator-min-microvolt = <1100000>;
+-				regulator-max-microvolt	= <1100000>;
++				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 			};
+ 
+ 			ldo11_reg: LDO11 {
+ 				regulator-name = "VDD_AUD_3V";
+ 				regulator-min-microvolt = <3000000>;
+-				regulator-max-microvolt	= <3000000>;
++				regulator-max-microvolt = <3000000>;
+ 			};
+ 
+ 			ldo14_reg: LDO14 {
+ 				regulator-name = "AVDD18_SWB_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt	= <1800000>;
++				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
+ 
+ 			ldo17_reg: LDO17 {
+ 				regulator-name = "VDD_SWB_3.3V";
+ 				regulator-min-microvolt = <3300000>;
+-				regulator-max-microvolt	= <3300000>;
++				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+ 
+ 			ldo21_reg: LDO21 {
+ 				regulator-name = "VDD_MIF_1.2V";
+ 				regulator-min-microvolt = <1200000>;
+-				regulator-max-microvolt	= <1200000>;
++				regulator-max-microvolt = <1200000>;
+ 				regulator-always-on;
+ 			};
+ 
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "VDD_ARM_1.2V";
+ 				regulator-min-microvolt = <950000>;
+-				regulator-max-microvolt	= <1350000>;
++				regulator-max-microvolt = <1350000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
+@@ -281,7 +281,7 @@ buck1_reg: BUCK1 {
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "VDD_INT_1.1V";
+ 				regulator-min-microvolt = <900000>;
+-				regulator-max-microvolt	= <1100000>;
++				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 5479ef09f9f3..e6aec5facabf 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -382,7 +382,7 @@ ldo28_reg: LDO28 {
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "VDD_MIF";
+ 				regulator-min-microvolt = <950000>;
+-				regulator-max-microvolt	= <1100000>;
++				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -391,7 +391,7 @@ buck1_reg: BUCK1 {
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "VDD_ARM";
+ 				regulator-min-microvolt = <900000>;
+-				regulator-max-microvolt	= <1350000>;
++				regulator-max-microvolt = <1350000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -400,7 +400,7 @@ buck2_reg: BUCK2 {
+ 			buck3_reg: BUCK3 {
+ 				regulator-name = "VDD_INT";
+ 				regulator-min-microvolt = <900000>;
+-				regulator-max-microvolt	= <1200000>;
++				regulator-max-microvolt = <1200000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -409,7 +409,7 @@ buck3_reg: BUCK3 {
+ 			buck4_reg: BUCK4 {
+ 				regulator-name = "VDD_G3D";
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt	= <1500000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -418,7 +418,7 @@ buck4_reg: BUCK4 {
+ 			buck5_reg: BUCK5 {
+ 				regulator-name = "VDD_M12";
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt	= <1500000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -427,7 +427,7 @@ buck5_reg: BUCK5 {
+ 			buck6_reg: BUCK6 {
+ 				regulator-name = "VDD12_5M";
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt	= <1500000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
+@@ -436,7 +436,7 @@ buck6_reg: BUCK6 {
+ 			buck9_reg: BUCK9 {
+ 				regulator-name = "VDDF28_EMMC";
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt	= <3000000>;
++				regulator-max-microvolt = <3000000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>; /* Normal Mode */
 -- 
 2.30.2
 
