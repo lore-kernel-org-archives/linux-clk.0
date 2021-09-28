@@ -2,58 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B7FC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91387C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4220361157
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A25E61357
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 23:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243542AbhI1X7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 19:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
+        id S243557AbhI1X7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 19:59:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243609AbhI1X7M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 19:59:12 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A72FC061772
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:57:20 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id b9-20020a5b07890000b0290558245b7eabso1086105ybq.10
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:57:20 -0700 (PDT)
+        with ESMTP id S243559AbhI1X66 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 19:58:58 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A40EC061762
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:57:12 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id n15-20020a170902e54f00b0013b7a095210so102703plf.15
+        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 16:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ihkiWIdVP9dVl3VzYiirCjeRk2Jnoz/1Mr1zuXgTp3A=;
-        b=aGCho/ZT42f9FJECHoQ5FwNACnqrnDRQrW3EZKeZ8fMIZkWu9yfckiBil2MSAfl1PW
-         /XBdnPIKQnx/ix06HKtL5uVNePgfm8jPP9VtjIOEYpkEiTwq/AVAykTzhcNRk1+EOro+
-         o8x070TidaiwQUry0PIVobVy853jKSi5f1/Lw13QXlS/cfAxchUAcdwUDHShJCVFkomf
-         C8HnzTJKPNSqepRR+sGptuGANLleuLWjxsNAeYOISEVcQKaEVk6++FDcaAJUUe7XIxQP
-         LEGeoyhx/s+PRWt7SIOXarb6g3PV1VWl3xMRO0HfcoTrOz4BaWi8RB+QiuWaf2ikXyGe
-         i0qA==
+        bh=yFM0rI/DSUBlzQ9GKRkScVVqCCNg3Z7W7rCmp+m4CSs=;
+        b=gyrFEOaSYsXhV8YsKduwaWzhKSJ6k7GHoLRL6593PhVeQGouKwStHntpTzB/MmXR//
+         F6TJWR6likxQhzJ9IylIMNOhspu5V7VDDdinqg+9qCwrishZhgU2lYbdrygBl7ffRaLK
+         7DDHag/RWHvNAo7+QxO9MzrUJNLtDnP8DsBIo5Xy9GYdDrpd43nZIFUfjlcJDfFo+NeF
+         zx0vGMXeyMfyt653sqR9mLxM2tUWCn7sPRQMs7/Fh2bbwiOje3tE4g5m9at338j1LKUe
+         ulRgMUdKhxbIgU0D66N8LJu2fCOVH+/G3E7y83bEEjfX6FvRUyO9JP+C0ZMcbjanaoGh
+         aGgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ihkiWIdVP9dVl3VzYiirCjeRk2Jnoz/1Mr1zuXgTp3A=;
-        b=rU9JzHM1f9Aajo70feUWYXAwAfFBImUBbpWUPJlciilVzx51PVeWjFyeIHkEES//dU
-         tpaMQ/4QkUmmDgkVIg+JjCqZxNoPUI83GbCDkhXCBlAMocKLVxlUruKONP98FcuZ24NF
-         gjmmdJ78znKmOOmwLyZn++TjGt9NJiHv9adhlMH7isLoNLiOHH3Ji5jbu4MmLHuS50kY
-         6D8M3sxEcrzp1RvpTBfH/JH91NGQMhGvKybrlt1DhGOrMlWA4cs973V2I6wnWvcSibYr
-         P0+G70I7VLmY0RtiRJ1LBIW7y2ED9VlniPG5ByDLSi2USzi0ASMTewvlys7Goc85pY6J
-         gRlg==
-X-Gm-Message-State: AOAM531F0X2hHy/F5ZOEWM0aMMVwsKRNA0jB6tM9yQydXKkXjqAUmZ/Q
-        G7KCjuSM17Gx8ux6X/KjAwCDKyUr9AHOEReEMic=
-X-Google-Smtp-Source: ABdhPJy1ak/rbpUYju2D4z+JFHyh/My10IdIhBzBl3vMZ2iJUIcpwrdRjCAU6M7zNko3A+i42IClCJSTWrIcUgd9klk=
+        bh=yFM0rI/DSUBlzQ9GKRkScVVqCCNg3Z7W7rCmp+m4CSs=;
+        b=CFly1xqV9cxuuLFsW7PN01YjwpkeqvDHXnyiGu7wyjvkryI5/YuK8Nd3D6Y8Nszrkm
+         GEOMylAsFThnixYYcrpJrzTxPPJs1hIbR9zAskKeghbKxn2bwpiZpxNqlmM4EMgXPGQX
+         gIwGPxaM/Y52UY8p/OHhMF2ybhgR0ZAzyPOP7yJpyaVp3yX7qpe8lSrmpXyg7zDRk5/B
+         Du1OJpynhhOZGfMyFFCMSForsW4kIpTqspanYHqvWWFO8ApVDI79oRP6f5iPWrlLAQ87
+         O9MDFMHop3puV3lpggD5ekfcoQKoP/fRaER2fY8h/1ptkTaqfAqWca5ktppgIQt8WxN6
+         SYpA==
+X-Gm-Message-State: AOAM532IlfB+8x78weDgOb7/eVkx19ZIEFuHeaUDLmB3+h7CkjLZScMJ
+        l/wH+pzchrE3ewJkwR3BZikmKRRqIsIYgTkoHHU=
+X-Google-Smtp-Source: ABdhPJxEudKi1cUEbRA6bTOrvgi3KIFrvopbvp+YQ/eHfD9nlnHBdrQ6ErZG7x39c7dBUY6sZjPAWArCTDlaPDw0ebg=
 X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a25:ac1:: with SMTP id
- 184mr10211657ybk.381.1632873439393; Tue, 28 Sep 2021 16:57:19 -0700 (PDT)
-Date:   Tue, 28 Sep 2021 23:56:29 +0000
+ (user=willmcvicker job=sendgmr) by 2002:a17:902:7ec2:b0:13d:b563:c39 with
+ SMTP id p2-20020a1709027ec200b0013db5630c39mr7512039plb.14.1632873432022;
+ Tue, 28 Sep 2021 16:57:12 -0700 (PDT)
+Date:   Tue, 28 Sep 2021 23:56:26 +0000
 In-Reply-To: <20210928235635.1348330-1-willmcvicker@google.com>
-Message-Id: <20210928235635.1348330-13-willmcvicker@google.com>
+Message-Id: <20210928235635.1348330-10-willmcvicker@google.com>
 Mime-Version: 1.0
 References: <20210928235635.1348330-1-willmcvicker@google.com>
 X-Mailer: git-send-email 2.33.0.685.g46640cef36-goog
-Subject: [PATCH v2 12/12] ARM: rtc: remove HAVE_S3C_RTC in favor of direct dependencies
+Subject: [PATCH v2 09/12] pinctrl: samsung: set PINCTRL_EXYNOS and
+ PINCTRL_SAMSUNG as tristate
 From:   Will McVicker <willmcvicker@google.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -82,90 +84,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The config HAVE_S3C_RTC is not really needed since we can simply just
-add the dependencies directly to RTC_DRV_S3C. Also, one less config to
-keep track of!
+Make PINCTRL_EXYNOS and PINCTRL_SAMSUNG tristate so that we can compile
+them as modules. Also don't have ARCH_EXYNOS directly select them, but
+use "default y if ARCH_EXYNOS || ARCH_S5PV210" instead.
 
 Signed-off-by: Will McVicker <willmcvicker@google.com>
 ---
- arch/arm/Kconfig              |  1 -
- arch/arm/mach-exynos/Kconfig  |  1 -
- arch/arm/mach-s5pv210/Kconfig |  1 -
- arch/arm64/Kconfig.platforms  |  1 -
- drivers/rtc/Kconfig           | 10 ++--------
- 5 files changed, 2 insertions(+), 12 deletions(-)
+ arch/arm/mach-exynos/Kconfig    | 1 -
+ arch/arm/mach-s5pv210/Kconfig   | 1 -
+ arch/arm64/Kconfig.platforms    | 1 -
+ drivers/pinctrl/samsung/Kconfig | 5 +++--
+ 4 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index fc196421b2ce..5ed6b5de981e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -475,7 +475,6 @@ config ARCH_S3C24XX
- 	select GPIOLIB
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select HAVE_S3C2410_I2C if I2C
--	select HAVE_S3C_RTC if RTC_CLASS
- 	select NEED_MACH_IO_H
- 	select S3C2410_WATCHDOG
- 	select SAMSUNG_ATAGS
 diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 2ad19a08bf06..8b72a70b6c43 100644
+index 01b8e8b8d95d..afc8cd062605 100644
 --- a/arch/arm/mach-exynos/Kconfig
 +++ b/arch/arm/mach-exynos/Kconfig
-@@ -19,7 +19,6 @@ menuconfig ARCH_EXYNOS
- 	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
- 	select HAVE_ARM_SCU if SMP
+@@ -22,7 +22,6 @@ menuconfig ARCH_EXYNOS
  	select HAVE_S3C2410_I2C if I2C
--	select HAVE_S3C_RTC if RTC_CLASS
+ 	select HAVE_S3C_RTC if RTC_CLASS
  	select PINCTRL
+-	select PINCTRL_EXYNOS
  	select PM_GENERIC_DOMAINS if PM
  	select S5P_DEV_MFC
+ 	select SAMSUNG_MC
 diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 62b90dda571f..681823687018 100644
+index 3d7e0b5739d8..62b90dda571f 100644
 --- a/arch/arm/mach-s5pv210/Kconfig
 +++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -12,7 +12,6 @@ config ARCH_S5PV210
- 	select CLKSRC_SAMSUNG_PWM
- 	select GPIOLIB
+@@ -14,7 +14,6 @@ config ARCH_S5PV210
  	select HAVE_S3C2410_I2C if I2C
--	select HAVE_S3C_RTC if RTC_CLASS
+ 	select HAVE_S3C_RTC if RTC_CLASS
  	select PINCTRL
+-	select PINCTRL_EXYNOS
  	select SOC_SAMSUNG
  	help
+ 	  Samsung S5PV210/S5PC110 series based systems
 diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index e44d5e9f5058..02c8637d3f09 100644
+index e6d4abadacd8..67f60cc3c723 100644
 --- a/arch/arm64/Kconfig.platforms
 +++ b/arch/arm64/Kconfig.platforms
-@@ -91,7 +91,6 @@ config ARCH_BRCMSTB
- 
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
--	select HAVE_S3C_RTC if RTC_CLASS
+@@ -95,7 +95,6 @@ config ARCH_EXYNOS
+ 	select EXYNOS_PMU
+ 	select HAVE_S3C_RTC if RTC_CLASS
  	select PINCTRL
+-	select PINCTRL_EXYNOS
  	select PM_GENERIC_DOMAINS if PM
  	select SOC_SAMSUNG
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index e1bc5214494e..7208eeb8459a 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1404,16 +1404,10 @@ config RTC_DRV_OMAP
- 	  This driver can also be built as a module, if so, module
- 	  will be called rtc-omap.
- 
--config HAVE_S3C_RTC
--	bool
--	help
--	  This will include RTC support for Samsung SoCs. If
--	  you want to include RTC support for any machine, kindly
--	  select this in the respective mach-XXXX/Kconfig file.
--
- config RTC_DRV_S3C
- 	tristate "Samsung S3C series SoC RTC"
--	depends on ARCH_S3C64XX || HAVE_S3C_RTC || COMPILE_TEST
-+	depends on ARCH_EXYNOS || ARCH_S3C64XX || ARCH_S3C24XX || ARCH_S5PV210 || \
-+		   COMPILE_TEST
  	help
- 	  RTC (Realtime Clock) driver for the clock inbuilt into the
- 	  Samsung S3C24XX series of SoCs. This can provide periodic
+diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
+index dfd805e76862..caeb865cfa21 100644
+--- a/drivers/pinctrl/samsung/Kconfig
++++ b/drivers/pinctrl/samsung/Kconfig
+@@ -3,15 +3,16 @@
+ # Samsung Pin control drivers
+ #
+ config PINCTRL_SAMSUNG
+-	bool
++	tristate "Pinctrl common driver for Exynos, S3C24XX, and S3C64XX SoCs" if COMPILE_TEST
+ 	depends on OF_GPIO
+ 	select PINMUX
+ 	select PINCONF
+ 
+ config PINCTRL_EXYNOS
+-	bool "Pinctrl common driver part for Samsung Exynos SoCs"
++	tristate "Pinctrl common driver part for Samsung Exynos ARM and ARM64 SoCs"
+ 	depends on OF_GPIO
+ 	depends on ARCH_EXYNOS || ARCH_S5PV210 || COMPILE_TEST
++	default y if (ARCH_EXYNOS || ARCH_S5PV210)
+ 	select PINCTRL_SAMSUNG
+ 	select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
+ 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
 -- 
 2.33.0.685.g46640cef36-goog
 
