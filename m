@@ -2,151 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58286C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074E4C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4171C61139
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7EA061159
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240094AbhI1NDU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 09:03:20 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:35985 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240300AbhI1NDU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:03:20 -0400
-X-IronPort-AV: E=Sophos;i="5.85,329,1624287600"; 
-   d="scan'208";a="95431720"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Sep 2021 22:01:39 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 99D1544703BB;
-        Tue, 28 Sep 2021 22:01:37 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S240745AbhI1NHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 09:07:35 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:38501 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235776AbhI1NHf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:07:35 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id 1C1EA2B014E5;
+        Tue, 28 Sep 2021 09:05:52 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 28 Sep 2021 09:05:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=OewulyQkxW7M0HdZfGu1vzBRMLg
+        C/FBIB7nFILSJNYc=; b=YzUS/n4QrmsRtFH8dVdSrSbPhtANfIbNxMeUMVaZM2/
+        0itGncvKcLfwnxJOllCwdSGpnmUn/+z8DGYLhEEfhVXRfYBKYGnJnMRBmAzg/2n0
+        KF8nUzjA+7/+NnNWjkzT0xM1nW+hmIVBg2gKvj3tGMqAeNUzra6Lv4Kr733wLPgS
+        0GUePN9KqtL93D5QCoDTXZVvY2WGdmoC8YKZvOnUBh74as8YFHUtX0coe43yeyjS
+        ldL+J00SHt5DlesyTJ1tKrT2Idm4QMtIUsnBWOhTNmtqFldVmHZAqTwoTFUlqvMP
+        GXm5u7aVNVC8nm3TUKDz6XTV6d10qwNrUWWOi0FZj2A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Oewuly
+        QkxW7M0HdZfGu1vzBRMLgC/FBIB7nFILSJNYc=; b=CvmXZ7YudxXN2pIWWPdzTC
+        Yw5ZeD8IfMcr5V2OrxCC/Twv3q0/SsGhlOGfCTx1phOce7HBPEKY78kUZ0gx08Ze
+        4v3jsdalLxqbr0TivQ2hc2cA+hp7fzD2k798eLxPAmsnf7k6V9fjADUWVKZX4oCK
+        uUkRd2XkE9FpxTKhmLyHSIgVGFGCm5iYz32rXqVL8GcY+MESwWGiN2e+Ygr8drKn
+        FSoMgS8TOP0AZibgc64jdaVT6LFc1SjxQ1/0oZ0hYQvXKHTZp7yXPIiilPLKoINX
+        OBUfzAnl3kzbVxevaqomtJdYqUKMKhRE2VmUdRMy9vpBZfc2+ZBPOWoBhBDIcjXA
+        ==
+X-ME-Sender: <xms:LxNTYSl7KMtc11fHWJ303RiHmX3TAYr_CGlGQrTpwU6DZLSswd6OFQ>
+    <xme:LxNTYZ1ipT5xxnH-CIWAl3DOzEevx0z5v_pA5kSLFJ5lHKBWxkB_dKn78XPKZtqJn
+    TbkCwGeYA0Qs1jQ6cw>
+X-ME-Received: <xmr:LxNTYQpjIEkSVJBoSXF5OHMENBeoXteDX1mVZBy7hdAxdMiY2_5lBAbiuMRU4tttMBOC-z5HHi7MKfbSyl_nGz5sLQvX0QCDcs9iOqUM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudektddgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:LxNTYWmT4Hl1-NXlskgLlDLrEzXrIXvve0M_YtkuSCBKDO_NOT-ltQ>
+    <xmx:LxNTYQ3eHtgkcV0BTfF3_ZLlCtNb8axK052KbtRNhu4kLfrut1A2cw>
+    <xmx:LxNTYdvVhjsAHYZZWIfbVzyLxIFWy-LG27zzOSwdScr4THPEEa7eFw>
+    <xmx:LxNTYVsVunCt157HDSUKmEeH1vYUOvdsAUPnZRjBWsBKX4XyMwcNUchkLUU>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Sep 2021 09:05:51 -0400 (EDT)
+Date:   Tue, 28 Sep 2021 15:05:49 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r9a07g044-cpg: Add clock and reset entries for SPI Multi I/O Bus Controller
-Date:   Tue, 28 Sep 2021 14:01:32 +0100
-Message-Id: <20210928130132.15022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Stapelberg <michael@stapelberg.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/5] drm/vc4: hdmi: Remove CPU hangs, take 2
+Message-ID: <20210928130549.wi6hvvcvqahzfkw5@gilmour>
+References: <20210922125419.4125779-1-maxime@cerno.tech>
+ <20210924074044.e24kbxr7lhdtb3eg@gilmour>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tkxdn235uef745fa"
+Content-Disposition: inline
+In-Reply-To: <20210924074044.e24kbxr7lhdtb3eg@gilmour>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock and reset entries for SPI Multi I/O Bus Controller.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a07g044-cpg.c | 18 ++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h     |  3 +++
- 2 files changed, 21 insertions(+)
+--tkxdn235uef745fa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 3c518b56c5a6..1e331cdb13a5 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -29,10 +29,14 @@ enum clk_ids {
- 	CLK_PLL2_DIV16,
- 	CLK_PLL2_DIV20,
- 	CLK_PLL3,
-+	CLK_PLL3_400,
-+	CLK_PLL3_533,
- 	CLK_PLL3_DIV2,
- 	CLK_PLL3_DIV2_4,
- 	CLK_PLL3_DIV2_4_2,
- 	CLK_PLL3_DIV4,
-+	CLK_SEL_PLL3_3,
-+	CLK_DIV_PLL3_C,
- 	CLK_PLL4,
- 	CLK_PLL5,
- 	CLK_PLL5_FOUT3,
-@@ -56,6 +60,7 @@ static const struct clk_div_table dtable_1_32[] = {
- };
- 
- /* Mux clock tables */
-+static const char * const sel_pll3_3[] = { ".pll3_533", ".pll3_400" };
- static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
- 
- static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
-@@ -68,6 +73,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
- 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
-+	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
-+	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
- 
- 	DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
- 	DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
-@@ -82,6 +89,10 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
- 	DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
- 	DEF_FIXED(".pll3_div4", CLK_PLL3_DIV4, CLK_PLL3, 1, 4),
-+	DEF_MUX(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3,
-+		sel_pll3_3, ARRAY_SIZE(sel_pll3_3), 0, CLK_MUX_READ_ONLY),
-+	DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3,
-+		DIVPL3C, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
- 
- 	DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
- 	DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
-@@ -101,6 +112,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
- 	DEF_MUX("HP", R9A07G044_CLK_HP, SEL_PLL6_2,
- 		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
-+	DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
-+	DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
- };
- 
- static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
-@@ -114,6 +127,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x52c, 0),
- 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
- 				0x52c, 1),
-+	DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
-+				0x550, 0),
-+	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
-+				0x550, 1),
- 	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
- 				0x570, 0),
- 	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
-@@ -182,6 +199,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
- 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 191c403aa52f..dc5b65a4029e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -11,6 +11,7 @@
- 
- #define CPG_PL2_DDIV		(0x204)
- #define CPG_PL3A_DDIV		(0x208)
-+#define CPG_PL3_SSEL		(0x408)
- #define CPG_PL6_ETH_SSEL	(0x418)
- 
- /* n = 0/1/2 for PLL1/4/6 */
-@@ -24,10 +25,12 @@
- #define DIVPL2A		DDIV_PACK(CPG_PL2_DDIV, 0, 3)
- #define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
- #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
-+#define DIVPL3C		DDIV_PACK(CPG_PL3A_DDIV, 8, 3)
- 
- #define SEL_PLL_PACK(offset, bitpos, size) \
- 		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
- 
-+#define SEL_PLL3_3	SEL_PLL_PACK(CPG_PL3_SSEL, 8, 1)
- #define SEL_PLL6_2	SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
- 
- /**
--- 
-2.17.1
+On Fri, Sep 24, 2021 at 09:40:44AM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> On Wed, Sep 22, 2021 at 02:54:14PM +0200, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > Here's another attempt at fixing the complete CPU stall while retrievin=
+g the
+> > HDMI connector status when the connector is disabled.
+> >=20
+> > This was fixed already, but eventually got reverted by Linus due to the=
+ same
+> > symptom happening in another situation. This was likely (but not confir=
+med by
+> > the reporter) due to the kernel being booted without an HDMI display co=
+nnected,
+> > in which case the firmware won't initialise the HDMI State Machine cloc=
+k.
+> >=20
+> > This is fixed by patch 3. However, further changes in the clock drivers=
+ were
+> > needed for clk_set_min_rate to be used, which are patches 1 and 2.
+> >=20
+> > Finally, patches 4 and 5 are the original patches that were reverted. P=
+atch 4
+> > got a small modification to move the clk_set_min_rate() call before the=
+ HSM
+> > clock is enabled.
+>=20
+> If we merge the clock patches and DRM patches separately we're going to
+> break bisectability. I guess the easiest approach would be to merge the
+> clk patches through DRM. Does that work for everyone?
 
+Anyone? I can ask around for reviews on DRM, but I'd really like some
+reviews on the clock patches here..
+
+Maxime
+
+
+--tkxdn235uef745fa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYVMTLQAKCRDj7w1vZxhR
+xcvsAQDxKhsDP22GD43Lx/O+AaKX9Che1s2gN5v6ULUQwlNDCQD9GRoiomNxCpu1
+kBfejcbPla1BuEPCa+nLgompl7GSJw4=
+=c5UX
+-----END PGP SIGNATURE-----
+
+--tkxdn235uef745fa--
