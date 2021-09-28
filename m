@@ -2,185 +2,242 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BF8C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 02:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D02C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D83F960E05
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 02:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41103600EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:39:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238590AbhI1Cwp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Sep 2021 22:52:45 -0400
-Received: from mail-eopbgr1310094.outbound.protection.outlook.com ([40.107.131.94]:56288
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238758AbhI1Cwl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Sep 2021 22:52:41 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iuw0g3tnt6K4P9XraLjYq56+4JBW4o2UKcEsIYVxMwhnkXcqPv8v+SsLWFANI9I8UnFCS4QzWXHrKZ2cl2C5uhFXe9deveKkCFw5suZQO1s+W8RO8b2IFCDdqRT+CPItxAlpgUn/rrOTZFHD3jIvzohtcEO/jbLl+qOmXyQ6ZUoIlG5H5Dd+I31OqGQExEouM0k955IZj62ABNJQZV6XV8EJ4llrnexdcMw7EktxEjRyl/W8kt8B11O5jH56HREKXqRhD9NpcmSW5i8EPt0U4ARNZ2li6h3AU/nJuvZNOS09LeGBW5bdcLpV4SJXD8aqnw/0fQzc5XNMCqRMGwCKzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=aGY4IyE1yM6Cv4Yt2uOnLZX3xff1d0XwN8/gP/Qy/U4=;
- b=XY4er9a1P5bzXbcGF1p9FyKu/2AAp2as5YD7komP2Lk5P+llp1yVFyRM/FW9TS5X28gYcuFLw2TvSejaeHYgzFxiw3bqsVC4H2OOUEFvbV7pAjpItREbTSGiXy/MZEfePbbkC8v483d/IMzeMz6VhtvLsUAt8hSjxv1vHfDYhbEPcLqyvMOVWA9UZHGNZ1xDsGNIUepKyqcq93FMhV90M09I4mMKvy9nH6guBdQQ0xko95M0DQD0vzpSEixvne2IYe083Jby7pa/7YRmV8cAx+dQMF1ZsPmJ55H9GuVPjuGzPsebhiKrjiWz/QScnB0bnyV8+xZ+rFvBOqhBdjA/zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aGY4IyE1yM6Cv4Yt2uOnLZX3xff1d0XwN8/gP/Qy/U4=;
- b=hY5UmVvy+SIcx1nnn7CRAsj1Nu6PBFJESQYsMKN6bB22kuq7PKe5vp93QwjazHuTdmPj1P1hTMTI/XSXn37E9z3uAWrQk44qr/qUsrPwLu+60JKGG59GpJpYOG5KXBQS4OOZ3q5IzTZjAYWqzn4Gd5k6YenCXGk59cI/3zU3Jk0RnvuzNbuejXAWVewVKZwXViZ/29PJ5RtLt68p8Nrr1Hdu1OwXohnESzEe2EFVsUtddlrrg1gE3lJx73lSoqBiXIuJAP2l7sf4upq7UHqWPJ5RNA7cruUXSp+45cYtIVaKmcxLukZerFyRTJunk4IDuHp4nsRiWGme+V6v/5N/Ag==
-Received: from HK0PR06MB2786.apcprd06.prod.outlook.com (2603:1096:203:5b::22)
- by HK0PR06MB2195.apcprd06.prod.outlook.com (2603:1096:203:4a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Tue, 28 Sep
- 2021 02:50:59 +0000
-Received: from HK0PR06MB2786.apcprd06.prod.outlook.com
- ([fe80::ddf1:e9d4:c209:8ab8]) by HK0PR06MB2786.apcprd06.prod.outlook.com
- ([fe80::ddf1:e9d4:c209:8ab8%7]) with mapi id 15.20.4544.022; Tue, 28 Sep 2021
- 02:50:59 +0000
-From:   Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "joel@jms.id.au" <joel@jms.id.au>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        BMC-SW <BMC-SW@aspeedtech.com>,
-        Steven Lee <steven_lee@aspeedtech.com>
-Subject: RE: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
- string
-Thread-Topic: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
- string
-Thread-Index: AQHXs9HHr7TBfuGZLUCpoIBAXdEJGKu4upXg
-Date:   Tue, 28 Sep 2021 02:50:59 +0000
-Message-ID: <HK0PR06MB2786DAAA2D6E58EA2E2FCB6BB2A89@HK0PR06MB2786.apcprd06.prod.outlook.com>
-References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
- <20210922103116.30652-11-chin-ting_kuo@aspeedtech.com>
- <YVIUf7/4ukMcrOb9@robh.at.kernel.org>
-In-Reply-To: <YVIUf7/4ukMcrOb9@robh.at.kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 465dfa1e-915a-4d46-58b5-08d9822acd5e
-x-ms-traffictypediagnostic: HK0PR06MB2195:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <HK0PR06MB21953082A2C48B972C09A794B2A89@HK0PR06MB2195.apcprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2512;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: or7yZVuU9PszheV3YKEKVjGJ7y4vu0n93xliIJEIvaH8Bz7Iil9iQ9evk2nOm4KUNFwR5nb45KOmSmI32yAt/el6P9n04QKvkrxTQNT/oXY0aEbHNgBOIqX2Eyca9fLg6Gm6/0yWxK2NUE7P/8EzAsjnqY0tsWfw9z1LM4uK6u/0wgxk7K7+xcnc5Q9amlujOae36jdxO5V1VeCP6OplKblW04O2p2gBg1BOaGcdivNKel2c/us3yAFJn+kpiD7y2KiV6S3Vl2LhEMykbfaan97AdcOQNkHr8+xrPajXYIgWhs7dk/y21TxCkbyPJpc1RTQ66HtqfN3+/YMVKyXxl1CyYAtsxh44Lg7XztBZb73ssbjyo8AhR87aVG6u/QrwtzyCk98HUoo/ZebpTt1AZI04IWo6r/JgPt5d9ij45rNWjceO0MZCfwspAf6EVnb6GeNnDR8TjuC/1i8A3ksPttSKGJ4ZWW8BH+8E+vL7o9hvRTydzgNhy5+wYwULffW+wUl++gIRCQAZ//stu7O9GOjRG0mNzfuHgGFhZ+dgK1VlGF2IAkwerf8XW8bP/nt8FUj20v6D3y0McQM4wj4C1aj7KdsXP9EvGx/VVL9v/rotfb/E7X+ZXc8a0VnGknHJ9uqKSN7Y6J5LbiiihNG0FPK1SyK+Ge2zUlke9VvcmIWmtMu3UKRJKtXs0mLH/ggppAiNyd6ZXNYs1JcpbjhQpw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR06MB2786.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(396003)(136003)(39850400004)(346002)(122000001)(66476007)(8936002)(107886003)(54906003)(508600001)(52536014)(316002)(38100700002)(4326008)(64756008)(66446008)(6916009)(66556008)(53546011)(7696005)(83380400001)(76116006)(33656002)(38070700005)(66946007)(6506007)(186003)(5660300002)(8676002)(55016002)(9686003)(71200400001)(86362001)(2906002)(26005)(7416002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?NtvveMHJqgixU9c5bS6Ll4+L6Lg94fR5ajr8eOiEvnnzL7JNQY9nk+ogiVsR?=
- =?us-ascii?Q?Xw8QkiYp3guocaX8k9d/5fZDgs9lB2v4Yl1QfFRM4gG43XTKh9Jwav+sIZA7?=
- =?us-ascii?Q?WhsbITt514tf4RLoyI+yTx95SvvL1PiRzUQqIAQS5+98zdhvWkHYT3q/az3h?=
- =?us-ascii?Q?wZbExYTvYAZ/GScVlnJuE8pVqpfJC7knuvZ9hRfqNd/U0eQkQn91stzkVRHv?=
- =?us-ascii?Q?xM4VlEF5YJFbzuWdEotW8K2H5QpCltclVDIAla7eof7BHw3wvsUPtGx3wjxb?=
- =?us-ascii?Q?wBNLpwcmwCywJ3Fq+dciiQISnKCLirXKhrul5XMiZXAs2gm3lCZVSWN5PDPp?=
- =?us-ascii?Q?U1x6yDOaQ3zsn6i926TaOzf0bhWwpd+DN5+DSdMOsJEgHbqPtkxPsMCJOxsn?=
- =?us-ascii?Q?bYdjxOorsHi/YF8sZ/CDUickZw9lShRJ3SOm/k+eL6sYokpxEx4GD50RcISH?=
- =?us-ascii?Q?WFiSWRP8AUSvT9+8bvpawow06IlUVBUyFDGDpOweRfuIJ6G5wKR0+ogDIYYp?=
- =?us-ascii?Q?5dqgc0Vntt2ulB2gSP2I836htnWiBrWiUqQ2FxvL0NztMnrPIguNBNRK2jpR?=
- =?us-ascii?Q?VCKy/VhAQzHpuOnFViBP8ioIsf7g0RSjPrPnRD6mEaCUd3TMGSuHak7dXheB?=
- =?us-ascii?Q?kJ1K+sQvseZC/uZEYH3LGMX9Lp4REFk055XIY/YK093iSGklcViyGhQG+78T?=
- =?us-ascii?Q?EBZY3nOojMHsnLqwNH7M28+wsPUbSp6pzU3xKshuS7oh3hKgKG9gI/ez9gb4?=
- =?us-ascii?Q?/mi5zA8gCtzY+SuyDSjiG9mQnGRmNlD3n/W3b4kr5CQkLTjrhzceeEABa3Y/?=
- =?us-ascii?Q?SOULsyQzn1d9x1IglYlSyuuwOtkxfFSaOSKWgWGmFN8RUwioGLMb5HW3jbNb?=
- =?us-ascii?Q?Zc9sivjgnLb45AbnAMhpMiGZ4YMOE7cks0MI3trPfoSjx4N1Ex8SHZC/yHLI?=
- =?us-ascii?Q?8GX6UIkgWbi1Jjzqe4GoPiGjhAmC50UlD5L3BWwLeDTLNCL/6ePAwoAYz5IV?=
- =?us-ascii?Q?bYHD+MOvQ4XhPyo1ZSkzKi/nhKlbq98pJIKO2+1la5LuT7NDW3Sx7NgE6j8M?=
- =?us-ascii?Q?WW6PK8HQ9ZZTdVsimg3r80iPrvRgFWe2IhgPK0t6k+iR/LNMOTB9zphM5yQE?=
- =?us-ascii?Q?lwLoqeUshcokfXQDGVeBEQja48XaySYbB5hgXhw/Fymq8PsW2eT4rMIt4826?=
- =?us-ascii?Q?mN15lSF9VcJlS3GKNcZIFaspuXQWc2JTxb0imxBrvigUt1I78FpTEU2FqfpX?=
- =?us-ascii?Q?eZB8huPRfvvTHA0qiauWZWoVn8LK6g94UGadNld4zRgYijWNsOZa01xoLAP7?=
- =?us-ascii?Q?UiE9RGyQM9uK+5FWP+4Q+Yps?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S239294AbhI1HlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 03:41:08 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:57989 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239287AbhI1HlI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 03:41:08 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id EB0DA3201E87;
+        Tue, 28 Sep 2021 03:39:26 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 28 Sep 2021 03:39:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=DWF+p9YbD0hLg
+        2FdhNa3X8UTo55dbts1qgkMeUtsZhQ=; b=RLGzRQKklRhJRUeL6T2QMJyaPwxwC
+        /3Nfi2Wrt1GcP0MCCgQflvK8QKkgKaxsB3/F/RDFovsE/ZfvEc2/sJneSDRxIdAd
+        TtfFe3BnGFZXnnCEj9j8u/TqscTxOxFgtiMFbwX8StQvy+1Z+4NtMSBxdbQp5JD9
+        wIzfG4jD0gDo7CRfzvdJreXtp0bF2C+VmfvhC8NCPZOZOOWGTti8R5fuamJ4FR6u
+        tlMIelNgUNTWd2I94W5kyOzDB/PX2ReX+ImD82J9Ob0CpeB70kXfaisFHdI6pOZv
+        GLGLRQGiKl43MhdU7i9+fIRR5+bdgXkfqOTnaCvIGcnqBbzCaljd+V29g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=DWF+p9YbD0hLg2FdhNa3X8UTo55dbts1qgkMeUtsZhQ=; b=KUkjDzJq
+        HRHg+QgN5IKeLr2nYduve7Irzh5DWQtmw1ChHgSlWHbVM5BpvYfni2SR85cAAO3I
+        TPV035x6BJYHUlaLzz92JsUnmkiaLRztVvcytI4k07WqoQovuoGBfmIsq5JwxI8v
+        WROOGttNk5JAC3RlQldM+NZek3T0IsoZ5/zjpk4qNB3zTgftFtisp6lIB1E1e+BJ
+        sY6t5Edf7C5/Ip4MduZgqPmcSl1+C8Sx//ckPhw/Z112SKEJbnV8baifWxYtMTcA
+        FgRRZpBCpF7cvGugeHXh7qxejzxjqZR3ieUKagl1ExZsyQNvn4UqD6hmkMk/xVg/
+        GlfowY4WQzWgrw==
+X-ME-Sender: <xms:rsZSYX3S3xgScMbdYBvMYPqAirYp17UiKZlrVCkIdqtjdFZq2J0UdA>
+    <xme:rsZSYWEJm2fN1ZFmmC6u2fy-O2skgEn9clVQWt6FrDI6z_v1B5hukyIv4JddHZuCC
+    07txdC9b3W-_cG1XA>
+X-ME-Received: <xmr:rsZSYX58PCLRc-HfnkHTQeDwvdRI6HfwcotqqsbJNqAMwswHTFP-ZayhDOxH-nQMkxcStDxpmHhMRF6cu7nVUS7zbOFEYwmD7uBuyfIBp0P_0GHlbKG9ZjHIt1VboC9En17gJg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejledguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheej
+    vdfgjeehueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:rsZSYc2hpTjUI97OsOFVLefvoDsLdxbfekLC_Suez_-COv5SboCulg>
+    <xmx:rsZSYaHWIxmh1Qw8SWSbqa7lFcMWmtjM_eZMa0KfdetqPy3fxiUghA>
+    <xmx:rsZSYd-kaeJdhbhPI7ok_Oov7NGaBqOJlLLC5EpHAidjFwvzd4_Usg>
+    <xmx:rsZSYYaAGwsDEJJDgjrQq-TjtDfvRjBMzsgZo0P4jhPJ_NWaolVMag>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Sep 2021 03:39:25 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v2 1/4] clk: sunxi-ng: Export symbols used by CCU drivers
+Date:   Tue, 28 Sep 2021 02:39:19 -0500
+Message-Id: <20210928073922.34264-2-samuel@sholland.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210928073922.34264-1-samuel@sholland.org>
+References: <20210928073922.34264-1-samuel@sholland.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HK0PR06MB2786.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 465dfa1e-915a-4d46-58b5-08d9822acd5e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2021 02:50:59.4206
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mijmxmajQdQ5xN4Z8AzcLyI4Z/K/lDUhrFO6JsdeRe4AS1nnVKj0TG/8WQcoJQfL5d8pm7DHwxbQKGc3UyNbF0Mxv+4Kisi6xXph0oevZrI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR06MB2195
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+For the individual CCU drivers to be built as modules, the ops structs
+and callback registration functions must be exported. These symbols are
+intended for use only by the adjacent CCU drivers, so export them into
+the SUNXI_CCU namespace.
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Tuesday, September 28, 2021 2:59 AM
-> To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-> Subject: Re: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
-> string
->=20
-> On Wed, Sep 22, 2021 at 06:31:16PM +0800, Chin-Ting Kuo wrote:
-> > Add "aspeed,ast2600-emmc" compatible string for the sake of
-> > distinguishing between SD and eMMC device.
->=20
-> Why?
->=20
-> Is the h/w block different? We already have properties to handle some of =
-the
-> eMMC specifics. Also, you can have a child node for the eMMC device if yo=
-u
-> need that.
+None of the helper functions need to be exported, because those
+functions are only referenced from the corresponding ops structs.
+of_sunxi_ccu_probe is not exported either, because it is only used
+by built-in early OF clock providers.
 
-There are two SD/SDIO controllers in a AST2600 SoC.
-One is for SD card and the other is for eMMC.
-Although both of them are embedded in the same SoC, the design of delay cel=
-l and
-the manufacture process are different. The delay phase is definitely differ=
-ent and, thus,
-we need a flag, compatible, to distinguish the device, SD or eMMC.
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 2 ++
+ drivers/clk/sunxi-ng/ccu_div.c    | 1 +
+ drivers/clk/sunxi-ng/ccu_gate.c   | 1 +
+ drivers/clk/sunxi-ng/ccu_mp.c     | 2 ++
+ drivers/clk/sunxi-ng/ccu_mult.c   | 1 +
+ drivers/clk/sunxi-ng/ccu_mux.c    | 2 ++
+ drivers/clk/sunxi-ng/ccu_nk.c     | 1 +
+ drivers/clk/sunxi-ng/ccu_nkm.c    | 1 +
+ drivers/clk/sunxi-ng/ccu_nkmp.c   | 1 +
+ drivers/clk/sunxi-ng/ccu_nm.c     | 1 +
+ drivers/clk/sunxi-ng/ccu_phase.c  | 1 +
+ drivers/clk/sunxi-ng/ccu_reset.c  | 1 +
+ 12 files changed, 15 insertions(+)
 
-Without "aspeed,ast2600-emmc" compatible, of course, eMMC device can work w=
-ith original
-sdhci driver and device tree setting. But, for ultra-speed or HS200 case, A=
-ST2600 SoC needs some
-phase delay which (maximum) value is different between SD and eMMC device.
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 31af8b6b5286..fe35336f6b87 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -83,6 +83,7 @@ int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb)
+ 	return clk_notifier_register(pll_nb->common->hw.clk,
+ 				     &pll_nb->clk_nb);
+ }
++EXPORT_SYMBOL_NS_GPL(ccu_pll_notifier_register, SUNXI_CCU);
+ 
+ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 			   struct device_node *node, void __iomem *reg,
+@@ -194,6 +195,7 @@ int devm_sunxi_ccu_probe(struct device *dev, void __iomem *reg,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_NS_GPL(devm_sunxi_ccu_probe, SUNXI_CCU);
+ 
+ void of_sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 			const struct sunxi_ccu_desc *desc)
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index 4c297089483c..cb10a3ea23f9 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -141,3 +141,4 @@ const struct clk_ops ccu_div_ops = {
+ 	.recalc_rate	= ccu_div_recalc_rate,
+ 	.set_rate	= ccu_div_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_div_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu_gate.c
+index 3d5ca092b08f..b77288f44118 100644
+--- a/drivers/clk/sunxi-ng/ccu_gate.c
++++ b/drivers/clk/sunxi-ng/ccu_gate.c
+@@ -124,3 +124,4 @@ const struct clk_ops ccu_gate_ops = {
+ 	.set_rate	= ccu_gate_set_rate,
+ 	.recalc_rate	= ccu_gate_recalc_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_gate_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index 9d3a76604d94..57cf2d615148 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -245,6 +245,7 @@ const struct clk_ops ccu_mp_ops = {
+ 	.recalc_rate	= ccu_mp_recalc_rate,
+ 	.set_rate	= ccu_mp_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_mp_ops, SUNXI_CCU);
+ 
+ /*
+  * Support for MMC timing mode switching
+@@ -325,3 +326,4 @@ const struct clk_ops ccu_mp_mmc_ops = {
+ 	.recalc_rate	= ccu_mp_mmc_recalc_rate,
+ 	.set_rate	= ccu_mp_mmc_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_mp_mmc_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 7c8cf2e04e94..7bee217ef111 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -170,3 +170,4 @@ const struct clk_ops ccu_mult_ops = {
+ 	.recalc_rate	= ccu_mult_recalc_rate,
+ 	.set_rate	= ccu_mult_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_mult_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 7d75da9a1f2e..e8149f3c2324 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -251,6 +251,7 @@ const struct clk_ops ccu_mux_ops = {
+ 	.determine_rate	= __clk_mux_determine_rate,
+ 	.recalc_rate	= ccu_mux_recalc_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_mux_ops, SUNXI_CCU);
+ 
+ /*
+  * This clock notifier is called when the frequency of the of the parent
+@@ -285,3 +286,4 @@ int ccu_mux_notifier_register(struct clk *clk, struct ccu_mux_nb *mux_nb)
+ 
+ 	return clk_notifier_register(clk, &mux_nb->clk_nb);
+ }
++EXPORT_SYMBOL_NS_GPL(ccu_mux_notifier_register, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index aee68b00f3b2..c4fb82af97e8 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -157,3 +157,4 @@ const struct clk_ops ccu_nk_ops = {
+ 	.round_rate	= ccu_nk_round_rate,
+ 	.set_rate	= ccu_nk_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_nk_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index b9cfee0276ea..67da2c189b53 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -206,3 +206,4 @@ const struct clk_ops ccu_nkm_ops = {
+ 	.recalc_rate	= ccu_nkm_recalc_rate,
+ 	.set_rate	= ccu_nkm_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_nkm_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index bda87b38c45c..39413cb0985c 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -230,3 +230,4 @@ const struct clk_ops ccu_nkmp_ops = {
+ 	.round_rate	= ccu_nkmp_round_rate,
+ 	.set_rate	= ccu_nkmp_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_nkmp_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index e6bcc0a7170c..9ca9257f4426 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -238,3 +238,4 @@ const struct clk_ops ccu_nm_ops = {
+ 	.round_rate	= ccu_nm_round_rate,
+ 	.set_rate	= ccu_nm_set_rate,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_nm_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
+index 92ab8bd66427..e4cae2afe9db 100644
+--- a/drivers/clk/sunxi-ng/ccu_phase.c
++++ b/drivers/clk/sunxi-ng/ccu_phase.c
+@@ -121,3 +121,4 @@ const struct clk_ops ccu_phase_ops = {
+ 	.get_phase	= ccu_phase_get_phase,
+ 	.set_phase	= ccu_phase_set_phase,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_phase_ops, SUNXI_CCU);
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
+index 483100e45df3..6577aa18cb01 100644
+--- a/drivers/clk/sunxi-ng/ccu_reset.c
++++ b/drivers/clk/sunxi-ng/ccu_reset.c
+@@ -75,3 +75,4 @@ const struct reset_control_ops ccu_reset_ops = {
+ 	.reset		= ccu_reset_reset,
+ 	.status		= ccu_reset_status,
+ };
++EXPORT_SYMBOL_NS_GPL(ccu_reset_ops, SUNXI_CCU);
+-- 
+2.31.1
 
->=20
-> >
-> > Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-> > ---
-> >  Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> > b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> > index 5bb66849df65..41105cd104c6 100644
-> > --- a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
-> > @@ -52,6 +52,7 @@ patternProperties:
-> >            - aspeed,ast2400-sdhci
-> >            - aspeed,ast2500-sdhci
-> >            - aspeed,ast2600-sdhci
-> > +          - aspeed,ast2600-emmc
-> >        reg:
-> >          maxItems: 1
-> >          description: The SDHCI registers
-> > --
-> > 2.17.1
-> >
-> >
