@@ -2,226 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A84AC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FC4C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4D476113E
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD3F60FC2
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 09:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239810AbhI1JIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 05:08:09 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:42333 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239623AbhI1JII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 05:08:08 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id B00A02B01605;
-        Tue, 28 Sep 2021 05:06:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 28 Sep 2021 05:06:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=3
-        +KWQOmitGlx5dS7qikRhiEwaMwGqnlRLiJbVG/4vB8=; b=dhwTA5T8yWAPFeHs1
-        qwbkgrHqohaW/mbsotgt1VPB7urO3mWKXpAD8yxlrbk/bJICddts8vEpBzr8BmP2
-        +mViREf0WVmwrnT6pbmpPlXavHOTrjW2lkXS6NR/MOaWtdTdY+4KcXTI9smdVEVf
-        LHCdc7z4n9KmakPnRJ4+EWYSwmdjLDZh7JnUjDEnG3qxNb/CZeNg9sx3sJbvFvgg
-        jboNPluRGcMVRwWevjesxhSCmAUeuLjrKQzLMjB/bzNYWJ/2doPUIfkGioiOHA5R
-        2TYnexm7bsa7glZbeNumPuan3VTGhzGQejb4K53nyBHkPYzURhxTSFf1NbaYd17n
-        Xv+7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=3+KWQOmitGlx5dS7qikRhiEwaMwGqnlRLiJbVG/4v
-        B8=; b=wu2VOcyAxjXpLYAo505J3eaVGTZoQccNmueq7IUlW00Kwk3NC8Nu5z9fV
-        k8fOyRW4/eznPeyw0XuJn3teesPS4xl9KgPaQAd61lwRaQFEZWuZ6M2FepiMeCAu
-        eYs0YjZwnVo8G11B6CJGRaNQtR77L7odeEfbiRQG4tuRpSUIcLxc+fsBlh4xXdVk
-        K84/3CUEVdPnq4RnZP8jrYBAOpCkDwNADs81G8uGTwNjQtV+oZKUsGta3edljmOg
-        Tld2Wym2VRvS6/Ul89GvaCHCB1wNWJMpjCHriO+S0+tNLkAT1/rxcWrH4tm4VVDV
-        FNiOwp9uUpT/fOao3tPfPcZFBEs7A==
-X-ME-Sender: <xms:E9tSYTeKFMnsgkCrQ1twBNMq3gxMcIggnWTwgLaTkednGlhIBVI9IQ>
-    <xme:E9tSYZNflnaFuUjIqV-6eh2pdVmT3Qe13I1CYtuE64bdjY3XsuqHneW1zrzmGCQGB
-    IxyNyO2wpayOVFxPck>
-X-ME-Received: <xmr:E9tSYcgbySTrWhz414tVgEzNxhE7q9CvW88EbIZnB6vobE_45CxhUGpxXdHbwC2vmBzZNW3rbzmnIroCRouRwSTvgfWb_FZCgfxH9Dxk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudektddgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpefgjeettdejgffgffdvteeutdehtdehgeehueetkeefgefhtdetjeekledu
-    gedvudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:E9tSYU_w2akdumQCi5yQHjVcKFX48JWRqnpKnAvhTsSzGtFzCquYUQ>
-    <xmx:E9tSYfsPymaoY6lyY0lk7FoCxQvZzisPc3K3mZqA1YQH_StmeRksBg>
-    <xmx:E9tSYTHsrjTmI8jQ5QAK37RhTJXSA2uGCn2xnKe0QcTlR6LlKkF6OQ>
-    <xmx:FNtSYdLCF3X69qnIoHXDtWvqtq6F-3JBsyDODXIYgKDU5ReqwE3f8PkjGZY>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Sep 2021 05:06:27 -0400 (EDT)
-Date:   Tue, 28 Sep 2021 11:06:25 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/7] clk: sunxi-ng: Add a RTC CCU driver
-Message-ID: <20210928090625.rq3atiaejaq5kcbx@gilmour>
-References: <20210901053951.60952-1-samuel@sholland.org>
- <20210903145013.hn6dv7lfyvfys374@gilmour>
- <4a187add-462b-dfe4-868a-fdab85258b8d@sholland.org>
- <20210909084538.jeqltc7b3rtqvu4h@gilmour>
- <c910527d-e2d7-31ca-efd9-1915db62d85d@sholland.org>
-MIME-Version: 1.0
+        id S239749AbhI1JNV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 05:13:21 -0400
+Received: from mail-am6eur05on2064.outbound.protection.outlook.com ([40.107.22.64]:59073
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S239927AbhI1JNT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Sep 2021 05:13:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hW9lK5uh/4G3SSo7y4VHA3L4tV6EQ0/ltVb91N+zcePWMico1mrOYckI+eYvHtRNM86OZfNUlkPPUgJB3FFsjVobMJOMfgqa8M+Nj1VV/UHTYbXqFhDsNea1Hb3gJ9fWOGX2Twbv9GGqCAFQ4UV0t+3ojjGcxhL6/l8aeeF1Gh8aMnwIJqOy0ykIxjxrBT3JuIuA7dknw9wYANvDYZSe1RVvqdiMyVVi7Sp4dMk72+5lSlVL5LD4coZkegBr5HJDBFvW3tbUzmyQ7TcSMCnLR5+OSqOhc/i071/jOwL29XdRdImmGZrBOp7YICKwnAenJKNruhVg1k/kG/NOyti7EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=XydbSv7Hu01/FT6HbxdUAjHJWyc9ZH5C2EbNY0dojhQ=;
+ b=HLhWqNErfb/FEmmT+hVIxiduXgAozp4d/bLe3HDOZ/CYdRCU2wgSctEcK0krSpj+SpqC3QhYA+SCcbk0yDaqtrjIPV1q01qB6c8XVasIH0ajWAy8RBOfTRlzYYx77Pq+7ypSqgki7QlouA3fM45AIVJI0InqWTLee0FiiBeVGLP6xqRYnrVGdFjEbu1CqEvfahnCVP6A/xEz1R32PU9C4Xh5WcEcElq8IsmTlHRrl2n783XFdjg59w4PshKYf7AKNfbBY1lfIUxp+r+IMem+J397nKFLykb0dGQj9Z8hQ9oTi39oT5ofzJjzjUL/yjDsz6EgJSx1+G4LKACL6cL/gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XydbSv7Hu01/FT6HbxdUAjHJWyc9ZH5C2EbNY0dojhQ=;
+ b=d73uUfSDjA7Rh1Y/XpRRU8Vklq2kJlLvWqUxRBIhaK//TAbN91nPvcdRsIqYtlgQk63JFpn6+DcA51PDJpkV08zFUOTN162dYg24l6upDKoIXOAse21aBX2RQOVXG9Cqb5ICyODW7RNiSbvo3/QjBYVGt2RrxtI2CzInjHeCfRE=
+Authentication-Results: phytec.de; dkim=none (message not signed)
+ header.d=none;phytec.de; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com (2603:10a6:800:57::8)
+ by VI1PR04MB6239.eurprd04.prod.outlook.com (2603:10a6:803:fd::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.18; Tue, 28 Sep
+ 2021 09:11:36 +0000
+Received: from VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::485a:4462:94c2:5edb]) by VI1PR0401MB2559.eurprd04.prod.outlook.com
+ ([fe80::485a:4462:94c2:5edb%10]) with mapi id 15.20.4544.022; Tue, 28 Sep
+ 2021 09:11:36 +0000
+Date:   Tue, 28 Sep 2021 12:11:34 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stefan Riedmueller <s.riedmueller@phytec.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: imx: imx6ul: Move csi_sel mux to correct
+ base register
+Message-ID: <YVLcRqJTpTsZ3hAJ@ryzen>
+References: <20210927072857.3940880-1-s.riedmueller@phytec.de>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c910527d-e2d7-31ca-efd9-1915db62d85d@sholland.org>
+In-Reply-To: <20210927072857.3940880-1-s.riedmueller@phytec.de>
+X-ClientProxiedBy: VI1PR08CA0203.eurprd08.prod.outlook.com
+ (2603:10a6:800:d2::33) To VI1PR0401MB2559.eurprd04.prod.outlook.com
+ (2603:10a6:800:57::8)
+MIME-Version: 1.0
+Received: from ryzen (86.121.85.242) by VI1PR08CA0203.eurprd08.prod.outlook.com (2603:10a6:800:d2::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.13 via Frontend Transport; Tue, 28 Sep 2021 09:11:35 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3952a28f-3e07-47e4-001e-08d9825ff913
+X-MS-TrafficTypeDiagnostic: VI1PR04MB6239:
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR04MB6239E0908CAE4336BCA67869F6A89@VI1PR04MB6239.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: V6S8tO9jkRohwd88mowRc94eJf5o56905s2rIjWO4aZpKLXG/ZfD2cB/Zs8VQVYeTEzCksq8L9M2Gvj0uCDzhaMbOy3HUe3UDXjQ/Yp6hUk9j6I+qcRP2ZRao6+hOAUr18SAmD7ISm9RKsPNuqqPb37YV60QjgXe8pGUUm39BJ/liD7ibd/h1smgnpUKdY3mqa0oZxHJvq7bwrxJvQrbfbXhO+c/WW6MVVj8cFkqhRNkvMZGfdW/KG8d0dz0682zsJeCY3GDclS9FjTx3DymaiHgooe+Zltc2AG0jbYYX71w95TVXBXwbShDYY6iqk0xuLT+dOiCYIQM+LJ8+ShbliW3Le8MPjzcHebt2w8b+Fu16Q6bhiljFNVxtf4yEYDN3B8n0vF5f9r4sboKJAhIpoRU3VRyidnVf4OtRg3lSUPzrvbRxJdJ7ZW2ny2br66XCDhPH370u2uuU4S2qhAGHr3UpggA1HN3C7f7ThI+MU7dXEQAUF2dUXjHpT5BCL+MK/X/TIuScxmZaAERQ3I4Jp08T3df80AnnCQNT0CTVGXIyJVVwA9c0Xp7M36kk3EwL8d8pRYxMkqJHgcOu1DBqX1Z1VJrZC3i5jFALsrFdYT98WVrcdvhwVfHDAZ7mbKhKQCsGmR7SuTY7EngQdB6WHPGOYAkgR1cC03GCyRB8gWlfLGXHR+NuiQ6w6eiXg3OS/N5o/YTFCwOXtSibF3U4i6ugDVoKdpSqKfRTM4Ykxg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0401MB2559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(33716001)(4326008)(53546011)(26005)(9686003)(52116002)(44832011)(316002)(5660300002)(8676002)(38100700002)(38350700002)(66476007)(55016002)(8936002)(86362001)(6916009)(9576002)(66946007)(6496006)(66556008)(956004)(2906002)(54906003)(83380400001)(508600001)(7416002)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?UQSxagk7TDfL/eAkXucdLwYw2WMIGLABAS4Cz2Lpo+BkEjD3OlkYM2x0mxH4?=
+ =?us-ascii?Q?apuBiDevhumTfubR143G/6+FqUvsOsX9FE2IPzShsjuXEepquGIG3oWRFtrt?=
+ =?us-ascii?Q?lInzNSH1oRl+7VHaQy9IyOfHu7kng6x33prMj9e6e/P4sDGZ2Xe6QOugLXR1?=
+ =?us-ascii?Q?wyMjHUnb+PSS2FjeylknyCmtCGuZNLxvWZikYES61nRB3Pyuh4jJrqv5On7n?=
+ =?us-ascii?Q?KVkXdnWnVyywOY4PIVqtd44rOvvZbH+rOgDS1J6lwHpRoUP9OEV+p/xSy+nr?=
+ =?us-ascii?Q?EIt42KLzWu1j3FiUMIaaZS5NpVgyrCgjZC+y9xHcDeqGqgi/obOGDqkf3JnQ?=
+ =?us-ascii?Q?7IFfCDeffrUmjvDohhSgQ66Z7VZYqAG5usa/NrlbXqVmIajQuIHxW7f9oLpx?=
+ =?us-ascii?Q?fxyVJL0PB0rJ0mgWQKOvGU71AfqzLmOLDs5XFHGHUriO4RsEVLI19aGNfOzn?=
+ =?us-ascii?Q?JotPG4cvUf2eSXa+yB9cXww/DewiZK4Nv8roX2+SZyl2+NYLVz1jBiM9/tbL?=
+ =?us-ascii?Q?IX47DEA9EyRvNtlLH2MImkAX0A6ikcc+KhbF4SNFQhDYY5ntxRQgr9HCOQ7J?=
+ =?us-ascii?Q?obp2cYbRfnXCDfhrZBBQ0GBkkUyoVpBHiNhsb4irv+kkmKQTafYMpGRl4Mu2?=
+ =?us-ascii?Q?ls16vbw4WL6gNvNgK/uzn4oT/iWKJnroBD0n9jeAEOdw10E7vMk9IiOnzG5d?=
+ =?us-ascii?Q?fQnKqjyixYvMztEdYy2ThmavwPjIxd3n3AkzD+b4q3mkuAPL3zEs11sEYsPu?=
+ =?us-ascii?Q?fabbLB9kvZML8JTP1VGMDPYiuxudN/ksYWHkuLIH5YQyZsUNfGeyFPFPDry9?=
+ =?us-ascii?Q?oJ2JPdl/0eQOFbpHVCh3Yr85epXJFS+Eq0dZ/ZNpqQ0Iac0rmMFbwu1sWYjf?=
+ =?us-ascii?Q?5PWDsWiQxg0UEWpJ0A9t6lm0juzL9gjcLDScOzMw3P39fQrBuFcpZpyKi3Fy?=
+ =?us-ascii?Q?rGo7E73rFvjZvzUgG/t4Kv8UC8GHSVElFzjDz+RoHh2GFWHOai+3qfeNbgBR?=
+ =?us-ascii?Q?RwXbGn7z4JxLL+UWaCABNd5FmxDaUNpUZY/aHBCR8NkFzOm5pn14Ld8UJew8?=
+ =?us-ascii?Q?InRpF8hShYz+YoxCkrfSqgtDep/I1gBvmnBKszGYDNIJQ1q4bO5o6NzfmK6N?=
+ =?us-ascii?Q?K1bQDIEvwN4SaJVm+kxKrNT0k9/C5TrxRlu5S2fSbZpkQd6h+taHWPWAy7/9?=
+ =?us-ascii?Q?zb+SZoifmU56DwbLYTFF1X5M0hI092xt/hgEP/kZQmkvgH6zrnv8QHvmBmn/?=
+ =?us-ascii?Q?KeslOpKBDxuEmDEzijlzZDT4Cku2Z75YvpT/v4au4wpoNRFrbbT/VKNUyc3u?=
+ =?us-ascii?Q?FKqS0HndIhq4v1E/Ccu+EjQi?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3952a28f-3e07-47e4-001e-08d9825ff913
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0401MB2559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2021 09:11:36.5650
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OKf2vR4Xe7MbTarHFCkXZnBi6myh7k9c9sWWk3HdFD6/n0BF9XnT68PL0SB1DMJpOke7zbfn3pTpOmKuyCRA+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6239
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 21-09-27 09:28:56, Stefan Riedmueller wrote:
+> The csi_sel mux register is located in the CCM register base and not the
+> CCM_ANALOG register base. So move it to the correct position in code.
+> 
+> Otherwise changing the parent of the csi clock can lead to a complete
+> system failure due to the CCM_ANALOG_PLL_SYS_TOG register being falsely
+> modified.
+> 
+> Also remove the SET_RATE_PARENT flag since one possible supply for the
+> csi_sel mux is the system PLL which we don't want to modify.
+> 
+> Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
 
-On Tue, Sep 28, 2021 at 02:46:39AM -0500, Samuel Holland wrote:
-> On 9/9/21 3:45 AM, Maxime Ripard wrote:
-> > On Fri, Sep 03, 2021 at 10:21:13AM -0500, Samuel Holland wrote:
-> >> On 9/3/21 9:50 AM, Maxime Ripard wrote:
-> >>> Hi,
-> >>>
-> >>> On Wed, Sep 01, 2021 at 12:39:44AM -0500, Samuel Holland wrote:
-> >>>> This patch series adds a CCU driver for the RTC in the H616 and R329.
-> >>>> The extra patches at the end of this series show how it would be
-> >>>> explanded to additional hardware variants.
-> >>>>
-> >>>> The driver is intended to support the existing binding used for the =
-H6,
-> >>>> but also an updated binding which includes all RTC input clocks. I do
-> >>>> not know how to best represent that binding -- that is a major reason
-> >>>> why this series is an RFC.
-> >>>>
-> >>>> A future patch series could add functionality to the driver to manage
-> >>>> IOSC calibration at boot and during suspend/resume.
-> >>>>
-> >>>> It may be possible to support all of these hardware variants in the
-> >>>> existing RTC clock driver and avoid some duplicate code, but I'm
-> >>>> concerned about the complexity there, without any of the CCU
-> >>>> abstraction.
-> >>>>
-> >>>> This series is currently based on top of the other series I just sent
-> >>>> (clk: sunxi-ng: Lifetime fixes and module support), but I can rebase=
- it
-> >>>> elsewhere.
-> >>>
-> >>> I'm generally ok with this, it makes sense to move it to sunxi-ng,
-> >>> especially with that other series of yours.
-> >>>
-> >>> My main concern about this is the split driver approach. We used to h=
-ave
-> >>> that before in the RTC too, but it was mostly due to the early clock
-> >>> requirements. With your previous work, that requirement is not there
-> >>> anymore and we can just register it as a device just like the other
-> >>> clock providers.
-> >>
-> >> That's a good point. Originally, I had this RTC CCU providing osc24M, =
-so
-> >> it did need to be an early provider. But with the current version, we
-> >> could have the RTC platform driver call devm_sunxi_ccu_probe. That does
-> >> seem cleaner.
-> >>
-> >> (Since it wasn't immediately obvious to me why this works: the only
-> >> early provider remaining is the sun5i CCU, and it doesn't use the sun6i
-> >> RTC driver.)
-> >>
-> >>> And since we can register all those clocks at device probe time, we
-> >>> don't really need to split the driver in two (and especially in two
-> >>> different places). The only obstacle to this after your previous seri=
-es
-> >>> is that we don't have of_sunxi_ccu_probe / devm_sunxi_ccu_probe
-> >>> functions public, but that can easily be fixed by moving their
-> >>> definition to include/linux/clk/sunxi-ng.h
-> >>
-> >> Where are you thinking the clock definitions would go? We don't export
-> >> any of those structures (ccu_mux, ccu_common) or macros
-> >> (SUNXI_CCU_GATE_DATA) in a public header either.
-> >=20
-> > Ah, right...
-> >=20
-> >> Would you want to export those? That seems like a lot of churn. Or wou=
-ld
-> >> we put the CCU descriptions in drivers/clk/sunxi-ng and export a
-> >> function that the RTC driver can call? (Or some other idea?)
-> >=20
-> > I guess we could export it. There's some fairly big headers in
-> > include/linux/clk already (tegra and ti), it's not uAPI and we do have
-> > reasons to do so, so I guess it's fine.
-> >=20
-> > I'd like to avoid having two drivers for the same device if possible,
-> > especially in two separate places. This creates some confusion since the
-> > general expectation is that there's only one driver per device. There's
-> > also the fact that this could lead to subtle bugs since the probe order
-> > is the link order (or module loading).
->=20
-> I don't think there can be two "struct device"s for a single OF node.
+Applied both. Thanks.
 
-That's not what I meant, there's indeed a single of_node for a single
-struct device. If we dig a bit into the core framework, the most likely
-scenario is that we would register both the RTC and clock driver at
-module_init, and with the device already created with its of_node set
-during the initial DT parsing.
-
-We register our platform driver using module_platform_driver, which
-expands to calling driver_register() at module_init(), setting the
-driver bus to the platform_bus in the process (in
-__platform_driver_register()).
-
-After some sanity check, driver_register() calls bus_add_driver(), which
-will call driver_attach() if drivers_autoprobe is set (which is the
-default, set into bus_register()).
-
-driver_attach() will, for each device on the platform bus, call
-__driver_attach(). If there's a match between that device and our driver
-(which is evaluated by platform_match() in our case), we'll call our
-driver probe with that device through driver_probe_device(),
-__driver_probe_device() and finally really_probe().
-
-However, at no point in time there's any check about whether that device
-has already been bound to a driver, nor does it create a new device for
-each driver. So this means that, if you have two drivers that match the
-same device (like our clock and RTC drivers), you'll have both probe
-being called with the same device, and the probe order will be defined
-by the link order. Worse, they would share the same driver_data, with
-each driver not being aware of the other. This is incredibly fragile,
-and hard to notice since it goes against the usual expectations.
-
-> So if the CCU part is in drivers/clk/sunxi-ng, the CCU "probe"
-> function would have to be called from the RTC driver.
-
-No, it would be called by the core directly if there's a compatible to
-match.
-
-> Since there has to be cooperation anyway, I don't think there would be
-> any ordering problems.
-
-My initial point was that, with a direct function call, it's both
-deterministic and obvious.
-
-> > And synchronizing access to registers between those two drivers will be
-> > hard, while we could just share the same spin lock between the RTC and
-> > clock drivers if they are instanciated in the same place.
->=20
-> While the RTC driver currently shares a spinlock between the clock part
-> and the RTC part, there isn't actually any overlap in register usage
-> between the two. So there doesn't need to be any synchronization.
-
-I know, but this was more of a social problem than a technical one. Each
-contributor and reviewer in the future will have to know or remember
-that it's there, and make sure that it's still the case after any change
-they make or review.
-
-This is again a fairly fragile assumption.
-
-Maxime
+> ---
+> No changes in v2.
+> ---
+>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index 5dbb6a937732..206e4c43f68f 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -161,7 +161,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	hws[IMX6UL_PLL5_BYPASS] = imx_clk_hw_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_PLL6_BYPASS] = imx_clk_hw_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_PLL7_BYPASS] = imx_clk_hw_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
+> -	hws[IMX6UL_CLK_CSI_SEL] = imx_clk_hw_mux_flags("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels), CLK_SET_RATE_PARENT);
+>  
+>  	/* Do not bypass PLLs initially */
+>  	clk_set_parent(hws[IMX6UL_PLL1_BYPASS]->clk, hws[IMX6UL_CLK_PLL1]->clk);
+> @@ -270,6 +269,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	hws[IMX6UL_CLK_ECSPI_SEL]	  = imx_clk_hw_mux("ecspi_sel",	base + 0x38, 18, 1, ecspi_sels, ARRAY_SIZE(ecspi_sels));
+>  	hws[IMX6UL_CLK_LCDIF_PRE_SEL]	  = imx_clk_hw_mux_flags("lcdif_pre_sel", base + 0x38, 15, 3, lcdif_pre_sels, ARRAY_SIZE(lcdif_pre_sels), CLK_SET_RATE_PARENT);
+>  	hws[IMX6UL_CLK_LCDIF_SEL]	  = imx_clk_hw_mux("lcdif_sel",	base + 0x38, 9, 3, lcdif_sels, ARRAY_SIZE(lcdif_sels));
+> +	hws[IMX6UL_CLK_CSI_SEL]		  = imx_clk_hw_mux("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels));
+>  
+>  	hws[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_hw_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
+>  	hws[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_hw_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
+> -- 
+> 2.25.1
+> 
