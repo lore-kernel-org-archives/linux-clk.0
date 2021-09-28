@@ -2,138 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E23C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52333C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC3361058
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A808611CB
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240615AbhI1MX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 08:23:26 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:33306
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240535AbhI1MX0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 08:23:26 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C8429402FE
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 12:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632831705;
-        bh=OfxwTguAAwbeZQgJ80ueoQgTshBZ+S7XY57UrX7LQSQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=Rd0aVshdaryBtD77hiwU9t33H9sijF1oaX1t90jyDSp8LBnWoEPnsdIspUPEEqrbK
-         WpV41NfVZupTGJp95ctnL0P2iJttlZlQbxhTiaxZN8YcitIq5ItrxCU5Iw5z7C/wE8
-         GcWTyw6fqJI1NZVG/QI2KuF+GsLvhYYCGBbCph6qWnnhURjKqO71UODTJfr3qos6hC
-         iFlfSrgJO7gsCJZ60Xklk0QVaKT2jinswL+P1aZpefHxdXXdC3rdkPqzCd9bkeeWKR
-         HIUdLvaZXIgKH3loeAWn8XSMsQD7dotDgpRqvvtoc/CZDU1loKahY/irfQjMHSuOPl
-         bxSFR4jLv/rYA==
-Received: by mail-lf1-f72.google.com with SMTP id c6-20020a05651200c600b003fc6d39efa4so19153585lfp.12
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 05:21:45 -0700 (PDT)
+        id S240651AbhI1MaD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 08:30:03 -0400
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:43904 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240642AbhI1MaB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 08:30:01 -0400
+Received: by mail-oi1-f175.google.com with SMTP id q16so2034205oiw.10;
+        Tue, 28 Sep 2021 05:28:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OfxwTguAAwbeZQgJ80ueoQgTshBZ+S7XY57UrX7LQSQ=;
-        b=s4oJ/OyhOJE+ALcacUj2/p4YisVDswpOh7iE/y5QWg3JftarS9u+h2Si9jbgoQZtda
-         q93ihXgZOPc8uNvMNThFOFurj/bd+N2zqYKaV6JbfhiV5Mdl1p2D2pEvefCIeFEUo5sg
-         rQp/tcuIASXRFN2U+U3xMzmTXzSPczp1d0XozYKMQAe4fqCCk2XX7MObfWLPJDamm1Tg
-         1+OLM6l02SLSf80VRxuveOPdCq0VtAUbNoHdh8TrkAEGIVnJbC6puND1hrdSgIP+LXXu
-         wF8cWwfw47wb0eWIJTKov0rJ3CKZsHdHR1uZi4HqDbyjQH4b6b2iUJE0YLKh9IdHROTj
-         bPlA==
-X-Gm-Message-State: AOAM533t0/z9a0U7Bt/7r3Y+NvSXp9+fd8LWOnhqrtVIjMJXr7pPzIHT
-        T2n1T38vBC32JU8gPU4B3K76vsBbWnOPrlq5/QSSVHIoYbNGwiXVsaZHl+Al9+HW1VUBHBPfBPq
-        Soj9EQZKTRpMZJxSKwAHXQins/LeRCykM4Hb7+w==
-X-Received: by 2002:a05:6512:114d:: with SMTP id m13mr5424618lfg.303.1632831705080;
-        Tue, 28 Sep 2021 05:21:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw0vy5vZrqnYYaMKL16pGzHUs9IX7TEGREv9QsV/r46W3ZYpEP3iSl0+DfWN2eepyhKMjjDmg==
-X-Received: by 2002:a05:6512:114d:: with SMTP id m13mr5424585lfg.303.1632831704789;
-        Tue, 28 Sep 2021 05:21:44 -0700 (PDT)
-Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id v138sm2097090lfa.120.2021.09.28.05.21.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Sep 2021 05:21:44 -0700 (PDT)
-Subject: Re: [PATCH 06/12] regulator: dt-bindings: samsung,s5m8767: convert to
- dtschema
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
- <20210928084949.27939-7-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <48ec9ee9-0fc6-4c25-3e3a-1395286ee89d@canonical.com>
-Date:   Tue, 28 Sep 2021 14:21:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <20210928084949.27939-7-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=1e86EGaNQSFspYR+g+H0ErCWrHt26ybPuetKkhUZAfk=;
+        b=1Eh8Cx0esdOMT9NQbs01WL3ulo1mrQy/9lr5ytQiI7AjMEAxV7DT5qHRZ8pRgNRxxa
+         2DvuzdbMluAVHNJzdzfTdO2hYIm3kRuXTsDGJ7WLMnb6yGkr4r9MeDLJReqVFemqAP8I
+         c00hSezp8gZPOuB2J011AEIdfVdP8juYfcLp1XeDorrnVGVlu9UhZJ3JQ3V57kZlS5tO
+         sUEQq+06jmMh/dvDUAPTAPWS+UhYVKg6wu09IWSDYpQ7d0L53lJmDAr1UKcUrQwTVpNG
+         ikfxb7pV5MPY/gc+mwO5HPubB2jhGRPEFWgFga4CQ4UpYsP0AYd53ZzA+RGiYQ1PeT5c
+         ZQ2w==
+X-Gm-Message-State: AOAM530dq4yXSsXGNFw+uiBHvVMc3JBY0U7JGckQeARnS8T0ZJwSRpsb
+        LAz3TLOAPdp1+yEpr+FKkQ==
+X-Google-Smtp-Source: ABdhPJxdweC4ViDWcuCSxhRm4TIg6wXEUwWOerbwOEDdBE9l96ZkoENskHa8vCNSMU3oKGJlcGSTAg==
+X-Received: by 2002:aca:ab4d:: with SMTP id u74mr3334236oie.120.1632832102003;
+        Tue, 28 Sep 2021 05:28:22 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id z12sm4585394ote.16.2021.09.28.05.28.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Sep 2021 05:28:20 -0700 (PDT)
+Received: (nullmailer pid 963816 invoked by uid 1000);
+        Tue, 28 Sep 2021 12:28:18 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-rtc@vger.kernel.org
+In-Reply-To: <20210928080335.36706-3-samuel@sholland.org>
+References: <20210928080335.36706-1-samuel@sholland.org> <20210928080335.36706-3-samuel@sholland.org>
+Subject: Re: [PATCH v2 2/9] dt-bindings: rtc: sun6i: Add H616, R329, and D1 support
+Date:   Tue, 28 Sep 2021 07:28:18 -0500
+Message-Id: <1632832098.554951.963815.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/09/2021 10:49, Krzysztof Kozlowski wrote:
-> Convert the regulators of Samsung S5M8767 PMIC to DT schema format.
+On Tue, 28 Sep 2021 03:03:28 -0500, Samuel Holland wrote:
+> These new RTC variants all have a single alarm, like the R40 variant.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> For the new SoCs, start requiring a complete list of input clocks. The
+> H616 has three required clocks. The R329 also has three required clocks
+> (but one is different), plus an optional crystal oscillator input. The
+> D1 RTC is identical to the one in the R329.
+> 
+> And since these new SoCs will have a well-defined output clock order as
+> well, they do not need the clock-output-names property.
+> 
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 > ---
->  .../bindings/regulator/samsung,s5m8767.txt    | 23 +----
->  .../bindings/regulator/samsung,s5m8767.yaml   | 83 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 85 insertions(+), 23 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
+> Changes since v1:
+>   - Properly update the DT binding clocks and clock-names properties.
 > 
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> index 6cd83d920155..a1c6eb6f07c8 100644
-> --- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> @@ -48,28 +48,7 @@ Additional properties required if either of the optional properties are used:
->     for dvs. The format of the gpio specifier depends in the gpio controller.
->  
->  
-> -Names of regulators supported by S5M8767 device:
-> -	- LDOn
-> -		  - valid values for n are 1 to 28
-> -		  - Example: LDO1, LDO2, LDO28
-> -	- BUCKn
-> -		  - valid values for n are 1 to 9.
-> -		  - Example: BUCK1, BUCK2, BUCK9
-> -Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> -as per the datasheet of device.
-> -
-> -
-> -Optional properties of the nodes under "regulators" sub-node:
-> - - op_mode: describes the different operating modes of the LDO's with
-> -            power mode change in SOC. The different possible values are,
-> -             0 - always off mode
-> -             1 - on in normal mode
-> -             2 - low power mode
-> -             3 - suspend mode
-> - - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> -                                   GPIO controlling this regulator
-> -                                   (enable/disable); This is valid only
-> -                                   for buck9.
-> +
+>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 72 ++++++++++++++++++-
+>  include/dt-bindings/clock/sun6i-rtc.h         | 10 +++
+>  2 files changed, 79 insertions(+), 3 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/sun6i-rtc.h
+> 
 
-That's obviously not sufficient - I will remove full file in v2.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Best regards,
-Krzysztof
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml:122:9: [error] duplication of key "minItems" in mapping (key-duplicates)
+./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml:150:9: [error] duplication of key "minItems" in mapping (key-duplicates)
+
+dtschema/dtc warnings/errors:
+make[1]: *** Deleting file 'Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.example.dts'
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-extract-example", line 45, in <module>
+    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 122, in get_single_data
+    return self.construct_document(node)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 132, in construct_document
+    for _dummy in generator:
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 722, in construct_yaml_map
+    value = self.construct_mapping(node)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 446, in construct_mapping
+    return BaseConstructor.construct_mapping(self, node, deep=deep)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 264, in construct_mapping
+    if self.check_mapping_key(node, key_node, mapping, key, value):
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 295, in check_mapping_key
+    raise DuplicateKeyError(*args)
+ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
+  in "<unicode string>", line 121, column 9
+found duplicate key "minItems" with value "3" (original value: "3")
+  in "<unicode string>", line 122, column 9
+
+To suppress this check see:
+    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
+
+make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-doc-validate", line 25, in check_doc
+    testtree = dtschema.load(filename, line_number=line_number)
+  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 623, in load
+    return yaml.load(f.read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 122, in get_single_data
+    return self.construct_document(node)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 132, in construct_document
+    for _dummy in generator:
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 722, in construct_yaml_map
+    value = self.construct_mapping(node)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 446, in construct_mapping
+    return BaseConstructor.construct_mapping(self, node, deep=deep)
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 264, in construct_mapping
+    if self.check_mapping_key(node, key_node, mapping, key, value):
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 295, in check_mapping_key
+    raise DuplicateKeyError(*args)
+ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
+  in "<unicode string>", line 121, column 9
+found duplicate key "minItems" with value "3" (original value: "3")
+  in "<unicode string>", line 122, column 9
+
+To suppress this check see:
+    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-doc-validate", line 67, in <module>
+    ret = check_doc(f)
+  File "/usr/local/bin/dt-doc-validate", line 30, in check_doc
+    print(filename + ":", exc.path[-1], exc.message, file=sys.stderr)
+AttributeError: 'DuplicateKeyError' object has no attribute 'path'
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml: ignoring, error parsing file
+warning: no schema found in file: ./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+make: *** [Makefile:1441: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1533753
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
