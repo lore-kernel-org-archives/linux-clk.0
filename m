@@ -2,76 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4588CC07E9D
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 20:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA0EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 22:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27AA7611C6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 20:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFC4F613A1
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 22:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242659AbhI1UKI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 16:10:08 -0400
-Received: from www.zeus03.de ([194.117.254.33]:60910 "EHLO mail.zeus03.de"
+        id S243037AbhI1WWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 18:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242671AbhI1UKF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Sep 2021 16:10:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=50+VZZr763Y4Yc
-        o+HsRSmUs/xv+RBnk0KYigKvjNxLk=; b=VJTPXTjnqkxydEykH0ffjquQuo4dWJ
-        mWZuOKS/CsHVxDUXaHGiGffrpACWdUqxPimp4Rv0XHrHqJqOELOQ10rCYzVqqNKg
-        CwzZMdbDHo8MB28K2P/nZVXJOI4WYvxnax9kJFAmGip8NLLW033klZAsO2K+yhpU
-        1V99OmUSlXiCA=
-Received: (qmail 1377488 invoked from network); 28 Sep 2021 22:08:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Sep 2021 22:08:23 +0200
-X-UD-Smtp-Session: l3s3148p1@qNCKxhPNgtIgAwDPXxnDADNsFyRXxb9N
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 9/9] mmc: renesas_sdhi: parse DT for SDnH
-Date:   Tue, 28 Sep 2021 22:08:04 +0200
-Message-Id: <20210928200804.50922-10-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210928200804.50922-1-wsa+renesas@sang-engineering.com>
-References: <20210928200804.50922-1-wsa+renesas@sang-engineering.com>
+        id S240687AbhI1WWG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Sep 2021 18:22:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E72206134F;
+        Tue, 28 Sep 2021 22:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632867626;
+        bh=cCrxQSnNRAST9uyK8lFINpxObG9fWTn6FmTmcnhmS7k=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=sLwAG3X+2olqzcUomNVYFpcBy8JHwyZdhBYNzc2kpXThcWyaKc0IyKYDp9kPwKr/P
+         PKFUW6JJOm1pKtxSA5eLh/L/O+cw8eH0TDUnt+PCCDkvGE87OPI82e1DjQLHbAQQBF
+         BUKdS5Fofn24kOpF5u+VZ4693btvNucJjwvFbuW381JwdxJpBZYIsp/Fw/wJKWLJCT
+         RthM9u6jUyBLJCitrWx+lwpnUvBzChvBDQaM1gQVa+dBL9Q5knakBqkiy2e7/o9Ag1
+         Vcrjz9vRdRr4VbTCj2pEU9Nv16K6q4Luhf9raNYkHShSFzLqZ1yp/NisKHoqyqTShD
+         fOQx4+pIyIEuw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1632836915.git.geert+renesas@glider.be>
+References: <cover.1632836915.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Fixes for v5.15
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 28 Sep 2021 15:20:24 -0700
+Message-ID: <163286762464.9433.17437033278031855000@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If there is a SDnH clock provided in DT, let's use it instead of relying
-on the fallback.
+Quoting Geert Uytterhoeven (2021-09-28 06:53:52)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd=
+8f:
+>=20
+>   Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.15-tag3
+>=20
+> for you to fetch changes up to fa2a30f8e0aa9304919750b116a9e9e322465299:
+>=20
+>   clk: renesas: rzg2l: Fix clk status function (2021-09-24 15:11:05 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 100f86d311ea..41a5ee80c661 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -922,8 +922,16 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		return ret;
- 	}
- 
-+	priv->clkh = devm_clk_get_optional(&pdev->dev, "clkh");
-+	if (IS_ERR(priv->clkh)) {
-+		ret = PTR_ERR(priv->clkh);
-+		dev_err(&pdev->dev, "cannot get clockh: %d\n", ret);
-+		return ret;
-+	}
-+
- 	/* Fallback for old DTs */
--	if (of_device_is_compatible(pdev->dev.of_node, "renesas,rcar-gen3-sdhi"))
-+	if (!priv->clkh &&
-+	    of_device_is_compatible(pdev->dev.of_node, "renesas,rcar-gen3-sdhi"))
- 		priv->clkh = clk_get_parent(clk_get_parent(priv->clk));
- 
- 	/*
--- 
-2.30.2
-
+Thanks. Pulled into clk-fixes
