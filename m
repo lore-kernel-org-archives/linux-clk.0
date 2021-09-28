@@ -2,84 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13ABC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1AEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 16:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8F55611F2
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1BB061206
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 16:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241122AbhI1Nzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 09:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241120AbhI1Nzl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:55:41 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8C2C061745
-        for <linux-clk@vger.kernel.org>; Tue, 28 Sep 2021 06:54:01 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:9d6a:ba71:99b4:9160])
-        by xavier.telenet-ops.be with bizsmtp
-        id zRtz2500V4bPoua01Rtzvm; Tue, 28 Sep 2021 15:53:59 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mVDYV-000LJI-Cl; Tue, 28 Sep 2021 15:53:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mVDYU-00AEzr-Lz; Tue, 28 Sep 2021 15:53:58 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Fixes for v5.15
-Date:   Tue, 28 Sep 2021 15:53:52 +0200
-Message-Id: <cover.1632836915.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S241743AbhI1Q1z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 12:27:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241702AbhI1Q1z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Sep 2021 12:27:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3737960462;
+        Tue, 28 Sep 2021 16:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632846375;
+        bh=oFzMNd56P/Bc6DPh2ju3WdH1InmiJeQKxMtO1+IROrI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=eUO4pKcvbbdSTakQ8QNE+mtbLlsywDXXnVYi8Yaj6zIDjOtTwKee/gTMXHm4nDaW6
+         IDPZKT24kQfJidzd8aLAFyDqFaCRoEUMfHRdNMbCqz0XKeXPWMoOAiompisRLzUozW
+         dz0o/1CKzRXpiW/jpTZkUVdYd/xEmq8T2R7QDa7rvw9RjGH4OEBhq2gghY5Uh1e1q9
+         ot/Nrl22pyxGn+mzqQNHReadorxYl148/+ph+UrZUQSGFyuNz+MLM51hpCpAE7y7Qz
+         wdPKwMiwXFionZv1uRg+GOlImIhJOU5W8LcFUOe+Q6o0OO8ZBfmAs3jJu3tRx7S5jq
+         gDB5t8AbnVOww==
+Message-ID: <f44655307df14c8e18239551faf581a49d2ef1fa.camel@kernel.org>
+Subject: Re: [PATCH 1/5] clk: bcm-2835: Pick the closest clock rate
+From:   nicolas saenz julienne <nsaenz@kernel.org>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Stapelberg <michael@stapelberg.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 28 Sep 2021 18:26:10 +0200
+In-Reply-To: <20210922125419.4125779-2-maxime@cerno.tech>
+References: <20210922125419.4125779-1-maxime@cerno.tech>
+         <20210922125419.4125779-2-maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+On Wed, 2021-09-22 at 14:54 +0200, Maxime Ripard wrote:
+> The driver currently tries to pick the closest rate that is lower than
+> the rate being requested.
+> 
+> This causes an issue with clk_set_min_rate() since it actively checks
+> for the rounded rate to be above the minimum that was just set.
+> 
+> Let's change the logic a bit to pick the closest rate to the requested
+> rate, no matter if it's actually higher or lower.
+> 
+> Fixes: 6d18b8adbe67 ("clk: bcm2835: Support for clock parent selection")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
+Reviewed-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
+Tested-by: Nicolas Saenz Julienne <nsaenz@kernel.org> # boot and basic functionality
 
-  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+Regards,
+Nicolas
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.15-tag3
-
-for you to fetch changes up to fa2a30f8e0aa9304919750b116a9e9e322465299:
-
-  clk: renesas: rzg2l: Fix clk status function (2021-09-24 15:11:05 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Fixes for v5.15
-
-  - Fix inverted logic in RZ/G2L .is_enabled() function.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: r9a07g044: Mark IA55_CLK and DMAC_ACLK critical
-      clk: renesas: rzg2l: Fix clk status function
-
- drivers/clk/renesas/r9a07g044-cpg.c | 2 ++
- drivers/clk/renesas/rzg2l-cpg.c     | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
