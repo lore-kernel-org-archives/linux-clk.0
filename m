@@ -2,248 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63776C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A45C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43BCA600EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2614460F4B
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 07:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239366AbhI1HlN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 03:41:13 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:47853 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239363AbhI1HlL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 03:41:11 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 355FE3200B7A;
-        Tue, 28 Sep 2021 03:39:32 -0400 (EDT)
+        id S239488AbhI1HsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 03:48:21 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:34901 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239462AbhI1HsU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 03:48:20 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 90F0F2B015A7;
+        Tue, 28 Sep 2021 03:46:40 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 28 Sep 2021 03:39:32 -0400
+  by compute2.internal (MEProxy); Tue, 28 Sep 2021 03:46:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=tsgrduVjDdssl
-        IuzVMotW+kMboVIt1vEZe888BN/7B4=; b=lTc++QtU6eHKmw741rky8pFk4REmp
-        htGWEfBGfft1GnlzaM5MT2TPD7VGQmJyaJQSIYnqFmZMWYRGPJIc6Xh7gOSvRXZw
-        3z1jeuZfDXpI5b0yQYblm6ZgRj/saTMI7DJjtXj1Dq4TsokvhgtSDkjgj/74+onx
-        XEIpQyR+prtxqPFxR0NcjPZNUxXjOHFsBMZ2v8naIByZO1OrxmiqjAqGPxfLPSKl
-        E9HlflwQdDFpy5SufKToWrgCE2ou5/jyKPgM2E0g2zyAIC/r5nrCs7RdhnLgeEnl
-        WFzECeMVziJSESaUNIrXsfL5FZd8mpFX7dBzmeA/yRh589d9Qn9cAp0cw==
+        to:cc:references:from:subject:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=d
+        tm6+SCKQFDhqHajeVv9mlgo//hwfhw0+BsVjCXiKJU=; b=gfWQKwKRnbVVOG5uT
+        ZVsSIduZk65knrnWjTQ/i50fugQaOiTFwcSx+SD4h8dm2Xf/5dYP9tYM7QCIbcLj
+        6/DRPEPWfVKCifTBfv2j007+Nvrtx69bXAu+rd3Ietc4SqzBXVtP998v08uAnx4x
+        0pq3yWFc3QxJWq6W/MMtNv6+IuaXmpPGorIeDEDBhuUtDVZnZtW6t0L5hWCug6Vr
+        MDtjQRekx4Y7e0+rruLdlRlO2heW/6zkcwfXJOaR67coAL0sf+xlBra2l3aQehJz
+        AZayE6DDjHwAihcfzM2D+kIGel1B/spEDopSmrIRmtBvt4PpuixiCLto+L1LoKNA
+        4wQ5w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=tsgrduVjDdsslIuzVMotW+kMboVIt1vEZe888BN/7B4=; b=aGzqDP0B
-        AUX55zr3hPib8R/OBcOt327Y7aHIxf2VPAqAvkIWQYZOfjm4ZH6O0M7QJc7b/JgB
-        Yc7SwVNxOQaCmq4iBMTtQN69CJmJ9RMveVAQ4tQFo1kAC91BL0nx3KmQxb2HQ9HR
-        cWbo5FQqOsDN5kLKEQ3GTodnMjJXwu3rsc1yeIXZe9Kaocso8DJoRV1ziliaR5h7
-        vP7bpK0Ca4FicLZ3TQtpu1mg3fwSAGpHe8fW8B9VNWsSTUZ5GkGdg7wPn0GO07Dh
-        C1PDCXNG7scC3P6jHm2PZRNg/AkmQ2nf6P00QL1e7ndg5wOti3PLgUz7ysXN+2D1
-        w6SHb9UYpdDLNA==
-X-ME-Sender: <xms:s8ZSYXZW75qrWuWtdEYwtx3RlyMch4rcmgQx15scxOfZn1wcLvReDA>
-    <xme:s8ZSYWbwU1AyVfCZVB5JgEAhOl-des11h1YJbAquqmtZ-1I2dULgIFRP0dcQJs9qk
-    -IvBaM3blgB5Z6xFA>
-X-ME-Received: <xmr:s8ZSYZ9XIafnhxnVzOz-SBVaxrhwOuIILNQJGyCDDrFu7SkcCsDTnqesdloAEcoXEr-an7GVNXzQyCYyR1rMn6hsOFAw0EzX2PuXrdHm2CXjCj4dNK0OJuBqj12ZyLn8-_7r_Q>
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=dtm6+SCKQFDhqHajeVv9mlgo//hwfhw0+BsVjCXiK
+        JU=; b=r4wM3dhpzOGmjMQw05l+XvQucQK7ERRBNELDW4xNv5ooyZXkxYiUNKArX
+        ypguFps/Kfw8hDkBfCgMIZA6UuHJGP9H/zz39nMO1mEmbyDkjSgPLeBNYWc8sGCg
+        HhMGV4NG4FEWaZ6damMJU+PcwFDLLA/Fz13QIDVHJQu5d4CQHpNZ85Zo75ZmkjBR
+        pziE1YV8T4hZRVFBmCerupDMSU0SBCx8JD2tIQL2GQDBgQ9xmJvSvILdAGhEfWvL
+        cbAT3TyUSZlB/tVlYmYq9vhnO6CLbRChbwmEvQM4jtU2xW90TqySnthsIT2QvB/X
+        zFrLw9k3msAQVDxnFEuQ0lU6zFnig==
+X-ME-Sender: <xms:X8hSYRLbcnZ3tEhKIDYzmSFliMXtzNfGPo6oBKV8PBrL5HdT3cQT6A>
+    <xme:X8hSYdKOR3imuXyqpjDbMwBvPdHFig7Ihnid5CeAfApO2M2Kh8snqFw2n7JGpEcNY
+    sweepnTxKfvjz2bWQ>
+X-ME-Received: <xmr:X8hSYZvTwD0R5xuKeoCZYhTH-QQhPfH1G7fczje1R9bYWm6354ZnW8DPArrioRsbBOp8iloubYcsXPeefy2kUZtMJF9SsawN2cFkQBz1X_HA-Q6PvWQGxFnCGQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejledguddulecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheej
-    vdfgjeehueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:s8ZSYdqUYgtAY4YOwwkakWNNrKStMMrbbvGIDIg1GmgWO_uE3-KKUA>
-    <xmx:s8ZSYSoB8eueC5FUwGTpOPu2nRgNyxqJWDeIDly_yYEEHr1QMSxulA>
-    <xmx:s8ZSYTTXR_zaPVU5BR2-xE8Nhq0nKUz52ksF_oc7sgdv2YaF-MKARw>
-    <xmx:s8ZSYedl4T093Zm7mhS6EFibCcwzuDWe6EiDYETeFGTd2IVpjnaFdw>
+    enucfjughrpefvfhfhuffkffgfgggjtgfgsehtkeertddtfeehnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeehjeeghfdufeefteelieeggfehteevieetueffhefhffekuedv
+    ffevffevtedufeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:YMhSYSbH_ko5olpDd9-v6slgV-fBRWPEuXSD2KQrXNyeeaNLU8Msyg>
+    <xmx:YMhSYYazspyFDFsplobTh50mhHQdZ7_DOg2kUBW2ZYfYTKl84pOwKg>
+    <xmx:YMhSYWBwz3nQ4juf-e3PybVWvoTcLqCbUsA5iJyVvaHkDGh7_9EZ-Q>
+    <xmx:YMhSYWn9i6Jqm4_iYidDaM8pM5n5LyzY6ersnviICcpU7-XhjKdUGMVOYoY>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Sep 2021 03:39:31 -0400 (EDT)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ 28 Sep 2021 03:46:39 -0400 (EDT)
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 4/4] clk: sunxi-ng: Allow the CCU core to be built as a module
-Date:   Tue, 28 Sep 2021 02:39:22 -0500
-Message-Id: <20210928073922.34264-5-samuel@sholland.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210928073922.34264-1-samuel@sholland.org>
-References: <20210928073922.34264-1-samuel@sholland.org>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20210901053951.60952-1-samuel@sholland.org>
+ <20210903145013.hn6dv7lfyvfys374@gilmour>
+ <4a187add-462b-dfe4-868a-fdab85258b8d@sholland.org>
+ <20210909084538.jeqltc7b3rtqvu4h@gilmour>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [RFC PATCH 0/7] clk: sunxi-ng: Add a RTC CCU driver
+Message-ID: <c910527d-e2d7-31ca-efd9-1915db62d85d@sholland.org>
+Date:   Tue, 28 Sep 2021 02:46:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
+In-Reply-To: <20210909084538.jeqltc7b3rtqvu4h@gilmour>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Like the individual CCU drivers, it can be beneficial for memory
-consumption of cross-platform configurations to only load the CCU core
-on the relevant platform. For example, a generic arm64 kernel sees the
-following improvement when building the CCU core and drivers as modules:
+On 9/9/21 3:45 AM, Maxime Ripard wrote:
+> On Fri, Sep 03, 2021 at 10:21:13AM -0500, Samuel Holland wrote:
+>> On 9/3/21 9:50 AM, Maxime Ripard wrote:
+>>> Hi,
+>>>
+>>> On Wed, Sep 01, 2021 at 12:39:44AM -0500, Samuel Holland wrote:
+>>>> This patch series adds a CCU driver for the RTC in the H616 and R329.
+>>>> The extra patches at the end of this series show how it would be
+>>>> explanded to additional hardware variants.
+>>>>
+>>>> The driver is intended to support the existing binding used for the H6,
+>>>> but also an updated binding which includes all RTC input clocks. I do
+>>>> not know how to best represent that binding -- that is a major reason
+>>>> why this series is an RFC.
+>>>>
+>>>> A future patch series could add functionality to the driver to manage
+>>>> IOSC calibration at boot and during suspend/resume.
+>>>>
+>>>> It may be possible to support all of these hardware variants in the
+>>>> existing RTC clock driver and avoid some duplicate code, but I'm
+>>>> concerned about the complexity there, without any of the CCU
+>>>> abstraction.
+>>>>
+>>>> This series is currently based on top of the other series I just sent
+>>>> (clk: sunxi-ng: Lifetime fixes and module support), but I can rebase it
+>>>> elsewhere.
+>>>
+>>> I'm generally ok with this, it makes sense to move it to sunxi-ng,
+>>> especially with that other series of yours.
+>>>
+>>> My main concern about this is the split driver approach. We used to have
+>>> that before in the RTC too, but it was mostly due to the early clock
+>>> requirements. With your previous work, that requirement is not there
+>>> anymore and we can just register it as a device just like the other
+>>> clock providers.
+>>
+>> That's a good point. Originally, I had this RTC CCU providing osc24M, so
+>> it did need to be an early provider. But with the current version, we
+>> could have the RTC platform driver call devm_sunxi_ccu_probe. That does
+>> seem cleaner.
+>>
+>> (Since it wasn't immediately obvious to me why this works: the only
+>> early provider remaining is the sun5i CCU, and it doesn't use the sun6i
+>> RTC driver.)
+>>
+>>> And since we can register all those clocks at device probe time, we
+>>> don't really need to split the driver in two (and especially in two
+>>> different places). The only obstacle to this after your previous series
+>>> is that we don't have of_sunxi_ccu_probe / devm_sunxi_ccu_probe
+>>> functions public, but that can easily be fixed by moving their
+>>> definition to include/linux/clk/sunxi-ng.h
+>>
+>> Where are you thinking the clock definitions would go? We don't export
+>> any of those structures (ccu_mux, ccu_common) or macros
+>> (SUNXI_CCU_GATE_DATA) in a public header either.
+> 
+> Ah, right...
+> 
+>> Would you want to export those? That seems like a lot of churn. Or would
+>> we put the CCU descriptions in drivers/clk/sunxi-ng and export a
+>> function that the RTC driver can call? (Or some other idea?)
+> 
+> I guess we could export it. There's some fairly big headers in
+> include/linux/clk already (tegra and ti), it's not uAPI and we do have
+> reasons to do so, so I guess it's fine.
+> 
+> I'd like to avoid having two drivers for the same device if possible,
+> especially in two separate places. This creates some confusion since the
+> general expectation is that there's only one driver per device. There's
+> also the fact that this could lead to subtle bugs since the probe order
+> is the link order (or module loading).
 
-  before:
-    text      data     bss     dec       hex      filename
-    13882360  5251670  360800  19494830  12977ae  vmlinux
+I don't think there can be two "struct device"s for a single OF node. So
+if the CCU part is in drivers/clk/sunxi-ng, the CCU "probe" function
+would have to be called from the RTC driver. Since there has to be
+cooperation anyway, I don't think there would be any ordering problems.
 
-  after:
-    text      data     bss     dec       hex      filename
-    13734787  5086442  360800  19182029  124b1cd  vmlinux
+> And synchronizing access to registers between those two drivers will be
+> hard, while we could just share the same spin lock between the RTC and
+> clock drivers if they are instanciated in the same place.
 
-So the result is a 390KB total reduction in kernel image size.
+While the RTC driver currently shares a spinlock between the clock part
+and the RTC part, there isn't actually any overlap in register usage
+between the two. So there doesn't need to be any synchronization.
 
-The one early clock provider (sun5i) requires the core to be built in.
-
-Now that loading the MMC driver will trigger loading the CCU core, the
-MMC timing mode functions do not need a compile-time fallback.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/clk/Makefile              |  2 +-
- drivers/clk/sunxi-ng/Kconfig      |  3 ++-
- drivers/clk/sunxi-ng/Makefile     | 33 +++++++++++++++++--------------
- drivers/clk/sunxi-ng/ccu_common.c |  3 +++
- drivers/mmc/host/Kconfig          |  1 +
- include/linux/clk/sunxi-ng.h      | 15 --------------
- 6 files changed, 25 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e42312121e51..6afe36bd2c0a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -110,7 +110,7 @@ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-y					+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
--obj-$(CONFIG_SUNXI_CCU)			+= sunxi-ng/
-+obj-y					+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= ti/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index de88b6e0ec69..727ff755eca4 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config SUNXI_CCU
--	bool "Clock support for Allwinner SoCs"
-+	tristate "Clock support for Allwinner SoCs"
- 	depends on ARCH_SUNXI || COMPILE_TEST
- 	select RESET_CONTROLLER
- 	default ARCH_SUNXI
-@@ -52,6 +52,7 @@ config SUN5I_CCU
- 	bool "Support for the Allwinner sun5i family CCM"
- 	default MACH_SUN5I
- 	depends on MACH_SUN5I || COMPILE_TEST
-+	depends on SUNXI_CCU=y
- 
- config SUN6I_A31_CCU
- 	tristate "Support for the Allwinner A31/A31s CCU"
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 1020ed49a588..659d55150c32 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,24 +1,27 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_SUNXI_CCU)		+= sunxi-ccu.o
-+
- # Common objects
--obj-y				+= ccu_common.o
--obj-y				+= ccu_mmc_timing.o
--obj-y				+= ccu_reset.o
-+sunxi-ccu-y			+= ccu_common.o
-+sunxi-ccu-y			+= ccu_mmc_timing.o
-+sunxi-ccu-y			+= ccu_reset.o
- 
- # Base clock types
--obj-y				+= ccu_div.o
--obj-y				+= ccu_frac.o
--obj-y				+= ccu_gate.o
--obj-y				+= ccu_mux.o
--obj-y				+= ccu_mult.o
--obj-y				+= ccu_phase.o
--obj-y				+= ccu_sdm.o
-+sunxi-ccu-y			+= ccu_div.o
-+sunxi-ccu-y			+= ccu_frac.o
-+sunxi-ccu-y			+= ccu_gate.o
-+sunxi-ccu-y			+= ccu_mux.o
-+sunxi-ccu-y			+= ccu_mult.o
-+sunxi-ccu-y			+= ccu_phase.o
-+sunxi-ccu-y			+= ccu_sdm.o
- 
- # Multi-factor clocks
--obj-y				+= ccu_nk.o
--obj-y				+= ccu_nkm.o
--obj-y				+= ccu_nkmp.o
--obj-y				+= ccu_nm.o
--obj-y				+= ccu_mp.o
-+sunxi-ccu-y			+= ccu_nk.o
-+sunxi-ccu-y			+= ccu_nkm.o
-+sunxi-ccu-y			+= ccu_nkmp.o
-+sunxi-ccu-y			+= ccu_nm.o
-+sunxi-ccu-y			+= ccu_mp.o
- 
- # SoC support
- obj-$(CONFIG_SUNIV_F1C100S_CCU)	+= suniv-f1c100s-ccu.o
-diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-index fe35336f6b87..81915500b0ee 100644
---- a/drivers/clk/sunxi-ng/ccu_common.c
-+++ b/drivers/clk/sunxi-ng/ccu_common.c
-@@ -9,6 +9,7 @@
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/iopoll.h>
-+#include <linux/module.h>
- #include <linux/slab.h>
- 
- #include "ccu_common.h"
-@@ -213,3 +214,5 @@ void of_sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
- 		kfree(ccu);
- 	}
- }
-+
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 71313961cc54..1247c9455dea 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -964,6 +964,7 @@ config MMC_REALTEK_USB
- config MMC_SUNXI
- 	tristate "Allwinner sunxi SD/MMC Host Controller support"
- 	depends on ARCH_SUNXI || COMPILE_TEST
-+	depends on SUNXI_CCU
- 	help
- 	  This selects support for the SD/MMC Host Controller on
- 	  Allwinner sunxi SoCs.
-diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
-index 3cd14acde0a1..cf32123b39f5 100644
---- a/include/linux/clk/sunxi-ng.h
-+++ b/include/linux/clk/sunxi-ng.h
-@@ -6,22 +6,7 @@
- #ifndef _LINUX_CLK_SUNXI_NG_H_
- #define _LINUX_CLK_SUNXI_NG_H_
- 
--#include <linux/errno.h>
--
--#ifdef CONFIG_SUNXI_CCU
- int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
- int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
--#else
--static inline int sunxi_ccu_set_mmc_timing_mode(struct clk *clk,
--						bool new_mode)
--{
--	return -ENOTSUPP;
--}
--
--static inline int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
--{
--	return -ENOTSUPP;
--}
--#endif
- 
- #endif
--- 
-2.31.1
-
+Regards,
+Samuel
