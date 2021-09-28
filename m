@@ -2,173 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52333C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58286C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A808611CB
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 12:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4171C61139
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Sep 2021 13:01:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240651AbhI1MaD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 08:30:03 -0400
-Received: from mail-oi1-f175.google.com ([209.85.167.175]:43904 "EHLO
-        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240642AbhI1MaB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 08:30:01 -0400
-Received: by mail-oi1-f175.google.com with SMTP id q16so2034205oiw.10;
-        Tue, 28 Sep 2021 05:28:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=1e86EGaNQSFspYR+g+H0ErCWrHt26ybPuetKkhUZAfk=;
-        b=1Eh8Cx0esdOMT9NQbs01WL3ulo1mrQy/9lr5ytQiI7AjMEAxV7DT5qHRZ8pRgNRxxa
-         2DvuzdbMluAVHNJzdzfTdO2hYIm3kRuXTsDGJ7WLMnb6yGkr4r9MeDLJReqVFemqAP8I
-         c00hSezp8gZPOuB2J011AEIdfVdP8juYfcLp1XeDorrnVGVlu9UhZJ3JQ3V57kZlS5tO
-         sUEQq+06jmMh/dvDUAPTAPWS+UhYVKg6wu09IWSDYpQ7d0L53lJmDAr1UKcUrQwTVpNG
-         ikfxb7pV5MPY/gc+mwO5HPubB2jhGRPEFWgFga4CQ4UpYsP0AYd53ZzA+RGiYQ1PeT5c
-         ZQ2w==
-X-Gm-Message-State: AOAM530dq4yXSsXGNFw+uiBHvVMc3JBY0U7JGckQeARnS8T0ZJwSRpsb
-        LAz3TLOAPdp1+yEpr+FKkQ==
-X-Google-Smtp-Source: ABdhPJxdweC4ViDWcuCSxhRm4TIg6wXEUwWOerbwOEDdBE9l96ZkoENskHa8vCNSMU3oKGJlcGSTAg==
-X-Received: by 2002:aca:ab4d:: with SMTP id u74mr3334236oie.120.1632832102003;
-        Tue, 28 Sep 2021 05:28:22 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id z12sm4585394ote.16.2021.09.28.05.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Sep 2021 05:28:20 -0700 (PDT)
-Received: (nullmailer pid 963816 invoked by uid 1000);
-        Tue, 28 Sep 2021 12:28:18 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
+        id S240094AbhI1NDU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 09:03:20 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:35985 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S240300AbhI1NDU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 09:03:20 -0400
+X-IronPort-AV: E=Sophos;i="5.85,329,1624287600"; 
+   d="scan'208";a="95431720"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Sep 2021 22:01:39 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 99D1544703BB;
+        Tue, 28 Sep 2021 22:01:37 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-rtc@vger.kernel.org
-In-Reply-To: <20210928080335.36706-3-samuel@sholland.org>
-References: <20210928080335.36706-1-samuel@sholland.org> <20210928080335.36706-3-samuel@sholland.org>
-Subject: Re: [PATCH v2 2/9] dt-bindings: rtc: sun6i: Add H616, R329, and D1 support
-Date:   Tue, 28 Sep 2021 07:28:18 -0500
-Message-Id: <1632832098.554951.963815.nullmailer@robh.at.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g044-cpg: Add clock and reset entries for SPI Multi I/O Bus Controller
+Date:   Tue, 28 Sep 2021 14:01:32 +0100
+Message-Id: <20210928130132.15022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 28 Sep 2021 03:03:28 -0500, Samuel Holland wrote:
-> These new RTC variants all have a single alarm, like the R40 variant.
-> 
-> For the new SoCs, start requiring a complete list of input clocks. The
-> H616 has three required clocks. The R329 also has three required clocks
-> (but one is different), plus an optional crystal oscillator input. The
-> D1 RTC is identical to the one in the R329.
-> 
-> And since these new SoCs will have a well-defined output clock order as
-> well, they do not need the clock-output-names property.
-> 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
-> Changes since v1:
->   - Properly update the DT binding clocks and clock-names properties.
-> 
->  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 72 ++++++++++++++++++-
->  include/dt-bindings/clock/sun6i-rtc.h         | 10 +++
->  2 files changed, 79 insertions(+), 3 deletions(-)
->  create mode 100644 include/dt-bindings/clock/sun6i-rtc.h
-> 
+Add clock and reset entries for SPI Multi I/O Bus Controller.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 18 ++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     |  3 +++
+ 2 files changed, 21 insertions(+)
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml:122:9: [error] duplication of key "minItems" in mapping (key-duplicates)
-./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml:150:9: [error] duplication of key "minItems" in mapping (key-duplicates)
-
-dtschema/dtc warnings/errors:
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.example.dts'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 45, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 122, in get_single_data
-    return self.construct_document(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 132, in construct_document
-    for _dummy in generator:
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 722, in construct_yaml_map
-    value = self.construct_mapping(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 446, in construct_mapping
-    return BaseConstructor.construct_mapping(self, node, deep=deep)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 264, in construct_mapping
-    if self.check_mapping_key(node, key_node, mapping, key, value):
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 295, in check_mapping_key
-    raise DuplicateKeyError(*args)
-ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
-  in "<unicode string>", line 121, column 9
-found duplicate key "minItems" with value "3" (original value: "3")
-  in "<unicode string>", line 122, column 9
-
-To suppress this check see:
-    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
-
-make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 25, in check_doc
-    testtree = dtschema.load(filename, line_number=line_number)
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 623, in load
-    return yaml.load(f.read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 122, in get_single_data
-    return self.construct_document(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 132, in construct_document
-    for _dummy in generator:
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 722, in construct_yaml_map
-    value = self.construct_mapping(node)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 446, in construct_mapping
-    return BaseConstructor.construct_mapping(self, node, deep=deep)
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 264, in construct_mapping
-    if self.check_mapping_key(node, key_node, mapping, key, value):
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 295, in check_mapping_key
-    raise DuplicateKeyError(*args)
-ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
-  in "<unicode string>", line 121, column 9
-found duplicate key "minItems" with value "3" (original value: "3")
-  in "<unicode string>", line 122, column 9
-
-To suppress this check see:
-    http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
-
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 67, in <module>
-    ret = check_doc(f)
-  File "/usr/local/bin/dt-doc-validate", line 30, in check_doc
-    print(filename + ":", exc.path[-1], exc.message, file=sys.stderr)
-AttributeError: 'DuplicateKeyError' object has no attribute 'path'
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml: ignoring, error parsing file
-warning: no schema found in file: ./Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
-make: *** [Makefile:1441: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1533753
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 3c518b56c5a6..1e331cdb13a5 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -29,10 +29,14 @@ enum clk_ids {
+ 	CLK_PLL2_DIV16,
+ 	CLK_PLL2_DIV20,
+ 	CLK_PLL3,
++	CLK_PLL3_400,
++	CLK_PLL3_533,
+ 	CLK_PLL3_DIV2,
+ 	CLK_PLL3_DIV2_4,
+ 	CLK_PLL3_DIV2_4_2,
+ 	CLK_PLL3_DIV4,
++	CLK_SEL_PLL3_3,
++	CLK_DIV_PLL3_C,
+ 	CLK_PLL4,
+ 	CLK_PLL5,
+ 	CLK_PLL5_FOUT3,
+@@ -56,6 +60,7 @@ static const struct clk_div_table dtable_1_32[] = {
+ };
+ 
+ /* Mux clock tables */
++static const char * const sel_pll3_3[] = { ".pll3_533", ".pll3_400" };
+ static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
+ 
+ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+@@ -68,6 +73,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+ 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
+ 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
+ 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
++	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
++	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
+ 
+ 	DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
+ 	DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
+@@ -82,6 +89,10 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
+ 	DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
+ 	DEF_FIXED(".pll3_div4", CLK_PLL3_DIV4, CLK_PLL3, 1, 4),
++	DEF_MUX(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3,
++		sel_pll3_3, ARRAY_SIZE(sel_pll3_3), 0, CLK_MUX_READ_ONLY),
++	DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3,
++		DIVPL3C, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+ 
+ 	DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
+ 	DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
+@@ -101,6 +112,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+ 	DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
+ 	DEF_MUX("HP", R9A07G044_CLK_HP, SEL_PLL6_2,
+ 		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
++	DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
++	DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
+ };
+ 
+ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+@@ -114,6 +127,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 				0x52c, 0),
+ 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+ 				0x52c, 1),
++	DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
++				0x550, 0),
++	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
++				0x550, 1),
+ 	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
+ 				0x570, 0),
+ 	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
+@@ -182,6 +199,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
+ 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
+ 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
++	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
+ 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
+ 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+ 	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 191c403aa52f..dc5b65a4029e 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -11,6 +11,7 @@
+ 
+ #define CPG_PL2_DDIV		(0x204)
+ #define CPG_PL3A_DDIV		(0x208)
++#define CPG_PL3_SSEL		(0x408)
+ #define CPG_PL6_ETH_SSEL	(0x418)
+ 
+ /* n = 0/1/2 for PLL1/4/6 */
+@@ -24,10 +25,12 @@
+ #define DIVPL2A		DDIV_PACK(CPG_PL2_DDIV, 0, 3)
+ #define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
+ #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
++#define DIVPL3C		DDIV_PACK(CPG_PL3A_DDIV, 8, 3)
+ 
+ #define SEL_PLL_PACK(offset, bitpos, size) \
+ 		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
+ 
++#define SEL_PLL3_3	SEL_PLL_PACK(CPG_PL3_SSEL, 8, 1)
+ #define SEL_PLL6_2	SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
+ 
+ /**
+-- 
+2.17.1
 
