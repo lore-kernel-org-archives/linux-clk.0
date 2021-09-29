@@ -2,114 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D269C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A8EC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 268C561368
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64145613CE
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245483AbhI2Vbu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 17:31:50 -0400
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:35610 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237351AbhI2Vbu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 17:31:50 -0400
-Received: by mail-oi1-f173.google.com with SMTP id n64so4676025oih.2;
-        Wed, 29 Sep 2021 14:30:08 -0700 (PDT)
+        id S1346730AbhI2VhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 17:37:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345930AbhI2VhX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 17:37:23 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFAE3C061767
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 14:35:41 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id i25so16460594lfg.6
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 14:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EyTnMzYq/vCo9+ZlAi5FiLa7VQj9CHwqWbGroqQ1q+g=;
+        b=p92tfDwcgAZ97KGfoC1Yt4fwYfXl7WZMfcSALcMasWs3c8GRxC6wenhVIFzdL9Wsq2
+         NXFzv6kwgIou6n9BdeQrNdb7Vb5IJ6tsD//eu9ahYDhr8ZoSIgAYx9PfVHDWOaUshbfm
+         DPd3pWGX5Emsn8QKCpFGY/fDKYRj+Zne9vEoPAK5pD/d0im1rHsEIn2zQahSyosaTv/h
+         xEib4h13Q0fO1GaHVfLW9PFvtPC7yrZtbBgFSdcVihg8bC80WUKAwZsJOWTgUgOWXQnc
+         c+hFNmVePqKEht1VIhoJD8WtTSaPAmw3DUVyNnYxdHre3ZIr5RJqcd+fE+e5j3BFShm1
+         Y6yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=xj3A4rvClnuXjjs9tt5J5UAtJSSY9GP9bYs5NYEPfs8=;
-        b=dlkEnL1/PjATKw+BYyLiHsbslr1o78bPXXInb0cF1yM8ZT1DnOs2gHKbAyCtefYGzj
-         VgdmmVs5UVP6SnlvnSNgYb66qqZQu1/bAymm2SYZNs4vQ15L8l9POFiLVP/35UerNS0g
-         0WepLMGeSIRezaNpPWlCIiVMlWi13BfmWlSnJQ0tVMpqqKzjBf9XU/5RFgglF6Y7pwZm
-         MKRcsiSfP/IaiPgyFqewbNXvjl1Z1T1ZlKFWBm8e+UceQmlpTmZpCuWZJ1GBKUp8Xkvd
-         PC8Ioi1yzH2/mAQu0FvUip/1gezBbSWJXc6pFXn7PchoqKN0Zj8zabEPAhGx3v72c7tg
-         K7yw==
-X-Gm-Message-State: AOAM530Dmb8cEtWYlFOnrwLEOgM8jUUu1sqerRa0GDps1aZ/eZJ+LetG
-        eWdfB/N/meNj68HU4xTxwbd2IfsfCg==
-X-Google-Smtp-Source: ABdhPJwMOVqFhsChePGW0D8oj7w80frc/fDvBCM3G907ladFwiT0DkQpLc8pRZba5bEr7dmrT7qtGw==
-X-Received: by 2002:a05:6808:a9c:: with SMTP id q28mr9871562oij.148.1632951008390;
-        Wed, 29 Sep 2021 14:30:08 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bh39sm225250oib.37.2021.09.29.14.30.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EyTnMzYq/vCo9+ZlAi5FiLa7VQj9CHwqWbGroqQ1q+g=;
+        b=Ov9hhiVpglw+/mZ888IN5DlYEs4XuQfSQngwOpfUzfy80otu+ZrpaNMv18JeUNoA33
+         VRENP2pyzCc5K+HEh+K9Kvd/ENubYkFVT8aR0Lwu+uecNOf8tOMC45qdt0CWgdODB4sJ
+         mF/RsR+y6wWB8b6ZjWbdAZPCKAQaaPEl/E66XwH5wZLeemAgVKaJch6MCWXaLKSdHt+K
+         +ZfN/B4Pf+wFzDIaruujef3aT/APOkFeLkPJJhfyDAAFjpMvV3mxpwQUbJuBPF1MD+dM
+         30IsaZAv4Gr7IxqaRJb68AU+i/N3BGz6TqjiRGt2fWm+ztS+OjDP1uwlx3DAswWhbmmj
+         +8Tg==
+X-Gm-Message-State: AOAM530lCV+uQZcqPAyla8HjpjguyTqubXF/zzKoZtoogkdyFSGp7snW
+        HAN7gc3GrTQ6Sj9E0EYmdV7G7okSFmr2mTOE
+X-Google-Smtp-Source: ABdhPJwkFWv34OpeQwSZYEXZsWF0YpaEoXfonGOz6oBsU4nBLcZpAQkDAYhGFtZSP9NZioVjB+JrpA==
+X-Received: by 2002:a05:6512:3d0e:: with SMTP id d14mr1932784lfv.20.1632951340130;
+        Wed, 29 Sep 2021 14:35:40 -0700 (PDT)
+Received: from cobook.home (nikaet.starlink.ru. [94.141.168.29])
+        by smtp.gmail.com with ESMTPSA id x11sm124016lfq.95.2021.09.29.14.35.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 14:30:07 -0700 (PDT)
-Received: (nullmailer pid 244287 invoked by uid 1000);
-        Wed, 29 Sep 2021 21:30:06 -0000
-Date:   Wed, 29 Sep 2021 16:30:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-serial@vger.kernel.org,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wed, 29 Sep 2021 14:35:39 -0700 (PDT)
+From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: mvebu-uart: document DT bindings for
- marvell,armada-3700-uart-clock
-Message-ID: <YVTa3pt279D/qWz6@robh.at.kernel.org>
-References: <20210929082034.15098-1-pali@kernel.org>
- <20210929082034.15098-4-pali@kernel.org>
- <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
- <20210929140132.gom6qiohucsczoxq@pali>
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] clk: renesas: r8a779[56]x: add MLP clock
+Date:   Thu, 30 Sep 2021 00:34:32 +0300
+Message-Id: <20210929213431.5275-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210929140132.gom6qiohucsczoxq@pali>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 04:01:32PM +0200, Pali Rohár wrote:
-> On Wednesday 29 September 2021 08:46:25 Rob Herring wrote:
-> > On Wed, 29 Sep 2021 10:20:31 +0200, Pali Rohár wrote:
-> > > This change adds DT bindings documentation for device nodes with compatible
-> > > string "marvell,armada-3700-uart-clock".
-> > > 
-> > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > 
-> > > ---
-> > > Changes in v6
-> > > * Fix license
-> > > * Rename node to clock-controller@12010
-> > > * Remove maxItems
-> > > ---
-> > >  .../bindings/clock/armada3700-uart-clock.yaml | 56 +++++++++++++++++++
-> > >  1 file changed, 56 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > > 
-> > 
-> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: 'http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#' does not match 'http://devicetree.org/schemas/.*\\.yaml#'
-> > 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: 'maintainers' is a required property
-> > 	hint: Metaschema for devicetree binding documentation
-> > 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-> > ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: relative path/filename doesn't match actual path or filename
-> > 	expected: http://devicetree.org/schemas/clock/armada3700-uart-clock.yaml#
-> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: ignoring, error in schema: $id
-> > warning: no schema found in file: ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > Documentation/devicetree/bindings/clock/armada3700-uart-clock.example.dt.yaml:0:0: /example-0/clock-controller@12010: failed to match any schema with compatible: ['marvell,armada-3700-uart-clock']
-> 
-> Hello! What does this error mean?
-> 
-> Should I add .yaml suffix into '$id: ' line and rename file via?
-> git mv Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
 
-Yes. They need to match.
+Add clocks for MLP module on Renesas H3 and M3.
 
-Rob
+Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  | 1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  | 1 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index c32d2c678046..d6b1d0148bfd 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -229,6 +229,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
+ 	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
+ 	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
++	DEF_MOD("mlp",			 802,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("vin7",			 804,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("vin6",			 805,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("vin5",			 806,	R8A7795_CLK_S0D2),
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 41593c126faf..9c22977e42c2 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -207,6 +207,7 @@ static struct mssr_mod_clk r8a7796_mod_clks[] __initdata = {
+ 	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("hdmi0",		 729,	R8A7796_CLK_HDMI),
++	DEF_MOD("mlp",			 802,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index bc1be8bcbbe4..52c5da26b756 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -205,6 +205,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
+ 	DEF_MOD("lvds",			727,	R8A77965_CLK_S2D1),
+ 	DEF_MOD("hdmi0",		729,	R8A77965_CLK_HDMI),
+ 
++	DEF_MOD("mlp",			802,	R8A77965_CLK_S2D1),
+ 	DEF_MOD("vin7",			804,	R8A77965_CLK_S0D2),
+ 	DEF_MOD("vin6",			805,	R8A77965_CLK_S0D2),
+ 	DEF_MOD("vin5",			806,	R8A77965_CLK_S0D2),
+-- 
+2.30.2
+
