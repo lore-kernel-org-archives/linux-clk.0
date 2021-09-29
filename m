@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBAAC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF68C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF4761411
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C436140D
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:23:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244825AbhI2IYu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 04:24:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33434 "EHLO mail.kernel.org"
+        id S244709AbhI2IYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 04:24:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244706AbhI2IYf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Sep 2021 04:24:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 08E5461425;
-        Wed, 29 Sep 2021 08:22:54 +0000 (UTC)
+        id S240284AbhI2IYd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Sep 2021 04:24:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1CF9E613A6;
+        Wed, 29 Sep 2021 08:22:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632903774;
-        bh=4byK3iUGbugkM2XJS6Aht8JNHiZ+/JguU81u9HVJrTY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p+kH+WnWvKIEIv8yFqPgyDfqIytCNqPuZSIyRgE4w/U7x0mlxhGPKqN70mIrcnpsF
-         YpexPhRWxc7gboYCbDix+i64mWmxUhelw3Z5ias+0d4jJWEpPMBT5Sh/SXZUW/I4B4
-         7zRau0cHi61VWiS8B8Z4grQc80qVYNSyWVZpwMPIBpuaziiPicxZtYx+ATRv0Cvkt+
-         a4BP7YxMIsbAky3FjM18Lh2OME+f44fp3JL31wuU1r3GEzftgCkW7VHWhVXeXlR0aG
-         VhvumSoWzaXtzfXy8H+4dOm0koQ23RFEwkuI2mvhgwRlp+DcdmpK/jtz74s/uoo/dw
-         bBITwy++bEkfg==
+        s=k20201202; t=1632903773;
+        bh=CaZv5D6dBea9V73DW6In0hGNMqG2tpf4Jer/zjX4Zto=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uJqGIJiWMZH9pKkJMRU08OKxG3jxLoX7g3bp/nMbKemRyLh7tH+Wp0kKosDPvgg5x
+         hIay9JRi6DG2DJqayM5seWElEItChISfMhCT4Rcxc6Rs8LjU89u4lpMJ4sNNVakkaC
+         ejOaxW2T0b2RgPyF7Mwl3l8lu9iCnXTVmBQs5FQ+D9ZkpizRNV2IixeUJipIBnqRwA
+         USUAJzWleYOQmgYu8rwCzqfL0mEb3t7TnYDhBI2ogCFWFmQoAR8jZz8gbLUVCQSwQq
+         QluSUmg0c6aEOKXpwW6MItasTqcBUr4jGn/wytuLR7EvLOW//wqMp58IWtQo8pKufz
+         m1YymgvpKDckA==
 Received: by pali.im (Postfix)
-        id 36C441E18; Wed, 29 Sep 2021 10:22:52 +0200 (CEST)
+        id B552C76E; Wed, 29 Sep 2021 10:22:50 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -41,12 +41,10 @@ Cc:     Andrew Lunn <andrew@lunn.ch>,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 3/6] dt-bindings: mvebu-uart: document DT bindings for marvell,armada-3700-uart-clock
-Date:   Wed, 29 Sep 2021 10:20:31 +0200
-Message-Id: <20210929082034.15098-4-pali@kernel.org>
+Subject: [PATCH v6 0/6] serial: mvebu-uart: Support for higher baudrates
+Date:   Wed, 29 Sep 2021 10:20:28 +0200
+Message-Id: <20210929082034.15098-1-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210929082034.15098-1-pali@kernel.org>
-References: <20210929082034.15098-1-pali@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,83 +52,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This change adds DT bindings documentation for device nodes with compatible
-string "marvell,armada-3700-uart-clock".
+This patch series add support for baudrates higher than 230400 on
+Marvell Armada 37xx boards.
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
+Changes in v6:
+* fixed yaml binding file and dts files
 
----
-Changes in v6
-* Fix license
-* Rename node to clock-controller@12010
-* Remove maxItems
----
- .../bindings/clock/armada3700-uart-clock.yaml | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Changes in v5:
+* fixed yaml binding file
+
+Changes in v4:
+* converted armada3700-uart-clock documentation to YAML
+* split documentation changes into two commits:
+  - first which adds clock documentation
+  - second which updates UART documentation
+
+Changes in v3:
+v3 is rebased on top of Linus master branch and all already applied patches
+were dropped. There are no changes in patches itself since v2.
+
+Pali Rohár (6):
+  math64: New DIV_U64_ROUND_CLOSEST helper
+  serial: mvebu-uart: implement UART clock driver for configuring UART
+    base clock
+  dt-bindings: mvebu-uart: document DT bindings for
+    marvell,armada-3700-uart-clock
+  dt-bindings: mvebu-uart: update information about UART clock
+  arm64: dts: marvell: armada-37xx: add device node for UART clock and
+    use it
+  serial: mvebu-uart: implement support for baudrates higher than 230400
+
+ .../bindings/clock/armada3700-uart-clock.yaml |  56 ++
+ .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  14 +-
+ drivers/tty/serial/Kconfig                    |   1 +
+ drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
+ include/linux/math64.h                        |  13 +
+ 6 files changed, 664 insertions(+), 21 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-new file mode 100644
-index 000000000000..1bb52305a44c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+title: Marvell Armada 3720 UART clocks
-+
-+properties:
-+  compatible:
-+    const: marvell,armada-3700-uart-clock
-+
-+  reg:
-+    items:
-+      - description: UART Clock Control Register
-+      - description: UART 2 Baud Rate Divisor Register
-+
-+  clocks:
-+    description: |
-+      List of parent clocks suitable for UART from following set:
-+        "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal"
-+      UART clock can use one from this set and when more are provided
-+      then kernel would choose and configure the most suitable one.
-+      It is suggest to specify at least one TBG clock to achieve
-+      baudrates above 230400 and also to specify clock which bootloader
-+      used for UART (most probably xtal) for smooth boot log on UART.
-+
-+  clock-names:
-+    items:
-+      - const: TBG-A-P
-+      - const: TBG-B-P
-+      - const: TBG-A-S
-+      - const: TBG-B-S
-+      - const: xtal
-+    minItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    uartclk: clock-controller@12010 {
-+      compatible = "marvell,armada-3700-uart-clock";
-+      reg = <0x12010 0x4>, <0x12210 0x4>;
-+      clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>, <&tbg 3>, <&xtalclk>;
-+      clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal";
-+      #clock-cells = <1>;
-+    };
 -- 
 2.20.1
 
