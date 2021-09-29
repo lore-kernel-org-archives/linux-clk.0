@@ -2,117 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B68DC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F835C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 19:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F0AC613D1
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8295D613DA
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 19:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244876AbhI2OFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 10:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245240AbhI2ODQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Sep 2021 10:03:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 848C960F4F;
-        Wed, 29 Sep 2021 14:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632924094;
-        bh=u765s826tzbfU6E7Jd+UfNUmJveS9TYHdoRPAUBCuQo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eqx8IaVhudHizsPHXmBuAIACus4x8V6AtWzV14J6HjnFg4wasOX4qg8jYK6/prsoM
-         ZFsRWknBPnZ7YftRS3qfUsWAH0Qrfctd6vkrh4DMBnH7yncp0jh6oKKwqRGF2LL4n1
-         eWjLFIJItIB92u1wE/18XCOn/nMde3fLI6GHxVqPo3+qaUtHk3zbYoxSnnAz8dYv2+
-         RYyTuaVYcB9vRF8DxeLXAudMTarxHFquZBPHOZQiEnHxtIbzGEUPw4v92BmGA9ZNFK
-         ItK38QSUr0PXJyQ7i6iA++bxRo6iWmk+xhirHQSYhjbNfSeS+Vnb+gl+dT+47P6T3P
-         vNBdX0Rac/Gow==
-Received: by pali.im (Postfix)
-        id 28A0E76E; Wed, 29 Sep 2021 16:01:32 +0200 (CEST)
-Date:   Wed, 29 Sep 2021 16:01:32 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-serial@vger.kernel.org,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: mvebu-uart: document DT bindings for
- marvell,armada-3700-uart-clock
-Message-ID: <20210929140132.gom6qiohucsczoxq@pali>
-References: <20210929082034.15098-1-pali@kernel.org>
- <20210929082034.15098-4-pali@kernel.org>
- <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
+        id S1345403AbhI2TuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 15:50:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345366AbhI2TuA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 15:50:00 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C7DC061764
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 12:48:17 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id v18so12722003edc.11
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 12:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3th2hUjvmiLPXNLmRnZX/EchQR6aXc4YsFVE304670Q=;
+        b=IaYLjPbFd6hwOEKnD3borADXZUAdBFhcU7NQsIc83/Kmivk0MUFZHiLULqzAcZwoYH
+         qgly0aAYe4/jrm2dq+AAqH7xrXWTyOu873UoXqA9WMnouuXtrzKdnoLmt/25r2KCYSmy
+         JlExGC4JrIen5ukSpZnE5amYh6LCDJ0KQ1XpqVsmk2ejUkv8+jPHPVjKyAOC5Cz4qgpY
+         6bT2hVDCBfl9XAYzeR2N0NKYwspYQ9NwfPoMneZu0g8DOzqtaKxaOPwB9oJPa4keQvv2
+         2kdnMxrbE2qa97FpIqy4/AppfVkBDN2apsainGdq2uZcZchTkzZ+wH5+vQ5O50wkEC4u
+         CZqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3th2hUjvmiLPXNLmRnZX/EchQR6aXc4YsFVE304670Q=;
+        b=fH1zvL+cVplrMr5EabuL6lKaCAaYGJwTkXYxbgZot2xrdROV4oZzi4RktfvqpGFWQY
+         KLxof2FvcdVnW1A4rL9702mR3hbjwwgxF1joGWIKnnAwb0xaIrn6IDYkB9loYX5pPTNS
+         wSikp/0od/U1mH1vOT8a6anhrKGPhTxoCZNVi9qEAbBQTPjJQ4bgqNEsDt+KpIklhGeg
+         otE72AHUBhWPPpM+EXzMbHwaC8Ee/R/8Sp2QTD82masuDm2sEOhzr4JF4PVhaOpNEdu1
+         7hSAzONOEyerXxsfIHSS8hywDG00OHOJdHe11dP6CcWFuwhr0EJe7UjuzEc3vzKq9LKQ
+         IVVg==
+X-Gm-Message-State: AOAM5301zQyqLLg9eeRw/4dOCKTAehoHyXM6vnTYtsFtPDAr6c7ztO+e
+        LHO1jUjyAZnL9ma5C7ENgm1no7K2AGFhCXoY700UKA==
+X-Google-Smtp-Source: ABdhPJzXsuFmp5jw2/gm+EE7SK7HrZyR0YkqtXCspdsR4fqquN6AoJLxVqpUYBYuw+OkilrsfXKcWu9Sh8ae4M6O/gs=
+X-Received: by 2002:a17:906:fa8c:: with SMTP id lt12mr1832859ejb.204.1632944896124;
+ Wed, 29 Sep 2021 12:48:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
-User-Agent: NeoMutt/20180716
+References: <20210928235635.1348330-1-willmcvicker@google.com> <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+In-Reply-To: <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+From:   Will McVicker <willmcvicker@google.com>
+Date:   Wed, 29 Sep 2021 12:48:00 -0700
+Message-ID: <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wednesday 29 September 2021 08:46:25 Rob Herring wrote:
-> On Wed, 29 Sep 2021 10:20:31 +0200, Pali Rohár wrote:
-> > This change adds DT bindings documentation for device nodes with compatible
-> > string "marvell,armada-3700-uart-clock".
-> > 
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > 
-> > ---
-> > Changes in v6
-> > * Fix license
-> > * Rename node to clock-controller@12010
-> > * Remove maxItems
-> > ---
-> >  .../bindings/clock/armada3700-uart-clock.yaml | 56 +++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> > 
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: 'http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#' does not match 'http://devicetree.org/schemas/.*\\.yaml#'
-> 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: 'maintainers' is a required property
-> 	hint: Metaschema for devicetree binding documentation
-> 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-> ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: relative path/filename doesn't match actual path or filename
-> 	expected: http://devicetree.org/schemas/clock/armada3700-uart-clock.yaml#
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: ignoring, error in schema: $id
-> warning: no schema found in file: ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
-> Documentation/devicetree/bindings/clock/armada3700-uart-clock.example.dt.yaml:0:0: /example-0/clock-controller@12010: failed to match any schema with compatible: ['marvell,armada-3700-uart-clock']
+On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 29/09/2021 01:56, Will McVicker wrote:
+> > This is v2 of the series of patches that modularizes a number of core
+> > ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
+> > modularized all of the drivers that are removed from the ARCH_EXYNOS
+> > series of "select XXX". This includes setting the following configs as
+> > tristate:
+> >
+> >  * COMMON_CLK_SAMSUNG
+> >  * EXYNOS_ARM64_COMMON_CLK
+> >  * PINCTRL_SAMSUNG
+> >  * PINCTRL_EXYNOS
+> >  * EXYNOS_PMU_ARM64
+> >  * EXYNOS_PM_DOMAINS
+> >
+> > Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
+> > which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
+> > The reason for these new configs is because we are not able to easily
+> > modularize the ARMv7 PMU driver due to built-in arch dependencies on
+> > pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
+> > the ARM and ARM64 portions into two separate configs.
+> >
+> > Overall, these drivers didn't require much refactoring and converted to
+> > modules relatively easily. However, due to my lack of exynos hardware, I
+> > was not able to boot test these changes. I'm mostly concerned about the
+> > CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
+> > requesting help for testing these changes on the respective hardware.
+> >
+>
+> These are all not tested at all? In such case, since these are not
+> trivial changes, please mark the series as RFT.
+>
+> I will not be able to test these for some days, so it must wait.
+>
+>
+> Best regards,
+> Krzysztof
 
-Hello! What does this error mean?
++Cc Arnd and Olof,
 
-Should I add .yaml suffix into '$id: ' line and rename file via?
-git mv Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+Hi Krzysztof,
 
-Or something else is needed?
+To avoid the scrambled conversation from the first patchset, I'm going
+to address all your general questions here in the cover letter thread
+so that it's easier for everyone to follow and reference in the
+future.
 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/patch/1534231
-> 
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
-> 
+>What is more, it seems you entirely ignored Geert's comments. I pointed
+>attention to it last time and you just said you will send v2 instead of
+>joining discussion.
+>
+>It's a NAK for this reason - ignoring what Geert brought: you just broke
+>distro configs for Exynos.
+
+First off I did want to chime into the discussion from the previous
+patchset, but I felt that Lee and Saravana addressed all your concerns
+regarding the intent and feasibility. You also made it clear what the
+next steps were that I needed to take.
+
+>Please also explain why Exynos is so special that we deviate from the
+>policy for all SoC that critical SoC-related drivers have to be enabled
+>(built-in or as module).
+
+I am not actually changing ANY default build configurations here and
+I'm not removing any existing configuration. I tried to make it pretty
+clear in my original patch series commit messages that none of my
+changes modify the default behavior. The .config is the same with and
+without my patches. All of these drivers remain enabled as built-in.
+So if there is a distro that requires all of these drivers to be
+built-in, then they can continue as is without noticing any
+difference. IOW, all of these changes are/should be backwards
+compatible.
+
+I really appreciate yours and John Stultz's comments regarding
+including the "why" in my commit message wording. I will spend more
+time on the next series on trying to write a more meaningful commit
+message, but before that we can surely discuss the "why" here.
+
+As mentioned by Lee and Saravana, our common goal is to make it easier
+for everyone to contribute upstream. In particular, this series of
+patches is laying the ground work for distros to have more flexibility
+in supporting a wider range of platforms without forcing everyone to
+include unnecessary drivers. You said that upstream supports a generic
+kernel, but I argue that the upstream "generic" arm64 kernel can't be
+considered generic if it builds in SoC specific drivers that can be
+modules. This patch series is addressing exactly that -- allow distros
+to move SoC specific drivers out of the core kernel and into modules.
+Ultimately, our goal is to be able to directly develop with the
+upstream kernel on new and old SoCs by not including SoC specific
+drivers in our generic kernel distro. This helps the upstream
+community in a number of ways:
+
+(1) It makes the ARM64 generic kernel smaller by converting more
+drivers into modules
+(2) It makes it a lot easier for everyone to develop upstream if they
+can directly use the upstream kernel without carrying downstream
+changes.
+
+>Even if there was, I think it is good to have dependencies like
+>ARCH_EXYNOS, as they let us partition the (19000, as Arnd said recently)
+>Kconfig symbols into better manageable groups.  Without these, we cannot
+>do better than "depends on ARM || ARM64 || COMPILE_TEST".
+
+My patch series still keeps the dependencies on ARCH_EXYNOS. I am
+totally fine with "depends on ARCH_EXYNOS" and totally fine with
+"default ARCH_EXYNOS". The problem we have is that ARCH_EXYNOS
+forcefully selects SoC specific drivers to be built-in because it just
+adds more and more SoC-specific drivers to a generic kernel.
+
+I know you are asking for me to only push changes that have proven to
+work. The theory behind these changes has been proven downstream on
+other devices and I'm more than willing to help debug any issues that
+arise out of this patch series, but since I don't have the hardware
+myself I do need help with device testing these changes. We are not
+trying to trick upstream in anyway to accept something that is not
+functional or going to hurt the upstream community. I am more than
+willing to help upstream and am totally willing to work with upstream
+to verify all of these changes before they are accepted (feel free to
+send me any dusty, unused hardware lying around if you want the extra
+help with device testing).
+
+I hope that helps clarifies things! I will address other patch
+specific comments in those threads as well.
+
+Thanks,
+Will
