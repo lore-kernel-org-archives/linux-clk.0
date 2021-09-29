@@ -2,1193 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D62C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 02:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E535DC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 03:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67E26611C0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 02:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C91D961350
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 03:03:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243661AbhI2CDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Sep 2021 22:03:33 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:51379 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243695AbhI2CDd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Sep 2021 22:03:33 -0400
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210929020151epoutp033f2a4a03232a2ccef6a1e5a309960336~pKImK5L5w1096110961epoutp03w
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 02:01:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210929020151epoutp033f2a4a03232a2ccef6a1e5a309960336~pKImK5L5w1096110961epoutp03w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1632880911;
-        bh=6IjJ2MVMwpILLVgnmhxUb+libLBEmsYv6BtXAkfv+c4=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=cqpB+JUr1fpj+ZKT4rmall0CC+LzflNSYblltMbCtsr16pqpMdpFhNfGhe0/H3Sh3
-         vCvmDxqMeBz/xexnFugUSleWpYHbyf5Yf1Y4XH7Xz4uw5JaJX3fs4e9BIy330rohSt
-         yvCB8SYFHwcv1WfeIsSEdV4T1D3s/K39Yt6qUYYk=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20210929020146epcas2p1f613f6372bf7cad9497325fa8d30bd79~pKIhld2LA0556905569epcas2p1Q;
-        Wed, 29 Sep 2021 02:01:46 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.88]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4HK03j6nj6z4x9QK; Wed, 29 Sep
-        2021 02:01:37 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A0.88.09472.BF8C3516; Wed, 29 Sep 2021 11:01:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210929020121epcas2p4a31ff7bd24c0530d5d446ad68d2db658~pKIKrPCIa2744827448epcas2p4M;
-        Wed, 29 Sep 2021 02:01:21 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210929020121epsmtrp14a178753f05d3dc2089a1f992f3fe73e~pKIKoDV8K1468114681epsmtrp1L;
-        Wed, 29 Sep 2021 02:01:21 +0000 (GMT)
-X-AuditID: b6c32a48-d5fff70000002500-f5-6153c8fb5353
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        09.CE.08750.1F8C3516; Wed, 29 Sep 2021 11:01:21 +0900 (KST)
-Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210929020121epsmtip2990b40985a3f040a08747d6da8a4b2a8~pKIKQsvFn0639906399epsmtip2g;
-        Wed, 29 Sep 2021 02:01:21 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Will McVicker'" <willmcvicker@google.com>,
-        "'Russell King'" <linux@armlinux.org.uk>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Catalin Marinas'" <catalin.marinas@arm.com>,
-        "'Will Deacon'" <will@kernel.org>,
-        "'Michael Turquette'" <mturquette@baylibre.com>,
-        "'Stephen Boyd'" <sboyd@kernel.org>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Alessandro Zummo'" <a.zummo@towertech.it>,
-        "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>,
-        "'John Stultz'" <john.stultz@linaro.org>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>
-Cc:     "'Lee Jones'" <lee.jones@linaro.org>,
-        "'Geert Uytterhoeven'" <geert@linux-m68k.org>,
-        "'Saravana Kannan'" <saravanak@google.com>,
-        <kernel-team@android.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>
-In-Reply-To: <20210928235635.1348330-9-willmcvicker@google.com>
-Subject: RE: [PATCH v2 08/12] pinctrl: samsung: modularize the ARM and ARM64
- pinctrls
-Date:   Wed, 29 Sep 2021 11:01:20 +0900
-Message-ID: <005501d7b4d5$e60f38f0$b22daad0$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG22v7dcW676vpFb/BQW8l6Xu2xWgGPMZ+lApHLJcWr2us3gA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUZRSf7959YZG3BeUDrYFFInGAXeTxQSANj+Y2klL80YyFdIe97fLa
-        XfeCiQ0DDck7MYM2VwIkhjfiLhvgIsgs+MiMYFBkkKABQVB5JOIoL1v2avHf7/zO+Z3zO+eb
-        T4ALf+E7COIUybRaQSWKeFs4Ld27/dxXrkdR4rxqEarsv81H2XNVfDRfVQDQnSf3uWhquAND
-        N1fcUVurLdLNPsPQ2NIVgIpWqzGknxjkon8KRrmouWwVoAFjCQ9drb/FQz/92YkhU3EHQP03
-        wlH3o2wuyjOt8dD6oI6DmvXFOKozmgXfjviguscvwPv2ZEt7C5dsKG0A5MBgP07OD53gk6UN
-        X5PajO945EXtX3yyXJ9C6utyeeTI4CUeOdfbyydN3TmAbK5MJ08a6gCpKX2OkYv6tyOJQwmB
-        cpqS0mpHWhGrlMYpZEGi/VExoTE+vmKJu8Qf+YkcFVQSHSQKi4h0/yAu0XwQkeNRKjHFTEVS
-        DCPy3BeoVqYk045yJZMcJKJV0kSVn8qDoZKYFIXMQ0EnB0jEYi8fc+EXCfLbD2ox1ekp7Jhh
-        4BqWAX5txPKAlQAS3nC6RAM2sJBoAzCzOSQPbDHjxwDWXFjgsMEigCtDo9xXimzdeYxNGAG8
-        0XyZywbTAD7S91t68QhPOJPTYknYEpe4cKWvwCLBiVkMTpwfxjeqrIhgOLI6Y3FiQ3wKf7zf
-        YeE5hAvM1PWZ1QKBNeEPjQNhG7Q18Sb87cw9zgbGiT2w6txDnLXkCJ9PVlns2RIhsHehls/W
-        2MKzuVn4xlxIjFvB0SodZ6MnJMLglbtSVmsDH1wz8FnsAGcKs/hsfT6AJ8ZfvEzUA5j7TQSL
-        g+GyxmDxhhO7YZPRk23pDHuGX1p7A+Z0r/FZ2hrmZAlZoSvsatVwWPwWzC9Z5J4CIu2mxbSb
-        FtNuWkD7/6xywKkD22kVkySjGS+V93/PHatM0gPLb3Ej28DZ2QUPE8AEwASgABfZWj+zi6KE
-        1lIq9TitVsaoUxJpxgR8zJf+HnfYFqs0fzdFcozE21/s7esr8fPyEfuJ7Kx/Xg+hhISMSqYT
-        aFpFq1/pMIGVQwYWsO93uOxECvfmxdhuXzVEf7TT362m74JnWFP8scxl1x0Hfihy3qoiGu92
-        H6juPJp2bmJboXeduGdkV7pwR5c89npI/QI+myrzfTf4ZhHTghe67HSYbPo7cDH646Q/MlKZ
-        yQ/LsndlLRUsSJwHImpl5V/NPV0v3h9TIWcGDhqq7U1T5XbDS02GWM4dFyflvHD4vfCKscVo
-        e6PudKXMkZgebydee/LZ/Na9NUdcTWkzocEV6vxTjfRczvGto4PhZ5xtNGNBr3PEa+8sx3to
-        pT2hneqH2Xs+94n/pObL3LzDAQ33NJqhw0fSW5vTDj1tvOwpvXrQySDtArcGYZk7PHnR1M4R
-        cRg5JXHD1Qz1L3Iat7G2BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7bCSvO7HE8GJBs87BC2WXLzKbtH+bhm7
-        xftlPYwW1788Z7V4dmsvk8WZ37oWO7aLWGx8+4PJ4v7Xo4wWU/4sZ7LY9Pgaq8XHnnusFpvn
-        /2G0uLxrDpvFsdVX2CxmnN/HZHFo6l5Gi4unXC0Ov2lnteg69JfN4t+1jSwWmzdNZbZYtQuo
-        oeWOqcWqT/8ZHSQ9tu3exuqxZt4aRo/L1y4ye7y/0cruMW9Ntceshl42j52z7rJ7LNhU6rFp
-        VSebx51re9g83p07x+5x6HAHo8fmJfUefVtWMXpMn/eTyePzJrkAgSgum5TUnMyy1CJ9uwSu
-        jMa+pcwFky8zVazYfZS9gfHLLKYuRk4OCQETifaN64BsLg4hgR2MEpvbNrFBJGQlnr3bwQ5h
-        C0vcbznCClH0jFHiYW8jI0iCTUBf4mXHNlYQW0TgCKvEys96IEXMAl+ZJD68vgk19jCjxIZV
-        T8FGcQrYS9z58xJst7BAqMTHi8vAJrEIqEo0b7wANImDg1fAUmLXZReQMK+AoMTJmU9YQGxm
-        AW2JpzefwtnLFr5mhrhOQeLn02VQRzhJnPuwkh2iRkRidmcb8wRG4VlIRs1CMmoWklGzkLQs
-        YGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRnGi0tHYw7ln1Qe8QIxMH4yFGCQ5m
-        JRHeH+LBiUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUw
-        HRBo2HjTodyOad05syvBx6aW3GV7e+Pb2hDJe4/e6zlI8Am6BrrVlb+M1314KWm74zaRqtQt
-        B0/kH93UcPuEx3Z+n2dCWkI+FTfkD1ge+JLgsWMa85UXVzhW7jjY7j5Nr8QupHyt78eu4tRw
-        v+tHFypEK7DPbM7OCDMvckt6ZHZzwxx2dSGNs7YX1X5OM5a+J3zlm97Jp0p8v4X5/wYIH6pw
-        WMcqu9q8u02gWaD3T9fFEws8X+VGKp9ff03OlJ+56OpBlvZ1VTuXHc42iU9InjXB3Nb/dWGF
-        wKyydkHFoETvJKdzc8+eb8y6uefD47Z9NRPW7bJNu3blh+TRe433JhvMPa25LLcq+XD1y7vS
-        SizFGYmGWsxFxYkARsDDcqMDAAA=
-X-CMS-MailID: 20210929020121epcas2p4a31ff7bd24c0530d5d446ad68d2db658
-X-Msg-Generator: CA
+        id S243273AbhI2DFg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Sep 2021 23:05:36 -0400
+Received: from mail-eopbgr1320102.outbound.protection.outlook.com ([40.107.132.102]:51806
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230022AbhI2DFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Sep 2021 23:05:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=emcbTd8efx5S0e0faKnJi/X66uLUIXlp1cqRuT9gnOGm+SFG3Fq3sH+WmZkEgLQM7sndmiZd41+UqbwLEqs2kLaNyfbxHTrspkd8ta5VSGXFOYPcKsIwGOThX7feVsci/pBIXvF3YmTJTTqu2g9zjJXAgiKPffs0rhxIEFx8tyvPIMgZGfETDHjt4XTcJUiL5VLCXVAm+q6itHfirWhuBVgqaGK9v1OKA6Iv9CU2fCJ5IaqL7T59Slxo+N1eNKCavUq79g/sZmiuheJwzKIz/w9P7uWqNy4t9CC+Pem1dU6gVwg1oHGP1mmwFrIAQA+LdAMc3YNPrUdDqo5Fg+6Crw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=47gpZ4wcuSiMuVU0zW1foMsE6PGPfylT1k3NoiWXXEQ=;
+ b=MYce7PdElr4U9D1lafayqZW7piISHbR70lwamiuLmK+5H+wUpDrhwMlUk+E1NOAgJarUoAGyqy/xvvPYPJrohZeV3PSU3STyRE8wTpiniHyaRyPUiy/qJOc5g+Yq6jELo17FxqQOk5x3ETwyMt7YjMGhNVz9Kgm7IY8JDtFZ8OFCw0Degwzx07FofnvjjomPYuFxxjN+W+mRG++07vnCeWPJkl1ZyVB+FPgoRhErbvaZ4lIIUFnEYr89FAZPg8nsExBIlv4lVPexa6As/rYTZzuWXmowv7+RuBPzQvhXziXn60U04ZaLyAONixM844D0Hu+sZq9W1eGMSBsdM6PRDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=47gpZ4wcuSiMuVU0zW1foMsE6PGPfylT1k3NoiWXXEQ=;
+ b=1h1ZCGVNuSpHbBRSDwUYG1QNZ/8fQHB79VYDUq6GHZPR7Itgg9jP1utj0GXd8Opi2Q5hf0/dlg0AEnVkNkgXmx3mgIBeWx2TKW+0gaTOuNwMcTcJXOdkuS+QTXk/rIAk526Atk07aB58e18jbjetqvAwprB/NK9wNWSNDF5ra9pg3FaCKTBCt3sV9SVMvoJXwmfAPntXAqNY0Q7sebujWLqf7wl7W5PRGQmlxj1Nik//8e1Bwaf8mtGkWNxprhi+Sucpe04DCcJLsgs4Wf57rvCslE7X1Ty2xzmeG6RAhGb/qHbtLrQhgCk1NekbZkHtNTp0xt/YCYSPe8XjK65pbg==
+Received: from HK0PR06MB2786.apcprd06.prod.outlook.com (2603:1096:203:5b::22)
+ by HK2PR0601MB1938.apcprd06.prod.outlook.com (2603:1096:202:d::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.19; Wed, 29 Sep
+ 2021 03:03:44 +0000
+Received: from HK0PR06MB2786.apcprd06.prod.outlook.com
+ ([fe80::ddf1:e9d4:c209:8ab8]) by HK0PR06MB2786.apcprd06.prod.outlook.com
+ ([fe80::ddf1:e9d4:c209:8ab8%7]) with mapi id 15.20.4544.022; Wed, 29 Sep 2021
+ 03:03:44 +0000
+From:   Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "joel@jms.id.au" <joel@jms.id.au>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        BMC-SW <BMC-SW@aspeedtech.com>,
+        Steven Lee <steven_lee@aspeedtech.com>
+Subject: RE: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
+ string
+Thread-Topic: [PATCH 10/10] dt-bindings: mmc: aspeed: Add a new compatible
+ string
+Thread-Index: AQHXs9HHr7TBfuGZLUCpoIBAXdEJGKu4upXggAFOF4CAAEp/kA==
+Date:   Wed, 29 Sep 2021 03:03:43 +0000
+Message-ID: <HK0PR06MB278642C55052360B039853FAB2A99@HK0PR06MB2786.apcprd06.prod.outlook.com>
+References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
+ <20210922103116.30652-11-chin-ting_kuo@aspeedtech.com>
+ <YVIUf7/4ukMcrOb9@robh.at.kernel.org>
+ <HK0PR06MB2786DAAA2D6E58EA2E2FCB6BB2A89@HK0PR06MB2786.apcprd06.prod.outlook.com>
+ <CAL_Jsq+TZFXrvfJTjofVcnT6jJat-3SvWj+jAq0QST8ndfeUMA@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+TZFXrvfJTjofVcnT6jJat-3SvWj+jAq0QST8ndfeUMA@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ef6e649e-4e8b-4651-5f51-08d982f5bf8e
+x-ms-traffictypediagnostic: HK2PR0601MB1938:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <HK2PR0601MB19388E40F76C91F0BE916D26B2A99@HK2PR0601MB1938.apcprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qMH1lC2y3CsoKvA9JalTKyz/5+vf8y8k3K4LaSvLWX/WP93djtXbcfv5iUUMdkTxSrNAeSL+Qs08WoJ+jXK1eZEzKzfcLrOf0rrxspoXHNo8bvtbwETcInIbULuh8bzFmPg4bkcBe5BIWKc8STKZvoZX5I33ESoiZCj1Kojfb7QzjmhQc8Hahtn5bjJBWGs0cf8mcfe9Hu7sZaVivtqJgQuL91RI+ibu4mksZ9fhFAO6rC41lzbbGUY3nJWGjW0FShOmfqOLScph8c3Q4lJnc1I5N1NA/DJfZWNG+HJi6LcTlPPL0gZ5cZClGg/7fHLWeOPLPVjVcN5lPUwMIsnyyTJOBaYInJ5/MUKudE7IGWr/jIA0O+XgVfn6QpSoi2g5S65SXeGHOassmJTB4pbl/ioxQgs6z8bAfwZHWBmufcypkQKz4/06v3vlgQ66YKHVeNNfVOuQBl8LJeUu0v3cwntvvKOTHlv6yNKFLr8KfKPCLOx5bj9DmF56lmUD0IH9PprltOji9aCovKHehgaczFuB0bNJB4B2josJdaeAtNcTL8tUUoME0NLhtbijugQjscyKFok/zhgPdcK7csTYBE8szT1dbRYSFnXbXRdRNnwzYuxsvr2YG3bpSHGR23YjCR2LO7buQT+K16VzFbB34zEugLeT0gotGKg+G00t4gcaeEKN2O2Z0PycGzOb76E8h1wj2On4jM3agrIsZlH+DQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR06MB2786.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(107886003)(86362001)(54906003)(38100700002)(316002)(508600001)(83380400001)(76116006)(122000001)(66946007)(26005)(8676002)(38070700005)(55016002)(66476007)(66446008)(64756008)(66556008)(5660300002)(71200400001)(186003)(7696005)(7416002)(2906002)(4326008)(6506007)(53546011)(9686003)(6916009)(52536014)(8936002)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?elhCc2J6cVBnbEcyb3Z4L3pJeGUzUVhmR1FaN0dIK2hTVVFBTEFkUlBoUmdV?=
+ =?utf-8?B?U1ZodG5ZMnh5RE5VSUZJbFN2LzBxU2JtTXJ2MXVuaVBiSzRjS0t1UzJ2SnlB?=
+ =?utf-8?B?aVFFMHhXTDdBSmhnOTc3SENnQitrbFlCUjNMcXJrL3RnMHlaQlRrWDJGR1dw?=
+ =?utf-8?B?bWFreVNuYkpxZVl5bXIzaHZFRCtvVzlZZWFIYzFHNkdBalFMQzVSTlMwVElV?=
+ =?utf-8?B?YlJWc09LWDNnQTlUM3hhQ3dVMTFZTlpzQWloazBjZEtVRSs2dDd3VmRhYmZ5?=
+ =?utf-8?B?RnZaczFtdzNJMy9vbHIwMG5GcVlNbVIrT3JkM2xIZStYbURRMHd2Zjh5eGhZ?=
+ =?utf-8?B?YzlpUFFWNUFrNU43bE93NmgxS1hFQm00NFBBNlVra2RMajRaSjlTWmpOaTF6?=
+ =?utf-8?B?TGtDcXlOQ201M1lpdkhmR1E0Qk1hdmo0THlXWndyVU9MaURVeXA1M2c0OFpM?=
+ =?utf-8?B?VldPTGJNdTByZEIzalJERXJRcGZhL0dvUGFzcjVLU3hXUzI4WWxwOCtxellz?=
+ =?utf-8?B?SVdPVkN2KzBhMFpIandKbi9jdk9YY1pLK1lsazRwUUdNMVJ2dTh2K0o0cWpJ?=
+ =?utf-8?B?RVphMnBhSjB5NXd1ZlgzOXlNMDNPV1pnQVoyUlR2NXZYLzBaQ25xOXNweVpv?=
+ =?utf-8?B?UlhLKzVOZ0NrYUk5aGZuc1p2VlB1TGx5VVdCV1ZYL0hPOEFlbkhNVzkzVXBT?=
+ =?utf-8?B?ajVmWmNsWUg0bVZOaXNURDJoQ2hvdW5WY1Z2a2ZLUVFhUm4rUXF2Y1BnSHI4?=
+ =?utf-8?B?UTJ4TDVwcEJzajcrd2NpUTl1bnBHMzhBYThWdDRzNVdCcENvYUUrbkxOTVZ3?=
+ =?utf-8?B?VUxNbzJhWSs1eS8xNHE0eE0yYnVINjI3Z2JTT05CTDNhRk9xbWpXeSthaXJE?=
+ =?utf-8?B?Njd4WU1lNHFvYUFSVUJEUkZHTWE1Uk1Lc3RkTzI3RnNSc2JlMEN6NEwzQWxH?=
+ =?utf-8?B?RFFXeG44QWs4aGlzRC8wL1VqaGthUDJsRU1yMEhBc2l1M21WUy90bDk1aGRT?=
+ =?utf-8?B?Sis3UTgrQ0lBOFFSb2lKMkNVek8wQk9mTmdQcGVkTGtVWkxTUUx0RG1QbjFZ?=
+ =?utf-8?B?Z01tV3V3bFoxNDF5YWN3QVlESzZHRWJTaXc4a3h1ejFTTmdOQmQrWVlSZHlS?=
+ =?utf-8?B?VVpyTWc3ZndOYWlJZHVScmhUTFRTU1pZdHJuN2EzVWRkd1A4c3BlektoSnha?=
+ =?utf-8?B?SHo3bUFndFVKU1cwK0E5NW8zbWk1dmZGVWV0UWErcHMvRHBLRHNON2Z2ZUk4?=
+ =?utf-8?B?RExlK2pJREwyaUswdlZkeWhPOGV2QnZRZDRacWFoV01DRUwrMFI2Snkyc1hh?=
+ =?utf-8?B?ZkdiUTlhYW0vYjJ1a2NiVHoyOEVNdC9nT2FZZVBPY3BNcm13RkxZQmsrdS9U?=
+ =?utf-8?B?YWxqbnVmUTc1Zlp2RkM0RE1BVDhsbG1lY09hc0k3R05JZGtmU1FlK29UcFZW?=
+ =?utf-8?B?bGNPaGlpOXZ3RFkwbUJ4MVdjUHZLakloMjJ4ZXJ3ZjlOclJZVWFpMUx1cVJJ?=
+ =?utf-8?B?S1dTMzQ4ZVA0V0J6YktsTWQ2bjZzYlI3NTVvbFNIekg3TUdjSS9zdW1RSGd4?=
+ =?utf-8?B?eUplVnphRkhIWllESlltUFEvZngvbjkwOURjRSthUXJuN24xMXd2cnRZL2VU?=
+ =?utf-8?B?ZXVmbDQrRVArMURBelFubEthNHU3TFk4c0hZak90RVlXNFVWdkZKdDlLOHlI?=
+ =?utf-8?B?RzV0YVFRVHpZRWVkc0x6SmZCUldWajhtNDFnSWpWa3VNREUxM1RNMVBySmFN?=
+ =?utf-8?Q?svck7R44EpdkHsZI7jgYRM/0Kwpn112maj2SFl+?=
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210928235735epcas2p37cda2826b65deb8825449a3b71b50d17
-References: <20210928235635.1348330-1-willmcvicker@google.com>
-        <CGME20210928235735epcas2p37cda2826b65deb8825449a3b71b50d17@epcas2p3.samsung.com>
-        <20210928235635.1348330-9-willmcvicker@google.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: HK0PR06MB2786.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef6e649e-4e8b-4651-5f51-08d982f5bf8e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2021 03:03:44.0024
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nl2JrpZUxNGUEGuRfELiCWXbD1RGLK8LROPFbPhn1UysXvjo/HSKEuBTlWwHEcGZdlJ+jexSPs62sBppG03HNqugeGsAgIt+PMhgoRbRhhA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR0601MB1938
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> This patch modularizes the Samsung Exynos ARM and ARM64 pinctrl drivers.
-> It creates 2 kernel modules (pending Kconfig changes):
-
-Hmm. I think we can use pinctrl-samsung.ko as a super module because chip-s=
-pecific objects can be selectable by Kconfig option.
-So, we don't need to separate them.
-
->=20
-> 1) pinctrl-samsung.ko: common pinctrl driver for all the samsung pinctrl
->    drivers.
-> 2) pinctrl_exynos.ko: ARM and ARM64 pinctrl driver.
->=20
-> Signed-off-by: Will McVicker <willmcvicker=40google.com>
-> ---
->  drivers/pinctrl/samsung/Makefile              =7C  13 +--
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c  =7C 102 ++++++++++--------
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    =7C  73 +++++++------
->  drivers/pinctrl/samsung/pinctrl-exynos.c      =7C  17 +--
->  drivers/pinctrl/samsung/pinctrl-samsung.c     =7C  11 +-
->  5 files changed, 117 insertions(+), 99 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/samsung/Makefile
-> b/drivers/pinctrl/samsung/Makefile
-> index ed951df6a112..767ce3357a19 100644
-> --- a/drivers/pinctrl/samsung/Makefile
-> +++ b/drivers/pinctrl/samsung/Makefile
-> =40=40 -1,9 +1,10 =40=40
->  =23 SPDX-License-Identifier: GPL-2.0
->  =23 Samsung pin control drivers
->=20
-> -obj-=24(CONFIG_PINCTRL_SAMSUNG)	+=3D pinctrl-samsung.o
-> -obj-=24(CONFIG_PINCTRL_EXYNOS)	+=3D pinctrl-exynos.o
-> -obj-=24(CONFIG_PINCTRL_EXYNOS_ARM)	+=3D pinctrl-exynos-arm.o
-> -obj-=24(CONFIG_PINCTRL_EXYNOS_ARM64)	+=3D pinctrl-exynos-arm64.o
-> -obj-=24(CONFIG_PINCTRL_S3C24XX)	+=3D pinctrl-s3c24xx.o
-> -obj-=24(CONFIG_PINCTRL_S3C64XX)	+=3D pinctrl-s3c64xx.o
-> +obj-=24(CONFIG_PINCTRL_SAMSUNG)			+=3D pinctrl-samsung.o
-> +obj-=24(CONFIG_PINCTRL_EXYNOS)			+=3D pinctrl_exynos.o
-> +pinctrl_exynos-y				+=3D pinctrl-exynos.o
-> +pinctrl_exynos-=24(CONFIG_PINCTRL_EXYNOS_ARM)	+=3D pinctrl-exynos-arm.o
-> +pinctrl_exynos-=24(CONFIG_PINCTRL_EXYNOS_ARM64)	+=3D pinctrl-exynos-arm6=
-4.o
-> +obj-=24(CONFIG_PINCTRL_S3C24XX)			+=3D pinctrl-s3c24xx.o
-> +obj-=24(CONFIG_PINCTRL_S3C64XX)			+=3D pinctrl-s3c64xx.o
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> index 85ddf49a5188..f3bd8cf1bbb6 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> =40=40 -83,12 +83,12 =40=40 s5pv210_retention_init(struct samsung_pinctrl=
-_drv_data
-> *drvdata,
->  	return ctrl;
->  =7D
->=20
-> -static const struct samsung_retention_data s5pv210_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data s5pv210_retention_data =3D =
-=7B
->  	.init	 =3D s5pv210_retention_init,
->  =7D;
-
-Any reason why do we need to drop __initconst and __init?
-AFAIK, they will be automatically converted in case of MODULE.
-
->=20
->  /* pin banks of s5pv210 pin-controller */ -static const struct
-> samsung_pin_bank_data s5pv210_pin_bank=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data s5pv210_pin_bank=5B=5D =3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(4, 0x020, =22gpa1=22, 0x04), =40=40 -126,7 +126,7=
- =40=40
-> static const struct samsung_pin_bank_data s5pv210_pin_bank=5B=5D __initco=
-nst =3D
-> =7B
->  	EXYNOS_PIN_BANK_EINTW(8, 0xc60, =22gph3=22, 0x0c),  =7D;
->=20
-> -static const struct samsung_pin_ctrl s5pv210_pin_ctrl=5B=5D __initconst =
-=3D =7B
-> +static const struct samsung_pin_ctrl s5pv210_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D s5pv210_pin_bank,
-> =40=40 -139,16 +139,17 =40=40 static const struct samsung_pin_ctrl
-> s5pv210_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data s5pv210_of_data __initconst =
-=3D
-> =7B
-> +const struct samsung_pinctrl_of_match_data s5pv210_of_data =3D =7B
->  	.ctrl		=3D s5pv210_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(s5pv210_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(s5pv210_of_data);
->=20
->  /* Pad retention control code for accessing PMU regmap */  static
-> atomic_t exynos_shared_retention_refcnt;
->=20
->  /* pin banks of exynos3250 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos3250_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos3250_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -160,7 +161,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos3250_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos3250 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos3250_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos3250_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTN(8, 0x120, =22gpe0=22),
->  	EXYNOS_PIN_BANK_EINTN(8, 0x140, =22gpe1=22), =40=40 -196,7 +197,7 =40=
-=40 static
-> const u32 exynos3250_retention_regs=5B=5D =3D =7B
->  	S5P_PAD_RET_SPI_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos3250_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data exynos3250_retention_data =3D
-> +=7B
->  	.regs	 =3D exynos3250_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos3250_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -208,7 +209,7 =40=40 static const struct samsung_retention_data
-> exynos3250_retention_data __initconst
->   * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC
-> includes
->   * two gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos3250_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos3250_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos3250_pin_banks0,
-> =40=40 -229,13 +230,14 =40=40 static const struct samsung_pin_ctrl
-> exynos3250_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos3250_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos3250_of_data =3D =7B
->  	.ctrl		=3D exynos3250_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos3250_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos3250_of_data);
->=20
->  /* pin banks of exynos4210 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos4210_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4210_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -256,7 +258,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos4210_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos4210 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos4210_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4210_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpj0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(5, 0x020, =22gpj1=22, 0x04), =40=40 -281,7 +283,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos4210_pin_banks1=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos4210 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos4210_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4210_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTN(7, 0x000, =22gpz=22),  =7D; =40=40 -296,7 +298,7 =
-=40=40
-> static const u32 exynos4_retention_regs=5B=5D =3D =7B
->  	S5P_PAD_RET_EBIB_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos4_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data exynos4_retention_data =3D =
-=7B
->  	.regs	 =3D exynos4_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos4_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -309,7 +311,7 =40=40 static const u32 exynos4_audio_retention_regs=
-=5B=5D =3D =7B
->  	S5P_PAD_RET_MAUDIO_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos4_audio_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data exynos4_audio_retention_data
-> +=3D =7B
->  	.regs	 =3D exynos4_audio_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos4_audio_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -320,7 +322,7 =40=40 static const struct samsung_retention_data
-> exynos4_audio_retention_data __initco
->   * Samsung pinctrl driver data for Exynos4210 SoC. Exynos4210 SoC
-> includes
->   * three gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos4210_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos4210_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos4210_pin_banks0,
-> =40=40 -346,13 +348,14 =40=40 static const struct samsung_pin_ctrl
-> exynos4210_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos4210_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos4210_of_data =3D =7B
->  	.ctrl		=3D exynos4210_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos4210_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos4210_of_data);
->=20
->  /* pin banks of exynos4x12 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos4x12_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4x12_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -370,7 +373,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos4x12_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos4x12 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos4x12_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4x12_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x040, =22gpk0=22, 0x08),
->  	EXYNOS_PIN_BANK_EINTG(7, 0x060, =22gpk1=22, 0x0c), =40=40 -398,13 +401,=
-13
-> =40=40 static const struct samsung_pin_bank_data exynos4x12_pin_banks1=5B=
-=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos4x12 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos4x12_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4x12_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos4x12 pin-controller 3 */ -static const struct
-> samsung_pin_bank_data exynos4x12_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos4x12_pin_banks3=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpv0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpv1=22, 0x04), =40=40 -417,7 +420,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos4x12_pin_banks3=5B=5D
-> __initconst =3D
->   * Samsung pinctrl driver data for Exynos4x12 SoC. Exynos4x12 SoC
-> includes
->   * four gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos4x12_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos4x12_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos4x12_pin_banks0,
-> =40=40 -453,13 +456,14 =40=40 static const struct samsung_pin_ctrl
-> exynos4x12_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos4x12_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos4x12_of_data =3D =7B
->  	.ctrl		=3D exynos4x12_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos4x12_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos4x12_of_data);
->=20
->  /* pin banks of exynos5250 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos5250_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5250_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -489,7 +493,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5250_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5250 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos5250_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5250_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpe0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(2, 0x020, =22gpe1=22, 0x04), =40=40 -503,7 +507,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5250_pin_banks1=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5250 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos5250_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5250_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpv0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpv1=22, 0x04), =40=40 -513,7 +517,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5250_pin_banks2=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5250 pin-controller 3 */ -static const struct
-> samsung_pin_bank_data exynos5250_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5250_pin_banks3=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz=22, 0x00),  =7D; =40=40 -522,7 +=
-526,7
-> =40=40 static const struct samsung_pin_bank_data exynos5250_pin_banks3=5B=
-=5D
-> __initconst =3D
->   * Samsung pinctrl driver data for Exynos5250 SoC. Exynos5250 SoC
-> includes
->   * four gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos5250_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos5250_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos5250_pin_banks0,
-> =40=40 -558,13 +562,14 =40=40 static const struct samsung_pin_ctrl
-> exynos5250_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos5250_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos5250_of_data =3D =7B
->  	.ctrl		=3D exynos5250_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos5250_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos5250_of_data);
->=20
->  /* pin banks of exynos5260 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos5260_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5260_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(4, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(7, 0x020, =22gpa1=22, 0x04), =40=40 -590,7 +595,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5260_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5260 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos5260_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5260_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpc0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpc1=22, 0x04), =40=40 -600,7 +605,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5260_pin_banks1=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5260 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos5260_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5260_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(4, 0x020, =22gpz1=22, 0x04), =40=40 -610,7 +615,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5260_pin_banks2=5B=5D
-> __initconst =3D
->   * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5260 SoC
-> includes
->   * three gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos5260_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos5260_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos5260_pin_banks0,
-> =40=40 -636,13 +641,14 =40=40 static const struct samsung_pin_ctrl
-> exynos5260_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos5260_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos5260_of_data =3D =7B
->  	.ctrl		=3D exynos5260_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos5260_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos5260_of_data);
->=20
->  /* pin banks of exynos5410 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos5410_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5410_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -682,7 +688,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5410_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5410 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos5410_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5410_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(5, 0x000, =22gpj0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpj1=22, 0x04), =40=40 -696,7 +702,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5410_pin_banks1=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5410 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos5410_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5410_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpv0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpv1=22, 0x04), =40=40 -706,7 +712,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5410_pin_banks2=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5410 pin-controller 3 */ -static const struct
-> samsung_pin_bank_data exynos5410_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5410_pin_banks3=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz=22, 0x00),  =7D; =40=40 -715,7 +=
-721,7
-> =40=40 static const struct samsung_pin_bank_data exynos5410_pin_banks3=5B=
-=5D
-> __initconst =3D
->   * Samsung pinctrl driver data for Exynos5410 SoC. Exynos5410 SoC
-> includes
->   * four gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos5410_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos5410_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos5410_pin_banks0,
-> =40=40 -748,13 +754,14 =40=40 static const struct samsung_pin_ctrl
-> exynos5410_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos5410_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos5410_of_data =3D =7B
->  	.ctrl		=3D exynos5410_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos5410_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos5410_of_data);
->=20
->  /* pin banks of exynos5420 pin-controller 0 */ -static const struct
-> samsung_pin_bank_data exynos5420_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5420_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpy7=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTW(8, 0xC00, =22gpx0=22, 0x00), =40=40 -764,7 +771,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5420_pin_banks0=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5420 pin-controller 1 */ -static const struct
-> samsung_pin_bank_data exynos5420_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5420_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpc0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpc1=22, 0x04), =40=40 -782,7 +789,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5420_pin_banks1=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5420 pin-controller 2 */ -static const struct
-> samsung_pin_bank_data exynos5420_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5420_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpe0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(2, 0x020, =22gpe1=22, 0x04), =40=40 -795,7 +802,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5420_pin_banks2=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5420 pin-controller 3 */ -static const struct
-> samsung_pin_bank_data exynos5420_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5420_pin_banks3=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(6, 0x020, =22gpa1=22, 0x04), =40=40 -809,7 +816,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos5420_pin_banks3=5B=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5420 pin-controller 4 */ -static const struct
-> samsung_pin_bank_data exynos5420_pin_banks4=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5420_pin_banks4=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz=22, 0x00),  =7D; =40=40 -830,7 +=
-837,7
-> =40=40 static const u32 exynos5420_retention_regs=5B=5D =3D =7B
->  	EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos5420_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data exynos5420_retention_data =3D
-> +=7B
->  	.regs	 =3D exynos5420_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos5420_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -842,7 +849,7 =40=40 static const struct samsung_retention_data
-> exynos5420_retention_data __initconst
->   * Samsung pinctrl driver data for Exynos5420 SoC. Exynos5420 SoC
-> includes
->   * four gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos5420_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos5420_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos5420_pin_banks0,
-> =40=40 -887,7 +894,8 =40=40 static const struct samsung_pin_ctrl
-> exynos5420_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos5420_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos5420_of_data =3D =7B
->  	.ctrl		=3D exynos5420_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos5420_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos5420_of_data);
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> index fe5f6046fbd5..9fb658c65b96 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> =40=40 -62,7 +62,7 =40=40 static const struct samsung_pin_bank_type
-> exynos850_bank_type_alive =3D =7B  static atomic_t
-> exynos_shared_retention_refcnt;
->=20
->  /* pin banks of exynos5433 pin-controller - ALIVE */ -static const struc=
-t
-> samsung_pin_bank_data exynos5433_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks0=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, =22gpa1=22, 0x04), =40=40 -76,32 +7=
-6,32
-> =40=40 static const struct samsung_pin_bank_data exynos5433_pin_banks0=5B=
-=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - AUD */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks1=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, =22gpz0=22, 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, =22gpz1=22, 0x04),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - CPIF */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks2=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, =22gpv6=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - eSE */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks3=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, =22gpj2=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - FINGER */ -static const
-> struct samsung_pin_bank_data exynos5433_pin_banks4=5B=5D __initconst =3D =
-=7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks4=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, =22gpd5=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - FSYS */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks5=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks5=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, =22gph1=22, 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, =22gpr4=22, 0x04), =40=40 -112,19
-> +112,19 =40=40 static const struct samsung_pin_bank_data
-> exynos5433_pin_banks5=5B=5D __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - IMEM */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks6=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks6=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, =22gpf0=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - NFC */ -static const struct
-> samsung_pin_bank_data exynos5433_pin_banks7=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks7=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, =22gpj0=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - PERIC */ -static const struc=
-t
-> samsung_pin_bank_data exynos5433_pin_banks8=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks8=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, =22gpv7=22, 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, =22gpb0=22, 0x04), =40=40 -146,7 +1=
-46,7
-> =40=40 static const struct samsung_pin_bank_data exynos5433_pin_banks8=5B=
-=5D
-> __initconst =3D  =7D;
->=20
->  /* pin banks of exynos5433 pin-controller - TOUCH */ -static const struc=
-t
-> samsung_pin_bank_data exynos5433_pin_banks9=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks9=5B=5D =
-=3D =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, =22gpj1=22, 0x00),  =7D; =40=40 -16=
-5,7
-> +165,7 =40=40 static const u32 exynos5433_retention_regs=5B=5D =3D =7B
->  	EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos5433_retention_data
-> __initconst =3D =7B
-> +static const struct samsung_retention_data exynos5433_retention_data =3D
-> +=7B
->  	.regs	 =3D exynos5433_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos5433_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -178,7 +178,7 =40=40 static const u32 exynos5433_audio_retention_r=
-egs=5B=5D =3D =7B
->  	EXYNOS5433_PAD_RETENTION_AUD_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data
-> exynos5433_audio_retention_data __initconst =3D =7B
-> +static const struct samsung_retention_data
-> +exynos5433_audio_retention_data =3D =7B
->  	.regs	 =3D exynos5433_audio_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos5433_audio_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -192,7 +192,7 =40=40 static const u32 exynos5433_fsys_retention_re=
-gs=5B=5D =3D =7B
->  	EXYNOS5433_PAD_RETENTION_MMC2_OPTION,
->  =7D;
->=20
-> -static const struct samsung_retention_data exynos5433_fsys_retention_dat=
-a
-> __initconst =3D =7B
-> +static const struct samsung_retention_data
-> +exynos5433_fsys_retention_data =3D =7B
->  	.regs	 =3D exynos5433_fsys_retention_regs,
->  	.nr_regs =3D ARRAY_SIZE(exynos5433_fsys_retention_regs),
->  	.value	 =3D EXYNOS_WAKEUP_FROM_LOWPWR,
-> =40=40 -203,7 +203,7 =40=40 static const struct samsung_retention_data
-> exynos5433_fsys_retention_data __init
->   * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC
-> includes
->   * ten gpio/pin-mux/pinconfig controllers.
->   */
-> -static const struct samsung_pin_ctrl exynos5433_pin_ctrl=5B=5D __initcon=
-st =3D
-> =7B
-> +static const struct samsung_pin_ctrl exynos5433_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 data */
->  		.pin_banks	=3D exynos5433_pin_banks0,
-> =40=40 -288,13 +288,14 =40=40 static const struct samsung_pin_ctrl
-> exynos5433_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos5433_of_data __initcons=
-t
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos5433_of_data =3D =7B
->  	.ctrl		=3D exynos5433_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos5433_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos5433_of_data);
->=20
->  /* pin banks of exynos7 pin-controller - ALIVE */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks0=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks0=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTW(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTW(8, 0x020, =22gpa1=22, 0x04), =40=40 -303,7 +304,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos7_pin_banks0=5B=5D __init=
-const
-> =3D =7B  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - BUS0 */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks1=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(5, 0x000, =22gpb0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpc0=22, 0x04), =40=40 -323,37 +324,=
-37
-> =40=40 static const struct samsung_pin_bank_data exynos7_pin_banks1=5B=5D
-> __initconst =3D =7B  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - NFC */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks2=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(3, 0x000, =22gpj0=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - TOUCH */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks3=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(3, 0x000, =22gpj1=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - FF */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks4=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks4=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(4, 0x000, =22gpg4=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - ESE */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks5=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks5=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(5, 0x000, =22gpv7=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - FSYS0 */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks6=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks6=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpr4=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - FSYS1 */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks7=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks7=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(4, 0x000, =22gpr0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpr1=22, 0x04), =40=40 -362,7 +363,7=
- =40=40
-> static const struct samsung_pin_bank_data exynos7_pin_banks7=5B=5D __init=
-const
-> =3D =7B  =7D;
->=20
->  /* pin banks of exynos7 pin-controller - BUS1 */ -static const struct
-> samsung_pin_bank_data exynos7_pin_banks8=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks8=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(8, 0x020, =22gpf0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(8, 0x040, =22gpf1=22, 0x04), =40=40 -376,13 +377,=
-13
-> =40=40 static const struct samsung_pin_bank_data exynos7_pin_banks8=5B=5D
-> __initconst =3D =7B
->  	EXYNOS_PIN_BANK_EINTG(3, 0x140, =22gpv6=22, 0x24),  =7D;
->=20
-> -static const struct samsung_pin_bank_data exynos7_pin_banks9=5B=5D
-> __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos7_pin_banks9=5B=5D =3D =
-=7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS_PIN_BANK_EINTG(7, 0x000, =22gpz0=22, 0x00),
->  	EXYNOS_PIN_BANK_EINTG(4, 0x020, =22gpz1=22, 0x04),  =7D;
->=20
-> -static const struct samsung_pin_ctrl exynos7_pin_ctrl=5B=5D __initconst =
-=3D =7B
-> +static const struct samsung_pin_ctrl exynos7_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 Alive data */
->  		.pin_banks	=3D exynos7_pin_banks0,
-> =40=40 -436,13 +437,14 =40=40 static const struct samsung_pin_ctrl
-> exynos7_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos7_of_data __initconst =
-=3D
-> =7B
-> +const struct samsung_pinctrl_of_match_data exynos7_of_data =3D =7B
->  	.ctrl		=3D exynos7_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos7_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos7_of_data);
->=20
->  /* pin banks of exynos850 pin-controller 0 (ALIVE) */ -static const
-> struct samsung_pin_bank_data exynos850_pin_banks0=5B=5D __initconst =3D =
-=7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks0=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTW(8, 0x000, =22gpa0=22, 0x00),
->  	EXYNOS850_PIN_BANK_EINTW(8, 0x020, =22gpa1=22, 0x04), =40=40 -453,7 +45=
-5,7
-> =40=40 static const struct samsung_pin_bank_data exynos850_pin_banks0=5B=
-=5D
-> __initconst =3D =7B  =7D;
->=20
->  /* pin banks of exynos850 pin-controller 1 (CMGP) */ -static const struc=
-t
-> samsung_pin_bank_data exynos850_pin_banks1=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks1=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTW(1, 0x000, =22gpm0=22, 0x00),
->  	EXYNOS850_PIN_BANK_EINTW(1, 0x020, =22gpm1=22, 0x04), =40=40 -466,27
-> +468,27 =40=40 static const struct samsung_pin_bank_data exynos850_pin_ba=
-nks1=5B=5D
-> __initconst =3D =7B  =7D;
->=20
->  /* pin banks of exynos850 pin-controller 2 (AUD) */ -static const struct
-> samsung_pin_bank_data exynos850_pin_banks2=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks2=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTG(5, 0x000, =22gpb0=22, 0x00),
->  	EXYNOS850_PIN_BANK_EINTG(5, 0x020, =22gpb1=22, 0x04),  =7D;
->=20
->  /* pin banks of exynos850 pin-controller 3 (HSI) */ -static const struct
-> samsung_pin_bank_data exynos850_pin_banks3=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks3=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTG(6, 0x000, =22gpf2=22, 0x00),  =7D;
->=20
->  /* pin banks of exynos850 pin-controller 4 (CORE) */ -static const struc=
-t
-> samsung_pin_bank_data exynos850_pin_banks4=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks4=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTG(4, 0x000, =22gpf0=22, 0x00),
->  	EXYNOS850_PIN_BANK_EINTG(8, 0x020, =22gpf1=22, 0x04),  =7D;
->=20
->  /* pin banks of exynos850 pin-controller 5 (PERI) */ -static const struc=
-t
-> samsung_pin_bank_data exynos850_pin_banks5=5B=5D __initconst =3D =7B
-> +static const struct samsung_pin_bank_data exynos850_pin_banks5=5B=5D =3D=
- =7B
->  	/* Must start with EINTG banks, ordered by EINT group number. */
->  	EXYNOS850_PIN_BANK_EINTG(2, 0x000, =22gpg0=22, 0x00),
->  	EXYNOS850_PIN_BANK_EINTG(6, 0x020, =22gpp0=22, 0x04), =40=40 -499,7 +50=
-1,7
-> =40=40 static const struct samsung_pin_bank_data exynos850_pin_banks5=5B=
-=5D
-> __initconst =3D =7B
->  	EXYNOS850_PIN_BANK_EINTG(6, 0x100, =22gpc1=22, 0x20),  =7D;
->=20
-> -static const struct samsung_pin_ctrl exynos850_pin_ctrl=5B=5D __initcons=
-t =3D =7B
-> +static const struct samsung_pin_ctrl exynos850_pin_ctrl=5B=5D =3D =7B
->  	=7B
->  		/* pin-controller instance 0 ALIVE data */
->  		.pin_banks	=3D exynos850_pin_banks0,
-> =40=40 -534,7 +536,8 =40=40 static const struct samsung_pin_ctrl
-> exynos850_pin_ctrl=5B=5D __initconst =3D =7B
->  	=7D,
->  =7D;
->=20
-> -const struct samsung_pinctrl_of_match_data exynos850_of_data __initconst
-> =3D =7B
-> +const struct samsung_pinctrl_of_match_data exynos850_of_data =3D =7B
->  	.ctrl		=3D exynos850_pin_ctrl,
->  	.num_ctrl	=3D ARRAY_SIZE(exynos850_pin_ctrl),
->  =7D;
-> +EXPORT_SYMBOL_GPL(exynos850_of_data);
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index 0489c899b401..628c6e94d08c 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> =40=40 -20,6 +20,7 =40=40
->  =23include <linux/irqchip/chained_irq.h>
->  =23include <linux/of.h>
->  =23include <linux/of_irq.h>
-> +=23include <linux/module.h>
->  =23include <linux/slab.h>
->  =23include <linux/spinlock.h>
->  =23include <linux/regmap.h>
-> =40=40 -207,7 +208,7 =40=40 static void exynos_irq_release_resources(stru=
-ct
-> irq_data *irqd)
->  /*
->   * irq_chip for gpio interrupts.
->   */
-> -static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst =3D=
- =7B
-> +static const struct exynos_irq_chip exynos_gpio_irq_chip =3D =7B
->  	.chip =3D =7B
->  		.name =3D =22exynos_gpio_irq_chip=22,
->  		.irq_unmask =3D exynos_irq_unmask,
-> =40=40 -275,7 +276,7 =40=40 struct exynos_eint_gpio_save =7B
->   * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
->   * =40d: driver data of samsung pinctrl driver.
->   */
-> -__init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
-> +int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
->  =7B
->  	struct samsung_pin_bank *bank;
->  	struct device *dev =3D d->dev;
-> =40=40 -399,7 +400,7 =40=40 static u32 eint_wake_mask_value =3D
-> EXYNOS_EINT_WAKEUP_MASK_DISABLED;
->  /*
->   * irq_chip for wakeup interrupts
->   */
-> -static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst =
-=3D =7B
-> +static const struct exynos_irq_chip s5pv210_wkup_irq_chip =3D =7B
->  	.chip =3D =7B
->  		.name =3D =22s5pv210_wkup_irq_chip=22,
->  		.irq_unmask =3D exynos_irq_unmask,
-> =40=40 -419,7 +420,7 =40=40 static const struct exynos_irq_chip
-> s5pv210_wkup_irq_chip __initconst =3D =7B
->  	.set_eint_wakeup_mask =3D s5pv210_pinctrl_set_eint_wakeup_mask,
->  =7D;
->=20
-> -static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst
-> =3D =7B
-> +static const struct exynos_irq_chip exynos4210_wkup_irq_chip =3D =7B
->  	.chip =3D =7B
->  		.name =3D =22exynos4210_wkup_irq_chip=22,
->  		.irq_unmask =3D exynos_irq_unmask,
-> =40=40 -438,7 +439,7 =40=40 static const struct exynos_irq_chip
-> exynos4210_wkup_irq_chip __initconst =3D =7B
->  	.set_eint_wakeup_mask =3D exynos_pinctrl_set_eint_wakeup_mask,
->  =7D;
->=20
-> -static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst =
-=3D =7B
-> +static const struct exynos_irq_chip exynos7_wkup_irq_chip =3D =7B
->  	.chip =3D =7B
->  		.name =3D =22exynos7_wkup_irq_chip=22,
->  		.irq_unmask =3D exynos_irq_unmask,
-> =40=40 -521,7 +522,7 =40=40 static void exynos_irq_demux_eint16_31(struct=
- irq_desc
-> *desc)
->   * exynos_eint_wkup_init() - setup handling of external wakeup interrupt=
-s.
->   * =40d: driver data of samsung pinctrl driver.
->   */
-> -__init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
-> +int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
->  =7B
->  	struct device *dev =3D d->dev;
->  	struct device_node *wkup_np =3D NULL;
-> =40=40 -760,3 +761,7 =40=40 exynos_retention_init(struct samsung_pinctrl_=
-drv_data
-> *drvdata,
->=20
->  	return ctrl;
->  =7D
-> +
-> +MODULE_DESCRIPTION(=22Pinctrl common driver for Exynos, S3C24XX, and
-> +S3C64XX SoCs=22); MODULE_AUTHOR(=22Thomas Abraham
-> +<thomas.ab=40samsung.com>=22); MODULE_LICENSE(=22GPL v2=22);
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 2a0fc63516f1..7a5f1363d0d1 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> =40=40 -18,6 +18,7 =40=40
->  =23include <linux/init.h>
->  =23include <linux/platform_device.h>
->  =23include <linux/io.h>
-> +=23include <linux/module.h>
->  =23include <linux/slab.h>
->  =23include <linux/err.h>
->  =23include <linux/gpio/driver.h>
-> =40=40 -1299,8 +1300,8 =40=40 static struct platform_driver samsung_pinct=
-rl_driver
-> =3D =7B
->  	=7D,
->  =7D;
->=20
-> -static int __init samsung_pinctrl_drv_register(void)
-> -=7B
-> -	return platform_driver_register(&samsung_pinctrl_driver);
-> -=7D
-> -postcore_initcall(samsung_pinctrl_drv_register);
-> +module_platform_driver(samsung_pinctrl_driver);
-
-To keep previous initcall order, please do not use module_platform_driver m=
-acro.
-
-Best Regards,
-Chanho Park
-
+SGkgUm9iDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJp
+bmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1iZXIgMjksIDIw
+MjEgNjoyOCBBTQ0KPiBUbzogQ2hpbi1UaW5nIEt1byA8Y2hpbi10aW5nX2t1b0Bhc3BlZWR0ZWNo
+LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxMC8xMF0gZHQtYmluZGluZ3M6IG1tYzogYXNw
+ZWVkOiBBZGQgYSBuZXcgY29tcGF0aWJsZQ0KPiBzdHJpbmcNCj4gDQo+IE9uIE1vbiwgU2VwIDI3
+LCAyMDIxIGF0IDk6NTEgUE0gQ2hpbi1UaW5nIEt1bw0KPiA8Y2hpbi10aW5nX2t1b0Bhc3BlZWR0
+ZWNoLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBIaSBSb2IsDQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3Jn
+Pg0KPiA+ID4gU2VudDogVHVlc2RheSwgU2VwdGVtYmVyIDI4LCAyMDIxIDI6NTkgQU0NCj4gPiA+
+IFRvOiBDaGluLVRpbmcgS3VvIDxjaGluLXRpbmdfa3VvQGFzcGVlZHRlY2guY29tPg0KPiA+ID4g
+U3ViamVjdDogUmU6IFtQQVRDSCAxMC8xMF0gZHQtYmluZGluZ3M6IG1tYzogYXNwZWVkOiBBZGQg
+YSBuZXcNCj4gPiA+IGNvbXBhdGlibGUgc3RyaW5nDQo+ID4gPg0KPiA+ID4gT24gV2VkLCBTZXAg
+MjIsIDIwMjEgYXQgMDY6MzE6MTZQTSArMDgwMCwgQ2hpbi1UaW5nIEt1byB3cm90ZToNCj4gPiA+
+ID4gQWRkICJhc3BlZWQsYXN0MjYwMC1lbW1jIiBjb21wYXRpYmxlIHN0cmluZyBmb3IgdGhlIHNh
+a2Ugb2YNCj4gPiA+ID4gZGlzdGluZ3Vpc2hpbmcgYmV0d2VlbiBTRCBhbmQgZU1NQyBkZXZpY2Uu
+DQo+ID4gPg0KPiA+ID4gV2h5Pw0KPiA+ID4NCj4gPiA+IElzIHRoZSBoL3cgYmxvY2sgZGlmZmVy
+ZW50PyBXZSBhbHJlYWR5IGhhdmUgcHJvcGVydGllcyB0byBoYW5kbGUNCj4gPiA+IHNvbWUgb2Yg
+dGhlIGVNTUMgc3BlY2lmaWNzLiBBbHNvLCB5b3UgY2FuIGhhdmUgYSBjaGlsZCBub2RlIGZvciB0
+aGUNCj4gPiA+IGVNTUMgZGV2aWNlIGlmIHlvdSBuZWVkIHRoYXQuDQo+ID4NCj4gPiBUaGVyZSBh
+cmUgdHdvIFNEL1NESU8gY29udHJvbGxlcnMgaW4gYSBBU1QyNjAwIFNvQy4NCj4gPiBPbmUgaXMg
+Zm9yIFNEIGNhcmQgYW5kIHRoZSBvdGhlciBpcyBmb3IgZU1NQy4NCj4gPiBBbHRob3VnaCBib3Ro
+IG9mIHRoZW0gYXJlIGVtYmVkZGVkIGluIHRoZSBzYW1lIFNvQywgdGhlIGRlc2lnbiBvZg0KPiA+
+IGRlbGF5IGNlbGwgYW5kIHRoZSBtYW51ZmFjdHVyZSBwcm9jZXNzIGFyZSBkaWZmZXJlbnQuIFRo
+ZSBkZWxheSBwaGFzZQ0KPiA+IGlzIGRlZmluaXRlbHkgZGlmZmVyZW50IGFuZCwgdGh1cywgd2Ug
+bmVlZCBhIGZsYWcsIGNvbXBhdGlibGUsIHRvIGRpc3Rpbmd1aXNoIHRoZQ0KPiBkZXZpY2UsIFNE
+IG9yIGVNTUMuDQo+ID4NCj4gPiBXaXRob3V0ICJhc3BlZWQsYXN0MjYwMC1lbW1jIiBjb21wYXRp
+YmxlLCBvZiBjb3Vyc2UsIGVNTUMgZGV2aWNlIGNhbg0KPiA+IHdvcmsgd2l0aCBvcmlnaW5hbCBz
+ZGhjaSBkcml2ZXIgYW5kIGRldmljZSB0cmVlIHNldHRpbmcuIEJ1dCwgZm9yDQo+ID4gdWx0cmEt
+c3BlZWQgb3IgSFMyMDAgY2FzZSwgQVNUMjYwMCBTb0MgbmVlZHMgc29tZSBwaGFzZSBkZWxheSB3
+aGljaA0KPiAobWF4aW11bSkgdmFsdWUgaXMgZGlmZmVyZW50IGJldHdlZW4gU0QgYW5kIGVNTUMg
+ZGV2aWNlLg0KPiANCj4gVGhpcyBpcyBxdWl0ZSBjb21tb24gYXMgdHdlYWtpbmcgdGhlIHRpbWlu
+ZyBpcyBhbHNvIG5lZWQgcGVyIGJvYXJkLg0KPiBMb29rIGF0IHdoYXQgb3RoZXIgYmluZGluZ3Mg
+aGF2ZSBkb25lLiBBIHByb3BlcnR5IGlzIG1vcmUgYXBwcm9wcmlhdGUgaGVyZS4NCg0KT2theSwg
+SSB3aWxsIHRyeSB0byBjaGVjayB3aGV0aGVyIHRoZXJlIGlzIGFuIGV4aXN0aW5nIGJpbmRpbmcg
+d2hpY2ggY2FuIGFjaGlldmUgdGhpcyBwdXJwb3NlLg0KT3IsIG1heWJlLCBhcyB5b3Ugc2FpZCwg
+YSBwcm9wZXJ0eSBpcyBiZXR0ZXIgc2luY2UgdGhpcyBwaGFzZSBkZWxheSBpcyBhIHByb3ByaWV0
+YXJ5DQpIVyBkZXNpZ24gYW5kIGlzIGRpZmZlcmVudCBiZXR3ZWVuIGVhY2ggY2hpcHNldCB2ZXJz
+aW9uLg0KDQo+IA0KPiBSb2INCg0KQ2hpbi1UaW5nDQo=
