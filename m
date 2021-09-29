@@ -2,129 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92513C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B68DC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7221D6140F
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F0AC613D1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 14:03:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245076AbhI2OCg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 10:02:36 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:57304
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245078AbhI2OCf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 10:02:35 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CBD83402F6
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 14:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632924053;
-        bh=WjyM9zf1nCEYn+RK+0ge3r02uUICdD54a8plMbZb68M=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=vv3Rrt8YyQ1dvYwWxYyLPXKvALKBSpkoRh4+dLT/a8o1ZCpkDiAZKCRHJEUQKrDgn
-         Aet/UDbTcIGroVlzCgqjz2jHqvA4NSN8aAmJnA/9wRKRfw1o4SHnXV/cv/0wHAyPzD
-         +u3iAvT/yHxZRWM1XFFEHQQTN6eJJbSIxGfBXVk2GMaFWLyDW/fYqAJ492QRjJjXH/
-         oHNp9E1nO284XHali3zgYJrW9brrmYEQpgJO3QihvWylTGHDTAdUdePh16tyNDT7Oc
-         aspp1NwbNSuxZU+Maq65IoW+6G1OQ1VarATh8fhVO9As5CD4ygcs9f7x0RR/zMUd1c
-         s5bc6Lt/4EceQ==
-Received: by mail-lf1-f72.google.com with SMTP id d22-20020a0565123d1600b003fd0097d747so2495113lfv.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 07:00:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WjyM9zf1nCEYn+RK+0ge3r02uUICdD54a8plMbZb68M=;
-        b=q7WO3YW3jUaeTqfrBFMX0+p4NdQ0TUNcIkArm5L2CIn9dZL1CjJl++5Ub92v92+/0x
-         bDnR6oAXBo91x9S+Se078/ztq8/+ba9XV7f791YyXHrwA6LJRRsKLwM89rGh1LZjyWeE
-         RyB35+fVoCzf+FDbbj5aPxRpJnNID3jEgWqqjGZg5c43cPwlHKpknuBW7HMEZhEs7iqU
-         tNw9+4SijrJ1l7elNY1QYyiH1BNFAYUid3Biwt8ea7dWbD05fsHfdDR7wO90k2C7D2DU
-         i1iWbg/P1yv0JIHgJuP1nquHot5HHYbF1uruGhjEA/U1VETiofn+MPZgiN/yWJL5aaGE
-         GNfQ==
-X-Gm-Message-State: AOAM531LuBa3VGMeaOBDO0SmqxbxC91utPpUWGhybpRg01ImLXep5PCv
-        kyjuBVGN8V7STvh5kwC7cKMOmAe122VojDNXE1d5eupDTOU8Pspewehvcb7UHk4CuShRwU/Xc+R
-        CPTF7m6e3FE9Bv74Y79r/8iqzeE7u/RuPtpZgOw==
-X-Received: by 2002:a05:6512:220f:: with SMTP id h15mr11115751lfu.398.1632924051595;
-        Wed, 29 Sep 2021 07:00:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzcRnIuhOY7CK9oDbVjvF9edjRx8oUhEpxRb6E1YojrS2Sfi3b7BVTyNWXrzfXxMSAityt0PQ==
-X-Received: by 2002:a05:6512:220f:: with SMTP id h15mr11115725lfu.398.1632924051401;
-        Wed, 29 Sep 2021 07:00:51 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id 8sm763ljr.10.2021.09.29.07.00.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Sep 2021 07:00:50 -0700 (PDT)
-Subject: Re: [PATCH v2 01/12] arm64: don't have ARCH_EXYNOS select
- EXYNOS_CHIPID
-To:     Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <20210928235635.1348330-2-willmcvicker@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <3274ed53-6058-323f-be3b-a90de479183c@canonical.com>
-Date:   Wed, 29 Sep 2021 16:00:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S244876AbhI2OFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 10:05:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245240AbhI2ODQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Sep 2021 10:03:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 848C960F4F;
+        Wed, 29 Sep 2021 14:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632924094;
+        bh=u765s826tzbfU6E7Jd+UfNUmJveS9TYHdoRPAUBCuQo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eqx8IaVhudHizsPHXmBuAIACus4x8V6AtWzV14J6HjnFg4wasOX4qg8jYK6/prsoM
+         ZFsRWknBPnZ7YftRS3qfUsWAH0Qrfctd6vkrh4DMBnH7yncp0jh6oKKwqRGF2LL4n1
+         eWjLFIJItIB92u1wE/18XCOn/nMde3fLI6GHxVqPo3+qaUtHk3zbYoxSnnAz8dYv2+
+         RYyTuaVYcB9vRF8DxeLXAudMTarxHFquZBPHOZQiEnHxtIbzGEUPw4v92BmGA9ZNFK
+         ItK38QSUr0PXJyQ7i6iA++bxRo6iWmk+xhirHQSYhjbNfSeS+Vnb+gl+dT+47P6T3P
+         vNBdX0Rac/Gow==
+Received: by pali.im (Postfix)
+        id 28A0E76E; Wed, 29 Sep 2021 16:01:32 +0200 (CEST)
+Date:   Wed, 29 Sep 2021 16:01:32 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-serial@vger.kernel.org,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: mvebu-uart: document DT bindings for
+ marvell,armada-3700-uart-clock
+Message-ID: <20210929140132.gom6qiohucsczoxq@pali>
+References: <20210929082034.15098-1-pali@kernel.org>
+ <20210929082034.15098-4-pali@kernel.org>
+ <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210928235635.1348330-2-willmcvicker@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/09/2021 01:56, Will McVicker wrote:
-> Now that EXYNOS_CHIPID can be a module and is enabled by default via
-> ARCH_EXYNOS, we don't need to have ARCH_EXYNOS directly select it. So
-> remove that.
+On Wednesday 29 September 2021 08:46:25 Rob Herring wrote:
+> On Wed, 29 Sep 2021 10:20:31 +0200, Pali Rohár wrote:
+> > This change adds DT bindings documentation for device nodes with compatible
+> > string "marvell,armada-3700-uart-clock".
+> > 
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > 
+> > ---
+> > Changes in v6
+> > * Fix license
+> > * Rename node to clock-controller@12010
+> > * Remove maxItems
+> > ---
+> >  .../bindings/clock/armada3700-uart-clock.yaml | 56 +++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> > 
 > 
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
->  arch/arm64/Kconfig.platforms | 1 -
->  1 file changed, 1 deletion(-)
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index b0ce18d4cc98..90c5cf4856e1 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -92,7 +92,6 @@ config ARCH_BRCMSTB
->  config ARCH_EXYNOS
->  	bool "ARMv8 based Samsung Exynos SoC family"
->  	select COMMON_CLK_SAMSUNG
-> -	select EXYNOS_CHIPID
->  	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
->  	select EXYNOS_PMU
->  	select HAVE_S3C_RTC if RTC_CLASS
+> yamllint warnings/errors:
 > 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: 'http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#' does not match 'http://devicetree.org/schemas/.*\\.yaml#'
+> 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: 'maintainers' is a required property
+> 	hint: Metaschema for devicetree binding documentation
+> 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+> ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: relative path/filename doesn't match actual path or filename
+> 	expected: http://devicetree.org/schemas/clock/armada3700-uart-clock.yaml#
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: ignoring, error in schema: $id
+> warning: no schema found in file: ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> Documentation/devicetree/bindings/clock/armada3700-uart-clock.example.dt.yaml:0:0: /example-0/clock-controller@12010: failed to match any schema with compatible: ['marvell,armada-3700-uart-clock']
 
-This actually should be part of my series converting ChipID driver to a
-module:
-https://lore.kernel.org/linux-samsung-soc/4aee1b0d-91a1-75ac-d2b7-6dab3d7a301f@kernel.org/T/#t
+Hello! What does this error mean?
 
-Applied it, thanks.
+Should I add .yaml suffix into '$id: ' line and rename file via?
+git mv Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
 
-Best regards,
-Krzysztof
+Or something else is needed?
+
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/patch/1534231
+> 
+> This check can fail if there are any dependencies. The base for a patch
+> series is generally the most recent rc1.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit.
+> 
