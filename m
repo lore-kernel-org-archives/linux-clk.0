@@ -2,70 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4486C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 07:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE28C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 952CA613DB
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 07:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A854E61462
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244554AbhI2HQT convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 03:16:19 -0400
-Received: from mail.shanghaitech.edu.cn ([119.78.254.11]:6504 "EHLO
-        mail.shanghaitech.edu.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244486AbhI2HQS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 03:16:18 -0400
-X-Greylist: delayed 924 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Sep 2021 03:16:18 EDT
-Received: from [10.15.44.215] by mail.shanghaitech.edu.cn with MESSAGESEC ESMTP id 480409677184998;
-        Wed, 29 Sep 2021 14:58:48 +0800 (CST)
-Received: from DESKTOP-FOJ6ELG.localdomain (10.15.44.220) by
- smtp.shanghaitech.edu.cn (10.15.44.215) with Microsoft SMTP Server (TLS) id
- 14.3.399.0; Wed, 29 Sep 2021 14:58:48 +0800
-From:   Mianhan Liu <liumh1@shanghaitech.edu.cn>
+        id S244639AbhI2IYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 04:24:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244590AbhI2IYd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Sep 2021 04:24:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AC52613A5;
+        Wed, 29 Sep 2021 08:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632903773;
+        bh=pFht2crJ58fEPAb0efcLhPOBTsC8scTXAQlpfMeAVoo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NE0W7RT1jcYVcpIAlzvMmZd6a92lZSJWgdIA0bWsVhZF0khaC2FuATVFlwg1j/AmG
+         nCyKNQf9gwzuuhJg4m195i1ot/K1jqDxc+xwa/OPFM/9jqiGvUhWiADtfifftW0F8K
+         DlN3VRYHgQD0ra+jGWz4gwSR1lYNHljNF6uxfjyZA+fKE2USBL++8znkmYcu8Z8QkH
+         NY8fUyjCRpzWoztyUeziNi4ywJ2Px5AQEHjKCZ/5Eb2htVpl/A41YH0YEft7k0I44V
+         yUWAW/PRrcARzXB4+do9RTXrtAqaFJDqQEsGY0fiZqAEqf9vuOVx00DuaVy3SoGQ6A
+         e9vGVYvHxRH2Q==
+Received: by pali.im (Postfix)
+        id 2A5811A0B; Wed, 29 Sep 2021 10:22:51 +0200 (CEST)
+From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-actions@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mianhan Liu <liumh1@shanghaitech.edu.cn>
-Subject: [PATCH -next] clk/actions/owl-factor.c: remove superfluous headers
-Date:   Wed, 29 Sep 2021 14:58:24 +0800
-Message-ID: <20210929065824.23691-1-liumh1@shanghaitech.edu.cn>
-X-Mailer: git-send-email 2.25.1
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v6 1/6] math64: New DIV_U64_ROUND_CLOSEST helper
+Date:   Wed, 29 Sep 2021 10:20:29 +0200
+Message-Id: <20210929082034.15098-2-pali@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210929082034.15098-1-pali@kernel.org>
+References: <20210929082034.15098-1-pali@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain
-X-Originating-IP: [10.15.44.220]
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-owl-factor.c hasn't use any macro or function declared in linux/slab.h.
-Thus, these files can be removed from owl-factor.c safely without
-affecting the compilation of the ./drivers/clk module
+Provide DIV_U64_ROUND_CLOSEST helper which uses div_u64 to perform
+division rounded to the closest integer using unsigned 64bit
+dividend and unsigned 32bit divisor.
 
-Signed-off-by: Mianhan Liu <liumh1@shanghaitech.edu.cn>
-
+Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- drivers/clk/actions/owl-factor.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/math64.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/actions/owl-factor.c b/drivers/clk/actions/owl-factor.c
-index f15e2621f..64f316cf7 100644
---- a/drivers/clk/actions/owl-factor.c
-+++ b/drivers/clk/actions/owl-factor.c
-@@ -10,7 +10,6 @@
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index 2928f03d6d46..a14f40de1dca 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -300,6 +300,19 @@ u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
+ #define DIV64_U64_ROUND_CLOSEST(dividend, divisor)	\
+ 	({ u64 _tmp = (divisor); div64_u64((dividend) + _tmp / 2, _tmp); })
  
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/slab.h>
- 
- #include "owl-factor.h"
- 
++/*
++ * DIV_U64_ROUND_CLOSEST - unsigned 64bit divide with 32bit divisor rounded to nearest integer
++ * @dividend: unsigned 64bit dividend
++ * @divisor: unsigned 32bit divisor
++ *
++ * Divide unsigned 64bit dividend by unsigned 32bit divisor
++ * and round to closest integer.
++ *
++ * Return: dividend / divisor rounded to nearest integer
++ */
++#define DIV_U64_ROUND_CLOSEST(dividend, divisor)	\
++	({ u32 _tmp = (divisor); div_u64((u64)(dividend) + _tmp / 2, _tmp); })
++
+ /*
+  * DIV_S64_ROUND_CLOSEST - signed 64bit divide with 32bit divisor rounded to nearest integer
+  * @dividend: signed 64bit dividend
 -- 
-2.25.1
-
+2.20.1
 
