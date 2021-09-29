@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE28C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2B4C43219
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A854E61462
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD63B61414
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 08:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244639AbhI2IYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 04:24:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
+        id S244746AbhI2IYf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 04:24:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244590AbhI2IYd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Sep 2021 04:24:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AC52613A5;
+        id S244607AbhI2IYe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Sep 2021 04:24:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C68961411;
         Wed, 29 Sep 2021 08:22:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1632903773;
-        bh=pFht2crJ58fEPAb0efcLhPOBTsC8scTXAQlpfMeAVoo=;
+        bh=QLuW6v3Lic+9u3xvdpn5U7PciiFoV7G+AE18M57+JTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NE0W7RT1jcYVcpIAlzvMmZd6a92lZSJWgdIA0bWsVhZF0khaC2FuATVFlwg1j/AmG
-         nCyKNQf9gwzuuhJg4m195i1ot/K1jqDxc+xwa/OPFM/9jqiGvUhWiADtfifftW0F8K
-         DlN3VRYHgQD0ra+jGWz4gwSR1lYNHljNF6uxfjyZA+fKE2USBL++8znkmYcu8Z8QkH
-         NY8fUyjCRpzWoztyUeziNi4ywJ2Px5AQEHjKCZ/5Eb2htVpl/A41YH0YEft7k0I44V
-         yUWAW/PRrcARzXB4+do9RTXrtAqaFJDqQEsGY0fiZqAEqf9vuOVx00DuaVy3SoGQ6A
-         e9vGVYvHxRH2Q==
+        b=SX8gUFLskGw/ZtkL7a/JgR6yGKhVapOJjmBkoOVDJlyOJeSTRa8Hc7E9RdmndDuDj
+         1uKi0cf6vmwLxmJVCcMgFkindzLpEohZZr6Cm+tIPx0TN7nvb9c5E5nIRgYCfGxUrX
+         WM+M8ocro39WSwPYTVYhVV2EJsFXCpI+rjC/lmaQ0uDKOvuNts1orzNG6GZ3vlMJp6
+         ZiBc38ImDgZkfaz1CY0s+J8lgwHd6OghBoxUQhdnBC2gnkLGDDE0TzdAWCImlq6neE
+         IfKWyBRTSZZf02xjzDP5VEG+7UpjhEui8ZvbkkbU5ExzBIR4Xk5DIPr29VyUmRFOee
+         vCdOEse7+7uLQ==
 Received: by pali.im (Postfix)
-        id 2A5811A0B; Wed, 29 Sep 2021 10:22:51 +0200 (CEST)
+        id 35EB51FAF; Wed, 29 Sep 2021 10:22:53 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -41,9 +41,9 @@ Cc:     Andrew Lunn <andrew@lunn.ch>,
         linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 1/6] math64: New DIV_U64_ROUND_CLOSEST helper
-Date:   Wed, 29 Sep 2021 10:20:29 +0200
-Message-Id: <20210929082034.15098-2-pali@kernel.org>
+Subject: [PATCH v6 5/6] arm64: dts: marvell: armada-37xx: add device node for UART clock and use it
+Date:   Wed, 29 Sep 2021 10:20:33 +0200
+Message-Id: <20210929082034.15098-6-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210929082034.15098-1-pali@kernel.org>
 References: <20210929082034.15098-1-pali@kernel.org>
@@ -54,39 +54,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Provide DIV_U64_ROUND_CLOSEST helper which uses div_u64 to perform
-division rounded to the closest integer using unsigned 64bit
-dividend and unsigned 32bit divisor.
+This change defines DT node for UART clock "marvell,armada-3700-uart-clock"
+and use this UART clock as a base clock for all UART devices.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
----
- include/linux/math64.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/include/linux/math64.h b/include/linux/math64.h
-index 2928f03d6d46..a14f40de1dca 100644
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -300,6 +300,19 @@ u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
- #define DIV64_U64_ROUND_CLOSEST(dividend, divisor)	\
- 	({ u64 _tmp = (divisor); div64_u64((dividend) + _tmp / 2, _tmp); })
+---
+Changes in v6:
+* Do not disable uartclk by default
+* Rename node to clock-controller@12010
+---
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index 9acc5d2b5a00..f9bfe73d8ec2 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -132,10 +132,20 @@
+ 				reg = <0x11500 0x40>;
+ 			};
  
-+/*
-+ * DIV_U64_ROUND_CLOSEST - unsigned 64bit divide with 32bit divisor rounded to nearest integer
-+ * @dividend: unsigned 64bit dividend
-+ * @divisor: unsigned 32bit divisor
-+ *
-+ * Divide unsigned 64bit dividend by unsigned 32bit divisor
-+ * and round to closest integer.
-+ *
-+ * Return: dividend / divisor rounded to nearest integer
-+ */
-+#define DIV_U64_ROUND_CLOSEST(dividend, divisor)	\
-+	({ u32 _tmp = (divisor); div_u64((u64)(dividend) + _tmp / 2, _tmp); })
++			uartclk: clock-controller@12010 {
++				compatible = "marvell,armada-3700-uart-clock";
++				reg = <0x12010 0x4>, <0x12210 0x4>;
++				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
++					<&tbg 3>, <&xtalclk>;
++				clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S",
++					"TBG-B-S", "xtal";
++				#clock-cells = <1>;
++			};
 +
- /*
-  * DIV_S64_ROUND_CLOSEST - signed 64bit divide with 32bit divisor rounded to nearest integer
-  * @dividend: signed 64bit dividend
+ 			uart0: serial@12000 {
+ 				compatible = "marvell,armada-3700-uart";
+ 				reg = <0x12000 0x18>;
+-				clocks = <&xtalclk>;
++				clocks = <&uartclk 0>;
+ 				interrupts =
+ 				<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+@@ -147,7 +157,7 @@
+ 			uart1: serial@12200 {
+ 				compatible = "marvell,armada-3700-uart-ext";
+ 				reg = <0x12200 0x30>;
+-				clocks = <&xtalclk>;
++				clocks = <&uartclk 1>;
+ 				interrupts =
+ 				<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+ 				<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.20.1
 
