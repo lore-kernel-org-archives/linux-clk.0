@@ -2,135 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A0FC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC9FC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 13:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA70C61452
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D8C6120D
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 13:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235524AbhI2N3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 09:29:31 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:41655 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229846AbhI2N3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 09:29:30 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 79F072B011A1;
-        Wed, 29 Sep 2021 09:27:48 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 29 Sep 2021 09:27:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=6C/iJ1ffI9rUTpcaRyBkXlkx1Zb
-        QQSzY1AH6rDwK+gA=; b=GkkoLWN3ri9d+BfDmgSm2OKR/XM+FqAmQhi5SYtoSlK
-        sT4AQMylXQVJotsD5eUckYqxMY9UmOn3v5wDXt9w/y88z8qVHwAcqBkYJ8VwINPM
-        bcu47E9plfgPbvaRzRrqTT9ZveQLXULZnvXRxhfgBln8wMfQ5HQAR2jbm79DHYvc
-        jS03fLGlo6J+MBQVhIPyF79eC4lQ/GNF4AXGZqr5Wn9f3MVcVB41+SK7gduU33sb
-        fIsZLmNtoCN+hb2Stf5n2feT7JkLaq+4cr2JSkJlK4Ln6uZSRZbHPbGqO2LMugIX
-        eHvl+Xw6hOyXpiJR+ReFlbb5Z1QgYejkKupntmk+wtg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=6C/iJ1
-        ffI9rUTpcaRyBkXlkx1ZbQQSzY1AH6rDwK+gA=; b=cRxhesrhf48+fFs+bZQONN
-        SD6ToSeTE2KbD3yjtbqLKmOXeHgGTMB8efTcWkQS6e28Y4aBRoH4EBbUHNsegF8C
-        Khmew77Af076NbK2AN62gRm+wEO/T6koUVz/iIrQq0+FnETl74rHHIs0/9kG+MA+
-        O6uStJzfSGCooUoI0ZZrW4DMFqGGkaDDFiDrG7Tjl4R6OZ1l5tQ/ABHwl1vaZnBP
-        68RCbNK3HC1yHECJPC3ZXCmQk6x9RZgX3y5rZxcZyjcRidx0eBjI71OhEW/nHCzn
-        UPFFg8JYc7iU+cmLhMnFJbRk3oHJZVo4oIWbbcPd1GcA/L/Bq+g24ijkKzIhgH7g
-        ==
-X-ME-Sender: <xms:02lUYTbdgYULFKbGxv0s_kmKWf1sA0bV1Ou-cZ4Q96-IRqE_EoAV0A>
-    <xme:02lUYSbQx45e9NJf17zy7hlYLsfGw2W8o-FKCsZA-HKS0o6evToFGtyO6bUt9aYQe
-    FWqVfo5hXS8-agsjWE>
-X-ME-Received: <xmr:02lUYV8cfh4b7jeJDfWioepGq1-qsR6juzrZyGdDrRsuIjYrmKBMwU3GcGpdFpPHc0EUBPzOfgTPl2XzsjVKyz5LAP-ExDiAZ6sJNf3D>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekvddgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:02lUYZraphfZcLjVsdZ89lJV2yrE-iLQc9Dt7wHsI6AZtvjNiu02hA>
-    <xmx:02lUYeozrUhhK-Jt7VgHtK_b50cn3Dp4D98h_JwDdddYH8_36NNIDA>
-    <xmx:02lUYfTyAdc4O1AURxw5GgyQNS3vrANQkkaVEgwtUjyNj_MMEvocfw>
-    <xmx:1GlUYbSqinCmnkRjqdhphGPpQOswR9TRgMcQmkxqs5TlFshqJOjN7Ih1084>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Sep 2021 09:27:47 -0400 (EDT)
-Date:   Wed, 29 Sep 2021 15:27:44 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     nicolas saenz julienne <nsaenz@kernel.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
+        id S1344281AbhI2Nim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 09:38:42 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:50118
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344277AbhI2Nil (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 09:38:41 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B8B2D40297
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 13:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632922619;
+        bh=IJ3OurHG/eMoa5Ez3cxwk82+OEdomsIA6378FAznzbU=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=Jgcjd3gzUNd9zvgicFXZyfLywA2NCZRDDkZNlb2PygLc8Ec9nYRiTYt2a/jrrOo3g
+         kwVf5ZCxCYApy/GLxXRCiAZN6/5NUH42DBwb65Cfg0nBXGZ+f393wvPzRCTZgPlqyT
+         ODpFTWYaHn6RQ2bE7y5lIyPajGF9RKcWjXA3vnRWot+wzMGYQjFblcTC7bGnuIc26J
+         z1ea8HokGuluH1QzfKTzNz+GBjaZsmq8TONoJBzMM9gX+UbQLFkzvi7sv6cgo7XAT2
+         9NtO+0AjczK5oyUM1BzbGN0j7RJY76ETMt2z1TMp4H36pR6bkFe4QVTiBVX3oTSUf4
+         9qLIMaZ5kl2Ew==
+Received: by mail-lf1-f71.google.com with SMTP id g9-20020a0565123b8900b003f33a027130so2387262lfv.18
+        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 06:36:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IJ3OurHG/eMoa5Ez3cxwk82+OEdomsIA6378FAznzbU=;
+        b=afF8ZicTEslT0JosmhuwJ39hsjEnBz2AHd19R0Iv56uh8VUzo2ra0PR2//AXWN6ITz
+         Auh4D7eqvegrtpJsOJvIWYShpmhu8YIR7pyPfqrHhgKVCeqiDbkakdWLEPbVLeGou9XK
+         g6xV9bW7FQyZv8rQvgH4+cFCyywD8iRGC+StUJ7VWo5O+Y6NvZzHGi/tvb0GHTTb2TGK
+         CSwUduc4EfJeIHeII7CHaGUjevRc1b3C7K+nuC1hJlCW3xoq+OrFY1tArE/naQC2K55r
+         OrE6ZYEHr/uPt6Fc8JFSf7+Gi1dS3qnQ5JDPof9JiMqUjwDR46zgPFfrZDrJnGnWnqO3
+         DFdA==
+X-Gm-Message-State: AOAM530pVCPWcmbAR2Jx//jVQ1w6KdyRKytVJcZuuW51izbQNIikuuiv
+        7Q1QhMFggoGTXKMVfNEnCHQNNrJs0hOQ70ttWuw8w+i6PQlNQXrnNjWAWmSYICXKmCOYUrv0AW3
+        liib/DfI2c92IhEN3pSsHuZ9RA5oLftjpgsU5sA==
+X-Received: by 2002:a05:6512:b0f:: with SMTP id w15mr11643575lfu.164.1632922618890;
+        Wed, 29 Sep 2021 06:36:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwV4mq82/bhZJUlEzYmX1tokizPArBTUd0Xy49dVS7VRmuCrClBqisSQWT0uvmf1nzwqca1yA==
+X-Received: by 2002:a05:6512:b0f:: with SMTP id w15mr11643554lfu.164.1632922618705;
+        Wed, 29 Sep 2021 06:36:58 -0700 (PDT)
+Received: from [192.168.0.197] ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id v26sm269056lja.22.2021.09.29.06.36.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Sep 2021 06:36:58 -0700 (PDT)
+To:     Will McVicker <willmcvicker@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/5] clk: bcm-2835: Remove rounding up the dividers
-Message-ID: <20210929132744.ursafra4jajpmljg@gilmour>
-References: <20210922125419.4125779-1-maxime@cerno.tech>
- <20210922125419.4125779-3-maxime@cerno.tech>
- <1d94747e74061f05395c34a4c441f96823dbf53a.camel@kernel.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <20210928235635.1348330-12-willmcvicker@google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v2 11/12] soc: samsung: pm_domains: modularize
+ EXYNOS_PM_DOMAINS
+Message-ID: <976e57f8-07ee-4698-b29d-dd854b79e570@canonical.com>
+Date:   Wed, 29 Sep 2021 15:36:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k7dl7qcxxmtg7pfs"
-Content-Disposition: inline
-In-Reply-To: <1d94747e74061f05395c34a4c441f96823dbf53a.camel@kernel.org>
+In-Reply-To: <20210928235635.1348330-12-willmcvicker@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 29/09/2021 01:56, Will McVicker wrote:
+> Convert the Exynos PM Domains driver into a module. This includes
+> setting EXYNOS_PM_DOMAINS as tristate and removing it from being
+> auto-selected by ARCH_EXYNOS. Instead, the config will use
+> "default y if ARCH_EXYNOS" which allows us to set it to a module via the
+> defconfig now.
+> 
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig     |  1 -
+>  arch/arm64/Kconfig.platforms     |  1 -
+>  drivers/soc/samsung/Kconfig      |  3 ++-
+>  drivers/soc/samsung/pm_domains.c | 12 +++++++-----
+>  4 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index e97e1d8f7b00..2ad19a08bf06 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -15,7 +15,6 @@ menuconfig ARCH_EXYNOS
+>  	select EXYNOS_THERMAL
+>  	select EXYNOS_PMU_ARM
+>  	select EXYNOS_SROM
+> -	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+>  	select GPIOLIB
+>  	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
+>  	select HAVE_ARM_SCU if SMP
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index e5e4b9b2fb97..e44d5e9f5058 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -91,7 +91,6 @@ config ARCH_BRCMSTB
+>  
+>  config ARCH_EXYNOS
+>  	bool "ARMv8 based Samsung Exynos SoC family"
+> -	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PM_GENERIC_DOMAINS if PM
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index fdf1162ec98b..e4743c29f73c 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -37,8 +37,9 @@ config EXYNOS_PMU_ARM
+>  	depends on ARCH_EXYNOS || (ARM && COMPILE_TEST)
+>  
+>  config EXYNOS_PM_DOMAINS
+> -	bool "Exynos PM domains" if COMPILE_TEST
+> +	tristate "Exynos PM domains"
 
---k7dl7qcxxmtg7pfs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
++Cc Arnd and Olof,
 
-On Tue, Sep 28, 2021 at 06:26:55PM +0200, nicolas saenz julienne wrote:
-> On Wed, 2021-09-22 at 14:54 +0200, Maxime Ripard wrote:
-> > The driver, once it found a divider, tries to round it up by increasing
-> > the least significant bit of the fractional part by one when the
-> > round_up argument is set and there's a remainder.
-> >=20
-> > However, since it increases the divider it will actually reduce the
-> > clock rate below what we were asking for, leading to issues with
-> > clk_set_min_rate() that will complain that our rounded clock rate is
-> > below the minimum of the rate.
-> >=20
-> > Since the dividers are fairly precise already, let's remove that part so
-> > that we can have clk_set_min_rate() working.
-> >=20
-> > This is effectively a revert of 9c95b32ca093 ("clk: bcm2835: add a round
-> > up ability to the clock divisor").
-> >=20
-> > Fixes: 9c95b32ca093 ("clk: bcm2835: add a round up ability to the clock=
- divisor")
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
->=20
-> Reviewed-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
-> Tested-by: Nicolas Saenz Julienne <nsaenz@kernel.org> # boot and basic fu=
-nctionality
+Unlike in clocks and soc drivers changes, you mentioned the removal of
+"if", however it is not explained why you do it.
 
-Does that mean you're ok with merging it through the DRM-misc tree?
-Florian, Mike, Stephen, any objection?
+Why is the most important part of commit message, not "what". Because
+"What" we can easily see. But "why" is sometimes trickier.
 
-Maxime
+Please also explain why Exynos is so special that we deviate from the
+policy for all SoC that critical SoC-related drivers have to be enabled
+(built-in or as module).
+https://lore.kernel.org/lkml/CAK8P3a1TY+XT1vF=wAh0XA5BXU5Z6Ab1d4DekXbVsN9aj3aL5w@mail.gmail.com/
 
---k7dl7qcxxmtg7pfs
-Content-Type: application/pgp-signature; name="signature.asc"
+We follow specific convention or policy and changing it requires some
+discussion, not silently under the "modularize" hood. It really looks
+like you want to sneak it in.
 
------BEGIN PGP SIGNATURE-----
+P.S. I recommend also to Cc Soc maintainers, because their point of view
+here is crucial.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYVRp0AAKCRDj7w1vZxhR
-xSWSAP9XndCsJarnvHMEXFLHhCdYgDMbnHRCxZttFGFS4pAP6gEAzwFfFa+DnjcF
-dhUDt6RJQPGoYz/lejjdLlzIvSIkeg8=
-=7O+H
------END PGP SIGNATURE-----
+>  	depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
+> +	default y if ARCH_EXYNOS
 
---k7dl7qcxxmtg7pfs--
+
+Best regards,
+Krzysztof
