@@ -2,126 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E93CC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 20:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D269C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 555126124C
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 20:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 268C561368
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Sep 2021 21:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346770AbhI2UsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 16:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346750AbhI2UsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 16:48:01 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF04C061768
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 13:46:19 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id b15so15839488lfe.7
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 13:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ei5m2coJFPE9ArBvAOBUe88q9SzwkYzMD0NediKju6U=;
-        b=qEv872EZJ1VZxT3IbJ1lydKZMOtHlz2Tq+poMTU1EKCSqXT6FO1OsC7Rr+v4XFJLfu
-         sh3FDwWV8D8kla4buDfzP9s/pIFjI20Ke+2kzu5bFSRunrsNbTbLE22/VNWZbyl31Ho4
-         zC6ZL3/oa0CIuBN4hbE+4PVZPLmzFeni2OSZIC+HlfoxlZ6aVFhfUwfAtkyGN6GsyOap
-         VOpWLMT6atWAINgWI7nt6MoexZQ6FhZ0nt5uIVa2L2mIbSs2XtHhnILZCdtulY3U5+CM
-         n60SmQgw3yX64OcifIiQ9uN5K10wtgiaDdQ6m4PPUVmHMue7zLg41F2rxhTG6NjmFsS2
-         URSw==
+        id S245483AbhI2Vbu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Sep 2021 17:31:50 -0400
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:35610 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237351AbhI2Vbu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 17:31:50 -0400
+Received: by mail-oi1-f173.google.com with SMTP id n64so4676025oih.2;
+        Wed, 29 Sep 2021 14:30:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ei5m2coJFPE9ArBvAOBUe88q9SzwkYzMD0NediKju6U=;
-        b=KqDSiZdDYZegB29CvITyHgoY3uGrjXAmKfx+hJhLB/mCseGq/+gI1DjcF6dRd16lQl
-         y/pGQGiqGWpqJyprKKkoEJMUH672qBpWeIT60rMJ5Gsfyn8P9pYlmEzm4E/paFXhVzMp
-         /kMSfLRnh6vzqyudpyFvrMI/bIcUJjvettVJ98E61yNVOM9l6DCGVfNKX8xDReRI7n+q
-         Zlg1Fh12zv4M1jIBlMzVoOa2R/QsjTo+ZoL9b1/RhVLJamdDZ1aW4W9MThRszF5Jo3b6
-         veLun0jhzfls3ra24Lo4cvsKnvqxOd08SgGlqxKZFIVP3QEcS0AzkFu6e4Fi68LtOvt6
-         9Vaw==
-X-Gm-Message-State: AOAM531bJVSTImOtoo0XRnfXI8g5G89/a69UH6RvKt3SjYlpeBuBtNue
-        cvPZGynZiMaH5Sk2K0KpwVFSwOeHl6MQnhO2Ae2r9A==
-X-Google-Smtp-Source: ABdhPJxrEvaOY+BJcEwgYKyltmJ1P95B1u5A4ohEGs0wRyoS4JlFDwH3bL8wLds17FeMKw6Pk2VeWmVGDsuYCaCd4P0=
-X-Received: by 2002:a2e:9802:: with SMTP id a2mr2036742ljj.427.1632948377858;
- Wed, 29 Sep 2021 13:46:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=xj3A4rvClnuXjjs9tt5J5UAtJSSY9GP9bYs5NYEPfs8=;
+        b=dlkEnL1/PjATKw+BYyLiHsbslr1o78bPXXInb0cF1yM8ZT1DnOs2gHKbAyCtefYGzj
+         VgdmmVs5UVP6SnlvnSNgYb66qqZQu1/bAymm2SYZNs4vQ15L8l9POFiLVP/35UerNS0g
+         0WepLMGeSIRezaNpPWlCIiVMlWi13BfmWlSnJQ0tVMpqqKzjBf9XU/5RFgglF6Y7pwZm
+         MKRcsiSfP/IaiPgyFqewbNXvjl1Z1T1ZlKFWBm8e+UceQmlpTmZpCuWZJ1GBKUp8Xkvd
+         PC8Ioi1yzH2/mAQu0FvUip/1gezBbSWJXc6pFXn7PchoqKN0Zj8zabEPAhGx3v72c7tg
+         K7yw==
+X-Gm-Message-State: AOAM530Dmb8cEtWYlFOnrwLEOgM8jUUu1sqerRa0GDps1aZ/eZJ+LetG
+        eWdfB/N/meNj68HU4xTxwbd2IfsfCg==
+X-Google-Smtp-Source: ABdhPJwMOVqFhsChePGW0D8oj7w80frc/fDvBCM3G907ladFwiT0DkQpLc8pRZba5bEr7dmrT7qtGw==
+X-Received: by 2002:a05:6808:a9c:: with SMTP id q28mr9871562oij.148.1632951008390;
+        Wed, 29 Sep 2021 14:30:08 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id bh39sm225250oib.37.2021.09.29.14.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Sep 2021 14:30:07 -0700 (PDT)
+Received: (nullmailer pid 244287 invoked by uid 1000);
+        Wed, 29 Sep 2021 21:30:06 -0000
+Date:   Wed, 29 Sep 2021 16:30:06 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-serial@vger.kernel.org,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: mvebu-uart: document DT bindings for
+ marvell,armada-3700-uart-clock
+Message-ID: <YVTa3pt279D/qWz6@robh.at.kernel.org>
+References: <20210929082034.15098-1-pali@kernel.org>
+ <20210929082034.15098-4-pali@kernel.org>
+ <1632923185.716457.3674443.nullmailer@robh.at.kernel.org>
+ <20210929140132.gom6qiohucsczoxq@pali>
 MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <20210928235635.1348330-3-willmcvicker@google.com> <CALAqxLUju1Bw0dDpi_oK6-eOiP6B2Xm1MV19G53WaRFm3Z_AWw@mail.gmail.com>
- <CABYd82Z4pgJpYVhJEGjgbWgSQp7if_=Rf03VmTu+U9D3b=dVzA@mail.gmail.com>
-In-Reply-To: <CABYd82Z4pgJpYVhJEGjgbWgSQp7if_=Rf03VmTu+U9D3b=dVzA@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 29 Sep 2021 13:46:05 -0700
-Message-ID: <CALAqxLXUOY+tdJat0YaxAEiS_AWrwxBaLq3M90btSVdWfvFBag@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] timekeeping: add API for getting timekeeping_suspended
-To:     Will McVicker <willmcvicker@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210929140132.gom6qiohucsczoxq@pali>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 1:01 PM Will McVicker <willmcvicker@google.com> wrote:
-> On Tue, Sep 28, 2021 at 8:42 PM John Stultz <john.stultz@linaro.org> wrote:
-> > On Tue, Sep 28, 2021 at 4:56 PM Will McVicker <willmcvicker@google.com> wrote:
-> > >
-> > > This allows modules to access the value of timekeeping_suspended without
-> > > giving them write access to the variable.
-> > >
-> >
-> > It's important to cover "the why" not "the what" in these commit
-> > messages, so you might add a note as to what code will be the user of
-> > this (the samsung/clk-pll.c code changed later in this series).
-> >
-> > thanks
-> > -john
->
-> Thanks John for the tip. I will try to be better at that in the followup.
+On Wed, Sep 29, 2021 at 04:01:32PM +0200, Pali Rohár wrote:
+> On Wednesday 29 September 2021 08:46:25 Rob Herring wrote:
+> > On Wed, 29 Sep 2021 10:20:31 +0200, Pali Rohár wrote:
+> > > This change adds DT bindings documentation for device nodes with compatible
+> > > string "marvell,armada-3700-uart-clock".
+> > > 
+> > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > 
+> > > ---
+> > > Changes in v6
+> > > * Fix license
+> > > * Rename node to clock-controller@12010
+> > > * Remove maxItems
+> > > ---
+> > >  .../bindings/clock/armada3700-uart-clock.yaml | 56 +++++++++++++++++++
+> > >  1 file changed, 56 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> > > 
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: 'http://devicetree.org/schemas/clock/marvell,armada-3700-uart-clock#' does not match 'http://devicetree.org/schemas/.*\\.yaml#'
+> > 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: 'maintainers' is a required property
+> > 	hint: Metaschema for devicetree binding documentation
+> > 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+> > ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: $id: relative path/filename doesn't match actual path or filename
+> > 	expected: http://devicetree.org/schemas/clock/armada3700-uart-clock.yaml#
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml: ignoring, error in schema: $id
+> > warning: no schema found in file: ./Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml
+> > Documentation/devicetree/bindings/clock/armada3700-uart-clock.example.dt.yaml:0:0: /example-0/clock-controller@12010: failed to match any schema with compatible: ['marvell,armada-3700-uart-clock']
+> 
+> Hello! What does this error mean?
+> 
+> Should I add .yaml suffix into '$id: ' line and rename file via?
+> git mv Documentation/devicetree/bindings/clock/armada3700-uart-clock.yaml Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
 
-I have to remind myself regularly as well. :)  Apologies if my quick
-reply above seemed curt (as it does to me re-reading it now). Wasn't
-my intent.
+Yes. They need to match.
 
-> For this specific patch, I am adding this new API because the Samsung
-> PLL driver (drivers/clk/samsung/clk-pll.c) currently is using the
-> variable 'timekeeping_suspended' to detect timeouts before the
-> clocksource is initialized or timekeeping itself is suspended. My
-> patch series aims to modularize the Samsung PLL driver. So to keep the
-> driver's functionality intact, I need to add this additional API.
-
-Sounds good!
-
-Another small/medium suggestion:  Since you're adding a new interface
-for non-core users of timekeeping_suspended, it might be good to
-switch the other users as well (seems like just
-drivers/clk/ti/clkctrl.c and kernel/sched/clock.c), then also remove
-the extern in include/linux/timekeeping.h (so there's one consistent
-method to access it)?  I know it's a sort of scope creep, so apologies
-for asking, but it would make the series more attractive if it's not
-leaving something for others to clean up later.
-
-thanks
--john
+Rob
