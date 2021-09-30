@@ -2,101 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259C6C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B42C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E9AD6126A
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B64613A7
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350600AbhI3NKS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 09:10:18 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38798
+        id S1350773AbhI3NSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 09:18:45 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39346
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350332AbhI3NKM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:10:12 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        by vger.kernel.org with ESMTP id S1350528AbhI3NSo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:18:44 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ECA19402CB
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 13:08:27 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 46D3E40260
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 13:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633007307;
-        bh=hUl4AzMPgOLZrORvQmrSxH7LjjpDiFvnLVFli7UcmE4=;
+        s=20210705; t=1633007821;
+        bh=RCNF115QrSenyhS4+VUmTb+/09HgZQVEEH62W5zhJ9o=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=JMkR8AwrzLNfSy3bPrwJdUXys8RZHIq+R/tzAh/BWwJOshsNEP46KgRvdM8iWQCod
-         aqghNAFiljYphWcnVcfP2sTnlqds5zdVDOK6qvuorjhKSCefVnuJBKamLJt+5p5WwV
-         2Hn96MkEw7vIR5htoiHwpIqLh8KH3+/A/eZ9Px3wn5rTU5e4UW0zuGvmE8yX0NlUL6
-         LzpCepEJWKF5SJCJs9Xn/s3FmlJXIJHYUHtR/wSb0/c6ZB25H3Hi/H9t5LQ+b/hODG
-         HTE5moIE5N9e/DeBBBW+2Neolwfn3YlobrHv6f9knXvVFSuUnmtuoiBG2BUJaLLvHg
-         jZVQJDclGfAww==
-Received: by mail-lf1-f70.google.com with SMTP id n22-20020a0565120ad600b003fcc09af59fso5545703lfu.21
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:08:27 -0700 (PDT)
+        b=NPBdil4tQLTdbn/InaRcY28R5pI15hbMigaqlVuDNvUHKLUI4t/k6TQ84trvRfQS2
+         f23JmlvnVzvCcIduDKPldzYvsS/b21/um2jRTsF3CZymQ5CPiK9ZVGDIoZBEAk+xhW
+         Fjbh+U19j8uXrSGlu8e0ugo337FaRr9czHMconAkylmLZLB4jVHcvvjJ08G7eJvXnx
+         Kn1GifhLbxK/7I3+slh9wtQtBoj/CJjphNSpDgFXLE0LzHy1hmyIsVlkQypv74mpqv
+         pHc2VdIR7O1X1zOuVXj7R+M2g4bHnW11VAXJlGR2k1Q1sNoMo0uKWUroM3Hom7gZzf
+         5/oEBpi2r1eSA==
+Received: by mail-lf1-f71.google.com with SMTP id d16-20020a056512369000b003fca9e038ddso5600186lfs.3
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:17:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=hUl4AzMPgOLZrORvQmrSxH7LjjpDiFvnLVFli7UcmE4=;
-        b=sJp1J6YvesknqbCj2B0ZJulJlc9q1m1NLp593s2ZUR7rWudV4nqbFoJWp5iglzfI0c
-         7vgLAMDwcEQCYlaiKLG0JkGfowhUfXufbCpQIw9CFOCP/7SYn2SZRsYUluL5coWWNE/d
-         f7+2I9dTTa9V6Y0DJB9xdFrFe62MIuXedAJe7RbE+DRJrkmtz8xRTR3Ko56EEtiP1Awg
-         KXXgDs1SCRzC/EU7m4jmE1wo0XcnX5CjQr0r4vNs2345GB8Tqn0tVwL9jIDLpJt6jxzs
-         v76YJ5IProYW4BeU3FnXhthoTcgXkZvKqvpa2rLpq1whLB74uI54ASyB2x1EKRp1nX5m
-         jFVw==
-X-Gm-Message-State: AOAM533yMlfrL3At0Jlw3OvPlXq0KkgY3EqsGElbQqkFJ3L3+d7AgkE3
-        GPEWTrv9sRtnWvSEx0xt0g5choGy+zGRewNUuFR3/f7VKbh1QEg0HCpi01PYbRgq9zpBOy6ZXae
-        ONXI3BcW9HcixWUwONQxE7G3cHrmTDM7wi0PnbA==
-X-Received: by 2002:a05:6512:3093:: with SMTP id z19mr5967979lfd.242.1633007305686;
-        Thu, 30 Sep 2021 06:08:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyjm3vd0EFvqL7ckfqAQvq9Lo79q9lkx+VOJUC5cK4B1tRx3+/dBYuyWUn8tO852nNIwX6f3w==
-X-Received: by 2002:a05:6512:3093:: with SMTP id z19mr5967946lfd.242.1633007305455;
-        Thu, 30 Sep 2021 06:08:25 -0700 (PDT)
+        bh=RCNF115QrSenyhS4+VUmTb+/09HgZQVEEH62W5zhJ9o=;
+        b=CkiUhtpM44GHSJD4XKoxxRZ9K9zKqYpNgvEcvHxA1qUDLzCJq4/2aPLByG8UU45I1Y
+         /AVqJFkNFYhjX31vs++3oveavqWg+0CgwQxmp5upu4UGZrTPSkkZ1anK3TvxjEvX08mi
+         TaMlK+dd3v4FOruLZrXQ5ddlcyH70lTbGHpawiZyGAVwPzUsawMV3KGX+Q1NeeJICSCe
+         8lOwLE6DCUk0O25YCcwHpIW/jT5y6qTveNEusAo2zGuB0gIX2s/5Uec5gLf8FgZMcRht
+         CZT92N/Nz46G3D3/8EhwRx67hpZdh0Asqv0W/6SctFoNNlwMz+xhAmPta3F0tPjny0WP
+         oWuw==
+X-Gm-Message-State: AOAM53326D7MQFbrq9QT0ZpoQwiPp9qoVFTYASSZEP1fTMqTlSa4vx1e
+        nxfLtzbTMppk38Npik8GYYVKX/aiv9QcEhTwBsFPa9IihbVehxO2DFcvl8Vu4uFqlSOZo7I6HiL
+        vGOZInF/nTtlBJ9h5CQqUDDZ4SD2YaSPFB3rJSQ==
+X-Received: by 2002:a2e:a596:: with SMTP id m22mr6316949ljp.262.1633007820688;
+        Thu, 30 Sep 2021 06:17:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy09YmqEMO9K/DkFa/bZTei75H3U3dhuXPBwEhVk4C2y92R9e/R2akQYKqXZiF/L9tEarb/qQ==
+X-Received: by 2002:a2e:a596:: with SMTP id m22mr6316925ljp.262.1633007820526;
+        Thu, 30 Sep 2021 06:17:00 -0700 (PDT)
 Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id r3sm367245lfc.131.2021.09.30.06.08.23
+        by smtp.gmail.com with ESMTPSA id f26sm341405ljj.82.2021.09.30.06.16.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Sep 2021 06:08:24 -0700 (PDT)
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
+        Thu, 30 Sep 2021 06:17:00 -0700 (PDT)
+Subject: Re: [PATCH 10/12] mfd: dt-bindings: samsung,s5m8767: document buck
+ and LDO supplies
 To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
- <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
- <YVWCK5QO331rfhJJ@google.com>
- <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
- <YVWwBz8jrznqXah4@google.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
+ <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
+ <YVWx+08egbGPiYYt@google.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
-Date:   Thu, 30 Sep 2021 15:08:23 +0200
+Message-ID: <e5ab2ba9-e4ae-30db-8e54-8af42d7f3bf1@canonical.com>
+Date:   Thu, 30 Sep 2021 15:16:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <YVWwBz8jrznqXah4@google.com>
+In-Reply-To: <YVWx+08egbGPiYYt@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -104,38 +91,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/09/2021 14:39, Lee Jones wrote:
-> On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
+On 30/09/2021 14:47, Lee Jones wrote:
+> On Tue, 28 Sep 2021, Krzysztof Kozlowski wrote:
 > 
->> On 30/09/2021 11:23, Lee Jones wrote:
->>> [0] Full disclosure: part of my role at Linaro is to keep the Android
->>> kernel running as close to Mainline as possible and encourage/push the
->>> upstream-first mantra, hence my involvement with this and other sets.
->>> I assure you all intentions are good and honourable.  If you haven't
->>> already seen it, please see Todd's most recent update on the goals and
->>> status of GKI:
->>>
->>>   Article: https://tinyurl.com/saaen3sp
->>>   Video:   https://youtu.be/O_lCFGinFPM
->>>
+>> Document the properties with regulator supplies for bucks and LDOs.  At
+>> least one board uses it (Exynos5250 Arndale).
 >>
->> Side topic, why this patchset is in your scope or Will's/Google's scope?
->> Just drop it from Android main kernel, it will not be your problem. I
->> mean, really, you don't need this patchset in your tree at all. The only
->> platform which needs it, the only platform which will loose something
->> will be one specific vendor. Therefore this will be an incentive for
->> them to join both discussions and upstream development. :)
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
 > 
-> How would they fix this besides upstreaming support for unreleased
-> work-in-progress H/W?
+> These all need Rob's Ack.
+
+Correct.
+
 > 
-> Haven't I explained this several times already? :)
+> But can you start with reworking the subject line please.
+> 
+> It should be:
+> 
+>   "dt-bindings: mfd: <component>: <Subject starting with an uppercase char>"
 
-Either that way or the same as Will's doing but that's not my question.
-I understand you flush the queue of your GKI patches to be closer to
-upstream. Reduce the backlog/burden. you can achieve your goal by simply
-dropping such patch and making it not your problem. :)
-
+Sure, just have in mind that Mark wants them the other way around for
+regulator. :)
 
 Best regards,
 Krzysztof
