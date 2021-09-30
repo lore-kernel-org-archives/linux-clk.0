@@ -2,120 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2BCC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486AFC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD5DB61247
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB3061555
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351074AbhI3NXU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 09:23:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47854 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351110AbhI3NXQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:23:16 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB26AC06176E
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:21:33 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id i6-20020a1c3b06000000b0030d05169e9bso6231665wma.4
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:21:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0EnoGcQxVcjVLjhlbUWYyjl1NXgdf4STxEMEBfnyuEE=;
-        b=RfTVTSp1Jll5QOCFPLIM78aADWMp5XJ+7MXbtAhSEJgHyf5spRRcODCjtBNQ1Zr29M
-         3zZ0ofUeQgp4EmzaiUh9syLWblSChCksVV8XwwiVndwfk9CSH9jlVDatSVNRtfSkLV0K
-         UUnMG/NHEM8gFVZWGcFMqUgEVGDEhc2uWRGCLnWvDTRkfyXc2jv+7H5qafKQ8fZl3Aum
-         1Nnr8yVXQDR+vs8nayhUqdLXMCaj7KCNtU5EJNuhDJL0tkmteDGs407BQjMP6qfWasle
-         4POTMeon+KJwy6tnw3miMqaA96nRffXtdAm+Ky0rqO/NNPSR0QKAem7NDkk6Kx3WDKv9
-         1VCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=0EnoGcQxVcjVLjhlbUWYyjl1NXgdf4STxEMEBfnyuEE=;
-        b=2Kpi1mFh/zWtPkRakcj5q2ZMue6DdgdqWcGAXB9afOML6M7xBt8BPr4mNYjKA3oXeD
-         rZsb6vj4mlyOKbYNTD1VbhdHqNDwq5L+R3pWwO7YPQe7eDzXFkucwiKD5hQ6u9LH3ICo
-         Pu/pFnLhLXd/oWoumWdyrbBQ98i/6YBf1tPnVk/XaBdY85YjflRwc4raYMwiyVqMFQXy
-         IFFo5OnoqBm8sv2oK2YEzyYELf+0M47h58In3qkbu7yRA04HtRiIYir3ShroDUnybOJa
-         bvWFbUbewvxo0naa/eLPx/Zv2SGy7HpNPy2xRlAY8gWxLrkdKBz5P1d3JINYjC07Jccs
-         3+uw==
-X-Gm-Message-State: AOAM531QZyEgE2oyxWlaXZyxq2OV1VACFhXDnku2NY6l40tUyI1laBJn
-        sPjtnoUtbDkkhtE3sA4J5043KA==
-X-Google-Smtp-Source: ABdhPJyyEtgq7rfkTi/7o2F3OJOwqDVQ7uW6EcRjxsPnSK+R3odzh0Zz0IG2MLTOeNWuUz6OYd2YEg==
-X-Received: by 2002:a1c:f713:: with SMTP id v19mr5199573wmh.188.1633008092422;
-        Thu, 30 Sep 2021 06:21:32 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id s13sm4847931wmc.47.2021.09.30.06.21.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 06:21:32 -0700 (PDT)
-Date:   Thu, 30 Sep 2021 14:21:30 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 10/12] mfd: dt-bindings: samsung,s5m8767: document buck
- and LDO supplies
-Message-ID: <YVW52vAdxbA8LqhM@google.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
- <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
- <YVWx+08egbGPiYYt@google.com>
- <e5ab2ba9-e4ae-30db-8e54-8af42d7f3bf1@canonical.com>
+        id S1351370AbhI3NaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 09:30:05 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:47471 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351362AbhI3NaF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:30:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1633008503; x=1664544503;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=WGH/7oHZ2lCij6lC7BGo1OaMpElgiKRYeW6ANkvGzVg=;
+  b=Vkp8WC2ioKQ37h6r35xan0z1zl8v+ZvtJdP0FEDpq/6vwp7gB/inMf2x
+   z9q/34ncvYn42lfADOZC7ZgAc5r/3TAZ/jyX/BIS3zX/bSkFvptCWz9uE
+   ui2M6BmE5QA2XGNGlH3JaN86ASST6aDcWo1X+jlPJoOo2z18VRlphyaJt
+   Chn/Z8dD2+iyQ8YX1yMG1Lt/MIHLh/ptSvlULB+Gm0aRODjJWrrbzIRW2
+   MybCrmTLPdcxoG+FaZsoasNMO7TMSpgvrhh8oavuUdP4G7jTNKhBjUMfg
+   r+shCFZmtG8MwUEKFm+Zbb4Aqg6i1QeScFQhFBHLdskZDs3EfsROep94A
+   A==;
+IronPort-SDR: /RNOiQNmjxpxi+yLj/icS2/tINUabZwNWoMF7i4ELTYDNGgSIuAqUYKAFLMystikET5LQ+oV3o
+ +kpsXZEYJJvuVW7mxEV5c3KGACBZXoREGvjPhLAVdC5Y/FhVKj9NqsHapJ67bd+BAffWHlt2T4
+ eyb5vEpmLU4znwZ0EY2B/bZq/PuzHKL7YkvYF2lEpGaVy5IapzFa8fOzFQrw7eJ+x3DGmVnsTx
+ an8f/XButtGKNVcu+Ast32q1RkxQirm+LL+k9V+tPq//BqKhiZJkNXHncys2QNMWGS9An1G+fd
+ kE5Ja8bXxBuy+ykI+rfIkD8T
+X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
+   d="scan'208";a="137988284"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Sep 2021 06:28:22 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 30 Sep 2021 06:28:21 -0700
+Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 30 Sep 2021 06:28:17 -0700
+From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+To:     <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+        <Eugen.Hristev@microchip.com>, <Kavyasree.Kotagiri@microchip.com>,
+        <Manohar.Puri@microchip.com>
+Subject: [PATCH v7 0/3] Add driver for lan966x Generic Clock Controller
+Date:   Thu, 30 Sep 2021 18:58:12 +0530
+Message-ID: <20210930132815.15353-1-kavyasree.kotagiri@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e5ab2ba9-e4ae-30db-8e54-8af42d7f3bf1@canonical.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
+This patch series adds a device driver for Generic Clock Controller
+of lan966x SoC.
 
-> On 30/09/2021 14:47, Lee Jones wrote:
-> > On Tue, 28 Sep 2021, Krzysztof Kozlowski wrote:
-> > 
-> >> Document the properties with regulator supplies for bucks and LDOs.  At
-> >> least one board uses it (Exynos5250 Arndale).
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >> ---
-> >>  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
-> >>  1 file changed, 38 insertions(+)
-> > 
-> > These all need Rob's Ack.
-> 
-> Correct.
-> 
-> > 
-> > But can you start with reworking the subject line please.
-> > 
-> > It should be:
-> > 
-> >   "dt-bindings: mfd: <component>: <Subject starting with an uppercase char>"
-> 
-> Sure, just have in mind that Mark wants them the other way around for
-> regulator. :)
+v6 -> v7:
+- Added Kconfig and Makefile entires for lan966x clock driver.
 
-a) I'm suggesting you use the standard formatting
-b) This is not a regulator patch :)
+v5 -> v6:
+- Added Acked-by to dt-bindings file.
+- Removed "_clk" in clock-names.
+- Added Reviewed-by to Documentation file.
+
+v4 -> v5:
+- In v4 dt-bindings, missed adding "clock-names" in required
+  properties and example. So, added them.
+- Returning proper error - PTR_ERR.
+- Removed unused variable "ret" in probe function.
+
+v3 -> v4:
+- Updated "clocks" and added "clock-names" in dt-bindings.
+- Used clk_parent_data instead of of_clk_get_parent_name().
+
+v2 -> v3:
+- Fixed dt_binding_check errors.
+
+v1 -> v2:
+- Updated license in dt-bindings.
+- Updated example provided for clock controller node.
+
+Kavyasree Kotagiri (3):
+  dt-bindings: clock: lan966x: Add binding includes for lan966x SoC
+    clock IDs
+  dt-bindings: clock: lan966x: Add LAN966X Clock Controller
+  clk: lan966x: Add lan966x SoC clock driver
+
+ .../bindings/clock/microchip,lan966x-gck.yaml |  57 +++++
+ drivers/clk/Kconfig                           |   7 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-lan966x.c                     | 236 ++++++++++++++++++
+ include/dt-bindings/clock/microchip,lan966x.h |  28 +++
+ 5 files changed, 329 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+ create mode 100644 drivers/clk/clk-lan966x.c
+ create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
