@@ -2,296 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A0CC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 06:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F329DC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 08:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A38A61875
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 06:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D256D617E5
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 08:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348185AbhI3GQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 02:16:48 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56978
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1348221AbhI3GQr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 02:16:47 -0400
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3B2BD405FE
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:15:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632982504;
-        bh=l4P1yQgHmK4IoeNIUGcmxpjGHV2AL8XAWEflVAlKCuA=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=RT4PSkwN7MtLM1mTe4Tp2PgDjsRDVNPsPMc4fRsVSpeiTUfv9teDqEFfkv8grmjDb
-         R/DQh8Bm4cTf49z6TIyuObIhH+Wp3wy0vLFU7JXGrPEktGo4aKyTnmtRuO9pwk2p5i
-         7KZ2HviCT8AvOj/dQQJAXG0mRFL9pPmNpJbgFOXR1fh8PJkZVE/+OydyWGmNTkmpo4
-         +M3DcjKOA4vKvMb2cnfrG+z/zTAtg8Fd6FqZG0Z0fDrfpnLQv5o0oMgJ44sExFY8f4
-         bAS+cKDnzqIxUxMdG/+Aj20Ioi5RtkUVvht5Zc0OWTshrIBGqJB2zhSJK+1yzMXAVs
-         qhzP7YAxYJriA==
-Received: by mail-ed1-f72.google.com with SMTP id y15-20020a50ce0f000000b003dab997cf7dso1488222edi.9
-        for <linux-clk@vger.kernel.org>; Wed, 29 Sep 2021 23:15:04 -0700 (PDT)
+        id S1348918AbhI3IFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 04:05:55 -0400
+Received: from mail-vk1-f181.google.com ([209.85.221.181]:40733 "EHLO
+        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348936AbhI3IDZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 04:03:25 -0400
+Received: by mail-vk1-f181.google.com with SMTP id w68so2417790vkd.7;
+        Thu, 30 Sep 2021 01:01:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l4P1yQgHmK4IoeNIUGcmxpjGHV2AL8XAWEflVAlKCuA=;
-        b=y2Elqg+miSz/m7ovYYyMxOGeJIXACsud2/rFkbEn4DlL6MaGmfOThhs3wpkaZHm3Ip
-         D16iUXhuFyKHwQxxeoIuxhe0g5oFiipe7Rmt/VsrCfvhAGoKXpMUu2G+EhnrTKmfW5Cl
-         BibRt4Qk5omZCd30m8Uzp9e/lFlubd9zeAdS57p8lcF2X6kK+vUCRARdcNnnuGNg4+Wb
-         3LcCpHkJgLRDURMgQzBLZ8GeiYVqubmnTqQ37mPwuI/ZCqTrOool2VXsHQ07D4KFyYRO
-         6tyRMLSGrlMVAiWy0JHeU4vxevchURgvd7QuZv8gLGb8taGa+1lU9QsCeaOYj05XRicS
-         uNCQ==
-X-Gm-Message-State: AOAM5305ONbRz7RAMzbbCstLeuOzusGwmsmStUO5mbjYShouEXg2QnN1
-        cRR38BJ+mBIqG08RcywIOdxw77XjvkwJJlITYhHB2r8H9jgveyOknwOyI9uVuHYNrxwwtH4RgBb
-        T9Xdx3I5tEJw0yIDV/w5T9/ozQtVZ9+MYfVce4w==
-X-Received: by 2002:a05:6512:3193:: with SMTP id i19mr1482839lfe.485.1632982492911;
-        Wed, 29 Sep 2021 23:14:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw2ed5i0IuL5p++CT70JdS9PYYz1vbD+xm+23BVhAAobKjG9WLM+ErIJYhEnSrjoPv18RAJXQ==
-X-Received: by 2002:a05:6512:3193:: with SMTP id i19mr1482787lfe.485.1632982492506;
-        Wed, 29 Sep 2021 23:14:52 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id l6sm252964lfp.143.2021.09.29.23.14.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Sep 2021 23:14:51 -0700 (PDT)
-To:     Will McVicker <willmcvicker@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
- <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
-Message-ID: <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
-Date:   Thu, 30 Sep 2021 08:14:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ms0VqDKZboxk1ut2VKuUbmXC/Os6zYllLTqnL0oRNbQ=;
+        b=VnYF7NDchrwmccq/WoK6bb/oudKrq2tzg7uDuJqTRXC6eD1wB3xlX8wYz1ymZ0eu2U
+         Q7cNRuwQJpxhYPl+yK+HhiEf8t1LE3xz+FcvWVgZ0nAdGdBmlvFgQJ445tBu2lFv3jYI
+         ng9qoFdBFgfqlMlAa0Ldz6Zw/KkqGgoU7nJIO68SGlcKKMe0mk0H0NhjVYhPmjYaniMW
+         uySORjIxIxPeaozHZr+ag5CCvH2FbMvXMIqJveNCRwXtry1Uar1XC5IkqVd+dbtSUzrO
+         LwtxPmYKb6SrKrSM3DCFcWyrjgi0cEoKh0YstpDgy9E6NGia0I+1XWhs2vK1H+nqVkrH
+         +CXA==
+X-Gm-Message-State: AOAM530w4GZO/y1CBh1NtWJZU2rOsTJbl0kk4882+E1AUeLh0zogxZx4
+        kUMIEG64WMiyYf7Kfb9TZ/X3/KoCtsXTGoXFpqIpetwXczk=
+X-Google-Smtp-Source: ABdhPJzM80iDyUPKXMxG4ur1pT73IGxCLDTHfMl3aO1BTD+/HNQJUw87pcAvECmNIYqvDzvLlU9N/pp5MpjFP+1Z3tM=
+X-Received: by 2002:a1f:3a4b:: with SMTP id h72mr2098433vka.19.1632988895590;
+ Thu, 30 Sep 2021 01:01:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210907144512.5238-1-marek.vasut@gmail.com> <163297980091.358640.10064724088378840378@swboyd.mtv.corp.google.com>
+In-Reply-To: <163297980091.358640.10064724088378840378@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 30 Sep 2021 10:01:24 +0200
+Message-ID: <CAMuHMdV8Xu-Pgda9ZrgaXFqXdzBrSRWwiSQFLjzxqRGNWkO3wQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar: Add missing COMMON_CLK dependency
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/09/2021 21:48, Will McVicker wrote:
-> On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 29/09/2021 01:56, Will McVicker wrote:
->>> This is v2 of the series of patches that modularizes a number of core
->>> ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
->>> modularized all of the drivers that are removed from the ARCH_EXYNOS
->>> series of "select XXX". This includes setting the following configs as
->>> tristate:
->>>
->>>  * COMMON_CLK_SAMSUNG
->>>  * EXYNOS_ARM64_COMMON_CLK
->>>  * PINCTRL_SAMSUNG
->>>  * PINCTRL_EXYNOS
->>>  * EXYNOS_PMU_ARM64
->>>  * EXYNOS_PM_DOMAINS
->>>
->>> Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
->>> which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
->>> The reason for these new configs is because we are not able to easily
->>> modularize the ARMv7 PMU driver due to built-in arch dependencies on
->>> pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
->>> the ARM and ARM64 portions into two separate configs.
->>>
->>> Overall, these drivers didn't require much refactoring and converted to
->>> modules relatively easily. However, due to my lack of exynos hardware, I
->>> was not able to boot test these changes. I'm mostly concerned about the
->>> CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
->>> requesting help for testing these changes on the respective hardware.
->>>
->>
->> These are all not tested at all? In such case, since these are not
->> trivial changes, please mark the series as RFT.
->>
->> I will not be able to test these for some days, so it must wait.
->>
->>
->> Best regards,
->> Krzysztof
-> 
-> +Cc Arnd and Olof,
-> 
-> Hi Krzysztof,
-> 
-> To avoid the scrambled conversation from the first patchset, I'm going
-> to address all your general questions here in the cover letter thread
-> so that it's easier for everyone to follow and reference in the
-> future.
-> 
->> What is more, it seems you entirely ignored Geert's comments. I pointed
->> attention to it last time and you just said you will send v2 instead of
->> joining discussion.
->>
->> It's a NAK for this reason - ignoring what Geert brought: you just broke
->> distro configs for Exynos.
-> 
-> First off I did want to chime into the discussion from the previous
-> patchset, but I felt that Lee and Saravana addressed all your concerns
-> regarding the intent and feasibility. You also made it clear what the
-> next steps were that I needed to take.
+Hi Stephen,
 
-One of the steps was problem with distros using everything as modules.
-They should not receive these drivers as modules.
-Reminder: these are essential drivers and all Exynos platforms must have
-them as built-in (at least till someone really tests this on multiple
-setups).
+On Thu, Sep 30, 2021 at 7:30 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> +linux-clk as I don't regularly read my inbox :/
+>
+> Quoting marek.vasut@gmail.com (2021-09-07 07:45:12)
+> > From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >
+> > Add COMMON_CLK dependency, otherwise the following build error occurs:
+> >   arm-linux-gnueabi-ld: drivers/pci/controller/pcie-rcar-host.o: in function `rcar_pcie_aarch32_abort_handler':
+> >   pcie-rcar-host.c:(.text+0xdd0): undefined reference to `__clk_is_enabled'
+> > This should be OK, since all platforms shipping this controller also
+> > need COMMON_CLK enabled for their clock driver.
+> >
+> > Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Wolfram Sang <wsa@the-dreams.de>
+> > Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > ---
+> > +CC Stephen, please double-check whether this is the right approach or
+> >     whether there is some better option
+>
+> Stop using __clk_is_enabled()? I don't quite understand what's going on in
+> the code but __clk_is_enabled() should really go away. I thought we were
+> close to doing that but now I see a handful of calls have come up. The
+> API should be replaced by clk_hw_is_enabled() and then removed. We move
+> it to clk_hw API so that only clk providers can look at it.
 
-> 
->> Please also explain why Exynos is so special that we deviate from the
->> policy for all SoC that critical SoC-related drivers have to be enabled
->> (built-in or as module).
-> 
-> I am not actually changing ANY default build configurations here and
-> I'm not removing any existing configuration.
+But this is not a clk provider...
 
-You are changing not default, but selectability which is part of the
-enforced configuration to make platforms working. The distros do not
-always choose defaults but rather all as modules. Kernel configuration
-is huge and complex, so by mistake they could now even disable
-potentially essential driver. There is no need to disable for example
-essential clock driver on a supported Exynos platform.
+> Sigh!
 
-> I tried to make it pretty
-> clear in my original patch series commit messages that none of my
-> changes modify the default behavior. The .config is the same with and
-> without my patches. All of these drivers remain enabled as built-in.
-> So if there is a distro that requires all of these drivers to be
-> built-in, then they can continue as is without noticing any
-> difference. IOW, all of these changes are/should be backwards
-> compatible.
+;-)
 
-I was not referring to default neither to backwards compatibility.
-Please explain why Exynos is special that it does not require essential
-drivers to be selected as built-in. For example why aren't same changes
-done for Renesas?
+> Anyway, fixing the dependency is "ok" but really the long term fix would
+> be to not use a "is this clk enabled" sort of API. If I'm reading the
+> code correctly, this is some sort of fault handler that's trying to
+> avoid hanging the bus while handling the fault so it tries to make sure
+> the clk is enabled first? Is it a problem if the clk is not actually
+> enabled here? Would runtime PM enable state of the device work just as
+> well?
 
-Is that now a new global approach that all SoC drivers should be allowed
-to be disabled for ARCH_XXX?
+Thanks, checking Runtime PM state is a good suggestion. Doing so
+would require caching a pointer to the PCIe struct device instead of
+the struct clk.
+However, pcie_bus_clk is not the module clock, which is managed by
+Runtime PM, but the PCIe bus clock, which is managed explicitly by
+the driver.
+However, I believe that we are checking the wrong clock, as register
+access needs the module clock to be enabled, not the PCIe bus clock?
+As the driver just calls pm_runtime_get_sync() and clk_prepare_enable()
+in .probe(), and never touches Runtime PM status or the PCIe bus clock
+during the further lifetime of the driver (it cannot be unloaded), both
+the module clock and the PCIe bus clock should always[*] be enabled
+when the static copy of the remapped PCIe controller address is valid.
+[*] Modulo system-wide power transitions like s2ram. Does
+    pm_runtime_suspended() reflect that state, too?
 
-> 
-> I really appreciate yours and John Stultz's comments regarding
-> including the "why" in my commit message wording. I will spend more
-> time on the next series on trying to write a more meaningful commit
-> message, but before that we can surely discuss the "why" here.
-> 
-> As mentioned by Lee and Saravana, our common goal is to make it easier
-> for everyone to contribute upstream. In particular, this series of
-> patches is laying the ground work for distros to have more flexibility
-> in supporting a wider range of platforms without forcing everyone to
-> include unnecessary drivers. 
+Gr{oetje,eeting}s,
 
-The drivers are usually necessary. Actually, you admitted you didn't
-test patchset, so how do you even know that they are unnecessary? How do
- you judge?
+                        Geert
 
-> You said that upstream supports a generic
-> kernel, but I argue that the upstream "generic" arm64 kernel can't be
-> considered generic if it builds in SoC specific drivers that can be
-> modules.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Good point, but since having them as modules was not tested, I consider
-it as theoretical topic.
-
-> This patch series is addressing exactly that -- allow distros
-> to move SoC specific drivers out of the core kernel and into modules.
-> Ultimately, our goal is to be able to directly develop with the
-> upstream kernel on new and old SoCs by not including SoC specific
-> drivers in our generic kernel distro. This helps the upstream
-> community in a number of ways:
-> 
-> (1) It makes the ARM64 generic kernel smaller by converting more
-> drivers into modules
-> (2) It makes it a lot easier for everyone to develop upstream if they
-> can directly use the upstream kernel without carrying downstream
-> changes.
-
-I don't understand the point (2) here. Anyone can use upstream kernel
-for supported and unsupported platforms. How upstream benefits from a
-change affecting supported platforms made for unsupported, downstream
-platforms.
-
-> 
->> Even if there was, I think it is good to have dependencies like
->> ARCH_EXYNOS, as they let us partition the (19000, as Arnd said recently)
->> Kconfig symbols into better manageable groups.  Without these, we cannot
->> do better than "depends on ARM || ARM64 || COMPILE_TEST".
-> 
-> My patch series still keeps the dependencies on ARCH_EXYNOS. I am
-> totally fine with "depends on ARCH_EXYNOS" and totally fine with
-> "default ARCH_EXYNOS". The problem we have is that ARCH_EXYNOS
-> forcefully selects SoC specific drivers to be built-in because it just
-> adds more and more SoC-specific drivers to a generic kernel.
-
-The selected drivers are essential for supported platforms. We don't
-even know what are these unsupported, downstream platforms you want
-customize kernel for. They cannot be audited, cannot be compared.
-
-Therefore I don't agree with calling it a "problem" that we select
-*necessary* drivers for supported platforms. It's by design - supported
-platforms should receive them without ability to remove.
-
-If you want to change it, let me paste from previous discussion:
-
-Affecting upstream platforms just because vendor/downstream does not
-want to mainline some code is unacceptable. Please upstream your drivers
-and DTS.
-
-Everyone else are working like this. NXP, Renesas, Xilinx, TI, Rockchip,
-AllWinner. Samsung or Google is not special to receive an exception for
-this.
-
-
-> 
-> I know you are asking for me to only push changes that have proven to
-> work. 
-
-Yep, tested.
-
-> The theory behind these changes has been proven downstream on
-> other devices and I'm more than willing to help debug any issues that
-> arise out of this patch series, but since I don't have the hardware
-> myself I do need help with device testing these changes.
-
-Downstream uses very specific Linux "distro" or fork - Android - with
-changes not present in others. Although tests on other
-(unsupported/unupstreamed) devices is good, but it's not sufficient. For
-example I guess that half or most of Odroid devices are running standard
-Linux distro (Arch, Ubuntu).
-
-You also mentioned downstream devices but without actually ever defining
-them. Please be more specific. What SoC, what hardware?
-
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
