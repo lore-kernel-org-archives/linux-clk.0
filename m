@@ -2,159 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C7EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB692C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 741DC615A2
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE296619E4
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351427AbhI3Nab (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 09:30:31 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:49540 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351433AbhI3NaY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:30:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1633008521; x=1664544521;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=s0z56KhLKO6MbP32TRs2TV8dX8ToFoXdejyMjuyrdXM=;
-  b=QeXkDVNRGHohkVZLhDYqOjGqt4f5f2BsAfZYxUS7JyYkyn8TiSVMUipj
-   gr5NgGLmp+jEf+3zISIItN6xLADUvmhJ65K8xWxrS/umrEsQv71kcqVuX
-   5SwvnO8pAlQQ2MrPWWEHIJ4snOW1g4hRU6yG1a3amgdN7wYqD+lwwng1o
-   pRZPIHkJdmH8cjIZ4JcJAqQhYHawKuhPnTIhdlHgEh6Q6tkefKqLX+y2b
-   QaGmlG8jhakuJoyoy9SNVFzxK+jfpd9t8qabbBA78jmRDOHdmAKPX0Kfn
-   idrLkZqlJMvbYphqChJGMlr0nB0PsoJZieaoiKBoTgRwq9JS0ysaYUrDP
-   A==;
-IronPort-SDR: 74ILhevK+Z8BzRYW72P8iiBRkxJE+TBIJzvTpBFI0yBRydAZy6+PSAx6MYmc5RscymafWxJhkU
- kfvRBF5gKzRipvh2jGvIZTirT6Jm1kXoVBBtfzCtHzGDbTa3W2AmkpHdhNehx9Djurb6N4SSlv
- GX1BfDWGfpMkfx4D6HIRs2nOM+bT/87YDHfZeaz3QVVf2PVxGKENgOrGds7TQUtIyGpximdQEk
- qEvQ3uWN8joYV7LbIwFqygsIHntGpRyiq5S0TnxcM6/eyiZVob0FobUobVHhaY9a/oahPMEW7X
- /B3t2puJ7ZJN+Au05lyNhBMC
-X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
-   d="scan'208";a="146266145"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Sep 2021 06:28:30 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 30 Sep 2021 06:28:30 -0700
-Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Thu, 30 Sep 2021 06:28:27 -0700
-From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-To:     <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
-        <Eugen.Hristev@microchip.com>, <Kavyasree.Kotagiri@microchip.com>,
-        <Manohar.Puri@microchip.com>
-Subject: [PATCH v7 2/3] dt-bindings: clock: lan966x: Add LAN966X Clock Controller
-Date:   Thu, 30 Sep 2021 18:58:14 +0530
-Message-ID: <20210930132815.15353-3-kavyasree.kotagiri@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210930132815.15353-1-kavyasree.kotagiri@microchip.com>
-References: <20210930132815.15353-1-kavyasree.kotagiri@microchip.com>
+        id S1351451AbhI3Nba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 09:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350049AbhI3Nb3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:31:29 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94D2C06176A
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id v17so10052353wrv.9
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
+        b=DgISTWDu6rOHfzRjV6Qlml3/7p6txDssydTajODz+GlRBwZnnZJ+mHqxja6SLqqzZS
+         eyqevG/RTJ1e19LvzUSviCvcRdY/ZQlLzVjdheF0j9oYG2VCjjxYzy70fFH6h8wQFIl1
+         heZTwo8Ij6lQSgsdYl1dZiwV3X78qZHJLVBF7Te55QST9l020nZl0zdexD6cQxRMEf6W
+         SRIUEGew9SLXCrM/mV3q/VEp2npSKkXBbZ5+s2TfsplI/1q6wc/x7KyW1mrI5x5IDs/H
+         NBJzxCeq6cVp7HZB2iCl43ejKQHiNBQy43JZ3VV5ezx4T/8upAw3Pc/u2fcrSEWOZw/o
+         CpiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
+        b=7oGfGxrlk7zbRnG9lx2ONFVweit9LspKG/AK99CJ5+CbYHMhjXtbNsirINCefLI/jE
+         tfaTqIHxdtWagEvpXC8br+CoVmxaHISoTyAShhhmvSZ9pnkR9KA2oUuFuDZK7kZBizpS
+         D5scmgMnQwRNDUrYQj5cRQFS6gEFcDyGUBJhzC7P6GeN+eiYmuQK0UqnhiEA2e9HQoaZ
+         b61DOVBLoJ8K0DqV+DGbwb1z8dJe9gn3eqBoZMm51Bw5eUtEt7RUT7qaM37hEQsF7VQH
+         LLKfpiDXjfiHTc+FINuLq9V4DAo5selXl8z0il4CDLIC5r8RCjVBBR1I8SyIIATHLwbe
+         FvfA==
+X-Gm-Message-State: AOAM530GoxdiJ76I/DBncGHR6Z2euc8BjCmPZ2ELUZ7nN+diUxo/sLSp
+        uyfLwpyB71YtLcFzhcwo+xsFcAmNVTx/Jw==
+X-Google-Smtp-Source: ABdhPJy/y/6uR/KPQ8dQ/+hV2n00qqTbyI2pfOM4zKq4a5jrPB98oGnv1D/dr/8czG2Kuq8YEDugGw==
+X-Received: by 2002:adf:eac8:: with SMTP id o8mr5785614wrn.273.1633008585451;
+        Thu, 30 Sep 2021 06:29:45 -0700 (PDT)
+Received: from google.com ([95.148.6.233])
+        by smtp.gmail.com with ESMTPSA id x21sm4825619wmc.14.2021.09.30.06.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Sep 2021 06:29:44 -0700 (PDT)
+Date:   Thu, 30 Sep 2021 14:29:42 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Will McVicker <willmcvicker@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <YVW7xoHaLdGHBoEQ@google.com>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
+ <YVWCK5QO331rfhJJ@google.com>
+ <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
+ <YVWwBz8jrznqXah4@google.com>
+ <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the DT bindings documentation for lan966x SoC
-generic clock controller.
+On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v6 -> v7:
-- No changes.
+> On 30/09/2021 14:39, Lee Jones wrote:
+> > On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
+> > 
+> >> On 30/09/2021 11:23, Lee Jones wrote:
+> >>> [0] Full disclosure: part of my role at Linaro is to keep the Android
+> >>> kernel running as close to Mainline as possible and encourage/push the
+> >>> upstream-first mantra, hence my involvement with this and other sets.
+> >>> I assure you all intentions are good and honourable.  If you haven't
+> >>> already seen it, please see Todd's most recent update on the goals and
+> >>> status of GKI:
+> >>>
+> >>>   Article: https://tinyurl.com/saaen3sp
+> >>>   Video:   https://youtu.be/O_lCFGinFPM
+> >>>
+> >>
+> >> Side topic, why this patchset is in your scope or Will's/Google's scope?
+> >> Just drop it from Android main kernel, it will not be your problem. I
+> >> mean, really, you don't need this patchset in your tree at all. The only
+> >> platform which needs it, the only platform which will loose something
+> >> will be one specific vendor. Therefore this will be an incentive for
+> >> them to join both discussions and upstream development. :)
+> > 
+> > How would they fix this besides upstreaming support for unreleased
+> > work-in-progress H/W?
+> > 
+> > Haven't I explained this several times already? :)
+> 
+> Either that way or the same as Will's doing but that's not my question.
+> I understand you flush the queue of your GKI patches to be closer to
+> upstream. Reduce the backlog/burden. you can achieve your goal by simply
+> dropping such patch and making it not your problem. :)
 
-v5 -> v6:
-- Removed "_clk" in clock-names.
-- Added Reviewed-by.
+git reset --hard mainline/master   # job done - tea break  :)
 
-v4 -> v5:
-- In v4 dt-bindings, missed adding "clock-names" in required
-  properties and example. So, added them.
+Seriously though, we wish to encourage the use of GKI so all vendors
+can enjoy the benefits of more easily updateable/secure code-bases.
 
-v3 -> v4:
-- Updated "clocks" description.
-- Added "clock-names".
+I can't see how pushing back on seamlessly benign changes would
+benefit them or anyone else.
 
-v2 -> v3:
-- Fixed dt_binding_check errors.
-
-v1 -> v2:
-- Updated example provided for clk controller DT node.
-
- .../bindings/clock/microchip,lan966x-gck.yaml | 57 +++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-new file mode 100644
-index 000000000000..fca83bd68e26
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/microchip,lan966x-gck.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip LAN966X Generic Clock Controller
-+
-+maintainers:
-+  - Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-+
-+description: |
-+  The LAN966X Generic clock controller contains 3 PLLs - cpu_clk,
-+  ddr_clk and sys_clk. This clock controller generates and supplies
-+  clock to various peripherals within the SoC.
-+
-+properties:
-+  compatible:
-+    const: microchip,lan966x-gck
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: CPU clock source
-+      - description: DDR clock source
-+      - description: System clock source
-+
-+  clock-names:
-+    items:
-+      - const: cpu
-+      - const: ddr
-+      - const: sys
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clks: clock-controller@e00c00a8 {
-+        compatible = "microchip,lan966x-gck";
-+        #clock-cells = <1>;
-+        clocks = <&cpu_clk>, <&ddr_clk>, <&sys_clk>;
-+        clock-names = "cpu", "ddr", "sys";
-+        reg = <0xe00c00a8 0x38>;
-+    };
-+...
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
