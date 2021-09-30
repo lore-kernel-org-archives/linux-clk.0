@@ -2,145 +2,219 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB692C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B13BC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 14:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE296619E4
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6911E611BD
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 14:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351451AbhI3Nba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 09:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350049AbhI3Nb3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 09:31:29 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94D2C06176A
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id v17so10052353wrv.9
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
-        b=DgISTWDu6rOHfzRjV6Qlml3/7p6txDssydTajODz+GlRBwZnnZJ+mHqxja6SLqqzZS
-         eyqevG/RTJ1e19LvzUSviCvcRdY/ZQlLzVjdheF0j9oYG2VCjjxYzy70fFH6h8wQFIl1
-         heZTwo8Ij6lQSgsdYl1dZiwV3X78qZHJLVBF7Te55QST9l020nZl0zdexD6cQxRMEf6W
-         SRIUEGew9SLXCrM/mV3q/VEp2npSKkXBbZ5+s2TfsplI/1q6wc/x7KyW1mrI5x5IDs/H
-         NBJzxCeq6cVp7HZB2iCl43ejKQHiNBQy43JZ3VV5ezx4T/8upAw3Pc/u2fcrSEWOZw/o
-         CpiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
-        b=7oGfGxrlk7zbRnG9lx2ONFVweit9LspKG/AK99CJ5+CbYHMhjXtbNsirINCefLI/jE
-         tfaTqIHxdtWagEvpXC8br+CoVmxaHISoTyAShhhmvSZ9pnkR9KA2oUuFuDZK7kZBizpS
-         D5scmgMnQwRNDUrYQj5cRQFS6gEFcDyGUBJhzC7P6GeN+eiYmuQK0UqnhiEA2e9HQoaZ
-         b61DOVBLoJ8K0DqV+DGbwb1z8dJe9gn3eqBoZMm51Bw5eUtEt7RUT7qaM37hEQsF7VQH
-         LLKfpiDXjfiHTc+FINuLq9V4DAo5selXl8z0il4CDLIC5r8RCjVBBR1I8SyIIATHLwbe
-         FvfA==
-X-Gm-Message-State: AOAM530GoxdiJ76I/DBncGHR6Z2euc8BjCmPZ2ELUZ7nN+diUxo/sLSp
-        uyfLwpyB71YtLcFzhcwo+xsFcAmNVTx/Jw==
-X-Google-Smtp-Source: ABdhPJy/y/6uR/KPQ8dQ/+hV2n00qqTbyI2pfOM4zKq4a5jrPB98oGnv1D/dr/8czG2Kuq8YEDugGw==
-X-Received: by 2002:adf:eac8:: with SMTP id o8mr5785614wrn.273.1633008585451;
-        Thu, 30 Sep 2021 06:29:45 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id x21sm4825619wmc.14.2021.09.30.06.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 06:29:44 -0700 (PDT)
-Date:   Thu, 30 Sep 2021 14:29:42 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1351811AbhI3OIZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 10:08:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351797AbhI3OIY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Sep 2021 10:08:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 21B0B60EFD;
+        Thu, 30 Sep 2021 14:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633010801;
+        bh=pV7wpRwYeddObrK3x2BRYB+BUb70rVeOOPgHw93L05s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uwqrJQlhmfkysFaoognvTOMelKZtmYisb28Nclpv9JNZM5fKRoqU5N08wrdIB/8Ht
+         uCsrMPtZOerzkZJDJxX8HuyOzi8v2dS05SPBGCeFL8co8ze1Eff0K8sTcO4xoF5BY3
+         VkfLEMMzEdfpdHBcEpC36gkcfZNeS7UKbrcWf6vmNHI8Ik/zp7a1iZwnzMQbIpqqYJ
+         UjRY3MtB2BMNzsvqw9EuTmsqIosTWxA967zuqh7NkSo4Zx3zDgTNogCUcsB3kSaxDD
+         1ApooBGjRExDQPUD9YGX108RZp4nkFd4kE9Cc3+nBxRsInYcbhNPuMRrs+mdt6w/hY
+         jeHacm3qNygIQ==
+Date:   Thu, 30 Sep 2021 22:06:30 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
-Message-ID: <YVW7xoHaLdGHBoEQ@google.com>
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
- <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
- <YVWCK5QO331rfhJJ@google.com>
- <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
- <YVWwBz8jrznqXah4@google.com>
- <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v13 16/35] usb: chipidea: tegra: Add runtime PM and OPP
+ support
+Message-ID: <20210930140630.GA6697@Peter>
+References: <20210926224058.1252-1-digetx@gmail.com>
+ <20210926224058.1252-17-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
+In-Reply-To: <20210926224058.1252-17-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
-
-> On 30/09/2021 14:39, Lee Jones wrote:
-> > On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
-> > 
-> >> On 30/09/2021 11:23, Lee Jones wrote:
-> >>> [0] Full disclosure: part of my role at Linaro is to keep the Android
-> >>> kernel running as close to Mainline as possible and encourage/push the
-> >>> upstream-first mantra, hence my involvement with this and other sets.
-> >>> I assure you all intentions are good and honourable.  If you haven't
-> >>> already seen it, please see Todd's most recent update on the goals and
-> >>> status of GKI:
-> >>>
-> >>>   Article: https://tinyurl.com/saaen3sp
-> >>>   Video:   https://youtu.be/O_lCFGinFPM
-> >>>
-> >>
-> >> Side topic, why this patchset is in your scope or Will's/Google's scope?
-> >> Just drop it from Android main kernel, it will not be your problem. I
-> >> mean, really, you don't need this patchset in your tree at all. The only
-> >> platform which needs it, the only platform which will loose something
-> >> will be one specific vendor. Therefore this will be an incentive for
-> >> them to join both discussions and upstream development. :)
-> > 
-> > How would they fix this besides upstreaming support for unreleased
-> > work-in-progress H/W?
-> > 
-> > Haven't I explained this several times already? :)
+On 21-09-27 01:40:39, Dmitry Osipenko wrote:
+> The Tegra USB controller belongs to the core power domain and we're going
+> to enable GENPD support for the core domain. Now USB controller must be
+> resumed using runtime PM API in order to initialize the USB power state.
+> We already support runtime PM for the CI device, but CI's PM is separated
+> from the RPM managed by tegra-usb driver. Add runtime PM and OPP support
+> to the driver.
 > 
-> Either that way or the same as Will's doing but that's not my question.
-> I understand you flush the queue of your GKI patches to be closer to
-> upstream. Reduce the backlog/burden. you can achieve your goal by simply
-> dropping such patch and making it not your problem. :)
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/usb/chipidea/ci_hdrc_tegra.c | 53 ++++++++++++++++++++++++----
+>  1 file changed, 46 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> index 60361141ac04..3142ef7ebe42 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  
+>  #include <linux/usb.h>
+> @@ -15,6 +16,8 @@
+>  #include <linux/usb/of.h>
+>  #include <linux/usb/phy.h>
+>  
+> +#include <soc/tegra/common.h>
+> +
+>  #include "../host/ehci.h"
+>  
+>  #include "ci.h"
+> @@ -278,6 +281,8 @@ static int tegra_usb_probe(struct platform_device *pdev)
+>  	if (!usb)
+>  		return -ENOMEM;
+>  
+> +	platform_set_drvdata(pdev, usb);
+> +
+>  	soc = of_device_get_match_data(&pdev->dev);
+>  	if (!soc) {
+>  		dev_err(&pdev->dev, "failed to match OF data\n");
+> @@ -296,11 +301,17 @@ static int tegra_usb_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	err = clk_prepare_enable(usb->clk);
+> -	if (err < 0) {
+> -		dev_err(&pdev->dev, "failed to enable clock: %d\n", err);
+> +	err = devm_pm_runtime_enable(&pdev->dev);
+> +	if (err)
+> +		return err;
+> +
+> +	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+> +	if (err)
+> +		return err;
+> +
+> +	err = pm_runtime_resume_and_get(&pdev->dev);
+> +	if (err)
+>  		return err;
+> -	}
+>  
+>  	if (device_property_present(&pdev->dev, "nvidia,needs-double-reset"))
+>  		usb->needs_double_reset = true;
+> @@ -320,8 +331,6 @@ static int tegra_usb_probe(struct platform_device *pdev)
+>  	if (err)
+>  		goto fail_power_off;
+>  
+> -	platform_set_drvdata(pdev, usb);
+> -
+>  	/* setup and register ChipIdea HDRC device */
+>  	usb->soc = soc;
+>  	usb->data.name = "tegra-usb";
+> @@ -350,7 +359,8 @@ static int tegra_usb_probe(struct platform_device *pdev)
+>  phy_shutdown:
+>  	usb_phy_shutdown(usb->phy);
+>  fail_power_off:
+> -	clk_disable_unprepare(usb->clk);
+> +	pm_runtime_put(&pdev->dev);
+> +
+>  	return err;
+>  }
+>  
+> @@ -360,15 +370,44 @@ static int tegra_usb_remove(struct platform_device *pdev)
+>  
+>  	ci_hdrc_remove_device(usb->dev);
+>  	usb_phy_shutdown(usb->phy);
+> +	pm_runtime_put(&pdev->dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused tegra_usb_runtime_resume(struct device *dev)
+> +{
+> +	struct tegra_usb *usb = dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	err = clk_prepare_enable(usb->clk);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to enable clock: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused tegra_usb_runtime_suspend(struct device *dev)
+> +{
+> +	struct tegra_usb *usb = dev_get_drvdata(dev);
+> +
+>  	clk_disable_unprepare(usb->clk);
+>  
+>  	return 0;
+>  }
+>  
+> +static const struct dev_pm_ops tegra_usb_pm = {
+> +	SET_RUNTIME_PM_OPS(tegra_usb_runtime_suspend, tegra_usb_runtime_resume,
+> +			   NULL)
+> +};
+> +
+>  static struct platform_driver tegra_usb_driver = {
+>  	.driver = {
+>  		.name = "tegra-usb",
+>  		.of_match_table = tegra_usb_of_match,
+> +		.pm = &tegra_usb_pm,
+>  	},
+>  	.probe = tegra_usb_probe,
+>  	.remove = tegra_usb_remove,
+> -- 
+> 2.32.0
+> 
 
-git reset --hard mainline/master   # job done - tea break  :)
+I got below compile error if only compile this file, I think previous patches
+should include the definition, if that, feel free to add my ack to this
+patch.
 
-Seriously though, we wish to encourage the use of GKI so all vendors
-can enjoy the benefits of more easily updateable/secure code-bases.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-I can't see how pushing back on seamlessly benign changes would
-benefit them or anyone else.
+drivers/usb/chipidea/ci_hdrc_tegra.c:308:8: error: implicit declaration of function ‘devm_tegra_core_dev_init_opp_table_common’;
+did you mean ‘devm_tegra_core_dev_init_opp_table’? [-Werror=implicit-function-declaration]
+  308 |  err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |        devm_tegra_core_dev_init_opp_table
+
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+Thanks,
+Peter Chen
+
