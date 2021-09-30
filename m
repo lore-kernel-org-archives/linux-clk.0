@@ -2,92 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F43C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 00:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A32C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 05:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEC8361288
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 00:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C978617E5
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 05:30:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346347AbhI3Alp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Sep 2021 20:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43274 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244341AbhI3Alp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Sep 2021 20:41:45 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FADC06161C;
-        Wed, 29 Sep 2021 17:40:03 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x27so18133551lfu.5;
-        Wed, 29 Sep 2021 17:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xEzZC82rqk2En9Ed7KsQn1FTg8FAxs/dG3UWgw54VAY=;
-        b=O8dP8YX3oMg9WnbDyZu1hmO2h68+60K+lapykwVro5Dm9ppn/F9/NcbISMG5UgjbC1
-         Gl65W0faHrgnuG4Ivm1ZPA//iIglFIfYes3pHap406XwsMqh6ze54KPK6G1G3O5UlV3H
-         OpAwEnFC47Abzp/TQ4SNOauFELwfHEFZLL20Xt+YDmW+i0BdpaHAE8kOe1R0ZwvSJ88R
-         vse5HwrZKesjEBIM+g1FgoFyiPN/TBhtT+YBZZx+rRc0POYrOrKJZ64TomxVC2KqUNKa
-         /E+/csDF4DZh2HAhhjUkvllNeyvgxTMBlt9VzUAWKm/iPV4qw7A2k9Nqntk6VvZaM2tE
-         WgAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xEzZC82rqk2En9Ed7KsQn1FTg8FAxs/dG3UWgw54VAY=;
-        b=iymX/5SeA5DZoS7QTiNcTck0k4lQuLG208oKGYpoY+Vukmhs6+MCFWgkcQbWxSA6hy
-         WL0RMICq/vbSIjUN7LM3exUZ4d/mk6GlLqRPdqchk9O8GMrhh18392BEqL+BECJpgzDp
-         ylWytHSHo09KN4TmWm9fTqx1Mbwdvce0bbmixpFm6qsbaWfxYCbGlDlYUoUOue2Yga8j
-         6+NS0ANr5zz2ZztZnu+bNXrHTAoJ0CN18uGKOZXp0AxaJSOe2CI63485YufEr/2n7cns
-         EYA4vF+F6YPBJxs6oxmyudszfbMdbsxhCS+AfRjGgIn1ZZIYpx46GwmLEK3B3mTTZDah
-         BZAA==
-X-Gm-Message-State: AOAM530rE5xVj4kfItluG/hdUBXtE6fLdilnMM4D6RRnCnmROoT8yJZG
-        t/UTDQ4FeTV7a7zDRkr7w97Y9IeI7ug=
-X-Google-Smtp-Source: ABdhPJwR5F7TvblD+2tTvq+HxgGw1yddafN9WyTWe+FiqhsLFgixz8gInIIfk3R5GKlFeUDsI4kXHw==
-X-Received: by 2002:a05:651c:150a:: with SMTP id e10mr2955411ljf.287.1632962401591;
-        Wed, 29 Sep 2021 17:40:01 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.googlemail.com with ESMTPSA id l23sm163024ljg.99.2021.09.29.17.40.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Sep 2021 17:40:01 -0700 (PDT)
-Subject: Re: [PATCH v13 16/35] usb: chipidea: tegra: Add runtime PM and OPP
- support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-17-digetx@gmail.com>
-Message-ID: <e8f778b0-816f-3273-2c46-5d2460545610@gmail.com>
-Date:   Thu, 30 Sep 2021 03:40:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S1347942AbhI3Fbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 01:31:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1347737AbhI3Fbo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Sep 2021 01:31:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F99D6140F;
+        Thu, 30 Sep 2021 05:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632979802;
+        bh=+7QSpekLgP3fgEqKNoZ4CEMvOwLvPzU+OwbALsEuWZM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qdZsfqrPpW7FR3COMQkj2nFr1YZw7479Jws2we5MNM9szdfYvBnlcvg5EX7rrvW21
+         Z7UA04BqEQ55z59zbk0LerS8OmS5TKCm5Lcr9V3gVMh5td9bA/v9oGxXUjCpIiRzCJ
+         O98CPIOfKLma3JQNeDe72kq6SPs6RYD8fow6Wn9vLY/WovBLZEmPmF2WtRfnN4xL9U
+         WHDXfeCSjBtMWfVN3dm/nnHk2AD+89DIFStZv6PXlgXcx+Ax1HeHQee7BdGalCuPCw
+         3UssumQ9xU3CVweB+fiqaLvcnkpOg+26O6d0Ot0QEgE3mMu9Hq+pohdws65SAAYQKD
+         cDcobiP0M8KpQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210926224058.1252-17-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210907144512.5238-1-marek.vasut@gmail.com>
+References: <20210907144512.5238-1-marek.vasut@gmail.com>
+Subject: Re: [PATCH] PCI: rcar: Add missing COMMON_CLK dependency
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+To:     linux-pci@vger.kernel.org, marek.vasut@gmail.com,
+        linux-clk@vger.kernel.org
+Date:   Wed, 29 Sep 2021 22:30:00 -0700
+Message-ID: <163297980091.358640.10064724088378840378@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-27.09.2021 01:40, Dmitry Osipenko пишет:
-> The Tegra USB controller belongs to the core power domain and we're going
-> to enable GENPD support for the core domain. Now USB controller must be
-> resumed using runtime PM API in order to initialize the USB power state.
-> We already support runtime PM for the CI device, but CI's PM is separated
-> from the RPM managed by tegra-usb driver. Add runtime PM and OPP support
-> to the driver.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/usb/chipidea/ci_hdrc_tegra.c | 53 ++++++++++++++++++++++++----
->  1 file changed, 46 insertions(+), 7 deletions(-)
++linux-clk as I don't regularly read my inbox :/
 
-Peter Chen, could you please ack this patch? Thanks in advance!
+Quoting marek.vasut@gmail.com (2021-09-07 07:45:12)
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>=20
+> Add COMMON_CLK dependency, otherwise the following build error occurs:
+>   arm-linux-gnueabi-ld: drivers/pci/controller/pcie-rcar-host.o: in funct=
+ion `rcar_pcie_aarch32_abort_handler':
+>   pcie-rcar-host.c:(.text+0xdd0): undefined reference to `__clk_is_enable=
+d'
+> This should be OK, since all platforms shipping this controller also
+> need COMMON_CLK enabled for their clock driver.
+>=20
+> Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort ho=
+ok")
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> +CC Stephen, please double-check whether this is the right approach or
+>     whether there is some better option
+
+Stop using __clk_is_enabled()? I don't quite understand what's going on in
+the code but __clk_is_enabled() should really go away. I thought we were
+close to doing that but now I see a handful of calls have come up. The
+API should be replaced by clk_hw_is_enabled() and then removed. We move
+it to clk_hw API so that only clk providers can look at it.
+
+Sigh!
+
+Anyway, fixing the dependency is "ok" but really the long term fix would
+be to not use a "is this clk enabled" sort of API. If I'm reading the
+code correctly, this is some sort of fault handler that's trying to
+avoid hanging the bus while handling the fault so it tries to make sure
+the clk is enabled first? Is it a problem if the clk is not actually
+enabled here? Would runtime PM enable state of the device work just as
+well?
