@@ -2,124 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCDEC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 14:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A95C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 15:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB8AB61A02
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 14:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BCA361267
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 15:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351669AbhI3OKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 10:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240149AbhI3OKl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Sep 2021 10:10:41 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1A0C06176A;
-        Thu, 30 Sep 2021 07:08:58 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id b15so25730137lfe.7;
-        Thu, 30 Sep 2021 07:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FbYwtZf63HA1feBdReYPazjfCwECYf7J/LcnagkS5eU=;
-        b=qRQIo8RwUav2UmTra9oF6epGn59qVcbfkWvdDGVDc/I3VvWeddwr1dqwKGHN43kWcO
-         DaknpPTwDGNSY0qj/vuZMQ+EkFjjT/DDyA8yAVbb5t8+cbMVH3ESCPkcYm04Ck8YWr43
-         zrplPFlPo+zCWrz4Vd8LF+IXnAG5rtwSZu7cV47thKqF865BwfegPZ11umUl0wvxpi3u
-         69cI9QAnuHM4T4curizIUlc+msZ3JMRXmJ23U1OoUXyP/pCpqx5znnf8RaSyTf/Iij/X
-         R01C7FPFx014oNqZOzPeCr4tdIky5Bmc4sGwQxivsb0fd368heHcy8U6CVbuaHa44hXZ
-         JOrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FbYwtZf63HA1feBdReYPazjfCwECYf7J/LcnagkS5eU=;
-        b=6510RLwK4zaHnLALzQPRb0fZ+jorJGzDatK7CXwDY9b1RcOwBxjZs7DyYa1SW6hfvm
-         NEGOcBL7VqUM9q3PVlA1rIan8r1Rz2pMgzMrHDCiiyXTcMJMJWCJBZxdPGZFfkDvYTm4
-         0Pq0whB+bTFhUOtBg5t4ikc5S/y+DELxnDA2UlowqMU6ULT8E59xOOiVx5qJL5ahl7zz
-         wausMrfD/z/RPsEtitd5lETeRuNBCht6cmsWQeDppOtpkhKDShxuf3lG1IdpXvZ2Xw0j
-         /bns4RO6yly2xe/UlyBaPlhrXknmzgbU7tCKxcOXEj3x8hM+YJW4tZ7sSetfpvqnGa4Y
-         UO4A==
-X-Gm-Message-State: AOAM532RfvOoTB/pMV4xxJhBxRMAYcg5gRdF4lI6uYoL3/mCPi007YSY
-        dhxVHCcwRGgvtExMVPBmNbI=
-X-Google-Smtp-Source: ABdhPJw2MpyVxuwrGHjgPVIzNI4sHyolChi3D2RfJQLhexFRsDLjbr061I9VfMnIzN8pIMuESKq7Kw==
-X-Received: by 2002:a2e:5046:: with SMTP id v6mr6445920ljd.368.1633010931799;
-        Thu, 30 Sep 2021 07:08:51 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.googlemail.com with ESMTPSA id r22sm357824lji.5.2021.09.30.07.08.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Sep 2021 07:08:51 -0700 (PDT)
-Subject: Re: [PATCH v13 16/35] usb: chipidea: tegra: Add runtime PM and OPP
- support
-To:     Peter Chen <peter.chen@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
+        id S1346571AbhI3Pxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 11:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1346501AbhI3Pxc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Sep 2021 11:53:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E6B66120D;
+        Thu, 30 Sep 2021 15:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633017110;
+        bh=FWQpFZPZBLpdmTrrwsbPqNU5OTmgWjPWJZMzALECrJc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AuVtTU/f9thasFp2vN5QBbvZNV2GJ+MhaZ3qs5j1IRRuwP6BMiINBhrdOaHazPWFB
+         BYpDiTaFJryPX9Wct1XN58ZrRHvCZpClrMuICrjQp0sPuzEyv1Y8XKZrzMvd/Oh8tM
+         kItNkco0yR/7fOBmzPLwsBf18TBnRgGFWN5F5TxANR3NuYAUXCLa3qL8C/rXVcC0FK
+         gU2UsHs8GPYXjfo4xOZEvt2iHLZJXOV4Iw60hQJ5krJ+rL+WB0cA2NN/sHkStCE9xF
+         YGlPrDdaI8atyqeaGflz6OyNwZocNmhu8SGHP5ZJFRc/TrlyvJrL72BbDn+IXVddVi
+         elidoLRVNfewg==
+Message-ID: <d348a2dc080d24d43d55128223be6e4a88c73053.camel@kernel.org>
+Subject: Re: [PATCH 3/5] drm/vc4: hdmi: Set a default HSM rate
+From:   nicolas saenz julienne <nsaenz@kernel.org>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-17-digetx@gmail.com> <20210930140630.GA6697@Peter>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e8eb0f29-2ffb-b1d8-34bf-7dff1e8ba1f8@gmail.com>
-Date:   Thu, 30 Sep 2021 17:08:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Stapelberg <michael@stapelberg.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 30 Sep 2021 17:51:45 +0200
+In-Reply-To: <20210922125419.4125779-4-maxime@cerno.tech>
+References: <20210922125419.4125779-1-maxime@cerno.tech>
+         <20210922125419.4125779-4-maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <20210930140630.GA6697@Peter>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-30.09.2021 17:06, Peter Chen пишет:
-> On 21-09-27 01:40:39, Dmitry Osipenko wrote:
->> The Tegra USB controller belongs to the core power domain and we're going
->> to enable GENPD support for the core domain. Now USB controller must be
->> resumed using runtime PM API in order to initialize the USB power state.
->> We already support runtime PM for the CI device, but CI's PM is separated
->> from the RPM managed by tegra-usb driver. Add runtime PM and OPP support
->> to the driver.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/usb/chipidea/ci_hdrc_tegra.c | 53 ++++++++++++++++++++++++----
->>  1 file changed, 46 insertions(+), 7 deletions(-)
-...
+On Wed, 2021-09-22 at 14:54 +0200, Maxime Ripard wrote:
+> When the firmware doesn't setup the HSM rate (such as when booting
+> without an HDMI cable plugged in), its rate is 0 and thus any register
+> access results in a CPU stall, even though HSM is enabled.
 > 
-> I got below compile error if only compile this file, I think previous patches
-> should include the definition, if that, feel free to add my ack to this
-> patch.
+> Let's enforce a minimum rate at boot to avoid this issue.
 > 
-> Acked-by: Peter Chen <peter.chen@kernel.org>
-> 
-> drivers/usb/chipidea/ci_hdrc_tegra.c:308:8: error: implicit declaration of function ‘devm_tegra_core_dev_init_opp_table_common’;
-> did you mean ‘devm_tegra_core_dev_init_opp_table’? [-Werror=implicit-function-declaration]
->   308 |  err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
->       |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |        devm_tegra_core_dev_init_opp_table
+> Fixes: 4f6e3d66ac52 ("drm/vc4: Add runtime PM support to the HDMI encoder driver")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-That's correct, devm_tegra_core_dev_init_opp_table_common() is added by
-an earlier patch of this series. Thank you!
+Reviewed-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
+Tested-by: Nicolas Saenz Julienne <nsaenz@kernel.org>
+
+Regards,
+Nicolas
+
