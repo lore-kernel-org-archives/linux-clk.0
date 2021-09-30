@@ -2,92 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624C5C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 18:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A0DC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 18:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F91B619E2
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 18:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CE061A07
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Sep 2021 18:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353075AbhI3SLW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Sep 2021 14:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
+        id S1353332AbhI3SRu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Sep 2021 14:17:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353064AbhI3SLW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Sep 2021 14:11:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1BBEA619E5;
-        Thu, 30 Sep 2021 18:09:39 +0000 (UTC)
+        id S1353324AbhI3SRt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Sep 2021 14:17:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B57EA61A02;
+        Thu, 30 Sep 2021 18:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633025379;
-        bh=Z2yAhY7WjcPBaDoUdlRPsE13pBWHi7VldZaOZhS4eZE=;
+        s=k20201202; t=1633025766;
+        bh=imSE4BVzuaU5GQAHEWNZDou02owSeD9rScj3NMKL5tQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YyRHf6fdr6My+4DZ+ADeoFX5RwDlHek63UnT59puU/nl5Tv4Y/juDrIWcNq8AzHkj
-         XXFXTLRrfEtqt5c+n8UkGRjZl5iT7n3DstH5EhmiEySYuFX9J2MD0lneBNwEHwof1p
-         ZwrlvAp4xnGQino04WJ1HvRuuf8/U7D9G6EXXAwQuQ5N9ch8wnGTPpi+B2P6TcElZy
-         im/5c+IvBUVIPgp9qQX41ntnA9OAKDH+jx8CyWLrqgoUM8eBAP26TZtu4jEM2Kx4Ao
-         S5v32NyviMws1DXmQjp6HaRxGF78cTezlVYp5MAFSY60GuTcYnSCPUxufg5iMq2mM6
-         EBtiWKN5kX+Tg==
+        b=UOprfN2x/NY+/h0DEp5g2ccaRzifbUjlraQmYYDWZ40OLXVXOySoiqGezxTAiSdF8
+         xa6YqtAFwmqCyi/Yg/l6FnNy/TeE9yweMpiAdRPzKAsPjORYAFNSblbfxAr6aWv2kC
+         tZBZMukdusiuqJD1gZyaC8okNHI088GSFlgUB3O2K7aVB9BPtxwTqUQE4SCgNiMqyL
+         f/ojoSWywBMGBmHUR4E9gHJUg7oDijgesNdrDaIuZJ2SR3MP4oQmSMYFMd22D5loWz
+         Kon13qHTv90UckRAYx5zT7eQCwXYfkXm/Ry4FZfiz+TsNlC94HCyz3qPAyiv3Hej62
+         7F5loyAP2D/mg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210928130549.wi6hvvcvqahzfkw5@gilmour>
-References: <20210922125419.4125779-1-maxime@cerno.tech> <20210924074044.e24kbxr7lhdtb3eg@gilmour> <20210928130549.wi6hvvcvqahzfkw5@gilmour>
-Subject: Re: [PATCH 0/5] drm/vc4: hdmi: Remove CPU hangs, take 2
+In-Reply-To: <CAMuHMdV8Xu-Pgda9ZrgaXFqXdzBrSRWwiSQFLjzxqRGNWkO3wQ@mail.gmail.com>
+References: <20210907144512.5238-1-marek.vasut@gmail.com> <163297980091.358640.10064724088378840378@swboyd.mtv.corp.google.com> <CAMuHMdV8Xu-Pgda9ZrgaXFqXdzBrSRWwiSQFLjzxqRGNWkO3wQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar: Add missing COMMON_CLK dependency
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Thu, 30 Sep 2021 11:09:37 -0700
-Message-ID: <163302537796.358640.5802901948949661491@swboyd.mtv.corp.google.com>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 30 Sep 2021 11:16:05 -0700
+Message-ID: <163302576552.358640.2337603190171807403@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2021-09-28 06:05:49)
-> On Fri, Sep 24, 2021 at 09:40:44AM +0200, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Wed, Sep 22, 2021 at 02:54:14PM +0200, Maxime Ripard wrote:
-> > > Hi,
-> > >=20
-> > > Here's another attempt at fixing the complete CPU stall while retriev=
-ing the
-> > > HDMI connector status when the connector is disabled.
-> > >=20
-> > > This was fixed already, but eventually got reverted by Linus due to t=
-he same
-> > > symptom happening in another situation. This was likely (but not conf=
-irmed by
-> > > the reporter) due to the kernel being booted without an HDMI display =
-connected,
-> > > in which case the firmware won't initialise the HDMI State Machine cl=
-ock.
-> > >=20
-> > > This is fixed by patch 3. However, further changes in the clock drive=
-rs were
-> > > needed for clk_set_min_rate to be used, which are patches 1 and 2.
-> > >=20
-> > > Finally, patches 4 and 5 are the original patches that were reverted.=
- Patch 4
-> > > got a small modification to move the clk_set_min_rate() call before t=
-he HSM
-> > > clock is enabled.
-> >=20
-> > If we merge the clock patches and DRM patches separately we're going to
-> > break bisectability. I guess the easiest approach would be to merge the
-> > clk patches through DRM. Does that work for everyone?
+Quoting Geert Uytterhoeven (2021-09-30 01:01:24)
+> Hi Stephen,
 >=20
-> Anyone? I can ask around for reviews on DRM, but I'd really like some
-> reviews on the clock patches here..
+> On Thu, Sep 30, 2021 at 7:30 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > +linux-clk as I don't regularly read my inbox :/
+> >
+> > Quoting marek.vasut@gmail.com (2021-09-07 07:45:12)
+> > > From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > >
+> > > Add COMMON_CLK dependency, otherwise the following build error occurs:
+> > >   arm-linux-gnueabi-ld: drivers/pci/controller/pcie-rcar-host.o: in f=
+unction `rcar_pcie_aarch32_abort_handler':
+> > >   pcie-rcar-host.c:(.text+0xdd0): undefined reference to `__clk_is_en=
+abled'
+> > > This should be OK, since all platforms shipping this controller also
+> > > need COMMON_CLK enabled for their clock driver.
+> > >
+> > > Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abor=
+t hook")
+> > > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: Wolfram Sang <wsa@the-dreams.de>
+> > > Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > Cc: linux-renesas-soc@vger.kernel.org
+> > > ---
+> > > +CC Stephen, please double-check whether this is the right approach or
+> > >     whether there is some better option
+> >
+> > Stop using __clk_is_enabled()? I don't quite understand what's going on=
+ in
+> > the code but __clk_is_enabled() should really go away. I thought we were
+> > close to doing that but now I see a handful of calls have come up. The
+> > API should be replaced by clk_hw_is_enabled() and then removed. We move
+> > it to clk_hw API so that only clk providers can look at it.
+>=20
+> But this is not a clk provider...
+>=20
+> > Sigh!
+>=20
+> ;-)
+
+Exactly!
+
+>=20
+> > Anyway, fixing the dependency is "ok" but really the long term fix would
+> > be to not use a "is this clk enabled" sort of API. If I'm reading the
+> > code correctly, this is some sort of fault handler that's trying to
+> > avoid hanging the bus while handling the fault so it tries to make sure
+> > the clk is enabled first? Is it a problem if the clk is not actually
+> > enabled here? Would runtime PM enable state of the device work just as
+> > well?
+>=20
+> Thanks, checking Runtime PM state is a good suggestion. Doing so
+> would require caching a pointer to the PCIe struct device instead of
+> the struct clk.
+> However, pcie_bus_clk is not the module clock, which is managed by
+> Runtime PM, but the PCIe bus clock, which is managed explicitly by
+> the driver.
+> However, I believe that we are checking the wrong clock, as register
+> access needs the module clock to be enabled, not the PCIe bus clock?
+> As the driver just calls pm_runtime_get_sync() and clk_prepare_enable()
+> in .probe(), and never touches Runtime PM status or the PCIe bus clock
+> during the further lifetime of the driver (it cannot be unloaded), both
+> the module clock and the PCIe bus clock should always[*] be enabled
+> when the static copy of the remapped PCIe controller address is valid.
+> [*] Modulo system-wide power transitions like s2ram. Does
+>     pm_runtime_suspended() reflect that state, too?
 >=20
 
-Looks ok to me to take through drm.
+Great! If that's all correct then simply removing the call to
+__clk_is_enabled() should work. Can we do that?
