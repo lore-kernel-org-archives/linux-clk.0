@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8BEC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D47EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D698761361
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2114361052
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:36:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352030AbhJAF0N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 01:26:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
+        id S1351909AbhJAFhx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 01:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351983AbhJAF0M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 01:26:12 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66EA6C06176E
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:24:28 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id z5so18122596ybj.2
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:24:28 -0700 (PDT)
+        with ESMTP id S241603AbhJAFhx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 01:37:53 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D861EC06176E
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:36:09 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id n2so5560668plk.12
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kId/COeOhh/kAGgHulJk60MONB+eztrTX08okhKullo=;
-        b=cGy18vWBa0ueLqC6hy/hY+Gl8ugqs8nZ9HOgwS0q3vSxnubUwp9AKg16RlXsP//Zfn
-         biil/+kdD9wfBLn0BonGUxxwvlrTPBsn+KRF1IUSnRgINEoJODQwllQ+oSiNbIFWQpEg
-         HOVowzx8zz1wLgXRLZKQKLzmPeGryZ+mDkDZHWggA0Hfs/ErLY9u6vpppMH/17DckRpO
-         n0nropukwD7U8SnA4Dnk8lsTF3T0l+aqbIdNA5kJTRrB0GhvhbvRhptE0+QEVlD/VQ+T
-         Sv8KEGEJJwS1pwtWob/5N0Iuu3ONXQ/WDjxLtd0Ria+S4M0+sNoEFbfyf1lT/WqxIDMr
-         AG3A==
+        bh=lwPyxDqaGBhT92QACUI/bh+VkUYF5Oo/5CIkAxgdtZ0=;
+        b=x4+eS/mPHFSaWAR3xsBgO23T1i0mXQSg5zBlZyUWrRmossN4sDE/RgApQuGNJSyKlx
+         LRsdEA+fHhNG7b37ubODdSxT8Bf61fc21oJV4cGXpJkBnDvVg9UMLor5aANUxLMedr2U
+         +4HtKL/belqPrhzcWZUz40RVVQaz/86inqcF15fBdN0ujQStvUBFnBY3/Z9OOntVQa+5
+         BbeZX0aEr6/mohhEefytrMODC7pyF+qHZR1t4VPvZGC75jGvIy9pllZ1e1zV6aIbzo8P
+         ED8gZPdtk/O1HyOl+alpfG38L+LhsnZN6H74QHGaNOZIdj3Bu+r/bbX89ffqFthfzbgn
+         6A6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kId/COeOhh/kAGgHulJk60MONB+eztrTX08okhKullo=;
-        b=j1WvHyHiBVzaeEFTV6ABg1NN/kPIA7Pfr4H0w0m+7EAYwkRx5go5PB4dbKUexzykPW
-         g/v2wKuP/WnFL2Ul7e+LMWhUwR4CIZi6cedB6L2wbxZlUChgENVGzVMQ5lWi2fCyCysu
-         55iZ8neE+wALMc9fIQFDwFjhcOUsvIYs+u5gsHRI5kIMrhMUTapDlKhh12MITV/afhTp
-         XbtoDwfHjM9DzJ8Ki9++lLRC4YCpiLYWBq1i/SLo0L9yGjaRjJ7W7g31WEFBg17jRFHu
-         1Ygybd/bbqvTqWmbQG3tRLs3iMzd6S+73HUp4lhjCTkb4N3nPys2wrD72s8KZhhL8rkx
-         Q7hw==
-X-Gm-Message-State: AOAM532feXYgrjsvQrl8qGgR+NpoN0XYnMW4GOXDgqqEedhKGWz87c4v
-        W7WYPZKkH5LCfT6rMOisk+zUCQUatb1+xBQ8sthHog==
-X-Google-Smtp-Source: ABdhPJwXeoiGNZ3EyKh4Kb1Ib3na33YQT3s/nrU4Sto2Ns9vh2rbSlg70jI3IQaf2mAUQ+MyOUuTqeUu9yES636/V3c=
-X-Received: by 2002:a25:db91:: with SMTP id g139mr3541031ybf.391.1633065867358;
- Thu, 30 Sep 2021 22:24:27 -0700 (PDT)
+        bh=lwPyxDqaGBhT92QACUI/bh+VkUYF5Oo/5CIkAxgdtZ0=;
+        b=NoSkG4a2TDJgAXOfDGl6F5YcoRkaOsUM0VUBicvPyYMXbQmDEnppyJnDp/nKkGHKX9
+         jjnNEozwO+zFNaPpGtxgvTwkoTjL5KAGKSAkVwT0cyqXK4NoqYkXEP3R1vRp8okQzttt
+         anv3J4SVzLENCOnE+cuwQn6UCgyJZo63ady9SNLkK4+EGfO1DRj/7nuJz3oSm/Qn2uRR
+         RGQ072PhYhWZQ2UHKtM6ISs/arwFaWewrTSBfGICqGJczSytpq2r0ydF6MbHC5ARRj4f
+         i98miwz+mKHmMpfhqcuT7tzq5qGUH97rPJrM1ViFSqKmyehWkG372UQXrXMmvIaJyo4q
+         aXTQ==
+X-Gm-Message-State: AOAM532zCjpdgXR4NQhSHPNcF/17n1Tp5vctvPe+ZaEPieGNXpvXzDeI
+        qrlzs+8ocHn8e5QHe2Y+WMV6u4FzEQvlMRaUPptunw==
+X-Google-Smtp-Source: ABdhPJyXrHEjSRsbvGuDy1U26vszb5TEBTH/srDHAuSr9YR7iT8IG7gbwvXgl1d4rlALNdae0jk7Dkp7FchFO9bSadM=
+X-Received: by 2002:a17:90a:9317:: with SMTP id p23mr11101909pjo.151.1633066567459;
+ Thu, 30 Sep 2021 22:36:07 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210928235635.1348330-1-willmcvicker@google.com>
  <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
-In-Reply-To: <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 30 Sep 2021 22:23:50 -0700
-Message-ID: <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com> <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+In-Reply-To: <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Thu, 30 Sep 2021 22:35:55 -0700
+Message-ID: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
 Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Olof Johansson <olof@lixom.net>
+To:     Saravana Kannan <saravanak@google.com>
 Cc:     Will McVicker <willmcvicker@google.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -85,118 +85,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 9:52 PM Olof Johansson <olof@lixom.net> wrote:
+On Thu, Sep 30, 2021 at 10:24 PM Saravana Kannan <saravanak@google.com> wrote:
 >
-> On Wed, Sep 29, 2021 at 12:48 PM Will McVicker <willmcvicker@google.com> wrote:
+> On Thu, Sep 30, 2021 at 9:52 PM Olof Johansson <olof@lixom.net> wrote:
 > >
-> > On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
+> > On Wed, Sep 29, 2021 at 12:48 PM Will McVicker <willmcvicker@google.com> wrote:
 > > >
-> > > On 29/09/2021 01:56, Will McVicker wrote:
-> > > > This is v2 of the series of patches that modularizes a number of core
-> > > > ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
-> > > > modularized all of the drivers that are removed from the ARCH_EXYNOS
-> > > > series of "select XXX". This includes setting the following configs as
-> > > > tristate:
+> > > On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
+> > > <krzysztof.kozlowski@canonical.com> wrote:
 > > > >
-> > > >  * COMMON_CLK_SAMSUNG
-> > > >  * EXYNOS_ARM64_COMMON_CLK
-> > > >  * PINCTRL_SAMSUNG
-> > > >  * PINCTRL_EXYNOS
-> > > >  * EXYNOS_PMU_ARM64
-> > > >  * EXYNOS_PM_DOMAINS
+> > > > On 29/09/2021 01:56, Will McVicker wrote:
+> > > > > This is v2 of the series of patches that modularizes a number of core
+> > > > > ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
+> > > > > modularized all of the drivers that are removed from the ARCH_EXYNOS
+> > > > > series of "select XXX". This includes setting the following configs as
+> > > > > tristate:
+> > > > >
+> > > > >  * COMMON_CLK_SAMSUNG
+> > > > >  * EXYNOS_ARM64_COMMON_CLK
+> > > > >  * PINCTRL_SAMSUNG
+> > > > >  * PINCTRL_EXYNOS
+> > > > >  * EXYNOS_PMU_ARM64
+> > > > >  * EXYNOS_PM_DOMAINS
+> > > > >
+> > > > > Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
+> > > > > which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
+> > > > > The reason for these new configs is because we are not able to easily
+> > > > > modularize the ARMv7 PMU driver due to built-in arch dependencies on
+> > > > > pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
+> > > > > the ARM and ARM64 portions into two separate configs.
+> > > > >
+> > > > > Overall, these drivers didn't require much refactoring and converted to
+> > > > > modules relatively easily. However, due to my lack of exynos hardware, I
+> > > > > was not able to boot test these changes. I'm mostly concerned about the
+> > > > > CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
+> > > > > requesting help for testing these changes on the respective hardware.
+> > > > >
 > > > >
-> > > > Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
-> > > > which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
-> > > > The reason for these new configs is because we are not able to easily
-> > > > modularize the ARMv7 PMU driver due to built-in arch dependencies on
-> > > > pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
-> > > > the ARM and ARM64 portions into two separate configs.
+> > > > These are all not tested at all? In such case, since these are not
+> > > > trivial changes, please mark the series as RFT.
 > > > >
-> > > > Overall, these drivers didn't require much refactoring and converted to
-> > > > modules relatively easily. However, due to my lack of exynos hardware, I
-> > > > was not able to boot test these changes. I'm mostly concerned about the
-> > > > CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
-> > > > requesting help for testing these changes on the respective hardware.
+> > > > I will not be able to test these for some days, so it must wait.
 > > > >
+> > > >
+> > > > Best regards,
+> > > > Krzysztof
 > > >
-> > > These are all not tested at all? In such case, since these are not
-> > > trivial changes, please mark the series as RFT.
+> > > +Cc Arnd and Olof,
 > > >
-> > > I will not be able to test these for some days, so it must wait.
+> > > Hi Krzysztof,
 > > >
-> > >
-> > > Best regards,
-> > > Krzysztof
+> > > To avoid the scrambled conversation from the first patchset, I'm going
+> > > to address all your general questions here in the cover letter thread
+> > > so that it's easier for everyone to follow and reference in the
+> > > future.
 > >
-> > +Cc Arnd and Olof,
+> > This patchset shouldn't go in.
 > >
-> > Hi Krzysztof,
+> > GKI is a fantastic effort, since it finally seems like Google has the
+> > backbone to put pressure on the vendors to upstream all their stuff.
 > >
-> > To avoid the scrambled conversation from the first patchset, I'm going
-> > to address all your general questions here in the cover letter thread
-> > so that it's easier for everyone to follow and reference in the
-> > future.
+> > This patcheset dilutes and undermines all of that by opening up a
+> > truck-size loophole, reducing the impact of GKI, and overall removes
+> > leverage to get vendors to do the right thing.
+> >
+> > It's against our interest as a community to have this happen, since
+> > there's no other reasonably justifiable reason to do this.
 >
-> This patchset shouldn't go in.
->
-> GKI is a fantastic effort, since it finally seems like Google has the
-> backbone to put pressure on the vendors to upstream all their stuff.
->
-> This patcheset dilutes and undermines all of that by opening up a
-> truck-size loophole, reducing the impact of GKI, and overall removes
-> leverage to get vendors to do the right thing.
->
-> It's against our interest as a community to have this happen, since
-> there's no other reasonably justifiable reason to do this.
+> Oolf, Geert, Krzysztof, Arnd,
 
-Oolf, Geert, Krzysztof, Arnd,
+So close.
 
-I skimmed through the emails and you all make a lot of good points. It
-looks like you all at least like the idea of being able to have a
-minimal generic kernel where everything that can be a module is a
-module. Please correct me if I'm wrong on that.
+> I skimmed through the emails and you all make a lot of good points.
 
-I was thinking about this patch series and I was wondering if it'd be
-good to come at it from the other end. Instead of taking the mostly
-builtin generic kernel and trying to rip out drivers as modules (and
-not having enough hardware to test them all) and hitting all these
-issues, we could come at it from the other end.
+I skimmed through this email and I think it adds a lot of new
+complexity and fragility to solve a problem that doesn't really exist
+for upstream, adding yet more config parameter combinations to build
+and test for.
 
-A config like ARM64_MINIMAL_GENERIC_KERNEL that's off by default. But
-if it's selected, all the "selects" done by the various ARCH_XXX are
-not done any more. Something like:
+A much more valuable approach would be to work towards being able to
+free up memory by un-probed drivers at the end of boot. That would
+possibly benefit all platforms on all architectures.
 
-ARCH_XXX
-    select XXX_CLK1 if !ARM64_MINIMAL_GENERIC_KERNEL
-    select XXX_PINCTRL1 if !ARM64_MINIMAL_GENERIC_KERNEL
 
-ARCH_YYY
-    select YYY_CLK1 if !ARM64_MINIMAL_GENERIC_KERNEL
-    select YYY_PINCTRL1 if !ARM64_MINIMAL_GENERIC_KERNEL
-
-And ARM64_MINIMAL_GENERIC_KERNEL itself would select the absolutely
-mandatory stuff that can never be made into a module like the GIC,
-architectured timer (as Geert mentioned) and UART early console
-driver. I'm not sure if ARM32 has an equivalent to the standardized
-GIC and arch timer. Basically the minimal kernel would need a timer
-for the scheduler tick and IRQ controller to get the timer IRQ and the
-fixed clock driver if the archtimer uses one to get its frequency and
-the early UART console is pointless as a module (so build it in to
-allow debugging/development).
-
-And then all new drivers, we should make sure are implemented as
-tristate drivers. And we can go back and slowly work on converting
-existing drivers to modules (community effort -- not one person or
-entity) -- at least the ones where the author has hardware or ones
-where the change is very likely to be correct and someone else is
-willing to test it. We'll never be able to support some/all ARM32 (do
-they even have a GIC/arch timer standard?), but at least for ARM64,
-this seems like a viable goal.
-
-This way, we'll keep the existing model working, while working on a
-fully modular kernel from the other end.
-
-Thoughts?
-
--Saravana
+-Olof
