@@ -2,175 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A830C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 19:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962EEC4321E
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 19:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F414619E9
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 19:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 795A461AF7
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 19:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbhJAT2q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 15:28:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38994 "EHLO
+        id S229822AbhJATvx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 15:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbhJAT2n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 15:28:43 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D266C0613E3
-        for <linux-clk@vger.kernel.org>; Fri,  1 Oct 2021 12:26:58 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id i84so22683480ybc.12
-        for <linux-clk@vger.kernel.org>; Fri, 01 Oct 2021 12:26:58 -0700 (PDT)
+        with ESMTP id S229531AbhJATvw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 15:51:52 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFBEEC061775;
+        Fri,  1 Oct 2021 12:50:07 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id x27so42934591lfu.5;
+        Fri, 01 Oct 2021 12:50:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+I3d1su/KvdHqod/jvZj4lVFL3MuIPfZCays9g7CN7k=;
-        b=EneX9Nz+akqriwHswlfP+5z4mszZUBt5tejoF6pkNPF4ct3GPQNHTy1gLNzJq7fhV5
-         Q3tNAAhnrbl2HAPqbX8HMMmI1D4l2VwdFNQK1rW1Lu+WxG36WHsJLmeRJ13tN85QPbR6
-         cyiOz85aw1l/YHU1853UOnyKSoEmVMMIHawKdQUekUrMJZRrAEykcvYaROArZIcTq1uF
-         ptpZKieD7AvZ/dcJtDOtylXMuHp0m7OWsyjH4WX1poQZPbals+M4U4iVxckbt+J3JcjR
-         k1NWIDAsCe9KtV59TJkdQs4MFoiN25XNYfxr1X3qGzMXRl550k6H94RilzZ/fJhr8lE6
-         5b2w==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+3tCCW1vf690/4T30qcUTSO03STgS9Zq/gOdQmsNyEY=;
+        b=lY0wpPfvEJC3ODP4sRKgGKoG8Swu6fLZXyhOhUQdBtt8vAmwxCUggKysIiRbfpVECz
+         Cd3ipKChxLyI1Zlljt9jBoTItp7HmkRZNf+eWjSo0rRzLJpIXZuZSpuczURL7aSNbaxj
+         i27N4TFDl5jVrgoDNEymG3WJmbBn2a47R0QIsqRS8kEVT2EURQYnYf+OZQh4u5X906wS
+         OP71a4OED8ggbpaM9F9WPD+jQS6co7bb2ujJRxsbNvD0guBE62JtB6hzhNKWUuRSoEPm
+         eED+tROxrUYQsEDU12h+rkOJTDJ9NZqCO/m7egmIDgFRlkZFJ+0EKU6mPddmAv9siSJx
+         aPHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+I3d1su/KvdHqod/jvZj4lVFL3MuIPfZCays9g7CN7k=;
-        b=aPP4l4yFZTA39X99edIecFHsmM2hBDHHYoS/Rjl43zkE2yabtqntO1cIRQImRxSRzR
-         GCvJUpIeQQjfg0vTXIXg+qHSdc+hARZbgb4/pfe2zQz3G3ovJ/eBoNiY5zgkV4yAA58K
-         lzqrxDMhc9h/I9ZcQ+grRb7iSlcd7FCzJ+7fqZjdCJ0t/vaNI9AXbKemH/ny2qACpTjF
-         xunpvmaxwVl+mOtA8TScs3S7AG8MVoIklbn2FT9i9qJF8yGgTtLZuXGz+rgnqIw1hh97
-         oRUTfwpd4c8QV/0eVv/adooEw0poHD9SCsFy52Us2A+esl8719rqnhpAY2t9Xwojqzl3
-         G3LQ==
-X-Gm-Message-State: AOAM532OHnKB3Oeiyf0PNMB1x6oGeMNCAZ5xu/kRGZDPGBkl4LuRNPMq
-        wyTPuGIHazVeaWOkxst1Ut5/JzO9TlXAt/IrObrYWg==
-X-Google-Smtp-Source: ABdhPJzEY4QNq5SWV1QbRoyFZtAgKfhNOJD2XXMlINUwQzL6veYPMvaJGswNlhCCzflMkhboQW0Q6R+GxM38wqKTb/A=
-X-Received: by 2002:a25:1dd7:: with SMTP id d206mr5271610ybd.486.1633116416960;
- Fri, 01 Oct 2021 12:26:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
- <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
- <CAMuHMdWhCB_zg6TwjYfz+=vc+_Wd5yzuAAzk=2ToZOQSAyaiJA@mail.gmail.com>
- <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com> <CAOesGMhHK7Z8Ki+UFRi24dXTdk4=YC6ExneOnfkVmG2HFiVMKw@mail.gmail.com>
-In-Reply-To: <CAOesGMhHK7Z8Ki+UFRi24dXTdk4=YC6ExneOnfkVmG2HFiVMKw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 1 Oct 2021 12:26:20 -0700
-Message-ID: <CAGETcx_UFLCwmqs_d5c8JY8Je9r=jy=KnELz1h91Qbrw9z+kaw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+3tCCW1vf690/4T30qcUTSO03STgS9Zq/gOdQmsNyEY=;
+        b=Z5MKWqJ44nV0FaQR+LgRdzd3D/DcVqURG5ba8wZhMGE6KgMLCzUFBhhYTmVTyQBSiM
+         vNwu+vpY8LIhD+xGa9ojgjPJFqtlrkYRwnGfZtUWv+1VIWDFkOhqYXxYdF0hPJbVNetG
+         S8++W0JJ0+D5pd2KnhJM23J6t6WVT9greYTkSOYvVI6IPOjq08LQViiqC/lajnFo5Q0T
+         0Igx/O4Xuqs8oLbhIO6CKuvNrolM82bRTDCUffb8BmhZlj6OhSRUfUtpaKrmcpJ7OvUJ
+         Y3gAkLXrodgyw33dv6gj6DADd8/B8t05KFDVKCzZE4dQQq4SWCDpv6WI8C6RCR4855K8
+         rDEA==
+X-Gm-Message-State: AOAM530roErC4l84PFvXKEHQXNYQSY4ucyZEkCIMviBdt0hp3MdwgF6J
+        hfkgfiCo/u1AeTOnYR6Atr0=
+X-Google-Smtp-Source: ABdhPJxYsYCCBKlCSGLAzxa6BXsGbqcTjHWvgb7beKpP4WisArOt1AAHN4vdv1Oz4AuVBT+h3gaDUA==
+X-Received: by 2002:a2e:924d:: with SMTP id v13mr13579672ljg.380.1633117806218;
+        Fri, 01 Oct 2021 12:50:06 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-198.dynamic.spd-mgts.ru. [79.139.163.198])
+        by smtp.googlemail.com with ESMTPSA id d26sm835708ljj.45.2021.10.01.12.50.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Oct 2021 12:50:05 -0700 (PDT)
+Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+References: <20210926224058.1252-1-digetx@gmail.com>
+ <20210926224058.1252-7-digetx@gmail.com>
+ <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7386079f-0dfe-9f55-6297-1f9ee67cd9d6@gmail.com>
+Date:   Fri, 1 Oct 2021 22:50:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 1, 2021 at 8:27 AM Olof Johansson <olof@lixom.net> wrote:
->
-> On Fri, Oct 1, 2021 at 2:01 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Fri, Oct 1, 2021 at 10:19 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Fri, Oct 1, 2021 at 7:24 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > > GIC and arch timer. Basically the minimal kernel would need a timer
-> > > > for the scheduler tick and IRQ controller to get the timer IRQ and the
-> > > > fixed clock driver if the archtimer uses one to get its frequency and
-> > > > the early UART console is pointless as a module (so build it in to
-> > > > allow debugging/development).
-> > > >
-> > > > And then all new drivers, we should make sure are implemented as
-> > > > tristate drivers. And we can go back and slowly work on converting
-> > > > existing drivers to modules (community effort -- not one person or
-> > > > entity) -- at least the ones where the author has hardware or ones
-> > > > where the change is very likely to be correct and someone else is
-> > > > willing to test it. We'll never be able to support some/all ARM32 (do
-> > > > they even have a GIC/arch timer standard?), but at least for ARM64,
-> > > > this seems like a viable goal.
-> > >
-> > > Cortex-A7/A15 and later have GIC and architectured timer, so it should
-> > > work for contemporary systems.
-> > > Cortex-A9 systems may have GIC, and TWD and/or Global Timer (but I've
-> > > seen SoCs where the interrupt for the latter was not wired :-(.
-> >
-> > There are a number of well-known examples even with 64-bit chips or
-> > Cortex-A7/A15 based SoCs that can't use the architected timer,
-> > irqchip or iommu.
-> >
-> > Apple M1, Broadcom BCM283x, Samsung Exynos5 and
-> > some Hisilicon server parts come to mind, I'm sure there
-> > are more.
->
-> There's also more and more movement towards having coprocessors with
-> standardized interfaces dealing with this functionality. We're
-> currently at the point where they have coprocessors with
-> non-standardized interfaces, and it's useful to keep encouraging
-> convergence in this area to everybody's benefit. I don't find it
-> particularly useful to make life easier for the custom solutions at
-> the expense of others like this patchset does, when that's (just
-> beyond? on?) the horizon.
->
-> > > What are the plans for other architectures?
-> > > I've seen similar patches being applied for e.g. MIPS.
-> >
-> > There is some work in the more actively maintained MIPS
-> > platforms to make those behave more like Arm/powerpc/riscv/m68k
-> > platforms, using a single image and moving drivers into modules.
-> > Most MIPS platforms seem unlikely to get updated to this,
-> > and will continue to require a SoC specific kernel binary forever,
-> > similar to the renesas superh platforms. Most of the less
-> > common architectures (arc, csky, hexagon, nios2, xtensa,
-> > microblaze, nds32, openrisc, sparc/leon) are way behind that
-> > though, and generally don't work at all without out-of-tree
-> > code.
->
-> One of the arguments for needing some of these core drivers in-kernel
-> is that some platforms boot at very conservative DVFS operating
-> points, to a degree that you really want to turn up the CPU clocks
-> fairly early during boot.
->
-> If you don't have the drivers built-in, you can't do that and/or you
-> create possible fragile or awkward inter-module dependencies with
-> deferred probing, etc. We do care about boot time enough to prefer to
-> just build them in for this reason.
+01.10.2021 15:32, Ulf Hansson пишет:
+>> +static int tegra_clock_sync_pd_state(struct tegra_clk_device *clk_dev)
+>> +{
+>> +       unsigned long rate;
+>> +       int ret = 0;
+>> +
+>> +       mutex_lock(&clk_dev->lock);
+>> +
+>> +       if (!pm_runtime_status_suspended(clk_dev->dev)) {
+>> +               rate = clk_hw_get_rate(clk_dev->hw);
+>> +               ret = tegra_clock_set_pd_state(clk_dev, rate);
+> Don't we need to sync the performance state even when the device is
+> runtime suspended?
+> 
+> Perhaps the clock, via a child-clock for example, can get
+> prepared/enabled (hence its device gets runtime resumed) before there
+> is a clock rate update for it. Then there is no performance state set
+> for it, right? Or maybe that isn't a problem?
+> 
 
-Go look at a Pixel 5, we got this working just fine with all these
-drivers as modules and we definitely care about boot time. You just
-need to load your CPU freq driver and the other ones it needs early
-on. And with fw_devlink=on (default in upstream), there's hardly any
-deferred probing.
-
-> If vmlinux binary size is a concern, maybe it's time to consider
-> splitting the drivers into a bare-minimum piece that's not a module
-> for early setup, and the rest that can be loaded post-boot.
-
-Isn't this literally what I was suggesting with my
-ARM64_MINIMAL_GENERIC_KERNEL suggestion? Build in all the bare minimum
-drivers that are needed before module loading can happen? You'd just
-select them all under that config. And any existing platform that
-wants to use it would break up their drivers into modules and switch
-to it.
-
--Saravana
+Good catch! Older versions of this patch had a special handling for clk
+enable/disable. I just forgot to update this function, it's now not a
+problem to change performance state of a suspended device and it
+actually needs to be done. I'll correct it, thanks!
