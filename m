@@ -2,62 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB69C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCA0C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 06:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B08AC61A55
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 05:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9ADC61A57
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 06:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbhJAGBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 02:01:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
+        id S230488AbhJAGFK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 02:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238056AbhJAGBF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 02:01:05 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3491C061770
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:59:21 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id p13so2366362edw.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 22:59:21 -0700 (PDT)
+        with ESMTP id S237686AbhJAGFI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 02:05:08 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975C1C06176A
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 23:03:24 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id u32so18189128ybd.9
+        for <linux-clk@vger.kernel.org>; Thu, 30 Sep 2021 23:03:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Wrerzu0eOzULblqI6hcqBoW5s1gAeWyg1d4PDm0YiP0=;
-        b=A7NluRHIT9P6ll142j0SyO7hXaBZ3Wm3gFiEtcJj/ODZ7DbVvi6FQp8DHFl4uUWrKE
-         A2nXBJk6lYPW1woby8AUcNHisprHtXQlLNTLOA/WOTcfcZK80hQdpbmCqDBame/6jXEJ
-         FF0oHRuUpBlvguQGYS73PQGq/v+OreH/y9w1Sx3xPmE0p3yFLP+pKhHODbIEYJoFu/L8
-         K+2Cbayc3YOH1cR4X9ZtfjUfLYAhsAZ1XcyvoQrs3xBX1XSQdqPejrN1dslA6egxkQZQ
-         Odib8NKeADHaGhHlQME8ssMuM0DjYqVmF6n3BxbLDog3ZeG9JgblBdp8bidhHQKxuVq0
-         HadA==
+        bh=4XHFyIl24a8InBUxS3yTnWfbC5yODh0CS5vqQSj8r7g=;
+        b=gQb+46RHjbWREUXxN64U8JEMZdkik3KQ6z1iNq6hiwe3ia9IRlhK/cIzlRCm6yLI3j
+         Ov5JSv8j9zBf0hsJXFJuuKPE28Xt1yGKNrngUU1wW/ld2e1sbIqalKLlnWlQBJN5LrEz
+         pCRAR95DiSNnLkQ+GHifeJWamz9f6kzVs01jYGK2Tq/9c+fkKloFE/aAtHv1JP84z9pN
+         YOmEkZ9MgXjJVHoKJzhQ25qVxZbfCM8XuA4REKHKJ1Es6S9ZC5MFlxdTFWER6/aFZ1rM
+         xh2qq6tt5iC3NH2SYC7WKi9pPL06sFWYUKHD1C1ZvMSsdwLkPJgxlvkoE7K3X0oFVc9K
+         glPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Wrerzu0eOzULblqI6hcqBoW5s1gAeWyg1d4PDm0YiP0=;
-        b=RGc8D5weDagzDqtlTZ8D+D8EXbFM0VYF1n1xnxBckTCXxXwYMT/4EI4g6/iq3I0q4+
-         DiT93roDfEpdMnuPXCOvnIPzXSJypKLUgyHJwGAiBk0CvBiJ0OuiX7tQw8ZeowRCm04H
-         zbk1oY83zbmUpJ+geTP+whMU/lcopeVDQae7i8/T1KxdSYI9NbByGGVizHHDfUZUe1gk
-         Em3mijGPmKrju+2Xq80eNFCkx+4yyellkNI5L3OjxVTy40TcwQKrgSzGZL5HBflS99DJ
-         /FiTiE516Iv41H0nhFonKkDMpMbqNAEdhk1/i09fP8e/hFOMZMA1K/XBfNDSrRqTonoX
-         KWQA==
-X-Gm-Message-State: AOAM532PvFga0tuTEhwfCw84gI2L1cGjp0nygKwn0zDOtL5tMU00jmNl
-        q4MfUmAQLhJ90V8wq54N+/0OTkjCJpSDK01LGCI3bw==
-X-Google-Smtp-Source: ABdhPJzuvodcs8tct+DTVA009d4X4KLuUNmSIlwB3FnuvDUY8NEj4Xa/4ykTuUiOVGOVFV3KFGQS3R125A2/yrLz1SA=
-X-Received: by 2002:a50:8405:: with SMTP id 5mr12215046edp.228.1633067959935;
- Thu, 30 Sep 2021 22:59:19 -0700 (PDT)
+        bh=4XHFyIl24a8InBUxS3yTnWfbC5yODh0CS5vqQSj8r7g=;
+        b=2m3D4ofJtTZ3veCEo6TptB07HlBA/hm2wgUvMuOAIfxoz8u/DSBWOyIgkKljkKLkak
+         HyKYFqbMwJn6nFZy39lpXHj9caLraIQhMvL2aUKeeDspHErShVuCWI5O8TPBlyyPwSTp
+         DrcU4UedTeUPn4X6fnYyQ+KdOmrjjco2jlLMxNGZFoKavKMFErJXlrbMcZ50dLHwr7l+
+         YOvoyNjqM6i72ebFaGX2c7sZAvR4hNuAAHCTqT3vR0+r+PhXfPMiq3Rss0IdUHfyHUJp
+         fnIbRhHZXmzvCQaoD9plh2tq4LGPIcsKCQV7x8gqwOJYdDXWmOvfRoO5cRdGMFMQIp9e
+         S2zg==
+X-Gm-Message-State: AOAM533EouPOjz8EChI42w/Em6miWeH5kIlbGhz8zQyCW6o2UYdwZN15
+        EovUz+rmgJ4KBRoMSsFbnFNAkkuLT9qJi+BsKQkHMQ==
+X-Google-Smtp-Source: ABdhPJx9japD4n+j+WHfnlr43J1D/KYK6bUrrEfX6nuXVSP7c4eyGu0nzECvXcHIoHBBuvGtgM2VdN5ovzRACmJk+Uc=
+X-Received: by 2002:a5b:783:: with SMTP id b3mr3850649ybq.328.1633068202700;
+ Thu, 30 Sep 2021 23:03:22 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210928235635.1348330-1-willmcvicker@google.com>
  <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
  <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
  <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com> <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
 In-Reply-To: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
-From:   Will McVicker <willmcvicker@google.com>
-Date:   Thu, 30 Sep 2021 22:59:04 -0700
-Message-ID: <CABYd82b7umA2h=b2NTMU7X0u8ABOjMcmh5cHOH_gyWr=QeFFTA@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 30 Sep 2021 23:02:46 -0700
+Message-ID: <CAGETcx_k2-mo9oUcYhsXhhsazLdwbifjP7ZT8pvyEbWB5k_qQg@mail.gmail.com>
 Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
 To:     Olof Johansson <olof@lixom.net>
-Cc:     Saravana Kannan <saravanak@google.com>,
+Cc:     Will McVicker <willmcvicker@google.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -154,27 +154,13 @@ On Thu, Sep 30, 2021 at 10:36 PM Olof Johansson <olof@lixom.net> wrote:
 > > >
 > > > It's against our interest as a community to have this happen, since
 > > > there's no other reasonably justifiable reason to do this.
-
-Are you saying that modularizing drivers is opening up a loophole? How
-is this different from Krysztof pushing changes to modularize the
-Exynos ChipId driver just last week [1].  I understand the push back
-on "these aren't tested yet" and I agree that we should not merge them
-until they are (I've re-iterated that multiple times and have
-requested for testing help multiple times since I can't get my hands
-on any Exynos arm64 hardware), but are you saying that if I gather the
-test data to prove that these drivers can actually be made into
-modules that you will still deny them out of the interest of the
-community?
-
-[1] https://lore.kernel.org/linux-samsung-soc/4aee1b0d-91a1-75ac-d2b7-6dab3d7a301f@kernel.org/T/#t
-
---Will
-
->
 > >
 > > Oolf, Geert, Krzysztof, Arnd,
 >
 > So close.
+
+I'm sorry, it's pretty late here and I'm sleepy and messed it up.
+
 >
 > > I skimmed through the emails and you all make a lot of good points.
 >
@@ -182,10 +168,20 @@ community?
 > complexity and fragility to solve a problem that doesn't really exist
 > for upstream, adding yet more config parameter combinations to build
 > and test for.
+
+How is this not an upstream problem? Having a minimal kernel with as
+many drivers as modules is of interest to upstream. And what's the
+complexity in having a config to easily disable a bunch of configs?
+The new config gives a clear config against which new
+platforms/systems should be developed against.
+
 >
 > A much more valuable approach would be to work towards being able to
 > free up memory by un-probed drivers at the end of boot. That would
 > possibly benefit all platforms on all architectures.
->
->
-> -Olof
+
+Sure it would help memory after boot, but it won't help with size on
+"disk", kernel load time, etc. And some of the devices have very tight
+boot requirements. Think battery operated outdoor cameras for example.
+
+-Saravana
