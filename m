@@ -2,79 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E006C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 07:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5B8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 08:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45EDE6115A
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 07:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA52261242
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 08:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352384AbhJAHNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 03:13:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352057AbhJAHNc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Oct 2021 03:13:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E51660551;
-        Fri,  1 Oct 2021 07:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633072309;
-        bh=Dk//hmxp9Ghg4gE573FRig1vcCvDqI1nQn4FlLIiFbo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qUWh1K7x5bY3xzjS/0A2kmVydSHY149JySt6VscptraAh4vDUYX0lFmT5a/A5yzCU
-         jrUZKFhZe1+UjIuS7eh2B1627bgisJMcHgmkOmLb7FQIGLdnTJdIjErmsgT2TlAENo
-         Ougdm9W//e0qWEaJiMVAQOcja0d/ch4rp5qg2bPDbLtB3M+wAAr8pj9uX86unK7og7
-         u6R9Njh6LbD0N28fKiLe1cyuD7MWgKIO7Nlk/zUBh9eFgkQ67l/G7c2twD1KQf8fDR
-         E6lqCRhqWwm9JpxUsG2LIJA9r5uxNcWvK4b2gRJtATObNJc79VUkuwoPN90YX0V1FC
-         iNuyH0bHTVXBA==
-Date:   Fri, 1 Oct 2021 12:41:42 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Mianhan Liu <liumh1@shanghaitech.edu.cn>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1352640AbhJAIDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 04:03:33 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49164
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352624AbhJAID3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 04:03:29 -0400
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F3BC7402E0
+        for <linux-clk@vger.kernel.org>; Fri,  1 Oct 2021 08:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633075284;
+        bh=uaaKTJ0cQrh7xMJybw70gv2lO5lfz55pljrjd+/j8E8=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=A/Do87MQn1UODgqveaEHb3cPWET/V2MMcDXszH3TCLHsyVhahZNWiftjD+qasg+FI
+         f7Upw81bC9jU41/1cfIPmwHgRSOz+nzcoJeoeoo+0jRasnSdNKTfrwXh/yifMZT5u1
+         g0HkVHH+K7zCAXMziIJZVf17G3UVtnYGbDLgqLJkHTOohomHe6iazWRrnlWeWD+gn9
+         p7MMiY8Rs8y7Rlkuhyh0aSpjOMUy93/Hs1xab6ncI8FwtCJvYXmDQbxtR4k6C311bS
+         NZGPd9qDxRGvd+F9uhp9+MdNxDps/z7XHWQwpfo17o6uHBDnkRb2NiP1sbpJSw1DKl
+         nmjueqIWcsTfA==
+Received: by mail-lf1-f69.google.com with SMTP id c24-20020ac25318000000b003f257832dfdso8142263lfh.20
+        for <linux-clk@vger.kernel.org>; Fri, 01 Oct 2021 01:01:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uaaKTJ0cQrh7xMJybw70gv2lO5lfz55pljrjd+/j8E8=;
+        b=dnNUjxnYukZEFgoS2W+NMVIu/pZ2KQ6Sgrmi5xZ7FFwGe0n7KljwNsSLojPuBvvLq4
+         lXIF2VcKk/6Szy2Pf6p1xLkLXhIcOOnjdSKWa8CmjMVU4rz6opVTPvUNmjNVQlRtm0j4
+         e7ijG8NYR1IQAGMnDEktDFIbmauHjPnEOm8xfxF5/+yDuXqXi7MxaLLyjqUfx7umRCLh
+         lrFALOjkJvH+LnSiXCiRO5/jD1xsYDyBGDvZxlG6XQezhDHLRwovrQFNGp/AzauMlE29
+         rKbH556tuOBPMnuYbAD9rsj03RWXcom3OtvHRsF/H1nn9Hm8o9LahPc/eaBoncnvHdUG
+         Oh8Q==
+X-Gm-Message-State: AOAM5319JddG5h+lmRWK6GKKT26M+kyeFCW7jLIuSN2UnZdtQzRGmeBT
+        1jHczQOCBGhL1M21PjDMHxVsi88a+TMwDbJh1gZcdZ3a7dsGC0AD72pbkTRv9rCXlPxbD7pxdxb
+        uW4FTVXNFueyB1/M53V/KdmwB8sj7JL99oNenGg==
+X-Received: by 2002:a05:6512:22c3:: with SMTP id g3mr3831308lfu.577.1633075283261;
+        Fri, 01 Oct 2021 01:01:23 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwnC0TWRcbTXzIlivq6kGBHxv6PT9DERXp0Gp0NMumXyFOXyX+j61vGOxB9oQtxeW3iWZpGuA==
+X-Received: by 2002:a05:6512:22c3:: with SMTP id g3mr3831286lfu.577.1633075283077;
+        Fri, 01 Oct 2021 01:01:23 -0700 (PDT)
+Received: from [192.168.0.197] ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id t17sm642232lft.296.2021.10.01.01.01.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Oct 2021 01:01:22 -0700 (PDT)
+To:     Will McVicker <willmcvicker@google.com>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] clk/actions/owl-factor.c: remove superfluous
- headers
-Message-ID: <20211001071142.GA5821@thinkpad>
-References: <20210929065824.23691-1-liumh1@shanghaitech.edu.cn>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+ <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+ <CABYd82b7umA2h=b2NTMU7X0u8ABOjMcmh5cHOH_gyWr=QeFFTA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <5d22846b-b2d8-e646-4b5c-732127e37f3a@canonical.com>
+Date:   Fri, 1 Oct 2021 10:01:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210929065824.23691-1-liumh1@shanghaitech.edu.cn>
+In-Reply-To: <CABYd82b7umA2h=b2NTMU7X0u8ABOjMcmh5cHOH_gyWr=QeFFTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 02:58:24PM +0800, Mianhan Liu wrote:
-> owl-factor.c hasn't use any macro or function declared in linux/slab.h.
-> Thus, these files can be removed from owl-factor.c safely without
-> affecting the compilation of the ./drivers/clk module
+On 01/10/2021 07:59, Will McVicker wrote:
+> On Thu, Sep 30, 2021 at 10:36 PM Olof Johansson <olof@lixom.net> wrote:
+>>
+>>>>
+>>>> GKI is a fantastic effort, since it finally seems like Google has the
+>>>> backbone to put pressure on the vendors to upstream all their stuff.
+>>>>
+>>>> This patcheset dilutes and undermines all of that by opening up a
+>>>> truck-size loophole, reducing the impact of GKI, and overall removes
+>>>> leverage to get vendors to do the right thing.
+>>>>
+>>>> It's against our interest as a community to have this happen, since
+>>>> there's no other reasonably justifiable reason to do this.
 > 
-> Signed-off-by: Mianhan Liu <liumh1@shanghaitech.edu.cn>
+> Are you saying that modularizing drivers is opening up a loophole? How
+> is this different from Krysztof pushing changes to modularize the
+> Exynos ChipId driver just last week [1].  
 
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+Modularizing drivers, which can work as modules or even can be disabled
+because they are not essential for platform boot, is not opening
+loophole and is helping upstream platforms. Modularizing everything,
+even essential drivers, because downstream does not want to contribute
+rest of its drivers, is not beneficial to the upstream project. Since
+downstream does want to contribute its platforms and drivers, it decides
+to change mainline project to fits its needs. Only its needs, not others.
 
-Thanks,
-Mani
-> 
-> ---
->  drivers/clk/actions/owl-factor.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/actions/owl-factor.c b/drivers/clk/actions/owl-factor.c
-> index f15e2621f..64f316cf7 100644
-> --- a/drivers/clk/actions/owl-factor.c
-> +++ b/drivers/clk/actions/owl-factor.c
-> @@ -10,7 +10,6 @@
->  
->  #include <linux/clk-provider.h>
->  #include <linux/regmap.h>
-> -#include <linux/slab.h>
->  
->  #include "owl-factor.h"
->  
-> -- 
-> 2.25.1
-> 
-> 
+I was repeating this multiple times - there is no point, no incentive
+for the mainline to allow disabling essential SoC drivers. It's only
+downstream interest without any benefit to the upstream.
+
+
+Best regards,
+Krzysztof
