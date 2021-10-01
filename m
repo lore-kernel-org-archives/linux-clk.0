@@ -2,77 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76612C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 17:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99760C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 17:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6672A61ABD
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 17:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804B361A8E
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 17:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354910AbhJARW0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 13:22:26 -0400
-Received: from aposti.net ([89.234.176.197]:38828 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354507AbhJARW0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Oct 2021 13:22:26 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-mips@vger.kernel.org, list@opendingux.net,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH] clk: ingenic: Fix bugs with divided dividers
-Date:   Fri,  1 Oct 2021 18:20:33 +0100
-Message-Id: <20211001172033.122329-1-paul@crapouillou.net>
+        id S1353548AbhJARuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 13:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231815AbhJARuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 13:50:12 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B29C06177E
+        for <linux-clk@vger.kernel.org>; Fri,  1 Oct 2021 10:48:28 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id bd28so37465949edb.9
+        for <linux-clk@vger.kernel.org>; Fri, 01 Oct 2021 10:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E435VevWHNvFfwzbwrSEsjtgrZwBjPFMUID//rqAmHc=;
+        b=HrAVVITqn8UALvaJMLEFX1IEvob89yUVhXwoNDpJg2aBCxAEgrEksiWwl/Pr+Hxc+3
+         3RVhXkMCRrBwLVNDhch3zhiHFzIOOlRJ43XQEf2/qVzwZWoM4xh5uiPYcItFTNLYWqgN
+         zJYjgi49ajbjRRiITLovVYrTLgWqIYL+DdavFCwUGZNXs8U2nYCNEZ7zf3dTADSfYOfE
+         dvmto4Slm0JeiFuzCB/HUvabALZvuz1ENrxPhlr87swuBhd8mcRoUFk0X1t9n+u+gkxA
+         S1OAGY5w7NyVZNtD0UqccaAqAJWMZiyKOF0s0xVpbKbwkfTU7fVFJFTTCMfdlK2Q9aAN
+         1hsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E435VevWHNvFfwzbwrSEsjtgrZwBjPFMUID//rqAmHc=;
+        b=MdeDsN+/QAxUlPj+6WJyBlDA/B/a62ankKI5rlFc5KFvPqBaJHVMg/UAv+qyyyjatg
+         OgmukmzPI28OIvEwJmbWyHUr9RmyT5iLnyssGZbdhhGfJj78kY9gdVrr3KTDbzuFQ3sh
+         XZiMsJEkaP8+w5gviO8bs25bI2Ei/vaMK2UQFzznCjbezzkuJxyHo1zNx36VK7RBcqbj
+         loYoHh3cGu9e2MSh2JK7Q7xqcXsQR7XKtV4KWyxwoF+RC2qVOp97zfhw6jAnmkKXH2oO
+         1Vy0/ivWA3QqW7V6/eCIDuS80lJKNdBU7T1m2h07w9np9Gy7o+Ye4fZtPY+iPP19RIQJ
+         uiRQ==
+X-Gm-Message-State: AOAM531uZ99LSAWr6fO2rXSqtqyHPriLqoTwxsBkjqBnqXWGdOAUy78b
+        cIlFXIpN9GWb+U02iI1/BwTJxllLovN0moMDc97PBw==
+X-Google-Smtp-Source: ABdhPJx2UKqAdOO40LH0YnQG+0frDPf32/9ThPP5PQp8PkBdz4P4kYMJpQVj2Lm4c8EVFOtz5hRi6xe/znckYZs8U8o=
+X-Received: by 2002:a17:906:3a58:: with SMTP id a24mr7926006ejf.67.1633110506264;
+ Fri, 01 Oct 2021 10:48:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+ <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+ <CAMuHMdUkMwyA-bk7hfr7S7TE-_S9eBUxKWKmpj0rDCUvHL+fxw@mail.gmail.com>
+ <CAOesGMg_eA5PNzsL76xv6kDQ2QUZeCwC04BNeucfGXkFSOE=Tw@mail.gmail.com>
+ <CABYd82YSh=q-QrUN+nbzMZ7Z9SKq8V7eAL1=m1mg-j-f8BCbDg@mail.gmail.com> <CAOesGMiubqENbGSuQ_FQA59vA897R5nkgq5vu5Tg6kqbEVdz0A@mail.gmail.com>
+In-Reply-To: <CAOesGMiubqENbGSuQ_FQA59vA897R5nkgq5vu5Tg6kqbEVdz0A@mail.gmail.com>
+From:   Will McVicker <willmcvicker@google.com>
+Date:   Fri, 1 Oct 2021 10:48:09 -0700
+Message-ID: <CABYd82ZHCrd5qhFUCTFPxPXn69LgdfWbW7zSMoTKaKq7FXvx=g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Two fixes in one:
+On Fri, Oct 1, 2021 at 10:16 AM Olof Johansson <olof@lixom.net> wrote:
+>
+> On Fri, Oct 1, 2021 at 9:51 AM Will McVicker <willmcvicker@google.com> wrote:
+> >
+> > On Fri, Oct 1, 2021 at 9:00 AM Olof Johansson <olof@lixom.net> wrote:
+> > >
+> > > On Fri, Oct 1, 2021 at 4:59 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > >
+> > > > Hi Olof,
+> > > >
+> > > > On Fri, Oct 1, 2021 at 7:36 AM Olof Johansson <olof@lixom.net> wrote:
+> > > > > A much more valuable approach would be to work towards being able to
+> > > > > free up memory by un-probed drivers at the end of boot. That would
+> > > > > possibly benefit all platforms on all architectures.
+> > > >
+> > > > We used to have such a functionality in arch/ppc (not arch/powerpc!),
+> > > > where code/data could be tagged __prep, __chrp, or __pmac, to put it
+> > > > in a special section, and to be freed with initdata when unused.  It
+> > > > was removed in v2.6.15[1], as the savings weren't worth the hassle.
+> > > > In a more fragmented space like arm the memory lost due to alignment
+> > > > of the sections would be even more substantial.
+> > >
+> > > Yeah, the balance between per-platform code size and overall kernel
+> > > code size shifted over time to a point where it wasn't as meaningful
+> > > on ppc.
+> > >
+> > > > Another problem is to know when is the end of the boot, especially
+> > > > with deferred probing.
+> > >
+> > > Most of this code either has a module_init() or an initcall that
+> > > actually registers the drivers and/or probes for the platform and does
+> > > the work.
+> > >
+> > > This means you can have a late equivalent hook/initcall that
+> > > determines whether this path ended up being probed/used. If it wasn't,
+> > > you can then unregister and flag the corresponding memory to be freed
+> > > at the end, and would take out the heuristics and guessing on needing
+> > > to do it automatically from the code path that's doing said freeing.
+> > >
+> > >
+> > > -Olof
+> >
+> > First off, I appreciate the constructive conversations and I
+> > understand the ask here. So I'd like to close the "we don't want this"
+> > and "this isn't possible" conversation. We have already proven
+> > downstream that it is in fact possible to modularize these drivers on
+> > other SoCs (mentioned earlier if you missed it) and I'd like to direct
+> > the conversation towards verifying/testing here instead of negatively
+> > arguing about how SoC vendors aren't upstreaming their drivers. I
+> > think everyone understands that, but unfortunately I have no control
+> > over that even though I would love everyone to work upstream directly.
+> >
+> > I am fine with forcing these drivers to always be enabled in some form
+> > upstream even though it doesn't really make much sense for a generic
+> > kernel that will run on Qualcomm, Exynos, Mediatek, (you name it) SoC
+> > devices. I thought about how to do this yesterday and wasn't able to
+> > come up with a proper solution that didn't always force this driver to
+> > be a module when CONFIG_MODULES is enabled.
+>
+> This line of reasoning: "I couldn't think of a better option" made us
+> merge a userspace ABI some time ago that within a few months was
+> replaced with a better solution. In that case it was the kernel
+> headers bundling with a build (extending the vmlinux size by a lot),
+> that seemed to have no concerns about binary growth. Not all that far
+> after that went in, the BPF folks came up with a solid solution for
+> CO-RE by introducing BTF, etc.
+>
+> So, the argument "I can't think of a better solution" is a local
+> maxima that we shouldn't settle for if there's a likely better global
+> maxima available with a bit more time/effort. If we say "this problem
+> is worth solving but this doesn't seem to be the solution we want to
+> go for" we might actually be better off long-term.
+>
+>
+> -Olof
 
-- In the "impose hardware constraints" block, the "logical" divider
-  value (aka. not translated to the hardware) was clamped to fit in the
-  register area, but this totally ignored the fact that the divider
-  value can itself have a fixed divider.
+If the answer is, "we don't have a solution for that" then that's
+fine. I'm not an expert at Kconfig configurations and am asking if
+there is already a way to handle this. To me it sounded like there
+might be a solution already due to this policy of "we don't allow
+disabling drivers that are essential." I'll wait for Krysztof to
+respond (or someone who has a potential solution) before I dig into
+this deeper.
 
-- The code that made sure that the divider value returned by the
-  function was a multiple of its own fixed divider could result in a
-  wrong value being calculated, because it was rounded down instead of
-  rounded up.
-
-Fixes: 4afe2d1a6ed5 ("clk: ingenic: Allow divider value to be divided")
-Co-developed-by: Artur Rojek <contact@artur-rojek.eu>
-Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/cgu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 266c7595d330..af31633a8862 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -453,15 +453,15 @@ ingenic_clk_calc_div(struct clk_hw *hw,
- 	}
- 
- 	/* Impose hardware constraints */
--	div = min_t(unsigned, div, 1 << clk_info->div.bits);
--	div = max_t(unsigned, div, 1);
-+	div = clamp_t(unsigned int, div, clk_info->div.div,
-+		      clk_info->div.div << clk_info->div.bits);
- 
- 	/*
- 	 * If the divider value itself must be divided before being written to
- 	 * the divider register, we must ensure we don't have any bits set that
- 	 * would be lost as a result of doing so.
- 	 */
--	div /= clk_info->div.div;
-+	div = DIV_ROUND_UP(div, clk_info->div.div);
- 	div *= clk_info->div.div;
- 
- 	return div;
--- 
-2.33.0
-
+--Will
