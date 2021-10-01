@@ -2,124 +2,409 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7233C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 12:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C28C43219
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 12:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A26F161164
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 12:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F7BE61AA9
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Oct 2021 12:33:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352491AbhJAMdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Oct 2021 08:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S1352842AbhJAMeq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Oct 2021 08:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353658AbhJAMdW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 08:33:22 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEABCC06177D
-        for <linux-clk@vger.kernel.org>; Fri,  1 Oct 2021 05:31:37 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id q127-20020a1ca785000000b0030cb71ea4d1so6644365wme.1
-        for <linux-clk@vger.kernel.org>; Fri, 01 Oct 2021 05:31:37 -0700 (PDT)
+        with ESMTP id S1353785AbhJAMeo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Oct 2021 08:34:44 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43976C06177F
+        for <linux-clk@vger.kernel.org>; Fri,  1 Oct 2021 05:33:00 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id y26so38398889lfa.11
+        for <linux-clk@vger.kernel.org>; Fri, 01 Oct 2021 05:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Mu18CAq1hBqJeqwZJAQst74KZfOgiaFerApR3I6y0OU=;
-        b=FXQiOVBOuXGIos9ZeYjN3BTAxm8yH1TdT07eKtbvce8xv5IVrtB1Lg4FQNFN9p7TN9
-         QkzNV6Ct/N3bi2v03QgZ1xJ+RqGFou/Pao0LO5z6nRQ51/hYNajXGlPREYU8VP7YoD6Y
-         vV13HXltj32P+yT4nhrAPpmLdz3iJUMgJuVprWHaBQkgObe1fnscPjuC3mtmfv6wIUB1
-         zgZQWcaz0BAljE8CIgE7XCnwZRuScBaNR274lLCpj9jara54mzkZPLfAIs3Ehiyyluo3
-         TRuxz5k1l+uYwZM5+DfHuL4h2dX6BIBeF0LRqMKWNoL9E0He3LhLvGa3XQg3e5Yq0tTQ
-         9DUA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MxegWTUqAg1wAtIssrheLi+x+LfQCMxJV5C3e9zY/So=;
+        b=vcJ2g2ALAm0IVx2Fp7EMGVafelLUrjG16muU1pmyzR8hwXe/c7kdMENPYG2cKj/WKw
+         BS+ZaaO+G4Uj5tvnRpwbititOE3WauKhPQkREVycG/Hvn9PHucIwhkZ/YUGB6qkv1U7f
+         1ae2JiP2HDu+Leu75eZhP4gJWxxvYNIu0f5oDf3KGrt2A4kayT/47nyueEjFDqAxQPI0
+         iTzo6lbag1DiAzbQ9jnlxf6WV5LlF4BTHECcT3A4vBoHPDuEldBEhV/YpniL1bV6yy2m
+         l7uOA4/tbztxL4Zph+77Sg+DntIuch0Ry+Gguy/mz8lrNGeYY+1Vyk1/7itYYlfM8hOX
+         BDkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Mu18CAq1hBqJeqwZJAQst74KZfOgiaFerApR3I6y0OU=;
-        b=MH9JDa2uk667I0j5pw8zkbd+Wkejwam5il2Rl5+zYYoz/7TzmzLlGvkpuIlEF8KZZs
-         i61GBDe5re2swkaaSVN34dTavACfrUNjqAyXzXt4drWBGVfZx5ogySJ4Bvzq6n2suryo
-         jZH/WbgwtobYSwNMlDZ5PW8+BaBYnkL/ng8xstZKFfgZSRp+3I8nncwzxkdXQg3K09uV
-         6O+xmfI4wiQROpwBc7/pjdtZ3X0cCKMy+zKpPG0ESvX2XnNjoGzfQL1emClKTgsBCnKO
-         4gpdF6ITeIBuumU8qJdHlNQ8jvZYIWm7bTMq3bZhtd4f+h2NooyCE1Y4NlgO5NTWs8MJ
-         gj8Q==
-X-Gm-Message-State: AOAM533p841Wsp3dH+nNPU6wAetbzNnV3hUwyYNBCPHrZOZ2Xpsx7pSS
-        x9Ls5KlTGOLSFp572WJevO3WeQ==
-X-Google-Smtp-Source: ABdhPJyANjmM1xve1FUQ4nbwObWE0NHXAsZCEc1kKceOWCG8u6kOYtyXw5EldAPiHn3NgpgT0bxlGA==
-X-Received: by 2002:a05:600c:3646:: with SMTP id y6mr4250718wmq.61.1633091496338;
-        Fri, 01 Oct 2021 05:31:36 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id v18sm5429361wml.44.2021.10.01.05.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Oct 2021 05:31:35 -0700 (PDT)
-Date:   Fri, 1 Oct 2021 13:31:33 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Olof Johansson <olof@lixom.net>,
-        Will McVicker <willmcvicker@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
-Message-ID: <YVb/pQ1l34TcP81G@google.com>
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
- <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
- <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
- <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
- <CAGETcx_k2-mo9oUcYhsXhhsazLdwbifjP7ZT8pvyEbWB5k_qQg@mail.gmail.com>
- <CAK8P3a1HtDoEDeqs42s1hDzCZMwU7MhudJ7TVONn6TjoijaWRw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MxegWTUqAg1wAtIssrheLi+x+LfQCMxJV5C3e9zY/So=;
+        b=Rw3ne92DNj4z35GJncs9GQTBxVZhBK7JK1n1SI8sb65hZzAkK226TjsXl0noV+H/5k
+         sVG6Woq6BjltJuSEmX+E1otXJeB5lMbuykskqfoCBL43WJnXeMlWKGPa2I3k1BES8iIX
+         XG7G5WGmA7jltgOEVg6DJkHWhjnArNnSYRW1e5PzYMqO2QLuB2LaunbiKoyzrC+T1ZFd
+         vQqclLCzItJCVzQxQNl+8VjUCggqbB21ylFCYFSduZ3ROJ0t+p/YsJrTSzyPIQXJAgai
+         ClbqtaOByequjH+YduT/1CGwFRSVFq4A3Pq84M7TgUcX3hyXHETvxy6t+vw8a8QuTnCh
+         udOw==
+X-Gm-Message-State: AOAM530Tw56DdoPtrA8teIu4KphFB44GWqgAQzOX51QKa205THSaA2jM
+        ecgwXVm0K0lHJZIHB6xWSVUAVICzrolIlBneVmi4eQ==
+X-Google-Smtp-Source: ABdhPJyfBm1RgU4LIN5CLjaq/tOmRfulY+xvfoc1wBqdFGGV+40L5VEoXJW9NfDQ0sTovAsPIzZgtcS+Jd2OZrom1nQ=
+X-Received: by 2002:a05:6512:3fa5:: with SMTP id x37mr5557500lfa.233.1633091578379;
+ Fri, 01 Oct 2021 05:32:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK8P3a1HtDoEDeqs42s1hDzCZMwU7MhudJ7TVONn6TjoijaWRw@mail.gmail.com>
+References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-7-digetx@gmail.com>
+In-Reply-To: <20210926224058.1252-7-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 1 Oct 2021 14:32:21 +0200
+Message-ID: <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com>
+Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 01 Oct 2021, Arnd Bergmann wrote:
-> The vmlinux file is clearly too big and includes too much stuff that should
-> be in loadable modules
+On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> The Clock-and-Reset controller resides in a core power domain on NVIDIA
+> Tegra SoCs.  In order to support voltage scaling of the core power domain,
+> we hook up DVFS-capable clocks to the core GENPD for managing of the
+> GENPD's performance state based on the clock changes.
+>
+> Some clocks don't have any specific physical hardware unit that backs
+> them, like root PLLs and system clock and they have theirs own voltage
+> requirements.  This patch adds new clk-device driver that backs the clocks
+> and provides runtime PM functionality for them.  A virtual clk-device is
+> created for each such DVFS-capable clock at the clock's registration time
+> by the new tegra_clk_register() helper.  Driver changes clock's device
+> GENPD performance state based on clk-rate notifications.
+>
+> In result we have this sequence of events:
+>
+>   1. Clock driver creates virtual device for selective clocks, enables
+>      runtime PM for the created device and registers the clock.
+>   2. Clk-device driver starts to listen to clock rate changes.
+>   3. Something changes clk rate or enables/disables clk.
+>   4. CCF core propagates the change through the clk tree.
+>   5. Clk-device driver gets clock rate-change notification or GENPD core
+>      handles prepare/unprepare of the clock.
+>   6. Clk-device driver changes GENPD performance state on clock rate
+>      change.
+>   7. GENPD driver changes voltage regulator state change.
+>   8. The regulator state is committed to hardware via I2C.
+>
+> We rely on fact that DVFS is not needed for Tegra I2C and that Tegra I2C
+> driver already keeps clock always-prepared.  Hence I2C subsystem stays
+> independent from the clk power management and there are no deadlock spots
+> in the sequence.
+>
+> Currently all clocks are registered very early during kernel boot when the
+> device driver core isn't available yet.  The clk-device can't be created
+> at that time.  This patch splits the registration of the clocks in two
+> phases:
+>
+>   1. Register all essential clocks which don't use RPM and are needed
+>      during early boot.
+>
+>   2. Register at a later boot time the rest of clocks.
+>
+> This patch adds power management support for Tegra20 and Tegra30 clocks.
+>
+> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/Makefile      |   1 +
+>  drivers/clk/tegra/clk-device.c  | 230 ++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-pll.c     |   2 +-
+>  drivers/clk/tegra/clk-super.c   |   2 +-
+>  drivers/clk/tegra/clk-tegra20.c |  77 ++++++++---
+>  drivers/clk/tegra/clk-tegra30.c | 116 +++++++++++-----
+>  drivers/clk/tegra/clk.c         |  75 ++++++++++-
+>  drivers/clk/tegra/clk.h         |   2 +
+>  8 files changed, 451 insertions(+), 54 deletions(-)
+>  create mode 100644 drivers/clk/tegra/clk-device.c
+>
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index 7b1816856eb5..a0715cdfc1a4 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-y                                  += clk.o
+>  obj-y                                  += clk-audio-sync.o
+> +obj-y                                  += clk-device.o
+>  obj-y                                  += clk-dfll.o
+>  obj-y                                  += clk-divider.o
+>  obj-y                                  += clk-periph.o
+> diff --git a/drivers/clk/tegra/clk-device.c b/drivers/clk/tegra/clk-device.c
+> new file mode 100644
+> index 000000000000..830bc0ba25d3
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-device.c
+> @@ -0,0 +1,230 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/tegra/common.h>
+> +
+> +#include "clk.h"
+> +
+> +/*
+> + * This driver manages performance state of the core power domain for the
+> + * independent PLLs and system clocks.  We created a virtual clock device
+> + * for such clocks, see tegra_clk_dev_register().
+> + */
+> +
+> +struct tegra_clk_device {
+> +       struct notifier_block clk_nb;
+> +       struct device *dev;
+> +       struct clk_hw *hw;
+> +       struct mutex lock;
+> +};
+> +
+> +static int tegra_clock_set_pd_state(struct tegra_clk_device *clk_dev,
+> +                                   unsigned long rate)
+> +{
+> +       struct device *dev = clk_dev->dev;
+> +       struct dev_pm_opp *opp;
+> +       unsigned int pstate;
+> +
+> +       opp = dev_pm_opp_find_freq_ceil(dev, &rate);
+> +       if (opp == ERR_PTR(-ERANGE)) {
+> +               dev_dbg(dev, "failed to find ceil OPP for %luHz\n", rate);
+> +               opp = dev_pm_opp_find_freq_floor(dev, &rate);
+> +       }
+> +
+> +       if (IS_ERR(opp)) {
+> +               dev_err(dev, "failed to find OPP for %luHz: %pe\n", rate, opp);
+> +               return PTR_ERR(opp);
+> +       }
+> +
+> +       pstate = dev_pm_opp_get_required_pstate(opp, 0);
+> +       dev_pm_opp_put(opp);
+> +
+> +       return dev_pm_genpd_set_performance_state(dev, pstate);
 
-This for me is the crux of the matter.
+The above code certainly looks like it can be made generic through a
+common opp helper. I know we have discussed this before, so I am not
+saying you should change right now.
 
-The ability to replace modules was only brought to light as an "and
-also, this is possible".  However in retrospect, given the attention
-this has received, it probably shouldn't have even mentioned, as it's
-not that important.
+Let's instead see what I think (and Viresh), when I have reviewed the
+entire series.
 
-We should focus on the benefits of making parts of the kernel modular
-if technically possible.  The most prominent of those is core binary
-size, since this has a direct impact on boot-time and RAM usage.
+> +}
+> +
+> +static int tegra_clock_change_notify(struct notifier_block *nb,
+> +                                    unsigned long msg, void *data)
+> +{
+> +       struct clk_notifier_data *cnd = data;
+> +       struct tegra_clk_device *clk_dev;
+> +       int err = 0;
+> +
+> +       clk_dev = container_of(nb, struct tegra_clk_device, clk_nb);
+> +
+> +       mutex_lock(&clk_dev->lock);
+> +       switch (msg) {
+> +       case PRE_RATE_CHANGE:
+> +               if (cnd->new_rate > cnd->old_rate)
+> +                       err = tegra_clock_set_pd_state(clk_dev, cnd->new_rate);
+> +               break;
+> +
+> +       case ABORT_RATE_CHANGE:
+> +               err = tegra_clock_set_pd_state(clk_dev, cnd->old_rate);
+> +               break;
+> +
+> +       case POST_RATE_CHANGE:
+> +               if (cnd->new_rate < cnd->old_rate)
+> +                       err = tegra_clock_set_pd_state(clk_dev, cnd->new_rate);
+> +               break;
+> +
+> +       default:
+> +               break;
+> +       }
+> +       mutex_unlock(&clk_dev->lock);
+> +
+> +       return notifier_from_errno(err);
+> +}
+> +
+> +static int tegra_clock_sync_pd_state(struct tegra_clk_device *clk_dev)
+> +{
+> +       unsigned long rate;
+> +       int ret = 0;
+> +
+> +       mutex_lock(&clk_dev->lock);
+> +
+> +       if (!pm_runtime_status_suspended(clk_dev->dev)) {
+> +               rate = clk_hw_get_rate(clk_dev->hw);
+> +               ret = tegra_clock_set_pd_state(clk_dev, rate);
 
-Reclaiming dead code after boot is certainly one way to tackle part of
-the problem.  Ensuring that it's not even loaded into RAM in the first
-place is a better more encompassing solution to both issues IMHO.
+Don't we need to sync the performance state even when the device is
+runtime suspended?
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Perhaps the clock, via a child-clock for example, can get
+prepared/enabled (hence its device gets runtime resumed) before there
+is a clock rate update for it. Then there is no performance state set
+for it, right? Or maybe that isn't a problem?
+
+> +       }
+> +
+> +       mutex_unlock(&clk_dev->lock);
+> +
+> +       return ret;
+> +}
+> +
+> +static int tegra_clock_probe(struct platform_device *pdev)
+> +{
+> +       struct tegra_core_opp_params opp_params = {};
+> +       struct tegra_clk_device *clk_dev;
+> +       struct device *dev = &pdev->dev;
+> +       struct clk *clk;
+> +       int err;
+> +
+> +       if (!dev->pm_domain)
+> +               return -EINVAL;
+> +
+> +       clk_dev = devm_kzalloc(dev, sizeof(*clk_dev), GFP_KERNEL);
+> +       if (!clk_dev)
+> +               return -ENOMEM;
+> +
+> +       clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       clk_dev->dev = dev;
+> +       clk_dev->hw = __clk_get_hw(clk);
+> +       clk_dev->clk_nb.notifier_call = tegra_clock_change_notify;
+> +       mutex_init(&clk_dev->lock);
+> +
+> +       platform_set_drvdata(pdev, clk_dev);
+> +
+> +       /*
+> +        * Runtime PM was already enabled for this device by the parent clk
+> +        * driver and power domain state should be synced under clk_dev lock,
+> +        * hence we don't use the common OPP helper that initializes OPP
+> +        * state. For some clocks common OPP helper may fail to find ceil
+> +        * rate, it's handled by this driver.
+> +        */
+> +       err = devm_tegra_core_dev_init_opp_table(dev, &opp_params);
+> +       if (err)
+> +               return err;
+> +
+> +       err = clk_notifier_register(clk, &clk_dev->clk_nb);
+> +       if (err) {
+> +               dev_err(dev, "failed to register clk notifier: %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       /*
+> +        * The driver is attaching to a potentially active/resumed clock, hence
+> +        * we need to sync the power domain performance state in a accordance to
+> +        * the clock rate if clock is resumed.
+> +        */
+> +       err = tegra_clock_sync_pd_state(clk_dev);
+> +       if (err)
+> +               goto unreg_clk;
+> +
+> +       return 0;
+> +
+> +unreg_clk:
+> +       clk_notifier_unregister(clk, &clk_dev->clk_nb);
+> +
+> +       return err;
+> +}
+> +
+> +static __maybe_unused int tegra_clock_pm_suspend(struct device *dev)
+> +{
+> +       struct tegra_clk_device *clk_dev = dev_get_drvdata(dev);
+> +
+> +       /*
+> +        * Power management of the clock is entangled with the Tegra PMC
+> +        * GENPD because PMC driver enables/disables clocks for toggling
+> +        * of the PD's on/off state.
+> +        *
+> +        * The PMC GENPD is resumed in NOIRQ phase, before RPM of the clocks
+> +        * becomes available, hence PMC can't use clocks at the early resume
+> +        * phase if RPM is involved. For example when 3d clock is enabled,
+> +        * it may enable the parent PLL clock that needs to be RPM-resumed.
+> +        *
+> +        * Secondly, the PLL clocks may be enabled by the low level suspend
+> +        * code, so we need to assume that PLL is in enabled state during
+> +        * suspend.
+> +        *
+> +        * We will keep PLLs and system clock resumed during suspend time.
+> +        * All PLLs on all SoCs are low power and system clock is always-on,
+> +        * so practically not much is changed here.
+> +        */
+> +
+> +       return clk_prepare(clk_dev->hw->clk);
+
+I am trying to understand, more exactly, what you intend to achieve
+with the clk_prepare() here. It looks a bit weird, to me. Can you try
+to elaborate a bit more on the use case?
+
+Is this rather about making sure that the clock's corresponding PM
+domain stays powered on during system suspend? In that case, I think
+there may be an alternative option....
+
+> +}
+> +
+> +static __maybe_unused int tegra_clock_pm_resume(struct device *dev)
+> +{
+> +       struct tegra_clk_device *clk_dev = dev_get_drvdata(dev);
+> +
+> +       clk_unprepare(clk_dev->hw->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +static void tegra_clock_shutdown(struct platform_device *pdev)
+> +{
+> +       struct tegra_clk_device *clk_dev = platform_get_drvdata(pdev);
+> +
+> +       clk_prepare(clk_dev->hw->clk);
+> +}
+> +
+> +static const struct dev_pm_ops tegra_clock_pm = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(tegra_clock_pm_suspend,
+> +                               tegra_clock_pm_resume)
+> +};
+
+[...]
+
+Kind regards
+Uffe
