@@ -2,70 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E62C4167E
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Oct 2021 08:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7330FC433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Oct 2021 11:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC9E61B56
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Oct 2021 08:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BF156121E
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Oct 2021 11:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbhJCIds (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Oct 2021 04:33:48 -0400
-Received: from mail.z3ntu.xyz ([128.199.32.197]:37914 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229875AbhJCIds (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 3 Oct 2021 04:33:48 -0400
-Received: from g550jk.portal.nstrein.ns.nl (unknown [145.15.244.215])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 5FA99C90EC;
-        Sun,  3 Oct 2021 08:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1633249920; bh=zmfazeMicj6zMjUJKJReCRNKJm8RWvDgpzfVzDxY7O8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=rBRihO+oqeAxJC5HfS0CbqS7qaV/Dej4lQKdpixvPFx0i4bOSjCAbaQqDYFFxoVj7
-         F50xqCAChRmWMzvx4jl+ypPHAeQeIWjpLq3EORnfkvP93pV4y4t3ZvNQguw/6+yrs8
-         5kG/qlEEr7PqJbY2K4waH/m/D+pg7/dL8To3ZB0Q=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, Luca Weiss <luca@z3ntu.xyz>,
+        id S230099AbhJCLXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Oct 2021 07:23:24 -0400
+Received: from m-r1.th.seeweb.it ([5.144.164.170]:53767 "EHLO
+        m-r1.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230095AbhJCLXY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Oct 2021 07:23:24 -0400
+Received: from [192.168.1.101] (83.6.167.124.neoplus.adsl.tpnet.pl [83.6.167.124])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id CF1FC1F67A;
+        Sun,  3 Oct 2021 13:21:33 +0200 (CEST)
+Message-ID: <778e6a99-a9aa-05a1-351b-ebf9efbf9033@somainline.org>
+Date:   Sun, 3 Oct 2021 13:21:32 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH 01/11] clk: qcom: add select QCOM_GDSC for SM6350
+Content-Language: en-US
+To:     Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] clk: qcom: add select QCOM_GDSC for SM6350
-Date:   Sun,  3 Oct 2021 10:31:24 +0200
-Message-Id: <20211003083141.613509-2-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211003083141.613509-1-luca@z3ntu.xyz>
 References: <20211003083141.613509-1-luca@z3ntu.xyz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20211003083141.613509-2-luca@z3ntu.xyz>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20211003083141.613509-2-luca@z3ntu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-QCOM_GDSC is needed for the gcc driver to probe.
 
-Fixes: 131abae905df ("clk: qcom: Add SM6350 GCC driver")
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
- drivers/clk/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 03.10.2021 10:31, Luca Weiss wrote:
+> QCOM_GDSC is needed for the gcc driver to probe.
+>
+> Fixes: 131abae905df ("clk: qcom: Add SM6350 GCC driver")
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+>
+Missed that, as I had more GCC drivers enabled in my config, good catch.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 0a5596797b93..9ef007b3cf9b 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -564,6 +564,7 @@ config SM_GCC_6125
- 
- config SM_GCC_6350
- 	tristate "SM6350 Global Clock Controller"
-+	select QCOM_GDSC
- 	help
- 	  Support for the global clock controller on SM6350 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
--- 
-2.33.0
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+
+
+
+Konrad
 
