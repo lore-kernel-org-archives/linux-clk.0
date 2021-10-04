@@ -2,116 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4DDC433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 02:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C684FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 09:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9306136A
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 02:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5FA61215
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 09:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232216AbhJDCYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Oct 2021 22:24:22 -0400
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:36767 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbhJDCYV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Oct 2021 22:24:21 -0400
-Received: by mail-oi1-f172.google.com with SMTP id y201so19746832oie.3;
-        Sun, 03 Oct 2021 19:22:33 -0700 (PDT)
+        id S231821AbhJDJNV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Oct 2021 05:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60152 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230477AbhJDJNV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Oct 2021 05:13:21 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5609CC0613EC
+        for <linux-clk@vger.kernel.org>; Mon,  4 Oct 2021 02:11:32 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id g14so13968312pfm.1
+        for <linux-clk@vger.kernel.org>; Mon, 04 Oct 2021 02:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YnXBnzRi4479wrP+sOZpLMZLpiMj5aSP2rgmOi0KU+Y=;
+        b=yHS0nO7iFlQxxeohVMKV6PWXnBayEsi9lK8tSdjyStFeIxmYN5rIMZxWjWE8H9QfQ7
+         AvniVHR4oVvflXPr7rVbf8sVCWvLQiAfD2PqZZOaMZZagxylmkSlHyBj920ay6skehmA
+         lwPjTUVi6b1oJKkZT0ky+bzsrvrsH1XTsPU+7POECpWl2AWydruKqWVrUMQtVvyTgJNZ
+         9cA08qnu4tcOpHZUG2y+ws6DGVRR6nnOd2Q7S631komf0wGsVpsnKC0k2yEC97ewcBee
+         Rlj7VnjufTy6C0syx9iS4lMwwcQ6JWoSgRGxLLVZ4yopWw1R7D8NUTmmgynLt2Yuhptl
+         CQxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=ushgit0mjUfKyHoADqKH5l5MXksAnFZZ1AfG5dgrz5o=;
-        b=KavC6goRMlIqYawnF0c6rDjtUiZLCGomJELy84TPlotH5ENKP6xbIyLKZxa3Mwp08i
-         k7sKpbhsBXUiTNtqOfATzoM9foTt4azfd6tj/wx7GkLgU9ddu2Xf7GPPOO2xhhVEFtWg
-         hPdBxorWCbDc5MGGI2qMMro9lCur8lRTUhaslgp31TrndVn/ftachMCWuqb7JLe4cD1p
-         WjRearT2vvBhvpUtVhJf4VfxkgAmZpC7pHGYKdB9H/73mJmlrJhGU/pjSSU307wejbQY
-         X4lG1KSqqoIx9G0J54W8ZCdRlE0y5RLOqsnzPHpS+qRDdJasXvGpdhwSDmEJ2TPcISY6
-         l8ng==
-X-Gm-Message-State: AOAM530f4p5Q8D35WsrHkotMfa2/iaxlCJJDDALpo4fPeTjllKKqWd+z
-        NPEmABs7Rh8fYSmQKGrVFw==
-X-Google-Smtp-Source: ABdhPJy86dvc9vfTKpEFg++eA1EydHmuKP0dyaBvrqugtku1lZKymqE4572adTJMvNNBVNFt4ors8Q==
-X-Received: by 2002:aca:5909:: with SMTP id n9mr11877042oib.130.1633314151746;
-        Sun, 03 Oct 2021 19:22:31 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id e2sm2612613ooa.20.2021.10.03.19.22.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YnXBnzRi4479wrP+sOZpLMZLpiMj5aSP2rgmOi0KU+Y=;
+        b=2pThLtlt+tSu5ornb8SBXqGdU9QxCmMUkeNsNfVcBcNIhqugOVvt6EihvW5N0tPIEe
+         +YCJRnp/ZbQP5JLNXKDOVJIRxB1Hf23k8i/XuDj5sQQKj2gDpWGRpzWpyOnmU8iViMou
+         4zICrkJxr4qOyVz4/GkTsVu35r1r1NpDpX3kqkM2mkocExwXRPqHwLUBu20OwufHZL/I
+         cIaRWUvMdqttVVL5BdLuPUFwz1/I8rRCcrwOFFxMgr4Bloxdyxeg/C6zBO4v3axOU5pd
+         NA/wY70dexrMs6d60EbefywYSmVVKcFy9eslAU7uAGG7oxTQFvrdWIYPpo/O4OUl3Vyk
+         6TFA==
+X-Gm-Message-State: AOAM532nxhAEuLPnLmxJ4iAJX1dpQg28VuE3YJoyFH21ghIUVhh0NGVW
+        Y1guIsi5kZd2ctSxAJ/92HQaFg==
+X-Google-Smtp-Source: ABdhPJxO8fMguXUXH6Qb+6kH1fEGOWCwG/KzlAh+unxySsrzptYsUWr9XN2Vqt7ITaHGghNVJjw0VA==
+X-Received: by 2002:a05:6a00:16cb:b0:44b:bd38:e068 with SMTP id l11-20020a056a0016cb00b0044bbd38e068mr25041257pfc.34.1633338691658;
+        Mon, 04 Oct 2021 02:11:31 -0700 (PDT)
+Received: from localhost ([122.171.247.18])
+        by smtp.gmail.com with ESMTPSA id p48sm13584576pfw.160.2021.10.04.02.11.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Oct 2021 19:22:31 -0700 (PDT)
-Received: (nullmailer pid 116315 invoked by uid 1000);
-        Mon, 04 Oct 2021 02:22:30 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     David Heidelberg <david@ixit.cz>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 04 Oct 2021 02:11:30 -0700 (PDT)
+Date:   Mon, 4 Oct 2021 14:41:29 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20211003192529.29615-1-david@ixit.cz>
-References: <20211003192529.29615-1-david@ixit.cz>
-Subject: Re: [PATCH] [v2] dt-bindings: clock: tegra: Fix USB controller nodes in examples
-Date:   Sun, 03 Oct 2021 21:22:30 -0500
-Message-Id: <1633314150.313988.116314.nullmailer@robh.at.kernel.org>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v13 00/35] NVIDIA Tegra power management patches for 5.16
+Message-ID: <20211004091129.fhlfhsddzk5fakuj@vireshk-i7>
+References: <20210926224058.1252-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210926224058.1252-1-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 03 Oct 2021 21:25:30 +0200, David Heidelberg wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 27-09-21, 01:40, Dmitry Osipenko wrote:
+> This series adds runtime PM support to Tegra drivers and enables core
+> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
 > 
-> A subsequent patch will convert the USB controller device tree bindings
-> to json-schema, which will cause the DT validation to point out various
-> issues with the examples in the clock and reset controller bindings.
-> 
-> Fix these issues so that the subsequent patch will not cause validation
-> warnings.
-> 
-> v2:
->  - add missing usb-ehci compatible (David)
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  .../bindings/clock/nvidia,tegra124-car.yaml           | 11 ++++++++---
->  .../devicetree/bindings/clock/nvidia,tegra20-car.yaml |  5 +++++
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
+> All patches in this series are interdependent and should go via Tegra tree.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+So you don't need any OPP changes anymore ? I just came back from
+vacation, don't know what you guys discussed in between :)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml: usb-controller@7d000000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci'] is too long
-	Additional items are not allowed ('usb-ehci' was unexpected)
-	Additional items are not allowed ('nvidia,tegra30-ehci', 'usb-ehci' were unexpected)
-	'nvidia,tegra124-ehci' is not one of ['allwinner,sun4i-a10-ehci', 'allwinner,sun50i-a64-ehci', 'allwinner,sun50i-h6-ehci', 'allwinner,sun5i-a13-ehci', 'allwinner,sun6i-a31-ehci', 'allwinner,sun7i-a20-ehci', 'allwinner,sun8i-a23-ehci', 'allwinner,sun8i-a83t-ehci', 'allwinner,sun8i-h3-ehci', 'allwinner,sun8i-r40-ehci', 'allwinner,sun9i-a80-ehci', 'aspeed,ast2400-ehci', 'aspeed,ast2500-ehci', 'aspeed,ast2600-ehci', 'brcm,bcm3384-ehci', 'brcm,bcm63268-ehci', 'brcm,bcm6328-ehci', 'brcm,bcm6358-ehci', 'brcm,bcm6362-ehci', 'brcm,bcm6368-ehci', 'brcm,bcm7125-ehci', 'brcm,bcm7346-ehci', 'brcm,bcm7358-ehci', 'brcm,bcm7360-ehci', 'brcm,bcm7362-ehci', 'brcm,bcm7420-ehci', 'brcm,bcm7425-ehci', 'brcm,bcm7435-ehci', 'ibm,476gtr-ehci', 'nxp,lpc1850-ehci', 'qca,ar7100-ehci', 'snps,hsdk-v1.0-ehci', 'socionext,uniphier-ehci']
-	'nvidia,tegra124-ehci' is not one of ['cavium,octeon-6335-ehci', 'ibm,usb-ehci-440epx', 'ibm,usb-ehci-460ex', 'nintendo,hollywood-usb-ehci', 'st,spear600-ehci']
-	'nvidia,tegra124-ehci' is not one of ['generic-ehci', 'usb-ehci']
-	'generic-ehci' was expected
-	'usb-ehci' was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml: usb-controller@7d000000: 'nvidia,phy', 'phy_type', 'reset-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml:0:0: /example-0/usb-controller@7d000000: failed to match any schema with compatible: ['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci']
-Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml:0:0: /example-0/usb-controller@7d000000: failed to match any schema with compatible: ['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1535873
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+-- 
+viresh
