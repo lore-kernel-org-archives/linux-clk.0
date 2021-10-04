@@ -2,80 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3C1C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 18:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCCFC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 19:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40FE86139E
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 18:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D006140B
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 19:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234798AbhJDS17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Oct 2021 14:27:59 -0400
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:46954 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234497AbhJDS17 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Oct 2021 14:27:59 -0400
-Received: by mail-ot1-f54.google.com with SMTP id o59-20020a9d2241000000b0054745f28c69so22710794ota.13;
-        Mon, 04 Oct 2021 11:26:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o8bwhkN79EalIrTbnnOWRqEA3DSi10UHvsR2eJcQa94=;
-        b=VX2GazQ7k2Feaf7Yd9RSRX0VUasnGDpItuUIKSofp9cNqs88YA6MzlaKq19hoq0oso
-         faOpDuRAu3cHWXElrisTuOZTViDXYfzdiZWAP9cbRinnzueKbaibz5JoGgvo6V/OMGBR
-         Wn+5SJGTAm1787SAX4Q/7ag7zk3561LRQjS0+LKOH8A7+OMEnbGL9ghbE4Fer6KagZVs
-         hUzjIfFxQzlbRAKbTfEoX2ftQ7zBOj2O0emvu6lgWWuS9XXMZBEawm0CjkFjNLqCVZgc
-         HuTXdhi7UMf59Ni1pxKvivUQ6XLflfr/ay6w05nNEIPSukpHM3c2142kVM7GiDuTeWQN
-         jsuA==
-X-Gm-Message-State: AOAM533anNfDOkN5dGGVHuD+e5l2pIPa+LvLHfbi40ByIMRmCj4q5c/v
-        RHDI3o4KWNhU4G2Ronzyhg==
-X-Google-Smtp-Source: ABdhPJz2K7KCGZfqZNBbWPfWIgbCS+HZoWQP3+s7HnKACw+3nQsHcrlj9kQ5sRUN6acBuzNlHkKtng==
-X-Received: by 2002:a05:6830:1616:: with SMTP id g22mr10744306otr.79.1633371969600;
-        Mon, 04 Oct 2021 11:26:09 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id j24sm2186115otq.72.2021.10.04.11.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 11:26:09 -0700 (PDT)
-Received: (nullmailer pid 1608195 invoked by uid 1000);
-        Mon, 04 Oct 2021 18:26:08 -0000
-Date:   Mon, 4 Oct 2021 13:26:08 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org,
+        id S235070AbhJDTyu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Oct 2021 15:54:50 -0400
+Received: from relay01.th.seeweb.it ([5.144.164.162]:57467 "EHLO
+        relay01.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234914AbhJDTyt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Oct 2021 15:54:49 -0400
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 104111F67F;
+        Mon,  4 Oct 2021 21:52:58 +0200 (CEST)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Maxime Ripard <mripard@kernel.org>, linux-rtc@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 1/9] dt-bindings: rtc: sun6i: Clean up repetition
-Message-ID: <YVtHQMMzPn00tLDw@robh.at.kernel.org>
-References: <20210928080335.36706-1-samuel@sholland.org>
- <20210928080335.36706-2-samuel@sholland.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] Global Clock Controller driver for MSM8976/56
+Date:   Mon,  4 Oct 2021 21:52:53 +0200
+Message-Id: <20211004195255.701220-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210928080335.36706-2-samuel@sholland.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 28 Sep 2021 03:03:27 -0500, Samuel Holland wrote:
-> - Use "enum" for compatibles instead of several "const" alternatives.
-> - Merge the H6 clock-output-names minItems/maxItems constraint into the
->   identical block above.
-> 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
-> Changes since v1:
->   - New patch.
-> 
->  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 28 ++++++-------------
->  1 file changed, 9 insertions(+), 19 deletions(-)
-> 
+This is the Global Clock Controller (GCC) driver for MSM8956, MSM8976
+and APQ variants and it has been tested on two Sony phones featuring the
+Qualcomm MSM8956 SoC.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+In addition to GCC this driver is also responsible for providing MDSS
+and GFX3D clocks which reside in the same register space.
+
+SoMainline is dedicated to getting their long-awaited msm8976 support,
+including the Xperia X, X Compact and if feasible also the Xperia Touch
+projector (APQ8056) slowly but steadily upstreamed.
+
+Changes since v4:
+- Insert error handling that left `int ret;` in gcc_msm8976_probe unused
+  when the original regmap read, xor, and write were replaced with
+  regmap_update_bits in v3;
+- Document vdd_gfx supply, required in oxili_gx_gdsc;
+- Dual-license the yaml Documentation and DT bindings (Rob).
+
+Changes since v3:
+- Set the enable_mask of gcc_apss_ahb_clk and gcc_apss_axi_clk to BIT 14
+  and 13 respectively instead of overlapping gcc_crypto_ahb_clk's BIT 0.
+
+Changes since v2:
+- Rebased on v5.14;
+- Various minor cleanups (lowercase hex, const where appropriate,
+  removal of unused enum constants);
+- Fixed XOR confusion in probe;
+- All remnants of global clock name dependencies are removed, all
+  inter-driver dependencies must be fully specified in DT;
+- Added proper dt-bindings yaml validation, listing the required clocks;
+- Moved dt-bindings header to the dt-bindings patch.
+
+Changes since v1:
+- Rebased onto linux-next 20191015
+- Fixed platform driver name (qcom,gcc-8976 => gcc-msm8976)
+- Splitted changes to dt-bindings to a separate commit
+
+AngeloGioacchino Del Regno (1):
+  clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
+
+Marijn Suijten (1):
+  dt-bindings: clk: qcom: Document MSM8976 Global Clock Controller
+
+ .../bindings/clock/qcom,gcc-msm8976.yaml      |   95 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-msm8976.c                | 4160 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8976.h  |  240 +
+ 5 files changed, 4504 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+ create mode 100644 drivers/clk/qcom/gcc-msm8976.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8976.h
+
+-- 
+2.33.0
+
