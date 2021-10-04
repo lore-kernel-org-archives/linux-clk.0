@@ -2,79 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50F4C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 14:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2253AC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 14:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7D5613D5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 14:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC6861175
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Oct 2021 14:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235190AbhJDOvx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Oct 2021 10:51:53 -0400
-Received: from mail-oo1-f52.google.com ([209.85.161.52]:43665 "EHLO
-        mail-oo1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235153AbhJDOvx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Oct 2021 10:51:53 -0400
-Received: by mail-oo1-f52.google.com with SMTP id t17-20020a4ac891000000b002b612d6d5e9so4730685ooq.10;
-        Mon, 04 Oct 2021 07:50:04 -0700 (PDT)
+        id S235289AbhJDOyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Oct 2021 10:54:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234608AbhJDOyi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Oct 2021 10:54:38 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5727C061749;
+        Mon,  4 Oct 2021 07:52:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id e15so72801906lfr.10;
+        Mon, 04 Oct 2021 07:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e9mEC7vyz6aYS5ipxJsTFX2kQTkmdkM9KeZtG855BT0=;
+        b=j0Ur3IU22Dtc5kFnP/nXkoktbxHcZFHOAKKskIoJgXkwGHYXbbkyALnAz04dfcCoVV
+         0Mi+yf7x6bLdauQEAwTnqbWC6yASn3DvUmQzjLsswUxGTTKJ6s/CRmffsVicfj4H/JdQ
+         c/LIIg0L7rv8lHs1sW2K5rZwgSx57ZXcHyto17YWq5qqGR+KdrUM8a/vBIQevrz7MKqt
+         4+fAAMP0uH9K8IRIrKtcrYu5d1hJt2gQAndx84DW2UalqWNKhO6AnDeKmZJUWZRpcZPy
+         CmjMAchXyeOg4QY//26g7aMb6W3U/7YeGFmXOquN7S/42F7Yuv5Wu7Qw7InfGjWugPr7
+         q3/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=U+Mb6i4jqc0BH9AVzQELvGnZO9UgrksO+BSiEwTlByk=;
-        b=o6cKETiwLLQZAzAjHKSwboFPH/j2UkexPPmWavrh45gyLV16lcaVEqabhKjjKelEKz
-         WA4d7+UiWXNmFQEA+YBJrQM6Uz4B4C3ysWv9xcif8xHekFgKc/0t+8KCsGHe9mA7d4Kj
-         1aDT51P61mrQnWnu4J+aL+mTzu/CJUKu7Jl2om1U5ozrBWR+7k+UPvIbFoFCe+YCjR/c
-         AB3lU4J+9epOoaCXK4eslrN6wMAIykaVXh7XT2faUMzdvEoR34vKuWSGDxCyWIDVpigI
-         3RS+RQvlpBm/SZje4jn/HtfvQ1sDXLYrnqkskK3xCHpvCB7IB5yjSA9CbYf8oMG6Cxje
-         HIPw==
-X-Gm-Message-State: AOAM532zlBlp/Owl806YJhJMLTSNLhEOXX2b4eT8H1JXkPQQr1aSSkAk
-        /pvFVnJOvRHHST4XvoKT+Q==
-X-Google-Smtp-Source: ABdhPJwcbEfoPtEh0rovkWKFruuJLLJC0475QVhxdpBWK6Ykpf94uuILWwvKYHEy1//0HuvayOeXPg==
-X-Received: by 2002:a4a:df0b:: with SMTP id i11mr9334532oou.30.1633359003717;
-        Mon, 04 Oct 2021 07:50:03 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id f37sm2492442otb.43.2021.10.04.07.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 07:50:03 -0700 (PDT)
-Received: (nullmailer pid 1275925 invoked by uid 1000);
-        Mon, 04 Oct 2021 14:50:01 -0000
-Date:   Mon, 4 Oct 2021 09:50:01 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e9mEC7vyz6aYS5ipxJsTFX2kQTkmdkM9KeZtG855BT0=;
+        b=i4FOD3fZwEezdBUfN0ibfgTJ8bBbIkAGRvpk6bnVxVD/jD6xaHkpPLWblD5dUTA+FN
+         xwnrb6cpktDfgsOJD7Z5NERbkC9ww5+MyuGnsg2HQ8KIjLd2G1yRTE2kR4R2aYhBARFP
+         7YJ9e/gjVT07bv7KzONujK/NvIL1OyachS6GD/Y2L5sEUYGzwcZvcwc2GR6dsTQptgRf
+         C//fUStXeY3Ufp/Fr4R7r1feYRNHMpIIlFJAxlPEMs4EegXfmRQHMUTiEVeti98JFixw
+         eMGZiKBw+sR90a7JmXSCm1P/+VIVC7PO7L00zZkOmgBPMJsDygKER/rrAVzJwqHVoKdZ
+         vN3A==
+X-Gm-Message-State: AOAM5326A24VhUpnlyO4l8r+dzkw2KfbwBEIgBbWc9ROTtdICTxxKtu2
+        E3uku8UKjseBYCt/yHAVPrE=
+X-Google-Smtp-Source: ABdhPJwZpF/pb309DarSmG6340t8JrbcT7IOPdU/tSH1oTe/CJm/C7yaYY6kTpK2zLUPD04MKNAKqg==
+X-Received: by 2002:a2e:5450:: with SMTP id y16mr16673360ljd.21.1633359167035;
+        Mon, 04 Oct 2021 07:52:47 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
+        by smtp.googlemail.com with ESMTPSA id o19sm1632148lfg.68.2021.10.04.07.52.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Oct 2021 07:52:46 -0700 (PDT)
+Subject: Re: [PATCH v13 00/35] NVIDIA Tegra power management patches for 5.16
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] dt-bindings: mfd: samsung,s5m8767: document
- buck and LDO supplies
-Message-ID: <YVsUmXb2QuKA9Ggd@robh.at.kernel.org>
-References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
- <20211001094106.52412-11-krzysztof.kozlowski@canonical.com>
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+References: <20210926224058.1252-1-digetx@gmail.com>
+ <20211004091129.fhlfhsddzk5fakuj@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <80e0e5a9-7987-a334-7a2b-a7b09b591414@gmail.com>
+Date:   Mon, 4 Oct 2021 17:52:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211001094106.52412-11-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211004091129.fhlfhsddzk5fakuj@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 01 Oct 2021 11:41:06 +0200, Krzysztof Kozlowski wrote:
-> Document the properties with regulator supplies for bucks and LDOs.  At
-> least one board uses it (Exynos5250 Arndale).
+04.10.2021 12:11, Viresh Kumar пишет:
+> On 27-09-21, 01:40, Dmitry Osipenko wrote:
+>> This series adds runtime PM support to Tegra drivers and enables core
+>> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
+>>
+>> All patches in this series are interdependent and should go via Tegra tree.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
+> So you don't need any OPP changes anymore ? I just came back from
+> vacation, don't know what you guys discussed in between :)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+We discussed it and decided that we don't need more OPP/domain core
+changes. It's already good enough for the starter and making it all
+absolutely ideal doesn't worth the effort for now.
