@@ -2,78 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C58DC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 14:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE85C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 14:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13FF960F4B
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 14:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B072E60F4B
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 14:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235685AbhJEOSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 10:18:42 -0400
-Received: from mx.socionext.com ([202.248.49.38]:22635 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235518AbhJEOSk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Oct 2021 10:18:40 -0400
-Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 05 Oct 2021 23:16:49 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id EA3BC2059034;
-        Tue,  5 Oct 2021 23:16:48 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 5 Oct 2021 23:16:48 +0900
-Received: from yuzu2.css.socionext.com (yuzu2 [172.31.9.57])
-        by kinkan2.css.socionext.com (Postfix) with ESMTP id 90EB9B62B7;
-        Tue,  5 Oct 2021 23:16:48 +0900 (JST)
-Received: from [10.212.181.36] (unknown [10.212.181.36])
-        by yuzu2.css.socionext.com (Postfix) with ESMTP id E5BF3B62B3;
-        Tue,  5 Oct 2021 23:16:47 +0900 (JST)
-Subject: Re: [PATCH 4/5] dt-bindings: clock: uniphier: Add clock binding for
- SoC-glue
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <1633399706-1251-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1633399706-1251-5-git-send-email-hayashi.kunihiko@socionext.com>
- <1633436798.596710.3226801.nullmailer@robh.at.kernel.org>
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Message-ID: <4e6d39ec-4c49-9dfb-9428-901dca940989@socionext.com>
-Date:   Tue, 5 Oct 2021 23:16:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S234899AbhJEOVy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 10:21:54 -0400
+Received: from mail-ua1-f46.google.com ([209.85.222.46]:42515 "EHLO
+        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235524AbhJEOVx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 10:21:53 -0400
+Received: by mail-ua1-f46.google.com with SMTP id c33so14972252uae.9;
+        Tue, 05 Oct 2021 07:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZsiLQowr4dhRO4ZjojPIeEJxCcz4NxfUulcGoFnBsRg=;
+        b=iMOPzSUmxXMNBW7Zqo7fLpZJpt5ejyvLoiVrXucMVMkbnGKLIUkZa+aA+7nyL06Gki
+         qcGZ4zSz+3FVOspYCvU40lDVwoYfEtOgaqbCuKu0sMzMXFPyt7oXxyXdnWPOXJssIANw
+         aTIH3QzD6pGskMYiL+cNpr6x8y7Jwc4iqt/+67qPY+Jt7rW7Y25mUhd5jI2edDAO41Ar
+         A77NmeptTANEFdNHvrRYWqhNzjIkMkTdPeDgp7NvGGHLsigf9Ycn/Dtw4N9HDp2lcrSU
+         Pd5zq9N6xlB+SNq9U0GXZl6jMI73MEtjdeat7PoV0wrfsxiTCE5y2SfugAiEXX6bptQs
+         arJA==
+X-Gm-Message-State: AOAM532N+vyECXsGKZaaOfD7inV/v5lkAl8cVYhrNwMXGBiNWKeZZoCg
+        kdL3iOeewQmO19ZH5sy7OmqXbOHti6k0b5BfDy8=
+X-Google-Smtp-Source: ABdhPJwbX0bv3d6cnzEiJdyoXXCC2z0J1QalhQzgibPPXevn+FB0srI+5BaF2vwcsf9msNCU0KS+wu3Pezau/u9StB0=
+X-Received: by 2002:ab0:58c1:: with SMTP id r1mr12347091uac.89.1633443602509;
+ Tue, 05 Oct 2021 07:20:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1633436798.596710.3226801.nullmailer@robh.at.kernel.org>
-Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210928130132.15022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210928130132.15022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Oct 2021 16:19:51 +0200
+Message-ID: <CAMuHMdVoAkJHedLwjN6v2Tqtc7Rj36PJ3DotSB-QXg-_VcAHVQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g044-cpg: Add clock and reset entries
+ for SPI Multi I/O Bus Controller
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021/10/05 21:26, Rob Herring wrote:
-> On Tue, 05 Oct 2021 11:08:25 +0900, Kunihiko Hayashi wrote:
->> Update binding document for clocks implemented in SoC-glue.
->>
->> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->> ---
->>   .../bindings/clock/socionext,uniphier-clock.yaml         | 16
-> ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml:51
-> :1: [error] syntax error: found character '\t' that cannot start any token
-> (syntax)
-I made mistake. I'll fix it in next.
+On Tue, Sep 28, 2021 at 3:01 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add clock and reset entries for SPI Multi I/O Bus Controller.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thank you,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.16.
 
----
-Best Regards
-Kunihiko Hayashi
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
