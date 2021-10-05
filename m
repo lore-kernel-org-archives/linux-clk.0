@@ -2,128 +2,256 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E59BC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 07:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695B6C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 08:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44D9C61409
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 07:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CF161371
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 08:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbhJEHCO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 03:02:14 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:53540 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231816AbhJEHCO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 03:02:14 -0400
-X-UUID: be0b5d5e78f24b48875d241a10957d00-20211005
-X-UUID: be0b5d5e78f24b48875d241a10957d00-20211005
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <mark-pk.tsai@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 4802693; Tue, 05 Oct 2021 15:00:20 +0800
-Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 5 Oct 2021 15:00:19 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb02.mediatek.inc
- (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 5 Oct
- 2021 15:00:19 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 5 Oct 2021 15:00:18 +0800
-From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <mark-pk.tsai@mediatek.com>, <yj.chiang@mediatek.com>,
-        <matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH] clk: make clk_core_lookup faster by using clk name hash
-Date:   Tue, 5 Oct 2021 14:59:49 +0800
-Message-ID: <20211005065948.10092-1-mark-pk.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        id S233289AbhJEIsI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 04:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233079AbhJEIsH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 04:48:07 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E092DC061755
+        for <linux-clk@vger.kernel.org>; Tue,  5 Oct 2021 01:46:16 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id i4so83791661lfv.4
+        for <linux-clk@vger.kernel.org>; Tue, 05 Oct 2021 01:46:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2XcUpJPfTy5QEwAH/Xm2eJXv/Zjhn/CbqgwcIVdR3Ko=;
+        b=StXvAQCBgcoX52kszMxZz5N8R1x7Jgws/vzvdghPVQAxrXcGRe2RV40TtiBs01cHvb
+         4a5hw6zBLLU11txa6ewFuW9GpUN94HGnLOEV6ABOkN/9NWcwu7jcjaojZzLlNklwrgPD
+         dpIvqQ39l/x1H3aGnXsOZUFdHRyasRBY5NQd8N8R3/OV70vtN1crrVBsGUPIpB2iOyv0
+         UZx+tqDe1nAs0yHDAToyTIIFcp9uipa16SSJ3+3DlZT3pK7Ak8o+tJ1Rnlf5JuyuntNb
+         XAyihgpLL6GB1mGseG20od2eroj4LTOulwyKeLzypAzWsA4UW3y49HvFCk9klXyRwvmI
+         pPbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2XcUpJPfTy5QEwAH/Xm2eJXv/Zjhn/CbqgwcIVdR3Ko=;
+        b=oK74LGm3cnako0oqUGVIy1SST//3lSqmdAcUX+jAxGQcXyHn9c27H74OcoX2tBDIh+
+         e0yiMh9tZxNZbrFeZ7e3s2OlAUxQSHY5pQdoju+TEMaRRMa3Qhcu7XGDuAfp84/46UqT
+         9db8J+c5sCxXxbQphOx7XIgGLOj/bStOWGgL5zx75WdVVKMq2kR2CiXg+WfFlLtVg9r5
+         sAX3h4LSMJkGlhBbu4r2H8jkXhdD9mzZVLPKcNv02JzaIIuU2nVau76c1b7fLIyX1HUp
+         raMfp/UqcxTiQXNDIQ7YfYrrglWGdaP47VJ5YUE8hggCEBlCzxae2Ijtx8QkUfGvmftv
+         uB2w==
+X-Gm-Message-State: AOAM533nZuDo/cbFv9dbbaGSAHuyp6erkxCbzZvYxRt3o1NnVHTZPugN
+        repKSrVj8TA1GFzftv+5KSPT5cuCp44kmRP4Wr9v2Q==
+X-Google-Smtp-Source: ABdhPJykqgW510fRv0PXxhEsYvLSC1wn3+yBs/rj2+Acwz1tRjhApok8H3vRKI1vEzEqYcUMDwpiGAqI/4xOyfOJSWs=
+X-Received: by 2002:a19:e307:: with SMTP id a7mr1560996lfh.358.1633423575163;
+ Tue, 05 Oct 2021 01:46:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-14-digetx@gmail.com>
+ <CAPDyKFpzhv1UxjM0q5AWHVxTWC_cCO_Kg_6exO0o_=EoVvjo+w@mail.gmail.com>
+ <aad7a508-7fb5-3418-f902-def80c365094@gmail.com> <CAPDyKFppSuP6FfaBaGn3o+8WvTT=vJ8XMzZ47WPQ1JKiUYyEpw@mail.gmail.com>
+ <8d75436d-864a-7ce0-ba53-daa8b663035a@gmail.com> <CAPDyKFpqs5gUcym4q+GuiJy13eXqjEnx-eFdUT4bQpcfPAOEYw@mail.gmail.com>
+ <f5b5e06a-71ed-1250-f0ad-692062e00e01@gmail.com>
+In-Reply-To: <f5b5e06a-71ed-1250-f0ad-692062e00e01@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 5 Oct 2021 10:45:38 +0200
+Message-ID: <CAPDyKFpWzLdKr0bYX4VYwNpPuJNEs=weEpNpDH6zfv9e8SaxJQ@mail.gmail.com>
+Subject: Re: [PATCH v13 13/35] drm/tegra: gr2d: Support generic power domain
+ and runtime PM
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Compare hash value before strcmp the full name to make
-clk_core_lookup faster.
+On Mon, 4 Oct 2021 at 17:57, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 04.10.2021 14:01, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, 1 Oct 2021 at 21:00, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >>
+> >> 01.10.2021 17:55, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Fri, 1 Oct 2021 at 16:29, Dmitry Osipenko <digetx@gmail.com> wrote=
+:
+> >>>>
+> >>>> 01.10.2021 16:39, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>>> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> w=
+rote:
+> >>>>>>
+> >>>>>> Add runtime power management and support generic power domains.
+> >>>>>>
+> >>>>>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+> >>>>>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+> >>>>>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1=
+ T124
+> >>>>>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> >>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>>>> ---
+> >>>>>>  drivers/gpu/drm/tegra/gr2d.c | 155 ++++++++++++++++++++++++++++++=
++++--
+> >>>>>
+> >>>>> [...]
+> >>>>>
+> >>>>>>  static int gr2d_remove(struct platform_device *pdev)
+> >>>>>> @@ -259,15 +312,101 @@ static int gr2d_remove(struct platform_devi=
+ce *pdev)
+> >>>>>>                 return err;
+> >>>>>>         }
+> >>>>>>
+> >>>>>> +       pm_runtime_dont_use_autosuspend(&pdev->dev);
+> >>>>>> +       pm_runtime_disable(&pdev->dev);
+> >>>>>
+> >>>>> There is no guarantee that the ->runtime_suspend() has been invoked
+> >>>>> here, which means that clock may be left prepared/enabled beyond th=
+is
+> >>>>> point.
+> >>>>>
+> >>>>> I suggest you call pm_runtime_force_suspend(), instead of
+> >>>>> pm_runtime_disable(), to make sure that gets done.
+> >>>>
+> >>>> The pm_runtime_disable() performs the final synchronization, please =
+see [1].
+> >>>>
+> >>>> [1]
+> >>>> https://elixir.bootlin.com/linux/v5.15-rc3/source/drivers/base/power=
+/runtime.c#L1412
+> >>>
+> >>> pm_runtime_disable() end up calling _pm_runtime_barrier(), which call=
+s
+> >>> cancel_work_sync() if dev->power.request_pending has been set.
+> >>>
+> >>> If the work that was punted to the pm_wq in rpm_idle() has not been
+> >>> started yet, we end up just canceling it. In other words, there are n=
+o
+> >>> guarantees it runs to completion.
+> >>
+> >> You're right. Although, in a case of this particular patch, the syncin=
+g
+> >> is actually implicitly done by pm_runtime_dont_use_autosuspend().
+> >>
+> >> But for drivers which don't use auto-suspend, there is no sync. This
+> >> looks like a disaster, it's a very common pattern for drivers to
+> >> 'put+disable'.
+> >>
+> >>> Moreover, use space may have bumped the usage count via sysfs for the
+> >>> device (pm_runtime_forbid()) to keep the device runtime resumed.
+> >>
+> >> Right, this is also a disaster in a case of driver removal.
+> >>
+> >>>> Calling pm_runtime_force_suspend() isn't correct because each 'enabl=
+e'
+> >>>> must have the corresponding 'disable'. Hence there is no problem her=
+e.
+> >>>
+> >>> pm_runtime_force_suspend() calls pm_runtime_disable(), so I think tha=
+t
+> >>> should be fine. No?
+> >>
+> >> [adding Rafael]
+> >>
+> >> Rafael, could you please explain how drivers are supposed to properly
+> >> suspend and disable RPM to cut off power and reset state that was
+> >> altered by the driver's resume callback? What we're missing? Is Ulf's
+> >> suggestion acceptable?
+> >>
+> >> The RPM state of a device is getting reset on driver's removal, hence
+> >> all refcounts that were bumped by the rpm-resume callback of the devic=
+e
+> >> driver will be screwed up if device is kept resumed after removal. I
+> >> just verified that it's true in practice.
+> >
+> > Note that, what makes the Tegra drivers a bit special is that they are
+> > always built with CONFIG_PM being set (selected from the "SoC"
+> > Kconfig).
+> >
+> > Therefore, pm_runtime_force_suspend() can work for some of these
+> > cases. Using this, would potentially avoid the driver from having to
+> > runtime resume the device in ->remove(), according to the below
+> > generic sequence, which is used in many drivers.
+> >
+> > pm_runtime_get_sync()
+> > clk_disable_unprepare() (+ additional things to turn off the device)
+> > pm_runtime_disable()
+> > pm_runtime_put_noidle()
+>
+> It's not a problem to change this patchset. The problem is that if
+> you'll grep mainline for 'pm_runtime_disable', you will find that there
+> are a lot of drivers in a potential trouble.
 
-It make clk driver probe 30 percent faster on the platform
-have 1483 registered clks and average clock name length 20.
+Let's start by fixing this patchset, please - then we can consider
+what to do with the other cases separately.
 
-Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
----
- drivers/clk/clk.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> I'm proposing that we should change pm_runtime_disable() to perform the
+> syncing with this oneliner:
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index ec94049442b9..5c9f28165824 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1380,6 +1380,8 @@ EXPORT_SYMBOL_GPL(pm_runtime_barrier);
+>   */
+>  void __pm_runtime_disable(struct device *dev, bool check_resume)
+>  {
+> +       flush_work(&dev->power.work);
+> +
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 65508eb89ec9..d5f65fda3db8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -89,6 +89,7 @@ struct clk_core {
- 	struct hlist_node	debug_node;
- #endif
- 	struct kref		ref;
-+	unsigned int		hash;
- };
- 
- #define CREATE_TRACE_POINTS
-@@ -292,16 +293,17 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
- 
- static struct clk_core *__clk_lookup_subtree(const char *name,
-+					     unsigned int hash,
- 					     struct clk_core *core)
- {
- 	struct clk_core *child;
- 	struct clk_core *ret;
- 
--	if (!strcmp(core->name, name))
-+	if (hash == core->hash && !strcmp(core->name, name))
- 		return core;
- 
- 	hlist_for_each_entry(child, &core->children, child_node) {
--		ret = __clk_lookup_subtree(name, child);
-+		ret = __clk_lookup_subtree(name, hash, child);
- 		if (ret)
- 			return ret;
- 	}
-@@ -313,20 +315,22 @@ static struct clk_core *clk_core_lookup(const char *name)
- {
- 	struct clk_core *root_clk;
- 	struct clk_core *ret;
-+	unsigned int hash;
- 
- 	if (!name)
- 		return NULL;
- 
-+	hash = full_name_hash(NULL, name, strlen(name));
- 	/* search the 'proper' clk tree first */
- 	hlist_for_each_entry(root_clk, &clk_root_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
-+		ret = __clk_lookup_subtree(name, hash, root_clk);
- 		if (ret)
- 			return ret;
- 	}
- 
- 	/* if not found, then search the orphan tree */
- 	hlist_for_each_entry(root_clk, &clk_orphan_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
-+		ret = __clk_lookup_subtree(name, hash, root_clk);
- 		if (ret)
- 			return ret;
- 	}
-@@ -3827,6 +3831,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		goto fail_name;
- 	}
- 
-+	core->hash = full_name_hash(NULL, core->name, strlen(core->name));
- 	if (WARN_ON(!init->ops)) {
- 		ret = -EINVAL;
- 		goto fail_ops;
--- 
-2.18.0
+What about the latency this may introduce? I am not sure that is
+acceptable here!?
 
+>         spin_lock_irq(&dev->power.lock);
+>
+>         if (dev->power.disable_depth > 0) {
+>
+> Objections?
+>
+> The sysfs rpm-forbid is a separate problem and it's less troublesome
+> since it requires root privileges. It's also not something that
+> userspace touches casually. For now I don't know what could be done
+> about it.
+
+As I said, the common method to address this problem is to run the
+following sequence:
+
+pm_runtime_get_sync()
+"power off the device"
+pm_runtime_disable()
+pm_runtime_put_noidle()
+
+This works even if user space, via sysfs, has triggered a call to
+pm_runtime_forbid(). Or doesn't it?
+
+If you don't like it, pm_runtime_force_suspend() should work too, at
+least for your cases, I believe.
+
+Kind regards
+Uffe
