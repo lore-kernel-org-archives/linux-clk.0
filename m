@@ -2,95 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E3BC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24763C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB9A6617E1
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0320E615A6
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234783AbhJEM2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 08:28:38 -0400
-Received: from mail-oo1-f54.google.com ([209.85.161.54]:41699 "EHLO
-        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234780AbhJEM2g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 08:28:36 -0400
-Received: by mail-oo1-f54.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso6342924ooq.8;
-        Tue, 05 Oct 2021 05:26:45 -0700 (PDT)
+        id S234900AbhJEM2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 08:28:48 -0400
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:43728 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234818AbhJEM2l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 08:28:41 -0400
+Received: by mail-ot1-f48.google.com with SMTP id x33-20020a9d37a4000000b0054733a85462so25585527otb.10;
+        Tue, 05 Oct 2021 05:26:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=12B425lue7e7bkxC1MmLr36fhfhw6Ghp6FxDgU81lTI=;
-        b=2ZvG6cRtRoQjw9TDwvPnA1TmO7OhqJ6eaJoK+UE/2H2KxmT0yPkim3HJ0SwNxgH+Z7
-         L4qfZL3FosZuTGVTVUwZ55JKyoLs9wObGO2QmDmq93cHAA0krvj0VAGxIGzH0B7t7GHk
-         E/ZrHImSvCpcGnvI15KWiQrBDn+ZStyY8k6E+aQbxedRW6XejOZdoR+K0IZTiBME4+eB
-         R7hGEnxcbG+u1YfMifCl0MjgwSYYXVG4WjfV2ohZCkDz3uDr+YRZd/4X2+FGMxeUtvlL
-         kTf6wrQahHRAHpC3IOoTrbrBKtdpMrZwU7JEk4BNkivYetrZ+JaSx//8GE3eGhMqYQzB
-         /J3A==
-X-Gm-Message-State: AOAM5335Z1tshfYxBdJgSgmTYQXDvLnF9Hw7PfTztOFx54noCi97LlR0
-        a4gs7jqglkDLP3ab2HPtdg==
-X-Google-Smtp-Source: ABdhPJzviUxP+uSvuH4E4JBAfoTZZ7tkOF4YnI98mcMiSAVS1rlPEbdZ3k7X70uJfL7DNdiD2Hhe0w==
-X-Received: by 2002:a4a:b994:: with SMTP id e20mr12894523oop.50.1633436805397;
-        Tue, 05 Oct 2021 05:26:45 -0700 (PDT)
+        bh=srNcdN6u67VLuDVEjunal3mhVTK6oKtIKqVefAM5/zw=;
+        b=spCXSUYuzlrKrxr+s87PaBG00jGlcK8sm+HcZ8o+ram9Cay6b4RZWt0t11GFbvA/Cy
+         Ypie+a11Ra+ZS6QQ4EUlnOFaHuDdjwBj2sgXfLnEywGTXPdXMyyt/o4+XgB32FQNyiTl
+         mzbL0+2k2G4VP9771hFf+ZbI7wsbrGJmCTC5LmH5F1HJza9BwPBkU+D80BIQew8Numdw
+         sRueJ0H6oXNWwmFRP+lJ1GoTxPPigjYnZMJl4Dzz6yQlu4nBfgHaGilS/mI5GNAPK8gB
+         lrZ1vN1w5PBS4Nh95RrXENmfIm4oYcdBZBc65IcH/fN5+6hl/EmrLzRT9O04b8FDIXKP
+         CWKw==
+X-Gm-Message-State: AOAM532eEA/GoqeAHW4uuV5sujAdk1MUS29bEz2g5L86Fa3GGAVsBk4j
+        DbB+b/K11JhVaruYHL+nRQ==
+X-Google-Smtp-Source: ABdhPJzGP0k7x9SJHnSA1WUxWsBg/ZNn8dg233m0CWHaSivAk8C7ANMMBUmCGX+ez61p7uivJLZDYg==
+X-Received: by 2002:a9d:490:: with SMTP id 16mr13966857otm.184.1633436810361;
+        Tue, 05 Oct 2021 05:26:50 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id g21sm3490872ooc.31.2021.10.05.05.26.43
+        by smtp.gmail.com with ESMTPSA id 8sm3274488oin.33.2021.10.05.05.26.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 05:26:44 -0700 (PDT)
-Received: (nullmailer pid 3226798 invoked by uid 1000);
+        Tue, 05 Oct 2021 05:26:49 -0700 (PDT)
+Received: (nullmailer pid 3226802 invoked by uid 1000);
         Tue, 05 Oct 2021 12:26:38 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Pavel Dubrova <pashadubrova@gmail.com>,
-        Martin Botka <martin.botka@somainline.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        phone-devel@vger.kernel.org
-In-Reply-To: <20211004195255.701220-2-marijn.suijten@somainline.org>
-References: <20211004195255.701220-1-marijn.suijten@somainline.org> <20211004195255.701220-2-marijn.suijten@somainline.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: clk: qcom: Document MSM8976 Global Clock Controller
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <1633399706-1251-5-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1633399706-1251-1-git-send-email-hayashi.kunihiko@socionext.com> <1633399706-1251-5-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH 4/5] dt-bindings: clock: uniphier: Add clock binding for SoC-glue
 Date:   Tue, 05 Oct 2021 07:26:38 -0500
-Message-Id: <1633436798.553183.3226797.nullmailer@robh.at.kernel.org>
+Message-Id: <1633436798.596710.3226801.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 04 Oct 2021 21:52:54 +0200, Marijn Suijten wrote:
-> Document the required properties and firmware clocks for gcc-msm8976 to
-> operate nominally, and add header definitions for referencing the clocks
-> from firmware.
+On Tue, 05 Oct 2021 11:08:25 +0900, Kunihiko Hayashi wrote:
+> Update binding document for clocks implemented in SoC-glue.
 > 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
->  .../bindings/clock/qcom,gcc-msm8976.yaml      |  95 +++++++
->  include/dt-bindings/clock/qcom,gcc-msm8976.h  | 240 ++++++++++++++++++
->  2 files changed, 335 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8976.h
+>  .../bindings/clock/socionext,uniphier-clock.yaml         | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
 
 My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
 on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
 yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml:51:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.example.dt.yaml: clock-controller@1800000: 'vdd_gfx-supply' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/socionext,uniphier-clock.example.dts'
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-extract-example", line 45, in <module>
+    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 120, in get_single_data
+    node = self.composer.get_single_node()
+  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
+  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 773, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 850, in _ruamel_yaml.CParser._compose_sequence_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 731, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
+ruamel.yaml.scanner.ScannerError: while scanning for the next token
+found character that cannot start any token
+  in "<unicode string>", line 51, column 1
+make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/clock/socionext,uniphier-clock.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+./Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml:  while scanning for the next token
+found character that cannot start any token
+  in "<unicode string>", line 51, column 1
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml: ignoring, error parsing file
+warning: no schema found in file: ./Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+make: *** [Makefile:1441: dt_binding_check] Error 2
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/patch/1536345
+See https://patchwork.ozlabs.org/patch/1536449
 
 This check can fail if there are any dependencies. The base for a patch
 series is generally the most recent rc1.
