@@ -2,91 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E6FC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E3BC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D97E361505
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB9A6617E1
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 12:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234488AbhJEMQl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 08:16:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233808AbhJEMQk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Oct 2021 08:16:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EAA5B61166;
-        Tue,  5 Oct 2021 12:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633436090;
-        bh=DeaHbSCWFT8NlzFI7wJri1fE1dG3RGKllnRW0mksoIo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CUNgIxvsTj9HQ9K9IbRnK/q5KeNl3Eq9UZtsxwYap6OhnKEBUkVz79qVWZIJA9OV0
-         IqB9kLaFnP60wlAm0vYZYd2qO5B/pEgLAI0xfqKMM9a9rAJ9HvzzyWorat3pC0a5EJ
-         RU80Mk5SupjC+SM+9lN4zx/oblJStStnqNrCbTjhFhKvSEUFGp1CKPGx8deEnKxNIz
-         GX4qNwgH9EQHKAB4yRD3nkX4q9HGl5hvluanRCXqM2F1Y8kBwY33MxnAPpzQu/GRm+
-         kMg0VaiExald2jB4tap1QTznzfe3UHVJfxC0s80FgZaDMlKgKbrUCaTbO4XqCOLP5o
-         hda23Jz+1GW/Q==
-Date:   Tue, 5 Oct 2021 13:14:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
- and S5M to dtschema
-Message-ID: <YVxBuEvHVdyDvaGD@sirena.org.uk>
-References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NHJ+x3vjgC+S2IOr"
-Content-Disposition: inline
-In-Reply-To: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
-X-Cookie: A is for Apple.
+        id S234783AbhJEM2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 08:28:38 -0400
+Received: from mail-oo1-f54.google.com ([209.85.161.54]:41699 "EHLO
+        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234780AbhJEM2g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 08:28:36 -0400
+Received: by mail-oo1-f54.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso6342924ooq.8;
+        Tue, 05 Oct 2021 05:26:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=12B425lue7e7bkxC1MmLr36fhfhw6Ghp6FxDgU81lTI=;
+        b=2ZvG6cRtRoQjw9TDwvPnA1TmO7OhqJ6eaJoK+UE/2H2KxmT0yPkim3HJ0SwNxgH+Z7
+         L4qfZL3FosZuTGVTVUwZ55JKyoLs9wObGO2QmDmq93cHAA0krvj0VAGxIGzH0B7t7GHk
+         E/ZrHImSvCpcGnvI15KWiQrBDn+ZStyY8k6E+aQbxedRW6XejOZdoR+K0IZTiBME4+eB
+         R7hGEnxcbG+u1YfMifCl0MjgwSYYXVG4WjfV2ohZCkDz3uDr+YRZd/4X2+FGMxeUtvlL
+         kTf6wrQahHRAHpC3IOoTrbrBKtdpMrZwU7JEk4BNkivYetrZ+JaSx//8GE3eGhMqYQzB
+         /J3A==
+X-Gm-Message-State: AOAM5335Z1tshfYxBdJgSgmTYQXDvLnF9Hw7PfTztOFx54noCi97LlR0
+        a4gs7jqglkDLP3ab2HPtdg==
+X-Google-Smtp-Source: ABdhPJzviUxP+uSvuH4E4JBAfoTZZ7tkOF4YnI98mcMiSAVS1rlPEbdZ3k7X70uJfL7DNdiD2Hhe0w==
+X-Received: by 2002:a4a:b994:: with SMTP id e20mr12894523oop.50.1633436805397;
+        Tue, 05 Oct 2021 05:26:45 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id g21sm3490872ooc.31.2021.10.05.05.26.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Oct 2021 05:26:44 -0700 (PDT)
+Received: (nullmailer pid 3226798 invoked by uid 1000);
+        Tue, 05 Oct 2021 12:26:38 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Martin Botka <martin.botka@somainline.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        phone-devel@vger.kernel.org
+In-Reply-To: <20211004195255.701220-2-marijn.suijten@somainline.org>
+References: <20211004195255.701220-1-marijn.suijten@somainline.org> <20211004195255.701220-2-marijn.suijten@somainline.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: qcom: Document MSM8976 Global Clock Controller
+Date:   Tue, 05 Oct 2021 07:26:38 -0500
+Message-Id: <1633436798.553183.3226797.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 04 Oct 2021 21:52:54 +0200, Marijn Suijten wrote:
+> Document the required properties and firmware clocks for gcc-msm8976 to
+> operate nominally, and add header definitions for referencing the clocks
+> from firmware.
+> 
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> ---
+>  .../bindings/clock/qcom,gcc-msm8976.yaml      |  95 +++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8976.h  | 240 ++++++++++++++++++
+>  2 files changed, 335 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8976.h
+> 
 
---NHJ+x3vjgC+S2IOr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-On Fri, Oct 01, 2021 at 11:40:56AM +0200, Krzysztof Kozlowski wrote:
+yamllint warnings/errors:
 
-> Merging/dependencies
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1. Regulator related binding changes depend on first two commits (the
->    fixes), because of context.
-> 2. The mfd bindings depend on clock and regulator bindings.
->=20
-> The fixes and bindings changes (patches 1-10) should go via the same
-> tree.  For example regulator or mfd tree.  I propose the regulator tree,
-> since it will have also one driver change (the fix, first commit).
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.example.dt.yaml: clock-controller@1800000: 'vdd_gfx-supply' is a required property
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
 
-Lee, Stephen, Michael does Krzysztof's plan make sense to you?
+doc reference errors (make refcheckdocs):
 
---NHJ+x3vjgC+S2IOr
-Content-Type: application/pgp-signature; name="signature.asc"
+See https://patchwork.ozlabs.org/patch/1536345
 
------BEGIN PGP SIGNATURE-----
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFcQbcACgkQJNaLcl1U
-h9B78Qf8DbtcL1OFNxmK5o5qziAQ7pj3GzOOi+h25mAQirGBLDoUxNGTTzs57/8f
-kSK2LEvstzQMBEUeZtXSOzhHzLjAGRahEWlwNLmYP/8hSAlY+y9VJCEBbYbeWnbl
-qm5Zy/rDqH8I9dKMWvTcMA6V2AfcGczQ6UnlObIdsO3+FYYRKvB9qxmQQaro8d8/
-s3Eq8je14T6lQ+AITujDiWEoxUzJsrPX8WxZQAiKjmJjl/RB/sjI8bN1i0UImjws
-IYvv3DYnFKTcyQzLXeBkstB/mmUaTAgdz9DzChh6j9StHXkI0h83/so2pp3Ys+09
-1mV23wOM9a2muVldboi23vvDpWBjSQ==
-=E3E1
------END PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---NHJ+x3vjgC+S2IOr--
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
