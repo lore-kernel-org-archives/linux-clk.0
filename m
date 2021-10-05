@@ -2,212 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5258C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 10:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCCCC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 10:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBD3E615A3
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 10:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 446F161354
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 10:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234278AbhJEKay (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 06:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234160AbhJEKao (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 06:30:44 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68ABCC061760
-        for <linux-clk@vger.kernel.org>; Tue,  5 Oct 2021 03:28:54 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id p2so609795vst.10
-        for <linux-clk@vger.kernel.org>; Tue, 05 Oct 2021 03:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=G0mA3IE5MZEisQTtgMG+oRXyhpY0P+ydyHuZ+OL6HWc=;
-        b=dYz37AlljNPD9qLWQ97zbV27b0HY7ewVO3Uc3VbZE59qtLyIPZdAygLiP/L7L6ta2k
-         7wo82cBeaU/yrZGMukOkPAJVQZ4pLBfEzhvWccizI4iAeqttaW9UJYaQFvD6X593YYIL
-         UMVXewCTa3HMEhW+WMZqNwoGh2ccWd/n4Pm/RN1VTve0giAK9GGSd5+fNcnUwN7X/V9y
-         AGJRlgKoL8TADZr1MKOpubWt6dNk1B3XRYOeE3CyYwjA1HnG55pgvOyQHGnDcbaDSd+t
-         CsvLEOIzJa6coTyRT5lmDL0toEgb6nBTS2LPk6eoarcqHaj93J/x0NsS2JxXZdDhzVeK
-         lPLg==
+        id S234127AbhJEKpK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 06:45:10 -0400
+Received: from mail-vk1-f180.google.com ([209.85.221.180]:42905 "EHLO
+        mail-vk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233576AbhJEKpK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 06:45:10 -0400
+Received: by mail-vk1-f180.google.com with SMTP id r25so266242vkl.9;
+        Tue, 05 Oct 2021 03:43:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=G0mA3IE5MZEisQTtgMG+oRXyhpY0P+ydyHuZ+OL6HWc=;
-        b=4bRjHJZBxYk5WujyWnIuFr5DlIk4/iZ7HWRwtbkbUDFF3LA7pfSuECr+kBgMHfF2uA
-         Tyz5YEBiJFLv5DMi6MS6hqC7WUjcqLtWAxeyEAu9sLri0KIcUMraBtQwijtscIFSe+u5
-         n2IWSh597TBoC1UgsuoNszPkytKViY/WIj6tMD9eW2u1k7MT2iOJlLBB87evRN3pWrfN
-         Sva76gQoDjG8GciQae/J3dyd2FGsfR/OrZ+TOxKjKHb84cHksUN8xAZJZd9Va+mZGk+5
-         z0aU5xQH210q7ZiiMotHaI20GVPX+DlABeLUoCZGJxr/mU8k2QY7qDwknh9Bu9dHs+H5
-         ZFtQ==
-X-Gm-Message-State: AOAM532CAmIHg1zRw4hgWrFugEEu1WWN9piuMTokv3c7AfLCh+lTQPx2
-        PMk7GOAIR7WySOrUOc3UnY+AOCisupGmNMo8M/a1OQ==
-X-Google-Smtp-Source: ABdhPJxI3BjDXd7TUEnohF0PNs6zjgfdCxTBiFr0D8GdDdXVisMsIArQDHOLlS4VgiQB2aceby4tfN5qicUSqa2Bf2o=
-X-Received: by 2002:a67:d289:: with SMTP id z9mr8432439vsi.39.1633429733158;
- Tue, 05 Oct 2021 03:28:53 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=CgfAA5tuaR0skShOha2ZwCdxx+sB32VR21cf+MP43iA=;
+        b=b5O2/bal3QQH1oliV7cKeq4hxlFYmJkqjDIYawaQXQr0pLN0snP23X/t3a5nMSN6wF
+         GLTc6CArRydwBawrfcAgt0XHYZFXpT/a/Zk1augaWH4A6w7cI8Kpjd2mvoEiiHoWyy7G
+         wTI4rFJP4k+v7oKTVN4x0cveD+x6KtPP9pMqcjnA+hLJAyZyYG7TmWRxeGIy1BpVdbnZ
+         UhPZubVU3B6cJEwJy+vTG44JFD94qokO7JvI1fkHd4cNwPJxaMmRy46vt9Xv5VTFV4Fh
+         eTp9F/hiQ+4RR2V+wYZ+cMm4nZe8kvn4gwHRz32g3MaCKvQ1GqDIjOzHpfUMSwd30Pla
+         W/3g==
+X-Gm-Message-State: AOAM532CgU8FrgxOnHQz5rPz/psM6Sa0fg+s4vUSyXP+IuXydlTQB6st
+        UApemvrOlHumzv1zQ6xIO0ReTD4+wUATWoUUyVA=
+X-Google-Smtp-Source: ABdhPJx5z+ZLiuL95t0JLquECq+CX9RzQsCP3ZndO98AruVdmMPxTE+9mWnqM8WfSDDepPcd9SrcP9wCHWu3sTkAS6k=
+X-Received: by 2002:a1f:230c:: with SMTP id j12mr19610053vkj.11.1633430599705;
+ Tue, 05 Oct 2021 03:43:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <20210914155607.14122-5-semen.protsenko@linaro.org> <96e5587e-aca7-248e-6448-8edfc70784b7@gmail.com>
-In-Reply-To: <96e5587e-aca7-248e-6448-8edfc70784b7@gmail.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 5 Oct 2021 13:28:40 +0300
-Message-ID: <CAPLW+4mEeh8Fo8kGHx+rB7nX7bDfaQRPGDotgPLTp4pm4rC0Cg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] dt-bindings: clock: Add bindings definitions for
- Exynos850 CMU
-To:     Chanwoo Choi <cwchoi00@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <20210914141939.26410-1-semen.protsenko@linaro.org> <CAPLW+4mhr4pJAUyGNpfWDnxgTsJ7-fj0hw=ehV8YkqRmaBSnag@mail.gmail.com>
+In-Reply-To: <CAPLW+4mhr4pJAUyGNpfWDnxgTsJ7-fj0hw=ehV8YkqRmaBSnag@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Oct 2021 12:43:08 +0200
+Message-ID: <CAMuHMdXVM4HZ6H4e=7u14qwmqszmR4cvNZ=K4h9O079fxZB95g@mail.gmail.com>
+Subject: Re: [PATCH] clk: Add clk_set_parent debugfs node
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mike Tipton <mdtipton@codeaurora.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Sept 2021 at 19:37, Chanwoo Choi <cwchoi00@gmail.com> wrote:
->
-> Hi,
->
-> You don't add clock ids for the all defined clocks in clk-exynos850.c.
-> I recommend that add all clock ids for the defined clocks if possible.
->
-> If you want to change the parent clock of mux or change the clock rate
-> of div rate for some clocks, you have to touch the files as following:
-> - include/dt-bindings/clock/exynos850.h
-> - drivers/clk/samsung/clk-exynos850.c
-> - exynos850 dt files
->
-> If you define the clock ids for all clocks added to this patchset,
-> you can change the parent or rate by just editing the dt files.
->
+Hi Sam,
 
-Hi Chanwoo,
-
-I see your point. But I have intentionally omitted some clock ids,
-which can't be / shouldn't be used by consumers in device tree.
-Actually I took that idea from clk-exynos7.c.
-
-Krzysztof, Sylwester: can you please advice if all clock ids should be
-defined, or only those that are going to be used in dts clk consumers?
-I don't mind reworking the patch, just want to be sure which design
-approach we want to follow.
-
-Thanks!
-
-> But, I have no strongly objection about just keeping this patch.
->
->
-> On 21. 9. 15. =EC=98=A4=EC=A0=84 12:56, Sam Protsenko wrote:
-> > Clock controller driver is designed to have separate instances for each
-> > particular CMU. So clock IDs in this bindings header also start from 1
-> > for each CMU.
+On Tue, Oct 5, 2021 at 12:11 PM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+> On Tue, 14 Sept 2021 at 17:19, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> > Useful for testing mux clocks. One can write the index of the parent to
+> > set into clk_set_parent node, starting from 0. Example
+> >
+> >     # cat clk_possible_parrents
+> >       dout_shared0_div4 dout_shared1_div4
+> >     # cat clk_parent
+> >       dout_shared0_div4
+> >     # echo 1 > clk_set_parent
+> >     # cat clk_parent
+> >       dout_shared1_div4
+> >
+> > Define CLOCK_ALLOW_WRITE_DEBUGFS in drivers/clk/clk.c in order to use
+> > this feature.
 > >
 > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > > ---
-> >   include/dt-bindings/clock/exynos850.h | 72 ++++++++++++++++++++++++++=
-+
-> >   1 file changed, 72 insertions(+)
-> >   create mode 100644 include/dt-bindings/clock/exynos850.h
-> >
-> > diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-binding=
-s/clock/exynos850.h
-> > new file mode 100644
-> > index 000000000000..2f0a7f619627
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/exynos850.h
-> > @@ -0,0 +1,72 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (C) 2021 Linaro Ltd.
-> > + * Author: Sam Protsenko <semen.protsenko@linaro.org>
-> > + *
-> > + * Device Tree binding constants for Exynos850 clock controller.
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_CLOCK_EXYNOS_850_H
-> > +#define _DT_BINDINGS_CLOCK_EXYNOS_850_H
-> > +
-> > +/* CMU_TOP */
-> > +#define DOUT_HSI_BUS                 1
-> > +#define DOUT_HSI_MMC_CARD            2
-> > +#define DOUT_HSI_USB20DRD            3
-> > +#define DOUT_PERI_BUS                        4
-> > +#define DOUT_PERI_UART                       5
-> > +#define DOUT_PERI_IP                 6
-> > +#define DOUT_CORE_BUS                        7
-> > +#define DOUT_CORE_CCI                        8
-> > +#define DOUT_CORE_MMC_EMBD           9
-> > +#define DOUT_CORE_SSS                        10
-> > +#define TOP_NR_CLK                   11
-> > +
-> > +/* CMU_HSI */
-> > +#define GOUT_USB_RTC_CLK             1
-> > +#define GOUT_USB_REF_CLK             2
-> > +#define GOUT_USB_PHY_REF_CLK         3
-> > +#define GOUT_USB_PHY_ACLK            4
-> > +#define GOUT_USB_BUS_EARLY_CLK               5
-> > +#define GOUT_GPIO_HSI_PCLK           6
-> > +#define GOUT_MMC_CARD_ACLK           7
-> > +#define GOUT_MMC_CARD_SDCLKIN                8
-> > +#define GOUT_SYSREG_HSI_PCLK         9
-> > +#define HSI_NR_CLK                   10
-> > +
-> > +/* CMU_PERI */
-> > +#define GOUT_GPIO_PERI_PCLK          1
-> > +#define GOUT_HSI2C0_IPCLK            2
-> > +#define GOUT_HSI2C0_PCLK             3
-> > +#define GOUT_HSI2C1_IPCLK            4
-> > +#define GOUT_HSI2C1_PCLK             5
-> > +#define GOUT_HSI2C2_IPCLK            6
-> > +#define GOUT_HSI2C2_PCLK             7
-> > +#define GOUT_I2C0_PCLK                       8
-> > +#define GOUT_I2C1_PCLK                       9
-> > +#define GOUT_I2C2_PCLK                       10
-> > +#define GOUT_I2C3_PCLK                       11
-> > +#define GOUT_I2C4_PCLK                       12
-> > +#define GOUT_I2C5_PCLK                       13
-> > +#define GOUT_I2C6_PCLK                       14
-> > +#define GOUT_MCT_PCLK                        15
-> > +#define GOUT_PWM_MOTOR_PCLK          16
-> > +#define GOUT_SPI0_IPCLK                      17
-> > +#define GOUT_SPI0_PCLK                       18
-> > +#define GOUT_SYSREG_PERI_PCLK                19
-> > +#define GOUT_UART_IPCLK                      20
-> > +#define GOUT_UART_PCLK                       21
-> > +#define GOUT_WDT0_PCLK                       22
-> > +#define GOUT_WDT1_PCLK                       23
-> > +#define PERI_NR_CLK                  24
-> > +
-> > +/* CMU_CORE */
-> > +#define GOUT_CCI_ACLK                        1
-> > +#define GOUT_GIC_CLK                 2
-> > +#define GOUT_MMC_EMBD_ACLK           3
-> > +#define GOUT_MMC_EMBD_SDCLKIN                4
-> > +#define GOUT_SSS_ACLK                        5
-> > +#define GOUT_SSS_PCLK                        6
-> > +#define CORE_NR_CLK                  7
-> > +
-> > +#endif /* _DT_BINDINGS_CLOCK_EXYNOS_850_H */
-> >
 >
+> + Adding more folks for review
 >
-> --
-> Best Regards,
-> Samsung Electronics
-> Chanwoo Choi
+> Guys, can you please review this one?
+
+Thanks for your patch!
+
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3214,6 +3214,30 @@ static int current_parent_show(struct seq_file *s, void *data)
+> >  }
+> >  DEFINE_SHOW_ATTRIBUTE(current_parent);
+> >
+> > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+> > +static int clk_set_parent_set(void *data, u64 val)
+
+u64 is overkill, num_parents is u8.
+
+> > +{
+> > +       struct clk_core *core = data, *parent;
+> > +       int ret;
+> > +
+> > +       if (val >= core->num_parents)
+> > +               return -EINVAL;
+
+clk_core_get_parent_by_index() called below already checks this.
+
+> > +
+> > +       parent = clk_core_get_parent_by_index(core, val);
+> > +       if (IS_ERR_OR_NULL(parent))
+> > +               return PTR_ERR(parent);
+> > +
+> > +       clk_prepare_lock();
+> > +       ret = clk_core_set_parent_nolock(core, parent);
+> > +       clk_prepare_unlock();
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +DEFINE_DEBUGFS_ATTRIBUTE(clk_set_parent_fops, NULL, clk_set_parent_set,
+> > +                        "%llu\n");
+> > +#endif
+> > +
+> >  static int clk_duty_cycle_show(struct seq_file *s, void *data)
+> >  {
+> >         struct clk_core *core = s->private;
+> > @@ -3285,9 +3309,14 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+> >                 debugfs_create_file("clk_parent", 0444, root, core,
+> >                                     &current_parent_fops);
+> >
+> > -       if (core->num_parents > 1)
+> > +       if (core->num_parents > 1) {
+> >                 debugfs_create_file("clk_possible_parents", 0444, root, core,
+> >                                     &possible_parents_fops);
+> > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+> > +               debugfs_create_file("clk_set_parent", 0200, root, core,
+> > +                                   &clk_set_parent_fops);
+> > +#endif
+
+Why add a new file, instead of making the existing "clk_parent" file
+writable, like is done for "clk_rate"?
+Yes, "clk_parent" prints a name, while you use a parent number, but
+I guess that can be fixed? Or even both can be accepted?
+
+> > +       }
+> >
+> >         if (core->ops->debug_init)
+> >                 core->ops->debug_init(core->hw, core->dentry);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
