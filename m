@@ -2,74 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0B3C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 06:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E59BC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 07:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E48F61165
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 06:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D9C61409
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 07:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232511AbhJEGrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 02:47:35 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:39251 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbhJEGre (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 02:47:34 -0400
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 1956OBIP023147;
-        Tue, 5 Oct 2021 14:24:11 +0800 (GMT-8)
-        (envelope-from ryan_chen@aspeedtech.com)
-Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 5 Oct
- 2021 14:45:16 +0800
-From:   Ryan Chen <ryan_chen@aspeedtech.com>
-To:     ryan_chen <ryan_chen@aspeedtech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk:aspeed:Fix reset driver probe from builtin_platform to core_initcal
-Date:   Tue, 5 Oct 2021 14:45:13 +0800
-Message-ID: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
+        id S230526AbhJEHCO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 03:02:14 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:53540 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231816AbhJEHCO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 03:02:14 -0400
+X-UUID: be0b5d5e78f24b48875d241a10957d00-20211005
+X-UUID: be0b5d5e78f24b48875d241a10957d00-20211005
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <mark-pk.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 4802693; Tue, 05 Oct 2021 15:00:20 +0800
+Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Tue, 5 Oct 2021 15:00:19 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 5 Oct
+ 2021 15:00:19 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 5 Oct 2021 15:00:18 +0800
+From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <mark-pk.tsai@mediatek.com>, <yj.chiang@mediatek.com>,
+        <matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] clk: make clk_core_lookup faster by using clk name hash
+Date:   Tue, 5 Oct 2021 14:59:49 +0800
+Message-ID: <20211005065948.10092-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [192.168.10.9]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 1956OBIP023147
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Change the reset probe sequence from builtin_platform to core_initcal.
-For avoid some driver is probe but failed due to reset driver not probe.
+Compare hash value before strcmp the full name to make
+clk_core_lookup faster.
 
-Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+It make clk driver probe 30 percent faster on the platform
+have 1483 registered clks and average clock name length 20.
+
+Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
 ---
- drivers/clk/clk-ast2600.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 085d0a18b2b6..6293d8d1a6a8 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -686,7 +686,13 @@ static struct platform_driver aspeed_g6_clk_driver = {
- 		.suppress_bind_attrs = true,
- 	},
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65508eb89ec9..d5f65fda3db8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -89,6 +89,7 @@ struct clk_core {
+ 	struct hlist_node	debug_node;
+ #endif
+ 	struct kref		ref;
++	unsigned int		hash;
  };
--builtin_platform_driver(aspeed_g6_clk_driver);
-+
-+static int __init aspeed_g6_clk_init(void)
-+{
-+	return platform_driver_register(&aspeed_g6_clk_driver);
-+}
-+
-+core_initcall(aspeed_g6_clk_init);
  
- static const u32 ast2600_a0_axi_ahb_div_table[] = {
- 	2, 2, 3, 5,
+ #define CREATE_TRACE_POINTS
+@@ -292,16 +293,17 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
+ EXPORT_SYMBOL_GPL(clk_hw_get_parent);
+ 
+ static struct clk_core *__clk_lookup_subtree(const char *name,
++					     unsigned int hash,
+ 					     struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 	struct clk_core *ret;
+ 
+-	if (!strcmp(core->name, name))
++	if (hash == core->hash && !strcmp(core->name, name))
+ 		return core;
+ 
+ 	hlist_for_each_entry(child, &core->children, child_node) {
+-		ret = __clk_lookup_subtree(name, child);
++		ret = __clk_lookup_subtree(name, hash, child);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -313,20 +315,22 @@ static struct clk_core *clk_core_lookup(const char *name)
+ {
+ 	struct clk_core *root_clk;
+ 	struct clk_core *ret;
++	unsigned int hash;
+ 
+ 	if (!name)
+ 		return NULL;
+ 
++	hash = full_name_hash(NULL, name, strlen(name));
+ 	/* search the 'proper' clk tree first */
+ 	hlist_for_each_entry(root_clk, &clk_root_list, child_node) {
+-		ret = __clk_lookup_subtree(name, root_clk);
++		ret = __clk_lookup_subtree(name, hash, root_clk);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+ 	/* if not found, then search the orphan tree */
+ 	hlist_for_each_entry(root_clk, &clk_orphan_list, child_node) {
+-		ret = __clk_lookup_subtree(name, root_clk);
++		ret = __clk_lookup_subtree(name, hash, root_clk);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -3827,6 +3831,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 		goto fail_name;
+ 	}
+ 
++	core->hash = full_name_hash(NULL, core->name, strlen(core->name));
+ 	if (WARN_ON(!init->ops)) {
+ 		ret = -EINVAL;
+ 		goto fail_ops;
 -- 
-2.17.1
+2.18.0
 
