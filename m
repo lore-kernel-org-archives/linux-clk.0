@@ -2,107 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13B7C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 02:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0B3C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 06:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3C86611C1
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 02:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E48F61165
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 06:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhJECKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Oct 2021 22:10:25 -0400
-Received: from mx.socionext.com ([202.248.49.38]:46766 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230514AbhJECKT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 Oct 2021 22:10:19 -0400
-Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 05 Oct 2021 11:08:28 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id 11F702058B40;
-        Tue,  5 Oct 2021 11:08:28 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 5 Oct 2021 11:08:28 +0900
-Received: from plum.e01.socionext.com (unknown [10.212.243.119])
-        by kinkan2.css.socionext.com (Postfix) with ESMTP id 9ECE4AB192;
-        Tue,  5 Oct 2021 11:08:27 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 5/5] clk: uniphier: Add SoC-glue clock source selector support for Pro4
-Date:   Tue,  5 Oct 2021 11:08:26 +0900
-Message-Id: <1633399706-1251-6-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1633399706-1251-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1633399706-1251-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S232511AbhJEGrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 02:47:35 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:39251 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230526AbhJEGre (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 02:47:34 -0400
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 1956OBIP023147;
+        Tue, 5 Oct 2021 14:24:11 +0800 (GMT-8)
+        (envelope-from ryan_chen@aspeedtech.com)
+Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 5 Oct
+ 2021 14:45:16 +0800
+From:   Ryan Chen <ryan_chen@aspeedtech.com>
+To:     ryan_chen <ryan_chen@aspeedtech.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk:aspeed:Fix reset driver probe from builtin_platform to core_initcal
+Date:   Tue, 5 Oct 2021 14:45:13 +0800
+Message-ID: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [192.168.10.9]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 1956OBIP023147
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add SoC-glue clock source selector for ahci controller on UniPhier SoCs.
-Currently this supports Pro4 only.
+Change the reset probe sequence from builtin_platform to core_initcal.
+For avoid some driver is probe but failed due to reset driver not probe.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- drivers/clk/uniphier/clk-uniphier-core.c |  5 +++++
- drivers/clk/uniphier/clk-uniphier-sys.c  | 17 +++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h      |  1 +
- 3 files changed, 23 insertions(+)
+ drivers/clk/clk-ast2600.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-index 0a947e7..46c66fa 100644
---- a/drivers/clk/uniphier/clk-uniphier-core.c
-+++ b/drivers/clk/uniphier/clk-uniphier-core.c
-@@ -210,6 +210,11 @@ static const struct of_device_id uniphier_clk_match[] = {
- 		.compatible = "socionext,uniphier-nx1-peri-clock",
- 		.data = uniphier_pro4_peri_clk_data,
+diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+index 085d0a18b2b6..6293d8d1a6a8 100644
+--- a/drivers/clk/clk-ast2600.c
++++ b/drivers/clk/clk-ast2600.c
+@@ -686,7 +686,13 @@ static struct platform_driver aspeed_g6_clk_driver = {
+ 		.suppress_bind_attrs = true,
  	},
-+	/* SoC-glue clock */
-+	{
-+		.compatible = "socionext,uniphier-pro4-sg-clock",
-+		.data = uniphier_pro4_sg_clk_data,
-+	},
- 	{ /* sentinel */ }
  };
- 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index e8bf85c..0180470 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -330,3 +330,20 @@ const struct uniphier_clk_data uniphier_nx1_sys_clk_data[] = {
- 			     "cpll/32"),
- 	{ /* sentinel */ }
- };
+-builtin_platform_driver(aspeed_g6_clk_driver);
 +
-+const struct uniphier_clk_data uniphier_pro4_sg_clk_data[] = {
-+	UNIPHIER_CLK_DIV("gpll", 4),
-+	{
-+		.name = "sata-ref",
-+		.type = UNIPHIER_CLK_TYPE_MUX,
-+		.idx = 0,
-+		.data.mux = {
-+			.parent_names = { "gpll/4", "ref", },
-+			.num_parents = 2,
-+			.reg = 0x1a28,
-+			.masks = { 0x1, 0x1, },
-+			.vals  = { 0x0, 0x1, },
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-index c54fb78..dea0c78 100644
---- a/drivers/clk/uniphier/clk-uniphier.h
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -155,5 +155,6 @@ extern const struct uniphier_clk_data uniphier_ld4_mio_clk_data[];
- extern const struct uniphier_clk_data uniphier_pro5_sd_clk_data[];
- extern const struct uniphier_clk_data uniphier_ld4_peri_clk_data[];
- extern const struct uniphier_clk_data uniphier_pro4_peri_clk_data[];
-+extern const struct uniphier_clk_data uniphier_pro4_sg_clk_data[];
++static int __init aspeed_g6_clk_init(void)
++{
++	return platform_driver_register(&aspeed_g6_clk_driver);
++}
++
++core_initcall(aspeed_g6_clk_init);
  
- #endif /* __CLK_UNIPHIER_H__ */
+ static const u32 ast2600_a0_axi_ahb_div_table[] = {
+ 	2, 2, 3, 5,
 -- 
-2.7.4
+2.17.1
 
