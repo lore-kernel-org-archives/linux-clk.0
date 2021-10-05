@@ -2,180 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF64C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 13:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AC9C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 13:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D13D161401
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 13:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBEE961872
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 13:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234437AbhJENM7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 09:12:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54562 "EHLO
+        id S234851AbhJENQy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 09:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234614AbhJENM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 09:12:58 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E5F6C061749
-        for <linux-clk@vger.kernel.org>; Tue,  5 Oct 2021 06:11:08 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id y26so86533687lfa.11
-        for <linux-clk@vger.kernel.org>; Tue, 05 Oct 2021 06:11:08 -0700 (PDT)
+        with ESMTP id S234850AbhJENQy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 09:16:54 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DE86C061760
+        for <linux-clk@vger.kernel.org>; Tue,  5 Oct 2021 06:15:03 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id j8so6859315wro.7
+        for <linux-clk@vger.kernel.org>; Tue, 05 Oct 2021 06:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jjr/5gs80cWEm3vhyk3aM1mKvl135EXltar2PLrRZ/k=;
-        b=P2GJcTPd6Kk45HZ8Ezt3mOStexgciMfR/ERjqn7quus9WPj7c0pgJ31TVKDyKIyFGw
-         Y+F7WGFBzXS/vp5jDxxMyzTz/hmBB5xPYGuEv6qEQ23KVdyCACYcfsWUkcNmRV/ofYHS
-         vE4LfuNllox/XGETXWlqstK2Q0L/vr7oXCynROhlgtpi4vvXnVvj6wEyBllh0eoIaYn8
-         f40td9gch4cO2Jp1h51EkJPAQ6/xwpwREWWIr5YIzLYLVQSBM9my6mb9NpueANAdQfBZ
-         CLGXLy2HZcaqGOasKeUtPNXPs47D7ubFHOmVm/lx2TuvCwySuEvv9iGf+AtaMpafWnSk
-         y69w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=C7t36aQJ/HdVD4haldIX8sv1hXdH5zMENhm9qykkDX0=;
+        b=u/W41neVt5urYn/aY5Lkl4TT8qiB8LAHeqCJ1PtTbbe+W7kGbk1QoUtfLs5mDnG9TQ
+         Jj1ySQu0udLwMDJ4GpmxcQqsmCEnTMqFD0kd0y9PgA3xRWiGHvwk0uTovGmPoju5mQth
+         Q9DCqXk4Eo/lldLxH6LsZtKnqKTMeH3Bmm7cttIylM5HawltyfbY7gqkuuu0kbVn7waY
+         ToFLue9dvcQfauTseB+5VSd0jXUYFx2gRrUNTtsmk6fX9Ha4G6XOIGwrdwaAj5NxmSL8
+         xrLoK2hn4K6oJ3cpfEUc1CVG+qvFLKnJVlA4Y68fC07b7PitzDR+U4e8gcloSFlZSxkh
+         Kyuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jjr/5gs80cWEm3vhyk3aM1mKvl135EXltar2PLrRZ/k=;
-        b=QlxKc5XpmpsAe2YWKqXJM8yb1VxGXuEBLRVT4IBoHiDl+cZj2bE2rj2J3KH3I3x6GY
-         x+9dUeP5iB2op08R7/Cfie2KuBdF5vLAW1UZlUpfncmPat7W4VwvVxLdEpO2attEusQi
-         LqeyUhZmBAfJAxKxTdDahkV8W9HKkvccfXd3hkgV0HNUoj99LKp2yj9v+4A25qzUBZSz
-         s1F+E0vs4hnq4iJznRn6plBEkWFIesn6a0QAaoxo51tUINLNScfhT9eei9k6CZHY1EB6
-         s+kEi6vVpaiUq5ltdJN+SlhxzvqVm0BgT/hPuFzw5NQlDABypMe6piuMcgKsofpa9HI7
-         J5+Q==
-X-Gm-Message-State: AOAM531VYYaDYwAIfBP3W40lFsPAw/h3aAQa7WqAEc2oYDpj9xDajkqA
-        MQVOi5NUNIG+0QxwqEZRI8etUgfkVyvvsqQa9WUynw==
-X-Google-Smtp-Source: ABdhPJzhN75cYX0QdxPZZrVkTo8LNm3eo8IzoivQ7mSAH2J9FquztKwBCIMLaRlaWOOdBUUox7ZGcX1wvMYGNrjgk1w=
-X-Received: by 2002:a05:651c:20b:: with SMTP id y11mr22911109ljn.463.1633439466354;
- Tue, 05 Oct 2021 06:11:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-7-digetx@gmail.com>
- <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com> <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
-In-Reply-To: <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 5 Oct 2021 15:10:30 +0200
-Message-ID: <CAPDyKFreK7976PJL-1zySoza_yXM7rMQ64aODWUZ+U3L-uCa0w@mail.gmail.com>
-Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=C7t36aQJ/HdVD4haldIX8sv1hXdH5zMENhm9qykkDX0=;
+        b=rTz3MOqDFBEPML9+cdvl15nPnVk/S2nz+SbRKkpOrKAEJjAnZxGosdPAFrFjzNue1O
+         g00+Gle8nvU5Mob0vPZXvo97SbM9G5Zt+WxoEXMUX7kUPmyg43aXM1zTRBpWU+R26w3+
+         aRrrbSUfaAa/P2UJqHeLB66rPQahLAENa621lDZBbYSaShBomMMIyLkRw8PumBCkw0He
+         6s/1Cpxf5PxIV4EZDGju2wisG/hupBJyg4M7Sxj2y50vNngwsKATQ4jb6ySLKvs7hfBg
+         htv73ZA4KJWd0aihrt/0sbHm+1fFLhvuHAopHUDcFTFPlT2KF0JoNepsKKSe+AWNjNMR
+         LJgQ==
+X-Gm-Message-State: AOAM531q+PvRqK5Eprino1IwpDPM9coMfdIULJPn30jNE8ugjnlusOHl
+        i9rJH2nCH9EFq0RzvRD1ZszZLA==
+X-Google-Smtp-Source: ABdhPJx+AvsAM1xJpR4F7gOV4Bz1IXec3HMpD2aJxgbeZYeQpGFuhMEfzND1sQXGP/vcePMxxmG4qg==
+X-Received: by 2002:a5d:64ca:: with SMTP id f10mr21231328wri.93.1633439701937;
+        Tue, 05 Oct 2021 06:15:01 -0700 (PDT)
+Received: from google.com ([95.148.6.175])
+        by smtp.gmail.com with ESMTPSA id k18sm1171078wrn.81.2021.10.05.06.15.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Oct 2021 06:15:01 -0700 (PDT)
+Date:   Tue, 5 Oct 2021 14:14:59 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
+ and S5M to dtschema
+Message-ID: <YVxP0+kVxI0xQmQQ@google.com>
+References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
+ <YVxBuEvHVdyDvaGD@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YVxBuEvHVdyDvaGD@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2 Oct 2021 at 22:44, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 01.10.2021 15:32, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> +static __maybe_unused int tegra_clock_pm_suspend(struct device *dev)
-> >> +{
-> >> +       struct tegra_clk_device *clk_dev =3D dev_get_drvdata(dev);
-> >> +
-> >> +       /*
-> >> +        * Power management of the clock is entangled with the Tegra P=
-MC
-> >> +        * GENPD because PMC driver enables/disables clocks for toggli=
-ng
-> >> +        * of the PD's on/off state.
-> >> +        *
-> >> +        * The PMC GENPD is resumed in NOIRQ phase, before RPM of the =
-clocks
-> >> +        * becomes available, hence PMC can't use clocks at the early =
-resume
-> >> +        * phase if RPM is involved. For example when 3d clock is enab=
-led,
-> >> +        * it may enable the parent PLL clock that needs to be RPM-res=
-umed.
-> >> +        *
-> >> +        * Secondly, the PLL clocks may be enabled by the low level su=
-spend
-> >> +        * code, so we need to assume that PLL is in enabled state dur=
-ing
-> >> +        * suspend.
-> >> +        *
-> >> +        * We will keep PLLs and system clock resumed during suspend t=
-ime.
-> >> +        * All PLLs on all SoCs are low power and system clock is alwa=
-ys-on,
-> >> +        * so practically not much is changed here.
-> >> +        */
-> >> +
-> >> +       return clk_prepare(clk_dev->hw->clk);
-> > I am trying to understand, more exactly, what you intend to achieve
-> > with the clk_prepare() here. It looks a bit weird, to me. Can you try
-> > to elaborate a bit more on the use case?
->
-> The Tegra GENPD driver enable/disable clocks when domain is turned on.
+On Tue, 05 Oct 2021, Mark Brown wrote:
 
-Okay. I noticed that in tegra_genpd_power_on(). And the same clocks
-are enabled/disabled also in tegra_genpd_power_off(), when powering
-off the PM domain.
+> On Fri, Oct 01, 2021 at 11:40:56AM +0200, Krzysztof Kozlowski wrote:
+> 
+> > Merging/dependencies
+> > ====================
+> > 1. Regulator related binding changes depend on first two commits (the
+> >    fixes), because of context.
+> > 2. The mfd bindings depend on clock and regulator bindings.
+> > 
+> > The fixes and bindings changes (patches 1-10) should go via the same
+> > tree.  For example regulator or mfd tree.  I propose the regulator tree,
+> > since it will have also one driver change (the fix, first commit).
+> 
+> Lee, Stephen, Michael does Krzysztof's plan make sense to you?
 
-So I guess the problem kind of exists for tegra_genpd_power_off() too?
+I tend to take cross subsystem patches.  MFD is usually in the centre
+of these scenarios and I have tooling to easily set-up immutable
+branches/pull-requests.
 
-> This can't be done during early system resume, when domains are getting
-> turned on by the drivers core, because when clock is enabled, it's
-> getting prepared (RPM-resumed) and this preparation fails because
-> performance state of the clock goes up and it doesn't work during the
-> early resume time since I2C, which applies the state to hardware, is
-> suspended and can't work at that early time.
+Always happy to discuss if others have different/better ideas though.
 
-This sounds complicated and I still don't quite follow all of it, sorry.
-
-So, tegra_genpd_power_on() gets called from genpd_resume_noirq(), when
-the first device of the attached devices to genpd gets resumed. And
-vice versa for tegra_genpd_power_off() and genpd_suspend_noirq().
-
-Are you saying that trying to enable/disable clocks from
-tegra_genpd_power_on|off() in these paths doesn't work, because it
-would also require the performance state to be changed, which would
-fail because the I2C bus/driver is suspended?
-
->
-> Secondly, Tegra has arch-specific low level assembly which touches
-> clocks during last phase of system suspend and in the beginning of
-> resume. Hence, clocks should stay prepared during suspend just because
-> technically clock should be prepared before it can be enabled.
-
-So the low level code is gating and ungating the clock behind the back
-of the clock driver then? Why is that done like that, more exactly?
-
->
-> > Is this rather about making sure that the clock's corresponding PM
-> > domain stays powered on during system suspend? In that case, I think
-> > there may be an alternative option....
-> >
->
-> This is not about domain staying powered on, this is about keeping the
-> performance state of the domain high during suspend.
-
-Right, so the PM domain managed in tegra_genpd_power_on|off() can
-still be powered on/off, as long as the clock remains ungated?
-
-Kind regards
-Uffe
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
