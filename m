@@ -2,124 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD4C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 22:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D42EAC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 01:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 056C6611C3
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Oct 2021 22:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA3B56138B
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 01:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbhJEWpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 18:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbhJEWpO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 18:45:14 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54390C061749;
-        Tue,  5 Oct 2021 15:43:23 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id t9so2291296lfd.1;
-        Tue, 05 Oct 2021 15:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QG+ghKl7BYypZZjDut6dTGHyiOgVAsyM1BWUZUWMu5U=;
-        b=Hd/Hgnl41abY2ut8awTV9Znfi0+mLbBx9rjGKMvBmv1GvhO4shIY8zKBANOfUfey6t
-         f5Ia/T7DT6465kZqrrXQThtz+C/Dyv3WwmTVE2S1/knhHJ2ZkcQGMJbpA7lJW8S92LV6
-         d4sMrDbdjRQ26EUeegNXhFT6soeFLf+BrXj5mPF3K+E6tl1/jGMbmKZnQ0VlaBRfoOWR
-         LuKoByxkOGkGhSjkSGOlHwyrskSGBdkV8ouXlaDVeZDQXkFs5OsF+2lgPEibKvUXARwq
-         QkljhBPkuFryLkM004napUFJxFdOqOTZNrXbWHEUeRQ3+onIjoSJKZ6XnhXG+LemKrOd
-         A8Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QG+ghKl7BYypZZjDut6dTGHyiOgVAsyM1BWUZUWMu5U=;
-        b=NKI6DzBBUj47SPHJaqj6L5uQHerhcCXQksJx4tDOH1zx+N1pv6NrMPzSbhiWv/yU5S
-         ZBYvK4WRoqZMlzzoztwywNi9hKE98gSfUXHBh3cpC7kjObydvS8Ea27tfA1lqGmvLVqr
-         mLWkdz/E+hfvRyAjoDBGPDOGhznyeoBn7eVLTAVK7oG0IX4fvvhbdjWz5xn9Ro/lOM5J
-         n/ZGXsKtPa0go78f/essm4XLKivJ7a/5cm3MkZnRQrFpqsa9XzeSuXpPps32NFeitH6d
-         xQvmc1I64tLtG99RgnhjGenIJM6Rz/FNcAc1vpx5rRgUPrtKvauMNcjsHKak4D49bdVG
-         xYhA==
-X-Gm-Message-State: AOAM530T77ZomtnnPADz4neUXMxhHuafoXQrozcjqjl0Z5ZcBz3AbtXw
-        0Pulf/vqDXRs9tEHv214GuQ=
-X-Google-Smtp-Source: ABdhPJxfNs4Gfg7N3fvFBrC2l/U9ZmVjgRHnpJ3ajA7WdQF4gcWUZ5S7J4URL5OZbbHW8d5K2gyE2g==
-X-Received: by 2002:a2e:743:: with SMTP id i3mr24366437ljd.250.1633473801726;
-        Tue, 05 Oct 2021 15:43:21 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
-        by smtp.googlemail.com with ESMTPSA id q30sm2086817lfb.108.2021.10.05.15.43.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Oct 2021 15:43:21 -0700 (PDT)
-Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-7-digetx@gmail.com>
- <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com>
- <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
- <CAPDyKFreK7976PJL-1zySoza_yXM7rMQ64aODWUZ+U3L-uCa0w@mail.gmail.com>
- <4bdba8a2-4b9b-ed7d-e6ca-9218d8200a85@gmail.com>
-Message-ID: <74a47158-e2e4-5fd0-3f37-0b50d4ead4d9@gmail.com>
-Date:   Wed, 6 Oct 2021 01:43:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231855AbhJFBlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 21:41:03 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:45829 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236969AbhJFBlC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Oct 2021 21:41:02 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1633484351; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: From: References: Cc: To: Subject: MIME-Version: Date:
+ Message-ID: Sender; bh=bFZPSnyPHoVBCttikq5GU7A4su6wYCm9mgJrJogb68Q=; b=D++dwTKEZrpbTxojarg/MSGRPACG3MNDd8/xgP7djUTxl0sqjCj6sX3q371DxryR4aQewMKE
+ v/dshNvjcUBeVnUarSHOqdydME3HkYLicy14YiD6RS8lkgGuVqlBfwZFxBYq74aYfgDW3PPv
+ 7QjafpXEEl/Yyn4y8P7NtLLsCew=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
+ 615cfe3e7ae92c7fc95b990d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 06 Oct 2021 01:39:10
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EE904C4360C; Wed,  6 Oct 2021 01:39:09 +0000 (UTC)
+Received: from [192.168.0.102] (unknown [49.204.180.16])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 651FAC4338F;
+        Wed,  6 Oct 2021 01:39:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 651FAC4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Message-ID: <20d90f13-9ae5-99e5-eaf8-5a37d87eccda@codeaurora.org>
+Date:   Wed, 6 Oct 2021 07:09:03 +0530
 MIME-Version: 1.0
-In-Reply-To: <4bdba8a2-4b9b-ed7d-e6ca-9218d8200a85@gmail.com>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add YAML schemas for LPASS
+ clocks on SC7280
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1630406202-3919-1-git-send-email-tdas@codeaurora.org>
+ <YS7bJ7bu6Ud2f+vB@robh.at.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+In-Reply-To: <YS7bJ7bu6Ud2f+vB@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-06.10.2021 01:19, Dmitry Osipenko пишет:
-...
-> I reproduced the OFF problem by removing the clk prepare/unprepare from
-> the suspend/resume of the clk driver and making some extra changes to
-> clock tree topology and etc to trigger the problem on Nexus 7.
-> 
-> tegra-pmc 7000e400.pmc: failed to turn off PM domain heg: -13
-> 
-> It happens from genpd_suspend_noirq() -> tegra_genpd_power_off() -> clk
-> -> GENPD -> I2C -> runtime-pm.
-> 
-> -13 is EACCES, it comes from the runtime PM of I2C device. RPM is
-> prohibited/disabled during late (NOIRQ) suspend by the drivers core.
+Hello Rob,
 
-My bad, I double-checked and it's not I2C RPM that is failing now, but
-the clock's RPM [1], which is also unavailable during NOIRQ.
+Thanks for your review.
 
-[1]
-https://elixir.free-electrons.com/linux/v5.15-rc4/source/drivers/clk/clk.c#L116
+On 9/1/2021 7:15 AM, Rob Herring wrote:
+> On Tue, Aug 31, 2021 at 04:06:41PM +0530, Taniya Das wrote:
+>> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
+>> properties that are needed in a device tree. Add the LPASS clock IDs for
+>> LPASS PIL client to request for the clocks.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../bindings/clock/qcom,sc7280-lpasscc.yaml        | 69 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,lpass-sc7280.h      | 16 +++++
+>>   2 files changed, 85 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,lpass-sc7280.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+>> new file mode 100644
+>> index 0000000..7b62763
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+>> @@ -0,0 +1,69 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,sc7280-lpasscc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm LPASS Core Clock Controller Binding for SC7280
+>> +
+>> +maintainers:
+>> +  - Taniya Das <tdas@codeaurora.org>
+>> +
+>> +description: |
+>> +  Qualcomm LPASS core clock control module which supports the clocks and
+>> +  power domains on SC7280.
+>> +
+>> +  See also:
+>> +  - dt-bindings/clock/qcom,lpass-sc7280.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,sc7280-lpasscc
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: gcc_cfg_noc_lpass_clk from GCC
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: iface
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    minItems: 3
+> 
+> Don't need minItems equal to 'items' length.
+> 
+Next patch will fix this.
 
-Previously it was I2C RPM that was failing in a similar way, but code
-changed a tad since that time.
+>> +    items:
+>> +      - description: LPASS qdsp6ss register
+>> +      - description: LPASS top-cc register
+>> +      - description: LPASS cc register
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: qdsp6ss
+>> +      - const: top_cc
+>> +      - const: cc
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+>> +    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
+>> +    clock-controller@3000000 {
+>> +      compatible = "qcom,sc7280-lpasscc";
+>> +      reg = <0x03000000 0x40>, <0x03c04000 0x4>, <0x03389000 0x24>;
+>> +      reg-names = "qdsp6ss", "top_cc", "cc";
+>> +      clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
+>> +      clock-names = "iface";
+>> +      #clock-cells = <1>;
+>> +    };
+>> +...
+>> diff --git a/include/dt-bindings/clock/qcom,lpass-sc7280.h b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+>> new file mode 100644
+>> index 0000000..a259463
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,lpass-sc7280.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> Dual license.
+>
+Yes, my bad, will fix it in the next patch.
+
+>> +/*
+>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
+>> +#define _DT_BINDINGS_CLK_QCOM_LPASS_SC7280_H
+>> +
+>> +#define LPASS_Q6SS_AHBM_CLK				0
+>> +#define LPASS_Q6SS_AHBS_CLK				1
+>> +#define LPASS_TOP_CC_LPI_Q6_AXIM_HS_CLK			2
+>> +#define LPASS_QDSP6SS_XO_CLK				3
+>> +#define LPASS_QDSP6SS_SLEEP_CLK				4
+>> +#define LPASS_QDSP6SS_CORE_CLK				5
+>> +
+>> +#endif
+>> -- 
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>
+>>
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
