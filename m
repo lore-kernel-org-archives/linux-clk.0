@@ -2,111 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72192C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 10:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C02C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 10:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B337611C3
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 10:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1CC611C0
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 10:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbhJFKW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 06:22:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35986 "EHLO
+        id S229824AbhJFKsY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 06:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhJFKW2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 06:22:28 -0400
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB8A5C061749;
-        Wed,  6 Oct 2021 03:20:36 -0700 (PDT)
-Received: by mail-vs1-xe2d.google.com with SMTP id p2so2295406vst.10;
-        Wed, 06 Oct 2021 03:20:36 -0700 (PDT)
+        with ESMTP id S231571AbhJFKsX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 06:48:23 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497D2C06174E
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 03:46:31 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id b34so1436614uad.8
+        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 03:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kVwkMAhpGeKWfHIGRVhGfdjQIS6M3v/qiruYCfRl4ZQ=;
-        b=Fn7gKu4+4IEORoUORMFCJHy9Qvbfh+YZ2AYlQLDQGopzmQWOKy98a2sKKgcbbvkBAd
-         4kplWr4d6szfH7kkRBYt9WcmP8RO50bFySfkLwpqKZl7TqiKMHjpQYHyww5VFdh92Mxy
-         LWBAkQW/1HmSPDBRtREMdrqkZVo/vItN5K05XP0mhu/+WIL22s85zIfpyJ0eFr6g0Igt
-         HTa9fql/ZGRwH/jy6yjHTf+LeZIQzJxz92JBSJeW3ifx8uHRGzfuGqZ7TYP3VHudD8Xm
-         Si30rQBw31Aixnyy3Uuj1Ay2bO7D0ARWEGEGnZSWoyedHPTmGCg3sGg0m+CTiVD/DeLF
-         3oGw==
+        bh=WAZ6VYVxXpp+/4weV4Gw1QKhKbSTkxuMKBLfGMMXi34=;
+        b=RW9U4DrKauxl7RiYBSIz5WrXXIfcuHG+K0ocrRpKxF4zt5xL9u4Fg9K6qYhR9lBPUl
+         y93WKKhFCAtxSPKBKYCjA4QJ+8FwXc/5sku7+kPilJLHB2VdACALVbJaOlRA89g7O7DU
+         Ik1VVeEJ4TJgHGexGQuKQSL+001+Wq5E7FzeRwC0K5S7UU8WQoM187ddsNnLUvQ1xA0R
+         C684SbtTBtrE4+uvIvzyL09hXp/luX8lpE8xIKgenBW874pWNGtFq5b9x5LhNP000LvE
+         yHp1CV3ozWmUotvTQbqGaUmaacMrD4brCiA2pHu/4d0FkCUHrgYmDY29/2zgPC2K3l2j
+         nbeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kVwkMAhpGeKWfHIGRVhGfdjQIS6M3v/qiruYCfRl4ZQ=;
-        b=JmI3rEENfqqqBhXisBLOLtYwojnMlSbc5CZLUneQbZN+VXKTHXjIk7SLrBm3xL0dgy
-         cam/k6cpO3o53yEhPcj7Yr7rcImjUoX9XKouJVNzFo9S2LSyw2c3yW99osHDRMLOQRpz
-         xztWE5oRa60rGc4rzarW1zgzRIe8JnHQR74VplH/R+/1KejI9lVqjSx3YSYq6wEY7ihn
-         nXIMf0RRZp+GKrWcns6MvChD1gFxDLWP1q3oF0C2AZbxoNIZjdtpiNrK3dXA4TZNat6s
-         9WSicx2JVc35eyTw/jP63o5rsbvkr2wPtg4HWFb6lRbQpAS9Nq5hk4tFExMPp02yDxq2
-         4e/Q==
-X-Gm-Message-State: AOAM532uy5JvyeytngnvfriA1OAf8OkJOJ8Ite5VS5tavdOdLAO+JkOS
-        D15l/YydWQyWFg6Y8p6Z02TqOESHjyaZwZgXnY3Xvl2W
-X-Google-Smtp-Source: ABdhPJzXP25TjAIXrqLn5eklFu+AuOJ5B3LGYksvktvAiW7q5gA7oRDRXvy3vMHFNxiTYNTdefBo1VkNiyZomeUWXAU=
-X-Received: by 2002:a05:6102:3ec3:: with SMTP id n3mr233627vsv.48.1633515636080;
- Wed, 06 Oct 2021 03:20:36 -0700 (PDT)
+        bh=WAZ6VYVxXpp+/4weV4Gw1QKhKbSTkxuMKBLfGMMXi34=;
+        b=6DJwOikUvH+ZbAuai3K23od/tT0WkvH7y67uT7s+9/5qKae/OJXxyb5RoLYzVtWYiW
+         RiNeCg89KMz/5gtRKwWm9GvTi7mUFoYucIgxJ/VaJ3PVTfOlth+STDSQr6TJvrLGx8wP
+         ly3lZ/tkR4PRVHHgWYqDZkgHBS/vz5mbuOeVHkCvMlAElcNrlsbejQQaCl0rmigSM0kn
+         hT1OHT9xeAzA7pvUDKwgyR9zR2AoKMMissEfQTYglxuB2Vb1kMYasXJPdu/mM9Vzv25c
+         /m+yZqSgQIegm/7sDDGJs23ZumOZyhQRDW3UJJC+w2Sis7Ij44N5E/mNHJgQqSXZPxmP
+         tKuw==
+X-Gm-Message-State: AOAM530QrcqBw1+EpMSRoj/19HbbkFID817YsdfaoHh3a3H8lNlEszpk
+        IkYGpX5YC0IxAJ2gMTnP5rk3c/hUdvPyFdxZo1sfLA==
+X-Google-Smtp-Source: ABdhPJzperz80UwQyac4C188t+tTN5/53/Vnxod/Zh2JotmRFJ6a4lcnzID/HuIDr8OIw9iJs9s2pzC6TK1K9n06Z9E=
+X-Received: by 2002:ab0:3303:: with SMTP id r3mr17099371uao.17.1633517190130;
+ Wed, 06 Oct 2021 03:46:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211006061204.2854-1-sergio.paracuellos@gmail.com>
- <20211006061204.2854-4-sergio.paracuellos@gmail.com> <20211006082903.GZ2048@kadam>
- <CAMhs-H_qb=goRmfhO1P+mt_NKhJFuJgH6a483-6Wk8M9MA1cJQ@mail.gmail.com> <20211006101458.GB2048@kadam>
-In-Reply-To: <20211006101458.GB2048@kadam>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Wed, 6 Oct 2021 12:20:24 +0200
-Message-ID: <CAMhs-H-isGf2Wq9FsnFPtGNK6gwObz39BC1ak-4DBXJjYebcNg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: ralink: make system controller node a reset provider
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-staging@lists.linux.dev, NeilBrown <neil@brown.name>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        John Crispin <john@phrozen.org>
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <20210914155607.14122-2-semen.protsenko@linaro.org> <6ef3e9a3-77e7-48b7-cbcd-c13db50d0cd9@canonical.com>
+In-Reply-To: <6ef3e9a3-77e7-48b7-cbcd-c13db50d0cd9@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 6 Oct 2021 13:46:18 +0300
+Message-ID: <CAPLW+4kexaByx0nfy3q5g9XmrYdLav7E25h8qiO4Z_zmUVbRYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 6, 2021 at 12:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, 15 Sept 2021 at 11:21, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 >
-> On Wed, Oct 06, 2021 at 12:02:12PM +0200, Sergio Paracuellos wrote:
-> > Hi Dan,
+> On 14/09/2021 17:56, Sam Protsenko wrote:
+> > By default if bus clock has no users its "enable count" value is 0. It
+> > might be actually running if it's already enabled in bootloader, but
+> > then in some cases it can be disabled by mistake. For example, such case
+> > was observed when dw_mci_probe() enabled bus clock, then failed to do
+> > something and disabled that bus clock on error path. After that even
+> > attempt to read the 'clk_summary' file in DebugFS freezed forever, as
+> > CMU bus clock ended up being disabled and it wasn't possible to access
+> > CMU registers anymore.
 > >
-> > Thanks for the review. Comments below.
+> > To avoid such cases, CMU driver must increment the ref count for that
+> > bus clock by running clk_prepare_enable(). There is already existing
+> > '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
+> > It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+> > support for runtime PM"). But the clock is actually enabled only in
+> > Exynos5433 clock driver. Let's mimic what is done there in generic
+> > samsung_cmu_register_one() function, so other drivers can benefit from
+> > that `.clk_name' field. As was described above, it might be helpful not
+> > only for PM reasons, but also to prevent possible erroneous clock gating
+> > on error paths.
 > >
-> > On Wed, Oct 6, 2021 at 10:29 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > On Wed, Oct 06, 2021 at 08:12:03AM +0200, Sergio Paracuellos wrote:
-> > > > @@ -398,6 +401,76 @@ static void __init mt7621_clk_init(struct device_node *node)
-> > > >  }
-> > > >  CLK_OF_DECLARE_DRIVER(mt7621_clk, "mediatek,mt7621-sysc", mt7621_clk_init);
-> > > >
-> > > > +struct mt7621_rst {
-> > > > +     struct reset_controller_dev rcdev;
-> > > > +     struct regmap *sysc;
-> > > > +};
-> > > > +
-> > > > +static inline struct mt7621_rst *to_mt7621_rst(struct reset_controller_dev *dev)
-> > >
-> > > No need to mark this as inline.  The compiler should do it automatically
-> > > or it will ignore the inline.
+> > Another way to workaround that issue would be to use CLOCK_IS_CRITICAL
+> > flag for corresponding gate clocks. But that might be not very good
+> > design decision, as we might still want to disable that bus clock, e.g.
+> > on PM suspend.
 > >
-> > Ok, I have other functions to_* with the same inline syntax, that's
-> > why I have added also here. I think I will maintain it to be coherent
-> > and can be removed afterwards with another patch not belonging to this
-> > series.
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/clk/samsung/clk.c | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> > index 1949ae7851b2..da65149fa502 100644
+> > --- a/drivers/clk/samsung/clk.c
+> > +++ b/drivers/clk/samsung/clk.c
+> > @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+> >
+> >       ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+> >
+> > +     /* Keep bus clock running, so it's possible to access CMU registers */
+> > +     if (cmu->clk_name) {
+> > +             struct clk *bus_clk;
+> > +
+> > +             bus_clk = __clk_lookup(cmu->clk_name);
+> > +             if (bus_clk) {
+> > +                     clk_prepare_enable(bus_clk);
+> > +             } else {
+> > +                     pr_err("%s: could not find bus clock %s\n", __func__,
+> > +                            cmu->clk_name);
+> > +             }
+> > +     }
+> > +
 >
-> Consistency is never an important goal.  It's better to be different
-> than to be wrong.
-
-Pretty clear, thanks. Will change this also, then.
-
->
-> regards,
-> dan carpenter
+> Solving this problem in generic way makes sense but your solution is
+> insufficient. You skipped suspend/resume paths and in such case you
+> should remove the Exynos5433-specific code.
 >
 
-Best regards,
-    Sergio Paracuellos
+Keeping core bus clocks always running seems like a separate
+independent feature to me (not related to suspend/resume). It's
+mentioned in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+support for runtime PM") this way:
+
+    "Also for each CMU there is one special parent clock, which has to
+be enabled all the time when any access to CMU registers is being
+done."
+
+Why do you think suspend/resume paths have to be implemented along
+with it? Btw, I didn't add PM ops in clk-exynos850, as PM is not
+implemented on my board yet and I can't test it.
+
+If you are suggesting moving all stuff from exynos5433_cmu_probe()
+into samsung_cmu_register_one(), it would take passing platform_device
+there, and implementing all PM related operations. I guess it's not a
+super easy task, as it would require converting clk-exynos7 to
+platform_driver for instance, and re-testing everything on exynos5433
+and exynos7 boards (which I don't have).
+
+What do you say if I pull that code to clk-exynos850.c instead for v2?
+Refactoring (merging stuff from exynos5433_cmu_probe() into
+samsung_cmu_register_one() ) can be done later, when I add PM ops into
+clk-exynos850.
+
+> Best regards,
+> Krzysztof
