@@ -2,328 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68097C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 01:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124E4C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 02:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF4A61350
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 01:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6A14611CC
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 02:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237252AbhJFBmj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Oct 2021 21:42:39 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:38231 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237195AbhJFBmj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 21:42:39 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1633484448; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=gKc8UBzWBnu5NoWp5EuXhlx8DnpxTw4TSDasUwh0oc8=; b=Uz9IHXaoDOT+gec+izXtxOin5Fm/SKS9R/5qknW308C8pzztfy3IkyiVS2XRtJt25QojBArp
- RebRxeZqtMYlmD45GCdFXNhOz+0TiTPoVJYXTwz/2ODfy6GEw8j/3AJNTr4s13/NitgoxgiQ
- IpKqy+7bDXQp4m7kok5jR4QifK0=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 615cfe97b8ab9916b39cdbb2 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 06 Oct 2021 01:40:39
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CFF82C43619; Wed,  6 Oct 2021 01:40:38 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3628CC4338F;
-        Wed,  6 Oct 2021 01:40:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 3628CC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 3/3] clk: qcom: Add lpass clock controller driver for SC7280
-Date:   Wed,  6 Oct 2021 07:10:16 +0530
-Message-Id: <1633484416-27852-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1633484416-27852-1-git-send-email-tdas@codeaurora.org>
-References: <1633484416-27852-1-git-send-email-tdas@codeaurora.org>
+        id S230273AbhJFCl6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Oct 2021 22:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229908AbhJFCl5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Oct 2021 22:41:57 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41FB3C061749;
+        Tue,  5 Oct 2021 19:40:06 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id t9so4046677lfd.1;
+        Tue, 05 Oct 2021 19:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jBjl2SKIDUWdGGNNCdNQzm0sXvagxduES6I98oCU5Y8=;
+        b=chv8eTFsLZvhIeL+hkzvYI0WTv6C1hQt4IbTe+2xmGQkTHoN3MvZ0Jtjaf5nJ60yH8
+         Qll610va/L7nfzXyHi9q5H18Ow+SshG+eVNj+gSdDfOq3y7RXIcXU17IFSrdKUsqMGDl
+         Bns94mjB430lIX1L+jpyb63pJy7SuBLUq2Zz5gUmkoa+ld9TdVOzDhd/itLWhWEQUYh6
+         w/ij/t35/Agn1d9bEjw9KP0FJwCJbX0TIcoQQ9rohRXEEbOoZw69in/qeyGnWiJ4R/RF
+         +DxmiKiv3q4SpB4Czd0/XkoQ7itREY7Ra4KeHWPZGr13fZLG2O0bWXrsMD3HPPH5buvd
+         Yn0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jBjl2SKIDUWdGGNNCdNQzm0sXvagxduES6I98oCU5Y8=;
+        b=4WZuTi/aFT8t0rIWmsNGXbNserSJoChOakY8uTfD8c8w09DW6C1uX9c7zH0O4LT5h6
+         h80Q8hc8S6aBiPGZ+lhWX14WVOyTvrZfEVeaeTUoJ5/KJf0D6u3FsSatLSMjFGJpICso
+         FBFho8zQsDwUsH/9b9QpmvquzW5dZwDdIZCtuYi69Inkm5G4s+XXQzEIpPPNMnrinYkq
+         gpzl+UNoK4YmYwNmPlylIWBxCk/1GRUFWfnECkvCbk9O6EPAV8Nh/HNqv5txVl/oWMF+
+         Yj6wzFjpXEIbULx1tjyJ6VEw1oftLzUZ+Uni2NVOpXDzjd7MC8+yakgjPWBuOHATu0zq
+         Tv7Q==
+X-Gm-Message-State: AOAM5332YZQX7BPuAOuuaHrL9W/Gy61+C/YFzKU72Q1m4YAMBi8dnrdg
+        mOS2Q8XKGdkNNoZJBEjbiXo=
+X-Google-Smtp-Source: ABdhPJz5nDf5e1lLckhTPfcq8ws67JWhBNrPmg70PycmaRWuWT397hKxpbU2YgDLYDLc8supNRztWA==
+X-Received: by 2002:a2e:91d4:: with SMTP id u20mr25686467ljg.81.1633488004426;
+        Tue, 05 Oct 2021 19:40:04 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
+        by smtp.googlemail.com with ESMTPSA id o19sm2137695lfg.68.2021.10.05.19.40.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Oct 2021 19:40:03 -0700 (PDT)
+Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+References: <20210926224058.1252-1-digetx@gmail.com>
+ <20210926224058.1252-7-digetx@gmail.com>
+ <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com>
+ <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
+ <CAPDyKFreK7976PJL-1zySoza_yXM7rMQ64aODWUZ+U3L-uCa0w@mail.gmail.com>
+ <4bdba8a2-4b9b-ed7d-e6ca-9218d8200a85@gmail.com>
+ <74a47158-e2e4-5fd0-3f37-0b50d4ead4d9@gmail.com>
+Message-ID: <8597d539-311b-4f04-481c-b48e6a5a882a@gmail.com>
+Date:   Wed, 6 Oct 2021 05:40:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <74a47158-e2e4-5fd0-3f37-0b50d4ead4d9@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the lpass clock controller found on SC7280 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
+06.10.2021 01:43, Dmitry Osipenko пишет:
+> 06.10.2021 01:19, Dmitry Osipenko пишет:
+> ...
+>> I reproduced the OFF problem by removing the clk prepare/unprepare from
+>> the suspend/resume of the clk driver and making some extra changes to
+>> clock tree topology and etc to trigger the problem on Nexus 7.
+>>
+>> tegra-pmc 7000e400.pmc: failed to turn off PM domain heg: -13
+>>
+>> It happens from genpd_suspend_noirq() -> tegra_genpd_power_off() -> clk
+>> -> GENPD -> I2C -> runtime-pm.
+>>
+>> -13 is EACCES, it comes from the runtime PM of I2C device. RPM is
+>> prohibited/disabled during late (NOIRQ) suspend by the drivers core.
+> 
+> My bad, I double-checked and it's not I2C RPM that is failing now, but
+> the clock's RPM [1], which is also unavailable during NOIRQ.
+> 
+> [1]
+> https://elixir.free-electrons.com/linux/v5.15-rc4/source/drivers/clk/clk.c#L116
+> 
+> Previously it was I2C RPM that was failing in a similar way, but code
+> changed a tad since that time.
+> 
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   8 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/lpasscc-sc7280.c | 216 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 225 insertions(+)
- create mode 100644 drivers/clk/qcom/lpasscc-sc7280.c
+Just in case, I checked that the suspension order isn't somehow the
+source of the problem by adding links to device tree in order to always
+suspend clocks after the rest of devices and still GENPD gets -EACCESS
+from clk_pm_runtime_get().
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index f9c36a1..622cde4 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -401,6 +401,14 @@ config SC_GPUCC_7280
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
+RPM is disabled by dpm_suspend_late(), which is invoked before
+dpm_suspend_noirq() [1]. Hence RPM is unavailable in NOIRQ phase in any
+case.
 
-+config SC_LPASSCC_7280
-+	tristate "SC7280 Low Power Audio Subsystem (LPASS) Clock Controller"
-+	select SC_GCC_7280
-+	help
-+	  Support for the LPASS clock controller on SC7280 devices.
-+	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
-+	  controller to reset the LPASS subsystem.
-+
- config SC_LPASS_CORECC_7180
- 	tristate "SC7180 LPASS Core Clock Controller"
- 	select SC_GCC_7180
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 9825ef8..8b9b01e 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_SC_GCC_7280) += gcc-sc7280.o
- obj-$(CONFIG_SC_GCC_8180X) += gcc-sc8180x.o
- obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
- obj-$(CONFIG_SC_GPUCC_7280) += gpucc-sc7280.o
-+obj-$(CONFIG_SC_LPASSCC_7280) += lpasscc-sc7280.o
- obj-$(CONFIG_SC_LPASS_CORECC_7180) += lpasscorecc-sc7180.o
- obj-$(CONFIG_SC_MSS_7180) += mss-sc7180.o
- obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
-diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-new file mode 100644
-index 0000000..89f1ad6
---- /dev/null
-+++ b/drivers/clk/qcom/lpasscc-sc7280.c
-@@ -0,0 +1,216 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,lpass-sc7280.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+
-+static struct clk_branch lpass_q6ss_ahbm_clk = {
-+	.halt_reg = 0x1c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbm_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_q6ss_ahbs_clk = {
-+	.halt_reg = 0x20,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x20,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbs_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
-+	.halt_reg = 0x0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_top_cc_lpi_q6_axim_hs_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_core_clk = {
-+	.halt_reg = 0x20,
-+	/* CLK_OFF would not toggle until LPASS is out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x20,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_core_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_xo_clk = {
-+	.halt_reg = 0x38,
-+	/* CLK_OFF would not toggle until LPASS is out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x38,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_xo_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_sleep_clk = {
-+	.halt_reg = 0x3c,
-+	/* CLK_OFF would not toggle until LPASS is out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x3c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config lpass_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *lpass_cc_sc7280_clocks[] = {
-+	[LPASS_Q6SS_AHBM_CLK] = &lpass_q6ss_ahbm_clk.clkr,
-+	[LPASS_Q6SS_AHBS_CLK] = &lpass_q6ss_ahbs_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_cc_sc7280_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_cc_sc7280_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_cc_sc7280_clocks),
-+};
-+
-+static struct clk_regmap *lpass_cc_top_sc7280_clocks[] = {
-+	[LPASS_TOP_CC_LPI_Q6_AXIM_HS_CLK] =
-+				&lpass_top_cc_lpi_q6_axim_hs_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_cc_top_sc7280_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_cc_top_sc7280_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_cc_top_sc7280_clocks),
-+};
-+
-+static struct clk_regmap *lpass_qdsp6ss_sc7280_clocks[] = {
-+	[LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
-+	[LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
-+	[LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_qdsp6ss_sc7280_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_qdsp6ss_sc7280_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sc7280_clocks),
-+};
-+
-+static int lpass_cc_sc7280_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_clk_create(&pdev->dev);
-+	if (ret)
-+		goto disable_pm_runtime;
-+
-+	ret = pm_clk_add(&pdev->dev, "iface");
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-+		goto destroy_pm_clk;
-+	}
-+
-+	lpass_regmap_config.name = "qdsp6ss";
-+	desc = &lpass_qdsp6ss_sc7280_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 0, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	lpass_regmap_config.name = "top_cc";
-+	desc = &lpass_cc_top_sc7280_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 1, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	lpass_regmap_config.name = "cc";
-+	desc = &lpass_cc_sc7280_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 2, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	return 0;
-+
-+destroy_pm_clk:
-+	pm_clk_destroy(&pdev->dev);
-+
-+disable_pm_runtime:
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id lpass_cc_sc7280_match_table[] = {
-+	{ .compatible = "qcom,sc7280-lpasscc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpass_cc_sc7280_match_table);
-+
-+static struct platform_driver lpass_cc_sc7280_driver = {
-+	.probe		= lpass_cc_sc7280_probe,
-+	.driver		= {
-+		.name	= "sc7280-lpasscc",
-+		.of_match_table = lpass_cc_sc7280_match_table,
-+	},
-+};
-+
-+static int __init lpass_cc_sc7280_init(void)
-+{
-+	return platform_driver_register(&lpass_cc_sc7280_driver);
-+}
-+subsys_initcall(lpass_cc_sc7280_init);
-+
-+static void __exit lpass_cc_sc7280_exit(void)
-+{
-+	platform_driver_unregister(&lpass_cc_sc7280_driver);
-+}
-+module_exit(lpass_cc_sc7280_exit);
-+
-+MODULE_DESCRIPTION("QTI LPASS_CC SC7280 Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+[1]
+https://elixir.bootlin.com/linux/v5.15-rc4/source/kernel/power/suspend.c#L399
