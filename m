@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD86FC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C62CC43217
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFB3861075
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59E3D61075
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238864AbhJFN00 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 09:26:26 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38176
+        id S238404AbhJFN0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 09:26:48 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38182
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238927AbhJFN0I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 09:26:08 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        by vger.kernel.org with ESMTP id S238845AbhJFN0W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 09:26:22 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5ADAE3FFF9
-        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 13:24:07 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 486AB3FFF6
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 13:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633526647;
-        bh=B1LQlQ7B/5D6Dgl3qfPf6DLDJ9sR5D/GqEBR3sbuvCA=;
+        s=20210705; t=1633526651;
+        bh=ot49W0BLovtQBZiy0mCJysagJRdZUZ8sfEESkGMXTWw=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=jsfFbKMX60jl8QpQQwRUzQjcUegRFgIyCLooYRQNcplrTwJXhQMMibfNLZf6wmaRn
-         T2BvhQyCwXGVlEfH53MX5FtP03JljzY1WmAz/IpKP/+Sf+eJ2Lh1hfqrwrJeRtzkPn
-         x+YOlQVLYCaSUgWLFtDY30HHpfRBgjAIBLLGzhVeJcuG0UYqpQkJ1EVJPCUP3ehz4b
-         Mak33XiNVUH8cZRcDIihTr07Dfli7Vyem5Wg8TClwSTCq1BUewp1Avuk1P8dyIhDWV
-         3fTFU+3XH37LCMaz5k5PtzHMIsS9/txdIFMS1CV0GykMHSWVFhtDeixNwrB9j3XOmC
-         F+XlC9vEAjAlg==
-Received: by mail-lf1-f71.google.com with SMTP id v2-20020ac25582000000b003fd1c161a31so1956131lfg.15
-        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 06:24:07 -0700 (PDT)
+        b=cFhBn7f8Zc5RheouS0w9GCrGxIY7zdUSAhsn6twZbVnxXSphO42tE9S61H/y6S8Qt
+         CYInvLghXYy34oWZfElvLPlLwIO0S8Yo9YsdruTvu2Ao0qVKjy5DhGb/lPPFkVn2QJ
+         X3AALXzM9t9hpA6JjDcSwgaWh5nxLxUkkZAYjFe7ZMIVKo+WEsvJfj4COsQbl58mII
+         JCaH5P07vsVgvKcMJEin+0BvokieXcF1DB1IS/+XqBXY85uwB2OKnxUkap5cbFwKJq
+         GCaGckxut0JB24WKxI5BmITe4xfRU1p+OWtjtwt3gI1kPYMIdMT+dF0evcO/pJnB1T
+         jH9B2nkd7U2Sg==
+Received: by mail-lf1-f72.google.com with SMTP id t14-20020ac24c0e000000b003fd392f9a5eso1970727lfq.13
+        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 06:24:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=B1LQlQ7B/5D6Dgl3qfPf6DLDJ9sR5D/GqEBR3sbuvCA=;
-        b=xBCNSB2+t/q5wJNXu9a5dfqzIaBxhxDUUbNDzXpqTgmKCTdXoMrwzNollEOxeQ5PEv
-         RVKeyJVwzuHNGY6D+G1sKh3Dm4Ev2DF3a5NNOvxPurJ0sKs81N2L1YWNEDdZ5rDYgtsW
-         Ay0HXsWMJ+MawHqu7/aUiXbXyblsgBGf8d5KDZ9zusdEI6oouEHpUYZ2iIi6YuFtbdeV
-         c43v2mHa2mIpQIkXS7JCPj3CNOdpQgPP7Mu1PsvngJtQ5LLywpyYE6RLsN1S2tR2cWnw
-         aPK+T1R3Ylx+It6wKFVdQP/BbX+YAdz+CCXQCBNnDILFI6TbNZeZZ/LEs6uXURSkeqP5
-         w+Hg==
-X-Gm-Message-State: AOAM533H8p/ji1nE378Ef2ebMaUAaU5n+33GI/+OGmvCNo5bDxW6wl0i
-        Js3ocPoXdbhS9Q40tXGeXrT/7OBpnIjASYZ+X8OIA3htt6HTC92tnKdf5L/UmbH1bnZ6ItgK2eQ
-        zaXoC0UAZ9SqGE9bVTvhFjl11WqkKGBFvuvq3BQ==
-X-Received: by 2002:a05:651c:289:: with SMTP id b9mr29080004ljo.465.1633526646594;
-        Wed, 06 Oct 2021 06:24:06 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzjGnDUmiuOQqsLWleF3DPjUQZQ+zoUaTETMtxV4PHL/vfPb8YsGjZKZ+FazY2lLxLzjB9iYA==
-X-Received: by 2002:a05:651c:289:: with SMTP id b9mr29079974ljo.465.1633526646371;
-        Wed, 06 Oct 2021 06:24:06 -0700 (PDT)
+        bh=ot49W0BLovtQBZiy0mCJysagJRdZUZ8sfEESkGMXTWw=;
+        b=wa/+eK8N4dBg6AEbs023fw7J+bVm7PiKk6G30bPMjXNTzMcK4dbqJsxYvUnjlaD16P
+         167QiB0NJIgPesWs5uYTfBdvszNuK2oilbhPTenZ7VlXRb8VGCymaMyzJsvFKezuiDi5
+         RNrfEkkNdEB1sJ9A25gjKzER/FMDIb64eq2oNt02eKfoUxol9xbHYAvVcj58dXW/+IO8
+         ahEf/KVhfZdxZ7LQp/PdDyaa0/0IWq4JaUSZc21EgsC0Ibn4AcUUirSpQJXKxtZFTFzz
+         bf2p5KkdF0aM0hKq9lajtaSvl8uww7UO4ki+yws4QE5odRDSvUny3Hu//JyqWXnOrrPg
+         LGOA==
+X-Gm-Message-State: AOAM53371UNNrHL5xnYbzFkULlP+KYvI3K5y8c7lBXyPj6YzGRNc5h4g
+        0r8YcqPq+iwQlc4/FTyyi8TQE06dUliImFlUZ2qde8FjLtVThWWjOjWgkyJm/4hfBP88OZxq60d
+        ZKzfwGNbpNPRHhUCb19CyEZpFg3PGGwylcDcl0Q==
+X-Received: by 2002:ac2:4e6b:: with SMTP id y11mr10008317lfs.439.1633526650530;
+        Wed, 06 Oct 2021 06:24:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxRxWfeaApDlIsaaR/SPlEtiRdyXJSqfeqYb5MncOtQ/2qAc4kIZjgn5flRv4cH2XjMqUQOKw==
+X-Received: by 2002:ac2:4e6b:: with SMTP id y11mr10008289lfs.439.1633526650353;
+        Wed, 06 Oct 2021 06:24:10 -0700 (PDT)
 Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y12sm2002819lfg.115.2021.10.06.06.24.05
+        by smtp.gmail.com with ESMTPSA id y12sm2002819lfg.115.2021.10.06.06.24.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 06:24:06 -0700 (PDT)
+        Wed, 06 Oct 2021 06:24:09 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -71,9 +71,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 05/10] regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
-Date:   Wed,  6 Oct 2021 15:23:19 +0200
-Message-Id: <20211006132324.76008-6-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 08/10] dt-bindings: mfd: samsung,s2mpa01: convert to dtschema
+Date:   Wed,  6 Oct 2021 15:23:22 +0200
+Message-Id: <20211006132324.76008-9-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
 References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
@@ -83,115 +83,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the regulators of Samsung S2MPA01 PMIC to DT schema format.
+Convert the MFD part of Samsung S2MPA01 PMIC to DT schema format.
+Previously the bindings were mostly in mfd/samsung,sec-core.txt.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/regulator/samsung,s2mpa01.txt    | 79 -------------------
- .../bindings/regulator/samsung,s2mpa01.yaml   | 62 +++++++++++++++
- 2 files changed, 62 insertions(+), 79 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+ .../bindings/mfd/samsung,s2mpa01.yaml         | 91 +++++++++++++++++++
+ 1 file changed, 91 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
 
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-deleted file mode 100644
-index bae3c7f838cf..000000000000
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-+++ /dev/null
-@@ -1,79 +0,0 @@
--Binding for Samsung S2MPA01 regulator block
--===========================================
--
--This is a part of device tree bindings for S2M family multi-function devices.
--More information can be found in bindings/mfd/sec-core.txt file.
--
--The S2MPA01 device provide buck and LDO regulators.
--
--To register these with regulator framework instantiate under main device node
--a sub-node named "regulators" with more sub-nodes for each regulator using the
--common regulator binding documented in:
-- - Documentation/devicetree/bindings/regulator/regulator.txt
--
--
--Names of regulators supported by S2MPA01 device:
--	- LDOn
--		  - valid values for n are 1 to 26
--		  - Example: LDO1, LD02, LDO26
--	- BUCKn
--		  - valid values for n are 1 to 10.
--		  - Example: BUCK1, BUCK2, BUCK9
--Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
--as per the datasheet of device.
--
--
--Optional properties of buck regulator nodes under "regulators" sub-node:
-- - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
--   (default), 25000, or 50000. May be 0 for disabling the ramp delay on
--   BUCK{1,2,3,4}.
--
--   In the absence of the regulator-ramp-delay property, the default ramp
--   delay will be used.
--
--   Note: Some bucks share the ramp rate setting i.e. same ramp value
--   will be set for a particular group of bucks so provide the same
--   regulator-ramp-delay value for them.
--   Groups sharing ramp rate:
--    - buck{1,6},
--    - buck{2,4},
--    - buck{8,9,10}.
--
--Example:
--
--	s2mpa01_pmic@66 {
--		compatible = "samsung,s2mpa01-pmic";
--		reg = <0x66>;
--
--		regulators {
--			ldo1_reg: LDO1 {
--				regulator-name = "VDD_ALIVE";
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1000000>;
--			};
--
--			ldo2_reg: LDO2 {
--				regulator-name = "VDDQ_MMC2";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-always-on;
--			};
--
--			buck1_reg: BUCK1 {
--				regulator-name = "vdd_mif";
--				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt = <1350000>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			buck2_reg: BUCK2 {
--				regulator-name = "vdd_arm";
--				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt = <1350000>;
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-ramp-delay = <50000>;
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
 new file mode 100644
-index 000000000000..0627dec513da
+index 000000000000..017befdf8adb
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
-@@ -0,0 +1,62 @@
++++ b/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
+@@ -0,0 +1,91 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/regulator/samsung,s2mpa01.yaml#
++$id: http://devicetree.org/schemas/mfd/samsung,s2mpa01.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung S2MPA01 Power Management IC regulators
++title: Samsung S2MPA01 Power Management IC
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
@@ -200,53 +114,82 @@ index 000000000000..0627dec513da
 +  This is a part of device tree bindings for S2M and S5M family of Power
 +  Management IC (PMIC).
 +
-+  The S2MPA01 provides buck and LDO regulators.
++  The Samsung S2MPA01 is a Power Management IC which includes voltage
++  and current regulators, RTC, clock outputs and other sub-blocks.
 +
-+  See also Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml for
-+  additional information and example.
++properties:
++  compatible:
++    const: samsung,s2mpa01-pmic
 +
-+patternProperties:
-+  # 26 LDOs
-+  "^LDO([1-9]|1[0-9]|2[0-6])$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
++  interrupts:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  regulators:
++    $ref: ../regulator/samsung,s2mpa01.yaml
 +    description:
-+      Properties for single LDO regulator.
++      List of child nodes that specify the regulators.
 +
-+    required:
-+      - regulator-name
++  wakeup-source: true
 +
-+  # 10 bucks
-+  "^BUCK([1-9]|10)$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for single BUCK regulator.
-+
-+    properties:
-+      regulator-ramp-delay:
-+        enum: [0, 6250, 12500, 25000, 50000]
-+        default: 12500
-+        description: |
-+          May be 0 for disabling the ramp delay on BUCK{1,2,3,4}.
-+
-+          In the absence of the regulator-ramp-delay property, the default ramp
-+          delay will be used.
-+
-+          Note: Some bucks share the ramp rate setting i.e. same ramp value
-+          will be set for a particular group of bucks so provide the same
-+          regulator-ramp-delay value for them.
-+          Groups sharing ramp rate:
-+            * buck{1,6},
-+            * buck{2,4},
-+            * buck{8,9,10}.
-+
-+    required:
-+      - regulator-name
++required:
++  - compatible
++  - reg
++  - regulators
 +
 +additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@66 {
++            compatible = "samsung,s2mpa01-pmic";
++            reg = <0x66>;
++
++            regulators {
++                ldo1_reg: LDO1 {
++                    regulator-name = "VDD_ALIVE";
++                    regulator-min-microvolt = <1000000>;
++                    regulator-max-microvolt = <1000000>;
++                };
++
++                ldo2_reg: LDO2 {
++                    regulator-name = "VDDQ_MMC2";
++                    regulator-min-microvolt = <2800000>;
++                    regulator-max-microvolt = <2800000>;
++                    regulator-always-on;
++                };
++
++                // ...
++
++                buck1_reg: BUCK1 {
++                    regulator-name = "vdd_mif";
++                    regulator-min-microvolt = <950000>;
++                    regulator-max-microvolt = <1350000>;
++                    regulator-always-on;
++                    regulator-boot-on;
++                };
++
++                buck2_reg: BUCK2 {
++                    regulator-name = "vdd_arm";
++                    regulator-min-microvolt = <950000>;
++                    regulator-max-microvolt = <1350000>;
++                    regulator-always-on;
++                    regulator-boot-on;
++                    regulator-ramp-delay = <50000>;
++                };
++
++                // ...
++            };
++        };
++    };
 -- 
 2.30.2
 
