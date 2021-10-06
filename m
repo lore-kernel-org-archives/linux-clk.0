@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7DBC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF47C433FE
 	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE36661166
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C3F76125F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238409AbhJFLZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 07:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50530 "EHLO
+        id S238393AbhJFLZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 07:25:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238286AbhJFLZC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:02 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E02AC061749;
-        Wed,  6 Oct 2021 04:23:10 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id v17so7734220wrv.9;
-        Wed, 06 Oct 2021 04:23:10 -0700 (PDT)
+        with ESMTP id S238270AbhJFLZE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:04 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE2EC061749;
+        Wed,  6 Oct 2021 04:23:12 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id r18so7781817wrg.6;
+        Wed, 06 Oct 2021 04:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lMW4foefc6bEFLqLQ2H0asFN0IF8jIbnNoNDfv9QTpo=;
-        b=fqdoZhMJ2rxSvh2lAg5TQLQ6khL0EhpVeNi4HptuzUZ1DC3nJNGIPgvplHbMR76SeG
-         tE+zzecpcLnJU5QQF05MnQrHtQbUemmbu1R6HLp8c9S47FR70J57K6ovtyOM65f8M6ih
-         PFZUHsOON6/HLhhmHOHAr6wdjR+GkNljvpSXtIm1QpL5Gti0XljT56KRRtf/G6RsqTFB
-         y6u3ydnPQpjnlIQA2q/9pnH5T2uqARPPc5mY7feGiQRBaP4xeVtbGGn6SjmKuoCTtx06
-         HVk7gdoqFC7wgyRkwpLkqY46OkBcZh0OnWuNb1pJCr8W6FKR4/G3z7ty99I7PY2w1VYP
-         KZfQ==
+        bh=Nw+gRBKSlBdLJR5JCN9jZoWbWkQnZuEzAoNBrLU9lmY=;
+        b=Ww78qLVzY61h+k6gNMOOU3DRQKzM8hQZlLDGESLtWFcvQgE8ZSoINAuxX0WrsdG9N1
+         aR14p6vPJf/Fn0UL48+vAS3qfIXEXvGBDjH2WXyfFAJ+7Es0Qk1IcM8ySpjoVtgg2+Ws
+         ayPZkEpeZ/sdDSGatogPb4ZQA1wAqb7GIYYW1kIDKrCjjrsZ3GF5G3p3QNFfaWnc98u5
+         4rgMQdYL6a4O09J+JexBm1PK8ASFcjrR+nad9FTNPM3/W0xuB2VGSRcWR2eohrWIEFjB
+         spHP6Z+aLVWu+ncNPEGMXVpDS0yNN3qi7QtnChYjaRj4W/9QMxrlF7+4nWkBIjO+Y2Jc
+         KUZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lMW4foefc6bEFLqLQ2H0asFN0IF8jIbnNoNDfv9QTpo=;
-        b=2PdPYCZXndpd/kVPuaEpiXvIc2XfJxjeokS0LMTzd9JkDrCF4VdncZZuUKL6y/HqRV
-         2omdA4X6/W8omr9Wr0L2DtSMfvq67eHZcFcMfKuMiH7bHya6fcBBU4SzWWnbBPnXSUVX
-         AReD+6LfG5Xmsebzxi0Uoymgx2lmlgtcVAtlAEyUCsckEtw4Eu+pgkgpNnfYw+tyGz73
-         IcyzZnNaTbW31CkCPEZZpAbcrXDKCC01RTBIJKtLd7tdQUCBjxIbBGq2isIxbKLX21L5
-         fG04HdVesEx0SLz4Ch5iLuv45uZQbuyCUglVFMqwYsTuTIs794a4Mdx4i52DDpGEPUKs
-         i2Wg==
-X-Gm-Message-State: AOAM532K/33rfdzmrL9urJ3VBhfE1Pp04/8364MgTQEUYUYq9eKOH5NA
-        rO4NKHUsf+4x+fHp0MRS1WSFzJLQgzA=
-X-Google-Smtp-Source: ABdhPJy9s/UAVv/L8Zfm9yvqWMej5Q+dXlji9BY4WfNy30A6S0GHmbTvPS+EYEKibZtyWtSJQgEwGg==
-X-Received: by 2002:a7b:c954:: with SMTP id i20mr9314376wml.126.1633519388877;
-        Wed, 06 Oct 2021 04:23:08 -0700 (PDT)
+        bh=Nw+gRBKSlBdLJR5JCN9jZoWbWkQnZuEzAoNBrLU9lmY=;
+        b=Ebxy2++ydNibY4T9FL+KVF1BR9oC3Z7SAexeuigqo4RocK7ItYFpPTF1WeCfeU4x7t
+         lftZpPH6UpX9cKjwWlV4VgSUj8vqf6aHFxyl22B9Uy1m5x1D1c79r3eOBd59eXkaZFXv
+         mnZUcxWCqByPrCZdkuWf/tu29Rb365t8l2aGvAU1I59MK/kLO47YnjjbLnP3OQ4oSQSo
+         H8mpNnG1MSIaCRZ3WQRiFOba0y2jcv6g8dgW0G+OhLZU3K18nbmxJIrakoySZFXmF8Py
+         0Q8eBgncC9zIS5SFk4PZF0ltylL5ajHDjSevYed02GdyErTMVgIoZE3FFXd+jsbQtQt+
+         +vkQ==
+X-Gm-Message-State: AOAM530IEBeA2+qURLItcqCiAbtWsxX1lS4M6zaWXUvY8Uj5DpbsNiAR
+        rkrxmF8OrTWA3wGa7OdFgjM=
+X-Google-Smtp-Source: ABdhPJyYJhfhOzDvyH7laJTeI5RmyTJlxWWlF2G/04PM0PpJLMb9zaJ286MTQc0nux8IxL8UoEUatQ==
+X-Received: by 2002:a05:600c:4ec6:: with SMTP id g6mr9304916wmq.95.1633519390776;
+        Wed, 06 Oct 2021 04:23:10 -0700 (PDT)
 Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.08
+        by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.09
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Oct 2021 04:23:08 -0700 (PDT)
+        Wed, 06 Oct 2021 04:23:10 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, gregkh@linuxfoundation.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org,
         linux-staging@lists.linux.dev, neil@brown.name,
         linux-kernel@vger.kernel.org, john@phrozen.org
-Subject: [PATCH v2 1/4] dt-bindings: reset: add dt binding header for Mediatek MT7621 resets
-Date:   Wed,  6 Oct 2021 13:23:03 +0200
-Message-Id: <20211006112306.4691-2-sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 3/4] clk: ralink: make system controller node a reset provider
+Date:   Wed,  6 Oct 2021 13:23:05 +0200
+Message-Id: <20211006112306.4691-4-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
 References: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
@@ -68,57 +68,127 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add dt binding header for resets lines in Mediatek MT7621 SoCs.
+MT7621 system controller node is already providing the clocks for the whole
+system but must also serve as a reset provider. Hence, add reset controller
+related code to the clock driver itself.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- include/dt-bindings/reset/mt7621-reset.h | 37 ++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 include/dt-bindings/reset/mt7621-reset.h
+ drivers/clk/ralink/clk-mt7621.c | 79 +++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/include/dt-bindings/reset/mt7621-reset.h b/include/dt-bindings/reset/mt7621-reset.h
-new file mode 100644
-index 000000000000..7572c6b41453
---- /dev/null
-+++ b/include/dt-bindings/reset/mt7621-reset.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2021 Sergio Paracuellos
-+ * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+ */
+diff --git a/drivers/clk/ralink/clk-mt7621.c b/drivers/clk/ralink/clk-mt7621.c
+index a2c045390f00..7a474bb4c877 100644
+--- a/drivers/clk/ralink/clk-mt7621.c
++++ b/drivers/clk/ralink/clk-mt7621.c
+@@ -11,14 +11,17 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <dt-bindings/clock/mt7621-clk.h>
++#include <dt-bindings/reset/mt7621-reset.h>
+ 
+ /* Configuration registers */
+ #define SYSC_REG_SYSTEM_CONFIG0         0x10
+ #define SYSC_REG_SYSTEM_CONFIG1         0x14
+ #define SYSC_REG_CLKCFG0		0x2c
+ #define SYSC_REG_CLKCFG1		0x30
++#define SYSC_REG_RESET_CTRL		0x34
+ #define SYSC_REG_CUR_CLK_STS		0x44
+ #define MEMC_REG_CPU_PLL		0x648
+ 
+@@ -398,6 +401,76 @@ static void __init mt7621_clk_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE_DRIVER(mt7621_clk, "mediatek,mt7621-sysc", mt7621_clk_init);
+ 
++struct mt7621_rst {
++	struct reset_controller_dev rcdev;
++	struct regmap *sysc;
++};
 +
-+#ifndef DT_BINDING_MT7621_RESET_H
-+#define DT_BINDING_MT7621_RESET_H
++static struct mt7621_rst *to_mt7621_rst(struct reset_controller_dev *dev)
++{
++	return container_of(dev, struct mt7621_rst, rcdev);
++}
 +
-+#define MT7621_RST_SYS		0
-+#define MT7621_RST_MCM		2
-+#define MT7621_RST_HSDMA	5
-+#define MT7621_RST_FE		6
-+#define MT7621_RST_SPDIFTX	7
-+#define MT7621_RST_TIMER	8
-+#define MT7621_RST_INT		9
-+#define MT7621_RST_MC		10
-+#define MT7621_RST_PCM		11
-+#define MT7621_RST_PIO		13
-+#define MT7621_RST_GDMA		14
-+#define MT7621_RST_NFI		15
-+#define MT7621_RST_I2C		16
-+#define MT7621_RST_I2S		17
-+#define MT7621_RST_SPI		18
-+#define MT7621_RST_UART1	19
-+#define MT7621_RST_UART2	20
-+#define MT7621_RST_UART3	21
-+#define MT7621_RST_ETH		23
-+#define MT7621_RST_PCIE0	24
-+#define MT7621_RST_PCIE1	25
-+#define MT7621_RST_PCIE2	26
-+#define MT7621_RST_AUX_STCK	28
-+#define MT7621_RST_CRYPTO	29
-+#define MT7621_RST_SDXC		30
-+#define MT7621_RST_PPE		31
++static int mt7621_assert_device(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct mt7621_rst *data = to_mt7621_rst(rcdev);
++	struct regmap *sysc = data->sysc;
 +
-+#endif /* DT_BINDING_MT7621_RESET_H */
++	if (id == MT7621_RST_SYS)
++		return -EINVAL;
++
++	return regmap_update_bits(sysc, SYSC_REG_RESET_CTRL, BIT(id), BIT(id));
++}
++
++static int mt7621_deassert_device(struct reset_controller_dev *rcdev,
++				  unsigned long id)
++{
++	struct mt7621_rst *data = to_mt7621_rst(rcdev);
++	struct regmap *sysc = data->sysc;
++
++	if (id == MT7621_RST_SYS)
++		return -EINVAL;
++
++	return regmap_update_bits(sysc, SYSC_REG_RESET_CTRL, BIT(id), 0);
++}
++
++static int mt7621_reset_device(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	int ret;
++
++	ret = mt7621_assert_device(rcdev, id);
++	if (ret < 0)
++		return ret;
++
++	return mt7621_deassert_device(rcdev, id);
++}
++
++static const struct reset_control_ops reset_ops = {
++	.reset = mt7621_reset_device,
++	.assert = mt7621_assert_device,
++	.deassert = mt7621_deassert_device
++};
++
++static int mt7621_reset_init(struct device *dev, struct regmap *sysc)
++{
++	struct mt7621_rst *rst_data;
++
++	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
++	if (!rst_data)
++		return -ENOMEM;
++
++	rst_data->sysc = sysc;
++	rst_data->rcdev.ops = &reset_ops;
++	rst_data->rcdev.owner = THIS_MODULE;
++	rst_data->rcdev.nr_resets = 32;
++	rst_data->rcdev.of_reset_n_cells = 1;
++	rst_data->rcdev.of_node = dev_of_node(dev);
++
++	return devm_reset_controller_register(dev, &rst_data->rcdev);
++}
++
+ static int mt7621_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -424,6 +497,12 @@ static int mt7621_clk_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = mt7621_reset_init(dev, priv->sysc);
++	if (ret) {
++		pr_err("Could not init reset controller\n");
++		return ret;
++	}
++
+ 	count = ARRAY_SIZE(mt7621_clks_base) +
+ 		ARRAY_SIZE(mt7621_fixed_clks) + ARRAY_SIZE(mt7621_gates);
+ 	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
 -- 
 2.33.0
 
