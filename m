@@ -2,203 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBB8C43219
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B59C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13F9C611B0
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08DE161056
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238482AbhJFLZO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 07:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
+        id S238357AbhJFLof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 07:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238387AbhJFLZF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:05 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC94C06174E;
-        Wed,  6 Oct 2021 04:23:13 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id o20so7760971wro.3;
-        Wed, 06 Oct 2021 04:23:13 -0700 (PDT)
+        with ESMTP id S238339AbhJFLoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:44:32 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3162C061755
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 04:42:39 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id n8so9082517lfk.6
+        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 04:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ffRV1lgCZH4SUcwisTjt7KS+V4NY1XyWgQczanLiSKI=;
-        b=AmO/WdSrVVzmz3eIuRFZdU6tZOPf6qAcPLEIznqiulf/Dc+r9+9GMsBc4J97s54N0B
-         2vnRSQtGx8ul5J7YfgVz53mFmMcbkdfQIM3wn/rtJ60nBjgTFOsQ7arVAe/Dk8QmHB/4
-         ox6ToBZIBm2pTvIR3uBxM1+mVhOb9W1dHS56XHwOaT3i0Y/ln2PEY+fA3iB41tsLctXA
-         7zkm+dU0GMBgssQLHXyYfT9nP7WortWEUuFPlsT+6JhzKS+gnnaQSym818qCMMqobTdK
-         bR0NTjywDvjtNMLN0/OtkKmobwikgYGXEdgDEJpbK4FRE2QE5hLE2D1++WFZJoVyzvG8
-         YeSQ==
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8B8LgJqjXvPVN+8wmzLYmPH7BuhH8dFjk677P8yjNhU=;
+        b=eVqiiFT5cCAsA+y2800EvVS6q/KgWIVvXr+fmYCCeivoYtPO77RPBze9rin8lhEfE5
+         3DaA/xGWEF+9W8AIRSdZ3/YT204dCyIOpS83R1NWnQsI349pkm2s6rpXRy27h2bsngwJ
+         8OImeTnH9hVSlFLFNrVTjhilNR+/mfc8FGT3ohUxU2qM2GBp48raOMoyzelfp/hEk6Q1
+         giwyvM2H7GvpFXYGgsdXbOQ7J5P1/ffokqQ5m0v58aTVxH+GCLaIIiCB+nbYZ/79Ubc2
+         hoS+55R71fP9fRQ0hIanaOlqNhYnbWyiX2ZyZTmYtxtIf/2yjoTe+2vyAeRSdry0uxq8
+         q8Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ffRV1lgCZH4SUcwisTjt7KS+V4NY1XyWgQczanLiSKI=;
-        b=aERg8/pDMamwYqMsCDJZA+jaTzLk3JXtJqxyTf9qM14qCsqDM/pcqq/pVPSwFlgl0N
-         zKPrNy5PSsXAvPPkSzPKReKSuvxQtj1Pim0Tc/GMeYSjZpR1esy1BQOkHjMOWVCBSITa
-         0QE3uQKhBLvw4sH25bwRDYxtEcDluWmEuWgP7813e2AIASD/gH9nzD3hFezDVDmVE436
-         ntCy5FFPpDumuXEZEY8iKDqzxUIUBL78mjaY0iUG0B34kbN2GMY0T1hDT57s7dU/RPlA
-         PCQK24iCRl2k8+JQqo9dg4t/HZaYH+TmVrgKEMJiaISUQHOVCdEjrNO2u/xpG4ub3Dm2
-         WGGA==
-X-Gm-Message-State: AOAM532EnbAgyfZww5pB9qv4C1K1J1jqULFCtyEk7hTdRoeKAD1DgV2P
-        d5CAjJqx0YhvOA4zpgeptH8=
-X-Google-Smtp-Source: ABdhPJzzhguOEY1DXT0UTKpsGkb5UY/wEblts5XqclGyygkkZMTw/GrMByM0bvcJVIxSm6QjhEvrUQ==
-X-Received: by 2002:a1c:1dcb:: with SMTP id d194mr8868510wmd.161.1633519391730;
-        Wed, 06 Oct 2021 04:23:11 -0700 (PDT)
-Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Oct 2021 04:23:11 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        linux-staging@lists.linux.dev, neil@brown.name,
-        linux-kernel@vger.kernel.org, john@phrozen.org
-Subject: [PATCH v2 4/4] staging: mt7621-dts: align resets with binding documentation
-Date:   Wed,  6 Oct 2021 13:23:06 +0200
-Message-Id: <20211006112306.4691-5-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
-References: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8B8LgJqjXvPVN+8wmzLYmPH7BuhH8dFjk677P8yjNhU=;
+        b=GnM+2KyOXLsemL/1PtBjFSa4YNOehU0JZxZhawX76oawQHD49Y5k8+L9yD+akGcYXJ
+         68nxfmciVyMCDvsLD3eyW5GsgH6puBD07wjVyeBr5jh10MIdg3BxCyQW1GoHTgSmoZgF
+         h7nEz4PkUZk7j/UWP8JVt2D2BXJjIFH+J6sTcHG0qukUeYNzc42K1lQYmDCRI3cKf8Uf
+         erUmQGDrS8aKP/qxCrCRteYuC4M1Pgrd0CnnFCFkEAbmLBUrvO9ksj5//rbwu2bArS5r
+         abynUOi9HRdltZR1kGRekE2QCOzqhb4iwp31/bY6CI0EOCidqTqu2vHfKVUKDHJ4Hc3T
+         IA3g==
+X-Gm-Message-State: AOAM532vCnTY059SXYfJTP0GbKlK3QZ0KfrCltiDaukF6A+fY3Avz3nS
+        q29zSH+oZanal8l8mDPRpNYLRQ==
+X-Google-Smtp-Source: ABdhPJzr+T4YhM3TMRJbJl9Ib0aDzjmeV2kENMZ4j5e6xf4wbh59d0amwUPJVUCHkqM5Z6xQ21ytPw==
+X-Received: by 2002:a2e:5418:: with SMTP id i24mr27806152ljb.115.1633520554670;
+        Wed, 06 Oct 2021 04:42:34 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id c5sm2243836ljd.94.2021.10.06.04.42.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Oct 2021 04:42:34 -0700 (PDT)
+Subject: Re: [PATCH v7 0/6] clk: qcom: use power-domain for sm8250's clock
+ controllers
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
+Message-ID: <a152a5eb-33f8-ebf4-27c3-3be10852e1a4@linaro.org>
+Date:   Wed, 6 Oct 2021 14:42:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-to be used as a reset provider. Align reset related bits and system controller
-node with binding documentation along the dtsi file.
+Hi,
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 27 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+On 29/08/2021 18:47, Dmitry Baryshkov wrote:
+> On SM8250 both the display and video clock controllers are powered up by
+> the MMCX power domain. Handle this by linking clock controllers to the
+> proper power domain, and using runtime power management to enable and
+> disable the MMCX power domain.
+> 
+> Dependencies:
+> https://lore.kernel.org/linux-pm/1628767642-4008-1-git-send-email-rnayak@codeaurora.org/
+> (pending inclusion into 5.15)
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 719ef28171f4..72b99d8b4647 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/interrupt-controller/mips-gic.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/clock/mt7621-clk.h>
-+#include <dt-bindings/reset/mt7621-reset.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -59,6 +60,7 @@ sysc: syscon@0 {
- 			compatible = "mediatek,mt7621-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			ralink,memctl = <&memc>;
- 			clock-output-names = "xtal", "cpu", "bus",
- 					     "50m", "125m", "150m",
-@@ -88,7 +90,7 @@ i2c: i2c@900 {
- 
- 			clocks = <&sysc MT7621_CLK_I2C>;
- 			clock-names = "i2c";
--			resets = <&rstctrl 16>;
-+			resets = <&sysc MT7621_RST_I2C>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -106,7 +108,7 @@ i2s: i2s@a00 {
- 
- 			clocks = <&sysc MT7621_CLK_I2S>;
- 			clock-names = "i2s";
--			resets = <&rstctrl 17>;
-+			resets = <&sysc MT7621_RST_I2S>;
- 			reset-names = "i2s";
- 
- 			interrupt-parent = <&gic>;
-@@ -151,7 +153,7 @@ spi0: spi@b00 {
- 			clocks = <&sysc MT7621_CLK_SPI>;
- 			clock-names = "spi";
- 
--			resets = <&rstctrl 18>;
-+			resets = <&sysc MT7621_RST_SPI>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -167,7 +169,7 @@ gdma: gdma@2800 {
- 
- 			clocks = <&sysc MT7621_CLK_GDMA>;
- 			clock-names = "gdma";
--			resets = <&rstctrl 14>;
-+			resets = <&sysc MT7621_RST_GDMA>;
- 			reset-names = "dma";
- 
- 			interrupt-parent = <&gic>;
-@@ -186,7 +188,7 @@ hsdma: hsdma@7000 {
- 
- 			clocks = <&sysc MT7621_CLK_HSDMA>;
- 			clock-names = "hsdma";
--			resets = <&rstctrl 5>;
-+			resets = <&sysc MT7621_RST_HSDMA>;
- 			reset-names = "hsdma";
- 
- 			interrupt-parent = <&gic>;
-@@ -286,11 +288,6 @@ pinmux {
- 		};
- 	};
- 
--	rstctrl: rstctrl {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	sdhci: sdhci@1E130000 {
- 		status = "disabled";
- 
-@@ -383,7 +380,7 @@ ethernet: ethernet@1e100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		resets = <&rstctrl 6 &rstctrl 23>;
-+		resets = <&sysc MT7621_CLK_FE &sysc MT7621_CLK_ETH>;
- 		reset-names = "fe", "eth";
- 
- 		interrupt-parent = <&gic>;
-@@ -428,7 +425,7 @@ switch0: switch0@0 {
- 				#size-cells = <0>;
- 				reg = <0>;
- 				mediatek,mcm;
--				resets = <&rstctrl 2>;
-+				resets = <&sysc MT7621_RST_MCM>;
- 				reset-names = "mcm";
- 				interrupt-controller;
- 				#interrupt-cells = <1>;
-@@ -514,7 +511,7 @@ pcie@0,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 4 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 24>;
-+			resets = <&sysc MT7621_RST_PCIE0>;
- 			clocks = <&sysc MT7621_CLK_PCIE0>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy0";
-@@ -529,7 +526,7 @@ pcie@1,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 25>;
-+			resets = <&sysc MT7621_RST_PCIE1>;
- 			clocks = <&sysc MT7621_CLK_PCIE1>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy1";
-@@ -544,7 +541,7 @@ pcie@2,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 25 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 26>;
-+			resets = <&sysc MT7621_RST_PCIE2>;
- 			clocks = <&sysc MT7621_CLK_PCIE2>;
- 			phys = <&pcie2_phy 0>;
- 			phy-names = "pcie-phy2";
+
+Gracious ping for this patch series.
+
+> 
+> Changes since v6:
+>   - Dropped dependency on Bjorn's patches
+>   - Restored required-opps properties
+>   - Held pm device state while gdsc is powered on, removing dependency on
+>     genpd's power_on() powering the domain into required state.
+> 
+> Changes since v5:
+>   - Dropped devm_pm_runtime_enable callback to remove extra dependency
+> 
+> Changes since v4:
+>   - Dropped pm_runtime handling from drivers/clk/qcom/common.c Moved the
+>     code into dispcc-sm8250.c and videocc-sm8250.c
+> 
+> Changes since v3:
+>   - Wrap gdsc_enable/gdsc_disable into pm_runtime_get/put calls rather
+>     than calling pm_runtime_get in gdsc_enabled and _put in gdsc_disable
+>   - Squash gdsc patches together to remove possible dependencies between
+>     two patches.
+> 
+> Changes since v2:
+>   - Move pm_runtime calls from generic genpd code to the gdsc code for
+>     now (as suggested by Ulf & Bjorn)
+> 
+> Changes since v1:
+>   - Rebase on top of Bjorn's patches, removing the need for setting
+>     performance state directly.
+>   - Move runtime PM calls from GDSC code to generic genpd code.
+>   - Always call pm_runtime_enable in the Qualcomm generic clock
+>     controller code.
+>   - Register GDSC power domains as subdomains of the domain powering the
+>     clock controller if there is one.
+> 
+> ----------------------------------------------------------------
+> Dmitry Baryshkov (8):
+>        dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx power domain
+>        dt-bindings: clock: qcom,videocc: add mmcx power domain
+>        clk: qcom: dispcc-sm8250: use runtime PM for the clock controller
+>        clk: qcom: videocc-sm8250: use runtime PM for the clock controller
+>        clk: qcom: gdsc: enable optional power domain support
+>        arm64: dts: qcom: sm8250: remove mmcx regulator
+>        clk: qcom: dispcc-sm8250: stop using mmcx regulator
+>        clk: qcom: videocc-sm8250: stop using mmcx regulator
+> 
+>   .../bindings/clock/qcom,dispcc-sm8x50.yaml         | 13 ++++++
+>   .../devicetree/bindings/clock/qcom,videocc.yaml    | 13 ++++++
+>   arch/arm64/boot/dts/qcom/sm8250.dtsi               | 13 ++----
+>   drivers/clk/qcom/dispcc-sm8250.c                   | 28 ++++++++++--
+>   drivers/clk/qcom/gdsc.c                            | 51 ++++++++++++++++++++--
+>   drivers/clk/qcom/gdsc.h                            |  2 +
+>   drivers/clk/qcom/videocc-sm8250.c                  | 31 ++++++++++---
+>   7 files changed, 130 insertions(+), 21 deletions(-)
+> 
+> 
+> 
+
+
 -- 
-2.33.0
-
+With best wishes
+Dmitry
