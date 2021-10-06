@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F44C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7DBC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B5D5611B0
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE36661166
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238421AbhJFLZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 07:25:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
+        id S238409AbhJFLZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 07:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238408AbhJFLZD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:03 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407B4C061755;
-        Wed,  6 Oct 2021 04:23:11 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id r7so7711745wrc.10;
-        Wed, 06 Oct 2021 04:23:11 -0700 (PDT)
+        with ESMTP id S238286AbhJFLZC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:02 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E02AC061749;
+        Wed,  6 Oct 2021 04:23:10 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id v17so7734220wrv.9;
+        Wed, 06 Oct 2021 04:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nNzJU9Y0TN+qNE5qJcuFSRHdr3qJUmf5dCSvTeevenI=;
-        b=DvkR5dgnWDdBS+0qZqDLqptsMrO48mZFBOoVfrhVp1wxj0c0lqbipUlch7OZ2zz6Ju
-         FJ808jczCkC64MPyLQ3ZaKyj+N60OlK4MlMcS+EKYeBqdXvtsec4ES4LUhDg+Cb9igbp
-         P2qfaBhC4M3KEmlyTrfH6d7CZObxFLz7co3AJM8bwypCl6XkaeiexgM2xkaNWqQ6Zqok
-         56RiOXUbl/GGEhcaCu/ffI6h9/qneYg71jDglCCaVPNfTXtWBPutm9YYGaEGR7Vs+Id1
-         54sA9MQelc5oQvRlUJ3chptIlSUGFO4LaM/DhnzsUQLB29hbkyQoQahqA3qBJruBF7O7
-         JtGg==
+        bh=lMW4foefc6bEFLqLQ2H0asFN0IF8jIbnNoNDfv9QTpo=;
+        b=fqdoZhMJ2rxSvh2lAg5TQLQ6khL0EhpVeNi4HptuzUZ1DC3nJNGIPgvplHbMR76SeG
+         tE+zzecpcLnJU5QQF05MnQrHtQbUemmbu1R6HLp8c9S47FR70J57K6ovtyOM65f8M6ih
+         PFZUHsOON6/HLhhmHOHAr6wdjR+GkNljvpSXtIm1QpL5Gti0XljT56KRRtf/G6RsqTFB
+         y6u3ydnPQpjnlIQA2q/9pnH5T2uqARPPc5mY7feGiQRBaP4xeVtbGGn6SjmKuoCTtx06
+         HVk7gdoqFC7wgyRkwpLkqY46OkBcZh0OnWuNb1pJCr8W6FKR4/G3z7ty99I7PY2w1VYP
+         KZfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nNzJU9Y0TN+qNE5qJcuFSRHdr3qJUmf5dCSvTeevenI=;
-        b=6mJMlM7amgCLkdyWaqibr2soI1dFaHkXtX1d57Ahg5YawItzfK+83E0SiSKIn3Lk+r
-         820abfz+LkQrnXKFrmvMEl01+vxv5zw2uxZIujEqBkVUuYNIaJ5GdbASOjaDn6zFzJHa
-         eqZShLEgHhK39okNxASKkcEZ0opx7nXfH82ORBAcFYyZQpRugMWTwRxRnk2VLjefXxIL
-         dSbr7fvcRreIwZ+gOcrW63+jjON6LgbzBgE3QRMYywbJVLNxHOeFDFwBeePzuf9aV90z
-         PVamCHnXbwdYrwGZ8Ld/nBzOQ3tmBo8eXzKllQdSlMoMmbIYA/zCnBKJ63RZD6++eQQf
-         npRA==
-X-Gm-Message-State: AOAM530kdEBIK9Tb8VQlENUUKLiQ632/yVhVAvWCbeF8Rne4mvDg5NSC
-        ZpjNOPyiubC4eLhk4sFrOLU=
-X-Google-Smtp-Source: ABdhPJxnXLZqC6UG7sG5RazrmyOBoNZVOuzAPL7APxcEs7FsSvkkn735SXc27MC7cXQ47Hksg6RmUg==
-X-Received: by 2002:adf:e74b:: with SMTP id c11mr26414202wrn.362.1633519389838;
-        Wed, 06 Oct 2021 04:23:09 -0700 (PDT)
+        bh=lMW4foefc6bEFLqLQ2H0asFN0IF8jIbnNoNDfv9QTpo=;
+        b=2PdPYCZXndpd/kVPuaEpiXvIc2XfJxjeokS0LMTzd9JkDrCF4VdncZZuUKL6y/HqRV
+         2omdA4X6/W8omr9Wr0L2DtSMfvq67eHZcFcMfKuMiH7bHya6fcBBU4SzWWnbBPnXSUVX
+         AReD+6LfG5Xmsebzxi0Uoymgx2lmlgtcVAtlAEyUCsckEtw4Eu+pgkgpNnfYw+tyGz73
+         IcyzZnNaTbW31CkCPEZZpAbcrXDKCC01RTBIJKtLd7tdQUCBjxIbBGq2isIxbKLX21L5
+         fG04HdVesEx0SLz4Ch5iLuv45uZQbuyCUglVFMqwYsTuTIs794a4Mdx4i52DDpGEPUKs
+         i2Wg==
+X-Gm-Message-State: AOAM532K/33rfdzmrL9urJ3VBhfE1Pp04/8364MgTQEUYUYq9eKOH5NA
+        rO4NKHUsf+4x+fHp0MRS1WSFzJLQgzA=
+X-Google-Smtp-Source: ABdhPJy9s/UAVv/L8Zfm9yvqWMej5Q+dXlji9BY4WfNy30A6S0GHmbTvPS+EYEKibZtyWtSJQgEwGg==
+X-Received: by 2002:a7b:c954:: with SMTP id i20mr9314376wml.126.1633519388877;
+        Wed, 06 Oct 2021 04:23:08 -0700 (PDT)
 Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
         by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.08
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Oct 2021 04:23:09 -0700 (PDT)
+        Wed, 06 Oct 2021 04:23:08 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, gregkh@linuxfoundation.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org,
         linux-staging@lists.linux.dev, neil@brown.name,
         linux-kernel@vger.kernel.org, john@phrozen.org
-Subject: [PATCH v2 2/4] dt-bindings: clock: mediatek,mt7621-sysc: add '#reset-cells' property
-Date:   Wed,  6 Oct 2021 13:23:04 +0200
-Message-Id: <20211006112306.4691-3-sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 1/4] dt-bindings: reset: add dt binding header for Mediatek MT7621 resets
+Date:   Wed,  6 Oct 2021 13:23:03 +0200
+Message-Id: <20211006112306.4691-2-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
 References: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
@@ -68,51 +68,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make system controller a reset provider for all the peripherals in the
-MT7621 SoC adding '#reset-cells' property.
+Add dt binding header for resets lines in Mediatek MT7621 SoCs.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- .../bindings/clock/mediatek,mt7621-sysc.yaml         | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ include/dt-bindings/reset/mt7621-reset.h | 37 ++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt7621-reset.h
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
-index 915f84efd763..0c0b0ae5e2ac 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
-@@ -22,6 +22,11 @@ description: |
- 
-   The clocks are provided inside a system controller node.
- 
-+  This node is also a reset provider for all the peripherals.
+diff --git a/include/dt-bindings/reset/mt7621-reset.h b/include/dt-bindings/reset/mt7621-reset.h
+new file mode 100644
+index 000000000000..7572c6b41453
+--- /dev/null
++++ b/include/dt-bindings/reset/mt7621-reset.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2021 Sergio Paracuellos
++ * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
++ */
 +
-+  Reset related bits are defined in:
-+  [2]: <include/dt-bindings/reset/mt7621-reset.h>.
++#ifndef DT_BINDING_MT7621_RESET_H
++#define DT_BINDING_MT7621_RESET_H
 +
- properties:
-   compatible:
-     items:
-@@ -37,6 +42,12 @@ properties:
-       clocks.
-     const: 1
- 
-+  "#reset-cells":
-+    description:
-+      The first cell indicates the reset bit within the register, see
-+      [2] for available resets.
-+    const: 1
++#define MT7621_RST_SYS		0
++#define MT7621_RST_MCM		2
++#define MT7621_RST_HSDMA	5
++#define MT7621_RST_FE		6
++#define MT7621_RST_SPDIFTX	7
++#define MT7621_RST_TIMER	8
++#define MT7621_RST_INT		9
++#define MT7621_RST_MC		10
++#define MT7621_RST_PCM		11
++#define MT7621_RST_PIO		13
++#define MT7621_RST_GDMA		14
++#define MT7621_RST_NFI		15
++#define MT7621_RST_I2C		16
++#define MT7621_RST_I2S		17
++#define MT7621_RST_SPI		18
++#define MT7621_RST_UART1	19
++#define MT7621_RST_UART2	20
++#define MT7621_RST_UART3	21
++#define MT7621_RST_ETH		23
++#define MT7621_RST_PCIE0	24
++#define MT7621_RST_PCIE1	25
++#define MT7621_RST_PCIE2	26
++#define MT7621_RST_AUX_STCK	28
++#define MT7621_RST_CRYPTO	29
++#define MT7621_RST_SDXC		30
++#define MT7621_RST_PPE		31
 +
-   ralink,memctl:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-@@ -61,6 +72,7 @@ examples:
-       compatible = "mediatek,mt7621-sysc", "syscon";
-       reg = <0x0 0x100>;
-       #clock-cells = <1>;
-+      #reset-cells = <1>;
-       ralink,memctl = <&memc>;
-       clock-output-names = "xtal", "cpu", "bus",
-                            "50m", "125m", "150m",
++#endif /* DT_BINDING_MT7621_RESET_H */
 -- 
 2.33.0
 
