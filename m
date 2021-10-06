@@ -2,120 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4103AC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F44C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE1B6109F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5D5611B0
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238404AbhJFLZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 07:25:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50524 "EHLO
+        id S238421AbhJFLZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 07:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238386AbhJFLZB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:01 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555D7C06174E;
-        Wed,  6 Oct 2021 04:23:09 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id u18so7790073wrg.5;
-        Wed, 06 Oct 2021 04:23:09 -0700 (PDT)
+        with ESMTP id S238408AbhJFLZD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:25:03 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407B4C061755;
+        Wed,  6 Oct 2021 04:23:11 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id r7so7711745wrc.10;
+        Wed, 06 Oct 2021 04:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=47s/bZHvgq69ktivg5JJy6fUXMerQl2jUwwg3kpWhpE=;
-        b=g1QA2+UjfP3hztVr1sVD8MWAB6aunYsFT2KalsjBUEvAk3VvWMKn0W9UZ8byMcobWs
-         ao8H4xXe914XRE4bMNt7FAsQXCl8p5gO/uQ9SRBQOC7l92/aQjSrf/BQhlOI19dqUM3j
-         oZwk22G51nlNTL59CVUt1xx/B/x/wFoToPdAxOsNL/BjCUHw69Dw7fn8Ez9uotXGJS4Y
-         XPqVsYnyzzNBsicY0FLxjVEZsMhjuuLR2NtwX3mcxa9Pp2lBZrJW7E5L10aZxVbu2UW4
-         4olTHkGlmzesj+dVnQdLEC5gB4XjV1dwFpjL6FP6ZKIpbcT5lSKSWxR3lj23sgGrxIsO
-         PuZg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nNzJU9Y0TN+qNE5qJcuFSRHdr3qJUmf5dCSvTeevenI=;
+        b=DvkR5dgnWDdBS+0qZqDLqptsMrO48mZFBOoVfrhVp1wxj0c0lqbipUlch7OZ2zz6Ju
+         FJ808jczCkC64MPyLQ3ZaKyj+N60OlK4MlMcS+EKYeBqdXvtsec4ES4LUhDg+Cb9igbp
+         P2qfaBhC4M3KEmlyTrfH6d7CZObxFLz7co3AJM8bwypCl6XkaeiexgM2xkaNWqQ6Zqok
+         56RiOXUbl/GGEhcaCu/ffI6h9/qneYg71jDglCCaVPNfTXtWBPutm9YYGaEGR7Vs+Id1
+         54sA9MQelc5oQvRlUJ3chptIlSUGFO4LaM/DhnzsUQLB29hbkyQoQahqA3qBJruBF7O7
+         JtGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=47s/bZHvgq69ktivg5JJy6fUXMerQl2jUwwg3kpWhpE=;
-        b=VK5iHFkhZDnXIaBRBAFzFVja2WT3JM8LogTyUa3RRbh88LvE+wwuWOwcQQ0/HJXv5L
-         qwfWOiyGQvF5Xd5kyt8EuxXeJecxXtbxi0oOiuJNtciL7kY/QgP4W1uRiFRYLt7zME6U
-         Z9OJmyFhL88pNJ0lZeLAvIPQpobp2ZoshqLHIQJD7W6nidFgdIU3+bfV0Z0SWMfoYVp3
-         ZXgcZhodrkD52AizExOztx7xSmfWcBRswpGbST6rmTsff7mba52/AJd6kStPzwIe2sDu
-         N1VRf8gACZHS/UCAgbXszzpcJqaKwbNkiYyqpWCHE8QkFARMAftPmEWNuY8gruBUQkzf
-         5M4Q==
-X-Gm-Message-State: AOAM531Xs7wNvmQVE/jlTScpYw+RgDXUnVR9AO/zEfg3kSl4z8CU15JA
-        TU+CFJaO9767xN9GGWk83TmQFZcPfq0=
-X-Google-Smtp-Source: ABdhPJxO8m46fxb9zABvCoD+pMl/Q0dgsharY/sFYhpKLR4z8Rul9+G4k+vwxTx1LRFFmTI+0V9YeA==
-X-Received: by 2002:a1c:f310:: with SMTP id q16mr9556452wmq.145.1633519387985;
-        Wed, 06 Oct 2021 04:23:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nNzJU9Y0TN+qNE5qJcuFSRHdr3qJUmf5dCSvTeevenI=;
+        b=6mJMlM7amgCLkdyWaqibr2soI1dFaHkXtX1d57Ahg5YawItzfK+83E0SiSKIn3Lk+r
+         820abfz+LkQrnXKFrmvMEl01+vxv5zw2uxZIujEqBkVUuYNIaJ5GdbASOjaDn6zFzJHa
+         eqZShLEgHhK39okNxASKkcEZ0opx7nXfH82ORBAcFYyZQpRugMWTwRxRnk2VLjefXxIL
+         dSbr7fvcRreIwZ+gOcrW63+jjON6LgbzBgE3QRMYywbJVLNxHOeFDFwBeePzuf9aV90z
+         PVamCHnXbwdYrwGZ8Ld/nBzOQ3tmBo8eXzKllQdSlMoMmbIYA/zCnBKJ63RZD6++eQQf
+         npRA==
+X-Gm-Message-State: AOAM530kdEBIK9Tb8VQlENUUKLiQ632/yVhVAvWCbeF8Rne4mvDg5NSC
+        ZpjNOPyiubC4eLhk4sFrOLU=
+X-Google-Smtp-Source: ABdhPJxnXLZqC6UG7sG5RazrmyOBoNZVOuzAPL7APxcEs7FsSvkkn735SXc27MC7cXQ47Hksg6RmUg==
+X-Received: by 2002:adf:e74b:: with SMTP id c11mr26414202wrn.362.1633519389838;
+        Wed, 06 Oct 2021 04:23:09 -0700 (PDT)
 Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.07
+        by smtp.gmail.com with ESMTPSA id e14sm10801985wrw.33.2021.10.06.04.23.08
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Oct 2021 04:23:07 -0700 (PDT)
+        Wed, 06 Oct 2021 04:23:09 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, gregkh@linuxfoundation.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org,
         linux-staging@lists.linux.dev, neil@brown.name,
         linux-kernel@vger.kernel.org, john@phrozen.org
-Subject: [PATCH v2 0/4] clk: ralink: make system controller a reset provider
-Date:   Wed,  6 Oct 2021 13:23:02 +0200
-Message-Id: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 2/4] dt-bindings: clock: mediatek,mt7621-sysc: add '#reset-cells' property
+Date:   Wed,  6 Oct 2021 13:23:04 +0200
+Message-Id: <20211006112306.4691-3-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
+References: <20211006112306.4691-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
+Make system controller a reset provider for all the peripherals in the
+MT7621 SoC adding '#reset-cells' property.
 
-This patch series add minimal change to provide mt7621 resets properly
-defining them in the 'mediatek,mt7621-sysc' node which is the system
-controller of the SoC and is already providing clocks to the rest of
-the world.
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ .../bindings/clock/mediatek,mt7621-sysc.yaml         | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-There is shared architecture code for all ralink platforms in 'reset.c'
-file located in 'arch/mips/ralink' but the correct thing to do to align
-hardware with software seems to define and add related reset code to the 
-already mainlined clock driver.
-
-After this changes, we can get rid of the useless reset controller node
-in the device tree and use system controller node instead where the property
-'#reset-cells' has been added. Binding documentation for this nodeq has
-been updated with the new property accordly.
-
-This series also provide a bindings include header where all related
-reset bits for the MT7621 SoC are defined.
-
-Also, please take a look to this review [0] to understand better motivation
-for this series.
-
-Thanks in advance for your feedback.
-
-Changes in v2:
- - Address review comments of Dan Carpenter [1]:
-    + Avoid 'inline' in function definition.
-    + Return proper error codes (-EINVAL) instead of '-1'. 
-    + Make use of 'devm_kzalloc' instead of 'kzalloc'.
-
-Best regards,
-    Sergio Paracuellos
-
-[0]: https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20210926145931.14603-3-sergio.paracuellos@gmail.com/ 
-[1]: https://lkml.org/lkml/2021/10/6/204
-
-Sergio Paracuellos (4):
-  dt-bindings: reset: add dt binding header for Mediatek MT7621 resets
-  dt-bindings: clock: mediatek,mt7621-sysc: add '#reset-cells' property
-  clk: ralink: make system controller node a reset provider
-  staging: mt7621-dts: align resets with binding documentation
-
- .../bindings/clock/mediatek,mt7621-sysc.yaml  | 12 +++
- drivers/clk/ralink/clk-mt7621.c               | 79 +++++++++++++++++++
- drivers/staging/mt7621-dts/mt7621.dtsi        | 27 +++----
- include/dt-bindings/reset/mt7621-reset.h      | 37 +++++++++
- 4 files changed, 140 insertions(+), 15 deletions(-)
- create mode 100644 include/dt-bindings/reset/mt7621-reset.h
-
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
+index 915f84efd763..0c0b0ae5e2ac 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
+@@ -22,6 +22,11 @@ description: |
+ 
+   The clocks are provided inside a system controller node.
+ 
++  This node is also a reset provider for all the peripherals.
++
++  Reset related bits are defined in:
++  [2]: <include/dt-bindings/reset/mt7621-reset.h>.
++
+ properties:
+   compatible:
+     items:
+@@ -37,6 +42,12 @@ properties:
+       clocks.
+     const: 1
+ 
++  "#reset-cells":
++    description:
++      The first cell indicates the reset bit within the register, see
++      [2] for available resets.
++    const: 1
++
+   ralink,memctl:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+@@ -61,6 +72,7 @@ examples:
+       compatible = "mediatek,mt7621-sysc", "syscon";
+       reg = <0x0 0x100>;
+       #clock-cells = <1>;
++      #reset-cells = <1>;
+       ralink,memctl = <&memc>;
+       clock-output-names = "xtal", "cpu", "bus",
+                            "50m", "125m", "150m",
 -- 
 2.33.0
 
