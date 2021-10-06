@@ -2,203 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400CFC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 06:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE72AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 07:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF22610C8
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 06:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AC661077
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 07:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237307AbhJFGOI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 02:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35014 "EHLO
+        id S231465AbhJFIBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 04:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236968AbhJFGOD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 02:14:03 -0400
+        with ESMTP id S237528AbhJFIBJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 04:01:09 -0400
 Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE3B0C061749;
-        Tue,  5 Oct 2021 23:12:11 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id r10so5180124wra.12;
-        Tue, 05 Oct 2021 23:12:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCEDC061749
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 00:59:17 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t8so6124979wri.1
+        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 00:59:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ffRV1lgCZH4SUcwisTjt7KS+V4NY1XyWgQczanLiSKI=;
-        b=qi1ALPM0XaBZwFKZd19WunT/AwGxj6bjgOnr+K3kM8QIBoy9JMsbUbzTWczOXCYxAS
-         NJIdPdbjU2xov0ZU47bIDnoqqmgyPLQADhVbXmbxIJ5aa6j9CWR0pj35MNoND2sMHUmX
-         6/eYpdOHQgC2WHHVli5vkW9pBZnILDKMQjFWlRRrjTZvg4uLNR2M5lLr+lGIcGGcNrMq
-         sPw3egVwqyfC0VEfLmrRV0Ph1Bf4WdTu1Kis82DAkFrI0QwyctRFJ5EVRZ18HfRTs02Z
-         lnsj9ERkg9TahPVDvwzXYuf1H+YXYjXOy12tEpDxvENpJLdngFJHWmjy4mGAnHF+UWC8
-         uVOQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=VR42jplXEyWwm4Rbes/BlNj+3w2C+/LaKWXYtyT3Dn8=;
+        b=jtR/VmB0T7MABmHHGyhlgvapP7iuUL5TYPO236XrLm540txRoHhsKCmduBgHZDLT8D
+         glIkOZLiCE5xfENk7EVa1+pxqIiDJyaSbBj0cyegwTww1heWSe70ujCenPY5FiYAQUAH
+         uSfzm6U/lVtglgFT0XMcxLPMZ+JaQCbtha1Ot4AwP56vkHgugCgWYgGINVpcFKlacTOk
+         7/Mhrk15auAttizfk25K5AEZAev4ia2vz5n9Ad/xjUmWKN9zfRZDS/HMif/JcvlQjsix
+         v2fbcOnKTPZdl6C+HjF4FEYq3wtnbh3GluC4Z3XxIf3xXfGeM+/RKHOikK9mHhUIxzvQ
+         b3Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ffRV1lgCZH4SUcwisTjt7KS+V4NY1XyWgQczanLiSKI=;
-        b=kDQ+oJXA1Aoi90/GyplQY161J1y0wN/L/qtlozsgdLUbrNQfl/t/YOhq6fJd6PQZ75
-         1buUEumoxaz6g84I/O1q/387J8mIDHjryXhwsLENfmJwYdQsznbbgqBiD4fIdUQWt2tm
-         tQAxOEmzlrQssOXYWpfIt4BNhQWYEh+ZnF7CO/rNsylrgV3Y53ZqYPgOEhQUpcmWesYK
-         b/8HgPjJG0FWVrh1VTcSEIynYO8EYvuiBBFDd7Mhlx7iVwFFydCLC4xsQxMfV7LvUvUq
-         xls/aY7quG5/5IfT5Y7uklqEYxMrewIrTl0NQqyXVux5AYhMTXNgeOwEh+KA3ABuQFTD
-         Z6Hg==
-X-Gm-Message-State: AOAM5316V/KscxJyCyhuqvg/QuFYbKxMJ4g1vqLZxdbUMkio/baMVXdr
-        bQ2k2ty4j1rj3VkvJmdYt6w=
-X-Google-Smtp-Source: ABdhPJyf+4z6TTXUkFWGer/Ad1T21KbbOpC1mUtM/48fmv/kGpfqQGCWOiFrCmRzOqYK29zda42oZw==
-X-Received: by 2002:a1c:f310:: with SMTP id q16mr8158405wmq.145.1633500730622;
-        Tue, 05 Oct 2021 23:12:10 -0700 (PDT)
-Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id e8sm3893071wme.46.2021.10.05.23.12.09
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Oct 2021 23:12:10 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        linux-staging@lists.linux.dev, neil@brown.name,
-        linux-kernel@vger.kernel.org, john@phrozen.org
-Subject: [PATCH 4/4] staging: mt7621-dts: align resets with binding documentation
-Date:   Wed,  6 Oct 2021 08:12:04 +0200
-Message-Id: <20211006061204.2854-5-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211006061204.2854-1-sergio.paracuellos@gmail.com>
-References: <20211006061204.2854-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=VR42jplXEyWwm4Rbes/BlNj+3w2C+/LaKWXYtyT3Dn8=;
+        b=Rv0qodbaNRBOSiAZMxDAAVGdA4TofW1SP28GunSF9yjt/07nvnnjD7VnT2yVGFkMCT
+         BNqAbNhUfHrbGk9FY/fHoq1uxwEJ7owVSmSaXPRAn3WwVfORFsHpZ6kA+SqZAybj/Hpb
+         D3UPZJnoF5Np/ooFdHn+hvVDPuxxmiwjs9PGgCKjYCMJd46kzgmvOYr61hnNKWkdyYVq
+         sUH2MrKsxj6MA+reP7wjk6ULq5MgD5N9ISYuQCFlp3SLZ2u0G4GzIIBNMimHslSK+XvA
+         Q6s/8Z/r+D7VNDKqpU6P5SzqdjFP3y4799/6gR4/fWHzn80pEOKHCb226au7zWMcHfgw
+         3dIg==
+X-Gm-Message-State: AOAM5318lwvHVGe5+C8UjF/Tw/1cPDqBk2TAEIBMt/kLyz+pCSSYV6B8
+        /SeYTNWXkJGSptsF1Y3EwkFvEQ==
+X-Google-Smtp-Source: ABdhPJwJj4g5XhITxOkW3toOBNYAmREUTrS1TEAQPSRfl1T7PTS8gIUw5QHVwCWyp+rk27NtSZ9yzw==
+X-Received: by 2002:adf:f302:: with SMTP id i2mr16902802wro.18.1633507156414;
+        Wed, 06 Oct 2021 00:59:16 -0700 (PDT)
+Received: from google.com ([95.148.6.175])
+        by smtp.gmail.com with ESMTPSA id k9sm19663548wrz.22.2021.10.06.00.59.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 00:59:15 -0700 (PDT)
+Date:   Wed, 6 Oct 2021 08:59:14 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+Message-ID: <YV1XUnz9t1pFMb1S@google.com>
+References: <20210918045114.387005-1-zhang.lyra@gmail.com>
+ <20210918045114.387005-3-zhang.lyra@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210918045114.387005-3-zhang.lyra@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-to be used as a reset provider. Align reset related bits and system controller
-node with binding documentation along the dtsi file.
+On Sat, 18 Sep 2021, Chunyan Zhang wrote:
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 27 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> 
+> Add bindings for Unisoc system global register which provide register map
+> for clocks.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+>  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 719ef28171f4..72b99d8b4647 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/interrupt-controller/mips-gic.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/clock/mt7621-clk.h>
-+#include <dt-bindings/reset/mt7621-reset.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -59,6 +60,7 @@ sysc: syscon@0 {
- 			compatible = "mediatek,mt7621-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			ralink,memctl = <&memc>;
- 			clock-output-names = "xtal", "cpu", "bus",
- 					     "50m", "125m", "150m",
-@@ -88,7 +90,7 @@ i2c: i2c@900 {
- 
- 			clocks = <&sysc MT7621_CLK_I2C>;
- 			clock-names = "i2c";
--			resets = <&rstctrl 16>;
-+			resets = <&sysc MT7621_RST_I2C>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -106,7 +108,7 @@ i2s: i2s@a00 {
- 
- 			clocks = <&sysc MT7621_CLK_I2S>;
- 			clock-names = "i2s";
--			resets = <&rstctrl 17>;
-+			resets = <&sysc MT7621_RST_I2S>;
- 			reset-names = "i2s";
- 
- 			interrupt-parent = <&gic>;
-@@ -151,7 +153,7 @@ spi0: spi@b00 {
- 			clocks = <&sysc MT7621_CLK_SPI>;
- 			clock-names = "spi";
- 
--			resets = <&rstctrl 18>;
-+			resets = <&sysc MT7621_RST_SPI>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -167,7 +169,7 @@ gdma: gdma@2800 {
- 
- 			clocks = <&sysc MT7621_CLK_GDMA>;
- 			clock-names = "gdma";
--			resets = <&rstctrl 14>;
-+			resets = <&sysc MT7621_RST_GDMA>;
- 			reset-names = "dma";
- 
- 			interrupt-parent = <&gic>;
-@@ -186,7 +188,7 @@ hsdma: hsdma@7000 {
- 
- 			clocks = <&sysc MT7621_CLK_HSDMA>;
- 			clock-names = "hsdma";
--			resets = <&rstctrl 5>;
-+			resets = <&sysc MT7621_RST_HSDMA>;
- 			reset-names = "hsdma";
- 
- 			interrupt-parent = <&gic>;
-@@ -286,11 +288,6 @@ pinmux {
- 		};
- 	};
- 
--	rstctrl: rstctrl {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	sdhci: sdhci@1E130000 {
- 		status = "disabled";
- 
-@@ -383,7 +380,7 @@ ethernet: ethernet@1e100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		resets = <&rstctrl 6 &rstctrl 23>;
-+		resets = <&sysc MT7621_CLK_FE &sysc MT7621_CLK_ETH>;
- 		reset-names = "fe", "eth";
- 
- 		interrupt-parent = <&gic>;
-@@ -428,7 +425,7 @@ switch0: switch0@0 {
- 				#size-cells = <0>;
- 				reg = <0>;
- 				mediatek,mcm;
--				resets = <&rstctrl 2>;
-+				resets = <&sysc MT7621_RST_MCM>;
- 				reset-names = "mcm";
- 				interrupt-controller;
- 				#interrupt-cells = <1>;
-@@ -514,7 +511,7 @@ pcie@0,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 4 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 24>;
-+			resets = <&sysc MT7621_RST_PCIE0>;
- 			clocks = <&sysc MT7621_CLK_PCIE0>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy0";
-@@ -529,7 +526,7 @@ pcie@1,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 25>;
-+			resets = <&sysc MT7621_RST_PCIE1>;
- 			clocks = <&sysc MT7621_CLK_PCIE1>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy1";
-@@ -544,7 +541,7 @@ pcie@2,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 25 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 26>;
-+			resets = <&sysc MT7621_RST_PCIE2>;
- 			clocks = <&sysc MT7621_CLK_PCIE2>;
- 			phys = <&pcie2_phy 0>;
- 			phy-names = "pcie-phy2";
+Applied, thanks.
+
 -- 
-2.33.0
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
