@@ -2,81 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153DBC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EC7C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2ACA611B0
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D00361186
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239309AbhJFTLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 15:11:46 -0400
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:38738 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239343AbhJFTLp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:11:45 -0400
-Received: by mail-ot1-f50.google.com with SMTP id c6-20020a9d2786000000b005471981d559so4406860otb.5;
-        Wed, 06 Oct 2021 12:09:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XXPzrlRNSvZUe4SiE0xybZeK1VafzSZG6M/PPM6Jsqc=;
-        b=0xr3aEcPAY0zJIjgCVOwSo8gUl1uZwEqsCarWnj22R2NOeNwm8nLzst+EhTcUTcy8d
-         m8ZFjzy7q4Yij0TbtFU4YIRmUtd4mxiVZKQDBT3ty2wYAvK7RU+3rndj3vmEfEvEyCZI
-         07EO3e5GFQM0nJL+iBTAslYetEKgkYAwjIdVe0hBmfAgBqjaA1KMA5CtrGnVf7zx34Sr
-         JfYkQhKWDc17coFuTe8OK3PwCJgVuPdZ8ywZS/Vj9yxMAOdWjEC3SIuh725i6us6ePeG
-         6f2ne/iaereFqkAU152EFONmVxdis/mx1v3OzaQB2tngH9EhrDAPWXQajrYwCLCLARqD
-         SMQw==
-X-Gm-Message-State: AOAM531u8OtrGYnPgfdelvgJSLE/ks+prdLQiFPjTkUrvTd1+6WAgSXR
-        9khRYmF8breI4ks4OE1YQA==
-X-Google-Smtp-Source: ABdhPJx15PPZ/Sp4jiguY2xyGQXBzop3CVtvzjN4FK7KhMUcxyeAfU1Rz92H7nLnJ0892+RoMu9+Fw==
-X-Received: by 2002:a05:6830:1513:: with SMTP id k19mr389585otp.41.1633547392838;
-        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a9sm4279056otk.3.2021.10.06.12.09.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
-Received: (nullmailer pid 2227188 invoked by uid 1000);
-        Wed, 06 Oct 2021 19:09:51 -0000
-Date:   Wed, 6 Oct 2021 14:09:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 06/10] regulator: dt-bindings: samsung,s5m8767:
- convert to dtschema
-Message-ID: <YV30fzEB/NlNhA+C@robh.at.kernel.org>
-References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
- <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
+        id S231807AbhJFTPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 15:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48258 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229926AbhJFTPV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:15:21 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5EEC061746
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 12:13:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=TRSrECSNLAyabpRrwaj0M92rPXMzopooMn+5rsE8OIM=; b=Qv3z63LhTuVs9tItQhX4jMtSXr
+        c5CSSAnQ6ti2AMdb9kLhSmH+yX66nqP5WJ2zDcyB6le5KFCZAhrxbqFVX4RI1bSPzs7xo9pstJXS6
+        dp3FgzXtsusPLdzyEQUMvac3f3OioJQV15ENSTHosNLry/tKFmttv39RjN1HfEdsR01wxqkVtLxf3
+        DZDgx3EoO40RxmEwFwhY/DH8qTkNl8zOQ1Rv9vrTaHn7+71Bqz7n05zSyYpZsOhySSHOUOqF1tdWk
+        0sfjryyBeHk5yLLvovLvDztdPxaz0ChIvT1A46WXHxuAHcbb2AqamXMYqTrF88+EPpVKC1Y9inTt2
+        Jyp6m66w==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mYCM4-00FOhe-U3; Wed, 06 Oct 2021 19:13:29 +0000
+Subject: Re: [PATCH] clk: imx: Make CLK_IMX8ULP select MXC_CLK
+To:     Fabio Estevam <festevam@gmail.com>, abel.vesa@nxp.com
+Cc:     shawnguo@kernel.org, ping.bai@nxp.com, linux-clk@vger.kernel.org
+References: <20211006190008.1935051-1-festevam@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <52250c6f-2955-a3e9-8d52-ec6c44a43710@infradead.org>
+Date:   Wed, 6 Oct 2021 12:13:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211006190008.1935051-1-festevam@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 06 Oct 2021 15:23:20 +0200, Krzysztof Kozlowski wrote:
-> Convert the regulators of Samsung S5M8767 PMIC to DT schema format.
+On 10/6/21 12:00 PM, Fabio Estevam wrote:
+> Building CLK_IMX8ULP without selecting MXC_CLK causes the following
+> build errors:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ld: drivers/clk/imx/clk-imx8ulp.o: in function `imx8ulp_clk_cgc2_init':
+> clk-imx8ulp.c:(.text+0xd0): undefined reference to `imx_ccm_lock'
+> ld: clk-imx8ulp.c:(.text+0x14f): undefined reference to `imx_clk_hw_pllv4'
+> ld: clk-imx8ulp.c:(.text+0x15a): undefined reference to `imx_ccm_lock'
+> 
+> Avoid this problem by making CLK_IMX8ULP select MXC_CLK.
+> 
+> Fixes: c43a801a5789 ("clk: imx: Add clock driver for imx8ulp")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+
+Thanks.
+
 > ---
->  .../bindings/regulator/samsung,s5m8767.txt    | 140 ------------------
->  .../bindings/regulator/samsung,s5m8767.yaml   |  74 +++++++++
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 75 insertions(+), 141 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
+>   drivers/clk/imx/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> index b81d6437ed95..c08edbd04d22 100644
+> --- a/drivers/clk/imx/Kconfig
+> +++ b/drivers/clk/imx/Kconfig
+> @@ -102,5 +102,6 @@ config CLK_IMX8QXP
+>   config CLK_IMX8ULP
+>   	tristate "IMX8ULP CCM Clock Driver"
+>   	depends on ARCH_MXC || COMPILE_TEST
+> +	select MXC_CLK
+>   	help
+>   	    Build the driver for i.MX8ULP CCM Clock Driver
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+-- 
+~Randy
