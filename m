@@ -2,96 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0595EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C129CC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB88E61130
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:00:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2D9E61186
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbhJFTCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 15:02:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbhJFTCW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:02:22 -0400
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF21C061746
-        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 12:00:29 -0700 (PDT)
-Received: by mail-qv1-xf2e.google.com with SMTP id z3so2587438qvl.9
-        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 12:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=glP7rgcIAL6wqIbM3vIVPAiMynzzX5NProMBYSjchkM=;
-        b=pJobD4u3VK05crFTlP7vi7YmurAORV7USxcEo+h0/XhkAlM4xmcO1VzSfbj+jtjR5P
-         KEDceoA6rNpx/Lq2PM6/ugrD8YC63CL/mANjcfL7Kd1WV1ltWg7sNZ0m+Lgi/5JIAQc4
-         LqCgkbcDbkApWBKsKmKbPYq2Kew7gc2VLqUO9McFCvDcirl7zFcgAHGp5fc2NDsB4uWY
-         FsUTyyp5Gdqkkvh0u3flmOcvA15axN604XlPrXee0vpzeoxgHgfOmazUgKbgtKouLaeQ
-         j0PyuWrSXFh4ujSUuBWLyk78PbO1PoGlmNpKH6j2Nb6TkjWOgksgd2kGLHSNBwlOk8pS
-         DKwQ==
+        id S239170AbhJFTKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 15:10:09 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:36643 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239153AbhJFTKI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:10:08 -0400
+Received: by mail-ot1-f44.google.com with SMTP id 5-20020a9d0685000000b0054706d7b8e5so4425003otx.3;
+        Wed, 06 Oct 2021 12:08:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=glP7rgcIAL6wqIbM3vIVPAiMynzzX5NProMBYSjchkM=;
-        b=Evwtq3wwi4WNP5zbmUo2BOL3r2oUmSK1r0ARvWzQqO8rp2QfKdYzh7A3HQif1w6i+X
-         m1xq4WXJi3+WDF/TudbOZGlTzWj413JCk2y0xAcwEq6gRTu1vsetF8xFs/C2gOKbmbJ5
-         0y6tTmlVRj3H9TGJUN6EKEivKRKnKZNSOI+TZ1PYr3jm+OkIrYdGtljAJj8yC91jhH0l
-         OdIfg0yjxLJXppBOq5Z4+nxxHRw0rxAG3Z7ycT6LzNYxxLHgyQPHPC3IVwtGt0OMg2GV
-         C/5IRuTO6yLYKxj0VU7cqV2pgBzq56panb+WLs7+ICeRWikq/HzW27ONzHQlbmkuO0af
-         pfLg==
-X-Gm-Message-State: AOAM530y1+ylyGt5ZB8azvv9tQBaRk99F2XNVu8n2cwGQ4/+3YDzWJqv
-        sYsjc+g3sz5vAlSmrx6/GU4=
-X-Google-Smtp-Source: ABdhPJzNBkWXrufssWiNyPnL7KvmlWU2XeDuE0OKdCrbSS7zrZSKdt4n2teznlO3mgknCR0ZRBan8g==
-X-Received: by 2002:a0c:9d4d:: with SMTP id n13mr35719172qvf.40.1633546829004;
-        Wed, 06 Oct 2021 12:00:29 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14c:485:504a:64e6:6f46:5646:4c28])
-        by smtp.gmail.com with ESMTPSA id l6sm3502383qkj.18.2021.10.06.12.00.26
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=3flmeFTtK50jBy1sd7u96vAnvkYzGiMbNOeFLQczGgE=;
+        b=7MYZKLh0meW6LCI51yo1vGtCJAc5z9wRwqU4xuf6O7S29R/dRzJ1Qp8XJaqJP6bwnV
+         DvlGC3PSjII7JE/DthqY8iMcMqhg/CAFg/T+aX+t14/k1VcdPZT63aOHve5/FVYBFNSW
+         N45A/dYE/E8cNADINzlnG8PX0oMRjFHjFoU2ICc68AiWlBArQDEwQqRRpkkmdThl63qe
+         zcqMtHPq63H7/yWB2IWNM6sFeR3hC5PGAuGIwGJH69/XpzH3DB0kD3uDYBg/mk7fHcuD
+         Jw1eOHgWgWReEGNGS/30vM8Nx85b0F6wvelbNyvczvaEPoLZJO501vNn9lr6Bassr5Q4
+         gzgA==
+X-Gm-Message-State: AOAM531m4rVGTgIe9WQDye5eHUtM8bpSv/6pgrW331vIKX9tJqHZj0dk
+        3sPAO2S5op/BNCOIyO62RA==
+X-Google-Smtp-Source: ABdhPJzSOlmbu7vtSuxS0zm9FxYUsJ0u5rcivP5wp1X1pGDsd4V2fzO+v0Ui0n45a6zuFUUYv9hwhw==
+X-Received: by 2002:a05:6830:79c:: with SMTP id w28mr371114ots.332.1633547295394;
+        Wed, 06 Oct 2021 12:08:15 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id i24sm4165829oie.42.2021.10.06.12.08.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 12:00:28 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     abel.vesa@nxp.com
-Cc:     shawnguo@kernel.org, rdunlap@infradead.org, ping.bai@nxp.com,
-        linux-clk@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH] clk: imx: Make CLK_IMX8ULP select MXC_CLK
-Date:   Wed,  6 Oct 2021 16:00:08 -0300
-Message-Id: <20211006190008.1935051-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 06 Oct 2021 12:08:14 -0700 (PDT)
+Received: (nullmailer pid 2218061 invoked by uid 1000);
+        Wed, 06 Oct 2021 19:08:13 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1633518555-8195-5-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1633518555-8195-1-git-send-email-hayashi.kunihiko@socionext.com> <1633518555-8195-5-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: uniphier: Add clock binding for SoC-glue
+Date:   Wed, 06 Oct 2021 14:08:13 -0500
+Message-Id: <1633547293.518535.2218060.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Building CLK_IMX8ULP without selecting MXC_CLK causes the following
-build errors:
+On Wed, 06 Oct 2021 20:09:14 +0900, Kunihiko Hayashi wrote:
+> Update binding document for clocks implemented in SoC-glue.
+> 
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  .../bindings/clock/socionext,uniphier-clock.yaml         | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
 
-ld: drivers/clk/imx/clk-imx8ulp.o: in function `imx8ulp_clk_cgc2_init':
-clk-imx8ulp.c:(.text+0xd0): undefined reference to `imx_ccm_lock'
-ld: clk-imx8ulp.c:(.text+0x14f): undefined reference to `imx_clk_hw_pllv4'
-ld: clk-imx8ulp.c:(.text+0x15a): undefined reference to `imx_ccm_lock'
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Avoid this problem by making CLK_IMX8ULP select MXC_CLK.
+yamllint warnings/errors:
 
-Fixes: c43a801a5789 ("clk: imx: Add clock driver for imx8ulp")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- drivers/clk/imx/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/socionext,uniphier-clock.example.dt.yaml:0:0: /example-3/soc-glue@5f800000: failed to match any schema with compatible: ['socionext,uniphier-sysctrl', 'simple-mfd', 'syscon']
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index b81d6437ed95..c08edbd04d22 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -102,5 +102,6 @@ config CLK_IMX8QXP
- config CLK_IMX8ULP
- 	tristate "IMX8ULP CCM Clock Driver"
- 	depends on ARCH_MXC || COMPILE_TEST
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8ULP CCM Clock Driver
--- 
-2.25.1
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1537058
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
