@@ -2,157 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B59C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E120C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 12:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08DE161056
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 11:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40B42611C3
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 12:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238357AbhJFLof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 07:44:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238339AbhJFLoc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 07:44:32 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3162C061755
-        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 04:42:39 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id n8so9082517lfk.6
-        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 04:42:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8B8LgJqjXvPVN+8wmzLYmPH7BuhH8dFjk677P8yjNhU=;
-        b=eVqiiFT5cCAsA+y2800EvVS6q/KgWIVvXr+fmYCCeivoYtPO77RPBze9rin8lhEfE5
-         3DaA/xGWEF+9W8AIRSdZ3/YT204dCyIOpS83R1NWnQsI349pkm2s6rpXRy27h2bsngwJ
-         8OImeTnH9hVSlFLFNrVTjhilNR+/mfc8FGT3ohUxU2qM2GBp48raOMoyzelfp/hEk6Q1
-         giwyvM2H7GvpFXYGgsdXbOQ7J5P1/ffokqQ5m0v58aTVxH+GCLaIIiCB+nbYZ/79Ubc2
-         hoS+55R71fP9fRQ0hIanaOlqNhYnbWyiX2ZyZTmYtxtIf/2yjoTe+2vyAeRSdry0uxq8
-         q8Dg==
+        id S238116AbhJFMkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 08:40:52 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35466
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232217AbhJFMkv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 08:40:51 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 606F23FFEE
+        for <linux-clk@vger.kernel.org>; Wed,  6 Oct 2021 12:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633523938;
+        bh=9mJv7vydoc4KxolrYZqQszFixt0Rzsc2yW8Qm+0Oasg=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=DDx0kfFBw5+UKhGwr3dRbHf7usgPGYWZwmZja0yJy6MfLXqRgLp46UT9/6XAy8/Ob
+         39Z5rRU7N5z9hp0yebe985HsgjwBc1CfdinGMIlIFycO7468ZGhHS10tpH3TEA8PEa
+         4GPg7cUKYgQ62nC7kVn1Bm7UOc6i7wBix0xJULMNVhZIsNNcoKX+iFWtbhHSexsoTK
+         deuMPz0lzyO1DsMbr072TzfydlArQIFqCco87V10G4yrUXy5DlPwj2RP0ZIsltSyDl
+         /lx8m2fqvZzldqNp46R60posO3lqH/L6x6WAhahsAk1Bz7GuyZhZ3lH4R99beaA4hA
+         SFnPqzZaWkbaw==
+Received: by mail-lf1-f72.google.com with SMTP id t14-20020ac24c0e000000b003fd392f9a5eso1862913lfq.13
+        for <linux-clk@vger.kernel.org>; Wed, 06 Oct 2021 05:38:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8B8LgJqjXvPVN+8wmzLYmPH7BuhH8dFjk677P8yjNhU=;
-        b=GnM+2KyOXLsemL/1PtBjFSa4YNOehU0JZxZhawX76oawQHD49Y5k8+L9yD+akGcYXJ
-         68nxfmciVyMCDvsLD3eyW5GsgH6puBD07wjVyeBr5jh10MIdg3BxCyQW1GoHTgSmoZgF
-         h7nEz4PkUZk7j/UWP8JVt2D2BXJjIFH+J6sTcHG0qukUeYNzc42K1lQYmDCRI3cKf8Uf
-         erUmQGDrS8aKP/qxCrCRteYuC4M1Pgrd0CnnFCFkEAbmLBUrvO9ksj5//rbwu2bArS5r
-         abynUOi9HRdltZR1kGRekE2QCOzqhb4iwp31/bY6CI0EOCidqTqu2vHfKVUKDHJ4Hc3T
-         IA3g==
-X-Gm-Message-State: AOAM532vCnTY059SXYfJTP0GbKlK3QZ0KfrCltiDaukF6A+fY3Avz3nS
-        q29zSH+oZanal8l8mDPRpNYLRQ==
-X-Google-Smtp-Source: ABdhPJzr+T4YhM3TMRJbJl9Ib0aDzjmeV2kENMZ4j5e6xf4wbh59d0amwUPJVUCHkqM5Z6xQ21ytPw==
-X-Received: by 2002:a2e:5418:: with SMTP id i24mr27806152ljb.115.1633520554670;
-        Wed, 06 Oct 2021 04:42:34 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id c5sm2243836ljd.94.2021.10.06.04.42.33
+        bh=9mJv7vydoc4KxolrYZqQszFixt0Rzsc2yW8Qm+0Oasg=;
+        b=cFofP9gfwC0S6XkNLDlo9hv8duu61Hb2j0ADNg8bJRHWJ4LLcXZc4CYU0+idZRGMRx
+         1npjenHS72748KdcdQPmRCE72QN8dgKs7EJcD9PMzDN07XRocVS2t5YXQ8lrtAB61v0y
+         AkMYJwg2pEgfNDnXgrtzjl6BjPqausVPGpxBbWsF2vF+A9mYidvrJsjO1daSd2rKW17x
+         73ICY21MwehYgSRkP9F48UgZeah0pMD5f5ZfBoOPZKypyHgIB6/96ucll1nHKJaJGKZy
+         oUhtbOSBOqTcBxvQa9zIkIr0/kxRnuOsSDwOe+qNkwFLZDvBFBrdqOKaGA6XGVM7Eiig
+         muLg==
+X-Gm-Message-State: AOAM533dhJhhRfXJAZW0DcnMUAm+ceAIX+IvqTAO4rgyRqXxYWD+IUzA
+        9WDT+3yYlG3Se7oO9hWmSClNsJ5z3rpEw1JTymTjV/cGvUuCcfgaV1yMkzsG9YdcuWhfc9Z4Rjb
+        I4sFdrIVCqAWpLoRQ7t3aV6TlvQs8qxvOxfzlvQ==
+X-Received: by 2002:a05:6512:3a88:: with SMTP id q8mr9272048lfu.425.1633523937631;
+        Wed, 06 Oct 2021 05:38:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJykyA+GW2Du8nJg20OBGB5WUBySz7bq6hoifotyrhP3nCgvQX2XPulj9GID977EqoW8vHGO8A==
+X-Received: by 2002:a05:6512:3a88:: with SMTP id q8mr9272011lfu.425.1633523937405;
+        Wed, 06 Oct 2021 05:38:57 -0700 (PDT)
+Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id c5sm2256595ljd.94.2021.10.06.05.38.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Oct 2021 04:42:34 -0700 (PDT)
-Subject: Re: [PATCH v7 0/6] clk: qcom: use power-domain for sm8250's clock
- controllers
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 06 Oct 2021 05:38:57 -0700 (PDT)
+Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
-Message-ID: <a152a5eb-33f8-ebf4-27c3-3be10852e1a4@linaro.org>
-Date:   Wed, 6 Oct 2021 14:42:33 +0300
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <20210914155607.14122-2-semen.protsenko@linaro.org>
+ <6ef3e9a3-77e7-48b7-cbcd-c13db50d0cd9@canonical.com>
+ <CAPLW+4kexaByx0nfy3q5g9XmrYdLav7E25h8qiO4Z_zmUVbRYQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <16ee07a1-afa9-b258-8836-e96de84551db@canonical.com>
+Date:   Wed, 6 Oct 2021 14:38:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <CAPLW+4kexaByx0nfy3q5g9XmrYdLav7E25h8qiO4Z_zmUVbRYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 06/10/2021 12:46, Sam Protsenko wrote:
+> On Wed, 15 Sept 2021 at 11:21, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 14/09/2021 17:56, Sam Protsenko wrote:
+>>> By default if bus clock has no users its "enable count" value is 0. It
+>>> might be actually running if it's already enabled in bootloader, but
+>>> then in some cases it can be disabled by mistake. For example, such case
+>>> was observed when dw_mci_probe() enabled bus clock, then failed to do
+>>> something and disabled that bus clock on error path. After that even
+>>> attempt to read the 'clk_summary' file in DebugFS freezed forever, as
+>>> CMU bus clock ended up being disabled and it wasn't possible to access
+>>> CMU registers anymore.
+>>>
+>>> To avoid such cases, CMU driver must increment the ref count for that
+>>> bus clock by running clk_prepare_enable(). There is already existing
+>>> '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
+>>> It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+>>> support for runtime PM"). But the clock is actually enabled only in
+>>> Exynos5433 clock driver. Let's mimic what is done there in generic
+>>> samsung_cmu_register_one() function, so other drivers can benefit from
+>>> that `.clk_name' field. As was described above, it might be helpful not
+>>> only for PM reasons, but also to prevent possible erroneous clock gating
+>>> on error paths.
+>>>
+>>> Another way to workaround that issue would be to use CLOCK_IS_CRITICAL
+>>> flag for corresponding gate clocks. But that might be not very good
+>>> design decision, as we might still want to disable that bus clock, e.g.
+>>> on PM suspend.
+>>>
+>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>>> ---
+>>>  drivers/clk/samsung/clk.c | 13 +++++++++++++
+>>>  1 file changed, 13 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+>>> index 1949ae7851b2..da65149fa502 100644
+>>> --- a/drivers/clk/samsung/clk.c
+>>> +++ b/drivers/clk/samsung/clk.c
+>>> @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+>>>
+>>>       ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+>>>
+>>> +     /* Keep bus clock running, so it's possible to access CMU registers */
+>>> +     if (cmu->clk_name) {
+>>> +             struct clk *bus_clk;
+>>> +
+>>> +             bus_clk = __clk_lookup(cmu->clk_name);
+>>> +             if (bus_clk) {
+>>> +                     clk_prepare_enable(bus_clk);
+>>> +             } else {
+>>> +                     pr_err("%s: could not find bus clock %s\n", __func__,
+>>> +                            cmu->clk_name);
+>>> +             }
+>>> +     }
+>>> +
+>>
+>> Solving this problem in generic way makes sense but your solution is
+>> insufficient. You skipped suspend/resume paths and in such case you
+>> should remove the Exynos5433-specific code.
+>>
+> 
+> Keeping core bus clocks always running seems like a separate
+> independent feature to me (not related to suspend/resume). It's
+> mentioned in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+> support for runtime PM") this way:
+> 
+>     "Also for each CMU there is one special parent clock, which has to
+> be enabled all the time when any access to CMU registers is being
+> done."
+> 
+> Why do you think suspend/resume paths have to be implemented along
+> with it? Btw, I didn't add PM ops in clk-exynos850, as PM is not
+> implemented on my board yet and I can't test it.
 
-On 29/08/2021 18:47, Dmitry Baryshkov wrote:
-> On SM8250 both the display and video clock controllers are powered up by
-> the MMCX power domain. Handle this by linking clock controllers to the
-> proper power domain, and using runtime power management to enable and
-> disable the MMCX power domain.
-> 
-> Dependencies:
-> https://lore.kernel.org/linux-pm/1628767642-4008-1-git-send-email-rnayak@codeaurora.org/
-> (pending inclusion into 5.15)
+You can skip the runtime PM, so keep your patch almost like it is now
+(in respect to Sylwester's comment about __clk_lookup). However now the
+Exynos5433 will enable the clk_name twice: here and in
+exynos5433_cmu_probe().
 
-
-Gracious ping for this patch series.
+If you keep this approach, you need to remove duplicated part in
+exynos5433_cmu_probe()...
 
 > 
-> Changes since v6:
->   - Dropped dependency on Bjorn's patches
->   - Restored required-opps properties
->   - Held pm device state while gdsc is powered on, removing dependency on
->     genpd's power_on() powering the domain into required state.
+> If you are suggesting moving all stuff from exynos5433_cmu_probe()
+> into samsung_cmu_register_one(), it would take passing platform_device
+> there, and implementing all PM related operations. I guess it's not a
+> super easy task, as it would require converting clk-exynos7 to
+> platform_driver for instance, and re-testing everything on exynos5433
+> and exynos7 boards (which I don't have).
 > 
-> Changes since v5:
->   - Dropped devm_pm_runtime_enable callback to remove extra dependency
+> What do you say if I pull that code to clk-exynos850.c instead for v2?
+> Refactoring (merging stuff from exynos5433_cmu_probe() into
+> samsung_cmu_register_one() ) can be done later, when I add PM ops into
+> clk-exynos850.
 > 
-> Changes since v4:
->   - Dropped pm_runtime handling from drivers/clk/qcom/common.c Moved the
->     code into dispcc-sm8250.c and videocc-sm8250.c
-> 
-> Changes since v3:
->   - Wrap gdsc_enable/gdsc_disable into pm_runtime_get/put calls rather
->     than calling pm_runtime_get in gdsc_enabled and _put in gdsc_disable
->   - Squash gdsc patches together to remove possible dependencies between
->     two patches.
-> 
-> Changes since v2:
->   - Move pm_runtime calls from generic genpd code to the gdsc code for
->     now (as suggested by Ulf & Bjorn)
-> 
-> Changes since v1:
->   - Rebase on top of Bjorn's patches, removing the need for setting
->     performance state directly.
->   - Move runtime PM calls from GDSC code to generic genpd code.
->   - Always call pm_runtime_enable in the Qualcomm generic clock
->     controller code.
->   - Register GDSC power domains as subdomains of the domain powering the
->     clock controller if there is one.
-> 
-> ----------------------------------------------------------------
-> Dmitry Baryshkov (8):
->        dt-bindings: clock: qcom,dispcc-sm8x50: add mmcx power domain
->        dt-bindings: clock: qcom,videocc: add mmcx power domain
->        clk: qcom: dispcc-sm8250: use runtime PM for the clock controller
->        clk: qcom: videocc-sm8250: use runtime PM for the clock controller
->        clk: qcom: gdsc: enable optional power domain support
->        arm64: dts: qcom: sm8250: remove mmcx regulator
->        clk: qcom: dispcc-sm8250: stop using mmcx regulator
->        clk: qcom: videocc-sm8250: stop using mmcx regulator
-> 
->   .../bindings/clock/qcom,dispcc-sm8x50.yaml         | 13 ++++++
->   .../devicetree/bindings/clock/qcom,videocc.yaml    | 13 ++++++
->   arch/arm64/boot/dts/qcom/sm8250.dtsi               | 13 ++----
->   drivers/clk/qcom/dispcc-sm8250.c                   | 28 ++++++++++--
->   drivers/clk/qcom/gdsc.c                            | 51 ++++++++++++++++++++--
->   drivers/clk/qcom/gdsc.h                            |  2 +
->   drivers/clk/qcom/videocc-sm8250.c                  | 31 ++++++++++---
->   7 files changed, 130 insertions(+), 21 deletions(-)
-> 
-> 
-> 
+>> Best regards,
+>> Krzysztof
 
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
