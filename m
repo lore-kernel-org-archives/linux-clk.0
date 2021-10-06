@@ -2,88 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C129CC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153DBC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2D9E61186
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2ACA611B0
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239170AbhJFTKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 15:10:09 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:36643 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239153AbhJFTKI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:10:08 -0400
-Received: by mail-ot1-f44.google.com with SMTP id 5-20020a9d0685000000b0054706d7b8e5so4425003otx.3;
-        Wed, 06 Oct 2021 12:08:15 -0700 (PDT)
+        id S239309AbhJFTLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Oct 2021 15:11:46 -0400
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:38738 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239343AbhJFTLp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Oct 2021 15:11:45 -0400
+Received: by mail-ot1-f50.google.com with SMTP id c6-20020a9d2786000000b005471981d559so4406860otb.5;
+        Wed, 06 Oct 2021 12:09:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=3flmeFTtK50jBy1sd7u96vAnvkYzGiMbNOeFLQczGgE=;
-        b=7MYZKLh0meW6LCI51yo1vGtCJAc5z9wRwqU4xuf6O7S29R/dRzJ1Qp8XJaqJP6bwnV
-         DvlGC3PSjII7JE/DthqY8iMcMqhg/CAFg/T+aX+t14/k1VcdPZT63aOHve5/FVYBFNSW
-         N45A/dYE/E8cNADINzlnG8PX0oMRjFHjFoU2ICc68AiWlBArQDEwQqRRpkkmdThl63qe
-         zcqMtHPq63H7/yWB2IWNM6sFeR3hC5PGAuGIwGJH69/XpzH3DB0kD3uDYBg/mk7fHcuD
-         Jw1eOHgWgWReEGNGS/30vM8Nx85b0F6wvelbNyvczvaEPoLZJO501vNn9lr6Bassr5Q4
-         gzgA==
-X-Gm-Message-State: AOAM531m4rVGTgIe9WQDye5eHUtM8bpSv/6pgrW331vIKX9tJqHZj0dk
-        3sPAO2S5op/BNCOIyO62RA==
-X-Google-Smtp-Source: ABdhPJzSOlmbu7vtSuxS0zm9FxYUsJ0u5rcivP5wp1X1pGDsd4V2fzO+v0Ui0n45a6zuFUUYv9hwhw==
-X-Received: by 2002:a05:6830:79c:: with SMTP id w28mr371114ots.332.1633547295394;
-        Wed, 06 Oct 2021 12:08:15 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XXPzrlRNSvZUe4SiE0xybZeK1VafzSZG6M/PPM6Jsqc=;
+        b=0xr3aEcPAY0zJIjgCVOwSo8gUl1uZwEqsCarWnj22R2NOeNwm8nLzst+EhTcUTcy8d
+         m8ZFjzy7q4Yij0TbtFU4YIRmUtd4mxiVZKQDBT3ty2wYAvK7RU+3rndj3vmEfEvEyCZI
+         07EO3e5GFQM0nJL+iBTAslYetEKgkYAwjIdVe0hBmfAgBqjaA1KMA5CtrGnVf7zx34Sr
+         JfYkQhKWDc17coFuTe8OK3PwCJgVuPdZ8ywZS/Vj9yxMAOdWjEC3SIuh725i6us6ePeG
+         6f2ne/iaereFqkAU152EFONmVxdis/mx1v3OzaQB2tngH9EhrDAPWXQajrYwCLCLARqD
+         SMQw==
+X-Gm-Message-State: AOAM531u8OtrGYnPgfdelvgJSLE/ks+prdLQiFPjTkUrvTd1+6WAgSXR
+        9khRYmF8breI4ks4OE1YQA==
+X-Google-Smtp-Source: ABdhPJx15PPZ/Sp4jiguY2xyGQXBzop3CVtvzjN4FK7KhMUcxyeAfU1Rz92H7nLnJ0892+RoMu9+Fw==
+X-Received: by 2002:a05:6830:1513:: with SMTP id k19mr389585otp.41.1633547392838;
+        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id i24sm4165829oie.42.2021.10.06.12.08.13
+        by smtp.gmail.com with ESMTPSA id a9sm4279056otk.3.2021.10.06.12.09.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 12:08:14 -0700 (PDT)
-Received: (nullmailer pid 2218061 invoked by uid 1000);
-        Wed, 06 Oct 2021 19:08:13 -0000
+        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
+Received: (nullmailer pid 2227188 invoked by uid 1000);
+        Wed, 06 Oct 2021 19:09:51 -0000
+Date:   Wed, 6 Oct 2021 14:09:51 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <1633518555-8195-5-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1633518555-8195-1-git-send-email-hayashi.kunihiko@socionext.com> <1633518555-8195-5-git-send-email-hayashi.kunihiko@socionext.com>
-Subject: Re: [PATCH v2 4/5] dt-bindings: clock: uniphier: Add clock binding for SoC-glue
-Date:   Wed, 06 Oct 2021 14:08:13 -0500
-Message-Id: <1633547293.518535.2218060.nullmailer@robh.at.kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 06/10] regulator: dt-bindings: samsung,s5m8767:
+ convert to dtschema
+Message-ID: <YV30fzEB/NlNhA+C@robh.at.kernel.org>
+References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
+ <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 06 Oct 2021 20:09:14 +0900, Kunihiko Hayashi wrote:
-> Update binding document for clocks implemented in SoC-glue.
+On Wed, 06 Oct 2021 15:23:20 +0200, Krzysztof Kozlowski wrote:
+> Convert the regulators of Samsung S5M8767 PMIC to DT schema format.
 > 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  .../bindings/clock/socionext,uniphier-clock.yaml         | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  .../bindings/regulator/samsung,s5m8767.txt    | 140 ------------------
+>  .../bindings/regulator/samsung,s5m8767.yaml   |  74 +++++++++
+>  MAINTAINERS                                   |   2 +-
+>  3 files changed, 75 insertions(+), 141 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/socionext,uniphier-clock.example.dt.yaml:0:0: /example-3/soc-glue@5f800000: failed to match any schema with compatible: ['socionext,uniphier-sysctrl', 'simple-mfd', 'syscon']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1537058
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
