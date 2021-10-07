@@ -2,57 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427F1C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 15:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5C7C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 16:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A53C610EA
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 15:46:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12C586113E
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 16:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241749AbhJGPsU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 11:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
+        id S242605AbhJGQSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 12:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241642AbhJGPsQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 11:48:16 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E88C061746
-        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 08:46:22 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id v10so9507810oic.12
-        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 08:46:22 -0700 (PDT)
+        with ESMTP id S242623AbhJGQSK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 12:18:10 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D33C061746
+        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 09:16:16 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id y15so27160447lfk.7
+        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 09:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kjtYykHRfu3oN6LXYJsRLSWIj815s4nhh1Muy8N60sQ=;
-        b=R45UfSQ+bdE2Lt+bNuC/oJ0r+7Gm/HotFGaEEwCZFjEckLGqCmSFMFsjdHztQRIYLb
-         8s8E6tSjyNPW+RyLroTsdWcH6fZhgGzM4xbAMmcdjxX/7+8iFWkN1X6mAscYYVTwitaC
-         63Q80xUR5epHZCDW9iEb6UKkd4zNLr2Q9dtvAS0BtYcnCkszQ6Yx1iZO+mYf28UwmszR
-         xdGv62q0OKWIdOszgup8QDJaymbosGpLvpudkt3OBcBv8JgGSAbogNWVFwjuU8mqQBa6
-         LLRYNO8XxSU0Ztoe85f/VtN42HYhhN+rsHgu3PeJr/EcfnRNSkz+QZZd3siZ3gDLm76A
-         6zig==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JPnT4IpQsu6GWrhFYest0dabRyyCsorT5rlqIt2XyBk=;
+        b=tCO7+DXwMMUKzKawpnAckHOhMLHXBMexNKIJ71+XuvkEY6UqKTLBuoDOXeWkBtO9O7
+         JEQStB4pAh7Q4JJmlmuqtfMOLaf/ai8bozykRxRPSbbDtkNI8iP+NvWnJ83C5Zyovkov
+         NZC3DvM77HGpvnLFXQP9A95bAxrxP31Brdu+NnrRuUgvhziyD9/MWoLF4r3TPt8gAODm
+         KgMKksJW9MG087YskbBg30CzgsD6pIYS6OGvIHQ+7yeJg/JM24WR8avFDW3rxUWZVzsF
+         oZNVI8xFpWaEZ8dXV+zzF/+l01bBo3H1XG4Sm32rZJmSuyjgEGkb2TCWFw7fSRk3JTUm
+         DzIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kjtYykHRfu3oN6LXYJsRLSWIj815s4nhh1Muy8N60sQ=;
-        b=VH/xXFuo7VrUZPkTW+MR2XuE5amDUi78r+KU0JEtHjr4t0k7pplT89FgjTPDf92/TO
-         zOuhoIA2Lmqe5ns7az+0aVMRAf+RLlvURn3NtI6poK5Bjm2EUaa1pTh4jIj2xFP9K7bj
-         NY8i53kDeQUB+GSyu1ualU8fNq40pJwTeT88owOn2492X1SrcYMov7fhR6knI0bgwWPc
-         7fEDzoKi0KKcQ5PMchZK0to3yWPRo9/OnJoN1NbLMLMQ0i2vLnFJkvlWgBOah76imKQ3
-         yCKqaTOW4IIsFFvuQt+gTkUkjPAAG5bUjg3sbDaEsE8aHDkwkJwgcUDZufZxQuRK0qxz
-         +kVQ==
-X-Gm-Message-State: AOAM532B3eCL9AxWkdtU+SEx2e6xqj58Hy+IJ31exSxUdtzRCTOpM8pY
-        I6dZT8KIyzYfDdMecO3Ba6h3hA==
-X-Google-Smtp-Source: ABdhPJyb0r7BkApnwD6ZTwsdS6wSJDTlROhQ2XReuZb9Hhs6nHxCYwNvx87/aJx3BBzNBiCYkKJqDw==
-X-Received: by 2002:aca:3656:: with SMTP id d83mr12288367oia.176.1633621581738;
-        Thu, 07 Oct 2021 08:46:21 -0700 (PDT)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id bj33sm5120916oib.31.2021.10.07.08.46.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 08:46:21 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 08:48:01 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JPnT4IpQsu6GWrhFYest0dabRyyCsorT5rlqIt2XyBk=;
+        b=y9S/1PcANeBipwrQ35dKm5Ql4bo2fJAnh+Ocb4Wg5PqGWo0mBwbJmVcjza7rKM41Uc
+         mhViAVqH7YQJiWodV3I8F+HWSJNA9h6iJ4vpZnGUJyDYQDbKia+lxbcR3BCO3NBGOT/B
+         B8JU88UNDcDKUGzF1VBvjm7SEPKTJ8gvWJEXdnI29BOmA6nSpB0RCrLgtioA9Uv8bGFB
+         BBsUdbH4Hyx2VKfAGrzyhD3dg6afe6Ugx/weWg/x/U8vH0jBx0kWmv+UQSM+ipxS3qzv
+         QL4OCbdA8vYBLaXKQYyC7REZw7sF+YoBw/JYu2HpazIR0FalBZbhMOqT8F4gvgpLHItU
+         KvTw==
+X-Gm-Message-State: AOAM5330ZqxyP3jSfIjmQdefVl3RqnkL/5WoLGUfOa5nQg2whH1jdHHi
+        MrlvS6yNanR9k1i9CarQ8bp0zA==
+X-Google-Smtp-Source: ABdhPJyWyNkSm3vUTGocVNe1vwyuX9qAZbEiipyo4qdoRtXwIb0mJnifjuLeaXBLQUipK9GTsK5YpQ==
+X-Received: by 2002:a2e:978a:: with SMTP id y10mr5411636lji.317.1633623374682;
+        Thu, 07 Oct 2021 09:16:14 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id p7sm434717lfr.275.2021.10.07.09.16.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Oct 2021 09:16:14 -0700 (PDT)
+Subject: Re: [PATCH v7 7/8] clk: qcom: dispcc-sm8250: stop using mmcx
+ regulator
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
@@ -64,53 +65,66 @@ Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 7/8] clk: qcom: dispcc-sm8250: stop using mmcx
- regulator
-Message-ID: <YV8WsQb9H7+CaLjP@ripper>
 References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
  <20210829154757.784699-8-dmitry.baryshkov@linaro.org>
+ <YV8WsQb9H7+CaLjP@ripper>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Message-ID: <4614587c-b87a-4375-cb6a-6af6f5462c6b@linaro.org>
+Date:   Thu, 7 Oct 2021 19:16:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210829154757.784699-8-dmitry.baryshkov@linaro.org>
+In-Reply-To: <YV8WsQb9H7+CaLjP@ripper>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun 29 Aug 08:47 PDT 2021, Dmitry Baryshkov wrote:
-
-> Now as the common qcom clock controller code has been taught about power
-> domains, stop mentioning mmcx supply as a way to power up the clock
-> controller's gdsc.
+On 07/10/2021 18:48, Bjorn Andersson wrote:
+> On Sun 29 Aug 08:47 PDT 2021, Dmitry Baryshkov wrote:
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Once we merge these, I expect that the boards will start crashing if
-the kernel is booted using an existing DTB?
-
-Is it okay to just merge the first 6 patches in the series now and
-postpone these two until we've had the dts change sitting for a while?
-
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/qcom/dispcc-sm8250.c | 1 -
->  1 file changed, 1 deletion(-)
+>> Now as the common qcom clock controller code has been taught about power
+>> domains, stop mentioning mmcx supply as a way to power up the clock
+>> controller's gdsc.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > 
-> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> index 108dd1249b6a..cf0bb12eb6e1 100644
-> --- a/drivers/clk/qcom/dispcc-sm8250.c
-> +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> @@ -1129,7 +1129,6 @@ static struct gdsc mdss_gdsc = {
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
->  	.flags = HW_CTRL,
-> -	.supply = "mmcx",
->  };
->  
->  static struct clk_regmap *disp_cc_sm8250_clocks[] = {
-> -- 
-> 2.33.0
+> Once we merge these, I expect that the boards will start crashing if
+> the kernel is booted using an existing DTB?
 > 
+> Is it okay to just merge the first 6 patches in the series now and
+> postpone these two until we've had the dts change sitting for a while?
+
+Sure it is.
+
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   drivers/clk/qcom/dispcc-sm8250.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+>> index 108dd1249b6a..cf0bb12eb6e1 100644
+>> --- a/drivers/clk/qcom/dispcc-sm8250.c
+>> +++ b/drivers/clk/qcom/dispcc-sm8250.c
+>> @@ -1129,7 +1129,6 @@ static struct gdsc mdss_gdsc = {
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   	.flags = HW_CTRL,
+>> -	.supply = "mmcx",
+>>   };
+>>   
+>>   static struct clk_regmap *disp_cc_sm8250_clocks[] = {
+>> -- 
+>> 2.33.0
+>>
+
+
+-- 
+With best wishes
+Dmitry
