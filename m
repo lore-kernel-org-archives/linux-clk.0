@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BC4C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 00:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81890C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 04:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B6EA61077
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 00:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 633BA61056
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 04:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240100AbhJGAqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Oct 2021 20:46:09 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:53095 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240091AbhJGAqI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Oct 2021 20:46:08 -0400
+        id S229729AbhJGEIY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 00:08:24 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:17317 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhJGEIY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 00:08:24 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1633567455; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=F9LFd7zEp2fy5P7bq+8J1pgiTkSQRvBHWbOHAJ8Jwf8=; b=iFDYAPVpXMAzjl45OKw7rvUtPMBvMXHfOptwQYHeKzl+Pu82VlkPbyVz0cHs6hIe5T4HBFBp
- 1To5t5oXJRnrLBoaQ0BdNPYMmXiuDhAQu26q81FAbygL8IEeFYwKUSlAjLZWO6bC2X+Y8/VG
- Z3TIMLd2SCUybewOZcqMASOUNDE=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1633579591; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=ThqZU5/Hiu9nTm4UkSZaL9sdjsmA90dM5r9HEPemVpw=; b=vEabUOHhaF8PKOBdboW6ayAan9Flt7BCVRXIUN+DbtHCx5CM/xyvWzhMBw3gsrDBHOkoHAdH
+ 2m2ITXdV1F+BOn71JI3x4LwCVvjdsmM4AVTmCUoflfIjM+muQAXE9AiI76kISQnwkHTZGM2j
+ 20ISKOybMvAbGuhqpIlhUAJwgRM=
+X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 615e42ce003e680efb8fc086 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 07 Oct 2021 00:43:58
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 615e724003355859c8af9c51 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 07 Oct 2021 04:06:24
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8A85EC4360D; Thu,  7 Oct 2021 00:43:57 +0000 (UTC)
+        id 22462C43460; Thu,  7 Oct 2021 04:06:24 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 152A2C4338F;
-        Thu,  7 Oct 2021 00:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 152A2C4338F
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A79AFC4338F;
+        Thu,  7 Oct 2021 04:06:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org A79AFC4338F
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -45,238 +45,149 @@ To:     Stephen Boyd <sboyd@kernel.org>,
 Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 1/2] dt-bindings: clock: Add YAML schemas for CAMCC clocks on SC7280
-Date:   Thu,  7 Oct 2021 06:13:44 +0530
-Message-Id: <1633567425-11953-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: gcc: Remove CPUSS clocks control for SC7280
+Date:   Thu,  7 Oct 2021 09:36:11 +0530
+Message-Id: <1633579571-25475-1-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The camera clock controller clock provider have a bunch of generic
-properties that are needed in a device tree. Add the CAMCC clock IDs for
-camera client to request for the clocks.
+The CPUSS clocks are kept always ON and at a fixed frequency of 100MHZ
+from the bootloader and no longer required to be controlled from HLOS.
 
+Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- .../bindings/clock/qcom,sc7280-camcc.yaml          |  71 ++++++++++++
- include/dt-bindings/clock/qcom,camcc-sc7280.h      | 127 +++++++++++++++++++++
- 2 files changed, 198 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,camcc-sc7280.h
+ drivers/clk/qcom/gcc-sc7280.c | 79 -------------------------------------------
+ 1 file changed, 79 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
-new file mode 100644
-index 0000000..f27ca6f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sc7280-camcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Camera Clock & Reset Controller Binding for SC7280
-+
-+maintainers:
-+  - Taniya Das <tdas@codeaurora.org>
-+
-+description: |
-+  Qualcomm camera clock control module which supports the clocks, resets and
-+  power domains on SC7280.
-+
-+  See also dt-bindings/clock/qcom,camcc-sc7280.h
-+
-+properties:
-+  compatible:
-+    const: qcom,sc7280-camcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board XO active source
-+      - description: Sleep clock source
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: sleep_clk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@ad00000 {
-+      compatible = "qcom,sc7280-camcc";
-+      reg = <0x0ad00000 0x10000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&sleep_clk>;
-+      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,camcc-sc7280.h b/include/dt-bindings/clock/qcom,camcc-sc7280.h
-new file mode 100644
-index 0000000..56640f4
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,camcc-sc7280.h
-@@ -0,0 +1,127 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SC7280_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SC7280_H
-+
-+/* CAM_CC clocks */
-+#define CAM_CC_PLL0				0
-+#define CAM_CC_PLL0_OUT_EVEN			1
-+#define CAM_CC_PLL0_OUT_ODD			2
-+#define CAM_CC_PLL1				3
-+#define CAM_CC_PLL1_OUT_EVEN			4
-+#define CAM_CC_PLL2				5
-+#define CAM_CC_PLL2_OUT_AUX			6
-+#define CAM_CC_PLL2_OUT_AUX2			7
-+#define CAM_CC_PLL3				8
-+#define CAM_CC_PLL3_OUT_EVEN			9
-+#define CAM_CC_PLL4				10
-+#define CAM_CC_PLL4_OUT_EVEN			11
-+#define CAM_CC_PLL5				12
-+#define CAM_CC_PLL5_OUT_EVEN			13
-+#define CAM_CC_PLL6				14
-+#define CAM_CC_PLL6_OUT_EVEN			15
-+#define CAM_CC_PLL6_OUT_ODD			16
-+#define CAM_CC_BPS_AHB_CLK			17
-+#define CAM_CC_BPS_AREG_CLK			18
-+#define CAM_CC_BPS_AXI_CLK			19
-+#define CAM_CC_BPS_CLK				20
-+#define CAM_CC_BPS_CLK_SRC			21
-+#define CAM_CC_CAMNOC_AXI_CLK			22
-+#define CAM_CC_CAMNOC_AXI_CLK_SRC		23
-+#define CAM_CC_CAMNOC_DCD_XO_CLK		24
-+#define CAM_CC_CCI_0_CLK			25
-+#define CAM_CC_CCI_0_CLK_SRC			26
-+#define CAM_CC_CCI_1_CLK			27
-+#define CAM_CC_CCI_1_CLK_SRC			28
-+#define CAM_CC_CORE_AHB_CLK			29
-+#define CAM_CC_CPAS_AHB_CLK			30
-+#define CAM_CC_CPHY_RX_CLK_SRC			31
-+#define CAM_CC_CSI0PHYTIMER_CLK			32
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC		33
-+#define CAM_CC_CSI1PHYTIMER_CLK			34
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC		35
-+#define CAM_CC_CSI2PHYTIMER_CLK			36
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC		37
-+#define CAM_CC_CSI3PHYTIMER_CLK			38
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC		39
-+#define CAM_CC_CSI4PHYTIMER_CLK			40
-+#define CAM_CC_CSI4PHYTIMER_CLK_SRC		41
-+#define CAM_CC_CSIPHY0_CLK			42
-+#define CAM_CC_CSIPHY1_CLK			43
-+#define CAM_CC_CSIPHY2_CLK			44
-+#define CAM_CC_CSIPHY3_CLK			45
-+#define CAM_CC_CSIPHY4_CLK			46
-+#define CAM_CC_FAST_AHB_CLK_SRC			47
-+#define CAM_CC_GDSC_CLK				48
-+#define CAM_CC_ICP_AHB_CLK			49
-+#define CAM_CC_ICP_CLK				50
-+#define CAM_CC_ICP_CLK_SRC			51
-+#define CAM_CC_IFE_0_AXI_CLK			52
-+#define CAM_CC_IFE_0_CLK			53
-+#define CAM_CC_IFE_0_CLK_SRC			54
-+#define CAM_CC_IFE_0_CPHY_RX_CLK		55
-+#define CAM_CC_IFE_0_CSID_CLK			56
-+#define CAM_CC_IFE_0_CSID_CLK_SRC		57
-+#define CAM_CC_IFE_0_DSP_CLK			58
-+#define CAM_CC_IFE_1_AXI_CLK			59
-+#define CAM_CC_IFE_1_CLK			60
-+#define CAM_CC_IFE_1_CLK_SRC			61
-+#define CAM_CC_IFE_1_CPHY_RX_CLK		62
-+#define CAM_CC_IFE_1_CSID_CLK			63
-+#define CAM_CC_IFE_1_CSID_CLK_SRC		64
-+#define CAM_CC_IFE_1_DSP_CLK			65
-+#define CAM_CC_IFE_2_AXI_CLK			66
-+#define CAM_CC_IFE_2_CLK			67
-+#define CAM_CC_IFE_2_CLK_SRC			68
-+#define CAM_CC_IFE_2_CPHY_RX_CLK		69
-+#define CAM_CC_IFE_2_CSID_CLK			70
-+#define CAM_CC_IFE_2_CSID_CLK_SRC		71
-+#define CAM_CC_IFE_2_DSP_CLK			72
-+#define CAM_CC_IFE_LITE_0_CLK			73
-+#define CAM_CC_IFE_LITE_0_CLK_SRC		74
-+#define CAM_CC_IFE_LITE_0_CPHY_RX_CLK		75
-+#define CAM_CC_IFE_LITE_0_CSID_CLK		76
-+#define CAM_CC_IFE_LITE_0_CSID_CLK_SRC		77
-+#define CAM_CC_IFE_LITE_1_CLK			78
-+#define CAM_CC_IFE_LITE_1_CLK_SRC		79
-+#define CAM_CC_IFE_LITE_1_CPHY_RX_CLK		80
-+#define CAM_CC_IFE_LITE_1_CSID_CLK		81
-+#define CAM_CC_IFE_LITE_1_CSID_CLK_SRC		82
-+#define CAM_CC_IPE_0_AHB_CLK			83
-+#define CAM_CC_IPE_0_AREG_CLK			84
-+#define CAM_CC_IPE_0_AXI_CLK			85
-+#define CAM_CC_IPE_0_CLK			86
-+#define CAM_CC_IPE_0_CLK_SRC			87
-+#define CAM_CC_JPEG_CLK				88
-+#define CAM_CC_JPEG_CLK_SRC			89
-+#define CAM_CC_LRME_CLK				90
-+#define CAM_CC_LRME_CLK_SRC			91
-+#define CAM_CC_MCLK0_CLK			92
-+#define CAM_CC_MCLK0_CLK_SRC			93
-+#define CAM_CC_MCLK1_CLK			94
-+#define CAM_CC_MCLK1_CLK_SRC			95
-+#define CAM_CC_MCLK2_CLK			96
-+#define CAM_CC_MCLK2_CLK_SRC			97
-+#define CAM_CC_MCLK3_CLK			98
-+#define CAM_CC_MCLK3_CLK_SRC			99
-+#define CAM_CC_MCLK4_CLK			100
-+#define CAM_CC_MCLK4_CLK_SRC			101
-+#define CAM_CC_MCLK5_CLK			102
-+#define CAM_CC_MCLK5_CLK_SRC			103
-+#define CAM_CC_SLEEP_CLK			104
-+#define CAM_CC_SLEEP_CLK_SRC			105
-+#define CAM_CC_SLOW_AHB_CLK_SRC			106
-+#define CAM_CC_XO_CLK_SRC			107
-+
-+/* CAM_CC power domains */
-+#define CAM_CC_BPS_GDSC				0
-+#define CAM_CC_IFE_0_GDSC			1
-+#define CAM_CC_IFE_1_GDSC			2
-+#define CAM_CC_IFE_2_GDSC			3
-+#define CAM_CC_IPE_0_GDSC			4
-+#define CAM_CC_TITAN_TOP_GDSC			5
-+
-+#endif
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index 6cefcdc..667f584 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -479,24 +479,6 @@ static struct clk_regmap_mux gcc_usb3_sec_phy_pipe_clk_src = {
+ 		},
+ 	},
+ };
+-static const struct freq_tbl ftbl_gcc_cpuss_ahb_clk_src[] = {
+-	F(19200000, P_BI_TCXO, 1, 0, 0),
+-	{ }
+-};
+-
+-static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
+-	.cmd_rcgr = 0x4800c,
+-	.mnd_width = 0,
+-	.hid_width = 5,
+-	.parent_map = gcc_parent_map_0,
+-	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_cpuss_ahb_clk_src",
+-		.parent_data = gcc_parent_data_0_ao,
+-		.num_parents = ARRAY_SIZE(gcc_parent_data_0_ao),
+-		.ops = &clk_rcg2_ops,
+-	},
+-};
+
+ static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+ 	F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+@@ -1239,21 +1221,6 @@ static struct clk_rcg2 gcc_sec_ctrl_clk_src = {
+ 	},
+ };
+
+-static struct clk_regmap_div gcc_cpuss_ahb_postdiv_clk_src = {
+-	.reg = 0x48024,
+-	.shift = 0,
+-	.width = 4,
+-	.clkr.hw.init = &(struct clk_init_data) {
+-		.name = "gcc_cpuss_ahb_postdiv_clk_src",
+-		.parent_hws = (const struct clk_hw*[]){
+-			&gcc_cpuss_ahb_clk_src.clkr.hw,
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_regmap_div_ro_ops,
+-	},
+-};
+-
+ static struct clk_regmap_div gcc_usb30_prim_mock_utmi_postdiv_clk_src = {
+ 	.reg = 0xf050,
+ 	.shift = 0,
+@@ -1500,27 +1467,6 @@ static struct clk_branch gcc_cfg_noc_usb3_sec_axi_clk = {
+ 	},
+ };
+
+-/* For CPUSS functionality the AHB clock needs to be left enabled */
+-static struct clk_branch gcc_cpuss_ahb_clk = {
+-	.halt_reg = 0x48000,
+-	.halt_check = BRANCH_HALT_VOTED,
+-	.hwcg_reg = 0x48000,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x52000,
+-		.enable_mask = BIT(21),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_cpuss_ahb_clk",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&gcc_cpuss_ahb_postdiv_clk_src.clkr.hw,
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_ddrss_gpu_axi_clk = {
+ 	.halt_reg = 0x71154,
+ 	.halt_check = BRANCH_HALT_SKIP,
+@@ -2608,27 +2554,6 @@ static struct clk_branch gcc_sdcc4_apps_clk = {
+ 	},
+ };
+
+-/* For CPUSS functionality the AHB clock needs to be left enabled */
+-static struct clk_branch gcc_sys_noc_cpuss_ahb_clk = {
+-	.halt_reg = 0x48178,
+-	.halt_check = BRANCH_HALT_VOTED,
+-	.hwcg_reg = 0x48178,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x52000,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_sys_noc_cpuss_ahb_clk",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&gcc_cpuss_ahb_postdiv_clk_src.clkr.hw,
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_throttle_pcie_ahb_clk = {
+ 	.halt_reg = 0x9001c,
+ 	.halt_check = BRANCH_HALT,
+@@ -3294,9 +3219,6 @@ static struct clk_regmap *gcc_sc7280_clocks[] = {
+ 	[GCC_CAMERA_SF_AXI_CLK] = &gcc_camera_sf_axi_clk.clkr,
+ 	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
+ 	[GCC_CFG_NOC_USB3_SEC_AXI_CLK] = &gcc_cfg_noc_usb3_sec_axi_clk.clkr,
+-	[GCC_CPUSS_AHB_CLK] = &gcc_cpuss_ahb_clk.clkr,
+-	[GCC_CPUSS_AHB_CLK_SRC] = &gcc_cpuss_ahb_clk_src.clkr,
+-	[GCC_CPUSS_AHB_POSTDIV_CLK_SRC] = &gcc_cpuss_ahb_postdiv_clk_src.clkr,
+ 	[GCC_DDRSS_GPU_AXI_CLK] = &gcc_ddrss_gpu_axi_clk.clkr,
+ 	[GCC_DDRSS_PCIE_SF_CLK] = &gcc_ddrss_pcie_sf_clk.clkr,
+ 	[GCC_DISP_GPLL0_CLK_SRC] = &gcc_disp_gpll0_clk_src.clkr,
+@@ -3403,7 +3325,6 @@ static struct clk_regmap *gcc_sc7280_clocks[] = {
+ 	[GCC_SDCC4_AHB_CLK] = &gcc_sdcc4_ahb_clk.clkr,
+ 	[GCC_SDCC4_APPS_CLK] = &gcc_sdcc4_apps_clk.clkr,
+ 	[GCC_SDCC4_APPS_CLK_SRC] = &gcc_sdcc4_apps_clk_src.clkr,
+-	[GCC_SYS_NOC_CPUSS_AHB_CLK] = &gcc_sys_noc_cpuss_ahb_clk.clkr,
+ 	[GCC_THROTTLE_PCIE_AHB_CLK] = &gcc_throttle_pcie_ahb_clk.clkr,
+ 	[GCC_TITAN_NRT_THROTTLE_CORE_CLK] =
+ 		&gcc_titan_nrt_throttle_core_clk.clkr,
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
