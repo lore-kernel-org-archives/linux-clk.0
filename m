@@ -2,97 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584E0C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 20:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6944C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 21:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41AC1610CC
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 20:09:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9687161263
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 21:25:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241991AbhJGULb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 16:11:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241708AbhJGUL3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 16:11:29 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0731FC061762
-        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 13:09:35 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id x27so29592067lfa.9
-        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 13:09:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tNYc9N5wA2dHAgeVOQF26AsRlfvK5B8e1wZ8lVV84+E=;
-        b=bx6QWhPL/4Wa0AAtXhs5CSKa9o3lioGisuzsJtke3H2JyZS9AM5Wpa9bAFXra/C3K6
-         TXOU/VgOIca4za0TTAydSzonRyXy/i4TYLu74r0yO3XDbJm3gPEhkAyw9cAQdLdoHfB6
-         rpNcAU6GD0fQSOZepC0CbZZX/g9d9/UpZAURCJKJ5sClFoYjHgdWDPlO8kigfGkHiIs8
-         TSq0Uz+Jl50eOgj2eV+5V6IrysH0E9sX4xxBo52Fnc5LAab1EiTbkkFSuuYXXTP70tm1
-         UguDBieeW4h9xViW6K87QrlnYY3EsPyyeFdUvMJR+H4AL5RoEQVLKgyWYdc71ciYUk+C
-         OmRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tNYc9N5wA2dHAgeVOQF26AsRlfvK5B8e1wZ8lVV84+E=;
-        b=gfy4CCzX4HHaM9aLAxR4B9EFD4hiUTtohSAJxVf7jGBPtM1Pzu0ks2cd1cJ/sC8/OP
-         qk+oenfa013G0TlLWVdKhlTbt6PnoguNEmstmsNtk+anL10EBBRyI9kLAxbBL8qRWJBo
-         Cy9UsvwD5TJJsZKY8L5FyVAaK6JVjvHESfa0u3H5SbAJVtGzwuMCyYhsON1P1YS/+qn5
-         Z0UIeGrHwLow7QjZX/t3SOEuGn1GqeSAIZPZchrTiY/avAtYxI+VawE33wFxBn8Ir+Wi
-         egnd3Dur+Tagc7DGvgbYwXpv84+XHodDA1QXdgmDlxzodoX1ET5yFSrJHFOkiHpk2P7M
-         +MKQ==
-X-Gm-Message-State: AOAM532iR5DlfZIDmrJii5VHz+AvPjobQKu7tWvOI78KCFhw6C8myuqv
-        iZ+T/FrZBDM/7PT6GOE5h/Oxt5xDX/T5VWSs
-X-Google-Smtp-Source: ABdhPJxg46kr59ekcCaJqXKFbIuLyss2b8rs7FGamRNJ3/kucNcSAAnD9kUxnAxbfYdB7e7eXlSzAw==
-X-Received: by 2002:a2e:b949:: with SMTP id 9mr6751593ljs.400.1633637373436;
-        Thu, 07 Oct 2021 13:09:33 -0700 (PDT)
-Received: from [192.168.112.17] (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id k16sm28153lfo.219.2021.10.07.13.09.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Oct 2021 13:09:33 -0700 (PDT)
-Subject: Re: [PATCH] clk: renesas: r8a779[56]x: add MLP clock
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S241187AbhJGV1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 17:27:18 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:58918 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233028AbhJGV1S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Oct 2021 17:27:18 -0400
+Received: from localhost.localdomain (ip-213-127-63-121.ip.prioritytelecom.net [213.127.63.121])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 2333FC91C0;
+        Thu,  7 Oct 2021 21:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1633641923; bh=vm4XvzJRFYh/K71Zt5Zz2PQqoNrCtNh97Lggz9HLaJg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=tFQf1PhLUs6sIHrn86U4XyF7E+aaJ0/0bTAv3/E88RukOWmeBs43vQK3Dx3moozIQ
+         mYz0CPPVw2FyjrhzDhAKeKnesOdo58zMsnYgHPrvlhdMUjkhXwXVTT53wo50uBjupr
+         ESfBYJp+nPcWIODwYmxGK7nmER56wZrDuNQ+tfes=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        konrad.dybcio@somainline.org, Luca Weiss <luca@z3ntu.xyz>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-References: <20210929213431.5275-1-nikita.yoush@cogentembedded.com>
- <CAMuHMdWBJSPWR+Tb87GcJiv_xkYjToOarTcHu8doAFsCECEd=w@mail.gmail.com>
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Message-ID: <173675cb-53e4-8d7e-eb6e-83824877da1b@cogentembedded.com>
-Date:   Thu, 7 Oct 2021 23:09:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/11] clk: qcom: add select QCOM_GDSC for SM6350
+Date:   Thu,  7 Oct 2021 23:24:28 +0200
+Message-Id: <20211007212444.328034-2-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211007212444.328034-1-luca@z3ntu.xyz>
+References: <20211007212444.328034-1-luca@z3ntu.xyz>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWBJSPWR+Tb87GcJiv_xkYjToOarTcHu8doAFsCECEd=w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> These additions look fine to me.  I'm only wondering about the
-> actual parent clocks, which are not well-documented in the Hardware
-> User's Manual.
-> It does say that MLP uses the Audio main bus (AXI).
-> The related AUDIO-DMAC uses S1D2, which runs at 266 MHz, while S2D1
-> runs at 400 MHz?
+QCOM_GDSC is needed for the gcc driver to probe.
 
-This patch was included in this form into Renesas BSP for years.
+Fixes: 131abae905df ("clk: qcom: Add SM6350 GCC driver")
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+v2: add R-b
 
-Indeed, the information on the parent clock is missing in the manual, and can be inexact here. I've sent 
-a question to our contact at Renesas but not sure they will reply.
+ drivers/clk/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-But, AFAIU, these parent clocks are not software-controlled, so having them wrong does not result in any 
-issues other than inexact information exported via sysfs/debugfs.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 0a5596797b93..9ef007b3cf9b 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -564,6 +564,7 @@ config SM_GCC_6125
+ 
+ config SM_GCC_6350
+ 	tristate "SM6350 Global Clock Controller"
++	select QCOM_GDSC
+ 	help
+ 	  Support for the global clock controller on SM6350 devices.
+ 	  Say Y if you want to use peripheral devices such as UART,
+-- 
+2.33.0
 
-> BTW, do you plan to enable full support for MLP in the upstream kernel?
-
-Yes, we are upstreaming full KF board support now.
-
-Nikita
