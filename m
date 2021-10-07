@@ -2,129 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5C7C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 16:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5E4C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 17:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12C586113E
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 16:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9259261262
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 17:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242605AbhJGQSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 12:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53082 "EHLO
+        id S241738AbhJGRrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 13:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242623AbhJGQSK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 12:18:10 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D33C061746
-        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 09:16:16 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id y15so27160447lfk.7
-        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 09:16:16 -0700 (PDT)
+        with ESMTP id S233719AbhJGRrR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 13:47:17 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D0DC061570
+        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 10:45:23 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id p18so7553862vsu.7
+        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 10:45:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JPnT4IpQsu6GWrhFYest0dabRyyCsorT5rlqIt2XyBk=;
-        b=tCO7+DXwMMUKzKawpnAckHOhMLHXBMexNKIJ71+XuvkEY6UqKTLBuoDOXeWkBtO9O7
-         JEQStB4pAh7Q4JJmlmuqtfMOLaf/ai8bozykRxRPSbbDtkNI8iP+NvWnJ83C5Zyovkov
-         NZC3DvM77HGpvnLFXQP9A95bAxrxP31Brdu+NnrRuUgvhziyD9/MWoLF4r3TPt8gAODm
-         KgMKksJW9MG087YskbBg30CzgsD6pIYS6OGvIHQ+7yeJg/JM24WR8avFDW3rxUWZVzsF
-         oZNVI8xFpWaEZ8dXV+zzF/+l01bBo3H1XG4Sm32rZJmSuyjgEGkb2TCWFw7fSRk3JTUm
-         DzIg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f/SSd9taA/ux/WcbF4zPpx1nrfRSaWr/6ufk+sBjGOU=;
+        b=C6OV7fNTNszO83NEHaEe9WFS92ipi/64+l5QWmrSf08rqt21EdnbkzayDbeQbffi8q
+         4EWmBrvGTjXk+RskDMJyaOKcdhNgkhuFRmA0dqtR+2QoW5HNYt3KBYu8nzbKLKgkjz93
+         FQABPrg1LfIwwUdGSgzk8+H5moBYA8C7xiQueXjfOnfLBkqGIF7lssvawMvmoX7/PKWv
+         7FheqBOhkduhYGMxsRwICIRa6gj+Y60RtPOTQnfFw3qEpiNyUyt6awddo1vVc94PK/D9
+         ewFPU/aqeVl6SiMmF1dGHZH2dbPU1llOpwspC/hCI6y532BiXHKx06E64YciBBxxcwrd
+         urow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JPnT4IpQsu6GWrhFYest0dabRyyCsorT5rlqIt2XyBk=;
-        b=y9S/1PcANeBipwrQ35dKm5Ql4bo2fJAnh+Ocb4Wg5PqGWo0mBwbJmVcjza7rKM41Uc
-         mhViAVqH7YQJiWodV3I8F+HWSJNA9h6iJ4vpZnGUJyDYQDbKia+lxbcR3BCO3NBGOT/B
-         B8JU88UNDcDKUGzF1VBvjm7SEPKTJ8gvWJEXdnI29BOmA6nSpB0RCrLgtioA9Uv8bGFB
-         BBsUdbH4Hyx2VKfAGrzyhD3dg6afe6Ugx/weWg/x/U8vH0jBx0kWmv+UQSM+ipxS3qzv
-         QL4OCbdA8vYBLaXKQYyC7REZw7sF+YoBw/JYu2HpazIR0FalBZbhMOqT8F4gvgpLHItU
-         KvTw==
-X-Gm-Message-State: AOAM5330ZqxyP3jSfIjmQdefVl3RqnkL/5WoLGUfOa5nQg2whH1jdHHi
-        MrlvS6yNanR9k1i9CarQ8bp0zA==
-X-Google-Smtp-Source: ABdhPJyWyNkSm3vUTGocVNe1vwyuX9qAZbEiipyo4qdoRtXwIb0mJnifjuLeaXBLQUipK9GTsK5YpQ==
-X-Received: by 2002:a2e:978a:: with SMTP id y10mr5411636lji.317.1633623374682;
-        Thu, 07 Oct 2021 09:16:14 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id p7sm434717lfr.275.2021.10.07.09.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Oct 2021 09:16:14 -0700 (PDT)
-Subject: Re: [PATCH v7 7/8] clk: qcom: dispcc-sm8250: stop using mmcx
- regulator
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
- <20210829154757.784699-8-dmitry.baryshkov@linaro.org>
- <YV8WsQb9H7+CaLjP@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <4614587c-b87a-4375-cb6a-6af6f5462c6b@linaro.org>
-Date:   Thu, 7 Oct 2021 19:16:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f/SSd9taA/ux/WcbF4zPpx1nrfRSaWr/6ufk+sBjGOU=;
+        b=qIPp3zdfWxBJctwJ782Haf134NGCY5Wv562S455nRyxqX/3ntLV38bcPwBogFcRDxr
+         SrR4vX2vonHm7Avz/hrQh7D4YOO3WDVMl6Ar5butJtuxVNzikM+B+uUmHdqcfn6at+J9
+         Nmcv8+EMi9up4jAR659j3QlEjbaeHv/wGNh6SwE5G9tDgmrXm61JFota2YUvpZVzORJO
+         ArnH95mBQR0B2dCHTVJcU3JyQxb6EasGLL3JcjWvGSCsIrFhZ/8koiMmmO7Vo/B0JWfW
+         scWeUXhJeHT/RZjGAgwjH0w/jz3TxS+A3euiEGGaBK5JjfVWZ4j1AkRWbojawUaIf+D5
+         sb4A==
+X-Gm-Message-State: AOAM53091uzMtQSN+jzGOomEybMNZrfPSKkZO0iXtKKvbv6JSaDYmo0K
+        GpAEgzoKB4xIIOzW5JKK49o3FZ16LD9ZC1WTspVT3A==
+X-Google-Smtp-Source: ABdhPJzs3BsUO8cKJEPJ0Qs45Sbe9/yBxJbj4v7ac+DJsZWM5TBVKa/rt3x2n3ALCUEU8THowSqy5JBQI6SxyrUFihM=
+X-Received: by 2002:a67:d289:: with SMTP id z9mr6123652vsi.39.1633628722573;
+ Thu, 07 Oct 2021 10:45:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YV8WsQb9H7+CaLjP@ripper>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20211007140904.3085-1-semen.protsenko@linaro.org> <CAHp75Ve1+pJ3Mqc7ErDSheLu5rEvSOf2Cq9JtSfOxSFrazNObg@mail.gmail.com>
+In-Reply-To: <CAHp75Ve1+pJ3Mqc7ErDSheLu5rEvSOf2Cq9JtSfOxSFrazNObg@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 7 Oct 2021 20:45:11 +0300
+Message-ID: <CAPLW+4=3Mx9HuLdDo8YQ7tjVMi2kaTP23N1E2b5Krp_RJbO5-g@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: Add write operation for clk_parent debugfs node
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mike Tipton <mdtipton@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/10/2021 18:48, Bjorn Andersson wrote:
-> On Sun 29 Aug 08:47 PDT 2021, Dmitry Baryshkov wrote:
-> 
->> Now as the common qcom clock controller code has been taught about power
->> domains, stop mentioning mmcx supply as a way to power up the clock
->> controller's gdsc.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Once we merge these, I expect that the boards will start crashing if
-> the kernel is booted using an existing DTB?
-> 
-> Is it okay to just merge the first 6 patches in the series now and
-> postpone these two until we've had the dts change sitting for a while?
+On Thu, 7 Oct 2021 at 17:39, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>
+> On Thu, Oct 7, 2021 at 5:09 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> >
+> > Useful for testing mux clocks. One can write the index of the parent to
+> > be set into clk_parent node, starting from 0. Example
+> >
+> >     # cd /sys/kernel/debug/clk/mout_peri_bus
+> >     # cat clk_possible_parrents
+> >       dout_shared0_div4 dout_shared1_div4
+> >     # cat clk_parent
+> >       dout_shared0_div4
+> >     # echo 1 > clk_parent
+> >     # cat clk_parent
+> >       dout_shared1_div4
+> >
+> > CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
+> > order to use this feature.
+>
+> ...
+>
+> > +static ssize_t current_parent_write(struct file *file, const char __user *ubuf,
+> > +                                   size_t count, loff_t *ppos)
+> > +{
+> > +       struct seq_file *s = file->private_data;
+> > +       struct clk_core *core = s->private;
+> > +       struct clk_core *parent;
+>
+> > +       char buf[4] = { 0 };
+>
+> We may use {} (in a more standardized way), but see below.
+>
+> > +       u8 idx;
+> > +       int err;
+>
+> > +       if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
+> > +               return -EFAULT;
+> > +
+> > +       err = kstrtou8(buf, 0, &idx);
+> > +       if (err)
+> > +               return err;
+>
+> NIH kstrotu8_from_user().
+>
 
-Sure it is.
+Cool, didn't know about that API existence. Will fix in v5.
 
-> 
-> Regards,
-> Bjorn
-> 
->> ---
->>   drivers/clk/qcom/dispcc-sm8250.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
->> index 108dd1249b6a..cf0bb12eb6e1 100644
->> --- a/drivers/clk/qcom/dispcc-sm8250.c
->> +++ b/drivers/clk/qcom/dispcc-sm8250.c
->> @@ -1129,7 +1129,6 @@ static struct gdsc mdss_gdsc = {
->>   	},
->>   	.pwrsts = PWRSTS_OFF_ON,
->>   	.flags = HW_CTRL,
->> -	.supply = "mmcx",
->>   };
->>   
->>   static struct clk_regmap *disp_cc_sm8250_clocks[] = {
->> -- 
->> 2.33.0
->>
+> > +       parent = clk_core_get_parent_by_index(core, idx);
+> > +       if (!parent)
+> > +               return -ENOENT;
+> > +
+> > +       clk_prepare_lock();
+> > +       err = clk_core_set_parent_nolock(core, parent);
+> > +       clk_prepare_unlock();
+> > +       if (err)
+> > +               return err;
+> > +
+> > +       return count;
+> > +}
+>
+> ...
+>
+> > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+> > +               if (core->num_parents > 1) {
+> > +                       debugfs_create_file("clk_parent", 0644, root, core,
+> > +                                           &current_parent_rw_fops);
+>
+> > +               } else {
+> > +                       debugfs_create_file("clk_parent", 0444, root, core,
+> > +                                           &current_parent_fops);
+> > +               }
+> > +#else
+> >                 debugfs_create_file("clk_parent", 0444, root, core,
+> >                                     &current_parent_fops);
+>
+> Dup. You can avoid it.
+>
 
+You're right, will be fixed in v5.
 
--- 
-With best wishes
-Dmitry
+Thanks for the review!
+
+> > +#endif
+> > +       }
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
