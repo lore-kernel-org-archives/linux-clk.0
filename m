@@ -2,156 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF36AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 12:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4438FC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 13:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C700261251
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 12:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2581861090
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 13:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241135AbhJGMKF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 08:10:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241185AbhJGMJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Oct 2021 08:09:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B3B166124A;
-        Thu,  7 Oct 2021 12:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633608485;
-        bh=GxJBOSZPI8VcVuf7ZRY+bIFuULIIPb3wgof+HIqQOWc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qX1bd03C6V/b1wGAo8fBR/Se5DW56qiuXAyFrfQ6Xoquil0Xcu45MrxUmqITFED7f
-         MRUxxD+YvTD2EX2P5tO84D8yO5xTMH7Hqug9f7RBXD1gqiY5E9zOJN/Ef6k+NvXz0J
-         b5oLHOEu4v/RhadrJ6Tz8Ps3f3yn/KHToajOtuFqBhmUVhH9iNU2kb1l0BTSmn5Bk1
-         TEvGthM9pwnIVFYmunRwUnZSa5vnPYTPhQc+505xi1mE623gJN2P1kF3ulzaP8JMKb
-         vEytu1lg8z5BsB0UWRImDolv9vi4d04XXGZKCpwG4a5WHdjut7k3yALcvIKLPz5SRe
-         kPfmbg7PDPclg==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1mYSBv-005QTr-ME; Thu, 07 Oct 2021 14:08:03 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
-Date:   Thu,  7 Oct 2021 14:06:55 +0200
-Message-Id: <a953600fd570e308c034fea43be5cd27a69771b8.1633607765.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1633607765.git.mchehab+huawei@kernel.org>
-References: <cover.1633607765.git.mchehab+huawei@kernel.org>
+        id S233114AbhJGNJn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 09:09:43 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50604
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240998AbhJGNJm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 09:09:42 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0520840005
+        for <linux-clk@vger.kernel.org>; Thu,  7 Oct 2021 13:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633612067;
+        bh=FORzsUXne7M2qBjMCfFLm5GuHPWnU7ify0SwCg4gAzA=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=VoAXT2NkGH7omN1mbgVrrSFl52l83rF1rNv6TYxonlMixwxbgJHlEfEUe2GqebwB1
+         hX0zRceU1wzMxmec+zik0wUoNIx6hSQ+O9bFDpHKotJQ+O5pcVXKTzA/rkQQ3RAOfq
+         m6Bgy9a8YTh+79ckN3jOSrIKyENclye/8YHiieobdKbF0hU5j8poj66Zo/Sx7ECpXR
+         cjW2G5FZGLeRrLdslWOxg3CM/kpdV5HtjqMMzwG/HtOTzk/zbUEmDa67LfOZNAYK6d
+         P5uOsrtrz6PU1oaWYx1s+RIDGOIQBI9L55GzhDcpqt7+1k4wKq1yfwgBOXhlvKhwMx
+         dNOb33tL3Zwsw==
+Received: by mail-wr1-f72.google.com with SMTP id k2-20020adfc702000000b0016006b2da9bso4638289wrg.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 06:07:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FORzsUXne7M2qBjMCfFLm5GuHPWnU7ify0SwCg4gAzA=;
+        b=qUN21aFoE/Z3Y4+xvl+q273rI1l9PJUvA65FIr92BK82HQZ0K0q5X8qKFhnUAO2R9s
+         PYj8J7iScslzGU2SzLnjwnzkCwMQurEYH0jUsvyBf01qapNoV63Yeo6po/CKNhIjhk7r
+         K/QEDsw7VrjQwseW9MkWkZZiKYG1SE6djRFRkkZxoxwlW9sRZu03oKOZDgyHFJlRUlBG
+         U7Zs02k1GDs4Az1Pp6thuE21OyzWfVDXQ7c6ee923ttw7jyE13r3WR6rDdGHAKvGY7iY
+         InDK7Hhb8y9xOZ3z+BSWZ6v12ZnBSwitbfL2VoNBRvstni1faWzeZjbrrIzs1Lp9Rqvn
+         OIUA==
+X-Gm-Message-State: AOAM533iBfeoJE5u+Mm99203vHuGpoQUi9BihZRWNrfNob5JjlpB6H4P
+        3bA2va/674hRxWBJ4ZTiM1Qee9Olx9V/cSHvbI5qiTzWNj4htgbpnc/YUUnWLeMPUulPfAERCrp
+        eOhZOOJtBmzKdiebZH1nolxd0W5iZcpZ3ObYDDA==
+X-Received: by 2002:adf:b355:: with SMTP id k21mr5428721wrd.380.1633612064188;
+        Thu, 07 Oct 2021 06:07:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy5pF3b8+6MeNpQSCXgOMr7rU57lLrOb+1ZGnujvyw0abYwmsBGvSJGW2lo9jvHE2DDTsCMuQ==
+X-Received: by 2002:adf:b355:: with SMTP id k21mr5428054wrd.380.1633612059354;
+        Thu, 07 Oct 2021 06:07:39 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-186-13.adslplus.ch. [188.155.186.13])
+        by smtp.gmail.com with ESMTPSA id d2sm24198585wrc.32.2021.10.07.06.07.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Oct 2021 06:07:38 -0700 (PDT)
+Subject: Re: [PATCH v3 10/10] dt-bindings: mfd: samsung,s5m8767: document buck
+ and LDO supplies
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
+ <20211006132324.76008-11-krzysztof.kozlowski@canonical.com>
+ <CAPLW+4migQ+3NBsHgMd04N-Fc71CTzxoUMS3HN2S8377qFDa6g@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <25ecf19b-eb40-ada6-2469-b0c29820b498@canonical.com>
+Date:   Thu, 7 Oct 2021 15:07:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+In-Reply-To: <CAPLW+4migQ+3NBsHgMd04N-Fc71CTzxoUMS3HN2S8377qFDa6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some clocks can't be disabled or the device stops working.
+On 06/10/2021 22:02, Sam Protsenko wrote:
+> On Wed, 6 Oct 2021 at 16:24, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> Document the properties with regulator supplies for bucks and LDOs.  At
+>> least one board uses it (Exynos5250 Arndale).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
+>> index b2529a48c890..12dea5aac8b6 100644
+>> --- a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
+>> +++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
+>> @@ -96,6 +96,44 @@ properties:
+>>      description: |
+>>        GPIO specifiers for three host gpio's used for dvs.
+>>
+>> +  vinb1-supply:
+>> +    description: Power supply for buck1
+>> +  vinb2-supply:
+>> +    description: Power supply for buck1
+> 
+> Nitpick: all those vinb* are for buck1, or that's a typo (here and below)?
 
-Mark those with CLK_IS_CRITICAL.
+Copy paste and needs fixing. Thanks for checking.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
+> 
+>> +  vinb3-supply:
+>> +    description: Power supply for buck1
+>> +  vinb4-supply:
+>> +    description: Power supply for buck1
+>> +  vinb5-supply:
+>> +    description: Power supply for buck1
+>> +  vinb6-supply:
+>> +    description: Power supply for buck1
+>> +  vinb7-supply:
+>> +    description: Power supply for buck1
+>> +  vinb8-supply:
+>> +    description: Power supply for buck1
+>> +  vinb9-supply:
+>> +    description: Power supply for buck1
+>> +
 
-To mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH 0/2] at: https://lore.kernel.org/all/cover.1633607765.git.mchehab+huawei@kernel.org/
-
- drivers/clk/hisilicon/clk-hi3670.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/clk-hi3670.c b/drivers/clk/hisilicon/clk-hi3670.c
-index 4d05a71683a5..d5813132df9c 100644
---- a/drivers/clk/hisilicon/clk-hi3670.c
-+++ b/drivers/clk/hisilicon/clk-hi3670.c
-@@ -82,13 +82,13 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_PPLL2_EN_ACPU, "ppll2_en_acpu", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x0, 3, 0, },
- 	{ HI3670_PPLL3_EN_ACPU, "ppll3_en_acpu", "clk_ppll3",
--	  CLK_SET_RATE_PARENT, 0x0, 27, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x0, 27, 0, },
- 	{ HI3670_PPLL1_GT_CPU, "ppll1_gt_cpu", "clk_ppll1",
- 	  CLK_SET_RATE_PARENT, 0x460, 16, 0, },
- 	{ HI3670_PPLL2_GT_CPU, "ppll2_gt_cpu", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x460, 18, 0, },
- 	{ HI3670_PPLL3_GT_CPU, "ppll3_gt_cpu", "clk_ppll3",
--	  CLK_SET_RATE_PARENT, 0x460, 20, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x460, 20, 0, },
- 	{ HI3670_CLK_GATE_PPLL2_MEDIA, "clk_gate_ppll2_media", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x410, 27, 0, },
- 	{ HI3670_CLK_GATE_PPLL3_MEDIA, "clk_gate_ppll3_media", "clk_ppll3",
-@@ -166,7 +166,7 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_CLK_CCI400_BYPASS, "clk_cci400_bypass", "clk_ddrc_freq",
- 	  CLK_SET_RATE_PARENT, 0x22C, 28, 0, },
- 	{ HI3670_CLK_GATE_CCI400, "clk_gate_cci400", "clk_ddrc_freq",
--	  CLK_SET_RATE_PARENT, 0x50, 14, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 14, 0, },
- 	{ HI3670_CLK_GATE_SD, "clk_gate_sd", "clk_mux_sd_sys",
- 	  CLK_SET_RATE_PARENT, 0x40, 17, 0, },
- 	{ HI3670_HCLK_GATE_SD, "hclk_gate_sd", "clk_div_sysbus",
-@@ -248,15 +248,15 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_CLK_GATE_AO_ASP, "clk_gate_ao_asp", "clk_div_ao_asp",
- 	  CLK_SET_RATE_PARENT, 0x0, 26, 0, },
- 	{ HI3670_PCLK_GATE_PCTRL, "pclk_gate_pctrl", "clk_div_ptp",
--	  CLK_SET_RATE_PARENT, 0x20, 31, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x20, 31, 0, },
- 	{ HI3670_CLK_CSI_TRANS_GT, "clk_csi_trans_gt", "clk_div_csi_trans",
--	  CLK_SET_RATE_PARENT, 0x30, 24, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x30, 24, 0, },
- 	{ HI3670_CLK_DSI_TRANS_GT, "clk_dsi_trans_gt", "clk_div_dsi_trans",
- 	  CLK_SET_RATE_PARENT, 0x30, 25, 0, },
- 	{ HI3670_CLK_GATE_PWM, "clk_gate_pwm", "clk_div_ptp",
- 	  CLK_SET_RATE_PARENT, 0x20, 0, 0, },
- 	{ HI3670_ABB_AUDIO_EN0, "abb_audio_en0", "clk_gate_abb_192",
--	  CLK_SET_RATE_PARENT, 0x30, 8, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x30, 8, 0, },
- 	{ HI3670_ABB_AUDIO_EN1, "abb_audio_en1", "clk_gate_abb_192",
- 	  CLK_SET_RATE_PARENT, 0x30, 9, 0, },
- 	{ HI3670_ABB_AUDIO_GT_EN0, "abb_audio_gt_en0", "abb_audio_en0",
-@@ -331,9 +331,9 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_clks[] = {
- 	{ HI3670_CLK_GATE_DSI_TRANS, "clk_gate_dsi_trans", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0xF4, 1, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_PTP, "clk_andgt_ptp", "clk_div_320m",
--	  CLK_SET_RATE_PARENT, 0xF8, 5, CLK_GATE_HIWORD_MASK, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0xF8, 5, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_OUT0, "clk_andgt_out0", "clk_ppll0",
--	  CLK_SET_RATE_PARENT, 0xF0, 10, CLK_GATE_HIWORD_MASK, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0xF0, 10, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_OUT1, "clk_andgt_out1", "clk_ppll0",
- 	  CLK_SET_RATE_PARENT, 0xF0, 11, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLKGT_DP_AUDIO_PLL_AO, "clkgt_dp_audio_pll_ao", "clk_ppll6",
-@@ -569,9 +569,9 @@ static const struct hisi_gate_clock hi3670_sctrl_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_SPI, "pclk_gate_spi", "clk_div_ioperi",
- 	  CLK_SET_RATE_PARENT, 0x1B0, 10, 0, },
- 	{ HI3670_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_ufs_subsys",
--	  CLK_SET_RATE_PARENT, 0x1B0, 14, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x1B0, 14, 0, },
- 	{ HI3670_CLK_GATE_UFSIO_REF, "clk_gate_ufsio_ref", "clkin_sys",
--	  CLK_SET_RATE_PARENT, 0x1b0, 12, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x1b0, 12, 0, },
- 	{ HI3670_PCLK_AO_GPIO0, "pclk_ao_gpio0", "clk_div_aobus",
- 	  CLK_SET_RATE_PARENT, 0x160, 11, 0, },
- 	{ HI3670_PCLK_AO_GPIO1, "pclk_ao_gpio1", "clk_div_aobus",
-@@ -593,7 +593,7 @@ static const struct hisi_gate_clock hi3670_sctrl_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_SYSCNT, "pclk_gate_syscnt", "clk_div_aobus",
- 	  CLK_SET_RATE_PARENT, 0x160, 19, 0, },
- 	{ HI3670_CLK_GATE_SYSCNT, "clk_gate_syscnt", "clkin_sys",
--	  CLK_SET_RATE_PARENT, 0x160, 20, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x160, 20, 0, },
- 	{ HI3670_CLK_GATE_ASP_SUBSYS_PERI, "clk_gate_asp_subsys_peri",
- 	  "clk_mux_asp_subsys_peri",
- 	  CLK_SET_RATE_PARENT, 0x170, 6, 0, },
-@@ -703,7 +703,7 @@ static const struct hisi_gate_clock hi3670_media1_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_DISP_NOC_SUBSYS, "pclk_gate_disp_noc_subsys", "clk_div_sysbus",
- 	  CLK_SET_RATE_PARENT, 0x10, 18, 0, },
- 	{ HI3670_ACLK_GATE_DISP_NOC_SUBSYS, "aclk_gate_disp_noc_subsys", "clk_gate_vivobusfreq",
--	  CLK_SET_RATE_PARENT, 0x10, 17, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x10, 17, 0, },
- 	{ HI3670_PCLK_GATE_DSS, "pclk_gate_dss", "pclk_gate_disp_noc_subsys",
- 	  CLK_SET_RATE_PARENT, 0x00, 14, 0, },
- 	{ HI3670_ACLK_GATE_DSS, "aclk_gate_dss", "aclk_gate_disp_noc_subsys",
--- 
-2.31.1
-
+Best regards,
+Krzysztof
