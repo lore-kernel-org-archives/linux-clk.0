@@ -2,163 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF350C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 11:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E17DC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 12:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B65DC610A2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 11:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8CB461260
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Oct 2021 12:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240803AbhJGLQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 07:16:38 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:13699 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232680AbhJGLQi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Oct 2021 07:16:38 -0400
-X-IronPort-AV: E=Sophos;i="5.85,354,1624287600"; 
-   d="scan'208";a="96435185"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Oct 2021 20:14:44 +0900
-Received: from localhost.localdomain (unknown [10.226.93.49])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id BDE144011429;
-        Thu,  7 Oct 2021 20:14:41 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
+        id S241200AbhJGMKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 08:10:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241188AbhJGMJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Oct 2021 08:09:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B7F6B6125F;
+        Thu,  7 Oct 2021 12:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633608485;
+        bh=v8jqFyirqmb+/8LYtAwzXPhvJSkgU1UvuVdFnoMXPxk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uH6uF9HPF4Q9hdU90Zfy9kNGND+3Gn/Oj3R6AByUpLz96GRJLpSa9p3u1+3NAYWCV
+         VohFmXTJJbkOgSyMk+WT/bCTAv4oQVkD7VCThxjEMbEDdgEVCeKJemzDhm68pryusS
+         KrnwsR3wkeVqInDuq7SyptFFUHuhgxsuGkvgp9Saef4e1jizwU3Q44Zj1MakcRw0gT
+         W32ag8dK3Y/4+p8RNexFDKG6BLeuX6KMgK3KqmvYDw9cqkDIwb03+47ApmQv58cYpE
+         lbgTaDVxqVdY+oKdi1aovb/tTUsQBev8zpZmsWMGihD0xnKvF2jnFaGBRsAEQ9FcZ8
+         NHZSKCPkmS1Wg==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1mYSBv-005QSt-JI; Thu, 07 Oct 2021 14:08:03 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] drivers: clk: renesas: r9a07g044-cpg: Add SDHI clock and reset entries
-Date:   Thu,  7 Oct 2021 12:14:34 +0100
-Message-Id: <20211007111434.8665-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211007111434.8665-1-biju.das.jz@bp.renesas.com>
-References: <20211007111434.8665-1-biju.das.jz@bp.renesas.com>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: fix the need of booking clk_ignore_unused=true on embedded devs
+Date:   Thu,  7 Oct 2021 14:06:53 +0200
+Message-Id: <cover.1633607765.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add SDHI{0,1} mux, clock and reset entries to CPG driver.
+Currently, the only way to boot a Kernel with drivers built as modules on embedded 
+devices like HiKey 970 is to pass clk_ignore_unused=true as a modprobe parameter.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
- * Renamed the clk source names as per latest HW manual
- * Removed .flag and .mux_flags from DEF_SD_MUX
- * Changed the mult/divider values for 533MHz clock
----
- drivers/clk/renesas/r9a07g044-cpg.c | 36 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h     |  4 ++++
- 2 files changed, 40 insertions(+)
+There are two separate issues:
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 1e331cdb13a5..47c16265fca9 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -44,6 +44,12 @@ enum clk_ids {
- 	CLK_PLL6,
- 	CLK_PLL6_250,
- 	CLK_P1_DIV2,
-+	CLK_PLL2_800,
-+	CLK_PLL2_SDHI_533,
-+	CLK_PLL2_SDHI_400,
-+	CLK_PLL2_SDHI_266,
-+	CLK_SD0_DIV4,
-+	CLK_SD1_DIV4,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -62,6 +68,7 @@ static const struct clk_div_table dtable_1_32[] = {
- /* Mux clock tables */
- static const char * const sel_pll3_3[] = { ".pll3_533", ".pll3_400" };
- static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
-+static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
- 
- static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	/* External Clock Inputs */
-@@ -82,6 +89,11 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".pll6", CLK_PLL6, CLK_EXTAL, 125, 6),
- 
- 	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".clk_800", CLK_PLL2_800, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 1, 3),
-+	DEF_FIXED(".clk_400", CLK_PLL2_SDHI_400, CLK_PLL2_800, 1, 2),
-+	DEF_FIXED(".clk_266", CLK_PLL2_SDHI_266, CLK_PLL2_SDHI_533, 1, 2),
-+
- 	DEF_FIXED(".pll2_div16", CLK_PLL2_DIV16, CLK_PLL2, 1, 16),
- 	DEF_FIXED(".pll2_div20", CLK_PLL2_DIV20, CLK_PLL2, 1, 20),
- 
-@@ -114,6 +126,12 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
- 	DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
- 	DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
-+	DEF_SD_MUX("SD0", R9A07G044_CLK_SD0, SEL_SDHI0,
-+		   sel_shdi, ARRAY_SIZE(sel_shdi)),
-+	DEF_SD_MUX("SD1", R9A07G044_CLK_SD1, SEL_SDHI1,
-+		   sel_shdi, ARRAY_SIZE(sel_shdi)),
-+	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G044_CLK_SD0, 1, 4),
-+	DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
- };
- 
- static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
-@@ -131,6 +149,22 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x550, 0),
- 	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
- 				0x550, 1),
-+	DEF_MOD("sdhi0_imclk",	R9A07G044_SDHI0_IMCLK, CLK_SD0_DIV4,
-+				0x554, 0),
-+	DEF_MOD("sdhi0_imclk2",	R9A07G044_SDHI0_IMCLK2, CLK_SD0_DIV4,
-+				0x554, 1),
-+	DEF_MOD("sdhi0_clk_hs",	R9A07G044_SDHI0_CLK_HS, R9A07G044_CLK_SD0,
-+				0x554, 2),
-+	DEF_MOD("sdhi0_aclk",	R9A07G044_SDHI0_ACLK, R9A07G044_CLK_P1,
-+				0x554, 3),
-+	DEF_MOD("sdhi1_imclk",	R9A07G044_SDHI1_IMCLK, CLK_SD1_DIV4,
-+				0x554, 4),
-+	DEF_MOD("sdhi1_imclk2",	R9A07G044_SDHI1_IMCLK2, CLK_SD1_DIV4,
-+				0x554, 5),
-+	DEF_MOD("sdhi1_clk_hs",	R9A07G044_SDHI1_CLK_HS, R9A07G044_CLK_SD1,
-+				0x554, 6),
-+	DEF_MOD("sdhi1_aclk",	R9A07G044_SDHI1_ACLK, R9A07G044_CLK_P1,
-+				0x554, 7),
- 	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
- 				0x570, 0),
- 	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
-@@ -200,6 +234,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
-+	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
-+	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 952fca98ba71..7fb6b4030f72 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -11,6 +11,7 @@
- 
- #define CPG_PL2_DDIV		(0x204)
- #define CPG_PL3A_DDIV		(0x208)
-+#define CPG_PL2SDHI_DSEL	(0x218)
- #define CPG_CLKSTATUS		(0x280)
- #define CPG_PL3_SSEL		(0x408)
- #define CPG_PL6_ETH_SSEL	(0x418)
-@@ -39,6 +40,9 @@
- #define SEL_PLL3_3	SEL_PLL_PACK(CPG_PL3_SSEL, 8, 1)
- #define SEL_PLL6_2	SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
- 
-+#define SEL_SDHI0	DDIV_PACK(CPG_PL2SDHI_DSEL, 0, 2)
-+#define SEL_SDHI1	DDIV_PACK(CPG_PL2SDHI_DSEL, 4, 2)
-+
- /**
-  * Definitions of CPG Core Clocks
-  *
+1. the clk's core calls clk_disable_unused() too early. By the time this
+   function is called, only the builtin drivers were already probed/initialized.
+   Drivers built as modules will only be probed afterwards.
+
+   This cause a race condition and boot instability, as the clk core will try
+   to disable clocks while the drivers built as modules are still being
+   probed and initialized.
+
+   I suspect that the same problem used to happen at the regulator's core,
+   as there's a code that waits for 30 seconds before disabling unused
+   regulators;
+
+2. there are some gate clocks defined at HiKey 970 that should always be on,
+   as otherwise the system will hang, or the filesystem I/O will stop.
+
+Ps.: 
+  I submitted already 3 or 4 versions of patches for HiKey 970 clock, but
+  they're all unreliable, due to the race conditions at the clk core due to (1).
+   
+Patch 1 solves the issue with the clk core.
+Patch 2 solves the HiKey 970 specific issues.
+
+Mauro Carvalho Chehab (2):
+  clk: wait for extra time before disabling unused clocks
+  clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
+
+ drivers/clk/clk.c                  | 51 +++++++++++++++++++-----------
+ drivers/clk/hisilicon/clk-hi3670.c | 24 +++++++-------
+ 2 files changed, 44 insertions(+), 31 deletions(-)
+
 -- 
-2.17.1
+2.31.1
+
 
