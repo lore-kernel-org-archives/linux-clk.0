@@ -2,57 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B701C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5B6C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32D8460FD7
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3D8B60FC3
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239036AbhJHDkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 23:40:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53392 "EHLO mail.kernel.org"
+        id S242778AbhJHDsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 23:48:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229714AbhJHDkM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Oct 2021 23:40:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9659760F94;
-        Fri,  8 Oct 2021 03:38:17 +0000 (UTC)
+        id S242866AbhJHDsK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Oct 2021 23:48:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 38DE660FD7;
+        Fri,  8 Oct 2021 03:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633664297;
-        bh=SO4WWpRN/VNmcG2ITuyiW6lfCl8pOr+q36Q7RPC9DZ8=;
+        s=k20201202; t=1633664776;
+        bh=LILxKtPM6i0oKzHRKfMYN9b7xPkkL+GaCXQvN1w7Bs8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Fy0Zpv+qtvCO2pDFN5GfD6iMoPsiO9RFt+LDUEBp6395rf1zpVcOXy4FumHjgvrxK
-         xGksKR1opi7LjlCdlDNNC7oM5Qt0w2/TvZNO9uBfgcqs5UOxKP4govb/v/b7LAKU9H
-         8KqcEaVrIk91PEHHEeOLr1HNqlm3bMiwErPHj+AT5AVexyyvf4lXWo8PRdXpKIS7n6
-         wzu6a+pg3/2hFxqY3gnM5ZYn/cZq5yQSAyISqpbY1jI0IwDarBgJQwzoNxGe/AjyhH
-         pOrgGhspPV+4SN79KeyKiYTRkgDs1twaaMOPKULKRfDcugA+w1WOJE3Gl93NZHklTg
-         LdTTwGN93Cm2w==
+        b=dhaEpWNaeDJod/hI8xBokcYXYseqvm/G4Hqk9yGHqrh2+T7nJO+UAxrH1e2tP1WOI
+         SUDMS0xVke/rI9sQeLZLR5L37SjT1E8bNSh95DQiDz77z4zhQQ9GIF5rMZzwpSXLDj
+         2fneTG/IIbyapm4F8YtFy60V7Bdf4f58AscwMFBdL94U5953xzIPEWKCpK1ydHWCWa
+         XB1Dooo6Om/bLiyWsLaK2Zso7pZan3IxGwe/j84AWcTUX8Uyt5uoSnli27adVL1rvg
+         8TBjfOvwdrYyKqbZO3ANtDp/rg9xhUmOtRhEkkYdq9oqnIFItJ+C/SVyfGAQ21WxMz
+         4JrLXIsuDRn/A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1633579571-25475-1-git-send-email-tdas@codeaurora.org>
-References: <1633579571-25475-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1] clk: qcom: gcc: Remove CPUSS clocks control for SC7280
+In-Reply-To: <cover.1633081408.git.geert+renesas@glider.be>
+References: <cover.1633081408.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.16
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 07 Oct 2021 20:38:16 -0700
-Message-ID: <163366429621.2041162.1682687728343834256@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 07 Oct 2021 20:46:14 -0700
+Message-ID: <163366477495.2041162.7008095640363240487@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2021-10-06 21:06:11)
-> The CPUSS clocks are kept always ON and at a fixed frequency of 100MHZ
-> from the bootloader and no longer required to be controlled from HLOS.
+Quoting Geert Uytterhoeven (2021-10-01 02:46:46)
+>         Hi Mike, Stephen,
 >=20
-> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver=
- for SC7280")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+> The following changes since commit fa2a30f8e0aa9304919750b116a9e9e3224652=
+99:
+>=20
+>   clk: renesas: rzg2l: Fix clk status function (2021-09-24 15:11:05 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.16-tag1
+>=20
+> for you to fetch changes up to cc3e8f97bbd370b51b3bb7fec391d65d461d7d02:
+>=20
+>   clk: renesas: r8a779a0: Add Z0 and Z1 clock support (2021-09-28 09:28:5=
+3 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into clk-next
