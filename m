@@ -2,130 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7174C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 13:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FC6C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 15:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97B4F61056
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 13:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B749860F6F
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 15:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234018AbhJHNzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Oct 2021 09:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38496 "EHLO
+        id S242780AbhJHPdl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Oct 2021 11:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232599AbhJHNzU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 09:55:20 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF714C061570;
-        Fri,  8 Oct 2021 06:53:24 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id m22so30224458wrb.0;
-        Fri, 08 Oct 2021 06:53:24 -0700 (PDT)
+        with ESMTP id S242961AbhJHPdi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 11:33:38 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59475C061762
+        for <linux-clk@vger.kernel.org>; Fri,  8 Oct 2021 08:31:43 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id o124so10994597vsc.6
+        for <linux-clk@vger.kernel.org>; Fri, 08 Oct 2021 08:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=yYWsu0Rg4yRualNrYxMIo7dnaqfU/YPo4u7hxec75RQ=;
-        b=bbohXNY2pN0tG0VfoSJkDk8zsi8ByEGKv47t0+GqCwHguogMWEq0doeEkGAiHLue74
-         tzC3QRTIA9xm3y4nVI7dd05PRfn/yIDLwRTgiUoOH6BzZkknS0tAZpy9gypIagpgixoK
-         0jw3ZjfgZnlMoA7m3VVroeT/TyFmLDmwP7qB32TkscZoDHF5+tUc97n0B582epeuiHVA
-         XEkdmZHdrlEVSr9tym+Wl60MDNgwCWOGQLuFAD7q9V07eDrrdtaETK75mBUjkBvfL78/
-         n4No8br5zx7Wed0F30CPolSvsbqHq7Fc6UQ1F+Pp/FqnvTnAiiWCxJWEEb18deIuqviO
-         vRfg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wfDWQNp2UL5+jS6p6MxQkSeoBswEyDZEW6ZvRWiqAYE=;
+        b=FG4nizPJKDttHDSuuLn3c6p8Myl+TE1ZajoLc02DiK82T5KiV2nzbAt9Lv37fLIA8x
+         jKWygR3yU4GfALjLvhn9RMbmj/MaEHuxJgQEoSfc5lYuqIkrvBvRubGjJHE63lSnPr1B
+         QTFecQ9I+HD1MPhI5wHPc4d0fh3EkJfZl/pqaQT9QiF3n1eJoI8wIO0hbET6LovqlLUG
+         idSGGFCcJz6UCgWODWsu5YjmH08T+PLc0TXKMwKEPjR5fsPatYxvLH8cm6U75QRAx9xo
+         x0+OJbzzXys4T0ZoXT5HVbErDYC6s1LvqGnsBCkjOLwX9Ue7hn4MVNOPWPtT9ip/m4Ds
+         EZSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=yYWsu0Rg4yRualNrYxMIo7dnaqfU/YPo4u7hxec75RQ=;
-        b=wP3gN/+XWRsYbvnNMJsYtYfIvInb1ty+E70LgnRGe7VgMcYVPfCnEB2gsJ4x1+l3k9
-         BEQaAFSelT5mW+TDTm9q2M2glN6zEH/Vd/7uMmHPK5yBlzlsV4YB3KpkoMhEBtgc6vF6
-         wNcK8xnbRmOUnw7pTVUegmVjwZyfDhcqMJ0P3fztYV4LpiBbltgDmWV9TpGOyfYVCjOA
-         Sq1UkB+deen7n8KFAtfxrfmlXALjOZGch4EGdQVCtK56jIC0zRbq8LcZE1+HKPC7wGoi
-         pCkkgeiUkBcmmtUnVTNDUeogkFXNEzk+th5C9taqwegHt14IeC514gWr77GvsVCDKRaw
-         V0VQ==
-X-Gm-Message-State: AOAM5316C85u+dWnkqIhR0R9pnzXdZWhceBMwzwcAWdq/qneNx3Mc1bO
-        GQ/LZWJW58eChqcZHKnnYTA=
-X-Google-Smtp-Source: ABdhPJwCCsh7mGFTBgvB/ol1kIoTWolzftm8yGGomZgw7NW71Awlwc9f6CNm1UOrwC/9jfT/DR6yCQ==
-X-Received: by 2002:a1c:7c02:: with SMTP id x2mr3427289wmc.165.1633701203204;
-        Fri, 08 Oct 2021 06:53:23 -0700 (PDT)
-Received: from [192.168.2.177] ([206.204.146.29])
-        by smtp.gmail.com with ESMTPSA id c7sm3794235wmq.13.2021.10.08.06.53.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Oct 2021 06:53:19 -0700 (PDT)
-Message-ID: <bc29d5bc-9ce7-6147-a708-e6304249b600@gmail.com>
-Date:   Fri, 8 Oct 2021 15:53:16 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wfDWQNp2UL5+jS6p6MxQkSeoBswEyDZEW6ZvRWiqAYE=;
+        b=SJo3jsror7cVQmK3YoQYm2+PxO+oiT6iPPKfuqxbNHJ9UgzKFYdlHGeF4r28dLegqc
+         hzAOWfFwanEcXmKCSi97t0ku/7MU7l0yxfGV7Acvfaj2kP4VkTfwc8Nz2T+SOd6FiIK3
+         oxduH7zFv7oAc0lvBBRMJxs2mxaut8AbMtprAbbsWu4uIPQ8K/uyxHXNs0f6tIz7X0p/
+         U96VHT8gVTrkt0B+7hclZRWtyK0188KBUMOFzuFdhniRb+imkNJaW/JursUgZGKRJKwj
+         zBOxZ+HNxcssDBlFEgKctgaoKbBC90OVhtSPmNyMnAUFaKgqOPPpKPqe+evh9msW3msU
+         vymA==
+X-Gm-Message-State: AOAM531w7ESZl9LLvxq3KdxmYTRSa3z8F0w/EeRS3ctnuNzx7Uj/IeBc
+        /a2Xa2lYRVv19Iq5eShwX+MbpCJBpcWNyr3scc+5tQ==
+X-Google-Smtp-Source: ABdhPJyvkGFu2hMnsDq29OMlmBSQiVg7L1kDuYFftacecAIHtbfGGV1GkOkzVRQpb7mW2uyOr4/ZNuPmO90t1XUAn1k=
+X-Received: by 2002:a67:d91b:: with SMTP id t27mr11899992vsj.55.1633707102322;
+ Fri, 08 Oct 2021 08:31:42 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: [v3,7/9] dt-bindings: arm64: dts: mediatek: Add mt7986 series
-Content-Language: en-US
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Ryder.Lee@mediatek.com, devicetree@vger.kernel.org,
-        enric.balletbo@collabora.com, fparent@baylibre.com,
-        gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
-        hsinyi@chromium.org, john@phrozen.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux@roeck-us.net, mpm@selenic.com, mturquette@baylibre.com,
-        robh+dt@kernel.org, sboyd@kernel.org, sean.wang@kernel.org,
-        seiya.wang@mediatek.com, wim@linux-watchdog.org
-References: <9552b0dc-337f-7edc-2997-50603dfe8bcd@gmail.com>
- <20210924114046.26070-1-sam.shih@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20210924114046.26070-1-sam.shih@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20211007194113.10507-1-semen.protsenko@linaro.org>
+ <20211007194113.10507-4-semen.protsenko@linaro.org> <abe4bdeb-ee15-d8c8-54af-1cdf7282b004@canonical.com>
+In-Reply-To: <abe4bdeb-ee15-d8c8-54af-1cdf7282b004@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 8 Oct 2021 18:31:30 +0300
+Message-ID: <CAPLW+4mM978QS8ce9ipnhAPc0ge2H8+ZZ5bsc=7Ryq4-yL8NQw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: clock: Add bindings definitions for
+ Exynos850 CMU
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sam,
+On Fri, 8 Oct 2021 at 09:45, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 07/10/2021 21:41, Sam Protsenko wrote:
+> > Clock controller driver is designed to have separate instances for each
+> > particular CMU. So clock IDs in this bindings header also start from 1
+> > for each CMU.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Changes in v2:
+> >   - Added all clock ids
+> >   - Added CLK_ prefix for all clock constants
+> >   - Added R-b tag by Krzysztof Kozlowski
+> >   - Added Ack tag by Rob Herring
+> >
+> >  include/dt-bindings/clock/exynos850.h | 141 ++++++++++++++++++++++++++
+> >  1 file changed, 141 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/exynos850.h
+> >
+> > diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+> > new file mode 100644
+> > index 000000000000..a44c5f91d3c7
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/exynos850.h
+> > @@ -0,0 +1,141 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+>
+> The bindings are preferred to be under GPL-2.0+BSD. I don't know about
+> such policy for the headers but it seems reasonable - allows re-usage in
+> other systems. Do you mind licensing it under:
+> GPL-2.0-only or BSD-2-Clause
+> ?
+>
 
-I'd advise to split this series in parts for:
-- basic device support via dts.
-- pinctrl driver + dts
-- clk driver + dts
+Sure, will do in v3.
 
-I would also advise to not send new versions of patches as new threads and don't 
-respond in the same thread. At least for me that breaks my workflow as I use b4.
-
-Regards,
-Matthias
-
-
-On 24/09/2021 13:40, Sam Shih wrote:
-> MT7986 series is Mediatek's new 4-core SoC, which is mainly for
-> wifi-router application. The difference between mt7986a and mt7986b
-> is that some pins do not exist on mt7986b.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> ---
-> v3: changed 'MT7986' to 'MT7986 series' in the commit message
-> v2: added an Acked-by tag
-> ---
->   Documentation/devicetree/bindings/arm/mediatek.yaml | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> index 80a05f6fee85..a9a778269684 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> @@ -76,6 +76,14 @@ properties:
->             - enum:
->                 - mediatek,mt7629-rfb
->             - const: mediatek,mt7629
-> +      - items:
-> +          - enum:
-> +              - mediatek,mt7986a-rfb
-> +          - const: mediatek,mt7986a
-> +      - items:
-> +          - enum:
-> +              - mediatek,mt7986b-rfb
-> +          - const: mediatek,mt7986b
->         - items:
->             - enum:
->                 - mediatek,mt8127-moose
-> 
+> Best regards,
+> Krzysztof
+>
+> > +/*
+> > + * Copyright (C) 2021 Linaro Ltd.
+> > + * Author: Sam Protsenko <semen.protsenko@linaro.org>
+> > + *
+> > + * Device Tree binding constants for Exynos850 clock controller.
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_CLOCK_EXYNOS_850_H
+> > +#define _DT_BINDINGS_CLOCK_EXYNOS_850_H
+> > +
+> > +/* CMU_TOP */
