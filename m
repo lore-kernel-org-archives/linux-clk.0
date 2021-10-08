@@ -2,83 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56380C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 09:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54C1C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 10:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30D9A61037
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 09:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850C461027
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 10:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239454AbhJHJtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Oct 2021 05:49:08 -0400
-Received: from mail-vk1-f181.google.com ([209.85.221.181]:38652 "EHLO
-        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239501AbhJHJtF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 05:49:05 -0400
-Received: by mail-vk1-f181.google.com with SMTP id bb12so1935970vkb.5;
-        Fri, 08 Oct 2021 02:47:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZhkuDcQL9tzn4rlqi3fw3STDZb023NsQ7pw++PUWl98=;
-        b=ufPSRqdATuVpXqRL3/Bpn1X0drQ6+HAUIpeMX3lgNrjd3afsYezQK/3vIgorYOw5Ad
-         zMvjfnK9l1bPC4bnexdk+1ANLFD1OXBcG1y7oymnUgOQa/mdDBwn9ILw/h4eufsBosYW
-         bAk3etWantJpfonHtSgqHLdez4UncsowgHV3tjRjsTX3F1XQnPSpRwIDp0jIUL9JctHS
-         WtwRQleIBpK0HrXHVfR4wYbg8gXRNSXjmE8RJqY7li1Sgc5PlLgAKqc81IErNsbx7Uqf
-         opZgltp7/kRH2oFgy+d8eTY6Td36CPW3yo95aALTvgzBuUqeXGUdefH/ffAKC2DaZE8z
-         3qpg==
-X-Gm-Message-State: AOAM533NLkiynhgd29mK6bzYJH1//iStgGc4OWWxP7qYQ2/WdJM7XiwI
-        vz5MvEyabrWiCZ7Ra0bbvvTPKu6Jj112a48RJD4=
-X-Google-Smtp-Source: ABdhPJx0vp+vewsGH6TcoNQtzkUhJtw6lJRBl36QRSHBSd/FGPv4RBBT40lkJ0ifQL61E5H/rORLvoHMSkvcJhw4fh0=
-X-Received: by 2002:a1f:5e84:: with SMTP id s126mr8220069vkb.7.1633686429994;
- Fri, 08 Oct 2021 02:47:09 -0700 (PDT)
+        id S238321AbhJHKEG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Oct 2021 06:04:06 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:56816 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236118AbhJHKEG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Oct 2021 06:04:06 -0400
+Received: from ip5f5a6e92.dynamic.kabel-deutschland.de ([95.90.110.146] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1mYmhb-0008SB-JP; Fri, 08 Oct 2021 12:02:07 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     krzysztof.kozlowski@canonical.com, robh@kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     krzysztof.kozlowski@canonical.com, zong.li@sifive.com,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, Paul Walmsley <paul.walmsley@sifive.com>,
+        sboyd@kernel.org, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH] dt-bindings: clock: fu740-prci: add reset-cells
+Date:   Fri, 08 Oct 2021 12:02:06 +0200
+Message-ID: <24526929.Pe8KFHSfS2@diego>
+In-Reply-To: <mhng-b9e6d8f9-b9be-4651-9649-3378d227eae1@palmerdabbelt-glaptop>
+References: <mhng-b9e6d8f9-b9be-4651-9649-3378d227eae1@palmerdabbelt-glaptop>
 MIME-Version: 1.0
-References: <20211007111434.8665-1-biju.das.jz@bp.renesas.com> <20211007111434.8665-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20211007111434.8665-3-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Oct 2021 11:46:59 +0200
-Message-ID: <CAMuHMdU0xsy=t=2mdvjEmD_eNjVieHUAZThDQWXC4zz5iyzNTQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drivers: clk: renesas: r9a07g044-cpg: Add SDHI
- clock and reset entries
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+Am Freitag, 8. Oktober 2021, 03:29:17 CEST schrieb Palmer Dabbelt:
+> On Thu, 23 Sep 2021 09:59:32 PDT (-0700), robh@kernel.org wrote:
+> > On Mon, 20 Sep 2021 16:49:44 +0200, Krzysztof Kozlowski wrote:
+> >> The SiFive FU740 Power Reset Clock Interrupt Controller is a reset line
+> >> provider so add respective reset-cells property to fix:
+> >>
+> >>   arch/riscv/boot/dts/sifive/hifive-unmatched-a00.dt.yaml: clock-controller@10000000:
+> >>     '#reset-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> >> ---
+> >>  .../devicetree/bindings/clock/sifive/fu740-prci.yaml          | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >>
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> 
+> For some reason I thought these went through your tree, LMK if you were 
+> planning on having me take it through mine.
 
-On Thu, Oct 7, 2021 at 1:14 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add SDHI{0,1} mux, clock and reset entries to CPG driver.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
->  * Renamed the clk source names as per latest HW manual
->  * Removed .flag and .mux_flags from DEF_SD_MUX
->  * Changed the mult/divider values for 533MHz clock
+Normally both driver + binding patches go through the driver-tree
+and actual dts changes through the tree carrying the dts files.
 
-Thanks for the update!
+So for a clock-patch this should be the clock-tree aka Mike Turquette
+and Stephen Boyd - already in Cc of original patch, so I'd assume they'll
+pick it up.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.16.
 
-Gr{oetje,eeting}s,
+Heiko
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
