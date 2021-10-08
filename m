@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5A5C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 06:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7101FC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 06:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED6B61073
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 06:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F1560EFE
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 06:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbhJHGrg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Oct 2021 02:47:36 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37104
+        id S231874AbhJHGsl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Oct 2021 02:48:41 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37190
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229664AbhJHGrg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 02:47:36 -0400
+        by vger.kernel.org with ESMTP id S229664AbhJHGsk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 02:48:40 -0400
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EFA1C3FFEC
-        for <linux-clk@vger.kernel.org>; Fri,  8 Oct 2021 06:45:40 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 73C353FFE6
+        for <linux-clk@vger.kernel.org>; Fri,  8 Oct 2021 06:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633675540;
-        bh=K6iXGmH+Xr2/o1b+hKgXwSDn2IBjQQPNyuaqrgkHtGo=;
+        s=20210705; t=1633675604;
+        bh=tV+7M+3749uq1FCdCB9Xz0P5iM22X/rCXdWu/eTEMvY=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=EJWAUaal4A5xHZ9T2T3tCyw043CSXEelP69NmQi44Is32Wa4o2Ktr5PJamENfd2bn
-         rBwPTlUoFQNMjqUMhrYuZOADG1mbtXYPhyx03YW41LH6Efd7+fGpmsBnK4mtQHCqGK
-         cLPj40SjfWE1JqQoSHiT7ObblyoIY2bTJrUGjbosK+pxy29wnEzuGbGNpp8Vqcok33
-         aGbrWppT7JMmNxk2L2+/pvRXXk6lYivObkHLb1Zh5HI/dLUnGb8Ev1m/G90dgAh3m1
-         bjJ2zzvcm6R6qboVsd754HM49BmRjzzVKDRHKqmYxfXvrviLZhGjRFUTZDdoBvPlx7
-         wjxvnGnhzTaeg==
-Received: by mail-wr1-f71.google.com with SMTP id h11-20020adfa4cb000000b00160c791a550so6320299wrb.6
-        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 23:45:40 -0700 (PDT)
+        b=vuVq1fooYPogZi4oj8vV21pcb2DGBgBEvsed3WtrcVbZnRIjz2BVU52JKEFw06RX7
+         /a4w2rNnYrIz/DJOs+aPsb5S+rRQcun80UoWQGrlL1N4JoaWBYh8xurb3+QPPyE/6Y
+         rVTxpfE864xIbKnPBq+NwQYCdKvXvyG1tFOkQHIAwbYqrtz0AzwWWiILhw/usm165e
+         j3aRlAFDKael0JEOAVxy8idhK9FTRzaq2s+agYiCi4pBM/XSj7Mj99CmNhQgpWA/vL
+         h3QH71W58CU4zS4Dp+p4XCGKnAVhyGo48VBl3CCF9PPoOPDZIWCzLvZ+c5rTeYuauB
+         WkcoXVR2WR/bg==
+Received: by mail-wr1-f71.google.com with SMTP id a10-20020a5d508a000000b00160723ce588so6496267wrt.23
+        for <linux-clk@vger.kernel.org>; Thu, 07 Oct 2021 23:46:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=K6iXGmH+Xr2/o1b+hKgXwSDn2IBjQQPNyuaqrgkHtGo=;
-        b=JzP+mzT1MVSokk31+iyhUhBaYErGEo7YgyjGUXUM2h3L5MJiGRwFodXyIKbcGCHFiE
-         pCv8eYM+xbzkxwU4JL9hj9ZCtuPEoG3J4KcvJN7T2+61a4u2giJp2UyaHiuhRFSgMA5P
-         ODhi8IaleAgiPuDLCGNmB3AxestyQk3BZZLjzvSaSGkOmOob/ZO29YLbTk1f19hf/nC2
-         HJ4PrX01LWmd9s+PE3hVPE+GYdcKy26BDmRkVYVGqB6nLOGOXePSGXWyOvxsKyY1mxTX
-         YgrJfP4hsd3sG3p9P4Cj/sB8VYnPR0Zq3V1FKfArBhEmNWvsdi7rm4DlCZ/72nN7ZDC/
-         UIFA==
-X-Gm-Message-State: AOAM531xAUE8XfWGLxYnR/mHnMgrIDxWGvfktfXWbqlPMFzVGjyixye4
-        PIO5PiRk8n+1BmfelYRd/jHNIKD4MW6Umk/lRgyjiciaIWaNPQuNnNswbbJtLKwZfy9NT+KgH4K
-        1hHGuKj9LdQdPYKlQ5JsfD2fj5pCc0DtlRGMyUQ==
-X-Received: by 2002:a5d:5986:: with SMTP id n6mr1798231wri.75.1633675540662;
-        Thu, 07 Oct 2021 23:45:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyOmryVllHENNzxlkya8eUdoqWDAGCtwrtq2AttxUID67l6XccGUczuhDVl0y/YrmmVswUgeg==
-X-Received: by 2002:a5d:5986:: with SMTP id n6mr1798196wri.75.1633675540394;
-        Thu, 07 Oct 2021 23:45:40 -0700 (PDT)
+        bh=tV+7M+3749uq1FCdCB9Xz0P5iM22X/rCXdWu/eTEMvY=;
+        b=hGMpIWRpwfcLmROyAiNZueTj2fOcCW3qRJzgbH8iSoZazVNCUsiupyZGHUnHArd1HD
+         3xZ840zpufQkdJW/PBSbcLMcAnfhSW0S/466qIlfUAFdU2p8SK4F6332RRQQHwZFKGbk
+         bbiL164yUy7H93odCr97dheV1tSxHdM8tQf6R6SQTFga2sViCxPm0mxzxxWbwXz6I/0N
+         9TuZNLwtNlQMsm6wq23zp3F8kHsgBKfx8UlIDsoug5JJcIQJDU012/Whx2qWmCkgBfJm
+         8B2c/787lS79uO8jQEP908d0kepZeA+wIkYzCbpYcwxQ5pXqs3Kp0Ung7OMXBPtVtwYp
+         gpdQ==
+X-Gm-Message-State: AOAM5324GH4V+g9TDgeph51RPD2LygKRLp+A9ZovhVYZBZLmrKIbsEso
+        QwT7XeD6uJdkrMMiUY+9FPSakl2+zxIOhbLMJqIUfZ88RVfw+L1EC2M6T1w56Xf2BdVs8nTvDno
+        Abjm54gEZu7v4ZB8b0X6On4o/JYWvwb1rG0P1ig==
+X-Received: by 2002:adf:fe4e:: with SMTP id m14mr1797384wrs.14.1633675604153;
+        Thu, 07 Oct 2021 23:46:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw3BOUcmtFw3Bjgu6D37Q26E5qqcZd2Qentpsk296xnX+9N3jCG0wxVsZ0hEoAFzfyQGWbhyA==
+X-Received: by 2002:adf:fe4e:: with SMTP id m14mr1797373wrs.14.1633675603999;
+        Thu, 07 Oct 2021 23:46:43 -0700 (PDT)
 Received: from [192.168.1.24] (xdsl-188-155-186-13.adslplus.ch. [188.155.186.13])
-        by smtp.gmail.com with ESMTPSA id q12sm1467343wrp.75.2021.10.07.23.45.39
+        by smtp.gmail.com with ESMTPSA id k9sm1462654wrz.22.2021.10.07.23.46.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Oct 2021 23:45:39 -0700 (PDT)
-Subject: Re: [PATCH v2 3/5] dt-bindings: clock: Add bindings definitions for
- Exynos850 CMU
+        Thu, 07 Oct 2021 23:46:43 -0700 (PDT)
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: Document Exynos850 CMU
+ bindings
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
@@ -75,14 +75,14 @@ Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20211007194113.10507-1-semen.protsenko@linaro.org>
- <20211007194113.10507-4-semen.protsenko@linaro.org>
+ <20211007194113.10507-5-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <abe4bdeb-ee15-d8c8-54af-1cdf7282b004@canonical.com>
-Date:   Fri, 8 Oct 2021 08:45:38 +0200
+Message-ID: <0befb3ab-cea8-ccd8-98f3-b05bfc6fb0f0@canonical.com>
+Date:   Fri, 8 Oct 2021 08:46:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211007194113.10507-4-semen.protsenko@linaro.org>
+In-Reply-To: <20211007194113.10507-5-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,49 +91,60 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 07/10/2021 21:41, Sam Protsenko wrote:
-> Clock controller driver is designed to have separate instances for each
-> particular CMU. So clock IDs in this bindings header also start from 1
-> for each CMU.
+> Provide dt-schema documentation for Exynos850 SoC clock controller.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
 > Changes in v2:
->   - Added all clock ids
->   - Added CLK_ prefix for all clock constants
->   - Added R-b tag by Krzysztof Kozlowski
->   - Added Ack tag by Rob Herring
+>   - Dropped OSCCLK node declaration example
+>   - Dropped UART node declaration example
+>   - Added Ack tag by Chanwoo Choi
 > 
->  include/dt-bindings/clock/exynos850.h | 141 ++++++++++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100644 include/dt-bindings/clock/exynos850.h
+>  .../clock/samsung,exynos850-clock.yaml        | 185 ++++++++++++++++++
+>  1 file changed, 185 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
 > 
-> diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
 > new file mode 100644
-> index 000000000000..a44c5f91d3c7
+> index 000000000000..79202e6e6402
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/exynos850.h
-> @@ -0,0 +1,141 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> @@ -0,0 +1,185 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/samsung,exynos850-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos850 SoC clock controller
+> +
+> +maintainers:
+> +  - Sam Protsenko <semen.protsenko@linaro.org>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +  - Tomasz Figa <tomasz.figa@gmail.com>
+> +
+> +description: |
+> +  Exynos850 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> +  two external clocks:: OSCCLK (26 MHz) and RTCCLK (32768 Hz). Those external
+> +  clocks must be defined as fixed-rate clocks in dts.
+> +
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks that available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'dt-bindings/clock/exynos850.h' header.
+> +
 
-The bindings are preferred to be under GPL-2.0+BSD. I don't know about
-such policy for the headers but it seems reasonable - allows re-usage in
-other systems. Do you mind licensing it under:
-GPL-2.0-only or BSD-2-Clause
-?
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
 
 Best regards,
 Krzysztof
-
-> +/*
-> + * Copyright (C) 2021 Linaro Ltd.
-> + * Author: Sam Protsenko <semen.protsenko@linaro.org>
-> + *
-> + * Device Tree binding constants for Exynos850 clock controller.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_EXYNOS_850_H
-> +#define _DT_BINDINGS_CLOCK_EXYNOS_850_H
-> +
-> +/* CMU_TOP */
