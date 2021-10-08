@@ -2,161 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E0AC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 18:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6651EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 19:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B65360F38
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 18:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B86C6054E
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 19:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240479AbhJHTAS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Oct 2021 15:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231312AbhJHTAS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 15:00:18 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E948C061570;
-        Fri,  8 Oct 2021 11:58:22 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D9296146F;
-        Fri,  8 Oct 2021 20:58:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1633719498;
-        bh=MHBiXZNJbPeFPmG29rwaw6VIy+Lb+40kRf3KLozS164=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ve3QkZ0wRysKeFMaDqFGb7JwEWPU6UDRYkfd9QJlUR3hVcOODY0lniKciKC/SfJwP
-         TxFtjnKge5JGGkfFnZsYFg5BuHVHCB9uPDurNaNq//dm/2yAasRcvXOHPSDVgxxDJs
-         z6rvYPs6sxCeKyCqmJz9lhhn0AE6ZTAAKlFlINGY=
-Date:   Fri, 8 Oct 2021 21:58:07 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/12] media: i2c: ov8865: Add an has_unmet_acpi_deps()
- check
-Message-ID: <YWCUv+gEnfWnpRS6@pendragon.ideasonboard.com>
-References: <20211008162121.6628-1-hdegoede@redhat.com>
- <20211008162121.6628-3-hdegoede@redhat.com>
- <YWCQ6/AMzP5Nfcyk@pendragon.ideasonboard.com>
- <39a85265-017e-f86d-619b-c1aa6a771a26@redhat.com>
+        id S231350AbhJHTW7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Oct 2021 15:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231316AbhJHTW6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Oct 2021 15:22:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F20261168;
+        Fri,  8 Oct 2021 19:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633720862;
+        bh=J3eo4Tu7qrOc2MiIoucmmx1WpNLGsUtlgBPNto2aiUs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aMgdTZipDf/D9JrNtQ1hae/jIFbuVzrHOHObvkCzN0PwN+MUX7wX4b7y5RYryzZNb
+         k7R9VKUyNPE9KsFDyCCSr2oUlWcnSmXAxnpG20J2RVSM6Fouk1/VFHupXpnRjZrIy3
+         5JrDaRemtKNzcf6Db4fApIKyePuqWYXlDtzFjefd6OSvz/DmYUjpNwTr0btuHDrNle
+         eIovcmW/7ab9LvyCocUjL7r8J3PbWc9oNX2DCOESIgyB1FceTnabR6bXlTbS7efQ/p
+         Lw87suge/FKKtJcNvhl2UOUY5a6A0ENS77hje9aLYncDTfp0+7MOC20HzX+F6wrGO5
+         iWJsr4VitJT/w==
+Received: by mail-ed1-f49.google.com with SMTP id g10so39333737edj.1;
+        Fri, 08 Oct 2021 12:21:02 -0700 (PDT)
+X-Gm-Message-State: AOAM531+AaJ+rp7zz7OE5sZ6o7fCzkw4QQDbohX9bT2KDkYwHHGYxriD
+        ijFmtjHFqmcL80JqhY587Zc//TgPb5JovtIHeA==
+X-Google-Smtp-Source: ABdhPJwsjP40w5LS3Pe0FI+JbwaB1t8n80TdqFlA4RgJ+smCkKocJH5RCRmN8VKIUMTL96V/wG4XUpUzCKI4Hk9FSP8=
+X-Received: by 2002:a50:da06:: with SMTP id z6mr17576606edj.355.1633720860729;
+ Fri, 08 Oct 2021 12:21:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <39a85265-017e-f86d-619b-c1aa6a771a26@redhat.com>
+References: <1633518555-8195-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1633518555-8195-5-git-send-email-hayashi.kunihiko@socionext.com>
+ <YV395BTH/gqcuDJH@robh.at.kernel.org> <f2138a98-9740-d1de-5dc9-e14a68fa509b@socionext.com>
+In-Reply-To: <f2138a98-9740-d1de-5dc9-e14a68fa509b@socionext.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 8 Oct 2021 14:20:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL8N+h7bciDt=4fMHyAP=DL=YikpaTh2v4q383XVXH2AA@mail.gmail.com>
+Message-ID: <CAL_JsqL8N+h7bciDt=4fMHyAP=DL=YikpaTh2v4q383XVXH2AA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: uniphier: Add clock binding
+ for SoC-glue
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hans,
-
-On Fri, Oct 08, 2021 at 08:48:18PM +0200, Hans de Goede wrote:
-> On 10/8/21 8:41 PM, Laurent Pinchart wrote:
-> > On Fri, Oct 08, 2021 at 06:21:11PM +0200, Hans de Goede wrote:
-> >> The clk and regulator frameworks expect clk/regulator consumer-devices
-> >> to have info about the consumed clks/regulators described in the device's
-> >> fw_node.
+On Thu, Oct 7, 2021 at 3:50 AM Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
+>
+> Hi Rob,
+>
+> On 2021/10/07 4:49, Rob Herring wrote:
+> > On Wed, Oct 06, 2021 at 08:09:14PM +0900, Kunihiko Hayashi wrote:
+> >> Update binding document for clocks implemented in SoC-glue.
 > >>
-> >> To work around cases where this info is not present in the firmware tables,
-> >> which is often the case on x86/ACPI devices, both frameworks allow the
-> >> provider-driver to attach info about consumers to the clks/regulators
-> >> when registering these.
-> >>
-> >> This causes problems with the probe ordering of the ov8865 driver vs the
-> >> drivers for these clks/regulators. Since the lookups are only registered
-> >> when the provider-driver binds, trying to get these clks/regulators before
-> >> then results in a -ENOENT error for clks and a dummy regulator for regs.
-> >>
-> >> On ACPI/x86 where this is a problem, the ov8865 ACPI fw-nodes have a _DEP
-> >> dependency on the INT3472 ACPI fw-node which describes the hardware which
-> >> provides the clks/regulators.
-> >>
-> >> The drivers/platform/x86/intel/int3472/ code dealing with these ACPI
-> >> fw-nodes will call acpi_dev_clear_dependencies() to indicate that this
-> >> _DEP has been "met" when all the clks/regulators have been setup.
-> >>
-> >> Call the has_unmet_acpi_deps() helper to check for unmet _DEPs
-> >> and return -EPROBE_DEFER if this returns true, so that we wait for
-> >> the clk/regulator setup to be done before continuing with probing.
-> >>
-> >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> >> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > >> ---
-> >>  drivers/media/i2c/ov8865.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
+> >>   .../bindings/clock/socionext,uniphier-clock.yaml         | 16
+> > ++++++++++++++++
+> >>   1 file changed, 16 insertions(+)
 > >>
-> >> diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-> >> index ce4e0ae2c4d3..fd18d1256f78 100644
-> >> --- a/drivers/media/i2c/ov8865.c
-> >> +++ b/drivers/media/i2c/ov8865.c
-> >> @@ -2978,6 +2978,9 @@ static int ov8865_probe(struct i2c_client *client)
-> >>  	unsigned int i;
-> >>  	int ret;
-> >>  
-> >> +	if (has_unmet_acpi_deps(dev))
-> >> +		return -EPROBE_DEFER;
+> >> diff --git
+> > a/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+> > b/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+> >> index ee8d16a8019e..05a9d1f89756 100644
+> >> ---
+> > a/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+> >> +++
+> > b/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+> >> @@ -46,6 +46,9 @@ properties:
+> >>             - socionext,uniphier-ld20-peri-clock
+> >>             - socionext,uniphier-pxs3-peri-clock
+> >>             - socionext,uniphier-nx1-peri-clock
+> >> +      - description: SoC-glue clock
+> >> +        enum:
+> >> +          - socionext,uniphier-pro4-sg-clock
+> >>
+> >>     "#clock-cells":
+> >>       const: 1
+> >> @@ -95,3 +98,16 @@ examples:
+> >>
+> >>           // other nodes ...
+> >>       };
 > >> +
-> > 
-> > We've worked hard to avoid adding ACPI-specific code such as this in
-> > sensor drivers, as it would then spread like crazy, and also open the
-> > door to more ACPI-specific support. I don't want to open this pandora's
-> > box, I'd like to see this handled in another layer (the I2C core could
-> > be a condidate for instance, but bonus points if it can be handled in
-> > the ACPI subsystem itself).
-> 
-> The problem is that we do NOT want this check for all i2c devices,
+> >> +  - |
+> >> +    soc-glue@5f800000 {
+> >> +        compatible = "socionext,uniphier-sysctrl", "simple-mfd",
+> > "syscon";
+> >> +        reg = <0x5f800000 0x2000>;
+> >> +
+> >> +        clock {
+> >> +            compatible = "socionext,uniphier-pro4-sg-clock";
+> >> +            #clock-cells = <1>;
+> >> +        };
+> >> +
+> >> +        // other nodes ...
+> >> +    };
+> >
+> > What's the value of this 2nd example? It's just a different compatible
+> > string.
+> Following the previous three examples in the document, it describes the
+> difference between the parent nodes that place the clock.
+>
+> They are common to be child nodes of "syscon", and the definition of the
+> parent node is not in this document.
+> Should I put them together in a common example?
 
-Any of these sensors can be used on non-ACPI-based platforms, or on
-ACPI-based platforms where integration has been done right. If it causes
-an issue to call this function on those platforms, then this driver
-won't work. If it causes no issue, why can't we call it in the I2C core
-(or somewhere else) ?
+I'd just drop the example.
 
-> so doing
-> it in any place other then the drivers means having some list of APCI-ids
-> to which to apply this someplace else. And then for every sensor driver
-> which needs this we need to update this list.
-> 
-> This is wht I've chosen to just put this check directly in the sensor
-> drivers. It is only 2 lines, it is a no-op on kernels where ACPI
-> is not enabled (without need a #ifdef) and it is a no-op if the
-> sensor i2c-client is not instantiated through APCI even when ACPI
-> support is enabled in the kernel.
-> 
-> I understand that you don't want a lot of ACPI specific code inside
-> the drivers, which is why I've come up with this fix which consists
-> of only 2 lines.  My previous attempts (which I never posted)
-> where much worse then this.
-
-So we only need to take one more step to remove just two lines :-)
-
-This is all caused by Intel messing up their ACPI design badly. It's too
-late to point and shame, it won't fix the problem, but I don't want this
-to spread through drivers, neither for just those two lines (there are
-dozens of sensors that would need the same treatment), nor for what the
-next steps would be when someone else will want to add ACPI-specific
-code and use this as a precedent. That's why we tried hard with Dan
-Scally to isolate all the necessary quirks in a single place instead of
-spreading them through drivers, which would have been easier to
-implement.
-
-I'd like to hear what Sakari thinks about this.
-
-> >>  	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
-> >>  	if (!sensor)
-> >>  		return -ENOMEM;
-
--- 
-Regards,
-
-Laurent Pinchart
+Rob
