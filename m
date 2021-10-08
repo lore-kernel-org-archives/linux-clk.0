@@ -2,61 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82747C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06F8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67BC060FF2
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DDDD60F5D
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 03:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242366AbhJHDt7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Oct 2021 23:49:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60328 "EHLO mail.kernel.org"
+        id S229745AbhJHDxc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Oct 2021 23:53:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231658AbhJHDt6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Oct 2021 23:49:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E1B8160FC3;
-        Fri,  8 Oct 2021 03:48:03 +0000 (UTC)
+        id S229717AbhJHDxc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Oct 2021 23:53:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6889A60462;
+        Fri,  8 Oct 2021 03:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633664884;
-        bh=UbaCa4xinuSzh8zJwgpxQpjmGmzbsKM2tJqtcsJ0WJ8=;
+        s=k20201202; t=1633665097;
+        bh=pKR3YtBNKGES2/NNydGS0iU1J2x9MVTJs7GYv4ymaF8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m8Mrr/vkY5SKBzTIneWKh5fczZuOwiFn1I0bhC/+zjrPfHFRrD3NwJQBB8K7AzH4k
-         KQN+AeUaeiA6AJUg2BztMjLB5rTOJOxRgtTgUgJMmW831DcWBUoP6kKHrlDABy9qJP
-         yqAcl9VQ6Zz0fs42QVdoSBHM7Slp+MQqwHCOvavVw/l9OjwV9wg8OqIAVVd4T8sfiN
-         4p/pkbnwDG0RIjWxRtmx7Ec1QueBuJp6beUzie0paXNKwkwZL7gr3G7Q7tC+2stuWr
-         Z588Qu8ao3aPypGsFlT1vNEMuZ73S6AixooScKKye3a21QBzFlEUmXIpddLXvsFxNr
-         mIoR7S1S5xfjA==
+        b=mkgm32nmpaVyGhvTW9KHxNHXqLf9KO5cN9OsiRZRAbt36Vp9Na9xuJW3qnNQUfPbV
+         n+g/cx+5vBrarRhHlYqso6bCxRCVnR1NRTBXvJJazXUHuU1hdzvFZK15Zr6kGiJbDQ
+         iPVeGjQhbDtMKGIgV9L6FVQ58Lc84hXkhjN5Yik6hlhlS9/S3BBihDsapZPFzvD+I3
+         VuEH9ZjAj6RWuTYfVNzh01ZbAxnsvUsiFhhcCrzD483WvnLiygwnuS4X4A2sZQ1c2j
+         o+FPguVAa0WoB+vBm0IOG19r8C3JwxR/OZNC4WyrRUhJYzobQ3DDPwNjRoiPzHT37I
+         DXz6dexfYFe+g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210913082633.110168-1-clement.leger@bootlin.com>
-References: <20210913082633.110168-1-clement.leger@bootlin.com>
-Subject: Re: [PATCH] clk: at91: check pmc node status before registering syscore ops
+In-Reply-To: <20210923132046.1860549-3-claudiu.beznea@microchip.com>
+References: <20210923132046.1860549-1-claudiu.beznea@microchip.com> <20210923132046.1860549-3-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH v4 02/17] clk: at91: pmc: execute suspend/resume only for backup mode
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Date:   Thu, 07 Oct 2021 20:48:02 -0700
-Message-ID: <163366488264.2041162.17217723256659455955@swboyd.mtv.corp.google.com>
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        mturquette@baylibre.com, nicolas.ferre@microchip.com
+Date:   Thu, 07 Oct 2021 20:51:36 -0700
+Message-ID: <163366509609.2041162.16407625879723979586@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cl=C3=A9ment L=C3=A9ger (2021-09-13 01:26:33)
-> Currently, at91 pmc driver always register the syscore_ops whatever
-> the status of the pmc node that has been found. When set as secure
-> and disabled, the pmc should not be accessed or this will generate
-> abort exceptions.
-> To avoid this, add a check on node availability before registering
-> the syscore operations.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> ---
+Quoting Claudiu Beznea (2021-09-23 06:20:31)
+> Before going to backup mode architecture specific PM code sets the first
+> word in securam (file arch/arm/mach-at91/pm.c, function at91_pm_begin()).
+> Thus take this into account when suspending/resuming clocks. This will
+> avoid executing unnecessary instructions when suspending to non backup
+> modes. Also this commit changed the postcore_initcall() with
+> subsys_initcall() to be able to execute of_find_compatible_node() since
+> this was not available at the moment of postcore_initcall(). This should
+> not alter the tcb_clksrc since the changes are related to clocks
+> suspend/resume procedure that will be executed at the user space request,
+> thus long ago after subsys_initcall().
 
-Applied to clk-next
+Is the comment still relevant though?
+
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index b2806946a77a..58e9c088cb22 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -110,13 +112,35 @@ struct pmc_data *pmc_data_allocate(unsigned int nco=
+re, unsigned int nsystem,
+>  }
+> =20
+>  #ifdef CONFIG_PM
+> +
+> +/* Address in SECURAM that say if we suspend to backup mode. */
+> +static void __iomem *at91_pmc_backup_suspend;
+> +
+>  static int at91_pmc_suspend(void)
+>  {
+> +       unsigned int backup;
+> +
+> +       if (!at91_pmc_backup_suspend)
+> +               return 0;
+> +
+> +       backup =3D *(unsigned int *)at91_pmc_backup_suspend;
+
+This will fail sparse. Why are we reading iomem without using iomem
+reading wrapper?
+
+> +       if (!backup)
